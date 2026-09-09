@@ -115,10 +115,10 @@ The snapshot does not edit your profile, upload resumes, run searches/Copilot,
 or synchronize application statuses back to the Mac. Full profile editing stays
 in the local app. The laptop can be off while you browse the published snapshot.
 
-Admin navigation includes Leads, Search (exported jobs), Applications (exported
-applied/interviewing/rejected statuses), Settings (browser appearance and session
-locking), and Profile (resume attachment state, profile timestamp and scored lead
-count). No additional private profile fields are published. Public jobs, the
+Admin navigation includes Leads, Search (exported jobs), and Applications (exported
+applied/interviewing/rejected statuses). Appearance and Lock remain in the header;
+the Settings and Profile navigation icons have been removed. No additional private
+profile fields are published. Public jobs, the
 unlock screen, and all admin views share the same theme and responsive shell.
 
 ## Security Boundaries

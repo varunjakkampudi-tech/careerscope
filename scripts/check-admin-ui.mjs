@@ -123,6 +123,12 @@ try {
   await page.reload();
   await page.getByRole('table', { name: 'My leads' }).waitFor();
   assert.equal(await page.locator('#rows [role=row]').count(), 50);
+  assert.deepEqual(
+    await page
+      .locator('#private-nav a')
+      .evaluateAll((links) => links.map((link) => link.dataset.view)),
+    ['leads', 'search', 'applications'],
+  );
   await page.getByRole('link', { name: 'Search', exact: true }).click();
   await page.getByRole('heading', { name: 'Search jobs' }).waitFor();
   await page.getByRole('searchbox', { name: 'Search', exact: true }).fill('React');
@@ -132,18 +138,22 @@ try {
   await page.getByRole('table', { name: 'Applications', exact: true }).waitFor();
   assert.equal(await page.locator('#rows [role=row]').count(), 1);
   assert.match(await page.locator('#rows').textContent(), /Engineer 59/);
-  await page.getByRole('link', { name: 'Profile', exact: true }).click();
+  await page.evaluate(() => {
+    location.hash = 'profile';
+  });
   await page.locator('#profile-view').waitFor();
   assert.equal(await page.locator('#profile-resume').textContent(), 'Attached');
   await page.reload();
   await page.locator('#profile-view').waitFor();
   assert.equal(await page.locator('#profile-leads').textContent(), '60');
-  await page.getByRole('link', { name: 'Settings', exact: true }).click();
+  await page.evaluate(() => {
+    location.hash = 'settings';
+  });
   await page.locator('#settings-view').waitFor();
   await page.getByLabel('Appearance').selectOption('dark');
   assert.equal(await page.locator('#theme').inputValue(), 'dark');
   await page.getByLabel('Appearance').selectOption('light');
-  for (const selected of ['leads', 'search', 'applications', 'settings', 'profile']) {
+  for (const selected of ['leads', 'search', 'applications']) {
     await page.locator(`[data-view="${selected}"]`).click();
     for (const width of [320, 390, 1440]) {
       await page.setViewportSize({ width, height: 900 });

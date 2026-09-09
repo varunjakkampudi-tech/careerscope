@@ -279,7 +279,7 @@ try {
       await page.locator('#empty').waitFor({ state: 'visible' });
       await capture(page, `${engineName}-admin-empty-mobile`);
       await page.getByRole('button', { name: 'Clear filters' }).click();
-      for (const view of ['search', 'applications', 'settings', 'profile']) {
+      for (const view of ['search', 'applications']) {
         await page.locator(`[data-view="${view}"]`).click();
         await page.waitForFunction(
           (selected) =>
@@ -296,8 +296,8 @@ try {
         }
       }
       await page.reload();
-      await page.locator('#profile-view').waitFor();
-      assert.equal(await page.locator('#profile-leads').textContent(), '65');
+      await page.getByRole('table', { name: 'Applications', exact: true }).waitFor();
+      assert.equal(await page.locator('#rows [role="row"]').count(), 1);
       await page.setViewportSize({ width: 390, height: 844 });
       await page.getByRole('button', { name: 'Lock', exact: true }).click();
       assert.equal(await page.evaluate(() => document.activeElement.id), 'passphrase');
