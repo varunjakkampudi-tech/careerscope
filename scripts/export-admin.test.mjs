@@ -2,6 +2,8 @@ import { adminLeads, configuredPassphrase } from './export-admin.mjs';
 
 test('local env config requires a non-placeholder passphrase and supports hidden input', () => {
   assert.equal(configuredPassphrase(''), null);
+  assert.throws(() => configuredPassphrase('test-only12'), /at least 12 characters/);
+  assert.equal(configuredPassphrase('test-only123'), 'test-only123');
   assert.throws(() => configuredPassphrase('admin'));
   assert.throws(() => configuredPassphrase('replace-me-with-a-secret'));
   assert.equal(configuredPassphrase('synthetic-test-passphrase'), 'synthetic-test-passphrase');

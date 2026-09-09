@@ -272,6 +272,37 @@ describe('profile', () => {
     }
   });
 
+  it('preserves entered CTC while backend processing uses the adjusted value', async () => {
+    const fixture = await buildTestApp();
+    try {
+      const created = await fixture.app.inject({
+        method: 'POST',
+        url: '/api/profile',
+        headers: fixture.auth,
+        payload: profileBody({ application: { currentCtc: '8.1', expectedCtc: '12 LPA' } }),
+      });
+      expect(created.statusCode).toBe(201);
+      expect(created.json().profile.application.currentCtc).toBe('8.1');
+      for (const attempt of [1, 2]) {
+        const updated = await fixture.app.inject({
+          method: 'PUT',
+          url: '/api/profile',
+          headers: fixture.auth,
+          payload: { application: { currentCtc: '8.1' } },
+        });
+        expect(updated.statusCode, `save ${attempt}`).toBe(200);
+        expect(updated.json().profile.application.currentCtc).toBe('8.1');
+        expect(fixture.container.repos.profiles.getForProcessing()?.application).toMatchObject({
+          currentCtc: '7.1',
+          expectedCtc: '12 LPA',
+        });
+        expect(fixture.container.repos.profiles.get()?.application.currentCtc).toBe('8.1');
+      }
+    } finally {
+      await fixture.close();
+    }
+  });
+
   it('creates, then deep-merges a partial update', async () => {
     const t = await buildTestApp();
     try {

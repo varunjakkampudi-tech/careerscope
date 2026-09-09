@@ -20,6 +20,7 @@ import {
 } from '@job-radar/shared';
 import { fromJson, toStringOrNull, toText, type Db, type Row } from '../index.js';
 import { LOCAL_PROFILE_ID, LOCAL_USER_ID } from '../../util/ids.js';
+import { profileForProcessing } from '../../util/currentCtc.js';
 
 function rowToProfile(row: Row): Profile {
   return profileSchema.parse({
@@ -42,6 +43,11 @@ export class ProfileRepo {
 
   exists(id: string = LOCAL_PROFILE_ID): boolean {
     return this.db.get('SELECT 1 FROM profiles WHERE id = :id', { id }) !== undefined;
+  }
+
+  getForProcessing(id: string = LOCAL_PROFILE_ID): Profile | null {
+    const profile = this.get(id);
+    return profile ? profileForProcessing(profile) : null;
   }
 
   /** Replaces the whole profile. Used by the onboarding form, which sends all of it. */

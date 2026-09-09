@@ -7,7 +7,7 @@ results. This is not a server account or the local owner's login password.
 ## Export On The Mac
 
 Run `npm run mobile:admin` in your own terminal. Choose a unique passphrase of
-at least 16 characters, preferably several randomly selected words generated
+at least 12 characters, preferably several randomly selected words generated
 by a password manager. Input is hidden. Do not enter it in chat, command-line
 arguments, or GitHub secrets. Keep it in your password
 manager; there is no password recovery for an existing snapshot.

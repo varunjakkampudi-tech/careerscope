@@ -29,8 +29,8 @@ async function deriveKey(passphrase, salt) {
 }
 
 export async function encryptSnapshot(snapshot, passphrase) {
-  if (typeof passphrase !== 'string' || passphrase.length < 16)
-    throw new Error('Use a unique passphrase of at least 16 characters.');
+  if (typeof passphrase !== 'string' || passphrase.length < 12)
+    throw new Error('Use a unique passphrase of at least 12 characters.');
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const nonce = crypto.getRandomValues(new Uint8Array(12));
   const key = await deriveKey(passphrase, salt);

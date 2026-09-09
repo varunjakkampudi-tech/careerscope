@@ -117,7 +117,7 @@ export class ApplicationAgent {
     if (this.closed || this.task || this.runs.active())
       throw ApiProblem.conflict('An application is already active or the worker is shutting down.');
     const lead = this.repos.leads.get(leadId);
-    const profile = this.repos.profiles.get();
+    const profile = this.repos.profiles.getForProcessing();
     if (!lead) throw ApiProblem.notFound('Lead', leadId);
     if (lead.status !== 'new' && lead.status !== 'saved')
       throw ApiProblem.conflict('Only new or saved leads can start an application.');

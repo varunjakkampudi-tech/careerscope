@@ -266,7 +266,7 @@ export class SearchRunner {
   ): { query: ProviderQuery; candidate: CandidateContext } {
     this.stage(runId, state, 'preparing');
 
-    const profile = this.deps.repos.profiles.get();
+    const profile = this.deps.repos.profiles.getForProcessing();
     if (!profile) {
       throw new Error('No profile saved yet — complete onboarding before searching');
     }

@@ -26,11 +26,11 @@ export function adminLeads(rows) {
 export function configuredPassphrase(value) {
   if (!value) return null;
   if (
-    value.length < 16 ||
+    value.length < 12 ||
     /^(admin|password|dummy|changeme|change-me|replace-me|example)/i.test(value)
   ) {
     throw new Error(
-      'Replace dummy ADMIN_SNAPSHOT_PASSPHRASE with a unique passphrase of at least 16 characters, or leave it empty for hidden input.',
+      'Replace dummy ADMIN_SNAPSHOT_PASSPHRASE with a unique passphrase of at least 12 characters, or leave it empty for hidden input.',
     );
   }
   return value;
@@ -65,7 +65,7 @@ async function askPassphrase() {
   });
   const reader = createInterface({ input: process.stdin, output: silent, terminal: true });
   try {
-    process.stdout.write('Choose a unique snapshot passphrase (16+ characters; input hidden): ');
+    process.stdout.write('Choose a unique snapshot passphrase (12+ characters; input hidden): ');
     const passphrase = await reader.question('');
     process.stdout.write('\nConfirm passphrase (input hidden): ');
     const confirmation = await reader.question('');

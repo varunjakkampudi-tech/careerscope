@@ -3,6 +3,15 @@ import { Buffer } from 'node:buffer';
 import { test } from 'node:test';
 import { encryptSnapshot, decryptSnapshot } from '../mobile-site/snapshot-crypto.mjs';
 
+test('accepts 12-character passphrases and rejects 11 characters', async () => {
+  const fixture = { leads: [] };
+  const passphrase = 'test-only123';
+  assert.equal(passphrase.length, 12);
+  await assert.rejects(encryptSnapshot(fixture, passphrase.slice(0, 11)), /at least 12 characters/);
+  const encrypted = await encryptSnapshot(fixture, passphrase);
+  assert.deepEqual(await decryptSnapshot(encrypted, passphrase), fixture);
+});
+
 test('round trip, random encryption, wrong password and tampering', async () => {
   const fixture = { leads: [{ title: 'PRIVATE_TEST_MARKER', score: 0.91 }] };
   const passphrase = 'synthetic-test-passphrase-only';
