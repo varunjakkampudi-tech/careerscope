@@ -55,6 +55,7 @@ import {
 } from '../components/ui';
 
 const POSTED_OPTIONS = [
+  { value: 1, label: 'Last 24 hours' },
   { value: 3, label: 'Last 3 days' },
   { value: 7, label: 'Last week' },
   { value: 14, label: 'Last 2 weeks' },

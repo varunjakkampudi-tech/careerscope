@@ -1,7 +1,34 @@
 import { describe, expect, it } from 'vitest';
-import { filtersFromParams, paramsFromFilters } from './Leads';
+import {
+  filtersFromParams,
+  paramsFromFilters,
+  freshMatchFilters,
+  savedShortlistFilters,
+} from './Leads';
 
 describe('lead match threshold', () => {
+  it('includes all saved leads without hiding older or lower-scored choices', () => {
+    const filters = filtersFromParams(paramsFromFilters(savedShortlistFilters(), null), []);
+    expect(filters.statuses).toEqual(['saved']);
+    expect(filters.minScore).toBe(0);
+    expect(filters.postedWithinDays).toBeUndefined();
+    expect(filters.sort).toBe('score');
+  });
+  it('round-trips the fresh match queue without stale filters or an open drawer', () => {
+    const params = paramsFromFilters(freshMatchFilters(), null);
+    const filters = filtersFromParams(params, []);
+    expect(filters).toMatchObject({
+      minScore: 0.85,
+      postedWithinDays: 1,
+      statuses: ['new', 'saved'],
+      sort: 'postedAt',
+      order: 'desc',
+    });
+    expect(params.has('lead')).toBe(false);
+    expect(filters.search).toBeUndefined();
+    expect(filters.runId).toBeUndefined();
+    expect(filters.sources).toBeUndefined();
+  });
   it('defaults to 0% unless an explicit default is supplied', () => {
     expect(filtersFromParams(new URLSearchParams(), []).minScore).toBe(0);
     expect(filtersFromParams(new URLSearchParams(), [], 0.92).minScore).toBe(0.92);

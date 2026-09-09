@@ -11,6 +11,8 @@ import {
   Globe,
   LockKeyhole,
   RefreshCw,
+  Bookmark,
+  BookmarkCheck,
 } from 'lucide-react';
 
 const icons = {
@@ -22,6 +24,8 @@ const icons = {
   globe: Globe,
   lock: LockKeyhole,
   refresh: RefreshCw,
+  bookmark: Bookmark,
+  'bookmark-check': BookmarkCheck,
 };
 for (const [name, icon] of Object.entries(icons)) {
   writeFileSync(

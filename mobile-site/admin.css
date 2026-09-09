@@ -80,6 +80,69 @@ nav a {
 .nav-icon {
   flex: 0 0 auto;
 }
+.workspace-toolbar,
+.job-actions,
+.dialog-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.workspace-toolbar {
+  justify-content: space-between;
+  margin: 20px 0;
+}
+.view-switch {
+  display: inline-flex;
+  gap: 4px;
+}
+.view-switch [aria-pressed='true'],
+.save-job[aria-pressed='true'] {
+  background: var(--soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+#saved-count {
+  display: inline-block;
+  min-width: 3ch;
+  font-variant-numeric: tabular-nums;
+}
+.public-filters {
+  grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
+}
+dialog {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  max-width: calc(100% - 32px);
+}
+dialog::backdrop {
+  background: rgb(0 0 0 / 45%);
+}
+.dialog-actions {
+  margin-top: 24px;
+  justify-content: flex-end;
+}
+#storage-error {
+  color: var(--error);
+}
+@media (max-width: 767px) {
+  .public-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .public-filters > label:first-child {
+    grid-column: 1 / -1;
+  }
+  .job-actions {
+    justify-content: space-between;
+    width: 100%;
+  }
+  #jobs > li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 :root[data-theme='dark'] .nav-icon {
   filter: invert(1);
 }

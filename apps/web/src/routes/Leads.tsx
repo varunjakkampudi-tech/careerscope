@@ -23,6 +23,7 @@
 
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { Bookmark, Clock3 } from 'lucide-react';
 import {
   DEFAULT_MATCH_THRESHOLD,
   LEAD_STATUSES,
@@ -135,6 +136,20 @@ export function paramsFromFilters(filters: LeadFilters, leadId: string | null): 
 }
 
 const SORTS = ['score', 'postedAt', 'company', 'title', 'salary'] as const;
+export function freshMatchFilters(): LeadFilters {
+  return {
+    minScore: DEFAULT_MATCH_THRESHOLD,
+    postedWithinDays: 1,
+    statuses: ['new', 'saved'],
+    sort: 'postedAt',
+    order: 'desc',
+  };
+}
+
+export function savedShortlistFilters(): LeadFilters {
+  return { minScore: 0, statuses: ['saved'], sort: 'score', order: 'desc' };
+}
+
 function isSort(value: string | null): value is LeadFilters['sort'] {
   return value !== null && (SORTS as readonly string[]).includes(value);
 }
@@ -279,6 +294,29 @@ export function Leads() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            <Button
+              size="sm"
+              variant="secondary"
+              title="New or saved jobs posted in the last 24 hours with at least 85% match"
+              onClick={() => {
+                setSelection(new Set());
+                write(freshMatchFilters(), null);
+              }}
+            >
+              <Clock3 size={16} aria-hidden="true" />
+              Fresh matches
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => {
+                setSelection(new Set());
+                write(savedShortlistFilters(), null);
+              }}
+            >
+              <Bookmark size={16} aria-hidden="true" />
+              Saved shortlist
+            </Button>
             <Button
               size="sm"
               variant="secondary"

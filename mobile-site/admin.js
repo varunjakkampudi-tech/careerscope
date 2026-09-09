@@ -1,4 +1,5 @@
 import { unlockSnapshot, restoreSnapshot } from './snapshot-crypto.mjs';
+import { isRecentJob } from './job-workspace.mjs';
 
 const element = (id) => document.getElementById(id);
 let snapshot = null;
@@ -41,6 +42,7 @@ function lock({ preserveSession = false } = {}) {
   element('status').replaceChildren(new Option('All statuses', ''));
   element('search').value = '';
   element('score').value = '0';
+  element('posted').value = '';
   element('passphrase').value = '';
   element('workspace').hidden = true;
   element('lock').hidden = true;
@@ -166,6 +168,7 @@ function render() {
     .filter(
       (lead) =>
         (view !== 'applications' || applicationStatuses.includes(lead.status)) &&
+        isRecentJob(lead, Number(element('posted').value)) &&
         lead.score * 100 >= minimum &&
         (!status || lead.status === status) &&
         (!sources.length || sources.includes(lead.source)) &&
@@ -285,7 +288,7 @@ element('more').addEventListener('click', () => {
   limit += 50;
   render();
 });
-for (const id of ['search', 'score', 'sources', 'status', 'sort'])
+for (const id of ['search', 'score', 'sources', 'status', 'sort', 'posted'])
   element(id).addEventListener('input', () => {
     limit = 50;
     render();
@@ -295,6 +298,7 @@ element('clear').addEventListener('click', () => {
   element('score').value = '0';
   element('status').value = '';
   element('sort').value = 'score';
+  element('posted').value = '';
   for (const input of element('sources').querySelectorAll('input')) input.checked = false;
   limit = 50;
   render();

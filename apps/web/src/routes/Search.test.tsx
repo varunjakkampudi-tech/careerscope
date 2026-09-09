@@ -17,6 +17,12 @@ vi.mock('../lib/queries', () => ({
 }));
 
 describe('saved search settings', () => {
+  it('offers the last 24 hours and preserves that saved window', () => {
+    saved.postedWithinDays = 1;
+    renderApp(<Search />);
+    expect(screen.getByRole('option', { name: 'Last 24 hours' })).toHaveValue('1');
+    expect(screen.getByLabelText('Posted within')).toHaveValue('1');
+  });
   it('shows the supported 1,000 result limit', () => {
     saved.maxResults = 1000;
     saved.postedWithinDays = 30;

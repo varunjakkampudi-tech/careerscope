@@ -27,6 +27,7 @@ const envelope = await encryptSnapshot(
 const files = new Set([
   'admin.html',
   'admin.js',
+  'job-workspace.mjs',
   'admin.css',
   'style.css',
   'theme.js',
@@ -90,6 +91,10 @@ try {
   ]);
   assert.equal(await page.getByRole('meter').count(), 50);
   assert.equal(await page.locator('#threshold-count').textContent(), '60 at or above 0%');
+  await page.getByLabel('Posted', { exact: true }).selectOption('1');
+  assert.equal(await page.locator('#rows [role=row]').count(), 0);
+  await page.getByRole('button', { name: 'Clear filters', exact: true }).click();
+  assert.equal(await page.locator('#posted').inputValue(), '');
   assert.equal(await page.locator('#rows img, #rows a[href^="javascript:"]').count(), 0);
   await page.getByRole('button', { name: 'Load more' }).click();
   assert.equal(await page.locator('#rows [role=row]').count(), 60);

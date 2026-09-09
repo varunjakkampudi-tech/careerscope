@@ -109,6 +109,16 @@ for (const engine of [chromium, firefox, webkit]) {
       }
       await page.goto(`${address}/leads`);
       await page.locator('main h1').waitFor();
+      await page.getByRole('button', { name: 'Fresh matches', exact: true }).click();
+      assert.equal(new URL(page.url()).searchParams.get('posted'), '1');
+      await page.getByRole('button', { name: 'Saved shortlist', exact: true }).click();
+      assert.equal(new URL(page.url()).searchParams.get('statuses'), 'saved');
+      assert.equal(new URL(page.url()).searchParams.has('posted'), false);
+      await page.reload();
+      await page.getByRole('button', { name: 'Saved shortlist', exact: true }).waitFor();
+      assert.equal(new URL(page.url()).searchParams.get('statuses'), 'saved');
+      await page.goto(`${address}/leads`);
+      await page.locator('main h1').waitFor();
       await page.setViewportSize({ width: 1440, height: 600 });
       const filters = page.getByRole('region', { name: 'Lead filters', exact: true });
       await filters.waitFor();

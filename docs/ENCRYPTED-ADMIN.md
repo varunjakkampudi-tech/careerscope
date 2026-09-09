@@ -105,8 +105,12 @@ may retain/copy it. Use Lock before leaving a shared device. Navigating to publi
 jobs keeps the unexpired tab session. JavaScript cannot guarantee immediate memory
 erasure by the browser or prevent OS screenshots/tab previews. Use a trusted device.
 
-Both pages share a System/Light/Dark selector. Only the theme preference is stored
-in localStorage; decrypted data and the passphrase are not. Public metadata opts
+Both pages share a System/Light/Dark selector. The theme preference and public-job
+bookmarks are stored in localStorage; decrypted admin data and the passphrase are
+not. Public bookmarks contain only posting URLs, remain browser-local, and do not
+update the Mac's saved leads or application statuses. Use Clear saved jobs to
+remove them on a shared device; admin Lock does not clear public bookmarks.
+Public metadata opts
 into indexing; admin stays noindex. On project Pages, the origin-root robots.txt
 belongs to the account site, so project-path robots.txt is advisory and may not
 be discovered by crawlers. The admin HTML noindex tag is still applicable.
@@ -120,6 +124,14 @@ applied/interviewing/rejected statuses). Appearance and Lock remain in the heade
 the Settings and Profile navigation icons have been removed. No additional private
 profile fields are published. Public jobs, the
 unlock screen, and all admin views share the same theme and responsive shell.
+
+Public jobs support All jobs/Saved views, keyword and source filters, posted-date
+windows, and newest/company sorting. Filters survive refresh in the page URL, so
+shared URLs can reveal the chosen search terms. Saved URLs missing from a newer
+snapshot are reported as unavailable, not displayed as current jobs. Clearing
+bookmarks requires confirmation. Blocked storage falls back to an in-memory list
+with a visible warning. Admin's Posted filter excludes unknown and future dates;
+it operates on the snapshot and does not run a live provider search.
 
 ## Security Boundaries
 

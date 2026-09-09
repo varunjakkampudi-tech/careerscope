@@ -25,7 +25,12 @@ export default tseslint.config(
     languageOptions: { globals: globals.browser },
   },
   {
-    files: ['scripts/check-ui.mjs', 'scripts/check-admin-ui.mjs', 'scripts/check-pages-ui.mjs'],
+    files: [
+      'scripts/check-ui.mjs',
+      'scripts/check-admin-ui.mjs',
+      'scripts/check-pages-ui.mjs',
+      'scripts/check-public-workspace.mjs',
+    ],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
   {

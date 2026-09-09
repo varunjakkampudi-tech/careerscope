@@ -28,7 +28,7 @@
     <link rel="icon" href="./favicon.svg" />
     <link rel="stylesheet" href="./style.css" />
     <link rel="stylesheet" href="./admin.css" />
-    <script src="./app.js" defer></script>
+    <script src="./app.js" type="module"></script>
   </head>
   <body class="admin-app">
     <a href="#main-content" class="skip-link">Skip to content</a>
@@ -51,13 +51,22 @@
     </header>
     <main id="main-content" tabindex="-1">
       <div class="heading">
-        <h1>Latest jobs</h1>
+        <h1 id="jobs-title">Latest jobs</h1>
         <button id="refresh" type="button" aria-label="Refresh jobs" title="Refresh jobs">
           <img class="nav-icon" src="./icon-refresh.svg" alt="" width="18" height="18" />
         </button>
       </div>
       <p id="updated" class="muted"></p>
-      <div class="filters">
+      <div class="workspace-toolbar">
+        <div class="view-switch" role="group" aria-label="Job view">
+          <button id="all-jobs" type="button" aria-pressed="true">All jobs</button>
+          <button id="saved-jobs" type="button" aria-pressed="false">
+            Saved <span id="saved-count">0</span>
+          </button>
+        </div>
+        <button id="clear-saved" type="button" hidden>Clear saved jobs</button>
+      </div>
+      <div class="filters public-filters">
         <label
           >Search<input
             id="search"
@@ -70,7 +79,28 @@
             <option value="">All sources</option>
           </select></label
         >
+        <label
+          >Posted<select id="posted" aria-label="Posted">
+            <option value="">Any time</option>
+            <option value="1">Last 24 hours</option>
+            <option value="3">Last 3 days</option>
+            <option value="7">Last week</option>
+            <option value="30">Last 30 days</option>
+          </select></label
+        >
+        <label
+          >Sort<select id="sort" aria-label="Sort">
+            <option value="snapshot">Snapshot order</option>
+            <option value="newest">Newest first</option>
+            <option value="company">Company</option>
+          </select></label
+        >
       </div>
+      <button id="clear-filters" type="button">Clear filters</button>
+      <p id="storage-error" role="alert" hidden>
+        Saved jobs could not be loaded or stored. Changes may last only until this page closes.
+      </p>
+      <p id="saved-unavailable" class="muted" role="status" hidden></p>
       <p id="count" role="status">Loading jobs...</p>
       <p id="error" role="alert" hidden>Jobs could not be loaded. Try refreshing.</p>
       <p id="empty" class="empty-state" hidden>No jobs match these filters.</p>
@@ -82,6 +112,13 @@
       >
       <ul id="jobs"></ul>
       <button id="more" type="button" hidden>Load more</button>
+      <dialog id="clear-dialog" aria-labelledby="clear-title">
+        <h2 id="clear-title">Clear saved jobs?</h2>
+        <div class="dialog-actions">
+          <button id="cancel-clear" type="button" autofocus>Cancel</button
+          ><button id="confirm-clear" type="button">Clear saved jobs</button>
+        </div>
+      </dialog>
     </main>
     <footer>
       CareerScope <span class="muted" data-app-version></span>

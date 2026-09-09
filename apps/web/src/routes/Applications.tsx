@@ -1,4 +1,6 @@
 import { ApplicationProgress } from '../components/ApplicationPanel';
+import { Link } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
 import { useApplications } from '../lib/applications';
 import { useLead } from '../lib/queries';
 import { Alert, ExternalLink } from '../components/ui';
@@ -25,6 +27,13 @@ export function Applications() {
         <article key={run.id} className="mt-6 border-t border-border pt-4">
           <ApplicationTitle leadId={run.leadId} />
           <ApplicationProgress run={run} />
+          <Link
+            to={`/leads?lead=${encodeURIComponent(run.leadId)}`}
+            className="mt-3 inline-flex min-h-10 items-center gap-1.5 text-sm font-medium text-accent"
+          >
+            <ArrowUpRight size={16} aria-hidden="true" />
+            Review lead
+          </Link>
         </article>
       ))}
     </div>
