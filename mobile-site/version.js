@@ -1,3 +1,3 @@
 document.querySelectorAll('[data-app-version]').forEach((element) => {
-  element.textContent = 'v1.0.0';
+  element.textContent = 'v1.1.0';
 });
