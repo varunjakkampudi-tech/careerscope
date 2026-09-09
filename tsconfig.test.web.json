@@ -1,0 +1,24 @@
+{
+  "$comment": "Typechecking for the web app's component tests. Separate from tsconfig.test.json because the two tiers genuinely differ: the node tests resolve as NodeNext (relative imports carry a .js extension), while these resolve as Bundler and need the DOM lib and the JSX transform. Widening the node project to Bundler would typecheck both, but it would also stop enforcing NodeNext's extension rule on the code that actually ships to Node.",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "composite": false,
+    "incremental": false,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "types": ["node", "vite/client"]
+  },
+  "include": [
+    "apps/web/vitest.setup.ts",
+    "apps/web/src/test/**/*.ts",
+    "apps/web/src/test/**/*.tsx",
+    "apps/web/src/**/*.test.ts",
+    "apps/web/src/**/*.test.tsx"
+  ]
+}

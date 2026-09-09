@@ -1,0 +1,32 @@
+# Prettier honours .gitignore by default only for files git already ignores;
+# everything else below is content Prettier must not touch.
+
+# Captured pages, verbatim.
+#
+# The scrape fixtures are byte-for-byte copies of what LinkedIn, Indeed and
+# Naukri actually served. Reformatting them would rewrite the evidence: the
+# suites assert exact card counts and an exact description length (2396
+# characters), and re-indenting the HTML changes both. A fixture that has been
+# prettified is no longer a capture — it is a guess about what the site sends.
+packages/providers/src/scrape/__fixtures__/
+
+# Build output and generated declarations.
+dist/
+dist-types/
+*.tsbuildinfo
+
+# Runtime data: the SQLite database, uploaded resumes, generated exports.
+data/
+
+# Dependencies.
+node_modules/
+
+# Lockfile — npm owns its formatting.
+package-lock.json
+
+# Scratch from the browser MCP tools during an interactive debugging session.
+.playwright-mcp/
+playwright-report/
+test-results/
+
+infra/nginx/*.inc

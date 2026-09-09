@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--
+      Tells the browser to paint form controls, scrollbars and the pre-hydration
+      background in the right scheme. Without it the very first frame is white
+      even when the user's OS is dark. The theme *class* is applied in main.tsx
+      rather than by an inline script, because the API's CSP (see app.ts) allows
+      no inline scripts on the single-origin deploy.
+    -->
+    <meta name="color-scheme" content="light dark" />
+    <!--
+      Paints the browser chrome to match the app surface on mobile. Two values,
+      because a single one is wrong in half the cases.
+    -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#11151f" />
+
+    <!--
+      This app is private. It holds one person's resume, expected CTC, phone
+      number and applications, so the correct SEO outcome is to be absent from
+      every index rather than to rank well in one.
+
+      Both mechanisms are needed and neither is redundant: `public/robots.txt`
+      is authoritative on the single-origin deploy where the API serves from the
+      domain root, but on GitHub Pages the site lives under `/<repo>/` and
+      crawlers read robots.txt only from the domain root — which belongs to
+      github.io. This tag travels with the page and covers that case.
+    -->
+    <meta name="robots" content="noindex, nofollow" />
+
+    <title>CareerScope | Job discovery and applications</title>
+    <meta name="application-name" content="CareerScope" />
+    <meta
+      name="description"
+      content="Your private workspace for resume-matched job discovery, lead tracking, and supervised applications."
+    />
+
+    <!--
+      Vite resolves BASE_URL for root and subpath deployments, including
+      direct navigation to nested application routes.
+    -->
+    <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="%BASE_URL%favicon.svg" />
+    <link rel="manifest" href="%BASE_URL%site.webmanifest" />
+
+    <!--
+      Link previews. Even a private app gets pasted into a chat or a ticket, and
+      the fallback without these is a bare URL. `og:image` is deliberately
+      absent rather than pointed at a placeholder — a broken image renders worse
+      than none, and there is no real one to point at.
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CareerScope" />
+    <meta property="og:title" content="CareerScope | Job discovery and applications" />
+    <meta
+      property="og:description"
+      content="Your private workspace for resume-matched job discovery, lead tracking, and supervised applications."
+    />
+    <meta name="twitter:card" content="summary" />
+  </head>
+  <body class="h-full">
+    <div id="root" class="h-full"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/shared" },
+    { "path": "./packages/resume" },
+    { "path": "./packages/matching" },
+    { "path": "./packages/providers" },
+    { "path": "./apps/api" },
+    { "path": "./apps/web" },
+    { "path": "./apps/web/tsconfig.node.json" }
+  ]
+}

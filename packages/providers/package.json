@@ -1,0 +1,30 @@
+{
+  "name": "@job-radar/providers",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf dist *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@job-radar/matching": "1.0.0",
+    "@job-radar/shared": "1.0.0",
+    "cheerio": "^1.2.0",
+    "google-auth-library": "^11.0.2"
+  },
+  "optionalDependencies": {
+    "playwright": "^1.63.0"
+  }
+}

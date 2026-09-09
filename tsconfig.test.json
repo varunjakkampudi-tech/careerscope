@@ -1,0 +1,19 @@
+{
+  "$comment": "Test and fixture files are excluded from the package builds so they never reach dist. That also means `tsc --build` never sees them, and a test can ship a type error that only surfaces when it runs. This project typechecks them (no emit) against the built declarations, so `npm run typecheck` covers the whole repo.",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "composite": false,
+    "incremental": false,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "types": ["node"]
+  },
+  "include": [
+    "packages/*/src/**/*.test.ts",
+    "packages/*/src/**/*.fixtures.ts",
+    "apps/api/src/**/*.test.ts",
+    "apps/api/src/**/*.fixtures.ts"
+  ]
+}

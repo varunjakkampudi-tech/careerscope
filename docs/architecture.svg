@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">CareerScope architecture</title>
+  <desc id="desc">A diagram showing profile and resume data flowing into the matching engine, providers flowing into the API and database, the private web app, Copilot application browser, and a separate public mobile jobs snapshot.</desc>
+  <style>
+    text{font-family:Arial,sans-serif;fill:#172424} .title{font-size:30px;font-weight:700}.label{font-size:17px;font-weight:700}.body{font-size:14px;fill:#526464}.box{fill:#fff;stroke:#b9cccc;stroke-width:2}.private{fill:#e8f3f1;stroke:#0d756b}.public{fill:#fff4e6;stroke:#b45309}.line{fill:none;stroke:#52706d;stroke-width:3;marker-end:url(#arrow)}.dash{stroke-dasharray:8 7}
+  </style>
+  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6z" fill="#52706d"/></marker></defs>
+  <rect width="1200" height="720" fill="#f4f7f7"/>
+  <text x="60" y="58" class="title">CareerScope architecture</text>
+  <text x="60" y="88" class="body">Private single-owner app with a deliberately separate public jobs snapshot</text>
+  <rect x="60" y="135" width="220" height="125" rx="10" class="box"/>
+  <text x="82" y="170" class="label">Profile + resume</text><text x="82" y="198" class="body">Preferences, skills</text><text x="82" y="220" class="body">Local SQLite + files</text>
+  <rect x="350" y="135" width="250" height="125" rx="10" class="private"/>
+  <text x="372" y="170" class="label">Matching engine</text><text x="372" y="198" class="body">Normalize, score, filter</text><text x="372" y="220" class="body">Pure TypeScript packages</text>
+  <rect x="670" y="135" width="250" height="125" rx="10" class="private"/>
+  <text x="692" y="170" class="label">Providers</text><text x="692" y="198" class="body">ATS + remote boards</text><text x="692" y="220" class="body">Optional browser sources</text>
+  <rect x="990" y="135" width="150" height="125" rx="10" class="private"/>
+  <text x="1012" y="170" class="label">Search queue</text><text x="1012" y="198" class="body">SSE progress</text><text x="1012" y="220" class="body">Daily schedule</text>
+  <path d="M280 198H350M600 198H670M920 198H990" class="line"/>
+  <rect x="350" y="350" width="250" height="125" rx="10" class="private"/>
+  <text x="372" y="385" class="label">Fastify API</text><text x="372" y="413" class="body">Auth, leads, exports</text><text x="372" y="435" class="body">Copilot controls</text>
+  <rect x="670" y="350" width="250" height="125" rx="10" class="private"/>
+  <text x="692" y="385" class="label">CareerScope web</text><text x="692" y="413" class="body">React + Vite</text><text x="692" y="435" class="body">Desktop workflow</text>
+  <rect x="990" y="350" width="150" height="125" rx="10" class="private"/>
+  <text x="1008" y="385" class="label">Copilot</text><text x="1008" y="413" class="body">Mac only</text><text x="1008" y="435" class="body">Review first</text>
+  <path d="M475 260V350M795 260V350M920 412H990" class="line"/>
+  <rect x="60" y="560" width="330" height="95" rx="10" class="public"/>
+  <text x="82" y="596" class="label">Public mobile snapshot</text><text x="82" y="623" class="body">Titles, companies, locations, links</text>
+  <rect x="470" y="560" width="260" height="95" rx="10" class="box"/>
+  <text x="492" y="596" class="label">GitHub Pages</text><text x="492" y="623" class="body">Static read-only hosting</text>
+  <path d="M475 475V520H225V560M225 655V680H600V655" class="line dash"/>
+  <text x="770" y="590" class="body">No profile, resume, scores, notes</text><text x="770" y="615" class="body">or application controls are published.</text>
+</svg>

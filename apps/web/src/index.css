@@ -1,0 +1,353 @@
+/**
+ * Design tokens and the handful of base rules the app relies on.
+ *
+ * Tailwind v4 is configured here rather than in a JS config file — `@theme`
+ * generates the utilities, so `--color-surface` below is what makes `bg-surface`
+ * exist. Everything else is a plain stylesheet.
+ *
+ * ## Why semantic names and not `slate-800`
+ *
+ * Every colour used by a component is named for its *role* — canvas, surface,
+ * border, muted — not its value. Dark mode is then a dozen variable overrides in
+ * one block instead of a `dark:` variant on every element in the app, and a
+ * component author never has to remember which grey pairs with which.
+ */
+
+@import 'tailwindcss';
+
+/*
+ * Class-based dark mode. v4 defaults to `prefers-color-scheme`, but the settings
+ * screen offers an explicit choice, and a preference that the OS can silently
+ * override is not a preference. `:where()` keeps specificity at zero so the
+ * variant never wins a fight it should not.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-canvas: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-border: #e2e5ec;
+  --color-border-strong: #cdd2dd;
+  --color-ink: #111725;
+  /*
+   * The secondary text ramp: ink → muted → faint, three steps that all clear
+   * 4.5:1 on the *canvas* — the darker of the two backgrounds either can land on,
+   * and so the binding one.
+   *
+   * `faint` was #8b93a5, which is 2.87:1 and a flat WCAG AA failure. It reads as
+   * "decorative", but it is on the filter-rail legends, the `Posted:` / `Package:`
+   * labels and the provenance note — all of them text a user has to read. There is
+   * no incidental-text exemption to hide behind.
+   *
+   * Darkening `faint` alone would have put it a hair off `muted` and collapsed the
+   * ramp to two steps, so `muted` moved down with it. The resulting 16.7 / 7.2 /
+   * 4.7 is close to the dark theme's 16.6 / 7.1 / 4.8 — the two themes now recede
+   * at the same rate, which is what makes a component read the same in both.
+   */
+  --color-muted: #4a5364;
+  --color-faint: #676f81;
+
+  --color-accent: #4055d6;
+  --color-accent-hover: #3547bb;
+  --color-accent-soft: #eaedfc;
+  --color-on-accent: #ffffff;
+
+  /* #157539 rather than a lighter green so chip text clears 4.5:1 on -soft. */
+  --color-good: #157539;
+  --color-good-soft: #e6f5ec;
+  --color-warn: #b45309;
+  --color-warn-soft: #fdf1e0;
+  --color-bad: #b91c1c;
+  --color-bad-soft: #fdecec;
+
+  /*
+   * The match scale — an ORDINAL RAMP: one hue, five monotone lightness steps,
+   * pale at the bottom of the range and dark at the top.
+   *
+   * It was a five-hue scale (teal / blue / violet / amber / grey) and that was
+   * wrong twice over. A multi-hue ramp for a magnitude is a rainbow scale: the
+   * reader has to learn an arbitrary hue order before the colour means anything,
+   * where lightness is read without instruction. And baking a colour break at
+   * exactly 85% contradicts the product — the threshold is a slider the user
+   * moves, so the moment they set it to 70% the palette is telling them the
+   * wrong story.
+   *
+   * So hue does one job here (how strong is this match) and the threshold gets
+   * its own channel: a marker on the meter track plus an icon-and-label badge.
+   *
+   * Validated with the dataviz skill's `validate_palette.js --ordinal`:
+   * monotone L, every adjacent gap >= 0.06, pale end 2.29:1 on the surface,
+   * hue spread 6 degrees. Do not hand-edit a step without re-running it.
+   */
+  --color-match-low: #2bbfae;
+  --color-match-60: #12a596;
+  --color-match-70: #0d8377;
+  --color-match-80: #0f665f;
+  --color-match-90: #123f3c;
+
+  /* The single hue every per-dimension bar wears; 4.64:1 on the surface. */
+  --color-match-fill: #0d8377;
+  /* Unfilled meter track: a pale step of the same ramp, recessive at 1.34:1. */
+  --color-match-track: #b9e8df;
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  --radius-card: 0.5rem;
+
+  /*
+   * The app header's height, as one number.
+   *
+   * It is in the `--spacing-*` namespace so it generates real utilities: `h-app-header`
+   * sizes the bar in `Layout`, and `top-app-header` is what every *other* sticky
+   * element offsets itself by so it pins below the bar instead of sliding behind
+   * it. That bar is translucent with a backdrop blur, so "behind it" is not
+   * hidden — it smears.
+   *
+   * This is the content box. The bar's 1px bottom border is added at the two call
+   * sites that need to clear it, rather than folded in here, so that
+   * `h-app-header` stays the height it actually sets.
+   */
+  --spacing-app-header: 6.5rem;
+
+  /*
+   * The width at which a lead stops being a card and becomes a table row.
+   *
+   * It is a *container* size, not a viewport breakpoint, and the `--container-*`
+   * namespace is what makes `@table:` a usable variant. The distinction is the
+   * whole point: the constraint on the leads table is its own width, not the
+   * window's. Opening the detail drawer takes ~520px out of the row, and nine
+   * columns do not fit in what is left however wide the screen is — the tracks
+   * are `minmax(0, …)`, so they collapse to nothing and the header labels
+   * overlap each other rather than wrapping.
+   *
+   * 48rem is Tailwind's own `md`, kept deliberately: it is the same number
+   * `LeadTable`'s `COMPACT_WIDTH` switches its row-height estimate on, and the
+   * two have to agree or the virtualizer seeds cards with a row's height.
+   */
+  --container-table: 48rem;
+}
+
+.dark {
+  --color-canvas: #0a0d14;
+  --color-surface: #11151f;
+  --color-surface-raised: #171d2a;
+  --color-border: #222a3a;
+  --color-border-strong: #333d52;
+  --color-ink: #e9edf5;
+  --color-muted: #98a1b6;
+  /*
+   * 4.72:1 on `surface-raised`, the lightest of the three backgrounds it can land
+   * on and so the binding one — #6d7689 was 3.70:1 there. See the light theme's note.
+   */
+  --color-faint: #7e889a;
+
+  --color-accent: #7b8cf7;
+  --color-accent-hover: #93a1f9;
+  --color-accent-soft: #1b2140;
+  --color-on-accent: #0a0d14;
+
+  --color-good: #4ade80;
+  --color-good-soft: #10281a;
+  --color-warn: #fbbf24;
+  --color-warn-soft: #2b1f08;
+  --color-bad: #f87171;
+  --color-bad-soft: #2c1113;
+
+  /*
+   * The same ramp with the anchor flipped: on a dark surface "more" reads as
+   * brighter, so the steps run dark-to-light in the same direction the light
+   * theme runs light-to-dark. Validated separately against #11151f — a dark
+   * theme is a second palette, not an automatic inversion of the first.
+   */
+  --color-match-low: #0f766e;
+  --color-match-60: #0d9488;
+  --color-match-70: #14b8a6;
+  --color-match-80: #2dd4bf;
+  --color-match-90: #5eead4;
+
+  --color-match-fill: #2dd4bf;
+  --color-match-track: #1a4744;
+}
+
+/*
+ * The first frame, before React has run and applied the theme class. Matching
+ * the OS here means the flash is a flash of the *right* background rather than a
+ * white rectangle on a dark desktop.
+ */
+@media (prefers-color-scheme: dark) {
+  html:not(.light):not(.dark) {
+    background-color: #0a0d14;
+  }
+}
+
+@layer base {
+  html {
+    background-color: var(--color-canvas);
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: calc(var(--spacing-app-header) + 1rem);
+    letter-spacing: 0;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  @media (pointer: coarse) {
+    input,
+    select,
+    textarea {
+      font-size: 1rem;
+    }
+  }
+
+  /*
+   * A visible focus ring on everything focusable. The leads table is meant to be
+   * usable from the keyboard, and the browser default disappears entirely
+   * against the dark surface.
+   */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: var(--color-accent-soft);
+  }
+
+  /* Firefox needs both; Chromium reads the second. */
+  * {
+    scrollbar-color: var(--color-border-strong) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-border-strong);
+    border-radius: 6px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --spacing-app-header: 3.5rem;
+  }
+}
+
+.range-control {
+  background-color: transparent;
+  background-size: 100% 6px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.range-control::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: transparent;
+}
+
+.range-control::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -7px;
+  border: 2px solid var(--color-surface);
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.range-control::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: transparent;
+}
+
+.range-control::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-surface);
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+@media (forced-colors: active) {
+  .range-control {
+    appearance: auto;
+    forced-color-adjust: auto;
+  }
+}
+
+.shell-gutter {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+.app-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 1rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-ink);
+  color: var(--color-surface);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer utilities {
+  /*
+   * Long job descriptions arrive as plain text with hard-wrapped lines and the
+   * occasional 60-character URL. `anywhere` is the only break rule that keeps
+   * such a URL inside the drawer instead of widening it.
+   */
+  .text-wrap-anywhere {
+    overflow-wrap: anywhere;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .motion-safe-only {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+}

@@ -1,0 +1,51 @@
+# What never needs to reach the Docker daemon.
+#
+# Two reasons to keep this tight: a smaller context is a faster build, and
+# anything listed here cannot end up in a layer by accident — which is the
+# point of the `.env` and `data/` entries below.
+
+# Installed and built inside the image, from the lockfile.
+node_modules
+**/node_modules
+dist
+**/dist
+dist-types
+**/dist-types
+*.tsbuildinfo
+**/*.tsbuildinfo
+
+# Secrets. The container gets its configuration from compose, never from a
+# file baked into the image.
+.env
+.env.*
+
+# The runtime data directory is a volume — nothing in it belongs in a layer.
+# The seed files the image needs at /app/seed live in `seed/`, which is source
+# data and is deliberately not listed here.
+data/**
+**/data/**
+**/.env
+**/.env.*
+.playwright-mcp
+recovered-session-*.md
+
+# Repo furniture with no role in a build.
+.git
+.gitignore
+.github
+.vscode
+.idea
+.auth
+docs
+playwright-report
+test-results
+*.log
+logs
+.DS_Store
+Thumbs.db
+
+# The compose file, the nginx config and the systemd unit describe how to run
+# the image; they have no business inside it. The entrypoint does.
+infra/**
+!infra/docker-entrypoint.sh
+!infra/xvfb-exec.sh

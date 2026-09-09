@@ -1,0 +1,21 @@
+{
+  "$comment": "The app project. Vite does the bundling; TypeScript only typechecks, so this emits declarations to a scratch dir rather than JS. `noEmit` is not an option here because a project referenced by `tsc -b` must be composite, and composite projects must emit something.",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "types": ["vite/client"],
+    "rootDir": "src",
+    "outDir": "dist-types",
+    "emitDeclarationOnly": true,
+    "declarationMap": false,
+    "sourceMap": false
+  },
+  "references": [{ "path": "../../packages/shared" }],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/test", "dist", "dist-types"]
+}

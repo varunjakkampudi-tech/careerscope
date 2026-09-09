@@ -1,0 +1,17 @@
+{
+  "$comment": "`vite.config.ts` runs in Node, not the browser, so it cannot share the app project's DOM lib or its `vite/client` types. It gets its own tiny project rather than going unchecked.",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "types": ["node"],
+    "outDir": "dist-types/node",
+    "emitDeclarationOnly": true,
+    "declarationMap": false,
+    "sourceMap": false
+  },
+  "include": ["vite.config.ts"]
+}

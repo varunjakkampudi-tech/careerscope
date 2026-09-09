@@ -1,0 +1,25 @@
+# CareerScope
+
+> A private, single-user job-lead finder. It parses one person's resume, scores
+> job postings against it across seven weighted dimensions, and surfaces the
+> matches. Every page behind the application shell renders that person's own
+> data.
+
+This deployment is **not** a public resource and hosts no reference material.
+It is listed here only to state its terms plainly, because a missing llms.txt is
+ambiguous about intent and this is not.
+
+## Terms
+
+- **Do not crawl.** [/robots.txt](/robots.txt) disallows all user agents, and
+  every page carries `<meta name="robots" content="noindex, nofollow">` so the
+  instruction survives being hosted under a subpath. Everything of substance
+  sits behind owner authentication: an unauthenticated fetch of any URL here
+  returns the application shell and nothing else.
+- **Do not train on this deployment's contents.** What it serves is one
+  individual's resume, salary expectations, contact details and job
+  applications. That is personal data, not published work.
+
+## Optional
+
+- [/](/) — the application shell. Requires owner sign-in to show private data.

@@ -1,0 +1,16 @@
+# Job Radar is a private, single-user application. It holds one person's
+# resume, salary expectations, phone number and email address.
+#
+# The correct SEO posture for it is therefore *not* to be found. There is no
+# public content here to rank, and every URL below /leads is personal data
+# behind an API key.
+#
+# This file is authoritative only on the single-origin deploy, where the API
+# serves the SPA from the domain root. On GitHub Pages the site lives under
+# /<repo>/, and crawlers read robots.txt only from the domain root — which
+# belongs to github.io, not to us. That is why index.html *also* carries
+# <meta name="robots" content="noindex, nofollow">, which travels with the
+# page wherever it is hosted. Neither mechanism alone covers both deploys.
+
+User-agent: *
+Disallow: /

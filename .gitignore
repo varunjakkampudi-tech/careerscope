@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+# The web app's typecheck-only declaration output. Vite does the real build; a
+# project referenced by `tsc -b` must be composite, and composite forbids
+# `noEmit`, so the declarations go here and are thrown away.
+dist-types/
+
+# Runtime data — SQLite database, uploaded resumes, exports. NEVER commit.
+# Ignored wholesale, with no exceptions: `seed/` holds the versioned source
+# data, so nothing under `data/` is ever worth tracking.
+data/
+!data/.gitkeep
+
+# Playwright browser session state
+.auth/
+playwright-report/
+test-results/
+# Scratch written by the browser MCP tools when the app is driven interactively
+# — page snapshots and console dumps, not test output. Left unignored it lands
+# in `prettier --check`, so a debugging session turns CI red.
+.playwright-mcp/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+*.swp

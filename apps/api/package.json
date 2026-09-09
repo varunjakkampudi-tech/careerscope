@@ -1,0 +1,37 @@
+{
+  "name": "@job-radar/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "cd ../.. && tsx watch --env-file-if-exists=.env apps/api/src/index.ts",
+    "build": "tsc -b",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.123.0",
+    "@fastify/cookie": "^11.1.2",
+    "@fastify/cors": "^10.0.1",
+    "@fastify/helmet": "^12.0.1",
+    "@fastify/multipart": "^9.0.1",
+    "@fastify/rate-limit": "^10.2.1",
+    "@fastify/static": "^10.1.3",
+    "@github/copilot-sdk": "^1.0.13",
+    "@job-radar/matching": "1.0.0",
+    "@job-radar/providers": "1.0.0",
+    "@job-radar/resume": "1.0.0",
+    "@job-radar/shared": "1.0.0",
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "exceljs": "^4.4.0",
+    "fastify": "^5.2.0",
+    "jose": "^6.2.12",
+    "pino": "^9.5.0",
+    "playwright": "^1.63.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "pino-pretty": "^13.0.0"
+  }
+}

@@ -1,0 +1,31 @@
+client_max_body_size 10m;
+gzip on;
+gzip_vary on;
+gzip_proxied any;
+gzip_min_length 1024;
+gzip_types text/plain text/css text/javascript application/javascript application/json application/manifest+json image/svg+xml;
+
+location ~ ^/api/runs/[^/]+/events$ {
+	proxy_pass http://job_radar_api;
+	proxy_http_version 1.1;
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $remote_addr;
+	proxy_set_header X-Forwarded-Proto $scheme;
+	proxy_set_header Connection "";
+	proxy_buffering off;
+	proxy_cache off;
+	proxy_read_timeout 1h;
+}
+
+location / {
+	proxy_pass http://job_radar_api;
+	proxy_http_version 1.1;
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $remote_addr;
+	proxy_set_header X-Forwarded-Proto $scheme;
+	proxy_set_header Connection "";
+	proxy_read_timeout 300s;
+	proxy_send_timeout 300s;
+}

@@ -1,0 +1,166 @@
+name: CI
+
+# Every check that must pass before anything is deployed.
+#
+# The build step is not redundant with typecheck. `vite build` resolves things
+# neither tsc nor ESLint can see — a manual-chunk name in the Rollup config is
+# a plain string, invisible to the TypeScript project graph, and a stale one
+# fails the build outright. That is exactly how a dropped dependency was found
+# here once, after both other checks had passed clean.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # node:sqlite is a built-in module, but only an unflagged one from 23.4 and
+  # stable from 24.0 — which is what engines.node pins, and what production
+  # runs. Testing on anything older would test a different database layer.
+  NODE_VERSION: '24'
+
+  # Playwright is an optional dependency of @job-radar/providers, so `npm ci`
+  # installs the package — and its postinstall would then pull a Chromium build
+  # nothing here opens. Every scrape test imports the types (erased at compile
+  # time) and drives a fake page; the only real `chromium.launch` in the tree is
+  # in browser.ts, reached solely at runtime with ENABLE_SCRAPERS=true. The one
+  # job that does want a browser installs it explicitly, inside the image.
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+jobs:
+  verify:
+    name: Typecheck, lint, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Format
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      # Two passes: `tsc --build` over the project references, then a second
+      # pass over the test and fixture files, which the build graph excludes.
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # A build that produces something which cannot boot is still a failure.
+      # The health route is public, so this needs no key beyond the one the
+      # production env parser insists on having.
+      - name: Boot the built server
+        env:
+          NODE_ENV: production
+          APP_API_KEY: ci-smoke-key-0000000000000000000000
+          DATA_DIR: ${{ runner.temp }}/smoke-data
+          PORT: '8080'
+          HOST: 127.0.0.1
+        run: |
+          mkdir -p "$DATA_DIR"
+          node apps/api/dist/db/migrate.js
+          node apps/api/dist/index.js &
+          server=$!
+          ok=0
+          for _ in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8080/api/health >/dev/null 2>&1; then
+              ok=1
+              break
+            fi
+            kill -0 "$server" 2>/dev/null || break
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8080/api/health || true
+          kill "$server" 2>/dev/null || true
+          wait "$server" 2>/dev/null || true
+          test "$ok" = 1
+
+  image:
+    name: Container image
+    if: ${{ github.event_name == 'workflow_dispatch' || vars.ENABLE_CONTAINER_CI == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Built here rather than only on the deploy host, so a broken Dockerfile
+      # fails on a pull request instead of halfway through a production deploy.
+      - name: Build
+        run: docker build -f infra/Dockerfile --target api -t job-radar:ci .
+
+      - name: Boot the image
+        run: |
+          docker run -d --name job-radar-ci \
+            -e APP_API_KEY=ci-smoke-key-0000000000000000000000 \
+            -p 8080:8080 job-radar:ci
+          ok=0
+          for _ in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:8080/api/health >/dev/null 2>&1; then
+              ok=1
+              break
+            fi
+            sleep 1
+          done
+          # The SPA is served by the API in this image; if the bundle did not
+          # make it into the layer, the root path returns JSON, not HTML.
+          curl -fsS http://127.0.0.1:8080/ | head -c 200 || true
+          echo
+          docker logs job-radar-ci
+          docker rm -f job-radar-ci >/dev/null
+          test "$ok" = 1
+
+      # The opt-in target. It reuses every layer above and adds apt, Chromium
+      # and an X server, which is the slow part — hence the 30 minute budget.
+      - name: Build the browser image
+        run: docker build -f infra/Dockerfile --target api-scrape -t job-radar:ci-scrape .
+
+      # The one place a real browser is launched anywhere in this repository.
+      # It answers the question the unit tests structurally cannot: whether the
+      # three pieces — Playwright resolving, Chromium's shared libraries being
+      # present, and Xvfb giving a headed browser somewhere to draw — actually
+      # line up inside the image.
+      #
+      # `--entrypoint` skips the migration wrapper; this needs no database.
+      # `headless: false` is not incidental — a headless launch would pass with
+      # no display at all and prove nothing about the X server.
+      - name: Launch headed Chromium in the browser image
+        run: |
+          docker run --rm --entrypoint /usr/local/bin/xvfb-exec.sh job-radar:ci-scrape \
+            node --input-type=module -e "
+              const { chromium } = await import('playwright');
+              const browser = await chromium.launch({
+                headless: false,
+                args: ['--no-sandbox', '--disable-dev-shm-usage'],
+              });
+              const version = browser.version();
+              const page = await browser.newPage();
+              await page.setContent('<h1>job-radar</h1>');
+              const heading = await page.textContent('h1');
+              await browser.close();
+              if (heading !== 'job-radar') throw new Error('rendered ' + heading);
+              console.log('chromium ' + version + ' rendered a page headed');
+            "

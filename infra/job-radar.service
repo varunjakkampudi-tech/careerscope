@@ -1,0 +1,93 @@
+# Job Radar — systemd unit.
+#
+# The non-Docker deployment: a git checkout at /opt/job-radar, built in place,
+# run directly by systemd with nginx on the same host proxying to it. Use this
+# when you would rather not run a container runtime on the box; use the compose
+# stack otherwise. Do not run both — they would fight over port 80 and over
+# the same database file.
+#
+# Install:
+#   sudo useradd --system --home /opt/job-radar --shell /usr/sbin/nologin jobradar
+#   sudo install -d -o jobradar -g jobradar /opt/job-radar/data
+#   sudo cp infra/job-radar.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now job-radar
+#
+# Full walkthrough, including the nginx side, in docs/RUNBOOK.md.
+
+[Unit]
+Description=Job Radar API
+Documentation=file:///opt/job-radar/docs/RUNBOOK.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=jobradar
+Group=jobradar
+WorkingDirectory=/opt/job-radar
+
+# Provider keys and the production HTTPS AUTH_ORIGIN.
+# ExecStart pins security settings because EnvironmentFile overrides Environment.
+EnvironmentFile=/opt/job-radar/.env
+
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=8080
+Environment=DATA_DIR=/opt/job-radar/data
+Environment=SERVE_WEB=true
+Environment=WEB_DIST=/opt/job-radar/apps/web/dist
+Environment=AUTH_DISABLED=false
+# Empty: nginx puts the SPA and the API on one origin, so nothing is
+# cross-origin and an allowlist would only widen the surface.
+Environment=CORS_ORIGINS=
+
+# Idempotent — it checks the schema version and returns early — so running it
+# on every start costs nothing and removes a deploy step people forget.
+ExecStartPre=/usr/bin/node /opt/job-radar/apps/api/dist/db/migrate.js
+
+# Leading `-`: a bad seed file costs enrichment quality, not correctness, and
+# must never be the reason the API will not start.
+ExecStartPre=-/usr/bin/node /opt/job-radar/apps/api/dist/db/seed.js /opt/job-radar/seed/companies.json
+
+ExecStart=/usr/bin/env NODE_ENV=production HOST=127.0.0.1 PORT=8080 DATA_DIR=/opt/job-radar/data SERVE_WEB=true WEB_DIST=/opt/job-radar/apps/web/dist AUTH_DISABLED=false LOGIN_ENABLED=true TRUST_PROXY=true ENABLE_APPLICATION_AGENT=false CORS_ORIGINS= /usr/bin/node /opt/job-radar/apps/api/dist/index.js
+
+Restart=on-failure
+RestartSec=5
+
+# The server drains in-flight requests for 15s (SHUTDOWN_TIMEOUT_MS in
+# apps/api/src/index.ts). Give it that plus a margin before SIGKILL.
+KillSignal=SIGTERM
+TimeoutStopSec=20
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=job-radar
+
+# --- Hardening ------------------------------------------------------------
+# The process needs exactly two things: outbound HTTPS to the job boards, and
+# write access to its own data directory. Everything else is taken away.
+NoNewPrivileges=true
+UMask=0077
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectHostname=true
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+# The one writable path — the SQLite database, its WAL, and uploaded resumes.
+ReadWritePaths=/opt/job-radar/data
+
+# MemoryDenyWriteExecute is deliberately NOT set. V8 maps its JIT pages
+# writable and then executable; turning it on does not harden Node, it stops
+# it from starting.
+
+[Install]
+WantedBy=multi-user.target

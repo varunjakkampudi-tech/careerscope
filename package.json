@@ -1,0 +1,59 @@
+{
+  "name": "job-radar",
+  "version": "1.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "description": "Resume-matched job lead finder — upload a resume, search multiple job sources, surface leads that match above a configurable threshold.",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "predev": "npm run build:api",
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm run dev -w @job-radar/api\" \"npm run dev -w @job-radar/web\"",
+    "build": "npm run build -w @job-radar/shared && npm run build -w @job-radar/resume && npm run build -w @job-radar/matching && npm run build -w @job-radar/providers && npm run build -w @job-radar/api && npm run build -w @job-radar/web",
+    "build:api": "npm run build -w @job-radar/shared && npm run build -w @job-radar/resume && npm run build -w @job-radar/matching && npm run build -w @job-radar/providers && npm run build -w @job-radar/api",
+    "build:web": "npm run build -w @job-radar/shared && npm run build -w @job-radar/web",
+    "start": "node --env-file-if-exists=.env apps/api/dist/index.js",
+    "mobile:export": "node --env-file-if-exists=.env scripts/export-mobile.mjs",
+    "mobile:watch": "npm run mobile:export -- --watch",
+    "mobile:test": "node --test scripts/export-mobile.test.mjs",
+    "typecheck": "tsc --build --force && tsc -p tsconfig.test.json && tsc -p tsconfig.test.web.json",
+    "test": "vitest run",
+    "test:ui": "npm run build && node --import tsx scripts/check-ui.mjs",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:migrate": "tsx --env-file-if-exists=.env apps/api/src/db/migrate.ts",
+    "auth:reset": "tsx --env-file-if-exists=.env apps/api/src/reset-owner.ts",
+    "seed:companies": "tsx --env-file-if-exists=.env apps/api/src/db/seed.ts",
+    "mcp": "node --env-file-if-exists=.env apps/api/dist/mcp/index.js",
+    "clean": "npm run clean --workspaces --if-present && rm -f *.tsbuildinfo"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/node": "^22.10.1",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.15.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^14.0.0",
+    "jsdom": "^30.0.1",
+    "prettier": "^3.4.1",
+    "tsx": "^4.23.13",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.16.0",
+    "vite": "^7.3.6",
+    "vitest": "^5.0.0"
+  }
+}

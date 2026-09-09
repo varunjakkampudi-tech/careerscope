@@ -1,0 +1,126 @@
+# Job Radar — single-box deployment.
+#
+#   cd infra && docker compose up -d --build
+#
+# Paths are relative to this file, so the build context is the repository root
+# one level up. Run it from anywhere with `-f infra/docker-compose.yml`.
+#
+# ## Running the browser-backed sources
+#
+# LinkedIn, Naukri and Indeed need Chromium and an X server, which live in a
+# separate, much larger image. To use them, build that target instead and turn
+# the tier on:
+#
+#   ENABLE_SCRAPERS=true in ../.env, then
+#   API_TARGET=api-scrape API_TAG=scrape docker compose up -d --build
+#
+# These two are read from the shell (or from infra/.env), not from ../.env —
+# Compose interpolates the file before it ever reads `env_file`. Leaving them
+# unset gives the small browserless image, which is the right default.
+
+name: job-radar
+
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+      target: ${API_TARGET:-api}
+    image: job-radar:${API_TAG:-latest}
+    restart: unless-stopped
+
+    # A real init as PID 1. The server handles SIGTERM itself, but a reaper
+    # keeps any short-lived child it spawns from lingering as a zombie.
+    init: true
+
+    # Secrets and provider keys. Everything in `environment:` below overrides
+    # this file, so a leftover development value (AUTH_DISABLED=true, say)
+    # cannot follow the deployment into production.
+    env_file:
+      - ../.env
+
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: '8080'
+      DATA_DIR: /app/data
+      SERVE_WEB: 'true'
+      WEB_DIST: /app/apps/web/dist
+      AUTH_DISABLED: 'false'
+      LOGIN_ENABLED: 'true'
+      AUTH_ORIGIN: ${AUTH_ORIGIN:?Set AUTH_ORIGIN to the production HTTPS origin}
+      TRUST_PROXY: 'true'
+      ENABLE_APPLICATION_AGENT: 'false'
+      # Empty means same-origin only, which is correct here: nginx proxies the
+      # SPA and the API through one hostname, so the browser never makes a
+      # cross-origin request. Set this only for the GitHub Pages split deploy.
+      CORS_ORIGINS: ''
+
+    volumes:
+      # The SQLite database and uploaded resumes. A *named* volume, so it
+      # inherits the /app/data ownership the image set for uid 1000. A bind
+      # mount would keep the host directory's ownership and the non-root
+      # process could not write to it — see docs/RUNBOOK.md.
+      - job-radar-data:/app/data
+
+    # Not `ports:`. Only nginx should be reachable from outside the host;
+    # publishing 8080 would expose the API directly, bypassing TLS.
+    expose:
+      - '8080'
+
+    # 15s to drain in-flight requests (SHUTDOWN_TIMEOUT_MS in
+    # apps/api/src/index.ts), plus a little room before Docker escalates.
+    stop_grace_period: 20s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+
+    ports:
+      - '80:80'
+      - '443:443'
+
+    volumes:
+      # Swap job-radar.conf for job-radar-tls.conf once certbot has issued a
+      # certificate. Plain HTTP is the default because the ACME challenge has
+      # to be answerable before any certificate exists.
+      - ${NGINX_CONFIG:-./nginx/job-radar.conf}:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/locations.inc:/etc/nginx/conf.d/locations.inc:ro
+      - letsencrypt:/etc/letsencrypt:ro
+      - certbot-webroot:/var/www/certbot:ro
+
+    depends_on:
+      api:
+        condition: service_healthy
+
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  # Certificate issuance and renewal. Behind a profile, so it never starts
+  # with the stack — it is a command you run, not a service that runs.
+  #
+  #   Issue:  docker compose --profile certbot run --rm certbot certonly \
+  #             --webroot -w /var/www/certbot -d jobs.example.com \
+  #             --email you@example.com --agree-tos --no-eff-email
+  #   Renew:  docker compose --profile certbot run --rm certbot renew
+  #           docker compose exec nginx nginx -s reload
+  certbot:
+    image: certbot/certbot:latest
+    profiles: [certbot]
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot-webroot:/var/www/certbot
+
+volumes:
+  job-radar-data:
+  letsencrypt:
+  certbot-webroot:

@@ -1,0 +1,31 @@
+{
+  // Job Radar's MCP server — the same services the HTTP API exposes, over
+  // stdio, against the same database file.
+  //
+  // It runs from `dist/`, so `npm run build` has to have happened at least
+  // once. If Copilot reports the server as failed, that is the first thing to
+  // check.
+  //
+  // No credentials live here. Provider keys are read from the gitignored `.env`
+  // by `--env-file-if-exists`, so this file is safe to commit.
+  "servers": {
+    "job-radar": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "--env-file-if-exists=${workspaceFolder}/.env",
+        "${workspaceFolder}/apps/api/dist/mcp/index.js"
+      ],
+      "env": {
+        // Explicit rather than inherited: the default is `./data` relative to
+        // the working directory, and the editor's is not guaranteed to be the
+        // workspace root. Pointing both faces at one directory is what keeps
+        // Copilot and the browser looking at the same leads.
+        "DATA_DIR": "${workspaceFolder}/data",
+        // The server logs to stderr (stdout is the protocol channel). `warn`
+        // keeps the output pane to things that need attention.
+        "LOG_LEVEL": "warn"
+      }
+    }
+  }
+}

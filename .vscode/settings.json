@@ -1,0 +1,42 @@
+{
+  // The repository's own TypeScript, not the one bundled with the editor. The
+  // build uses project references and `tsc -b`; a different compiler version in
+  // the editor reports errors the build does not, and misses ones it does.
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // Build output and dependencies: never searched, never watched. The watcher
+  // exclusion matters most — `dist/` churns on every build.
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.playwright-mcp": true,
+    "**/dist": true,
+    "**/dist-types": true,
+    "**/*.tsbuildinfo": true
+  },
+  "search.exclude": {
+    "**/dist": true,
+    "**/dist-types": true,
+    "**/node_modules": true,
+    "package-lock.json": true
+  },
+  "files.watcherExclude": {
+    "**/dist/**": true,
+    "**/dist-types/**": true,
+    "**/node_modules/**": true,
+    "**/data/**": true
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.test.ts, ${capture}.fixtures.ts",
+    "*.tsx": "${capture}.test.tsx",
+    "package.json": "package-lock.json",
+    "tsconfig.json": "tsconfig.*.json"
+  }
+}

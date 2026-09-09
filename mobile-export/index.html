@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="referrer" content="no-referrer" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Jobs | CareerScope</title>
+    <link rel="icon" href="./favicon.svg" />
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <a href="./" class="brand"
+        ><img src="./favicon.svg" alt="" width="32" height="32" /><span
+          >Career<span class="accent">Scope</span></span
+        ></a
+      ><span class="edition">Job listings</span>
+    </header>
+    <main>
+      <div class="heading">
+        <h1>Latest jobs</h1>
+        <button id="refresh" type="button" aria-label="Refresh jobs" title="Refresh jobs">
+          &#8635;
+        </button>
+      </div>
+      <p id="updated" class="muted"></p>
+      <div class="filters">
+        <label
+          >Search<input id="search" type="search" placeholder="Role, company or location" /></label
+        ><label
+          >Source<select id="source">
+            <option value="">All sources</option>
+          </select></label
+        >
+      </div>
+      <p id="count" role="status">Loading jobs...</p>
+      <p id="error" role="alert" hidden>Jobs could not be loaded. Try refreshing.</p>
+      <ul id="jobs"></ul>
+      <button id="more" type="button" hidden>Load more</button>
+    </main>
+    <footer>CareerScope <span class="muted">Public job listings</span></footer>
+  </body>
+</html>
