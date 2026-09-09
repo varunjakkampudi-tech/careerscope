@@ -17,6 +17,7 @@ import type { SearchRun } from '@job-radar/shared';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Layout } from './Layout';
+import { APP_VERSION } from '../lib/brand';
 import { renderApp, screen, within } from '../test/utils';
 
 const useLeadCounts = vi.hoisted(() => vi.fn());
@@ -131,7 +132,7 @@ it('still displays a rejected-credentials warning', () => {
 it('provides a keyboard skip target and a compact workspace footer', () => {
   renderApp(<Layout />);
   expect(screen.getByRole('link', { name: 'CareerScope' })).toHaveAttribute('href', '/');
-  expect(screen.getByText('v1.0.0')).toBeInTheDocument();
+  expect(screen.getByText(`v${APP_VERSION}`)).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'Skip to content' })).toHaveAttribute(
     'href',
     '#main-content',
