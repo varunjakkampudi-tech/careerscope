@@ -227,9 +227,7 @@ describe('LeadRepo.page', () => {
       expect(page.facets.byStatus).toEqual({ new: sources.length });
       expect(page.facets.aboveThreshold).toBe(sources.length);
     }
-    const empty = repos.leads.page(
-      makeQuery({ sources: ['greenhouse'], statuses: ['applied'] }),
-    );
+    const empty = repos.leads.page(makeQuery({ sources: ['greenhouse'], statuses: ['applied'] }));
     expect(empty.facets.bySource).toEqual({});
   });
 

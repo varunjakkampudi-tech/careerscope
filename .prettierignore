@@ -17,6 +17,7 @@ dist-types/
 
 # Runtime data: the SQLite database, uploaded resumes, generated exports.
 data/
+mobile-export/
 mobile-site/jobs.json
 mobile-site/admin.enc.json
 

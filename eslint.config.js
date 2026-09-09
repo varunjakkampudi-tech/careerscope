@@ -15,6 +15,7 @@ export default tseslint.config(
       'test-results/**',
       'data/**',
       'mobile-export/**',
+      '_site/**',
     ],
   },
   js.configs.recommended,

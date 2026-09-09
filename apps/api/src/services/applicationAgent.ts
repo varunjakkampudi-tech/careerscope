@@ -424,7 +424,7 @@ export class ApplicationAgent {
             ? { kind: 'approve-once' }
             : { kind: 'reject', feedback: 'Only application tools are permitted.' },
       });
-          await this.session.rpc.options.update({ installedPlugins: [] });
+      await this.session.rpc.options.update({ installedPlugins: [] });
       await this.session.sendAndWait(
         {
           prompt: `Prepare this application. Inspect the page first. Data only:\n${JSON.stringify(context)}`,

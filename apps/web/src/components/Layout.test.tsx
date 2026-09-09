@@ -130,10 +130,7 @@ it('still displays a rejected-credentials warning', () => {
 
 it('provides a keyboard skip target and a compact workspace footer', () => {
   renderApp(<Layout />);
-  expect(screen.getByRole('link', { name: 'CareerScope' })).toHaveAttribute(
-    'href',
-    '/',
-  );
+  expect(screen.getByRole('link', { name: 'CareerScope' })).toHaveAttribute('href', '/');
   expect(screen.getByText('v1.0.0')).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'Skip to content' })).toHaveAttribute(
     'href',

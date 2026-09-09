@@ -40,6 +40,29 @@ and rejects unexpected fields in either export. The passphrase never goes to Git
 Re-export and publish when you want fresh results. Exporting does not push or
 schedule publication automatically.
 
+## Change The Passphrase And Publish
+
+Update `ADMIN_SNAPSHOT_PASSPHRASE` in the ignored root `.env`, then run:
+
+```sh
+npm run pages:publish
+```
+
+This command reads the current `.env` on every run, overriding any stale shell
+value, re-encrypts the admin snapshot, commits only `mobile-site/admin.enc.json`,
+and pushes `main` to `origin`. Commit intended code changes first and leave no
+staged changes. Uncommitted code changes are not included. A missing or invalid
+passphrase or a failed export stops publication. If pushing fails, the snapshot
+commit may remain locally; resolve Git access before retrying.
+
+After the Pages deployment succeeds, reload the admin page and unlock with the
+new value. The password never goes to GitHub. An ordinary `git push` or workflow
+rerun cannot read your local `.env` and will not automatically rotate the
+snapshot: use `pages:publish` for future releases. This command updates the admin
+snapshot only; use `mobile:export` and commit its output to refresh public jobs.
+Changing the password does not revoke older downloaded snapshots or already
+unlocked browser sessions. This does not change the local workspace login.
+
 ## Mobile Use
 
 Open the Pages site, select Admin login, and enter the snapshot passphrase.

@@ -54,7 +54,14 @@ Repository: <https://github.com/varunjakkampudi-tech/careerscope>
 
 Public site: <https://varunjakkampudi-tech.github.io/careerscope/>
 
-Pages uses **GitHub Actions**. Generate both snapshots with `mobile:export` and
+Pages uses **GitHub Actions**, through the single **CI** workflow in
+`.github/workflows/ci.yml`. Pushes to `main` run formatting, lint, typechecking,
+tests, snapshot validation, build and server boot checks before the **Deploy
+public mobile jobs** job publishes both public and encrypted admin assets.
+Pull requests validate without deploying. An enabled container check must also
+pass; a failed check leaves the previous deployed site unchanged.
+
+Generate both snapshots with `mobile:export` and
 `mobile:admin`, validate with `pages:test`, then commit the reviewed site files
 and snapshots and push to `main`. Export commands do not commit or push.
 

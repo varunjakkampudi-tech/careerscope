@@ -16,7 +16,7 @@ on:
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -66,6 +66,12 @@ jobs:
       - name: Test
         run: npm test
 
+      - name: Validate Pages snapshots and publication
+        run: npm run pages:test
+
+      - name: Stage only validated Pages assets
+        run: npm run pages:stage
+
       - name: Build
         run: npm run build
 
@@ -76,6 +82,7 @@ jobs:
         env:
           NODE_ENV: production
           APP_API_KEY: ci-smoke-key-0000000000000000000000
+          AUTH_ORIGIN: https://localhost
           DATA_DIR: ${{ runner.temp }}/smoke-data
           PORT: '8080'
           HOST: 127.0.0.1
@@ -98,6 +105,30 @@ jobs:
           wait "$server" 2>/dev/null || true
           test "$ok" = 1
 
+      - name: Upload validated Pages artifact
+        if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  pages:
+    name: Deploy public mobile jobs
+    needs: [verify, image]
+    if: ${{ always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && needs.verify.result == 'success' && (needs.image.result == 'success' || needs.image.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - uses: actions/deploy-pages@v4
+        id: deployment
+
   image:
     name: Container image
     if: ${{ github.event_name == 'workflow_dispatch' || vars.ENABLE_CONTAINER_CI == 'true' }}
@@ -116,6 +147,7 @@ jobs:
         run: |
           docker run -d --name job-radar-ci \
             -e APP_API_KEY=ci-smoke-key-0000000000000000000000 \
+            -e AUTH_ORIGIN=https://localhost \
             -p 8080:8080 job-radar:ci
           ok=0
           for _ in $(seq 1 40); do
