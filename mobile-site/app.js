@@ -7,6 +7,25 @@ const refresh = document.querySelector('#refresh');
 let jobs = [];
 let limit = 50;
 
+function validJobs(value) {
+  if (!Array.isArray(value)) throw new Error('Invalid snapshot');
+  return value.filter((job) => {
+    if (
+      !job ||
+      !['title', 'company', 'location', 'source', 'url'].every(
+        (key) => typeof job[key] === 'string',
+      )
+    )
+      return false;
+    try {
+      const url = new URL(job.url);
+      return url.protocol === 'https:' && !url.username && !url.password;
+    } catch {
+      return false;
+    }
+  });
+}
+
 function render() {
   const query = search.value.trim().toLowerCase();
   const matches = jobs.filter(
@@ -48,16 +67,18 @@ function render() {
   }
   count.textContent = `${matches.length.toLocaleString()} jobs${matches.length ? ` / showing ${Math.min(limit, matches.length)}` : ' found'}`;
   more.hidden = matches.length <= limit;
+  document.querySelector('#empty').hidden = matches.length !== 0;
 }
 
 async function load() {
+  if (refresh.disabled) return;
   refresh.disabled = true;
   document.querySelector('#error').hidden = true;
   try {
     const response = await fetch('./jobs.json', { cache: 'no-store' });
     if (!response.ok) throw new Error('Snapshot unavailable');
     const data = await response.json();
-    jobs = data.jobs;
+    jobs = validJobs(data.jobs);
     const selection = source.value;
     source.replaceChildren(new Option('All sources', ''));
     for (const name of [...new Set(jobs.map((job) => job.source))].sort())

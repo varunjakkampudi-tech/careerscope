@@ -19,6 +19,7 @@ data/
 .auth/
 playwright-report/
 test-results/
+_site/
 # Scratch written by the browser MCP tools when the app is driven interactively
 # — page snapshots and console dumps, not test output. Left unignored it lands
 # in `prettier --check`, so a debugging session turns CI red.

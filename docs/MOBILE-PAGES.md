@@ -4,10 +4,11 @@
 
 - The private CareerScope app, database, resume, scheduled searches and Copilot
   worker remain on the Mac. Do not upload this workspace or its data to Pages.
-- A separate static site contains public posting titles, companies, locations,
-  sources, posting dates and canonical posting links. It has no login, private
-  API calls, tracking scripts, profile, resume, match scores, notes, application
-  history, or automated submission controls.
+- The public view contains posting titles, companies, locations, sources,
+  posting dates and canonical posting links. It excludes private matching data.
+- Admin login opens a passphrase-encrypted, read-only snapshot with scores,
+  statuses and filters. It makes no private API calls and has no server login.
+  See [encrypted admin setup](ENCRYPTED-ADMIN.md) for fields and security limits.
 - Android Chrome can view the site and open employer postings for manual
   applications. Phone form autofill from CareerScope is not provided. Copilot
   filling remains on the Mac. Manual applications on the phone do not sync an
@@ -16,8 +17,9 @@
 ## Visibility
 
 Standard GitHub Pages is public, not access-controlled by possession of a link.
-Anyone can redistribute the URL or download the job list. `noindex`, `nofollow`
-and robots exclusions discourage indexing but do not enforce privacy. The list
+Anyone can redistribute the URL or download the job list. The public view permits
+indexing; the admin HTML uses `noindex`. Neither robots rules nor `noindex`
+enforce privacy. The encrypted snapshot requires a strong passphrase. The list
 itself can reveal job-search interests. Do not publish unless this is acceptable.
 Deleting a published snapshot cannot remove copies others already downloaded.
 
@@ -46,21 +48,21 @@ It checks once a minute, writes the JSON atomically and does not change the
 snapshot timestamp if the public jobs have not changed. This watcher exports
 locally only. It does not upload files or possess GitHub credentials.
 
-## GitHub Setup Pending
+## GitHub Publication
 
-A dedicated repository and your GitHub authentication are required before
-publishing can be connected. Do not reuse a repository containing private data.
-No repository is created, committed, pushed or published by the export commands.
+Repository: <https://github.com/varunjakkampudi-tech/careerscope>
 
-The repository contains the six public site files and
-`.github/workflows/pages.yml`. Select **GitHub Actions** as the Pages source.
-The workflow deploys only the six allowed site files on each push to `main`.
+Public site: <https://varunjakkampudi-tech.github.io/careerscope/>
 
-After a repository is supplied, connect a Mac-side uploader to the exporter so
-changed snapshots are committed there and trigger the workflow automatically.
-GitHub Actions cannot read the private database on your Mac. Never upload `.env`, database files, resumes,
-browser state, or this full workspace as a Pages artifact. GitHub credentials
-must stay in the Mac's credential store, never in frontend JavaScript.
+Pages uses **GitHub Actions**. Generate both snapshots with `mobile:export` and
+`mobile:admin`, validate with `pages:test`, then commit the reviewed site files
+and snapshots and push to `main`. Export commands do not commit or push.
+
+The workflow runs security checks and `scripts/stage-pages.mjs`, which validates
+the public fields and encrypted envelope before copying an explicit asset
+allowlist. A missing encrypted snapshot stops deployment. The source repository
+is public, but `.env`, databases, resumes and browser state must never be committed
+or placed in the Pages artifact. GitHub Actions cannot read the private Mac DB.
 
 ## Daily Updates
 
@@ -75,7 +77,7 @@ sources pause an attempt. Browser-based manual Gmail collection is separate;
 unattended Gmail still requires OAuth configuration. Results and completion
 times depend on providers. No phone/email delivery notification is implemented.
 
-Once publishing is connected, the last deployed site remains available while
+The last deployed site remains available while
 the Mac sleeps, but fresh jobs cannot be collected/exported/uploaded until it
 is awake and the required processes run. GitHub deployment can take a few
 minutes. The mobile page displays the export timestamp and refreshes its data

@@ -3,26 +3,51 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="robots" content="index,follow" />
     <meta name="referrer" content="no-referrer" />
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"
     />
     <title>Jobs | CareerScope</title>
+    <meta
+      name="description"
+      content="Browse public job listings by role, company, location and source. Open original employer postings to apply."
+    />
+    <link rel="canonical" href="https://varunjakkampudi-tech.github.io/careerscope/" />
+    <meta property="og:title" content="Jobs | CareerScope" />
+    <meta
+      property="og:description"
+      content="Browse job listings and apply through original employer postings."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varunjakkampudi-tech.github.io/careerscope/" />
+    <meta name="theme-color" content="#f4f7f7" />
+    <script src="./theme.js"></script>
     <link rel="icon" href="./favicon.svg" />
     <link rel="stylesheet" href="./style.css" />
     <script src="./app.js" defer></script>
   </head>
   <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <header>
       <a href="./" class="brand"
         ><img src="./favicon.svg" alt="" width="32" height="32" /><span
           >Career<span class="accent">Scope</span></span
         ></a
-      ><span class="edition">Job listings</span>
+      >
+      <nav aria-label="Public navigation">
+        <label class="theme-control"
+          >Theme<select id="theme" name="theme">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select></label
+        >
+        <a href="./admin.html" class="posting">Admin login</a>
+      </nav>
     </header>
-    <main>
+    <main id="main-content" tabindex="-1">
       <div class="heading">
         <h1>Latest jobs</h1>
         <button id="refresh" type="button" aria-label="Refresh jobs" title="Refresh jobs">
@@ -32,7 +57,12 @@
       <p id="updated" class="muted"></p>
       <div class="filters">
         <label
-          >Search<input id="search" type="search" placeholder="Role, company or location" /></label
+          >Search<input
+            id="search"
+            name="search"
+            autocomplete="off"
+            type="search"
+            placeholder="Role, company or location" /></label
         ><label
           >Source<select id="source">
             <option value="">All sources</option>
@@ -41,6 +71,13 @@
       </div>
       <p id="count" role="status">Loading jobs...</p>
       <p id="error" role="alert" hidden>Jobs could not be loaded. Try refreshing.</p>
+      <p id="empty" class="empty-state" hidden>No jobs match these filters.</p>
+      <noscript
+        ><p>
+          JavaScript is required to search this snapshot.
+          <a href="./jobs.json">Download the public job list</a>.
+        </p></noscript
+      >
       <ul id="jobs"></ul>
       <button id="more" type="button" hidden>Load more</button>
     </main>

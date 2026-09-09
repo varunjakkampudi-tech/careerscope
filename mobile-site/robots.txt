@@ -1,2 +1,5 @@
 User-agent: *
-Disallow: /
+Allow: /careerscope/
+Disallow: /careerscope/admin.html
+Disallow: /careerscope/admin.enc.json
+Sitemap: https://varunjakkampudi-tech.github.io/careerscope/sitemap.xml

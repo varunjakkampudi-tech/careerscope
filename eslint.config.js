@@ -20,11 +20,11 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['mobile-site/*.js'],
+    files: ['mobile-site/*.{js,mjs}'],
     languageOptions: { globals: globals.browser },
   },
   {
-    files: ['scripts/check-ui.mjs'],
+    files: ['scripts/check-ui.mjs', 'scripts/check-admin-ui.mjs', 'scripts/check-pages-ui.mjs'],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
   {

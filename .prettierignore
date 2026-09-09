@@ -17,6 +17,8 @@ dist-types/
 
 # Runtime data: the SQLite database, uploaded resumes, generated exports.
 data/
+mobile-site/jobs.json
+mobile-site/admin.enc.json
 
 # Dependencies.
 node_modules/

@@ -22,11 +22,14 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate static site security and theme
+        run: node --test scripts/export-mobile.test.mjs scripts/export-admin.test.mjs scripts/snapshot-crypto.test.mjs scripts/theme.test.mjs scripts/stage-pages.test.mjs
       - uses: actions/configure-pages@v5
       - name: Stage only public mobile files
-        run: |
-          mkdir _site
-          cp mobile-site/index.html mobile-site/app.js mobile-site/style.css mobile-site/favicon.svg mobile-site/robots.txt mobile-site/jobs.json _site/
+        run: node scripts/stage-pages.mjs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="referrer" content="no-referrer" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>My leads | CareerScope</title>
+    <meta
+      name="description"
+      content="Unlock your encrypted CareerScope job snapshot to review resume match scores and job links."
+    />
+    <meta name="theme-color" content="#f4f7f7" />
+    <script src="./theme.js"></script>
+    <link rel="icon" href="./favicon.svg" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./admin.css" />
+    <script type="module" src="./admin.js"></script>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
+    <header>
+      <a href="./" class="brand"
+        ><img src="./favicon.svg" alt="" width="32" height="32" /><span
+          >Career<span class="accent">Scope</span></span
+        ></a
+      >
+      <nav aria-label="Admin">
+        <label class="theme-control"
+          >Theme<select id="theme" name="theme">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select></label
+        >
+        <a href="./">Public jobs</a><button id="lock" type="button" hidden>Lock</button>
+      </nav>
+    </header>
+    <main id="main-content" tabindex="-1">
+      <section id="locked" aria-labelledby="unlock-title">
+        <h1 id="unlock-title">Unlock my leads</h1>
+        <form id="unlock-form">
+          <label
+            >Snapshot passphrase<input
+              id="passphrase"
+              name="passphrase"
+              aria-describedby="error"
+              spellcheck="false"
+              type="password"
+              autocomplete="current-password"
+              required
+          /></label>
+          <button id="unlock" type="submit">Unlock</button>
+        </form>
+      </section>
+      <p id="error" role="alert" hidden></p>
+      <section id="workspace" hidden aria-labelledby="leads-title">
+        <div class="heading">
+          <h1 id="leads-title" tabindex="-1">My leads</h1>
+          <span class="muted">Read-only snapshot</span>
+        </div>
+        <p id="updated" class="muted"></p>
+        <details>
+          <summary>Matching profile</summary>
+          <p id="profile" class="muted"></p>
+        </details>
+        <div class="admin-layout">
+          <details id="filter-panel" class="filter-panel" open>
+            <summary>Filters</summary>
+            <aside aria-label="Lead filters">
+              <label
+                >Search<input
+                  id="search"
+                  name="search"
+                  autocomplete="off"
+                  type="search"
+                  placeholder="Role, company or location"
+              /></label>
+              <label for="score"
+                >Minimum match <output id="score-value" for="score">0%</output
+                ><input id="score" type="range" min="0" max="100" value="0"
+              /></label>
+              <fieldset>
+                <legend>Sources</legend>
+                <div id="sources"></div>
+              </fieldset>
+              <label
+                >Status<select id="status">
+                  <option value="">All statuses</option>
+                </select></label
+              >
+              <label
+                >Sort<select id="sort">
+                  <option value="score">Highest match</option>
+                  <option value="postedAt">Newest first</option>
+                  <option value="company">Company</option>
+                  <option value="title">Role</option>
+                </select></label
+              >
+              <button id="clear" type="button">Clear filters</button>
+            </aside>
+          </details>
+          <div class="results">
+            <p id="count" role="status"></p>
+            <p id="empty" class="empty-state" hidden>No leads match these filters.</p>
+            <div role="table" aria-label="My leads" class="lead-table">
+              <div role="rowgroup" class="table-head">
+                <div role="row">
+                  <span role="columnheader">Match</span
+                  ><span role="columnheader">Role / Company</span
+                  ><span role="columnheader">Location</span><span role="columnheader">Source</span
+                  ><span role="columnheader">Status</span>
+                </div>
+              </div>
+              <div id="rows" role="rowgroup"></div>
+            </div>
+            <button id="more" type="button" hidden>Load more</button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>CareerScope <span class="muted">Encrypted snapshot</span></footer>
+  </body>
+</html>
