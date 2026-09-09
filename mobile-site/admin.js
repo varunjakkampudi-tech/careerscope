@@ -5,7 +5,7 @@ let snapshot = null;
 let limit = 50;
 let generation = 0;
 let lastActivity = Date.now();
-const compactFilters = window.matchMedia('(max-width: 680px)');
+const compactFilters = window.matchMedia('(max-width: 1023px)');
 const syncFilters = () => {
   element('filter-panel').open = !compactFilters.matches;
 };
@@ -17,7 +17,8 @@ function lock() {
   snapshot = null;
   element('rows').replaceChildren();
   element('sources').replaceChildren();
-  for (const id of ['updated', 'profile', 'count']) element(id).textContent = '';
+  for (const id of ['updated', 'profile', 'count', 'threshold-count']) element(id).textContent = '';
+  element('leads-title').textContent = 'My leads';
   element('status').replaceChildren(new Option('All statuses', ''));
   element('search').value = '';
   element('score').value = '0';
@@ -90,20 +91,39 @@ function render() {
       title.rel = 'noopener noreferrer';
       title.referrerPolicy = 'no-referrer';
     }
-    const company = document.createElement('p');
-    company.className = 'details';
-    company.textContent = `${lead.company} / ${lead.postedAt ? new Date(lead.postedAt).toLocaleDateString() : 'Date unavailable'}`;
-    role.append(title, company);
+    role.className = 'role-cell';
+    role.append(title);
+    const match = cell(`${Math.round(lead.score * 100)}%`, 'match');
+    const meter = document.createElement('meter');
+    meter.min = 0;
+    meter.max = 100;
+    meter.value = lead.score * 100;
+    meter.setAttribute('aria-label', 'Match score');
+    match.append(meter);
+    const statusCell = cell('');
+    const badge = document.createElement('span');
+    badge.className = 'status-badge';
+    badge.dataset.status = lead.status;
+    badge.textContent = lead.status.charAt(0).toUpperCase() + lead.status.slice(1);
+    statusCell.append(badge);
     row.append(
-      cell(`${Math.round(lead.score * 100)}%`, 'match'),
+      match,
       role,
-      cell(lead.location),
-      cell(lead.source),
-      cell(lead.status),
+      cell(lead.company, 'company-cell'),
+      cell(lead.location, 'location-cell'),
+      cell(lead.source, 'source-cell'),
+      cell(
+        lead.postedAt ? new Date(lead.postedAt).toLocaleDateString() : 'Not listed',
+        'posted-cell',
+      ),
+      statusCell,
     );
     return row;
   });
   element('rows').replaceChildren(...rows);
+  element('leads-title').textContent = `${snapshot.leads.length.toLocaleString()} leads`;
+  element('threshold-count').textContent =
+    `${leads.length.toLocaleString()} at or above ${minimum}%`;
   element('count').textContent = `${leads.length.toLocaleString()} leads / showing ${rows.length}`;
   element('more').hidden = limit >= leads.length;
   element('empty').hidden = leads.length !== 0;

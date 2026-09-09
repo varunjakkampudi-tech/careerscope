@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="./admin.css" />
     <script type="module" src="./admin.js"></script>
   </head>
-  <body>
+  <body class="admin-app">
     <a href="#main-content" class="skip-link">Skip to content</a>
     <header>
       <a href="./" class="brand"
@@ -29,7 +29,11 @@
           >Career<span class="accent">Scope</span></span
         ></a
       >
-      <nav aria-label="Admin">
+      <nav aria-label="Main" class="workspace-nav">
+        <a href="./admin.html" aria-current="page">Leads</a>
+        <a href="./">Public jobs</a>
+      </nav>
+      <nav aria-label="Admin" class="account-nav">
         <label class="theme-control"
           >Theme<select id="theme" name="theme">
             <option value="system">System</option>
@@ -37,7 +41,7 @@
             <option value="dark">Dark</option>
           </select></label
         >
-        <a href="./">Public jobs</a><button id="lock" type="button" hidden>Lock</button>
+        <button id="lock" type="button" hidden>Lock</button>
       </nav>
     </header>
     <main id="main-content" tabindex="-1">
@@ -59,15 +63,6 @@
       </section>
       <p id="error" role="alert" hidden></p>
       <section id="workspace" hidden aria-labelledby="leads-title">
-        <div class="heading">
-          <h1 id="leads-title" tabindex="-1">My leads</h1>
-          <span class="muted">Read-only snapshot</span>
-        </div>
-        <p id="updated" class="muted"></p>
-        <details>
-          <summary>Matching profile</summary>
-          <p id="profile" class="muted"></p>
-        </details>
         <div class="admin-layout">
           <details id="filter-panel" class="filter-panel" open>
             <summary>Filters</summary>
@@ -102,27 +97,41 @@
                 </select></label
               >
               <button id="clear" type="button">Clear filters</button>
+              <details class="profile-details">
+                <summary>Matching profile</summary>
+                <p id="profile" class="muted"></p>
+              </details>
             </aside>
           </details>
           <div class="results">
-            <p id="count" role="status"></p>
+            <div class="results-heading">
+              <div>
+                <h1 id="leads-title" tabindex="-1">My leads</h1>
+                <p id="threshold-count" class="muted"></p>
+              </div>
+              <span class="snapshot-badge">Read-only snapshot</span>
+            </div>
             <p id="empty" class="empty-state" hidden>No leads match these filters.</p>
             <div role="table" aria-label="My leads" class="lead-table">
               <div role="rowgroup" class="table-head">
                 <div role="row">
-                  <span role="columnheader">Match</span
-                  ><span role="columnheader">Role / Company</span
-                  ><span role="columnheader">Location</span><span role="columnheader">Source</span
+                  <span role="columnheader">Match</span><span role="columnheader">Role</span
+                  ><span role="columnheader">Company</span><span role="columnheader">Location</span
+                  ><span role="columnheader">Source</span><span role="columnheader">Posted</span
                   ><span role="columnheader">Status</span>
                 </div>
               </div>
               <div id="rows" role="rowgroup"></div>
+            </div>
+            <div class="results-meta">
+              <p id="count" role="status"></p>
+              <p id="updated" class="muted"></p>
             </div>
             <button id="more" type="button" hidden>Load more</button>
           </div>
         </div>
       </section>
     </main>
-    <footer>CareerScope <span class="muted">Encrypted snapshot</span></footer>
+    <footer>CareerScope <span class="muted">v1.0.0</span></footer>
   </body>
 </html>

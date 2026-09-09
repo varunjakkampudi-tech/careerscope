@@ -72,6 +72,17 @@ try {
   await page.getByRole('button', { name: 'Unlock', exact: true }).click();
   await page.getByRole('table', { name: 'My leads' }).waitFor();
   assert.equal(await page.locator('#rows [role=row]').count(), 50);
+  assert.deepEqual(await page.getByRole('columnheader').allTextContents(), [
+    'Match',
+    'Role',
+    'Company',
+    'Location',
+    'Source',
+    'Posted',
+    'Status',
+  ]);
+  assert.equal(await page.getByRole('meter').count(), 50);
+  assert.equal(await page.locator('#threshold-count').textContent(), '60 at or above 0%');
   assert.equal(await page.locator('#rows img, #rows a[href^="javascript:"]').count(), 0);
   await page.getByRole('button', { name: 'Load more' }).click();
   assert.equal(await page.locator('#rows [role=row]').count(), 60);
@@ -100,6 +111,8 @@ try {
   await page.getByRole('button', { name: 'Lock', exact: true }).click();
   assert.equal(await page.locator('#rows [role=row]').count(), 0);
   assert.equal(await page.locator('#workspace').isVisible(), false);
+  assert.equal(await page.locator('#leads-title').textContent(), 'My leads');
+  assert.equal(await page.locator('#threshold-count').textContent(), '');
   assert.equal(await page.getByLabel('Snapshot passphrase').inputValue(), '');
   await page.getByLabel('Snapshot passphrase').fill(passphrase);
   await page.getByRole('button', { name: 'Unlock', exact: true }).click();
