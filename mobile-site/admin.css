@@ -75,6 +75,49 @@ nav a {
 }
 nav a {
   text-decoration: none;
+  gap: 6px;
+}
+.nav-icon {
+  flex: 0 0 auto;
+}
+:root[data-theme='dark'] .nav-icon {
+  filter: invert(1);
+}
+.icon-button,
+#refresh {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.detail-view {
+  max-width: 760px;
+}
+.detail-view h2 {
+  margin-top: 32px;
+}
+.setting-field {
+  max-width: 320px;
+  margin: 28px 0;
+}
+.detail-list > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+  padding: 20px 0;
+  overflow-wrap: anywhere;
+}
+.detail-list dt {
+  color: var(--muted);
+}
+.detail-list dd {
+  margin: 0;
+}
+.workspace-nav {
+  flex-wrap: nowrap;
 }
 nav a[aria-current='page'] {
   color: var(--accent);
@@ -327,6 +370,9 @@ summary {
   .workspace-nav {
     grid-column: 1 / -1;
     grid-row: 2;
+    overflow-x: auto;
+    max-width: 100%;
+    padding: 4px 0;
   }
   .account-nav {
     grid-column: 2;
@@ -377,6 +423,22 @@ summary {
   }
 }
 @media (max-width: 539px) {
+  .admin-app > header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+  }
+  .workspace-nav {
+    order: 3;
+    width: 100%;
+  }
+  .workspace-nav a {
+    min-width: 44px;
+    justify-content: center;
+  }
+  .workspace-nav .nav-label {
+    display: none;
+  }
   aside {
     grid-template-columns: 1fr;
   }

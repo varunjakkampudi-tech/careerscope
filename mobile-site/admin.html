@@ -16,6 +16,7 @@
     />
     <meta name="theme-color" content="#f4f7f7" />
     <script src="./theme.js"></script>
+    <script src="./version.js" defer></script>
     <link rel="icon" href="./favicon.svg" />
     <link rel="stylesheet" href="./style.css" />
     <link rel="stylesheet" href="./admin.css" />
@@ -29,11 +30,40 @@
           >Career<span class="accent">Scope</span></span
         ></a
       >
-      <nav aria-label="Main" class="workspace-nav">
-        <a href="./admin.html" aria-current="page">Leads</a>
-        <a href="./">Public jobs</a>
+      <nav id="private-nav" aria-label="Main" class="workspace-nav" hidden>
+        <a href="#leads" data-view="leads" aria-label="Leads" title="Leads" aria-current="page"
+          ><img class="nav-icon" src="./icon-list.svg" alt="" width="18" height="18" /><span
+            class="nav-label"
+            >Leads</span
+          ></a
+        >
+        <a href="#search" data-view="search" aria-label="Search" title="Search"
+          ><img class="nav-icon" src="./icon-search.svg" alt="" width="18" height="18" /><span
+            class="nav-label"
+            >Search</span
+          ></a
+        >
+        <a
+          href="#applications"
+          data-view="applications"
+          aria-label="Applications"
+          title="Applications"
+          ><img class="nav-icon" src="./icon-briefcase.svg" alt="" width="18" height="18" /><span
+            class="nav-label"
+            >Applications</span
+          ></a
+        >
+        <a href="#settings" data-view="settings" aria-label="Settings" title="Settings"
+          ><img class="nav-icon" src="./icon-settings.svg" alt="" width="18" height="18"
+        /></a>
+        <a href="#profile" data-view="profile" aria-label="Profile" title="Profile"
+          ><img class="nav-icon" src="./icon-user.svg" alt="" width="18" height="18"
+        /></a>
       </nav>
       <nav aria-label="Admin" class="account-nav">
+        <a href="./" aria-label="Public jobs" title="Public jobs"
+          ><img class="nav-icon" src="./icon-globe.svg" alt="" width="18" height="18"
+        /></a>
         <label class="theme-control"
           >Theme<select id="theme" name="theme">
             <option value="system">System</option>
@@ -41,7 +71,9 @@
             <option value="dark">Dark</option>
           </select></label
         >
-        <button id="lock" type="button" hidden>Lock</button>
+        <button id="lock" type="button" aria-label="Lock" title="Lock" class="icon-button" hidden>
+          <img class="nav-icon" src="./icon-lock.svg" alt="" width="18" height="18" />
+        </button>
       </nav>
     </header>
     <main id="main-content" tabindex="-1">
@@ -112,7 +144,7 @@
               <span class="snapshot-badge">Read-only snapshot</span>
             </div>
             <p id="empty" class="empty-state" hidden>No leads match these filters.</p>
-            <div role="table" aria-label="My leads" class="lead-table">
+            <div id="lead-table" role="table" aria-label="My leads" class="lead-table">
               <div role="rowgroup" class="table-head">
                 <div role="row">
                   <span role="columnheader">Match</span><span role="columnheader">Role</span
@@ -131,7 +163,56 @@
           </div>
         </div>
       </section>
+      <section id="settings-view" class="detail-view" aria-labelledby="settings-title" hidden>
+        <div class="results-heading">
+          <h1 id="settings-title" tabindex="-1">Settings</h1>
+          <span class="snapshot-badge">This browser</span>
+        </div>
+        <label class="setting-field"
+          >Appearance<select id="settings-theme" data-theme-select>
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select></label
+        >
+        <dl class="detail-list">
+          <div>
+            <dt>Idle lock</dt>
+            <dd>5 minutes</dd>
+          </div>
+          <div>
+            <dt>Session</dt>
+            <dd>Current browser tab</dd>
+          </div>
+          <div>
+            <dt>Snapshot exported</dt>
+            <dd id="settings-exported" data-private-value></dd>
+          </div>
+        </dl>
+        <button id="settings-lock" type="button">Lock this session</button>
+      </section>
+      <section id="profile-view" class="detail-view" aria-labelledby="profile-title" hidden>
+        <div class="results-heading">
+          <h1 id="profile-title" tabindex="-1">Profile</h1>
+          <span class="snapshot-badge">Read-only snapshot</span>
+        </div>
+        <h2>Matching profile</h2>
+        <dl class="detail-list">
+          <div>
+            <dt>Resume</dt>
+            <dd id="profile-resume" data-private-value></dd>
+          </div>
+          <div>
+            <dt>Profile updated</dt>
+            <dd id="profile-updated" data-private-value></dd>
+          </div>
+          <div>
+            <dt>Scored leads</dt>
+            <dd id="profile-leads" data-private-value></dd>
+          </div>
+        </dl>
+      </section>
     </main>
-    <footer>CareerScope <span class="muted">v1.0.0</span></footer>
+    <footer>CareerScope <span class="muted" data-app-version></span></footer>
   </body>
 </html>

@@ -49,11 +49,34 @@ npm run pages:publish
 ```
 
 This command reads the current `.env` on every run, overriding any stale shell
-value, re-encrypts the admin snapshot, commits only `mobile-site/admin.enc.json`,
-and pushes `main` to `origin`. Commit intended code changes first and leave no
-staged changes. Uncommitted code changes are not included. A missing or invalid
-passphrase or a failed export stops publication. If pushing fails, the snapshot
-commit may remain locally; resolve Git access before retrying.
+value, re-encrypts the admin snapshot, increments the patch version, and commits
+the ciphertext with the root package/lockfile and generated app/Pages version
+files. It then pushes `main` to `origin`. Commit intended code changes first and
+leave no staged changes or uncommitted version files. Uncommitted code changes
+are not included. A missing or invalid passphrase or a failed export stops
+publication. If a later step fails, release files or a commit may remain locally.
+If the push alone failed, resolve Git access and push the existing commit rather
+than running another version bump.
+
+Choose a release type explicitly when needed:
+
+```sh
+npm run pages:publish -- patch
+npm run pages:publish -- minor
+npm run pages:publish -- major
+```
+
+- Patch: fixes and snapshot refreshes, for example `1.0.0` to `1.0.1`.
+- Minor: backward-compatible features, for example `1.0.1` to `1.1.0`.
+- Major: breaking changes, for example `1.1.0` to `2.0.0`.
+
+The root `package.json` is the product release source; internal workspace package
+versions are independent. `npm run version:sync` regenerates the local app and
+public/admin footer versions. CI runs `version:check` to reject inconsistent
+version files. Version increments happen before publication, not in CI: rerunning
+the same commit uses the same version. Direct pushes do not infer a release type;
+use `pages:publish` for versioned releases. Do not change encryption envelope or
+snapshot schema versions for a product release.
 
 After the Pages deployment succeeds, reload the admin page and unlock with the
 new value. The password never goes to GitHub. An ordinary `git push` or workflow
@@ -68,10 +91,19 @@ unlocked browser sessions. This does not change the local workspace login.
 Open the Pages site, select Admin login, and enter the snapshot passphrase.
 Search, select multiple sources, filter scores/status, sort, and open employer
 links for manual applications. The private list is decrypted in browser memory,
-not saved to localStorage, sessionStorage, or IndexedDB. Lock clears the rendered
-data and references; the page also locks after five minutes of inactivity and
-when navigating away. JavaScript cannot guarantee immediate memory erasure by
-the browser or prevent OS screenshots/tab previews. Use a trusted browser/device.
+not saved to localStorage, sessionStorage, or IndexedDB. To survive refresh, the
+current tab stores a snapshot-bound decryption key and last-activity time in
+sessionStorage. The passphrase is never stored. The key is sensitive: anyone with
+access to the open tab or its storage can decrypt that snapshot. Lock removes the
+key and rendered data; five minutes of inactivity expires the session. Refresh
+restores only an unexpired key for the same encrypted snapshot. A newly published
+snapshot requires unlocking again. Storage-blocked browsers fall back to
+memory-only unlocking and require the passphrase after refresh.
+
+Normal tab closure ends tab storage, but browser session restore or tab duplication
+may retain/copy it. Use Lock before leaving a shared device. Navigating to public
+jobs keeps the unexpired tab session. JavaScript cannot guarantee immediate memory
+erasure by the browser or prevent OS screenshots/tab previews. Use a trusted device.
 
 Both pages share a System/Light/Dark selector. Only the theme preference is stored
 in localStorage; decrypted data and the passphrase are not. Public metadata opts
@@ -82,6 +114,12 @@ be discovered by crawlers. The admin HTML noindex tag is still applicable.
 The snapshot does not edit your profile, upload resumes, run searches/Copilot,
 or synchronize application statuses back to the Mac. Full profile editing stays
 in the local app. The laptop can be off while you browse the published snapshot.
+
+Admin navigation includes Leads, Search (exported jobs), Applications (exported
+applied/interviewing/rejected statuses), Settings (browser appearance and session
+locking), and Profile (resume attachment state, profile timestamp and scored lead
+count). No additional private profile fields are published. Public jobs, the
+unlock screen, and all admin views share the same theme and responsive shell.
 
 ## Security Boundaries
 

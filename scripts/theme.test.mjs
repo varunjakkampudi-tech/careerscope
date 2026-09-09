@@ -22,6 +22,12 @@ test('theme follows system, persists selection and tolerates blocked storage', a
         events.select = handler;
       },
     };
+    const settings = {
+      value: '',
+      addEventListener: (_name, handler) => {
+        events.settings = handler;
+      },
+    };
     let saved = 'system';
     runInNewContext(source, {
       window: {
@@ -33,6 +39,7 @@ test('theme follows system, persists selection and tolerates blocked storage', a
       document: {
         documentElement: root,
         querySelector: (selector) => (selector === '#theme' ? select : meta),
+        querySelectorAll: () => [select, settings],
         addEventListener: (_name, handler) => {
           events.ready = handler;
         },
@@ -52,8 +59,12 @@ test('theme follows system, persists selection and tolerates blocked storage', a
     events.ready();
     events.select({ target: { value: 'light' } });
     assert.equal(root.dataset.theme, 'light');
-    assert.equal(meta.content, '#f4f7f7');
+    assert.equal(meta.content, '#f6f7f9');
+    assert.equal(settings.value, 'light');
     if (!blocked) assert.equal(saved, 'light');
+    events.settings({ target: { value: 'dark' } });
+    assert.equal(select.value, 'dark');
+    assert.equal(meta.content, '#0a0d14');
     events.storage({ key: 'careerscope.theme', newValue: 'system' });
     assert.equal(root.dataset.theme, 'dark');
     media.matches = false;

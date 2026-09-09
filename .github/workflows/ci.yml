@@ -40,6 +40,8 @@ jobs:
     name: Typecheck, lint, test, build
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    outputs:
+      version: ${{ steps.release.outputs.version }}
 
     steps:
       - uses: actions/checkout@v4
@@ -54,6 +56,13 @@ jobs:
 
       - name: Format
         run: npm run format:check
+
+      - name: Check release version consistency
+        run: npm run version:check && node --test scripts/sync-version.test.mjs
+
+      - name: Read release version
+        id: release
+        run: node -e 'require("node:fs").appendFileSync(process.env.GITHUB_OUTPUT, "version=" + require("./package.json").version + "\n")'
 
       - name: Lint
         run: npm run lint
@@ -128,6 +137,13 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/deploy-pages@v4
         id: deployment
+
+      - name: Report deployed release
+        env:
+          RELEASE_VERSION: ${{ needs.verify.outputs.version }}
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          printf '## CareerScope v%s\n\n- Public: %s\n- Admin: %sadmin.html\n' "$RELEASE_VERSION" "$PAGES_URL" "$PAGES_URL" >> "$GITHUB_STEP_SUMMARY"
 
   image:
     name: Container image

@@ -14,9 +14,9 @@
     const resolved = choice === 'system' ? (media.matches ? 'dark' : 'light') : choice;
     document.documentElement.dataset.theme = resolved;
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.content = resolved === 'dark' ? '#151b1d' : '#f4f7f7';
-    const select = document.querySelector('#theme');
-    if (select) select.value = choice;
+    if (meta) meta.content = resolved === 'dark' ? '#0a0d14' : '#f6f7f9';
+    for (const select of document.querySelectorAll('#theme, [data-theme-select]'))
+      select.value = choice;
   }
 
   apply();
@@ -28,14 +28,15 @@
   });
   document.addEventListener('DOMContentLoaded', () => {
     apply();
-    document.querySelector('#theme')?.addEventListener('change', (event) => {
-      choice = choices.includes(event.target.value) ? event.target.value : 'system';
-      try {
-        localStorage.setItem(key, choice);
-      } catch {
-        return apply();
-      }
-      apply();
-    });
+    for (const select of document.querySelectorAll('#theme, [data-theme-select]'))
+      select.addEventListener('change', (event) => {
+        choice = choices.includes(event.target.value) ? event.target.value : 'system';
+        try {
+          localStorage.setItem(key, choice);
+        } catch {
+          return apply();
+        }
+        apply();
+      });
   });
 })();

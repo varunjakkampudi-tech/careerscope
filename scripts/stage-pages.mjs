@@ -10,6 +10,10 @@ export const pageFiles = [
   'app.js',
   'style.css',
   'theme.js',
+  'version.js',
+  ...['list', 'search', 'briefcase', 'settings', 'user', 'globe', 'lock', 'refresh'].map(
+    (name) => `icon-${name}.svg`,
+  ),
   'favicon.svg',
   'select-chevron.svg',
   'robots.txt',

@@ -1,10 +1,23 @@
-import { decryptSnapshot } from './snapshot-crypto.mjs';
+import { unlockSnapshot, restoreSnapshot } from './snapshot-crypto.mjs';
 
 const element = (id) => document.getElementById(id);
 let snapshot = null;
 let limit = 50;
 let generation = 0;
 let lastActivity = Date.now();
+let tabSession = null;
+let view = 'leads';
+const sessionKey = 'careerscope.admin.session';
+const views = ['leads', 'search', 'applications', 'settings', 'profile'];
+const applicationStatuses = ['applied', 'interview', 'interviewing', 'offer', 'rejected'];
+function saveSession() {
+  try {
+    if (tabSession) sessionStorage.setItem(sessionKey, JSON.stringify(tabSession));
+    else sessionStorage.removeItem(sessionKey);
+  } catch {
+    return;
+  }
+}
 const compactFilters = window.matchMedia('(max-width: 1023px)');
 const syncFilters = () => {
   element('filter-panel').open = !compactFilters.matches;
@@ -12,9 +25,15 @@ const syncFilters = () => {
 syncFilters();
 compactFilters.addEventListener('change', syncFilters);
 
-function lock() {
+function lock({ preserveSession = false } = {}) {
   generation += 1;
   snapshot = null;
+  if (!preserveSession) {
+    tabSession = null;
+    saveSession();
+  }
+  for (const id of ['settings-view', 'profile-view', 'private-nav']) element(id).hidden = true;
+  for (const node of document.querySelectorAll('[data-private-value]')) node.textContent = '';
   element('rows').replaceChildren();
   element('sources').replaceChildren();
   for (const id of ['updated', 'profile', 'count', 'threshold-count']) element(id).textContent = '';
@@ -33,6 +52,87 @@ function lock() {
   element('error').hidden = true;
   element('empty').hidden = true;
   element('passphrase').focus({ preventScroll: true });
+}
+
+function selectView({ focus = false } = {}) {
+  if (!snapshot) return;
+  view = views.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'leads';
+  for (const link of document.querySelectorAll('[data-view]')) {
+    if (link.dataset.view === view) link.setAttribute('aria-current', 'page');
+    else link.removeAttribute('aria-current');
+  }
+  element('workspace').hidden = ['settings', 'profile'].includes(view);
+  element('settings-view').hidden = view !== 'settings';
+  element('profile-view').hidden = view !== 'profile';
+  document.title = `${view.charAt(0).toUpperCase() + view.slice(1)} | CareerScope`;
+  limit = 50;
+  render();
+  if (view === 'search') element('filter-panel').open = true;
+  if (focus) {
+    const target =
+      view === 'search'
+        ? 'search'
+        : view === 'settings'
+          ? 'settings-title'
+          : view === 'profile'
+            ? 'profile-title'
+            : 'leads-title';
+    element(target).focus({ preventScroll: true });
+  }
+}
+
+function showSnapshot(decrypted) {
+  if (
+    decrypted.version !== 1 ||
+    !Array.isArray(decrypted.leads) ||
+    !decrypted.profile ||
+    decrypted.leads.some(
+      (lead) =>
+        !['title', 'company', 'location', 'source', 'status'].every(
+          (key) => typeof lead[key] === 'string',
+        ) ||
+        !Number.isFinite(lead.score) ||
+        lead.score < 0 ||
+        lead.score > 1 ||
+        (lead.postedAt !== null && typeof lead.postedAt !== 'string'),
+    )
+  )
+    throw new Error('Invalid snapshot');
+  snapshot = decrypted;
+  element('sources').replaceChildren(
+    ...[...new Set(snapshot.leads.map((lead) => lead.source))].sort().map((source) => {
+      const label = document.createElement('label');
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.value = source;
+      label.append(input, document.createTextNode(source));
+      return label;
+    }),
+  );
+  element('status').replaceChildren(
+    new Option('All statuses', ''),
+    ...[...new Set(snapshot.leads.map((lead) => lead.status))]
+      .sort()
+      .map((status) => new Option(status, status)),
+  );
+  element('updated').textContent = `Exported ${new Date(snapshot.updatedAt).toLocaleString()}`;
+  element('profile').textContent =
+    `Profile updated ${new Date(snapshot.profile.updatedAt).toLocaleString()} / Resume ${snapshot.profile.hasResume ? 'attached' : 'not attached'}`;
+  element('profile-updated').textContent = new Date(snapshot.profile.updatedAt).toLocaleString();
+  element('profile-resume').textContent = snapshot.profile.hasResume ? 'Attached' : 'Not attached';
+  element('settings-exported').textContent = new Date(snapshot.updatedAt).toLocaleString();
+  element('profile-leads').textContent = snapshot.leads.length.toLocaleString();
+  element('locked').hidden = true;
+  element('lock').hidden = false;
+  element('private-nav').hidden = false;
+  element('error').hidden = true;
+  selectView({ focus: true });
+}
+
+async function fetchEnvelope() {
+  const response = await fetch('./admin.enc.json', { cache: 'no-store', credentials: 'omit' });
+  if (!response.ok) throw new Error('Snapshot unavailable');
+  return response.json();
 }
 
 function safeLink(value) {
@@ -65,6 +165,7 @@ function render() {
   const leads = snapshot.leads
     .filter(
       (lead) =>
+        (view !== 'applications' || applicationStatuses.includes(lead.status)) &&
         lead.score * 100 >= minimum &&
         (!status || lead.status === status) &&
         (!sources.length || sources.includes(lead.source)) &&
@@ -121,7 +222,20 @@ function render() {
     return row;
   });
   element('rows').replaceChildren(...rows);
-  element('leads-title').textContent = `${snapshot.leads.length.toLocaleString()} leads`;
+  element('leads-title').textContent =
+    view === 'search'
+      ? 'Search jobs'
+      : view === 'applications'
+        ? 'Applications'
+        : `${snapshot.leads.length.toLocaleString()} leads`;
+  element('empty').textContent =
+    view === 'applications'
+      ? 'No applications match these filters in this snapshot.'
+      : 'No leads match these filters.';
+  element('lead-table').setAttribute(
+    'aria-label',
+    view === 'applications' ? 'Applications' : 'My leads',
+  );
   element('threshold-count').textContent =
     `${leads.length.toLocaleString()} at or above ${minimum}%`;
   element('count').textContent = `${leads.length.toLocaleString()} leads / showing ${rows.length}`;
@@ -140,53 +254,13 @@ element('unlock-form').addEventListener('submit', async (event) => {
   element('passphrase').removeAttribute('aria-invalid');
   element('error').hidden = true;
   try {
-    const response = await fetch('./admin.enc.json', { cache: 'no-store', credentials: 'omit' });
-    if (!response.ok) throw new Error('unavailable');
-    const decrypted = await decryptSnapshot(await response.json(), passphrase);
+    const envelope = await fetchEnvelope();
+    const unlocked = await unlockSnapshot(envelope, passphrase);
     if (attempt !== generation) return;
-    if (
-      decrypted.version !== 1 ||
-      !Array.isArray(decrypted.leads) ||
-      !decrypted.profile ||
-      decrypted.leads.some(
-        (lead) =>
-          !['title', 'company', 'location', 'source', 'status'].every(
-            (key) => typeof lead[key] === 'string',
-          ) ||
-          !Number.isFinite(lead.score) ||
-          lead.score < 0 ||
-          lead.score > 1 ||
-          (lead.postedAt !== null && typeof lead.postedAt !== 'string'),
-      )
-    )
-      throw new Error('invalid');
-    snapshot = decrypted;
-    limit = 50;
     lastActivity = Date.now();
-    element('sources').replaceChildren(
-      ...[...new Set(snapshot.leads.map((lead) => lead.source))].sort().map((source) => {
-        const label = document.createElement('label');
-        const input = document.createElement('input');
-        input.type = 'checkbox';
-        input.value = source;
-        label.append(input, document.createTextNode(source));
-        return label;
-      }),
-    );
-    element('status').replaceChildren(
-      new Option('All statuses', ''),
-      ...[...new Set(snapshot.leads.map((lead) => lead.status))]
-        .sort()
-        .map((status) => new Option(status, status)),
-    );
-    element('updated').textContent = `Exported ${new Date(snapshot.updatedAt).toLocaleString()}`;
-    element('profile').textContent =
-      `Profile updated ${new Date(snapshot.profile.updatedAt).toLocaleString()} / Resume ${snapshot.profile.hasResume ? 'attached' : 'not attached'}`;
-    element('locked').hidden = true;
-    element('workspace').hidden = false;
-    element('lock').hidden = false;
-    render();
-    element('leads-title').focus({ preventScroll: true });
+    showSnapshot(unlocked.snapshot);
+    tabSession = { key: unlocked.key, salt: envelope.salt, nonce: envelope.nonce, lastActivity };
+    saveSession();
   } catch {
     if (attempt !== generation) return;
     lock();
@@ -205,6 +279,8 @@ element('unlock-form').addEventListener('submit', async (event) => {
   }
 });
 element('lock').addEventListener('click', lock);
+element('settings-lock').addEventListener('click', lock);
+window.addEventListener('hashchange', () => selectView({ focus: true }));
 element('more').addEventListener('click', () => {
   limit += 50;
   render();
@@ -229,6 +305,10 @@ for (const event of ['pointerdown', 'keydown', 'scroll'])
     () => {
       if (snapshot && Date.now() - lastActivity >= 300000) lock();
       lastActivity = Date.now();
+      if (tabSession && snapshot) {
+        tabSession.lastActivity = lastActivity;
+        saveSession();
+      }
     },
     { passive: true },
   );
@@ -238,4 +318,26 @@ setInterval(() => {
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden && Date.now() - lastActivity >= 300000) lock();
 });
-window.addEventListener('pagehide', lock);
+window.addEventListener('pagehide', () => lock({ preserveSession: true }));
+
+async function resumeSession() {
+  const attempt = ++generation;
+  element('unlock').disabled = true;
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(sessionKey) || 'null');
+    if (!saved) return;
+    const decrypted = await restoreSnapshot(await fetchEnvelope(), saved);
+    if (attempt !== generation) return;
+    lastActivity = saved.lastActivity;
+    tabSession = saved;
+    showSnapshot(decrypted);
+  } catch {
+    if (attempt === generation) lock();
+  } finally {
+    element('unlock').disabled = false;
+  }
+}
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) resumeSession();
+});
+resumeSession();

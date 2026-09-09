@@ -11,7 +11,7 @@ function decode(value) {
   return Uint8Array.from(atob(value), (character) => character.charCodeAt(0));
 }
 
-async function deriveKey(passphrase, salt) {
+async function deriveKey(passphrase, salt, extractable = false) {
   const material = await crypto.subtle.importKey(
     'raw',
     encoder.encode(passphrase),
@@ -23,7 +23,7 @@ async function deriveKey(passphrase, salt) {
     { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
     material,
     { name: 'AES-GCM', length: 256 },
-    false,
+    extractable,
     ['encrypt', 'decrypt'],
   );
 }
@@ -78,12 +78,40 @@ export function validateEnvelope(envelope) {
 }
 
 export async function decryptSnapshot(envelope, passphrase) {
-  const { salt, nonce, ciphertext } = validateEnvelope(envelope);
+  const { salt } = validateEnvelope(envelope);
   const key = await deriveKey(passphrase, salt);
+  return decryptWithKey(envelope, key);
+}
+
+async function decryptWithKey(envelope, key) {
+  const { nonce, ciphertext } = validateEnvelope(envelope);
   const decrypted = await crypto.subtle.decrypt(
     { name: 'AES-GCM', iv: nonce, additionalData: context },
     key,
     ciphertext,
   );
   return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(decrypted));
+}
+
+export async function unlockSnapshot(envelope, passphrase) {
+  const { salt } = validateEnvelope(envelope);
+  const key = await deriveKey(passphrase, salt, true);
+  const snapshot = await decryptWithKey(envelope, key);
+  return { snapshot, key: encode(new Uint8Array(await crypto.subtle.exportKey('raw', key))) };
+}
+
+export async function restoreSnapshot(envelope, session, now = Date.now()) {
+  if (
+    !session ||
+    session.salt !== envelope.salt ||
+    session.nonce !== envelope.nonce ||
+    !Number.isFinite(session.lastActivity) ||
+    session.lastActivity > now ||
+    now - session.lastActivity >= 300000
+  )
+    throw new Error('Session expired');
+  const key = await crypto.subtle.importKey('raw', decode(session.key), 'AES-GCM', false, [
+    'decrypt',
+  ]);
+  return decryptWithKey(envelope, key);
 }

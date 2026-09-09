@@ -8,7 +8,15 @@ import { configuredPassphrase } from './export-admin.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 
-export function publishPages({ read = readFileSync, run = execFileSync } = {}) {
+const versionPaths = [
+  'package.json',
+  'package-lock.json',
+  'apps/web/src/lib/brand.ts',
+  'mobile-site/version.js',
+];
+
+export function publishPages({ read = readFileSync, run = execFileSync, bump = 'patch' } = {}) {
+  if (!['patch', 'minor', 'major'].includes(bump)) throw new Error('Choose patch, minor or major.');
   const local = parseEnv(read(resolve(root, '.env'), 'utf8'));
   if (!configuredPassphrase(local.ADMIN_SNAPSHOT_PASSPHRASE)) {
     throw new Error('Set ADMIN_SNAPSHOT_PASSPHRASE in the local .env before publishing.');
@@ -21,31 +29,36 @@ export function publishPages({ read = readFileSync, run = execFileSync } = {}) {
   if (git('diff', '--cached', '--name-only')) {
     throw new Error('Commit or unstage pending changes before publishing.');
   }
+  if (git('status', '--porcelain', '--', ...versionPaths)) {
+    throw new Error('Commit version-file changes before publishing.');
+  }
   run(process.execPath, ['scripts/export-admin.mjs'], {
     ...options,
     env: { ...process.env, ...local },
   });
-  git('add', '--', 'mobile-site/admin.enc.json');
-  git(
-    'commit',
-    '--only',
-    '-m',
-    'Refresh encrypted admin snapshot',
-    '--',
-    'mobile-site/admin.enc.json',
+  run(
+    'npm',
+    ['version', bump, '--no-git-tag-version', '--ignore-scripts', '--workspaces=false'],
+    options,
   );
+  run(process.execPath, ['scripts/sync-version.mjs'], options);
+  const { version } = JSON.parse(read(resolve(root, 'package.json'), 'utf8'));
+  const files = [...versionPaths, 'mobile-site/admin.enc.json'];
+  git('add', '--', ...files);
+  git('commit', '--only', '-m', `Release v${version}`, '--', ...files);
   git('push', 'origin', 'main');
+  return version;
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
-    publishPages();
+    const version = publishPages({ bump: process.argv[2] ?? 'patch' });
     process.stdout.write(
-      'Encrypted with the current local passphrase and pushed main. Wait for Pages deployment to finish.\n',
+      `Release v${version} pushed with the current local passphrase. Wait for CI and Pages deployment to finish.\n`,
     );
   } catch {
     process.stderr.write(
-      'Publication failed. Check the local passphrase, main branch, pending staged changes and Git access. A snapshot commit may remain locally if the push failed. No secret was printed.\n',
+      'Publication failed. Check the release type (patch/minor/major), local passphrase, main branch, pending version/staged changes and Git access. Release files or a commit may remain locally if a step failed. No secret was printed.\n',
     );
     process.exitCode = 1;
   }

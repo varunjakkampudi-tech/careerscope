@@ -1,6 +1,9 @@
 # CareerScope
 
-Version **1.0.0**. A private, single-owner job-search workspace, formerly Job Radar.
+A private, single-owner job-search workspace, formerly Job Radar.
+The product release version is defined in [package.json](package.json) and displayed
+in the app and mobile-site footers. See [versioned publishing](docs/ENCRYPTED-ADMIN.md#change-the-passphrase-and-publish)
+for patch, minor and major releases.
 See [release notes](docs/RELEASE-1.0.0.md) for the current build and verification scope.
 
 **Public jobs:** <https://varunjakkampudi-tech.github.io/careerscope/>

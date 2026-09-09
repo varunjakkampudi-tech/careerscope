@@ -9,6 +9,7 @@ import { encryptSnapshot } from '../mobile-site/snapshot-crypto.mjs';
 import { pageFiles, stagePages } from './stage-pages.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
+const release = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
 const output = join(root, 'test-results/pages');
 const baseline = join(root, 'test-results/pages-baseline');
 const update = process.argv.includes('--update-baselines');
@@ -24,7 +25,7 @@ const leads = Array.from({ length: 65 }, (_, index) => ({
   location: 'India / Remote',
   source: index % 2 ? 'lever' : 'linkedin',
   score: index % 2 ? 0.65 : 0.95,
-  status: index % 2 ? 'saved' : 'new',
+  status: index === 64 ? 'applied' : index % 2 ? 'saved' : 'new',
   postedAt: '2026-09-09T00:00:00Z',
   url: `https://www.linkedin.com/jobs/view/${1000 + index}/`,
 }));
@@ -232,6 +233,7 @@ try {
       });
       await page.goto(base);
       await page.locator('#jobs li').first().waitFor();
+      assert.equal(await page.locator('[data-app-version]').textContent(), `v${release.version}`);
       assert.equal(
         await page.locator('meta[name="robots"]').getAttribute('content'),
         'index,follow',
@@ -245,6 +247,8 @@ try {
       assert.equal(await page.evaluate(() => document.activeElement.id), 'main-content');
       await page.locator('#theme').selectOption('dark');
       await page.getByRole('link', { name: 'Admin login' }).click();
+      await page.waitForLoadState('load');
+      assert.equal(await page.locator('[data-app-version]').textContent(), `v${release.version}`);
       assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
       await page.reload();
       assert.equal(await page.locator('#theme').inputValue(), 'dark');
@@ -274,6 +278,27 @@ try {
       await page.locator('#search').fill('no-match-fixture');
       await page.locator('#empty').waitFor({ state: 'visible' });
       await capture(page, `${engineName}-admin-empty-mobile`);
+      await page.getByRole('button', { name: 'Clear filters' }).click();
+      for (const view of ['search', 'applications', 'settings', 'profile']) {
+        await page.locator(`[data-view="${view}"]`).click();
+        await page.waitForFunction(
+          (selected) =>
+            document.querySelector(`[data-view="${selected}"]`).getAttribute('aria-current') ===
+            'page',
+          view,
+        );
+        for (const theme of ['light', 'dark']) {
+          await page.locator('#theme').selectOption(theme);
+          for (const width of [320, 390, 768, 1024, 1440, 1920]) {
+            await page.setViewportSize({ width, height: width < 768 ? 844 : 900 });
+            await capture(page, `${engineName}-${view}-${theme}-${width}`);
+          }
+        }
+      }
+      await page.reload();
+      await page.locator('#profile-view').waitFor();
+      assert.equal(await page.locator('#profile-leads').textContent(), '65');
+      await page.setViewportSize({ width: 390, height: 844 });
       await page.getByRole('button', { name: 'Lock', exact: true }).click();
       assert.equal(await page.evaluate(() => document.activeElement.id), 'passphrase');
       assert.equal(

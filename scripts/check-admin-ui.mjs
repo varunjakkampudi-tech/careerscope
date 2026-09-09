@@ -17,7 +17,7 @@ const envelope = await encryptSnapshot(
       location: 'India',
       source: index % 2 ? 'lever' : 'linkedin',
       score: index % 2 ? 0.6 : 0.95,
-      status: index % 2 ? 'saved' : 'new',
+      status: index === 59 ? 'applied' : index % 2 ? 'saved' : 'new',
       postedAt: null,
       url: index === 0 ? 'javascript:alert(1)' : 'https://www.linkedin.com/jobs/view/123',
     })),
@@ -30,6 +30,10 @@ const files = new Set([
   'admin.css',
   'style.css',
   'theme.js',
+  'version.js',
+  ...['list', 'search', 'briefcase', 'settings', 'user', 'globe', 'lock', 'refresh'].map(
+    (name) => `icon-${name}.svg`,
+  ),
   'select-chevron.svg',
   'snapshot-crypto.mjs',
   'favicon.svg',
@@ -59,11 +63,14 @@ await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
 let browser;
 try {
   browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage();
+  const context = await browser.newContext();
+  const page = await context.newPage();
   await page.clock.install();
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(`http://127.0.0.1:${server.address().port}/admin.html`);
+  const release = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
+  assert.equal(await page.locator('[data-app-version]').textContent(), `v${release.version}`);
   await page.getByLabel('Snapshot passphrase').fill('incorrect');
   await page.getByRole('button', { name: 'Unlock', exact: true }).click();
   await page.getByRole('alert').waitFor({ state: 'visible' });
@@ -90,7 +97,7 @@ try {
   assert.equal(await page.locator('#rows [role=row]').count(), 30);
   await page.getByLabel('lever', { exact: true }).check();
   assert.equal(await page.locator('#rows [role=row]').count(), 50);
-  await page.getByLabel('Search', { exact: true }).fill('React');
+  await page.getByRole('searchbox', { name: 'Search', exact: true }).fill('React');
   assert.equal(await page.locator('#rows [role=row]').count(), 1);
   await page.getByRole('button', { name: 'Clear filters' }).click();
   await page.locator('#score').fill('85');
@@ -107,22 +114,109 @@ try {
     );
     await page.screenshot({ path: `/tmp/careerscope-admin-${width}.png` });
   }
-  assert.equal(await page.evaluate(() => localStorage.length + sessionStorage.length), 0);
+  assert.equal(await page.evaluate(() => localStorage.length), 0);
+  assert.equal(await page.evaluate(() => sessionStorage.length), 1);
+  assert.equal(
+    await page.evaluate((secret) => JSON.stringify(sessionStorage).includes(secret), passphrase),
+    false,
+  );
+  await page.reload();
+  await page.getByRole('table', { name: 'My leads' }).waitFor();
+  assert.equal(await page.locator('#rows [role=row]').count(), 50);
+  await page.getByRole('link', { name: 'Search', exact: true }).click();
+  await page.getByRole('heading', { name: 'Search jobs' }).waitFor();
+  await page.getByRole('searchbox', { name: 'Search', exact: true }).fill('React');
+  assert.equal(await page.locator('#rows [role=row]').count(), 1);
+  await page.getByRole('button', { name: 'Clear filters' }).click();
+  await page.getByRole('link', { name: 'Applications', exact: true }).click();
+  await page.getByRole('table', { name: 'Applications', exact: true }).waitFor();
+  assert.equal(await page.locator('#rows [role=row]').count(), 1);
+  assert.match(await page.locator('#rows').textContent(), /Engineer 59/);
+  await page.getByRole('link', { name: 'Profile', exact: true }).click();
+  await page.locator('#profile-view').waitFor();
+  assert.equal(await page.locator('#profile-resume').textContent(), 'Attached');
+  await page.reload();
+  await page.locator('#profile-view').waitFor();
+  assert.equal(await page.locator('#profile-leads').textContent(), '60');
+  await page.getByRole('link', { name: 'Settings', exact: true }).click();
+  await page.locator('#settings-view').waitFor();
+  await page.getByLabel('Appearance').selectOption('dark');
+  assert.equal(await page.locator('#theme').inputValue(), 'dark');
+  await page.getByLabel('Appearance').selectOption('light');
+  for (const selected of ['leads', 'search', 'applications', 'settings', 'profile']) {
+    await page.locator(`[data-view="${selected}"]`).click();
+    for (const width of [320, 390, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      assert.equal(
+        await page.evaluate(() => document.documentElement.scrollWidth > innerWidth),
+        false,
+      );
+      await page.screenshot({ path: `/tmp/careerscope-${selected}-${width}.png` });
+    }
+  }
+  const otherTab = await page.context().newPage();
+  await otherTab.goto(`http://127.0.0.1:${server.address().port}/admin.html`);
+  assert.equal(await otherTab.locator('#workspace').isVisible(), false);
+  await otherTab.close();
+  await page.getByRole('link', { name: 'Leads', exact: true }).click();
   await page.getByRole('button', { name: 'Lock', exact: true }).click();
   assert.equal(await page.locator('#rows [role=row]').count(), 0);
   assert.equal(await page.locator('#workspace').isVisible(), false);
   assert.equal(await page.locator('#leads-title').textContent(), 'My leads');
   assert.equal(await page.locator('#threshold-count').textContent(), '');
   assert.equal(await page.getByLabel('Snapshot passphrase').inputValue(), '');
+  assert.equal(await page.evaluate(() => sessionStorage.length), 0);
   await page.getByLabel('Snapshot passphrase').fill(passphrase);
   await page.getByRole('button', { name: 'Unlock', exact: true }).click();
   await page.getByRole('table', { name: 'My leads' }).waitFor();
   await page.clock.fastForward(310000);
   assert.equal(await page.locator('#workspace').isVisible(), false);
   assert.equal(await page.locator('#rows [role=row]').count(), 0);
+  assert.equal(await page.evaluate(() => sessionStorage.length), 0);
+  await page.getByLabel('Snapshot passphrase').fill(passphrase);
+  await page.getByRole('button', { name: 'Unlock', exact: true }).click();
+  await page.getByRole('table', { name: 'My leads' }).waitFor();
+  await page.evaluate(() => {
+    const saved = JSON.parse(sessionStorage.getItem('careerscope.admin.session'));
+    saved.lastActivity = Date.now() - 310000;
+    sessionStorage.setItem('careerscope.admin.session', JSON.stringify(saved));
+  });
+  await page.reload();
+  await page.waitForFunction(() => !document.querySelector('#unlock').disabled);
+  assert.equal(await page.locator('#workspace').isVisible(), false);
+  assert.equal(await page.evaluate(() => sessionStorage.length), 0);
+  await page.getByLabel('Snapshot passphrase').fill(passphrase);
+  await page.getByRole('button', { name: 'Unlock', exact: true }).click();
+  await page.getByRole('table', { name: 'My leads' }).waitFor();
+  const replaced = await encryptSnapshot({ leads: [] }, passphrase);
+  await page.route('**/admin.enc.json', (route) =>
+    route.fulfill({ contentType: 'application/json', body: JSON.stringify(replaced) }),
+  );
+  await page.reload();
+  await page.waitForFunction(() => !document.querySelector('#unlock').disabled);
+  assert.equal(await page.locator('#workspace').isVisible(), false);
+  assert.equal(await page.evaluate(() => sessionStorage.length), 0);
+  await page.unroute('**/admin.enc.json');
+  const blocked = await browser.newPage();
+  blocked.on('pageerror', (error) => errors.push(error.message));
+  await blocked.addInitScript(() =>
+    Object.defineProperty(window, 'sessionStorage', {
+      get() {
+        throw new Error('Storage blocked');
+      },
+    }),
+  );
+  await blocked.goto(`http://127.0.0.1:${server.address().port}/admin.html`);
+  await blocked.getByLabel('Snapshot passphrase').fill(passphrase);
+  await blocked.getByRole('button', { name: 'Unlock', exact: true }).click();
+  await blocked.getByRole('table', { name: 'My leads' }).waitFor();
+  await blocked.reload();
+  await blocked.waitForFunction(() => !document.querySelector('#unlock').disabled);
+  assert.equal(await blocked.locator('#workspace').isVisible(), false);
+  await blocked.close();
   assert.deepEqual(errors, []);
   process.stdout.write(
-    'Admin browser checks passed: wrong password, unlock, filters, pagination, safe DOM, lock, no storage, desktop/mobile.\n',
+    'Admin browser checks passed: wrong password, unlock, refresh session, filters, pagination, safe DOM, lock, desktop/mobile.\n',
   );
 } finally {
   await browser?.close();
