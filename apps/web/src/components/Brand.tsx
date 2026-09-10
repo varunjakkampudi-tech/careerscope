@@ -8,7 +8,7 @@ export function Brand() {
         <Compass size={24} strokeWidth={1.75} aria-hidden="true" />
       </span>
       <span
-        className="whitespace-nowrap text-lg leading-none font-semibold tracking-normal text-ink"
+        className="whitespace-nowrap text-base leading-none font-semibold tracking-normal text-ink sm:text-lg"
         translate="no"
         aria-hidden="true"
       >
