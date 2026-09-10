@@ -1,42 +1,57 @@
 # Temporary Pending Work
 
-Updated: 2026-09-10. Baseline: CareerScope v1.3.0, commit `a231f63`.
+Updated: 2026-09-10. Deployed baseline: CareerScope v1.3.1, commit `0904377`.
 This is a reviewed handoff checklist retained in Git at the owner's request.
-The baseline results below describe v1.3.0, not future deployment verification.
+The release results below describe v1.3.1. Follow-up edits are local until committed
+and independently verified for publication.
 
 ## Current State
 
-- GitHub Pages is deployed; CI run `34467130374` succeeded.
+- GitHub Pages is deployed; CI run `34470638235` succeeded.
 - Public: https://varunjakkampudi-tech.github.io/careerscope/
 - Admin: https://varunjakkampudi-tech.github.io/careerscope/admin.html
 - Release verification passed: 998 application tests, 21 Pages tests, three
   infrastructure tests, typecheck, formatting, build and browser acceptance.
 - All 26 live assets matched the release. Live public saved-job filtering and
   encrypted-admin unlock/reload/lock passed at 320, 390 and 1440 pixels.
-- Linux Firefox/WebKit exposed a narrow header overlap during release; it was
-  fixed and the remote browser checks passed before deployment.
+- The release contains 2,183 public jobs and 2,510 encrypted private leads;
+  the existing admin passphrase was retained.
+- The v1.3.0 Linux header overlap was fixed. The v1.3.1 retry also passed after
+  browser acceptance waited for shortlist requests before reload/navigation.
 - Pages serves static snapshots only. API, collection and Copilot remain local.
 - No confirmed real application submission has been completed.
 
 ## Ready For Local Follow-Up
 
-- [ ] Update stale CI comments in `.github/workflows/ci.yml`: verification now
-      launches real browsers, not only mocked pages or container smoke tests.
-      Check YAML parsing and formatting; do not change job behavior for this cleanup.
-- [ ] Consolidate `docs/RELEASE-REVIEW.md` with the final v1.3.0 deployment result
-      and Linux header fix. Retain its limited manual-review scope and deferred gates.
-- [ ] Review GitHub Actions Node 20 deprecation warnings. Check supported action
-      releases and runner requirements, including the upload-pages-artifact dependency,
-      before upgrading. Acceptance: full CI and Pages artifact/deployment checks pass.
-- [ ] Resolve the three existing console lint warnings in API migration/seed
-      scripts without removing useful command output. Run lint and isolated migration
-      and seed checks against disposable data, never the owner's database.
-- [ ] Rerun `npm audit --omit=dev` and triage current results. Earlier notes mention
-      moderate ExcelJS/uuid advisories; their present status was not rechecked here.
-      Do not use a forced dependency downgrade. Verify export behavior after changes.
-- [ ] Confirm the running MCP process loads the committed source/status filter
-      fix. Its protocol regression test passed, but an older process may need restarting.
-      Acceptance: filtered `list_leads` calls return only the requested source/status.
+- [x] Restore local session fetching after the folder rename by running API and
+      frontend together with root `npm run dev`. Added sibling shutdown on command
+      exit; synthetic success/failure lifecycle checks passed. Authenticated session,
+      health, lead counts and scheduler diagnostics return HTTP 200.
+- [x] Correct stale browser comments in `.github/workflows/ci.yml`. Parsed YAML
+      matches the committed workflow exactly; formatting passed. No job behavior changed.
+- [x] Consolidate `docs/RELEASE-REVIEW.md` with v1.3.1 deployment evidence and the
+      earlier Linux header fix, retaining the limited manual-review scope.
+- [x] Review available Node 24 Actions releases: checkout v7.0.1, setup-node v7.0.0,
+      upload-pages-artifact v5.0.0 (nested upload-artifact v7.0.0), configure-pages
+      v6.0.0 and deploy-pages v5.0.1. No versions changed in this follow-up.
+- [ ] Upgrade Actions in a separate verified change after checking runner and
+      compatibility requirements. Acceptance: remote CI and Pages deployment pass.
+- [x] Resolve three CLI lint warnings through an exact-file console.log allowance
+      for migration/seed; service restrictions remain. Repository lint is clean.
+      Disposable-data checks passed: migration/repeat, seed/skip/force and missing-file
+      failure exit/stderr. CLI behavior and owner data are unchanged.
+- [x] Rerun `npm audit --omit=dev`: two moderate entries, zero high/critical, from
+      GHSA-w5hq-g745-h8pq via ExcelJS 4.4.0 -> uuid 8.3.2. Installed ExcelJS uses v4,
+      not the affected v3/v5/v6 buffer APIs. Synthetic XLSX/CSV checks passed.
+- [ ] Track the unresolved UUID advisory and an upstream-compatible fix. No forced
+      ExcelJS downgrade or unverified major UUID override was applied.
+- [x] Recheck the attached MCP process after reopening the renamed workspace.
+      LinkedIn/new reports 247 matches and returned only LinkedIn/New leads;
+      LinkedIn/saved returns zero. The previous stale-process filter failure is cleared.
+- [x] Verify authenticated scheduler diagnostics: daily 07:00 Asia/Kolkata,
+      interval 1440 minutes, persisted queued attempt on 2026-09-10 at 02:10:53 UTC.
+      No schedule was changed or search manually triggered. Next eligible daily
+      window is 2026-09-11 at 07:00 Asia/Kolkata, subject to process/queue availability.
 - [ ] Extend manual review to unchanged files if a full line-by-line audit is
       required. Previous work inventoried the repo but concentrated deep review on
       changed and high-risk paths. Track specific findings rather than blanket cleanup.
@@ -58,9 +73,10 @@ The baseline results below describe v1.3.0, not future deployment verification.
 - [ ] Recheck live provider availability and missing credentials when needed.
       Mocked adapter tests do not establish live access. Record rate limits, bot checks
       and partial results explicitly; do not sign up for services without approval.
-- [ ] Confirm the local daily scheduler's next eligible run while the Mac/API are
-      awake. Pages does not run collection or auto-refresh snapshots; review and publish
-      new exports when a public update is intended.
+- [ ] Observe completion of the next eligible scheduled run while the Mac/API are
+      awake. Diagnostics are now accessible and show a prior queued attempt, not
+      proof of successful provider results. Pages does not run collection or refresh
+      snapshots; review and publish new exports when a public update is intended.
 
 ## Blocked Until Docker And EC2 Are Approved
 

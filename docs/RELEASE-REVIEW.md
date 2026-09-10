@@ -76,6 +76,52 @@ release assets and the expected version at both public and admin URLs. Productio
 credentials are never test fixtures. Do not mistake mocked provider tests or a
 green health endpoint for evidence that an external portal will accept applications.
 
+## Deployed Release Evidence
+
+CareerScope v1.3.1 is deployed from commit `0904377`; CI run `34470638235`
+succeeded, including Pages deployment. All 26 live assets matched the local
+release byte-for-byte. The public snapshot contains 2,183 jobs and the encrypted
+admin contains 2,510 leads; its passphrase is unchanged. Live public save/filter/
+reload and admin unlock/reload/lock passed at 320, 390 and 1440 pixels without
+horizontal overflow or JavaScript errors.
+
+The v1.3.0 Linux Firefox/WebKit header overlap was fixed with responsive brand
+typography. The first v1.3.1 CI attempt exposed interrupted shortlist requests in
+WebKit during test navigation. Waiting for network idle before reload and before
+leaving the reloaded shortlist resolved it; local three-engine checks and remote
+CI passed without suppressing errors or weakening application security.
+
+## Local Follow-Up Evidence
+
+These follow-ups are separate from the deployed v1.3.1 artifact:
+
+- Corrected obsolete browser comments in CI; parsed YAML is identical to the
+  committed workflow, so no execution behavior changed.
+- Allowed intentional console.log output only in migration and seed CLI files.
+  Repository lint now has no warnings; service console restrictions remain.
+  Disposable-data CLI checks passed for migration/repeat, seed/skip/force and
+  missing-file error exit/stderr. No owner database was used for these checks.
+- Production dependency audit reports two moderate entries and no high/critical
+  findings: ExcelJS 4.4.0 depends on uuid 8.3.2, affected by
+  [GHSA-w5hq-g745-h8pq](https://github.com/advisories/GHSA-w5hq-g745-h8pq).
+  Installed ExcelJS source uses UUID v4, not the advisory's v3/v5/v6 buffer APIs.
+  This limits the identified exposure but does not clear the advisory. No major
+  downgrade/override was applied; synthetic XLSX round-trip and CSV checks passed.
+- Reviewed available Node 24 Action releases, including the nested uploader.
+  Upgrade remains separate, pending runner compatibility and remote acceptance.
+- Thirteen focused MCP/scheduler tests passed. After reopening the renamed workspace,
+  the attached MCP process now reports 247 LinkedIn/New matches and returns only
+  matching leads; LinkedIn/Saved returns zero. The prior stale-process failure cleared.
+- Authenticated scheduler diagnostics now return 200: daily 07:00 Asia/Kolkata and
+  a persisted queued attempt on 2026-09-10 at 02:10:53 UTC. This verifies scheduling
+  diagnostics, not provider success or a future run. No schedule was changed.
+- Recurring session-fetch errors coincided with separately launched API/frontend
+  processes stopping. Root `npm run dev` now starts both with sibling shutdown when
+  either command exits. Synthetic lifecycle checks passed for zero/nonzero child
+  exits. This does not provide automatic restarts or survive closing the terminal.
+- The follow-up rerun passed all 998 tests, 21 Pages checks, three infrastructure
+  checks, typecheck, build, clean lint, formatting and three-engine browser acceptance.
+
 ## Deferred Risks
 
 The local release run on 2026-09-10 passed 998 Vitest tests, 21 Pages tests,

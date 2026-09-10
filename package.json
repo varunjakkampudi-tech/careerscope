@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "predev": "npm run build:api",
-    "dev": "concurrently -n api,web -c cyan,magenta \"npm run dev -w @job-radar/api\" \"npm run dev -w @job-radar/web\"",
+    "dev": "concurrently --kill-others -n api,web -c cyan,magenta \"npm run dev -w @job-radar/api\" \"npm run dev -w @job-radar/web\"",
     "build": "npm run build -w @job-radar/shared && npm run build -w @job-radar/resume && npm run build -w @job-radar/matching && npm run build -w @job-radar/providers && npm run build -w @job-radar/api && npm run build -w @job-radar/web",
     "build:api": "npm run build -w @job-radar/shared && npm run build -w @job-radar/resume && npm run build -w @job-radar/matching && npm run build -w @job-radar/providers && npm run build -w @job-radar/api",
     "build:web": "npm run build -w @job-radar/shared && npm run build -w @job-radar/web",

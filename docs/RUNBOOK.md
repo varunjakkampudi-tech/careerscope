@@ -46,6 +46,21 @@ SameSite=Strict login cookies. The API needs a real hostname and certificate.
 Do not run the compose stack and the systemd unit on the same box. They fight
 over port 80 and over the same database file.
 
+### Local development
+
+Run `npm run dev` from the repository root and keep that terminal running. It
+builds the API packages, starts the API on port 8080 and Vite on port 5173, and
+stops the sibling service if either development command exits. This is a local
+development process, not a persistent system service or an automatic restart policy.
+
+After renaming or reopening the workspace, stop any old standalone development
+commands before starting the root command. Do not start only the web workspace:
+its `/api` proxy needs the API process too. A stopped API can produce a session
+check error with HTTP 500; a stopped Vite process produces connection-refused or
+failed-to-fetch errors. Check `http://localhost:5173/api/health` for HTTP 200, then
+reload `http://localhost:5173/leads`. Do not disable authentication to fix a
+missing server. Closing the development terminal stops the application.
+
 ---
 
 ## EC2 first boot

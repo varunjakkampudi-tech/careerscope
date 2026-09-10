@@ -52,6 +52,10 @@ export default tseslint.config(
     rules: { 'no-console': 'off' },
   },
   {
+    files: ['apps/api/src/db/migrate.ts', 'apps/api/src/db/seed.ts'],
+    rules: { 'no-console': ['warn', { allow: ['log', 'warn', 'error'] }] },
+  },
+  {
     // The web app only. Two rule sets that the compiler cannot supply:
     //
     //  - **Rules of hooks.** A conditional or out-of-order hook call type-checks

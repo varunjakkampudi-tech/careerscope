@@ -27,12 +27,9 @@ env:
   # runs. Testing on anything older would test a different database layer.
   NODE_VERSION: '24'
 
-  # Playwright is an optional dependency of @job-radar/providers, so `npm ci`
-  # installs the package — and its postinstall would then pull a Chromium build
-  # nothing here opens. Every scrape test imports the types (erased at compile
-  # time) and drives a fake page; the only real `chromium.launch` in the tree is
-  # in browser.ts, reached solely at runtime with ENABLE_SCRAPERS=true. The one
-  # job that does want a browser installs it explicitly, inside the image.
+  # Browser installation is explicit: verify installs Chromium, Firefox and
+  # WebKit for acceptance checks, while container targets install their own
+  # runtime browsers. Avoid implicit downloads during dependency installation.
   PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
 
 jobs:
@@ -192,8 +189,7 @@ jobs:
       - name: Build the browser image
         run: docker build -f infra/Dockerfile --target api-scrape -t job-radar:ci-scrape .
 
-      # The one place a real browser is launched anywhere in this repository.
-      # It answers the question the unit tests structurally cannot: whether the
+      # This complements host browser acceptance by checking whether the
       # three pieces — Playwright resolving, Chromium's shared libraries being
       # present, and Xvfb giving a headed browser somewhere to draw — actually
       # line up inside the image.
