@@ -3,15 +3,19 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Bot, Check, RefreshCw, Send, Square } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { request } from '../lib/api';
+import { browserApplicationRequest, type ApplicationDestination } from '../lib/browserApplication';
 import {
   applicationLabels,
   isApplicationActive,
   useApplications,
   type ApplicationRun,
 } from '../lib/applications';
-import { Alert, Button, Checkbox, ExternalLink, Field, Textarea } from './ui';
+import { Alert, Button, Checkbox, CopyButton, ExternalLink, Field, Select, Textarea } from './ui';
 
 export function ApplicationPanel({ leadId }: { leadId: string }) {
+  const [method, setMethod] = useState<'shared' | 'local'>('shared');
+  const [destination, setDestination] = useState<ApplicationDestination>('source-first');
+  const handoffId = useId();
   const [consent, setConsent] = useState(false);
   const [autoSubmit, setAutoSubmit] = useState(false);
   const [retryOf, setRetryOf] = useState<string | undefined>();
@@ -20,9 +24,14 @@ export function ApplicationPanel({ leadId }: { leadId: string }) {
   const capability = useQuery({
     queryKey: ['application-capability'],
     queryFn: () =>
-      request<{ available: boolean; reason: string | null }>('/applications/capability'),
+      request<{
+        available: boolean;
+        reason: string | null;
+        emailVerificationAvailable?: boolean;
+      }>('/applications/capability'),
     retry: false,
     staleTime: 60000,
+    enabled: method === 'local',
   });
   const start = useMutation({
     mutationFn: () =>
@@ -53,7 +62,88 @@ export function ApplicationPanel({ leadId }: { leadId: string }) {
         </p>
       ) : null}
       {latest ? <ApplicationProgress key={latest.id} run={latest} /> : null}
-      {!isApplicationActiveOrMissing(latest) && latest?.status !== 'submitted' ? (
+      <fieldset className="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-b border-border pb-3 text-sm">
+        <legend className="sr-only">Application method</legend>
+        {(
+          [
+            ['shared', 'Shared browser'],
+            ['local', 'Local agent'],
+          ] as const
+        ).map(([value, label]) => (
+          <label key={value} className="flex cursor-pointer items-center gap-2">
+            <input
+              type="radio"
+              name={`${handoffId}-method`}
+              value={value}
+              checked={method === value}
+              disabled={start.isPending}
+              onChange={() => {
+                setMethod(value);
+                setConsent(false);
+                setAutoSubmit(false);
+              }}
+              className="accent-accent"
+            />
+            {label}
+          </label>
+        ))}
+      </fieldset>
+      {method === 'shared' ? (
+        <div className="mt-3 min-w-0 space-y-3">
+          {applications.isPending ? (
+            <p role="status" className="text-sm text-muted">
+              Checking application history...
+            </p>
+          ) : applications.isError ? null : active ? (
+            <Alert tone="warn" title="An application is already active">
+              <Link to="/applications">Review the active application.</Link>
+            </Alert>
+          ) : latest?.status === 'submitted' ? (
+            <p role="status" className="text-sm text-muted">
+              Application already submitted.
+            </p>
+          ) : latest?.outcomeUnknown ? (
+            <p role="status" className="text-sm text-muted">
+              Check the employer portal before another attempt.
+            </p>
+          ) : (
+            <>
+              <Field label="Apply via" htmlFor={`${handoffId}-destination`}>
+                <Select
+                  id={`${handoffId}-destination`}
+                  value={destination}
+                  onChange={(event) => setDestination(event.target.value as ApplicationDestination)}
+                >
+                  <option value="source-first">Source first, careers fallback</option>
+                  <option value="source">Source portal</option>
+                  <option value="careers">Employer careers page</option>
+                </Select>
+              </Field>
+              <Field label="Copilot chat request" htmlFor={handoffId}>
+                <Textarea
+                  id={handoffId}
+                  readOnly
+                  rows={8}
+                  value={browserApplicationRequest(leadId, destination)}
+                  className="text-xs"
+                />
+              </Field>
+              <CopyButton
+                key={`${leadId}:${destination}`}
+                value={browserApplicationRequest(leadId, destination)}
+                label="Copy browser request"
+              />
+              <p role="status" className="text-xs text-muted">
+                No application started. Account creation and final submission require approval in
+                Copilot chat.
+              </p>
+            </>
+          )}
+        </div>
+      ) : null}
+      {method === 'local' &&
+      !isApplicationActiveOrMissing(latest) &&
+      latest?.status !== 'submitted' ? (
         <div className="mt-4 flex flex-col gap-3">
           {capability.isPending ? (
             <p role="status" className="text-sm text-muted">
@@ -97,9 +187,16 @@ export function ApplicationPanel({ leadId }: { leadId: string }) {
           />
           <p className="text-xs text-muted">
             The application browser opens on the computer running CareerScope, not this phone.
-            Unknown answers, account creation and terms require your input. Enter passwords,
-            verification codes and CAPTCHA only in that application browser.
+            Account creation and terms require separate approval. Enter passwords and CAPTCHA only
+            in that application browser. Never paste verification codes into a reply.
           </p>
+          {capability.data?.available ? (
+            <p role="status" className="text-xs text-muted">
+              {capability.data.emailVerificationAvailable
+                ? 'Gmail verification: configured. Approval required for each code; final submission stays review-first.'
+                : 'Gmail verification: not connected. Complete email verification in the application browser.'}
+            </p>
+          ) : null}
           <Button
             variant="primary"
             disabled={

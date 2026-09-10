@@ -30,6 +30,7 @@
  */
 
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { Bot } from 'lucide-react';
 import {
   formatRelativeDate,
   formatSalary,
@@ -91,6 +92,8 @@ export function LeadDrawer({ leadId, fallback, threshold, onClose }: LeadDrawerP
   const detail = useLead(leadId);
   const heading = useRef<HTMLDivElement>(null);
   const headingId = useId();
+  const application = useRef<HTMLDivElement>(null);
+  const applicationId = useId();
 
   const lead = detail.data?.lead ?? fallback;
   const company = detail.data?.company ?? null;
@@ -181,8 +184,24 @@ export function LeadDrawer({ leadId, fallback, threshold, onClose }: LeadDrawerP
           </div>
         ) : (
           <div className="flex flex-col gap-6 px-5 py-5">
-            <Actions lead={lead} company={company} />
-            <ApplicationPanel key={lead.id} leadId={lead.id} />
+            <Actions
+              lead={lead}
+              company={company}
+              applicationId={applicationId}
+              onApply={() => {
+                application.current?.focus({ preventScroll: true });
+                application.current?.scrollIntoView({ block: 'nearest' });
+              }}
+            />
+            <div
+              ref={application}
+              id={applicationId}
+              tabIndex={-1}
+              aria-label="Application options"
+              className="min-w-0 focus-visible:outline-2 focus-visible:outline-accent"
+            >
+              <ApplicationPanel key={lead.id} leadId={lead.id} />
+            </div>
             <MatchMeter match={lead.match} threshold={threshold} />
             <Facts job={lead.job} />
             <Links job={lead.job} company={company} />
@@ -211,7 +230,17 @@ export function LeadDrawer({ leadId, fallback, threshold, onClose }: LeadDrawerP
  * posting and decide against it, and a status they didn't choose is a lie in
  * their own tracker.
  */
-function Actions({ lead, company }: { lead: Lead; company: Company | null }) {
+function Actions({
+  lead,
+  company,
+  applicationId,
+  onApply,
+}: {
+  lead: Lead;
+  company: Company | null;
+  applicationId: string;
+  onApply: () => void;
+}) {
   const update = useUpdateLead();
   const statusId = useId();
 
@@ -220,7 +249,10 @@ function Actions({ lead, company }: { lead: Lead; company: Company | null }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
-        <ExternalLink href={lead.job.applyUrl} className={buttonClass('primary')}>
+        <Button variant="primary" onClick={onApply} aria-controls={applicationId}>
+          <Bot size={16} aria-hidden="true" /> Apply with Copilot
+        </Button>
+        <ExternalLink href={lead.job.applyUrl} className={buttonClass('secondary')}>
           Open posting
         </ExternalLink>
         {portal ? (

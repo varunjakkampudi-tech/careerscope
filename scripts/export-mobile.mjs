@@ -69,8 +69,6 @@ export async function exportMobile() {
   const jobs = publicJobs(rows);
   const destination = join(root, 'mobile-site');
   await mkdir(destination, { recursive: true });
-  for (const name of ['index.html', 'app.js', 'style.css', 'robots.txt'])
-    await copyFile(join(root, 'mobile-site', name), join(destination, name));
   await copyFile(join(root, 'apps/web/public/favicon.svg'), join(destination, 'favicon.svg'));
   const previous = await readFile(join(destination, 'jobs.json'), 'utf8')
     .then(JSON.parse)

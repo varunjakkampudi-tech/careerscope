@@ -104,6 +104,7 @@ export { createFeedProvider, type FeedAdapter, type FeedProviderOptions } from '
 export { createAdzunaProvider, type AdzunaOptions } from './keyed/adzuna.js';
 export { createJoobleProvider, type JoobleOptions } from './keyed/jooble.js';
 export { createJSearchProvider, type JSearchOptions } from './keyed/jsearch.js';
+export { createGmailVerificationReader, type VerificationRequest } from './email/verification.js';
 export {
   createKeyedProvider,
   type KeyedAdapter,

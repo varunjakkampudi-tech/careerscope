@@ -35,6 +35,9 @@ const Applications = lazy(() =>
   import('./routes/Applications').then((module) => ({ default: module.Applications })),
 );
 const Login = lazy(() => import('./routes/Login').then((module) => ({ default: module.Login })));
+const PublicJobs = lazy(() =>
+  import('./routes/PublicJobs').then((module) => ({ default: module.PublicJobs })),
+);
 
 export default function App() {
   return (
@@ -42,6 +45,15 @@ export default function App() {
       <PageMetadata />
       <ErrorBoundary>
         <Routes>
+          <Route index element={<Navigate to="/jobs" replace />} />
+          <Route
+            path="jobs"
+            element={
+              <Suspense fallback={<RouteLoading />}>
+                <PublicJobs />
+              </Suspense>
+            }
+          />
           <Route
             path="login"
             element={
@@ -52,7 +64,7 @@ export default function App() {
           />
           <Route element={<RequireLogin />}>
             <Route element={<Layout />}>
-              <Route index element={<Landing />} />
+              <Route path="workspace" element={<Landing />} />
               <Route path="onboarding" element={<Onboarding />} />
               <Route path="profile" element={<Onboarding />} />
               <Route path="search" element={<Search />} />

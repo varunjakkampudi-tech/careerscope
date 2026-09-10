@@ -14,7 +14,7 @@ it.skipIf(!existsSync(chromium.executablePath()))(
     const context = await real.newContext();
     const page = await context.newPage();
     const html =
-      '<html><body><h1>Example careers</h1><label>Name<input name="name"></label><label>Password<input type="password"></label><label>Resume<input type="file"></label><button type="button">Continue</button></body></html>';
+      '<html><body><h1>Example careers</h1><label>Name<input name="name"></label><label>Password<input type="password"></label><label>Resume<input type="file"></label><label>Verification code<input autocomplete="one-time-code"></label><button type="button">Continue</button></body></html>';
     const originalRoute = context.route.bind(context);
     vi.spyOn(context, 'route').mockImplementation(async () => {
       return originalRoute('**/*', async (route) =>
@@ -37,6 +37,17 @@ it.skipIf(!existsSync(chromium.executablePath()))(
         'Synthetic Candidate',
       );
       await expect(browser.fill(ref('Password'), 'not-a-real-secret')).rejects.toThrow(/secrets/);
+      await expect(browser.fill(ref('Verification code'), '123456')).rejects.toThrow(/secrets/);
+      await expect(browser.verificationTarget(ref('Name'))).rejects.toThrow(/verification code/);
+      await expect(browser.verificationTarget(ref('Password'))).rejects.toThrow(
+        /verification code/,
+      );
+      expect(await browser.verificationTarget(ref('Verification code'))).toBe(
+        'https://careers.example.com',
+      );
+      await expect(
+        browser.fillVerification(ref('Verification code'), '123456', 'https://other.example.com'),
+      ).rejects.toThrow(/changed/);
       await browser.upload(ref('Resume'), {
         name: 'fixture.pdf',
         mimeType: 'application/pdf',
@@ -60,6 +71,32 @@ it.skipIf(!existsSync(chromium.executablePath()))(
         .flatMap((frame) => frame.fields)
         .find((field) => field.label === 'Submit application')!;
       await browser.click(button.ref);
+      const verificationSnapshot = (await browser.inspect()) as typeof after;
+      const verificationRef = verificationSnapshot.frames
+        .flatMap((frame) => frame.fields)
+        .find((field) => field.label === 'Verification code')!.ref;
+      await browser.fillVerification(verificationRef, '123456', 'https://careers.example.com');
+      expect(await page.getByLabel('Verification code').inputValue()).toBe('123456');
+      await page.evaluate(() => {
+        const document = (
+          globalThis as unknown as {
+            document: {
+              createElement(tag: string): { textContent: string };
+              body: { append(element: unknown): void };
+            };
+          }
+        ).document;
+        const echo = document.createElement('button');
+        echo.textContent = 'Echo 123456';
+        document.body.append(echo);
+      });
+      expect(await browser.text()).not.toContain('123456');
+      const redacted = (await browser.inspect()) as typeof after;
+      expect(JSON.stringify(redacted)).not.toContain('123456');
+      const echoRef = redacted.frames
+        .flatMap((frame) => frame.fields)
+        .find((field) => field.label === 'Echo [redacted]')!.ref;
+      expect(browser.control(echoRef).label).toBe('Echo [redacted]');
     } finally {
       launch.mockRestore();
       await browser.close();

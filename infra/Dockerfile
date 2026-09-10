@@ -71,6 +71,7 @@ WORKDIR /app
 COPY tsconfig.base.json tsconfig.json ./
 COPY packages packages
 COPY apps apps
+COPY mobile-site/jobs.json mobile-site/jobs.json
 
 # Empty API base URL means "same origin as this page", which is exactly right
 # for this image: the API serves the bundle itself. The Pages build overrides
@@ -216,3 +217,25 @@ USER node
 # The entrypoint still runs first and still `exec`s this, so the X server comes
 # up between the migration and the server, and node still ends up as PID 1.
 CMD ["/usr/local/bin/xvfb-exec.sh", "node", "/app/apps/api/dist/index.js"]
+
+FROM api-scrape AS api-apply
+
+USER root
+ARG COPILOT_VERSION=1.0.83
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends ca-certificates git x11vnc novnc websockify \
+ && npm install --global @github/copilot@${COPILOT_VERSION} \
+ && copilot --version \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
+ENV APPLICATION_COPILOT_PATH=/usr/local/bin/copilot
+COPY infra/application-exec.sh /usr/local/bin/application-exec.sh
+RUN chmod +x /usr/local/bin/application-exec.sh \
+ && mkdir -p /home/node/.copilot /home/node/.vnc \
+ && chown -R node:node /home/node
+
+USER node
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD node -e "Promise.all(['http://127.0.0.1:8080/api/health/ready','http://127.0.0.1:6080/vnc.html'].map(url=>fetch(url).then(r=>{if(!r.ok)throw Error('not ready')}))).then(()=>process.exit(0),()=>process.exit(1))"
+CMD ["/usr/local/bin/xvfb-exec.sh", "/usr/local/bin/application-exec.sh", "node", "/app/apps/api/dist/index.js"]

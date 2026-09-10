@@ -4,6 +4,8 @@ import { APP_NAME } from '../lib/brand';
 
 const PAGE_NAMES: Record<string, string> = {
   '/': 'Job discovery',
+  '/jobs': 'Public job leads',
+  '/workspace': 'My workspace',
   '/login': 'Sign in',
   '/leads': 'Job leads',
   '/search': 'Search jobs',

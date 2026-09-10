@@ -384,6 +384,8 @@ apps/
   api/          Fastify, SQLite, queue, SSE, company enrichment, exports, MCP bridge
   web/          React 19 + Vite + Tailwind v4 + TanStack Query
 infra/          Dockerfile, compose, nginx, systemd
+mobile-site/    public static site and encrypted read-only admin for GitHub Pages
+scripts/        snapshot exporters, publishing tools, and browser verification
 seed/           versioned source data — 112 employers, 117 postings, hand-verified
 data/           runtime only: the SQLite database, uploaded resumes. Gitignored
 docs/           architecture, operations, and Gmail setup
@@ -406,6 +408,10 @@ Dependencies run one way: `shared ← matching ← providers ← api`, and
 Why it is built this way — the module graph, the run pipeline, the invariants,
 and how to add a source or a scoring dimension:
 **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
+
+The [release review](docs/RELEASE-REVIEW.md) records the September 2026 cleanup,
+test coverage and deployment limits. The [EC2 application runtime](docs/EC2-APPLICATIONS.md)
+is opt-in and has separate acceptance gates; Pages does not run it.
 
 ### API
 

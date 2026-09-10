@@ -11,6 +11,7 @@ import { existsSync, mkdirSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { chromium } from 'playwright';
+import type { VerificationRequest } from '@job-radar/providers';
 import type { Repos } from '../db/repo/index.js';
 import { ApplicationRepo } from '../db/repo/applications.js';
 import { ApiProblem } from '../errors.js';
@@ -42,7 +43,9 @@ Every click must use request_application_click. Set finalSubmission true ONLY fo
 Set requiresUserApproval false only for ordinary navigation or submission of this exact verified job with complete known answers.
 Set requiresUserApproval true for account creation, terms, consent, payments, unrelated actions or any uncertainty.
 For account creation, ask first. Never accept terms silently. For unknown answers use ask_application_user.
-Passwords, OTP, CAPTCHA and sign-in must be completed by the user directly in the visible browser. Never request secrets in the UI.
+Passwords, CAPTCHA and sign-in must be completed by the user directly in the visible browser. Never request secrets in the UI.
+For email OTP use verify_application_email only when the portal identifies its expected sender and the user can approve the exact sender and destination. Never guess a sender or use this for password resets, payment, unrelated accounts or Gmail sign-in.
+The verification tool reads a fresh matching Gmail message and enters its code without exposing it to you. It never clicks or submits. Re-inspect afterward; account creation and terms still require separate approval. If unavailable or ambiguous, ask the user to complete verification directly in the browser. Never read Gmail through application browser tools.
 Never bypass access controls, pay fees, send unrelated messages or browse unrelated sites.
 For final submission include employer, role, resume and an accurate review of answers in the approval summary.
 After submission inspect the page and call confirm_application with the exact visible success message.
@@ -66,6 +69,10 @@ export class ApplicationAgent {
     dataDir: string,
     private readonly clock: () => string,
     cliPath?: string,
+    private readonly verification?: {
+      available: boolean;
+      read: (request: VerificationRequest) => Promise<string | null>;
+    },
   ) {
     this.runs = new ApplicationRepo(repos.db);
     this.runs.reap(clock());
@@ -104,6 +111,10 @@ export class ApplicationAgent {
     } finally {
       await client.stop().catch(() => {});
     }
+  }
+
+  emailVerificationAvailable(): boolean {
+    return this.verification?.available ?? false;
   }
 
   async start(
@@ -152,6 +163,7 @@ export class ApplicationAgent {
       { profile, resumeText: this.repos.resumes.text(profile.resumeId), job: lead.job },
       { name: resume.filename, mimeType: resume.mimeType, buffer: Buffer.from(bytes) },
       autoSubmit,
+      profile.candidate.email ?? '',
     ).finally(() => {
       this.task = undefined;
       this.activeId = undefined;
@@ -233,6 +245,7 @@ export class ApplicationAgent {
     context: unknown,
     resume: { name: string; mimeType: string; buffer: Buffer },
     autoSubmit: boolean,
+    recipient: string,
   ): Promise<void> {
     let steps = 0;
     let beforeSubmission = '';
@@ -301,6 +314,48 @@ export class ApplicationAgent {
             progress('Uploading the attached resume.');
             await browser.upload(ref, resume);
             return 'Resume uploaded.';
+          },
+        }),
+        defineTool('verify_application_email', {
+          description:
+            'After explicit user approval, read one fresh code from the approved sender to the profile email and enter it into a verified OTP field. No code or email is returned. Never clicks or submits; forces final review.',
+          parameters: z.object({ ref: z.string(), sender: z.email().max(254) }),
+          handler: async ({ ref, sender }) => {
+            preparing();
+            if (!this.verification?.available || !recipient)
+              return 'Gmail verification is not configured or the profile email is missing. Ask the user to complete verification directly in the browser.';
+            const origin = await browser.verificationTarget(ref);
+            const approvedUrl = browser.url();
+            const after = Math.max(Date.parse(run.createdAt), Date.now() - 600_000);
+            autoSubmit = false;
+            await waitForUser(
+              `Approve Gmail verification for ${origin}?\nRead a recent code sent by ${sender} to ${recipient} and enter it on this page. Confirm this sender belongs to the employer or its application provider. This can complete verification if the page autosubmits the code. No email body or code is sent to Copilot. Account creation and final application submission require separate approval.`,
+              false,
+            );
+            preparing();
+            if (browser.url() !== approvedUrl || (await browser.verificationTarget(ref)) !== origin)
+              throw new Error('Verification page changed. Request fresh approval.');
+            progress('Reading the approved verification email.');
+            let code: string | null;
+            try {
+              code = await this.verification.read({ sender, recipient, after });
+            } catch {
+              return 'Verification mail unavailable. Complete verification directly in the browser.';
+            }
+            preparing();
+            if (!code)
+              return 'No single fresh verification code found. Ask the user to complete verification directly in the browser or request a new code.';
+            try {
+              if (browser.url() !== approvedUrl)
+                return 'Verification page changed. Request fresh approval.';
+              await browser.fillVerification(ref, code, origin);
+            } catch {
+              return 'Code entry could not be confirmed. Re-inspect the application page; complete verification manually if needed.';
+            }
+            progress(
+              'Approved verification code entered. Final application review is still required.',
+            );
+            return 'Verification code entered without clicking. Inspect the page. Final submission still requires user review.';
           },
         }),
         defineTool('request_application_click', {

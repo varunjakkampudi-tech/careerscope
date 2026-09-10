@@ -48,6 +48,7 @@ export class ApplicationBrowser {
     { locator: Locator; label: string; type: string; tag: string; signature: string; url: string }
   >();
   private allowedOrigins = new Set<string>();
+  private readonly verificationSecrets = new Set<string>();
 
   constructor(private readonly directory: string) {}
 
@@ -91,21 +92,28 @@ export class ApplicationBrowser {
   }
 
   url(): string {
-    return this.page?.url() ?? '';
+    return this.redact(this.page?.url() ?? '');
+  }
+
+  private redact(value: string): string {
+    for (const secret of this.verificationSecrets) value = value.split(secret).join('[redacted]');
+    return value;
   }
 
   async text(): Promise<string> {
     if (!this.page) throw new Error('Browser is not open.');
-    return (
-      await Promise.all(
-        this.page.frames().map((frame) =>
-          frame
-            .locator('body')
-            .innerText()
-            .catch(() => ''),
-        ),
-      )
-    ).join('\n');
+    return this.redact(
+      (
+        await Promise.all(
+          this.page.frames().map((frame) =>
+            frame
+              .locator('body')
+              .innerText()
+              .catch(() => ''),
+          ),
+        )
+      ).join('\n'),
+    );
   }
 
   async inspect(): Promise<unknown> {
@@ -162,13 +170,13 @@ export class ApplicationBrowser {
         .catch(() => '');
       frames.push({ url: frame.url(), text: text.slice(0, 18000), fields });
     }
-    return { url: this.url(), frames };
+    return JSON.parse(this.redact(JSON.stringify({ url: this.url(), frames })));
   }
 
   control(ref: string) {
     const control = this.controls.get(ref);
     if (!control) throw new Error('Unknown control; inspect the current page again.');
-    return control;
+    return { ...control, label: this.redact(control.label) };
   }
 
   async fill(ref: string, value: string): Promise<void> {
@@ -194,6 +202,41 @@ export class ApplicationBrowser {
     await this.validateControl(ref);
     if (this.control(ref).type !== 'file') throw new Error('Choose a file input.');
     await this.control(ref).locator.setInputFiles(file);
+  }
+
+  async verificationTarget(ref: string): Promise<string> {
+    await this.validateControl(ref);
+    const control = this.control(ref);
+    const origin = publicApplicationUrl(this.url()).origin;
+    const field = await control.locator.evaluate((element) => {
+      const input = element as unknown as {
+        getAttribute(name: string): string | null;
+        ownerDocument: { location: { origin: string } };
+      };
+      return {
+        autocomplete: input.getAttribute('autocomplete'),
+        origin: input.ownerDocument.location.origin,
+      };
+    });
+    if (
+      control.tag !== 'input' ||
+      !['text', 'tel', 'number', ''].includes(control.type) ||
+      (!/otp|verification.?code|one.?time|security.?code/i.test(control.label) &&
+        field.autocomplete !== 'one-time-code') ||
+      field.origin !== origin
+    )
+      throw new Error(
+        'Choose a same-origin verification code input; otherwise complete it manually.',
+      );
+    return origin;
+  }
+
+  async fillVerification(ref: string, code: string, approvedOrigin: string): Promise<void> {
+    if (!/^\d{6,8}$/.test(code) || (await this.verificationTarget(ref)) !== approvedOrigin)
+      throw new Error('Verification target changed; request fresh approval.');
+    this.verificationSecrets.add(code);
+    await this.control(ref).locator.fill(code);
+    this.controls.clear();
   }
 
   async validateControl(ref: string): Promise<void> {

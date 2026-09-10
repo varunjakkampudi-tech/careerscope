@@ -44,7 +44,10 @@ export async function applicationsRoutes(
         reason:
           'Set ENABLE_APPLICATION_AGENT=true on the local API to enable Copilot applications.',
       };
-    return applications.capability();
+    return {
+      ...(await applications.capability()),
+      emailVerificationAvailable: applications.emailVerificationAvailable(),
+    };
   });
   app.get('/applications', async (request) => {
     const { leadId } = parseOrThrow(z.object({ leadId: z.string().optional() }), request.query);

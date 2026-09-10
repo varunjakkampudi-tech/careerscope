@@ -353,7 +353,10 @@ export function buildMcpServer(container: Container): McpServer {
       },
     },
     async (input) => {
-      const query = leadQuerySchema.safeParse(prune(input));
+      const { source, status, ...filters } = input;
+      const query = leadQuerySchema.safeParse(
+        prune({ ...filters, sources: source, statuses: status }),
+      );
       if (!query.success) return problem('Invalid filter', query.error.issues);
 
       const page = repos.leads.page(query.data);

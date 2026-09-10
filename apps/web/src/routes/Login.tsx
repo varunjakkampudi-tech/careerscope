@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Eye, EyeOff, LockKeyhole } from 'lucide-react';
 import { request } from '../lib/api';
@@ -47,6 +47,9 @@ export function Login() {
   return (
     <main className="flex min-h-dvh flex-col bg-canvas px-5 py-8 text-ink">
       <Brand />
+      <Link to="/jobs" className="mt-4 w-fit text-sm text-accent hover:underline">
+        Public jobs
+      </Link>
       <section className="mx-auto my-auto w-full max-w-sm py-12" aria-labelledby="login-title">
         <LockKeyhole size={28} className="mb-5 text-accent" aria-hidden="true" />
         <h1 id="login-title" className="text-2xl font-semibold">

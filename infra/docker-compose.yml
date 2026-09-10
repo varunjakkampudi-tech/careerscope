@@ -50,7 +50,7 @@ services:
       LOGIN_ENABLED: 'true'
       AUTH_ORIGIN: ${AUTH_ORIGIN:?Set AUTH_ORIGIN to the production HTTPS origin}
       TRUST_PROXY: 'true'
-      ENABLE_APPLICATION_AGENT: 'false'
+      ENABLE_APPLICATION_AGENT: ${ENABLE_APPLICATION_AGENT:-false}
       # Empty means same-origin only, which is correct here: nginx proxies the
       # SPA and the API through one hostname, so the browser never makes a
       # cross-origin request. Set this only for the GitHub Pages split deploy.

@@ -3,9 +3,8 @@ name: Deploy API to EC2
 # Ships the API (and, on this host, the SPA it serves) to a single EC2 box
 # running the compose stack in infra/docker-compose.yml.
 #
-# Triggered by CI finishing green on main, so a red build cannot reach
-# production. `workflow_dispatch` is the manual escape hatch — for redeploying
-# after changing .env on the server, say, when no commit is involved.
+# Manual-only while the Docker/EC2 acceptance gates remain unverified.
+# ENABLE_EC2_DEPLOY must be explicitly enabled before any manual run can deploy.
 #
 # One-time setup, under Settings → Secrets and variables → Actions:
 #
@@ -25,10 +24,6 @@ name: Deploy API to EC2
 # the directory. Full walkthrough in docs/RUNBOOK.md.
 
 on:
-  workflow_run:
-    workflows: [CI]
-    branches: [main]
-    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -46,8 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
-    # A completed workflow_run includes failures and cancellations.
-    if: ${{ github.event_name == 'workflow_dispatch' || (vars.ENABLE_EC2_DEPLOY == 'true' && github.event.workflow_run.conclusion == 'success') }}
+    if: ${{ vars.ENABLE_EC2_DEPLOY == 'true' }}
 
     steps:
       # No third-party SSH action: this step holds a private key with shell

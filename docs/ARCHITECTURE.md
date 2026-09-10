@@ -13,8 +13,9 @@ for the person about to change it.
 
 ## The shape
 
-One npm-workspaces monorepo, one TypeScript build graph (`tsc -b`), one
-deployable process.
+One npm-workspaces monorepo and one TypeScript build graph (`tsc -b`). The
+full application runs as an API process serving the React bundle. GitHub Pages
+is a separate static artifact built from `mobile-site/`, not the full application.
 
 Four ideas do most of the work:
 
@@ -22,10 +23,9 @@ Four ideas do most of the work:
    with the schema and the UI infers its types from the same object, so a field
    renamed on the server is a compile error in the browser rather than an
    `undefined` at runtime.
-2. **The scoring engine is pure.** `packages/matching` has no I/O, no clock it
-   does not receive, and no network. That is what makes 135 unit tests over it
-   meaningful, and it is why accuracy is the part of this app you can actually
-   reason about.
+2. **Deterministic scoring stays separate from I/O.** Heuristic scoring receives
+   its context explicitly. Optional LLM reranking is a separate network-backed
+   operation; it must not be confused with deterministic scoring.
 3. **Dependencies are passed, never imported ambiently.** `container.ts` builds
    the graph once. Nothing below `env.ts` reads `process.env`; no service
    reaches for a database handle it was not given.
@@ -37,7 +37,9 @@ Four ideas do most of the work:
 
 ## Module graph
 
-Edges point at dependencies. There are no cycles, and `tsc -b` enforces that.
+Package dependencies are declared in workspace manifests and TypeScript project
+references. `providers` uses `matching` for demand extraction; the API composes
+the packages. `tsc -b` checks project references, not every source-level import cycle.
 
 ```
                     ┌─────────────────┐
@@ -142,8 +144,8 @@ back in, so the _next_ run queries the new board (`absorbBoards` in
 ## The browser tier
 
 LinkedIn, Naukri and Indeed publish no API. `packages/providers/src/scrape/`
-covers them anyway, and it is the only code in the repository that can start a
-browser — though not every source in it does: LinkedIn's logged-out guest
+covers collection from them. The API's separate `ApplicationBrowser` also starts
+a browser for supervised applications. Not every collector needs one: LinkedIn's logged-out guest
 endpoints answer a plain HTTP client, so `needsBrowser: false` and it never pays
 for a launch. Only Naukri and Indeed need Chromium.
 

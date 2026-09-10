@@ -1,6 +1,56 @@
 # Copilot Application Agent
 
-## Setup
+## Shared Browser Handoff
+
+**Shared browser** is the default application method in a lead's AI application
+panel. Choose **Copy browser request**, then paste the request into your VS Code
+Copilot chat with the relevant career page and signed-in Gmail tab shared. The
+request is visible for review and selection if clipboard access is unavailable.
+It contains only the lead ID and workflow instructions, not profile values,
+resume contents, passwords, email bodies or OTPs.
+
+**Apply via** selects the route for the shared-browser request:
+
+- **Source first, careers fallback** starts at the original LinkedIn, Naukri,
+  Indeed or other publisher posting. If it cannot accept the application and
+  nothing has been submitted, Copilot can locate the same verified employer job
+  and explain the route change before entering data.
+- **Source portal** stays in the original portal's application flow, including
+  its external Apply redirect. A separate route requires asking first.
+- **Employer careers page** locates the exact job on the verified company site;
+  a similar title, guessed URL or unverified job is not a substitute.
+
+For Gmail/aggregator leads, the source route means the linked job publisher.
+Prior applications must be checked across sources: never submit on both routes
+or switch portals after an uncertain submission. Portal confirmations can establish
+success, but an account-created message or redirect alone cannot. These instructions
+guide Copilot; the handoff is not a deterministic integration with every portal.
+You can also request a specific lead and route directly in the shared Copilot chat
+without copying the request. Account and final-review approvals still apply.
+
+This path uses the browser tools available to the current chat. It does not
+require Gmail OAuth, Copilot CLI or the separate local application worker, and
+does not extract or transfer browser cookies. The chat cannot be started by the
+web page: copying alone performs no browser automation, starts no application
+run and changes no lead status. The worker's Applications timeline does not
+automatically track work done in the shared browser.
+
+The handoff requires checking the exact job and prior application history,
+permission before sharing the profile/resume, approval before every account and
+terms acceptance, and a separate final review before submission. Only current,
+matching verification mail should be read; passwords and CAPTCHA stay in the
+browser. Codes should transfer directly between approved browser fields without
+being returned in tool output when supported; otherwise enter them yourself.
+Unknown or ambiguous verification links/codes require manual review. After an
+approved submission, Copilot must observe employer confirmation before updating
+the lead to Applied. Uncertain outcomes must not be retried automatically.
+
+The panel withholds new handoffs while a worker application is active or a prior
+attempt is submitted or uncertain. Copilot must still recheck status when the
+request is pasted, because clipboard requests are not live authorization tokens.
+No real application or account creation is exercised by the handoff tests.
+
+## Local Agent Setup
 
 This is an opt-in local desktop workflow with review-first and per-job automatic
 submission modes, not a universal unattended
@@ -26,15 +76,15 @@ does not send a prompt to an existing VS Code chat.
 
 ## Workflow
 
-Open a lead and review the data-sharing consent. Optionally select **Authorize
+Open a lead, select **Local agent**, and review the data-sharing consent. Optionally select **Authorize
 automatic submission for this job**, then choose **Apply with Copilot** once to
 start. Automatic submission is off by default and resets for another job.
 A saved profile and attached resume are required.
 The worker opens the posting, is instructed to find and verify the exact employer
 job, fills known fields and uploads the attached resume. Unknown answers are
 questions, not guesses. Account creation, terms, consent and checkbox/radio choices
-need approval in both modes. Passwords, sign-in, OTP and CAPTCHA require direct
-browser input. Automatic mode permits ordinary navigation and final submission
+need approval in both modes. Passwords, sign-in and CAPTCHA require direct
+browser input. Optional Gmail verification is described below. Automatic mode permits ordinary navigation and final submission
 for this job under the initial authorization; uncertain actions still pause.
 
 **Applications** shows persisted progress across navigation and page refreshes.
@@ -58,6 +108,47 @@ checked the employer portal and confirmed it was not received. This acknowledgme
 is tied to the specific attempt and stored with the retry; an old acknowledgment
 cannot authorize a later uncertain attempt. Legacy failed records without outcome
 metadata conservatively require this check. A confirmed submission cannot be retried.
+
+## Accounts And Gmail Verification
+
+For the review-first workflow, leave **Authorize automatic submission** unchecked.
+Copilot can prepare a career-site account and its application form, but asks before
+each account-creation action and before accepting terms. Enter a unique password
+directly in the visible application browser, preferably with your password manager.
+The app does not generate or retain account passwords. Account registration and
+email verification do not mark a lead Applied.
+
+To enable code entry from Gmail, configure the existing read-only OAuth connection
+in [GMAIL.md](GMAIL.md), using the mailbox matching your profile's candidate email,
+then restart the local API. The application panel reports whether credentials are
+configured, not whether the OAuth grant is currently valid. This connection does
+not attach to Gmail tabs shared with VS Code. No new Google permission scope is
+needed beyond `gmail.readonly`.
+
+When the portal identifies its verification sender, Copilot can request
+**Approve Gmail verification** for a specific sender, recipient and destination.
+Verify that these belong to this application before approving. Unknown senders
+must not be guessed. Only messages after this application started and within the
+last ten minutes qualify. The reader fetches at most ten messages, excludes spam,
+trash, drafts and sent mail, and requires exactly one eligible message containing
+one labelled 6-8 digit code. It rejects ambiguous codes, password-reset/payment
+messages and unfamiliar templates. Sender filtering is not proof of authenticity.
+
+The code goes directly from the local reader to an unchanged, same-origin OTP
+input. The worker returns only an outcome to Copilot, redacts echoed codes from
+later inspection, and never writes the code or email body to application events.
+It does not click a verification link or button, mark mail read, or submit an
+application. Some portals autosubmit OTP fields when filled; the approval covers
+that verification step. Account creation still needs its own approval, and using
+Gmail verification forces a separate final application review, including for runs
+that originally selected automatic submission.
+
+If Gmail is unavailable, a code is expired or ambiguous, the page changed, the form
+uses split/cross-origin inputs, or the email contains a verification link instead,
+complete verification directly in the application browser and tell Copilot it is
+done. Do not paste passwords or codes into the reply field. No CAPTCHA bypass,
+mailbox-wide browsing, unattended account creation or universal portal coverage
+is provided.
 
 ## Daily Leads
 
@@ -90,7 +181,7 @@ they do not backfill older runs or indicate that a sleeping API is healthy.
 - Progress/questions/confirmation are stored in SQLite, bounded to 200 events
   per application. Field values are not included in routine progress events.
   Never place secrets in question replies; replies are sent to Copilot.
-- The SDK exposes only the six application tools, with no shell, arbitrary script,
+- The SDK exposes only the seven application tools, with no shell, arbitrary script,
   filesystem browsing, built-in coding tools or external MCP tools.
 - Browser checks block common local/private destinations and require HTTPS.
   These checks are defense in depth, not an OS-level network sandbox. Do not run
@@ -110,3 +201,6 @@ Chromium is not installed. No real application is submitted by the tests.
 Worker tests cover automatic submission authorization, manual-review defaults,
 sensitive-action pauses and confirmation-only Applied updates. An authenticated
 live Copilot/employer run still requires user sign-in and has not been verified.
+Gmail tests use synthetic messages and mock HTTP, and worker tests verify approval
+before mailbox access, cancellation, code privacy and mandatory final review.
+Real account creation and Gmail OTP delivery are not exercised by tests.

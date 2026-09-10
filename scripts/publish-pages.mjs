@@ -29,8 +29,8 @@ export function publishPages({ read = readFileSync, run = execFileSync, bump = '
   if (git('diff', '--cached', '--name-only')) {
     throw new Error('Commit or unstage pending changes before publishing.');
   }
-  if (git('status', '--porcelain', '--', ...versionPaths)) {
-    throw new Error('Commit version-file changes before publishing.');
+  if (git('status', '--porcelain', '--untracked-files=all')) {
+    throw new Error('Commit all intended changes and resolve untracked files before publishing.');
   }
   run(process.execPath, ['scripts/export-admin.mjs'], {
     ...options,
@@ -58,7 +58,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     );
   } catch {
     process.stderr.write(
-      'Publication failed. Check the release type (patch/minor/major), local passphrase, main branch, pending version/staged changes and Git access. Release files or a commit may remain locally if a step failed. No secret was printed.\n',
+      'Publication failed. Check the release type (patch/minor/major), local passphrase, main branch, clean worktree and Git access. Release files or a commit may remain locally if a step failed. No secret was printed.\n',
     );
     process.exitCode = 1;
   }

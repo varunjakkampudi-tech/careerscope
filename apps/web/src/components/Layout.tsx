@@ -59,6 +59,7 @@ export function Layout() {
             />
             <NavItem to="/applications" label="Applications" />
             <NavItem to="/settings" label="Settings" />
+            <NavItem to="/jobs" label="Public jobs" />
           </nav>
 
           <div className="col-start-2 row-start-1 flex items-center gap-1 lg:col-start-3">
@@ -193,7 +194,7 @@ const THEME_LABELS: Record<ThemeChoice, string> = {
  * choice a user can want back, and a binary toggle silently throws it away the
  * first time it is pressed.
  */
-function ThemeToggle() {
+export function ThemeToggle() {
   const choice = useSyncExternalStore(subscribeToTheme, getThemeChoice);
   const resolved = useSyncExternalStore(subscribeToTheme, getResolvedTheme);
   const next = THEME_ORDER[(THEME_ORDER.indexOf(choice) + 1) % THEME_ORDER.length] ?? 'system';

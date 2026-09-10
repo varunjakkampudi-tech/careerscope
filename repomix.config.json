@@ -1,0 +1,60 @@
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "input": { "maxFileSize": 150000 },
+  "output": {
+    "filePath": ".repomix/context.md",
+    "style": "markdown",
+    "compress": true,
+    "fileSummary": true,
+    "directoryStructure": true,
+    "includeFullDirectoryStructure": true,
+    "removeEmptyLines": true,
+    "copyToClipboard": false,
+    "tokenBudget": 12000,
+    "git": { "sortByChanges": false, "includeDiffs": false, "includeLogs": false }
+  },
+  "include": [
+    "docs/PROJECT-CONTEXT.md",
+    "package.json",
+    "tsconfig.base.json",
+    "apps/*/package.json",
+    "packages/*/package.json",
+    "apps/api/src/app.ts",
+    "apps/api/src/container.ts",
+    "apps/web/src/App.tsx",
+    "packages/*/src/index.ts"
+  ],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      "**/.env*",
+      "**/data/**",
+      "**/resumes/**",
+      "**/.auth/**",
+      "**/application-agent/**",
+      "**/*.{db,sqlite,sqlite3,pem,key,p12,pfx}",
+      "**/*.{db,sqlite,sqlite3}-*",
+      "**/*.{pdf,docx}",
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/dist-types/**",
+      "**/coverage/**",
+      "**/logs/**",
+      "**/*.log",
+      "**/*.tsbuildinfo",
+      "**/package-lock.json",
+      "**/.playwright-mcp/**",
+      "**/playwright-report/**",
+      "**/test-results/**",
+      "**/recovered-session*",
+      "seed/**",
+      "_site/**",
+      "mobile-site/jobs.json",
+      "mobile-site/admin.enc.json",
+      ".repomix/**",
+      "repomix-output*"
+    ]
+  },
+  "security": { "enableSecurityCheck": true }
+}

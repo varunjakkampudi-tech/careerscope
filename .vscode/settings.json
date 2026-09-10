@@ -7,6 +7,10 @@
 
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "repomix.output.copyToClipboard": false,
+  "repomix.runner.keepOutputFile": true,
+  "repomix.runner.useTargetAsOutput": false,
+  "repomix.runner.useBundleNameAsOutputName": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
@@ -24,7 +28,11 @@
     "**/dist": true,
     "**/dist-types": true,
     "**/node_modules": true,
-    "package-lock.json": true
+    "package-lock.json": true,
+    ".repomix/**": true,
+    "mobile-site/jobs.json": true,
+    "mobile-site/admin.enc.json": true,
+    "recovered-session*.md": true
   },
   "files.watcherExclude": {
     "**/dist/**": true,

@@ -41,3 +41,7 @@ Thumbs.db
 # Editor
 .idea/
 *.swp
+
+# Generated AI context stays local and must not be re-packed.
+.repomix/
+repomix-output*

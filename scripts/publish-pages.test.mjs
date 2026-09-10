@@ -57,6 +57,7 @@ test('each publication reads the local passphrase and commits a patch release wi
       'mobile-site/version.js',
       'mobile-site/admin.enc.json',
     ]);
+    assert.deepEqual(runner.calls[2].args, ['status', '--porcelain', '--untracked-files=all']);
     assert.ok(runner.calls.every((call) => !call.args.join(' ').includes(passphrase)));
     assert.ok(
       runner.calls.filter((call) => call.command === 'git').every((call) => !call.options.env),
@@ -71,6 +72,12 @@ test('missing or placeholder passphrases, wrong branches and staged changes prev
     fixture('ADMIN_SNAPSHOT_PASSPHRASE=valid-synthetic-secret-123', { branch: 'feature' }),
     fixture('ADMIN_SNAPSHOT_PASSPHRASE=valid-synthetic-secret-123', { staged: 'README.md' }),
     fixture('ADMIN_SNAPSHOT_PASSPHRASE=valid-synthetic-secret-123', { dirty: ' M package.json' }),
+    fixture('ADMIN_SNAPSHOT_PASSPHRASE=valid-synthetic-secret-123', {
+      dirty: ' M apps/api/src/app.ts',
+    }),
+    fixture('ADMIN_SNAPSHOT_PASSPHRASE=valid-synthetic-secret-123', {
+      dirty: '?? apps/web/src/routes/NewRoute.tsx',
+    }),
   ]) {
     assert.throws(() => publishPages(runner));
     assert.ok(!runner.calls.some((call) => ['add', 'commit', 'push'].includes(call.args[0])));

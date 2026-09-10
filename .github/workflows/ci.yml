@@ -72,8 +72,11 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Install test browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
       - name: Test
-        run: npm test
+        run: npm test && node --test infra/application-runtime.test.mjs
 
       - name: Validate Pages snapshots and publication
         run: npm run pages:test
@@ -83,6 +86,9 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Verify built app and public workspace in browsers
+        run: node --import tsx scripts/check-ui.mjs && npm run pages:workspace:test && node scripts/check-admin-ui.mjs
 
       # A build that produces something which cannot boot is still a failure.
       # The health route is public, so this needs no key beyond the one the

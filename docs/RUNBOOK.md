@@ -8,6 +8,10 @@ Start with [Production readiness](PRODUCTION-READINESS.md) and
 an existing owner account. The HTTP bootstrap site serves only ACME challenges;
 all application routes return 503 until the TLS configuration is activated.
 
+For Copilot-assisted applications with a remote browser, use the opt-in
+[EC2 application runtime](EC2-APPLICATIONS.md). The default image is not the
+complete application-agent runtime.
+
 > **Read this first.** No part of `infra/` has been built or run on a developer
 > machine — Docker was not available where this was written. CI's `image` job
 > builds the container, and the first `docker compose up` on your box is the
@@ -378,10 +382,11 @@ error in the console means step 3 was missed.
 
 ## CI/CD
 
-Cloud automation is opt-in. Set repository variable `ENABLE_EC2_DEPLOY=true`
-to deploy after green CI on `main`, or run the EC2 workflow manually. Set
-`ENABLE_PAGES_DEPLOY=true` only when using GitHub Pages. Container CI checks run
-when `ENABLE_CONTAINER_CI=true` or CI is launched manually.
+GitHub Pages deploys the validated static artifact after successful CI on `main`.
+EC2 is manual-only while its acceptance gates remain unverified; even a manual
+run requires repository variable `ENABLE_EC2_DEPLOY=true`. Do not enable it for
+the Pages-only release. Container CI checks run when `ENABLE_CONTAINER_CI=true`
+or CI is launched manually.
 
 The EC2 workflow also needs four secrets and supports an optional path variable:
 

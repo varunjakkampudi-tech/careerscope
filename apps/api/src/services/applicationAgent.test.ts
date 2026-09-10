@@ -7,7 +7,15 @@ const runtime = vi.hoisted(() => ({
   clientOptions: undefined as Record<string, unknown> | undefined,
   sessionOptions: undefined as Record<string, unknown> | undefined,
   updateOptions: vi.fn(),
+  verificationRead: vi.fn(),
+  verificationFill: vi.fn(),
+  browserUrl: 'https://careers.example.com/apply',
   finish: undefined as (() => void) | undefined,
+}));
+
+vi.mock('@job-radar/providers', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@job-radar/providers')>()),
+  createGmailVerificationReader: () => ({ available: true, read: runtime.verificationRead }),
 }));
 
 vi.mock('@github/copilot-sdk', () => ({
@@ -45,7 +53,7 @@ vi.mock('./applicationBrowser.js', () => ({
   ApplicationBrowser: class {
     open = vi.fn();
     close = vi.fn().mockResolvedValue(undefined);
-    url = () => 'https://careers.example.com/apply';
+    url = () => runtime.browserUrl;
     control = () => ({ label: 'Submit application', type: 'submit' });
     validateControl = vi.fn();
     text = async () =>
@@ -58,6 +66,8 @@ vi.mock('./applicationBrowser.js', () => ({
     };
     fill = vi.fn();
     upload = vi.fn();
+    verificationTarget = async () => 'https://careers.example.com';
+    fillVerification = runtime.verificationFill;
   },
 }));
 
@@ -69,6 +79,9 @@ afterEach(() => {
   runtime.clientOptions = undefined;
   runtime.sessionOptions = undefined;
   runtime.updateOptions.mockClear();
+  runtime.verificationRead.mockReset();
+  runtime.verificationFill.mockReset();
+  runtime.browserUrl = 'https://careers.example.com/apply';
 });
 
 async function fixtureWithResume() {
@@ -98,13 +111,163 @@ function tool(name: string, args: unknown) {
 }
 
 describe('application worker approvals', () => {
+  it('rejects a changed page before reading the approved mailbox', async () => {
+    const fixture = await fixtureWithResume();
+    try {
+      const agent = fixture.container.applications;
+      const run = await agent.start(fixture.container.repos.leads.forProfile()[0]!.id, true);
+      await vi.waitFor(() => expect(runtime.tools.length).toBe(7));
+      const pending = tool('verify_application_email', {
+        ref: '1',
+        sender: 'accounts@employer.example',
+      });
+      const rejected = expect(pending).rejects.toThrow(/page changed/);
+      await vi.waitFor(() => expect(agent.runs.get(run.id)?.status).toBe('needs_input'));
+      runtime.browserUrl = 'https://other.example.com/apply';
+      agent.respond(run.id, agent.runs.get(run.id)!.requestId!, 'Approved');
+      await rejected;
+      expect(runtime.verificationRead).not.toHaveBeenCalled();
+      expect(runtime.verificationFill).not.toHaveBeenCalled();
+      await agent.cancel(run.id);
+    } finally {
+      await fixture.close();
+    }
+  });
+
+  it('does not enter a code if cancelled while Gmail is responding', async () => {
+    const fixture = await fixtureWithResume();
+    try {
+      const agent = fixture.container.applications;
+      const run = await agent.start(fixture.container.repos.leads.forProfile()[0]!.id, true);
+      await vi.waitFor(() => expect(runtime.tools.length).toBe(7));
+      let finishRead: (code: string) => void = () => {};
+      runtime.verificationRead.mockImplementation(
+        () =>
+          new Promise<string>((resolve) => {
+            finishRead = resolve;
+          }),
+      );
+      const pending = tool('verify_application_email', {
+        ref: '1',
+        sender: 'accounts@employer.example',
+      });
+      const rejected = expect(pending).rejects.toThrow(/not active/);
+      await vi.waitFor(() => expect(agent.runs.get(run.id)?.status).toBe('needs_input'));
+      agent.respond(run.id, agent.runs.get(run.id)!.requestId!, 'Approved');
+      await vi.waitFor(() => expect(runtime.verificationRead).toHaveBeenCalled());
+      await agent.cancel(run.id);
+      finishRead('123456');
+      await rejected;
+      expect(runtime.verificationFill).not.toHaveBeenCalled();
+      expect(runtime.clicked).toBe(false);
+    } finally {
+      await fixture.close();
+    }
+  });
+
+  it('requires Gmail approval, keeps the code private and forces a separate final review', async () => {
+    const fixture = await fixtureWithResume();
+    try {
+      const agent = fixture.container.applications;
+      const lead = fixture.container.repos.leads.forProfile()[0]!;
+      const run = await agent.start(lead.id, true, true);
+      await vi.waitFor(() => expect(runtime.tools.length).toBe(7));
+      runtime.verificationRead.mockResolvedValue('123456');
+      const pending = tool('verify_application_email', {
+        ref: '1',
+        sender: 'accounts@employer.example',
+      });
+      await vi.waitFor(() => expect(agent.runs.get(run.id)?.status).toBe('needs_input'));
+      const waiting = agent.runs.get(run.id)!;
+      expect(waiting.question).toContain('https://careers.example.com');
+      expect(waiting.question).toContain('accounts@employer.example');
+      expect(waiting.question).toContain('test@example.com');
+      expect(runtime.verificationRead).not.toHaveBeenCalled();
+      agent.respond(run.id, waiting.requestId!, 'Approved');
+      const result = await pending;
+      expect(runtime.verificationRead).toHaveBeenCalledWith({
+        sender: 'accounts@employer.example',
+        recipient: 'test@example.com',
+        after: expect.any(Number),
+      });
+      expect(runtime.verificationFill).toHaveBeenCalledWith(
+        '1',
+        '123456',
+        'https://careers.example.com',
+      );
+      expect(result).not.toContain('123456');
+      expect(JSON.stringify(agent.runs.get(run.id))).not.toContain('123456');
+      expect(runtime.clicked).toBe(false);
+      expect(fixture.container.repos.leads.get(lead.id)?.status).toBe('new');
+      const submission = tool('request_application_click', {
+        ref: '1',
+        summary: 'Reviewed application.',
+        finalSubmission: true,
+        requiresUserApproval: false,
+      });
+      const rejected = expect(submission).rejects.toThrow(/cancelled/);
+      await vi.waitFor(() => expect(agent.runs.get(run.id)?.status).toBe('ready'));
+      expect(runtime.clicked).toBe(false);
+      await agent.cancel(run.id);
+      await rejected;
+    } finally {
+      await fixture.close();
+    }
+  });
+
+  it('cancels Gmail approval without reading mail or filling the code', async () => {
+    const fixture = await fixtureWithResume();
+    try {
+      const agent = fixture.container.applications;
+      const run = await agent.start(fixture.container.repos.leads.forProfile()[0]!.id, true);
+      await vi.waitFor(() => expect(runtime.tools.length).toBe(7));
+      const pending = tool('verify_application_email', {
+        ref: '1',
+        sender: 'accounts@employer.example',
+      });
+      const rejected = expect(pending).rejects.toThrow(/cancelled/);
+      await vi.waitFor(() => expect(agent.runs.get(run.id)?.status).toBe('needs_input'));
+      await agent.cancel(run.id);
+      await rejected;
+      expect(runtime.verificationRead).not.toHaveBeenCalled();
+      expect(runtime.verificationFill).not.toHaveBeenCalled();
+    } finally {
+      await fixture.close();
+    }
+  });
+
+  it('leaves unavailable or ambiguous verification to the user without leaking errors', async () => {
+    const fixture = await fixtureWithResume();
+    try {
+      const agent = fixture.container.applications;
+      const run = await agent.start(fixture.container.repos.leads.forProfile()[0]!.id, true);
+      await vi.waitFor(() => expect(runtime.tools.length).toBe(7));
+      for (const result of [null, new Error('private-token')]) {
+        if (result instanceof Error) runtime.verificationRead.mockRejectedValueOnce(result);
+        else runtime.verificationRead.mockResolvedValueOnce(result);
+        const pending = tool('verify_application_email', {
+          ref: '1',
+          sender: 'accounts@employer.example',
+        });
+        await vi.waitFor(() => expect(agent.runs.get(run.id)?.status).toBe('needs_input'));
+        agent.respond(run.id, agent.runs.get(run.id)!.requestId!, 'Approved');
+        expect(await pending).not.toContain('private-token');
+        expect(runtime.verificationFill).not.toHaveBeenCalled();
+        expect(runtime.clicked).toBe(false);
+      }
+      await agent.cancel(run.id);
+    } finally {
+      await fixture.close();
+    }
+  });
+
   it('preserves uncertainty when cancelled after a submit click', async () => {
     const fixture = await fixtureWithResume();
     try {
       const agent = fixture.container.applications;
       const lead = fixture.container.repos.leads.forProfile()[0]!;
       const run = await agent.start(lead.id, true, true);
-      await vi.waitFor(() => expect(runtime.tools.length).toBe(6));
+      await vi.waitFor(() => expect(runtime.tools.length).toBe(7));
       expect(runtime.clientOptions).toMatchObject({
         mode: 'copilot-cli',
         useLoggedInUser: true,
@@ -143,7 +306,7 @@ describe('application worker approvals', () => {
       const agent = fixture.container.applications;
       const lead = fixture.container.repos.leads.forProfile()[0]!;
       const run = await agent.start(lead.id, true, true);
-      await vi.waitFor(() => expect(runtime.tools.length).toBe(6));
+      await vi.waitFor(() => expect(runtime.tools.length).toBe(7));
       await tool('request_application_click', {
         ref: '1',
         summary: 'Send the completed application for this verified job.',
@@ -173,7 +336,7 @@ describe('application worker approvals', () => {
     try {
       const agent = fixture.container.applications;
       const run = await agent.start(fixture.container.repos.leads.forProfile()[0]!.id, true, true);
-      await vi.waitFor(() => expect(runtime.tools.length).toBe(6));
+      await vi.waitFor(() => expect(runtime.tools.length).toBe(7));
       const pending = tool('request_application_click', {
         ref: '1',
         summary: 'Create account.',
@@ -196,7 +359,7 @@ describe('application worker approvals', () => {
       const agent = fixture.container.applications;
       const lead = fixture.container.repos.leads.forProfile()[0]!;
       const run = await agent.start(lead.id, true);
-      await vi.waitFor(() => expect(runtime.tools.length).toBe(6));
+      await vi.waitFor(() => expect(runtime.tools.length).toBe(7));
       await expect(agent.start(lead.id, true)).rejects.toThrow(/already active/);
       await expect(
         tool('confirm_application', {
@@ -234,7 +397,7 @@ describe('application worker approvals', () => {
     try {
       const agent = fixture.container.applications;
       const run = await agent.start(fixture.container.repos.leads.forProfile()[0]!.id, true);
-      await vi.waitFor(() => expect(runtime.tools.length).toBe(6));
+      await vi.waitFor(() => expect(runtime.tools.length).toBe(7));
       const click = tool('request_application_click', {
         ref: '1',
         summary: 'Create account.',

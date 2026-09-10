@@ -1,0 +1,19 @@
+services:
+  api:
+    build:
+      target: api-apply
+      args:
+        NODE_IMAGE: node:24-bookworm-slim
+    image: job-radar:apply
+    environment:
+      ENABLE_APPLICATION_AGENT: 'true'
+      APPLICATION_COPILOT_PATH: /usr/local/bin/copilot
+      HOME: /home/node
+    volumes:
+      - job-radar-agent-home:/home/node
+    ports:
+      - '127.0.0.1:6080:6080'
+    shm_size: '1gb'
+
+volumes:
+  job-radar-agent-home:

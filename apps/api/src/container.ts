@@ -25,6 +25,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { DEFAULT_RERANK_MODEL, type RerankClient } from '@job-radar/matching';
 import {
   closeSharedBrowser,
+  createGmailVerificationReader,
   createProviders,
   DEFAULT_BOARDS,
   HttpClient,
@@ -87,6 +88,7 @@ export function createContainer(env: Env = parseEnv(), options: ContainerOptions
     env.DATA_DIR,
     clock,
     env.APPLICATION_COPILOT_PATH,
+    createGmailVerificationReader(providerCredentials(env)),
   );
 
   // A restart leaves any run that was executing stuck at `running` with nobody
