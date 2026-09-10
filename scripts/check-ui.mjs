@@ -114,9 +114,11 @@ for (const engine of [chromium, firefox, webkit]) {
       await page.getByRole('button', { name: 'Saved shortlist', exact: true }).click();
       assert.equal(new URL(page.url()).searchParams.get('statuses'), 'saved');
       assert.equal(new URL(page.url()).searchParams.has('posted'), false);
+      await page.waitForLoadState('networkidle');
       await page.reload();
       await page.getByRole('button', { name: 'Saved shortlist', exact: true }).waitFor();
       assert.equal(new URL(page.url()).searchParams.get('statuses'), 'saved');
+      await page.waitForLoadState('networkidle');
       await page.goto(`${address}/leads`);
       await page.locator('main h1').waitFor();
       await page.setViewportSize({ width: 1440, height: 600 });
