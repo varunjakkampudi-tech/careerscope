@@ -5,11 +5,9 @@
 # ## Why node:24
 #
 # The database layer uses `node:sqlite`, which is a *built-in* module rather
-# than a native dependency. That is what keeps this image small — no
-# build-essential, no node-gyp, no prebuild download — but it also pins the
-# floor: `node:sqlite` needed `--experimental-sqlite` until 23.3, became
-# unflagged in 23.4, and only stabilised in 24.0. Anything older than 24 will
-# either refuse the import or print an experimental warning on every boot.
+# than a native dependency. Other packages can require native builds on ARM64,
+# so install stages include CMake and compiler tools; the runtime stage does not.
+# The project requires Node >=24 and uses its built-in SQLite and backup APIs.
 #
 # ## Two targets
 #
@@ -38,6 +36,10 @@ ARG NODE_IMAGE=node:24-slim
 # --------------------------------------------------------------------------
 FROM ${NODE_IMAGE} AS manifests
 WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      build-essential cmake python3 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Playwright's postinstall downloads ~150 MB of browsers. Two of the three
 # install stages below have no use for them, and the third wants them somewhere

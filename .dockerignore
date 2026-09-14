@@ -11,6 +11,8 @@ dist
 **/dist
 dist-types
 **/dist-types
+.next
+**/.next
 *.tsbuildinfo
 **/*.tsbuildinfo
 
@@ -42,7 +44,10 @@ repomix-output*
 **/.vnc
 docs
 playwright-report
+**/playwright-report
 test-results
+**/test-results
+context.txt
 *.log
 logs
 .DS_Store

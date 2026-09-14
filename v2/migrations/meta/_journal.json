@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1789312905570,
+      "tag": "0000_sweet_pestilence",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789313230287,
+      "tag": "0001_rich_frank_castle",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789314728413,
+      "tag": "0002_giant_cyclops",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789315064333,
+      "tag": "0003_remarkable_thor",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1789402065435,
+      "tag": "0004_typical_ares",
+      "breakpoints": true
+    }
+  ]
+}

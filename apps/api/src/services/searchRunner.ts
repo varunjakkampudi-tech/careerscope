@@ -154,6 +154,7 @@ export interface SearchRunnerDeps {
   /** Absent unless a key is configured; its absence is how rerank stays optional. */
   rerankClient?: RerankClient | undefined;
   rerankModel?: string | undefined;
+  rerankLimits?: { topN: number; batchSize: number; concurrency: number };
   clock?: (() => string) | undefined;
   /** Per-source fetch budget; defaults to `DEFAULT_SOURCE_BUDGET_MS`. */
   sourceBudgetMs?: number | undefined;
@@ -587,6 +588,7 @@ export class SearchRunner {
     const reranked = await rerankLeads(input, candidate, {
       client,
       ...(this.deps.rerankModel ? { model: this.deps.rerankModel } : {}),
+      ...this.deps.rerankLimits,
       onWarning: (message) => this.log(runId, 'warn', `Semantic pass: ${message}`),
       signal,
     });

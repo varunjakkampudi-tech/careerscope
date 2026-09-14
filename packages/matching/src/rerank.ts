@@ -57,7 +57,7 @@ export interface RerankInput {
  * The slice of the Anthropic client this module uses. Narrow on purpose: tests
  * pass a stub, and the real `Anthropic` instance satisfies it structurally.
  */
-export interface RerankClient {
+export interface AnthropicRerankClient {
   messages: {
     parse(
       params: Anthropic.MessageCreateParamsNonStreaming,
@@ -72,7 +72,21 @@ export interface RerankClient {
  * build rather than the first live call failing in production.
  */
 type Assert<T extends true> = T;
-export type RerankClientIsSdkCompatible = Assert<Anthropic extends RerankClient ? true : false>;
+export type RerankClientIsSdkCompatible = Assert<
+  Anthropic extends AnthropicRerankClient ? true : false
+>;
+
+export interface StructuredRerankClient {
+  assess(request: {
+    model: string;
+    system: string;
+    prompt: string;
+    schema: Record<string, unknown>;
+    signal?: AbortSignal;
+  }): Promise<{ stop_reason: string | null; parsed_output: unknown }>;
+}
+
+export type RerankClient = AnthropicRerankClient | StructuredRerankClient;
 
 export interface RerankOptions {
   client: RerankClient;
@@ -223,20 +237,37 @@ async function assessBatch(
   batch: readonly RerankInput[],
   { client, model, system, signal }: AssessArgs,
 ): Promise<RerankBatch['assessments']> {
-  const response = await client.messages.parse(
-    {
-      model,
-      max_tokens: RERANK_MAX_TOKENS,
-      thinking: { type: 'adaptive' },
-      system,
-      messages: [{ role: 'user', content: renderBatch(batch) }],
-      output_config: { effort: 'low', format: zodOutputFormat(rerankBatchSchema) },
-      // No `fallbacks`: that path runs through `client.beta.messages`, and a
-      // refused or unavailable turn already has a defined correct behaviour
-      // here — the deterministic score stands untouched.
-    },
-    signal ? { signal } : undefined,
-  );
+  const localSchema = rerankBatchSchema.extend({
+    assessments: z.array(
+      assessmentSchema.extend({
+        id: z.enum(batch.map((item) => item.job.id) as [string, ...string[]]),
+        score: z.number().min(0).max(1),
+      }),
+    ),
+  });
+  const response =
+    'assess' in client
+      ? await client.assess({
+          model,
+          system: system.map((block) => block.text).join('\n\n'),
+          prompt: renderBatch(batch),
+          schema: z.toJSONSchema(localSchema),
+          signal,
+        })
+      : await client.messages.parse(
+          {
+            model,
+            max_tokens: RERANK_MAX_TOKENS,
+            thinking: { type: 'adaptive' },
+            system,
+            messages: [{ role: 'user', content: renderBatch(batch) }],
+            output_config: { effort: 'low', format: zodOutputFormat(rerankBatchSchema) },
+            // No `fallbacks`: that path runs through `client.beta.messages`, and a
+            // refused or unavailable turn already has a defined correct behaviour
+            // here — the deterministic score stands untouched.
+          },
+          signal ? { signal } : undefined,
+        );
 
   if (response.stop_reason === 'refusal') {
     throw new Error('the model declined to assess this batch');
@@ -250,7 +281,9 @@ async function assessBatch(
 
   // Re-validated rather than trusted: `parsed_output` is typed `unknown` on the
   // narrow client interface, and a stub in a test can return anything at all.
-  const parsed = rerankBatchSchema.safeParse(response.parsed_output);
+  const parsed = ('assess' in client ? localSchema : rerankBatchSchema).safeParse(
+    response.parsed_output,
+  );
   if (!parsed.success) {
     throw new Error(`the response did not match the schema (${parsed.error.issues.length} issues)`);
   }

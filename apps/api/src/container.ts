@@ -40,6 +40,7 @@ import { parseEnv, providerCredentials, type Env } from './env.js';
 import { createLogger, type Logger } from './logger.js';
 import { CompanyResolver } from './services/companyResolver.js';
 import { ApplicationAgent } from './services/applicationAgent.js';
+import { OllamaRerankClient } from './services/ollamaRerank.js';
 import { RunEventBus } from './services/events.js';
 import { RunQueue } from './services/queue.js';
 import { SearchRunner } from './services/searchRunner.js';
@@ -157,7 +158,12 @@ export function createContainer(env: Env = parseEnv(), options: ContainerOptions
     providers,
     resolver,
     rerankClient: createRerankClient(env, logger),
-    rerankModel: DEFAULT_RERANK_MODEL,
+    rerankModel:
+      env.LLM_MODEL ??
+      (env.LLM_PROVIDER === 'ollama' ? 'qwen2.5:1.5b-instruct-q4_K_M' : DEFAULT_RERANK_MODEL),
+    ...(env.LLM_PROVIDER === 'ollama'
+      ? { rerankLimits: { topN: 5, batchSize: 1, concurrency: 1 } }
+      : {}),
     clock,
     onBoardsDiscovered: absorbBoards,
   });
@@ -199,16 +205,17 @@ export function createContainer(env: Env = parseEnv(), options: ContainerOptions
 }
 
 /**
- * The Anthropic client, or nothing.
+ * The selected semantic client, or nothing.
  *
- * `env.ts` already refuses to boot with `ENABLE_LLM_RERANK` and no key, so the
- * only way to reach the `undefined` branch is with the feature switched off.
+ * `env.ts` requires a key for Anthropic and a local origin for Ollama. The
+ * `undefined` branch means the feature is switched off.
  * That is the intended path, not a fallback: the deterministic engine is the
  * product, and the rerank is a second opinion on top of it.
  */
 function createRerankClient(env: Env, logger: Logger): RerankClient | undefined {
-  if (!env.ENABLE_LLM_RERANK || !env.ANTHROPIC_API_KEY) return undefined;
-  logger.info({ model: DEFAULT_RERANK_MODEL }, 'semantic rerank enabled');
+  if (!env.ENABLE_LLM_RERANK) return undefined;
+  logger.info({ provider: env.LLM_PROVIDER }, 'semantic rerank enabled');
+  if (env.LLM_PROVIDER === 'ollama') return new OllamaRerankClient(env.OLLAMA_ORIGIN);
   return new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
 }
 
