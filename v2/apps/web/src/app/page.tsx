@@ -4,10 +4,10 @@ import Link from 'next/link';
 import ProfileEditor from '../components/profile-editor';
 import SavedLeads, { SaveJob } from '../components/saved-leads';
 import MatchEvidence from '../components/match-evidence';
-import type { CollectedJob, CreateSearch } from '@careerscope/core';
+import type { CollectedJob, CreateSearch, SourceOutcome } from '@careerscope/core';
 import { api, ApiError } from '../lib/api';
 
-import { useDeferredValue, useState, type FormEvent } from 'react';
+import { useDeferredValue, useEffect, useState, type FormEvent } from 'react';
 import {
   QueryClient,
   QueryClientProvider,
@@ -42,6 +42,7 @@ type Detail = {
   runId: string;
   status: string;
   request: CreateSearch;
+  sourceOutcomes: SourceOutcome[] | null;
   jobs: Job[];
   events: { cursor: string; type: string; createdAt: string }[];
 };
@@ -50,9 +51,12 @@ function Workspace() {
   const [view, setView] = useState<'search' | 'profile' | 'leads'>('search');
   const [leadId, setLeadId] = useState<string | null>(null);
   const [leadDirty, setLeadDirty] = useState(false);
+  const [profileDirty, setProfileDirty] = useState(false);
   function changeView(next: typeof view) {
-    if (leadDirty && !window.confirm('Discard unsaved notes?')) return;
+    if (next === view) return;
+    if ((leadDirty || profileDirty) && !window.confirm('Discard unsaved changes?')) return;
     setLeadDirty(false);
+    setProfileDirty(false);
     setView(next);
   }
   const [selected, setSelected] = useState<string | null>(null);
@@ -78,7 +82,9 @@ function Workspace() {
     queryFn: ({ signal }) => api<Detail>(`/searches/${selectedId}`, { signal }),
     retry: 1,
     refetchInterval: (query) =>
-      ['completed', 'failed', 'cancelled'].includes(query.state.data?.status ?? '') ? false : 2000,
+      ['completed', 'partial', 'failed', 'cancelled'].includes(query.state.data?.status ?? '')
+        ? false
+        : 10000,
   });
   const login = useMutation({
     mutationFn: (body: { email: string; password: string }) =>
@@ -94,6 +100,9 @@ function Workspace() {
       api('/logout', { method: 'POST', headers: { 'x-csrf-token': session.data?.csrf ?? '' } }),
     onSuccess: () => {
       setSelected(null);
+      setLeadDirty(false);
+      setProfileDirty(false);
+      setView('search');
       exportSearch.reset();
       cache.clear();
     },
@@ -147,6 +156,28 @@ function Workspace() {
     (error) => error instanceof ApiError && error.status === 401,
   );
   const authenticated = session.data?.authenticated && !expired;
+  const streamActive =
+    authenticated && view === 'search' && ['queued', 'running'].includes(detail.data?.status ?? '');
+  useEffect(() => {
+    if (!streamActive || !selectedId) return;
+    const source = new EventSource(`/api/searches/${selectedId}/events`);
+    const refresh = () => {
+      void cache.invalidateQueries({ queryKey: ['searches'] });
+    };
+    source.addEventListener('progress', refresh);
+    source.addEventListener('settled', () => {
+      source.close();
+      refresh();
+    });
+    source.addEventListener('session-expired', () => {
+      source.close();
+      cache.setQueryData(['session'], { authenticated: false });
+      cache.removeQueries({ queryKey: ['searches'] });
+      cache.removeQueries({ queryKey: ['profile'] });
+      cache.removeQueries({ queryKey: ['leads'] });
+    });
+    return () => source.close();
+  }, [cache, selectedId, streamActive]);
   function signIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -164,8 +195,19 @@ function Workspace() {
     ) ?? [];
   return (
     <>
+      <a className="skip-link" href="#workspace-content">
+        Skip to content
+      </a>
       <header className="topbar">
-        <Link className="brand" href="/">
+        <Link
+          className="brand"
+          href="/"
+          onClick={(event) => {
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            event.preventDefault();
+            changeView('search');
+          }}
+        >
           <BriefcaseBusiness aria-hidden="true" />
           CareerScope<span>v2 alpha</span>
         </Link>
@@ -183,8 +225,10 @@ function Workspace() {
             <button
               className="icon-button"
               onClick={() => {
-                if (!leadDirty || window.confirm('Discard unsaved notes and sign out?')) {
-                  setLeadDirty(false);
+                if (
+                  !(leadDirty || profileDirty) ||
+                  window.confirm('Discard unsaved changes and sign out?')
+                ) {
                   logout.mutate();
                 }
               }}
@@ -197,7 +241,7 @@ function Workspace() {
           </div>
         )}
       </header>
-      <main>
+      <main id="workspace-content" tabIndex={-1}>
         {session.isPending ? (
           <div className="state" role="status">
             <LoaderCircle className="spin" />
@@ -240,7 +284,14 @@ function Workspace() {
             </form>
           </section>
         ) : view === 'profile' ? (
-          <ProfileEditor csrf={session.data?.csrf ?? ''} onBack={() => setView('search')} />
+          <ProfileEditor
+            csrf={session.data?.csrf ?? ''}
+            onDirty={setProfileDirty}
+            onBack={() => {
+              setProfileDirty(false);
+              setView('search');
+            }}
+          />
         ) : view === 'leads' ? (
           <SavedLeads
             csrf={session.data?.csrf ?? ''}
@@ -376,7 +427,7 @@ function Workspace() {
                       <span className={`status ${detail.data.status}`} role="status">
                         {detail.data.status}
                       </span>
-                      {detail.data.status === 'completed' && (
+                      {['completed', 'partial'].includes(detail.data.status) && (
                         <button
                           className="icon-button"
                           type="button"
@@ -427,6 +478,47 @@ function Workspace() {
                     {detail.data.status === 'failed' && (
                       <p role="alert">This search failed. Start a new search to try again.</p>
                     )}
+                    {detail.data.status === 'partial' && (
+                      <p role="status">Partial results. Some sources did not finish.</p>
+                    )}
+                    {detail.data.sourceOutcomes && (
+                      <ul className="source-outcomes" aria-label="Source outcomes">
+                        {detail.data.sourceOutcomes.map((outcome) => (
+                          <li key={outcome.source}>
+                            <strong>{sourceNames[outcome.source]}</strong>: {outcome.accepted}{' '}
+                            accepted
+                            {'; '}
+                            {outcome.status === 'completed'
+                              ? 'complete'
+                              : outcome.errorCode === 'source_timeout'
+                                ? 'timed out'
+                                : outcome.errorCode === 'invalid_response'
+                                  ? 'invalid response'
+                                  : 'source failed'}
+                            {outcome.limited ? '; collection limit reached' : ''}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {detail.data.sourceOutcomes?.some((outcome) => outcome.status === 'failed') && (
+                      <button
+                        type="button"
+                        disabled={search.isPending}
+                        onClick={() =>
+                          search.mutate({
+                            query: detail.data!.request.query,
+                            sources: detail
+                              .data!.sourceOutcomes!.filter(
+                                (outcome) => outcome.status === 'failed',
+                              )
+                              .map((outcome) => outcome.source),
+                          })
+                        }
+                      >
+                        <RefreshCw size={16} />
+                        Retry failed sources
+                      </button>
+                    )}
                     {detail.data.jobs.length > 0 && (
                       <label className="filter">
                         <span className="sr-only">Filter results</span>
@@ -437,7 +529,7 @@ function Workspace() {
                         />
                       </label>
                     )}
-                    {jobs.length === 0 && detail.data.status === 'completed' && (
+                    {jobs.length === 0 && ['completed', 'partial'].includes(detail.data.status) && (
                       <div className="state">
                         <h2>No Matching Jobs</h2>
                       </div>

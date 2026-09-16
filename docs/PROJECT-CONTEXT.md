@@ -5,6 +5,11 @@ Read the owning module and its neighboring tests, not the entire repository.
 
 ## Architecture
 
+- This module map describes preserved V1. V2 is a separate incomplete migration;
+  consult [V2 architecture](../v2/ARCHITECTURE.md) and [V2 status](../v2/README.md).
+- V2's private S3 adapter is tested but not enabled. MinIO upstream is archived;
+  runtime selection, resume workflows and full migration acceptance remain open.
+
 - npm-workspaces TypeScript monorepo; Node 24+; React/Vite frontend and Fastify API.
 - The Mac-local API owns SQLite, resumes, profile, matching, job collection and applications.
 - GitHub Pages hosts a separate public jobs export and encrypted read-only admin snapshot.

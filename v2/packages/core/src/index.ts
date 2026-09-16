@@ -9,3 +9,6 @@ export * from './runtime.js';
 export * from './profile.js';
 export * from './leads.js';
 export * from './bull-queue.js';
+export * from './storage.js';
+export * from './resumes.js';
+export * from './resume-parser.js';

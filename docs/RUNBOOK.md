@@ -673,6 +673,26 @@ the current `.env` — `restart` does not re-read it, `up -d` does.
    [The browser-backed sources](#the-browser-backed-sources-optional). Indeed in
    particular returns nothing at the default threshold by design.
 
+### Withdrawn job cleanup
+
+The v1 search runner checks up to 25 existing Greenhouse/Lever leads after each
+refresh, rotating a persisted cursor through eligible leads with a 30-second
+total budget. It deletes a lead only when the exact, uncached ATS job endpoint
+returns JSON with HTTP 404/410 and the same employer's board returns a valid
+posting list that does not contain that job. Redirects, access challenges,
+timeouts, rate limits, malformed responses and missing search results are not
+removal evidence. Greenhouse board-scoped IDs support custom employer URLs only
+when the URL includes the matching `gh_jid`. Other sources and unrecognized
+employer URLs remain unchecked.
+
+Only untouched `new` leads are eligible. Saved leads, notes, application statuses
+and application-run history are preserved, with guards rechecked at deletion to
+protect concurrent edits. The job record remains; no application history is
+deleted. Run logs report checked, removed and inconclusive counts. This is a
+bounded best-effort check, not instant or universal expiry detection. MCP workers
+already running before a code update need restarting to load the new runner.
+Public snapshots are unchanged until a separately authorized export/publication.
+
 ### SSE progress arrives in one lump at the end
 
 `proxy_buffering off` is missing on `/api/runs/*/events`. It is set in

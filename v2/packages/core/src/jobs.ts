@@ -39,3 +39,29 @@ export const collectedJobSchema = z
 export type CollectedJob = z.infer<typeof collectedJobSchema>;
 export type CollectedJobInput = z.input<typeof collectedJobSchema>;
 export const collectedJobsSchema = z.array(collectedJobSchema).max(100);
+
+export const sourceOutcomeSchema = z
+  .object({
+    source: searchSourceSchema,
+    status: z.enum(['completed', 'failed']),
+    accepted: z.number().int().min(0).max(100),
+    limited: z.boolean(),
+    errorCode: z.enum(['source_failed', 'source_timeout', 'invalid_response']).nullable(),
+  })
+  .strict()
+  .refine((value) => (value.status === 'completed') === (value.errorCode === null));
+
+export const sourceOutcomesSchema = z
+  .array(sourceOutcomeSchema)
+  .min(1)
+  .max(2)
+  .refine((values) => new Set(values.map((value) => value.source)).size === values.length);
+
+export type SourceOutcome = z.infer<typeof sourceOutcomeSchema>;
+
+export function collectionStatus(jobs: CollectedJobInput[], outcomes: SourceOutcome[]) {
+  if (outcomes.every((outcome) => outcome.status === 'completed')) return 'completed';
+  return jobs.length || outcomes.some((outcome) => outcome.status === 'completed')
+    ? 'partial'
+    : 'failed';
+}

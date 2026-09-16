@@ -1,16 +1,256 @@
 CAREERSCOPE V2 - ZERO-PAID-SERVICE DOCKER + LOCAL LLM ARCHITECTURE
 ==============================================================
-Reference date: 2026-09-14
+Reference date: 2026-09-15
+Portable handoff updated: 2026-09-16. See docs/SESSION-HANDOFF.md for the latest
+Hostinger purchase discussion, proposed outbound Mac-LLM worker, setup prerequisites
+and five browser bookmarks. These hosting/worker changes are proposals, not deployed
+features. Exact VPS/OS/domain/access and staging authorization remain unconfirmed.
+User authorizes checkpoint commit/push on the existing V2 branch, not deployment.
+Raw chats, credentials and authenticated browser sessions are excluded from public
+Git. The manual VS Code task opens public/account-neutral URLs in a desktop browser;
+new-machine login and sharing pages with Copilot are separate steps. Previous preview
+process has exited. Git checkout does not restore live chat or owner data.
 Root product version: 1.3.4 (preserved v1 runtime)
 Target: INCOMPLETE v2.0.0-alpha.1 migration.
 Branch: feature/v2-local-migration. Main remains v1.3.4.
-Latest authorization: after testing and safe cleanup, commit/push the current
-incomplete v2 checkpoint to its feature branch. No deployment, Pages publication,
-release tagging or merge into main. Publishing source is not v2 acceptance.
+Latest authorization: improve code, architecture, workflows, design, testing,
+documentation and GitHub About content without routine approval prompts. Preserve
+V1 and owner data. This portable checkpoint includes the current improvements;
+consult Git history/status for its commit and any later edits. No deployment,
+release tagging or merge into main. September16 transfer checks: root1043 tests
+and both versions' type/lint/build/format pass. V2 full tests were stopped because
+Docker/Queue Redis was unavailable; earlier31-test/browser evidence remains historical.
+Publishing source is not V2 acceptance.
 Authority: the v2 policy below and v2/ARCHITECTURE.md define the target.
 The legacy appendix describes v1 only; it cannot override v2 decisions.
 
-CURRENT V2 STATUS - 2026-09-14
+LATEST IMPLEMENTATION CONTINUATION - 2026-09-15
+----------------------------------------------
+Current user decision: KEEP UPSTREAM-ONLY STORAGE RUNTIMES. The user declined a
+pinned RustFS source-patch evaluation. Latest release checks still return rc6 and
+SeaweedFS4.47, the rejected candidates. No fork or weakened ACL/deletion contract.
+The full request remains incomplete; storage-dependent activation is blocked.
+Other unfinished implementation work is also listed below, not claimed complete.
+
+Completed independent search integration:
+- Validated per-source outcomes, accepted counts, limit indicators and fixed
+  source_failed/source_timeout/invalid_response codes. Preserve validated rows
+  before source failure. Distinguish completed/partial/failed and successful empty
+  sources. Cancellation aborts. Bounds:25s/source,60s overall,100rows/source,100jobs.
+- Migration0007 persists bounded outcomes and partial status. Fenced settlement
+  binds the exact selected sources and per-source counts to jobs and terminal event
+  in one transaction. Recorded source failures mark the SEARCH failed but COMMAND
+  handled/completed, preventing transport retries. Infrastructure retry/DLQ remains.
+- API detail/export includes status/outcomes; partial jobs can be saved/exported.
+  UI shows source outcomes and Retry failed sources, creating a new run without
+  mutating the original result or matching snapshot.
+- GET /api/searches/:id/events: owner-scoped SSE, validated Last-Event-ID or after,
+  50-event batches,2streams/owner,32/API process,30opens/minute,25s connection limit,
+  1s heartbeat/session recheck and disconnect/shutdown cleanup. Metadata only.
+  Native EventSource reconnects with2s retry;10s detail polling remains fallback.
+  Unknown/foreign cursors return400; event retention is not enabled.
+- Fenced idempotent SearchStarted and migration0008 owner/run/cursor index.
+  Per-run state/event transactions serialize allocation. Competing start/terminal
+  writes, replay, caught-up reconnect, bad cursors, ownership, simultaneous stream
+  admission and live-session revocation tested over real sockets.
+
+Verification:31 V2 tests and typecheck/lint/build/format; real SQS collection plus
+BullMQ execution-policy partial/total-failure and duplicate checks; isolated queue
+restart/AOF/process check. Fresh/repeat and populated0006->0008 upgrades preserve
+prior completed runs. Chromium/Firefox/WebKit at320/390/1440 pass, including SSE
+running state, targeted retry, partial export/save and existing owner workflows.
+Screenshots reviewed. Root1043tests plus typecheck/lint/build/format pass.
+No dependencies added this pass. Normal V2 DB is NOT migrated; reviewed migrations
+and owner setup are required before owner use. Test DBs/queues cleaned up. Current
+changes remain uncommitted; no ownerdata/configuration change, push, merge or deploy.
+
+Still unfinished: accepted upstream S3/version-preserving restore; enabled resume
+API/UI/filesworker, owner review/matching and retention; OS parser sandbox; model
+benchmarks/approval/AIworker; enrichment/Gmail/application workflows; detailed live
+source progress; Nginx/TLS; observability; public Next.js parity; coordinated backup,
+SQLite cutover rehearsal, transport cutover and mixed-load soak/full acceptance.
+Do not claim100% or production readiness. See TEMP-PENDING-WORK.md.
+
+PREVIOUS RESUME IMPLEMENTATION CONTINUATION - 2026-09-15
+------------------------------------------------------
+User requests completion of the entire agreed backlog, with context and temporary
+pending work kept current. Do not equate this internal milestone with full V2
+completion. The earlier records below are historical where superseded here.
+
+Implemented ResumeUploadCoordinator: bounded5MiB copied bytes, server SHA256/size/
+PDF-or-ZIP signature, owner/idempotency reservation, storage readiness and exact
+version verification before atomic parse-outbox scheduling. Container signatures
+only admit quarantine, not safe parsing. Storage bucket is taken from the adapter.
+recoverVersion uses HEAD plus verified exact-version GET; missing differs from
+denied/corrupt. Ambiguous successful PUT responses and SQL failure after creation
+are recovered without overwrite or another version. Owner-scoped explicit reconcile
+leaves absent objects pending. No unattended sweep or deletion is implemented.
+
+Implemented parseResumeIsolated and resumeParseHandler, reusing the existing resume
+domain package outside Fastify. Child process: no inherited env/secrets, limited
+code/dependency reads, no network/write/native-addon/child-process permissions,
+one parse per process,30s kill deadline,192MiB V8 old-space (NOT total RSS guarantee).
+Node must support network permissions; tested Node26.8.1. Fails closed otherwise.
+This is defense in depth, NOT an OS sandbox or verified files-worker container.
+DOCX yauzl preflight:200entries,20MiB expanded,100:1 per-entry ratio,validated sizes,
+required parts,encrypted/macros/embeddings rejected. PDF limit50pages; text160000
+characters; IPC1MiB. PureJS MIT DOMMatrix avoids granting native canvas permissions.
+JSZip is test-only. Invalid-document versus processing failure uses fixed errors,
+never raw parser diagnostics or private text in logs.
+
+Migration0006_amazing_ares adds resume_results: owner/upload compositeFK, unique
+upload and command, bounded JSON or fixed rejectioncode. Fenced live execution plus
+durable command equality and immutable upload command binding govern completion.
+Result insertion and execution completion/failure are atomic. Invalid documents
+are handled terminally; exhausted worker retries persist processing_failed through
+a resume-specific queue callback. Search state is unchanged. No parsed facts are
+automatically applied to profiles or matching. All new migrations ran only on
+disposable fresh/repeated test DBs; normal V2 database and V1 ownerdata untouched.
+
+Verified: synthetic DOCX upload -> S3 -> real local SQS delivery -> restricted
+parser -> PostgreSQL result; duplicate delivery does not parse again; stale fences,
+cross-owner/tampered commands, result-write rollback, lost PUT response, SQL-failure
+recovery, eight-way upload race, no extra object versions, cancelled parsing and
+subsequent parser availability. Real synthetic PDF and DOCX extraction, malformed
+files, macros, excess ZIP entries/expansion,51-page PDF and corrupt recovery rejected.
+V2 all29tests,typecheck,lint,build,format passed; queue process/restart/AOF restore
+passed after the consumer change; runtime dependency audit0known advisories.
+Root/UI/browser gates were not rerun for this backend-only work. Prior browser
+evidence below remains historical; no production/readiness/complete-security claim.
+
+REMAINING RELEASE BLOCKERS: both evaluated storage candidates still fail the
+existing acceptance contract (details below).
+RustFS rc6 source confirms full_control_grants hardcodes id:None; configuring a
+private ACL/credential cannot repair that response. Corrected maintained builds
+or another accepted runtime are required; a storage fork needs an explicit decision.
+No persistent files-worker process,
+resume publisher route, upload API/UI or owner-review action is activated. Storage
+restart/backuprestore, OS/container parser acceptance, owner review -> matching,
+retention/unattended orphan recovery, benchmark approval/AIworker,partial-source
+outcomes and all other stated V2 gates remain unfinished. Do not relax privacy or
+deletion guards, change provider architecture, migrate ownerdata or activate an
+unaccepted runtime simply to report100%. No commit/push/merge/deploy occurred.
+
+EARLIER REVIEW UPDATE - 2026-09-15
+--------------------------
+Do not claim 100% completion, exhaustive line-by-line review or production readiness.
+This pass reviewed storage, worker routing/completion, profile navigation, export
+dependencies and documentation, with repository-wide automated gates. The working
+tree contains 321 tracked code/documentation files; automated gates are not manual
+review of every line. Existing V1 withdrawn-lead changes were preserved.
+
+Implemented a private versioned S3 resume-object adapter using the existing AWS
+SDK: loopback endpoint, explicit private credentials, owner/resume UUID keys,
+PDF/DOCX metadata, 5 MiB bound, SHA-256, immutable conditional writes, exact-version
+reads/deletes, finite deadlines and cancellation. Initialization rejects missing
+versioning, non-owner ACL grants and bucket policies. Four synthetic/LocalStack
+storage tests pass. The metadata/outbox foundation below is now implemented, but
+worker parsing, owner review, orphan reconciliation, retention and recovery remain
+unimplemented. There is no enabled resume upload route or parser worker.
+
+Continuation September 15: added ResumeUploadRepository and additive migration
+0005_resume_upload_reservations. PostgreSQL stores only owner-scoped metadata:
+idempotency key, bucket, checksum, byte count, MIME, immutable object version and
+parse command reference, never binary files. Concurrent reservation retries return
+one row; conflicting metadata/version reuse fails. queueStoredUpload locks the row
+and commits queued state plus one ID-only resume.parse outbox command atomically.
+Only a trusted upload coordinator may call it after verifying storage; it is not
+proof of object existence and must never accept unchecked client version claims.
+The coordinator, upload recovery and parser remain pending; no production caller
+or queue route was enabled. Migration0005 ran only on disposable test databases,
+not the normal V2 database. No owner data or V1 migration occurred.
+
+Publisher scans now filter to configured command types BEFORE the 20-row limit.
+This prevents unsupported resume commands from starving search publication.
+Isolated tests cover owner isolation, invalid metadata, repeated migration,
+eight-way reservation/finalization races, version conflicts, rollback at both
+outbox and metadata writes, retry after failure, and 23 pending parse commands
+ahead of a publishable search. Fresh-schema/repeat migration passed; upgrading
+and restoring a populated owner database still require separate acceptance.
+
+STORAGE DECISION UPDATE: private S3-compatible object storage is the requirement,
+not MinIO. Canonical configuration is S3_ENDPOINT/S3_BUCKET/S3_ACCESS_KEY/
+S3_SECRET_KEY. Complete legacy MINIO_* configurations still work; partial canonical
+configuration and conflicting aliases fail closed. No existing private .env was
+changed. V2 retains 5 MiB (5,242,880 bytes), versus legacy V1's 10 MiB.
+
+Upstream https://github.com/minio/minio is archived and explicitly
+unmaintained (verified September 15; archive date April 25, 2026). Community
+distribution is source-only. The versioned Docker Hub pull was denied. Do not
+enable an old image or substitute an unreviewed mirror. Review a maintained
+S3-compatible runtime or an explicitly accepted source-maintenance plan. No paid
+service/account/license was activated. LocalStack is not real-runtime acceptance.
+
+Two maintained Apache-2.0 candidates were tested using pinned upstream-linked
+ARM64 images, loopback-only ports, resource limits and disposable synthetic volumes:
+- SeaweedFS4.47: private/versioned object lifecycle, eight-way immutable write
+  race (one winner/seven412 responses), anonymous read/write/delete/list denial,
+  wrong-secret denial and exact-version cleanup passed. Final empty-bucket deletion
+  failed BucketNotEmpty with s3.allowDeleteBucketNotEmpty=false. Upstream treats
+  leftover prefix directories as contents. Do not enable recursive nonempty-bucket
+  deletion merely to pass. Candidate NOT accepted.
+- RustFS1.0.0-rc.6: private readiness failed because FULL_CONTROL CanonicalUser
+  grant omits its ID; owner/grantee equality cannot be established. Do not infer
+  missing identity. This build is also a prerelease. Candidate NOT accepted.
+Exact image digests and criteria are in v2/ARCHITECTURE.md. Candidate contract uses
+S3_CONTRACT_ENDPOINT/ACCESS_KEY/SECRET_KEY; absent endpoint retains LocalStack mode.
+All test containers, synthetic volumes and the dedicated network were removed.
+Images remain cached; no application storage runtime was activated. Neither runtime
+has passed restart, persistence or backup/restore acceptance. No real resume or
+owner data was used. A corrected maintained build must pass the full contract and
+isolated version-preserving restore before selection; this blocks upload enablement.
+
+Latest storage-neutralization verification: all28 V2 tests, typecheck, lint, build,
+format and focused four storage checks pass. Candidate failures above are separate
+negative acceptance results, not passing runtime gates. Root/browser/queue-restart
+checks were not rerun for this storage-only change; their prior evidence remains
+historical. No upload coordinator, parser, matching-review, retention or AI-worker
+implementation is claimed in this continuation. Implement partial-source outcomes
+before expanding provider count. Existing V1 and uncommitted work were preserved.
+
+Fixed V2 unsaved-profile loss through header navigation/sign-out and added an
+unload warning, removed after successful save/discard. Failed sign-out retains
+protection. Added keyboard skip navigation and actual hidden/focus layout checks.
+Chromium/Firefox/WebKit synthetic workflows pass at 320/390/1440 pixels, including
+search/export/cancel/profile/saved leads and conflicts. Existing visual design is
+preserved; V2 theme parity and a comprehensive accessibility audit remain pending.
+
+Patched root ExcelJS's transitive UUID to 11.1.1 with a scoped override, without
+downgrading ExcelJS. A workbook conditional-formatting round trip and 47 route
+tests pass; root and V2 runtime dependency audits report zero known advisories.
+This is a point-in-time advisory check, not a security certification.
+
+Previous review verification: root 1,043 tests, 21 Pages tests, three runtime
+guards; V2 27 tests (including four storage checks), plus isolated Redis restart/
+AOF restore/process-lifecycle acceptance. Root and V2 typecheck, lint, build and
+format checks passed. V1, V2 and public workspace browser workflows passed in
+Chromium, Firefox and WebKit; V2 screenshots reviewed at mobile/desktop sizes.
+Git diff whitespace and touched-file editor diagnostics passed. Existing Fastify
+disableRequestLogging deprecation remains a future-major compatibility warning.
+GitHub About now states local-first discovery/matching/tracking with V1 preserved
+and V2 in alpha; homepage unchanged. Source/docs remain uncommitted for review,
+with no branch push, merge, application submission or deployment in this pass.
+
+Continuation verification: V2 now has 28 passing tests; typecheck, lint, build,
+format and isolated queue restart/AOF/process checks passed. Focused metadata/S3
+checks passed after restoring stopped local Docker dependencies. No UI or root
+runtime code changed in this continuation; browser/root checks above are prior
+evidence, not newly rerun. Updated TEMP-PENDING-WORK.md with current V1/V2 boundaries
+and next gates while preserving the September10 release record as history.
+
+Docker was stopped; the installed local application was restarted for testing.
+Existing V1 containers auto-resumed via restart policies. Existing V2 PostgreSQL,
+cache Redis, LocalStack and queue Redis were started without removing volumes.
+No real resume, owner credentials or V1 data was migrated. All integration fixtures
+use isolated synthetic databases/buckets; no application submissions or publication.
+
+Outstanding: maintained object runtime + complete resume lifecycle; benchmark/model
+approval and isolated AI worker; enrichment/Gmail/provider parity; application
+approvals worker; resumable SSE; Nginx/TLS; observability; coordinated DB/object
+backup and restore; SQLite cutover rehearsal; sustained mixed-workload soak; full
+V2 workflow/UX acceptance. 4B smoke passed previously, 9B remains unapproved.
+
+PREVIOUS CHECKPOINT STATUS - 2026-09-14
 ------------------------------
 Checkpoint verification September 14: root 1,017 tests, 21 Pages tests, three
 application-runtime guards, typecheck/lint/build/format all passed. Built v1 and
@@ -33,7 +273,7 @@ fully end-to-end accepted, or production ready. See v2/ARCHITECTURE.md for the
 complete target and feature inventory, and v2/README.md for runnable commands.
 
 Target: no required paid infrastructure/inference services. Docker Compose,
-PostgreSQL, dedicated persistent Redis/BullMQ, MinIO, local Ollama, Next.js,
+PostgreSQL, dedicated persistent Redis/BullMQ, private S3-compatible storage, local Ollama, Next.js,
 Fastify, Nginx and optional bounded observability. Kafka is deferred; AWS/EC2
 deployment is separately approved v3 work. Electricity, hardware, backup media
 and software/license eligibility remain constraints, not free infrastructure.
@@ -116,7 +356,7 @@ DOCKER ARCHITECTURE - REQUIRED V2 BASELINE
   Browser --> Nginx --+--> Next.js
          +--> Fastify API --+--> PostgreSQL
                 +--> Redis (throttle/cache only)
-                +--> MinIO (private objects)
+                +--> Private S3-compatible object storage
 
   PostgreSQL outbox --> Publisher --> Dedicated Redis / BullMQ
                   |
@@ -128,7 +368,7 @@ DOCKER ARCHITECTURE - REQUIRED V2 BASELINE
 
 PostgreSQL owns state, attempts, results and durable events. Queue Redis uses
 AOF/noeviction and is separate from disposable throttle/cache Redis. Resume/export
-workers also use private MinIO storage. Ollama runs natively with Metal on this
+workers also use private S3-compatible storage. Ollama runs natively with Metal on this
 Mac where possible; Dockerized Ollama is an optional CPU-benchmarked alternative,
 not the preferred M1 Pro runtime. Only the AI worker may access its explicitly
 allowed private endpoint. Nginx is the target same-origin application entry point.
@@ -191,8 +431,9 @@ existing providers, deduplicates richer normalized records before matching and
 preserves exclusion/confidence rules. Sources persist with each search and result
 links now display actual provider attribution. Bounds: 100 candidates per source,
 100 final jobs, 30 days, 60-second combined deadline; Himalayas caps at 20 pages
-(2,000 recent postings), not complete feed coverage. Selected-source failure still
-fails the whole attempt; partial-success persistence is not implemented.
+(2,000 recent postings), not complete feed coverage. At this September14 checkpoint,
+source failure failed the whole attempt. The latest September15 continuation above
+supersedes this with durable partial-source outcomes and targeted retry.
 Remotive remains disabled pending restart-safe shared fetch budgeting/caching.
 All 23 v2 tests and type/lint/build/format passed. Three-browser acceptance covered
 empty selection, both-source submission/persistence, reload, attribution and the
@@ -237,11 +478,11 @@ Main v2 owner setup still requires direct terminal input. Root/shared code remai
 unchanged in this slice; previous root gates were not rerun. No commit/push/deploy.
 
 Still required before full v2 completion:
-- MinIO/resume upload, parsing, metadata, retention and resume-derived matching.
+- Accepted S3 runtime, connected resume upload/parsing, retention and resume-derived matching.
 - Local 4B/9B benchmarking, isolated AI worker and reviewed task-specific outputs.
-- Remaining sources/partial outcomes, company enrichment, Gmail, application history and bulk exports.
+- Remaining sources, company enrichment, Gmail, application history and bulk exports.
 - Approval-gated application browser worker; no automatic final submissions.
-- Resumable SSE/detailed progress and public Next.js jobs/SEO/cache invalidation.
+- Detailed live source progress, proxy/TLS SSE acceptance and public Next.js jobs/SEO/cache invalidation.
 - Complete application images, Nginx/local TLS and observability implementation.
 - SQLite migration, consistent DB/object backup restore, mixed-workload soak,
   deliberate transport/data cutover and full feature-parity acceptance.
@@ -719,7 +960,8 @@ Resume records contain metadata, a storage path, extracted text and derived data
 Original filenames are metadata, not trusted filesystem paths. Files use generated
 identifiers. Parsing is evidence extraction, not authority to invent qualifications.
 The saved resume is also the source for an approved application upload.
-The current upload limit is 10 MiB; supported MIME types are PDF and DOCX.
+The legacy V1 upload limit is 10 MiB; supported MIME types are PDF and DOCX.
+V2 has a separate 5 MiB object limit; this legacy appendix does not override it.
 
 Profile JSON can contain candidate, preferences and application details. Partial
 imports merge supported fields; supplied arrays replace those arrays, omitted
@@ -1138,7 +1380,8 @@ Implemented mechanisms:
 - Durable search/application state and database-backed event replay.
 - One active search worker and bounded provider concurrency.
 - HTTP timeouts, cancellation, safe retries/caching in provider abstractions.
-- Per-source budgets and explicit partial outcomes.
+- V1 legacy behavior: per-source budgets and explicit partial outcomes. This is
+  not a V2 completion claim; see the latest V2 implementation status above.
 - Deterministic fallback when optional model inference fails.
 - Graceful shutdown/recovery behavior and health/readiness endpoints.
 - Readiness checks include database availability and queue state.

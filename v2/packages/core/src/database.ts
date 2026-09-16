@@ -1,10 +1,16 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { and, eq, isNull, or, lt, sql } from 'drizzle-orm';
+import { and, eq, inArray, isNull, or, lt, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 import type { Command, CreateSearch } from './commands.js';
 import * as tables from './schema.js';
-import { collectedJobsSchema, type CollectedJobInput } from './jobs.js';
+import {
+  collectedJobsSchema,
+  collectionStatus,
+  sourceOutcomesSchema,
+  type SourceOutcome,
+  type CollectedJobInput,
+} from './jobs.js';
 import { matchingProfile } from './profile.js';
 
 import { Conflict } from './errors.js';
@@ -130,17 +136,21 @@ export class Database {
     }
   }
 
-  async unpublished() {
+  async unpublished(types?: readonly Command['type'][]) {
+    if (types?.length === 0) return [];
     return this.db
       .select()
       .from(tables.outbox)
       .where(
-        or(
-          isNull(tables.outbox.publishedAt),
-          and(
-            lt(tables.outbox.publishedAt, new Date(Date.now() - 120_000)),
-            sql`NOT EXISTS (SELECT 1 FROM command_executions WHERE command_executions.id = ${tables.outbox.id}
+        and(
+          types ? inArray(sql<string>`${tables.outbox.command}->>'type'`, [...types]) : undefined,
+          or(
+            isNull(tables.outbox.publishedAt),
+            and(
+              lt(tables.outbox.publishedAt, new Date(Date.now() - 120_000)),
+              sql`NOT EXISTS (SELECT 1 FROM command_executions WHERE command_executions.id = ${tables.outbox.id}
         AND (status IN ('completed', 'failed') OR lease_until > now()))`,
+            ),
           ),
         ),
       )
@@ -202,6 +212,47 @@ export class Database {
     return result.rows[0]?.fence ?? null;
   }
 
+  async startSearch(command: Command, fence: number): Promise<boolean> {
+    if (command.type !== 'search.collect') throw new Conflict('Unsupported start type');
+    const client = await this.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const owned = await client.query(
+        `SELECT id FROM command_executions WHERE id = $1 AND fence = $2 AND status = 'running'
+         AND lease_until > now() AND EXISTS (SELECT 1 FROM outbox_events WHERE id = $1 AND command = $3::jsonb)
+         FOR UPDATE`,
+        [command.id, fence, JSON.stringify(command)],
+      );
+      if (!owned.rowCount) {
+        await client.query('ROLLBACK');
+        return false;
+      }
+      const updated = await client.query(
+        `UPDATE search_runs SET status = 'running' WHERE id = $1 AND owner_id = $2 AND status = 'queued' RETURNING id`,
+        [command.aggregateId, command.ownerId],
+      );
+      if (updated.rowCount) {
+        await client.query(
+          "INSERT INTO run_events (id, run_id, owner_id, type) VALUES ($1, $2, $3, 'SearchStarted')",
+          [randomUUID(), command.aggregateId, command.ownerId],
+        );
+      } else {
+        const active = await client.query(
+          "SELECT id FROM search_runs WHERE id = $1 AND owner_id = $2 AND status = 'running'",
+          [command.aggregateId, command.ownerId],
+        );
+        if (!active.rowCount) throw new Conflict('Search cannot start');
+      }
+      await client.query('COMMIT');
+      return true;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
   async complete(
     command: Command,
     fence: number,
@@ -214,11 +265,33 @@ export class Database {
     return this.settle(command, fence, [], 'failed');
   }
 
+  async completeCollection(
+    command: Command,
+    fence: number,
+    jobs: CollectedJobInput[],
+    sourceOutcomes: SourceOutcome[],
+  ) {
+    const validated = collectedJobsSchema.parse(jobs);
+    const outcomes = sourceOutcomesSchema.parse(sourceOutcomes);
+    if (
+      outcomes.some(
+        (outcome) =>
+          validated.filter((job) => job.source === outcome.source).length > outcome.accepted,
+      ) ||
+      validated.some(
+        (job) => !outcomes.some((outcome) => outcome.source === job.source && outcome.accepted > 0),
+      )
+    )
+      throw new Conflict('Jobs do not match source outcomes');
+    return this.settle(command, fence, validated, collectionStatus(validated, outcomes), outcomes);
+  }
+
   private async settle(
     command: Command,
     fence: number,
     jobs: CollectedJobInput[],
-    status: 'completed' | 'failed',
+    status: 'completed' | 'partial' | 'failed',
+    outcomes: SourceOutcome[] | null = null,
   ): Promise<boolean> {
     const validated = collectedJobsSchema.parse(jobs);
     if (command.type !== 'search.collect') throw new Conflict('Unsupported completion type');
@@ -230,16 +303,24 @@ export class Database {
         WHERE id = $1 AND fence = $2 AND status = 'running' AND lease_until > now()
         AND EXISTS (SELECT 1 FROM outbox_events WHERE id = $1 AND command = $3::jsonb)
         RETURNING id`,
-        [command.id, fence, JSON.stringify(command), status],
+        [command.id, fence, JSON.stringify(command), outcomes ? 'completed' : status],
       );
       if (!owned.rowCount) {
         await client.query('ROLLBACK');
         return false;
       }
       const updated = await client.query(
-        `UPDATE search_runs SET status = $3
-        WHERE id = $1 AND owner_id = $2 AND status IN ('queued', 'running') RETURNING id`,
-        [command.aggregateId, command.ownerId, status],
+        `UPDATE search_runs SET status = $3, source_outcomes = $4::jsonb
+        WHERE id = $1 AND owner_id = $2 AND status IN ('queued', 'running')
+        AND ($5::jsonb IS NULL OR (request->'sources' @> $5::jsonb AND request->'sources' <@ $5::jsonb))
+        RETURNING id`,
+        [
+          command.aggregateId,
+          command.ownerId,
+          status,
+          outcomes ? JSON.stringify(outcomes) : null,
+          outcomes ? JSON.stringify(outcomes.map((outcome) => outcome.source)) : null,
+        ],
       );
       if (!updated.rowCount) throw new Conflict('Search is not eligible for completion');
       for (const job of validated) {
@@ -261,7 +342,11 @@ export class Database {
           randomUUID(),
           command.aggregateId,
           command.ownerId,
-          status === 'completed' ? 'SearchCompleted' : 'SearchFailed',
+          status === 'completed'
+            ? 'SearchCompleted'
+            : status === 'partial'
+              ? 'SearchPartial'
+              : 'SearchFailed',
         ],
       );
       await client.query('COMMIT');

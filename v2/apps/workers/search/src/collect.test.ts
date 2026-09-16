@@ -12,7 +12,7 @@ import {
 const request = { query: 'React', sources: ['remoteok'] as ['remoteok'] };
 const signal = new AbortController().signal;
 
-test('multi-source collection deduplicates before matching and stops on a selected source failure', async () => {
+test('multi-source collection retains validated partial results and preserves cancellation', async () => {
   const raw = {
     source: 'remoteok' as const,
     sourceJobId: 'multi',
@@ -51,17 +51,30 @@ test('multi-source collection deduplicates before matching and stops on a select
       };
     },
   };
-  const result = await collect(request, signal, [remote, himalayas]);
+  const multiRequest = {
+    ...request,
+    sources: ['remoteok', 'himalayas'] as ['remoteok', 'himalayas'],
+  };
+  const { jobs: result, status } = await collect(multiRequest, signal, [remote, himalayas]);
+  assert.equal(status, 'completed');
   assert.equal(result.length, 2);
   assert.equal(result.find((job) => job.company === 'Example')?.source, 'himalayas');
   const failing = {
     ...himalayas,
     async *search() {
-      yield raw;
+      yield { ...raw, source: 'himalayas' as const };
       throw new Error('Synthetic source failure');
     },
   };
-  await assert.rejects(collect(request, signal, [remote, failing]), /Synthetic source failure/);
+  const partial = await collect(multiRequest, signal, [remote, failing]);
+  assert.equal(partial.status, 'partial');
+  assert.equal(partial.jobs.length, 1);
+  assert.deepEqual(
+    partial.outcomes.map((outcome) => outcome.status),
+    ['completed', 'failed'],
+  );
+  assert.equal(partial.outcomes[1]!.errorCode, 'source_failed');
+  assert.equal(partial.outcomes[1]!.accepted, 1);
   const control = new AbortController();
   const cancelling = {
     ...remote,
@@ -78,7 +91,7 @@ test('multi-source collection deduplicates before matching and stops on a select
       yield raw;
     },
   };
-  await assert.rejects(collect(request, control.signal, [cancelling, uncalled]), {
+  await assert.rejects(collect(multiRequest, control.signal, [cancelling, uncalled]), {
     name: 'AbortError',
   });
   assert.equal(secondCalled, false);
@@ -105,7 +118,7 @@ test('search uses the established provider normalization and attribution', async
         { headers: { 'content-type': 'application/json' } },
       ),
   });
-  const results = await collect(request, signal, createRemoteOkProvider(), http);
+  const { jobs: results } = await collect(request, signal, createRemoteOkProvider(), http);
   assert.equal(results.length, 1);
   assert.equal(results[0]!.match, null);
   assert.equal(results[0]!.description, 'Build accessible React interfaces.');
@@ -137,7 +150,12 @@ test('selected Himalayas adapter follows bounded pages and preserves source link
       });
     },
   });
-  const result = await collect({ query: 'React', sources: ['himalayas'] }, signal, undefined, http);
+  const { jobs: result } = await collect(
+    { query: 'React', sources: ['himalayas'] },
+    signal,
+    undefined,
+    http,
+  );
   assert.equal(urls.length, 2);
   assert.ok(urls.every((url) => url.startsWith('https://himalayas.app/jobs/api?limit=100')));
   assert.ok(urls[1]!.includes('cursor=next-page'));
@@ -166,8 +184,9 @@ test('combined collection bounds each provider and returns at most 100 unique re
       }
     },
   };
-  const result = await collect(request, signal, [provider, provider]);
-  assert.equal(read, 200);
+  const { jobs: result, outcomes } = await collect(request, signal, provider);
+  assert.equal(read, 100);
+  assert.equal(outcomes[0]!.limited, true);
   assert.equal(result.length, 100);
   assert.equal(new Set(result.map((job) => job.fingerprint)).size, 100);
 });
@@ -226,7 +245,7 @@ test('profile matching preserves exclusions, confidence ceilings and company fla
       };
     },
   };
-  const results = await collect(request, signal, provider, undefined, { profile, now });
+  const { jobs: results } = await collect(request, signal, provider, undefined, { profile, now });
   assert.equal(results.length, 2);
   const full = results.find((job) => job.company === 'Example')!;
   const snippet = results.find((job) => job.company === 'Flagged Inc')!;
@@ -236,7 +255,10 @@ test('profile matching preserves exclusions, confidence ceilings and company fla
   assert.equal(snippet.match?.flaggedCompany, true);
   assert.equal(full.match?.llmScore, null);
   assert.ok(full.match!.matchedSkills.includes('React'));
-  assert.deepEqual(await collect(request, signal, provider, undefined, { profile, now }), results);
+  assert.deepEqual(
+    (await collect(request, signal, provider, undefined, { profile, now })).jobs,
+    results,
+  );
 });
 
 test('source failure and cancellation cannot masquerade as successful empty searches', async () => {
@@ -244,11 +266,62 @@ test('source failure and cancellation cannot masquerade as successful empty sear
     retries: 0,
     fetch: async () => new Response('unavailable', { status: 503 }),
   });
-  await assert.rejects(
-    collect(request, signal, createRemoteOkProvider(), http),
-    /Provider collection failed/,
-  );
+  const result = await collect(request, signal, createRemoteOkProvider(), http);
+  assert.equal(result.status, 'failed');
+  assert.deepEqual(result.jobs, []);
+  assert.equal(result.outcomes[0]!.errorCode, 'source_failed');
   await assert.rejects(collect(request, AbortSignal.abort(), createRemoteOkProvider(), http), {
     name: 'AbortError',
   });
+});
+
+test('malformed source rows are excluded while successful empty sources remain explicit', async () => {
+  const valid = {
+    source: 'remoteok' as const,
+    sourceJobId: 'safe',
+    title: 'React Engineer',
+    companyName: 'Synthetic',
+    location: 'Remote',
+    description: 'Validated fixture',
+    sourceUrl: 'https://remoteok.com/remote-jobs/safe',
+    applyUrl: 'https://example.test/apply',
+  };
+  const invalid = {
+    ...createRemoteOkProvider(),
+    async *search() {
+      yield valid;
+      yield {
+        ...valid,
+        source: 'himalayas' as const,
+        sourceJobId: 'unsafe',
+        applyUrl: 'javascript:alert(1)',
+      };
+      throw new Error('Invalid response must close the iterator');
+    },
+  };
+  const empty = {
+    ...createHimalayasProvider(),
+    async *search() {
+      yield* [];
+    },
+  };
+  const result = await collect({ ...request, sources: ['remoteok', 'himalayas'] }, signal, [
+    invalid,
+    empty,
+  ]);
+  assert.equal(result.status, 'partial');
+  assert.equal(result.jobs.length, 1);
+  assert.equal(result.outcomes[0]!.errorCode, 'invalid_response');
+  assert.equal(result.outcomes[0]!.accepted, 1);
+  assert.deepEqual(result.outcomes[1], {
+    source: 'himalayas',
+    status: 'completed',
+    accepted: 0,
+    limited: false,
+    errorCode: null,
+  });
+  const successfulEmpty = await collect({ ...request, sources: ['himalayas'] }, signal, empty);
+  assert.equal(successfulEmpty.status, 'completed');
+  assert.deepEqual(successfulEmpty.jobs, []);
+  await assert.rejects(collect(request, signal, [invalid, invalid]), /Providers must match/);
 });

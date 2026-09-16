@@ -280,6 +280,38 @@ export class LeadRepo {
     return this.db.tx(() => inputs.map((input) => this.upsert(input, at, profileId)));
   }
 
+  removalCandidates(afterId: string, limit: number, profileId = LOCAL_PROFILE_ID): Lead[] {
+    return this.db
+      .all(
+        `${SELECT} WHERE l.profile_id = :profileId AND l.id > :afterId
+        AND j.source IN ('greenhouse', 'lever') AND l.status = 'new' AND l.note = ''
+        AND NOT EXISTS (SELECT 1 FROM application_runs a WHERE a.lead_id = l.id)
+        ORDER BY l.id LIMIT :limit`,
+        { profileId, afterId, limit },
+      )
+      .map(rowToLead);
+  }
+
+  deleteConfirmedRemoved(lead: Lead, profileId = LOCAL_PROFILE_ID): boolean {
+    return (
+      this.db.run(
+        `DELETE FROM leads WHERE id = :id AND profile_id = :profileId
+        AND job_id = :jobId AND updated_at = :updatedAt AND status = 'new' AND note = ''
+        AND NOT EXISTS (SELECT 1 FROM application_runs a WHERE a.lead_id = leads.id)
+        AND EXISTS (SELECT 1 FROM jobs j WHERE j.id = leads.job_id
+          AND j.source_url = :sourceUrl AND j.last_seen_at = :lastSeenAt)`,
+        {
+          id: lead.id,
+          profileId,
+          jobId: lead.job.id,
+          updatedAt: lead.updatedAt,
+          sourceUrl: lead.job.sourceUrl,
+          lastSeenAt: lead.job.lastSeenAt,
+        },
+      ).changes === 1
+    );
+  }
+
   update(id: string, patch: { status?: LeadStatus; note?: string }, at: string): Lead | null {
     if (patch.status === undefined && patch.note === undefined) return this.get(id);
     this.db.run(

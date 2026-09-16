@@ -4,7 +4,19 @@ A private, single-owner job-search workspace, formerly Job Radar.
 The product release version is defined in [package.json](package.json) and displayed
 in the app and mobile-site footers. See [versioned publishing](docs/ENCRYPTED-ADMIN.md#change-the-passphrase-and-publish)
 for patch, minor and major releases.
-See [release notes](docs/RELEASE-1.0.0.md) for the current build and verification scope.
+See [release verification](docs/RELEASE-REVIEW.md) for the verification scope.
+
+## Versions And Readiness
+
+The root application is the preserved **v1.3.4** runtime. The separate
+[V2 migration](v2/README.md) is **2.0.0-alpha.1**, not a finished replacement or
+production release. Its [architecture and acceptance gaps](v2/ARCHITECTURE.md)
+are authoritative for V2; the root stack below describes V1 only.
+
+V2 currently supports authenticated search, profiles, saved leads, cancellation
+and JSON export. Resume workflows, application AI, full provider parity, recovery
+and cutover remain incomplete. The planned MinIO runtime is blocked by upstream
+maintenance/distribution changes; synthetic S3 tests do not establish MinIO readiness.
 
 **Public jobs:** <https://varunjakkampudi-tech.github.io/careerscope/>
 
@@ -30,11 +42,12 @@ Each admin release requires a locally generated encrypted export. See
 Upload a resume, say what you want, and get job leads that actually match it —
 scored, explained, and complete enough to act on.
 
-Each lead carries the company, role, package, location, full job description,
+Each lead can carry the company, role, package, location, full job description,
 detected tech stack, the direct apply link, the company's careers portal and
 website, and — when one can be **verified** — a careers email. Everything is
 scored against your resume with a breakdown you can read, so an "87%" is
-auditable rather than a number the app asserts.
+auditable rather than a number the app asserts. Availability depends on the source;
+missing salaries and snippet-only descriptions are not invented or treated as complete.
 
 ---
 

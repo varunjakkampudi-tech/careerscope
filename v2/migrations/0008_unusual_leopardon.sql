@@ -1,0 +1,1 @@
+CREATE INDEX "event_owner_run_sequence" ON "run_events" USING btree ("owner_id","run_id","sequence");

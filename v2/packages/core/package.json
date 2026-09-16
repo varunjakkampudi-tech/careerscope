@@ -15,11 +15,17 @@
     "@opentelemetry/auto-instrumentations-node": "^0.80.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.222.0",
     "@opentelemetry/sdk-node": "^0.222.0",
+    "@thednp/dommatrix": "^3.1.2",
     "bullmq": "^5.81.5",
     "drizzle-orm": "^0.45.2",
     "pg": "^8.23.0",
     "pino": "^10.3.1",
     "redis": "^6.2.1",
+    "yauzl": "^3.4.0",
     "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/yauzl": "^3.4.0",
+    "jszip": "^3.10.2"
   }
 }

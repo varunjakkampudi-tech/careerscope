@@ -36,6 +36,34 @@
       "when": 1789402065435,
       "tag": "0004_typical_ares",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1789482441764,
+      "tag": "0005_resume_upload_reservations",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1789485041679,
+      "tag": "0006_amazing_ares",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1789486627367,
+      "tag": "0007_black_firebird",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1789487205410,
+      "tag": "0008_unusual_leopardon",
+      "breakpoints": true
     }
   ]
 }

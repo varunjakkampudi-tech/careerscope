@@ -83,21 +83,42 @@ try {
       now: Date.parse('2026-09-13T12:00:00Z'),
     },
   );
-  assert.equal(scored.length, 1);
-  await database.complete(command, fence, [
+  assert.equal(scored.jobs.length, 1);
+  const sourceOutcomes = [
     {
-      fingerprint: 'browser-fixture',
-      title: 'Senior React Engineer',
-      company: 'Example Technology',
-      location: 'Remote',
-      description: 'Build accessible interfaces using React and TypeScript.',
-      source: 'himalayas',
-      sourceUrl: 'https://himalayas.app/jobs/synthetic',
-      applyUrl: 'https://example.test/apply',
-      postedAt: null,
+      source: 'remoteok' as const,
+      status: 'completed' as const,
+      accepted: 1,
+      limited: false,
+      errorCode: null,
     },
-    ...scored,
-  ]);
+    {
+      source: 'himalayas' as const,
+      status: 'failed' as const,
+      accepted: 1,
+      limited: false,
+      errorCode: 'source_failed' as const,
+    },
+  ];
+  await database.completeCollection(
+    command,
+    fence,
+    [
+      {
+        fingerprint: 'browser-fixture',
+        title: 'Senior React Engineer',
+        company: 'Example Technology',
+        location: 'Remote',
+        description: 'Build accessible interfaces using React and TypeScript.',
+        source: 'himalayas',
+        sourceUrl: 'https://himalayas.app/jobs/synthetic',
+        applyUrl: 'https://example.test/apply',
+        postedAt: null,
+      },
+      ...scored.jobs,
+    ],
+    sourceOutcomes,
+  );
   await mkdir(new URL('../test-results/', import.meta.url), { recursive: true });
   await app.listen({ host: '127.0.0.1', port: 5390 });
   for (const [engine, browserType] of Object.entries({ chromium, firefox, webkit })) {
@@ -107,17 +128,46 @@ try {
       const errors: string[] = [];
       page.on('pageerror', (error) => errors.push(error.message));
       await page.goto(origin);
+      const skipLink = page.getByRole('link', { name: 'Skip to content', exact: true });
+      const hiddenSkip = await skipLink.boundingBox();
+      assert.ok(hiddenSkip && hiddenSkip.width === 1 && hiddenSkip.height === 1);
+      assert.equal(
+        await skipLink.evaluate((element) => getComputedStyle(element).clipPath),
+        'inset(50%)',
+      );
+      await skipLink.focus();
+      const focusedSkip = await skipLink.boundingBox();
+      assert.ok(
+        focusedSkip && focusedSkip.y >= 0 && focusedSkip.width > 40 && focusedSkip.height > 40,
+      );
+      await skipLink.press('Enter');
+      assert.equal(
+        await page.locator('main').evaluate((element) => element === document.activeElement),
+        true,
+      );
       await page.getByLabel('Email', { exact: true }).fill('ui@example.test');
       await page.getByLabel('Password', { exact: true }).fill(password);
       await page.getByRole('button', { name: 'Sign in', exact: true }).click();
       await page
         .getByRole('navigation', { name: 'Search history' })
-        .getByRole('button', { name: /^React/ })
+        .getByRole('button', { name: /^React.*partial/s })
         .click();
       await page.getByRole('heading', { name: 'Senior React Engineer' }).waitFor();
       const resultResponse = await page.request.get(`${origin}/api/searches/${search.id}`);
       assert.equal(resultResponse.status(), 200);
       const resultBody = await resultResponse.json();
+      assert.equal(resultBody.status, 'partial');
+      await page
+        .getByText('Partial results. Some sources did not finish.', { exact: true })
+        .waitFor();
+      await page
+        .getByRole('list', { name: 'Source outcomes' })
+        .getByText('Himalayas: 1 accepted; source failed', { exact: true })
+        .waitFor();
+      assert.equal(
+        await page.getByRole('button', { name: 'Retry failed sources', exact: true }).isEnabled(),
+        true,
+      );
       assert.equal(resultBody.jobs[0].data.title, 'Scored React Engineer');
       assert.equal(resultBody.jobs[1].data.match, null);
       await page.getByText('Not scored', { exact: true }).waitFor();
@@ -203,7 +253,16 @@ try {
       const downloadedPath = await download.path();
       assert.ok(downloadedPath);
       const exported = JSON.parse(await readFile(downloadedPath, 'utf8'));
-      assert.deepEqual(Object.keys(exported).sort(), ['jobs', 'request', 'runId', 'schemaVersion']);
+      assert.deepEqual(Object.keys(exported).sort(), [
+        'jobs',
+        'request',
+        'runId',
+        'schemaVersion',
+        'sourceOutcomes',
+        'status',
+      ]);
+      assert.equal(exported.status, 'partial');
+      assert.deepEqual(exported.sourceOutcomes, sourceOutcomes);
       assert.equal(exported.schemaVersion, 1);
       assert.equal(exported.runId, search.id);
       assert.deepEqual(exported.request.sources, ['himalayas', 'remoteok']);
@@ -233,7 +292,7 @@ try {
       await page.getByRole('button', { name: 'Sign in', exact: true }).click();
       await page
         .getByRole('navigation', { name: 'Search history' })
-        .getByRole('button', { name: /^React/ })
+        .getByRole('button', { name: /^React.*partial/s })
         .click();
       await page.getByLabel('Filter results').fill('');
       await page.getByLabel('Role or technology').fill('TypeScript');
@@ -248,6 +307,10 @@ try {
         (response) =>
           response.url().endsWith('/api/searches') && response.request().method() === 'POST',
       );
+      const progressStream = page.waitForResponse(
+        (response) =>
+          response.url().includes('/api/searches/') && response.url().endsWith('/events'),
+      );
       await page.getByRole('button', { name: 'Search', exact: true }).click();
       const submission = await submitted;
       assert.equal(submission.status(), 202);
@@ -257,6 +320,17 @@ try {
         'remoteok',
       ]);
       await page.getByText('Search in progress', { exact: true }).waitFor();
+      assert.equal((await progressStream).status(), 200);
+      const startedCommand = (await database.unpublished()).find(
+        (entry) => entry.command.aggregateId === submittedId,
+      )!.command;
+      const startedFence = await database.claim(startedCommand.id);
+      assert.ok(startedFence);
+      assert.equal(await database.startSearch(startedCommand, startedFence), true);
+      await page
+        .locator('.result-toolbar .status')
+        .filter({ hasText: /^running$/ })
+        .waitFor({ timeout: 5000 });
       assert.equal(await exportButton.count(), 0);
       const cancellation = page.getByRole('button', { name: 'Cancel search', exact: true });
       for (const width of [1440, 390, 320]) {
@@ -326,7 +400,7 @@ try {
       );
       await page
         .getByRole('navigation', { name: 'Search history' })
-        .getByRole('button', { name: /^React/ })
+        .getByRole('button', { name: /^React.*partial/s })
         .click();
       await page.getByRole('heading', { name: 'Senior React Engineer', exact: true }).click();
       const savedJob = page.locator('details.job').filter({ hasText: 'Senior React Engineer' });
@@ -444,8 +518,42 @@ try {
       await page.getByRole('textbox', { name: 'Target Roles', exact: true }).fill('React Engineer');
       await page.getByRole('textbox', { name: 'Skills', exact: true }).fill('React\nTypeScript');
       await page.getByLabel('Years of Experience', { exact: true }).fill('4');
+      for (const target of [
+        page.getByRole('button', { name: 'Sign out', exact: true }),
+        page.getByRole('link', { name: /CareerScope/ }),
+      ]) {
+        let warned = false;
+        page.once('dialog', async (dialog) => {
+          warned = true;
+          await dialog.dismiss();
+        });
+        await target.click();
+        assert.equal(warned, true, `${engine}: dirty profile navigation must warn`);
+        assert.equal(
+          await page.getByLabel('Full Name', { exact: true }).inputValue(),
+          'Example Candidate',
+        );
+      }
+      assert.equal(
+        await page.evaluate(() => {
+          const event = new Event('beforeunload', { cancelable: true });
+          window.dispatchEvent(event);
+          return event.defaultPrevented;
+        }),
+        true,
+        `${engine}: dirty profile unload must be guarded`,
+      );
       await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
       await page.getByText('Profile saved.', { exact: true }).waitFor();
+      assert.equal(
+        await page.evaluate(() => {
+          const event = new Event('beforeunload', { cancelable: true });
+          window.dispatchEvent(event);
+          return event.defaultPrevented;
+        }),
+        false,
+        `${engine}: saved profile must release unload guard`,
+      );
       await page.reload();
       await page.getByRole('button', { name: 'Candidate profile', exact: true }).click();
       await page.getByLabel('Full Name', { exact: true }).waitFor();
@@ -494,6 +602,23 @@ try {
           });
       }
       await page.getByRole('button', { name: 'Back to Search', exact: true }).click();
+      await page
+        .getByRole('navigation', { name: 'Search history' })
+        .getByRole('button', { name: /^React.*partial/s })
+        .click();
+      const retried = page.waitForResponse(
+        (response) =>
+          response.url().endsWith('/api/searches') && response.request().method() === 'POST',
+      );
+      await page.getByRole('button', { name: 'Retry failed sources', exact: true }).click();
+      const retryResponse = await retried;
+      assert.equal(retryResponse.status(), 202);
+      const retryId = (await retryResponse.json()).runId;
+      assert.deepEqual((await database.getSearch(ownerId, retryId))?.request.sources, [
+        'himalayas',
+      ]);
+      assert.equal((await database.getSearch(ownerId, search.id))?.status, 'partial');
+      await database.cancelSearch(ownerId, retryId);
       await page.getByRole('button', { name: 'Sign out', exact: true }).click();
       await page.getByRole('heading', { name: 'Sign in', exact: true }).waitFor();
       assert.deepEqual(errors, []);

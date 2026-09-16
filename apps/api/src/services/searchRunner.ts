@@ -61,6 +61,7 @@ import type { Logger } from '../logger.js';
 import { now } from '../util/time.js';
 import type { CompanyHints, CompanyResolver } from './companyResolver.js';
 import type { RunEventBus } from './events.js';
+import { removeWithdrawnLeads } from './jobAvailability.js';
 
 /* -------------------------------------------------------------------------- */
 /* Tuning                                                                     */
@@ -214,6 +215,13 @@ export class SearchRunner {
       await this.enrich(runId, state, kept, signal);
       const reranked = await this.rerankIfEnabled(runId, state, kept, context.candidate, signal);
       const leads = this.store(runId, state, reranked);
+      const availability = await removeWithdrawnLeads(repos, this.deps.http, signal, this.clock());
+      throwIfCancelled(signal);
+      this.log(
+        runId,
+        'info',
+        `Removal checks: ${availability.checked} checked, ${availability.removed} confirmed withdrawn leads deleted, ${availability.unknown} inconclusive and retained (Greenhouse/Lever only).`,
+      );
 
       // `finish` writes the row; the run is read back because the caller needs
       // the completed shape — status, timings and final stats — not the queued
@@ -225,7 +233,7 @@ export class SearchRunner {
         { runId, leads: leads.length, matched: state.stats.matched },
         'search run completed',
       );
-      return { run: finished, leads };
+      return { run: finished, leads: leads.filter((lead) => repos.leads.get(lead.id) !== null) };
     } catch (error) {
       if (error instanceof RunCancelled || isAbortError(error)) {
         // Whoever aborted owns the terminal row and the terminal event: a user

@@ -12,6 +12,23 @@
   display: flex;
   gap: 8px;
 }
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  background: var(--surface);
+}
+.skip-link:focus {
+  width: auto;
+  height: auto;
+  padding: 12px 16px;
+  clip-path: none;
+}
 .profile-page {
   max-width: 1000px;
 }
@@ -419,6 +436,17 @@ h3 {
 }
 .status.completed {
   color: var(--good);
+}
+.status.partial {
+  color: #8a4b00;
+}
+.source-outcomes {
+  padding-left: 20px;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.source-outcomes + button {
+  margin-bottom: 16px;
 }
 .status.failed,
 [role='alert'] {

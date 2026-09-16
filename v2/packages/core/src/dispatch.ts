@@ -10,7 +10,8 @@ export type QueueRoutes = Partial<Record<Command['type'], Pick<LocalQueue, 'send
 
 export async function publishPending(database: Database, queues: QueueRoutes) {
   let published = 0;
-  for (const record of await database.unpublished()) {
+  const types = (Object.keys(queues) as Command['type'][]).filter((type) => queues[type]);
+  for (const record of await database.unpublished(types)) {
     const command = commandSchema.parse(record.command);
     const queue = queues[command.type];
     if (!queue) continue;
@@ -28,6 +29,8 @@ export async function consumeMessage(
   type: Command['type'],
   handler: Handler,
   shutdown: AbortSignal,
+  fail: (command: Command, fence: number) => Promise<boolean> = (command, fence) =>
+    database.fail(command, fence),
 ) {
   const receipt = message.ReceiptHandle;
   if (!receipt) throw new Error('Queue message has no receipt');
@@ -53,7 +56,7 @@ export async function consumeMessage(
     return 'busy';
   }
   if (fence > 5) {
-    await database.fail(command, fence);
+    await fail(command, fence);
     return 'failed';
   }
   const control = new AbortController();
@@ -86,7 +89,7 @@ export async function consumeMessage(
   } catch (error) {
     const count = Number(message.Attributes?.ApproximateReceiveCount ?? 1);
     if ((fence >= 5 || count >= 5) && !shutdown.aborted && !heartbeatFailed) {
-      await database.fail(command, fence);
+      await fail(command, fence);
     } else {
       await database.release(command.id, fence);
     }

@@ -89,7 +89,7 @@ export class LeadRepository {
       await client.query('BEGIN');
       const source = await client.query<{ data: unknown }>(
         `SELECT job.data FROM search_jobs job JOIN search_runs run ON run.id = job.run_id
-         AND run.owner_id = job.owner_id WHERE job.owner_id = $1 AND job.id = $2 AND run.status = 'completed'`,
+         AND run.owner_id = job.owner_id WHERE job.owner_id = $1 AND job.id = $2 AND run.status IN ('completed', 'partial')`,
         [ownerId, jobId],
       );
       if (!source.rows[0]) {

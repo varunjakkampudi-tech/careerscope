@@ -4,8 +4,10 @@
 
 The revised v2 target is a local, single-machine application with **no required
 paid infrastructure or hosted inference services**. Docker Compose replaces the
-AWS-oriented runtime target; BullMQ replaces SQS; MinIO replaces the LocalStack
-object-store emulator; Ollama is the only supported inference provider in v2.
+AWS-oriented runtime target; BullMQ replaces SQS; private S3-compatible object
+storage replaces the LocalStack object-store emulator. The storage runtime is an
+implementation choice subject to acceptance, not a MinIO requirement. Ollama is
+the only supported inference provider in v2.
 PostgreSQL, the modular Fastify core, Next.js, immutable matching inputs and the
 transactional outbox remain. Kafka is not a v2 dependency.
 
@@ -26,6 +28,60 @@ the host pauses service. Public hosting and AWS remain a separately approved v3.
 
 ## Target Topology
 
+### Storage Acceptance Blocker (2026-09-15)
+
+MinIO is no longer the required target or an approved runtime dependency. The
+[upstream repository](https://github.com/minio/minio) is archived (April 25, 2026)
+and states that it is no longer maintained; community distribution is source-only.
+A versioned Docker Hub pull failed during local acceptance preparation. Retaining
+an unsupported binary without a security-maintenance plan is not an acceptable
+way to declare this migration complete. Select and review a maintained S3-compatible
+runtime, or explicitly accept and resource a source-maintenance plan, before cutover.
+No replacement has been accepted or activated for application data. No paid license,
+account or deployment has been enabled. Two upstream-linked Apache-2.0 candidates
+were evaluated on ARM64 using disposable local Docker volumes and synthetic data:
+
+| Candidate         | Pinned image digest                                                                           | Result                                                                                                                                                                              |
+| ----------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SeaweedFS 4.47    | `chrislusf/seaweedfs@sha256:ce9e796f1fe6f06968f4c04bdaf8f678dad9c8acdfef3d244133d71bfa6bf882` | Object lifecycle and eight-way conditional-write assertions passed, but empty-bucket cleanup failed with `BucketNotEmpty` when `-s3.allowDeleteBucketNotEmpty=false`. Not accepted. |
+| RustFS 1.0.0-rc.6 | `rustfs/rustfs@sha256:97171b3d72cd47dc81000f92ea84de25608bfc35a94c965501afaeb5d99f6035`       | Private readiness failed: the canonical-user ACL grant omits its ID, so ownership cannot be verified. Also a prerelease. Not accepted.                                              |
+
+Do not enable recursive nonempty-bucket deletion or infer a missing ACL identity to
+make acceptance pass. Retest a corrected maintained build against the unchanged
+contract. Runtime selection additionally requires private credentials and anonymous
+denial, exact-version access/deletion, durable local persistence, restart and an
+isolated backup/restore rehearsal. No required payment or external account is allowed.
+The failed candidate runs do not establish persistence, restore or security readiness.
+The pinned RustFS release's [ACL response builder](https://github.com/rustfs/rustfs/blob/1.0.0-rc.6/rustfs/src/storage/s3_api/acl.rs)
+explicitly returns `id: None` in `full_control_grants`; this is not a missing local
+credential or bucket setting. A corrected maintained build or another accepted
+runtime is required. Maintaining a storage fork is a separate architecture decision.
+The user selected **upstream-only runtimes** on September15; patched RustFS evaluation
+is not authorized. Latest release checks still return rc6 and SeaweedFS4.47.
+Storage-dependent activation remains blocked.
+SeaweedFS additionally passed real anonymous object read/write/delete and bucket
+listing denial, plus wrong-secret initialization/read/delete denial. This narrower
+evidence does not remove its cleanup failure or constitute a complete security audit.
+
+The new core `storage.ts` provides a bounded private versioned S3 contract using
+the existing SDK. Synthetic HTTP and isolated LocalStack S3 tests pass. Migration
+`0005` and `ResumeUploadRepository` now provide owner-scoped metadata reservations
+and an atomic immutable-version/parse-outbox transition, tested on disposable databases.
+An internal upload coordinator and isolated parse handler now connect these
+foundations in synthetic end-to-end tests; no upload API/UI, persistent files-worker
+process or publisher route is enabled. Migration0006 persists fenced owner-scoped
+parse results without applying them to the profile. See the README's internal
+pipeline section for exact bounds and runtime prerequisites. The
+publisher filters supported types before batching, so pending parse commands cannot
+starve search publication. PostgreSQL must still own the remaining lifecycle,
+parsing state and orphan/deletion reconciliation;
+successful object operations alone are not a durable resume workflow. A backup
+unit must include PostgreSQL, object versions, configuration and required encryption/
+access-control material, with secrets protected independently and a tested recovery
+procedure. S3 emulation does not prove real-runtime acceptance.
+
+### Target Diagram
+
 ```mermaid
 flowchart TD
   Browser[Browser] --> Nginx[Nginx: same origin]
@@ -33,7 +89,7 @@ flowchart TD
   Nginx --> API[Fastify modular API]
   API --> PG[(PostgreSQL: authoritative state)]
   API --> Cache[(Redis: throttle and optional cache)]
-  API --> Objects[MinIO: private objects]
+   API --> Objects[Private S3-compatible objects]
   PG --> Publisher[Transactional outbox publisher]
   Publisher --> Queue[(Persistent Redis: BullMQ)]
   Queue --> Search[Search worker]
@@ -87,7 +143,7 @@ v2/
    queue.ts                    SQS compatibility adapter (exists)
    bull-queue.ts               Opt-in BullMQ search adapter (exists)
    dispatch.ts                 Durable execution/recovery policy (exists)
-   storage.ts                  Private object lifecycle (planned)
+   storage.ts                  Private S3 adapter (tested; lifecycle integration pending)
    inference.ts                Bounded Ollama protocol (implemented, not integrated)
    telemetry.ts                Redacted instrumentation (planned)
   migrations/                   Append-only generated SQL and metadata
@@ -120,27 +176,27 @@ file yet. Preserve the current database volume and development ports during the
 transition. Every target image needs a reviewed version/digest, ARM64 support,
 license/security review and actual startup tests before it is pinned.
 
-| Service                   | Profile and exposure                                     | Persistence and startup requirements                                                           |
-| ------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| nginx                     | Core; sole application host port, proposed loopback 5280 | Read-only config/cert mounts; web/API readiness; port replaces current preview only at cutover |
-| web                       | Core; internal 3000                                      | Standalone Next build; no private build-time data                                              |
-| api                       | Core; internal 5390                                      | Migration completed; PostgreSQL and throttle Redis ready                                       |
-| migrate                   | One-shot; no ports                                       | Exclusive migration lock; fails closed; never auto-seeds owner                                 |
-| postgres                  | Core; internal 5432                                      | Existing postgres-data volume; bounded connections and readiness                               |
-| redis-queue               | Core; internal 6379                                      | Dedicated queue-data volume, AOF every second, noeviction                                      |
-| redis-cache               | Core; internal 6379 in its own container                 | Disposable TTL-bound throttle/cache state, bounded eviction                                    |
-| minio                     | Files; private service, console not public               | Persistent objects volume; private bucket initialization and least-privilege credentials       |
-| publisher                 | Core; no ports                                           | PostgreSQL and queue ready; publishes/reconciles durable commands                              |
-| search-worker             | Core; no ports                                           | PostgreSQL and queue; bounded public-provider egress                                           |
-| enrichment-worker         | Enrichment opt-in; no ports                              | Queue/DB; provider quotas, timeouts and cancellation                                           |
-| files-worker              | Files opt-in; no ports                                   | Queue/DB/MinIO; parser resource isolation                                                      |
-| ai-worker                 | AI opt-in; no ports                                      | Queue/DB/local inference; concurrency one initially                                            |
-| ollama                    | Container-inference opt-in; no public port               | Persistent model volume; explicit reviewed model pull                                          |
-| email-worker              | Email opt-in; no ports                                   | Owner-approved OAuth; encrypted tokens; scoped external access                                 |
-| application-worker        | Application opt-in; no public ports                      | Isolated browser identity and per-action approvals                                             |
-| otel-collector            | Observability opt-in; internal receivers                 | Bounded memory/queues; never blocks business requests                                          |
-| prometheus, loki, grafana | Observability opt-in; Grafana loopback only              | Bounded persistent retention; authenticated Grafana                                            |
-| tempo                     | Trace opt-in                                             | Explicit trace storage/retention; not needed for metrics/logs                                  |
+| Service                   | Profile and exposure                                     | Persistence and startup requirements                                                                      |
+| ------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| nginx                     | Core; sole application host port, proposed loopback 5280 | Read-only config/cert mounts; web/API readiness; port replaces current preview only at cutover            |
+| web                       | Core; internal 3000                                      | Standalone Next build; no private build-time data                                                         |
+| api                       | Core; internal 5390                                      | Migration completed; PostgreSQL and throttle Redis ready                                                  |
+| migrate                   | One-shot; no ports                                       | Exclusive migration lock; fails closed; never auto-seeds owner                                            |
+| postgres                  | Core; internal 5432                                      | Existing postgres-data volume; bounded connections and readiness                                          |
+| redis-queue               | Core; internal 6379                                      | Dedicated queue-data volume, AOF every second, noeviction                                                 |
+| redis-cache               | Core; internal 6379 in its own container                 | Disposable TTL-bound throttle/cache state, bounded eviction                                               |
+| object-store              | Files; private service, console not public               | Accepted maintained S3 runtime; persistent objects volume; private bucket and least-privilege credentials |
+| publisher                 | Core; no ports                                           | PostgreSQL and queue ready; publishes/reconciles durable commands                                         |
+| search-worker             | Core; no ports                                           | PostgreSQL and queue; bounded public-provider egress                                                      |
+| enrichment-worker         | Enrichment opt-in; no ports                              | Queue/DB; provider quotas, timeouts and cancellation                                                      |
+| files-worker              | Files opt-in; no ports                                   | Queue/DB/private S3; parser resource isolation                                                            |
+| ai-worker                 | AI opt-in; no ports                                      | Queue/DB/local inference; concurrency one initially                                                       |
+| ollama                    | Container-inference opt-in; no public port               | Persistent model volume; explicit reviewed model pull                                                     |
+| email-worker              | Email opt-in; no ports                                   | Owner-approved OAuth; encrypted tokens; scoped external access                                            |
+| application-worker        | Application opt-in; no public ports                      | Isolated browser identity and per-action approvals                                                        |
+| otel-collector            | Observability opt-in; internal receivers                 | Bounded memory/queues; never blocks business requests                                                     |
+| prometheus, loki, grafana | Observability opt-in; Grafana loopback only              | Bounded persistent retention; authenticated Grafana                                                       |
+| tempo                     | Trace opt-in                                             | Explicit trace storage/retention; not needed for metrics/logs                                             |
 
 Use restart policies, health checks, explicit graceful stop periods, init for
 child-process workers, log rotation, resource limits and a private service network.
@@ -157,7 +213,7 @@ service identities. Do not interpolate secrets into committed YAML or print
 resolved Compose configuration in diagnostics. Separate DB migrator and runtime
 roles. Encrypt OAuth tokens using a versioned key stored outside DB/backups.
 Use host disk encryption plus encrypted backup archives for at-rest protection;
-do not describe a plain MinIO or PostgreSQL volume as encrypted.
+do not describe a plain object-store or PostgreSQL volume as encrypted.
 
 Nginx routes /api (including SSE) to Fastify and other requests to Next.js.
 Set upload limits, finite proxy timeouts and trusted proxy handling. SSE uses
@@ -174,22 +230,24 @@ Use relational ownership and lifecycle columns, with validated JSONB for profile
 snapshots, provider payload subsets and scoring evidence. Existing schema names
 below match the current implementation; proposed additions need migrations/tests.
 
-| Table or group                      | Required invariant and indexes                                                                                | State                                                         |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| users, sessions                     | Unique user email; hashed opaque sessions with owner FK/expiry; add expiry cleanup index                      | Implemented; cleanup index pending                            |
-| candidate_profiles                  | Owner primary key, positive revision, compare-and-swap saves                                                  | Implemented                                                   |
-| search_runs                         | Owner/idempotency uniqueness, request hash, immutable matching inputs, valid lifecycle                        | Implemented                                                   |
-| search_jobs                         | Unique run/fingerprint; owner/run index; validated normalized job and match evidence                          | Implemented                                                   |
-| outbox_events                       | Command UUID, versioned ID-only payload, publication time; pending/recovery scan indexes                      | Implemented; scan indexes pending                             |
-| command_executions                  | Outbox FK, durable attempts, renewable lease, monotonic fence; constrain allowed states                       | Implemented; additional constraints pending                   |
-| run_events                          | Owner/run scope and durable sequence; add replay index and retention boundary                                 | Implemented; resumable ordering pending                       |
-| resumes, resume_versions            | Owner FK, private object key/version, checksum, bytes, MIME, parser version, state; unique object key/version | Planned                                                       |
-| ai_runs, match_results              | Command/input/profile/resume/model versions, validated result, latency, state; unique logical input/version   | Planned                                                       |
-| companies, enrichment_runs          | Canonical company identity, source/time provenance, expiry; deduplicated refresh                              | Planned                                                       |
-| saved_leads, lead_history           | Owner/job identity, preserved notes/statuses; revision-safe updates and transactional audit                   | Implemented for saved/archived; application lifecycle pending |
-| email_connections, email_ingestions | Encrypted scoped tokens, owner/provider/message dedupe, acknowledged ingestion state                          | Planned                                                       |
-| application_attempts, approvals     | Owner/lead/action identity, approval expiry and evidence, uncertain terminal outcome; duplicate guard         | Planned                                                       |
-| export_runs, object_deletions       | Owner-scoped format/artifact lifecycle and durable cleanup commands                                           | Planned                                                       |
+| Table or group                      | Required invariant and indexes                                                                                  | State                                                                            |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| users, sessions                     | Unique user email; hashed opaque sessions with owner FK/expiry; add expiry cleanup index                        | Implemented; cleanup index pending                                               |
+| candidate_profiles                  | Owner primary key, positive revision, compare-and-swap saves                                                    | Implemented                                                                      |
+| search_runs                         | Owner/idempotency uniqueness, request hash, immutable matching inputs, valid lifecycle                          | Implemented                                                                      |
+| search_jobs                         | Unique run/fingerprint; owner/run index; validated normalized job and match evidence                            | Implemented                                                                      |
+| outbox_events                       | Command UUID, versioned ID-only payload, publication time; pending/recovery scan indexes                        | Implemented; scan indexes pending                                                |
+| command_executions                  | Outbox FK, durable attempts, renewable lease, monotonic fence; constrain allowed states                         | Implemented; additional constraints pending                                      |
+| run_events                          | Owner/run scope and durable sequence; add replay index and retention boundary                                   | Implemented; resumable ordering pending                                          |
+| resume_uploads                      | Owner/key uniqueness, bounded metadata, immutable version, atomic parse-command reference                       | Implemented foundation; migration 0005 tested only in disposable databases       |
+| resume_results                      | Owner/upload composite FK, one bounded result per upload/command, fixed failure codes, fenced atomic completion | Implemented internal handler; migration 0006 tested only in disposable databases |
+| resumes, resume_versions            | Parsed versions, parser identity, owner review and retention beyond upload reservations                         | Planned                                                                          |
+| ai_runs, match_results              | Command/input/profile/resume/model versions, validated result, latency, state; unique logical input/version     | Planned                                                                          |
+| companies, enrichment_runs          | Canonical company identity, source/time provenance, expiry; deduplicated refresh                                | Planned                                                                          |
+| saved_leads, lead_history           | Owner/job identity, preserved notes/statuses; revision-safe updates and transactional audit                     | Implemented for saved/archived; application lifecycle pending                    |
+| email_connections, email_ingestions | Encrypted scoped tokens, owner/provider/message dedupe, acknowledged ingestion state                            | Planned                                                                          |
+| application_attempts, approvals     | Owner/lead/action identity, approval expiry and evidence, uncertain terminal outcome; duplicate guard           | Planned                                                                          |
+| export_runs, object_deletions       | Owner-scoped format/artifact lifecycle and durable cleanup commands                                             | Planned                                                                          |
 
 Use explicit transactions for state, outbox and terminal events. Enforce tenant
 consistency with composite ownership constraints where related rows cross tables,
@@ -251,14 +309,24 @@ before commit. Graceful shutdown stops taking jobs, aborts bounded operations an
 releases/expires leases. Never treat a timed-out external submission as retry-safe:
 uncertain application outcomes require human reconciliation, not automatic retry.
 
-## MinIO And Resume Lifecycle
+## Private S3 Storage And Resume Lifecycle
 
-Use private S3-compatible buckets through an explicitly configured MinIO endpoint
-and path-style addressing. Reuse the SDK, not LocalStack production assumptions.
-Pin a reviewed maintained build and assess MinIO's AGPL/distribution obligations;
+Use private S3-compatible buckets through an explicitly configured endpoint and
+path-style addressing. Reuse the SDK, not LocalStack production assumptions.
+Canonical configuration is `S3_ENDPOINT`, `S3_BUCKET`, `S3_ACCESS_KEY` and
+`S3_SECRET_KEY`. Legacy `MINIO_*` aliases remain accepted as a complete family;
+partial canonical configuration or conflicting aliases fail closed. Current
+adapter endpoints are loopback-only; Docker DNS support requires a separately
+validated network trust boundary before the full container topology is activated.
+Pin a reviewed maintained build and assess its license/distribution obligations;
 do not assume a supported free binary or use an unreviewed latest image. Failure
 to identify a suitable build/license is an implementation blocker, not permission
 to silently substitute a paid service.
+
+V2 resume objects are limited to **5 MiB (5,242,880 bytes)**, consistently enforced
+by the adapter, metadata schema and PostgreSQL constraint. Future API/UI and proxy
+limits must preserve that object bound (with separately bounded multipart overhead).
+The legacy V1 upload limit is 10 MiB; it does not override the V2 contract.
 
 The API authorizes uploads, bounds bytes and issues a short-lived scoped upload
 grant. Files begin quarantined under a server-generated owner/object key; a
@@ -269,7 +337,7 @@ limits. Never execute macros or fetch embedded links. Parsing failure must not
 replace the last usable resume/profile. Derivations retain source/version evidence.
 
 For direct browser uploads the signing endpoint must be reachable through the
-same-origin object gateway and preserve the signed host/path; internal minio DNS
+same-origin object gateway and preserve the signed host/path; internal object-store DNS
 URLs are not browser URLs. Otherwise use a bounded streaming API upload. Restrict
 CORS to the configured origin. Downloads require ownership checks and short-lived
 grants; redact presigned URL queries from logs. No bucket listing/public policy.
@@ -381,12 +449,18 @@ Last-Event-ID. Recheck session validity, limit concurrent streams, send heartbea
 and handle disconnect/backpressure. UI reconnects with bounded backoff and falls
 back to status reads; it never needs browser-stored private tokens.
 
-The current bigserial sequence alone is not a commit-order guarantee: concurrent
-transactions can commit out of allocation order. Before enabling replay, serialize
-per-run event allocation with a run-row lock/transactional counter, and index
-(owner_id, run_id, sequence). Test overlapping commits and replay gaps. Return an
-explicit reset/snapshot response when a cursor predates retention; do not silently
-skip events. Transport notifications can wake readers but are never authoritative.
+Search writers now serialize execution/run-row updates and event allocation in one
+transaction. Replay is scoped to the run and indexed by (owner_id, run_id, sequence);
+cross-run bigserial allocation is not used as a commit-order guarantee. Competing
+start/terminal writes and replay are tested. Future progress writers must preserve
+this discipline. No event retention is enabled; unknown cursors return400. Implement
+an explicit reset/snapshot protocol before deleting events. Notifications are not authority.
+
+Current SSE:50-event batches,2streams/owner,32/API process,30opens/minute,25s lifetime,
+1s heartbeat/session check,2s native reconnect hint and10s detail polling fallback.
+Disconnect/shutdown abort work, terminal events close replay and payloads contain
+metadata only. Real sockets and three browsers verify the direct/Next proxy path,
+not the unimplemented Nginx/TLS topology.
 
 Begin with SQL reads and no result cache. Add bounded owner/version-keyed Redis
 caches only for measured repeated queries, with TTL, invalidation after commit
@@ -441,7 +515,7 @@ simultaneously without checking memory. No hardware upgrades are assumed.
    reconcile outstanding database commands and enable one queue transport. Never
    process a command through both transports casually. Back up and prove rollback
    first; preserve LocalStack until outstanding work is accounted for.
-3. Add MinIO upload/parser/export lifecycle and isolated restore tests, then AI
+3. Accept a private S3 runtime, add upload/parser/export lifecycle and isolated restore tests, then AI
    queue/Ollama with benchmark evidence and durable SSE. Continue multi-source,
    enrichment, Gmail, lead/history and approval-gated application migration.
 4. Build reproducible non-root images, introduce Nginx and test the actual Compose
@@ -487,7 +561,8 @@ flowchart LR
   DLQ -->|reconcile durable failure| Publisher
 ```
 
-The browser currently polls persisted run status; resumable SSE is still pending.
+The browser consumes persisted owner-scoped SSE with polling fallback. Search
+outcomes persist completed/partial/failed state and bounded per-source outcomes.
 Only `search.collect` has an active route and handler. The other command names
 are reference-only contracts, not implemented workers.
 
@@ -527,7 +602,9 @@ are reference-only contracts, not implemented workers.
 3. PostgreSQL leases last 60 seconds. Workers renew every 15 seconds and extend SQS
    visibility. A new attempt increments the fence; stale workers cannot commit.
 4. Result insertion, terminal run state, execution state and event insertion share
-   one transaction. Failed provider work cannot write a completed search.
+   one transaction. Failed sources cannot masquerade as full success: validated
+   jobs remain available with explicit partial/failed run status. Recorded source
+   outcomes mark commands handled/completed; infrastructure exceptions still retry.
 5. Retry failures use bounded jitter; attempts are durable, not Redis counters.
    Exhausted work transitions to failed. DLQ reconciliation marks abandoned runs
    failed only after acquiring a lease. Completed/failed records are not revived.
@@ -543,23 +620,23 @@ yet. Do not remove the PostgreSQL volume or use production data for tests.
 
 ## Remaining v2 Work
 
-| Area                                                           | Status                                                                                                                   |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Private search UI/API and real search handler                  | Implemented; synthetic browser/provider and service tests                                                                |
-| Public Next.js jobs/SEO and public cache invalidation          | Not migrated; existing Pages remains unchanged                                                                           |
-| Profiles and preferences                                       | Implemented with revision conflicts and immutable search inputs                                                          |
-| Resume metadata and resume-derived matching facts              | Not migrated                                                                                                             |
-| MinIO upload/download, validation, retention and resume worker | Revised target; SDK installed, MinIO/workflows not implemented                                                           |
-| BullMQ transport and persistent queue Redis                    | Opt-in adapter tested including isolated restart/AOF restore and process lifecycle; cutover/soak pending                 |
-| Deterministic matching                                         | Connected with exclusions, confidence guards and UI evidence                                                             |
-| Isolated optional AI rank worker                               | Existing v1 implementation remains; v2 not connected                                                                     |
-| Company enrichment and multi-source collection                 | Remote OK + Himalayas selection/deduplication implemented; other sources, partial outcomes and enrichment pending        |
-| Gmail ingestion and email worker                               | Not migrated                                                                                                             |
-| Saved leads, application history and exports                   | Saved leads/notes/archive/restore/audit and search JSON export implemented; application history and bulk exports pending |
-| Approval-gated isolated browser/application worker             | Not implemented; no automatic submissions                                                                                |
-| Resumable SSE, cancellation and detailed progress              | Owner-scoped cancellation and fenced terminal events implemented/tested; UI polling remains; resumable SSE pending       |
-| OTel metrics/traces and operational dashboards                 | Dependencies installed; configuration/instrumentation pending                                                            |
-| Data migration, backup/restore and load/soak acceptance        | Not verified                                                                                                             |
+| Area                                                                | Status                                                                                                                                                  |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Private search UI/API and real search handler                       | Implemented; synthetic browser/provider and service tests                                                                                               |
+| Public Next.js jobs/SEO and public cache invalidation               | Not migrated; existing Pages remains unchanged                                                                                                          |
+| Profiles and preferences                                            | Implemented with revision conflicts and immutable search inputs                                                                                         |
+| Resume metadata and resume-derived matching facts                   | Metadata/internal parse results implemented; owner approval and matching integration pending                                                            |
+| Private S3 upload/download, validation, retention and resume worker | Adapter, coordinator/recovery and isolated durable parse handler tested; runtime acceptance, owner UI/review, retention and restore pending             |
+| BullMQ transport and persistent queue Redis                         | Opt-in adapter tested including isolated restart/AOF restore and process lifecycle; cutover/soak pending                                                |
+| Deterministic matching                                              | Connected with exclusions, confidence guards and UI evidence                                                                                            |
+| Isolated optional AI rank worker                                    | Existing v1 implementation remains; v2 not connected                                                                                                    |
+| Company enrichment and multi-source collection                      | Selection/deduplication, durable partial outcomes and targeted retry implemented; other sources/enrichment pending                                      |
+| Gmail ingestion and email worker                                    | Not migrated                                                                                                                                            |
+| Saved leads, application history and exports                        | Saved leads/notes/archive/restore/audit and search JSON export implemented; application history and bulk exports pending                                |
+| Approval-gated isolated browser/application worker                  | Not implemented; no automatic submissions                                                                                                               |
+| Resumable SSE, cancellation and detailed progress                   | Fenced running/terminal replay, browser SSE and cancellation implemented; detailed live source events, retention/reset and Nginx/TLS acceptance pending |
+| OTel metrics/traces and operational dashboards                      | Dependencies installed; configuration/instrumentation pending                                                                                           |
+| Data migration, backup/restore and load/soak acceptance             | Not verified                                                                                                                                            |
 
 The complete architecture request is therefore **still in progress**. A working
 search slice is not feature parity and must not be presented as v2 complete.

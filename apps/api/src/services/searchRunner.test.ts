@@ -24,7 +24,15 @@ import type { JobProvider, ProviderContext } from '@job-radar/providers';
 import type { ProviderQuery, RawJob, SourceId } from '@job-radar/shared';
 import { SearchRunner } from './searchRunner.js';
 import { RunEventBus } from './events.js';
-import { createTestRepos, makeProfile, makeSearchRequest, NOW } from '../db/repo/repo.fixtures.js';
+import {
+  createTestRepos,
+  makeProfile,
+  makeSearchRequest,
+  makeJob,
+  makeBreakdown,
+  storeJob,
+  NOW,
+} from '../db/repo/repo.fixtures.js';
 
 /** Short enough that a hung source is settled in milliseconds, not minutes. */
 const BUDGET_MS = 40;
@@ -93,7 +101,10 @@ function hangingProvider(id: SourceId, mode: 'clean' | 'throws'): JobProvider {
 /* Harness                                                                    */
 /* -------------------------------------------------------------------------- */
 
-function harness(providers: readonly JobProvider[]) {
+function harness(
+  providers: readonly JobProvider[],
+  http = new HttpClient({ userAgent: 'job-radar-test/1.0' }),
+) {
   const repos = createTestRepos();
   repos.profiles.save(makeProfile(), NOW);
 
@@ -103,7 +114,7 @@ function harness(providers: readonly JobProvider[]) {
     logger: pino({ level: 'silent' }),
     // Constructed but unreachable: every provider here is a stub, and without a
     // resolver or a rerank client no later stage makes a request either.
-    http: new HttpClient({ userAgent: 'job-radar-test/1.0' }),
+    http,
     providers,
     clock: () => NOW,
     sourceBudgetMs: BUDGET_MS,
@@ -120,6 +131,32 @@ function harness(providers: readonly JobProvider[]) {
 /* -------------------------------------------------------------------------- */
 
 describe('SearchRunner per-source fetch budget', () => {
+  it('removes a confirmed withdrawn older lead during a refresh, not merely because it was absent', async () => {
+    const http = new HttpClient({
+      minIntervalMs: 0,
+      fetch: async (url) =>
+        String(url).endsWith('/123')
+          ? new Response('{"error":"Job not found"}', { status: 404 })
+          : new Response('{"jobs":[]}', { status: 200 }),
+    });
+    const fixture = harness([fastProvider('greenhouse', 0)], http);
+    try {
+      const job = storeJob(
+        fixture.repos,
+        makeJob({ sourceJobId: '123', sourceUrl: 'https://boards.greenhouse.io/acme/jobs/123' }),
+      );
+      const lead = fixture.repos.leads.upsert(
+        { jobId: job.id, runId: null, breakdown: makeBreakdown() },
+        NOW,
+      );
+      const result = await fixture.start(['greenhouse']);
+      expect(result.run.status).toBe('completed');
+      expect(fixture.repos.leads.get(lead.id)).toBeNull();
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
   it.each(['warn', 'error'] as const)(
     'surfaces handled provider %s events in source summaries',
     async (level) => {

@@ -1,0 +1,14 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "CareerScope: Open five session tabs",
+      "type": "process",
+      "command": "node",
+      "args": ["${workspaceFolder}/scripts/open-session-tabs.mjs"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    }
+  ]
+}

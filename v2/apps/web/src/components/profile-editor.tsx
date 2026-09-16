@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, LoaderCircle, RefreshCw, Save } from 'lucide-react';
 import type { WritableProfile } from '@careerscope/core';
@@ -333,11 +333,28 @@ function ProfileForm({
   );
 }
 
-export default function ProfileEditor({ csrf, onBack }: { csrf: string; onBack: () => void }) {
+export default function ProfileEditor({
+  csrf,
+  onBack,
+  onDirty,
+}: {
+  csrf: string;
+  onBack: () => void;
+  onDirty: (dirty: boolean) => void;
+}) {
   const cache = useQueryClient();
   const [dirty, setDirty] = useState(false);
   const [saved, setSaved] = useState(false);
   const [generation, setGeneration] = useState(0);
+  useEffect(() => {
+    if (!dirty) return;
+    const preventUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', preventUnload);
+    return () => window.removeEventListener('beforeunload', preventUnload);
+  }, [dirty]);
   const profile = useQuery({
     queryKey: ['profile'],
     queryFn: ({ signal }) => api<ProfileResponse>('/profile', { signal }),
@@ -349,6 +366,7 @@ export default function ProfileEditor({ csrf, onBack }: { csrf: string; onBack: 
     const result = await profile.refetch();
     if (result.isSuccess) {
       setDirty(false);
+      onDirty(false);
       setSaved(false);
       setGeneration((value) => value + 1);
     }
@@ -384,12 +402,14 @@ export default function ProfileEditor({ csrf, onBack }: { csrf: string; onBack: 
           csrf={csrf}
           onDirty={() => {
             setDirty(true);
+            onDirty(true);
             setSaved(false);
           }}
           onReload={reload}
           onSaved={(record) => {
             cache.setQueryData(['profile'], record);
             setDirty(false);
+            onDirty(false);
             setSaved(true);
           }}
         />

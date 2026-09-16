@@ -1,11 +1,125 @@
 # Temporary Pending Work
 
-Updated: 2026-09-10. Deployed baseline: CareerScope v1.3.1, commit `0904377`.
-This is a reviewed handoff checklist retained in Git at the owner's request.
-The release results below describe v1.3.1. Follow-up edits are local until committed
-and independently verified for publication.
+Updated: 2026-09-16. Root runtime: v1.3.4. V2: incomplete 2.0.0-alpha.1.
+Branch: `feature/v2-local-migration`; portable checkpoint, not a release.
+This checklist is retained in Git at the owner's request. The September 10 release
+record below is historical, not a current deployment claim. Source commit/push is
+authorized; deployment and merging into main are not. See
+[the portable handoff](docs/SESSION-HANDOFF.md) for destination setup and five tabs.
+September16 recheck: V1's1043 tests and both versions' type/lint/build/format gates
+passed. V2's full test rerun was stopped because Docker/Queue Redis was unavailable;
+the31-test and browser results below are earlier evidence, not a fresh rerun.
 
-## Current State
+## Current V2 Implementation
+
+- [x] Durable partial-source outcomes: validated retained jobs, exact selected
+      sources/counts, explicit partial/failed states, fixed error codes and atomic
+      fenced settlement. Handled source failures do not retry as transport failures.
+- [x] Partial-result API/UI: source outcomes, saved leads, truthful JSON export and
+      retry of failed sources into a new immutable run.
+- [x] Owner-scoped resumable SSE: bounded/indexed replay, fenced running transition,
+      native browser reconnect, polling fallback, session revocation, connection/rate
+      limits and shutdown cleanup. Detailed live source events, retention/reset and
+      Nginx/TLS acceptance remain separate work.
+- [x] Migrations0007/0008: fresh/repeat and populated0006 upgrades tested on disposable
+      databases; no normal/owner migration. Competing start/terminal writes tested.
+- [x] Latest verification:31 V2 tests and type/lint/build/format; SQS/PG integration,
+      BullMQ execution policy and queue restart/AOF/process check; three browsers at
+      320/390/1440 including SSE and targeted retry; screenshots reviewed.
+      Root1043 tests plus typecheck/lint/build/format pass.
+- [x] Internal upload coordinator: server-computed metadata, bounded copied body,
+      private readiness, verified exact-version storage and atomic parse scheduling.
+      Lost PUT responses/SQL failures recover without overwrite or extra versions;
+      explicit owner-scoped reconciliation leaves missing objects pending.
+- [x] Restricted parser child and durable handler: real synthetic PDF/DOCX extraction,
+      30-second deadline, 192 MiB V8 old-space, no inherited secrets/network/writes/
+      native addons/child spawning. Node network-permission support is required;
+      verified on Node 26.8.1. This is not a complete sandbox or total RSS limit.
+- [x] DOCX preflight: 200 entries, 20 MiB expansion, 100:1 ratio, validated sizes,
+      required parts, encrypted/macro/embedded entries rejected. PDF 50-page bound,
+      text 160,000 characters and IPC 1 MiB. Native canvas permissions remain disabled.
+- [x] Additive migration `0006_amazing_ares`: owner-scoped bounded parse results,
+      fenced atomic completion, rollback and fixed invalid/processing failure codes.
+      Real SQS delivery, duplicate/exhaustion and DOCX upload-to-result checks pass;
+      parsing never changes profile facts. Normal V2 database was not migrated.
+- [x] Previous resume-only verification: 29 V2 tests, typecheck/lint/build/format, isolated queue
+      process/restart/AOF restore and runtime audit (zero known advisories). Focused
+      corruption, cancellation, archive and PDF page-bound tests pass. Root/browser
+      gates were not rerun. No owner uploads or persistent parser runtime enabled.
+- [x] Private versioned S3 adapter: explicit local configuration, private-bucket
+      readiness, 5 MiB bound, SHA-256, immutable writes and version-specific reads/deletes.
+      Synthetic HTTP and LocalStack checks pass; this is not real-runtime acceptance.
+- [x] Runtime-neutral `S3_*` configuration, complete legacy `MINIO_*` compatibility,
+      conflicting/partial configuration rejection. V2 remains 5 MiB (5,242,880 bytes),
+      intentionally separate from V1's 10 MiB; no private configuration changed.
+- [x] Evaluate two maintained Apache-2.0 ARM64 candidates using pinned images and
+      disposable local Docker resources. SeaweedFS 4.47 passed lifecycle/concurrent
+      writes/anonymous and wrong-secret denial, but failed empty-bucket cleanup with
+      nonempty deletion disabled. RustFS 1.0.0-rc.6 failed owner/grantee ACL identity
+      validation and is a prerelease. Neither accepted; exact digests are in the
+      V2 architecture document. Test containers/volumes/network removed.
+- [x] Upload metadata reservations and additive migration `0005`: owner-scoped
+      idempotency, database-enforced metadata bounds and immutable version binding.
+      PostgreSQL stores metadata only, not binary resumes.
+- [x] Atomic stored-upload transition: row lock, one `resume.parse` outbox command,
+      concurrent retries, version conflict rejection and rollback at both writes.
+      This internal method requires trusted verification of the stored object first.
+- [x] Filter outbox scans by configured queue routes before limiting the batch;
+      pending unsupported parse commands no longer starve searches.
+- [x] V2 verification: 28 tests, typecheck, lint, build, format, isolated queue
+      restart/AOF restore/process lifecycle. Migration `0005` tested on disposable
+      fresh databases and repeat migration only; normal V2 database unchanged.
+      Latest storage-only continuation reran 28 tests and type/lint/build/format;
+      queue process/restart, root and browser checks remain previous-pass evidence.
+- [x] Previous pass: profile navigation/sign-out/unload guards and keyboard skip
+      navigation; Chromium/Firefox/WebKit workflows and reviewed mobile/desktop screenshots.
+- [x] Previous pass: root ExcelJS-only UUID 11.1.1 override and XLSX regression;
+      root/V2 runtime audits clean. Root 1,043 tests, 21 Pages tests, three runtime
+      guards and browser/static/build gates passed. Not rerun in this backend-only continuation.
+- [x] Context, V2 README and architecture status updated. GitHub About was updated
+      in the previous pass; no new external metadata changes in this continuation.
+
+## Next V2 Gates
+
+- [ ] Select and validate a maintained private object-storage runtime. MinIO's
+      upstream repository is archived and unmaintained; the attempted image pull
+      failed. Do not silently use old mirrors, accept licenses or activate paid services.
+      Retest corrected candidate builds without relaxing privacy or deletion guards.
+      RustFS rc6 source hardcodes the missing ACL grantee ID; this is not repairable
+      through local credential settings. A storage fork is a separate decision.
+      User explicitly chose upstream-only runtimes; no patched-build evaluation is
+      authorized. Latest releases remain the rejected rc6/4.47 candidates.
+      Storage-dependent activation remains blocked.
+      Both candidates still require persistence/restart and exact-version backup/restore
+      acceptance; no production candidate or upload workflow is enabled.
+- [ ] Expose the tested internal coordinator through bounded authenticated API/UI
+      with owner/origin/CSRF checks and aggregate admission limits, only after runtime
+      acceptance. Never trust client object-version claims. No upload API is enabled.
+- [ ] Schedule unattended reconciliation and implement retention/version deletion;
+      explicit ambiguous-write and interrupted-reservation recovery is now tested.
+- [ ] Activate a dedicated parser worker and publisher route after storage acceptance;
+      handler, isolation and durable retry/fencing/results are tested internally.
+      OS/container CPU/RSS/egress and long-running process acceptance remain pending.
+- [ ] Owner-approved resume facts into immutable matching snapshots; do not infer
+      or overwrite qualifications without review.
+- [ ] Coordinated PostgreSQL/object/configuration/encryption-material restore.
+      Populated search-schema upgrade is now tested, not a full topology restore
+      or permission to migrate the real owner.
+- [ ] Benchmark/model approval and dedicated AI worker; 4B prior smoke is not
+      application approval, 9B remains unapproved. Keep inference outside Fastify.
+- [ ] Enrichment, Gmail/provider parity, approval-gated application worker,
+      detailed live source progress, SSE retention/reset and Nginx/TLS acceptance,
+      observability and V2 theme/accessibility parity.
+- [ ] SQLite-to-PostgreSQL cutover rehearsal, sustained mixed-workload soak and
+      full V2 acceptance. Existing tests do not establish 100% completion.
+
+## Historical September 10 Release
+
+The remaining sections preserve the v1.3.1 release record and its original follow-up
+checklist. Current local Docker verification and the resolved UUID advisory above
+supersede their older blocker statements. EC2/public deployment remains deferred.
+
+### Release State
 
 - GitHub Pages is deployed; CI run `34470638235` succeeded.
 - Public: https://varunjakkampudi-tech.github.io/careerscope/
@@ -43,8 +157,8 @@ and independently verified for publication.
 - [x] Rerun `npm audit --omit=dev`: two moderate entries, zero high/critical, from
       GHSA-w5hq-g745-h8pq via ExcelJS 4.4.0 -> uuid 8.3.2. Installed ExcelJS uses v4,
       not the affected v3/v5/v6 buffer APIs. Synthetic XLSX/CSV checks passed.
-- [ ] Track the unresolved UUID advisory and an upstream-compatible fix. No forced
-      ExcelJS downgrade or unverified major UUID override was applied.
+- [x] Resolved September 15: scoped UUID 11.1.1 override, no ExcelJS downgrade;
+      workbook round-trip and export route regression passed, runtime audit clean.
 - [x] Recheck the attached MCP process after reopening the renamed workspace.
       LinkedIn/new reports 247 matches and returned only LinkedIn/New leads;
       LinkedIn/saved returns zero. The previous stale-process filter failure is cleared.

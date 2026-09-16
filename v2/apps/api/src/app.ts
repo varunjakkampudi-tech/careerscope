@@ -1,4 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { Readable } from 'node:stream';
+import { setTimeout as delay } from 'node:timers/promises';
 import Fastify from 'fastify';
 import cookie from '@fastify/cookie';
 import helmet from '@fastify/helmet';
@@ -9,6 +11,7 @@ import {
   Conflict,
   createSearchSchema,
   collectedJobSchema,
+  sourceOutcomesSchema,
   ProfileRepository,
   ProfileRevisionConflict,
   LeadRepository,
@@ -22,6 +25,9 @@ const loginSchema = z
   .strict();
 const identifier = z.object({ id: z.string().uuid() });
 const idempotencyKey = z.string().regex(/^[a-zA-Z0-9_-]{8,128}$/);
+const eventCursor = z
+  .string()
+  .refine((value) => /^(0|[1-9][0-9]{0,18})$/.test(value) && BigInt(value) <= 9223372036854775807n);
 class HttpError extends Error {
   constructor(
     readonly statusCode: number,
@@ -41,6 +47,7 @@ export async function createApp(database: Database, origin: string, rateLimit: R
   const auth = new Auth(database);
   const profiles = new ProfileRepository(database);
   const leads = new LeadRepository(database);
+  const streams = new Map<AbortController, string>();
   const app = Fastify({
     bodyLimit: 16_384,
     requestTimeout: 15_000,
@@ -58,6 +65,9 @@ export async function createApp(database: Database, origin: string, rateLimit: R
     contentSecurityPolicy: { directives: { defaultSrc: ["'none'"], frameAncestors: ["'none'"] } },
   });
   app.decorateRequest('ownerId', null);
+  app.addHook('preClose', async () => {
+    for (const controller of streams.keys()) controller.abort();
+  });
   app.addHook('onRequest', async (request, reply) => {
     reply.header('Cache-Control', 'no-store');
     const path = request.routeOptions.url;
@@ -204,7 +214,8 @@ export async function createApp(database: Database, origin: string, rateLimit: R
       throw new HttpError(429, 'Too many exports');
     const search = await database.getSearch(request.ownerId!, id);
     if (!search) throw new HttpError(404, 'Search not found');
-    if (search.status !== 'completed') throw new HttpError(409, 'Search is not complete');
+    if (!['completed', 'partial'].includes(search.status))
+      throw new HttpError(409, 'Search is not complete');
     const jobs = await database.pool.query(
       `SELECT data FROM search_jobs WHERE owner_id = $1 AND run_id = $2
        ORDER BY (data->'match'->>'score')::double precision DESC NULLS LAST, id LIMIT 100`,
@@ -216,9 +227,111 @@ export async function createApp(database: Database, origin: string, rateLimit: R
       .send({
         schemaVersion: 1,
         runId: id,
+        status: search.status,
+        sourceOutcomes: search.sourceOutcomes
+          ? sourceOutcomesSchema.parse(search.sourceOutcomes)
+          : null,
         request: createSearchSchema.parse(search.request),
         jobs: jobs.rows.map((row) => collectedJobSchema.strip().parse(row.data)),
       });
+  });
+  app.get('/api/searches/:id/events', async (request, reply) => {
+    const { id } = identifier.parse(request.params);
+    const query = z.object({ after: eventCursor.optional() }).strict().parse(request.query);
+    let cursor = eventCursor.parse(request.headers['last-event-id'] ?? query.after ?? '0');
+    const ownerId = request.ownerId!;
+    if (!(await database.getSearch(ownerId, id))) throw new HttpError(404, 'Search not found');
+    if (cursor !== '0') {
+      const known = await database.pool.query(
+        'SELECT sequence FROM run_events WHERE owner_id = $1 AND run_id = $2 AND sequence = $3::bigint',
+        [ownerId, id, cursor],
+      );
+      if (!known.rowCount) throw new HttpError(400, 'Invalid event cursor');
+    }
+    if (!(await rateLimit(`events:${ownerId}`, 30, 60)))
+      throw new HttpError(429, 'Too many event streams');
+    if (
+      streams.size >= 32 ||
+      [...streams.values()].filter((owner) => owner === ownerId).length >= 2
+    )
+      throw new HttpError(429, 'Too many event streams');
+    const controller = new AbortController();
+    streams.set(controller, ownerId);
+    const timer = setTimeout(() => controller.abort(), 25_000);
+    const close = () => controller.abort();
+    const cleanup = () => {
+      controller.abort();
+      clearTimeout(timer);
+      streams.delete(controller);
+      reply.raw.off('close', close);
+    };
+    reply.raw.once('close', close);
+    const body = Readable.from(
+      (async function* () {
+        try {
+          yield 'retry: 2000\n\n';
+          while (!controller.signal.aborted) {
+            const session = await auth.session(request.cookies[sessionCookie]);
+            if (!session || session.ownerId !== ownerId) {
+              yield 'event: session-expired\ndata: {}\n\n';
+              break;
+            }
+            const events = await database.pool.query<{
+              cursor: string;
+              type: string;
+              createdAt: Date;
+            }>(
+              `SELECT sequence::text AS cursor, type, created_at AS "createdAt" FROM run_events
+             WHERE owner_id = $1 AND run_id = $2 AND sequence > $3::bigint ORDER BY sequence LIMIT 50`,
+              [ownerId, id, cursor],
+            );
+            controller.signal.throwIfAborted();
+            for (const event of events.rows) {
+              cursor = event.cursor;
+              yield `id: ${cursor}\nevent: progress\ndata: ${JSON.stringify(event)}\n\n`;
+              if (
+                ['SearchCompleted', 'SearchPartial', 'SearchFailed', 'SearchCancelled'].includes(
+                  event.type,
+                )
+              ) {
+                yield 'event: settled\ndata: {}\n\n';
+                return;
+              }
+            }
+            if (events.rows.length === 50) continue;
+            const search = await database.getSearch(ownerId, id);
+            if (!search) break;
+            if (
+              ['completed', 'partial', 'failed', 'cancelled'].includes(search.status) &&
+              !events.rows.length
+            ) {
+              const pending = await database.pool.query(
+                'SELECT sequence FROM run_events WHERE owner_id = $1 AND run_id = $2 AND sequence > $3::bigint LIMIT 1',
+                [ownerId, id, cursor],
+              );
+              if (pending.rowCount) continue;
+              yield 'event: settled\ndata: {}\n\n';
+              break;
+            }
+            yield ': heartbeat\n\n';
+            await delay(1000, undefined, { signal: controller.signal });
+          }
+        } catch {
+          if (!controller.signal.aborted) {
+            request.log.error({ requestId: request.id }, 'Event stream failed');
+            yield 'event: unavailable\ndata: {}\n\n';
+          }
+        } finally {
+          cleanup();
+        }
+      })(),
+    );
+    body.once('close', cleanup);
+    return reply
+      .type('text/event-stream')
+      .header('Cache-Control', 'no-store, no-transform')
+      .header('X-Accel-Buffering', 'no')
+      .send(body);
   });
   app.get('/api/searches/:id', async (request) => {
     const { id } = identifier.parse(request.params);
@@ -239,6 +352,9 @@ export async function createApp(database: Database, origin: string, rateLimit: R
       status: search.status,
       request: search.request,
       profileRevision: search.profileRevision,
+      sourceOutcomes: search.sourceOutcomes
+        ? sourceOutcomesSchema.parse(search.sourceOutcomes)
+        : null,
       jobs: jobs.rows,
       events: events.rows,
     };
