@@ -4,7 +4,14 @@ import type { Database } from './database.js';
 import { collectedJobSchema, type CollectedJob } from './jobs.js';
 import { Conflict } from './errors.js';
 
-export const leadStatusSchema = z.enum(['saved', 'archived']);
+export const leadStatusSchema = z.enum([
+  'saved',
+  'applied',
+  'interviewing',
+  'offer',
+  'rejected',
+  'archived',
+]);
 export const saveLeadSchema = z.object({ jobId: z.string().uuid() }).strict();
 export const updateLeadSchema = z
   .object({
@@ -149,7 +156,10 @@ export class LeadRepository {
         return current;
       }
       const updated = await client.query<LeadRecord>(
-        `UPDATE saved_leads SET notes = $3, status = $4, revision = revision + 1, updated_at = now()
+        `UPDATE saved_leads SET notes = $3, status = $4, revision = revision + 1, updated_at = now(),
+         -- Only moved when the stage actually changes, so editing a note does
+         -- not make a cold application look freshly worked.
+         status_changed_at = CASE WHEN status <> $4 THEN now() ELSE status_changed_at END
          WHERE owner_id = $1 AND id = $2 RETURNING ${columns}`,
         [ownerId, id, changes.notes, changes.status],
       );

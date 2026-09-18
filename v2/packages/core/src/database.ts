@@ -383,6 +383,36 @@ export class Database {
             JSON.stringify(job),
           ],
         );
+        // In the same transaction as the job itself: a sighting that could be
+        // committed without its posting would be evidence of something that
+        // never happened.
+        await client.query(
+          `INSERT INTO job_sightings
+             (owner_id, fingerprint, title, company, first_posted_at, last_posted_at, last_run_id)
+           VALUES ($1, $2, $3, $4, $5, $5, $6)
+           ON CONFLICT (owner_id, fingerprint) DO UPDATE SET
+             last_seen_at = now(),
+             sightings = job_sightings.sightings + 1,
+             title = EXCLUDED.title,
+             company = EXCLUDED.company,
+             last_posted_at = COALESCE(EXCLUDED.last_posted_at, job_sightings.last_posted_at),
+             -- A posting that comes back claiming a newer date is the same role
+             -- refreshed, not a new one. That is the signal worth counting.
+             repost_count = job_sightings.repost_count + CASE
+               WHEN EXCLUDED.last_posted_at IS NOT NULL
+                AND job_sightings.last_posted_at IS NOT NULL
+                AND EXCLUDED.last_posted_at > job_sightings.last_posted_at
+               THEN 1 ELSE 0 END,
+             last_run_id = EXCLUDED.last_run_id`,
+          [
+            command.ownerId,
+            job.fingerprint,
+            job.title,
+            job.company,
+            job.postedAt,
+            command.aggregateId,
+          ],
+        );
       }
       await client.query(
         `INSERT INTO run_events (id, run_id, owner_id, type) VALUES ($1, $2, $3, $4)`,
