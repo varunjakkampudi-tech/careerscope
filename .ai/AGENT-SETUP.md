@@ -231,6 +231,45 @@ No secrets. The validator checks.
 
 ---
 
+## Skills each agent should consult
+
+Twenty skills are already installed in `.github/skills/`. Nothing needs
+installing; agents need to know which apply to them.
+
+| Agent                | Skills                                                                                                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| System Designer      | `careerscope-architecture`, `careerscope-outbox-queue`, `careerscope-job-discovery`                                                                                |
+| Product Architect    | `careerscope-architecture`, `careerscope-job-matching`                                                                                                             |
+| Backend              | `careerscope-outbox-queue`, `careerscope-resume-storage`, `careerscope-job-discovery`, `careerscope-job-matching`, `postgres-best-practices`, `drizzle-orm-expert` |
+| Frontend             | `react-best-practices`, `design-taste-frontend`, `accesslint-audit`, `nextjs-seo-indexing`                                                                         |
+| Visual Designer      | `ckw-design`, `emil-design-eng`, `baseline-ui`, `design-taste-frontend`                                                                                            |
+| UX                   | `accesslint-audit`, `ckw-design`                                                                                                                                   |
+| Infrastructure       | `careerscope-deployment`, `container-security-hardening`                                                                                                           |
+| Security             | `careerscope-security`, `container-security-hardening`, `audit-skills`                                                                                             |
+| QA / Performance     | `careerscope-verification`                                                                                                                                         |
+| Independent Reviewer | `careerscope-verification`, `phase-gated-debugging`                                                                                                                |
+| Senior Engineer      | `phase-gated-debugging`, plus whichever domain skill the change touches                                                                                            |
+| Code Quality         | `careerscope-architecture` (for boundary ownership)                                                                                                                |
+
+The `careerscope-*` skills carry the invariants that are easiest to break.
+Consult the relevant one **before** changing that area, not after a reviewer
+finds the breakage.
+
+### Agents do not install skills
+
+**No agent installs a skill, plugin or extension on its own.** A skill can carry
+scripts, remote execution and destructive commands; installing on the strength
+of a name is a supply-chain decision made by something that cannot be held
+responsible for it. Installing a catalogue wholesale is worse.
+
+When an agent needs a capability nothing covers, it says so and stops. The
+operator then finds the smallest relevant skill, reads it and its resources in
+full, checks for scripts and remote execution, rejects anything conflicting with
+the engineering contract, installs it project-scoped and pinned, and records
+why. `audit-skills` exists for exactly this review.
+
+---
+
 ## Loop limits
 
 ```

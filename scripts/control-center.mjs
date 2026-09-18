@@ -169,6 +169,12 @@ function duration(ms) {
   return `${Math.floor(s / 3600)}h ${Math.floor((s % 3600) / 60)}m`;
 }
 
+// Animation is only ever applied to an agent with a fresh heartbeat. A spinner
+// over a run that has gone quiet is the fake activity this tool exists to avoid,
+// so a stale agent keeps a static mark and is labelled STALE instead.
+const SPINNER = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+let frame = 0;
+
 function render() {
   const loop = loopState();
   const out = [];
@@ -247,7 +253,9 @@ function render() {
   for (const agent of agents().sort((a, b) => a.name.localeCompare(b.name))) {
     const state = String(recorded[agent.id] ?? 'WAITING').toUpperCase();
     const paint = STATE_STYLE[state] ?? ((t) => t);
-    const mark = MARK[state] ?? '●';
+    const busy = !['WAITING', 'COMPLETE', 'PASSED', 'FAILED', 'BLOCKED'].includes(state);
+    const live = busy && !stale && agent.id === loop.activeAgent;
+    const mark = live ? SPINNER[frame % SPINNER.length] : (MARK[state] ?? '●');
     const active = agent.id === loop.activeAgent;
     // Execute-without-edit is a real third tier: QA can run things, not change them.
     const permission = agent.write
@@ -378,11 +386,35 @@ if (process.argv.includes('--json')) {
     process.stdout.write(dim('  watching .ai/ — Ctrl+C to stop\n'));
   };
   draw();
+  // Only spin while an agent is genuinely live. When nothing is running the
+  // screen is static, so motion on it always means something is actually
+  // happening rather than that the process is merely alive.
+  let ticking = false;
+  setInterval(() => {
+    const loop = loopState();
+    const beat = loop?.lastHeartbeat ? Date.now() - Date.parse(loop.lastHeartbeat) : null;
+    const live =
+      Boolean(loop?.activeAgent) &&
+      ['RUNNING', 'REVIEWING', 'IMPLEMENTING', 'TESTING'].includes(
+        String(loop.status).toUpperCase(),
+      ) &&
+      beat !== null &&
+      beat <= STALE_AFTER_MS;
+    if (!live) {
+      ticking = false;
+      return;
+    }
+    ticking = true;
+    frame += 1;
+    draw();
+  }, 120).unref?.();
   for (const target of [AI, REVIEW]) {
     if (!existsSync(target)) continue;
     watch(target, { recursive: statSync(target).isDirectory() }, () => {
       clearTimeout(timer);
-      timer = setTimeout(draw, 150);
+      timer = setTimeout(() => {
+        if (!ticking) draw();
+      }, 150);
     });
   }
 } else {

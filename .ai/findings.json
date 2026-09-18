@@ -1,5 +1,45 @@
 {
   "$comment": "Canonical machine-readable review findings. The Orchestrator appends; reviewers have no edit tool and hand findings over as text. Severity: P0 data loss/security/catastrophic, P1 serious correctness, P2 quality, P3 minor.",
   "updatedAt": "2026-09-19T00:00:00.000Z",
-  "findings": []
+  "findings": [
+    {
+      "id": "Q1",
+      "severity": "P2",
+      "foundBy": "Code Quality",
+      "file": "scripts/publish-pages.mjs",
+      "symbol": "versionPaths",
+      "what": "Second hand-maintained copy of the version-file list owned by sync-version.mjs versionFiles()",
+      "cost": "publishPages runs sync-version.mjs then commits against its own list. A third version-bearing file would be written but not committed, publishing a stale version string. Only visible after a push to main.",
+      "evidence": "grep -rn 'mobile-site/version.js' scripts/*.mjs -> publish-pages.mjs:15 and sync-version.mjs:13, independently maintained, nothing asserts they agree",
+      "fix": "Derive the list by importing versionFiles from sync-version.mjs",
+      "status": "OPEN",
+      "assignedTo": "unassigned"
+    },
+    {
+      "id": "Q2",
+      "severity": "P2",
+      "foundBy": "Code Quality",
+      "file": "scripts/publish-pages.mjs",
+      "symbol": "CLI catch block",
+      "what": "Bare catch discards five distinct, already-safe guard messages and replaces them with one generic paragraph",
+      "cost": "Also swallows execFileSync failures from npm version, sync-version, git commit and git push - mid-release failures - while telling the operator a partial release may exist without saying which step produced it",
+      "evidence": "grep -n 'catch {' scripts/publish-pages.mjs -> line 59; grep -c 'throw new Error' -> 5",
+      "fix": "catch (error); print error.message for guard errors, keep the redacted text only for subprocess failures whose output could echo env",
+      "status": "OPEN",
+      "assignedTo": "unassigned"
+    },
+    {
+      "id": "Q3",
+      "severity": "P3",
+      "foundBy": "Code Quality",
+      "file": "scripts/export-admin.mjs",
+      "symbol": "readAdminSnapshot",
+      "what": "Exported with no importer; only called from the same file",
+      "cost": "Reads as public surface and implies test coverage that does not exist - it is the one of three functions with no test",
+      "evidence": "grep -rn 'readAdminSnapshot' --include=*.mjs --include=*.ts --include=*.tsx . -> declaration and one same-file call site only",
+      "fix": "Add the missing unit test and keep the export deliberate; do not delete the function, only the modifier is unused",
+      "status": "OPEN",
+      "assignedTo": "unassigned"
+    }
+  ]
 }
