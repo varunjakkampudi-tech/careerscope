@@ -443,8 +443,7 @@ docker compose -f infra/docker-compose.yml up -d --build
 `infra/` holds the pieces: a multi-stage `Dockerfile`, `docker-compose.yml`
 (API + nginx + certbot behind a profile), three nginx configs, and
 `job-radar.service` for running under systemd instead of Docker.
-`.github/workflows/deploy-ec2.yml` does this over plain `ssh` when run manually,
-or after green CI on `main` when `ENABLE_EC2_DEPLOY=true` is set in repository variables.
+This is the V1 self-hosted path; the deployed V2 stack uses `infra/v3` instead.
 
 nginx proxies but does **not** serve the SPA — the API does, so client-side
 route fallback lives in exactly one place. `proxy_buffering` is off on
@@ -498,8 +497,7 @@ and how to add a source or a scoring dimension:
 **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
 
 The [release review](docs/RELEASE-REVIEW.md) records the September 2026 cleanup,
-test coverage and deployment limits. The [EC2 application runtime](docs/EC2-APPLICATIONS.md)
-is opt-in and has separate acceptance gates; Pages does not run it.
+test coverage and deployment limits.
 
 ### API
 
@@ -565,7 +563,7 @@ then boots the built server and health-checks it. Docker/browser-image checks ru
 on manual CI runs or when repository variable `ENABLE_CONTAINER_CI=true`.
 
 Cloud deployment workflows remain available but do not deploy automatically by
-default. Set `ENABLE_EC2_DEPLOY=true` or `ENABLE_PAGES_DEPLOY=true` in GitHub
+default. Set `ENABLE_PAGES_DEPLOY=true` in GitHub
 repository variables only for the hosting you use, after configuring its
 credentials. Both workflows can also be launched manually. Local development
 needs none of these variables or GitHub Actions.

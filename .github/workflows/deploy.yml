@@ -35,6 +35,9 @@ env:
   PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
   DEPLOY_HOST: 201.18.193.230
   DEPLOY_USER: root
+  # Every ssh invocation pins the host key. A deploy that would accept a new
+  # key is a deploy that can be pointed at someone else's machine.
+  SSH_OPTIONS: -i ~/.ssh/deploy -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=15
 
 jobs:
   gate:
@@ -83,32 +86,61 @@ jobs:
         run: echo "sha=$(git rev-parse HEAD)" >>"$GITHUB_OUTPUT"
 
       - name: Authorise the deployment key
+        env:
+          # Passed through the environment rather than interpolated into the
+          # script. Inline interpolation splices the secret into the command
+          # text, which mangles multi-line keys and is an injection surface.
+          DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          HOST_KEY: ${{ secrets.DEPLOY_HOST_KEY }}
         run: |
+          # This guard exists because the host-key secret was once stored empty:
+          # ssh-keyscan had produced nothing and the failure only surfaced as an
+          # unexplained host-verification error during a deploy.
+          if [ -z "${DEPLOY_KEY//[[:space:]]/}" ]; then
+            echo "::error::DEPLOY_SSH_KEY is empty. Set it with: gh secret set DEPLOY_SSH_KEY < key" >&2
+            exit 1
+          fi
+          if [ -z "${HOST_KEY//[[:space:]]/}" ]; then
+            echo "::error::DEPLOY_HOST_KEY is empty. Capture it on the host with: cat /etc/ssh/ssh_host_ed25519_key.pub" >&2
+            exit 1
+          fi
           install -m 700 -d ~/.ssh
-          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" >~/.ssh/deploy
+          printf '%s\n' "$DEPLOY_KEY" >~/.ssh/deploy
           chmod 600 ~/.ssh/deploy
           # Pin the host key rather than accepting whatever answers. An unpinned
           # deploy trusts DNS and the network path with a root shell.
-          printf '%s\n' "${{ secrets.DEPLOY_HOST_KEY }}" >~/.ssh/known_hosts
+          printf '%s\n' "$HOST_KEY" >~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
+          ssh-keygen -y -f ~/.ssh/deploy >/dev/null || {
+            echo "::error::DEPLOY_SSH_KEY is not a usable private key" >&2
+            exit 1
+          }
+
+      # Fail here, before maintenance mode is enabled, rather than halfway
+      # through a deploy with the site already behind the holding page.
+      - name: Verify the host is reachable
+        run: |
+          ssh -i ~/.ssh/deploy -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=15 "$DEPLOY_USER@$DEPLOY_HOST" \
+            'test -x /opt/careerscope/infra/v3/ship.sh && echo "deployment tree present on $(hostname)"'
 
       - name: Build the deployment archive from the commit
         run: git archive --format=tar.gz -o /tmp/deploy.tgz "${{ steps.rev.outputs.sha }}"
 
       - name: Enable maintenance mode
         run: |
-          ssh -i ~/.ssh/deploy -o BatchMode=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+          ssh $SSH_OPTIONS "$DEPLOY_USER@$DEPLOY_HOST" \
             "bash /opt/careerscope/infra/v3/maintenance.sh enable 'Deploying' 'about 10 minutes'"
 
       - name: Ship
         run: |
-          scp -i ~/.ssh/deploy -o BatchMode=yes /tmp/deploy.tgz "$DEPLOY_USER@$DEPLOY_HOST:/tmp/deploy.tgz"
-          ssh -i ~/.ssh/deploy -o BatchMode=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+          scp $SSH_OPTIONS /tmp/deploy.tgz "$DEPLOY_USER@$DEPLOY_HOST:/tmp/deploy.tgz"
+          ssh $SSH_OPTIONS "$DEPLOY_USER@$DEPLOY_HOST" \
             "bash /opt/careerscope/infra/v3/ship.sh /tmp/deploy.tgz ${{ steps.rev.outputs.sha }}"
 
       - name: Build images, migrate and start
         run: |
-          ssh -i ~/.ssh/deploy -o BatchMode=yes "$DEPLOY_USER@$DEPLOY_HOST" "
+          ssh $SSH_OPTIONS "$DEPLOY_USER@$DEPLOY_HOST" "
             set -e
             cd /opt/careerscope/infra/v3
             bash build-images.sh ${{ steps.rev.outputs.sha }}
@@ -118,12 +150,12 @@ jobs:
 
       - name: Verify provenance
         run: |
-          ssh -i ~/.ssh/deploy -o BatchMode=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+          ssh $SSH_OPTIONS "$DEPLOY_USER@$DEPLOY_HOST" \
             "bash /opt/careerscope/infra/v3/check-provenance.sh ${{ steps.rev.outputs.sha }}"
 
       - name: Verify the origin answers
         run: |
-          ssh -i ~/.ssh/deploy -o BatchMode=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+          ssh $SSH_OPTIONS "$DEPLOY_USER@$DEPLOY_HOST" \
             "bash /opt/careerscope/infra/v3/maintenance.sh disable"
           for attempt in 1 2 3 4 5; do
             code=$(curl -s -o /dev/null -w '%{http_code}' https://careerscope.tech/)
@@ -135,7 +167,7 @@ jobs:
             echo "attempt $attempt: code=$code health=$health"
             sleep 10
           done
-          echo "origin did not become healthy" >&2
+          echo "::error::origin did not become healthy after deploy" >&2
           exit 1
 
       # Runs even when an earlier step failed, so a broken deploy does not leave
@@ -143,7 +175,7 @@ jobs:
       - name: Lift maintenance mode
         if: always()
         run: |
-          ssh -i ~/.ssh/deploy -o BatchMode=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+          ssh $SSH_OPTIONS "$DEPLOY_USER@$DEPLOY_HOST" \
             "bash /opt/careerscope/infra/v3/maintenance.sh disable" || true
 
       - name: Remove the deployment key

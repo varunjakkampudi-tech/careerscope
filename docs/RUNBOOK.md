@@ -8,9 +8,8 @@ Start with [Production readiness](PRODUCTION-READINESS.md) and
 an existing owner account. The HTTP bootstrap site serves only ACME challenges;
 all application routes return 503 until the TLS configuration is activated.
 
-For Copilot-assisted applications with a remote browser, use the opt-in
-[EC2 application runtime](EC2-APPLICATIONS.md). The default image is not the
-complete application-agent runtime.
+Copilot-assisted applications run locally only. There is no server-side
+application runtime.
 
 > **Runtime evidence:** the base API image and isolated local Compose stack have
 > been built and exercised on ARM64 Docker Desktop. This does not validate the
@@ -478,41 +477,39 @@ error in the console means step 3 was missed.
 ## CI/CD
 
 GitHub Pages deploys the validated static artifact after successful CI on `main`.
-EC2 is manual-only while its acceptance gates remain unverified; even a manual
-run requires repository variable `ENABLE_EC2_DEPLOY=true`. Do not enable it for
-the Pages-only release. Container CI checks run when `ENABLE_CONTAINER_CI=true`
+Container CI checks run when `ENABLE_CONTAINER_CI=true`
 or CI is launched manually.
 
-The EC2 workflow also needs four secrets and supports an optional path variable:
+The EC2 deployment target has been removed. The deployed stack is the single
+Hostinger host described in
+[OPERATIONS/DEPLOYMENT](OPERATIONS/DEPLOYMENT.md), and `.github/workflows/deploy.yml`
+deploys it after a push to `main`. It needs two repository secrets:
 
-|                            |                                                       |
-| -------------------------- | ----------------------------------------------------- |
-| `EC2_SSH_KEY`              | private half of a deploy keypair                      |
-| `EC2_HOST`                 | hostname or elastic IP                                |
-| `EC2_USER`                 | login user; must be in the `docker` group             |
-| `EC2_KNOWN_HOSTS`          | `ssh-keyscan -H <host>`, run from a machine you trust |
-| `EC2_APP_DIR` _(variable)_ | checkout path; defaults to `/opt/job-radar`           |
+|                   |                                                             |
+| ----------------- | ----------------------------------------------------------- |
+| `DEPLOY_SSH_KEY`  | private half of the deploy keypair, whole file with headers |
+| `DEPLOY_HOST_KEY` | the host's public key line, so the host is pinned           |
 
 ```bash
-# locally
-ssh-keygen -t ed25519 -f ~/.ssh/job-radar-deploy -N '' -C 'job-radar deploy'
-ssh-copy-id -i ~/.ssh/job-radar-deploy.pub ec2-user@jobs.example.com
-ssh-keyscan -H jobs.example.com            # → EC2_KNOWN_HOSTS
-cat ~/.ssh/job-radar-deploy                # → EC2_SSH_KEY, whole file including headers
+# On the host, to produce DEPLOY_HOST_KEY:
+cat /etc/ssh/ssh_host_ed25519_key.pub
+# prefix it with the address the workflow connects to:
+#   201.18.193.230 ssh-ed25519 AAAA...
 ```
 
-`EC2_KNOWN_HOSTS` is mandatory rather than convenient: without it the workflow
+Set them without the value passing through a terminal history or a chat:
+
+```bash
+gh secret set DEPLOY_SSH_KEY  --repo <owner>/<repo> < ~/.ssh/careerscope_deploy
+gh secret set DEPLOY_HOST_KEY --repo <owner>/<repo> < known_hosts_line
+```
+
+`DEPLOY_HOST_KEY` is mandatory rather than convenient: without it the workflow
 would need `StrictHostKeyChecking=no`, and the deploy would be one DNS hijack
-away from handing a production key to whoever answers.
-
-The deploy does `git reset --hard origin/main`, rebuilds, prunes dangling images,
-and polls `/api/health` for 60 seconds. On failure it prints the last 80 log
-lines and exits non-zero. **Anything you edited on the box that is tracked in git
-is discarded** — that is the point, and it is why the TLS domain belongs in a
-commit.
-
-Manual redeploy — after editing `.env`, for instance, where no commit exists:
-**Actions → Deploy API to EC2 → Run workflow.**
+away from handing a production key to whoever answers. The workflow refuses to
+run if either secret is empty — that check exists because the host key was once
+stored blank and the only symptom was an unexplained verification failure
+mid-deploy.
 
 ---
 
