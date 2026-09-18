@@ -631,7 +631,71 @@
       "errors": [
         "WIP limit exceeded"
       ]
+    },
+    {
+      "runId": "feature-1789775284897",
+      "phase": "feature",
+      "startedAt": "2026-09-18T23:48:04.893Z",
+      "completedAt": "2026-09-18T23:48:04.897Z",
+      "commit": "226ce46c026578afc5ff779e5a424babb335b58d",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789775285236",
+      "phase": "feature",
+      "startedAt": "2026-09-18T23:48:05.224Z",
+      "completedAt": "2026-09-18T23:48:05.236Z",
+      "commit": "226ce46c026578afc5ff779e5a424babb335b58d",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789775285626",
+      "phase": "feature",
+      "startedAt": "2026-09-18T23:48:05.616Z",
+      "completedAt": "2026-09-18T23:48:05.626Z",
+      "commit": "226ce46c026578afc5ff779e5a424babb335b58d",
+      "branch": "main",
+      "result": "wip-exceeded",
+      "errors": [
+        "WIP limit exceeded"
+      ]
+    },
+    {
+      "runId": "feature-1789775401135",
+      "phase": "feature",
+      "startedAt": "2026-09-18T23:50:01.130Z",
+      "completedAt": "2026-09-18T23:50:01.135Z",
+      "commit": "226ce46c026578afc5ff779e5a424babb335b58d",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789775401638",
+      "phase": "feature",
+      "startedAt": "2026-09-18T23:50:01.630Z",
+      "completedAt": "2026-09-18T23:50:01.638Z",
+      "commit": "226ce46c026578afc5ff779e5a424babb335b58d",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789775402245",
+      "phase": "feature",
+      "startedAt": "2026-09-18T23:50:02.233Z",
+      "completedAt": "2026-09-18T23:50:02.245Z",
+      "commit": "226ce46c026578afc5ff779e5a424babb335b58d",
+      "branch": "main",
+      "result": "wip-exceeded",
+      "errors": [
+        "WIP limit exceeded"
+      ]
     }
   ],
-  "updatedAt": "2026-09-18T23:39:58.389Z"
+  "updatedAt": "2026-09-18T23:50:02.562Z"
 }

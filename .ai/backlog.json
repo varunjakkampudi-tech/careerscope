@@ -44,7 +44,7 @@
       "source": "CI run 35396486771",
       "area": "frontend",
       "priority": "P1",
-      "status": "PLANNED",
+      "status": "QA",
       "size": "M",
       "value": 4,
       "risk": 4,
@@ -65,8 +65,12 @@
       "releaseTarget": "3.0.1",
       "ownerAgent": "Frontend",
       "reviewAgents": ["UX", "QA", "Independent Reviewer"],
-      "currentStep": null,
-      "completedSteps": ["Project Manager"],
+      "currentStep": "awaiting CI on Linux WebKit — cannot be reproduced locally",
+      "completedSteps": [
+        "Project Manager",
+        "Root cause: the settle guard accepted two equal readings, which a never-changed stale value also satisfies",
+        "Fix: wait for the header to agree with the computed --spacing-app-header, timeout caught so the assertion still reports the exact delta"
+      ],
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-19",
       "summary": "On one browser engine, the table header on the Leads page sits in the wrong place at tablet width, so it overlaps the rows you are trying to read. Two attempted fixes did not hold because both treated it as a timing fluke; it is not.",
