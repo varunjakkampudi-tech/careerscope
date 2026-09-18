@@ -80,12 +80,16 @@ export async function consumeMessage(
   };
   const renewing = heartbeat();
   const startedAt = performance.now();
-  // Completes the requestId -> runId -> executionId -> attempt chain.
+  // Completes the requestId -> runId -> executionId -> attempt chain. The
+  // comment used to claim that without emitting requestId at all, so a run
+  // could be traced forward from a request but never back to one.
   const settled = (outcome: string) =>
     logger.info(
       {
+        requestId: command.correlationId,
         executionId: command.id,
         runId: command.aggregateId,
+        ownerId: command.ownerId,
         jobType: command.type,
         attempt: Number(message.Attributes?.ApproximateReceiveCount ?? 1),
         fence,

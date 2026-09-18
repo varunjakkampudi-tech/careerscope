@@ -31,7 +31,7 @@ export class Database {
     this.db = drizzle({ client: this.pool, schema: tables });
   }
 
-  async createSearch(ownerId: string, key: string, request: CreateSearch) {
+  async createSearch(ownerId: string, key: string, request: CreateSearch, requestId?: string) {
     const requestHash = createHash('sha256').update(JSON.stringify(request)).digest('hex');
     return this.db.transaction(async (transaction) => {
       const id = randomUUID();
@@ -78,7 +78,10 @@ export class Database {
         aggregateId: id,
         ownerId,
         occurredAt: new Date().toISOString(),
-        correlationId: id,
+        // The HTTP request that caused this work. Without it an admin can reach
+        // a run from a request but not a request from a run.
+        correlationId: requestId ?? id,
+        causationId: id,
       };
       await transaction.insert(tables.outbox).values({ id: command.id, command });
       await transaction

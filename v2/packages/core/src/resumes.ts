@@ -277,6 +277,7 @@ export class ResumeUploadRepository {
     ownerId: string,
     id: string,
     objectVersion: string,
+    requestId?: string,
   ): Promise<ResumeUploadRecord | null> {
     identifier.parse(ownerId);
     identifier.parse(id);
@@ -307,7 +308,10 @@ export class ResumeUploadRepository {
         aggregateId: id,
         ownerId,
         occurredAt: new Date().toISOString(),
-        correlationId: id,
+        // The HTTP request that caused this work, so an admin can reach the
+        // parse execution from the upload request and back again.
+        correlationId: requestId ?? id,
+        causationId: id,
       };
       await client.query('INSERT INTO outbox_events (id, command) VALUES ($1, $2::jsonb)', [
         command.id,
@@ -365,7 +369,13 @@ export class ResumeUploadCoordinator {
     };
   }
 
-  async upload(ownerId: string, key: string, body: Uint8Array, signal?: AbortSignal) {
+  async upload(
+    ownerId: string,
+    key: string,
+    body: Uint8Array,
+    signal?: AbortSignal,
+    requestId?: string,
+  ) {
     const deadline = AbortSignal.any([AbortSignal.timeout(45_000), ...(signal ? [signal] : [])]);
     deadline.throwIfAborted();
     identifier.parse(ownerId);
@@ -402,10 +412,10 @@ export class ResumeUploadCoordinator {
     }
     await this.storage.get(object, version, deadline);
     deadline.throwIfAborted();
-    return this.uploads.queueStoredUpload(ownerId, record.id, version);
+    return this.uploads.queueStoredUpload(ownerId, record.id, version, requestId);
   }
 
-  async reconcile(ownerId: string, id: string, signal?: AbortSignal) {
+  async reconcile(ownerId: string, id: string, signal?: AbortSignal, requestId?: string) {
     const deadline = AbortSignal.any([AbortSignal.timeout(45_000), ...(signal ? [signal] : [])]);
     deadline.throwIfAborted();
     const record = await this.uploads.get(ownerId, id);
@@ -414,7 +424,7 @@ export class ResumeUploadCoordinator {
     await this.initialize(deadline);
     const version = await this.storage.recoverVersion(object, deadline);
     deadline.throwIfAborted();
-    return version ? this.uploads.queueStoredUpload(ownerId, id, version) : record;
+    return version ? this.uploads.queueStoredUpload(ownerId, id, version, requestId) : record;
   }
 }
 

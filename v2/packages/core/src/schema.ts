@@ -6,6 +6,7 @@ import {
   timestamp,
   jsonb,
   integer,
+  boolean,
   uniqueIndex,
   index,
   check,
@@ -22,6 +23,8 @@ export const users = pgTable('users', {
   id: uuid('id').primaryKey(),
   email: text('email').notNull().unique(),
   passwordHash: text('password_hash').notNull(),
+  // Server-side only. Nothing in a request may set or influence this.
+  isAdmin: boolean('is_admin').default(false).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
@@ -273,5 +276,75 @@ export const resumeResults = pgTable(
       OR (${table.status} = 'rejected' AND ${table.parsed} IS NULL
         AND ${table.errorCode} IS NOT NULL AND ${table.errorCode} IN ('invalid_document', 'processing_failed'))`,
     ),
+  ],
+);
+
+// Security audit trail. Separate from operational logging on purpose: these
+// records answer "who did what to whom", must survive log rotation, and are
+// queried rather than tailed.
+//
+// `targetOwnerId` is the account an admin inspected or acted on. It is nullable
+// because some actions have no user target.
+export const auditEvents = pgTable(
+  'audit_events',
+  {
+    id: uuid('id').primaryKey(),
+    sequence: bigserial('sequence', { mode: 'number' }).notNull().unique(),
+    actorId: uuid('actor_id')
+      .notNull()
+      .references(() => users.id),
+    action: text('action').notNull(),
+    targetOwnerId: uuid('target_owner_id').references(() => users.id),
+    targetType: text('target_type'),
+    targetId: text('target_id'),
+    requestId: uuid('request_id'),
+    outcome: text('outcome').$type<'allowed' | 'denied' | 'failed'>().notNull(),
+    // Allowlisted, non-sensitive detail only: counts, filters, status values.
+    // Never a request body, never a token, never private content.
+    detail: jsonb('detail').$type<Record<string, string | number | boolean | null>>(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('audit_actor_created').on(table.actorId, table.createdAt),
+    index('audit_target_created').on(table.targetOwnerId, table.createdAt),
+    index('audit_action_created').on(table.action, table.createdAt),
+    check('audit_outcome_valid', sql`${table.outcome} IN ('allowed', 'denied', 'failed')`),
+    check(
+      'audit_detail_bounded',
+      sql`${table.detail} IS NULL OR octet_length(${table.detail}::text) <= 4096`,
+    ),
+  ],
+);
+
+// One row per unexpected failure, so an admin can investigate without shell
+// access. Deliberately not a copy of the request: no body, no headers, no URL.
+// `message` is the sanitized text already shown to the user; the stack stays in
+// the operator log where it belongs.
+export const errorDiagnostics = pgTable(
+  'error_diagnostics',
+  {
+    id: uuid('id').primaryKey(),
+    requestId: uuid('request_id'),
+    ownerId: uuid('owner_id').references(() => users.id),
+    runId: uuid('run_id'),
+    executionId: uuid('execution_id'),
+    service: text('service').notNull(),
+    revision: text('revision'),
+    route: text('route'),
+    method: text('method'),
+    status: integer('status').notNull(),
+    errorCode: text('error_code').notNull(),
+    errorClass: text('error_class'),
+    message: text('message').notNull(),
+    retryable: boolean('retryable').default(false).notNull(),
+    durationMs: integer('duration_ms'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('diagnostic_owner_created').on(table.ownerId, table.createdAt),
+    index('diagnostic_code_created').on(table.errorCode, table.createdAt),
+    index('diagnostic_request').on(table.requestId),
+    check('diagnostic_status_valid', sql`${table.status} BETWEEN 100 AND 599`),
+    check('diagnostic_message_bounded', sql`length(${table.message}) <= 1024`),
   ],
 );

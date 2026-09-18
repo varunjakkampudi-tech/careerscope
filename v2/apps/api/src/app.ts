@@ -23,6 +23,10 @@ import {
   InvalidResumeUpload,
   ResumeStorageLimit,
   maximumResumeBytes,
+  AuditLog,
+  Diagnostics,
+  AdminRepository,
+  type ErrorCode,
   type UploadStorage,
   type Database,
 } from '@careerscope/core';
@@ -46,6 +50,7 @@ class HttpError extends Error {
   constructor(
     readonly statusCode: number,
     message: string,
+    readonly code: ErrorCode = 'internal_error',
   ) {
     super(message);
   }
@@ -54,6 +59,7 @@ class HttpError extends Error {
 declare module 'fastify' {
   interface FastifyRequest {
     ownerId: string | null;
+    isAdmin: boolean;
   }
 }
 
@@ -77,6 +83,9 @@ export async function createApp(
   } = {},
 ) {
   const auth = new Auth(database);
+  const audit = new AuditLog(database.pool);
+  const diagnostics = new Diagnostics(database.pool);
+  const admin = new AdminRepository(database.pool);
   const profiles = new ProfileRepository(database);
   const leads = new LeadRepository(database);
   const uploads = new ResumeUploadRepository(database);
@@ -101,6 +110,7 @@ export async function createApp(
     contentSecurityPolicy: { directives: { defaultSrc: ["'none'"], frameAncestors: ["'none'"] } },
   });
   app.decorateRequest('ownerId', null);
+  app.decorateRequest('isAdmin', false);
   app.addHook('preClose', async () => {
     for (const controller of streams.keys()) controller.abort();
   });
@@ -109,18 +119,39 @@ export async function createApp(
     const path = request.routeOptions.url;
     if (path === '/api/health') return;
     if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method) && request.headers.origin !== origin) {
-      throw new HttpError(403, 'Origin denied');
+      throw new HttpError(403, 'Origin denied', 'origin_denied');
     }
     if (path === '/api/login' || path === '/api/register') return;
     const session = await auth.session(request.cookies[sessionCookie]);
     if (path === '/api/session') return;
-    if (!session) throw new HttpError(401, 'Authentication required');
+    if (!session) throw new HttpError(401, 'Authentication required', 'authentication_required');
     request.ownerId = session.ownerId;
     if (
       !['GET', 'HEAD', 'OPTIONS'].includes(request.method) &&
       !auth.validCsrf(session.csrf, request.headers['x-csrf-token'])
     ) {
-      throw new HttpError(403, 'CSRF check failed');
+      throw new HttpError(403, 'CSRF check failed', 'csrf_failed');
+    }
+    // Admin status is read from the database against the session's own owner id.
+    // Nothing in the request can influence it, and it is resolved before any
+    // admin route body runs rather than inside each handler.
+    if (path?.startsWith('/api/admin')) {
+      const { rows } = await database.pool.query<{ isAdmin: boolean }>(
+        'SELECT is_admin AS "isAdmin" FROM users WHERE id = $1',
+        [session.ownerId],
+      );
+      request.isAdmin = rows[0]?.isAdmin === true;
+      if (!request.isAdmin) {
+        await audit.record({
+          actorId: session.ownerId,
+          action: `admin.denied:${path}`,
+          outcome: 'denied',
+          requestId: request.id,
+        });
+        throw new HttpError(403, 'Administrator access required', 'forbidden');
+      }
+      if (!(await rateLimit(`admin:${session.ownerId}`, 120, 60)))
+        throw new HttpError(429, 'Too many requests', 'rate_limited');
     }
   });
   // Correlation without private data: route templates only, never URLs or bodies.
@@ -155,6 +186,26 @@ export async function createApp(
                 : frameworkStatus === 400
                   ? 400
                   : 500;
+    // A stable code an admin can filter on. Human messages get reworded;
+    // this does not.
+    const code: ErrorCode =
+      error instanceof HttpError
+        ? error.code
+        : error instanceof z.ZodError
+          ? 'validation_failed'
+          : error instanceof InvalidResumeUpload
+            ? 'invalid_resume_upload'
+            : error instanceof ResumeStorageLimit
+              ? 'resume_storage_limit'
+              : error instanceof ProfileRevisionConflict || error instanceof LeadRevisionConflict
+                ? 'revision_conflict'
+                : error instanceof Conflict
+                  ? 'idempotency_conflict'
+                  : status === 413
+                    ? 'payload_too_large'
+                    : status === 400
+                      ? 'validation_failed'
+                      : 'internal_error';
     if (status === 500) request.log.error({ requestId: request.id }, 'Request failed');
     const messages: Record<number, string> = {
       400: 'Invalid request',
@@ -168,11 +219,164 @@ export async function createApp(
     };
     const fallbackMessage = messages[status] ?? 'Request failed';
     const message = error instanceof HttpError ? error.message : fallbackMessage;
-    reply.code(status).send({ error: message, requestId: request.id });
+    // Only unexpected and capacity failures are worth a durable record. Writing
+    // one per validation error would turn a bad client into a disk-fill.
+    if (status >= 500) {
+      void diagnostics.record({
+        requestId: request.id,
+        ownerId: request.ownerId,
+        service: 'api',
+        revision: process.env.CAREERSCOPE_REVISION ?? null,
+        route: request.routeOptions.url ?? null,
+        method: request.method,
+        status,
+        errorCode: code,
+        errorClass: error instanceof Error ? error.constructor.name : null,
+        message,
+        durationMs: Math.round(reply.elapsedTime),
+      });
+    }
+    reply.code(status).send({ error: message, code, requestId: request.id });
   });
   app.get('/api/health', async () => {
     await database.pool.query('SELECT 1');
     return { status: 'ok', version };
+  });
+
+  // Owner-only debugging surface. Authorization, rate limiting and the denial
+  // audit all happen in the onRequest hook above, so every route here can
+  // assume an authenticated administrator and nothing more.
+  //
+  // These are read-only by design. There is no admin mutation endpoint, because
+  // "an admin can change any row" is not a feature — it is the thing an audit
+  // log exists to catch.
+  //
+  // Every route resolves the target account server-side from an identifier the
+  // admin supplies, then scopes every query by the resolved owner id. A caller
+  // cannot widen the scope by sending a different value.
+  const resolveTarget = async (request: { query: unknown; id: string; ownerId: string | null }) => {
+    const { user: term } = z.object({ user: z.string().min(1).max(254) }).parse(request.query);
+    const target = await admin.findUser(term);
+    if (!target) throw new HttpError(404, 'Account not found', 'not_found');
+    return target as { id: string; email: string };
+  };
+
+  app.get('/api/admin/overview', async (request) => {
+    const overview = await admin.overview();
+    await audit.record({
+      actorId: request.ownerId!,
+      action: 'admin.overview',
+      outcome: 'allowed',
+      requestId: request.id,
+    });
+    return { revision: process.env.CAREERSCOPE_REVISION ?? null, version, ...overview };
+  });
+
+  app.get('/api/admin/users', async (request) => {
+    const target = await resolveTarget(request as never);
+    await audit.record({
+      actorId: request.ownerId!,
+      action: 'admin.user.view',
+      outcome: 'allowed',
+      targetOwnerId: target.id,
+      targetType: 'user',
+      targetId: target.id,
+      requestId: request.id,
+    });
+    return target;
+  });
+
+  app.get('/api/admin/timeline', async (request) => {
+    const target = await resolveTarget(request as never);
+    const query = request.query as Record<string, unknown>;
+    const entries = await admin.timeline(target.id, {
+      from: query.from,
+      to: query.to,
+      limit: query.limit,
+    });
+    // Read access to another account's operational history is itself sensitive,
+    // so it is audited even though it changes nothing.
+    await audit.record({
+      actorId: request.ownerId!,
+      action: 'admin.timeline.view',
+      outcome: 'allowed',
+      targetOwnerId: target.id,
+      targetType: 'user',
+      targetId: target.id,
+      requestId: request.id,
+      detail: { entries: entries.length },
+    });
+    return { user: { id: target.id, email: target.email }, entries };
+  });
+
+  app.get('/api/admin/runs/:id', async (request) => {
+    const target = await resolveTarget(request as never);
+    const { id } = identifier.parse(request.params);
+    const run = await admin.run(target.id, id);
+    if (!run) throw new HttpError(404, 'Run not found', 'not_found');
+    await audit.record({
+      actorId: request.ownerId!,
+      action: 'admin.run.view',
+      outcome: 'allowed',
+      targetOwnerId: target.id,
+      targetType: 'run',
+      targetId: id,
+      requestId: request.id,
+    });
+    return run;
+  });
+
+  app.get('/api/admin/requests/:id', async (request) => {
+    const target = await resolveTarget(request as never);
+    const { id } = identifier.parse(request.params);
+    const trail = await admin.byRequestId(target.id, id);
+    await audit.record({
+      actorId: request.ownerId!,
+      action: 'admin.request.view',
+      outcome: 'allowed',
+      targetOwnerId: target.id,
+      targetType: 'request',
+      targetId: id,
+      requestId: request.id,
+    });
+    return trail;
+  });
+
+  app.get('/api/admin/diagnostics', async (request) => {
+    const query = request.query as Record<string, unknown>;
+    // Scoping to an account is optional here, but when one is named it is
+    // resolved server-side exactly as everywhere else.
+    const target = query.user ? await resolveTarget(request as never) : null;
+    const rows = await diagnostics.search({
+      ownerId: target?.id,
+      requestId: typeof query.requestId === 'string' ? query.requestId : undefined,
+      errorCode: typeof query.errorCode === 'string' ? query.errorCode : undefined,
+      from: query.from,
+      to: query.to,
+      limit: query.limit,
+    });
+    await audit.record({
+      actorId: request.ownerId!,
+      action: 'admin.diagnostics.search',
+      outcome: 'allowed',
+      targetOwnerId: target?.id ?? null,
+      requestId: request.id,
+      detail: { results: rows.length },
+    });
+    return { entries: rows };
+  });
+
+  app.get('/api/admin/audit', async (request) => {
+    const query = request.query as Record<string, unknown>;
+    const entries = await audit.list({ from: query.from, to: query.to, limit: query.limit });
+    await audit.record({
+      actorId: request.ownerId!,
+      action: 'admin.audit.view',
+      outcome: 'allowed',
+      requestId: request.id,
+      detail: { entries: entries.length },
+    });
+    return { entries };
   });
   app.get('/api/session', async (request) => {
     const session = await auth.session(request.cookies[sessionCookie]);
@@ -283,6 +487,7 @@ export async function createApp(
             idempotencyKey.parse(request.headers['idempotency-key']),
             request.body,
             controller.signal,
+            request.id,
           );
           if (!upload) throw new HttpError(409, 'Upload changed; retry');
           return reply.code(202).send({ id: upload.id, status: upload.status });
@@ -310,7 +515,12 @@ export async function createApp(
       };
       reply.raw.once('close', abort);
       try {
-        const record = await coordinator.reconcile(request.ownerId!, id, controller.signal);
+        const record = await coordinator.reconcile(
+          request.ownerId!,
+          id,
+          controller.signal,
+          request.id,
+        );
         if (!record) throw new HttpError(404, 'Resume not found');
         return { id: record.id, status: record.status };
       } finally {
@@ -427,6 +637,7 @@ export async function createApp(
       request.ownerId!,
       idempotencyKey.parse(request.headers['idempotency-key']),
       createSearchSchema.parse(request.body),
+      request.id,
     );
     // Links the run to the request that created it for end-to-end tracing.
     request.log.info(
