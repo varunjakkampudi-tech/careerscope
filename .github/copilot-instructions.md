@@ -60,6 +60,12 @@ documentation if behaviour or architecture changed.
 - Do not use `any` to hide a type problem without an explicit justification.
 - Do not disable a lint, type or test rule to get CI green. Do not delete or
   weaken a test because it fails, and never edit a test to mask a regression.
+- A validator, review verdict or progress record must never be made green by
+  changing the interpretation of the condition it was created to enforce.
+- Prove a new check can fail before trusting that it passes: valid input must
+  pass, invalid input must fail, and **malformed input must fail**. Never treat
+  a parse failure, a missing file or an empty read as "nothing to report" —
+  that is how six checks in this repository passed while unable to look.
 - Do not introduce a duplicate utility, an unnecessary dependency, or an
   abstraction for a single call site. Respect module boundaries.
 - Do not claim completion without evidence.
@@ -102,7 +108,11 @@ These have each already caused a real incident on this project.
   allowlists and the clean-worktree publication guard.
 - The v2 stack is deployed on a single Hostinger VPS behind Caddy and served at
   `https://careerscope.tech`. Use `infra/v3` for host provisioning, deployment and
-  live verification. Do not provision additional infrastructure, change DNS or
+  live verification. The deployed version is whatever `v2/package.json`
+  (`careerscope-v2`) states; the root `package.json` is the separate V1 line
+  (`job-radar`) and is several major versions behind. Reading the wrong one has
+  already put a three-major-version error on a dashboard. Confirm against
+  `/api/health` rather than either file. Do not provision additional infrastructure, change DNS or
   widen public exposure without explicit approval.
 - Job imports are not applications. Verify exact roles and duplicate history;
   ask before each account/terms step and final submission. Never invent candidate
@@ -124,17 +134,29 @@ a catalog wholesale or trust a skill because its name sounds relevant. See
 
 ## Multi-Agent Workflow
 
-Non-trivial work runs through the specialist agents in `.github/agents`, so that
-the agent implementing a change is never the sole authority that it is correct:
+Non-trivial work runs through the 24 specialist agents in `.github/agents`, so
+that the agent implementing a change is never the sole authority that it is
+correct:
 
 - **Orchestrator** — requirements, recon, routing, `.ai/` state, completion.
-- **Product Architect, UX, Security, Final Auditor, Research** — read-only
-  reviewers, granted no edit tool, so the restriction is enforced.
+- **Read-only reviewers** — Product Architect, System Designer, UX, Security,
+  Research, Research Reference, Independent Reviewer, Final Auditor, Code
+  Quality, Product Discovery, Project Manager, Agent Operations, Skills Curator.
+  Granted no edit tool, so the restriction is enforced by capability rather
+  than by instruction.
 - **QA, Performance** — execute the real checks, cannot edit implementation.
-- **Frontend, Backend, Infrastructure** — implementation, tests and docs.
+- **Builders** — Frontend, Backend, Infrastructure, Senior Engineer, Visual
+  Designer, Documentation, Repository, Release Manager.
 
-The Orchestrator routes to the **smallest sufficient team**; running all eleven
-on a small change is theatre. Durable state lives in `.ai/` because conversation
+A twenty-fifth reviewer, **ChatGPT**, is recorded in `.ai/AGENT-SETUP.md` and
+deliberately has no file here: nothing in `.github/agents` can invoke it. It
+sees only what the operator pastes, which makes it a strong second opinion on
+reasoning and a weak one on completeness. Never paste secrets, `.env` contents,
+resumes or personal data into it. Record its verdict as a finding attributed to
+it, never as fact.
+
+The Orchestrator routes to the **smallest sufficient team**; running all 24 on a
+small change is theatre. Durable state lives in `.ai/` because conversation
 memory does not survive the fresh sessions that independent review requires.
 
 Bounds: plan review 5, implementation 3, code review 3, security 2, performance
@@ -145,6 +167,19 @@ Validate the configuration with `node scripts/check-agents.mjs`.
 Full description in [docs/AI-ENGINEERING-WORKFLOW.md](../docs/AI-ENGINEERING-WORKFLOW.md).
 A separate cross-CLI workflow is documented in
 [.github/CLAUDEX-WORKFLOW.md](CLAUDEX-WORKFLOW.md); use one per task, not both.
+
+## Planning And Release
+
+Work is planned in one-week sprints against `.ai/backlog.json`, with a WIP limit
+of 2 enforced by exit code. Use `npm run agile:status`, `agile:plan`,
+`agile:scrum`, `agile:feature`, `agile:review`, `agile:retro`, `agile:release`.
+`npm run ui:engineering` serves a read-only control centre on 127.0.0.1:7777.
+
+`scripts/release-gate.mjs` refuses by default and must be satisfied, not
+argued with. It distinguishes three states — present-and-valid, absent, and
+**unparseable** — because a corrupt `findings.json` once made it report
+"no open P0 or P1" and exit 0. Its behaviour is pinned by mutation tests in
+`check-release-gate.mjs`; the agile gates are pinned by `check-agile-gates.mjs`.
 
 ## Verification And References
 
