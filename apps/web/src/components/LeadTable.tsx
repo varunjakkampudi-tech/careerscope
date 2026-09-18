@@ -216,6 +216,13 @@ export function LeadTable({
     if (layout.current === compact) return;
     layout.current = compact;
     virtualizer.measure();
+    // WebKit delivers ResizeObserver entries before React's layout effects, so
+    // the rows are measured and then `measure()` above discards those heights.
+    // Nothing resizes again, so the cache is never refilled and every row keeps
+    // the estimate: at 390px they render 261px tall on a 233px pitch and overlap.
+    for (const node of list.current?.querySelectorAll<HTMLDivElement>('[data-index]') ?? []) {
+      virtualizer.measureElement(node);
+    }
   }, [compact, virtualizer]);
 
   const items = virtualizer.getVirtualItems();

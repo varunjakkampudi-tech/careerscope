@@ -202,8 +202,20 @@ for (const engine of [chromium, firefox, webkit]) {
         .locator('main')
         .evaluate((element) => element === document.activeElement);
       await page.setViewportSize({ width: 390, height: 844 });
-      await page.waitForFunction(
-        () => {
+      // The reload above refetches, so rows may not exist yet. Waiting for data
+      // and for layout in one condition made this the only flaky check in CI.
+      await page.locator('[role="row"][data-index]').nth(1).waitFor();
+      const rowGeometry = () =>
+        page.evaluate(() =>
+          [...document.querySelectorAll('[role="row"][data-index]')]
+            .map((element) => {
+              const box = element.getBoundingClientRect();
+              return { index: element.dataset.index, top: box.top, bottom: box.bottom };
+            })
+            .sort((left, right) => left.top - right.top),
+        );
+      try {
+        await page.waitForFunction(() => {
           const rows = [...document.querySelectorAll('[role="row"][data-index]')]
             .map((element) => element.getBoundingClientRect())
             .sort((left, right) => left.top - right.top);
@@ -211,10 +223,18 @@ for (const engine of [chromium, firefox, webkit]) {
             rows.length > 1 &&
             rows.every((row, index) => index === 0 || row.top >= rows[index - 1].bottom - 1)
           );
-        },
-        undefined,
-        { timeout: 5000 },
-      );
+        });
+      } catch (cause) {
+        const rows = await rowGeometry();
+        const overlapping = rows.filter(
+          (row, index) => index > 0 && row.top < rows[index - 1].bottom - 1,
+        );
+        throw new Error(
+          `${engine.name()}: rows must stack at 390px. ${rows.length} rows, ` +
+            `${overlapping.length} overlapping: ${JSON.stringify(overlapping.slice(0, 3))}`,
+          { cause },
+        );
+      }
       await page.screenshot({ path: join(screenshots, `${engine.name()}-mobile-dark.png`) });
       results.push({
         browser: engine.name(),

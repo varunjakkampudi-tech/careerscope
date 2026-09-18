@@ -84,8 +84,14 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Verify built app and public workspace in browsers
-        run: node --import tsx scripts/check-ui.mjs && npm run pages:workspace:test && node scripts/check-admin-ui.mjs
+      - name: Verify the built app in browsers
+        run: node --import tsx scripts/check-ui.mjs
+
+      - name: Verify the public workspace
+        run: npm run pages:workspace:test
+
+      - name: Verify the encrypted admin
+        run: node scripts/check-admin-ui.mjs
 
       # A build that produces something which cannot boot is still a failure.
       # The health route is public, so this needs no key beyond the one the
