@@ -13,9 +13,11 @@ The root application is the preserved **v1.3.4** runtime. The separate
 production release. Its [architecture and acceptance gaps](v2/ARCHITECTURE.md)
 are authoritative for V2; the root stack below describes V1 only.
 
-V2 currently supports authenticated search, profiles, saved leads, cancellation
-and JSON export. Resume workflows, application AI, full provider parity, recovery
-and cutover remain incomplete. The planned MinIO runtime is blocked by upstream
+V2 currently supports authenticated accounts, encrypted resume upload with isolated
+parsing and explicit profile review, five-source discovery, deterministic matching,
+saved leads, rules-based interview preparation, cancellation and JSON export.
+AI inference stays off by design, and full provider parity, account recovery email and
+cutover remain incomplete. The planned MinIO runtime is blocked by upstream
 maintenance/distribution changes; synthetic S3 tests do not establish MinIO readiness.
 
 **Public jobs:** <https://varunjakkampudi-tech.github.io/careerscope/>
@@ -38,6 +40,79 @@ Each admin release requires a locally generated encrypted export. See
 [the architecture guide](docs/ARCHITECTURE.md).
 
 ![CareerScope architecture](docs/architecture.svg)
+
+## How It Fits Together
+
+```mermaid
+flowchart LR
+    User([Owner]) --> Web["Next.js workspace"]
+    Web --> Proxy["Caddy TLS proxy<br/>HSTS - host check - body cap"]
+    Proxy --> API["Fastify API<br/>session - CSRF - rate limit"]
+    API --> DB[("PostgreSQL<br/>source of truth")]
+    API --> Store[["Encrypted resume store<br/>AES-256-GCM"]]
+    DB -- transactional outbox --> Pub["Publisher"]
+    Pub --> Queue{{"Queue"}}
+    Queue --> SearchW["Search worker"]
+    Queue --> FilesW["Files worker"]
+    SearchW --> Providers["Job sources"]
+    FilesW --> Parser["Isolated resume parser"]
+    SearchW --> DB
+    FilesW --> DB
+```
+
+The API is the only process that writes resume objects. Workers read. Every unit of
+durable work is claimed with a fence, so a crashed worker cannot settle a run twice.
+
+## Discovery To Lead
+
+```mermaid
+sequenceDiagram
+    participant U as Owner
+    participant A as API
+    participant D as PostgreSQL
+    participant W as Search worker
+    participant S as Job sources
+    U->>A: Start search
+    A->>D: Create run + immutable profile snapshot + outbox command
+    D-->>W: Published command (claimed with a fence)
+    W->>S: Bounded queries, per-source deadlines
+    S-->>W: Listings (partial failures isolated)
+    W->>W: Deduplicate, score against the snapshot
+    W->>D: Atomic completion with per-source outcomes
+    D-->>U: Results with match evidence
+    U->>A: Save lead
+```
+
+Matching uses the profile snapshot taken when the search started, so results stay
+explainable even after the profile changes.
+
+## Capabilities
+
+```mermaid
+mindmap
+  root((CareerScope))
+    Discover
+      Five job sources
+      Saved target roles
+      Bounded deadlines
+      Per-source outcomes
+    Understand
+      Deterministic scoring
+      Readable evidence
+      Exclusion rules
+    Organize
+      Saved leads
+      Notes and archive
+      JSON export
+    Prepare
+      Profile readiness checks
+      Clarification questions
+      Interview practice
+    Protect
+      Encrypted resumes
+      Owner-scoped access
+      Local-only by default
+```
 
 Upload a resume, say what you want, and get job leads that actually match it —
 scored, explained, and complete enough to act on.

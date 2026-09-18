@@ -1,6 +1,6 @@
 # Runbook
 
-Operating Job Radar on a server. Everything here has a command; nothing here
+Operating CareerScope on a server. Everything here has a command; nothing here
 requires reading source.
 
 Start with [Production readiness](PRODUCTION-READINESS.md) and

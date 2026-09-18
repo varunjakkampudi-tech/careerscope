@@ -60,11 +60,11 @@ does not send a prompt to an existing VS Code chat.
 1. Install GitHub Copilot CLI and sign in with an account entitled to Copilot.
    On this Mac the installed executable is `~/.local/bin/copilot`.
    Run `~/.local/bin/copilot login --web-flow` yourself and complete GitHub authentication,
-   then select **Refresh agent status** in Job Radar. Use the API's configured
+   then select **Refresh agent status** in CareerScope. Use the API's configured
    executable, which may differ from the `copilot` wrapper on your shell path.
    The SDK uses CLI mode to access the OS credential store; empty mode disables
    Keychain access. Session tools and ambient features remain explicitly restricted.
-   Never paste tokens, passwords or verification codes into Job Radar.
+   Never paste tokens, passwords or verification codes into CareerScope.
 2. Run `npx playwright install chromium` from the repository root.
 3. Set `ENABLE_APPLICATION_AGENT=true` in the local API environment. Set
    `APPLICATION_COPILOT_PATH` when the CLI is not at `~/.local/bin/copilot`.

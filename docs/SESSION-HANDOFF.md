@@ -8,8 +8,8 @@ This is the sanitized, portable conversation handoff. This repository is public:
 raw chat/debug logs, email content, cookies, tokens, resumes, databases, environment
 files and SSH keys must not be committed. Git does not transfer the live Copilot
 conversation, its tools/permissions or browser authentication. Start a new chat
-and ask it to read this file, `context.txt`, `TEMP-PENDING-WORK.md` and
-`v2/ARCHITECTURE.md` before continuing. Do not assume the Mac's MCP configuration
+and ask it to read this file, `README.md`, `v2/ARCHITECTURE.md` and
+`v2/PRODUCT-ACCEPTANCE.md` before continuing. Do not assume the Mac's MCP configuration
 or user instructions exist on the new machine.
 
 ```sh
@@ -100,7 +100,8 @@ was submitted. Preview the URLs without opening anything using `--print`.
 
 Suggested first prompt on the new machine:
 
-> Read docs/SESSION-HANDOFF.md, context.txt, TEMP-PENDING-WORK.md and the applicable
+> Read docs/SESSION-HANDOFF.md, README.md, v2/ARCHITECTURE.md,
+> v2/PRODUCT-ACCEPTANCE.md and the applicable
 > repository instructions. Inspect the current branch and local changes. Continue
 > from the verified implementation without claiming unfinished features complete.
 > Confirm Hostinger details and staging authorization before remote changes.
@@ -130,14 +131,16 @@ Verified release at that time: v1.3.2, commit `10b0544`.
 
 ## Remaining Boundaries
 
-- Docker/EC2 execution and deployment remain deferred. Do not install system
-  software, provision infrastructure or enable cloud workflows without approval.
+- The v2 stack is deployed on a Hostinger VPS and served at `https://careerscope.tech`
+  with a Let's Encrypt certificate. Deployment procedures live in `infra/v3`. Do not
+  provision further infrastructure or enable additional cloud workflows without approval.
 - Real applications require truthful qualifications, duplicate-history checks,
   separate account/terms approval and final-submission approval. No successful
   real application submission is claimed.
 - Dependency advisory remediation, Actions upgrades, physical-device and
   screen-reader acceptance, worker authentication and future scheduled-run
-  completion remain tracked in [the pending-work checklist](../TEMP-PENDING-WORK.md).
+  completion remain tracked in
+  [the V2 acceptance record](../v2/PRODUCT-ACCEPTANCE.md).
 - Check current Git status and running processes before resuming. Do not restore
   older archived files over newer user changes.
 
