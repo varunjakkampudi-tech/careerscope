@@ -1,0 +1,8 @@
+{
+  "$comment": "Release board. A release only reaches status 'deployed' with real evidence: a commit SHA, a provenance check and a live response. scripts/release-gate.mjs evaluates readiness and refuses; never edit state to satisfy it.",
+  "updatedAt": "2026-09-19T00:00:00.000Z",
+  "schedulerEnabled": false,
+  "currentRelease": null,
+  "nextRelease": null,
+  "releaseHistory": []
+}

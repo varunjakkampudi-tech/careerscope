@@ -17,6 +17,10 @@ tools:
 agents:
   [
     'CareerScope Project Manager',
+    'CareerScope Product Discovery',
+    'CareerScope Release Manager',
+    'CareerScope Agent Operations',
+    'CareerScope Skills Curator',
     'CareerScope Product Architect',
     'CareerScope System Designer',
     'CareerScope UX',

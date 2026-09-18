@@ -1,0 +1,5 @@
+{
+  "$comment": "Product backlog. Canonical machine state - automation reads this, not Markdown. Scores assist prioritisation only; the Project Manager, Client and Architect decide scope. A rejected item does not return without new evidence.",
+  "updatedAt": "2026-09-19T00:00:00.000Z",
+  "items": []
+}

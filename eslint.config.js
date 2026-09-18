@@ -34,7 +34,14 @@ export default tseslint.config(
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
   {
-    files: ['scripts/check-agents.mjs', 'scripts/control-center.mjs', 'scripts/backup-session.mjs'],
+    files: [
+      'scripts/check-agents.mjs',
+      'scripts/control-center.mjs',
+      'scripts/backup-session.mjs',
+      'scripts/release-gate.mjs',
+      'scripts/product.mjs',
+      'scripts/check-release-gate.mjs',
+    ],
     languageOptions: { globals: globals.node },
   },
   {
@@ -53,7 +60,14 @@ export default tseslint.config(
   {
     // A tool whose entire output is a report has to reach stdout. This has to sit
     // after the general rules above, because flat config lets the last match win.
-    files: ['scripts/check-agents.mjs', 'scripts/control-center.mjs', 'scripts/backup-session.mjs'],
+    files: [
+      'scripts/check-agents.mjs',
+      'scripts/control-center.mjs',
+      'scripts/backup-session.mjs',
+      'scripts/release-gate.mjs',
+      'scripts/product.mjs',
+      'scripts/check-release-gate.mjs',
+    ],
     rules: { 'no-console': 'off' },
   },
   {

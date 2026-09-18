@@ -37,6 +37,14 @@
     "pages:preview": "node scripts/preview-pages.mjs",
     "pages:stage": "node scripts/stage-pages.mjs",
     "pages:publish": "node scripts/publish-pages.mjs",
+    "product:discover": "node scripts/product.mjs discover",
+    "product:council": "node scripts/product.mjs council",
+    "product:plan": "node scripts/product.mjs plan",
+    "product:release": "node scripts/product.mjs release",
+    "product:verify": "node scripts/product.mjs verify",
+    "release:gate": "node scripts/release-gate.mjs",
+    "agents:check": "node scripts/check-agents.mjs",
+    "control-center": "node scripts/control-center.mjs",
     "version:sync": "node scripts/sync-version.mjs",
     "version:check": "node scripts/sync-version.mjs --check",
     "mobile:test": "node --test scripts/export-mobile.test.mjs",
@@ -52,7 +60,8 @@
     "auth:reset": "tsx --env-file-if-exists=.env apps/api/src/reset-owner.ts",
     "seed:companies": "tsx --env-file-if-exists=.env apps/api/src/db/seed.ts",
     "mcp": "node --env-file-if-exists=.env apps/api/dist/mcp/index.js",
-    "clean": "npm run clean --workspaces --if-present && rm -f *.tsbuildinfo"
+    "clean": "npm run clean --workspaces --if-present && rm -f *.tsbuildinfo",
+    "release:gate:test": "node scripts/check-release-gate.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",

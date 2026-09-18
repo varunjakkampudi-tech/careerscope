@@ -30,7 +30,11 @@
     "careerscope-independent-reviewer": "WAITING",
     "careerscope-research-agent": "WAITING",
     "careerscope-research-reference": "WAITING",
-    "careerscope-final-auditor": "WAITING"
+    "careerscope-final-auditor": "WAITING",
+    "careerscope-product-discovery": "WAITING",
+    "careerscope-release-manager": "WAITING",
+    "careerscope-agent-operations": "WAITING",
+    "careerscope-skills-curator": "WAITING"
   },
   "counts": {
     "planReview": 0,
@@ -58,7 +62,12 @@
     "architecture": "not-started"
   },
   "qa": "not-run",
-  "unresolved": { "P0": 0, "P1": 0, "P2": 0, "P3": 0 },
+  "unresolved": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0,
+    "P3": 0
+  },
   "activity": [],
   "lastVerdict": null,
   "status": "RECON",

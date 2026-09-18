@@ -1,0 +1,23 @@
+{
+  "runs": [
+    {
+      "runId": "discover-1789764660345",
+      "phase": "discover",
+      "startedAt": "2026-09-18T20:51:00.342Z",
+      "completedAt": "2026-09-18T20:51:00.345Z",
+      "commit": "a6294ddee8f4f88302bfba0b8055b9c2c32582de",
+      "result": "prepared",
+      "errors": []
+    },
+    {
+      "runId": "plan-1789764660774",
+      "phase": "plan",
+      "startedAt": "2026-09-18T20:51:00.771Z",
+      "completedAt": "2026-09-18T20:51:00.774Z",
+      "commit": "a6294ddee8f4f88302bfba0b8055b9c2c32582de",
+      "result": "reported",
+      "errors": []
+    }
+  ],
+  "updatedAt": "2026-09-18T20:51:00.826Z"
+}

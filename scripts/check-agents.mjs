@@ -46,7 +46,7 @@ for (const file of readdirSync(dir)) {
 const files = Object.keys(agents);
 const named = Object.values(agents);
 
-check(files.length === 20, `20 agent files (got ${files.length})`);
+check(files.length === 24, `24 agent files (got ${files.length})`);
 check(
   named.every((a) => a.name && a.description && a.target === 'vscode'),
   'every agent has name, description and target: vscode',
@@ -78,6 +78,9 @@ for (const role of [
   'research-reference',
   'project-manager-client',
   'code-quality',
+  'product-discovery',
+  'agent-operations',
+  'skills-curator',
 ]) {
   const file = files.find((f) => f.includes(role));
   check(file && !agents[file].tools.includes('edit'), `${role} has no edit tool`);
@@ -91,6 +94,7 @@ for (const role of [
   'visual-designer',
   'documentation',
   'repository',
+  'release-manager',
 ]) {
   const file = files.find((f) => f.includes(role));
   check(
@@ -174,6 +178,22 @@ check(unknown.length === 0, `every status is a defined value ${unknown.join(', '
 for (const file of ['progress.json', 'findings.json', 'references.json']) {
   check(existsSync(`.ai/${file}`), `structured state exists: ${file}`);
 }
+for (const file of [
+  'backlog.json',
+  'product-discovery.json',
+  'release-plan.json',
+  'agent-operations.json',
+  'skill-registry.json',
+]) {
+  check(existsSync(`.ai/${file}`), `product state exists: ${file}`);
+}
+check(existsSync('scripts/release-gate.mjs'), 'release gate script exists');
+// The scheduler must stay off until the gates it depends on are proven.
+const releasePlan = JSON.parse(readFileSync('.ai/release-plan.json', 'utf8'));
+check(
+  releasePlan.schedulerEnabled === false,
+  `scheduled operation is disabled (${releasePlan.schedulerEnabled})`,
+);
 const canonical = JSON.parse(readFileSync('.ai/progress.json', 'utf8'));
 const projected = new Map(
   [...matrices.matchAll(/^\|\s*([A-Za-z/ ]+?)\s*\|\s*(\d+)%/gm)].map((m) => [m[1], Number(m[2])]),

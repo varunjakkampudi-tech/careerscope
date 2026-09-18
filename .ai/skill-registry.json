@@ -1,0 +1,24 @@
+{
+  "$comment": "Provenance for every externally sourced capability. Twenty skills were already present in .github/skills when this registry was created; they are recorded as pre-existing rather than claimed as reviewed, because no security review of them has been performed by this system. Agents recommend; the operator installs.",
+  "updatedAt": "2026-09-19T00:00:00.000Z",
+  "skills": [
+    {
+      "name": "pre-existing .github/skills set",
+      "source": "present before this registry existed",
+      "count": 20,
+      "securityReview": "NOT PERFORMED",
+      "pinned": "unknown",
+      "note": "Inventoried and mapped to agents in AGENT-SETUP.md. Auditing them with the audit-skills skill is open work, not a completed check."
+    }
+  ],
+  "extensions": [],
+  "mcpServers": [
+    {
+      "name": "job-radar",
+      "source": ".vscode/mcp.json",
+      "purpose": "Read-only access to the V1 job database for the owner's own data",
+      "securityReview": "NOT PERFORMED by this system",
+      "note": "Pre-existing. Its launcher lives under gitignored data/ and asserts a pinned runtime, a separate working-copy database, paused scheduling and a scrubbed environment."
+    }
+  ]
+}
