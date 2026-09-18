@@ -319,6 +319,72 @@
       "architectureImpact": "review topology",
       "ownerAgent": "Agent Operations",
       "reviewAgents": ["Orchestrator", "Project Manager"]
+    },
+    {
+      "releaseTarget": null,
+      "currentStep": null,
+      "completedSteps": [],
+      "createdAt": "2026-09-19",
+      "updatedAt": "2026-09-19",
+      "id": "CS-11",
+      "title": "The public Pages surface has had no design pass",
+      "userProblem": "The public job list is the only part of CareerScope a stranger ever sees, and it was built to be correct rather than to be read.",
+      "source": "operator request",
+      "area": "frontend",
+      "priority": "P2",
+      "status": "DISCOVERY",
+      "size": "L",
+      "value": 4,
+      "risk": 2,
+      "complexity": 3,
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "Hierarchy, type scale and spacing come from the design system, not ad-hoc values",
+        "Empty, loading, error and long-content states are designed, not incidental",
+        "Verified at real breakpoints including 768px, in all three browser engines",
+        "Accessibility verified with the accesslint-audit skill, not asserted",
+        "No new external origin, no build step, and the snapshot allowlist is unchanged"
+      ],
+      "evidence": [
+        "mobile-site/ and _site/ are plain HTML, CSS and ES modules with no design system applied",
+        "CS-2 shows breakpoint behaviour here is not currently trustworthy"
+      ],
+      "securityImpact": "public artifact — allowlist must not widen",
+      "architectureImpact": "none; static artifact only",
+      "ownerAgent": "Frontend",
+      "reviewAgents": ["Visual Designer", "UX", "Security", "QA"]
+    },
+    {
+      "releaseTarget": null,
+      "currentStep": null,
+      "completedSteps": [],
+      "createdAt": "2026-09-19",
+      "updatedAt": "2026-09-19",
+      "id": "CS-12",
+      "title": "The 24-agent workflow has never executed",
+      "userProblem": "Review that exists only as configuration provides no assurance, while looking like it does.",
+      "source": "verified against .ai/LOOP-STATE.json",
+      "area": "process",
+      "priority": "P1",
+      "status": "READY",
+      "size": "M",
+      "value": 5,
+      "risk": 4,
+      "complexity": 3,
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "At least one change is driven end to end through the orchestrator and recorded in LOOP-STATE activity",
+        "Handoffs, verdicts and iteration counts are written by the run, not by hand",
+        "If the workflow cannot be driven in practice, that is recorded as the finding rather than left implied"
+      ],
+      "evidence": [
+        "All 24 agents WAITING, activity empty, every iteration counter 0, qa not-run, lastVerdict null",
+        "check-agents.mjs validates configuration only; it cannot observe execution"
+      ],
+      "securityImpact": "none directly; removes assumed review assurance",
+      "architectureImpact": "review topology",
+      "ownerAgent": "Agent Operations",
+      "reviewAgents": ["Orchestrator", "Project Manager", "Final Auditor"]
     }
   ]
 }

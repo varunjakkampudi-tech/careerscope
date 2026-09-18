@@ -25,7 +25,7 @@ const ready = {
   scopeFrozen: true,
   features: [{ id: 'F1', title: 'synthetic', status: 'complete' }],
   ci: { tests: 'pass', build: 'pass', status: 'green' },
-  acceptance: { security: 'pass', browser: 'pass', migrations: 'pass' },
+  acceptance: { security: 'pass', browser: 'pass', migrations: 'pass', documentation: 'pass' },
   deployment: { artifact: 'deploy.tgz', commit: 'a6294dd' },
   rollback: { plan: 'redeploy previous image' },
   safety: {},
@@ -79,6 +79,33 @@ const cases = [
     1,
   ],
   ['no rollback plan', () => set({ ...structuredClone(ready), rollback: {} }), 1],
+  [
+    'documentation not updated',
+    () =>
+      set({
+        ...structuredClone(ready),
+        acceptance: { ...ready.acceptance, documentation: 'not-run' },
+      }),
+    1,
+  ],
+  [
+    'documentation key absent entirely',
+    () =>
+      set({
+        ...structuredClone(ready),
+        acceptance: { security: 'pass', browser: 'pass', migrations: 'pass' },
+      }),
+    1,
+  ],
+  [
+    'documentation claimed with a non-string',
+    () =>
+      set({
+        ...structuredClone(ready),
+        acceptance: { ...ready.acceptance, documentation: true },
+      }),
+    1,
+  ],
   [
     'commit SHA missing',
     () => set({ ...structuredClone(ready), deployment: { artifact: 'x' } }),

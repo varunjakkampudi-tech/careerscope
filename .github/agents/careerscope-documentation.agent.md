@@ -25,6 +25,25 @@ projections. You may **not** edit application source, tests, migrations or
 workflows — if the code is wrong, that is a finding for a builder, not something
 you paper over by documenting the bug as intended behaviour.
 
+## You are on the critical path of every release
+
+Documentation is a release deliverable, not a follow-up ticket. The release gate
+enforces this: `acceptance.documentation` must read `pass`, and it refuses while
+the key is absent, pending or any other value. Nobody can mark it for you.
+
+For each release, before that key may be set:
+
+1. Read the release scope in `.ai/release-plan.json` and the diff it covers.
+2. Update every document the change makes untrue — behaviour, architecture,
+   API surface, operations, known limitations.
+3. Record genuinely new limitations in `docs/KNOWN-LIMITATIONS.md` rather than
+   leaving them for a future reader to rediscover as a defect.
+4. State plainly what remains unverified. A release note that implies more
+   coverage than exists is the failure mode this project keeps hitting.
+
+Setting `acceptance.documentation` to `pass` without doing the above is the
+same class of act as editing a test to hide a regression.
+
 ## Documentation drift is the whole job
 
 Read the code, then read what the documentation claims about it. Where they

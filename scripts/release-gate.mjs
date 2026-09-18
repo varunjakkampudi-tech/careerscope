@@ -85,6 +85,10 @@ gate('build passes', release.ci?.build === 'pass');
 gate('CI green', release.ci?.status === 'green');
 gate('security review passed', release.acceptance?.security === 'pass');
 gate('browser validation passed', release.acceptance?.browser === 'pass');
+// Documentation is a release deliverable, not a follow-up. A release whose docs
+// still describe the previous behaviour ships a lie to whoever reads them next,
+// and the next reader is usually an agent that then acts on it.
+gate('documentation updated for this release', release.acceptance?.documentation === 'pass');
 gate('migrations verified against a populated database', release.acceptance?.migrations === 'pass');
 gate('deployment artifact created', Boolean(release.deployment?.artifact));
 gate('commit SHA recorded', /^[0-9a-f]{7,40}$/.test(String(release.deployment?.commit ?? '')));
