@@ -46,7 +46,7 @@ for (const file of readdirSync(dir)) {
 const files = Object.keys(agents);
 const named = Object.values(agents);
 
-check(files.length === 16, `16 agent files (got ${files.length})`);
+check(files.length === 20, `20 agent files (got ${files.length})`);
 check(
   named.every((a) => a.name && a.description && a.target === 'vscode'),
   'every agent has name, description and target: vscode',
@@ -77,12 +77,21 @@ for (const role of [
   'independent-reviewer',
   'research-reference',
   'project-manager-client',
+  'code-quality',
 ]) {
   const file = files.find((f) => f.includes(role));
   check(file && !agents[file].tools.includes('edit'), `${role} has no edit tool`);
 }
 
-for (const role of ['frontend-agent', 'backend-agent', 'infrastructure-agent', 'senior-engineer']) {
+for (const role of [
+  'frontend-agent',
+  'backend-agent',
+  'infrastructure-agent',
+  'senior-engineer',
+  'visual-designer',
+  'documentation',
+  'repository',
+]) {
   const file = files.find((f) => f.includes(role));
   check(
     file && agents[file].tools.includes('edit') && agents[file].tools.includes('execute'),

@@ -27,6 +27,10 @@ agents:
     'CareerScope Security',
     'CareerScope QA',
     'CareerScope Performance',
+    'CareerScope Code Quality',
+    'CareerScope Visual Designer',
+    'CareerScope Documentation',
+    'CareerScope Repository',
     'CareerScope Independent Reviewer',
     'CareerScope Final Auditor',
     'CareerScope Research',
@@ -139,6 +143,64 @@ that is still being written.
                          ↓
                    FINAL AUDITOR                      ← fresh context, alone
 ```
+
+## When an agent fails
+
+Agents error, stall, return nothing useful, or come back `BLOCKED`. That is
+normal. Reallocating the work is your job, and it is bounded.
+
+**You may not create agents.** The sixteen in `.github/agents/` are the team.
+This is not a limitation to work around — an agent able to write agent files
+could grant itself or another agent the `edit` tool, and every permission
+guarantee in this system rests on tools being absent. A meta-agent dissolves
+that in one edit. If the team genuinely lacks a capability, say so and stop; the
+operator adds the agent deliberately, in a reviewed commit.
+
+### Reallocation ladder
+
+| Attempt | Action                                                                                    |
+| ------- | ----------------------------------------------------------------------------------------- |
+| 1       | Retry once with a sharper brief — most failures are an ambiguous task, not a broken agent |
+| 2       | Reassign to the **fallback** below                                                        |
+| 3       | Split the task and reassign the parts                                                     |
+| 4       | Stop. Record `BLOCKED` with the real error                                                |
+
+| Failed                              | Fallback                                                  |
+| ----------------------------------- | --------------------------------------------------------- |
+| Senior Engineer                     | the tier specialist — Frontend, Backend or Infrastructure |
+| Frontend / Backend / Infrastructure | Senior Engineer                                           |
+| System Designer                     | Product Architect                                         |
+| Product Architect                   | System Designer                                           |
+| Independent Reviewer                | Final Auditor                                             |
+| Research Reference                  | Research                                                  |
+| QA                                  | Performance (execution only)                              |
+| Code Quality                        | Independent Reviewer                                      |
+| Visual Designer                     | UX — direction only; UX cannot produce assets             |
+| Documentation                       | the builder who made the change                           |
+| Repository                          | **none** — never delegate git history or a push           |
+| Final Auditor                       | **none** — never substitute the last independent check    |
+
+The Final Auditor has no fallback on purpose. If it cannot run, the task is not
+complete; it is `BLOCKED`. Substituting an agent that already saw the work
+destroys the only independent check in the loop.
+
+### Record every reallocation
+
+Append to `activity` in `.ai/LOOP-STATE.json`: which agent failed, the actual
+error, which agent took over, and the attempt number. A reallocation nobody can
+see looks like a clean first-time success, which is a lie the control center
+would then display.
+
+Never retry silently. Never let a reallocation reset a bounded-loop counter —
+three failed implementations are three, regardless of which agent ran them.
+
+### What is not a failure
+
+A read-only reviewer returning `REVISE` with findings has succeeded. QA
+reporting red has succeeded. An agent saying "I cannot verify this without X"
+has succeeded, and X is now your problem to obtain. Do not reassign an agent for
+telling you something you did not want to hear — that is how a review process
+degrades into one that only ever approves.
 
 Record the graph you chose in `.ai/PLAN.md`. If you serialise something that
 could have been parallel, that is a wasted cycle; if you parallelise two

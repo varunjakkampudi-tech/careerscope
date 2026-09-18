@@ -967,3 +967,103 @@ The CI -> Deploy release gate, with required checks and an audited override.
 Then the Caddy self-healing defect.
 
 ============================================================
+
+
+============================================================
+ENTRY
+============================================================
+
+Date:       2026-09-19
+Task:       Add four agents for unowned artefacts; orchestrator failure policy
+Iteration:  7
+Phase:      implementation -> validation
+Agents:     none (agent-system change; no product code touched)
+
+## REQUEST
+
+Agents for git/repo maintenance, documentation, page/visual design and code
+quality, plus an agent able to create agents and reallocate failed work.
+
+## RECON
+
+Checked each request against the existing sixteen rather than adding on request:
+
+  git hygiene, releases       NOT covered - Infrastructure owns CI/CD and the
+                              host, not branches, tags or history       -> ADD
+  documentation               NOT owned - builders touched it, nobody owned
+                              drift; DOCUMENTATION-AUDIT.md had no owner -> ADD
+  design system / imagery     NOT owned - progress matrix records
+                              "Design system: NOT STARTED"              -> ADD
+  maintainability             NOT owned - CLEANUP-REPORT.md had no owner -> ADD
+  "follow system design"      ALREADY covered by System Designer plus
+                              Independent Reviewer and Final Auditor   -> NO ADD
+
+## ARCHITECTURE
+
+Two pairs deliberately kept separate rather than merged:
+  Product Architect / System Designer     domain model vs structure
+  Independent Reviewer / Code Quality     does it work vs can we keep changing it
+
+Code Quality is READ-ONLY on purpose: an agent that both judges quality and
+performs the cleanup grades its own work.
+
+Visual Designer and Frontend both write, so they may never run together. The
+Designer owns tokens, global styles and assets; Frontend owns components.
+
+The agent-creating agent was REFUSED. An agent able to write .github/agents/*.md
+can grant itself the edit tool, and every permission guarantee in this system
+rests on tools being absent. It is also not mechanically possible: VS Code reads
+agent files as static config and agents cannot invoke each other. Implemented
+the real requirement instead - a bounded reallocation ladder in the Orchestrator
+with a named fallback per agent, no fallback for the Final Auditor or the
+Repository agent, reallocations logged to activity, and counters that do not
+reset on reassignment.
+
+## FILES CHANGED
+
+  .github/agents/careerscope-documentation.agent.md     new
+  .github/agents/careerscope-repository.agent.md        new
+  .github/agents/careerscope-visual-designer.agent.md   new
+  .github/agents/careerscope-code-quality.agent.md      new
+  .github/agents/careerscope-orchestrator.agent.md      failure policy, 4 agents
+  .ai/LOOP-STATE.json, .ai/AGENT-SETUP.md               modified
+  scripts/check-agents.mjs                              16 -> 20, new tiers
+
+## TESTING
+
+  node scripts/check-agents.mjs   exit 0, "20 agent files (got 20)",
+                                  "LOOP-STATE tracks every agent (20 of 20)",
+                                  code-quality has no edit tool,
+                                  visual-designer/documentation/repository
+                                  can edit and execute
+  npm run lint                    exit 0
+  npm run format:check            exit 0
+  node scripts/control-center.mjs exit 0, renders all 20 with permissions
+
+## CODE QUALITY
+
+Found .ai/AGENT-SETUP.md still listing ELEVEN agents. An earlier edit reported
+ambiguously and was never verified, so the specification had been wrong for two
+cycles while the validator passed - the validator checks agent files, not the
+prose describing them. Rewritten to all twenty. This is exactly the drift the
+new Documentation agent exists to catch, found by reading the file rather than
+trusting a previous tool result.
+
+## FINAL STATUS
+
+PASS - twenty agents, permissions enforced by tool absence and validated,
+failure reallocation bounded and logged.
+
+## REMAINING ISSUES
+
+  1. CI->Deploy release gate still missing. Rated P0 by external review.
+  2. WebKit row-overlap intermittent on CI; not reproducible on Windows.
+  3. V1 app layer retirement unscoped - blocked on Pages export and MCP.
+  4. Caddy self-healing defect still open.
+  5. AGENT-SETUP.md drift went undetected for two cycles; no check covers prose.
+
+## NEXT ACTION
+
+The CI -> Deploy release gate. Then scope the V1 retirement.
+
+============================================================

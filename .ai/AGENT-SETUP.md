@@ -25,19 +25,55 @@ restrictions — exists to make that rule enforceable rather than aspirational.
 
 Located in `.github/agents/`.
 
-| Agent             | Role        | Model                      | Write access     | Primary responsibility                                   |
-| ----------------- | ----------- | -------------------------- | ---------------- | -------------------------------------------------------- |
-| Orchestrator      | coordinator | picker default             | edit + execute   | requirements, routing, `.ai/` state, completion decision |
-| Product Architect | reviewer    | **intended Claude**        | **none**         | architecture, requirements, domain model, debt           |
-| UX                | reviewer    | **intended Claude**        | **none**         | IA, navigation, states, accessibility                    |
-| Frontend          | builder     | _unresolved_               | edit + execute   | Next.js, React, components, routing                      |
-| Backend           | builder     | _unresolved_               | edit + execute   | Fastify, PostgreSQL, queues, workers                     |
-| Infrastructure    | builder     | _unresolved_               | edit + execute   | Docker, Caddy, CI/CD, host                               |
-| Security          | reviewer    | **intended Claude**        | **none**         | adversarial security review                              |
-| QA                | verifier    | picker default             | **execute only** | runs the real commands                                   |
-| Performance       | verifier    | picker default             | **execute only** | measures; recommends only with evidence                  |
-| Research          | advisor     | picker default             | **none**         | investigates before adoption                             |
-| Final Auditor     | auditor     | **intended Claude, fresh** | **none**         | "is this actually complete?"                             |
+| Agent                | Role        | Model                      | Write access     | Primary responsibility                         |
+| -------------------- | ----------- | -------------------------- | ---------------- | ---------------------------------------------- |
+| Orchestrator         | coordinator | picker default             | edit + execute   | routing, `.ai/` state, the completion decision |
+| Project Manager      | product     | **intended Claude**        | **none**         | what to build, priority, acceptance, GO/NO-GO  |
+| Product Architect    | reviewer    | **intended Claude**        | **none**         | requirements, domain model, debt               |
+| System Designer      | architect   | **intended Claude**        | **none**         | boundaries, flows, topology, failure modes     |
+| UX                   | reviewer    | **intended Claude**        | **none**         | IA, navigation, states, accessibility          |
+| Research             | advisor     | picker default             | **none**         | internal investigation before adoption         |
+| Research Reference   | advisor     | picker default             | **none**         | current external fact, cited                   |
+| Senior Engineer      | builder     | _unresolved_               | edit + execute   | cross-cutting implementation                   |
+| Frontend             | builder     | _unresolved_               | edit + execute   | Next.js, React, components, routing            |
+| Backend              | builder     | _unresolved_               | edit + execute   | Fastify, PostgreSQL, queues, workers           |
+| Infrastructure       | builder     | _unresolved_               | edit + execute   | Docker, Caddy, CI/CD, host                     |
+| Visual Designer      | builder     | picker default             | edit + execute   | design system, tokens, imagery                 |
+| Documentation        | builder     | picker default             | edit + execute   | docs, and drift between docs and code          |
+| Repository           | builder     | picker default             | edit + execute   | git hygiene, branches, tags, releases          |
+| QA                   | verifier    | picker default             | **execute only** | runs the real commands                         |
+| Performance          | verifier    | picker default             | **execute only** | measures; recommends only with evidence        |
+| Security             | verifier    | **intended Claude**        | **execute only** | adversarial security review                    |
+| Code Quality         | reviewer    | **intended Claude**        | **none**         | duplication, dead code, complexity, boundaries |
+| Independent Reviewer | auditor     | **intended Claude**        | **none**         | tries to prove the implementation wrong        |
+| Final Auditor        | auditor     | **intended Claude, fresh** | **none**         | "is this actually complete?"                   |
+
+Nine roles were added beyond the original eleven, each separating a decision
+that had been blurred or an artefact nobody owned:
+
+- **Project Manager** decides what and why; **System Designer** decides how it
+  should be structured; **Senior Engineer** builds; **Independent Reviewer**
+  tries to break it; **Research Reference** supplies current external fact.
+- **Visual Designer** owns a design system that did not exist — no tokens, no
+  primitives. **Documentation** owns drift. **Repository** owns git and release
+  hygiene. **Code Quality** owns maintainability.
+
+Two pairs look like duplicates and are not:
+
+- **Product Architect vs System Designer** — one asks whether the domain model
+  is right, the other whether the structure is.
+- **Independent Reviewer vs Code Quality** — one asks "does it work?", the other
+  "can we keep changing it?". Code Quality is read-only precisely so it cannot
+  perform the cleanup it recommends and then grade its own work.
+
+**Visual Designer and Frontend must never run together.** Both write to the same
+tree. The Designer owns tokens, global styles and assets; Frontend owns
+components, routes and state.
+
+**No agent may create an agent.** An agent able to write `.github/agents/*.md`
+could grant itself the `edit` tool, and every permission guarantee here rests on
+tools being absent. When the team lacks a capability, the Orchestrator reports
+it and stops; the operator adds the agent in a reviewed commit.
 
 ---
 
