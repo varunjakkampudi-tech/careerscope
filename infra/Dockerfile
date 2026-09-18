@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 #
-# Job Radar — API image (also serves the SPA).
+# CareerScope — API image (also serves the SPA).
 #
 # ## Why node:24
 #
