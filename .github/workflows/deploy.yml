@@ -53,6 +53,18 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      # v2 type-checks against the root workspace's *built* packages, so those
+      # have to exist before anything in v2 runs. The same order is what the
+      # runtime image does; skipping it here only appeared to work locally
+      # because a previous build had left the dist directories behind.
+      - name: Build the domain packages v2 depends on
+        run: |
+          npm ci
+          npm run build --workspace @job-radar/shared
+          npm run build --workspace @job-radar/resume
+          npm run build --workspace @job-radar/matching
+          npm run build --workspace @job-radar/providers
+
       - name: Install V2 dependencies
         working-directory: v2
         run: npm ci
