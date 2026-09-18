@@ -395,20 +395,22 @@ Things VS Code and Copilot cannot enforce, stated rather than papered over:
 ## Activation policy
 
 This is a **24-agent specialist capability library with an operator-driven,
-bounded workflow and a durable state model**. It is not an orchestrated
-execution system, and the difference matters: nothing here can invoke a
-sub-agent programmatically, so every handoff is performed by the operator.
+bounded workflow and a durable state model**.
 
-As of this writing **no agent has executed**: all 24 are `WAITING`, `activity`
-is empty and every iteration counter is 0. The control centre therefore labels
-agent state as operator-reported and never observed. Do not write state that
-claims an agent acted when a person did the work — manufactured orchestration
-evidence is worse than none, because the next reader cannot tell it apart from
-the real thing.
+Sub-agents **can** be invoked from a chat session — this was asserted to be
+impossible in this file and in the Copilot contract until a Code Quality agent
+was run to test the claim. It read a file, produced file:line findings, and
+found a real defect that had been committed two changes earlier. The claim was
+wrong, and it had already been written into two documents and used as the
+premise of an external review.
 
-What the agent files are genuinely worth: role contracts, permission
-definitions, review checklists, specialist prompts, and ready targets if the
-platform ever exposes real invocation.
+What is genuinely operator-driven is the **sequencing**: nothing chains one
+agent into the next, and no agent writes `.ai/` state by itself. So durable
+state is still recorded by hand, and must never claim an agent acted when the
+operator did the work. Equally, it must not claim the agents cannot run.
+
+What the agent files are worth: role contracts, permission definitions, review
+checklists, specialist prompts — and now, working invocation targets.
 
 The roster is a capability library, not an attendance list. Twenty-four agents
 existing is not the problem; twenty-four participating in every task would be.

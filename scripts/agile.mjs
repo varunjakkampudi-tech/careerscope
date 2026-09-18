@@ -47,7 +47,49 @@ const git = (args, fallback = null) => {
 };
 
 const ACTIVE = ['IN_PROGRESS', 'CODE_REVIEW', 'QA', 'SECURITY'];
+// One definition of finished. `review` and `carry` disagreeing on this meant a
+// released item was reviewed as done and carried forward as unfinished.
+const COMPLETE = 'RELEASED';
 const sprintPath = () => join(AI, 'sprints', `${isoWeek()}.json`);
+
+/** One sprint shape. Two literals drift the moment a field is added to either. */
+function sprintSkeleton(id, { startDate = null, targetReleaseDate = null } = {}) {
+  return {
+    sprintId: id,
+    week: id,
+    goal: null,
+    startDate,
+    targetReleaseDate,
+    status: 'PLANNING',
+    candidates: [],
+    selectedFeatures: [],
+    deferredFeatures: [],
+    rejectedFeatures: [],
+    risks: [],
+    dependencies: [],
+    acceptanceCriteria: [],
+    agents: [],
+    releasePlan: {},
+  };
+}
+
+/**
+ * Read canonical state that a report depends on. Absent and unreadable are both
+ * refusals: a board showing "0 open P0" because it could not open the file is
+ * the defect this project keeps rediscovering.
+ */
+function readRequired(path) {
+  if (!existsSync(path)) {
+    console.error(`\n  ${path} is missing. Refusing to report a state I cannot read.\n`);
+    process.exit(1);
+  }
+  try {
+    return JSON.parse(readFileSync(path, 'utf8').replace(/\r\n/g, '\n'));
+  } catch (error) {
+    console.error(`\n  ${path} is unreadable: ${error.message}. Refusing to report.\n`);
+    process.exit(1);
+  }
+}
 
 function record(phase, result, errors = []) {
   const path = join(AI, 'runs.json');
@@ -70,11 +112,13 @@ const started = new Date().toISOString();
 
 function status() {
   const sprint = read(sprintPath());
-  const backlog = read(join(AI, 'backlog.json'), { items: [] });
-  const findings = read(join(AI, 'findings.json'), { findings: [] });
+  const backlog = readRequired(join(AI, 'backlog.json'));
+  const findings = readRequired(join(AI, 'findings.json'));
   const plan = read(join(AI, 'release-plan.json'), {});
   const branch = git(['branch', '--show-current'], 'unknown');
-  const open = findings.findings.filter((f) => f.status !== 'FIXED' && f.status !== 'CLOSED');
+  const open = (findings.findings ?? []).filter(
+    (f) => f.status !== 'FIXED' && f.status !== 'CLOSED',
+  );
   const counts = (status_) => backlog.items.filter((i) => i.status === status_).length;
 
   console.log(`\n  CAREERSCOPE  ${isoWeek()}\n`);
@@ -125,23 +169,13 @@ function plan() {
   const start = new Date();
   const friday = new Date(start);
   friday.setDate(friday.getDate() + ((5 - friday.getDay() + 7) % 7));
-  write(path, {
-    sprintId: isoWeek(),
-    week: isoWeek(),
-    goal: null,
-    startDate: today(),
-    targetReleaseDate: friday.toISOString().slice(0, 10),
-    status: 'PLANNING',
-    candidates: [],
-    selectedFeatures: [],
-    deferredFeatures: [],
-    rejectedFeatures: [],
-    risks: [],
-    dependencies: [],
-    acceptanceCriteria: [],
-    agents: [],
-    releasePlan: {},
-  });
+  write(
+    path,
+    sprintSkeleton(isoWeek(), {
+      startDate: today(),
+      targetReleaseDate: friday.toISOString().slice(0, 10),
+    }),
+  );
   console.log(`\n  SPRINT PLANNING  ${isoWeek()}`);
   console.log(`  Created ${path}\n`);
   console.log('  Convene, in order, each contributing only from its responsibility:');
@@ -232,9 +266,9 @@ function review() {
     process.exitCode = 1;
     return;
   }
-  const backlog = read(join(AI, 'backlog.json'), { items: [] });
+  const backlog = readRequired(join(AI, 'backlog.json'));
   const selected = sprint.selectedFeatures ?? [];
-  const done = backlog.items.filter((i) => selected.includes(i.id) && i.status === 'RELEASED');
+  const done = backlog.items.filter((i) => selected.includes(i.id) && i.status === COMPLETE);
   const carried = selected.filter((id) => !done.some((d) => d.id === id));
   console.log(`\n  SPRINT REVIEW  ${sprint.sprintId}\n`);
   console.log(`  Goal        ${sprint.goal ?? '—'}`);
@@ -320,28 +354,12 @@ function carry() {
     return;
   }
 
-  const done = selected.filter((id) => byId.get(id).status === 'DONE');
-  const unfinished = selected.filter((id) => byId.get(id).status !== 'DONE');
+  const done = selected.filter((id) => byId.get(id).status === COMPLETE);
+  const unfinished = selected.filter((id) => byId.get(id).status !== COMPLETE);
 
   const next = isoWeek(new Date(Date.now() + 7 * 86400000));
   const nextPath = join(AI, 'sprints', `${next}.json`);
-  const target = read(nextPath, {
-    sprintId: next,
-    week: next,
-    goal: null,
-    startDate: null,
-    targetReleaseDate: null,
-    status: 'PLANNING',
-    candidates: [],
-    selectedFeatures: [],
-    deferredFeatures: [],
-    rejectedFeatures: [],
-    risks: [],
-    dependencies: [],
-    acceptanceCriteria: [],
-    agents: [],
-    releasePlan: {},
-  });
+  const target = read(nextPath, sprintSkeleton(next));
 
   for (const id of unfinished) {
     if (!target.candidates.includes(id)) target.candidates.push(id);

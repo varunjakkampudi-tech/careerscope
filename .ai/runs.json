@@ -557,7 +557,81 @@
       "errors": [
         "WIP limit exceeded"
       ]
+    },
+    {
+      "runId": "feature-1789774691128",
+      "phase": "feature",
+      "startedAt": "2026-09-18T23:38:11.126Z",
+      "completedAt": "2026-09-18T23:38:11.128Z",
+      "commit": "5852cd892a76b9947f62f634a47deddc2b94cbdb",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789774691324",
+      "phase": "feature",
+      "startedAt": "2026-09-18T23:38:11.321Z",
+      "completedAt": "2026-09-18T23:38:11.324Z",
+      "commit": "5852cd892a76b9947f62f634a47deddc2b94cbdb",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789774691519",
+      "phase": "feature",
+      "startedAt": "2026-09-18T23:38:11.514Z",
+      "completedAt": "2026-09-18T23:38:11.519Z",
+      "commit": "5852cd892a76b9947f62f634a47deddc2b94cbdb",
+      "branch": "main",
+      "result": "wip-exceeded",
+      "errors": [
+        "WIP limit exceeded"
+      ]
+    },
+    {
+      "runId": "status-1789774694224",
+      "phase": "status",
+      "startedAt": "2026-09-18T23:38:14.093Z",
+      "completedAt": "2026-09-18T23:38:14.224Z",
+      "commit": "5852cd892a76b9947f62f634a47deddc2b94cbdb",
+      "branch": "main",
+      "result": "reported",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789774797889",
+      "phase": "feature",
+      "startedAt": "2026-09-18T23:39:57.886Z",
+      "completedAt": "2026-09-18T23:39:57.889Z",
+      "commit": "5852cd892a76b9947f62f634a47deddc2b94cbdb",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789774798088",
+      "phase": "feature",
+      "startedAt": "2026-09-18T23:39:58.084Z",
+      "completedAt": "2026-09-18T23:39:58.088Z",
+      "commit": "5852cd892a76b9947f62f634a47deddc2b94cbdb",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789774798282",
+      "phase": "feature",
+      "startedAt": "2026-09-18T23:39:58.278Z",
+      "completedAt": "2026-09-18T23:39:58.282Z",
+      "commit": "5852cd892a76b9947f62f634a47deddc2b94cbdb",
+      "branch": "main",
+      "result": "wip-exceeded",
+      "errors": [
+        "WIP limit exceeded"
+      ]
     }
   ],
-  "updatedAt": "2026-09-18T23:13:42.065Z"
+  "updatedAt": "2026-09-18T23:39:58.389Z"
 }

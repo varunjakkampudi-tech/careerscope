@@ -383,33 +383,35 @@
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-19",
       "id": "CS-12",
-      "title": "The orchestration claim is stronger than the toolchain supports",
+      "title": "Agent invocation was believed impossible; it is not",
       "userProblem": "A system described as orchestrated, but driven by hand, misleads whoever reads its state next.",
       "source": "verified against .ai/LOOP-STATE.json",
       "area": "process",
-      "priority": "P2",
-      "status": "READY",
+      "priority": "P1",
+      "status": "IN_PROGRESS",
       "size": "M",
       "value": 5,
       "risk": 4,
       "complexity": 3,
       "dependencies": [],
       "acceptanceCriteria": [
-        "Documentation describes a capability library with an operator-driven bounded workflow, not an orchestrated execution system",
-        "Agent state is labelled operator-reported and never observed, wherever it is displayed",
-        "No state file is ever written claiming an agent acted when the operator did the work",
-        "Revisit only if the platform exposes real agent invocation and execution telemetry"
+        "Documentation states that agents can be invoked and that sequencing is what remains manual",
+        "A daily routine exists that names which agent is invoked at which step",
+        "Agent output is recorded as a finding attributed to that agent, never as state claiming autonomous action",
+        "The read-only permission boundary is confirmed to hold under real invocation"
       ],
       "evidence": [
         "All 24 agents WAITING, activity empty, every iteration counter 0, qa not-run, lastVerdict null",
         "check-agents.mjs validates configuration only; it cannot observe execution",
-        "External review: manufacturing an end-to-end run would be worse than having no orchestration evidence"
+        "External review: manufacturing an end-to-end run would be worse than having no orchestration evidence",
+        "Code Quality agent invoked 2026-09-19: read scripts/agile.mjs, returned file:line findings, one of them a real defect",
+        "The false claim had already been committed to .github/copilot-instructions.md and .ai/AGENT-SETUP.md"
       ],
       "securityImpact": "none directly; removes assumed review assurance",
       "architectureImpact": "review topology",
       "ownerAgent": "Documentation",
       "reviewAgents": ["Orchestrator", "Project Manager", "Final Auditor"],
-      "summary": "The twenty-four review roles have never run, and nothing in this setup can invoke them automatically — a person performs every handoff. The fix is not to fake a run; it is to stop claiming orchestration and describe what this actually is: a library of role definitions with an operator-driven workflow.",
+      "summary": "Two documents, and an external review built on them, stated that the specialist agents could not be run automatically. Running one disproved it in a single attempt — and that agent immediately found a real defect. What is actually manual is the sequencing between agents, not the invocation.",
       "dimension": "engineering"
     },
     {
@@ -641,6 +643,74 @@
       "architectureImpact": "none",
       "ownerAgent": "Frontend",
       "reviewAgents": ["Backend", "Security", "UX", "QA"]
+    },
+    {
+      "releaseTarget": null,
+      "currentStep": null,
+      "completedSteps": [],
+      "createdAt": "2026-09-19",
+      "updatedAt": "2026-09-19",
+      "dimension": "engineering",
+      "id": "CS-20",
+      "title": "agile status and review reported a clean board from files they could not read",
+      "summary": "The daily status command showed zero work in progress and zero blocking problems when the files holding that information were missing entirely. A clean board produced by an inability to look is the most dangerous output this project produces.",
+      "userProblem": "A dashboard that cannot distinguish \"nothing wrong\" from \"cannot see\" is worse than no dashboard.",
+      "source": "Code Quality agent, 2026-09-19",
+      "area": "tooling",
+      "priority": "P1",
+      "status": "QA",
+      "size": "S",
+      "value": 5,
+      "risk": 4,
+      "complexity": 1,
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "status and review refuse when backlog.json or findings.json is absent or unparseable",
+        "The refusal names the file and the reason",
+        "Covered by the agile gate mutation suite"
+      ],
+      "evidence": [
+        "read(path, { items: [] }) turned a missing backlog into an empty one at scripts/agile.mjs",
+        "Same defect class as the release-gate findings.json failure"
+      ],
+      "securityImpact": "none",
+      "architectureImpact": "state-reading contract",
+      "ownerAgent": "Senior Engineer",
+      "reviewAgents": ["Independent Reviewer", "QA"]
+    },
+    {
+      "releaseTarget": null,
+      "currentStep": null,
+      "completedSteps": [],
+      "createdAt": "2026-09-19",
+      "updatedAt": "2026-09-19",
+      "dimension": "engineering",
+      "id": "CS-21",
+      "title": "Sprint carry could never mark anything finished",
+      "summary": "The carry command I added counted a finished item by a status value that does not exist in this system, so a completed item would have been carried into the next week forever while the review command counted the same item as done.",
+      "userProblem": "Two commands disagreeing about what \"finished\" means makes both untrustworthy.",
+      "source": "Code Quality agent, 2026-09-19",
+      "area": "tooling",
+      "priority": "P1",
+      "status": "QA",
+      "size": "S",
+      "value": 4,
+      "risk": 3,
+      "complexity": 1,
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "One shared definition of complete used by review and carry",
+        "The value is one the status vocabulary actually contains",
+        "A released item is reported as completed by carry, not carried forward"
+      ],
+      "evidence": [
+        "carry compared against 'DONE'; review compares against 'RELEASED'; the status list contains only the latter",
+        "Introduced by me two commits before it was found"
+      ],
+      "securityImpact": "none",
+      "architectureImpact": "none",
+      "ownerAgent": "Senior Engineer",
+      "reviewAgents": ["Independent Reviewer", "QA"]
     }
   ]
 }
