@@ -1,0 +1,20 @@
+{
+  "$comment": "Canonical machine-readable progress. Automation reads THIS; CAREERSCOPE-PROGRESS.md is the human projection. check-agents.mjs asserts the two agree, so drift is caught rather than discovered.",
+  "updatedAt": "2026-09-19T00:00:00.000Z",
+  "overallStatus": "IN PROGRESS",
+  "overall": 65,
+  "areas": [
+    { "area": "Product", "percent": 60, "status": "IN PROGRESS" },
+    { "area": "Frontend", "percent": 20, "status": "IN PROGRESS" },
+    { "area": "Backend", "percent": 85, "status": "VERIFIED" },
+    { "area": "Database", "percent": 70, "status": "VERIFIED" },
+    { "area": "Infrastructure", "percent": 85, "status": "VERIFIED" },
+    { "area": "Security", "percent": 85, "status": "VERIFIED" },
+    { "area": "Performance", "percent": 70, "status": "IN PROGRESS" },
+    { "area": "Testing", "percent": 85, "status": "VERIFIED" },
+    { "area": "System Design", "percent": 85, "status": "VERIFIED" },
+    { "area": "UX/UI", "percent": 15, "status": "NOT STARTED" },
+    { "area": "Documentation", "percent": 85, "status": "VERIFIED" },
+    { "area": "Code Quality", "percent": 90, "status": "VERIFIED" }
+  ]
+}

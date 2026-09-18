@@ -46,7 +46,7 @@ for (const file of readdirSync(dir)) {
 const files = Object.keys(agents);
 const named = Object.values(agents);
 
-check(files.length === 11, `11 agent files (got ${files.length})`);
+check(files.length === 16, `16 agent files (got ${files.length})`);
 check(
   named.every((a) => a.name && a.description && a.target === 'vscode'),
   'every agent has name, description and target: vscode',
@@ -73,12 +73,16 @@ for (const role of [
   'security-agent',
   'final-auditor',
   'research-agent',
+  'system-designer',
+  'independent-reviewer',
+  'research-reference',
+  'project-manager-client',
 ]) {
   const file = files.find((f) => f.includes(role));
   check(file && !agents[file].tools.includes('edit'), `${role} has no edit tool`);
 }
 
-for (const role of ['frontend-agent', 'backend-agent', 'infrastructure-agent']) {
+for (const role of ['frontend-agent', 'backend-agent', 'infrastructure-agent', 'senior-engineer']) {
   const file = files.find((f) => f.includes(role));
   check(
     file && agents[file].tools.includes('edit') && agents[file].tools.includes('execute'),
@@ -156,8 +160,28 @@ const unknown = [...new Set(statuses)].filter((s) => !allowed.has(s));
 check(statuses.length > 40, `progress matrices parsed (${statuses.length} status cells)`);
 check(unknown.length === 0, `every status is a defined value ${unknown.join(', ')}`);
 
+// Structured state is canonical; the Markdown is the human projection. Drift
+// between them has to be caught here, or the projection quietly becomes fiction.
+for (const file of ['progress.json', 'findings.json', 'references.json']) {
+  check(existsSync(`.ai/${file}`), `structured state exists: ${file}`);
+}
+const canonical = JSON.parse(readFileSync('.ai/progress.json', 'utf8'));
+const projected = new Map(
+  [...matrices.matchAll(/^\|\s*([A-Za-z/ ]+?)\s*\|\s*(\d+)%/gm)].map((m) => [m[1], Number(m[2])]),
+);
+const drifted = canonical.areas.filter((a) => projected.get(a.area) !== a.percent);
+check(canonical.areas.length === 12, `progress.json covers 12 areas (${canonical.areas.length})`);
+check(
+  drifted.length === 0,
+  `progress.json and the Markdown agree ${drifted.map((a) => `${a.area} json=${a.percent} md=${projected.get(a.area)}`).join(', ')}`,
+);
+
 const loop = JSON.parse(readFileSync('.ai/LOOP-STATE.json', 'utf8'));
 check(loop.status !== 'COMPLETE', `LOOP-STATE not falsely complete (${loop.status})`);
+check(
+  Object.keys(loop.agents ?? {}).length === files.length,
+  `LOOP-STATE tracks every agent (${Object.keys(loop.agents ?? {}).length} of ${files.length})`,
+);
 
 // The control center renders these, so their absence would silently degrade it
 // to a screen that shows nothing rather than one that reports a problem.

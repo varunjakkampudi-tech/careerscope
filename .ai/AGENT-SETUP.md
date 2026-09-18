@@ -169,14 +169,27 @@ model that decides it knows better.
 
 ## Shared state
 
-`.ai/` — 20 files. Conversation memory does not survive a session, and fresh
-sessions are exactly what independent review requires.
+**Canonical, machine-readable.** Automation reads these and nothing else:
 
-`PROJECT-CONTEXT` · `REQUIREMENTS` · `ARCHITECTURE` · `SYSTEM-DESIGN` ·
-`UX-DESIGN` · `DECISIONS` · `ACTIVE-TASK` · `PLAN` · `PLAN-REVIEW` ·
-`IMPLEMENTATION-LOG` · `CODE-REVIEW` · `SECURITY-REPORT` · `PERFORMANCE-REPORT` ·
-`QA-REPORT` · `FINAL-AUDIT` · `DOCUMENTATION-AUDIT` · `CLEANUP-REPORT` ·
-`CAREERSCOPE-PROGRESS` · `AGENT-SETUP` · `LOOP-STATE.json`
+```
+.ai/LOOP-STATE.json     phase, active agent, heartbeat, per-agent state, activity
+.ai/progress.json       the progress matrix
+.ai/findings.json       P0-P3 findings
+.ai/references.json     research cache with URLs and access dates
+```
+
+**Human projections.** People read these; scripts do not parse them:
+
+`CAREERSCOPE-PROGRESS` · `AGENT-SETUP` · `PROJECT-CONTEXT` · `REQUIREMENTS` ·
+`ARCHITECTURE` · `SYSTEM-DESIGN` · `UX-DESIGN` · `DECISIONS` · `ACTIVE-TASK` ·
+`PLAN` · `PLAN-REVIEW` · `IMPLEMENTATION-LOG` · `CODE-REVIEW` · `SECURITY-REPORT` ·
+`PERFORMANCE-REPORT` · `QA-REPORT` · `FINAL-AUDIT` · `DOCUMENTATION-AUDIT` ·
+`CLEANUP-REPORT` · `review.txt`
+
+The validator asserts the JSON and the Markdown **agree**, so the projection
+cannot quietly become fiction. This split exists because regex over prose
+produced three silent false negatives here; machine decisions now consume
+structured data.
 
 No secrets. The validator checks.
 
@@ -186,6 +199,7 @@ No secrets. The validator checks.
 
 ```
 PLAN_REVIEW_MAX     5
+SYSTEM_DESIGN_MAX   3
 IMPLEMENTATION_MAX  3
 CODE_REVIEW_MAX     3
 SECURITY_MAX        2

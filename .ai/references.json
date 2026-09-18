@@ -1,0 +1,5 @@
+{
+  "$comment": "Research cache. A cached entry never overrides current official evidence - if the question is whether something changed, revalidate and add a new entry rather than editing an old one. Never record a source that was not actually opened.",
+  "updatedAt": "2026-09-19T00:00:00.000Z",
+  "references": []
+}

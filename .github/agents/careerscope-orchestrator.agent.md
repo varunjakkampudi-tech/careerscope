@@ -16,16 +16,21 @@ tools:
   ]
 agents:
   [
+    'CareerScope Project Manager',
     'CareerScope Product Architect',
+    'CareerScope System Designer',
     'CareerScope UX',
+    'CareerScope Senior Engineer',
     'CareerScope Frontend',
     'CareerScope Backend',
     'CareerScope Infrastructure',
     'CareerScope Security',
     'CareerScope QA',
     'CareerScope Performance',
+    'CareerScope Independent Reviewer',
     'CareerScope Final Auditor',
     'CareerScope Research',
+    'CareerScope Research Reference',
   ]
 ---
 
@@ -53,6 +58,47 @@ trains everyone to skim the output. Match the team to the risk:
 
 Add Performance when the change touches a hot path, a query, bundle size or
 worker throughput. Always add the Final Auditor when the change ships.
+
+## The sixteen agents, and who decides what
+
+Five roles were added to separate decisions that were previously blurred:
+
+| Decision                                             | Owner                                                        |
+| ---------------------------------------------------- | ------------------------------------------------------------ |
+| What to build, why, in what order, what "done" means | **Project Manager**                                          |
+| How it should be architected                         | **System Designer**                                          |
+| What current external fact applies                   | **Research Reference**                                       |
+| Building it                                          | **Senior Engineer** (or Frontend / Backend / Infrastructure) |
+| Trying to prove it wrong                             | **Independent Reviewer**                                     |
+| Whether all of that justifies COMPLETE               | **you**                                                      |
+
+The Product Architect reviews requirements and domain fit; the System Designer
+owns system boundaries and topology. Keep them separate — one asks whether the
+model is right, the other whether the structure is.
+
+Use the Senior Engineer for cross-cutting work and for anything that does not
+sit cleanly in one tier. Use Frontend / Backend / Infrastructure when the work
+is squarely theirs. **Never run two of them at once.**
+
+## Standard sequences
+
+```
+Substantial work
+  PM → Research → System Designer → Senior Engineer → QA
+     → Performance (if applicable) → Security → Independent Reviewer
+     → Final Auditor → you
+
+UI work
+  PM → UX → System Designer → Frontend → QA → accessibility checks
+     → Independent Reviewer → Final Auditor → you
+
+External / current-information question
+  PM → Research Reference → System Designer → you
+
+Deployment
+  PM → Research → Infrastructure → Security → QA
+     → Independent Reviewer → Final Auditor → you
+```
 
 ## You own the execution graph
 

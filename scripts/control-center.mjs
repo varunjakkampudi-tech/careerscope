@@ -54,44 +54,36 @@ function loopState() {
   }
 }
 
-/** Percentages come from the progress matrix only; this never computes one. */
+/**
+ * Progress comes from .ai/progress.json, never from the Markdown.
+ *
+ * Parsing prose with regex produced three silent false negatives in this
+ * repository, so structured state is canonical and the Markdown is the human
+ * projection. check-agents.mjs asserts the two agree.
+ */
 function progress() {
-  const file = read(join(AI, 'CAREERSCOPE-PROGRESS.md'));
-  if (!file) return [];
-  const start = file.indexOf('## Overall Progress');
-  const end = file.indexOf('##', start + 3);
-  if (start === -1) return [];
-  return [
-    ...file
-      .slice(start, end === -1 ? undefined : end)
-      .matchAll(/^\|\s*([A-Za-z/ ]+?)\s*\|\s*(\d+)%\s*\|\s*([A-Z][A-Z ]+?)\s*\|/gm),
-  ].map((m) => ({ area: m[1], percent: Number(m[2]), status: m[3] }));
+  const raw = read(join(AI, 'progress.json'));
+  if (!raw) return [];
+  try {
+    return JSON.parse(raw).areas ?? [];
+  } catch {
+    return [];
+  }
 }
 
-/** The previous committed matrix, so a regression cannot be quietly dropped. */
+/** The previous committed figures, so a regression cannot be quietly dropped. */
 function previousProgress() {
   try {
-    const commits = execFileSync(
-      'git',
-      ['log', '-2', '--format=%H', '--', `${AI}/CAREERSCOPE-PROGRESS.md`],
-      { encoding: 'utf8' },
-    )
+    const commits = execFileSync('git', ['log', '-2', '--format=%H', '--', `${AI}/progress.json`], {
+      encoding: 'utf8',
+    })
       .split('\n')
       .filter(Boolean);
     if (commits.length < 2) return null;
-    const older = execFileSync('git', ['show', `${commits[1]}:${AI}/CAREERSCOPE-PROGRESS.md`], {
-      encoding: 'utf8',
-    });
-    const start = older.indexOf('## Overall Progress');
-    if (start === -1) return null;
-    const end = older.indexOf('##', start + 3);
-    return new Map(
-      [
-        ...older
-          .slice(start, end === -1 ? undefined : end)
-          .matchAll(/^\|\s*([A-Za-z/ ]+?)\s*\|\s*(\d+)%/gm),
-      ].map((m) => [m[1], Number(m[2])]),
+    const older = JSON.parse(
+      execFileSync('git', ['show', `${commits[1]}:${AI}/progress.json`], { encoding: 'utf8' }),
     );
+    return new Map((older.areas ?? []).map((a) => [a.area, a.percent]));
   } catch {
     return null;
   }
@@ -115,29 +107,15 @@ function agents() {
     });
 }
 
-/** Findings come from the review tables; an empty table means zero, not unknown. */
+/** Findings come from .ai/findings.json. An empty list means zero, not unknown. */
 function findings() {
-  const sources = {
-    'Code review': 'CODE-REVIEW.md',
-    Security: 'SECURITY-REPORT.md',
-    Performance: 'PERFORMANCE-REPORT.md',
-    QA: 'QA-REPORT.md',
-  };
-  const rows = [];
-  for (const [origin, file] of Object.entries(sources)) {
-    const body = read(join(AI, file));
-    if (!body) continue;
-    for (const match of body.matchAll(/^\|\s*(P[0-3])\s*\|([^\n]*)$/gm)) {
-      const cells = match[2].split('|').map((cell) => cell.trim());
-      rows.push({
-        severity: match[1],
-        origin,
-        where: cells[0] || '—',
-        status: cells.at(-2) || '—',
-      });
-    }
+  const raw = read(join(AI, 'findings.json'));
+  if (!raw) return [];
+  try {
+    return JSON.parse(raw).findings ?? [];
+  } catch {
+    return [];
   }
-  return rows;
 }
 
 /** The newest review.txt entry, which is the last thing actually performed. */
@@ -219,7 +197,9 @@ function render() {
   const running = ['RUNNING', 'REVIEWING', 'IMPLEMENTING', 'TESTING'].includes(
     String(loop.status).toUpperCase(),
   );
-  const stale = running && age !== null && age > STALE_AFTER_MS;
+  // The heartbeat is the liveness signal; updatedAt only says the file changed.
+  const beat = loop.lastHeartbeat ? Date.now() - Date.parse(loop.lastHeartbeat) : age;
+  const stale = running && beat !== null && beat > STALE_AFTER_MS;
 
   line(`  Task        ${loop.task ?? dim('none accepted')}`);
   line(`  Phase       ${loop.phase ?? dim('unknown')}    Iteration  ${loop.iteration ?? 0}`);
@@ -233,11 +213,19 @@ function render() {
     const meta = agents().find((a) => a.id === loop.activeAgent);
     line();
     line(`  Active      ${bold(meta?.name ?? loop.activeAgent)}`);
-    line(`  Model       ${loop.model ?? yellow('not pinned — VS Code picker decides')}`);
+    line(`  Model       ${loop.model ?? yellow('UNPINNED / PICKER CONTROLLED')}`);
     line(
       `  Permission  ${meta ? (meta.write ? yellow('WRITE ENABLED') : green('READ ONLY')) : dim('unknown')}`,
     );
+    // VS Code exposes no agent runtime, so this is a record and says so.
+    line(
+      `  State       ${yellow(loop.stateSource ?? 'REPORTED')} ${dim('— self-declared, not probed')}`,
+    );
     line(`  Operation   ${loop.currentOperation ?? dim('not recorded')}`);
+    if (loop.sourceCommit) line(`  Commit      ${loop.sourceCommit}`);
+    if (loop.lastHeartbeat) {
+      line(`  Heartbeat   ${duration(beat)} ago${stale ? red('   STALE') : ''}`);
+    }
     if (loop.startedAt) {
       line(
         `  Elapsed     ${duration(Date.now() - Date.parse(loop.startedAt))}${stale ? red(' (stale)') : ''}`,
@@ -261,7 +249,12 @@ function render() {
     const paint = STATE_STYLE[state] ?? ((t) => t);
     const mark = MARK[state] ?? '●';
     const active = agent.id === loop.activeAgent;
-    const permission = agent.write ? yellow('WRITE') : green('READ ONLY');
+    // Execute-without-edit is a real third tier: QA can run things, not change them.
+    const permission = agent.write
+      ? yellow('WRITE')
+      : agent.execute
+        ? cyan('EXECUTE')
+        : green('READ ONLY');
     line(
       `  ${paint(mark)} ${(active ? bold : (t) => t)(agent.name.padEnd(34))} ${paint(state.padEnd(13))} ${permission}`,
     );
@@ -271,7 +264,7 @@ function render() {
   const rows = progress();
   const before = previousProgress();
   line();
-  line(bold('  PROGRESS') + dim('   (from .ai/CAREERSCOPE-PROGRESS.md)'));
+  line(bold('  PROGRESS') + dim('   (from .ai/progress.json)'));
   if (rows.length === 0) {
     line(dim('  No progress matrix found.'));
   }
@@ -290,17 +283,22 @@ function render() {
   // Findings
   const found = findings();
   const counts = { P0: 0, P1: 0, P2: 0, P3: 0 };
-  for (const item of found) counts[item.severity] += 1;
+  for (const item of found) if (item.severity in counts) counts[item.severity] += 1;
   line();
-  line(bold('  REVIEW FINDINGS'));
+  line(bold('  REVIEW FINDINGS') + dim('   (.ai/findings.json)'));
   const paintSeverity = { P0: red, P1: red, P2: yellow, P3: grey };
   for (const severity of ['P0', 'P1', 'P2', 'P3']) {
     line(`  ${paintSeverity[severity]('█')} ${severity}  ${counts[severity]}`);
   }
   for (const item of found.slice(0, 6)) {
-    line(dim(`      ${item.severity}  ${item.origin} — ${item.where}  [${item.status}]`));
+    const where = item.file ?? item.where ?? '—';
+    line(
+      dim(
+        `      ${item.severity}  ${item.foundBy ?? item.origin ?? '—'} — ${where}  [${item.status ?? 'OPEN'}]`,
+      ),
+    );
   }
-  if (found.length === 0) line(dim('      No findings recorded in the review tables.'));
+  if (found.length === 0) line(dim('      No findings recorded.'));
 
   // Activity
   line();

@@ -805,3 +805,165 @@ Before shutting down this machine: close VS Code, reopen, and run
 `node scripts/backup-session.mjs` once more to capture a flushed session.
 
 ============================================================
+
+
+============================================================
+ENTRY
+============================================================
+
+Date:       2026-09-19
+Task:       Expand the agent system to 16; make machine state structured;
+            add the START-HERE onboarding folder
+Iteration:  6
+Phase:      implementation -> validation
+Agents:     none (agent-system change; no product code touched)
+
+## REQUEST
+
+Add five specialist agents (System Designer, Senior Engineer, Independent
+Reviewer, Research + Reference, Project Manager/Client) without replacing or
+weakening the existing eleven. Enforce permissions with tools rather than prose.
+Make machine state structured rather than parsed from Markdown. Update the
+control center, validator and the three permanent records. Add one folder that
+lets Copilot on any machine understand the project and perform setup.
+
+## RECON
+
+Read an existing read-only agent in full before writing any new one, so the
+five match the established house style rather than introducing a second one.
+Confirmed the current permission model is enforced by tool absence, and that
+the orchestrator is the sole delegator.
+
+## ARCHITECTURE
+
+The five additions separate decisions that were previously blurred:
+
+  what and why, priority, acceptance     -> Project Manager
+  how it should be structured            -> System Designer
+  current external fact                  -> Research Reference
+  building it                            -> Senior Engineer
+  trying to prove it wrong               -> Independent Reviewer
+  whether that justifies COMPLETE        -> Orchestrator (unchanged)
+
+Product Architect and System Designer deliberately remain separate: one asks
+whether the domain model is right, the other whether the structure is.
+
+The larger change is the state architecture. External review identified that
+three of this project's four false negatives came from regex over prose, and
+recommended structured state as canonical with Markdown as a projection. Done:
+
+  canonical    .ai/LOOP-STATE.json, progress.json, findings.json, references.json
+  projection   CAREERSCOPE-PROGRESS.md and the rest of .ai/*.md, review.txt
+
+The validator now asserts the two AGREE, so the projection cannot silently
+become fiction - which is the failure this split exists to prevent.
+
+## UX
+
+START-HERE/ is ordered rather than alphabetical, opens with the surprising
+facts and the five incident-derived operational rules, and links existing
+documentation instead of copying it, so it cannot drift from the source.
+
+## IMPLEMENTATION
+
+Five agent files; orchestrator delegation list 10 -> 15 and an explicit
+sixteen-agent responsibility table with four standard sequences; LOOP-STATE
+extended with stateSource, sourceCommit, lastHeartbeat and all 16 agents;
+progress.json, findings.json and references.json created; control center
+switched from Markdown regex to JSON and given a third permission tier;
+validator extended; START-HERE/ with six files.
+
+## FILES CHANGED
+
+  .github/agents/careerscope-system-designer.agent.md            new
+  .github/agents/careerscope-senior-engineer.agent.md            new
+  .github/agents/careerscope-independent-reviewer.agent.md       new
+  .github/agents/careerscope-research-reference.agent.md         new
+  .github/agents/careerscope-project-manager-client.agent.md     new
+  .ai/progress.json, findings.json, references.json              new
+  START-HERE/README, 01-SETUP, 02-PROJECT, 03-MULTI-AGENT,
+    04-SESSION-RESTORE, 05-VERIFICATION                          new
+  .github/agents/careerscope-orchestrator.agent.md               modified
+  .ai/LOOP-STATE.json, .ai/AGENT-SETUP.md                        modified
+  scripts/control-center.mjs, scripts/check-agents.mjs           modified
+  review.txt                                                     this entry
+
+## TESTING
+
+  node scripts/check-agents.mjs   37 checks, exit 0
+  npm test                        1047 passed (1047), 67 files, exit 0
+  npm run typecheck               exit 0
+  npm run lint                    exit 0, ZERO problems
+  npm run format:check            exit 0
+  node scripts/control-center.mjs exit 0, renders all 16 agents
+
+Negative proof of the new drift check, because a check that has only passed is
+not evidence:
+
+  clean                                  PASS, exit 0
+  progress.json Frontend 20 -> 42        FAIL "progress.json and the Markdown
+                                         agree Frontend json=42 md=20", exit 1
+  restored                               PASS, exit 0
+
+Permission enforcement verified by the validator rather than by reading the
+files: all nine read-only agents confirmed to hold no edit tool, four builders
+confirmed to hold edit and execute, QA and Performance confirmed execute-only.
+
+## SECURITY
+
+No security-relevant change. No agent gained a permission. The five new agents
+hold no edit tool except the Senior Engineer, which is a declared builder.
+Secret scan over .ai still passes.
+
+## PERFORMANCE
+
+Not applicable.
+
+## CODE QUALITY
+
+Three inaccuracies caught by reading the rendered output rather than assuming:
+
+1. The control center still printed "(from .ai/CAREERSCOPE-PROGRESS.md)" after
+   being switched to JSON - a label that had become a false statement.
+2. QA and Performance displayed as READ ONLY when they hold execute. Added a
+   third tier so the display matches the enforced permission.
+3. A duplicated Shared-state section left behind by an edit; removed.
+
+## DOCUMENTATION
+
+START-HERE/ created. AGENT-SETUP.md rewritten for sixteen agents, the canonical
+/projection split and the system-design loop bound.
+
+## REVIEW
+
+Self-reviewed. The expansion was not routed through the loop, because the loop
+is what was being modified.
+
+## FIXES
+
+  - stale progress-source label in the dashboard
+  - EXECUTE tier missing from the permission display
+  - duplicated section in AGENT-SETUP.md
+
+## FINAL STATUS
+
+PASS - sixteen agents configured, permissions enforced by tool absence and
+verified by a validator that has been shown to fail, structured state canonical
+with drift detection, onboarding folder in place.
+
+## REMAINING ISSUES
+
+  1. CI->Deploy release gate still missing. Rated P0 by external review.
+  2. Caddy self-healing defect still open.
+  3. .vscode/mcp.json still points into gitignored data/; MCP will not start on
+     a fresh clone. Documented in START-HERE/01-SETUP.md rather than hidden.
+  4. Models remain unpinned; VS Code cannot pin per agent file.
+  5. Agent runtime remains unobservable; state is REPORTED, staleness surfaced.
+  6. Sub-agents cannot be invoked programmatically; the operator drives handoffs.
+
+## NEXT ACTION
+
+The CI -> Deploy release gate, with required checks and an audited override.
+Then the Caddy self-healing defect.
+
+============================================================

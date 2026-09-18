@@ -1,0 +1,5 @@
+{
+  "$comment": "Canonical machine-readable review findings. The Orchestrator appends; reviewers have no edit tool and hand findings over as text. Severity: P0 data loss/security/catastrophic, P1 serious correctness, P2 quality, P3 minor.",
+  "updatedAt": "2026-09-19T00:00:00.000Z",
+  "findings": []
+}
