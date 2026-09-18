@@ -64,6 +64,13 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # The gates decide whether a release may ship and whether a deploy may
+      # proceed, and none of them ran in any workflow. A gate nobody exercises
+      # is a gate nobody knows is broken - which is how a corrupt findings file
+      # once produced "no open P0 or P1" and exit 0.
+      - name: Prove the release, agile and deploy gates still refuse
+        run: npm run gates:test
+
       # Two passes: `tsc --build` over the project references, then a second
       # pass over the test and fixture files, which the build graph excludes.
       - name: Typecheck

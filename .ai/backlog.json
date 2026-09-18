@@ -184,8 +184,15 @@
     },
     {
       "releaseTarget": null,
-      "currentStep": null,
-      "completedSteps": [],
+      "currentStep": "independent review and QA",
+      "completedSteps": [
+        "Confirmed the real defect: the deploy gate is a strict subset of CI, never running check-ui.mjs, the V2 tests, Pages validation or root format:check",
+        "Corrected the plan: needs: cannot span workflows, so the Pages pattern could not be copied",
+        "Added the require-ci job querying the Actions API for the exact head SHA",
+        "Moved the decision into scripts/require-ci-success.mjs so it could be tested without a network or jq",
+        "Added scripts/check-deploy-gate.mjs: 22 checks, 5 mutations proven detected",
+        "Wired release, agile, deploy and agent gates into CI via npm run gates:test — none of them ran in any workflow before"
+      ],
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-19",
       "id": "CS-7",
@@ -194,7 +201,7 @@
       "source": "external review (ChatGPT), confirmed against workflow files",
       "area": "infrastructure",
       "priority": "P0",
-      "status": "READY",
+      "status": "QA",
       "size": "S",
       "value": 5,
       "risk": 5,
@@ -207,7 +214,10 @@
       ],
       "evidence": [
         "Deploy succeeded at least four times while CI was red",
-        "pages.yml already gates on needs.verify.result == success; deploy.yml is the outlier"
+        "pages.yml already gates on needs.verify.result == success; deploy.yml is the outlier",
+        "Deploy gate omits check-ui.mjs, V2 unit tests, pages:test and root format:check, which is why both were green and red at once",
+        "Gate logic: 22 checks pass, 5 mutations each detected, restored clean",
+        "A stray shell command wrote a malformed-to-PASS mutation into the gate; the suite caught it"
       ],
       "securityImpact": "ships unreviewed code to the public origin",
       "architectureImpact": "workflow dependency graph",

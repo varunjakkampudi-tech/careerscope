@@ -7,9 +7,16 @@ name: Deploy
 # holds a deployment key is a supply-chain hole. Secrets are only reachable from
 # pushes to main and from a manual dispatch, both of which require write access.
 #
-# The gate job is not decoration either. Deployment happens after the V2 suites
-# pass against the exact commit being deployed, not after a green run on some
-# earlier commit.
+# The gate job is not decoration either. Deployment happens after the checks
+# below pass against the exact commit being deployed, not after a green run on
+# some earlier commit.
+#
+# The gate is deliberately *not* the whole story. It is a narrower set of checks
+# than CI runs, which is how this repository deployed four times while CI was
+# red: the two were both green and red at once because they were checking
+# different things. `require-ci` closes that by refusing to deploy a commit
+# whose CI run did not succeed. GitHub cannot express that with `needs:`,
+# because `needs:` does not span workflows.
 
 on:
   push:
@@ -18,6 +25,15 @@ on:
     inputs:
       revision:
         description: 'Commit SHA to deploy (defaults to the current main)'
+        required: false
+        type: string
+      override_ci:
+        description: 'Deploy even though CI did not pass (requires a reason)'
+        required: false
+        default: false
+        type: boolean
+      override_reason:
+        description: 'Why the CI result is being overridden'
         required: false
         type: string
 
@@ -40,8 +56,59 @@ env:
   SSH_OPTIONS: -i ~/.ssh/deploy -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=15
 
 jobs:
+  require-ci:
+    name: Require a green CI run for this commit
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ inputs.revision || github.sha }}
+
+      - name: Resolve the revision
+        id: rev
+        run: echo "sha=$(git rev-parse HEAD)" >>"$GITHUB_OUTPUT"
+
+      - name: Record the override
+        if: ${{ inputs.override_ci }}
+        env:
+          REASON: ${{ inputs.override_reason }}
+        run: |
+          set -euo pipefail
+          if [ -z "${REASON//[[:space:]]/}" ]; then
+            echo "::error::override_ci requires override_reason. Refusing to deploy." >&2
+            exit 1
+          fi
+          echo "::warning::CI result overridden for ${{ steps.rev.outputs.sha }}: ${REASON}"
+          {
+            echo "## CI gate overridden"
+            echo "Commit: \`${{ steps.rev.outputs.sha }}\`"
+            echo "By: @${{ github.actor }}"
+            echo "Reason: ${REASON}"
+          } >>"$GITHUB_STEP_SUMMARY"
+
+      # Every failure path here refuses. An unreachable API, an unreadable
+      # payload and an absent run are all "we cannot show CI passed", which is
+      # not the same as "CI passed" - reading one as the other is how a corrupt
+      # findings file once turned a blocked release into READY TO DEPLOY.
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        if: ${{ !inputs.override_ci }}
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Require CI success for this exact commit
+        if: ${{ !inputs.override_ci }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ steps.rev.outputs.sha }}
+        run: node scripts/require-ci-success.mjs
+
   gate:
     name: Verify the commit being deployed
+    needs: require-ci
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

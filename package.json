@@ -71,7 +71,9 @@
     "mcp": "node --env-file-if-exists=.env apps/api/dist/mcp/index.js",
     "clean": "npm run clean --workspaces --if-present && rm -f *.tsbuildinfo",
     "release:gate:test": "node scripts/check-release-gate.mjs",
-    "agile:gate:test": "node scripts/check-agile-gates.mjs"
+    "agile:gate:test": "node scripts/check-agile-gates.mjs",
+    "deploy:gate:test": "node scripts/check-deploy-gate.mjs",
+    "gates:test": "npm run release:gate:test && npm run agile:gate:test && npm run deploy:gate:test && npm run agents:check"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
