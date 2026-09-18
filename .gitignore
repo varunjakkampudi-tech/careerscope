@@ -45,3 +45,7 @@ Thumbs.db
 # Generated AI context stays local and must not be re-packed.
 .repomix/
 repomix-output*
+
+# Deployment build contexts are produced on demand and must never be committed.
+deploy.tgz
+*.tgz

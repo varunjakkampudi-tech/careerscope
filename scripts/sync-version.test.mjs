@@ -4,6 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import process from 'node:process';
 import { runInNewContext } from 'node:vm';
 import { syncVersion, versionFiles } from './sync-version.mjs';
 
@@ -56,9 +57,10 @@ test('npm semantic bumps update root metadata and lockfile without scripts or ta
       ['major', '2.0.0'],
     ]) {
       execFileSync(
-        'npm',
+        // Windows resolves npm through npm.cmd, which needs a shell to execute.
+        process.platform === 'win32' ? 'npm.cmd' : 'npm',
         ['version', bump, '--no-git-tag-version', '--ignore-scripts', '--workspaces=false'],
-        { cwd: directory, stdio: 'pipe' },
+        { cwd: directory, stdio: 'pipe', shell: process.platform === 'win32' },
       );
       assert.equal(
         JSON.parse(await readFile(join(directory, 'package.json'), 'utf8')).version,
@@ -75,17 +77,21 @@ test('npm semantic bumps update root metadata and lockfile without scripts or ta
 
 test('check mode rejects stale versions without writing files', () => {
   const files = versionFiles('1.2.3');
-  const read = (path) =>
-    path.endsWith('package.json')
+  // Resolved paths use the platform separator, so compare normalised suffixes.
+  const read = (path) => {
+    const normalised = String(path).replaceAll('\\', '/');
+    return normalised.endsWith('package.json')
       ? '{"version":"1.2.3"}'
-      : Object.entries(files).find(([file]) => path.endsWith(file))?.[1];
+      : Object.entries(files).find(([file]) => normalised.endsWith(file))?.[1];
+  };
   const write = () => assert.fail('Check must not write');
   assert.equal(syncVersion({ check: true, read, write }), '1.2.3');
   assert.throws(
     () =>
       syncVersion({
         check: true,
-        read: (path) => (path.endsWith('package.json') ? read(path) : 'stale'),
+        read: (path) =>
+          String(path).replaceAll('\\', '/').endsWith('package.json') ? read(path) : 'stale',
         write,
       }),
     /Version mismatch/,

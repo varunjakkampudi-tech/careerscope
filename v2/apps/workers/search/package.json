@@ -1,0 +1,9 @@
+{
+  "name": "@careerscope/search-worker",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@careerscope/core": "3.0.0"
+  }
+}

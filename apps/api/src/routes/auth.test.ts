@@ -57,10 +57,15 @@ it('protects data despite the old bypass, restricts setup, and rejects CSRF and 
         })
       ).statusCode,
     ).toBe(403);
-    expect(
-      (await fixture.app.inject({ method: 'POST', url: '/api/auth/logout', headers: { cookie } }))
-        .statusCode,
-    ).toBe(403);
+    const missingOrigin = await fixture.app.inject({
+      method: 'POST',
+      url: '/api/auth/logout',
+      headers: { cookie },
+    });
+    expect(missingOrigin.statusCode).toBe(403);
+    expect(missingOrigin.body).toContain(
+      'This request must come from the CareerScope application.',
+    );
     expect(
       (
         await fixture.app.inject({
@@ -76,7 +81,9 @@ it('protects data despite the old bypass, restricts setup, and rejects CSRF and 
   } finally {
     await fixture.close();
   }
-});
+  // The heaviest Argon2id test in the file; it exceeds the default timeout under
+  // parallel load. The hashing cost is deliberately not reduced to speed it up.
+}, 30_000);
 
 it('rate limits password attempts even when forwarded IPs are spoofed', async () => {
   const fixture = await buildTestApp({ LOGIN_ENABLED: 'true' });
@@ -93,7 +100,8 @@ it('rate limits password attempts even when forwarded IPs are spoofed', async ()
   } finally {
     await fixture.close();
   }
-});
+  // Six Argon2id verifications exceed the default timeout under parallel load.
+}, 30_000);
 
 it('uses host-only Secure cookies in production and forbids public setup', async () => {
   const fixture = await buildTestApp({
@@ -124,7 +132,7 @@ it('uses host-only Secure cookies in production and forbids public setup', async
   } finally {
     await fixture.close();
   }
-});
+}, 30_000);
 
 it('requires HTTPS for production login and an API key for legacy production auth', () => {
   expect(() =>

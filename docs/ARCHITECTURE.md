@@ -1,5 +1,10 @@
 # Architecture
 
+> **This file describes V1** — the SQLite/Vite stack at the repository root.
+> The deployed application is **V2**, under `v2/`. Start at
+> [PROJECT-STATE](PROJECT-STATE.md) if you are not sure which one you need,
+> then read [v2/ARCHITECTURE](../v2/ARCHITECTURE.md).
+
 Why the code is shaped the way it is. [README](../README.md) covers what the app
 does and how to run it; [RUNBOOK](RUNBOOK.md) covers operating it. This file is
 for the person about to change it.
@@ -34,6 +39,27 @@ Four ideas do most of the work:
    work but never loses track of it.
 
 ---
+
+### Local inference boundary
+
+The optional local stack uses the existing API/UI and SQLite persistence plus a
+private Ollama service. `container.ts` selects the explicitly configured provider;
+`matching` owns prompt construction, eligibility, schema validation and score
+blending; the API's Ollama adapter owns bounded HTTP transport. Model failures do
+not fail collection, and local inference never silently falls back to a paid API.
+
+Local requests are serial, limited to five eligible leads, and use a conservative
+UTF-8 byte upper bound plus generation/template reserve to select a 4K-16K context.
+Oversized input is rejected rather than silently dropped by the inference server.
+Wrong posting IDs and scores outside 0-1 are rejected in code as well as constrained
+in the local output schema. A structurally valid answer can still be inaccurate;
+the deterministic score retains majority weight and model quality is unproven.
+
+SQLite remains the database and durable queue for this single-owner, single-writer
+deployment. No Redis or separate database server is introduced: neither resolves
+the observed CPU inference latency, and both add backup, security and consistency
+work. Reconsider only after measuring contention, concurrent workers or a concrete
+shared-cache requirement. See [local runtime evidence](RUNBOOK.md#local-containers).
 
 ## Module graph
 

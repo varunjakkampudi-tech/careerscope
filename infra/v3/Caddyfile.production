@@ -1,0 +1,86 @@
+{
+	admin off
+	persist_config off
+}
+
+# Shared response hardening. Kept in one place so every site inherits it.
+(hardening) {
+	header {
+		-Server
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy no-referrer
+		Cross-Origin-Opener-Policy same-origin
+		Cross-Origin-Resource-Policy same-origin
+		Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
+	}
+}
+
+http://{$CAREERSCOPE_DOMAIN}, http://www.{$CAREERSCOPE_DOMAIN} {
+	import hardening
+	redir https://{$CAREERSCOPE_DOMAIN}{uri} permanent
+}
+
+# www resolves via DNS, so it needs its own certificate; without this block the
+# handshake simply fails instead of redirecting to the canonical apex.
+https://www.{$CAREERSCOPE_DOMAIN} {
+	tls {$CAREERSCOPE_TLS_MODE}
+	import hardening
+	redir https://{$CAREERSCOPE_DOMAIN}{uri} permanent
+}
+
+# Any request whose Host is not the configured domain is refused before routing.
+:443 {
+	tls {$CAREERSCOPE_TLS_MODE}
+	import hardening
+	respond 421
+}
+
+https://{$CAREERSCOPE_DOMAIN} {
+	# "internal" for local verification, an operator email for ACME in production.
+	tls {$CAREERSCOPE_TLS_MODE}
+	import hardening
+
+	@foreign_host not host {$CAREERSCOPE_DOMAIN}
+	respond @foreign_host 421
+
+	# Maintenance is decided by a file the operator writes, not by application
+	# state, so it still serves while the stack is down or mid-deploy.
+	root * /srv/maintenance
+	@maintenance file /active
+
+	# Health stays reachable during maintenance so deploys and monitors can still
+	# see the truth. It exposes no infrastructure detail.
+	handle /api/health {
+		reverse_proxy {$CAREERSCOPE_UPSTREAM} {
+			header_up -X-Forwarded-For
+			header_up -X-Forwarded-Host
+			header_up -X-Forwarded-Proto
+		}
+	}
+
+	handle @maintenance {
+		header Cache-Control "no-store"
+		header Retry-After "300"
+		rewrite * /index.html
+		file_server {
+			status 503
+		}
+	}
+
+	request_body {
+		max_size 5242880
+	}
+
+	reverse_proxy {$CAREERSCOPE_UPSTREAM} {
+		flush_interval -1
+		header_up -X-Forwarded-For
+		header_up -X-Forwarded-Host
+		header_up -X-Forwarded-Proto
+		transport http {
+			dial_timeout 3s
+			response_header_timeout 20s
+		}
+	}
+}

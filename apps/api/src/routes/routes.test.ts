@@ -14,6 +14,7 @@
 // an `undefined` inside a failure message. This one cannot: `leadPageSchema`
 // gaining a field is a compile error here the moment a test stops covering it.
 import type { LeadPage, SkillGap } from '@job-radar/shared';
+import ExcelJS from 'exceljs';
 import { describe, expect, it } from 'vitest';
 import {
   buildTestApp,
@@ -860,6 +861,26 @@ describe('runs', () => {
 /* -------------------------------------------------------------------------- */
 
 describe('export', () => {
+  it('preserves workbook conditional formatting with the patched UUID dependency', async () => {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Synthetic');
+    sheet.addRow([42]);
+    sheet.addConditionalFormatting({
+      ref: 'A1',
+      rules: [
+        {
+          type: 'dataBar',
+          priority: 1,
+          cfvo: [{ type: 'min' }, { type: 'max' }],
+        },
+      ],
+    });
+    const bytes = await workbook.xlsx.writeBuffer();
+    const restored = new ExcelJS.Workbook();
+    await restored.xlsx.load(bytes);
+    expect(restored.getWorksheet('Synthetic')?.getCell('A1').value).toBe(42);
+  });
+
   it('produces a downloadable workbook', async () => {
     const t = await buildTestApp();
     try {
@@ -876,6 +897,9 @@ describe('export', () => {
       expect(response.headers['content-disposition']).toContain('.xlsx');
       // XLSX is a zip; a workbook that does not start with `PK` is not one.
       expect(response.rawPayload.subarray(0, 2).toString('latin1')).toBe('PK');
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(Uint8Array.from(response.rawPayload).buffer);
+      expect(workbook.creator).toBe('CareerScope');
     } finally {
       await t.close();
     }

@@ -4,10 +4,32 @@ Apply principal-engineer judgment to requirements, architecture, security,
 implementation, testing, operations and UX. Scale the review to the task's risk;
 do not turn small fixes or non-coding requests into architecture exercises.
 
+## Start Here
+
+Before the first change in a session, establish actual state rather than
+assuming it:
+
+1. Read [docs/PROJECT-STATE.md](../docs/PROJECT-STATE.md). It explains the
+   V1/V2 split, branch semantics and what is deployed. Most mistakes on this
+   repository come from editing V1 while thinking about V2.
+2. Read the architecture for the stack you are touching —
+   [V1](../docs/ARCHITECTURE.md) or [V2](../v2/ARCHITECTURE.md).
+3. Check the current branch and commit: `git branch --show-current`,
+   `git rev-parse HEAD`, `git status --porcelain`.
+4. Check what is actually deployed:
+   `infra/v3/check-provenance.sh`. Local `HEAD` and the deployed revision are
+   often legitimately different — confirm, never assume.
+5. Read [docs/TESTING.md](../docs/TESTING.md) and run the nearest test before
+   you change anything, so you know what was already failing.
+6. Read `.env.example` for configuration. Never read or print a real `.env`.
+7. Read [docs/KNOWN-LIMITATIONS.md](../docs/KNOWN-LIMITATIONS.md) before
+   reporting a defect — it may already be recorded, with a reason.
+
 ## Working Agreement
 
-- Start with the affected implementation and a nearby test. State important
-  assumptions, choose the smallest defensible change, and validate it promptly.
+- Understand before modifying. Start with the affected implementation and a
+  nearby test. State important assumptions, choose the smallest defensible
+  change, and validate it promptly.
 - Challenge unsafe, incorrect or unnecessarily complex proposals with evidence
   and a simpler recommendation. Do not expand scope without approval.
 - Preserve user edits, public contracts, stored data and established conventions.
@@ -17,6 +39,55 @@ do not turn small fixes or non-coding requests into architecture exercises.
   was actually tested and what remains unverified; compilation is not readiness.
 - Commit, push, publish, provision infrastructure, install system software or
   submit external forms only when authorized for the current task.
+
+## Before Any Meaningful Change
+
+Inspect the affected architecture, trace the full data flow, search for an
+existing implementation before writing a new one, identify callers and tests,
+and name the failure modes. Then implement, verify, review the diff, and update
+documentation if behaviour or architecture changed.
+
+## Non-Negotiables
+
+- Preserve API contracts, database invariants, transaction boundaries,
+  idempotency, crash consistency and queue/outbox semantics.
+- Never weaken authentication, authorization, rate limits, Argon2 cost,
+  validation, encryption or security headers to make something pass.
+- Never expose secrets. Do not log credentials, tokens, resume content, full
+  URLs or request bodies. Validate all external input.
+- Treat retries, timeouts, cancellation and partial failure as first-class.
+  Do not silently swallow errors.
+- Do not use `any` to hide a type problem without an explicit justification.
+- Do not disable a lint, type or test rule to get CI green. Do not delete or
+  weaken a test because it fails, and never edit a test to mask a regression.
+- Do not introduce a duplicate utility, an unnecessary dependency, or an
+  abstraction for a single call site. Respect module boundaries.
+- Do not claim completion without evidence.
+
+## Operational Non-Negotiables
+
+These have each already caused a real incident on this project.
+
+- **Never run `nft flush ruleset`.** It deletes Docker's NAT rules and kills
+  container egress. The symptom is an unrelated timeout, not a firewall error.
+  The firewall owns only the `inet careerscope` table.
+- **Never restart the proxy alone.** Every service joins its network namespace;
+  restarting it orphans them all behind a 502 while they still report healthy.
+  Use `infra/v3/restart-stack.sh`.
+- **Never run `docker system prune -a`.** It removes the images a rollback
+  depends on. Prune build cache only.
+- **Never regenerate `POSTGRES_PASSWORD`** against an existing database volume.
+  `infra/v3/.env` on the host is the only copy; `ship.sh` preserves it.
+- **Never deploy uncommitted code.** Deploy `git archive` from a reviewed
+  commit, then prove it with `check-provenance.sh`.
+- **Never publish an internal container port.** Only the proxy publishes.
+- Keep the resume storage single-writer contract. Never delete cancellation
+  markers by age — they are authoritative.
+- Keep AI **off**, auto-apply on **hold**, and Naukri legitimate-access only.
+- Never move `main` without explicit release intent. `main` is the V1 line;
+  V2 work belongs on `feature/v2-local-migration`.
+- Update the documentation whenever architecture or behaviour changes, and
+  verify the live deployment after any runtime-affecting change.
 
 ## Project Boundaries
 
@@ -29,12 +100,27 @@ do not turn small fixes or non-coding requests into architecture exercises.
 - Keep personal data, resumes, databases, credentials, browser state, generated
   builds and Repomix output out of Git and public artifacts. Preserve snapshot
   allowlists and the clean-worktree publication guard.
-- Docker/EC2 execution is currently deferred. Do not enable cloud deployment or
-  describe the application container as verified without explicit approval and
-  target-runtime acceptance evidence.
+- The v2 stack is deployed on a single Hostinger VPS behind Caddy and served at
+  `https://careerscope.tech`. Use `infra/v3` for host provisioning, deployment and
+  live verification. Do not provision additional infrastructure, change DNS or
+  widen public exposure without explicit approval.
 - Job imports are not applications. Verify exact roles and duplicate history;
   ask before each account/terms step and final submission. Never invent candidate
   qualifications or mark Applied without confirmation. Stop on uncertain outcomes.
+
+## Skills
+
+Project-local skills live in `.github/skills`. Domain skills — architecture,
+discovery, matching, resume storage, outbox/queue, security, deployment and
+verification — carry the invariants that are easiest to break; consult the
+relevant one before changing that area.
+
+When a task needs a capability the installed skills do not cover, find the
+smallest relevant skill, read it and its resources in full, check for scripts,
+remote execution and destructive commands, reject anything conflicting with the
+rules above, install it project-scoped and pinned, and record why. Never install
+a catalog wholesale or trust a skill because its name sounds relevant. See
+`.github/skills/README.md`.
 
 ## Verification And References
 
@@ -45,8 +131,10 @@ do not turn small fixes or non-coding requests into architecture exercises.
   Do not hide missing prerequisites, skipped tests or external-service failures.
 - Report results concisely: changes, verification and remaining risks. Give
   findings first for reviews; use architecture/trade-off sections only when useful.
-- Consult [architecture](../docs/ARCHITECTURE.md),
-  [operations](../docs/RUNBOOK.md), [applications](../docs/APPLICATIONS.md),
-  [browser imports](../docs/BROWSER-IMPORT.md) and
-  [release scope](../docs/RELEASE-REVIEW.md) when relevant. Do not load every
-  document for every request.
+- Consult [project state](../docs/PROJECT-STATE.md),
+  [API surface](../docs/API-SURFACE.md), [security](../docs/SECURITY.md),
+  [deployment](../docs/OPERATIONS/DEPLOYMENT.md),
+  [rollback](../docs/OPERATIONS/ROLLBACK.md),
+  [firewall](../docs/OPERATIONS/FIREWALL.md) and
+  [known limitations](../docs/KNOWN-LIMITATIONS.md) when relevant. Do not load
+  every document for every request.

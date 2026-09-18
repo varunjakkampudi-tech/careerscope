@@ -16,6 +16,7 @@
  */
 
 import { z } from 'zod';
+import { localModelOrigin } from './services/ollamaRerank.js';
 
 /** `"true"`/`"1"`/`"yes"` are all how people actually write booleans in a .env. */
 const boolish = (fallback: boolean) =>
@@ -86,8 +87,21 @@ export const envSchema = z
      * anything in the app.
      */
     ENABLE_SCRAPERS: boolish(false),
-    /** The Claude semantic rerank pass. Needs ANTHROPIC_API_KEY. */
+    /** Optional semantic rerank; paid credentials are required only for Anthropic. */
     ENABLE_LLM_RERANK: boolish(false),
+    LLM_PROVIDER: z.enum(['anthropic', 'ollama']).default('anthropic'),
+    LLM_MODEL: secret,
+    OLLAMA_ORIGIN: z
+      .string()
+      .default('http://127.0.0.1:11434')
+      .refine((value) => {
+        try {
+          localModelOrigin(value);
+          return true;
+        } catch {
+          return false;
+        }
+      }, 'Use a local HTTP model origin without credentials or paths'),
     ENABLE_APPLICATION_AGENT: boolish(false),
     APPLICATION_COPILOT_PATH: secret,
 
@@ -172,7 +186,7 @@ export const envSchema = z
         message: 'Production login requires an HTTPS AUTH_ORIGIN.',
       });
     }
-    if (env.ENABLE_LLM_RERANK && !env.ANTHROPIC_API_KEY) {
+    if (env.ENABLE_LLM_RERANK && env.LLM_PROVIDER === 'anthropic' && !env.ANTHROPIC_API_KEY) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['ANTHROPIC_API_KEY'],

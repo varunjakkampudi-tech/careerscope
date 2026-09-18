@@ -137,6 +137,7 @@ it('provides a keyboard skip target and a compact workspace footer', () => {
     'href',
     '#main-content',
   );
+  expect(screen.getByRole('link', { name: 'Skip to content' })).toHaveAttribute('tabindex', '0');
   expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content');
   expect(screen.getByRole('main')).toHaveAttribute('tabindex', '-1');
   const footer = screen.getByRole('contentinfo');

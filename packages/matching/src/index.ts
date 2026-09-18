@@ -61,4 +61,4 @@ export {
   MAX_RESUME_CHARS,
   RERANK_MAX_TOKENS,
 } from './rerank.js';
-export type { RerankClient, RerankInput, RerankOptions } from './rerank.js';
+export type { RerankClient, StructuredRerankClient, RerankInput, RerankOptions } from './rerank.js';

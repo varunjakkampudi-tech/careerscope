@@ -32,3 +32,6 @@ playwright-report/
 test-results/
 
 infra/nginx/*.inc
+
+# The nested v2 workspace runs its own formatting gate.
+v2/

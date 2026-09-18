@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Under maintenance | CareerScope</title>
+    <style>
+      :root {
+        --canvas: #f6f7f9;
+        --surface: #fff;
+        --ink: #111725;
+        --muted: #4a5364;
+        --border: #e2e5ec;
+        --accent: #4055d6;
+        --focus: #7087ea;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --canvas: #0d1117;
+          --surface: #161b25;
+          --ink: #eef1f6;
+          --muted: #a2abbb;
+          --border: #262d3a;
+          --accent: #8a9bf0;
+          --focus: #8a9bf0;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: var(--canvas);
+        color: var(--ink);
+        font:
+          400 15px/1.55 'Avenir Next',
+          'Segoe UI',
+          system-ui,
+          sans-serif;
+      }
+      main {
+        width: 100%;
+        max-width: 30rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 28px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      h1 {
+        margin: 22px 0 10px;
+        font-size: 22px;
+        font-weight: 650;
+        line-height: 1.25;
+      }
+      p {
+        margin: 0 0 12px;
+        color: var(--muted);
+      }
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 4px;
+        padding: 4px 9px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .dot {
+          animation: pulse 2s ease-in-out infinite;
+        }
+      }
+      @keyframes pulse {
+        50% {
+          opacity: 0.35;
+        }
+      }
+      dl {
+        margin: 18px 0 0;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        font-size: 14px;
+      }
+      dt {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      dd {
+        margin: 2px 0 12px;
+      }
+      button {
+        margin-top: 20px;
+        padding: 9px 15px;
+        border: 1px solid transparent;
+        border-radius: 5px;
+        background: var(--accent);
+        color: #fff;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button:hover {
+        filter: brightness(1.07);
+      }
+      :focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="brand">
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="12" fill="var(--accent)" />
+          <circle
+            cx="12"
+            cy="12"
+            r="6.2"
+            fill="none"
+            stroke="#fff"
+            stroke-width="1.7"
+            opacity=".85"
+          />
+          <g stroke="#fff" stroke-width="2" stroke-linecap="round">
+            <path d="M9 14v-2" />
+            <path d="M12 14v-4" />
+            <path d="M15 14v-6" />
+          </g>
+        </svg>
+        CareerScope
+      </div>
+
+      <h1>We are temporarily under maintenance</h1>
+
+      <!-- role=status announces without stealing focus; the page is static. -->
+      <div role="status">
+        <p id="reason">CareerScope is briefly unavailable while we complete an update.</p>
+        <span class="status"><span class="dot"></span> Maintenance in progress</span>
+      </div>
+
+      <dl id="details" hidden>
+        <dt>Expected back</dt>
+        <dd id="eta"></dd>
+      </dl>
+
+      <button type="button" onclick="location.reload()">Try again</button>
+    </main>
+
+    <script>
+      // Populated by maintenance.sh at enable time; absent when not configured.
+      const reason = document.body.dataset.reason;
+      const eta = document.body.dataset.eta;
+      if (reason) document.getElementById('reason').textContent = reason;
+      if (eta) {
+        document.getElementById('eta').textContent = eta;
+        document.getElementById('details').hidden = false;
+      }
+    </script>
+  </body>
+</html>

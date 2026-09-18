@@ -21,7 +21,7 @@ export interface ProviderContext {
 }
 
 export type ProviderEvent =
-  | { level: 'debug' | 'info'; source: SourceId; message: string }
+  | { level: 'debug' | 'info'; source: SourceId; message: string; limited?: boolean }
   | { level: 'warn' | 'error'; source: SourceId; message: string };
 
 export interface JobProvider {

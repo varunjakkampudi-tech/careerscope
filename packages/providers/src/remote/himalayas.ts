@@ -116,6 +116,7 @@ const adapter: FeedAdapter<HimalayasJob> = {
         ctx.log?.({
           level: 'info',
           source: 'himalayas',
+          limited: true,
           message:
             `stopped after ${MAX_PAGES} pages (${MAX_PAGES * PAGE_SIZE} most recent postings) — ` +
             `the feed carries ${payload?.totalCount ?? 'many more'} and offers no keyword filter, ` +

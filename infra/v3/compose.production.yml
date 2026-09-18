@@ -1,0 +1,224 @@
+name: careerscope
+
+# Single-host production topology. Every service except the proxy joins the
+# proxy network namespace and binds loopback, so Postgres, Redis, the queue,
+# the API and the web server have no reachable address from outside the host.
+# Only the proxy publishes ports.
+#
+# Because of that, the proxy must never be restarted on its own: Docker gives it
+# a new network namespace and leaves every other container attached to the dead
+# one, which answers as 502 until they are restarted too. Use restart-stack.sh.
+
+x-hardening: &hardening
+  init: true
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  pids_limit: 256
+  restart: unless-stopped
+  tmpfs: ['/tmp:size=64m,mode=1777']
+  stop_grace_period: 20s
+  logging:
+    driver: json-file
+    options: { max-size: 10m, max-file: '5' }
+
+x-environment: &environment
+  DATABASE_URL: postgres://careerscope:${POSTGRES_PASSWORD:?Database password required}@127.0.0.1:5432/careerscope
+  REDIS_URL: redis://127.0.0.1:6379
+  LOCAL_AWS_ENDPOINT: http://127.0.0.1:4566
+  APP_ORIGIN: ${APP_ORIGIN:?Public origin required}
+  REGISTRATION_ENABLED: ${REGISTRATION_ENABLED:-false}
+  RESUME_STORAGE_DIRECTORY: /private/objects
+  RESUME_STORAGE_KEY_FILE: /private/encryption.key
+  NODE_OPTIONS: --max-old-space-size=512
+
+x-app: &app
+  <<: *hardening
+  image: careerscope:v3
+  user: '1000:1000'
+  network_mode: service:proxy
+  environment: *environment
+  cpus: 1
+  mem_limit: 640m
+  depends_on:
+    bootstrap: { condition: service_completed_successfully }
+    redis: { condition: service_healthy }
+    localstack: { condition: service_healthy }
+
+services:
+  proxy:
+    <<: *hardening
+    image: careerscope:v3-proxy
+    user: '1000:1000'
+    # Restored only so the proxy can bind 80 and 443 as an unprivileged user.
+    cap_add: [NET_BIND_SERVICE]
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      CAREERSCOPE_DOMAIN: ${CAREERSCOPE_DOMAIN:?Domain required}
+      CAREERSCOPE_TLS_MODE: ${CAREERSCOPE_TLS_MODE:?TLS mode required}
+      CAREERSCOPE_UPSTREAM: 127.0.0.1:5280
+    volumes:
+      - './Caddyfile.production:/etc/caddy/Caddyfile:ro'
+      # Issued certificates and ACME account keys must survive restarts,
+      # otherwise every restart re-requests and burns issuance quota.
+      - 'certificates:/data'
+      - 'proxyconfig:/config'
+      # Operator-controlled maintenance flag and page. Read-only to the proxy so
+      # a compromised proxy cannot enable or disable maintenance.
+      - '${CAREERSCOPE_MAINTENANCE_DIR:-/srv/maintenance}:/srv/maintenance:ro'
+    tmpfs: ['/tmp:size=16m,mode=1777']
+    cpus: 1
+    mem_limit: 256m
+
+  postgres:
+    <<: *hardening
+    image: postgres:17.6-alpine@sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94
+    user: postgres
+    network_mode: service:proxy
+    command: ['postgres', '-c', 'listen_addresses=127.0.0.1']
+    environment:
+      POSTGRES_DB: careerscope
+      POSTGRES_USER: careerscope
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Database password required}
+    volumes: ['database:/var/lib/postgresql/data']
+    tmpfs: ['/tmp:size=64m,mode=1777', '/var/run/postgresql:size=8m,uid=70,gid=70,mode=0775']
+    cpus: 1
+    mem_limit: 1g
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-h', '127.0.0.1', '-U', 'careerscope', '-d', 'careerscope']
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  redis:
+    <<: *hardening
+    image: redis:7.4.5-alpine@sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08
+    user: redis
+    network_mode: service:proxy
+    command:
+      [
+        'redis-server',
+        '--bind',
+        '127.0.0.1',
+        '--save',
+        '',
+        '--maxmemory',
+        '192mb',
+        '--maxmemory-policy',
+        'noeviction',
+      ]
+    cpus: 0.5
+    mem_limit: 256m
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # SQS-compatible queue endpoint. Delivery is a hint only: the transactional
+  # outbox in Postgres is the source of truth and reconciles anything the queue
+  # loses, which is why the queue is allowed to be ephemeral.
+  localstack:
+    <<: *hardening
+    image: localstack/localstack:4.7.0@sha256:12253acd9676770e9bd31cbfcf17c5ca6fd7fb5c0c62f3c46dd701f20304260c
+    user: '1000:1000'
+    network_mode: service:proxy
+    environment:
+      SERVICES: sqs
+      GATEWAY_LISTEN: 127.0.0.1:4566
+      AWS_DEFAULT_REGION: us-east-1
+      DEBUG: '0'
+    tmpfs:
+      [
+        '/tmp:size=256m,mode=1777',
+        '/var/lib/localstack:size=128m,uid=1000,gid=1000,mode=0700',
+        '/home/localstack/.cache:size=32m,uid=1000,gid=1000,mode=0700',
+      ]
+    cpus: 1
+    mem_limit: 1g
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://127.0.0.1:4566/_localstack/health']
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  bootstrap:
+    <<: *hardening
+    image: careerscope:v3
+    user: '1000:1000'
+    network_mode: service:proxy
+    environment: *environment
+    restart: 'no'
+    command: ['node', '/app/v2/bootstrap.mjs']
+    volumes: ['private:/private', './bootstrap.mjs:/app/v2/bootstrap.mjs:ro']
+    cpus: 1
+    mem_limit: 512m
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  api:
+    <<: *app
+    command: ['node', 'apps/api/dist/main.js']
+    volumes: ['private:/private']
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:5390/api/health').then(response=>process.exit(response.ok?0:1),()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  publisher:
+    <<: *app
+    command: ['node', 'apps/workers/search/dist/publisher.js']
+
+  search:
+    <<: *app
+    command: ['node', 'apps/workers/search/dist/main.js']
+
+  files:
+    <<: *app
+    command: ['node', 'apps/workers/search/dist/files.js']
+    volumes: ['private:/private:ro']
+
+  web:
+    <<: *app
+    working_dir: /app/v2/apps/web
+    command:
+      [
+        'node',
+        '/app/v2/node_modules/next/dist/bin/next',
+        'start',
+        '--hostname',
+        '127.0.0.1',
+        '--port',
+        '5280',
+      ]
+    tmpfs:
+      [
+        '/tmp:size=64m,mode=1777',
+        '/app/v2/apps/web/.next/cache:size=64m,uid=1000,gid=1000,mode=0700',
+      ]
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:5280/').then(response=>process.exit(response.ok?0:1),()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  database:
+  private:
+  certificates:
+  proxyconfig:

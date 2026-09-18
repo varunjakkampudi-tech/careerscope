@@ -1,0 +1,40 @@
+# CareerScope
+
+> CareerScope matches job listings against a candidate's actual resume and stated
+> requirements, and explains why each result scored the way it did. This public site
+> lists jobs collected from supported sources and links to the original employer
+> posting. The private workspace that holds resumes and profiles is a separate,
+> authenticated application and is not part of this site.
+
+## What this site is
+
+- A read-only, static list of job postings collected from supported job sources.
+- Every listing links out to the original employer or source posting to apply.
+- No account, tracking or personal data is required to browse it.
+
+## What this site is not
+
+- It is not the CareerScope application. Resume upload, profile configuration,
+  matching and saved leads live in a separate authenticated workspace that is
+  deliberately excluded from search indexing.
+- It does not host resumes, contact details, salary expectations or application
+  history.
+- It does not accept applications. Applying happens on the employer's own site.
+
+## How matching works in the product
+
+Matching is deterministic and explainable. A saved profile snapshot is taken when a
+search starts, listings are scored against that snapshot, and each result carries the
+evidence behind its score. Scores describe fit against stated requirements; they are
+not predictions of hiring outcomes.
+
+## Accuracy and limitations
+
+- Listings reflect what the source published at collection time and can become stale.
+- Salary, location and seniority are only shown when the source supplied them; missing
+  values are not inferred.
+- Coverage is limited to supported sources and is not a complete view of the job market.
+
+## Contact
+
+Source: https://github.com/varunjakkampudi-tech/careerscope

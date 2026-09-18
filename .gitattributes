@@ -1,0 +1,10 @@
+# Shell scripts and container entrypoints run on Linux hosts. Without this a
+# Windows checkout commits CRLF and the remote shell fails on $'\r'.
+*.sh text eol=lf
+*.mjs text eol=lf
+Dockerfile text eol=lf
+Dockerfile.* text eol=lf
+Caddyfile text eol=lf
+Caddyfile.* text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf

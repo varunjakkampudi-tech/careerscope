@@ -1,0 +1,42 @@
+# SHA-pinned actions do not receive security fixes on their own, so they need an
+# updater. Grouped so a patch sweep is one review, not twenty.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      actions:
+        patterns: ['*']
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      production:
+        dependency-type: production
+      development:
+        dependency-type: development
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: /v2
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      production:
+        dependency-type: production
+      development:
+        dependency-type: development
+        update-types: [minor, patch]
+
+  - package-ecosystem: docker
+    directory: /infra/v3
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3

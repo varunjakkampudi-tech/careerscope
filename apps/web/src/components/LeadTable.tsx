@@ -201,6 +201,7 @@ export function LeadTable({
   const virtualizer = useWindowVirtualizer<HTMLDivElement>({
     count: leads.length,
     estimateSize: () => (compact ? CARD_ESTIMATE : ROW_ESTIMATE),
+    measureElement: (element) => element.getBoundingClientRect().height,
     overscan: 8,
     scrollMargin,
   });

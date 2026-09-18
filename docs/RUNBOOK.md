@@ -1,6 +1,6 @@
 # Runbook
 
-Operating Job Radar on a server. Everything here has a command; nothing here
+Operating CareerScope on a server. Everything here has a command; nothing here
 requires reading source.
 
 Start with [Production readiness](PRODUCTION-READINESS.md) and
@@ -12,11 +12,11 @@ For Copilot-assisted applications with a remote browser, use the opt-in
 [EC2 application runtime](EC2-APPLICATIONS.md). The default image is not the
 complete application-agent runtime.
 
-> **Read this first.** No part of `infra/` has been built or run on a developer
-> machine — Docker was not available where this was written. CI's `image` job
-> builds the container, and the first `docker compose up` on your box is the
-> first time the full stack runs end to end. Budget time for it, and read
-> [Troubleshooting](#troubleshooting) before you start rather than after.
+> **Runtime evidence:** the base API image and isolated local Compose stack have
+> been built and exercised on ARM64 Docker Desktop. This does not validate the
+> production nginx/TLS stack, browser-agent image, EC2, or unattended operations.
+> Read [Local containers](#local-containers) for the tested development path and
+> [Troubleshooting](#troubleshooting) before deploying elsewhere.
 
 **Contents** — [Choosing a shape](#choosing-a-shape) · [EC2 first boot](#ec2-first-boot)
 · [TLS](#tls) · [systemd instead of Docker](#systemd-instead-of-docker)
@@ -63,11 +63,91 @@ missing server. Closing the development terminal stops the application.
 
 ---
 
+## Local containers
+
+The local stack is isolated from the existing host app: separate named data and
+model volumes, no owner-directory mounts, no `.env` secret loading, and only
+`127.0.0.1:5180` published. It serves the built React UI and API from one origin.
+Login remains required. This is development HTTP, not a server deployment recipe.
+
+```bash
+docker compose -f infra/docker-compose.local.yml up -d --build --wait
+docker compose -f infra/docker-compose.local.yml exec api node apps/api/dist/setup-owner.js
+```
+
+Run the second command directly in your own terminal. It accepts hidden email and
+confirmed password input, calls the existing loopback-only setup route from inside
+the container, and refuses an existing account. Do not put passwords in shell
+arguments, chat, or environment variables. Sign in at `http://localhost:5180`.
+This new volume initially has no owner resume or imported leads; the host app's
+data is unchanged. Upload a resume and configure the profile in the new app.
+
+### Optional local inference
+
+```bash
+docker compose -f infra/docker-compose.local.yml --profile llm up -d --wait
+docker compose -f infra/docker-compose.local.yml exec ollama ollama pull qwen2.5:1.5b-instruct-q4_K_M
+LOCAL_LLM_ENABLED=true docker compose -f infra/docker-compose.local.yml --profile llm up -d --wait
+node scripts/check-container.mjs --llm
+```
+
+`LOCAL_LLM_MODEL` overrides the model; download it explicitly before enabling it.
+Ollama has no published host port, and no cloud API fallback exists. The transport
+accepts only configured local origins, disallows redirects, bounds response size,
+and times out after 120 seconds. Local ranking checks at most five full-description
+leads serially; failures and over-budget prompts retain deterministic scores with
+a run warning. Exclusions and snippet-confidence rules still apply.
+
+The CPU baseline is **not an accuracy recommendation or an interactive-speed
+claim**. On an M1 Pro with Docker's approximately 8 GB VM and two inference CPU
+cores, a synthetic full ranking request took **96.6 seconds**, with about **1.49
+GiB** model-service memory afterward and **113 MiB** API memory. The Qwen3 4B
+instruct variant timed out on the same ranking prompt. These are single-request
+observations, not representative load or quality benchmarks. Docker Linux does
+not use Apple Metal. Faster inference needs different hardware/runtime or a
+measured smaller workload; Redis does not speed up model computation.
+
+Tested Ollama image: `ollama/ollama:0.11.10`. Tested baseline model manifest:
+`65ec06548149b04c096a120e4a6da9d4017ea809c91734ea5631e89f96ddc57b`
+(986,061,892 bytes). Tags remain mutable; verify the manifest before repeating
+acceptance or choosing a server image. These versions are not a vulnerability
+certification.
+
+To disable inference while preserving models and all app data:
+
+```bash
+LOCAL_LLM_ENABLED=false docker compose -f infra/docker-compose.local.yml up -d --wait api
+docker compose -f infra/docker-compose.local.yml --profile llm stop ollama
+```
+
+### Container acceptance
+
+`node scripts/check-container.mjs` tests `careerscope:local` in a temporary,
+network-disabled container with synthetic data. It verifies non-root operation,
+read-only root, non-interactive setup refusal, readiness, SPA delivery, auth and
+CSRF denial, login rotation, SQLite backup restoration across an API-process
+restart, persisted sessions, and logout revocation. Cleanup only removes its own
+uniquely named test container. `--llm` additionally sends synthetic facts through
+the real running local model and checks unavailable-model fallback. A fallback
+is deliberately a failed inference acceptance check, not a false success.
+
+Docker must remain running and the computer must remain awake; `restart:
+unless-stopped` is not 24/7 availability on a sleeping laptop. Use `stop` or
+`down` without `-v` to preserve named volumes. Do not delete volumes as a reset.
+The acceptance backup covers SQLite only; owner resumes, filesystem state,
+off-host encrypted backups, full disaster recovery, server TLS and rollback need
+separate acceptance before deployment.
+
+This foundation adds local ranking, not an autonomous replacement for Copilot:
+Gmail mark-read automation, a local application-preparation agent, and the in-app
+assistant remain unimplemented. Application submission and account/terms steps
+still require explicit approval. No server or public release is created here.
+
 ## EC2 first boot
 
 ### The instance
 
-`t3.small` (2 GB) is enough — the API idles around 120 MB and peaks near 400 MB
+For the API without local inference, `t3.small` (2 GB) is enough — the API idles around 120 MB and peaks near 400 MB
 during a search. `t3.micro` (1 GB) works but has no headroom for
 `docker compose build`; build elsewhere or add swap. 20 GB of disk is generous:
 images and layers dominate, the database does not.
@@ -592,6 +672,26 @@ the current `.env` — `restart` does not re-read it, `up -d` does.
 4. If LinkedIn, Naukri or Indeed report as unavailable, see
    [The browser-backed sources](#the-browser-backed-sources-optional). Indeed in
    particular returns nothing at the default threshold by design.
+
+### Withdrawn job cleanup
+
+The v1 search runner checks up to 25 existing Greenhouse/Lever leads after each
+refresh, rotating a persisted cursor through eligible leads with a 30-second
+total budget. It deletes a lead only when the exact, uncached ATS job endpoint
+returns JSON with HTTP 404/410 and the same employer's board returns a valid
+posting list that does not contain that job. Redirects, access challenges,
+timeouts, rate limits, malformed responses and missing search results are not
+removal evidence. Greenhouse board-scoped IDs support custom employer URLs only
+when the URL includes the matching `gh_jid`. Other sources and unrecognized
+employer URLs remain unchecked.
+
+Only untouched `new` leads are eligible. Saved leads, notes, application statuses
+and application-run history are preserved, with guards rechecked at deletion to
+protect concurrent edits. The job record remains; no application history is
+deleted. Run logs report checked, removed and inconclusive counts. This is a
+bounded best-effort check, not instant or universal expiry detection. MCP workers
+already running before a code update need restarting to load the new runner.
+Public snapshots are unchanged until a separately authorized export/publication.
 
 ### SSE progress arrives in one lump at the end
 

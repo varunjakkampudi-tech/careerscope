@@ -1,0 +1,64 @@
+name: careerscope-v2
+services:
+  postgres:
+    image: postgres:17.6-alpine
+    environment:
+      POSTGRES_DB: careerscope
+      POSTGRES_USER: careerscope
+      POSTGRES_PASSWORD: ${V2_DATABASE_PASSWORD:?Run the local setup script first}
+    ports: ['127.0.0.1:55433:5432']
+    volumes: ['postgres-data:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U careerscope -d careerscope']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    mem_limit: 512m
+    cpus: 1
+  redis:
+    image: redis:7.4.5-alpine
+    command: ['redis-server', '--maxmemory', '128mb', '--maxmemory-policy', 'allkeys-lru']
+    ports: ['127.0.0.1:56479:6379']
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    mem_limit: 192m
+    cpus: 1
+  redis-queue:
+    image: redis:7.4.5-alpine
+    profiles: ['bullmq']
+    command:
+      [
+        'redis-server',
+        '--appendonly',
+        'yes',
+        '--appendfsync',
+        'everysec',
+        '--maxmemory',
+        '192mb',
+        '--maxmemory-policy',
+        'noeviction',
+      ]
+    ports: ['127.0.0.1:56480:6379']
+    volumes: ['queue-data:/data']
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    mem_limit: 384m
+    cpus: 1
+  localstack:
+    image: localstack/localstack:4.7.0
+    environment:
+      SERVICES: sqs,s3
+      AWS_DEFAULT_REGION: us-east-1
+      DEBUG: '0'
+    ports: ['127.0.0.1:54566:4566']
+    mem_limit: 768m
+    cpus: 1
+volumes:
+  postgres-data:
+  queue-data:

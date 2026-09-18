@@ -202,6 +202,19 @@ for (const engine of [chromium, firefox, webkit]) {
         .locator('main')
         .evaluate((element) => element === document.activeElement);
       await page.setViewportSize({ width: 390, height: 844 });
+      await page.waitForFunction(
+        () => {
+          const rows = [...document.querySelectorAll('[role="row"][data-index]')]
+            .map((element) => element.getBoundingClientRect())
+            .sort((left, right) => left.top - right.top);
+          return (
+            rows.length > 1 &&
+            rows.every((row, index) => index === 0 || row.top >= rows[index - 1].bottom - 1)
+          );
+        },
+        undefined,
+        { timeout: 5000 },
+      );
       await page.screenshot({ path: join(screenshots, `${engine.name()}-mobile-dark.png`) });
       results.push({
         browser: engine.name(),

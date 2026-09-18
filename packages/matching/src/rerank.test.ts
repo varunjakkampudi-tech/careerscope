@@ -76,6 +76,55 @@ function thinLead(id: string): RerankInput {
 /* -------------------------------------------------------------------------- */
 
 describe('rerankLeads', () => {
+  it('validates and applies provider-neutral assessments with the same safeguards', async () => {
+    const assess = vi.fn(async () => ({
+      stop_reason: 'end_turn',
+      parsed_output: {
+        assessments: [
+          { id: 'local', score: 0.8, rationale: 'Evidence matches.', missingSkills: [] },
+        ],
+      },
+    }));
+    const input = [lead('local'), thinLead('snippet')];
+    const result = await rerankLeads(input, candidate(), {
+      client: { assess },
+      model: 'local-model',
+    });
+    expect(assess).toHaveBeenCalledWith(
+      expect.objectContaining({
+        model: 'local-model',
+        schema: expect.objectContaining({ type: 'object' }),
+        prompt: expect.stringContaining('<posting id="local">'),
+      }),
+    );
+    expect(result[0]!.match.llmScore).toBe(0.8);
+    expect(result[1]!.match).toEqual(input[1]!.match);
+    assess.mockResolvedValueOnce({ stop_reason: 'end_turn', parsed_output: { assessments: [] } });
+    const fallback = await rerankLeads(input, candidate(), { client: { assess } });
+    expect(fallback[0]!.match).toEqual(input[0]!.match);
+  });
+
+  it.each([
+    { id: 'local', score: 95 },
+    { id: 'invented', score: 0.9 },
+  ])('rejects invalid local assessments instead of promoting them: %j', async (assessment) => {
+    const input = [lead('local')];
+    const onWarning = vi.fn();
+    const result = await rerankLeads(input, candidate(), {
+      client: {
+        assess: async () => ({
+          stop_reason: 'end_turn',
+          parsed_output: {
+            assessments: [{ ...assessment, rationale: 'Unsupported result.', missingSkills: [] }],
+          },
+        }),
+      },
+      onWarning,
+    });
+    expect(result[0]!.match).toEqual(input[0]!.match);
+    expect(onWarning).toHaveBeenCalledWith(expect.stringContaining('did not match the schema'));
+  });
+
   it('blends the model score into the lead', async () => {
     const input = [lead('a')];
     const { client } = stub((params) =>
