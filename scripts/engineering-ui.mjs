@@ -81,7 +81,11 @@ function snapshot() {
     repo: {
       branch: git(['branch', '--show-current'], 'unknown'),
       commit: git(['rev-parse', '--short', 'HEAD'], '?'),
-      version: read('package.json', {}).version ?? '?',
+      // v2 is what serves careerscope.tech. The root package.json is the V1
+      // line and reads 1.3.4, so showing it here labelled "Version" claimed the
+      // deployed application was three major versions older than it is.
+      version: read('v2/package.json', {}).version ?? '?',
+      legacyVersion: read('package.json', {}).version ?? '?',
     },
     week,
     sprint: read(join(AI, 'sprints', `${week}.json`)),
@@ -215,7 +219,8 @@ function overview(){
   const n=s=>open.filter(x=>x.severity===s).length;
   const active=(d.backlog.items||[]).filter(i=>['IN_PROGRESS','CODE_REVIEW','QA','SECURITY'].includes(i.status));
   return '<div class=grid>'
-    +card('Version',d.repo.version)+card('Branch',d.repo.branch,d.repo.branch==='main'?'warn':'')
+    +card('Version (deployed)',d.repo.version)+card('V1 line',d.repo.legacyVersion,'muted')
+    +card('Branch',d.repo.branch,d.repo.branch==='main'?'warn':'')
     +card('Commit',d.repo.commit)+card('Sprint',d.sprint?d.sprint.sprintId:'not planned')
     +card('Sprint goal',d.sprint&&d.sprint.goal?d.sprint.goal:'—')
     +card('Target release',d.sprint?d.sprint.targetReleaseDate:'—')
