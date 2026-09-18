@@ -11,6 +11,10 @@
 # a brute-force attempt cannot succeed regardless. The jail is about cutting off
 # log noise and connection churn, not about being the control that stops
 # password guessing. That control is sshd.
+#
+# Optionally set OPERATOR_IP to your own address before running, so a scripted
+# session can never lock you out:
+#   OPERATOR_IP=203.0.113.10 bash setup-fail2ban.sh
 set -euo pipefail
 
 if [ "$(id -u)" -ne 0 ]; then
@@ -31,11 +35,11 @@ if ! dpkg -s fail2ban >/dev/null 2>&1; then
 fi
 
 echo "== writing jail configuration"
-cat >/etc/fail2ban/jail.d/careerscope.local <<'EOF'
+cat >/etc/fail2ban/jail.d/careerscope.local <<EOF
 # CareerScope SSH jail.
 #
 # banaction uses the multiport nftables action, which maintains its own
-# `f2b-table` and an addr-set. It never flushes the ruleset, so the Docker NAT
+# \`f2b-table\` and an addr-set. It never flushes the ruleset, so the Docker NAT
 # rules and the careerscope input chain are untouched.
 [DEFAULT]
 banaction = nftables-multiport
@@ -43,15 +47,24 @@ banaction_allports = nftables-allports
 backend = systemd
 
 # Never lock the operator out of their own host.
-ignoreip = 127.0.0.1/8 ::1
+ignoreip = 127.0.0.1/8 ::1${OPERATOR_IP:+ $OPERATOR_IP}
 
 [sshd]
 enabled  = true
 port     = ssh
-mode     = aggressive
-maxretry = 5
+# Deliberately NOT \`aggressive\`. That mode also matches pre-authentication
+# disconnects, which is what a scripted operator or a CI deploy job looks like:
+# many short-lived connections in quick succession. It banned the operator's own
+# address within minutes of being enabled, and it would do the same to the
+# GitHub Actions runner mid-deploy.
+#
+# With password authentication disabled in sshd, brute force cannot succeed
+# anyway. This jail exists to cut log noise, so it is tuned to catch persistent
+# scanners and nothing else.
+mode     = normal
+maxretry = 10
 findtime = 10m
-bantime  = 1h
+bantime  = 15m
 EOF
 
 echo "== validating configuration"

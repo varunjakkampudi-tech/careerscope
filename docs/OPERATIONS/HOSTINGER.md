@@ -52,11 +52,12 @@ running `systemctl reload ssh`.
 
 fail2ban, configured by [setup-fail2ban.sh](../../infra/v3/setup-fail2ban.sh).
 
-- SSH jail only. 5 failures in 10 minutes, 1 hour ban.
+- SSH jail only. 10 failures in 10 minutes, 15 minute ban.
 - `banaction = nftables-multiport`, which maintains its own `inet f2b-table`.
   It never flushes the ruleset, so Docker NAT and the CareerScope firewall table
   are untouched.
-- `127.0.0.1/8` and `::1` are permanently ignored.
+- `127.0.0.1/8` and `::1` are permanently ignored. Set `OPERATOR_IP` when
+  running the script to add your own address.
 - Enabled at boot.
 
 Its value here is limited and should be described honestly: password
@@ -64,10 +65,24 @@ authentication is already off, so brute force cannot succeed regardless. The
 jail cuts log noise and connection churn. **sshd is the control that stops
 password guessing, not fail2ban.**
 
+### It will lock you out if you let it
+
+The jail was first configured with `mode = aggressive`. That mode also matches
+**pre-authentication disconnects**, which is exactly what a scripted operator or
+a CI deploy job looks like: many short-lived connections in quick succession. It
+banned the operator's own address within minutes, and it would have banned the
+GitHub Actions runner mid-deploy.
+
+The symptom is precise and worth recognising: port 22 times out while 80 and 443
+still answer, and the site stays healthy. That is a ban, not an outage.
+
 ```
 fail2ban-client status sshd
 fail2ban-client set sshd unbanip <address>
 ```
+
+If you are already locked out, SSH cannot help you. Use the **Web console**
+button on the hPanel VPS Overview page, or wait out `bantime`.
 
 ## Patching
 
