@@ -3,6 +3,32 @@
   "updatedAt": "2026-09-19T00:00:00.000Z",
   "findings": [
     {
+      "id": "R1",
+      "severity": "P1",
+      "foundBy": "Infrastructure recon",
+      "file": ".github/workflows/ci.yml, deploy.yml",
+      "symbol": "test coverage of the deployed application",
+      "what": "The V2 test suite never runs in any pipeline. ci.yml runs only the root suite; deploy.yml runs v2 typecheck, lint, format and build but no tests. There are only two workflows.",
+      "cost": "The 49 tests covering the application that actually serves careerscope.tech execute nowhere in CI or Deploy. A V2 regression is caught only by someone running the suite locally.",
+      "evidence": "git grep -nE 'working-directory: v2|prefix v2|cd v2' -- .github/workflows -> deploy.yml lines 69, 73, 81 (npm ci, typecheck/lint/build, audit) and nothing else; git grep -n 'npm test' -- .github/workflows -> ci.yml:76 only",
+      "fix": "Run the v2 suite in CI. It needs --env-file=.env plus Postgres, Redis and LocalStack, so it requires service containers rather than a one-line addition.",
+      "status": "OPEN",
+      "assignedTo": "Infrastructure"
+    },
+    {
+      "id": "R2",
+      "severity": "P2",
+      "foundBy": "Infrastructure recon",
+      "file": ".github/workflows/deploy.yml",
+      "symbol": "gate job",
+      "what": "The deploy gate built packages/ but never tested them, while packages/ is copied into the runtime image",
+      "cost": "A regression in matching or providers would ship. This is the concrete mechanism behind Deploy succeeding three times while CI was red - the two were checking different things.",
+      "evidence": "deploy.yml gate ran npm ci plus four workspace builds, then v2 typecheck/lint/format/build/audit; no test step. infra/v3/Dockerfile copies /app/packages into the runtime stage.",
+      "fix": "Added 'Test the domain packages being shipped' running npm test in the gate.",
+      "status": "FIXED",
+      "assignedTo": "Infrastructure"
+    },
+    {
       "id": "Q1",
       "severity": "P2",
       "foundBy": "Code Quality",

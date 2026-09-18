@@ -65,6 +65,13 @@ jobs:
           npm run build --workspace @job-radar/matching
           npm run build --workspace @job-radar/providers
 
+      # `packages/` is copied into the runtime image, so a regression in matching
+      # or providers reaches production. The gate built them and never ran their
+      # tests, which is how a red CI could sit alongside a green deploy: the two
+      # were checking different things, and only CI was checking this one.
+      - name: Test the domain packages being shipped
+        run: npm test
+
       - name: Install V2 dependencies
         working-directory: v2
         run: npm ci
