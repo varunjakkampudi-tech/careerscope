@@ -34,7 +34,8 @@
       "completedSteps": ["Project Manager", "System Designer", "Backend"],
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-19",
-      "summary": "The application that actually runs the website had tests that no pipeline ever executed. Now the quick ones run on every change, so an obvious break is caught before it ships. The slower half still does not run — that is CS-9."
+      "summary": "The application that actually runs the website had tests that no pipeline ever executed. Now the quick ones run on every change, so an obvious break is caught before it ships. The slower half still does not run — that is CS-9.",
+      "dimension": "engineering"
     },
     {
       "id": "CS-2",
@@ -68,7 +69,8 @@
       "completedSteps": ["Project Manager"],
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-19",
-      "summary": "On one browser engine, the table header on the Leads page sits in the wrong place at tablet width, so it overlaps the rows you are trying to read. Two attempted fixes did not hold because both treated it as a timing fluke; it is not."
+      "summary": "On one browser engine, the table header on the Leads page sits in the wrong place at tablet width, so it overlaps the rows you are trying to read. Two attempted fixes did not hold because both treated it as a timing fluke; it is not.",
+      "dimension": "engineering"
     },
     {
       "id": "CS-3",
@@ -97,7 +99,8 @@
       "completedSteps": [],
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-19",
-      "summary": "If the web server in front of everything crashes, the whole site goes down while every internal health check still reports fine. Nobody is told. Fixing this means it either recovers by itself or you find out immediately."
+      "summary": "If the web server in front of everything crashes, the whole site goes down while every internal health check still reports fine. Nobody is told. Fixing this means it either recovers by itself or you find out immediately.",
+      "dimension": "engineering"
     },
     {
       "id": "CS-4",
@@ -126,7 +129,8 @@
       "completedSteps": [],
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-19",
-      "summary": "When a new version file is added, the release can publish the old version number, so the site claims to be running something it is not."
+      "summary": "When a new version file is added, the release can publish the old version number, so the site claims to be running something it is not.",
+      "dimension": "engineering"
     },
     {
       "id": "CS-5",
@@ -160,7 +164,8 @@
       "completedSteps": [],
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-19",
-      "summary": "The original first-generation application is still in the repository. Most of it is unused, but parts still feed the public job page, so it cannot simply be deleted. This is about untangling that safely."
+      "summary": "The original first-generation application is still in the repository. Most of it is unused, but parts still feed the public job page, so it cannot simply be deleted. This is about untangling that safely.",
+      "dimension": "engineering"
     },
     {
       "id": "CS-6",
@@ -186,7 +191,8 @@
       "completedSteps": [],
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-19",
-      "summary": "The front-end pages grew one at a time, so navigation, the signed-in boundary and the shared page frame are inconsistent. This is the clean-up that makes new screens quick to add instead of copy-pasted."
+      "summary": "The front-end pages grew one at a time, so navigation, the signed-in boundary and the shared page frame are inconsistent. This is the clean-up that makes new screens quick to add instead of copy-pasted.",
+      "dimension": "engineering"
     },
     {
       "releaseTarget": "3.0.1",
@@ -229,7 +235,8 @@
       "architectureImpact": "workflow dependency graph",
       "ownerAgent": "Infrastructure",
       "reviewAgents": ["Release Manager", "Security", "QA"],
-      "summary": "Deployment could put code on the live site that the test pipeline had already rejected, because the two were checking different things. Now a deployment refuses unless the tests genuinely passed for that exact version."
+      "summary": "Deployment could put code on the live site that the test pipeline had already rejected, because the two were checking different things. Now a deployment refuses unless the tests genuinely passed for that exact version.",
+      "dimension": "engineering"
     },
     {
       "releaseTarget": "3.0.1",
@@ -262,7 +269,8 @@
       "architectureImpact": "state-reading contract",
       "ownerAgent": "Senior Engineer",
       "reviewAgents": ["Independent Reviewer", "QA"],
-      "summary": "Several internal checks read a status file and, if that file was damaged or unreadable, concluded there was nothing wrong. That is how a blocked release once reported itself ready. Every such reader needs to treat unreadable as a refusal."
+      "summary": "Several internal checks read a status file and, if that file was damaged or unreadable, concluded there was nothing wrong. That is how a blocked release once reported itself ready. Every such reader needs to treat unreadable as a refusal.",
+      "dimension": "engineering"
     },
     {
       "releaseTarget": "3.0.1",
@@ -295,7 +303,8 @@
       "architectureImpact": "CI service topology",
       "ownerAgent": "Backend",
       "reviewAgents": ["QA", "Infrastructure"],
-      "summary": "The tests that need a real database, queue and browser do not run in the pipeline at all. That is the layer where this application actually breaks, so the current pipeline proves less than it appears to."
+      "summary": "The tests that need a real database, queue and browser do not run in the pipeline at all. That is the layer where this application actually breaks, so the current pipeline proves less than it appears to.",
+      "dimension": "engineering"
     },
     {
       "releaseTarget": null,
@@ -328,7 +337,8 @@
       "architectureImpact": "review topology",
       "ownerAgent": "Agent Operations",
       "reviewAgents": ["Orchestrator", "Project Manager"],
-      "summary": "There are twenty-four defined review roles and nothing said how many should take part in a given change. An activation policy now sets a default of four; this item is the follow-up audit of which roles genuinely earn their place."
+      "summary": "There are twenty-four defined review roles and nothing said how many should take part in a given change. An activation policy now sets a default of four; this item is the follow-up audit of which roles genuinely earn their place.",
+      "dimension": "engineering"
     },
     {
       "releaseTarget": null,
@@ -363,7 +373,8 @@
       "architectureImpact": "none; static artifact only",
       "ownerAgent": "Frontend",
       "reviewAgents": ["Visual Designer", "UX", "Security", "QA"],
-      "summary": "The public job page is the only part of CareerScope a stranger ever sees, and it was built to be correct rather than to be read. This is a proper design pass over it."
+      "summary": "The public job page is the only part of CareerScope a stranger ever sees, and it was built to be correct rather than to be read. This is a proper design pass over it.",
+      "dimension": "product"
     },
     {
       "releaseTarget": null,
@@ -372,11 +383,11 @@
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-19",
       "id": "CS-12",
-      "title": "The 24-agent workflow has never executed",
-      "userProblem": "Review that exists only as configuration provides no assurance, while looking like it does.",
+      "title": "The orchestration claim is stronger than the toolchain supports",
+      "userProblem": "A system described as orchestrated, but driven by hand, misleads whoever reads its state next.",
       "source": "verified against .ai/LOOP-STATE.json",
       "area": "process",
-      "priority": "P1",
+      "priority": "P2",
       "status": "READY",
       "size": "M",
       "value": 5,
@@ -384,19 +395,22 @@
       "complexity": 3,
       "dependencies": [],
       "acceptanceCriteria": [
-        "At least one change is driven end to end through the orchestrator and recorded in LOOP-STATE activity",
-        "Handoffs, verdicts and iteration counts are written by the run, not by hand",
-        "If the workflow cannot be driven in practice, that is recorded as the finding rather than left implied"
+        "Documentation describes a capability library with an operator-driven bounded workflow, not an orchestrated execution system",
+        "Agent state is labelled operator-reported and never observed, wherever it is displayed",
+        "No state file is ever written claiming an agent acted when the operator did the work",
+        "Revisit only if the platform exposes real agent invocation and execution telemetry"
       ],
       "evidence": [
         "All 24 agents WAITING, activity empty, every iteration counter 0, qa not-run, lastVerdict null",
-        "check-agents.mjs validates configuration only; it cannot observe execution"
+        "check-agents.mjs validates configuration only; it cannot observe execution",
+        "External review: manufacturing an end-to-end run would be worse than having no orchestration evidence"
       ],
       "securityImpact": "none directly; removes assumed review assurance",
       "architectureImpact": "review topology",
-      "ownerAgent": "Agent Operations",
+      "ownerAgent": "Documentation",
       "reviewAgents": ["Orchestrator", "Project Manager", "Final Auditor"],
-      "summary": "The twenty-four-role review system has never actually run — every role is idle and no work has ever passed through it. Until it runs once end to end, it provides no assurance, while looking like it does."
+      "summary": "The twenty-four review roles have never run, and nothing in this setup can invoke them automatically — a person performs every handoff. The fix is not to fake a run; it is to stop claiming orchestration and describe what this actually is: a library of role definitions with an operator-driven workflow.",
+      "dimension": "engineering"
     },
     {
       "releaseTarget": null,
@@ -427,7 +441,8 @@
       "securityImpact": "error text must not leak internal detail",
       "architectureImpact": "shared UI primitives",
       "ownerAgent": "Frontend",
-      "reviewAgents": ["UX", "QA"]
+      "reviewAgents": ["UX", "QA"],
+      "dimension": "product"
     },
     {
       "releaseTarget": null,
@@ -458,7 +473,8 @@
       "securityImpact": "none",
       "architectureImpact": "none",
       "ownerAgent": "Frontend",
-      "reviewAgents": ["UX", "QA"]
+      "reviewAgents": ["UX", "QA"],
+      "dimension": "product"
     },
     {
       "releaseTarget": null,
@@ -491,7 +507,140 @@
       "securityImpact": "none",
       "architectureImpact": "none",
       "ownerAgent": "Frontend",
+      "reviewAgents": ["UX", "QA"],
+      "dimension": "product"
+    },
+    {
+      "releaseTarget": null,
+      "currentStep": null,
+      "completedSteps": [],
+      "createdAt": "2026-09-19",
+      "updatedAt": "2026-09-19",
+      "dimension": "product",
+      "id": "CS-16",
+      "title": "Discovery does not present jobs in a way you can act on",
+      "summary": "Search returns matches, but the list gives you little more than a title and a number. You cannot tell from it which jobs are worth opening, so the ranking work behind it goes to waste.",
+      "userProblem": "A ranked list you cannot skim is no better than an unranked one.",
+      "source": "external review — first step of the core product slice",
+      "area": "frontend",
+      "priority": "P1",
+      "status": "READY",
+      "size": "M",
+      "value": 5,
+      "risk": 2,
+      "complexity": 3,
+      "dependencies": ["CS-13"],
+      "acceptanceCriteria": [
+        "A result row shows enough to decide whether to open it: role, company, location, recency, salary when known, and why it matched",
+        "Filters that exist in the API are reachable from the UI",
+        "Ranking order is visible and explainable, never an unexplained number",
+        "Readable at 320, 768 and 1440 widths in all three engines"
+      ],
+      "evidence": ["The matching package produces dimension scores that the UI does not surface"],
+      "securityImpact": "none",
+      "architectureImpact": "none",
+      "ownerAgent": "Frontend",
       "reviewAgents": ["UX", "QA"]
+    },
+    {
+      "releaseTarget": null,
+      "currentStep": null,
+      "completedSteps": [],
+      "createdAt": "2026-09-19",
+      "updatedAt": "2026-09-19",
+      "dimension": "product",
+      "id": "CS-17",
+      "title": "There is no job detail view worth opening",
+      "summary": "Opening a job should tell you what the role is, what it pays, what it demands, and whether it is worth your time. Today that decision is made on a list row.",
+      "userProblem": "Deciding to apply is the highest-stakes action here, made with the least information.",
+      "source": "external review — second step of the core product slice",
+      "area": "frontend",
+      "priority": "P1",
+      "status": "READY",
+      "size": "M",
+      "value": 5,
+      "risk": 2,
+      "complexity": 3,
+      "dependencies": ["CS-16"],
+      "acceptanceCriteria": [
+        "Full description, requirements, company, location, salary and source link",
+        "Original posting always reachable, and clearly marked as leaving the app",
+        "Untrusted posting content is rendered safely — no HTML injection from a job source",
+        "Save, dismiss and apply actions available without returning to the list"
+      ],
+      "evidence": ["Job descriptions come from external sources and are attacker-influenced input"],
+      "securityImpact": "renders third-party content — sanitisation is mandatory",
+      "architectureImpact": "none",
+      "ownerAgent": "Frontend",
+      "reviewAgents": ["Security", "UX", "QA"]
+    },
+    {
+      "releaseTarget": null,
+      "currentStep": null,
+      "completedSteps": [],
+      "createdAt": "2026-09-19",
+      "updatedAt": "2026-09-19",
+      "dimension": "product",
+      "id": "CS-18",
+      "title": "The match score is a number with no explanation",
+      "summary": "Scoring weighs several dimensions and then shows you one number. Without seeing which parts matched and which did not, you cannot trust the score or correct your profile when it is wrong.",
+      "userProblem": "An unexplained score is either believed blindly or ignored entirely. Both are wrong.",
+      "source": "external review — third step of the core product slice",
+      "area": "frontend",
+      "priority": "P1",
+      "status": "READY",
+      "size": "M",
+      "value": 5,
+      "risk": 2,
+      "complexity": 3,
+      "dependencies": ["CS-17"],
+      "acceptanceCriteria": [
+        "Per-dimension contributions shown, including the ones that scored badly",
+        "Hard exclusions state which rule excluded the job",
+        "Low-confidence results say so rather than presenting a confident-looking number",
+        "Presentation derives from the matching output; no second copy of the weights in the UI"
+      ],
+      "evidence": [
+        "Deterministic scoring with dimension weights, exclusion gates and a low-confidence ceiling already exists and is not surfaced"
+      ],
+      "securityImpact": "none",
+      "architectureImpact": "must read weights from the matching package, not duplicate them",
+      "ownerAgent": "Frontend",
+      "reviewAgents": ["Product Architect", "UX", "QA"]
+    },
+    {
+      "releaseTarget": null,
+      "currentStep": null,
+      "completedSteps": [],
+      "createdAt": "2026-09-19",
+      "updatedAt": "2026-09-19",
+      "dimension": "product",
+      "id": "CS-19",
+      "title": "Saving a job and working the shortlist is not a coherent flow",
+      "summary": "Finding a job is only useful if what happens next holds together: save it, find it again, move it through stages, and see what is waiting on you. That loop is what makes this a tool rather than a search box.",
+      "userProblem": "Without a working shortlist, every search starts from nothing.",
+      "source": "external review — final step of the core product slice",
+      "area": "frontend",
+      "priority": "P1",
+      "status": "READY",
+      "size": "M",
+      "value": 5,
+      "risk": 2,
+      "complexity": 3,
+      "dependencies": ["CS-18", "CS-14"],
+      "acceptanceCriteria": [
+        "Save from both list and detail, with immediate confirmation and an undo",
+        "Status changes persist and survive a reload",
+        "The shortlist makes clear what is waiting on the user",
+        "A duplicate posting already saved is recognised, not saved twice"
+      ],
+      "evidence": [
+        "Fingerprint deduplication exists in discovery; the UI does not use it when saving"
+      ],
+      "securityImpact": "owner isolation must hold on every lead mutation",
+      "architectureImpact": "none",
+      "ownerAgent": "Frontend",
+      "reviewAgents": ["Backend", "Security", "UX", "QA"]
     }
   ]
 }

@@ -252,7 +252,11 @@ function backlog(){
 }
 function agents(){
   const st=d.loop.agents||{};
-  return '<div class=card><div class=k>'+d.agents.length+' agents — state is REPORTED by the orchestrator, not probed</div><table>'
+  const acted=Array.isArray(d.loop.activity)?d.loop.activity.length:0;
+  const provenance=acted===0
+    ?'operator-reported, never observed — no agent has executed'
+    :'operator-reported, not probed — '+acted+' recorded handoff(s)';
+  return '<div class=card><div class=k>'+d.agents.length+' agents — '+provenance+'</div><table>'
    +'<tr><th></th><th>Agent</th><th>State</th><th>Permission</th></tr>'
    +d.agents.map(a=>{const s=(st[a.id]||'WAITING').toUpperCase();
      const isLive=d.live&&d.loop.activeAgent===a.id;

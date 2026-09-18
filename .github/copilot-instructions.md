@@ -136,7 +136,10 @@ a catalog wholesale or trust a skill because its name sounds relevant. See
 
 Non-trivial work runs through the 24 specialist agents in `.github/agents`, so
 that the agent implementing a change is never the sole authority that it is
-correct:
+correct. This is a **capability library with an operator-driven workflow**, not
+an orchestrated execution system: sub-agents cannot be invoked programmatically,
+and as of this writing none has ever executed. Never record state claiming an
+agent acted when the operator did the work.
 
 - **Orchestrator** — requirements, recon, routing, `.ai/` state, completion.
 - **Read-only reviewers** — Product Architect, System Designer, UX, Security,

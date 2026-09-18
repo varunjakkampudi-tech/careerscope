@@ -394,6 +394,22 @@ Things VS Code and Copilot cannot enforce, stated rather than papered over:
 
 ## Activation policy
 
+This is a **24-agent specialist capability library with an operator-driven,
+bounded workflow and a durable state model**. It is not an orchestrated
+execution system, and the difference matters: nothing here can invoke a
+sub-agent programmatically, so every handoff is performed by the operator.
+
+As of this writing **no agent has executed**: all 24 are `WAITING`, `activity`
+is empty and every iteration counter is 0. The control centre therefore labels
+agent state as operator-reported and never observed. Do not write state that
+claims an agent acted when a person did the work — manufactured orchestration
+evidence is worse than none, because the next reader cannot tell it apart from
+the real thing.
+
+What the agent files are genuinely worth: role contracts, permission
+definitions, review checklists, specialist prompts, and ready targets if the
+platform ever exposes real invocation.
+
 The roster is a capability library, not an attendance list. Twenty-four agents
 existing is not the problem; twenty-four participating in every task would be.
 Route the **smallest sufficient team** and justify each addition.

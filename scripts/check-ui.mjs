@@ -70,20 +70,29 @@ for (const engine of [chromium, firefox, webkit]) {
       const layouts = [];
       for (const width of [1440, 1024, 768, 390, 320]) {
         await page.setViewportSize({ width, height: 1000 });
-        // `--spacing-app-header` changes across the breakpoint, and the custom
-        // property updates before the header has finished re-laying out. Two
-        // frames was an assumption; wait for the height to actually settle.
-        await page.evaluate(() => {
-          delete window.__careerscopeHeaderHeight;
-        });
-        await page.waitForFunction(() => {
-          const header = document.querySelector('header');
-          if (!header) return false;
-          const height = header.getBoundingClientRect().height;
-          const previous = window.__careerscopeHeaderHeight;
-          window.__careerscopeHeaderHeight = height;
-          return previous === height;
-        });
+        // Wait for the header to AGREE with the stylesheet, not merely to hold
+        // still. "Two equal readings" is also satisfied by a value that never
+        // changed: moving 1024 -> 768, WebKit could still be reporting the old
+        // 3.5rem header twice while `--spacing-app-header` had already become
+        // 6.5rem, and the stale reading was then measured as a real mismatch.
+        // The catch is deliberate — on genuine disagreement the assertion below
+        // reports the exact delta, which a bare timeout would not.
+        await page
+          .waitForFunction(
+            () => {
+              const header = document.querySelector('header');
+              if (!header) return false;
+              const root = getComputedStyle(document.documentElement);
+              const expected =
+                parseFloat(root.getPropertyValue('--spacing-app-header')) *
+                  parseFloat(root.fontSize) +
+                1;
+              return Math.abs(header.getBoundingClientRect().height - expected) < 0.5;
+            },
+            null,
+            { timeout: 5000 },
+          )
+          .catch(() => {});
         layouts.push(
           await page.evaluate(() => {
             const rootStyle = getComputedStyle(document.documentElement);
