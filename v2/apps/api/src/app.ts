@@ -23,6 +23,7 @@ import {
   InvalidResumeUpload,
   ResumeStorageLimit,
   maximumResumeBytes,
+  MarketRepository,
   type UploadStorage,
   type Database,
 } from '@careerscope/core';
@@ -77,6 +78,7 @@ export async function createApp(
   } = {},
 ) {
   const auth = new Auth(database);
+  const market = new MarketRepository(database.pool);
   const profiles = new ProfileRepository(database);
   const leads = new LeadRepository(database);
   const uploads = new ResumeUploadRepository(database);
@@ -392,6 +394,37 @@ export async function createApp(
       throw new HttpError(429, 'Too many profile updates');
     return profiles.save(request.ownerId!, request.body);
   });
+  // Market evidence. Read-only, owner-scoped, derived entirely from what this
+  // owner's own searches have already seen — no shared corpus, no other user's
+  // data, nothing inferred.
+  app.get('/api/market/postings', async (request) => {
+    const query = request.query as Record<string, unknown>;
+    return { entries: await market.stalePostings(request.ownerId!, { limit: query.limit }) };
+  });
+
+  app.get('/api/market/postings/:fingerprint', async (request) => {
+    const { fingerprint } = z
+      .object({ fingerprint: z.string().min(1).max(256) })
+      .parse(request.params);
+    const evidence = await market.posting(request.ownerId!, fingerprint);
+    if (!evidence) throw new HttpError(404, 'No sightings recorded for this posting');
+    return evidence;
+  });
+
+  app.get('/api/market/companies', async (request) => {
+    const query = request.query as Record<string, unknown>;
+    return { entries: await market.companies(request.ownerId!, { limit: query.limit }) };
+  });
+
+  app.get('/api/pipeline', async (request) => market.pipeline(request.ownerId!));
+
+  app.get('/api/pipeline/stalled', async (request) => {
+    const query = request.query as Record<string, unknown>;
+    return {
+      entries: await market.stalled(request.ownerId!, { days: query.days, limit: query.limit }),
+    };
+  });
+
   app.get('/api/leads', async (request) => leads.list(request.ownerId!, request.query));
   app.post('/api/leads', async (request) => {
     if (!(await rateLimit(`leads:${request.ownerId!}`, 60, 60)))

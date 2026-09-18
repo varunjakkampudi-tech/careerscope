@@ -2152,7 +2152,9 @@ test('PostgreSQL atomic outbox, owner isolation and stale-worker fencing', async
         403,
       );
       for (const invalid of [
-        { revision: 1, notes: '', status: 'applied' },
+        // 'applied' became a real pipeline stage; 'hired' is still not one, so
+        // this keeps asserting that an unknown status is refused.
+        { revision: 1, notes: '', status: 'hired' },
         { revision: 0, notes: '', status: 'saved' },
         { revision: 1, notes: 'x'.repeat(10001), status: 'saved' },
         { revision: 1, notes: '', status: 'saved', ownerId },
@@ -2229,7 +2231,8 @@ test('PostgreSQL atomic outbox, owner isolation and stale-worker fencing', async
       assert.equal(audit.headers['cache-control'], 'no-store');
       assert.equal((await app.inject({ url: '/api/leads?limit=51', cookies })).statusCode, 400);
       assert.equal(
-        (await app.inject({ url: '/api/leads?status=applied', cookies })).statusCode,
+        // Same reason as above: 'applied' is now a real stage, 'hired' is not.
+        (await app.inject({ url: '/api/leads?status=hired', cookies })).statusCode,
         400,
       );
       assert.equal(
@@ -2283,7 +2286,9 @@ test('PostgreSQL atomic outbox, owner isolation and stale-worker fencing', async
         ),
       );
       await assert.rejects(
-        database.pool.query("UPDATE saved_leads SET status = 'applied' WHERE id = $1", [lead.id]),
+        // The database, not just the API, refuses a status outside the pipeline.
+        // 'applied' is now a real stage, so 'hired' carries the original intent.
+        database.pool.query("UPDATE saved_leads SET status = 'hired' WHERE id = $1", [lead.id]),
       );
       assert.equal(snapshot?.profileRevision, 2);
       assert.equal(snapshot?.matchingProfile?.application.yearsOfExperience, 5);

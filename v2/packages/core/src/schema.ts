@@ -11,6 +11,7 @@ import {
   check,
   bigserial,
   foreignKey,
+  primaryKey,
 } from 'drizzle-orm/pg-core';
 import type { Command, CreateSearch } from './commands.js';
 import type { CollectedJob, SourceOutcome } from './jobs.js';
@@ -164,7 +165,15 @@ export const leads = pgTable(
     fingerprint: text('fingerprint').notNull(),
     data: jsonb('data').$type<CollectedJob>().notNull(),
     notes: text('notes').notNull().default(''),
-    status: text('status').$type<'saved' | 'archived'>().notNull().default('saved'),
+    // A job search is a pipeline, not a bookmark list. Widening this is additive:
+    // every existing row is 'saved' or 'archived' and stays valid.
+    status: text('status')
+      .$type<'saved' | 'applied' | 'interviewing' | 'offer' | 'rejected' | 'archived'>()
+      .notNull()
+      .default('saved'),
+    // Stamped on every status change so "nothing has moved in three weeks" is a
+    // question the data can answer.
+    statusChangedAt: timestamp('status_changed_at', { withTimezone: true }).defaultNow().notNull(),
     revision: integer('revision').notNull().default(1),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
@@ -174,7 +183,10 @@ export const leads = pgTable(
     uniqueIndex('lead_owner_id').on(table.ownerId, table.id),
     index('lead_owner_status_created').on(table.ownerId, table.status, table.createdAt, table.id),
     check('lead_revision_positive', sql`${table.revision} > 0`),
-    check('lead_status_valid', sql`${table.status} IN ('saved', 'archived')`),
+    check(
+      'lead_status_valid',
+      sql`${table.status} IN ('saved', 'applied', 'interviewing', 'offer', 'rejected', 'archived')`,
+    ),
     check('lead_notes_bounded', sql`length(${table.notes}) <= 10000`),
   ],
 );
@@ -186,7 +198,9 @@ export const leadHistory = pgTable(
     ownerId: uuid('owner_id').notNull(),
     leadId: uuid('lead_id').notNull(),
     revision: integer('revision').notNull(),
-    status: text('status').$type<'saved' | 'archived'>().notNull(),
+    status: text('status')
+      .$type<'saved' | 'applied' | 'interviewing' | 'offer' | 'rejected' | 'archived'>()
+      .notNull(),
     notesChanged: integer('notes_changed').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
@@ -196,7 +210,10 @@ export const leadHistory = pgTable(
       foreignColumns: [leads.ownerId, leads.id],
     }),
     uniqueIndex('lead_history_revision').on(table.ownerId, table.leadId, table.revision),
-    check('lead_history_status_valid', sql`${table.status} IN ('saved', 'archived')`),
+    check(
+      'lead_history_status_valid',
+      sql`${table.status} IN ('saved', 'applied', 'interviewing', 'offer', 'rejected', 'archived')`,
+    ),
     check('lead_history_notes_changed_valid', sql`${table.notesChanged} IN (0, 1)`),
   ],
 );
@@ -273,5 +290,44 @@ export const resumeResults = pgTable(
       OR (${table.status} = 'rejected' AND ${table.parsed} IS NULL
         AND ${table.errorCode} IS NOT NULL AND ${table.errorCode} IN ('invalid_document', 'processing_failed'))`,
     ),
+  ],
+);
+
+// What a job board will not tell you, because it is paid by the employer.
+//
+// Every run records that it saw a posting. Over time that turns into evidence:
+// how long a role has actually been open, how many times you have seen it, and
+// whether the company quietly re-posted it to look fresh.
+//
+// Only facts are stored. "Ghost job" is an interpretation and is never written
+// here -- the API reports what was observed and lets the reader conclude.
+export const jobSightings = pgTable(
+  'job_sightings',
+  {
+    ownerId: uuid('owner_id')
+      .notNull()
+      .references(() => users.id),
+    fingerprint: text('fingerprint').notNull(),
+    // Denormalised so the listing does not have to open every jsonb document.
+    title: text('title').notNull(),
+    company: text('company').notNull(),
+    firstSeenAt: timestamp('first_seen_at', { withTimezone: true }).defaultNow().notNull(),
+    lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).defaultNow().notNull(),
+    // Distinct searches this posting has turned up in.
+    sightings: integer('sightings').notNull().default(1),
+    // The date the posting itself claims. Nullable: not every source gives one.
+    firstPostedAt: timestamp('first_posted_at', { withTimezone: true }),
+    lastPostedAt: timestamp('last_posted_at', { withTimezone: true }),
+    // Incremented when the same posting comes back with a newer claimed date,
+    // which is a company refreshing a stale listing rather than a new role.
+    repostCount: integer('repost_count').notNull().default(0),
+    lastRunId: uuid('last_run_id'),
+  },
+  (table) => [
+    primaryKey({ columns: [table.ownerId, table.fingerprint] }),
+    index('sighting_owner_last_seen').on(table.ownerId, table.lastSeenAt),
+    index('sighting_owner_company').on(table.ownerId, table.company),
+    check('sighting_count_positive', sql`${table.sightings} > 0`),
+    check('sighting_reposts_valid', sql`${table.repostCount} >= 0`),
   ],
 );

@@ -14,3 +14,4 @@ export * from './storage.js';
 export * from './file-storage.js';
 export * from './resumes.js';
 export * from './resume-parser.js';
+export * from './market.js';

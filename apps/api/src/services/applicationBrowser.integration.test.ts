@@ -105,4 +105,9 @@ it.skipIf(!existsSync(chromium.executablePath()))(
       vi.restoreAllMocks();
     }
   },
+  // Launches a real Chromium. The default 5s budget is for unit tests, and this
+  // is not one: the test skips entirely when no browser binary is present, so
+  // installing Playwright's browsers is what makes it start failing rather than
+  // any change in the code it covers.
+  60_000,
 );
