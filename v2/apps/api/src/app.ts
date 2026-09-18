@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { Readable } from 'node:stream';
 import { setTimeout as delay } from 'node:timers/promises';
 import Fastify, { LogController } from 'fastify';
@@ -27,6 +28,12 @@ import {
 } from '@careerscope/core';
 
 export type RateLimit = (key: string, limit: number, seconds: number) => Promise<boolean>;
+
+// Read rather than hardcode: the literal that used to live here was still
+// reporting 2.0.0-alpha.1 after the package had moved on.
+const { version } = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+) as { version: string };
 const loginSchema = z
   .object({ email: z.string().trim().email().max(254), password: z.string().min(12).max(256) })
   .strict();
@@ -165,7 +172,7 @@ export async function createApp(
   });
   app.get('/api/health', async () => {
     await database.pool.query('SELECT 1');
-    return { status: 'ok', version: '2.0.0-alpha.1' };
+    return { status: 'ok', version };
   });
   app.get('/api/session', async (request) => {
     const session = await auth.session(request.cookies[sessionCookie]);

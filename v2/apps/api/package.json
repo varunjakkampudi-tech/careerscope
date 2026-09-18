@@ -1,10 +1,10 @@
 {
   "name": "@careerscope/api",
-  "version": "2.0.0-alpha.1",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
   "dependencies": {
-    "@careerscope/core": "2.0.0-alpha.1",
+    "@careerscope/core": "3.0.0",
     "@fastify/cookie": "^11.0.2",
     "@fastify/helmet": "^13.0.2",
     "fastify": "^5.6.0"

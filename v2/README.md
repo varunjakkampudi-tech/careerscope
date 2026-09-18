@@ -1,6 +1,6 @@
 # CareerScope v2
 
-Local architecture migration, version 2.0.0-alpha.1. This is a working authenticated
+Local architecture migration, version 3.0.0. This is a working authenticated
 search vertical slice, **not the complete v1 feature migration or a release**.
 The original v1 application, data and Pages publication remain separate.
 
