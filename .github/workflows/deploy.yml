@@ -1,0 +1,151 @@
+name: Deploy
+
+# Deploys main to the Hostinger host.
+#
+# Trigger is deliberately narrow. There is no `pull_request` trigger: this
+# repository is public, and a workflow that both runs fork-authored code and
+# holds a deployment key is a supply-chain hole. Secrets are only reachable from
+# pushes to main and from a manual dispatch, both of which require write access.
+#
+# The gate job is not decoration either. Deployment happens after the V2 suites
+# pass against the exact commit being deployed, not after a green run on some
+# earlier commit.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      revision:
+        description: 'Commit SHA to deploy (defaults to the current main)'
+        required: false
+        type: string
+
+# One deployment at a time. Cancelling mid-deploy would leave the host with a
+# shipped tree and unbuilt images, so in-progress runs are allowed to finish.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '24'
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+  DEPLOY_HOST: 201.18.193.230
+  DEPLOY_USER: root
+
+jobs:
+  gate:
+    name: Verify the commit being deployed
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ inputs.revision || github.sha }}
+
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install V2 dependencies
+        working-directory: v2
+        run: npm ci
+
+      - name: Typecheck, lint and build
+        working-directory: v2
+        run: |
+          npm run typecheck
+          npm run lint
+          npm run format:check
+          npm run build
+
+      - name: Production dependency audit
+        working-directory: v2
+        run: npm audit --omit=dev
+
+  deploy:
+    name: Ship, build and verify
+    needs: gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ inputs.revision || github.sha }}
+          fetch-depth: 0
+
+      - name: Resolve the revision
+        id: rev
+        run: echo "sha=$(git rev-parse HEAD)" >>"$GITHUB_OUTPUT"
+
+      - name: Authorise the deployment key
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" >~/.ssh/deploy
+          chmod 600 ~/.ssh/deploy
+          # Pin the host key rather than accepting whatever answers. An unpinned
+          # deploy trusts DNS and the network path with a root shell.
+          printf '%s\n' "${{ secrets.DEPLOY_HOST_KEY }}" >~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Build the deployment archive from the commit
+        run: git archive --format=tar.gz -o /tmp/deploy.tgz "${{ steps.rev.outputs.sha }}"
+
+      - name: Enable maintenance mode
+        run: |
+          ssh -i ~/.ssh/deploy -o BatchMode=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            "bash /opt/careerscope/infra/v3/maintenance.sh enable 'Deploying' 'about 10 minutes'"
+
+      - name: Ship
+        run: |
+          scp -i ~/.ssh/deploy -o BatchMode=yes /tmp/deploy.tgz "$DEPLOY_USER@$DEPLOY_HOST:/tmp/deploy.tgz"
+          ssh -i ~/.ssh/deploy -o BatchMode=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            "bash /opt/careerscope/infra/v3/ship.sh /tmp/deploy.tgz ${{ steps.rev.outputs.sha }}"
+
+      - name: Build images, migrate and start
+        run: |
+          ssh -i ~/.ssh/deploy -o BatchMode=yes "$DEPLOY_USER@$DEPLOY_HOST" "
+            set -e
+            cd /opt/careerscope/infra/v3
+            bash build-images.sh ${{ steps.rev.outputs.sha }}
+            bash apply-migrations.sh
+            docker compose -f compose.production.yml up -d --wait
+          "
+
+      - name: Verify provenance
+        run: |
+          ssh -i ~/.ssh/deploy -o BatchMode=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            "bash /opt/careerscope/infra/v3/check-provenance.sh ${{ steps.rev.outputs.sha }}"
+
+      - name: Verify the origin answers
+        run: |
+          ssh -i ~/.ssh/deploy -o BatchMode=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            "bash /opt/careerscope/infra/v3/maintenance.sh disable"
+          for attempt in 1 2 3 4 5; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' https://careerscope.tech/)
+            health=$(curl -s https://careerscope.tech/api/health)
+            if [ "$code" = "200" ] && [ "${health#*\"status\":\"ok\"}" != "$health" ]; then
+              echo "origin healthy: $health"
+              exit 0
+            fi
+            echo "attempt $attempt: code=$code health=$health"
+            sleep 10
+          done
+          echo "origin did not become healthy" >&2
+          exit 1
+
+      # Runs even when an earlier step failed, so a broken deploy does not leave
+      # the site stuck behind the maintenance page with nobody watching.
+      - name: Lift maintenance mode
+        if: always()
+        run: |
+          ssh -i ~/.ssh/deploy -o BatchMode=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            "bash /opt/careerscope/infra/v3/maintenance.sh disable" || true
+
+      - name: Remove the deployment key
+        if: always()
+        run: rm -f ~/.ssh/deploy ~/.ssh/known_hosts
