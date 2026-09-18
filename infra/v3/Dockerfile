@@ -28,6 +28,9 @@ RUN printf '%s\n' \
     && go build -trimpath -ldflags '-s -w' -o /out/caddy .
 
 FROM ${ALPINE_IMAGE} AS proxy
+ARG CAREERSCOPE_REVISION=unknown
+LABEL org.opencontainers.image.revision="${CAREERSCOPE_REVISION}"
+LABEL org.opencontainers.image.source="https://github.com/varunjakkampudi-tech/careerscope"
 RUN apk upgrade --no-cache \
     && apk add --no-cache ca-certificates mailcap \
     && mkdir -p /config/caddy /data/caddy \

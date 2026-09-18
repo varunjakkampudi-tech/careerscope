@@ -29,4 +29,6 @@ DOCKER_BUILDKIT=1 docker build \
 
 echo "==> Recorded revision"
 docker image inspect careerscope:v3 \
-  --format '{{index .Config.Labels "org.opencontainers.image.revision"}}'
+  --format 'runtime {{index .Config.Labels "org.opencontainers.image.revision"}}'
+docker image inspect careerscope:v3-proxy \
+  --format 'proxy   {{index .Config.Labels "org.opencontainers.image.revision"}}'
