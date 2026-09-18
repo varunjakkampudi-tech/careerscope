@@ -20,6 +20,11 @@ data/
 mobile-site/jobs.json
 mobile-site/admin.enc.json
 
+# Append-only run log, rewritten by every product:* and agile:* invocation.
+# Checking a file that a script regenerates on each run means CI breaks whenever
+# anyone uses the tooling. The rest of .ai/ is hand-maintained and still checked.
+.ai/runs.json
+
 # Dependencies.
 node_modules/
 

@@ -100,7 +100,69 @@ function snapshot() {
     stale: running && beat !== null && beat > STALE_MS,
     heartbeatAgeMs: beat,
     agents: agentsFromDisk(),
+    history: dailyProgress(),
+    activity: dailyActivity(),
   };
+}
+
+/**
+ * Daily progress, derived from git history of .ai/progress.json.
+ *
+ * Real history, not a synthesised trend: each point is a commit that actually
+ * changed the matrix. A day with no commit produces no point rather than a
+ * flat line implying someone looked and confirmed no change.
+ */
+function dailyProgress() {
+  try {
+    const log = execFileSync('git', ['log', '--format=%H|%cI', '--', '.ai/progress.json'], {
+      encoding: 'utf8',
+    })
+      .split('\n')
+      .filter(Boolean)
+      .slice(0, 30)
+      .reverse();
+    const points = [];
+    for (const line of log) {
+      const [sha, when] = line.split('|');
+      try {
+        const doc = JSON.parse(
+          execFileSync('git', ['show', `${sha}:.ai/progress.json`], { encoding: 'utf8' }),
+        );
+        const areas = doc.areas ?? [];
+        if (!areas.length) continue;
+        points.push({
+          date: when.slice(0, 10),
+          commit: sha.slice(0, 7),
+          overall:
+            doc.overall ?? Math.round(areas.reduce((s, a) => s + a.percent, 0) / areas.length),
+          areas: Object.fromEntries(areas.map((a) => [a.area, a.percent])),
+        });
+      } catch {
+        continue;
+      }
+    }
+    // Last point per day, so several commits in a day do not read as several days.
+    const byDay = new Map();
+    for (const p of points) byDay.set(p.date, p);
+    return [...byDay.values()];
+  } catch {
+    return [];
+  }
+}
+
+/** Commits per day, so "what changed today" is answerable without guessing. */
+function dailyActivity() {
+  try {
+    return execFileSync('git', ['log', '--since=14.days', '--format=%cI|%s'], { encoding: 'utf8' })
+      .split('\n')
+      .filter(Boolean)
+      .map((l) => {
+        const [when, ...rest] = l.split('|');
+        return { date: when.slice(0, 10), subject: rest.join('|') };
+      });
+  } catch {
+    return [];
+  }
 }
 
 const PAGE = `<!doctype html>
@@ -128,6 +190,13 @@ th{color:var(--muted);font-weight:400;font-size:11px;text-transform:uppercase;le
 .bar>i{display:block;height:100%;background:var(--ok)}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--muted);margin-right:8px}
 .dot.live{background:var(--live);animation:p 1s ease-in-out infinite}
+.spark{display:flex;align-items:flex-end;gap:3px;height:80px;margin-top:10px;justify-content:flex-start}
+.spark>i{width:22px;flex:0 0 auto;background:linear-gradient(180deg,var(--live),#1f6feb);border-radius:2px 2px 0 0}
+.spark>i:hover{background:var(--ok)}
+.up{color:var(--ok)}.down{color:var(--bad)}.flat{color:var(--muted)}
+.day{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px solid var(--line)}
+.tag{font-size:10px;border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--muted)}
+.fresh{outline:1px solid var(--live);outline-offset:2px;border-radius:4px}
 @keyframes p{0%,100%{opacity:1}50%{opacity:.25}}
 @media (prefers-reduced-motion:reduce){.dot.live{animation:none}}
 .empty{color:var(--muted);padding:10px 0}
@@ -136,7 +205,7 @@ th{color:var(--muted);font-weight:400;font-size:11px;text-transform:uppercase;le
 <header><h1>CAREERSCOPE ENGINEERING</h1><span id="hdr" class="muted"></span></header>
 <nav id="nav"></nav><main id="main"></main>
 <script>
-const TABS=['OVERVIEW','SPRINT','BACKLOG','AGENTS','FINDINGS','RELEASES','RESEARCH','AUDIT'];
+const TABS=['OVERVIEW','DAILY','SPRINT','BACKLOG','AGENTS','FINDINGS','RELEASES','RESEARCH','AUDIT'];
 let tab='OVERVIEW',d={};
 const esc=s=>String(s??'—').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const card=(k,v,cls='')=>'<div class=card><div class=k>'+k+'</div><div class="v '+cls+'">'+esc(v)+'</div></div>';
@@ -209,15 +278,48 @@ function audit(){
   return '<div class=card><table><tr><th>When</th><th>Phase</th><th>Result</th><th>Commit</th></tr>'
    +d.runs.map(r=>'<tr><td class=muted>'+esc(new Date(r.completedAt).toLocaleString())+'</td><td>'+esc(r.phase)+'</td><td class="'+(String(r.result).includes('block')||String(r.result).includes('exceed')?'bad':'')+'">'+esc(r.result)+'</td><td class=muted>'+esc((r.commit||'').slice(0,7))+'</td></tr>').join('')+'</table></div>';
 }
-const VIEWS={OVERVIEW:overview,SPRINT:sprint,BACKLOG:backlog,AGENTS:agents,FINDINGS:findings,RELEASES:releases,RESEARCH:research,AUDIT:audit};
+function daily(){
+  const h=d.history||[];
+  if(!h.length)return '<div class=card><div class=empty>No progress history yet. Points appear once .ai/progress.json has been committed more than once — nothing is interpolated.</div></div>';
+  const last=h[h.length-1],prev=h.length>1?h[h.length-2]:null;
+  const delta=prev?last.overall-prev.overall:0;
+  const max=Math.max(...h.map(p=>p.overall),1);
+  const spark=h.length>1
+    ?'<div class=spark>'+h.map(p=>'<i style="height:'+Math.max(6,(p.overall/max)*100)+'%" title="'+p.date+' — '+p.overall+'% ('+p.commit+')"></i>').join('')+'</div>'
+    :'<div class=empty>One record so far — '+esc(last.date)+' at '+last.overall+'%. A trend needs a second commit to .ai/progress.json; nothing is interpolated to fill the gap.</div>';
+  const areaRows=prev?Object.keys(last.areas).map(a=>{const n=last.areas[a],o=prev.areas[a];
+    const c=o===undefined?0:n-o;
+    return '<tr><td>'+esc(a)+'</td><td>'+n+'%</td><td class="'+(c>0?'up':c<0?'down':'flat')+'">'+(c>0?'+'+c:c===0?'—':c)+'%</td></tr>';}).join(''):'<tr><td class=muted colspan=3>Only one data point so far.</td></tr>';
+  const byDay={};for(const a of (d.activity||[]))(byDay[a.date]=byDay[a.date]||[]).push(a.subject);
+  const days=Object.keys(byDay).sort().reverse().slice(0,10);
+  return '<div class=grid>'+card('Overall',last.overall+'%')
+    +card('Change since last record',(delta>0?'+':'')+delta+'%',delta>0?'ok':delta<0?'bad':'muted')
+    +card('Records',h.length)+card('Latest',last.date+'  '+last.commit)+'</div>'
+   +'<div class=card><div class=k>Overall progress — one point per day that actually changed</div>'+spark+'</div>'
+   +'<div class=card><div class=k>Per-area change since the previous record</div><table><tr><th>Area</th><th>Now</th><th>Change</th></tr>'+areaRows+'</table></div>'
+   +'<div class=card><div class=k>Commits by day (last 14 days)</div>'+(days.length?days.map(x=>'<div class=day><span>'+esc(x)+'</span><span class=tag>'+byDay[x].length+' commits</span></div>'+byDay[x].slice(0,4).map(s=>'<div class=muted style="padding-left:12px;font-size:12px">'+esc(s)+'</div>').join('')).join(''):'<div class=empty>No commits in the last 14 days.</div>')+'</div>';
+}
+const VIEWS={OVERVIEW:overview,DAILY:daily,SPRINT:sprint,BACKLOG:backlog,AGENTS:agents,FINDINGS:findings,RELEASES:releases,RESEARCH:research,AUDIT:audit};
 function paint(){
   document.getElementById('nav').innerHTML=TABS.map(t=>'<button aria-selected="'+(t===tab)+'" onclick="go(\\''+t+'\\')">'+t+'</button>').join('');
   document.getElementById('hdr').textContent=d.repo.branch+' @ '+d.repo.commit+'  ·  '+d.week+'  ·  '+new Date(d.generatedAt).toLocaleTimeString();
   document.getElementById('main').innerHTML=VIEWS[tab]();
 }
 function go(t){tab=t;paint()}
-async function load(){d=await (await fetch('/state')).json();paint()}
-load();setInterval(load,5000);
+let lastSig='';
+async function load(){
+  try{
+    const next=await (await fetch('/state')).json();
+    // Repaint only when something actually changed, so the page does not flicker
+    // and a reader does not lose their place every few seconds.
+    const sig=JSON.stringify([next.repo,next.loop,next.backlog,next.findings,next.sprint,next.history&&next.history.length,next.runs&&next.runs.length]);
+    d=next;
+    if(sig!==lastSig){lastSig=sig;paint();
+      const el=document.getElementById('hdr');el.classList.add('fresh');setTimeout(()=>el.classList.remove('fresh'),600);}
+    else{document.getElementById('hdr').textContent=d.repo.branch+' @ '+d.repo.commit+'  ·  '+d.week+'  ·  '+new Date(d.generatedAt).toLocaleTimeString();}
+  }catch(e){document.getElementById('hdr').textContent='state unavailable — '+e.message;}
+}
+load();setInterval(load,3000);
 </script></body></html>`;
 
 createServer((req, res) => {
