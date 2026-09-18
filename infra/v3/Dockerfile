@@ -55,7 +55,10 @@ RUN npm ci --prefix v2 && npm --prefix v2 run build
 RUN npm prune --omit=dev --omit=optional && npm prune --prefix v2 --omit=dev
 
 FROM ${NODE_IMAGE} AS runtime
-ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
+ARG CAREERSCOPE_REVISION=unknown
+LABEL org.opencontainers.image.revision="${CAREERSCOPE_REVISION}"
+LABEL org.opencontainers.image.source="https://github.com/varunjakkampudi-tech/careerscope"
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 CAREERSCOPE_REVISION=${CAREERSCOPE_REVISION}
 # The base image is digest-pinned for reproducibility, so it never picks up
 # Debian security updates on its own; apply them explicitly.
 RUN apt-get update \

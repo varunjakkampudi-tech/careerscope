@@ -34,7 +34,12 @@ try {
       logger.warn(reclaimed, 'Reclaimed resume temporaries from a dead writer');
   }
   await app.listen({ host: '127.0.0.1', port: 5390 });
-  logger.info({ port: 5390 }, 'v2 API listening');
+  // Ties a running process to the source it was built from. Deliberately not on
+  // /api/health, which is unauthenticated.
+  logger.info(
+    { port: 5390, revision: process.env.CAREERSCOPE_REVISION ?? 'unknown' },
+    'v2 API listening',
+  );
   if (!shutdown.signal.aborted)
     await new Promise<void>((resolve) =>
       shutdown.signal.addEventListener('abort', () => resolve(), { once: true }),
