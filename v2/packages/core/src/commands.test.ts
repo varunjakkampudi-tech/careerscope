@@ -24,7 +24,21 @@ test('search commands only advertise implemented providers', () => {
     createSearchSchema.parse({ query: 'React', sources: ['remoteok', 'himalayas'] }).sources,
     ['himalayas', 'remoteok'],
   );
-  for (const sources of [[], ['remoteok', 'remoteok'], ['remotive']]) {
+  assert.equal(
+    createSearchSchema.parse({
+      query: 'React',
+      sources: ['remoteok', 'himalayas', 'greenhouse', 'lever', 'workable'],
+    }).sources.length,
+    5,
+  );
+  for (const sources of [
+    [],
+    ['remoteok', 'remoteok'],
+    ['remotive'],
+    ['linkedin'],
+    ['naukri'],
+    ['indeed'],
+  ]) {
     assert.equal(createSearchSchema.safeParse({ query: 'React', sources }).success, false);
   }
   assert.deepEqual(createSearchSchema.parse({ query: ' React ', sources: ['remoteok'] }), {
@@ -38,6 +52,22 @@ test('search commands only advertise implemented providers', () => {
 });
 
 test('retry jitter remains bounded even after many attempts', () => {
+  assert.equal(
+    createSearchSchema.parse({
+      query: 'Saved target roles',
+      sources: ['remoteok'],
+      useProfileTitles: true,
+    }).useProfileTitles,
+    true,
+  );
+  assert.equal(
+    createSearchSchema.safeParse({
+      query: 'React',
+      sources: ['remoteok'],
+      useProfileTitles: 'true',
+    }).success,
+    false,
+  );
   assert.equal(
     retryDelay(1, () => 0.5),
     500,

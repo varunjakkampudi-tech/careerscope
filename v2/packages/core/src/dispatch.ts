@@ -3,6 +3,7 @@ import { isDeepStrictEqual } from 'node:util';
 import type { Message } from '@aws-sdk/client-sqs';
 import { commandSchema, retryDelay, type Command } from './commands.js';
 import type { Database } from './database.js';
+import { logger } from './runtime.js';
 import type { LocalQueue } from './queue.js';
 
 export type Handler = (command: Command, fence: number, signal: AbortSignal) => Promise<boolean>;
@@ -78,6 +79,21 @@ export async function consumeMessage(
     }
   };
   const renewing = heartbeat();
+  const startedAt = performance.now();
+  // Completes the requestId -> runId -> executionId -> attempt chain.
+  const settled = (outcome: string) =>
+    logger.info(
+      {
+        executionId: command.id,
+        runId: command.aggregateId,
+        jobType: command.type,
+        attempt: Number(message.Attributes?.ApproximateReceiveCount ?? 1),
+        fence,
+        outcome,
+        durationMs: Math.round(performance.now() - startedAt),
+      },
+      'Command execution settled',
+    );
   try {
     const committed = await handler(command, fence, signal);
     if (!committed) throw new Error('Command result was not committed');
@@ -85,13 +101,16 @@ export async function consumeMessage(
       throw new Error('Handler returned without durable completion');
     }
     await queue.acknowledge(receipt);
+    settled('completed');
     return 'completed';
   } catch (error) {
     const count = Number(message.Attributes?.ApproximateReceiveCount ?? 1);
     if ((fence >= 5 || count >= 5) && !shutdown.aborted && !heartbeatFailed) {
       await fail(command, fence);
+      settled('dead-lettered');
     } else {
       await database.release(command.id, fence);
+      settled('released');
     }
     await queue.visibility(
       receipt,
@@ -106,13 +125,19 @@ export async function consumeMessage(
   }
 }
 
-export async function reconcileDeadLetter(database: Database, message: Message) {
+export async function reconcileDeadLetter(
+  database: Database,
+  message: Message,
+  type: Command['type'] = 'search.collect',
+  fail: (command: Command, fence: number) => Promise<boolean> = (command, fence) =>
+    database.fail(command, fence),
+) {
   const command = commandSchema.parse(JSON.parse(message.Body ?? ''));
   const stored = await database.command(command.id);
-  if (!stored || !isDeepStrictEqual(stored, command) || command.type !== 'search.collect') {
+  if (!stored || !isDeepStrictEqual(stored, command) || command.type !== type) {
     throw new Error('Dead letter does not match a supported durable command');
   }
   const fence = await database.claim(command.id);
-  if (fence !== null) return database.fail(command, fence);
+  if (fence !== null) return fail(command, fence);
   return false;
 }

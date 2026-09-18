@@ -25,13 +25,18 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
-export const sessions = pgTable('sessions', {
-  tokenHash: text('token_hash').primaryKey(),
-  ownerId: uuid('owner_id')
-    .notNull()
-    .references(() => users.id),
-  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
-});
+export const sessions = pgTable(
+  'sessions',
+  {
+    tokenHash: text('token_hash').primaryKey(),
+    ownerId: uuid('owner_id')
+      .notNull()
+      .references(() => users.id),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  },
+  // Revoking every other session and removing an owner both filter on owner_id.
+  (table) => [index('session_owner').on(table.ownerId)],
+);
 
 export const profiles = pgTable(
   'candidate_profiles',
@@ -75,7 +80,7 @@ export const searches = pgTable(
     check(
       'search_outcomes_bounded',
       sql`${table.sourceOutcomes} IS NULL OR (jsonb_typeof(${table.sourceOutcomes}) = 'array'
-        AND jsonb_array_length(${table.sourceOutcomes}) BETWEEN 1 AND 2
+        AND jsonb_array_length(${table.sourceOutcomes}) BETWEEN 1 AND 5
         AND octet_length(${table.sourceOutcomes}::text) <= 2048)`,
     ),
     check(
@@ -85,22 +90,33 @@ export const searches = pgTable(
   ],
 );
 
-export const outbox = pgTable('outbox_events', {
-  id: uuid('id').primaryKey(),
-  command: jsonb('command').$type<Command>().notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  publishedAt: timestamp('published_at', { withTimezone: true }),
-});
+export const outbox = pgTable(
+  'outbox_events',
+  {
+    id: uuid('id').primaryKey(),
+    command: jsonb('command').$type<Command>().notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    publishedAt: timestamp('published_at', { withTimezone: true }),
+  },
+  // The publisher polls continuously against a table that only grows, matching
+  // unpublished rows and then stale published ones, ordered by created_at.
+  (table) => [index('outbox_published_created').on(table.publishedAt, table.createdAt)],
+);
 
-export const executions = pgTable('command_executions', {
-  id: uuid('id')
-    .primaryKey()
-    .references(() => outbox.id),
-  status: text('status').notNull(),
-  fence: integer('fence').notNull(),
-  leaseUntil: timestamp('lease_until', { withTimezone: true }).notNull(),
-  attempts: integer('attempts').notNull(),
-});
+export const executions = pgTable(
+  'command_executions',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .references(() => outbox.id),
+    status: text('status').notNull(),
+    fence: integer('fence').notNull(),
+    leaseUntil: timestamp('lease_until', { withTimezone: true }).notNull(),
+    attempts: integer('attempts').notNull(),
+  },
+  // Reclaiming expired leases and reporting backlog both scan status/lease_until.
+  (table) => [index('execution_status_lease').on(table.status, table.leaseUntil)],
+);
 
 export const events = pgTable(
   'run_events',
@@ -199,7 +215,10 @@ export const resumeUploads = pgTable(
     contentType: text('content_type').notNull(),
     objectVersion: text('object_version'),
     commandId: uuid('command_id').references(() => outbox.id),
-    status: text('status').$type<'uploading' | 'queued'>().notNull().default('uploading'),
+    status: text('status')
+      .$type<'uploading' | 'queued' | 'cancelling' | 'cancelled'>()
+      .notNull()
+      .default('uploading'),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   },
@@ -219,7 +238,7 @@ export const resumeUploads = pgTable(
     check(
       'resume_upload_state_valid',
       sql`
-      (${table.status} = 'uploading' AND ${table.objectVersion} IS NULL AND ${table.commandId} IS NULL)
+      (${table.status} IN ('uploading', 'cancelling', 'cancelled') AND ${table.objectVersion} IS NULL AND ${table.commandId} IS NULL)
       OR (${table.status} = 'queued' AND ${table.objectVersion} IS NOT NULL
         AND length(${table.objectVersion}) BETWEEN 1 AND 1024 AND ${table.objectVersion} <> 'null'
         AND ${table.commandId} IS NOT NULL)`,

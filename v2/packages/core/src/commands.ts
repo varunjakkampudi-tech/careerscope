@@ -23,15 +23,22 @@ export const commandSchema = z
 
 export type Command = z.infer<typeof commandSchema>;
 
-export const searchSourceSchema = z.enum(['remoteok', 'himalayas']);
+export const searchSourceSchema = z.enum([
+  'remoteok',
+  'himalayas',
+  'greenhouse',
+  'lever',
+  'workable',
+]);
 
 export const createSearchSchema = z
   .object({
     query: z.string().trim().min(2).max(160),
+    useProfileTitles: z.boolean().optional(),
     sources: z
       .array(searchSourceSchema)
       .min(1)
-      .max(2)
+      .max(5)
       .refine((sources) => new Set(sources).size === sources.length, 'Duplicate sources')
       .transform((sources) => sources.sort()),
   })

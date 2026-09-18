@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 import { QueueEvents, Worker, UnrecoverableError } from 'bullmq';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { Database, users } from '@careerscope/core';
@@ -57,7 +58,7 @@ test(
     let worker: Worker | undefined;
     try {
       await migrate(database.db, {
-        migrationsFolder: new URL('../../../migrations', import.meta.url).pathname,
+        migrationsFolder: fileURLToPath(new URL('../../../migrations', import.meta.url)),
       });
       await queue.initialize();
       await events.waitUntilReady();

@@ -118,10 +118,28 @@ function LeadEditor({
         {record.status === 'archived' ? 'Archived' : 'Saved'} &middot; Revision {record.revision}
       </p>
       <div className="job-links">
-        <a href={record.data.sourceUrl} target="_blank" rel="noopener noreferrer">
-          {record.data.source === 'himalayas' ? 'Himalayas' : 'Remote OK'}{' '}
-          <ExternalLink size={14} />
-        </a>
+        {(record.data.sourceLinks?.length
+          ? record.data.sourceLinks
+          : [{ source: record.data.source, url: record.data.sourceUrl }]
+        ).map((link) => (
+          <a
+            key={`${link.source}:${link.url}`}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {
+              {
+                remoteok: 'Remote OK',
+                himalayas: 'Himalayas',
+                greenhouse: 'Greenhouse',
+                lever: 'Lever',
+                workable: 'Workable',
+              }[link.source]
+            }{' '}
+            <ExternalLink size={14} />
+          </a>
+        ))}
         <a href={record.data.applyUrl} target="_blank" rel="noopener noreferrer">
           Open Posting <ExternalLink size={14} />
         </a>

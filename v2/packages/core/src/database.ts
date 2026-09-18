@@ -64,6 +64,13 @@ export class Database {
           throw new Conflict('Idempotency key reused with different input');
         return existing;
       }
+      if (
+        request.useProfileTitles &&
+        !inserted[0].matchingProfile?.preferences.titles.some(
+          (title) => title.trim().length >= 2 && title.trim().length <= 160,
+        )
+      )
+        throw new Conflict('Save target roles before starting profile discovery');
       const command: Command = {
         id: randomUUID(),
         type: 'search.collect',
@@ -156,6 +163,41 @@ export class Database {
       )
       .orderBy(tables.outbox.createdAt)
       .limit(20);
+  }
+
+  /**
+   * Operational backlog signal: durable work waiting to be published, work
+   * currently leased, and leases that expired without settling. Expired leases
+   * are redelivered, but a persistent count means execution is not progressing.
+   */
+  async backlog() {
+    const { rows } = await this.pool.query<{
+      unpublished: string;
+      running: string;
+      expired: string;
+      oldest_seconds: string | null;
+      oldest_running_seconds: string | null;
+    }>(
+      `SELECT
+         count(*) FILTER (WHERE o.published_at IS NULL) AS unpublished,
+         count(*) FILTER (WHERE e.status = 'running') AS running,
+         count(*) FILTER (WHERE e.status = 'running' AND e.lease_until < now()) AS expired,
+         max(extract(epoch FROM now() - o.created_at)) FILTER (WHERE o.published_at IS NULL)
+           AS oldest_seconds,
+         max(extract(epoch FROM now() - o.created_at)) FILTER (WHERE e.status = 'running')
+           AS oldest_running_seconds
+       FROM outbox_events o
+       LEFT JOIN command_executions e ON e.id = o.id`,
+    );
+    const row = rows[0];
+    return {
+      unpublished: Number(row?.unpublished ?? 0),
+      running: Number(row?.running ?? 0),
+      expiredLeases: Number(row?.expired ?? 0),
+      oldestUnpublishedSeconds: row?.oldest_seconds === null ? null : Number(row?.oldest_seconds),
+      oldestRunningSeconds:
+        row?.oldest_running_seconds == null ? null : Number(row.oldest_running_seconds),
+    };
   }
 
   async published(id: string) {
@@ -280,6 +322,12 @@ export class Database {
       ) ||
       validated.some(
         (job) => !outcomes.some((outcome) => outcome.source === job.source && outcome.accepted > 0),
+      ) ||
+      validated.some((job) =>
+        job.sourceLinks?.some(
+          (link) =>
+            !outcomes.some((outcome) => outcome.source === link.source && outcome.accepted > 0),
+        ),
       )
     )
       throw new Conflict('Jobs do not match source outcomes');

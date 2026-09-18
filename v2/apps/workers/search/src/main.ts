@@ -14,8 +14,8 @@ const env = configuration();
 const database = new Database(env.DATABASE_URL);
 const shutdown = shutdownSignal();
 try {
-  if (env.QUEUE_TRANSPORT === 'bullmq') {
-    const queue = new BullSearchQueue(database, env.QUEUE_REDIS_URL!);
+  if (env.SEARCH_QUEUE_TRANSPORT === 'bullmq') {
+    const queue = new BullSearchQueue(database, env.SEARCH_QUEUE_REDIS_URL!);
     let worker: ReturnType<BullSearchQueue['worker']> | undefined;
     try {
       await queue.initialize();

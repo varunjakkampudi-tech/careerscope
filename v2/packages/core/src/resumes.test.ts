@@ -1,27 +1,22 @@
 import assert from 'node:assert/strict';
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import JSZip from 'jszip';
+import { DeleteQueueCommand } from '@aws-sdk/client-sqs';
 import { Database } from './database.js';
 import { Conflict } from './errors.js';
 import { ResumeUploadCoordinator, ResumeUploadRepository, resumeParseHandler } from './resumes.js';
-import { PrivateResumeStorage, maximumResumeBytes } from './storage.js';
-import {
-  CreateBucketCommand,
-  DeleteBucketCommand,
-  DeleteObjectCommand,
-  ListObjectVersionsCommand,
-  PutBucketVersioningCommand,
-  S3Client,
-} from '@aws-sdk/client-s3';
-import { localEndpoint } from './queue.js';
-import JSZip from 'jszip';
-import { parseResumeIsolated } from '../dist/resume-parser.js';
+import { maximumResumeBytes } from './storage.js';
+import { PrivateFileResumeStorage } from './file-storage.js';
 import { commandSchema } from './commands.js';
-import { publishPending } from './dispatch.js';
 import { consumeMessage, publishPending } from './dispatch.js';
-import { DeleteQueueCommand } from '@aws-sdk/client-sqs';
 import { localEndpoint, LocalQueue } from './queue.js';
+import { parseResumeIsolated } from '../dist/resume-parser.js';
 
 test('resume reservations are owner-scoped and queue exactly one durable parse command atomically', async () => {
   const configured = process.env.DATABASE_URL;
@@ -37,7 +32,7 @@ test('resume reservations are owner-scoped and queue exactly one durable parse c
   const metadata = { sha256: 'a'.repeat(64), bytes: 100, contentType: 'application/pdf' };
   const bucket = 'synthetic-resumes';
   try {
-    const migrationsFolder = new URL('../../../migrations', import.meta.url).pathname;
+    const migrationsFolder = fileURLToPath(new URL('../../../migrations', import.meta.url));
     await migrate(database.db, { migrationsFolder });
     await migrate(database.db, { migrationsFolder });
     const ownerId = randomUUID();
@@ -81,6 +76,80 @@ test('resume reservations are owner-scoped and queue exactly one durable parse c
       uploads.reserve(ownerId, 'same-upload-key', 'another-bucket', metadata),
       Conflict,
     );
+    const cancelled = await uploads.reserve(ownerId, 'cancel-before-write', bucket, metadata);
+    let cleanups = 0;
+    assert.equal(
+      await uploads.cancelUpload(otherOwner, cancelled.id, bucket, async () => {
+        cleanups += 1;
+      }),
+      null,
+    );
+    await assert.rejects(
+      uploads.cancelUpload(ownerId, cancelled.id, 'another-bucket', async () => {
+        cleanups += 1;
+      }),
+      Conflict,
+    );
+    assert.equal(cleanups, 0);
+    let releaseCleanup!: () => void;
+    let enteredCleanup!: () => void;
+    const cleanupStarted = new Promise<void>((resolve) => {
+      enteredCleanup = resolve;
+    });
+    const cleanupRelease = new Promise<void>((resolve) => {
+      releaseCleanup = resolve;
+    });
+    const cancelling = uploads.cancelUpload(ownerId, cancelled.id, bucket, async () => {
+      enteredCleanup();
+      await cleanupRelease;
+      throw new Error('synthetic cleanup interrupted');
+    });
+    const failedCleanup = assert.rejects(cancelling, /synthetic cleanup interrupted/);
+    await cleanupStarted;
+    assert.equal((await uploads.get(ownerId, cancelled.id))?.status, 'cancelling');
+    const unlocked = await database.pool.connect();
+    try {
+      await unlocked.query('BEGIN');
+      await unlocked.query('SELECT id FROM resume_uploads WHERE id = $1 FOR UPDATE NOWAIT', [
+        cancelled.id,
+      ]);
+      await unlocked.query('ROLLBACK');
+    } finally {
+      unlocked.release();
+    }
+    await assert.rejects(
+      uploads.queueStoredUpload(ownerId, cancelled.id, 'late-version'),
+      Conflict,
+    );
+    releaseCleanup();
+    await failedCleanup;
+    assert.equal((await uploads.get(ownerId, cancelled.id))?.status, 'cancelling');
+    assert.equal(
+      (
+        await uploads.cancelUpload(ownerId, cancelled.id, bucket, async () => {
+          cleanups += 1;
+        })
+      )?.status,
+      'cancelled',
+    );
+    assert.equal(
+      (
+        await uploads.cancelUpload(ownerId, cancelled.id, bucket, async () => {
+          cleanups += 1;
+        })
+      )?.status,
+      'cancelled',
+    );
+    assert.equal(cleanups, 1);
+    await assert.rejects(
+      uploads.queueStoredUpload(ownerId, cancelled.id, 'late-version'),
+      Conflict,
+    );
+    assert.equal(
+      (await uploads.reserve(ownerId, 'cancel-before-write', bucket, metadata)).status,
+      'cancelled',
+    );
+    assert.equal((await database.unpublished()).length, 0);
     assert.equal(await uploads.get(otherOwner, reserved.id), null);
     assert.equal(await uploads.queueStoredUpload(otherOwner, reserved.id, 'v1'), null);
     assert.notEqual(
@@ -106,6 +175,13 @@ test('resume reservations are owner-scoped and queue exactly one durable parse c
       queued.every((record) => record?.status === 'queued' && record.objectVersion === 'v1'),
     );
     assert.equal((await database.unpublished()).length, 1);
+    await assert.rejects(
+      uploads.cancelUpload(ownerId, reserved.id, bucket, async () => {
+        cleanups += 1;
+      }),
+      Conflict,
+    );
+    assert.equal(cleanups, 1);
     const command = commandSchema.parse(await database.command(queued[0]!.commandId!));
     assert.equal(command.type, 'resume.parse');
     assert.equal(command.ownerId, ownerId);
@@ -178,31 +254,15 @@ test('resume reservations are owner-scoped and queue exactly one durable parse c
         .count,
       0,
     );
+    const objectDirectory = await mkdtemp(join(tmpdir(), 'careerscope-coordinator-'));
     const endpoint = localEndpoint(process.env.LOCAL_AWS_ENDPOINT!);
-    const objectBucket = `test-coordinator-${randomUUID()}`;
-    const client = new S3Client({
-      endpoint,
-      region: 'us-east-1',
-      forcePathStyle: true,
-      credentials: { accessKeyId: 'local', secretAccessKey: 'local-synthetic-secret' },
-      maxAttempts: 1,
-    });
     const options = () => ({ abortSignal: AbortSignal.timeout(10_000) });
-    const storage = new PrivateResumeStorage({
-      S3_ENDPOINT: endpoint,
-      S3_BUCKET: objectBucket,
-      S3_ACCESS_KEY: 'local',
-      S3_SECRET_KEY: 'local-synthetic-secret',
+    const storage = new PrivateFileResumeStorage({
+      directory: objectDirectory,
+      encryptionKey: randomBytes(32).toString('hex'),
     });
-    await client.send(new CreateBucketCommand({ Bucket: objectBucket }), options());
+    const objectBucket = storage.bucket;
     try {
-      await client.send(
-        new PutBucketVersioningCommand({
-          Bucket: objectBucket,
-          VersioningConfiguration: { Status: 'Enabled' },
-        }),
-        options(),
-      );
       const coordinator = new ResumeUploadCoordinator(uploads, storage);
       const data = Buffer.from('%PDF-1.7\nSynthetic quarantine fixture, not a parser fixture');
       const before = (
@@ -246,11 +306,7 @@ test('resume reservations are owner-scoped and queue exactly one durable parse c
         Conflict,
       );
       assert.equal(await coordinator.reconcile(otherOwner, completed.id), null);
-      const versions = await client.send(
-        new ListObjectVersionsCommand({ Bucket: objectBucket }),
-        options(),
-      );
-      assert.equal(versions.Versions?.length, 1);
+      assert.equal((await storage.inventory()).objects, 1);
 
       let puts = 0;
       const lostResponse = new ResumeUploadCoordinator(uploads, {
@@ -261,7 +317,7 @@ test('resume reservations are owner-scoped and queue exactly one durable parse c
         async put(object, bytes, signal) {
           puts += 1;
           await storage.put(object, bytes, signal);
-          throw new Error('Synthetic response lost after S3 committed');
+          throw new Error('Synthetic response lost after the object was committed');
         },
       });
       assert.equal(
@@ -305,11 +361,11 @@ test('resume reservations are owner-scoped and queue exactly one durable parse c
         metadata,
       );
       await assert.rejects(coordinator.reconcile(ownerId, mismatched.id), Conflict);
-      const after = await client.send(
-        new ListObjectVersionsCommand({ Bucket: objectBucket }),
-        options(),
+      assert.equal(
+        (await storage.inventory()).objects,
+        3,
+        'Recovery must not create another object version',
       );
-      assert.equal(after.Versions?.length, 3, 'Recovery must not create another object version');
       const parseCommands = await database.pool.query(
         "SELECT count(*)::int AS count FROM outbox_events WHERE command->>'aggregateId' = ANY($1::text[])",
         [[completed.id, resumed!.id, absent.id]],
@@ -529,25 +585,7 @@ test('resume reservations are owner-scoped and queue exactly one durable parse c
       }
     } finally {
       storage.close();
-      try {
-        const remaining = await client.send(
-          new ListObjectVersionsCommand({ Bucket: objectBucket }),
-          options(),
-        );
-        for (const entry of [...(remaining.Versions ?? []), ...(remaining.DeleteMarkers ?? [])]) {
-          await client.send(
-            new DeleteObjectCommand({
-              Bucket: objectBucket,
-              Key: entry.Key,
-              VersionId: entry.VersionId,
-            }),
-            options(),
-          );
-        }
-        await client.send(new DeleteBucketCommand({ Bucket: objectBucket }), options());
-      } finally {
-        client.destroy();
-      }
+      await rm(objectDirectory, { recursive: true, force: true });
     }
   } finally {
     await database.close();

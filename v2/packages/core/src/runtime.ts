@@ -13,29 +13,53 @@ function localUrl(value: string, protocols: string[]) {
   return value;
 }
 
+// The browser-facing origin is the one value that must be public in a deployed
+// installation: it is compared against the Origin header and decides whether the
+// session cookie carries Secure. Anything that is not loopback must be https, so
+// the cookie can never silently lose Secure behind a real hostname.
+function appOrigin(value: string) {
+  const url = new URL(value);
+  if (!['http:', 'https:'].includes(url.protocol)) throw new Error('APP_ORIGIN must be http(s)');
+  if (url.origin !== value) throw new Error('APP_ORIGIN must be an origin');
+  const loopback = ['127.0.0.1', 'localhost'].includes(url.hostname);
+  if (!loopback && url.protocol !== 'https:') {
+    throw new Error('A public APP_ORIGIN must use https');
+  }
+  return value;
+}
+
 export function configuration(source: NodeJS.ProcessEnv = process.env) {
+  // The alternative transport only ever covered the search queue: the adapter is
+  // BullSearchQueue and the files worker dispatches resume parsing over SQS
+  // unconditionally. The old QUEUE_TRANSPORT name claimed more than that, so it
+  // is rejected outright rather than silently reinterpreted.
+  if (source.QUEUE_TRANSPORT !== undefined || source.QUEUE_REDIS_URL !== undefined) {
+    throw new Error(
+      'QUEUE_TRANSPORT/QUEUE_REDIS_URL were renamed to SEARCH_QUEUE_TRANSPORT/SEARCH_QUEUE_REDIS_URL. ' +
+        'They select the search queue transport only; resume parsing always uses LOCAL_AWS_ENDPOINT.',
+    );
+  }
   const env = z
     .object({
       DATABASE_URL: z.string().min(1),
       REDIS_URL: z.string().min(1),
       LOCAL_AWS_ENDPOINT: z.string().min(1),
       APP_ORIGIN: z.string().min(1),
-      QUEUE_TRANSPORT: z.enum(['sqs', 'bullmq']).default('sqs'),
-      QUEUE_REDIS_URL: z.string().min(1).optional(),
+      REGISTRATION_ENABLED: z.enum(['true', 'false']).default('false'),
+      SEARCH_QUEUE_TRANSPORT: z.enum(['sqs', 'bullmq']).default('sqs'),
+      SEARCH_QUEUE_REDIS_URL: z.string().min(1).optional(),
     })
     .parse(source);
   localUrl(env.DATABASE_URL, ['postgres:', 'postgresql:']);
   localUrl(env.REDIS_URL, ['redis:']);
   localEndpoint(env.LOCAL_AWS_ENDPOINT);
-  if (env.QUEUE_TRANSPORT === 'bullmq') {
-    if (!env.QUEUE_REDIS_URL || env.QUEUE_REDIS_URL === env.REDIS_URL) {
-      throw new Error('BullMQ requires a separate QUEUE_REDIS_URL');
+  if (env.SEARCH_QUEUE_TRANSPORT === 'bullmq') {
+    if (!env.SEARCH_QUEUE_REDIS_URL || env.SEARCH_QUEUE_REDIS_URL === env.REDIS_URL) {
+      throw new Error('BullMQ requires a separate SEARCH_QUEUE_REDIS_URL');
     }
-    localUrl(env.QUEUE_REDIS_URL, ['redis:']);
+    localUrl(env.SEARCH_QUEUE_REDIS_URL, ['redis:']);
   }
-  const origin = new URL(env.APP_ORIGIN);
-  localUrl(env.APP_ORIGIN, ['http:', 'https:']);
-  if (origin.origin !== env.APP_ORIGIN) throw new Error('APP_ORIGIN must be an origin');
+  appOrigin(env.APP_ORIGIN);
   return env;
 }
 

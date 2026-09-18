@@ -21,8 +21,90 @@ alternative to benchmark. No model is enabled for application inference.
 Latest September 15 verification: 31 V2 tests, static/build/format gates, isolated queue
 restart/AOF restore, and Chromium/Firefox/WebKit workflows at 320/390/1440px passed.
 The root regression suite has 1,043 passing tests. These checks cover implemented
-workflows only, not the missing resume/AI/recovery/cutover gates. The current Fastify
-request-logging option emits a deprecation warning for its future major release.
+workflows only, not the missing resume/AI/recovery/cutover gates. September 17:
+the Fastify logging deprecation is resolved without enabling request-body logging.
+The current multi-user product requirements and release gates are tracked in
+[PRODUCT-ACCEPTANCE.md](PRODUCT-ACCEPTANCE.md); this is not a production release.
+
+## Accounts And Database Recovery
+
+Registration is opt-in through `REGISTRATION_ENABLED=true` (default `false`).
+The Windows local launcher explicitly enables it; open http://localhost:5280 and
+select **Create an account**. Other runtimes must set the flag deliberately.
+The existing `setup:owner` command remains available and refuses existing users.
+V1 accounts and data are not imported or shared with V2.
+
+Signup normalizes email, uses Argon2id, relies on database uniqueness under
+concurrent requests, and never changes an existing account. New and duplicate
+emails receive the same 202 response without an automatic session. Login is
+separate. Origin checks, IP signup throttling, IP/account login throttling,
+HTTP-only SameSite cookies and CSRF enforcement remain required. Redis failure
+rejects signup rather than bypassing throttling. The form does not place passwords
+in query-cache mutation variables, URLs or browser storage. These local accounts
+do not yet verify email ownership or support password recovery, MFA or deletion;
+do not enable public registration as a production service.
+
+`npm --prefix v2 run test:database-recovery` exercises real `pg_dump`/`pg_restore`
+using a unique synthetic source database and a fresh temporary PostgreSQL 17.6
+container. It compares all 13 current tables, verifies session/login, profile,
+saved notes/history, owner isolation and claimable pending outbox work. The dump
+stays in memory; temporary resources are removed. Docker must have access to the
+local V2 PostgreSQL container (`V2_POSTGRES_CONTAINER` defaults to
+`careerscope-v2-postgres-1`). The check also restores encrypted filesystem objects,
+compares exact versions and parsed results, and reparses the restored document.
+The synthetic snapshot is quiesced; this is not an online/off-host backup system,
+key-loss recovery, RPO/RTO measurement or complete queue replay.
+
+## Private Resume Workflow (September 17)
+
+The user explicitly approved private filesystem storage for this single-host app,
+superseding the earlier S3-only activation dependency. S3 remains an optional
+adapter; its failed candidates and unchanged acceptance contract remain documented
+below as historical evaluation, not blockers for the approved filesystem route.
+
+Configure both `RESUME_STORAGE_DIRECTORY` and `RESUME_STORAGE_KEY_FILE` as absolute
+paths to enable uploads. The Windows launcher now supplies an independent ignored
+directory and a 64-character hex key file created with cryptographic randomness.
+Its directory, key and object-folder ACLs were verified to allow only the current
+Windows user and SYSTEM. Other installations must provision private permissions;
+POSIX mode checks are enforced, but POSIX runtime acceptance has not been performed.
+Never regenerate the key for existing objects. Filesystem encryption does not
+protect a compromised application account or encrypt parsed text inside PostgreSQL.
+
+The adapter uses AES-256-GCM with unique nonces, authenticated owner/object/type/
+size/hash/version metadata, exclusive temporary writes, file fsync and atomic
+hard-link publication. It rejects traversal, linked roots, wrong keys/versions,
+changed lengths and tampered ciphertext. It never serves files from a public URL.
+Version identity is immutable per object, not a general-purpose versioned filesystem.
+Directory fsync is POSIX-only; Windows power-loss durability remains unverified.
+
+In **Candidate Profile**, upload PDF/DOCX (5 MiB maximum), wait for queued parsing,
+review extracted text and choose **Review profile draft**. Edit the proposed fields
+and explicitly **Save Profile**. Subsequent searches capture that revision and
+matching skills. Parsed data never silently replaces the profile. Settled resumes
+can be deleted with confirmation; saved profile fields remain. Deletion removes
+the encrypted file and parsed text/metadata, retaining ID-only execution records.
+
+The API checks session, origin, CSRF, idempotency and rate limits. Reservations are
+serialized per account and limited to 50 objects/100 MiB. Both API and UI enforce
+the byte bound; no client filename/checksum determines storage identity. A separate
+`start:files` process uses the existing SQS transport, ID-only outbox commands,
+leases/fencing, finite retries and isolated parser. The supervisor starts five
+processes; without storage configuration the files process stays disabled.
+`FILES_QUEUE_NAME` exists for isolated runtime tests; normal use defaults to
+`careerscope-v2-files`. Search transport selection does not switch the files queue.
+
+Verified with synthetic data: encrypted read/restart/restore, eight-writer race,
+wrong-key/tamper/ownership/version denial, quota races, deletion rollback/retry,
+real API and separate files process, and Chromium/Firefox/WebKit signup/upload/
+review/profile-save/matching-snapshot/deletion at 320/390/1440px. No real resume
+was uploaded or owner account created by these tests. Current V2 suite: 34 tests.
+
+Remaining gates: interrupted-upload/orphan reconciliation and deletion before
+parsing settles, global disk/admission limits, key rotation and independent backup,
+full DB/file/queue outage recovery, graceful files-process runtime acceptance,
+malicious-document threat review, email verification/recovery and production TLS.
+Do not present this local workflow as a public production release.
 
 ## Implemented
 
@@ -36,13 +118,15 @@ request-logging option emits a deprecation warning for its future major release.
 - Local SQS-compatible queues and dead-letter queues. Send-before-mark publication,
   durable duplicate detection, bounded jitter, renewable leases, fenced result
   commits, retry exhaustion and dead-letter reconciliation.
-- Remote OK and Himalayas collection reuse the existing repository providers and normalization
+- Remote OK, Himalayas, Greenhouse, Lever and Workable collection reuse existing providers and normalization
   packages. Source warnings/errors produce failed source outcomes, retaining
-  validated jobs; cancellation still aborts the attempt. Select either or both;
+  validated jobs; cancellation still aborts the attempt. Select any supported subset;
   duplicate/unknown source selections are rejected. Shared deduplication keeps the
   richer normalized record before deterministic matching. Limits: 100 candidates
-  per source, 100 final results, 30-day window, 25 seconds per source and a
-  60-second combined deadline.
+  per source, 100 final results, 30-day window, up to 25 seconds per source within
+  a shared 55-second acquisition budget and a 60-second combined deadline. ATSs use
+  curated company boards, with at most 20 description fetches per source. This is
+  not exhaustive ATS coverage. Failed detail requests retain low-confidence listings.
   Himalayas scans at most 20 pages (2,000 recent postings), not its full inventory.
   Source failures persist a `partial` run when validated jobs or a successful source
   remain; all failed sources without retained jobs persist a `failed` run. Outcomes
@@ -50,7 +134,10 @@ request-logging option emits a deprecation warning for its future major release.
   distinction; targeted retry creates a new run. Detailed live source progress
   remains pending. Remotive is not enabled until
   a restart-safe shared fetch budget/cache can honor its low request allowance.
-  The UI preserves selected sources per run and links each result to its source.
+  The UI preserves selected sources per run and retains all validated source links
+  for merged duplicates in search, export and saved leads. Old records use their
+  existing primary link. LinkedIn, Naukri and Indeed remain disabled pending supported
+  acquisition access; auto-apply is on hold. See CS-P0-06 in the acceptance ledger.
   September 14 live Himalayas smoke returned four jobs in about seven seconds;
   it used a generic query without a profile and did not persist jobs.
 - Real PostgreSQL, Redis and LocalStack integration checks plus browser checks.
@@ -118,15 +205,16 @@ setup before owner use. Nginx/TLS, retention and mixed-load acceptance remain pe
 
 ## Private Storage Foundation
 
-The user selected upstream-only runtimes on September15. Patched RustFS evaluation
-is not authorized; current rc6/SeaweedFS4.47 remain rejected under the unchanged
-contract. Storage-dependent owner activation remains blocked.
+Resume objects are stored by `PrivateFileResumeStorage`: authenticated AES-256-GCM
+envelopes on a private local directory, with immutable version identity, exclusive
+publication and exact-version integrity reads. The API process is the only writer.
 
-`PrivateResumeStorage` is a tested S3-compatible adapter, not an enabled upload
-feature. It requires an explicitly configured loopback endpoint and private
-credentials (`S3_ENDPOINT`, `S3_BUCKET`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`). Complete
-legacy `MINIO_*` configurations remain compatible; partial canonical configuration
-and conflicting aliases are rejected rather than mixing endpoints and credentials.
+An S3-compatible adapter was previously carried alongside it. Nothing in the
+application, workers or scripts ever used it, so it was removed with its tests and
+the `@aws-sdk/client-s3` dependency rather than maintained as unused surface. The
+decision it represented is recorded here: object storage remains a viable future
+option, but it would be reintroduced only when a concrete deployment needs it, and
+only against the `ResumeObjectStore` contract in `packages/core/src/storage.ts`.
 No new dependency, bucket, secret or production configuration
 is installed automatically. Keep credentials in ignored owner-only files.
 
@@ -164,6 +252,14 @@ nonempty-bucket deletion disabled; RustFS
 Pinned digests and selection requirements are in [ARCHITECTURE.md](ARCHITECTURE.md#storage-acceptance-blocker-2026-09-15).
 Do not weaken either guard to make a candidate pass. Persistence/restart and isolated
 version-preserving backup/restore remain unverified for both candidates.
+
+September 17 Windows/Linux-amd64 evaluation of upstream RustFS 1.0.0, digest
+`sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff`,
+also failed the unchanged `Resume bucket must be private` readiness assertion.
+Versioning initialization and final synthetic bucket/version cleanup succeeded.
+The isolated container was removed; no owner files or credentials were used.
+The exact cause for 1.0.0 was not established; the rc6 source diagnosis must not
+be assumed to apply. No replacement storage was activated.
 
 The existing integration test can target a disposable local candidate using
 `S3_CONTRACT_ENDPOINT`, `S3_CONTRACT_ACCESS_KEY` and `S3_CONTRACT_SECRET_KEY`.
@@ -399,6 +495,47 @@ The S3 service is available in the emulator, but **resume/object workflows are n
 implemented**. No real AWS credentials are used. Local endpoint validation rejects
 non-loopback hosts. Nothing here provisions AWS, publishes Pages or migrates v1 data.
 
+## Production Deployment
+
+The stack runs on a single Ubuntu host behind Caddy and is served at
+`https://careerscope.tech`. Everything below lives in `infra/v3`.
+
+```bash
+# 1. Prepare the host: Docker, unattended security upgrades and an nftables
+#    ruleset that drops everything except 22/80/443. Idempotent.
+bash provision-host.sh
+
+# 2. Ship the build context, then build both images.
+DOCKER_BUILDKIT=1 docker build -f infra/v3/Dockerfile --target runtime -t careerscope:v3 .
+DOCKER_BUILDKIT=1 docker build -f infra/v3/Dockerfile --target proxy   -t careerscope:v3-proxy .
+
+# 3. Start the stack. The database password is generated on the host on first
+#    run and never leaves it. Pass `internal` instead of an email to use a
+#    self-signed certificate while testing.
+bash deploy.sh careerscope.tech operator@example.com
+
+# 4. Create the owner account interactively. Registration stays disabled.
+docker exec -it careerscope-api-1 node /app/v2/scripts/setup-owner.ts
+```
+
+Only the proxy publishes ports. Every other service joins the proxy network
+namespace and binds loopback, so Postgres, Redis, the queue, the API and the web
+server have no address reachable from outside the host. Issued certificates live
+on a persistent volume, so restarts do not re-request them.
+
+Verification scripts, all of which run against the live origin:
+
+| Script                           | What it proves                                                              |
+| -------------------------------- | --------------------------------------------------------------------------- |
+| `check-live-origin.sh <origin>`  | Session cookie attributes, CSRF origin rejection, forwarded-header handling |
+| `check-live-flow.mjs <origin>`   | Full workspace flow from registration to session revocation                 |
+| `check-tls.ts`                   | TLS topology and Host handling                                              |
+| `purge-verification-accounts.sh` | Removes the throwaway `verify-*` accounts the checks create                 |
+
+`check-live-flow.mjs` needs registration temporarily enabled:
+`REGISTRATION_ENABLED=true bash deploy.sh …`. Turn it off again afterwards and
+run the purge script.
+
 ## Optional BullMQ Transport
 
 Start the separate queue service without restarting other services:
@@ -417,9 +554,21 @@ After database/owner setup and a deliberate transport cutover, use these setting
 in **both** publisher and worker terminals before their existing start commands:
 
 ```sh
-export QUEUE_TRANSPORT=bullmq
-export QUEUE_REDIS_URL=redis://127.0.0.1:56480
+export SEARCH_QUEUE_TRANSPORT=bullmq
+export SEARCH_QUEUE_REDIS_URL=redis://127.0.0.1:56480
 ```
+
+`SEARCH_QUEUE_TRANSPORT` selects the transport for the **search** queue only. Resume
+parsing is always dispatched over the loopback SQS endpoint, on both the
+publisher and the files worker, so `LOCAL_AWS_ENDPOINT` stays required and the
+emulator still has to be running in BullMQ mode. The deployed stack runs the SQS
+transport for both queues; that is the path the crash matrix and queue
+reconciliation evidence was produced against.
+
+The queue is a delivery hint, not a durability boundary. The transactional outbox
+in PostgreSQL is the source of truth, which is what makes the emulator's
+ephemeral state acceptable: work survives queue loss and is republished. The
+emulator itself is not durable and must not be described as such.
 
 No private environment file is changed automatically. Stop old SQS publishers and
 consumers, quiesce submissions and reconcile outstanding commands before switching.
@@ -459,6 +608,34 @@ rendering and score ordering, matching evidence, profile persistence and revisio
 conflicts, filtering, asynchronous submission, cancellation and logout. Restart the preview after
 rebuilding so it serves the current asset manifest. The check does not call live
 providers or exercise real application submission. Screenshots are ignored.
+
+## Windows Verification
+
+On September 17, 2026, the implemented V2 stack passed verification on Windows
+with Node 26.8.1 and Docker Desktop's Linux engine. Filesystem paths in migration,
+integration and browser scripts now use `fileURLToPath`. The queue runtime test
+uses a Windows-only IPC bridge to exercise existing graceful shutdown handlers;
+Unix still uses SIGTERM, and clean-exit assertions remain required.
+
+All 31 V2 tests, the isolated queue restart/AOF restore test, typecheck, lint,
+production build and formatting passed. Chromium, Firefox and WebKit passed
+search/export/cancellation, saved-lead and profile workflows at 320/390/1440px.
+The root gates also passed, including 1,047 tests. The production dependency audit
+reported no vulnerabilities; four moderate development-tool findings remain in
+the `drizzle-kit` dependency chain. No forced dependency downgrade was applied.
+
+This host reserves TCP port 55433, so an ignored local Compose override maps
+PostgreSQL to loopback port 5435. A private launcher supplies the matching database
+URL without modifying the existing `.env`. Migrations were applied to the fresh
+V2 database, not V1. Web, API, publisher and worker run as native Node processes;
+PostgreSQL, both Redis services and LocalStack run in dedicated Docker containers.
+The live web proxy returned health 200 and unauthenticated search 401.
+
+Local browser registration is now available through the explicit launcher flag;
+interactive owner setup remains an alternative before any accounts exist. No V1 data was
+imported, real searches submitted, or upload/AI/application workflows activated.
+This acceptance covers the implemented alpha, not full V1 parity or the pending
+storage, files-worker, AI-worker, recovery and release requirements above.
 
 ## Source Layout
 

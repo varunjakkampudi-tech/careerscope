@@ -30,6 +30,10 @@ export const collectedJobSchema = z
     description: z.string().max(100_000),
     source: searchSourceSchema,
     sourceUrl: publicLink,
+    sourceLinks: z
+      .array(z.object({ source: searchSourceSchema, url: publicLink }).strict())
+      .max(500)
+      .optional(),
     applyUrl: publicLink,
     postedAt: z.string().datetime().nullable(),
     match,
@@ -54,7 +58,7 @@ export const sourceOutcomeSchema = z
 export const sourceOutcomesSchema = z
   .array(sourceOutcomeSchema)
   .min(1)
-  .max(2)
+  .max(5)
   .refine((values) => new Set(values.map((value) => value.source)).size === values.length);
 
 export type SourceOutcome = z.infer<typeof sourceOutcomeSchema>;

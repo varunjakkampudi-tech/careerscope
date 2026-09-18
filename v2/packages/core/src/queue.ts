@@ -131,6 +131,30 @@ export class LocalQueue {
     );
   }
 
+  /**
+   * Queue-native backlog. Database counters alone cannot see work that was
+   * published but never delivered, retried or dead-lettered.
+   */
+  async depth() {
+    const count = async (url: string) => {
+      const result = await this.client.send(
+        new GetQueueAttributesCommand({
+          QueueUrl: url,
+          AttributeNames: ['ApproximateNumberOfMessages', 'ApproximateNumberOfMessagesNotVisible'],
+        }),
+        { abortSignal: AbortSignal.timeout(25_000) },
+      );
+      return {
+        ready: Number(result.Attributes?.ApproximateNumberOfMessages ?? 0),
+        inFlight: Number(result.Attributes?.ApproximateNumberOfMessagesNotVisible ?? 0),
+      };
+    };
+    const main = await count(this.ready());
+    if (!this.deadLetterUrl) throw new Error('Queue is not initialized');
+    const dead = await count(this.deadLetterUrl);
+    return { ...main, deadLetter: dead.ready + dead.inFlight };
+  }
+
   close() {
     this.client.destroy();
   }

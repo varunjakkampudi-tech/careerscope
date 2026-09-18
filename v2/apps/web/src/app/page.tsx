@@ -1,13 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import ProfileEditor from '../components/profile-editor';
+import AccountForm from '../components/account-form';
 import SavedLeads, { SaveJob } from '../components/saved-leads';
 import MatchEvidence from '../components/match-evidence';
 import type { CollectedJob, CreateSearch, SourceOutcome } from '@careerscope/core';
 import { api, ApiError } from '../lib/api';
 
-import { useDeferredValue, useEffect, useState, type FormEvent } from 'react';
+import { lazy, Suspense, useDeferredValue, useEffect, useState, type FormEvent } from 'react';
 import {
   QueryClient,
   QueryClientProvider,
@@ -19,20 +19,51 @@ import {
   BriefcaseBusiness,
   Bookmark,
   ChevronDown,
+  ClipboardCheck,
   Download,
   ExternalLink,
   History,
+  LayoutDashboard,
+  Library,
   LoaderCircle,
   LogOut,
   MapPin,
   RefreshCw,
   Search,
+  ShieldCheck,
   Square,
   UserRound,
 } from 'lucide-react';
 
-type Session = { authenticated: boolean; csrf?: string };
-const sourceNames = { remoteok: 'Remote OK', himalayas: 'Himalayas' };
+const ProfileEditor = lazy(() => import('../components/profile-editor'));
+const AccountSecurity = lazy(() => import('../components/account-security'));
+const PreparationPanel = lazy(() => import('../components/preparation-panel'));
+const careerResources = [
+  { name: 'Remote OK', category: 'Job sources', url: 'https://remoteok.com/' },
+  { name: 'Himalayas', category: 'Job sources', url: 'https://himalayas.app/jobs' },
+  { name: 'Microsoft Careers', category: 'Company careers', url: 'https://careers.microsoft.com/' },
+  {
+    name: 'Google Careers',
+    category: 'Company careers',
+    url: 'https://www.google.com/about/careers/applications/',
+  },
+  { name: 'Amazon Jobs', category: 'Company careers', url: 'https://www.amazon.jobs/' },
+  {
+    name: 'Harvard Resume Resources',
+    category: 'Preparation',
+    url: 'https://careerservices.fas.harvard.edu/channels/create-a-resume-cv-or-cover-letter/',
+  },
+  { name: 'Microsoft Learn', category: 'Learning', url: 'https://learn.microsoft.com/training/' },
+  { name: 'MDN Web Docs', category: 'Learning', url: 'https://developer.mozilla.org/' },
+];
+type Session = { authenticated: boolean; csrf?: string; registrationEnabled?: boolean };
+const sourceNames = {
+  remoteok: 'Remote OK',
+  himalayas: 'Himalayas',
+  greenhouse: 'Greenhouse',
+  lever: 'Lever',
+  workable: 'Workable',
+};
 type Run = { id: string; status: string; createdAt: string; request: { query: string } };
 type Job = {
   id: string;
@@ -48,7 +79,11 @@ type Detail = {
 };
 function Workspace() {
   const cache = useQueryClient();
-  const [view, setView] = useState<'search' | 'profile' | 'leads'>('search');
+  const [view, setView] = useState<
+    'search' | 'profile' | 'leads' | 'security' | 'dashboard' | 'links' | 'preparation'
+  >('search');
+  const [resourceFilter, setResourceFilter] = useState('');
+  const [accountNotice, setAccountNotice] = useState('');
   const [leadId, setLeadId] = useState<string | null>(null);
   const [leadDirty, setLeadDirty] = useState(false);
   const [profileDirty, setProfileDirty] = useState(false);
@@ -62,6 +97,7 @@ function Workspace() {
   const [selected, setSelected] = useState<string | null>(null);
   const [filter, setFilter] = useState('');
   const [sources, setSources] = useState<CreateSearch['sources']>(['remoteok']);
+  const [useProfileTitles, setUseProfileTitles] = useState(false);
   const filtered = useDeferredValue(filter).toLowerCase();
   const session = useQuery({
     queryKey: ['session'],
@@ -85,15 +121,6 @@ function Workspace() {
       ['completed', 'partial', 'failed', 'cancelled'].includes(query.state.data?.status ?? '')
         ? false
         : 10000,
-  });
-  const login = useMutation({
-    mutationFn: (body: { email: string; password: string }) =>
-      api('/login', { method: 'POST', body: JSON.stringify(body) }),
-    onSuccess: () => {
-      setSelected(null);
-      exportSearch.reset();
-      cache.clear();
-    },
   });
   const logout = useMutation({
     mutationFn: () =>
@@ -165,6 +192,11 @@ function Workspace() {
       void cache.invalidateQueries({ queryKey: ['searches'] });
     };
     source.addEventListener('progress', refresh);
+    // The server replayed from the start because our cursor aged out of retention.
+    source.addEventListener('reset', () => {
+      cache.removeQueries({ queryKey: ['searches', selectedId] });
+      refresh();
+    });
     source.addEventListener('settled', () => {
       source.close();
       refresh();
@@ -178,16 +210,15 @@ function Workspace() {
     });
     return () => source.close();
   }, [cache, selectedId, streamActive]);
-  function signIn(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    login.mutate({ email: String(data.get('email')), password: String(data.get('password')) });
-    event.currentTarget.reset();
-  }
   function startSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    if (sources.length) search.mutate({ query: String(data.get('query')), sources });
+    if (sources.length)
+      search.mutate({
+        query: useProfileTitles ? 'Saved target roles' : String(data.get('query')),
+        sources,
+        ...(useProfileTitles ? { useProfileTitles: true } : {}),
+      });
   }
   const jobs =
     detail.data?.jobs.filter(({ data }) =>
@@ -213,6 +244,15 @@ function Workspace() {
         </Link>
         {authenticated && (
           <div className="header-actions">
+            <button
+              className="icon-button"
+              type="button"
+              onClick={() => changeView('security')}
+              title="Account security"
+              aria-label="Account security"
+            >
+              <ShieldCheck size={19} />
+            </button>
             <button
               className="icon-button"
               type="button"
@@ -242,6 +282,30 @@ function Workspace() {
         )}
       </header>
       <main id="workspace-content" tabIndex={-1}>
+        {authenticated && (
+          <nav className="workspace-nav" aria-label="Career workspace">
+            {(
+              [
+                ['dashboard', 'Dashboard', LayoutDashboard],
+                ['search', 'Discovery', Search],
+                ['leads', 'Leads', Bookmark],
+                ['preparation', 'Preparation', ClipboardCheck],
+                ['links', 'Career Links', Library],
+                ['profile', 'Profile', UserRound],
+              ] as const
+            ).map(([target, label, Icon]) => (
+              <button
+                key={target}
+                type="button"
+                aria-current={view === target ? 'page' : undefined}
+                onClick={() => changeView(target)}
+              >
+                <Icon size={17} aria-hidden="true" />
+                {label}
+              </button>
+            ))}
+          </nav>
+        )}
         {session.isPending ? (
           <div className="state" role="status">
             <LoaderCircle className="spin" />
@@ -257,41 +321,176 @@ function Workspace() {
             </button>
           </div>
         ) : !authenticated ? (
-          <section className="login">
-            <h1>Sign in</h1>
-            <form onSubmit={signIn}>
-              <label>
-                Email
-                <input name="email" type="email" autoComplete="username" required maxLength={254} />
-              </label>
-              <label>
-                Password
-                <input
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  minLength={12}
-                  maxLength={256}
-                />
-              </label>
-              {(login.error || expired) && (
-                <p role="alert">{login.error?.message ?? 'Your session has expired.'}</p>
-              )}
-              <button className="primary" disabled={login.isPending}>
-                {login.isPending ? <LoaderCircle className="spin" size={18} /> : null}Sign in
-              </button>
-            </form>
-          </section>
-        ) : view === 'profile' ? (
-          <ProfileEditor
-            csrf={session.data?.csrf ?? ''}
-            onDirty={setProfileDirty}
-            onBack={() => {
-              setProfileDirty(false);
+          <AccountForm
+            registrationEnabled={session.data?.registrationEnabled === true}
+            expired={expired}
+            notice={accountNotice}
+            onAuthenticated={() => {
+              setSelected(null);
               setView('search');
+              setAccountNotice('');
+              exportSearch.reset();
+              cache.clear();
             }}
           />
+        ) : view === 'dashboard' ? (
+          <section className="results career-overview">
+            <p className="eyebrow">Your career workspace</p>
+            <h1>Your Next Chapter</h1>
+            <div className="overview-actions">
+              <button className="primary" onClick={() => changeView('search')}>
+                <Search size={18} />
+                Discover roles
+              </button>
+              <button onClick={() => changeView('leads')}>
+                <Bookmark size={18} />
+                Review saved leads
+              </button>
+              <button onClick={() => changeView('profile')}>
+                <UserRound size={18} />
+                Update profile
+              </button>
+            </div>
+            <div className="overview-band">
+              <h2>Recent discovery</h2>
+              {runs.isPending && <p role="status">Loading searches...</p>}
+              {runs.error && (
+                <p role="alert">
+                  Could not load searches.{' '}
+                  <button onClick={() => runs.refetch()}>
+                    <RefreshCw size={16} />
+                    Retry
+                  </button>
+                </p>
+              )}
+              {runs.data?.items.length === 0 && <p>No searches yet.</p>}
+              <ul className="resource-list">
+                {runs.data?.items.slice(0, 5).map((run) => (
+                  <li key={run.id}>
+                    <button
+                      onClick={() => {
+                        setSelected(run.id);
+                        setFilter('');
+                        changeView('search');
+                      }}
+                    >
+                      <span>
+                        <strong>{run.request.query}</strong>
+                        <small>{new Date(run.createdAt).toLocaleDateString()}</small>
+                      </span>
+                      <span className="run-status">{run.status}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="overview-band">
+              <h2>Career resources</h2>
+              <div className="overview-actions">
+                <button
+                  onClick={() => {
+                    setResourceFilter('Preparation');
+                    changeView('links');
+                  }}
+                >
+                  <Library size={18} />
+                  Resume preparation
+                </button>
+                <button
+                  onClick={() => {
+                    setResourceFilter('Company careers');
+                    changeView('links');
+                  }}
+                >
+                  <BriefcaseBusiness size={18} />
+                  Company careers
+                </button>
+              </div>
+            </div>
+          </section>
+        ) : view === 'preparation' ? (
+          <Suspense fallback={<p role="status">Loading preparation...</p>}>
+            <PreparationPanel onProfile={() => changeView('profile')} />
+          </Suspense>
+        ) : view === 'links' ? (
+          <section className="results career-overview">
+            <p className="eyebrow">Resources</p>
+            <h1>Career Links</h1>
+            <label className="resource-filter">
+              Find resources
+              <input
+                type="search"
+                value={resourceFilter}
+                onChange={(event) => setResourceFilter(event.target.value)}
+                placeholder="Name or category"
+              />
+            </label>
+            <ul className="resource-list">
+              {careerResources
+                .filter((resource) =>
+                  `${resource.name} ${resource.category}`
+                    .toLowerCase()
+                    .includes(resourceFilter.toLowerCase()),
+                )
+                .map((resource) => (
+                  <li key={resource.url}>
+                    <a href={resource.url} target="_blank" rel="noopener noreferrer">
+                      <span>
+                        <strong>{resource.name}</strong>
+                        <small>{resource.category}</small>
+                      </span>
+                      <ExternalLink size={18} aria-hidden="true" />
+                    </a>
+                  </li>
+                ))}
+            </ul>
+            {!careerResources.some((resource) =>
+              `${resource.name} ${resource.category}`
+                .toLowerCase()
+                .includes(resourceFilter.toLowerCase()),
+            ) && <p role="status">No resources found.</p>}
+          </section>
+        ) : view === 'security' ? (
+          <Suspense
+            fallback={
+              <div className="state" role="status">
+                Loading account security
+              </div>
+            }
+          >
+            <AccountSecurity
+              csrf={session.data?.csrf ?? ''}
+              onBack={() => setView('search')}
+              onChanged={() => {
+                setSelected(null);
+                setLeadId(null);
+                setLeadDirty(false);
+                setProfileDirty(false);
+                setView('search');
+                setAccountNotice('Password changed. All sessions signed out. Sign in again.');
+                exportSearch.reset();
+                cache.clear();
+              }}
+            />
+          </Suspense>
+        ) : view === 'profile' ? (
+          <Suspense
+            fallback={
+              <div className="state" role="status">
+                <LoaderCircle className="spin" aria-hidden="true" />
+                Loading profile
+              </div>
+            }
+          >
+            <ProfileEditor
+              csrf={session.data?.csrf ?? ''}
+              onDirty={setProfileDirty}
+              onBack={() => {
+                setProfileDirty(false);
+                setView('search');
+              }}
+            />
+          </Suspense>
         ) : view === 'leads' ? (
           <SavedLeads
             csrf={session.data?.csrf ?? ''}
@@ -351,24 +550,38 @@ function Workspace() {
               </div>
               <fieldset className="source-options" disabled={search.isPending}>
                 <legend>Sources</legend>
-                {(['remoteok', 'himalayas'] as const).map((source) => (
-                  <label key={source}>
-                    <input
-                      type="checkbox"
-                      checked={sources.includes(source)}
-                      onChange={(event) =>
-                        setSources((current) =>
-                          event.target.checked
-                            ? [...current, source]
-                            : current.filter((selectedSource) => selectedSource !== source),
-                        )
-                      }
-                    />
-                    {sourceNames[source]}
-                  </label>
-                ))}
+                {(['remoteok', 'himalayas', 'greenhouse', 'lever', 'workable'] as const).map(
+                  (source) => (
+                    <label key={source}>
+                      <input
+                        type="checkbox"
+                        checked={sources.includes(source)}
+                        onChange={(event) =>
+                          setSources((current) =>
+                            event.target.checked
+                              ? [...current, source]
+                              : current.filter((selectedSource) => selectedSource !== source),
+                          )
+                        }
+                      />
+                      {sourceNames[source]}
+                    </label>
+                  ),
+                )}
               </fieldset>
               <form className="search-form" onSubmit={startSearch}>
+                <label className="discovery-mode">
+                  <span className="sr-only">Discovery mode</span>
+                  <select
+                    aria-label="Discovery mode"
+                    value={useProfileTitles ? 'profile' : 'query'}
+                    disabled={search.isPending}
+                    onChange={(event) => setUseProfileTitles(event.target.value === 'profile')}
+                  >
+                    <option value="query">Role or technology</option>
+                    <option value="profile">Saved target roles</option>
+                  </select>
+                </label>
                 <label className="search-input">
                   <Search size={19} aria-hidden="true" />
                   <span className="sr-only">Role or technology</span>
@@ -377,7 +590,8 @@ function Workspace() {
                     placeholder="Role or technology"
                     minLength={2}
                     maxLength={160}
-                    required
+                    required={!useProfileTitles}
+                    disabled={useProfileTitles || search.isPending}
                   />
                 </label>
                 <button className="primary" disabled={search.isPending || sources.length === 0}>
@@ -507,6 +721,9 @@ function Workspace() {
                         onClick={() =>
                           search.mutate({
                             query: detail.data!.request.query,
+                            ...(detail.data!.request.useProfileTitles
+                              ? { useProfileTitles: true }
+                              : {}),
                             sources: detail
                               .data!.sourceOutcomes!.filter(
                                 (outcome) => outcome.status === 'failed',
@@ -566,9 +783,19 @@ function Workspace() {
                             />
                             {data.match && <MatchEvidence match={data.match} />}
                             <div className="job-links">
-                              <a href={data.sourceUrl} target="_blank" rel="noopener noreferrer">
-                                {sourceNames[data.source]} <ExternalLink size={14} />
-                              </a>
+                              {(data.sourceLinks?.length
+                                ? data.sourceLinks
+                                : [{ source: data.source, url: data.sourceUrl }]
+                              ).map((link) => (
+                                <a
+                                  key={`${link.source}:${link.url}`}
+                                  href={link.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {sourceNames[link.source]} <ExternalLink size={14} />
+                                </a>
+                              ))}
                               <a href={data.applyUrl} target="_blank" rel="noopener noreferrer">
                                 Open Posting <ExternalLink size={14} />
                               </a>

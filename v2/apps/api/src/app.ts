@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { Readable } from 'node:stream';
 import { setTimeout as delay } from 'node:timers/promises';
-import Fastify from 'fastify';
+import Fastify, { LogController } from 'fastify';
 import cookie from '@fastify/cookie';
 import helmet from '@fastify/helmet';
 import { z } from 'zod';
@@ -14,14 +14,21 @@ import {
   sourceOutcomesSchema,
   ProfileRepository,
   ProfileRevisionConflict,
+  prepareProfile,
   LeadRepository,
   LeadRevisionConflict,
+  ResumeUploadRepository,
+  ResumeUploadCoordinator,
+  InvalidResumeUpload,
+  ResumeStorageLimit,
+  maximumResumeBytes,
+  type UploadStorage,
   type Database,
 } from '@careerscope/core';
 
 export type RateLimit = (key: string, limit: number, seconds: number) => Promise<boolean>;
 const loginSchema = z
-  .object({ email: z.string().email().max(254), password: z.string().min(12).max(256) })
+  .object({ email: z.string().trim().email().max(254), password: z.string().min(12).max(256) })
   .strict();
 const identifier = z.object({ id: z.string().uuid() });
 const idempotencyKey = z.string().regex(/^[a-zA-Z0-9_-]{8,128}$/);
@@ -43,17 +50,39 @@ declare module 'fastify' {
   }
 }
 
-export async function createApp(database: Database, origin: string, rateLimit: RateLimit) {
+export async function createApp(
+  database: Database,
+  origin: string,
+  rateLimit: RateLimit,
+  options: {
+    registrationEnabled?: boolean;
+    resumeStorage?: UploadStorage & {
+      cancelUpload?: (
+        object: import('@careerscope/core').ResumeObject,
+        signal?: AbortSignal,
+      ) => Promise<void>;
+      delete: (
+        object: import('@careerscope/core').ResumeObject,
+        version: string,
+        signal?: AbortSignal,
+      ) => Promise<void>;
+    };
+  } = {},
+) {
   const auth = new Auth(database);
   const profiles = new ProfileRepository(database);
   const leads = new LeadRepository(database);
+  const uploads = new ResumeUploadRepository(database);
+  const coordinator = options.resumeStorage
+    ? new ResumeUploadCoordinator(uploads, options.resumeStorage)
+    : undefined;
   const streams = new Map<AbortController, string>();
   const app = Fastify({
     bodyLimit: 16_384,
     requestTimeout: 15_000,
     connectionTimeout: 10_000,
     trustProxy: false,
-    disableRequestLogging: true,
+    logController: new LogController({ disableRequestLogging: true }),
     genReqId: () => randomUUID(),
     logger: {
       level: 'info',
@@ -75,7 +104,7 @@ export async function createApp(database: Database, origin: string, rateLimit: R
     if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method) && request.headers.origin !== origin) {
       throw new HttpError(403, 'Origin denied');
     }
-    if (path === '/api/login') return;
+    if (path === '/api/login' || path === '/api/register') return;
     const session = await auth.session(request.cookies[sessionCookie]);
     if (path === '/api/session') return;
     if (!session) throw new HttpError(401, 'Authentication required');
@@ -87,21 +116,38 @@ export async function createApp(database: Database, origin: string, rateLimit: R
       throw new HttpError(403, 'CSRF check failed');
     }
   });
+  // Correlation without private data: route templates only, never URLs or bodies.
+  app.addHook('onResponse', async (request, reply) => {
+    if (request.routeOptions.url === '/api/health') return;
+    const record = {
+      requestId: request.id,
+      method: request.method,
+      route: request.routeOptions.url ?? 'unmatched',
+      status: reply.statusCode,
+      durationMs: Math.round(reply.elapsedTime),
+      authenticated: request.ownerId !== null,
+    };
+    if (reply.statusCode >= 500) app.log.error(record, 'Request failed');
+    else if (reply.statusCode >= 400) app.log.warn(record, 'Request rejected');
+    else app.log.info(record, 'Request completed');
+  });
   app.setErrorHandler((error, request, reply) => {
     const frameworkStatus =
       error instanceof Error && 'statusCode' in error ? error.statusCode : undefined;
     const status =
-      error instanceof z.ZodError
+      error instanceof z.ZodError || error instanceof InvalidResumeUpload
         ? 400
-        : error instanceof Conflict
-          ? 409
-          : error instanceof HttpError
-            ? error.statusCode
-            : frameworkStatus === 413
-              ? 413
-              : frameworkStatus === 400
-                ? 400
-                : 500;
+        : error instanceof ResumeStorageLimit
+          ? 507
+          : error instanceof Conflict
+            ? 409
+            : error instanceof HttpError
+              ? error.statusCode
+              : frameworkStatus === 413
+                ? 413
+                : frameworkStatus === 400
+                  ? 400
+                  : 500;
     if (status === 500) request.log.error({ requestId: request.id }, 'Request failed');
     const messages: Record<number, string> = {
       400: 'Invalid request',
@@ -111,6 +157,7 @@ export async function createApp(database: Database, origin: string, rateLimit: R
           : 'Idempotency conflict',
       413: 'Request too large',
       500: 'Service unavailable',
+      507: 'Resume storage capacity reached',
     };
     const fallbackMessage = messages[status] ?? 'Request failed';
     const message = error instanceof HttpError ? error.message : fallbackMessage;
@@ -122,12 +169,26 @@ export async function createApp(database: Database, origin: string, rateLimit: R
   });
   app.get('/api/session', async (request) => {
     const session = await auth.session(request.cookies[sessionCookie]);
-    return session ? { authenticated: true, csrf: session.csrf } : { authenticated: false };
+    return session
+      ? { authenticated: true, csrf: session.csrf }
+      : { authenticated: false, registrationEnabled: options.registrationEnabled === true };
+  });
+  app.post('/api/register', async (request, reply) => {
+    if (options.registrationEnabled !== true) throw new HttpError(404, 'Registration unavailable');
+    const key = createHash('sha256').update(request.ip).digest('hex');
+    if (!(await rateLimit(`register:${key}`, 5, 3600)))
+      throw new HttpError(429, 'Too many attempts');
+    const { email, password } = loginSchema.parse(request.body);
+    await auth.register(email, password);
+    return reply.code(202).send({ message: 'You can now try signing in with your credentials.' });
   });
   app.post('/api/login', async (request, reply) => {
     const { email, password } = loginSchema.parse(request.body);
     const key = createHash('sha256').update(request.ip).digest('hex');
     if (!(await rateLimit(`login:${key}`, 10, 60))) throw new HttpError(429, 'Too many attempts');
+    const accountKey = createHash('sha256').update(email.toLowerCase()).digest('hex');
+    if (!(await rateLimit(`login-account:${accountKey}`, 20, 60)))
+      throw new HttpError(429, 'Too many attempts');
     const token = await auth.login(email, password, request.cookies[sessionCookie]);
     if (!token) throw new HttpError(401, 'Invalid credentials');
     reply.setCookie(sessionCookie, token, {
@@ -144,10 +205,180 @@ export async function createApp(database: Database, origin: string, rateLimit: R
     reply.clearCookie(sessionCookie, { path: '/api' });
     return { authenticated: false };
   });
+  app.post('/api/account/sessions/revoke-others', async (request, reply) => {
+    if (!(await rateLimit(`sessions:${request.ownerId!}`, 5, 3600)))
+      throw new HttpError(429, 'Too many attempts');
+    z.object({}).strict().parse(request.body);
+    if (!(await auth.revokeOtherSessions(request.ownerId!, request.cookies[sessionCookie]!)))
+      throw new HttpError(401, 'Authentication required');
+    return reply.code(204).send();
+  });
+  app.post('/api/account/password', async (request, reply) => {
+    if (!(await rateLimit(`password:${request.ownerId!}`, 5, 3600)))
+      throw new HttpError(429, 'Too many attempts');
+    const input = z
+      .object({
+        currentPassword: z.string().min(12).max(256),
+        newPassword: z.string().min(12).max(256),
+      })
+      .strict()
+      .parse(request.body);
+    const changed = await auth.changePassword(
+      request.ownerId!,
+      input.currentPassword,
+      input.newPassword,
+    );
+    if (!changed) throw new HttpError(400, 'Password could not be changed');
+    reply.clearCookie(sessionCookie, { path: '/api' });
+    return reply.code(204).send();
+  });
+  await app.register(async (resumes) => {
+    resumes.addContentTypeParser(
+      'application/octet-stream',
+      { parseAs: 'buffer', bodyLimit: maximumResumeBytes },
+      (_request, body, done) => done(null, body),
+    );
+    resumes.get('/api/resumes', async (request) => {
+      if (!coordinator) return { enabled: false, items: [] };
+      const result = await database.pool.query(
+        `SELECT upload.id, upload.bytes, upload.content_type AS "contentType",
+         upload.created_at AS "createdAt", COALESCE(result.status, upload.status) AS status
+         FROM resume_uploads upload LEFT JOIN resume_results result
+         ON result.upload_id = upload.id AND result.owner_id = upload.owner_id
+         WHERE upload.owner_id = $1 ORDER BY upload.created_at DESC, upload.id DESC LIMIT 50`,
+        [request.ownerId],
+      );
+      return {
+        enabled: true,
+        cancellationEnabled: !!options.resumeStorage?.cancelUpload,
+        items: result.rows,
+      };
+    });
+    resumes.post(
+      '/api/resumes',
+      {
+        bodyLimit: maximumResumeBytes,
+        onRequest: async (request) => {
+          if (!coordinator) throw new HttpError(503, 'Resume uploads unavailable');
+          if (!(await rateLimit(`upload:${request.ownerId!}`, 5, 3600)))
+            throw new HttpError(429, 'Too many uploads');
+        },
+      },
+      async (request, reply) => {
+        if (!Buffer.isBuffer(request.body))
+          throw new HttpError(400, 'A PDF or DOCX file is required');
+        const controller = new AbortController();
+        const abort = () => controller.abort();
+        request.raw.once('aborted', abort);
+        try {
+          const upload = await coordinator!.upload(
+            request.ownerId!,
+            idempotencyKey.parse(request.headers['idempotency-key']),
+            request.body,
+            controller.signal,
+          );
+          if (!upload) throw new HttpError(409, 'Upload changed; retry');
+          return reply.code(202).send({ id: upload.id, status: upload.status });
+        } finally {
+          request.raw.removeListener('aborted', abort);
+        }
+      },
+    );
+    resumes.get('/api/resumes/:id', async (request) => {
+      if (!coordinator) throw new HttpError(503, 'Resume uploads unavailable');
+      const { id } = identifier.parse(request.params);
+      const upload = await uploads.get(request.ownerId!, id);
+      if (!upload) throw new HttpError(404, 'Resume not found');
+      const result = await uploads.result(request.ownerId!, id);
+      return { id, status: result?.status ?? upload.status, result };
+    });
+    resumes.post('/api/resumes/:id/recover', async (request, reply) => {
+      if (!coordinator) throw new HttpError(503, 'Resume uploads unavailable');
+      if (!(await rateLimit(`resume-recover:${request.ownerId!}`, 10, 3600)))
+        throw new HttpError(429, 'Too many attempts');
+      const { id } = identifier.parse(request.params);
+      const controller = new AbortController();
+      const abort = () => {
+        if (!reply.raw.writableEnded) controller.abort();
+      };
+      reply.raw.once('close', abort);
+      try {
+        const record = await coordinator.reconcile(request.ownerId!, id, controller.signal);
+        if (!record) throw new HttpError(404, 'Resume not found');
+        return { id: record.id, status: record.status };
+      } finally {
+        reply.raw.removeListener('close', abort);
+      }
+    });
+    resumes.post('/api/resumes/:id/cancel', async (request, reply) => {
+      const storage = options.resumeStorage;
+      if (!storage?.cancelUpload) throw new HttpError(503, 'Upload cancellation unavailable');
+      if (!(await rateLimit(`resume-cancel:${request.ownerId!}`, 20, 60)))
+        throw new HttpError(429, 'Too many requests');
+      const { id } = identifier.parse(request.params);
+      if (request.body !== undefined) z.object({}).strict().parse(request.body);
+      const controller = new AbortController();
+      const abort = () => {
+        if (!reply.raw.writableEnded) controller.abort();
+      };
+      reply.raw.once('close', abort);
+      try {
+        const record = await uploads.cancelUpload(
+          request.ownerId!,
+          id,
+          storage.bucket,
+          async (upload) => {
+            await storage.cancelUpload!(
+              {
+                ownerId: upload.ownerId,
+                resumeId: upload.id,
+                sha256: upload.sha256,
+                bytes: upload.bytes,
+                contentType: upload.contentType,
+              },
+              AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]),
+            );
+          },
+        );
+        if (!record) throw new HttpError(404, 'Resume not found');
+        return { id: record.id, status: record.status };
+      } finally {
+        reply.raw.removeListener('close', abort);
+      }
+    });
+    resumes.delete('/api/resumes/:id', async (request, reply) => {
+      if (!options.resumeStorage) throw new HttpError(503, 'Resume uploads unavailable');
+      if (!(await rateLimit(`resume-delete:${request.ownerId!}`, 20, 60)))
+        throw new HttpError(429, 'Too many requests');
+      const { id } = identifier.parse(request.params);
+      await uploads.deleteSettled(request.ownerId!, id, async (record) => {
+        if (record.bucket !== options.resumeStorage!.bucket || !record.objectVersion)
+          throw new HttpError(409, 'Resume storage changed');
+        await options.resumeStorage!.delete(
+          {
+            ownerId: record.ownerId,
+            resumeId: record.id,
+            sha256: record.sha256,
+            bytes: record.bytes,
+            contentType: record.contentType,
+          },
+          record.objectVersion,
+          AbortSignal.timeout(15000),
+        );
+      });
+      return reply.code(204).send();
+    });
+  });
   app.get('/api/profile', async (request) => {
     return (
       (await profiles.get(request.ownerId!)) ?? { revision: 0, profile: null, updatedAt: null }
     );
+  });
+  app.get('/api/preparation', async (request) => {
+    z.object({}).strict().parse(request.query);
+    if (!(await rateLimit(`preparation:${request.ownerId!}`, 30, 60)))
+      throw new HttpError(429, 'Too many preparation requests');
+    return prepareProfile(await profiles.get(request.ownerId!));
   });
   app.put('/api/profile', async (request) => {
     if (!(await rateLimit(`profile:${request.ownerId!}`, 30, 60)))
@@ -189,6 +420,11 @@ export async function createApp(database: Database, origin: string, rateLimit: R
       request.ownerId!,
       idempotencyKey.parse(request.headers['idempotency-key']),
       createSearchSchema.parse(request.body),
+    );
+    // Links the run to the request that created it for end-to-end tracing.
+    request.log.info(
+      { requestId: request.id, runId: search.id, status: search.status },
+      'Search run created',
     );
     return reply.code(202).send({ runId: search.id, status: search.status });
   });
@@ -241,12 +477,31 @@ export async function createApp(database: Database, origin: string, rateLimit: R
     let cursor = eventCursor.parse(request.headers['last-event-id'] ?? query.after ?? '0');
     const ownerId = request.ownerId!;
     if (!(await database.getSearch(ownerId, id))) throw new HttpError(404, 'Search not found');
+    // A cursor that predates the retained window means the client missed events,
+    // which is recoverable by resynchronising rather than a client error.
+    let resynchronise = false;
     if (cursor !== '0') {
-      const known = await database.pool.query(
-        'SELECT sequence FROM run_events WHERE owner_id = $1 AND run_id = $2 AND sequence = $3::bigint',
+      const known = await database.pool.query<{ retained: string | null }>(
+        `SELECT
+           (SELECT min(sequence)::text FROM run_events WHERE owner_id = $1 AND run_id = $2)
+             AS retained,
+           EXISTS (
+             SELECT 1 FROM run_events
+             WHERE owner_id = $1 AND run_id = $2 AND sequence = $3::bigint
+           ) AS present`,
         [ownerId, id, cursor],
       );
-      if (!known.rowCount) throw new HttpError(400, 'Invalid event cursor');
+      const row = known.rows[0] as unknown as { retained: string | null; present: boolean };
+      if (!row?.present) {
+        // No retained events at all also means the cursor expired: refusing it
+        // would strand a client whose history was pruned entirely.
+        if (!row?.retained || BigInt(cursor) < BigInt(row.retained)) {
+          resynchronise = true;
+          cursor = '0';
+        } else {
+          throw new HttpError(400, 'Invalid event cursor');
+        }
+      }
     }
     if (!(await rateLimit(`events:${ownerId}`, 30, 60)))
       throw new HttpError(429, 'Too many event streams');
@@ -270,6 +525,7 @@ export async function createApp(database: Database, origin: string, rateLimit: R
       (async function* () {
         try {
           yield 'retry: 2000\n\n';
+          if (resynchronise) yield 'event: reset\ndata: {"reason":"cursor-expired"}\n\n';
           while (!controller.signal.aborted) {
             const session = await auth.session(request.cookies[sessionCookie]);
             if (!session || session.ownerId !== ownerId) {

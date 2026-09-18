@@ -15,7 +15,7 @@ This document is a specification, not a claim that the target stack is running.
 The implementation inventory below remains authoritative for current behavior.
 The existing compose.yml starts PostgreSQL, throttle Redis and LocalStack by
 default. An opt-in bullmq profile now adds persistent queue Redis, and the publisher
-and search worker accept QUEUE_TRANSPORT=bullmq with an explicit QUEUE_REDIS_URL.
+and search worker accept SEARCH_QUEUE_TRANSPORT=bullmq with an explicit SEARCH_QUEUE_REDIS_URL.
 SQS remains the default; no workload cutover has occurred. Other proposed services
 must not be treated as implemented.
 
@@ -27,6 +27,26 @@ unlimited inference or production readiness is promised. Sleeping or restarting
 the host pauses service. Public hosting and AWS remain a separately approved v3.
 
 ## Target Topology
+
+### Approved Single-Host Storage (2026-09-17)
+
+The user explicitly approved private filesystem-backed resume storage while
+retaining S3 as an optional adapter. This supersedes the S3-only activation
+dependency for the single-host local app, not the S3 privacy/cleanup contract.
+`PrivateFileResumeStorage` supplies authenticated AES-256-GCM envelopes, immutable
+version identity, atomic exclusive publication and exact-version integrity reads.
+Windows user/SYSTEM-only ACLs protect the provisioned local directory and key.
+The key is separate from PostgreSQL; parsed text in PostgreSQL still requires
+database/disk and backup protection. Same-account compromise is outside this
+adapter's protection; it is not an OS sandbox.
+
+The authenticated API, dedicated files process and profile review UI now reuse
+the existing reservation/outbox/parser contracts. The user explicitly saves an
+editable proposal before matching uses it. Synthetic three-browser workflows and
+quiesced PostgreSQL-plus-encrypted-file restoration pass. Online/off-host recovery,
+key rotation, power loss, abandoned uploads and public deployment remain gates.
+See [README.md](README.md#private-resume-workflow-september-17) for exact limits,
+runtime settings and evidence. Historical S3 findings below remain valid.
 
 ### Storage Acceptance Blocker (2026-09-15)
 
@@ -57,7 +77,13 @@ explicitly returns `id: None` in `full_control_grants`; this is not a missing lo
 credential or bucket setting. A corrected maintained build or another accepted
 runtime is required. Maintaining a storage fork is a separate architecture decision.
 The user selected **upstream-only runtimes** on September15; patched RustFS evaluation
-is not authorized. Latest release checks still return rc6 and SeaweedFS4.47.
+is not authorized. On September 17, upstream RustFS 1.0.0 was evaluated on the
+Windows host's Linux-amd64 Docker engine with digest
+`sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff`.
+The unchanged integration contract failed `Resume bucket must be private` after
+versioning initialization. Synthetic version and empty-bucket cleanup passed,
+and the temporary container was removed. This does not establish the exact
+1.0.0 ACL failure cause, persistence or recovery readiness.
 Storage-dependent activation remains blocked.
 SeaweedFS additionally passed real anonymous object read/write/delete and bucket
 listing denial, plus wrong-secret initialization/read/delete denial. This narrower
@@ -80,7 +106,39 @@ unit must include PostgreSQL, object versions, configuration and required encryp
 access-control material, with secrets protected independently and a tested recovery
 procedure. S3 emulation does not prove real-runtime acceptance.
 
+### Implemented Topology
+
+This is what actually runs today. Anything not shown here is not implemented.
+
+```mermaid
+flowchart TD
+  Browser[Browser] --> Proxy[Caddy: TLS, HSTS, host check, body cap]
+  Proxy --> Web[Next.js workspace]
+  Proxy --> API[Fastify API: session, CSRF, rate limit]
+  API --> PG[(PostgreSQL: authoritative state)]
+  API --> Throttle[(Redis: rate limiting)]
+  API --> Objects[Encrypted filesystem resume store]
+  PG --> Publisher[Transactional outbox publisher]
+  Publisher --> Queue[(SQS-compatible queue)]
+  Queue --> Search[Search worker]
+  Queue --> Files[Files worker]
+  Search --> Providers[Five job sources]
+  Search --> PG
+  Files --> Parser[Isolated resume parser]
+  Files --> Objects
+  Files --> PG
+  PG --> Events[Owner-scoped SSE replay]
+  Events --> API
+```
+
+The API is the only process that writes resume objects, which is what makes the
+single-instance capacity reservation sound. Observability is structured logging with a
+request, run and execution correlation chain; there is no metrics backend.
+
 ### Target Diagram
+
+Aspirational only. BullMQ is an opt-in alternative transport, and the enrichment worker,
+AI worker, object storage service and the telemetry stack below are **not implemented**.
 
 ```mermaid
 flowchart TD
@@ -537,7 +595,7 @@ simultaneously without checking memory. No hardware upgrades are assumed.
    acceptance. Test all required dependency outages, disk pressure, host restart,
    model cancellation and an agreed multi-hour mixed-workload soak. Record skipped
    live-provider, mailbox and application actions instead of simulating success.
-8. Only after migration/acceptance, refresh root context.txt and related runbooks,
+8. Only after migration/acceptance, refresh the root README and related runbooks,
    remove proven-unused code/dependencies/emulators and rerun post-cleanup gates.
    Preserve active v1, secrets, owner data, backups and reusable domain packages.
 
@@ -555,7 +613,7 @@ flowchart LR
   PG -->|transactional outbox| Publisher[Publisher process]
   Publisher --> SQS[Local SQS search queue]
   SQS --> Worker[Search worker process]
-   Worker --> Providers[Existing Remote OK and Himalayas providers]
+   Worker --> Providers[Remote OK, Himalayas and curated Greenhouse/Lever/Workable boards]
   Worker -->|fenced results and events| PG
   SQS --> DLQ[Dead-letter queue]
   DLQ -->|reconcile durable failure| Publisher

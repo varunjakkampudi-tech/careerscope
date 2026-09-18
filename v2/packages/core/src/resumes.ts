@@ -7,8 +7,8 @@ import { Conflict } from './errors.js';
 import {
   maximumResumeBytes,
   resumeUploadMetadataSchema,
-  type PrivateResumeStorage,
   type ResumeObject,
+  type ResumeObjectStore,
 } from './storage.js';
 import { detectFormat } from '../../../../packages/resume/dist/extract.js';
 import { commandSchema } from './commands.js';
@@ -41,7 +41,7 @@ export type ResumeUploadRecord = z.infer<typeof resumeUploadMetadataSchema> & {
   bucket: string;
   objectVersion: string | null;
   commandId: string | null;
-  status: 'uploading' | 'queued';
+  status: 'uploading' | 'queued' | 'cancelling' | 'cancelled';
   createdAt: Date;
   updatedAt: Date;
 };
@@ -49,6 +49,8 @@ export type ResumeUploadRecord = z.infer<typeof resumeUploadMetadataSchema> & {
 const columns = `id, owner_id AS "ownerId", bucket, sha256, bytes,
   content_type AS "contentType", object_version AS "objectVersion", command_id AS "commandId",
   status, created_at AS "createdAt", updated_at AS "updatedAt"`;
+
+export class ResumeStorageLimit extends Conflict {}
 
 export class ResumeUploadRepository {
   constructor(private readonly database: Database) {}
@@ -138,6 +140,33 @@ export class ResumeUploadRepository {
     const client = await this.database.pool.connect();
     try {
       await client.query('BEGIN');
+      await client.query('SELECT id FROM users WHERE id = $1 FOR UPDATE', [ownerId]);
+      await client.query('SELECT pg_advisory_xact_lock(734205, 1)');
+      const existingKey = await client.query(
+        'SELECT id FROM resume_uploads WHERE owner_id = $1 AND idempotency_key = $2',
+        [ownerId, key],
+      );
+      if (!existingKey.rowCount) {
+        const globalUsage = await client.query<{ count: string; bytes: string }>(
+          'SELECT count(*) AS count, COALESCE(sum(bytes), 0) AS bytes FROM resume_uploads',
+        );
+        if (
+          Number(globalUsage.rows[0]!.count) >= 1000 ||
+          Number(globalUsage.rows[0]!.bytes) + metadata.bytes > 1024 * 1024 * 1024
+        ) {
+          throw new ResumeStorageLimit('Resume storage limit reached');
+        }
+        const usage = await client.query<{ count: string; bytes: string }>(
+          'SELECT count(*) AS count, COALESCE(sum(bytes), 0) AS bytes FROM resume_uploads WHERE owner_id = $1',
+          [ownerId],
+        );
+        if (
+          Number(usage.rows[0]!.count) >= 50 ||
+          Number(usage.rows[0]!.bytes) + metadata.bytes > 100 * 1024 * 1024
+        ) {
+          throw new ResumeStorageLimit('Resume storage limit reached');
+        }
+      }
       const inserted = await client.query<ResumeUploadRecord>(
         `INSERT INTO resume_uploads (id, owner_id, idempotency_key, bucket, sha256, bytes, content_type)
          VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -171,6 +200,79 @@ export class ResumeUploadRepository {
     }
   }
 
+  async deleteSettled(
+    ownerId: string,
+    id: string,
+    removeObject: (record: ResumeUploadRecord) => Promise<void>,
+  ): Promise<boolean> {
+    identifier.parse(ownerId);
+    identifier.parse(id);
+    const client = await this.database.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const locked = await client.query<ResumeUploadRecord>(
+        `SELECT ${columns} FROM resume_uploads WHERE owner_id = $1 AND id = $2 FOR UPDATE`,
+        [ownerId, id],
+      );
+      const record = locked.rows[0];
+      if (!record) {
+        await client.query('ROLLBACK');
+        return false;
+      }
+      const result = await client.query(
+        'SELECT upload_id FROM resume_results WHERE owner_id = $1 AND upload_id = $2',
+        [ownerId, id],
+      );
+      if (!result.rowCount) throw new Conflict('Resume processing has not settled');
+      await removeObject(record);
+      await client.query('DELETE FROM resume_results WHERE owner_id = $1 AND upload_id = $2', [
+        ownerId,
+        id,
+      ]);
+      await client.query('DELETE FROM resume_uploads WHERE owner_id = $1 AND id = $2', [
+        ownerId,
+        id,
+      ]);
+      await client.query('COMMIT');
+      return true;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  async cancelUpload(
+    ownerId: string,
+    id: string,
+    bucket: string,
+    cancelObject: (record: ResumeUploadRecord) => Promise<void>,
+  ): Promise<ResumeUploadRecord | null> {
+    identifier.parse(ownerId);
+    identifier.parse(id);
+    bucketSchema.parse(bucket);
+    const claimed = await this.database.pool.query<ResumeUploadRecord>(
+      `UPDATE resume_uploads SET status = 'cancelling', updated_at = now()
+       WHERE owner_id = $1 AND id = $2 AND bucket = $3 AND status IN ('uploading', 'cancelling')
+       RETURNING ${columns}`,
+      [ownerId, id, bucket],
+    );
+    const record = claimed.rows[0];
+    if (!record) {
+      const existing = await this.get(ownerId, id);
+      if (!existing || (existing.status === 'cancelled' && existing.bucket === bucket))
+        return existing;
+      throw new Conflict('Upload cannot be cancelled');
+    }
+    await cancelObject(record);
+    await this.database.pool.query(
+      "UPDATE resume_uploads SET status = 'cancelled', updated_at = now() WHERE owner_id = $1 AND id = $2 AND status = 'cancelling'",
+      [ownerId, id],
+    );
+    return this.get(ownerId, id);
+  }
+
   async queueStoredUpload(
     ownerId: string,
     id: string,
@@ -197,6 +299,7 @@ export class ResumeUploadRepository {
         await client.query('COMMIT');
         return record;
       }
+      if (record.status !== 'uploading') throw new Conflict('Upload cancelled');
       const command: Command = {
         id: randomUUID(),
         type: 'resume.parse',
@@ -226,16 +329,29 @@ export class ResumeUploadRepository {
   }
 }
 
-type UploadStorage = Pick<
-  PrivateResumeStorage,
+export type UploadStorage = Pick<
+  ResumeObjectStore,
   'bucket' | 'initialize' | 'put' | 'get' | 'recoverVersion'
 >;
 
+export class InvalidResumeUpload extends Error {}
+
 export class ResumeUploadCoordinator {
+  private initialization: Promise<void> | undefined;
+
   constructor(
     private readonly uploads: ResumeUploadRepository,
     private readonly storage: UploadStorage,
   ) {}
+
+  private async initialize(signal: AbortSignal) {
+    this.initialization ??= this.storage.initialize(AbortSignal.timeout(15000)).catch((error) => {
+      this.initialization = undefined;
+      throw error;
+    });
+    await this.initialization;
+    signal.throwIfAborted();
+  }
 
   private object(record: ResumeUploadRecord): ResumeObject {
     if (record.bucket !== this.storage.bucket)
@@ -255,11 +371,12 @@ export class ResumeUploadCoordinator {
     identifier.parse(ownerId);
     keySchema.parse(key);
     if (body.byteLength === 0 || body.byteLength > maximumResumeBytes) {
-      throw new Error('Resume must contain between 1 byte and 5 MiB');
+      throw new InvalidResumeUpload('Resume must contain between 1 byte and 5 MiB');
     }
     const data = Buffer.from(body);
     const format = detectFormat(data);
-    if (!format) throw new Error('Resume must have a PDF or DOCX container signature');
+    if (!format)
+      throw new InvalidResumeUpload('Resume must have a PDF or DOCX container signature');
     const metadata = resumeUploadMetadataSchema.parse({
       sha256: createHash('sha256').update(data).digest('hex'),
       bytes: data.length,
@@ -270,8 +387,9 @@ export class ResumeUploadCoordinator {
     });
     const record = await this.uploads.reserve(ownerId, key, this.storage.bucket, metadata);
     if (record.status === 'queued') return record;
+    if (record.status !== 'uploading') throw new Conflict('Upload cancelled');
     const object = this.object(record);
-    await this.storage.initialize(deadline);
+    await this.initialize(deadline);
     let version = await this.storage.recoverVersion(object, deadline);
     if (!version) {
       try {
@@ -291,9 +409,9 @@ export class ResumeUploadCoordinator {
     const deadline = AbortSignal.any([AbortSignal.timeout(45_000), ...(signal ? [signal] : [])]);
     deadline.throwIfAborted();
     const record = await this.uploads.get(ownerId, id);
-    if (!record || record.status === 'queued') return record;
+    if (!record || record.status !== 'uploading') return record;
     const object = this.object(record);
-    await this.storage.initialize(deadline);
+    await this.initialize(deadline);
     const version = await this.storage.recoverVersion(object, deadline);
     deadline.throwIfAborted();
     return version ? this.uploads.queueStoredUpload(ownerId, id, version) : record;
@@ -302,7 +420,7 @@ export class ResumeUploadCoordinator {
 
 export function resumeParseHandler(
   database: Database,
-  storage: Pick<PrivateResumeStorage, 'bucket' | 'get'>,
+  storage: Pick<ResumeObjectStore, 'bucket' | 'get'>,
   parse: typeof parseResumeIsolated = parseResumeIsolated,
 ): Handler {
   const uploads = new ResumeUploadRepository(database);

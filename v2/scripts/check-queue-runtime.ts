@@ -5,6 +5,7 @@ import { promisify } from 'node:util';
 import { once } from 'node:events';
 import { setTimeout as delay } from 'node:timers/promises';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { Database, BullSearchQueue, users } from '@careerscope/core';
 
@@ -31,7 +32,8 @@ async function stop(child: ChildProcess) {
     return;
   }
   const exit = once(child, 'exit');
-  child.kill('SIGTERM');
+  if (process.platform === 'win32') child.send('shutdown');
+  else child.kill('SIGTERM');
   const timer = setTimeout(() => child.kill('SIGKILL'), 10_000);
   try {
     const [code, signal] = await exit;
@@ -40,6 +42,21 @@ async function stop(child: ChildProcess) {
   } finally {
     clearTimeout(timer);
   }
+}
+
+function runtimeArguments(entry: URL) {
+  if (process.platform !== 'win32') return [fileURLToPath(entry)];
+  return [
+    '--input-type=module',
+    '-e',
+    `process.on('message', message => {
+      if (message === 'shutdown') {
+        process.disconnect();
+        process.emit('SIGTERM');
+      }
+    });
+    await import(${JSON.stringify(entry.href)});`,
+  ];
 }
 
 test(
@@ -113,7 +130,7 @@ test(
       databaseUrl.pathname = `/${name}`;
       database = new Database(databaseUrl.href);
       await migrate(database.db, {
-        migrationsFolder: new URL('../migrations', import.meta.url).pathname,
+        migrationsFolder: fileURLToPath(new URL('../migrations', import.meta.url)),
       });
       const ownerId = randomUUID();
       await database.db
@@ -130,13 +147,15 @@ test(
       const env = {
         ...process.env,
         DATABASE_URL: databaseUrl.href,
-        QUEUE_TRANSPORT: 'bullmq',
-        QUEUE_REDIS_URL: endpoint,
+        SEARCH_QUEUE_TRANSPORT: 'bullmq',
+        SEARCH_QUEUE_REDIS_URL: endpoint,
+        RESUME_STORAGE_DIRECTORY: undefined,
+        RESUME_STORAGE_KEY_FILE: undefined,
       };
       publisher = spawn(
         process.execPath,
-        [new URL('../apps/workers/search/dist/publisher.js', import.meta.url).pathname],
-        { env, stdio: ['ignore', 'pipe', 'pipe'] },
+        runtimeArguments(new URL('../apps/workers/search/dist/publisher.js', import.meta.url)),
+        { env, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] },
       );
       publisher.stdout?.resume();
       publisher.stderr?.resume();
@@ -185,8 +204,11 @@ test(
       assert.equal(await database.complete(command, fence), true);
       worker = spawn(
         process.execPath,
-        [new URL('../apps/workers/search/dist/main.js', import.meta.url).pathname],
-        { env: { ...env, QUEUE_REDIS_URL: restoredEndpoint }, stdio: ['ignore', 'pipe', 'pipe'] },
+        runtimeArguments(new URL('../apps/workers/search/dist/main.js', import.meta.url)),
+        {
+          env: { ...env, SEARCH_QUEUE_REDIS_URL: restoredEndpoint },
+          stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+        },
       );
       worker.stdout?.resume();
       worker.stderr?.resume();

@@ -18,5 +18,7 @@ workers. Restart the preview after rebuilding to avoid stale asset manifests.
 and temporary API. Leave 5390 free for this check. Private responses must not
 enter shared caches, and credentials/resumes must not enter client builds.
 
-Cloud deployment is deferred to v3. The [architecture](../../ARCHITECTURE.md)
-distinguishes the Docker-first target from implemented functionality.
+The deployed stack runs behind Caddy on a single host; see `infra/v3` for the
+production compose file and verification scripts. The
+[architecture](../../ARCHITECTURE.md) distinguishes the Docker-first target from
+implemented functionality.

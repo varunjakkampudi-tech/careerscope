@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, LoaderCircle, RefreshCw, Save } from 'lucide-react';
 import type { WritableProfile } from '@careerscope/core';
 import { api, ApiError } from '../lib/api';
+import ResumePanel, { type ResumeProposal } from './resume-panel';
 
 type ProfileResponse = {
   revision: number;
@@ -19,12 +20,14 @@ const employmentOptions = [
 
 function ProfileForm({
   record,
+  proposal,
   csrf,
   onSaved,
   onDirty,
   onReload,
 }: {
   record: ProfileResponse;
+  proposal?: ResumeProposal;
   csrf: string;
   onSaved: (record: ProfileResponse) => void;
   onDirty: () => void;
@@ -39,9 +42,30 @@ function ProfileForm({
       }),
     onSuccess: onSaved,
   });
-  const candidate = record.profile?.candidate;
-  const preferences = record.profile?.preferences;
-  const application = record.profile?.application;
+  const candidate = {
+    ...record.profile?.candidate,
+    ...(proposal
+      ? Object.fromEntries(
+          ['fullName', 'email', 'phone', 'location', 'linkedin', 'github', 'portfolio'].flatMap(
+            (field) => {
+              const value = proposal[field as keyof ResumeProposal];
+              return typeof value === 'string' && value ? [[field, value]] : [];
+            },
+          ),
+        )
+      : {}),
+  };
+  const preferences = {
+    ...record.profile?.preferences,
+    ...(proposal?.techStack.length ? { techStack: proposal.techStack } : {}),
+    ...(proposal?.titles.length ? { titles: proposal.titles } : {}),
+  };
+  const application = {
+    ...record.profile?.application,
+    ...(proposal?.yearsOfExperience != null
+      ? { yearsOfExperience: proposal.yearsOfExperience }
+      : {}),
+  };
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
@@ -188,7 +212,7 @@ function ProfileForm({
               required
               rows={3}
               maxLength={4000}
-              defaultValue={preferences?.titles.join('\n') ?? ''}
+              defaultValue={preferences.titles?.join('\n') ?? ''}
             />
           </label>
           <label>
@@ -198,7 +222,7 @@ function ProfileForm({
               required
               rows={3}
               maxLength={8000}
-              defaultValue={preferences?.techStack.join('\n') ?? ''}
+              defaultValue={preferences.techStack?.join('\n') ?? ''}
             />
           </label>
           <label>
@@ -207,7 +231,7 @@ function ProfileForm({
               name="locations"
               rows={3}
               maxLength={4000}
-              defaultValue={preferences?.locations.join('\n') ?? ''}
+              defaultValue={preferences.locations?.join('\n') ?? ''}
             />
           </label>
           <label>
@@ -226,7 +250,7 @@ function ProfileForm({
               name="excludeKeywords"
               rows={3}
               maxLength={4000}
-              defaultValue={preferences?.excludeKeywords.join('\n') ?? ''}
+              defaultValue={preferences.excludeKeywords?.join('\n') ?? ''}
             />
           </label>
           <label>
@@ -235,7 +259,7 @@ function ProfileForm({
               name="excludeCompanies"
               rows={3}
               maxLength={8000}
-              defaultValue={preferences?.excludeCompanies.join('\n') ?? ''}
+              defaultValue={preferences.excludeCompanies?.join('\n') ?? ''}
             />
           </label>
         </div>
@@ -346,6 +370,7 @@ export default function ProfileEditor({
   const [dirty, setDirty] = useState(false);
   const [saved, setSaved] = useState(false);
   const [generation, setGeneration] = useState(0);
+  const [proposal, setProposal] = useState<ResumeProposal>();
   useEffect(() => {
     if (!dirty) return;
     const preventUnload = (event: BeforeUnloadEvent) => {
@@ -365,6 +390,7 @@ export default function ProfileEditor({
   async function reload() {
     const result = await profile.refetch();
     if (result.isSuccess) {
+      setProposal(undefined);
       setDirty(false);
       onDirty(false);
       setSaved(false);
@@ -385,6 +411,17 @@ export default function ProfileEditor({
           Back to Search
         </button>
       </div>
+      <ResumePanel
+        csrf={csrf}
+        onReview={(derived) => {
+          if (dirty && !window.confirm('Replace unsaved edits with the resume draft?')) return;
+          setProposal(derived);
+          setGeneration((value) => value + 1);
+          setDirty(true);
+          onDirty(true);
+          setSaved(false);
+        }}
+      />
       {profile.isPending ? (
         <p role="status">Loading profile...</p>
       ) : profile.isError ? (
@@ -399,6 +436,7 @@ export default function ProfileEditor({
         <ProfileForm
           key={`${profile.data.revision}:${generation}`}
           record={profile.data}
+          proposal={proposal}
           csrf={csrf}
           onDirty={() => {
             setDirty(true);
@@ -407,6 +445,7 @@ export default function ProfileEditor({
           }}
           onReload={reload}
           onSaved={(record) => {
+            setProposal(undefined);
             cache.setQueryData(['profile'], record);
             setDirty(false);
             onDirty(false);
