@@ -18,11 +18,10 @@ applyTo: 'apps/api/src/container.ts,apps/api/src/app.ts,apps/web/src/App.tsx,inf
   authentication assumptions or advertise unavailable runtime capabilities.
 - Preserve release gates and allowlisted Pages staging. Verify the actual release
   version and deployed assets, not only a successful push or image build.
-- Never trigger EC2, change enable flags or install system software without current
+- Never change enable flags or install system software without current
   approval. Deferred container checks remain deferred until executed on a real host.
 - Before cloud enablement, pin the exact verified commit, choose the correct Compose
   target, test TLS/proxy readiness, non-root operation, limits, persistent sessions,
   restart behavior, backup/restore and rollback. Do not expose VNC publicly.
-- See [architecture](../../docs/ARCHITECTURE.md),
-  [runbook](../../docs/RUNBOOK.md) and
-  [EC2 acceptance](../../docs/EC2-APPLICATIONS.md) for implementation context.
+- See [architecture](../../docs/ARCHITECTURE.md) and
+  [runbook](../../docs/RUNBOOK.md) for implementation context.

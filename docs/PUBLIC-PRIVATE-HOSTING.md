@@ -32,8 +32,7 @@ explicit migration, not a public repository push.
 
 By default, Copilot application filling stays on the Mac and the hosted server
 has `ENABLE_APPLICATION_AGENT=false`. The cloud workspace does not remotely
-control or synchronize the Mac worker. The opt-in [EC2 application runtime](EC2-APPLICATIONS.md)
-provides a separate server browser and Copilot sign-in; its container and EC2
-acceptance gates remain unverified.
+control or synchronize the Mac worker. There is no server-side application
+runtime; the remote-browser option was removed along with the EC2 target.
 
 No combined-site deployment or private data migration has been performed.
