@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "test": "npm run build:core && node --env-file=.env --import tsx --test packages/core/src/*.test.ts apps/workers/search/src/*.test.ts",
-    "test:unit": "npm run build:core && node --import tsx --test packages/core/src/commands.test.ts packages/core/src/profile.test.ts packages/core/src/inference.test.ts packages/core/src/file-storage.test.ts apps/workers/search/src/collect.test.ts",
+    "test:unit": "npm run build:core && node --import tsx --test packages/core/src/commands.test.ts packages/core/src/file-storage.test.ts packages/core/src/inference.test.ts packages/core/src/profile.test.ts apps/workers/search/src/collect.test.ts",
     "benchmark:llm": "node --import tsx scripts/benchmark-llm.ts",
     "test:ui": "node --env-file=.env --import tsx scripts/check-ui.ts",
     "test:queue-runtime": "npm run build:core && node --env-file=.env --import tsx --test scripts/check-queue-runtime.ts",
@@ -39,7 +39,8 @@
     "start:publisher": "node --env-file=.env apps/workers/search/dist/publisher.js",
     "start:worker": "node --env-file=.env apps/workers/search/dist/main.js",
     "start:files": "node --env-file=.env apps/workers/search/dist/files.js",
-    "start:web": "npm run start --workspace @careerscope/web"
+    "start:web": "npm run start --workspace @careerscope/web",
+    "test:integration": "npm run build:core && node --env-file=.env --import tsx --test packages/core/src/bull-queue.test.ts packages/core/src/database.test.ts packages/core/src/market.test.ts packages/core/src/queue.test.ts packages/core/src/resumes.test.ts packages/core/src/runtime.test.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

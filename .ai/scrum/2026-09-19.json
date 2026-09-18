@@ -1,0 +1,63 @@
+{
+  "date": "2026-09-19",
+  "sprint": "2026-W38",
+  "sprintGoal": "CI proves what deployment ships",
+  "commit": "bd1bd24",
+  "contributions": [
+    {
+      "agent": "Project Manager",
+      "note": "Sprint goal is one sentence and both selected items serve it. CS-5 rejected for this sprint, not as work - it is XL and deleting 22k lines that feed a live public site is not a same-week task. CS-6 has the highest product value but must be sliced before it enters any sprint."
+    },
+    {
+      "agent": "System Designer",
+      "note": "CS-1 is CI topology only; no application change. The split is real, not cosmetic: 5 of 11 V2 test files touch no external service, 6 create databases or open Redis. Layer B needs service containers and a CI-built .env."
+    },
+    {
+      "agent": "Infrastructure",
+      "note": "CS-1 implemented. v2 test:unit and test:integration added; the 11 files are fully partitioned with none dropped. CI job named 'Test V2 (unit only - no database, queue or browser coverage)'."
+    },
+    {
+      "agent": "QA",
+      "note": "Negative proof run on the new job. Clean: 33 pass, 0 fail, exit 0. One assertion inverted: 30 pass, 3 fail, exit 1. Restored: exit 0. The job can go red, so a green result means something."
+    },
+    {
+      "agent": "Frontend",
+      "note": "CS-2 blocked on reproduction. The CI diagnostic now gives a number: header 57 against expected 105 at 768px, a 48px gap. That is 3.5rem versus 6.5rem - two breakpoints apart, not a settle race. I will not attempt a third speculative fix from Windows."
+    },
+    {
+      "agent": "Independent Reviewer",
+      "note": "Watch that the unit job never gets renamed to something implying full V2 coverage. A green step called 'V2 tests' would be worse than no step, because it reads as proof the integration half passed."
+    }
+  ],
+  "yesterday": [
+    "Found and fixed a live false-pass: a corrupt findings.json turned the release gate from BLOCKED to READY TO DEPLOY",
+    "Fixed the CI format failure caused by runs.json being rewritten on every tooling invocation",
+    "Added the DAILY progress view to the control centre"
+  ],
+  "today": [
+    "CS-1: split the V2 suite and added the unit layer to CI, with negative proof",
+    "CS-2: reproduction planned in the Playwright Linux container"
+  ],
+  "blockers": [
+    {
+      "id": "CS-2",
+      "blocker": "Cannot reproduce Linux WebKit on Windows. Needs mcr.microsoft.com/playwright. Two previous fixes were guesses; the second did not hold."
+    },
+    {
+      "id": "CS-1",
+      "blocker": "Layer B still unrun. Six V2 files need Postgres, Redis and a CI-built .env - a separate piece of work, not a follow-up line."
+    }
+  ],
+  "decisions": [
+    "Name the job 'unit only' and list what it does not cover, so it cannot be mistaken for full V2 coverage",
+    "Do not attempt CS-2 without a Linux reproduction",
+    "Target 3.0.1 as a PATCH: pipeline correctness and a rendering defect, no new capability"
+  ],
+  "newFeatures": [],
+  "removedFeatures": [],
+  "risks": [
+    "Partial coverage read as full coverage - mitigated by the job name, not by hope",
+    "Deploy still succeeds when CI fails; gating Deploy on required CI is the next step and is not yet done"
+  ],
+  "nextRelease": "3.0.1"
+}

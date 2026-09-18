@@ -1,17 +1,55 @@
 {
   "sprintId": "2026-W38",
   "week": "2026-W38",
-  "goal": null,
-  "startDate": "2026-09-18",
+  "goal": "CI proves what deployment ships",
+  "goalRationale": "Deploy has succeeded three times while CI was red, and the V2 suite runs in no workflow at all. Until the pipeline exercises the application it claims to ship, every other gate is measuring the wrong thing. One goal; both selected items serve it.",
+  "startDate": "2026-09-19",
   "targetReleaseDate": "2026-09-24",
-  "status": "PLANNING",
-  "candidates": [],
-  "selectedFeatures": [],
-  "deferredFeatures": [],
-  "rejectedFeatures": [],
-  "risks": [],
-  "dependencies": [],
-  "acceptanceCriteria": [],
-  "agents": [],
-  "releasePlan": {}
+  "status": "ACTIVE",
+  "scopeFrozen": true,
+  "candidates": ["CS-1", "CS-2", "CS-3", "CS-4", "CS-5", "CS-6"],
+  "selectedFeatures": ["CS-1", "CS-2"],
+  "deferredFeatures": [
+    {
+      "id": "CS-3",
+      "reason": "P1 and real, but L-sized infrastructure work. Taking it alongside CS-1 would breach the WIP limit and leave both half done."
+    },
+    {
+      "id": "CS-4",
+      "reason": "Small and worth doing, but it does not serve the sprint goal. Carrying it would be padding the sprint with unrelated work."
+    },
+    {
+      "id": "CS-6",
+      "reason": "Highest product value, but XL. It needs slicing into vertical slices before it can enter any sprint."
+    }
+  ],
+  "rejectedFeatures": [
+    {
+      "id": "CS-5",
+      "reason": "Not rejected as work - rejected for THIS sprint. XL, blocked on porting the Pages export and the MCP server, and deleting 22k lines that feed a live public site is not a same-week task. Stays in DISCOVERY until the System Designer produces a migration plan."
+    }
+  ],
+  "risks": [
+    "CS-2 cannot be reproduced on Windows. Without a Linux container it stays a guess, and I have already guessed twice.",
+    "CS-1 risks manufacturing the appearance of coverage. A v2-unit job that reads as 'V2 passed' would be worse than no job at all."
+  ],
+  "dependencies": ["Docker available locally for the Playwright Linux image (CS-2)"],
+  "acceptanceCriteria": [
+    "A CI job runs the V2 tests that need no services, and states plainly what it does not cover",
+    "Breaking a V2 unit test turns that job red - proven, not assumed",
+    "The WebKit offset defect is reproduced on Linux before any fix is attempted"
+  ],
+  "agents": [
+    "Project Manager",
+    "System Designer",
+    "Infrastructure",
+    "Frontend",
+    "QA",
+    "Independent Reviewer"
+  ],
+  "releasePlan": {
+    "targetVersion": "3.0.1",
+    "type": "PATCH",
+    "rationale": "Pipeline correctness and a rendering defect. No new capability, no contract change."
+  }
 }

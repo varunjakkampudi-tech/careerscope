@@ -75,6 +75,18 @@ jobs:
       - name: Test
         run: npm test && node --test infra/application-runtime.test.mjs
 
+      # The V2 application serves careerscope.tech and its suite ran in no
+      # workflow at all. Six of its eleven files need PostgreSQL, Redis and a
+      # gitignored .env, so they cannot run here yet. These five need nothing.
+      #
+      # The step name says "unit only" deliberately: a green job called "V2
+      # tests" would imply the integration half had passed, which is a worse
+      # failure than having no job, because it looks like coverage.
+      - name: Test V2 (unit only — no database, queue or browser coverage)
+        run: |
+          npm --prefix v2 ci
+          npm --prefix v2 run test:unit
+
       - name: Validate Pages snapshots and publication
         run: npm run pages:test
 
