@@ -8,3 +8,18 @@ Caddyfile text eol=lf
 Caddyfile.* text eol=lf
 *.yml text eol=lf
 *.yaml text eol=lf
+
+# Markdown and JSON were omitted here for a long time on the grounds that line
+# endings are cosmetic. They are not: a CRLF file made a multiline regex match
+# nothing, and the validator that depended on it reported "No entries yet" for a
+# file with three entries. The requirement is not that Git stops warning - it is
+# that a Windows checkout, a Linux checkout and every parser in between see the
+# same bytes and the same semantics.
+*.md text eol=lf
+*.json text eol=lf
+*.js text eol=lf
+*.cjs text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.css text eol=lf
+*.html text eol=lf
