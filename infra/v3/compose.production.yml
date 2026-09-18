@@ -61,6 +61,9 @@ services:
       # otherwise every restart re-requests and burns issuance quota.
       - 'certificates:/data'
       - 'proxyconfig:/config'
+      # Operator-controlled maintenance flag and page. Read-only to the proxy so
+      # a compromised proxy cannot enable or disable maintenance.
+      - '${CAREERSCOPE_MAINTENANCE_DIR:-/srv/maintenance}:/srv/maintenance:ro'
     tmpfs: ['/tmp:size=16m,mode=1777']
     cpus: 1
     mem_limit: 256m

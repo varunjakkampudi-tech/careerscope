@@ -45,6 +45,30 @@ https://{$CAREERSCOPE_DOMAIN} {
 	@foreign_host not host {$CAREERSCOPE_DOMAIN}
 	respond @foreign_host 421
 
+	# Maintenance is decided by a file the operator writes, not by application
+	# state, so it still serves while the stack is down or mid-deploy.
+	root * /srv/maintenance
+	@maintenance file /active
+
+	# Health stays reachable during maintenance so deploys and monitors can still
+	# see the truth. It exposes no infrastructure detail.
+	handle /api/health {
+		reverse_proxy {$CAREERSCOPE_UPSTREAM} {
+			header_up -X-Forwarded-For
+			header_up -X-Forwarded-Host
+			header_up -X-Forwarded-Proto
+		}
+	}
+
+	handle @maintenance {
+		header Cache-Control "no-store"
+		header Retry-After "300"
+		rewrite * /index.html
+		file_server {
+			status 503
+		}
+	}
+
 	request_body {
 		max_size 5242880
 	}

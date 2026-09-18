@@ -4,20 +4,21 @@ description: Quickly deslop UI code by fixing spacing, hierarchy, typography, an
 license: MIT
 license_source: https://github.com/ibelick/ui-skills/blob/main/LICENSE
 metadata:
-    upstream: sickn33/agentic-awesome-skills
-    pinned-tag: v17.5.0
-    pinned-commit: ebffb8789f6f36047ba76ed7233380b4d837d371
+  upstream: sickn33/agentic-awesome-skills
+  pinned-tag: v17.5.0
+  pinned-commit: ebffb8789f6f36047ba76ed7233380b4d837d371
 name: baseline-ui
 risk: critical
 source: https://github.com/ibelick/ui-skills/tree/main/skills/baseline-ui
 source_repo: ibelick/ui-skills
 source_type: community
 ---
+
 # Baseline UI
+
 ## When to Use
 
 Use this skill when you need quickly deslop UI code by fixing spacing, hierarchy, typography, and small layout issues. Use when the interface needs a fast cleanup or polish pass.
-
 
 Enforces an opinionated UI baseline to prevent AI-generated interface slop.
 
