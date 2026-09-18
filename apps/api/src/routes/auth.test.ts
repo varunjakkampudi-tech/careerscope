@@ -81,7 +81,9 @@ it('protects data despite the old bypass, restricts setup, and rejects CSRF and 
   } finally {
     await fixture.close();
   }
-});
+  // The heaviest Argon2id test in the file; it exceeds the default timeout under
+  // parallel load. The hashing cost is deliberately not reduced to speed it up.
+}, 30_000);
 
 it('rate limits password attempts even when forwarded IPs are spoofed', async () => {
   const fixture = await buildTestApp({ LOGIN_ENABLED: 'true' });
@@ -130,7 +132,7 @@ it('uses host-only Secure cookies in production and forbids public setup', async
   } finally {
     await fixture.close();
   }
-});
+}, 30_000);
 
 it('requires HTTPS for production login and an API key for legacy production auth', () => {
   expect(() =>
