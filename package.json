@@ -29,6 +29,8 @@
     "mobile:admin": "node --env-file-if-exists=.env scripts/export-admin.mjs",
     "mobile:admin:test": "node --test scripts/snapshot-crypto.test.mjs scripts/export-admin.test.mjs",
     "pages:test": "node --test scripts/export-mobile.test.mjs scripts/export-admin.test.mjs scripts/snapshot-crypto.test.mjs scripts/admin-session.test.mjs scripts/theme.test.mjs scripts/stage-pages.test.mjs scripts/publish-pages.test.mjs scripts/sync-version.test.mjs scripts/job-workspace.test.mjs",
+    "test:full-disk": "node infra/v3/check-full-disk.mjs",
+    "skills:check": "node scripts/check-skills.mjs",
     "pages:workspace:test": "node scripts/check-public-workspace.mjs",
     "pages:visual": "node scripts/check-pages-ui.mjs",
     "pages:visual:update": "node scripts/check-pages-ui.mjs --update-baselines",
