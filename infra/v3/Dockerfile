@@ -56,6 +56,11 @@ RUN npm prune --omit=dev --omit=optional && npm prune --prefix v2 --omit=dev
 
 FROM ${NODE_IMAGE} AS runtime
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
+# The base image is digest-pinned for reproducibility, so it never picks up
+# Debian security updates on its own; apply them explicitly.
+RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/node_modules ./node_modules
