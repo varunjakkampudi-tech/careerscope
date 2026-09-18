@@ -70,12 +70,20 @@ for (const engine of [chromium, firefox, webkit]) {
       const layouts = [];
       for (const width of [1440, 1024, 768, 390, 320]) {
         await page.setViewportSize({ width, height: 1000 });
-        await page.evaluate(
-          () =>
-            new Promise((resolveFrame) =>
-              requestAnimationFrame(() => requestAnimationFrame(resolveFrame)),
-            ),
-        );
+        // `--spacing-app-header` changes across the breakpoint, and the custom
+        // property updates before the header has finished re-laying out. Two
+        // frames was an assumption; wait for the height to actually settle.
+        await page.evaluate(() => {
+          delete window.__careerscopeHeaderHeight;
+        });
+        await page.waitForFunction(() => {
+          const header = document.querySelector('header');
+          if (!header) return false;
+          const height = header.getBoundingClientRect().height;
+          const previous = window.__careerscopeHeaderHeight;
+          window.__careerscopeHeaderHeight = height;
+          return previous === height;
+        });
         layouts.push(
           await page.evaluate(() => {
             const rootStyle = getComputedStyle(document.documentElement);
@@ -277,7 +285,7 @@ for (const result of results) {
       assert.equal(
         layout.headerHeight,
         layout.expectedHeight,
-        `${result.browser}: sticky offset mismatch`,
+        `${result.browser}: sticky offset mismatch at ${layout.width}px — header ${layout.headerHeight}, expected ${layout.expectedHeight}, delta ${(layout.headerHeight - layout.expectedHeight).toFixed(4)}`,
       );
       assert.ok(layout.profileHeight >= 40, `${result.browser}: small profile touch target`);
     }
