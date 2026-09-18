@@ -237,7 +237,39 @@
       "branch": "main",
       "result": "ok",
       "errors": []
+    },
+    {
+      "runId": "feature-1789767956499",
+      "phase": "feature",
+      "startedAt": "2026-09-18T21:45:56.496Z",
+      "completedAt": "2026-09-18T21:45:56.499Z",
+      "commit": "898866d00650e442ffbe5d854129d5a42437f27a",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789767956702",
+      "phase": "feature",
+      "startedAt": "2026-09-18T21:45:56.698Z",
+      "completedAt": "2026-09-18T21:45:56.702Z",
+      "commit": "898866d00650e442ffbe5d854129d5a42437f27a",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789767956971",
+      "phase": "feature",
+      "startedAt": "2026-09-18T21:45:56.968Z",
+      "completedAt": "2026-09-18T21:45:56.971Z",
+      "commit": "898866d00650e442ffbe5d854129d5a42437f27a",
+      "branch": "main",
+      "result": "wip-exceeded",
+      "errors": [
+        "WIP limit exceeded"
+      ]
     }
   ],
-  "updatedAt": "2026-09-18T21:36:44.778Z"
+  "updatedAt": "2026-09-18T21:45:57.079Z"
 }

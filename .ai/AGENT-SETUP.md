@@ -390,6 +390,40 @@ Things VS Code and Copilot cannot enforce, stated rather than papered over:
 5. **Sub-agents cannot be invoked programmatically from a chat session** — the
    operator drives each handoff.
 
+---
+
+## External Reviewer (non-resident)
+
+A twenty-fifth reviewer exists, and it is deliberately **not** in
+`.github/agents/`: a file there would imply VS Code can invoke it, and VS Code
+cannot. It runs in a browser tab.
+
+| Property    | Value                                                      |
+| ----------- | ---------------------------------------------------------- |
+| Identity    | ChatGPT, separate provider and separate account            |
+| Model       | Not verifiable from this repository; do not record a guess |
+| Repository  | **No access.** Sees only what the operator pastes          |
+| Permissions | Cannot read, edit, execute or deploy                       |
+| Invocation  | Operator-mediated, one paste at a time                     |
+| Artefact    | A written verdict, transcribed into `.ai/findings.json`    |
+
+**Why it is worth keeping.** It shares none of this session's context, so it
+does not inherit its blind spots. It has already earned its place twice: it
+classified the deploy/CI decoupling as P0 when it had been recorded here as a
+lower-priority cleanup, and it supplied the malformed-state rule that the
+release-gate defect proved necessary.
+
+**Where its independence stops, stated plainly.** It reviews a summary chosen
+by the agent being reviewed. If the briefing omits something, the reviewer
+cannot find it — its recall is bounded by an interested party. It is therefore
+a genuine second opinion on _reasoning_, and a weak one on _completeness_. It
+does not replace the Final Auditor, which reads the repository directly.
+
+**Rules.** Paste the briefing, never a secret, never a `.env`, never resume or
+personal data — the transcript leaves this machine. Record its verdict as a
+finding with its own source, not as fact. Its disagreement is evidence to weigh,
+not an instruction to follow.
+
 ## Relationship to Claudex Loop
 
 `.github/CLAUDEX-WORKFLOW.md` documents a separate cross-CLI workflow whose host

@@ -1,6 +1,6 @@
 {
   "$comment": "Product backlog. Canonical machine state - automation reads this, not Markdown. Scores assist prioritisation only; the Project Manager, Client and Architect decide scope. A rejected item does not return without new evidence.",
-  "updatedAt": "2026-09-19T00:00:00.000Z",
+  "updatedAt": "2026-09-19",
   "items": [
     {
       "id": "CS-1",
@@ -181,6 +181,134 @@
       "completedSteps": [],
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-19"
+    },
+    {
+      "releaseTarget": null,
+      "currentStep": null,
+      "completedSteps": [],
+      "createdAt": "2026-09-19",
+      "updatedAt": "2026-09-19",
+      "id": "CS-7",
+      "title": "Deploy can ship a revision that continuous integration rejected",
+      "userProblem": "The live site can be running code that the pipeline says is broken, with nothing reporting a conflict.",
+      "source": "external review (ChatGPT), confirmed against workflow files",
+      "area": "infrastructure",
+      "priority": "P0",
+      "status": "READY",
+      "size": "S",
+      "value": 5,
+      "risk": 5,
+      "complexity": 2,
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "deploy.yml will not deploy unless the CI verify job succeeded for that commit",
+        "An override exists, requires explicit intent and is recorded in the run log",
+        "Proven by pushing a commit with a deliberately failing check and observing deploy refuse"
+      ],
+      "evidence": [
+        "Deploy succeeded at least four times while CI was red",
+        "pages.yml already gates on needs.verify.result == success; deploy.yml is the outlier"
+      ],
+      "securityImpact": "ships unreviewed code to the public origin",
+      "architectureImpact": "workflow dependency graph",
+      "ownerAgent": "Infrastructure",
+      "reviewAgents": ["Release Manager", "Security", "QA"]
+    },
+    {
+      "releaseTarget": null,
+      "currentStep": null,
+      "completedSteps": [],
+      "createdAt": "2026-09-19",
+      "updatedAt": "2026-09-19",
+      "id": "CS-8",
+      "title": "Readers of canonical state may treat unreadable as empty",
+      "userProblem": "A corrupt state file can silently downgrade a blocking condition into an all-clear.",
+      "source": "defect found in release-gate.mjs during this project",
+      "area": "tooling",
+      "priority": "P1",
+      "status": "READY",
+      "size": "M",
+      "value": 5,
+      "risk": 5,
+      "complexity": 3,
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "Every reader of .ai/*.json distinguishes absent, valid and unparseable",
+        "Unparseable refuses; it is never reported as no findings",
+        "Each is mutation-tested with all three cases, malformed included"
+      ],
+      "evidence": [
+        "A corrupt findings.json made the release gate print PASS no open P0 or P1 and exit 0",
+        "release-gate.mjs is fixed; the other readers have not been audited"
+      ],
+      "securityImpact": "defeats the release gate",
+      "architectureImpact": "state-reading contract",
+      "ownerAgent": "Senior Engineer",
+      "reviewAgents": ["Independent Reviewer", "QA"]
+    },
+    {
+      "releaseTarget": null,
+      "currentStep": null,
+      "completedSteps": [],
+      "createdAt": "2026-09-19",
+      "updatedAt": "2026-09-19",
+      "id": "CS-9",
+      "title": "V2 tests in CI cover no database, queue or browser path",
+      "userProblem": "The layer where the application actually fails is the layer CI does not exercise.",
+      "source": "scoped during CS-1",
+      "area": "testing",
+      "priority": "P1",
+      "status": "READY",
+      "size": "L",
+      "value": 4,
+      "risk": 4,
+      "complexity": 4,
+      "dependencies": ["CS-1"],
+      "acceptanceCriteria": [
+        "Postgres and Redis service containers run in CI with a CI-built environment file",
+        "The six integration files execute rather than being skipped",
+        "A skipped suite is reported as not run, never as passed"
+      ],
+      "evidence": [
+        "Layer A is 33 unit tests; six files need real services",
+        "The CI step is named to say unit only so the gap is not misread"
+      ],
+      "securityImpact": "none directly",
+      "architectureImpact": "CI service topology",
+      "ownerAgent": "Backend",
+      "reviewAgents": ["QA", "Infrastructure"]
+    },
+    {
+      "releaseTarget": null,
+      "currentStep": null,
+      "completedSteps": [],
+      "createdAt": "2026-09-19",
+      "updatedAt": "2026-09-19",
+      "id": "CS-10",
+      "title": "Twenty-four agents exist with no activation policy",
+      "userProblem": "A roster nobody can route confidently becomes ceremony, and ceremony hides real review gaps.",
+      "source": "external review (ChatGPT)",
+      "area": "process",
+      "priority": "P2",
+      "status": "DISCOVERY",
+      "size": "M",
+      "value": 3,
+      "risk": 3,
+      "complexity": 3,
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "Each agent is retained only if it produces a unique artefact, holds a distinct permission boundary, makes a materially different decision, or supplies independent evidence",
+        "A written activation policy states which agents a given change class requires",
+        "Agents failing the retention test are merged or removed, not left dormant"
+      ],
+      "evidence": [
+        "The roster grew 11 to 24 in one session",
+        "AGENT-SETUP.md described 11 agents for two cycles while the validator stayed green"
+      ],
+      "securityImpact": "none",
+      "architectureImpact": "review topology",
+      "ownerAgent": "Agent Operations",
+      "reviewAgents": ["Orchestrator", "Project Manager"]
     }
   ]
 }
