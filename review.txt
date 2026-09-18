@@ -658,3 +658,150 @@ that state, and was proven to refuse completion when gates fail.
 Owner decision on pushing to main, which auto-deploys. Then the Caddy defect.
 
 ============================================================
+
+
+============================================================
+ENTRY
+============================================================
+
+Date:       2026-09-19
+Task:       Session backup for the macOS migration
+Iteration:  5
+Phase:      RECON -> implementation -> validation
+Agents:     none (local tooling; no product code touched)
+
+## REQUEST
+
+Save and back up the current VS Code session so it can be restored after moving
+to another machine.
+
+## RECON
+
+Established what actually exists rather than assuming git could carry it:
+
+  workspaceStorage/<hash>/
+    chatSessions/             0 files      EMPTY
+    chatEditingSessions/   1086 files      29.34 MB
+    GitHub.copilot-chat/     92 files      16.56 MB  (2 transcripts, 14 MB)
+    state.vscdb               1 file       93.89 MB
+
+  state.vscdb keys: memento/interactive-session 995 KB,
+                    chat.ChatSessionStore.index 26 bytes
+
+The finding that shaped everything: chatSessions/ is EMPTY and the session-store
+index is 26 bytes. VS Code had not written a reopenable session. The conversation
+exists only as transcripts plus an in-database memento at backup time, so a
+restore into the VS Code chat UI is NOT guaranteed from a mid-session backup.
+
+Also confirmed data/session-backups/ is gitignored, which matters because a
+transcript contains whatever was discussed, including infrastructure detail.
+
+## ARCHITECTURE
+
+A tracked cross-platform script writing to an untracked directory. The script is
+safe to commit; its output never is. Resolves the VS Code user directory per
+platform so the same command works after the migration.
+
+## UX
+
+Prints a size table and warns explicitly rather than implying a clean capture.
+The manifest carries restore steps, because the storage hash differs per machine
+and copying into the old hash would silently do nothing.
+
+## IMPLEMENTATION
+
+  scripts/backup-session.mjs - resolves this workspace's storage by matching the
+  recorded folder URI, copies chat state, writes MANIFEST.json with platform,
+  git HEAD/branch/dirty, per-item counts and bytes, warnings and restore steps.
+  --slim skips the 29 MB of file-edit snapshots.
+
+## FILES CHANGED
+
+  scripts/backup-session.mjs   new
+  eslint.config.js             console exemption moved after the general rules
+  review.txt                   this entry
+
+## TESTING
+
+  node scripts/backup-session.mjs   exit 0, 139.80 MB captured
+  npm run lint                      exit 0, ZERO problems
+  npm run format:check              exit 0
+  node scripts/check-agents.mjs     exit 0
+  git status --porcelain data/      empty - backup correctly ignored
+
+Verified the backup contains both transcripts (13.43 MB and 0.71 MB) rather
+than trusting the copy reported success.
+
+## SECURITY
+
+The backup contains the full conversation and is written only to gitignored
+data/session-backups/. Confirmed by git status rather than by reading .gitignore.
+The script prints no chat content.
+
+## PERFORMANCE
+
+139.80 MB per full backup; --slim drops 29 MB of edit snapshots.
+
+## CODE QUALITY
+
+Two real defects found during this cycle, both by running things rather than
+reasoning about them:
+
+1. The first backup silently captured the WRONG storage folder - 0.05 MB instead
+   of 93.89 MB. Two storage folders claim this repository path, VS Code having
+   left a stale entry behind, and the resolver returned the first match. It
+   exited 0 and printed a size table, so nothing looked wrong. Now every
+   candidate is ranked by write time, all are recorded in the manifest, and a
+   duplicate raises a warning. That bad backup was deleted.
+
+2. eslint.config.js declared a no-console exemption BEFORE the general rules
+   block. Flat config lets the last match win, so the exemption never applied.
+   This is why lint had been reporting "2 pre-existing warnings" for several
+   cycles - they were never pre-existing, they were this. Lint is now at zero.
+
+Defect 1 is the same shape as the recurring pattern: an operation that reported
+success while being structurally unable to notice it had done the wrong thing.
+
+## DOCUMENTATION
+
+Restore procedure lives in the generated MANIFEST.json, beside the artefact it
+describes, rather than in a document that can drift from it.
+
+## REVIEW
+
+Self-reviewed. External review this cycle addressed the wider project and is
+recorded under NEXT ACTION rather than as a review of this change.
+
+## FIXES
+
+  - wrong-storage-folder selection
+  - eslint flat-config ordering (removed 2 long-standing warnings)
+  - deleted the incorrect first backup
+
+## FINAL STATUS
+
+PASS with a stated limitation. The conversation is captured and verified.
+Restoring it into the VS Code chat UI is NOT guaranteed from this backup,
+because VS Code had not flushed a reopenable session. Re-run after closing
+VS Code for the best chance of a true restore.
+
+## REMAINING ISSUES
+
+  1. chatSessions/ empty at capture; UI restore uncertain until re-run on close.
+  2. .vscode/mcp.json still points into gitignored data/.
+  3. CI->Deploy release gate missing. External review rates this P0, above the
+     Caddy defect, because production can currently advance while required
+     validation is red.
+  4. Caddy self-healing defect still open.
+  5. Three commits remain unpushed.
+
+## NEXT ACTION
+
+Per external review, revised order: build the required-CI -> Deploy gate with an
+audited override, THEN the Caddy defect, then the firewall, then frontend routes.
+Do not push the three main commits until the release gate exists.
+
+Before shutting down this machine: close VS Code, reopen, and run
+`node scripts/backup-session.mjs` once more to capture a flushed session.
+
+============================================================

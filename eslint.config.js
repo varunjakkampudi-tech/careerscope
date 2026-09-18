@@ -34,10 +34,8 @@ export default tseslint.config(
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
   {
-    // A validator whose whole output is a pass/fail list has to reach stdout.
-    files: ['scripts/check-agents.mjs', 'scripts/control-center.mjs'],
+    files: ['scripts/check-agents.mjs', 'scripts/control-center.mjs', 'scripts/backup-session.mjs'],
     languageOptions: { globals: globals.node },
-    rules: { 'no-console': 'off' },
   },
   {
     rules: {
@@ -51,6 +49,12 @@ export default tseslint.config(
       'prefer-const': 'error',
       'no-var': 'error',
     },
+  },
+  {
+    // A tool whose entire output is a report has to reach stdout. This has to sit
+    // after the general rules above, because flat config lets the last match win.
+    files: ['scripts/check-agents.mjs', 'scripts/control-center.mjs', 'scripts/backup-session.mjs'],
+    rules: { 'no-console': 'off' },
   },
   {
     // Tests talk to stdout on purpose — a failing assertion is easier to read
