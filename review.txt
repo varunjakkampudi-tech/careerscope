@@ -1,0 +1,497 @@
+============================================================
+CAREERSCOPE ENGINEERING REVIEW LOG
+============================================================
+
+PROJECT:  CareerScope
+DOMAIN:   https://careerscope.tech
+
+This file is append-only. Never truncate it, never rewrite an earlier entry to
+make the history look cleaner. A log that gets tidied is a log nobody can trust.
+
+Only record what was actually performed and verified.
+
+============================================================
+ENTRY
+============================================================
+
+Date:       2026-09-18
+Task:       Configure the multi-agent engineering system and permanent records
+Iteration:  1
+Phase:      RECON -> configuration -> validation
+Agents:     none (framework did not exist yet; configured by the session directly)
+
+## REQUEST
+
+Configure CareerScope as a multi-agent engineering workspace: eleven specialist
+agents, shared .ai/ state, bounded loops, permanent progress and audit records.
+Do not begin CareerScope feature work.
+
+## RECON
+
+Repository: main @ 3bee7b2, deployed 3bee7b2, provenance consistent 4/4.
+Live: https://careerscope.tech -> {"status":"ok","version":"3.0.0"}
+
+Measured, not assumed:
+  - v2 frontend routes:  1  (one page.tsx)
+  - v2 API routes:       26
+  - migrations:          13
+  - existing agents:     none before this session
+  - MCP servers:         1 (job-radar)
+
+Pre-existing: .github/copilot-instructions.md, .vscode/{extensions,mcp,settings,
+tasks}.json. No .ai/, no AGENTS.md, no .claude/.
+
+## ARCHITECTURE
+
+Eleven agents created; two created earlier the same session (careerscope-architect,
+careerscope-builder) were DELETED because they duplicated Product Architect,
+Frontend, Backend and Infrastructure exactly. Two agents owning one role means
+neither owns it. Their content was carried into the specialists.
+
+Read-only enforced by withholding the `edit` tool rather than by instruction.
+Five reviewers cannot modify implementation files even if told to. QA and
+Performance get `execute` but not `edit`.
+
+Only the Orchestrator declares sub-agents, which is what makes a delegation
+cycle impossible.
+
+## UX
+
+Not applicable — no product work performed.
+
+## IMPLEMENTATION
+
+Created 11 agent files, 20 .ai/ files, docs/AI-ENGINEERING-WORKFLOW.md, the
+validator scripts/check-agents.mjs, and this log. Updated copilot-instructions,
+.vscode/tasks.json and eslint.config.js.
+
+## FILES CHANGED
+
+  .github/agents/*.agent.md                 11 files, new
+  .ai/*                                     20 files, new
+  docs/AI-ENGINEERING-WORKFLOW.md           new
+  scripts/check-agents.mjs                  new
+  review.txt                                new (this file)
+  .github/copilot-instructions.md           modified
+  .vscode/tasks.json                        modified (existing task preserved)
+  eslint.config.js                          modified (node globals for validator)
+
+No CareerScope product source was touched. Verified by git status filter.
+
+## TESTING
+
+Commands actually executed:
+
+  node scripts/check-agents.mjs            -> 19/19 PASS, exit 0
+  npm run lint                             -> exit 0
+  npm run format:check                     -> exit 0
+  bash check-provenance.sh (host)          -> consistent at 3bee7b2
+  curl https://careerscope.tech/api/health -> {"status":"ok","version":"3.0.0"}
+
+Validator asserts: 11 agents, unique names, handoffs resolve, only the
+orchestrator delegates, 5 reviewers have no edit tool, 3 builders can edit and
+execute, QA/Performance execute but cannot edit, 18 .ai files exist, LOOP-STATE
+not falsely complete, bounds present, no secrets in .ai.
+
+Dry run of the state machine: RECON -> PLANNING -> PLAN_REVIEW -> IMPLEMENTATION
+-> QA -> CODE_REVIEW -> FINAL_AUDIT. Confirmed 5/5 plan reviews yields BLOCKED
+rather than COMPLETE, and that an open P0 forbids completion. LOOP-STATE.json
+restored untouched afterwards.
+
+## SECURITY
+
+No product security change. Validator asserts no secrets in .ai/. Reviewers are
+granted no write-capable MCP integration.
+
+## PERFORMANCE
+
+Not applicable.
+
+## CODE QUALITY
+
+Two duplicate agents removed rather than left alongside their replacements.
+
+The validator caught a real defect in itself: Prettier rewrapped the YAML
+frontmatter arrays into block style, and the original regex matched only the
+inline form. It therefore read the Orchestrator's handoff list as empty and
+reported "only the orchestrator delegates (none)" — a FALSE PASS on a file it
+had failed to parse. Parser fixed to accept both forms.
+
+## DOCUMENTATION
+
+Created docs/AI-ENGINEERING-WORKFLOW.md, .ai/AGENT-SETUP.md,
+.ai/CAREERSCOPE-PROGRESS.md. Updated .github/copilot-instructions.md.
+
+## REVIEW
+
+No independent review — the framework being configured is the thing that would
+perform it. Stated plainly rather than claimed. The first real task will be the
+first genuine exercise of the loop.
+
+## FIXES
+
+  - eslint: added node globals + console allowance for the validator (lint 0)
+  - check-agents.mjs: handle block-style YAML arrays (false pass fixed)
+  - removed careerscope-architect and careerscope-builder as duplicates
+
+## FINAL STATUS
+
+PASS — agent system configured and validated.
+Configuration only. No CareerScope functionality was added or verified.
+
+## REMAINING ISSUES
+
+  1. GPT-6 Astra unavailable. `copilot --model gpt-6-astra` returns
+     `Error: Model "gpt-6-astra" from --model flag is not available.`
+     No substitute pinned. Documented in .ai/DECISIONS.md D-005.
+     Caveat: every identifier probed was rejected including claude-opus-5, the
+     model this session runs on, so this proves unavailability to the CLI and
+     not necessarily absence from the VS Code picker.
+  2. VS Code cannot pin a model per agent file; the picker governs.
+  3. A fresh session cannot be forced programmatically.
+  4. `execute` can modify state via shell, so QA/Performance are limited by
+     convention rather than capability.
+  5. 8 files uncommitted at time of writing.
+
+## NEXT ACTION
+
+Operator confirms the builder model in the VS Code picker, then supplies the
+first CareerScope task.
+
+Recommended first task, from measured state: route architecture, auth boundary
+and shared application shell. The V2 frontend is ONE route with seven
+components, which blocks every other UI improvement.
+
+============================================================
+MULTI-AGENT ENGINEERING SYSTEM INITIALIZED
+============================================================
+
+Date:  2026-09-18
+
+Orchestrator:    picker default (not pinned - VS Code cannot pin per agent)
+Architect:       intended Claude, not pinned
+UX:              intended Claude, not pinned
+Frontend:        UNRESOLVED - GPT-6 Astra requested, unavailable
+Backend:         UNRESOLVED - GPT-6 Astra requested, unavailable
+Infrastructure:  UNRESOLVED - GPT-6 Astra requested, unavailable
+Security:        intended Claude, not pinned
+QA:              picker default
+Performance:     picker default
+Research:        picker default
+Final Auditor:   intended Claude, fresh context, not pinned
+
+Custom Agents:   .github/agents/careerscope-orchestrator.agent.md
+                 .github/agents/careerscope-product-architect.agent.md
+                 .github/agents/careerscope-ux-agent.agent.md
+                 .github/agents/careerscope-frontend-agent.agent.md
+                 .github/agents/careerscope-backend-agent.agent.md
+                 .github/agents/careerscope-infrastructure-agent.agent.md
+                 .github/agents/careerscope-security-agent.agent.md
+                 .github/agents/careerscope-qa-agent.agent.md
+                 .github/agents/careerscope-performance-agent.agent.md
+                 .github/agents/careerscope-research-agent.agent.md
+                 .github/agents/careerscope-final-auditor.agent.md
+
+Shared State:    .ai/ (20 files incl. CAREERSCOPE-PROGRESS.md, AGENT-SETUP.md)
+
+MCP:             job-radar (pre-existing, unchanged)
+
+Handoffs:        Orchestrator -> 10 specialists. Only the Orchestrator
+                 delegates; no cycle is possible.
+
+Loop Limits:     plan review 5 · implementation 3 · code review 3 ·
+                 security 2 · performance 2 · final audit 2
+
+Validation:      PASS - node scripts/check-agents.mjs, 19/19, exit 0
+
+Known Limitations:
+  - No model pinning per agent; the picker governs at run time
+  - Fresh sessions are a manual step
+  - `execute` can modify state, so QA/Performance boundaries are conventional
+  - Nothing stops a human pasting reviewer output and calling it a review
+  - Sub-agents cannot be invoked programmatically from chat
+
+============================================================
+
+
+============================================================
+ENTRY
+============================================================
+
+Date:       2026-09-18
+Task:       Conform the three permanent records to the progress specification
+Iteration:  2
+Phase:      documentation -> validation
+Agents:     none (records/tooling change; no product code touched)
+
+## REQUEST
+
+Re-stated specification for the permanent progress system: mandatory detailed
+progress matrices with named tracked items, a fixed status vocabulary, an
+append-only audit log, and continuous synchronization of the three records.
+
+## RECON
+
+Audited the existing records against the specification instead of assuming the
+previous cycle had complied. Found four real gaps:
+
+  1. Backend matrix missing 4 required items: controllers, services,
+     repositories, retries.
+  2. Infrastructure matrix missing 5: service startup, database, cache, queue,
+     development environment.
+  3. System Design was prose, not the 14 required tracked items.
+  4. UX/UI missing 4 (mobile, desktop, interactions, usability) and had
+     typography and spacing merged into one row.
+
+Also found a vocabulary violation: PARTIAL was used in 13 places and is not one
+of the six defined statuses. It is the worst possible invented value here
+because it silently conceals whether a thing was ever verified.
+
+## ARCHITECTURE
+
+No architecture change.
+
+## UX
+
+No product UX change. The UX matrix was expanded to all 19 tracked items, which
+lowered the apparent state of several rows by describing them honestly rather
+than collapsing four state types into one "PARTIAL" cell.
+
+## IMPLEMENTATION
+
+Expanded all five matrices to the full required item lists. Replaced every
+PARTIAL with IN PROGRESS or NOT STARTED as the evidence warranted. Converted
+System Design from prose to a 14-row table. Corrected a stale ".ai/ - 18 files"
+count in AGENT-SETUP.md.
+
+Added a status-vocabulary check to scripts/check-agents.mjs, scoped to the
+matrices because the Open items table records dispositions, not statuses.
+
+Added a "Negative proof" section to AGENT-SETUP.md.
+
+## FILES CHANGED
+
+  .ai/CAREERSCOPE-PROGRESS.md    matrices expanded, vocabulary corrected
+  .ai/AGENT-SETUP.md             file count fixed, negative-proof rule added
+  scripts/check-agents.mjs       status-vocabulary check added
+  review.txt                     this entry
+
+## TESTING
+
+  node scripts/check-agents.mjs   -> 23/23 PASS, exit 0
+  npm run format                  -> clean
+  npm run format:check            -> exit 0
+
+Mutation test of the new check, because a check that has never gone red is not
+evidence that it can:
+
+  clean                        -> PASS, exit 0, 92 status cells parsed
+  inject PARTIAL               -> FAIL "every status is a defined value PARTIAL",
+                                  exit 1
+  restore                      -> PASS, exit 0
+
+The first version of that check was unscoped and reported
+`FAIL ... PARTIAL, KNOWN LIMITATION`. KNOWN LIMITATION was a genuine
+pre-existing value in the Open items table, surfaced only because the mutation
+test forced the check to run against real content. Scoping the check to the
+matrices resolved it correctly rather than by widening the allowed set.
+
+## SECURITY
+
+No security-relevant change. Secret scan over .ai still passes.
+
+## PERFORMANCE
+
+Not applicable.
+
+## CODE QUALITY
+
+The new check was written once in a form that could not fail, and was rewritten.
+That is the second time in this session the validator produced a false pass, and
+it is the reason the negative-proof rule was written down rather than remembered.
+
+## DOCUMENTATION
+
+All three records updated and mutually consistent.
+
+## REVIEW
+
+Self-reviewed only. The multi-agent loop was not exercised; this cycle changed
+records and tooling, not product behaviour.
+
+An external review of the overall project state was obtained in the same session
+and is recorded here because it changes the planned order of work, not because
+it validates this change.
+
+## FIXES
+
+  - PARTIAL -> IN PROGRESS / NOT STARTED, 13 occurrences
+  - status check scoped to the matrices after it over-matched
+  - AGENT-SETUP.md file count 18 -> 20
+
+## FINAL STATUS
+
+PASS - records conform to the specification and the conformance is enforced by
+a check that has been shown to fail when violated.
+
+## REMAINING ISSUES
+
+  1. Caddy crash + `restart: unless-stopped` can still produce a healthy-looking
+     total outage. Highest-priority open engineering defect.
+  2. Hostinger managed firewall configured but not attached.
+  3. No password recovery; transactional email needs an external provider.
+  4. Admin console on a branch, not deployed.
+  5. Trivy version discrepancy unexplained.
+  6. 10 files uncommitted.
+
+## NEXT ACTION
+
+External review recommends, and I agree, that the order should be:
+
+  Caddy self-healing -> attach managed firewall -> frontend route architecture
+  + auth boundary + shared shell -> admin UI -> domain expansion -> pages
+
+Rationale for the reordering: restart-stack.sh is recovery-by-operator, not
+availability protection. A demonstrated outage mechanism that requires no user
+action outranks a known UI gap. Awaiting owner confirmation before starting.
+
+============================================================
+
+
+============================================================
+ENTRY
+============================================================
+
+Date:       2026-09-18
+Task:       Fix persistently failing CI, and make the workspace portable to macOS
+Iteration:  3
+Phase:      RECON -> implementation -> QA
+Agents:     none (diagnosis and fix performed directly)
+
+## REQUEST
+
+CI pipelines mostly failing; a permanent fix, not a patch. Plus: migrating back
+to a Mac, so the repository and the multi-agent system must work after a pull.
+
+## RECON
+
+Surveyed the last 40 runs and read the failing logs rather than guessing:
+
+  6 of 10 failures  browser verification step
+  1                 TypeScript error + missing packages/shared build output
+  1                 deploy host reachability
+  2                 dependabot version bumps (vite plugin, MCP arity)
+
+The dominant signature was one step. Critically, CI was RED on main while
+Deploy was GREEN - the project had been deploying past a failing gate.
+
+## ARCHITECTURE
+
+No architecture change. One CI step was split into three so a failure names
+itself; the three checks had been chained with && behind a single step name,
+which is why every log said only "Process completed with exit code 1".
+
+## UX
+
+The defect was a real mobile UX defect, not a test problem. At 390px in WebKit
+the lead rows physically overlapped each other by 28px.
+
+## IMPLEMENTATION
+
+Root cause, in apps/web/src/components/LeadTable.tsx:
+
+Crossing the card/table breakpoint calls virtualizer.measure() to clear stale
+heights. WebKit delivers ResizeObserver entries BEFORE React layout effects, so
+the sequence there is: rows measured -> measure() discards those heights ->
+nothing resizes again -> the size cache is never refilled. Every row then keeps
+the 233px CARD_ESTIMATE while rendering 261px tall. Chromium and Firefox
+deliver after the layout effect and were unaffected.
+
+Fix: after clearing the cache, re-measure the mounted rows directly.
+
+Also removed an arbitrary `timeout: 5000` on the one wait in check-ui.mjs that
+had it - every other wait in that file uses the 30s default - and separated
+"data has loaded" from "layout has settled", so the two are no longer conflated.
+On failure the check now reports actual row geometry.
+
+## FILES CHANGED
+
+  apps/web/src/components/LeadTable.tsx  re-measure rows after cache clear
+  scripts/check-ui.mjs                   split the wait, added diagnostics
+  .github/workflows/ci.yml               one step -> three attributable steps
+  .github/agents/*.agent.md              4 files: portable validation commands
+  .github/CLAUDEX-WORKFLOW.md            portable validation commands
+
+## TESTING
+
+  node --import tsx scripts/check-ui.mjs   before fix: FAIL, exit 1
+      "webkit: rows must stack at 390px. 11 rows, 10 overlapping:
+       [{"index":"1","top":561,"bottom":822},{"index":"2","top":794,...}]"
+
+  node --import tsx scripts/check-ui.mjs   after fix: chromium, firefox and
+                                           webkit all pass, exit 0
+  npm test                                 1047/1047, 67 files, exit 0
+  npm run typecheck                        exit 0
+  npm run lint                             exit 0, 2 pre-existing warnings
+  npm run format:check                     exit 0
+  node scripts/check-agents.mjs            exit 0
+  npm --prefix v2 run typecheck            exit 0 (proves the portable form)
+
+Correction to the record: earlier in this cycle I reported the browser check as
+"passing locally". It was not. I had filtered the output and never read the exit
+code. The diagnostics added here are what exposed that, and the mistake is the
+same one this project keeps hitting - treating an unread result as a pass.
+
+## SECURITY
+
+No security-relevant change. No sensitive path staged; data/ remains ignored.
+
+## PERFORMANCE
+
+Not measured; the change adds one re-measure pass on breakpoint crossings only.
+
+## CODE QUALITY
+
+The 5000ms timeout was not the root cause, only what made the real defect fast
+and unreadable. Raising it alone would have produced a green pipeline over a
+broken mobile layout.
+
+## DOCUMENTATION
+
+This entry. Agent command blocks changed from powershell to portable bash.
+
+## REVIEW
+
+Self-reviewed. Not routed through the agent loop.
+
+## FIXES
+
+  - WebKit row overlap (the actual defect)
+  - undiagnosable CI step (3 checks behind 1 name)
+  - Windows-only commands in 5 tracked agent/workflow documents
+
+## FINAL STATUS
+
+PASS - the failing gate now passes for the right reason, with before/after
+evidence rather than a loosened assertion.
+
+## REMAINING ISSUES
+
+  1. .vscode/mcp.json points at data/windows-toolchain/.../node.exe and
+     data/start-windows-mcp.mjs. data/ is gitignored, so BOTH are absent after
+     a clone. Deliberately not changed: the launcher asserts the pinned Node
+     26.8.1 runtime, and repointing it at PATH node would break the working
+     Windows setup before the migration happens. Needs an owner decision.
+  2. data/windows-v2/run.mjs and data/start-windows-mcp.mjs are untracked and
+     Windows-only. They carry real safety assertions - separate working-copy
+     database, paused scheduling, no active runs, scrubbed environment - so
+     they should be ported deliberately, not improvised on the new machine.
+  3. Caddy self-healing defect still open and still the top priority.
+  4. Hostinger managed firewall still not attached.
+
+## NEXT ACTION
+
+Push to main, which auto-deploys - requires owner authorisation first.
+Then port the MCP launcher for macOS, then the Caddy self-healing defect.
+
+============================================================

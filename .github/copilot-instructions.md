@@ -122,6 +122,30 @@ rules above, install it project-scoped and pinned, and record why. Never install
 a catalog wholesale or trust a skill because its name sounds relevant. See
 `.github/skills/README.md`.
 
+## Multi-Agent Workflow
+
+Non-trivial work runs through the specialist agents in `.github/agents`, so that
+the agent implementing a change is never the sole authority that it is correct:
+
+- **Orchestrator** — requirements, recon, routing, `.ai/` state, completion.
+- **Product Architect, UX, Security, Final Auditor, Research** — read-only
+  reviewers, granted no edit tool, so the restriction is enforced.
+- **QA, Performance** — execute the real checks, cannot edit implementation.
+- **Frontend, Backend, Infrastructure** — implementation, tests and docs.
+
+The Orchestrator routes to the **smallest sufficient team**; running all eleven
+on a small change is theatre. Durable state lives in `.ai/` because conversation
+memory does not survive the fresh sessions that independent review requires.
+
+Bounds: plan review 5, implementation 3, code review 3, security 2, performance
+2, final audit 2. Reaching one means `BLOCKED`, never `COMPLETE`.
+
+Validate the configuration with `node scripts/check-agents.mjs`.
+
+Full description in [docs/AI-ENGINEERING-WORKFLOW.md](../docs/AI-ENGINEERING-WORKFLOW.md).
+A separate cross-CLI workflow is documented in
+[.github/CLAUDEX-WORKFLOW.md](CLAUDEX-WORKFLOW.md); use one per task, not both.
+
 ## Verification And References
 
 - Start with a focused regression test. For broad code changes or a release, run

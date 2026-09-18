@@ -1,0 +1,33 @@
+{
+  "phase": "RECON",
+  "task": null,
+  "iteration": 0,
+  "counts": {
+    "planReview": 0,
+    "implementation": 0,
+    "codeReview": 0,
+    "securityReview": 0,
+    "performanceReview": 0,
+    "finalAudit": 0
+  },
+  "limits": {
+    "planReview": 5,
+    "implementation": 3,
+    "codeReview": 3,
+    "securityReview": 2,
+    "performanceReview": 2,
+    "finalAudit": 2
+  },
+  "subsystems": {
+    "frontend": "not-started",
+    "backend": "not-started",
+    "infrastructure": "not-started",
+    "documentation": "not-started",
+    "architecture": "not-started"
+  },
+  "qa": "not-run",
+  "unresolved": { "P0": 0, "P1": 0, "P2": 0, "P3": 0 },
+  "lastVerdict": null,
+  "status": "RECON",
+  "notes": "Framework configured; no CareerScope task accepted. Reaching any limit sets BLOCKED, never COMPLETE."
+}

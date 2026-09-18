@@ -9,6 +9,33 @@
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": [],
       "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      // Both CLIs are resolved from PATH rather than an absolute path, so this
+      // stays portable across machines. Invoke /claudex-loop or $claudex-loop
+      // inside the session that opens.
+      "label": "Claudex: Claude Code session (host)",
+      "type": "shell",
+      "command": "claude",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "Claudex: Codex session (host)",
+      "type": "shell",
+      "command": "codex",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "Claudex: Verify environment",
+      "type": "shell",
+      "command": "claude --version; claude auth status; codex --version; codex login status; python --version",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
     }
   ]
 }
