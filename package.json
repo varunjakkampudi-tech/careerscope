@@ -49,6 +49,7 @@
     "agile:review": "node scripts/agile.mjs review",
     "agile:retro": "node scripts/agile.mjs retro",
     "agile:release": "node scripts/agile.mjs release",
+    "agile:carry": "node scripts/agile.mjs carry",
     "agile:ui": "node scripts/engineering-ui.mjs",
     "engineering:center": "node scripts/engineering-ui.mjs",
     "release:gate": "node scripts/release-gate.mjs",

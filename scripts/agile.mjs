@@ -14,6 +14,7 @@
  *   npm run agile:review     sprint review readiness
  *   npm run agile:release    release gate
  *   npm run agile:retro      open the retrospective
+ *   npm run agile:carry      close the week and carry unfinished work forward
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -283,7 +284,98 @@ function release() {
   }
 }
 
-const commands = { status, plan, scrum, feature, review, retro, release };
+/**
+ * Move unfinished work into next week's sprint, explicitly.
+ *
+ * Work that quietly disappears at the end of a week is how a backlog starts
+ * lying. Carrying an item records that it was carried and how many times, so a
+ * item on its fourth week is visible as a problem rather than as normal.
+ */
+function carry() {
+  const from = sprintPath();
+  const sprint = read(from);
+  if (!sprint) {
+    console.error(`\n  No sprint at ${from}. Nothing to carry.\n`);
+    record('carry', 'no-sprint', ['no current sprint']);
+    process.exitCode = 1;
+    return;
+  }
+
+  const backlog = read(join(AI, 'backlog.json'));
+  if (!backlog || !Array.isArray(backlog.items)) {
+    // An unreadable backlog is not an empty one.
+    console.error('\n  .ai/backlog.json is missing or has no items array. Refusing to carry.\n');
+    record('carry', 'backlog-unreadable', ['backlog unreadable']);
+    process.exitCode = 1;
+    return;
+  }
+
+  const byId = new Map(backlog.items.map((i) => [i.id, i]));
+  const selected = Array.isArray(sprint.selectedFeatures) ? sprint.selectedFeatures : [];
+  const unknown = selected.filter((id) => !byId.has(id));
+  if (unknown.length) {
+    console.error(`\n  Sprint names items absent from the backlog: ${unknown.join(', ')}\n`);
+    record('carry', 'unknown-items', unknown);
+    process.exitCode = 1;
+    return;
+  }
+
+  const done = selected.filter((id) => byId.get(id).status === 'DONE');
+  const unfinished = selected.filter((id) => byId.get(id).status !== 'DONE');
+
+  const next = isoWeek(new Date(Date.now() + 7 * 86400000));
+  const nextPath = join(AI, 'sprints', `${next}.json`);
+  const target = read(nextPath, {
+    sprintId: next,
+    week: next,
+    goal: null,
+    startDate: null,
+    targetReleaseDate: null,
+    status: 'PLANNING',
+    candidates: [],
+    selectedFeatures: [],
+    deferredFeatures: [],
+    rejectedFeatures: [],
+    risks: [],
+    dependencies: [],
+    acceptanceCriteria: [],
+    agents: [],
+    releasePlan: {},
+  });
+
+  for (const id of unfinished) {
+    if (!target.candidates.includes(id)) target.candidates.push(id);
+    const item = byId.get(id);
+    item.carriedCount = (item.carriedCount ?? 0) + 1;
+    item.carriedFrom = [...new Set([...(item.carriedFrom ?? []), sprint.sprintId])];
+    item.updatedAt = today();
+  }
+
+  sprint.status = 'CLOSED';
+  sprint.closedAt = today();
+  sprint.outcome = { completed: done, carried: unfinished, carriedTo: next };
+
+  write(from, sprint);
+  write(nextPath, target);
+  write(join(AI, 'backlog.json'), backlog);
+
+  console.log(`\n  SPRINT CARRY  ${sprint.sprintId} → ${next}\n`);
+  console.log(`  Completed: ${done.length ? done.join(', ') : 'none'}`);
+  console.log(`  Carried:   ${unfinished.length ? unfinished.join(', ') : 'none'}\n`);
+  for (const id of unfinished) {
+    const item = byId.get(id);
+    const times = item.carriedCount;
+    console.log(
+      `    ${id}  ${item.status.padEnd(12)} carried ${times}×${times >= 3 ? '  ← slice it or drop it' : ''}`,
+    );
+  }
+  console.log(
+    `\n  Carrying is not progress. ${unfinished.length} item(s) moved to ${next} as candidates,\n  not as commitments — next week's plan still has to select them.\n`,
+  );
+  record('carry', 'carried', []);
+}
+
+const commands = { status, plan, scrum, feature, review, retro, release, carry };
 const command = process.argv[2];
 if (!commands[command]) {
   console.error(`Usage: node scripts/agile.mjs <${Object.keys(commands).join('|')}>`);
