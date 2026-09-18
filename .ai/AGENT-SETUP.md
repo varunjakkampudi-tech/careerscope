@@ -99,6 +99,37 @@ skim the output.
 | Full feature        | Research → Architect → UX → Frontend + Backend → QA → Security → Performance → Final Auditor |
 | System redesign     | all                                                                                          |
 
+## Execution graph
+
+The Orchestrator decides what runs together. One rule governs it:
+
+**Parallel is safe only for read-only agents.** Architect, UX, Security,
+Performance and Research hold no `edit` tool, so no number of them running at
+once can conflict.
+
+**Never parallelise two builders.** Frontend, Backend and Infrastructure all
+write files. "They touch different folders" is a prediction, not a guarantee.
+
+Also sequential: anything consuming another agent's output. QA cannot verify an
+implementation that has not happened.
+
+```
+        ┌──────────────── ORCHESTRATOR ───────────────┐
+        ↓                     ↓                       ↓
+    ARCHITECT                 UX                  RESEARCH      parallel
+        └─────────────────────┼───────────────────────┘
+                              ↓
+                        IMPLEMENTATION                          one writer
+                              ↓
+                     ┌────────┴────────┐
+                    QA             SECURITY                     parallel
+                     └────────┬────────┘
+                              ↓
+                        PERFORMANCE
+                              ↓
+                       FINAL AUDITOR                            fresh context
+```
+
 ---
 
 ## Handoffs
@@ -178,6 +209,34 @@ audit passed · `LOOP-STATE.json` reports `COMPLETE`.
 None of these is completion: a zero exit code, an output file existing, a model
 saying "done". On this machine `claude auth status` exits **0** while reporting
 `loggedIn: false` — the trap is live in the first command anyone runs.
+
+## Engineering Control Center
+
+`node scripts/control-center.mjs` — or the **CareerScope: Engineering Control
+Center** task, which watches `.ai/` and re-renders on change. `--json` for a
+machine-readable dump.
+
+It renders task, phase, iteration, active agent, model, permission, elapsed
+time, current operation, every agent's state, the progress matrix with deltas
+against the previous commit, P0-P3 findings, the activity log, the last review
+entry and the next action.
+
+Everything it prints is read from a file. It computes no percentage of its own —
+those come from the progress matrix — and it invents no activity.
+
+Two honest limits, both deliberate:
+
+1. **VS Code does not publish agent runtime to disk.** "Active agent" is
+   whatever the Orchestrator last wrote. This is a record, not a probe.
+2. **Because of (1), a recorded `RUNNING` state that has not been updated for
+   15 minutes is reported as `STALE`, not animated.** A spinner over an
+   abandoned run is precisely the fake activity the tool exists to avoid.
+
+Permission is derived from each agent's actual tool list, not from a label, so
+the `READ ONLY` / `WRITE` column cannot drift from the enforced configuration.
+
+The dashboard reads `.ai/` and `review.txt` and nothing else. CareerScope does
+not depend on it; if it breaks, the application is unaffected.
 
 ## Negative proof
 

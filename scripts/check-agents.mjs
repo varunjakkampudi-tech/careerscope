@@ -158,6 +158,31 @@ check(unknown.length === 0, `every status is a defined value ${unknown.join(', '
 
 const loop = JSON.parse(readFileSync('.ai/LOOP-STATE.json', 'utf8'));
 check(loop.status !== 'COMPLETE', `LOOP-STATE not falsely complete (${loop.status})`);
+
+// The control center renders these, so their absence would silently degrade it
+// to a screen that shows nothing rather than one that reports a problem.
+check(
+  [
+    'activeAgent',
+    'model',
+    'currentOperation',
+    'startedAt',
+    'updatedAt',
+    'agents',
+    'activity',
+  ].every((key) => key in loop),
+  'LOOP-STATE carries the fields the control center renders',
+);
+// An agent recorded as running while no agent is active is the exact lie the
+// dashboard exists to prevent.
+const busy = Object.entries(loop.agents ?? {}).filter(
+  ([, state]) => !['WAITING', 'COMPLETE', 'PASSED', 'FAILED', 'BLOCKED'].includes(state),
+);
+check(
+  loop.activeAgent !== null || busy.length === 0,
+  `no agent is recorded busy without an active agent ${busy.map(([id]) => id).join(', ')}`,
+);
+check(existsSync('scripts/control-center.mjs'), 'control center script exists');
 check(
   loop.limits.planReview === 5 && loop.limits.implementation === 3 && loop.limits.finalAudit === 2,
   'loop bounds present',

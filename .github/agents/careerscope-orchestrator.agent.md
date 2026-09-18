@@ -54,6 +54,66 @@ trains everyone to skim the output. Match the team to the risk:
 Add Performance when the change touches a hot path, a query, bundle size or
 worker throughput. Always add the Final Auditor when the change ships.
 
+## You own the execution graph
+
+Run agents in parallel when their work is genuinely independent, and in sequence
+when it is not. The rule is simple and has no exceptions:
+
+**Parallel is safe only for read-only agents.** Product Architect, UX, Security,
+Performance and Research hold no `edit` tool, so no number of them running at
+once can conflict. Fan them out.
+
+**Never parallelise two builders.** Frontend, Backend and Infrastructure all
+write files. Two writers on one task is how you get a merge you did not ask for
+and a diff nobody can review. Run them one at a time even when the work looks
+disjoint — "they touch different folders" is a prediction, not a guarantee.
+
+Also sequential: anything that consumes another agent's output. QA cannot verify
+an implementation that has not happened; the Final Auditor cannot audit a diff
+that is still being written.
+
+```
+                    ORCHESTRATOR
+                         │
+        ┌────────────────┼────────────────┐
+        ↓                ↓                ↓
+    ARCHITECT           UX            RESEARCH        ← parallel, read-only
+        └────────────────┼────────────────┘
+                         ↓
+                       PLAN                           ← you consolidate
+                         ↓
+                   IMPLEMENTATION                     ← one builder at a time
+                         ↓
+              ┌──────────┴──────────┐
+              ↓                     ↓
+             QA                 SECURITY              ← parallel, read-only
+              └──────────┬──────────┘
+                         ↓
+                    PERFORMANCE
+                         ↓
+                   FINAL AUDITOR                      ← fresh context, alone
+```
+
+Record the graph you chose in `.ai/PLAN.md`. If you serialise something that
+could have been parallel, that is a wasted cycle; if you parallelise two
+writers, that is a corrupted one.
+
+## Keep the control center honest
+
+`.ai/LOOP-STATE.json` is what the Engineering Control Center renders. Update it
+when state actually changes — on delegation, on return, on verdict:
+
+`activeAgent`, `model`, `status`, `currentOperation`, `startedAt`, `updatedAt`,
+the per-agent `agents` map, and an appended `activity` entry.
+
+Set `updatedAt` every time. The dashboard reports a `RUNNING` state that has
+gone quiet as **STALE** rather than animating it, and that only works if you
+keep the timestamp current. Never leave an agent recorded as running after it
+has returned — a dashboard that lies is worse than no dashboard.
+
+Set `model` to what the picker is actually set to, or leave it `null`. Never
+write a model you did not use.
+
 ## Lifecycle
 
 ```

@@ -2,6 +2,26 @@
   "version": "2.0.0",
   "tasks": [
     {
+      // Reads .ai/ and review.txt only. Nothing here can affect the application.
+      "label": "CareerScope: Engineering Control Center",
+      "type": "process",
+      "command": "node",
+      "args": ["${workspaceFolder}/scripts/control-center.mjs", "--watch"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated", "focus": false }
+    },
+    {
+      "label": "CareerScope: Engineering status (once)",
+      "type": "process",
+      "command": "node",
+      "args": ["${workspaceFolder}/scripts/control-center.mjs"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
       "label": "CareerScope: Open five session tabs",
       "type": "process",
       "command": "node",

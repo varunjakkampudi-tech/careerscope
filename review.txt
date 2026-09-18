@@ -495,3 +495,166 @@ Push to main, which auto-deploys - requires owner authorisation first.
 Then port the MCP launcher for macOS, then the Caddy self-healing defect.
 
 ============================================================
+
+
+============================================================
+ENTRY
+============================================================
+
+Date:       2026-09-19
+Task:       Engineering Control Center and agent execution graph
+Iteration:  4
+Phase:      implementation -> validation
+Agents:     none (observability tooling; no product code touched)
+
+## REQUEST
+
+A visible way to understand what the AI engineering team is doing: live agent
+state, models, permissions, progress, findings, activity and completion - read
+from real repository state, with no simulated activity and no fake percentages.
+
+## RECON
+
+Established what could honestly be delivered before building anything:
+
+  - VS Code does NOT publish agent runtime to disk. No script can observe which
+    agent is executing, its elapsed time or its current tool. Anything claiming
+    to would be fabricating.
+  - Models are not pinned; the picker decides at run time.
+  - The review tables in .ai/ are currently empty, so findings are genuinely
+    zero rather than unknown.
+
+Those three facts shaped the design rather than being worked around.
+
+## ARCHITECTURE
+
+A single dependency-free Node script reading files. No frontend application, no
+server, no framework. It reads .ai/ and review.txt and nothing else, so the
+application cannot depend on it and cannot be affected by it.
+
+The load-bearing design decision is STALENESS. Because "active agent" is a
+record written by the Orchestrator rather than a probe of a live process, a
+recorded RUNNING state that has not been updated for 15 minutes is displayed as
+STALE instead of animated. A spinner over an abandoned run is exactly the fake
+activity the request prohibits, and without this it would have been the default
+behaviour.
+
+Agent permission is derived from each agent's actual tool list, not from a
+label, so READ ONLY / WRITE cannot drift from the enforced configuration.
+
+## UX
+
+Terminal rendering with a --watch mode and a VS Code task. Deliberately not a
+web dashboard: a second frontend to display the state of the first frontend is
+not the simplest maintainable implementation.
+
+## IMPLEMENTATION
+
+  - scripts/control-center.mjs, rendering: task, phase, iteration, status,
+    active agent, model, permission, elapsed, operation, state age, all 11
+    agent states, the progress matrix with per-area deltas against the previous
+    commit, P0-P3 findings with origin and file, activity log, last review
+    entry, next action, and a completion gate that states why it is not met.
+  - .ai/LOOP-STATE.json extended with activeAgent, model, currentOperation,
+    startedAt, updatedAt, a per-agent state map and an activity array.
+  - Orchestrator given an explicit execution graph: parallel only for read-only
+    agents, never two builders at once, plus the duty to keep LOOP-STATE current.
+  - Two VS Code tasks: watching and one-shot.
+  - Three new assertions in check-agents.mjs.
+
+## FILES CHANGED
+
+  scripts/control-center.mjs                      new
+  .ai/LOOP-STATE.json                             live-state fields
+  .ai/AGENT-SETUP.md                              execution graph, control center
+  .github/agents/careerscope-orchestrator.agent.md  graph + state duty
+  .vscode/tasks.json                              two tasks
+  scripts/check-agents.mjs                        three assertions
+  review.txt                                      this entry
+
+## TESTING
+
+  node scripts/control-center.mjs                 exit 0, renders real state
+  node scripts/check-agents.mjs                   exit 0
+
+Mutation test 1 - does the dashboard track real state, or just print?
+Injected a running frontend agent, two other agent states, an activity log and
+a synthetic P1 into SECURITY-REPORT.md:
+
+  Task/Phase/Iteration       reflected
+  Active                     CareerScope Frontend
+  Permission                 WRITE ENABLED   (derived from tools)
+  Model                      "not pinned - VS Code picker decides"
+  Elapsed                    7m 0s from startedAt
+  Agent states               Frontend IMPLEMENTING, Architect COMPLETE,
+                             UX REVIEWING
+  Findings                   P1 1, listed with file and OPEN status
+  Activity                   both events, timestamped
+  Completion gate            refused, citing "1 open P1"
+
+All files restored afterwards.
+
+Mutation test 2 - staleness. A RUNNING state timestamped 3 hours ago rendered
+"RUNNING  STALE - recorded as running but not updated" and "Elapsed 3h 0m
+(stale)" rather than presenting as live.
+
+Mutation test 3 - the new validator assertion. Marking QA RUNNING while
+activeAgent was null produced FAIL and exit 1; restoring produced exit 0.
+
+## SECURITY
+
+No security-relevant change. The dashboard is read-only over .ai/ and
+review.txt. Secret scan still passes.
+
+## PERFORMANCE
+
+Not applicable. The script reads a handful of files on demand.
+
+## CODE QUALITY
+
+The first render reported "LAST RECORDED CYCLE: No entries yet" while review.txt
+contained three entries. The repository is checked out CRLF on Windows, so every
+multiline pattern silently failed to match and the screen reported empty instead
+of erroring. Fixed by normalising line endings on read. This is the third false
+negative of this kind in the project, and the reason the negative-proof rule now
+applies to the dashboard as well as the validator.
+
+A future-dated timestamp also produced "State age -19112s"; a clock disagreement
+is now named rather than rendered as a negative duration.
+
+## DOCUMENTATION
+
+.ai/AGENT-SETUP.md gained the execution graph and a control center section that
+states both honest limits. This entry.
+
+## REVIEW
+
+Self-reviewed. Not routed through the agent loop - this is the instrumentation
+the loop will be observed through, not a change to the loop's behaviour.
+
+## FIXES
+
+  - CRLF parsing false negative
+  - negative state age on clock skew
+  - staleness reporting, added after recognising the spinner risk
+
+## FINAL STATUS
+
+PASS - the control center renders real state, was proven to track changes in
+that state, and was proven to refuse completion when gates fail.
+
+## REMAINING ISSUES
+
+  1. Live agent runtime cannot be observed. Fidelity depends on the Orchestrator
+     updating LOOP-STATE.json. Mitigated by staleness reporting, not solved.
+  2. Models remain unpinned, so the dashboard shows the picker caveat rather
+     than a model name.
+  3. .vscode/mcp.json still points into gitignored data/ - open from iteration 3.
+  4. Caddy self-healing defect still open and still top priority.
+  5. Two commits remain unpushed.
+
+## NEXT ACTION
+
+Owner decision on pushing to main, which auto-deploys. Then the Caddy defect.
+
+============================================================

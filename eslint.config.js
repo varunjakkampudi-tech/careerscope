@@ -35,7 +35,7 @@ export default tseslint.config(
   },
   {
     // A validator whose whole output is a pass/fail list has to reach stdout.
-    files: ['scripts/check-agents.mjs'],
+    files: ['scripts/check-agents.mjs', 'scripts/control-center.mjs'],
     languageOptions: { globals: globals.node },
     rules: { 'no-console': 'off' },
   },
