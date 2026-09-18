@@ -347,6 +347,13 @@ export class AdminRepository {
 // for different reasons. A search that took 40 seconds because the publisher
 // was backed up is a different problem from one that took 40 seconds inside a
 // provider, and the two are indistinguishable without this.
+//
+// The trace root is the requestId, not a separate traceId, because every trace
+// in this system originates from an HTTP request. That is a real constraint,
+// not a coincidence: the moment work can begin somewhere else -- a scheduled
+// job, a CLI, an inbound webhook -- there is no requestId to reuse and a
+// distinct trace root becomes necessary. Until then a second identifier would
+// only ever be a copy.
 export interface TraceSpan {
   operation: string;
   startedAt: string | null;
@@ -486,6 +493,9 @@ function observe(
   return notes;
 }
 
+// A debug session raises diagnostic detail for a bounded window. It must never
+// become a way to run something: any UI built on this exposes predefined
+// diagnostics only, never a free-form command or query box.
 export class DebugSessions {
   constructor(private readonly pool: Pool) {}
 

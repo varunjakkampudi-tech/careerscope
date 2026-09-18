@@ -274,9 +274,14 @@ export async function createApp(
   // audit all happen in the onRequest hook above, so every route here can
   // assume an authenticated administrator and nothing more.
   //
-  // These are read-only by design. There is no admin mutation endpoint, because
-  // "an admin can change any row" is not a feature — it is the thing an audit
-  // log exists to catch.
+  // Investigation is read-only. The only mutations are the debug-session
+  // lifecycle below, and they touch no product data: they open and close a
+  // time-boxed investigation window and nothing else.
+  //
+  // What is deliberately absent is an endpoint that edits a user's records.
+  // "An admin can change any row" is not a feature — it is the thing an audit
+  // log exists to catch. There is also no arbitrary SQL and no command
+  // execution, and neither should ever be added here.
   //
   // Every route resolves the target account server-side from an identifier the
   // admin supplies, then scopes every query by the resolved owner id. A caller
