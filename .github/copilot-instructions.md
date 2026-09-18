@@ -6,8 +6,9 @@ do not turn small fixes or non-coding requests into architecture exercises.
 
 ## Working Agreement
 
-- Start with the affected implementation and a nearby test. State important
-  assumptions, choose the smallest defensible change, and validate it promptly.
+- Understand before modifying. Start with the affected implementation and a
+  nearby test. State important assumptions, choose the smallest defensible
+  change, and validate it promptly.
 - Challenge unsafe, incorrect or unnecessarily complex proposals with evidence
   and a simpler recommendation. Do not expand scope without approval.
 - Preserve user edits, public contracts, stored data and established conventions.
@@ -17,6 +18,30 @@ do not turn small fixes or non-coding requests into architecture exercises.
   was actually tested and what remains unverified; compilation is not readiness.
 - Commit, push, publish, provision infrastructure, install system software or
   submit external forms only when authorized for the current task.
+
+## Before Any Meaningful Change
+
+Inspect the affected architecture, trace the full data flow, search for an
+existing implementation before writing a new one, identify callers and tests,
+and name the failure modes. Then implement, verify, review the diff, and update
+documentation if behaviour or architecture changed.
+
+## Non-Negotiables
+
+- Preserve API contracts, database invariants, transaction boundaries,
+  idempotency, crash consistency and queue/outbox semantics.
+- Never weaken authentication, authorization, rate limits, Argon2 cost,
+  validation, encryption or security headers to make something pass.
+- Never expose secrets. Do not log credentials, tokens, resume content, full
+  URLs or request bodies. Validate all external input.
+- Treat retries, timeouts, cancellation and partial failure as first-class.
+  Do not silently swallow errors.
+- Do not use `any` to hide a type problem without an explicit justification.
+- Do not disable a lint, type or test rule to get CI green. Do not delete or
+  weaken a test because it fails, and never edit a test to mask a regression.
+- Do not introduce a duplicate utility, an unnecessary dependency, or an
+  abstraction for a single call site. Respect module boundaries.
+- Do not claim completion without evidence.
 
 ## Project Boundaries
 
@@ -29,12 +54,27 @@ do not turn small fixes or non-coding requests into architecture exercises.
 - Keep personal data, resumes, databases, credentials, browser state, generated
   builds and Repomix output out of Git and public artifacts. Preserve snapshot
   allowlists and the clean-worktree publication guard.
-- Docker/EC2 execution is currently deferred. Do not enable cloud deployment or
-  describe the application container as verified without explicit approval and
-  target-runtime acceptance evidence.
+- The v2 stack is deployed on a single Hostinger VPS behind Caddy and served at
+  `https://careerscope.tech`. Use `infra/v3` for host provisioning, deployment and
+  live verification. Do not provision additional infrastructure, change DNS or
+  widen public exposure without explicit approval.
 - Job imports are not applications. Verify exact roles and duplicate history;
   ask before each account/terms step and final submission. Never invent candidate
   qualifications or mark Applied without confirmation. Stop on uncertain outcomes.
+
+## Skills
+
+Project-local skills live in `.github/skills`. Domain skills — architecture,
+discovery, matching, resume storage, outbox/queue, security, deployment and
+verification — carry the invariants that are easiest to break; consult the
+relevant one before changing that area.
+
+When a task needs a capability the installed skills do not cover, find the
+smallest relevant skill, read it and its resources in full, check for scripts,
+remote execution and destructive commands, reject anything conflicting with the
+rules above, install it project-scoped and pinned, and record why. Never install
+a catalog wholesale or trust a skill because its name sounds relevant. See
+`.github/skills/README.md`.
 
 ## Verification And References
 
