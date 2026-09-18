@@ -61,7 +61,10 @@ const POLL_INTERVAL_MS = 1_000;
 /** Matches the HTTP export cap, for the same memory reason. */
 const MAX_EXPORT_ROWS = 5_000;
 
-export function buildMcpServer(container: Container): McpServer {
+export function buildMcpServer(
+  container: Container,
+  options: { readOnly?: boolean } = {},
+): McpServer {
   const { repos, queue, providers, env, logger } = container;
 
   const server = new McpServer({ name: 'job-radar', version: '1.0.0' });
@@ -107,6 +110,7 @@ export function buildMcpServer(container: Container): McpServer {
       },
     },
     async ({ profile }) => {
+      if (options.readOnly) return problem('This MCP connection is read-only.');
       const at = now();
       const existing = repos.profiles.get();
 
@@ -140,6 +144,7 @@ export function buildMcpServer(container: Container): McpServer {
       },
     },
     async ({ path }) => {
+      if (options.readOnly) return problem('This MCP connection is read-only.');
       const absolute = resolve(path);
       let bytes: Uint8Array;
       try {
@@ -240,6 +245,7 @@ export function buildMcpServer(container: Container): McpServer {
       },
     },
     async ({ sources, waitSeconds }) => {
+      if (options.readOnly) return problem('This MCP connection is read-only.');
       if (!repos.profiles.exists()) {
         return problem('No profile configured — there is nothing to match against.');
       }
@@ -323,6 +329,7 @@ export function buildMcpServer(container: Container): McpServer {
       inputSchema: { runId: z.string() },
     },
     async ({ runId }) => {
+      if (options.readOnly) return problem('This MCP connection is read-only.');
       const cancelled = queue.cancel(runId) || repos.runs.cancel(runId, now());
       return json({ cancelled, runId });
     },
@@ -404,6 +411,7 @@ export function buildMcpServer(container: Container): McpServer {
       },
     },
     async ({ leadId, status, note }) => {
+      if (options.readOnly) return problem('This MCP connection is read-only.');
       const patch = leadUpdateSchema.safeParse(prune({ status, note }));
       if (!patch.success) return problem('Invalid update', patch.error.issues);
 
@@ -427,6 +435,7 @@ export function buildMcpServer(container: Container): McpServer {
       },
     },
     async ({ format, minScore, path }) => {
+      if (options.readOnly) return problem('This MCP connection is read-only.');
       const extension = format ?? 'xlsx';
       const query = leadQuerySchema.parse(prune({ minScore, limit: 500 }));
 

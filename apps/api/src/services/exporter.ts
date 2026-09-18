@@ -103,7 +103,7 @@ export async function exportLeadsXlsx(
   options: ExportOptions = {},
 ): Promise<Buffer> {
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = 'Job Radar';
+  workbook.creator = 'CareerScope';
   workbook.created = new Date(options.generatedAt ?? Date.now());
   // Recorded in the file's properties rather than in a banner row, so the sheet
   // stays a clean table that Excel's own filters and pivots can consume.

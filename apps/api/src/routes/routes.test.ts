@@ -897,6 +897,9 @@ describe('export', () => {
       expect(response.headers['content-disposition']).toContain('.xlsx');
       // XLSX is a zip; a workbook that does not start with `PK` is not one.
       expect(response.rawPayload.subarray(0, 2).toString('latin1')).toBe('PK');
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(Uint8Array.from(response.rawPayload).buffer);
+      expect(workbook.creator).toBe('CareerScope');
     } finally {
       await t.close();
     }

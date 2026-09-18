@@ -28,6 +28,7 @@ export const pageFiles = [
   'select-chevron.svg',
   'robots.txt',
   'sitemap.xml',
+  'llms.txt',
   'jobs.json',
   'admin.html',
   'admin.js',

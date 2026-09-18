@@ -38,7 +38,7 @@ export function Layout() {
 
   return (
     <div className="app-shell flex min-h-dvh flex-col bg-canvas">
-      <a href="#main-content" className="skip-link">
+      <a href="#main-content" className="skip-link" tabIndex={0}>
         Skip to content
       </a>
       <header className="sticky top-0 z-30 border-b border-border bg-surface">

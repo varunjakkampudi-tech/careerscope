@@ -617,6 +617,7 @@ describe('himalayas adapter', () => {
 
     const capped = ctx.events.find((event) => event.message.includes('stopped after 20 pages'));
     expect(capped?.level).toBe('info');
+    expect(capped).toMatchObject({ limited: true });
     expect(capped?.message).toContain('103909');
     expect(capped?.message).toContain('were not read');
   });

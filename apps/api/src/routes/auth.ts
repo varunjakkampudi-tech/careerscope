@@ -19,7 +19,7 @@ export function requireAuthOrigin(request: FastifyRequest, env: Env): void {
     throw new ApiProblem(
       403,
       'invalid_origin',
-      'This request must come from the Job Radar application.',
+      'This request must come from the CareerScope application.',
     );
   }
 }

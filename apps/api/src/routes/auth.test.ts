@@ -57,10 +57,15 @@ it('protects data despite the old bypass, restricts setup, and rejects CSRF and 
         })
       ).statusCode,
     ).toBe(403);
-    expect(
-      (await fixture.app.inject({ method: 'POST', url: '/api/auth/logout', headers: { cookie } }))
-        .statusCode,
-    ).toBe(403);
+    const missingOrigin = await fixture.app.inject({
+      method: 'POST',
+      url: '/api/auth/logout',
+      headers: { cookie },
+    });
+    expect(missingOrigin.statusCode).toBe(403);
+    expect(missingOrigin.body).toContain(
+      'This request must come from the CareerScope application.',
+    );
     expect(
       (
         await fixture.app.inject({
@@ -93,7 +98,8 @@ it('rate limits password attempts even when forwarded IPs are spoofed', async ()
   } finally {
     await fixture.close();
   }
-});
+  // Six Argon2id verifications exceed the default timeout under parallel load.
+}, 30_000);
 
 it('uses host-only Secure cookies in production and forbids public setup', async () => {
   const fixture = await buildTestApp({

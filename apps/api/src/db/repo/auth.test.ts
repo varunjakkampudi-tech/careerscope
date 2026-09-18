@@ -22,7 +22,9 @@ it('recovers local setup without deleting application data and revokes old sessi
   } finally {
     fixture.cleanup();
   }
-});
+  // Argon2id is deliberately expensive, so this exceeds the default timeout
+  // when the suite saturates the CPU.
+}, 30_000);
 
 it('hashes credentials, signs expiring tokens and enforces revocation', async () => {
   const fixture = createTestRepos();
@@ -55,4 +57,4 @@ it('hashes credentials, signs expiring tokens and enforces revocation', async ()
   } finally {
     fixture.cleanup();
   }
-});
+}, 30_000);

@@ -1,4 +1,4 @@
-# Job Radar is a private, single-user application. It holds one person's
+# CareerScope is a private, single-user application. It holds one person's
 # resume, salary expectations, phone number and email address.
 #
 # The correct SEO posture for it is therefore *not* to be found. There is no

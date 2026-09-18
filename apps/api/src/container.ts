@@ -74,6 +74,8 @@ export interface ContainerOptions {
   /** Injected so provider tests never reach the network. */
   http?: HttpClient;
   clock?: () => string;
+  startScheduler?: boolean;
+  recoverOrphans?: boolean;
 }
 
 export function createContainer(env: Env = parseEnv(), options: ContainerOptions = {}): Container {
@@ -95,7 +97,7 @@ export function createContainer(env: Env = parseEnv(), options: ContainerOptions
   // A restart leaves any run that was executing stuck at `running` with nobody
   // to finish it. Closing those here — before the first request is served — is
   // what stops the UI showing a progress bar that will never move again.
-  const reaped = repos.runs.reapOrphans(clock());
+  const reaped = options.recoverOrphans === false ? 0 : repos.runs.reapOrphans(clock());
   if (reaped > 0) logger.warn({ reaped }, 'closed runs left mid-flight by a restart');
 
   const http =
@@ -178,19 +180,22 @@ export function createContainer(env: Env = parseEnv(), options: ContainerOptions
   });
 
   let closed = false;
-  const stopScheduler = startSearchScheduler({
-    repos,
-    queue,
-    providers,
-    logger,
-    intervalMinutes: env.SEARCH_INTERVAL_MINUTES,
-    enableLlmRerank: env.ENABLE_LLM_RERANK,
-    clock,
-  });
+  const stopScheduler =
+    options.startScheduler === false
+      ? undefined
+      : startSearchScheduler({
+          repos,
+          queue,
+          providers,
+          logger,
+          intervalMinutes: env.SEARCH_INTERVAL_MINUTES,
+          enableLlmRerank: env.ENABLE_LLM_RERANK,
+          clock,
+        });
   const close = async (): Promise<void> => {
     if (closed) return;
     closed = true;
-    stopScheduler();
+    stopScheduler?.();
     await applications.close();
     await queue.close();
     // After the queue, because that is what cancels the in-flight run — closing
