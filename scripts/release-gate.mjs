@@ -33,12 +33,28 @@ const findings = read('.ai/findings.json', { findings: [] });
 const results = [];
 const gate = (name, ok, detail = '') => results.push({ name, ok: Boolean(ok), detail });
 
-if (!plan) {
-  process.stdout.write('BLOCKED  .ai/release-plan.json is missing.\n');
+// Unreadable state is a refusal, not an absence. Collapsing "cannot parse" into
+// "empty" made this gate MORE permissive when its inputs were corrupt: a
+// malformed findings.json yielded zero findings, so "no open P0 or P1" passed
+// and a release that was BLOCKED reported READY TO DEPLOY.
+for (const [path, state] of [
+  ['.ai/release-plan.json', plan],
+  ['.ai/findings.json', findings],
+]) {
+  if (state?.parseError) {
+    process.stdout.write(`BLOCKED  unreadable state — ${path}: ${state.parseError}\n`);
+    process.exit(1);
+  }
+}
+if (!Array.isArray(findings.findings)) {
+  process.stdout.write(
+    'BLOCKED  .ai/findings.json has no findings array; cannot prove there are no blockers.\n',
+  );
   process.exit(1);
 }
-if (plan.parseError) {
-  process.stdout.write(`BLOCKED  release-plan.json is not valid JSON: ${plan.parseError}\n`);
+
+if (!plan) {
+  process.stdout.write('BLOCKED  .ai/release-plan.json is missing.\n');
   process.exit(1);
 }
 

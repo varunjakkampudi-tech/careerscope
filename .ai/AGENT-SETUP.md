@@ -331,6 +331,31 @@ not depend on it; if it breaks, the application is unaffected.
 
 **A green check is not evidence until the check has been shown to go red.**
 
+Every critical validator needs **three** cases, not two:
+
+| Input                              | Required outcome |
+| ---------------------------------- | ---------------- |
+| valid, satisfying state            | PASS             |
+| valid, violating state             | FAIL             |
+| **malformed or unparseable state** | **FAIL**         |
+
+The third is not theoretical. The release gate shipped briefly with a parse
+failure collapsing into "empty", so a corrupt `findings.json` produced zero
+findings, "no open P0 or P1" passed, and a release that was **BLOCKED reported
+READY TO DEPLOY**. Corrupting a file made the gate _more_ permissive.
+
+So: **never interpret a parser failure as "nothing found".** Unreadable state is
+a refusal, not an absence.
+
+Two further rules earned the hard way:
+
+> A validator, review verdict or progress record must never be made green by
+> changing the interpretation of the condition it was created to enforce.
+
+> Keep an agent only if it owns a unique artefact, holds a unique permission
+> boundary, makes a materially different decision, or provides evidence no other
+> agent can. Otherwise merge it. Activate per task — never "run all agents".
+
 For every acceptance assertion, ask what deliberately broken state would make it
 fail, then create that state and confirm it does. `check-agents.mjs` has now
 produced a false pass twice: once when a regex matched only inline YAML arrays

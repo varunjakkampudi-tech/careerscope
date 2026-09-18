@@ -109,6 +109,34 @@ const cases = [
   ],
 ];
 
+// A third category beyond valid/invalid: state that cannot be parsed at all.
+// Several defects in this project were not "correct input, wrong result" but
+// "unexpected representation, parser returns empty, empty reads as all-clear".
+// A malformed file must refuse harder than a valid one, never more softly.
+const malformed = [
+  [
+    'malformed findings.json',
+    () => {
+      set(structuredClone(ready));
+      writeFileSync(FIND, '{ not json');
+    },
+  ],
+  [
+    'malformed release-plan.json',
+    () => {
+      set(structuredClone(ready));
+      writeFileSync(PLAN, '{ not json');
+    },
+  ],
+  [
+    'findings.json without a findings array',
+    () => {
+      set(structuredClone(ready));
+      writeFileSync(FIND, JSON.stringify({ updatedAt: 'x' }));
+    },
+  ],
+];
+
 let failures = 0;
 for (const [name, mutate, expected] of cases) {
   mutate();
@@ -116,6 +144,13 @@ for (const [name, mutate, expected] of cases) {
   const ok = code === expected;
   if (!ok) failures += 1;
   console.log(`${ok ? 'PASS' : 'FAIL'}  ${name.padEnd(45)} expected exit ${expected}, got ${code}`);
+}
+for (const [name, mutate] of malformed) {
+  mutate();
+  const { code } = run();
+  const ok = code === 1;
+  if (!ok) failures += 1;
+  console.log(`${ok ? 'PASS' : 'FAIL'}  ${name.padEnd(45)} expected exit 1, got ${code}`);
 }
 
 copyFileSync(backupPlan, PLAN);

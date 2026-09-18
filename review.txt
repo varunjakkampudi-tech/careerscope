@@ -1067,3 +1067,112 @@ failure reallocation bounded and logged.
 The CI -> Deploy release gate. Then scope the V1 retirement.
 
 ============================================================
+
+
+============================================================
+ENTRY
+============================================================
+
+Date:       2026-09-19
+Task:       External review; fix a live false-pass in the release gate
+Iteration:  8
+Phase:      review -> implementation -> validation
+Agents:     Code Quality (smoke test), external review
+
+## REQUEST
+
+Update the external reviewer, obtain a review, and act on it.
+
+## RECON
+
+External review returned five points. Four were affirmations or reorderings.
+The fifth predicted a defect I did not know I had:
+
+  "Never interpret parser failure as no findings. For each critical validator:
+   accept valid state, reject invalid state, REJECT MALFORMED STATE."
+
+I tested it rather than accepting or dismissing it:
+
+  valid findings.json    -> exit 1, correctly BLOCKED by the open P1
+  corrupt findings.json  -> "PASS no open P0 or P1 findings"
+                         -> "READY TO DEPLOY", exit 0
+
+Corrupting an input made the gate MORE permissive. A release that was BLOCKED
+reported READY TO DEPLOY. This is the sixth instance of the project's recurring
+pattern and the most serious: the others hid defects, this one would have
+shipped one.
+
+## IMPLEMENTATION
+
+release-gate.mjs now distinguishes present-and-valid, absent, and
+present-but-unparseable, and refuses on the third before evaluating any gate.
+It also refuses when findings.json has no findings array, because it cannot
+prove the absence of blockers from a shape it does not understand.
+
+control-center.mjs had the same defect in its findings reader - a corrupt file
+rendered as "No findings recorded", which reads as all-clear. It now reports
+UNREADABLE explicitly.
+
+Added the malformed-state category to the gate suite as a permanent third case.
+
+## FILES CHANGED
+
+  scripts/release-gate.mjs          unreadable state refuses
+  scripts/control-center.mjs        unreadable findings reported, not hidden
+  scripts/check-release-gate.mjs    3 malformed cases added
+  .ai/AGENT-SETUP.md                three-case rule and two further rules
+  package.json                      engineering:center alias
+  review.txt                        this entry
+
+## TESTING
+
+  node scripts/check-release-gate.mjs   15/15, exit 0
+
+  Including the three that previously exposed the false pass:
+    malformed findings.json                  exit 1
+    malformed release-plan.json              exit 1
+    findings.json without a findings array   exit 1
+
+  Before the fix, the first of those exited 0 with READY TO DEPLOY.
+
+## SECURITY
+
+No security-relevant change, but the defect was security-adjacent: the gate
+that prevents deploying with an open P0 could be defeated by corrupting a file.
+
+## CODE QUALITY
+
+The fix is one idea applied in two places: absence and unreadability are
+different states and must not share a code path. Every other reader of
+canonical state should be audited for the same collapse; that is open work.
+
+## DOCUMENTATION
+
+AGENT-SETUP.md now carries the three-case negative-proof rule, the rule that a
+verdict must never be made green by reinterpreting its condition, and the
+agent-retention rule.
+
+## REVIEW
+
+External review; findings acted on rather than filed.
+
+## FINAL STATUS
+
+PASS - a live false-pass in the release gate found and fixed, with the failing
+behaviour reproduced before the fix and proven absent after.
+
+## REMAINING ISSUES
+
+  1. R1 still open. External review agrees it is now the top priority and
+     recommends splitting CI into v2-unit, v2-integration, v2-browser and
+     release-contract jobs rather than a single misleading "V2 tests passed".
+  2. Other readers of canonical state not yet audited for absence-vs-unreadable.
+  3. 24 agents is "approaching the danger zone"; retention rule now recorded.
+  4. WebKit, Caddy and firewall items unchanged.
+
+## NEXT ACTION
+
+R1: split the V2 suite into a no-services layer that runs today and a
+service-backed integration layer, labelled so neither implies the other.
+
+============================================================

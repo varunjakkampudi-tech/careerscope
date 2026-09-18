@@ -50,6 +50,7 @@
     "agile:retro": "node scripts/agile.mjs retro",
     "agile:release": "node scripts/agile.mjs release",
     "agile:ui": "node scripts/engineering-ui.mjs",
+    "engineering:center": "node scripts/engineering-ui.mjs",
     "release:gate": "node scripts/release-gate.mjs",
     "agents:check": "node scripts/check-agents.mjs",
     "control-center": "node scripts/control-center.mjs",

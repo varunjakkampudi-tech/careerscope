@@ -112,9 +112,13 @@ function findings() {
   const raw = read(join(AI, 'findings.json'));
   if (!raw) return [];
   try {
-    return JSON.parse(raw).findings ?? [];
-  } catch {
-    return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed.findings))
+      return { unreadable: 'findings.json has no findings array' };
+    return parsed.findings;
+  } catch (error) {
+    // Never render a parse failure as "no findings" - that reads as all-clear.
+    return { unreadable: error.message };
   }
 }
 
@@ -290,6 +294,13 @@ function render() {
 
   // Findings
   const found = findings();
+  if (!Array.isArray(found)) {
+    line();
+    line(bold('  REVIEW FINDINGS'));
+    line(red(`      UNREADABLE — ${found.unreadable}`));
+    line(red('      This is not "no findings". Fix the file before trusting this screen.'));
+    return out.join('\n');
+  }
   const counts = { P0: 0, P1: 0, P2: 0, P3: 0 };
   for (const item of found) if (item.severity in counts) counts[item.severity] += 1;
   line();
