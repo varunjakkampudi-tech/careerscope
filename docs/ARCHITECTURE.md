@@ -1,5 +1,10 @@
 # Architecture
 
+> **This file describes V1** — the SQLite/Vite stack at the repository root.
+> The deployed application is **V2**, under `v2/`. Start at
+> [PROJECT-STATE](PROJECT-STATE.md) if you are not sure which one you need,
+> then read [v2/ARCHITECTURE](../v2/ARCHITECTURE.md).
+
 Why the code is shaped the way it is. [README](../README.md) covers what the app
 does and how to run it; [RUNBOOK](RUNBOOK.md) covers operating it. This file is
 for the person about to change it.

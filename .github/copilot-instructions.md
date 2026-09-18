@@ -4,6 +4,27 @@ Apply principal-engineer judgment to requirements, architecture, security,
 implementation, testing, operations and UX. Scale the review to the task's risk;
 do not turn small fixes or non-coding requests into architecture exercises.
 
+## Start Here
+
+Before the first change in a session, establish actual state rather than
+assuming it:
+
+1. Read [docs/PROJECT-STATE.md](../docs/PROJECT-STATE.md). It explains the
+   V1/V2 split, branch semantics and what is deployed. Most mistakes on this
+   repository come from editing V1 while thinking about V2.
+2. Read the architecture for the stack you are touching —
+   [V1](../docs/ARCHITECTURE.md) or [V2](../v2/ARCHITECTURE.md).
+3. Check the current branch and commit: `git branch --show-current`,
+   `git rev-parse HEAD`, `git status --porcelain`.
+4. Check what is actually deployed:
+   `infra/v3/check-provenance.sh`. Local `HEAD` and the deployed revision are
+   often legitimately different — confirm, never assume.
+5. Read [docs/TESTING.md](../docs/TESTING.md) and run the nearest test before
+   you change anything, so you know what was already failing.
+6. Read `.env.example` for configuration. Never read or print a real `.env`.
+7. Read [docs/KNOWN-LIMITATIONS.md](../docs/KNOWN-LIMITATIONS.md) before
+   reporting a defect — it may already be recorded, with a reason.
+
 ## Working Agreement
 
 - Understand before modifying. Start with the affected implementation and a
@@ -42,6 +63,31 @@ documentation if behaviour or architecture changed.
 - Do not introduce a duplicate utility, an unnecessary dependency, or an
   abstraction for a single call site. Respect module boundaries.
 - Do not claim completion without evidence.
+
+## Operational Non-Negotiables
+
+These have each already caused a real incident on this project.
+
+- **Never run `nft flush ruleset`.** It deletes Docker's NAT rules and kills
+  container egress. The symptom is an unrelated timeout, not a firewall error.
+  The firewall owns only the `inet careerscope` table.
+- **Never restart the proxy alone.** Every service joins its network namespace;
+  restarting it orphans them all behind a 502 while they still report healthy.
+  Use `infra/v3/restart-stack.sh`.
+- **Never run `docker system prune -a`.** It removes the images a rollback
+  depends on. Prune build cache only.
+- **Never regenerate `POSTGRES_PASSWORD`** against an existing database volume.
+  `infra/v3/.env` on the host is the only copy; `ship.sh` preserves it.
+- **Never deploy uncommitted code.** Deploy `git archive` from a reviewed
+  commit, then prove it with `check-provenance.sh`.
+- **Never publish an internal container port.** Only the proxy publishes.
+- Keep the resume storage single-writer contract. Never delete cancellation
+  markers by age — they are authoritative.
+- Keep AI **off**, auto-apply on **hold**, and Naukri legitimate-access only.
+- Never move `main` without explicit release intent. `main` is the V1 line;
+  V2 work belongs on `feature/v2-local-migration`.
+- Update the documentation whenever architecture or behaviour changes, and
+  verify the live deployment after any runtime-affecting change.
 
 ## Project Boundaries
 
@@ -85,8 +131,10 @@ a catalog wholesale or trust a skill because its name sounds relevant. See
   Do not hide missing prerequisites, skipped tests or external-service failures.
 - Report results concisely: changes, verification and remaining risks. Give
   findings first for reviews; use architecture/trade-off sections only when useful.
-- Consult [architecture](../docs/ARCHITECTURE.md),
-  [operations](../docs/RUNBOOK.md), [applications](../docs/APPLICATIONS.md),
-  [browser imports](../docs/BROWSER-IMPORT.md) and
-  [release scope](../docs/RELEASE-REVIEW.md) when relevant. Do not load every
-  document for every request.
+- Consult [project state](../docs/PROJECT-STATE.md),
+  [API surface](../docs/API-SURFACE.md), [security](../docs/SECURITY.md),
+  [deployment](../docs/OPERATIONS/DEPLOYMENT.md),
+  [rollback](../docs/OPERATIONS/ROLLBACK.md),
+  [firewall](../docs/OPERATIONS/FIREWALL.md) and
+  [known limitations](../docs/KNOWN-LIMITATIONS.md) when relevant. Do not load
+  every document for every request.

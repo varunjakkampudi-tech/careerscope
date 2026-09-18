@@ -4,6 +4,10 @@ name: careerscope
 # proxy network namespace and binds loopback, so Postgres, Redis, the queue,
 # the API and the web server have no reachable address from outside the host.
 # Only the proxy publishes ports.
+#
+# Because of that, the proxy must never be restarted on its own: Docker gives it
+# a new network namespace and leaves every other container attached to the dead
+# one, which answers as 502 until they are restarted too. Use restart-stack.sh.
 
 x-hardening: &hardening
   init: true

@@ -1,30 +1,38 @@
 # v2 Docker-First Architecture And Migration Status
 
+> **Scope warning.** Parts of this document were written as a _target_ design
+> before v2 was deployed. The "Decision And Scope" section below has been
+> corrected against the running system; treat anything further down that
+> contradicts [docs/PROJECT-STATE.md](../docs/PROJECT-STATE.md) as a proposal,
+> not as implementation.
+
 ## Decision And Scope
 
-The revised v2 target is a local, single-machine application with **no required
-paid infrastructure or hosted inference services**. Docker Compose replaces the
-AWS-oriented runtime target; BullMQ replaces SQS; private S3-compatible object
-storage replaces the LocalStack object-store emulator. The storage runtime is an
-implementation choice subject to acceptance, not a MinIO requirement. Ollama is
-the only supported inference provider in v2.
-PostgreSQL, the modular Fastify core, Next.js, immutable matching inputs and the
-transactional outbox remain. Kafka is not a v2 dependency.
+v2 is a single-machine application with **no required paid infrastructure and no
+hosted inference services**. Docker Compose replaces the AWS-oriented runtime
+target. PostgreSQL, the modular Fastify core, Next.js, immutable matching inputs
+and the transactional outbox remain. Kafka is not a v2 dependency.
 
-This document is a specification, not a claim that the target stack is running.
-The implementation inventory below remains authoritative for current behavior.
-The existing compose.yml starts PostgreSQL, throttle Redis and LocalStack by
-default. An opt-in bullmq profile now adds persistent queue Redis, and the publisher
-and search worker accept SEARCH_QUEUE_TRANSPORT=bullmq with an explicit SEARCH_QUEUE_REDIS_URL.
-SQS remains the default; no workload cutover has occurred. Other proposed services
-must not be treated as implemented.
+Three claims in earlier revisions of this section were wrong and are corrected
+here, because they described intent as though it were fact:
 
-Zero required service fees does not mean zero total cost: hardware, electricity,
-storage, connectivity and independent backups remain the owner's responsibility.
-Docker Desktop eligibility and each dependency/model license must be checked for
-the intended use. No free portal availability, public uptime, high availability,
-unlimited inference or production readiness is promised. Sleeping or restarting
-the host pauses service. Public hosting and AWS remain a separately approved v3.
+- **SQS is the queue.** BullMQ did not replace it. SQS via LocalStack is the
+  default for both queues and the _only_ transport the files queue supports.
+  BullMQ is an opt-in path for the **search** queue alone, selected with
+  `SEARCH_QUEUE_TRANSPORT=bullmq` and `SEARCH_QUEUE_REDIS_URL`. The legacy
+  `QUEUE_TRANSPORT` and `QUEUE_REDIS_URL` variables are rejected at startup
+  rather than silently ignored.
+- **Resume storage is an encrypted private filesystem**, not S3-compatible
+  object storage and not MinIO.
+- **Inference is off.** Ollama is not running and no external model is called.
+  Matching is fully deterministic. AI is DEFERRED — INTENTIONAL.
+
+v2 is deployed at `https://careerscope.tech` on a single Hostinger VPS behind
+Caddy. See [docs/OPERATIONS/DEPLOYMENT.md](../docs/OPERATIONS/DEPLOYMENT.md).
+
+Zero required service fees does not mean zero total cost: hardware, connectivity
+and backups remain the owner's responsibility. **There is no off-host backup** —
+that was skipped as an owner decision. No high availability is promised.
 
 ## Target Topology
 
