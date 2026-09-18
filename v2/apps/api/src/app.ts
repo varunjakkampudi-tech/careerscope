@@ -26,6 +26,8 @@ import {
   AuditLog,
   Diagnostics,
   AdminRepository,
+  TraceRepository,
+  DebugSessions,
   type ErrorCode,
   type UploadStorage,
   type Database,
@@ -86,6 +88,23 @@ export async function createApp(
   const audit = new AuditLog(database.pool);
   const diagnostics = new Diagnostics(database.pool);
   const admin = new AdminRepository(database.pool);
+  const traces = new TraceRepository(database.pool);
+  const debugSessions = new DebugSessions(database.pool);
+
+  // Security events are written best-effort and must never fail the request
+  // that produced them; a rejected login that cannot be recorded is still a
+  // rejected login.
+  const security = (
+    action: string,
+    actorId: string | null,
+    requestId: string,
+    detail?: Record<string, string | number | boolean | null>,
+  ) => {
+    if (!actorId) return;
+    void audit
+      .record({ actorId, action, outcome: 'denied', requestId, detail })
+      .catch(() => undefined);
+  };
   const profiles = new ProfileRepository(database);
   const leads = new LeadRepository(database);
   const uploads = new ResumeUploadRepository(database);
@@ -130,6 +149,9 @@ export async function createApp(
       !['GET', 'HEAD', 'OPTIONS'].includes(request.method) &&
       !auth.validCsrf(session.csrf, request.headers['x-csrf-token'])
     ) {
+      security('security.csrf.rejected', session.ownerId, request.id, {
+        route: path ?? 'unmatched',
+      });
       throw new HttpError(403, 'CSRF check failed', 'csrf_failed');
     }
     // Admin status is read from the database against the session's own owner id.
@@ -144,14 +166,19 @@ export async function createApp(
       if (!request.isAdmin) {
         await audit.record({
           actorId: session.ownerId,
-          action: `admin.denied:${path}`,
+          action: 'security.admin.denied',
           outcome: 'denied',
           requestId: request.id,
+          detail: { route: path ?? 'unmatched' },
         });
         throw new HttpError(403, 'Administrator access required', 'forbidden');
       }
-      if (!(await rateLimit(`admin:${session.ownerId}`, 120, 60)))
+      if (!(await rateLimit(`admin:${session.ownerId}`, 120, 60))) {
+        security('security.rate_limited', session.ownerId, request.id, {
+          route: path ?? 'unmatched',
+        });
         throw new HttpError(429, 'Too many requests', 'rate_limited');
+      }
     }
   });
   // Correlation without private data: route templates only, never URLs or bodies.
@@ -377,6 +404,130 @@ export async function createApp(
       detail: { entries: entries.length },
     });
     return { entries };
+  });
+
+  // Groups recurrences so an investigation starts from "this failure happened
+  // 40 times to 3 accounts since revision X", not from one row.
+  app.get('/api/admin/fingerprints', async (request) => {
+    const query = request.query as Record<string, unknown>;
+    const entries = await diagnostics.fingerprints({
+      from: query.from,
+      to: query.to,
+      limit: query.limit,
+    });
+    await audit.record({
+      actorId: request.ownerId!,
+      action: 'admin.fingerprints.view',
+      outcome: 'allowed',
+      requestId: request.id,
+      detail: { groups: entries.length },
+    });
+    return { entries };
+  });
+
+  app.get('/api/admin/revisions', async (request) => {
+    const query = request.query as Record<string, unknown>;
+    const entries = await diagnostics.byRevision({ from: query.from, to: query.to });
+    await audit.record({
+      actorId: request.ownerId!,
+      action: 'admin.revisions.view',
+      outcome: 'allowed',
+      requestId: request.id,
+    });
+    // Correlation, not causation. The caller is told which it is.
+    return { entries, note: 'Error counts per revision are evidence, not proven causality.' };
+  });
+
+  app.get('/api/admin/traces/:id', async (request) => {
+    const target = await resolveTarget(request as never);
+    const { id } = identifier.parse(request.params);
+    const trace = await traces.trace(target.id, id);
+    if (!trace) throw new HttpError(404, 'Run not found', 'not_found');
+    await audit.record({
+      actorId: request.ownerId!,
+      action: 'admin.trace.view',
+      outcome: 'allowed',
+      targetOwnerId: target.id,
+      targetType: 'run',
+      targetId: id,
+      requestId: request.id,
+    });
+    return trace;
+  });
+
+  // Security activity is deliberately a separate view from operational
+  // activity. "Who tried to reach this account" must not have to be filtered
+  // out of ordinary request noise.
+  app.get('/api/admin/security', async (request) => {
+    const query = request.query as Record<string, unknown>;
+    const target = query.user ? await resolveTarget(request as never) : null;
+    const entries = await audit.list({
+      from: query.from,
+      to: query.to,
+      limit: query.limit,
+      actorId: target?.id,
+      prefix: 'security.',
+    });
+    await audit.record({
+      actorId: request.ownerId!,
+      action: 'admin.security.view',
+      outcome: 'allowed',
+      targetOwnerId: target?.id ?? null,
+      requestId: request.id,
+      detail: { entries: entries.length },
+    });
+    return { entries };
+  });
+
+  app.get('/api/admin/debug-sessions', async () => {
+    return { entries: await debugSessions.active() };
+  });
+
+  app.post('/api/admin/debug-sessions', async (request) => {
+    const body = z
+      .object({
+        reason: z.string().trim().min(3).max(500),
+        minutes: z.number().int().min(1).max(120).optional(),
+        user: z.string().max(254).optional(),
+      })
+      .strict()
+      .parse(request.body);
+    const target = body.user ? await admin.findUser(body.user) : null;
+    if (body.user && !target) throw new HttpError(404, 'Account not found', 'not_found');
+    const session = await debugSessions.start({
+      actorId: request.ownerId!,
+      targetOwnerId: (target as { id: string } | null)?.id ?? null,
+      reason: body.reason,
+      minutes: body.minutes ?? 15,
+    });
+    await audit.record({
+      actorId: request.ownerId!,
+      action: 'admin.debug-session.start',
+      outcome: 'allowed',
+      targetOwnerId: (target as { id: string } | null)?.id ?? null,
+      targetType: 'debug-session',
+      targetId: session.id,
+      requestId: request.id,
+      // The reason is operator-supplied text and is recorded so the activation
+      // is accountable.
+      detail: { minutes: body.minutes ?? 15, reason: body.reason.slice(0, 200) },
+    });
+    return session;
+  });
+
+  app.delete('/api/admin/debug-sessions/:id', async (request, reply) => {
+    const { id } = identifier.parse(request.params);
+    const ended = await debugSessions.end(request.ownerId!, id);
+    if (!ended) throw new HttpError(404, 'Debug session not found', 'not_found');
+    await audit.record({
+      actorId: request.ownerId!,
+      action: 'admin.debug-session.end',
+      outcome: 'allowed',
+      targetType: 'debug-session',
+      targetId: id,
+      requestId: request.id,
+    });
+    return reply.code(204).send();
   });
   app.get('/api/session', async (request) => {
     const session = await auth.session(request.cookies[sessionCookie]);

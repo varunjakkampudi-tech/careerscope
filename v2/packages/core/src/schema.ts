@@ -116,6 +116,12 @@ export const executions = pgTable(
     fence: integer('fence').notNull(),
     leaseUntil: timestamp('lease_until', { withTimezone: true }).notNull(),
     attempts: integer('attempts').notNull(),
+    // Timing is recorded so queue delay, worker pickup delay and execution time
+    // can be told apart. Without them a slow search is indistinguishable from a
+    // search that waited a long time to start.
+    startedAt: timestamp('started_at', { withTimezone: true }),
+    finishedAt: timestamp('finished_at', { withTimezone: true }),
+    worker: text('worker'),
   },
   // Reclaiming expired leases and reporting backlog both scan status/lease_until.
   (table) => [index('execution_status_lease').on(table.status, table.leaseUntil)],
@@ -334,6 +340,14 @@ export const errorDiagnostics = pgTable(
     method: text('method'),
     status: integer('status').notNull(),
     errorCode: text('error_code').notNull(),
+    // Groups recurrences of the same failure. Derived from stable characteristics
+    // only -- never a timestamp, id or user value, or every occurrence would be
+    // unique and grouping would be impossible.
+    //
+    // The default exists for the migration, not for writes: every insert sets
+    // this explicitly. Without it, adding a NOT NULL column to a table that
+    // already holds diagnostics fails outright.
+    fingerprint: text('fingerprint').default('unknown').notNull(),
     errorClass: text('error_class'),
     message: text('message').notNull(),
     retryable: boolean('retryable').default(false).notNull(),
@@ -343,8 +357,35 @@ export const errorDiagnostics = pgTable(
   (table) => [
     index('diagnostic_owner_created').on(table.ownerId, table.createdAt),
     index('diagnostic_code_created').on(table.errorCode, table.createdAt),
+    index('diagnostic_fingerprint_created').on(table.fingerprint, table.createdAt),
     index('diagnostic_request').on(table.requestId),
     check('diagnostic_status_valid', sql`${table.status} BETWEEN 100 AND 599`),
     check('diagnostic_message_bounded', sql`length(${table.message}) <= 1024`),
+  ],
+);
+
+// Time-boxed elevated diagnostic detail for one investigation.
+//
+// This exists so "turn on debug logging" is never a permanent global switch.
+// A session names the account under investigation, carries an operator-supplied
+// reason, and expires on its own. Activation and deactivation are audited.
+export const debugSessions = pgTable(
+  'debug_sessions',
+  {
+    id: uuid('id').primaryKey(),
+    actorId: uuid('actor_id')
+      .notNull()
+      .references(() => users.id),
+    targetOwnerId: uuid('target_owner_id').references(() => users.id),
+    reason: text('reason').notNull(),
+    startedAt: timestamp('started_at', { withTimezone: true }).defaultNow().notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    endedAt: timestamp('ended_at', { withTimezone: true }),
+  },
+  (table) => [
+    index('debug_session_expiry').on(table.expiresAt),
+    check('debug_session_reason_bounded', sql`length(${table.reason}) BETWEEN 3 AND 500`),
+    // An investigation window that never closes is just verbose logging.
+    check('debug_session_bounded', sql`${table.expiresAt} > ${table.startedAt}`),
   ],
 );

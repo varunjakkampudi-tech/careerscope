@@ -241,18 +241,19 @@ export class Database {
     );
   }
 
-  async claim(id: string, leaseSeconds = 60): Promise<number | null> {
+  async claim(id: string, leaseSeconds = 60, worker?: string): Promise<number | null> {
     const result = await this.pool.query<{ fence: number }>(
       `
-      INSERT INTO command_executions (id, status, fence, lease_until, attempts)
-      SELECT id, 'running', 1, now() + $2 * interval '1 second', 1
+      INSERT INTO command_executions (id, status, fence, lease_until, attempts, started_at, worker)
+      SELECT id, 'running', 1, now() + $2 * interval '1 second', 1, now(), $3
       FROM outbox_events WHERE id = $1
       ON CONFLICT (id) DO UPDATE SET fence = command_executions.fence + 1,
         attempts = command_executions.attempts + 1, status = 'running',
-        lease_until = now() + $2 * interval '1 second'
+        lease_until = now() + $2 * interval '1 second',
+        started_at = now(), finished_at = NULL, worker = $3
       WHERE command_executions.status = 'running' AND command_executions.lease_until < now()
       RETURNING fence`,
-      [id, leaseSeconds],
+      [id, leaseSeconds, worker ?? null],
     );
     return result.rows[0]?.fence ?? null;
   }
@@ -350,7 +351,7 @@ export class Database {
     try {
       await client.query('BEGIN');
       const owned = await client.query(
-        `UPDATE command_executions SET status = $4
+        `UPDATE command_executions SET status = $4, finished_at = now()
         WHERE id = $1 AND fence = $2 AND status = 'running' AND lease_until > now()
         AND EXISTS (SELECT 1 FROM outbox_events WHERE id = $1 AND command = $3::jsonb)
         RETURNING id`,
