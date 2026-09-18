@@ -26,7 +26,15 @@ case "${1:-status}" in
     attributes=""
     [ -n "$reason" ] && attributes=" data-reason=\"$(escape "$reason")\""
     [ -n "$eta" ] && attributes="$attributes data-eta=\"$(escape "$eta")\""
-    sed "s|<body>|<body${attributes}>|" "$root/maintenance/index.html" >"$target/index.html"
+    # Neither sed nor bash pattern substitution is safe here: in a sed
+    # replacement '&' means the whole match, and bash 5.2 gave ${var/pat/repl}
+    # the same behaviour. Escaped entities such as &quot; would expand back into
+    # the matched text and tear the tag open. Splitting and printing avoids any
+    # interpretation of the replacement.
+    template=$(cat "$root/maintenance/index.html")
+    before=${template%%<body>*}
+    after=${template#*<body>}
+    printf '%s<body%s>%s\n' "$before" "$attributes" "$after" >"$target/index.html"
     date -u +%Y-%m-%dT%H:%M:%SZ >"$flag"
     echo "maintenance=enabled since $(cat "$flag")"
     ;;
