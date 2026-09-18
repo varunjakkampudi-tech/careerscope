@@ -38,10 +38,10 @@ git status --porcelain     # must be empty
 REV=$(git rev-parse HEAD)
 git archive --format=tar.gz -o deploy.tgz "$REV"
 
-# 2. Ship. This preserves the host's .env.
+# 2. Ship. This preserves the host's .env and records the revision.
 scp -i ~/.ssh/careerscope_deploy deploy.tgz root@201.18.193.230:/tmp/
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 \
-  "bash /opt/careerscope/infra/v3/ship.sh /tmp/deploy.tgz"
+  "bash /opt/careerscope/infra/v3/ship.sh /tmp/deploy.tgz $REV"
 
 # 3. Build with provenance, migrate, bring up.
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
