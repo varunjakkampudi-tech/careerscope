@@ -130,11 +130,18 @@ jobs:
 
       # Fail here, before maintenance mode is enabled, rather than halfway
       # through a deploy with the site already behind the holding page.
+      #
+      # Presence, not the executable bit: every script is invoked as
+      # `bash <script>`, and scp without -p drops the mode, so requiring +x
+      # would be asserting something the deployment does not actually need.
       - name: Verify the host is reachable
         run: |
-          ssh -i ~/.ssh/deploy -o BatchMode=yes -o StrictHostKeyChecking=yes \
-            -o ConnectTimeout=15 "$DEPLOY_USER@$DEPLOY_HOST" \
-            'test -x /opt/careerscope/infra/v3/ship.sh && echo "deployment tree present on $(hostname)"'
+          ssh $SSH_OPTIONS "$DEPLOY_USER@$DEPLOY_HOST" \
+            'set -e
+             for script in ship.sh build-images.sh apply-migrations.sh check-provenance.sh maintenance.sh; do
+               test -f "/opt/careerscope/infra/v3/$script" || { echo "missing $script" >&2; exit 1; }
+             done
+             echo "deployment tree present on $(hostname)"'
 
       - name: Build the deployment archive from the commit
         run: git archive --format=tar.gz -o /tmp/deploy.tgz "${{ steps.rev.outputs.sha }}"
