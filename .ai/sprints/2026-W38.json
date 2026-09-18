@@ -1,0 +1,17 @@
+{
+  "sprintId": "2026-W38",
+  "week": "2026-W38",
+  "goal": null,
+  "startDate": "2026-09-18",
+  "targetReleaseDate": "2026-09-24",
+  "status": "PLANNING",
+  "candidates": [],
+  "selectedFeatures": [],
+  "deferredFeatures": [],
+  "rejectedFeatures": [],
+  "risks": [],
+  "dependencies": [],
+  "acceptanceCriteria": [],
+  "agents": [],
+  "releasePlan": {}
+}

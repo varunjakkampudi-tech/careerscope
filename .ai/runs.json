@@ -17,7 +17,143 @@
       "commit": "a6294ddee8f4f88302bfba0b8055b9c2c32582de",
       "result": "reported",
       "errors": []
+    },
+    {
+      "runId": "plan-1789764872702",
+      "phase": "plan",
+      "startedAt": "2026-09-18T20:54:32.698Z",
+      "completedAt": "2026-09-18T20:54:32.702Z",
+      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "branch": "main",
+      "result": "opened",
+      "errors": []
+    },
+    {
+      "runId": "retro-1789764872955",
+      "phase": "retro",
+      "startedAt": "2026-09-18T20:54:32.950Z",
+      "completedAt": "2026-09-18T20:54:32.955Z",
+      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "branch": "main",
+      "result": "opened",
+      "errors": []
+    },
+    {
+      "runId": "status-1789764873162",
+      "phase": "status",
+      "startedAt": "2026-09-18T20:54:33.046Z",
+      "completedAt": "2026-09-18T20:54:33.162Z",
+      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "branch": "main",
+      "result": "reported",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789764911090",
+      "phase": "feature",
+      "startedAt": "2026-09-18T20:55:11.086Z",
+      "completedAt": "2026-09-18T20:55:11.090Z",
+      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789764911285",
+      "phase": "feature",
+      "startedAt": "2026-09-18T20:55:11.282Z",
+      "completedAt": "2026-09-18T20:55:11.285Z",
+      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789764911480",
+      "phase": "feature",
+      "startedAt": "2026-09-18T20:55:11.477Z",
+      "completedAt": "2026-09-18T20:55:11.480Z",
+      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "branch": "main",
+      "result": "wip-exceeded",
+      "errors": [
+        "WIP limit exceeded"
+      ]
+    },
+    {
+      "runId": "feature-1789764979868",
+      "phase": "feature",
+      "startedAt": "2026-09-18T20:56:19.865Z",
+      "completedAt": "2026-09-18T20:56:19.868Z",
+      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789764980072",
+      "phase": "feature",
+      "startedAt": "2026-09-18T20:56:20.068Z",
+      "completedAt": "2026-09-18T20:56:20.072Z",
+      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789764980297",
+      "phase": "feature",
+      "startedAt": "2026-09-18T20:56:20.290Z",
+      "completedAt": "2026-09-18T20:56:20.297Z",
+      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "branch": "main",
+      "result": "wip-exceeded",
+      "errors": [
+        "WIP limit exceeded"
+      ]
+    },
+    {
+      "runId": "feature-1789765085253",
+      "phase": "feature",
+      "startedAt": "2026-09-18T20:58:05.250Z",
+      "completedAt": "2026-09-18T20:58:05.253Z",
+      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789765085429",
+      "phase": "feature",
+      "startedAt": "2026-09-18T20:58:05.426Z",
+      "completedAt": "2026-09-18T20:58:05.429Z",
+      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789765085613",
+      "phase": "feature",
+      "startedAt": "2026-09-18T20:58:05.610Z",
+      "completedAt": "2026-09-18T20:58:05.613Z",
+      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "branch": "main",
+      "result": "wip-exceeded",
+      "errors": [
+        "WIP limit exceeded"
+      ]
+    },
+    {
+      "runId": "status-1789765086413",
+      "phase": "status",
+      "startedAt": "2026-09-18T20:58:06.296Z",
+      "completedAt": "2026-09-18T20:58:06.413Z",
+      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "branch": "main",
+      "result": "reported",
+      "errors": []
     }
   ],
-  "updatedAt": "2026-09-18T20:51:00.826Z"
+  "updatedAt": "2026-09-18T20:58:06.510Z"
 }

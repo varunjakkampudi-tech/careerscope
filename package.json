@@ -42,6 +42,14 @@
     "product:plan": "node scripts/product.mjs plan",
     "product:release": "node scripts/product.mjs release",
     "product:verify": "node scripts/product.mjs verify",
+    "agile:status": "node scripts/agile.mjs status",
+    "agile:plan": "node scripts/agile.mjs plan",
+    "agile:scrum": "node scripts/agile.mjs scrum",
+    "agile:feature": "node scripts/agile.mjs feature",
+    "agile:review": "node scripts/agile.mjs review",
+    "agile:retro": "node scripts/agile.mjs retro",
+    "agile:release": "node scripts/agile.mjs release",
+    "agile:ui": "node scripts/engineering-ui.mjs",
     "release:gate": "node scripts/release-gate.mjs",
     "agents:check": "node scripts/check-agents.mjs",
     "control-center": "node scripts/control-center.mjs",
@@ -61,7 +69,8 @@
     "seed:companies": "tsx --env-file-if-exists=.env apps/api/src/db/seed.ts",
     "mcp": "node --env-file-if-exists=.env apps/api/dist/mcp/index.js",
     "clean": "npm run clean --workspaces --if-present && rm -f *.tsbuildinfo",
-    "release:gate:test": "node scripts/check-release-gate.mjs"
+    "release:gate:test": "node scripts/check-release-gate.mjs",
+    "agile:gate:test": "node scripts/check-agile-gates.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
