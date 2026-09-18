@@ -1,26 +1,38 @@
 {
   "sprintId": "2026-W38",
   "week": "2026-W38",
-  "goal": "CI proves what deployment ships",
-  "goalRationale": "Deploy has succeeded three times while CI was red, and the V2 suite runs in no workflow at all. Until the pipeline exercises the application it claims to ship, every other gate is measuring the wrong thing. One goal; both selected items serve it.",
+  "goal": "CI proves what deployment ships, and the shipped production paths are actually valid",
+  "goalRationale": "The original goal stopped at pipeline correctness. Six P1s in a PATCH was a wish, not a scope. Narrowed on external review to defects that affect the deployed application, its availability, and the checks that can silently fail.",
   "startDate": "2026-09-19",
   "targetReleaseDate": "2026-09-24",
   "status": "ACTIVE",
   "scopeFrozen": true,
   "candidates": ["CS-1", "CS-2", "CS-3", "CS-4", "CS-5", "CS-6"],
-  "selectedFeatures": ["CS-1", "CS-2"],
+  "selectedFeatures": ["CS-1", "CS-2", "CS-3", "CS-7", "CS-8", "CS-9"],
   "deferredFeatures": [
     {
-      "id": "CS-3",
-      "reason": "P1 and real, but L-sized infrastructure work. Taking it alongside CS-1 would breach the WIP limit and leave both half done."
+      "id": "CS-12",
+      "reason": "control-plane capability, not a runtime defect — next cycle"
+    },
+    {
+      "id": "CS-10",
+      "reason": "P2 — superseded in part by the activation policy added this cycle"
+    },
+    {
+      "id": "CS-11",
+      "reason": "P2 — design work does not belong in a correctness patch"
     },
     {
       "id": "CS-4",
-      "reason": "Small and worth doing, but it does not serve the sprint goal. Carrying it would be padding the sprint with unrelated work."
+      "reason": "P2"
     },
     {
       "id": "CS-6",
-      "reason": "Highest product value, but XL. It needs slicing into vertical slices before it can enter any sprint."
+      "reason": "P2"
+    },
+    {
+      "id": "CS-5",
+      "reason": "blocked"
     }
   ],
   "rejectedFeatures": [
@@ -51,5 +63,11 @@
     "targetVersion": "3.0.1",
     "type": "PATCH",
     "rationale": "Pipeline correctness and a rendering defect. No new capability, no contract change."
+  },
+  "updatedAt": "2026-09-19",
+  "scopeDecision": {
+    "decidedOn": "2026-09-19",
+    "source": "External Reviewer (ChatGPT)",
+    "note": "Recorded as a finding attributed to the reviewer, not as fact. Accepted because the reasoning held: a patch containing a design pass and an unproven agent workflow is not a patch."
   }
 }

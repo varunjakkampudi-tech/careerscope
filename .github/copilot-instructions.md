@@ -156,7 +156,10 @@ resumes or personal data into it. Record its verdict as a finding attributed to
 it, never as fact.
 
 The Orchestrator routes to the **smallest sufficient team**; running all 24 on a
-small change is theatre. Durable state lives in `.ai/` because conversation
+small change is theatre. The roster is a capability library, not an attendance
+list — default is four agents (Orchestrator, one builder, QA, Independent
+Reviewer), and each addition must be justified. The activation policy is in
+`.ai/AGENT-SETUP.md`. Durable state lives in `.ai/` because conversation
 memory does not survive the fresh sessions that independent review requires.
 
 Bounds: plan review 5, implementation 3, code review 3, security 2, performance

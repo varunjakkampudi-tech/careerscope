@@ -88,7 +88,7 @@
       "evidence": ["restart-stack.sh is operator recovery, not self-healing"],
       "securityImpact": "availability",
       "architectureImpact": "compose topology",
-      "releaseTarget": null,
+      "releaseTarget": "3.0.1",
       "ownerAgent": "Infrastructure",
       "reviewAgents": ["System Designer", "Security", "QA"],
       "currentStep": null,
@@ -183,7 +183,7 @@
       "updatedAt": "2026-09-19"
     },
     {
-      "releaseTarget": null,
+      "releaseTarget": "3.0.1",
       "currentStep": "independent review and QA",
       "completedSteps": [
         "Confirmed the real defect: the deploy gate is a strict subset of CI, never running check-ui.mjs, the V2 tests, Pages validation or root format:check",
@@ -225,7 +225,7 @@
       "reviewAgents": ["Release Manager", "Security", "QA"]
     },
     {
-      "releaseTarget": null,
+      "releaseTarget": "3.0.1",
       "currentStep": null,
       "completedSteps": [],
       "createdAt": "2026-09-19",
@@ -257,7 +257,7 @@
       "reviewAgents": ["Independent Reviewer", "QA"]
     },
     {
-      "releaseTarget": null,
+      "releaseTarget": "3.0.1",
       "currentStep": null,
       "completedSteps": [],
       "createdAt": "2026-09-19",

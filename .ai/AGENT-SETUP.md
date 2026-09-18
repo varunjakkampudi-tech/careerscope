@@ -392,6 +392,27 @@ Things VS Code and Copilot cannot enforce, stated rather than papered over:
 
 ---
 
+## Activation policy
+
+The roster is a capability library, not an attendance list. Twenty-four agents
+existing is not the problem; twenty-four participating in every task would be.
+Route the **smallest sufficient team** and justify each addition.
+
+| Task class          | Agents activated                                              |
+| ------------------- | ------------------------------------------------------------- |
+| Default             | Orchestrator, one builder, QA, Independent Reviewer (4)       |
+| Non-trivial change  | add Product Architect or System Designer (5–6)                |
+| Security-sensitive  | add Security                                                  |
+| UI or Pages work    | add UX; add Visual Designer if tokens or assets change        |
+| Deployment or infra | add Infrastructure and Release Manager                        |
+| New dependency      | add Research Reference, and Skills Curator if a skill is used |
+| Release             | add Documentation — mandatory, it gates the release           |
+| Disputed outcome    | add Final Auditor, in a fresh session                         |
+
+Activating an agent that produces no artefact, holds no distinct permission and
+makes no different decision is ceremony. Record the team in `.ai/LOOP-STATE.md`
+so the choice can be reviewed afterwards rather than assumed.
+
 ## External Reviewer (non-resident)
 
 A twenty-fifth reviewer exists, and it is deliberately **not** in
