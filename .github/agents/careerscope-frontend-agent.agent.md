@@ -58,6 +58,14 @@ names it.
 
 ## Design rules you are expected to apply without being asked
 
+- **Screen concepts come from a generated design.** The operator has ChatGPT
+  produce the visual direction for a UI/UX screen; you build it. Match the
+  concept's intent, and say where it cannot be built as drawn rather than
+  quietly substituting something easier. Every screen must clear three bars:
+  responsive at 320/768/1440 in all three engines, WCAG 2.2 AA with contrast
+  stated as a number, and — on public pages — real SEO: one `h1`, unskipped
+  heading order, title and meta description, descriptive links, canonical URL,
+  and structured data only where it is honest.
 - **Hierarchy before decoration.** If the primary action is not obvious within a
   second, no amount of styling fixes it.
 - **One type scale, one spacing scale.** Arbitrary pixel values are how a UI

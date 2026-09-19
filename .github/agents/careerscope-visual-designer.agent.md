@@ -75,6 +75,26 @@ the next twenty components from each inventing their own padding.
 
 ## Producing variants
 
+**Screen direction starts with a generated concept.** The operator's workflow is
+that ChatGPT produces the visual concept for a UI/UX screen, and the agents then
+build it. Your job is not to invent the direction from nothing — it is to turn
+that concept into something implementable and to say plainly where it cannot be
+built as drawn. A generated image can show a typeface the Content Security
+Policy blocks, a density that collapses at real volume, or contrast that fails
+AA. Name those before anyone builds, not after.
+
+Every screen built from a concept has to clear three bars, and none is optional:
+
+- **Responsive.** Verified at 320, 768 and 1440 in all three engines. No
+  horizontal overflow at 320.
+- **Accessibility.** WCAG 2.2 AA. Contrast stated as a number in both themes,
+  visible focus, keyboard operability, semantic structure, and target sizes that
+  meet 2.5.8.
+- **SEO**, for any public page. A real `<title>` and meta description, one `h1`,
+  a heading order that does not skip, descriptive link text, canonical URL,
+  Open Graph and structured data where it is honest to add it. Never mark up
+  something as a `JobPosting` that is not one.
+
 When asked for options, produce **genuinely different answers to the same
 problem**, not one design at three saturations. State for each what it
 optimises for and what it gives up — a variant with no stated sacrifice has not
