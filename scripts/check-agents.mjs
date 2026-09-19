@@ -195,8 +195,14 @@ check(
   `scheduled operation is disabled (${releasePlan.schedulerEnabled})`,
 );
 const canonical = JSON.parse(readFileSync('.ai/progress.json', 'utf8'));
+// An em dash means deliberately unmeasured and must equal null in the JSON.
+// This widens what the projection can read, not what counts as agreement:
+// 70 against 85, or a dash against a number, still drift.
 const projected = new Map(
-  [...matrices.matchAll(/^\|\s*([A-Za-z/ ]+?)\s*\|\s*(\d+)%/gm)].map((m) => [m[1], Number(m[2])]),
+  [...matrices.matchAll(/^\|\s*([A-Za-z/ ]+?)\s*\|\s*(\d+%|—)/gm)].map((m) => [
+    m[1],
+    m[2] === '—' ? null : Number(m[2].slice(0, -1)),
+  ]),
 );
 const drifted = canonical.areas.filter((a) => projected.get(a.area) !== a.percent);
 check(canonical.areas.length === 12, `progress.json covers 12 areas (${canonical.areas.length})`);

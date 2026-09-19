@@ -75,7 +75,8 @@
     "agile:gate:test": "node scripts/check-agile-gates.mjs",
     "deploy:gate:test": "node scripts/check-deploy-gate.mjs",
     "eol:check": "node scripts/check-line-endings.mjs",
-    "gates:test": "npm run release:gate:test && npm run agile:gate:test && npm run deploy:gate:test && npm run eol:check && npm run agents:check"
+    "progress:check": "node scripts/check-progress.mjs",
+    "gates:test": "npm run release:gate:test && npm run agile:gate:test && npm run deploy:gate:test && npm run eol:check && npm run progress:check && npm run agents:check"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",

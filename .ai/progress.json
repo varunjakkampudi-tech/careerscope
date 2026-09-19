@@ -1,20 +1,126 @@
 {
-  "$comment": "Canonical machine-readable progress. Automation reads THIS; CAREERSCOPE-PROGRESS.md is the human projection. check-agents.mjs asserts the two agree, so drift is caught rather than discovered.",
-  "updatedAt": "2026-09-19T00:00:00.000Z",
-  "overallStatus": "IN PROGRESS",
-  "overall": 65,
+  "$comment": "Percentages require evidence. VERIFIED requires evidence. UNMEASURED carries no number at all. Enforced by scripts/check-progress.mjs.",
+  "updatedAt": "2026-09-19",
+  "overallStatus": "IN PROGRESS — deployed and working; core user journey not built",
+  "overall": null,
   "areas": [
-    { "area": "Product", "percent": 60, "status": "IN PROGRESS" },
-    { "area": "Frontend", "percent": 20, "status": "IN PROGRESS" },
-    { "area": "Backend", "percent": 85, "status": "VERIFIED" },
-    { "area": "Database", "percent": 70, "status": "VERIFIED" },
-    { "area": "Infrastructure", "percent": 85, "status": "VERIFIED" },
-    { "area": "Security", "percent": 85, "status": "VERIFIED" },
-    { "area": "Performance", "percent": 70, "status": "IN PROGRESS" },
-    { "area": "Testing", "percent": 85, "status": "VERIFIED" },
-    { "area": "System Design", "percent": 85, "status": "VERIFIED" },
-    { "area": "UX/UI", "percent": 15, "status": "NOT STARTED" },
-    { "area": "Documentation", "percent": 85, "status": "VERIFIED" },
-    { "area": "Code Quality", "percent": 90, "status": "VERIFIED" }
+    {
+      "area": "Product",
+      "percent": 25,
+      "status": "IN PROGRESS",
+      "evidence": [
+        "Discovery, matching and storage work end to end on the deployed stack (/api/health returns 3.0.0)",
+        "The core user journey is not built: CS-16 to CS-19 are all READY, none started",
+        "No user-facing feature has been validated from the user perspective"
+      ]
+    },
+    {
+      "area": "Frontend",
+      "percent": 20,
+      "status": "IN PROGRESS",
+      "evidence": [
+        "v2/apps/web builds, typechecks and lints clean",
+        "No shared loading, empty or error states (CS-13); Leads unusable on a phone (CS-14)",
+        "Known layout defect open at 768px on Linux WebKit (CS-2), fix written but unverified"
+      ]
+    },
+    {
+      "area": "Backend",
+      "percent": 70,
+      "status": "IN PROGRESS",
+      "evidence": [
+        "Root suite 1047/1047 passing locally",
+        "v2 unit layer 33/33 passing in CI",
+        "Six v2 integration files need Postgres and Redis and run nowhere (CS-9)"
+      ]
+    },
+    {
+      "area": "Database",
+      "percent": null,
+      "status": "UNMEASURED",
+      "evidence": [
+        "Migrations exist and the deployed application serves traffic",
+        "No verification against a populated database has been recorded — the release gate asks for it and nothing has answered"
+      ]
+    },
+    {
+      "area": "Infrastructure",
+      "percent": 65,
+      "status": "IN PROGRESS",
+      "evidence": [
+        "Deployed and serving: careerscope.tech/api/health returns 3.0.0",
+        "Deploy now refuses a commit CI rejected (CS-7), unverified in a live run",
+        "Managed firewall configured but NOT attached; no proxy self-healing (CS-3)"
+      ]
+    },
+    {
+      "area": "Security",
+      "percent": null,
+      "status": "UNMEASURED",
+      "evidence": [
+        "Argon2, sessions, CSRF, origin checks and rate limits are implemented",
+        "No security review has been run this cycle; the Security agent has never been invoked",
+        "CS-17 will render attacker-influenced third-party job content — unassessed"
+      ]
+    },
+    {
+      "area": "Performance",
+      "percent": null,
+      "status": "UNMEASURED",
+      "evidence": [
+        "No performance measurement of any kind has been recorded",
+        "The previous 70% was not derived from a measurement"
+      ]
+    },
+    {
+      "area": "Testing",
+      "percent": 55,
+      "status": "IN PROGRESS",
+      "evidence": [
+        "1047 root tests and 33 v2 unit tests pass; five gate suites proven by mutation",
+        "No database, queue or browser coverage runs in CI (CS-9)",
+        "CS-2 cannot be reproduced locally; only CI can adjudicate it"
+      ]
+    },
+    {
+      "area": "System Design",
+      "percent": 75,
+      "status": "IN PROGRESS",
+      "evidence": [
+        "Architecture is documented and the V1/V2 split is recorded",
+        "No independent design review has been run this cycle",
+        "CS-6 records that frontend route architecture and the shared shell are inconsistent"
+      ]
+    },
+    {
+      "area": "UX/UI",
+      "percent": 15,
+      "status": "IN PROGRESS",
+      "evidence": [
+        "No design pass on the public Pages surface (CS-11)",
+        "No accessibility baseline has ever been measured (CS-15)",
+        "Frontend agent now owns senior UI/UX; nothing has been implemented under it yet"
+      ]
+    },
+    {
+      "area": "Documentation",
+      "percent": 70,
+      "status": "IN PROGRESS",
+      "evidence": [
+        "The documentation set is extensive and the Copilot contract is current",
+        "Two documents asserted agents could not be invoked; disproved on 2026-09-19, so drift is demonstrated not hypothetical",
+        "Documentation now gates the release, but no release has passed that gate yet"
+      ]
+    },
+    {
+      "area": "Code Quality",
+      "percent": 70,
+      "status": "IN PROGRESS",
+      "evidence": [
+        "lint 0, format 0, typecheck 0 across the workspace",
+        "Code Quality agent reviewed ONE file on 2026-09-19 and found duplication, unreadable-as-empty reads and a status-vocabulary defect",
+        "The previous 90% VERIFIED predated any review actually being run"
+      ]
+    }
   ]
 }

@@ -1,5 +1,11 @@
 # CareerScope — Engineering Progress
 
+> **Re-baselined 2026-09-19.** The previous figures carried no evidence and
+> seven areas claimed VERIFIED without any. Several numbers went **down**; none
+> of the work regressed. A percentage now requires evidence, VERIFIED requires
+> evidence, and an area with nothing behind it reports UNMEASURED and no number.
+> Enforced by `scripts/check-progress.mjs`.
+
 **Last Updated:** 2026-09-18
 **Current Task:** none — awaiting the first task through the multi-agent workflow
 **Current Phase:** RECON
@@ -26,20 +32,20 @@ important fact about this repository.
 
 ## Overall Progress
 
-| Area           | Progress | Status      | Evidence                                                                      |
-| -------------- | -------- | ----------- | ----------------------------------------------------------------------------- |
-| Product        | 60%      | IN PROGRESS | Core owner loop works end to end; several planned surfaces have no data model |
-| Frontend       | 20%      | IN PROGRESS | **1 route**, 7 components, no shell, no routing, no admin UI                  |
-| Backend        | 85%      | VERIFIED    | 26 routes, v2 suite 49/49, outbox + fencing + leases verified                 |
-| Database       | 70%      | VERIFIED    | 13 migrations applied; no company/job-corpus/saved-search entities            |
-| Infrastructure | 85%      | VERIFIED    | 3 consecutive green auto-deploys, provenance 4/4, TLS, nftables 14/14         |
-| Security       | 85%      | VERIFIED    | Live 401/403/421, all 9 headers, Argon2id, CSRF+Origin, owner isolation       |
-| Performance    | 70%      | IN PROGRESS | Backend workload qualified; **no frontend performance work done**             |
-| Testing        | 85%      | VERIFIED    | root 1047/1047 (0 skipped), v2 49/49, crash 4/4, full-disk PASS               |
-| System Design  | 85%      | VERIFIED    | Documented + diagrammed; one known availability defect open                   |
-| UX/UI          | 15%      | NOT STARTED | Single page, no design system, no information architecture                    |
-| Documentation  | 85%      | VERIFIED    | 13 docs incl. architecture, operations, security, testing, limitations        |
-| Code Quality   | 90%      | VERIFIED    | lint/format/typecheck green both workspaces; audit found no dead code         |
+| Area           | Progress | Status      | Evidence                                                                         |
+| -------------- | -------- | ----------- | -------------------------------------------------------------------------------- |
+| Product        | 25%      | IN PROGRESS | Deployed loop works; the core user journey CS-16..CS-19 is not built             |
+| Frontend       | 20%      | IN PROGRESS | Builds clean; no shared loading/empty/error states, phone layout unusable        |
+| Backend        | 70%      | IN PROGRESS | root 1047/1047, v2 unit 33/33; six integration files run nowhere (CS-9)          |
+| Database       | —        | UNMEASURED  | Migrations exist and serve traffic; no verification against a populated database |
+| Infrastructure | 65%      | IN PROGRESS | Live at 3.0.0; firewall not attached, no proxy self-healing (CS-3)               |
+| Security       | —        | UNMEASURED  | Controls implemented; no review run this cycle, Security agent never invoked     |
+| Performance    | —        | UNMEASURED  | No measurement of any kind recorded; the previous 70% was not derived            |
+| Testing        | 55%      | IN PROGRESS | Unit and gate suites proven; no database, queue or browser coverage in CI        |
+| System Design  | 75%      | IN PROGRESS | Documented; no independent review this cycle, CS-6 open                          |
+| UX/UI          | 15%      | IN PROGRESS | No design pass on the public surface, no accessibility baseline ever measured    |
+| Documentation  | 70%      | IN PROGRESS | Extensive and current; drift demonstrated on 2026-09-19, not hypothetical        |
+| Code Quality   | 70%      | IN PROGRESS | lint/format/typecheck green; one reviewed file yielded three findings            |
 
 **Overall: ~65%.** Dominated by the frontend and UX gap, not by backend debt.
 
