@@ -174,46 +174,89 @@ const PAGE = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>CareerScope Engineering</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-:root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--ink:#e6edf3;--muted:#8b949e;--ok:#3fb950;--warn:#d29922;--bad:#f85149;--live:#58a6ff}
+/* Command Centre (Refined Dark) — tokens from the approved concept. */
+:root{--bg:#080B10;--surface:#0F141A;--panel:#141B22;--line:#1F2937;--ink:#F4F7FA;--muted:#AEB8C4;--ok:#2DD4A5;--warn:#F59E0B;--bad:#EF4444;--dim:#64748B;--unmeasured:#94A3B8;--focus:#7DE7CF;--hover:#151E26;color-scheme:dark}
+html[data-theme=light]{--bg:#F5F7FA;--surface:#FFFFFF;--panel:#EEF2F5;--line:#D5DDE5;--ink:#10151B;--muted:#52606D;--ok:#0B7F68;--warn:#B45309;--bad:#DC2626;--dim:#64748B;--unmeasured:#6B7A8A;--focus:#0B7F68;--hover:#E9EEF2;color-scheme:light}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
-header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;gap:20px;align-items:baseline;flex-wrap:wrap}
-h1{font-size:15px;margin:0;letter-spacing:.08em}
-nav{display:flex;gap:4px;padding:8px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-nav button{background:none;border:1px solid transparent;color:var(--muted);padding:5px 10px;cursor:pointer;font:inherit;border-radius:6px}
-nav button[aria-selected=true]{color:var(--ink);border-color:var(--line);background:var(--panel)}
-main{padding:20px;display:grid;gap:16px}
-.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px}
-.k{color:var(--muted);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
-.v{font-size:19px;margin-top:4px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 13px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+header{padding:14px 24px;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:var(--surface)}
+.brand{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:16px;letter-spacing:-.02em}
+h1{font-size:28px;font-weight:700;letter-spacing:-.02em;margin:0 0 2px}
+h2{font-size:20px;font-weight:600;letter-spacing:-.01em;margin:0 0 12px}
+.sub{color:var(--muted);font-size:12px;font-weight:500;letter-spacing:.02em}
+.grow{flex:1}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px}
+nav{display:flex;gap:2px;padding:0 24px;border-bottom:1px solid var(--line);flex-wrap:wrap;background:var(--surface)}
+nav button{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:10px 12px;cursor:pointer;font:inherit;font-size:13px;font-weight:500}
+nav button:hover{color:var(--ink)}
+nav button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--ok)}
+main{padding:24px;display:grid;gap:24px;max-width:1440px;margin:0 auto}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:12px 14px;transition:background 120ms ease-out}
+.card:hover{background:var(--hover)}
+.k{color:var(--muted);font-size:12px;font-weight:500;letter-spacing:.02em;text-transform:uppercase}
+.v{font-size:22px;font-weight:600;letter-spacing:-.01em;margin-top:6px;font-variant-numeric:tabular-nums}
+.note{color:var(--muted);font-size:12px;margin-top:4px;display:flex;align-items:center;gap:6px}
+/* A breached or blocked value is never signalled by colour alone. */
+.card.breach{border-color:var(--bad);border-left-width:3px}
+.card.breach .v{color:var(--bad)}
+.card.breach .note{color:var(--bad);font-weight:600}
+.card.attn{border-color:var(--warn)}
+.card.attn .v{color:var(--warn)}
+.card.unmeasured .v{color:var(--unmeasured)}
 table{width:100%;border-collapse:collapse}
-td,th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
-th{color:var(--muted);font-weight:400;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+td,th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr{height:52px}
+tbody tr:hover{background:var(--hover)}
+th{color:var(--muted);font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.02em}
 .ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}.muted{color:var(--muted)}
-.bar{height:6px;background:#21262d;border-radius:3px;overflow:hidden;margin-top:6px}
+.bar{height:8px;background:var(--surface);border:1px solid var(--line);border-radius:2px;overflow:hidden;min-width:120px}
 .bar>i{display:block;height:100%;background:var(--ok)}
-.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--muted);margin-right:8px}
-.dot.live{background:var(--live);animation:p 1s ease-in-out infinite}
-.spark{display:flex;align-items:flex-end;gap:3px;height:80px;margin-top:10px;justify-content:flex-start}
-.spark>i{width:22px;flex:0 0 auto;background:linear-gradient(180deg,var(--live),#1f6feb);border-radius:2px 2px 0 0}
-.spark>i:hover{background:var(--ok)}
+.bar>i.warn{background:var(--warn)}
+.bar>i.bad{background:var(--bad)}
+/* Unmeasured is not zero: hatching reads as "no data", an empty bar reads as 0%. */
+.bar.none{background:repeating-linear-gradient(45deg,transparent,transparent 3px,var(--line) 3px,var(--line) 6px)}
+.st{font-size:12px;font-weight:600;letter-spacing:.02em;white-space:nowrap}
+.st.VERIFIED{color:var(--ok)}
+.st.INPROGRESS{color:var(--warn)}
+.st.UNMEASURED{color:var(--unmeasured)}
+.st.BLOCKED{color:var(--bad)}
+.st.NOTSTARTED{color:var(--dim)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--dim);margin-right:8px;flex:0 0 auto}
+.dot.live{background:var(--ok);animation:p 1s ease-in-out infinite}
+.dot.ok{background:var(--ok)}.dot.warn{background:var(--warn)}.dot.bad{background:var(--bad)}
+.spark{display:flex;align-items:flex-end;gap:3px;height:60px;margin-top:10px}
+.spark>i{width:16px;flex:0 0 auto;background:var(--ok);opacity:.85;border-radius:1px}
+.spark>i:hover{opacity:1}
 .up{color:var(--ok)}.down{color:var(--bad)}.flat{color:var(--muted)}
-.day{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px solid var(--line)}
-.tag{font-size:10px;border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--muted)}
-.fresh{outline:1px solid var(--live);outline-offset:2px;border-radius:4px}
+.day{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}
+.tag{font-size:12px;border:1px solid var(--line);border-radius:3px;padding:1px 6px;color:var(--muted)}
+.fresh{outline:1px solid var(--ok);outline-offset:2px;border-radius:3px}
 @keyframes p{0%,100%{opacity:1}50%{opacity:.25}}
-@media (prefers-reduced-motion:reduce){.dot.live{animation:none}}
+@media (prefers-reduced-motion:reduce){.dot.live{animation:none}.card{transition:none}}
 .empty{color:var(--muted);padding:10px 0}
-.pill{border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:11px;color:var(--muted)}
+.pill{border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:12px;color:var(--muted)}
+.cols{display:grid;gap:16px;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+@media (max-width:1023px){.cols{grid-template-columns:minmax(0,1fr)}}
+.foot{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:12px}
+.legend{display:grid;gap:8px}
+.legend div{display:flex;align-items:center;gap:8px;font-size:12px}
 </style></head><body>
-<header><h1>CAREERSCOPE ENGINEERING</h1><span id="hdr" class="muted"></span></header>
+<header>
+<span class="brand"><svg width="20" height="20" viewBox="0 0 56 56" aria-hidden="true" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M52 26C52 39.255 41.255 50 28 50C14.745 50 4 39.255 4 26C4 12.745 14.745 2 28 2C38.1 2 46.9 8.15 50.25 17H40.2C37.8 13.75 33.35 11 28 11C19.715 11 13 17.715 13 26C13 34.285 19.715 41 28 41C33.35 41 37.8 38.25 40.2 35H50.25C46.9 43.85 38.1 50 28 50Z"/><circle cx="39" cy="26" r="4.25" fill="currentColor"/></svg>CareerScope</span>
+<span class="sub">Engineering Control Centre</span>
+<span class="grow"></span>
+<button id="theme" class="pill" style="cursor:pointer;background:none">Theme</button>
+<span class="sub mono" id="hdr"></span>
+</header>
 <nav id="nav"></nav><main id="main"></main>
 <script>
 const TABS=['OVERVIEW','DAILY','SPRINT','BACKLOG','AGENTS','FINDINGS','RELEASES','RESEARCH','AUDIT'];
 let tab='OVERVIEW',d={};
 const esc=s=>String(s??'—').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-const card=(k,v,cls='')=>'<div class=card><div class=k>'+k+'</div><div class="v '+cls+'">'+esc(v)+'</div></div>';
+const card=(k,v,cls='',note='')=>'<div class="card '+cls+'"><div class=k>'+k+'</div><div class="v">'+esc(v)+'</div>'+(note?'<div class=note>'+note+'</div>':'')+'</div>';
+const dot=(c,t)=>'<span class="dot '+c+'"></span>'+esc(t);
 function overview(){
   const f=d.findings.items||d.findings.findings||[];
   const open=f.filter(x=>x.status!=='FIXED'&&x.status!=='CLOSED');
@@ -222,30 +265,43 @@ function overview(){
   const active=items.filter(i=>['IN_PROGRESS','CODE_REVIEW','QA','SECURITY'].includes(i.status));
   const paused=d.mode&&d.mode.mode==='PAUSED';
   const dim=k=>items.filter(i=>i.dimension===k).length;
+  const breached=active.length>2;
   const banner=paused
-    ?'<div class=card><div class=k>SPRINT PROCESS PAUSED until '+esc(d.mode.resumeOn||'further notice')+'</div><div>'+esc(d.mode.reason||'')+'</div><div class=muted style="margin-top:6px">Resume when: '+esc(d.mode.resumeCondition||'unspecified')+'</div><div class=muted>Agents and every safety gate remain active.</div></div>'
+    ?'<div class="card attn"><div class=k>Sprint process paused until '+esc(d.mode.resumeOn||'further notice')+'</div><div style="margin-top:6px">'+esc(d.mode.reason||'')+'</div><div class=note>Resume when: '+esc(d.mode.resumeCondition||'unspecified')+'</div><div class=note>Agents and every safety gate remain active.</div></div>'
     :'';
-  return banner+'<div class=grid>'
-    +card('Version (deployed)',d.repo.version)+card('V1 line',d.repo.legacyVersion,'muted')
-    +card('Branch',d.repo.branch,d.repo.branch==='main'?'warn':'')
+  return '<div><h1>System status</h1><div class=sub>Real data. Read-only. Repaints every 3 seconds.</div></div>'+banner+'<div class=grid>'
+    +card('Deployed',d.repo.version,'',dot('ok','Live on production'))
+    +card('V1 line',d.repo.legacyVersion,'',dot('','Legacy data'))
+    +card('Branch',d.repo.branch,d.repo.branch==='main'?'attn':'',dot(d.repo.branch==='main'?'warn':'ok',d.repo.branch==='main'?'Release line':'Feature branch'))
     +card('Commit',d.repo.commit)
-    +card('Process',paused?'PAUSED':'ACTIVE',paused?'warn':'ok')
-    +card('Sprint',d.sprint?d.sprint.sprintId+(d.sprint.status?' — '+d.sprint.status:''):'not planned')
-    +card('Sprint goal',d.sprint&&d.sprint.goal?d.sprint.goal:'—')
-    +card('Target release',d.sprint?d.sprint.targetReleaseDate:'—')
-    +card('WIP',active.length+'/2',active.length>2?'bad':'')
-    +card('Backlog',items.length)
-    +card('Product items',dim('product'),dim('product')?'':'bad')
-    +card('Engineering items',dim('engineering'),'muted')
-    +card('Open P0',n('P0'),n('P0')?'bad':'ok')+card('Open P1',n('P1'),n('P1')?'bad':'ok')
-    +card('Open P2',n('P2'))+card('Open P3',n('P3'))
-    +card('Scheduler',d.releasePlan.schedulerEnabled?'ENABLED':'disabled',d.releasePlan.schedulerEnabled?'warn':'muted')
-    +'</div>'+progress();
+    +card('Process mode',paused?'PAUSED':'ACTIVE',paused?'attn':'',paused?dot('warn','until '+esc(d.mode.resumeOn||'—')):dot('ok','Running'))
+    +card('Sprint',d.sprint?d.sprint.sprintId:'not planned','',d.sprint?dot(d.sprint.status==='ACTIVE'?'ok':'warn',d.sprint.status||'—'):'')
+    +card('Target release',d.sprint?d.sprint.targetReleaseDate:'—','',dot('','Planned'))
+    +card('Scheduler',d.releasePlan.schedulerEnabled?'ENABLED':'Disabled',d.releasePlan.schedulerEnabled?'breach':'',dot(d.releasePlan.schedulerEnabled?'bad':'','Manual only'))
+    +card('WIP',active.length+'/2',breached?'breach':'',breached?'&#9888; Limit breached':dot('ok','Within limit'))
+    +card('Backlog total',items.length,'',dot('',dim('product')+' product / '+dim('engineering')+' eng'))
+    +card('P0',n('P0'),n('P0')?'breach':'',n('P0')?'&#9888; Blocking':dot('ok','Clear'))
+    +card('P1',n('P1'),n('P1')?'attn':'',dot(n('P1')?'warn':'ok',n('P1')?'Needs attention':'Clear'))
+    +card('P2',n('P2'))
+    +card('P3',n('P3'))
+    +'</div>'
+    +'<div class=cols><div>'+progress()+'</div><div>'+legend()+'</div></div>';
+}
+function legend(){
+  const rows=[['ok','Verified'],['warn','In progress'],['bad','Blocked'],['','Not started'],['','Unmeasured']];
+  return '<div class=card><div class=k>Status legend</div><div class=legend style="margin-top:10px">'
+    +rows.map(r=>'<div>'+dot(r[0],r[1])+'</div>').join('')
+    +'</div><div class=note style="margin-top:12px">Unmeasured shows an em dash and a hatched bar. It is not the same as zero.</div></div>';
 }
 function progress(){
   const a=d.progress.areas||[];if(!a.length)return '';
-  return '<div class=card><div class=k>Progress</div><table>'+a.map(x=>
-    '<tr><td>'+esc(x.area)+'</td><td style="width:60%"><div class=bar><i style="width:'+x.percent+'%"></i></div></td><td>'+x.percent+'%</td><td class=muted>'+esc(x.status)+'</td></tr>').join('')+'</table></div>';
+  const cls=x=>x.status==='VERIFIED'?'':x.status==='BLOCKED'?'bad':'warn';
+  return '<div class=card><h2 style="margin:0 0 12px">Progress by area</h2><table>'+a.map(x=>{
+    const none=x.percent===null||x.percent===undefined;
+    const pct=none?'—':x.percent+'%';
+    const fill=none?'<div class="bar none"></div>':'<div class=bar><i class="'+cls(x)+'" style="width:'+x.percent+'%"></i></div>';
+    return '<tr><td style="width:150px">'+esc(x.area)+'</td><td>'+fill+'</td><td class=mono style="width:52px;text-align:right">'+pct+'</td><td style="width:110px"><span class="st '+String(x.status).replace(/[^A-Z]/g,'')+'">'+esc(x.status)+'</span></td></tr>';
+  }).join('')+'</table></div>';
 }
 function sprint(){
   if(!d.sprint)return '<div class=card><div class=empty>No sprint planned for '+esc(d.week)+'. Run <code>npm run agile:plan</code>.</div></div>';
@@ -321,23 +377,34 @@ function daily(){
    +'<div class=card><div class=k>Commits by day (last 14 days)</div>'+(days.length?days.map(x=>'<div class=day><span>'+esc(x)+'</span><span class=tag>'+byDay[x].length+' commits</span></div>'+byDay[x].slice(0,4).map(s=>'<div class=muted style="padding-left:12px;font-size:12px">'+esc(s)+'</div>').join('')).join(''):'<div class=empty>No commits in the last 14 days.</div>')+'</div>';
 }
 const VIEWS={OVERVIEW:overview,DAILY:daily,SPRINT:sprint,BACKLOG:backlog,AGENTS:agents,FINDINGS:findings,RELEASES:releases,RESEARCH:research,AUDIT:audit};
+// The concept asks for staleness to be visible rather than implied, so the
+// header says how old the reading is once it stops being current.
+function stamp(){
+  const age=Math.round((Date.now()-Date.parse(d.generatedAt))/1000);
+  const when=new Date(d.generatedAt).toLocaleTimeString();
+  return 'Local · 127.0.0.1:7777 · '+(age>60?'⏱ Stale — '+age+'s old':'auto-refresh 3s · '+when);
+}
 function paint(){
   document.getElementById('nav').innerHTML=TABS.map(t=>'<button aria-selected="'+(t===tab)+'" onclick="go(\\''+t+'\\')">'+t+'</button>').join('');
-  document.getElementById('hdr').textContent=d.repo.branch+' @ '+d.repo.commit+'  ·  '+d.week+'  ·  '+new Date(d.generatedAt).toLocaleTimeString();
+  document.getElementById('hdr').textContent=stamp();
   document.getElementById('main').innerHTML=VIEWS[tab]();
 }
 function go(t){tab=t;paint()}
+document.getElementById('theme').addEventListener('click',()=>{
+  const light=document.documentElement.getAttribute('data-theme')==='light';
+  document.documentElement.setAttribute('data-theme',light?'dark':'light');
+});
 let lastSig='';
 async function load(){
   try{
     const next=await (await fetch('/state')).json();
     // Repaint only when something actually changed, so the page does not flicker
     // and a reader does not lose their place every few seconds.
-    const sig=JSON.stringify([next.repo,next.loop,next.backlog,next.findings,next.sprint,next.history&&next.history.length,next.runs&&next.runs.length]);
+    const sig=JSON.stringify([next.repo,next.loop,next.backlog,next.findings,next.sprint,next.mode,next.progress,next.history&&next.history.length,next.runs&&next.runs.length]);
     d=next;
     if(sig!==lastSig){lastSig=sig;paint();
       const el=document.getElementById('hdr');el.classList.add('fresh');setTimeout(()=>el.classList.remove('fresh'),600);}
-    else{document.getElementById('hdr').textContent=d.repo.branch+' @ '+d.repo.commit+'  ·  '+d.week+'  ·  '+new Date(d.generatedAt).toLocaleTimeString();}
+    else{document.getElementById('hdr').textContent=stamp();}
   }catch(e){document.getElementById('hdr').textContent='state unavailable — '+e.message;}
 }
 load();setInterval(load,3000);
