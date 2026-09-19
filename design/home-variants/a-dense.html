@@ -188,6 +188,23 @@
       .meta {
         display: none;
       }
+      .vh {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .rows {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: contents;
+      }
       .state {
         padding: 48px var(--gutter);
         color: var(--muted);
@@ -279,6 +296,7 @@
       </div>
     </header>
     <main id="main"><div id="list"></div></main>
+    <p id="live" class="vh" role="status" aria-live="polite"></p>
     <footer><button id="more">Load more</button><span class="count" id="shown"></span></footer>
     <script type="module" src="./variant.js"></script>
   </body>
