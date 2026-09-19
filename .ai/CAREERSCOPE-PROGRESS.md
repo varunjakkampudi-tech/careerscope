@@ -1,4 +1,4 @@
-# CareerScope — Engineering Progress
+# CareerScope — Engineerin| Database | 65% | IN PROGRESS | 13 tables, 13 migrations, 18 checks; no recovery run recorded, n| Security | 72% | IN PROGRESS | All ten areas implemented; never reviewed until 2026-09-19, live origin un| Performance | 30% | IN PROGRESS | Live health 91-196ms measured; no workload, database, queue or browser measurement |
 
 > **Re-baselined 2026-09-19.** The previous figures carried no evidence and
 > seven areas claimed VERIFIED without any. Several numbers went **down**; none
@@ -32,20 +32,20 @@ important fact about this repository.
 
 ## Overall Progress
 
-| Area           | Progress | Status      | Evidence                                                                         |
-| -------------- | -------- | ----------- | -------------------------------------------------------------------------------- |
-| Product        | 25%      | IN PROGRESS | Deployed loop works; the core user journey CS-16..CS-19 is not built             |
-| Frontend       | 20%      | IN PROGRESS | Builds clean; no shared loading/empty/error states, phone layout unusable        |
-| Backend        | 70%      | IN PROGRESS | root 1047/1047, v2 unit 33/33; six integration files run nowhere (CS-9)          |
-| Database       | —        | UNMEASURED  | Migrations exist and serve traffic; no verification against a populated database |
-| Infrastructure | 65%      | IN PROGRESS | Live at 3.0.0; firewall not attached, no proxy self-healing (CS-3)               |
-| Security       | —        | UNMEASURED  | Controls implemented; no review run this cycle, Security agent never invoked     |
-| Performance    | —        | UNMEASURED  | No measurement of any kind recorded; the previous 70% was not derived            |
-| Testing        | 55%      | IN PROGRESS | Unit and gate suites proven; no database, queue or browser coverage in CI        |
-| System Design  | 75%      | IN PROGRESS | Documented; no independent review this cycle, CS-6 open                          |
-| UX/UI          | 15%      | IN PROGRESS | No design pass on the public surface, no accessibility baseline ever measured    |
-| Documentation  | 70%      | IN PROGRESS | Extensive and current; drift demonstrated on 2026-09-19, not hypothetical        |
-| Code Quality   | 70%      | IN PROGRESS | lint/format/typecheck green; one reviewed file yielded three findings            |
+| Area           | Progress | Status      | Evidence                                                                      |
+| -------------- | -------- | ----------- | ----------------------------------------------------------------------------- |
+| Product        | 25%      | IN PROGRESS | Deployed loop works; the core user journey CS-16..CS-19 is not built          |
+| Frontend       | 20%      | IN PROGRESS | Builds clean; no shared loading/empty/error states, phone layout unusable     |
+| Backend        | 70%      | IN PROGRESS | root 1047/1047, v2 unit 33/33; six integration files run nowhere (CS-9)       |
+| Database       | 65%      | IN PROGRESS | 13 tables, 13 migrations, 18 checks; no recovery run, no scheduled dump       |
+| Infrastructure | 65%      | IN PROGRESS | Live at 3.0.0; firewall not attached, no proxy self-healing (CS-3)            |
+| Security       | 72%      | IN PROGRESS | Ten areas implemented; first review 2026-09-19, live origin untested          |
+| Performance    | 30%      | IN PROGRESS | Live health 91-196ms; no workload, database, queue or browser figure          |
+| Testing        | 55%      | IN PROGRESS | Unit and gate suites proven; no database, queue or browser coverage in CI     |
+| System Design  | 75%      | IN PROGRESS | Documented; no independent review this cycle, CS-6 open                       |
+| UX/UI          | 15%      | IN PROGRESS | No design pass on the public surface, no accessibility baseline ever measured |
+| Documentation  | 70%      | IN PROGRESS | Extensive and current; drift demonstrated on 2026-09-19, not hypothetical     |
+| Code Quality   | 70%      | IN PROGRESS | lint/format/typecheck green; one reviewed file yielded three findings         |
 
 **Overall: ~65%.** Dominated by the frontend and UX gap, not by backend debt.
 
@@ -53,29 +53,29 @@ important fact about this repository.
 
 ## Frontend
 
-| Item              | Status      | Evidence                                         |
-| ----------------- | ----------- | ------------------------------------------------ |
-| Application shell | NOT STARTED | No shared layout beyond `layout.tsx`             |
-| Routing           | NOT STARTED | **One** `page.tsx`; `view` state simulates pages |
-| Layouts           | NOT STARTED |                                                  |
-| Design system     | NOT STARTED | No tokens, no primitives, ad-hoc styling         |
-| Components        | IMPLEMENTED | 7 components, functional                         |
-| Pages             | NOT STARTED | No `/login`, `/leads`, `/profile` routes         |
-| Forms             | IMPLEMENTED | Profile and account forms work                   |
-| State management  | IMPLEMENTED | Local state lifted into `page.tsx`; no store     |
-| API integration   | VERIFIED    | `lib/api.ts`, CSRF + revisions handled           |
-| Authentication UI | IMPLEMENTED | `account-form.tsx`; no dedicated route           |
-| Job search        | IMPLEMENTED | Search + SSE progress                            |
-| Job details       | IMPLEMENTED | `match-evidence.tsx`                             |
-| Profiles          | IMPLEMENTED | `profile-editor.tsx` with revision conflicts     |
-| Dashboards        | NOT STARTED |                                                  |
-| Responsive design | IN PROGRESS | Verified 320/390/1440 on what exists             |
-| Accessibility     | VERIFIED    | axe clean WCAG 2.0/2.1 A+AA, 3 browsers          |
-| Loading states    | IN PROGRESS | Present in some surfaces, not systematic         |
-| Empty states      | IN PROGRESS | Ad-hoc; no shared empty-state treatment          |
-| Error states      | IN PROGRESS | 409/507 handled; not consistent everywhere       |
-| Performance       | NOT STARTED | No bundle or render measurement taken            |
-| Tests             | IN PROGRESS | Browser + axe checks; no component tests         |
+| Item              | Status      | Evidence                                             |
+| ----------------- | ----------- | ---------------------------------------------------- |
+| Application shell | NOT STARTED | No shared layout beyond `layout.tsx`                 |
+| Routing           | NOT STARTED | **One** `page.tsx`; `view` state simulates pages     |
+| Layouts           | NOT STARTED |                                                      |
+| Design system     | NOT STARTED | No tokens, no primitives, ad-hoc styling             |
+| Components        | IMPLEMENTED | 7 components, functional                             |
+| Pages             | NOT STARTED | No `/login`, `/leads`, `/profile` routes             |
+| Forms             | IMPLEMENTED | Profile and account forms work                       |
+| State management  | IMPLEMENTED | Local state lifted into `page.tsx`; no store         |
+| API integration   | VERIFIED    | `lib/api.ts`, CSRF + revisions handled               |
+| Authentication UI | IMPLEMENTED | `account-form.tsx`; no dedicated route               |
+| Job search        | IMPLEMENTED | Search + SSE progress                                |
+| Job details       | IMPLEMENTED | `match-evidence.tsx`                                 |
+| Profiles          | IMPLEMENTED | `profile-editor.tsx` with revision conflicts         |
+| Dashboards        | NOT STARTED |                                                      |
+| Responsive design | IN PROGRESS | Verified 320/390/1440 on what exists                 |
+| Accessibility     | VERIFIED    | axe clean WCAG 2.0/2.1 A+AA, 3 browsers              |
+| Loading states    | IN PROGRESS | Present in some surfaces, not systematic             |
+| Empty states      | IN PROGRESS | Ad-hoc; no shared empty-state treatment              |
+| Error states      | IN PROGRESS | 409/507 handled; not consistent everywhere           |
+| Performance       | IN PROGRESS | Live health measured; no bundle or render figure yet |
+| Tests             | IN PROGRESS | Browser + axe checks; no component tests             |
 
 **Blocked, not merely unbuilt:** `/companies`, `/market`, `/skills`, `/alerts`
 and public `/jobs` have **no backing data**. `CollectedJob` carries 11 fields —
@@ -94,7 +94,7 @@ inventing data.
 | Validation       | VERIFIED    | Zod at every boundary                                  |
 | Authentication   | COMPLETE    | Argon2id, opaque sessions, revocation                  |
 | Authorization    | COMPLETE    | Session-derived `ownerId` + composite FKs              |
-| Database         | VERIFIED    | PostgreSQL 17, Drizzle, 13 migrations                  |
+| Database         | IN PROGRESS | PostgreSQL 17, Drizzle, 13 migrations; recovery unrun  |
 | Transactions     | VERIFIED    | Outbox written in the business transaction             |
 | Queues           | VERIFIED    | SQS default; BullMQ search-only, legacy names rejected |
 | Workers          | VERIFIED    | publisher, search, files                               |
@@ -105,8 +105,8 @@ inventing data.
 | Logging          | VERIFIED    | Redacted; route templates only, never URLs or bodies   |
 | Observability    | IN PROGRESS | Correlation chain complete; no dashboard               |
 | Tests            | VERIFIED    | 49/49                                                  |
-| Performance      | VERIFIED    | 16,119 req, 8 concurrent, 0 failures, p95 22ms         |
-| Security         | VERIFIED    | See Security section                                   |
+| Performance      | IN PROGRESS | Earlier figure; no run recorded in the evidence trail  |
+| Security         | IN PROGRESS | Reviewed 2026-09-19; live origin not observed          |
 
 **Not implemented:** transactional email (no provider), admin endpoints (exist
 on `feature/frontend-pages-admin-console`, not deployed), company/market/skills
@@ -125,7 +125,7 @@ domain.
 | Health checks           | VERIFIED    | Compose `--wait` gates deploys                          |
 | Logging                 | VERIFIED    | json-file, 10m × 5                                      |
 | Persistent storage      | VERIFIED    | 6 volumes; certificates survive restart                 |
-| Database                | VERIFIED    | PostgreSQL 17 container, volume-backed, recovery PASS   |
+| Database                | IN PROGRESS | Volume-backed; recovery not re-run this cycle           |
 | Cache                   | NOT STARTED | Redis deployed for BullMQ only; no cache layer          |
 | Queue                   | VERIFIED    | SQS in production, LocalStack locally                   |
 | Reverse proxy           | VERIFIED    | Caddy, TLS to 17 Dec 2026, no cert churn                |

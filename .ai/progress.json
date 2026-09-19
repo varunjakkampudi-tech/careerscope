@@ -36,11 +36,13 @@
     },
     {
       "area": "Database",
-      "percent": null,
-      "status": "UNMEASURED",
+      "percent": 65,
+      "status": "IN PROGRESS",
       "evidence": [
-        "Migrations exist and the deployed application serves traffic",
-        "No verification against a populated database has been recorded — the release gate asks for it and nothing has answered"
+        "13 tables and 13 applied migrations, with 18 CHECK constraints, 10 indexes and 2 composite foreign keys — the schema is substantially complete, not a sketch",
+        "Security review found search_jobs and run_events reference searches.id and users.id separately rather than a composite (owner_id, run_id) key, so a cross-owner row is representable at the database layer",
+        "v2/scripts/check-database-recovery.ts exists but no recovery run has been recorded, and no scheduled dump exists (CS-25)",
+        "Postings have no retention or liveness recheck (CS-27), and identity can merge two real openings (CS-28)"
       ]
     },
     {
@@ -55,21 +57,25 @@
     },
     {
       "area": "Security",
-      "percent": null,
-      "status": "UNMEASURED",
+      "percent": 72,
+      "status": "IN PROGRESS",
       "evidence": [
-        "Argon2, sessions, CSRF, origin checks and rate limits are implemented",
-        "No security review has been run this cycle; the Security agent has never been invoked",
-        "CS-17 will render attacker-influenced third-party job content — unassessed"
+        "Security agent review 2026-09-19: all ten assessed areas IMPLEMENTED — Argon2id m=19456, session tokens stored only as SHA-256 with 8h expiry and fixation resistance, owner scoping enforced at the repository layer, origin plus timing-safe CSRF, helmet and Caddy headers, Zod strict validation at every boundary, magic-byte upload checks with 0600 files",
+        "No reachable cross-owner or injection path was found; publicLink rejects non-HTTPS and embedded credentials, and no dangerouslySetInnerHTML exists in v2/apps/web",
+        "Deduction is evidential: no security review had ever been recorded for v2 before this one, the v2 suite runs in no pipeline, and the live origin was not observed — these are code-level conclusions about a deployment that was not tested",
+        "Open gaps: auth and isolation tests never execute in CI (P1), non-composite FKs on search_jobs and run_events (P2), script-src unsafe-inline in the app CSP (P2)"
       ]
     },
     {
       "area": "Performance",
-      "percent": null,
-      "status": "UNMEASURED",
+      "percent": 30,
+      "status": "IN PROGRESS",
       "evidence": [
-        "No performance measurement of any kind has been recorded",
-        "The previous 70% was not derived from a measurement"
+        "Live /api/health measured 2026-09-19 from this machine: 196ms, 105ms, 91ms — the deployed origin responds, but this is one endpoint over the public internet, not a workload",
+        "v2/scripts/check-performance.ts exists and measures p95, concurrency, duration and request counts, so the capability is present",
+        "No performance result has ever been recorded in the progress evidence, and the check runs in no pipeline",
+        "Public payload measured: jobs.json is 0.54 MB across 2,529 rows and parses in 9ms; the rebuilt page ships 50 KB with the first 20 rows inlined",
+        "Nothing has been measured for the database, the queue, the workers or the browser, which is where this application would actually degrade"
       ]
     },
     {

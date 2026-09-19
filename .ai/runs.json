@@ -1855,7 +1855,83 @@
       "errors": [
         "release gate refused"
       ]
+    },
+    {
+      "runId": "feature-1789828815281",
+      "phase": "feature",
+      "startedAt": "2026-09-19T14:40:15.276Z",
+      "completedAt": "2026-09-19T14:40:15.281Z",
+      "commit": "d1c30e2303eecef59083e1368b2f07ab804259db",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789828815490",
+      "phase": "feature",
+      "startedAt": "2026-09-19T14:40:15.483Z",
+      "completedAt": "2026-09-19T14:40:15.490Z",
+      "commit": "d1c30e2303eecef59083e1368b2f07ab804259db",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789828815708",
+      "phase": "feature",
+      "startedAt": "2026-09-19T14:40:15.699Z",
+      "completedAt": "2026-09-19T14:40:15.708Z",
+      "commit": "d1c30e2303eecef59083e1368b2f07ab804259db",
+      "branch": "main",
+      "result": "wip-exceeded",
+      "errors": [
+        "WIP limit exceeded"
+      ]
+    },
+    {
+      "runId": "feature-1789828816352",
+      "phase": "feature",
+      "startedAt": "2026-09-19T14:40:16.348Z",
+      "completedAt": "2026-09-19T14:40:16.352Z",
+      "commit": "d1c30e2303eecef59083e1368b2f07ab804259db",
+      "branch": "main",
+      "result": "paused",
+      "errors": []
+    },
+    {
+      "runId": "status-1789828816692",
+      "phase": "status",
+      "startedAt": "2026-09-19T14:40:16.568Z",
+      "completedAt": "2026-09-19T14:40:16.692Z",
+      "commit": "d1c30e2303eecef59083e1368b2f07ab804259db",
+      "branch": "main",
+      "result": "reported",
+      "errors": []
+    },
+    {
+      "runId": "feature-1789828816963",
+      "phase": "feature",
+      "startedAt": "2026-09-19T14:40:16.957Z",
+      "completedAt": "2026-09-19T14:40:16.963Z",
+      "commit": "d1c30e2303eecef59083e1368b2f07ab804259db",
+      "branch": "main",
+      "result": "wip-exceeded",
+      "errors": [
+        "WIP limit exceeded"
+      ]
+    },
+    {
+      "runId": "release-1789828817506",
+      "phase": "release",
+      "startedAt": "2026-09-19T14:40:17.328Z",
+      "completedAt": "2026-09-19T14:40:17.506Z",
+      "commit": "d1c30e2303eecef59083e1368b2f07ab804259db",
+      "branch": "main",
+      "result": "gate-blocked",
+      "errors": [
+        "release gate refused"
+      ]
     }
   ],
-  "updatedAt": "2026-09-19T14:34:48.162Z"
+  "updatedAt": "2026-09-19T14:40:17.657Z"
 }
