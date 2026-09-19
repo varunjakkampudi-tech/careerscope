@@ -243,6 +243,24 @@ th{color:var(--muted);font-weight:500;font-size:12px;text-transform:uppercase;le
 @media (max-width:1023px){.cols{grid-template-columns:minmax(0,1fr)}}
 .foot{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:12px}
 .warnicon{color:var(--warn)}
+.board{display:grid;gap:12px;grid-template-columns:repeat(7,minmax(200px,1fr));overflow-x:auto;padding-bottom:8px}
+@media (max-width:1439px){.board{grid-template-columns:repeat(7,minmax(190px,1fr));width:max-content;min-width:100%}}
+.col{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.col--warn{border-color:var(--warn)}
+.colhead{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.02em;text-transform:uppercase}
+.count{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:0 7px;font-variant-numeric:tabular-nums}
+.bcard{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--line);border-radius:4px;padding:10px}
+.bcard.blocked{border-left-color:var(--bad)}
+.bhead{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.btitle{font-size:13px;font-weight:600;margin-top:4px;line-height:1.35}
+.bsum{color:var(--muted);font-size:12px;line-height:1.45;margin-top:6px}
+.bfoot{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.pri{font-size:11px;font-weight:700;letter-spacing:.02em}
+.pri.P0,.pri.P1{color:var(--bad)}
+.pri.P2{color:var(--warn)}
+.pri.P3{color:var(--dim)}
+.pill.warn{color:var(--warn);border-color:var(--warn)}
+.pill.bad{color:var(--bad);border-color:var(--bad)}
 .legend{display:grid;gap:8px}
 .legend div{display:flex;align-items:center;gap:8px;font-size:12px}
 </style></head><body>
@@ -255,8 +273,8 @@ th{color:var(--muted);font-weight:500;font-size:12px;text-transform:uppercase;le
 </header>
 <nav id="nav"></nav><main id="main"></main>
 <script>
-const TABS=['OVERVIEW','DAILY','SPRINT','BACKLOG','AGENTS','FINDINGS','RELEASES','RESEARCH','AUDIT'];
-let tab='OVERVIEW',d={};
+const TABS=['PROGRESS','BOARD','AGENTS'];
+let tab='PROGRESS',d={};
 const esc=s=>String(s??'—').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const card=(k,v,cls='',note='')=>'<div class="card '+cls+'"><div class=k>'+k+'</div><div class="v">'+esc(v)+'</div>'+(note?'<div class=note>'+note+'</div>':'')+'</div>';
 const dot=(c,t)=>'<span class="dot '+c+'"></span>'+esc(t);
@@ -272,23 +290,17 @@ function overview(){
   const banner=paused
     ?'<div class="card attn"><div class=k>Sprint process paused until '+esc(d.mode.resumeOn||'further notice')+'</div><div style="margin-top:6px">'+esc(d.mode.reason||'')+'</div><div class=note>Resume when: '+esc(d.mode.resumeCondition||'unspecified')+'</div><div class=note>Agents and every safety gate remain active.</div></div>'
     :'';
-  return '<div><h1>System status</h1><div class=sub>Real data. Read-only. Repaints every 3 seconds.</div></div>'+banner+'<div class=grid>'
+  return '<div><h1>Overall progress</h1><div class=sub>Real data. Read-only. Repaints every 3 seconds.</div></div>'+banner+'<div class=grid>'
     +card('Deployed',d.repo.version,'',dot('ok','Live on production'))
-    +card('V1 line',d.repo.legacyVersion,'',dot('','Legacy data'))
     +card('Branch',d.repo.branch,d.repo.branch==='main'?'attn':'',dot(d.repo.branch==='main'?'warn':'ok',d.repo.branch==='main'?'Release line':'Feature branch'))
     +card('Commit',d.repo.commit,'',dot('',d.activity&&d.activity[0]?rel(d.activity[0].at):'—'))
     +card('Process mode',paused?'PAUSED':'ACTIVE',paused?'attn':'',paused?dot('warn','until '+esc(d.mode.resumeOn||'—')):dot('ok','Running'))
-    +card('Sprint',d.sprint?d.sprint.sprintId:'not planned','',d.sprint?dot(d.sprint.status==='ACTIVE'?'ok':'warn',d.sprint.status||'—'):'')
-    +card('Target release',d.sprint?d.sprint.targetReleaseDate:'—','',dot('','Planned'))
-    +card('Scheduler',d.releasePlan.schedulerEnabled?'ENABLED':'Disabled',d.releasePlan.schedulerEnabled?'breach':'',dot(d.releasePlan.schedulerEnabled?'bad':'','Manual only'))
     +card('WIP',active.length+'/2',breached?'breach':'',breached?'&#9888; Limit breached':dot('ok','Within limit'))
     +card('Backlog total',items.length,'',dot('',dim('product')+' product / '+dim('engineering')+' eng'))
     +card('P0',n('P0'),n('P0')?'breach':'',n('P0')?'&#9888; Blocking':dot('ok','Clear'))
     +card('P1',n('P1'),n('P1')?'attn':'',dot(n('P1')?'warn':'ok',n('P1')?'Needs attention':'Clear'))
-    +card('P2',n('P2'))
-    +card('P3',n('P3'))
     +'</div>'
-    +'<div class=cols><div>'+progress()+'</div><div>'+activity()+legend()+'</div></div>'
+    +'<div class=cols><div>'+progress()+'</div><div>'+legend()+'</div></div>'
     +'<div class=foot><span class="warnicon">&#9888;</span><span>State is operator-reported and never observed. '+(agentsActed()?'':'No agents have executed.')+'</span><span class=grow></span><span class=mono>Last updated '+esc(new Date(d.generatedAt).toLocaleString())+'</span></div>';
 }
 function agentsActed(){return Array.isArray(d.loop.activity)&&d.loop.activity.length>0}
@@ -341,20 +353,37 @@ function progress(){
     return '<tr><td style="width:150px">'+esc(x.area)+'</td><td>'+fill+'</td><td class=mono style="width:52px;text-align:right">'+pct+'</td><td style="width:110px"><span class="st '+String(x.status).replace(/[^A-Z]/g,'')+'">'+esc(x.status)+'</span></td></tr>';
   }).join('')+'</table></div>';
 }
-function sprint(){
-  if(!d.sprint)return '<div class=card><div class=empty>No sprint planned for '+esc(d.week)+'. Run <code>npm run agile:plan</code>.</div></div>';
-  const s=d.sprint;const days=['Mon Planning','Tue Build','Wed Integrate','Thu Release candidate','Fri Release + review'];
-  return '<div class=card><div class=k>Sprint '+esc(s.sprintId)+' — '+esc(s.status)+'</div><div class=v>'+esc(s.goal||'no goal set')+'</div></div>'
-   +'<div class=card><div class=k>Week</div><table>'+days.map(x=>'<tr><td>'+x+'</td></tr>').join('')+'</table></div>'
-   +'<div class=grid>'+card('Selected',(s.selectedFeatures||[]).length)+card('Deferred',(s.deferredFeatures||[]).length)+card('Rejected',(s.rejectedFeatures||[]).length)+'</div>'
-   +(d.scrum?'<div class=card><div class=k>Latest scrum '+esc(d.scrum.date)+'</div><table>'+((d.scrum.contributions||[]).map(c=>'<tr><td>'+esc(c.agent)+'</td><td>'+esc(c.note)+'</td></tr>').join('')||'<tr><td class=muted>No contributions recorded yet.</td></tr>')+'</table></div>':'');
-}
-function backlog(){
+// Jira-style board. The eleven internal statuses collapse into six columns,
+// plus Blocked. Anything the map does not cover lands in "Not mapped" rather
+// than disappearing — a board that silently drops work is worse than no board.
+const COLS=[
+  ['Backlog',['IDEA','DISCOVERY']],
+  ['To do',['READY','PLANNED']],
+  ['In progress',['IN_PROGRESS','CODE_REVIEW','SECURITY']],
+  ['QA',['QA']],
+  ['Ready',['READY_FOR_RELEASE']],
+  ['Production',['RELEASED']],
+  ['Blocked',['BLOCKED']],
+];
+function board(){
   const items=d.backlog.items||[];
   if(!items.length)return '<div class=card><div class=empty>Backlog is empty. Nothing has been fabricated to fill it.</div></div>';
-  const cols=['IDEA','DISCOVERY','READY','PLANNED','IN_PROGRESS','CODE_REVIEW','QA','SECURITY','READY_FOR_RELEASE','RELEASED','BLOCKED'];
-  return '<div class=grid>'+cols.map(c=>{const list=items.filter(i=>i.status===c);
-    return '<div class=card><div class=k>'+c+' ('+list.length+')</div>'+(list.map(i=>'<div style="margin-top:10px"><b>'+esc(i.id)+'</b> '+esc(i.title)+(i.summary?'<div class=muted style="margin:4px 0;font-size:12px;line-height:1.45">'+esc(i.summary)+'</div>':'')+'<span class=pill>'+esc(i.size)+'</span> <span class=pill>'+esc(i.priority)+'</span> <span class=pill>'+esc(i.dimension||'?')+'</span>'+(i.carriedCount?' <span class=pill>carried '+esc(i.carriedCount)+'\u00d7</span>':'')+'</div>').join('')||'<div class=empty>\u2014</div>')+'</div>';}).join('')+'</div>';
+  const mapped=new Set(COLS.flatMap(c=>c[1]));
+  const loose=items.filter(i=>!mapped.has(i.status));
+  const cols=loose.length?[...COLS,['Not mapped',[]]]:COLS;
+  const cardFor=i=>'<div class="bcard'+(i.status==='BLOCKED'?' blocked':'')+'">'
+    +'<div class=bhead><b>'+esc(i.id)+'</b><span class="pri '+esc(i.priority)+'">'+esc(i.priority)+'</span></div>'
+    +'<div class=btitle>'+esc(i.title)+'</div>'
+    +(i.summary?'<div class=bsum>'+esc(i.summary)+'</div>':'')
+    +'<div class=bfoot><span class=pill>'+esc(i.dimension||'?')+'</span><span class=pill>'+esc(i.size)+'</span>'
+    +(i.carriedCount?'<span class="pill warn">carried '+esc(i.carriedCount)+'\u00d7</span>':'')
+    +(i.status==='BLOCKED'?'<span class="pill bad">&#9888; blocked</span>':'')+'</div></div>';
+  return '<div><h1>Board</h1><div class=sub>'+items.length+' items across '+cols.length+' columns. Every status is shown; none are filtered out.</div></div>'
+   +'<div class=board>'+cols.map(([name,statuses])=>{
+      const list=name==='Not mapped'?loose:items.filter(i=>statuses.includes(i.status));
+      return '<section class="col'+(name==='Not mapped'?' col--warn':'')+'"><div class=colhead>'+esc(name)+'<span class=count>'+list.length+'</span></div>'
+        +(list.map(cardFor).join('')||'<div class=empty style="font-size:12px">\u2014</div>')+'</section>';
+    }).join('')+'</div>';
 }
 function agents(){
   const st=d.loop.agents||{};
@@ -362,59 +391,15 @@ function agents(){
   const provenance=acted===0
     ?'operator-reported, never observed — no agent has executed'
     :'operator-reported, not probed — '+acted+' recorded handoff(s)';
-  return '<div class=card><div class=k>'+d.agents.length+' agents — '+provenance+'</div><table>'
+  return '<div><h1>Agents</h1><div class=sub>'+d.agents.length+' defined — '+provenance+'</div></div>'
+   +'<div class=card><table>'
    +'<tr><th></th><th>Agent</th><th>State</th><th>Permission</th></tr>'
    +d.agents.map(a=>{const s=(st[a.id]||'WAITING').toUpperCase();
      const isLive=d.live&&d.loop.activeAgent===a.id;
      return '<tr><td><span class="dot'+(isLive?' live':'')+'"></span></td><td>'+esc(a.name)+'</td><td class="'+(s==='BLOCKED'||s==='FAILED'?'bad':s==='COMPLETE'||s==='PASSED'?'ok':'muted')+'">'+esc(d.stale&&d.loop.activeAgent===a.id?s+' — STALE':s)+'</td><td class=muted>'+esc(a.permission)+'</td></tr>';}).join('')
    +'</table></div>';
 }
-function findings(){
-  const f=d.findings.items||d.findings.findings||[];
-  if(!f.length)return '<div class=card><div class=empty>No findings recorded.</div></div>';
-  return '<div class=card><table><tr><th>ID</th><th>Sev</th><th>Found by</th><th>File</th><th>What</th><th>Status</th></tr>'
-   +f.map(x=>'<tr><td>'+esc(x.id)+'</td><td class="'+(x.severity==='P0'||x.severity==='P1'?'bad':'warn')+'">'+esc(x.severity)+'</td><td>'+esc(x.foundBy)+'</td><td class=muted>'+esc(x.file)+'</td><td>'+esc(x.what)+'</td><td>'+esc(x.status)+'</td></tr>').join('')+'</table></div>';
-}
-function releases(){
-  const p=d.releasePlan;
-  return '<div class=grid>'+card('Current',p.currentRelease?p.currentRelease.releaseId:'none')
-   +card('Next',p.nextRelease?p.nextRelease.releaseId:'none')
-   +card('History',(p.releaseHistory||[]).length)
-   +card('Scheduler',p.schedulerEnabled?'ENABLED':'disabled',p.schedulerEnabled?'warn':'muted')+'</div>'
-   +'<div class=card><div class=k>Release gate</div><div class=empty>Run <code>npm run release:gate</code>. It refuses by default; an absent field is a refusal, not a pass.</div></div>';
-}
-function research(){
-  const c=d.discovery.candidates||[];
-  return (c.length?'<div class=card><table><tr><th>ID</th><th>Title</th><th>Problem</th><th>Confidence</th></tr>'+c.map(x=>'<tr><td>'+esc(x.id)+'</td><td>'+esc(x.title)+'</td><td>'+esc(x.userProblem)+'</td><td>'+esc(x.confidence)+'</td></tr>').join('')+'</table></div>':'<div class=card><div class=empty>No candidates. Discovery has not run.</div></div>')
-   +'<div class=card><div class=k>Skill registry</div><table>'+((d.skills.skills||[]).map(s=>'<tr><td>'+esc(s.name)+'</td><td class=muted>'+esc(s.securityReview)+'</td></tr>').join('')||'<tr><td class=muted>—</td></tr>')+'</table></div>';
-}
-function audit(){
-  if(!d.runs.length)return '<div class=card><div class=empty>No recorded runs.</div></div>';
-  return '<div class=card><table><tr><th>When</th><th>Phase</th><th>Result</th><th>Commit</th></tr>'
-   +d.runs.map(r=>'<tr><td class=muted>'+esc(new Date(r.completedAt).toLocaleString())+'</td><td>'+esc(r.phase)+'</td><td class="'+(String(r.result).includes('block')||String(r.result).includes('exceed')?'bad':'')+'">'+esc(r.result)+'</td><td class=muted>'+esc((r.commit||'').slice(0,7))+'</td></tr>').join('')+'</table></div>';
-}
-function daily(){
-  const h=d.history||[];
-  if(!h.length)return '<div class=card><div class=empty>No progress history yet. Points appear once .ai/progress.json has been committed more than once — nothing is interpolated.</div></div>';
-  const last=h[h.length-1],prev=h.length>1?h[h.length-2]:null;
-  const delta=prev?last.overall-prev.overall:0;
-  const max=Math.max(...h.map(p=>p.overall),1);
-  const spark=h.length>1
-    ?'<div class=spark>'+h.map(p=>'<i style="height:'+Math.max(6,(p.overall/max)*100)+'%" title="'+p.date+' — '+p.overall+'% ('+p.commit+')"></i>').join('')+'</div>'
-    :'<div class=empty>One record so far — '+esc(last.date)+' at '+last.overall+'%. A trend needs a second commit to .ai/progress.json; nothing is interpolated to fill the gap.</div>';
-  const areaRows=prev?Object.keys(last.areas).map(a=>{const n=last.areas[a],o=prev.areas[a];
-    const c=o===undefined?0:n-o;
-    return '<tr><td>'+esc(a)+'</td><td>'+n+'%</td><td class="'+(c>0?'up':c<0?'down':'flat')+'">'+(c>0?'+'+c:c===0?'—':c)+'%</td></tr>';}).join(''):'<tr><td class=muted colspan=3>Only one data point so far.</td></tr>';
-  const byDay={};for(const a of (d.activity||[]))(byDay[a.date]=byDay[a.date]||[]).push(a.subject);
-  const days=Object.keys(byDay).sort().reverse().slice(0,10);
-  return '<div class=grid>'+card('Overall',last.overall+'%')
-    +card('Change since last record',(delta>0?'+':'')+delta+'%',delta>0?'ok':delta<0?'bad':'muted')
-    +card('Records',h.length)+card('Latest',last.date+'  '+last.commit)+'</div>'
-   +'<div class=card><div class=k>Overall progress — one point per day that actually changed</div>'+spark+'</div>'
-   +'<div class=card><div class=k>Per-area change since the previous record</div><table><tr><th>Area</th><th>Now</th><th>Change</th></tr>'+areaRows+'</table></div>'
-   +'<div class=card><div class=k>Commits by day (last 14 days)</div>'+(days.length?days.map(x=>'<div class=day><span>'+esc(x)+'</span><span class=tag>'+byDay[x].length+' commits</span></div>'+byDay[x].slice(0,4).map(s=>'<div class=muted style="padding-left:12px;font-size:12px">'+esc(s)+'</div>').join('')).join(''):'<div class=empty>No commits in the last 14 days.</div>')+'</div>';
-}
-const VIEWS={OVERVIEW:overview,DAILY:daily,SPRINT:sprint,BACKLOG:backlog,AGENTS:agents,FINDINGS:findings,RELEASES:releases,RESEARCH:research,AUDIT:audit};
+const VIEWS={PROGRESS:overview,BOARD:board,AGENTS:agents};
 // The concept asks for staleness to be visible rather than implied, so the
 // header says how old the reading is once it stops being current.
 function stamp(){
