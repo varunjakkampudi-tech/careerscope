@@ -25,6 +25,11 @@ export default tseslint.config(
     languageOptions: { globals: globals.browser },
   },
   {
+    // Design variants are browser pages, not tooling.
+    files: ['design/**/*.{js,mjs}'],
+    languageOptions: { globals: globals.browser },
+  },
+  {
     files: [
       'scripts/check-ui.mjs',
       'scripts/check-admin-ui.mjs',

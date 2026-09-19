@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en" data-variant="dense">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Latest jobs | CareerScope — Variant A: Dense Utility</title>
+    <style>
+      /* Variant A — Dense Utility.
+         Optimises for rows-on-screen and column alignment. Gives up comfort. */
+      :root {
+        color-scheme: dark light;
+        --bg: #0b0e13;
+        --panel: #12161d;
+        --line: #232a35;
+        --ink: #e7edf5;
+        --muted: #8d99ab;
+        --accent: #6aa9ff;
+        --save: #f0b429;
+        --row: 30px;
+        --gutter: 16px;
+        --fs: 13px;
+        font-family:
+          ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+      }
+      html[data-theme='light'] {
+        --bg: #fbfcfe;
+        --panel: #fff;
+        --line: #d9e0ea;
+        --ink: #101620;
+        --muted: #5b6979;
+        --accent: #1553b8;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-size: var(--fs);
+        line-height: 1.35;
+      }
+      a {
+        color: inherit;
+      }
+      .skip {
+        position: absolute;
+        left: -9999px;
+      }
+      .skip:focus {
+        left: var(--gutter);
+        top: 8px;
+        background: var(--accent);
+        color: #000;
+        padding: 6px 10px;
+        z-index: 10;
+      }
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+      }
+      .bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px var(--gutter);
+        flex-wrap: wrap;
+      }
+      h1 {
+        font-size: 13px;
+        margin: 0;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .count {
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .grow {
+        flex: 1;
+      }
+      button,
+      .btn {
+        font: inherit;
+        background: transparent;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 4px 9px;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      button[aria-pressed='true'] {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #06101f;
+      }
+      html[data-theme='light'] button[aria-pressed='true'] {
+        color: #fff;
+      }
+      input[type='search'] {
+        font: inherit;
+        background: var(--bg);
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 4px 9px;
+        min-width: 180px;
+      }
+
+      .head,
+      .row {
+        display: grid;
+        grid-template-columns: 28px minmax(0, 3fr) minmax(0, 1.6fr) minmax(0, 1.4fr) 92px 80px;
+        gap: 10px;
+        align-items: center;
+        padding: 0 var(--gutter);
+      }
+      .head {
+        height: 26px;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        position: sticky;
+        top: 41px;
+        background: var(--panel);
+        z-index: 4;
+      }
+      .row {
+        height: var(--row);
+        border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+      }
+      .row:hover {
+        background: color-mix(in srgb, var(--accent) 9%, transparent);
+      }
+      .t {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 600;
+      }
+      .t a {
+        text-decoration: none;
+      }
+      .t a:hover {
+        text-decoration: underline;
+      }
+      .c,
+      .l,
+      .s {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--muted);
+      }
+      .age {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+      }
+      .age.fresh {
+        color: var(--accent);
+      }
+      .star {
+        border: 0;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        line-height: 1;
+        color: var(--muted);
+        font-size: 15px;
+      }
+      .star[aria-pressed='true'] {
+        color: var(--save);
+        background: transparent;
+      }
+      /* The stacked mobile line is off until the columns collapse. */
+      .meta {
+        display: none;
+      }
+      .state {
+        padding: 48px var(--gutter);
+        color: var(--muted);
+        text-align: center;
+      }
+      .state b {
+        display: block;
+        color: var(--ink);
+        margin-bottom: 4px;
+      }
+      .sk {
+        height: var(--row);
+        border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+        background: linear-gradient(
+          90deg,
+          transparent,
+          color-mix(in srgb, var(--line) 60%, transparent),
+          transparent
+        );
+        background-size: 200% 100%;
+        animation: sh 1.1s linear infinite;
+      }
+      @keyframes sh {
+        to {
+          background-position: -200% 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .sk {
+          animation: none;
+        }
+      }
+      footer {
+        padding: 14px var(--gutter) 40px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      @media (max-width: 860px) {
+        .head {
+          display: none;
+        }
+        .row {
+          grid-template-columns: 28px minmax(0, 1fr) 62px;
+          height: auto;
+          padding: 7px var(--gutter);
+          align-items: start;
+        }
+        .meta {
+          display: block;
+          grid-column: 2;
+          color: var(--muted);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .c,
+        .l,
+        .s {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header>
+      <div class="bar">
+        <h1>Latest jobs</h1>
+        <span class="count" id="count">—</span>
+        <input
+          type="search"
+          id="q"
+          placeholder="Filter title or company"
+          aria-label="Filter jobs"
+        />
+        <button id="all" aria-pressed="true">All jobs</button>
+        <button id="saved" aria-pressed="false">Saved</button>
+        <button id="clearf">Clear filters</button>
+        <span class="grow"></span>
+        <button id="theme" aria-label="Theme: dark">◐</button>
+        <a class="btn" href="#">Download</a>
+        <a class="btn" href="#">Admin login</a>
+      </div>
+      <div class="head" aria-hidden="true">
+        <span></span><span>Role</span><span>Company</span><span>Location</span><span>Source</span
+        ><span style="text-align: right">Posted</span>
+      </div>
+    </header>
+    <main id="main"><div id="list"></div></main>
+    <footer><button id="more">Load more</button><span class="count" id="shown"></span></footer>
+    <script type="module" src="./variant.js"></script>
+  </body>
+</html>
