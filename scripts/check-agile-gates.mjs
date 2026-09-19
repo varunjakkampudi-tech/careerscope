@@ -4,10 +4,21 @@ import process from 'node:process';
 
 const BACKLOG = '.ai/backlog.json';
 const LOOP = '.ai/LOOP-STATE.json';
+const MODE = '.ai/process-mode.json';
 const bBak = `${process.env.TEMP}/b.bak`;
 const lBak = `${process.env.TEMP}/l.bak`;
+const mBak = `${process.env.TEMP}/m.bak`;
 copyFileSync(BACKLOG, bBak);
 copyFileSync(LOOP, lBak);
+copyFileSync(MODE, mBak);
+
+const mode = JSON.parse(readFileSync(MODE, 'utf8'));
+const setMode = (patch) =>
+  writeFileSync(MODE, `${JSON.stringify({ ...mode, ...patch }, null, 2)}\n`);
+
+// The WIP limit must hold on its own terms. Running these while the process is
+// paused would short-circuit the command and prove nothing.
+setMode({ mode: 'ACTIVE' });
 
 const run = (script, args = []) => {
   try {
@@ -58,10 +69,23 @@ expect('scheduler enabled refused', run('scripts/check-agents.mjs'), 1);
 writeFileSync('.ai/release-plan.json', `${JSON.stringify(plan, null, 2)}\n`);
 expect('scheduler disabled accepted', run('scripts/check-agents.mjs'), 0);
 
+// Pausing must actually stop the ceremony, and must never stop a safety control.
+setBacklog([item('F1', 'IN_PROGRESS'), item('F2', 'QA'), item('F3', 'SECURITY')]);
+setMode({ mode: 'PAUSED', paused: ['agile:feature'] });
+expect('paused: feature does not start work', run('scripts/agile.mjs', ['feature']), 0);
+expect('paused: status still reports', run('scripts/agile.mjs', ['status']), 0);
+setMode({ mode: 'ACTIVE' });
+expect('resumed: WIP limit enforced again', run('scripts/agile.mjs', ['feature']), 1);
+setMode({ mode: 'PAUSED', paused: ['agile:feature'] });
+// The release gate is not ceremony; pausing the process must not make it pass.
+expect('paused: release gate still refuses', run('scripts/agile.mjs', ['release']), 1);
+copyFileSync(mBak, MODE);
+
 copyFileSync(bBak, BACKLOG);
 copyFileSync(lBak, LOOP);
 unlinkSync(bBak);
 unlinkSync(lBak);
+unlinkSync(mBak);
 
 const failures = results.filter((r) => !r).length;
 console.log(

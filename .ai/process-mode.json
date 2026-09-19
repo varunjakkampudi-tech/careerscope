@@ -1,0 +1,22 @@
+{
+  "$comment": "Whether the sprint process is running. Paused is a real state, not an absence of one: scripts must say so rather than presenting a stale sprint as active.",
+  "mode": "PAUSED",
+  "pausedOn": "2026-09-19",
+  "resumeOn": "2026-09-30",
+  "reason": "Finish the application first. Sprint ceremony over an incomplete product measures the ceremony.",
+  "decidedBy": "operator",
+  "stillActive": [
+    "All specialist agents, invoked and sequenced the same way: discuss, implement, review, then record the verdict",
+    "The release gate, deploy gate, line-ending check and agent validator — these are safety controls, not ceremony, and are never paused",
+    "The backlog, as the record of what is left; only the weekly ritual around it stops"
+  ],
+  "paused": [
+    "agile:plan",
+    "agile:scrum",
+    "agile:feature",
+    "agile:review",
+    "agile:retro",
+    "agile:carry"
+  ],
+  "resumeCondition": "The vertical slice CS-16 to CS-19 is usable end to end and 3.0.1 hardening is verified in CI, not locally."
+}

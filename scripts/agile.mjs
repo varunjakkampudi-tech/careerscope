@@ -91,6 +91,32 @@ function readRequired(path) {
   }
 }
 
+/** Paused is a state the tooling has to honour, or pausing means nothing. */
+function processMode() {
+  const path = join(AI, 'process-mode.json');
+  if (!existsSync(path)) return { mode: 'ACTIVE' };
+  try {
+    return JSON.parse(readFileSync(path, 'utf8').replace(/\r\n/g, '\n'));
+  } catch (error) {
+    console.error(`\n  ${path} is unreadable: ${error.message}. Refusing to guess the mode.\n`);
+    process.exit(1);
+  }
+}
+
+function refuseWhilePaused(command) {
+  const m = processMode();
+  if (m.mode !== 'PAUSED') return false;
+  if (!Array.isArray(m.paused) || !m.paused.includes(`agile:${command}`)) return false;
+  console.log(`\n  SPRINT PROCESS PAUSED  until ${m.resumeOn ?? 'further notice'}\n`);
+  console.log(`  ${m.reason ?? ''}\n`);
+  console.log(`  agile:${command} is paused. Still running:`);
+  for (const line of m.stillActive ?? []) console.log(`    - ${line}`);
+  console.log(`\n  Resume when: ${m.resumeCondition ?? 'unspecified'}`);
+  console.log(`  To resume, set mode to ACTIVE in .ai/process-mode.json.\n`);
+  record(command, 'paused');
+  return true;
+}
+
 function record(phase, result, errors = []) {
   const path = join(AI, 'runs.json');
   const log = read(path, { runs: [] });
@@ -112,6 +138,11 @@ const started = new Date().toISOString();
 
 function status() {
   const sprint = read(sprintPath());
+  const mode = processMode();
+  if (mode.mode === 'PAUSED') {
+    console.log(`\n  SPRINT PROCESS PAUSED  until ${mode.resumeOn ?? 'further notice'}`);
+    console.log(`  ${mode.reason ?? ''}`);
+  }
   const backlog = readRequired(join(AI, 'backlog.json'));
   const findings = readRequired(join(AI, 'findings.json'));
   const plan = read(join(AI, 'release-plan.json'), {});
@@ -399,4 +430,5 @@ if (!commands[command]) {
   console.error(`Usage: node scripts/agile.mjs <${Object.keys(commands).join('|')}>`);
   process.exit(2);
 }
-commands[command]();
+// release is a safety control, and status only reports. Neither is ceremony.
+if (!refuseWhilePaused(command)) commands[command]();
