@@ -158,12 +158,14 @@ function dailyProgress() {
 /** Commits per day, so "what changed today" is answerable without guessing. */
 function dailyActivity() {
   try {
-    return execFileSync('git', ['log', '--since=14.days', '--format=%cI|%s'], { encoding: 'utf8' })
+    return execFileSync('git', ['log', '--since=14.days', '--format=%h|%cI|%s'], {
+      encoding: 'utf8',
+    })
       .split('\n')
       .filter(Boolean)
       .map((l) => {
-        const [when, ...rest] = l.split('|');
-        return { date: when.slice(0, 10), subject: rest.join('|') };
+        const [sha, when, ...rest] = l.split('|');
+        return { sha, at: when, date: when.slice(0, 10), subject: rest.join('|') };
       });
   } catch {
     return [];
@@ -240,6 +242,7 @@ th{color:var(--muted);font-weight:500;font-size:12px;text-transform:uppercase;le
 .cols{display:grid;gap:16px;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
 @media (max-width:1023px){.cols{grid-template-columns:minmax(0,1fr)}}
 .foot{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:12px}
+.warnicon{color:var(--warn)}
 .legend{display:grid;gap:8px}
 .legend div{display:flex;align-items:center;gap:8px;font-size:12px}
 </style></head><body>
@@ -273,7 +276,7 @@ function overview(){
     +card('Deployed',d.repo.version,'',dot('ok','Live on production'))
     +card('V1 line',d.repo.legacyVersion,'',dot('','Legacy data'))
     +card('Branch',d.repo.branch,d.repo.branch==='main'?'attn':'',dot(d.repo.branch==='main'?'warn':'ok',d.repo.branch==='main'?'Release line':'Feature branch'))
-    +card('Commit',d.repo.commit)
+    +card('Commit',d.repo.commit,'',dot('',d.activity&&d.activity[0]?rel(d.activity[0].at):'—'))
     +card('Process mode',paused?'PAUSED':'ACTIVE',paused?'attn':'',paused?dot('warn','until '+esc(d.mode.resumeOn||'—')):dot('ok','Running'))
     +card('Sprint',d.sprint?d.sprint.sprintId:'not planned','',d.sprint?dot(d.sprint.status==='ACTIVE'?'ok':'warn',d.sprint.status||'—'):'')
     +card('Target release',d.sprint?d.sprint.targetReleaseDate:'—','',dot('','Planned'))
@@ -285,7 +288,42 @@ function overview(){
     +card('P2',n('P2'))
     +card('P3',n('P3'))
     +'</div>'
-    +'<div class=cols><div>'+progress()+'</div><div>'+legend()+'</div></div>';
+    +'<div class=cols><div>'+progress()+'</div><div>'+activity()+legend()+'</div></div>'
+    +'<div class=foot><span class="warnicon">&#9888;</span><span>State is operator-reported and never observed. '+(agentsActed()?'':'No agents have executed.')+'</span><span class=grow></span><span class=mono>Last updated '+esc(new Date(d.generatedAt).toLocaleString())+'</span></div>';
+}
+function agentsActed(){return Array.isArray(d.loop.activity)&&d.loop.activity.length>0}
+function rel(iso){
+  const s=Math.round((Date.now()-Date.parse(iso))/1000);
+  if(!Number.isFinite(s))return '';
+  if(s<60)return s+'s ago';
+  if(s<3600)return Math.round(s/60)+'m ago';
+  if(s<86400)return Math.round(s/3600)+'h ago';
+  return Math.round(s/86400)+'d ago';
+}
+// Commit volume over the last fortnight, drawn from real git history rather
+// than a synthesised trend. The comparison is this week against the one before.
+function activity(){
+  const all=d.activity||[];
+  const byDay={};for(const a of all)(byDay[a.date]=byDay[a.date]||[]).push(a);
+  const days=[];
+  for(let i=13;i>=0;i--){const t=new Date();t.setDate(t.getDate()-i);days.push(t.toISOString().slice(0,10));}
+  const counts=days.map(x=>(byDay[x]||[]).length);
+  const max=Math.max(1,...counts);
+  const recent=counts.slice(7).reduce((a,b)=>a+b,0);
+  const prior=counts.slice(0,7).reduce((a,b)=>a+b,0);
+  const delta=prior===0?null:Math.round(((recent-prior)/prior)*100);
+  const trend=delta===null?'<span class=muted>no prior week</span>'
+    :'<span class="'+(delta>0?'up':delta<0?'down':'flat')+'">'+(delta>0?'+':'')+delta+'%</span>';
+  const bars=counts.map((c,i)=>'<i title="'+days[i]+': '+c+' commits" style="height:'+Math.max(2,Math.round((c/max)*56))+'px"></i>').join('');
+  const latest=all.slice(0,6).map(a=>
+    '<div class=day><span class=mono style="color:var(--muted);flex:0 0 auto">'+esc(a.sha)+'</span>'
+    +'<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 10px">'+esc(a.subject)+'</span>'
+    +'<span class=muted style="flex:0 0 auto;font-size:12px">'+esc(rel(a.at))+'</span></div>').join('');
+  return '<div class=card><h2 style="margin:0 0 4px">Recent activity</h2>'
+    +'<div class=note style="justify-content:space-between"><span>Commits, last 14 days</span><span><b style="color:var(--ink)">'+all.length+'</b> '+trend+'</span></div>'
+    +'<div class=spark>'+bars+'</div>'
+    +'<div class=k style="margin-top:16px">Latest commits</div>'
+    +(latest||'<div class=empty>No commits in the last 14 days.</div>')+'</div>';
 }
 function legend(){
   const rows=[['ok','Verified'],['warn','In progress'],['bad','Blocked'],['','Not started'],['','Unmeasured']];
