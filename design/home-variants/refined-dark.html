@@ -1,0 +1,1315 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Latest jobs — 2,529 open roles | CareerScope</title>
+    <meta
+      name="description"
+      content="A continuously updated list of 2,529 open engineering and product roles, gathered from public job sources. Search, filter and save the ones worth reading."
+    />
+    <link rel="canonical" href="https://careerscope.tech/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Latest jobs | CareerScope" />
+    <meta
+      property="og:description"
+      content="2,529 open roles, updated daily. Nothing here is an application."
+    />
+    <meta property="og:url" content="https://careerscope.tech/" />
+    <style>
+      /* Refined Dark — tokens taken from the approved design spec. */
+      :root {
+        --bg: #080b10;
+        --surface: #0f141a;
+        --elevated: #141b22;
+        --text: #f4f7fa;
+        --text-2: #aeb8c4;
+        --accent: #2dd4a5;
+        --focus: #7de7cf;
+        --border: #586572;
+        --hover: #151e26;
+        --skeleton-base: #141b22;
+        --skeleton-highlight: #1d2730;
+        --shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 28px rgba(0, 0, 0, 0.18);
+        --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+        --r: 4px;
+        color-scheme: dark;
+      }
+      html[data-theme='light'] {
+        --bg: #f5f7fa;
+        --surface: #ffffff;
+        --elevated: #eef2f5;
+        --text: #10151b;
+        --text-2: #52606d;
+        --accent: #0b7f68;
+        --focus: #0b7f68;
+        --border: #788591;
+        --hover: #e9eef2;
+        --skeleton-base: #e9eef2;
+        --skeleton-highlight: #dde4ea;
+        --shadow: 0 1px 0 rgba(16, 21, 27, 0.04), 0 10px 24px rgba(16, 21, 27, 0.06);
+        color-scheme: light;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        font-size: 16px;
+        line-height: 24px;
+      }
+      .vh {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .skip {
+        position: absolute;
+        left: -9999px;
+      }
+      .skip:focus {
+        left: 32px;
+        top: 12px;
+        z-index: 20;
+        background: var(--accent);
+        color: var(--bg);
+        padding: 8px 12px;
+        border-radius: var(--r);
+      }
+      :focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+      }
+      .shell {
+        max-width: 1360px;
+        margin: 0 auto;
+        padding: 32px;
+      }
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 12px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      .grow {
+        flex: 1;
+      }
+
+      .head {
+        padding: 24px 20px 20px;
+      }
+      h1 {
+        font-size: 32px;
+        line-height: 40px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 0;
+      }
+      .sub {
+        color: var(--text-2);
+        font-size: 13px;
+        line-height: 18px;
+        letter-spacing: 0.01em;
+        margin: 4px 0 0;
+      }
+      .sub b {
+        color: var(--text);
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .bar {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 0 20px 16px;
+      }
+      .control {
+        min-height: 40px;
+        padding: 0 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        background: var(--surface);
+        color: var(--text);
+        font: inherit;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 120ms ease-out;
+      }
+      .control:hover {
+        background: var(--hover);
+      }
+      .control[aria-pressed='true'] {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: var(--bg);
+      }
+      .control--quiet {
+        border-color: transparent;
+        background: transparent;
+      }
+      .control--quiet:hover {
+        background: var(--hover);
+      }
+      .search {
+        position: relative;
+        flex: 1 1 280px;
+        min-width: 200px;
+      }
+      .search .i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-2);
+        pointer-events: none;
+      }
+      .search input {
+        width: 100%;
+        min-height: 40px;
+        padding: 0 12px 0 36px;
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        background: var(--bg);
+        color: var(--text);
+        font: inherit;
+        font-size: 14px;
+      }
+      select.control {
+        appearance: none;
+        padding-right: 28px;
+        background-image: none;
+      }
+
+      .thead,
+      .row {
+        display: grid;
+        grid-template-columns:
+          minmax(260px, 2.9fr) minmax(120px, 1.35fr) minmax(150px, 1.7fr)
+          minmax(110px, 1.1fr) 92px 44px;
+        align-items: center;
+        gap: 12px;
+        padding: 0 20px;
+      }
+      .thead {
+        height: 36px;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        color: var(--text-2);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+      }
+      .rows {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .row {
+        min-height: 52px;
+        border-bottom: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
+        transition: background 120ms ease-out;
+      }
+      .row:hover {
+        background: var(--hover);
+      }
+      .cell {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .title {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0;
+      }
+      .job {
+        color: var(--text);
+        text-decoration: none;
+      }
+      .row:hover .job {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .company,
+      .location,
+      .source {
+        color: var(--text-2);
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .posted {
+        color: var(--text-2);
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+        text-align: right;
+      }
+      .act {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .save {
+        width: 44px;
+        height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+        border-radius: var(--r);
+        background: transparent;
+        color: var(--text-2);
+        cursor: pointer;
+      }
+      .save:hover {
+        background: var(--elevated);
+        color: var(--text);
+      }
+      .save[aria-pressed='true'] {
+        color: var(--accent);
+      }
+
+      .foot {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 20px;
+      }
+      .count {
+        color: var(--text-2);
+        font-size: 13px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .state {
+        padding: 48px 20px;
+        text-align: center;
+        color: var(--text-2);
+      }
+      .state svg {
+        color: var(--text-2);
+      }
+      .state h2 {
+        font-size: 24px;
+        line-height: 32px;
+        letter-spacing: -0.01em;
+        color: var(--text);
+        margin: 16px 0 4px;
+      }
+      .state p {
+        margin: 0 0 16px;
+      }
+      .state--error {
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        margin: 20px;
+      }
+
+      @keyframes careerscope-skeleton-shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+      .sk-line {
+        height: 12px;
+        border-radius: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--skeleton-base) 0%,
+          var(--skeleton-highlight) 45%,
+          var(--skeleton-base) 100%
+        );
+        background-size: 200% 100%;
+        animation: careerscope-skeleton-shimmer 1200ms ease-in-out infinite;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .sk-line {
+          animation: none;
+          background: var(--skeleton-highlight);
+        }
+        .control,
+        .row {
+          transition: none;
+        }
+      }
+
+      @media (max-width: 767px) {
+        .shell {
+          padding: 16px;
+        }
+        .thead {
+          display: none;
+        }
+        .row {
+          grid-template-columns: minmax(0, 1fr) 44px;
+          grid-template-rows: auto auto;
+          row-gap: 4px;
+          min-height: 64px;
+          padding: 12px 16px;
+          align-items: start;
+        }
+        .title {
+          grid-column: 1;
+          grid-row: 1;
+          white-space: normal;
+        }
+        .act {
+          grid-column: 2;
+          grid-row: 1 / span 2;
+          align-items: flex-start;
+        }
+        .company,
+        .location,
+        .source,
+        .posted {
+          display: none;
+        }
+        .meta {
+          grid-column: 1;
+          grid-row: 2;
+          color: var(--text-2);
+          font-size: 13px;
+          line-height: 18px;
+          white-space: normal;
+        }
+        .head,
+        .bar,
+        .foot {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+      }
+      @media (min-width: 768px) {
+        .meta {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="0"
+      height="0"
+      style="position: absolute; overflow: hidden"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <defs>
+        <symbol id="icon-save-outline" viewBox="0 0 24 24">
+          <path
+            d="M6.5 4.5A2.5 2.5 0 0 1 9 2h6a2.5 2.5 0 0 1 2.5 2.5V21l-5.5-3.5L6.5 21V4.5Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linejoin="round"
+            vector-effect="non-scaling-stroke"
+          />
+        </symbol>
+        <symbol id="icon-save-filled" viewBox="0 0 24 24">
+          <path
+            d="M6.5 4.5A2.5 2.5 0 0 1 9 2h6a2.5 2.5 0 0 1 2.5 2.5V21l-5.5-3.5L6.5 21V4.5Z"
+            fill="currentColor"
+          />
+        </symbol>
+        <symbol id="icon-search" viewBox="0 0 24 24">
+          <circle
+            cx="10.75"
+            cy="10.75"
+            r="6.75"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            vector-effect="non-scaling-stroke"
+          />
+          <path
+            d="m16 16 4.25 4.25"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            vector-effect="non-scaling-stroke"
+          />
+        </symbol>
+        <symbol id="icon-download" viewBox="0 0 24 24">
+          <path
+            d="M12 3.5v11"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            vector-effect="non-scaling-stroke"
+          />
+          <path
+            d="m7.75 10.75 4.25 4.25 4.25-4.25"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            vector-effect="non-scaling-stroke"
+          />
+          <path
+            d="M4 19.5h16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            vector-effect="non-scaling-stroke"
+          />
+        </symbol>
+        <symbol id="icon-sun" viewBox="0 0 24 24">
+          <circle
+            cx="12"
+            cy="12"
+            r="4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            vector-effect="non-scaling-stroke"
+          />
+          <path
+            d="M12 2.5v2M12 19.5v2M4.58 4.58 6 6M18 18l1.42 1.42M2.5 12h2M19.5 12h2M4.58 19.42 6 18M18 6l1.42-1.42"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            vector-effect="non-scaling-stroke"
+          />
+        </symbol>
+        <symbol id="icon-moon" viewBox="0 0 24 24">
+          <path
+            d="M19.25 14.5A7.75 7.75 0 0 1 9.5 4.75a7.25 7.25 0 1 0 9.75 9.75Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linejoin="round"
+            vector-effect="non-scaling-stroke"
+          />
+        </symbol>
+      </defs>
+    </svg>
+
+    <a class="skip" href="#content">Skip to content</a>
+    <div class="shell">
+      <div class="panel">
+        <header class="topbar">
+          <a class="brand" href="/">
+            <svg width="20" height="20" viewBox="0 0 56 56" aria-hidden="true" fill="none">
+              <path
+                fill="currentColor"
+                fill-rule="evenodd"
+                d="M52 26C52 39.255 41.255 50 28 50C14.745 50 4 39.255 4 26C4 12.745 14.745 2 28 2C38.1 2 46.9 8.15 50.25 17H40.2C37.8 13.75 33.35 11 28 11C19.715 11 13 17.715 13 26C13 34.285 19.715 41 28 41C33.35 41 37.8 38.25 40.2 35H50.25C46.9 43.85 38.1 50 28 50Z"
+              />
+              <circle cx="39" cy="26" r="4.25" fill="currentColor" />
+            </svg>
+            CareerScope
+          </a>
+          <span class="grow"></span>
+          <button id="theme" class="control control--quiet" type="button" aria-label="Theme: dark">
+            <svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+              <use id="theme-icon" href="#icon-moon"></use>
+            </svg>
+          </button>
+          <a class="control control--quiet" href="./admin.html">Admin login</a>
+        </header>
+
+        <main id="content">
+          <div class="head">
+            <h1>Latest jobs</h1>
+            <p class="sub">
+              <b id="total">2,529</b> roles · newest first · nothing here is an application
+            </p>
+          </div>
+
+          <div class="bar">
+            <button id="all" class="control" type="button" aria-pressed="true">All jobs</button>
+            <button id="saved" class="control" type="button" aria-pressed="false">Saved</button>
+            <label class="search">
+              <span class="vh">Search jobs, companies or locations</span>
+              <svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#icon-search"></use>
+              </svg>
+              <input id="q" type="search" placeholder="Search jobs, companies or locations" />
+            </label>
+            <select id="source" class="control" aria-label="Filter by source">
+              <option value="">All sources</option>
+            </select>
+            <button id="clearf" class="control control--quiet" type="button">Clear filters</button>
+            <a class="control control--quiet" href="./jobs.json" download>
+              <svg class="i" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#icon-download"></use>
+              </svg>
+              Download
+            </a>
+          </div>
+
+          <div class="thead" aria-hidden="true">
+            <span>Title</span><span>Company</span><span>Location</span><span>Source</span>
+            <span style="text-align: right">Posted</span><span></span>
+          </div>
+
+          <div id="list">
+            <ul class="rows">
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/anaconda/jobs/staff-software-engineer-5335638545"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Staff Software Engineer<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>Anaconda</span>
+                <span class="cell location"><span class="vh">Location: </span>United Kingdom</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:26:55.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/anaconda/jobs/staff-software-engineer-5335638545"
+                  >
+                    <span class="vh">Save Staff Software Engineer</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/sigma-software-e561c036-16e4-4b2c-aa28-a33af9f3750b/jobs/senior-android-developer-ad-sdk-infrastructure"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Senior Android Developer (Ad SDK Infrastructure)<span class="vh">
+                      — opens in a new tab</span
+                    ></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>Sigma Software</span>
+                <span class="cell location"><span class="vh">Location: </span>Romania</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:25:34.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/sigma-software-e561c036-16e4-4b2c-aa28-a33af9f3750b/jobs/senior-android-developer-ad-sdk-infrastructure"
+                  >
+                    <span class="vh">Save Senior Android Developer (Ad SDK Infrastructure)</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/ci-t/jobs/job-31548-senior-qa-engineer"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >[Job-31548] Senior QA Engineer<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>CI&amp;T</span>
+                <span class="cell location"
+                  ><span class="vh">Location: </span>Brazil, Colombia</span
+                >
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:25:10.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/ci-t/jobs/job-31548-senior-qa-engineer"
+                  >
+                    <span class="vh">Save [Job-31548] Senior QA Engineer</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/parallel-wireless/jobs/senior-principal-local-llm-generative-ai-platform-engineer"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Senior/Principal Local LLM &amp; Generative AI Platform Engineer<span
+                      class="vh"
+                    >
+                      — opens in a new tab</span
+                    ></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>Parallel Wireless</span>
+                <span class="cell location"><span class="vh">Location: </span>United States</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:22:51.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/parallel-wireless/jobs/senior-principal-local-llm-generative-ai-platform-engineer"
+                  >
+                    <span class="vh"
+                      >Save Senior/Principal Local LLM &amp; Generative AI Platform Engineer</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/turnitin-llc/jobs/principal-software-engineer-fullstack-backend-technologies-poland-remote-4216497716"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Principal Software Engineer, Fullstack/Backend Technologies (Poland
+                    Remote)<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>Turnitin, LLC</span>
+                <span class="cell location"><span class="vh">Location: </span>Poland</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:21:43.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/turnitin-llc/jobs/principal-software-engineer-fullstack-backend-technologies-poland-remote-4216497716"
+                  >
+                    <span class="vh"
+                      >Save Principal Software Engineer, Fullstack/Backend Technologies (Poland
+                      Remote)</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/xage-security/jobs/solutions-architect-7550117695"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Solutions Architect<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>Xage Security</span>
+                <span class="cell location"><span class="vh">Location: </span>India</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:21:43.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/xage-security/jobs/solutions-architect-7550117695"
+                  >
+                    <span class="vh">Save Solutions Architect</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/empower-com/jobs/principal-data-engineer-3233730117"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Principal Data Engineer<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>Empower</span>
+                <span class="cell location"><span class="vh">Location: </span>United States</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:20:42.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/empower-com/jobs/principal-data-engineer-3233730117"
+                  >
+                    <span class="vh">Save Principal Data Engineer</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/bonterra/jobs/senior-software-engineer-9841133812"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Senior Software Engineer<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>Bonterra</span>
+                <span class="cell location"><span class="vh">Location: </span>United States</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:19:05.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/bonterra/jobs/senior-software-engineer-9841133812"
+                  >
+                    <span class="vh">Save Senior Software Engineer</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/chainguard/jobs/senior-analytics-engineer"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Senior Analytics Engineer<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>Chainguard</span>
+                <span class="cell location"><span class="vh">Location: </span>United States</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:19:04.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/chainguard/jobs/senior-analytics-engineer"
+                  >
+                    <span class="vh">Save Senior Analytics Engineer</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/bright-vision-technologies/jobs/sap-integration-engineer-1563045676"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >SAP Integration Engineer<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"
+                  ><span class="vh">Company: </span>Bright Vision Technologies</span
+                >
+                <span class="cell location"><span class="vh">Location: </span>United States</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:17:23.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/bright-vision-technologies/jobs/sap-integration-engineer-1563045676"
+                  >
+                    <span class="vh">Save SAP Integration Engineer</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/mutt-data/jobs/data-engineer-lead-databricks"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Data Engineer Lead - Databricks<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>Mutt Data</span>
+                <span class="cell location"><span class="vh">Location: </span>Argentina</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:17:09.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/mutt-data/jobs/data-engineer-lead-databricks"
+                  >
+                    <span class="vh">Save Data Engineer Lead - Databricks</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/redicasystems/jobs/senior-ai-engineer"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Senior AI Engineer<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>REDICA Systems</span>
+                <span class="cell location"><span class="vh">Location: </span>United States</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:14:36.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/redicasystems/jobs/senior-ai-engineer"
+                  >
+                    <span class="vh">Save Senior AI Engineer</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/niryu/jobs/data-engineer-python-automation-specialist"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Data Engineer / Python Automation Specialist<span class="vh">
+                      — opens in a new tab</span
+                    ></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>NirYu</span>
+                <span class="cell location"><span class="vh">Location: </span>Mexico</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:13:27.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/niryu/jobs/data-engineer-python-automation-specialist"
+                  >
+                    <span class="vh">Save Data Engineer / Python Automation Specialist</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/priority/jobs/manager-engineering"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Manager, Engineering<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>Priority</span>
+                <span class="cell location"><span class="vh">Location: </span>United States</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:13:16.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/priority/jobs/manager-engineering"
+                  >
+                    <span class="vh">Save Manager, Engineering</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/electric-power-engineers/jobs/senior-power-system-engineer"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Senior Power System Engineer<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"
+                  ><span class="vh">Company: </span>Electric Power Engineers</span
+                >
+                <span class="cell location"><span class="vh">Location: </span>United States</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:13:16.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/electric-power-engineers/jobs/senior-power-system-engineer"
+                  >
+                    <span class="vh">Save Senior Power System Engineer</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/cookunity/jobs/ai-native-engineer-growth-marketing-4133882377"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >AI Native Engineer, Growth Marketing<span class="vh">
+                      — opens in a new tab</span
+                    ></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>CookUnity</span>
+                <span class="cell location"><span class="vh">Location: </span>United States</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:13:14.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/cookunity/jobs/ai-native-engineer-growth-marketing-4133882377"
+                  >
+                    <span class="vh">Save AI Native Engineer, Growth Marketing</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/bright-vision-technologies/jobs/java-developer-windchill-5220614067"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Java Developer – Windchill<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"
+                  ><span class="vh">Company: </span>Bright Vision Technologies</span
+                >
+                <span class="cell location"><span class="vh">Location: </span>United States</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:13:14.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/bright-vision-technologies/jobs/java-developer-windchill-5220614067"
+                  >
+                    <span class="vh">Save Java Developer – Windchill</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/ais-applied-information-sciences/jobs/ai-foundry-platform-engineer"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >AI Foundry Platform Engineer<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"
+                  ><span class="vh">Company: </span>AIS (Applied Information Sciences)</span
+                >
+                <span class="cell location"><span class="vh">Location: </span>United States</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:09:33.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/ais-applied-information-sciences/jobs/ai-foundry-platform-engineer"
+                  >
+                    <span class="vh">Save AI Foundry Platform Engineer</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/miris/jobs/backend-engineer-senior"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >Backend Engineer (Senior+)<span class="vh"> — opens in a new tab</span></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>Miris</span>
+                <span class="cell location"><span class="vh">Location: </span>Remote</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:08:29.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/miris/jobs/backend-engineer-senior"
+                  >
+                    <span class="vh">Save Backend Engineer (Senior+)</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+              <li class="row">
+                <span class="cell title"
+                  ><a
+                    class="job"
+                    href="https://himalayas.app/companies/ewor-gmbh/jobs/ai-infrastructure-head-of-data-engineering-100-remote-m-f-d"
+                    rel="noopener noreferrer nofollow"
+                    target="_blank"
+                    >AI Infrastructure Head of Data Engineering (100 % remote) (m/f/d)<span
+                      class="vh"
+                    >
+                      — opens in a new tab</span
+                    ></a
+                  ></span
+                >
+                <span class="cell company"><span class="vh">Company: </span>EWOR GmbH</span>
+                <span class="cell location"><span class="vh">Location: </span>Remote</span>
+                <span class="cell source"><span class="vh">Source: </span>himalayas</span>
+                <time class="cell posted" datetime="2026-09-13T11:08:07.000Z">5d ago</time>
+                <span class="cell act"
+                  ><button
+                    class="save"
+                    type="button"
+                    aria-pressed="false"
+                    data-url="https://himalayas.app/companies/ewor-gmbh/jobs/ai-infrastructure-head-of-data-engineering-100-remote-m-f-d"
+                  >
+                    <span class="vh"
+                      >Save AI Infrastructure Head of Data Engineering (100 % remote) (m/f/d)</span
+                    ><svg
+                      class="i"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <use href="#icon-save-outline"></use>
+                    </svg></button
+                ></span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="foot">
+            <button id="more" class="control" type="button">Load more</button>
+            <span class="count" id="shown">Showing 1–20 of 2,529</span>
+          </div>
+        </main>
+      </div>
+    </div>
+    <p id="live" class="vh" role="status" aria-live="polite"></p>
+    <script type="module" src="./refined-dark.js"></script>
+  </body>
+</html>
