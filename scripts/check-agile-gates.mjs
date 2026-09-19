@@ -1,13 +1,17 @@
 import { execFileSync } from 'node:child_process';
 import { copyFileSync, readFileSync, writeFileSync, unlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import process from 'node:process';
 
 const BACKLOG = '.ai/backlog.json';
 const LOOP = '.ai/LOOP-STATE.json';
 const MODE = '.ai/process-mode.json';
-const bBak = `${process.env.TEMP}/b.bak`;
-const lBak = `${process.env.TEMP}/l.bak`;
-const mBak = `${process.env.TEMP}/m.bak`;
+// process.env.TEMP is Windows-only; on Linux it is undefined and every backup
+// path became the literal string "undefined/...".
+const bBak = join(tmpdir(), 'careerscope-b.bak');
+const lBak = join(tmpdir(), 'careerscope-l.bak');
+const mBak = join(tmpdir(), 'careerscope-m.bak');
 copyFileSync(BACKLOG, bBak);
 copyFileSync(LOOP, lBak);
 copyFileSync(MODE, mBak);

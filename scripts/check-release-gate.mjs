@@ -1,11 +1,15 @@
 import { execFileSync } from 'node:child_process';
 import { copyFileSync, readFileSync, writeFileSync, unlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import process from 'node:process';
 
 const PLAN = '.ai/release-plan.json';
 const FIND = '.ai/findings.json';
-const backupPlan = `${process.env.TEMP}/plan.bak`;
-const backupFind = `${process.env.TEMP}/find.bak`;
+// process.env.TEMP is Windows-only; on Linux it is undefined and every backup
+// path became the literal string "undefined/...".
+const backupPlan = join(tmpdir(), 'careerscope-plan.bak');
+const backupFind = join(tmpdir(), 'careerscope-find.bak');
 copyFileSync(PLAN, backupPlan);
 copyFileSync(FIND, backupFind);
 
