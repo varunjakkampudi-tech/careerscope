@@ -5,7 +5,7 @@
   "goalRationale": "The original goal stopped at pipeline correctness. Six P1s in a PATCH was a wish, not a scope. Narrowed on external review to defects that affect the deployed application, its availability, and the checks that can silently fail.",
   "startDate": "2026-09-19",
   "targetReleaseDate": "2026-09-24",
-  "status": "PAUSED",
+  "status": "ACTIVE",
   "scopeFrozen": true,
   "candidates": ["CS-1", "CS-2", "CS-3", "CS-4", "CS-5", "CS-6"],
   "selectedFeatures": ["CS-1", "CS-2", "CS-3", "CS-7", "CS-8", "CS-9"],
@@ -71,5 +71,6 @@
     "note": "Recorded as a finding attributed to the reviewer, not as fact. Accepted because the reasoning held: a patch containing a design pass and an unproven agent workflow is not a patch."
   },
   "pausedOn": "2026-09-19",
-  "pauseNote": "Sprint ceremony paused until 2026-09-30 to finish the application. Scope and items are unchanged; only the weekly ritual stops."
+  "pauseNote": "Sprint ceremony paused until 2026-09-30 to finish the application. Scope and items are unchanged; only the weekly ritual stops.",
+  "resumedOn": "2026-09-19"
 }
