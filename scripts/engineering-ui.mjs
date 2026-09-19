@@ -274,9 +274,17 @@ tbody tr:hover{background:var(--hover)}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--dim);display:inline-block}
 .dot.ok{background:var(--ok)}.dot.warn{background:var(--warn)}.dot.bad{background:var(--bad)}
 .empty{color:var(--muted);padding:12px 0}
+.vh{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:12px;top:10px;z-index:30;background:var(--ok);color:var(--bg);padding:8px 12px;border-radius:6px}
+main:focus{outline:none}
+/* When the source is gone the header stops looking healthy. */
+.top.down .loc .dot{background:var(--bad)}
+.top.down{border-bottom-color:var(--bad)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (max-width:860px){body{grid-template-columns:minmax(0,1fr)}aside{position:static;height:auto;flex-direction:row;align-items:center;flex-wrap:wrap}nav{flex-direction:row}.side-foot{margin:0 0 0 auto;flex-direction:row;align-items:center;gap:18px}}
 </style></head><body>
+<a class="skip" href="#main">Skip to content</a>
 <aside>
   <div class="brand">
     <svg width="26" height="26" viewBox="0 0 56 56" aria-hidden="true" fill="none" style="color:var(--ok)"><path fill="currentColor" fill-rule="evenodd" d="M52 26C52 39.255 41.255 50 28 50C14.745 50 4 39.255 4 26C4 12.745 14.745 2 28 2C38.1 2 46.9 8.15 50.25 17H40.2C37.8 13.75 33.35 11 28 11C19.715 11 13 17.715 13 26C13 34.285 19.715 41 28 41C33.35 41 37.8 38.25 40.2 35H50.25C46.9 43.85 38.1 50 28 50Z"/><circle cx="39" cy="26" r="4.25" fill="currentColor"/></svg>
@@ -297,7 +305,8 @@ tbody tr:hover{background:var(--hover)}
     <span class="upd"><span>Last updated</span><b id="hdr">—</b></span>
     <button class="icon-btn" id="refresh" type="button" aria-label="Refresh now"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   </div>
-  <main id="main"></main>
+  <main id="main" tabindex="-1"></main>
+  <p id="live" class="vh" role="status" aria-live="polite"></p>
 </div>
 <script>
 const TABS=[['Overview','M4 5h7v7H4zM13 5h7v4h-7zM13 11h7v8h-7zM4 14h7v5H4z'],['Agents','M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 20a8 8 0 0 1 16 0'],['Backlog','M5 4h14v16H5zM8 9h8M8 13h8M8 17h5']];
@@ -345,7 +354,7 @@ function appCard(){
       return '<div class="barrow"><span>'+esc(a.area)+'</span>'
         +(none?'<div class="track none"></div>':'<div class="track"><i style="width:'+a.percent+'%;background:'+colour(a)+'"></i></div>')
         +'<span class="pc">'+(none?'—':a.percent+'%')+'</span></div>';}).join('')
-    +'<button class="more" onclick="go(\\'Overview\\')">Unmeasured areas show a hatched bar, never 0%</button></div>';
+    +'<button class="more" data-goto="Overview">Unmeasured areas show a hatched bar, never 0%</button></div>';
 }
 function agentsCard(){
   const st=d.loop.agents||{};
@@ -363,7 +372,7 @@ function agentsCard(){
     +ring(140,14,segs,'<b>'+d.agents.length+'</b><span>agents</span>')+legendRows(segs)+'</div>'
     +'<div class="info"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="flex:0 0 auto;color:var(--info)"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.75"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>'
     +'<span><b>State is operator-reported</b>'+(acted===0?'Agents have not executed. No runs observed.':acted+' handoff(s) recorded. State is reported, not probed.')+'</span></div>'
-    +'<button class="more" onclick="go(\\'Agents\\')">View agents →</button></div>';
+    +'<button class="more" data-goto="Agents">View agents →</button></div>';
 }
 
 // Six columns over the internal statuses. Anything unmapped gets its own column
@@ -383,12 +392,12 @@ function boardCard(limit){
   const cols=loose.length?[...COLS,['Not mapped',[],'var(--bad)','—','These statuses match no column.']]:COLS;
   const tile=i=>'<div class="bcard'+(i.status==='BLOCKED'?' blocked':'')+'"><div class="bid">'+esc(i.id)+'</div><div class="btitle">'+esc(i.title)+'</div><div class="tags"><span class="tag '+esc(i.priority)+'">'+esc(i.priority)+'</span><span class="tag '+esc(i.dimension||'')+'">'+esc(i.dimension||'?')+'</span>'+(i.carriedCount?'<span class="tag P2">carried '+i.carriedCount+'×</span>':'')+'</div></div>';
   return '<div class="card"><div class="boardhead"><div><h2>Work Backlog</h2><p>From idea to production</p></div><span class="grow"></span><span class="muted" style="font-size:12px">'+num(items.length)+' items</span>'
-    +(limit?'<button class="more" onclick="go(\\'Backlog\\')">View all →</button>':'')+'</div>'
+    +(limit?'<button class="more" data-goto="Backlog">View all →</button>':'')+'</div>'
     +'<div class="board">'+cols.map(([name,st,c,t,sub])=>{
       const list=name==='Not mapped'?loose:items.filter(i=>st.includes(i.status));
       const show=limit?list.slice(0,3):list;
       return '<section class="col"><div class="colhead" style="--c:'+c+'">'+esc(name)+'<span class="count">'+list.length+'</span></div><div class="colbody">'
-        +(list.length?show.map(tile).join('')+(list.length>show.length?'<button class="more" onclick="go(\\'Backlog\\')">+ '+(list.length-show.length)+' more</button>':'')
+        +(list.length?show.map(tile).join('')+(list.length>show.length?'<button class="more" data-goto="Backlog">+ '+(list.length-show.length)+' more</button>':'')
           :'<div class="mt"><b>'+esc(t)+'</b><small>'+esc(sub)+'</small></div>')
         +'</div></section>';}).join('')+'</div></div>';
 }
@@ -420,33 +429,81 @@ function stamp(){
   const age=Math.round((Date.now()-Date.parse(d.generatedAt))/1000);
   return age>60?age+'s ago — stale':(age<5?'just now':age+'s ago');
 }
+// The nav is built once. Rebuilding it on every repaint destroyed the focused
+// element, so a keyboard user lost their place whenever the data changed.
+function buildNav(){
+  document.getElementById('nav').innerHTML=TABS.map(([t,p])=>
+    '<button type="button" data-view="'+t+'"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="'+p+'" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'+t+'</button>').join('');
+}
+function markNav(){
+  for(const b of document.querySelectorAll('#nav button')){
+    if(b.dataset.view===tab)b.setAttribute('aria-current','page');
+    else b.removeAttribute('aria-current');
+  }
+}
 function paint(){
-  document.getElementById('nav').innerHTML=TABS.map(([t,p])=>'<button '+(t===tab?'aria-current="page"':'')+' onclick="go(\\''+t+'\\')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="'+p+'" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'+t+'</button>').join('');
+  markNav();
   const paused=d.mode&&d.mode.mode==='PAUSED';
   document.getElementById('proc').innerHTML='<span class="dot '+(paused?'warn':'ok')+'" style="margin-top:5px"></span><div><span class="k">Process</span><b style="color:var(--'+(paused?'warn':'ok')+')">'+(paused?'PAUSED':'ACTIVE')+'</b>'+(paused?'<small>until '+esc(d.mode.resumeOn||'—')+'</small>':'')+'</div>';
   document.getElementById('stamp').textContent=new Date(d.generatedAt).toLocaleString();
   document.getElementById('hdr').textContent=stamp();
   document.getElementById('main').innerHTML=VIEWS[tab]();
+  document.title=tab+' — CareerScope Engineering';
 }
-function go(t){tab=t;paint()}
+function go(t){
+  if(!VIEWS[t])return;
+  tab=t;paint();
+  document.getElementById('main').focus();
+  say(t+' view');
+}
+const say=m=>{const l=document.getElementById('live');if(l)l.textContent=m;};
+// One delegated listener rather than inline handlers, so re-rendered content
+// never carries a stale reference and nothing depends on a global.
+document.body.addEventListener('click',e=>{
+  const nav=e.target.closest('#nav button[data-view]');
+  if(nav){go(nav.dataset.view);return;}
+  const jump=e.target.closest('[data-goto]');
+  if(jump)go(jump.dataset.goto);
+});
 document.getElementById('theme').addEventListener('click',()=>{
   const light=document.documentElement.getAttribute('data-theme')==='light';
-  document.documentElement.setAttribute('data-theme',light?'dark':'light');
+  const next=light?'dark':'light';
+  document.documentElement.setAttribute('data-theme',next);
   document.getElementById('themelabel').textContent=light?'Dark mode':'Light mode';
+  say(next==='light'?'Light theme':'Dark theme');
 });
-document.getElementById('refresh').addEventListener('click',()=>load());
-let lastSig='';
+document.getElementById('refresh').addEventListener('click',()=>{say('Refreshing');load();});
+let lastSig='',failures=0;
+function offline(message){
+  document.getElementById('hdr').textContent='unavailable';
+  document.querySelector('.top').classList.add('down');
+  // Say so on the page. A dashboard that keeps showing the last good reading
+  // while the source is gone is indistinguishable from one that is working.
+  document.getElementById('main').innerHTML=
+    '<div class="card" role="alert"><h2>State unavailable</h2><p class="muted" style="margin:0 0 6px">'+esc(message)+'</p>'
+    +'<p class="muted" style="margin:0">The figures below the header are from the last successful read and are no longer being updated. Check that <span class="mono">npm run ui:engineering</span> is still running.</p></div>';
+  say('State unavailable');
+}
 async function load(){
   try{
-    const next=await (await fetch('/state')).json();
+    const res=await fetch('/state',{cache:'no-store'});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const next=await res.json();
+    if(!next||typeof next!=='object'||!next.repo)throw new Error('unreadable state');
+    failures=0;
+    document.querySelector('.top').classList.remove('down');
     // Repaint only when something changed, so the page does not flicker and a
     // reader does not lose their place every few seconds.
     const sig=JSON.stringify([next.repo,next.loop,next.backlog,next.findings,next.sprint,next.mode,next.progress]);
     d=next;
-    if(sig!==lastSig){lastSig=sig;paint();}
+    if(sig!==lastSig){const first=lastSig==='';lastSig=sig;paint();if(!first)say('Updated');}
     else{document.getElementById('hdr').textContent=stamp();}
-  }catch(e){document.getElementById('hdr').textContent='unavailable';}
+  }catch(e){
+    // One blip during a restart is not an outage; a run of them is.
+    if(++failures>=2)offline(e.message);
+  }
 }
+buildNav();
 load();setInterval(load,3000);
 </script></body></html>`;
 
