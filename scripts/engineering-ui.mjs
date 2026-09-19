@@ -88,6 +88,7 @@ function snapshot() {
       legacyVersion: read('package.json', {}).version ?? '?',
     },
     week,
+    mode: read(join(AI, 'process-mode.json'), { mode: 'ACTIVE' }),
     sprint: read(join(AI, 'sprints', `${week}.json`)),
     retro: read(join(AI, 'sprints', `${week}-retrospective.json`)),
     scrum: scrums[0] ? read(join(scrumDir, scrums[0])) : null,
@@ -217,14 +218,25 @@ function overview(){
   const f=d.findings.items||d.findings.findings||[];
   const open=f.filter(x=>x.status!=='FIXED'&&x.status!=='CLOSED');
   const n=s=>open.filter(x=>x.severity===s).length;
-  const active=(d.backlog.items||[]).filter(i=>['IN_PROGRESS','CODE_REVIEW','QA','SECURITY'].includes(i.status));
-  return '<div class=grid>'
+  const items=d.backlog.items||[];
+  const active=items.filter(i=>['IN_PROGRESS','CODE_REVIEW','QA','SECURITY'].includes(i.status));
+  const paused=d.mode&&d.mode.mode==='PAUSED';
+  const dim=k=>items.filter(i=>i.dimension===k).length;
+  const banner=paused
+    ?'<div class=card><div class=k>SPRINT PROCESS PAUSED until '+esc(d.mode.resumeOn||'further notice')+'</div><div>'+esc(d.mode.reason||'')+'</div><div class=muted style="margin-top:6px">Resume when: '+esc(d.mode.resumeCondition||'unspecified')+'</div><div class=muted>Agents and every safety gate remain active.</div></div>'
+    :'';
+  return banner+'<div class=grid>'
     +card('Version (deployed)',d.repo.version)+card('V1 line',d.repo.legacyVersion,'muted')
     +card('Branch',d.repo.branch,d.repo.branch==='main'?'warn':'')
-    +card('Commit',d.repo.commit)+card('Sprint',d.sprint?d.sprint.sprintId:'not planned')
+    +card('Commit',d.repo.commit)
+    +card('Process',paused?'PAUSED':'ACTIVE',paused?'warn':'ok')
+    +card('Sprint',d.sprint?d.sprint.sprintId+(d.sprint.status?' — '+d.sprint.status:''):'not planned')
     +card('Sprint goal',d.sprint&&d.sprint.goal?d.sprint.goal:'—')
     +card('Target release',d.sprint?d.sprint.targetReleaseDate:'—')
     +card('WIP',active.length+'/2',active.length>2?'bad':'')
+    +card('Backlog',items.length)
+    +card('Product items',dim('product'),dim('product')?'':'bad')
+    +card('Engineering items',dim('engineering'),'muted')
     +card('Open P0',n('P0'),n('P0')?'bad':'ok')+card('Open P1',n('P1'),n('P1')?'bad':'ok')
     +card('Open P2',n('P2'))+card('Open P3',n('P3'))
     +card('Scheduler',d.releasePlan.schedulerEnabled?'ENABLED':'disabled',d.releasePlan.schedulerEnabled?'warn':'muted')
@@ -248,7 +260,7 @@ function backlog(){
   if(!items.length)return '<div class=card><div class=empty>Backlog is empty. Nothing has been fabricated to fill it.</div></div>';
   const cols=['IDEA','DISCOVERY','READY','PLANNED','IN_PROGRESS','CODE_REVIEW','QA','SECURITY','READY_FOR_RELEASE','RELEASED','BLOCKED'];
   return '<div class=grid>'+cols.map(c=>{const list=items.filter(i=>i.status===c);
-    return '<div class=card><div class=k>'+c+' ('+list.length+')</div>'+(list.map(i=>'<div style="margin-top:8px"><b>'+esc(i.id)+'</b> '+esc(i.title)+'<br><span class=pill>'+esc(i.size)+'</span> <span class=pill>'+esc(i.priority)+'</span></div>').join('')||'<div class=empty>—</div>')+'</div>';}).join('')+'</div>';
+    return '<div class=card><div class=k>'+c+' ('+list.length+')</div>'+(list.map(i=>'<div style="margin-top:10px"><b>'+esc(i.id)+'</b> '+esc(i.title)+(i.summary?'<div class=muted style="margin:4px 0;font-size:12px;line-height:1.45">'+esc(i.summary)+'</div>':'')+'<span class=pill>'+esc(i.size)+'</span> <span class=pill>'+esc(i.priority)+'</span> <span class=pill>'+esc(i.dimension||'?')+'</span>'+(i.carriedCount?' <span class=pill>carried '+esc(i.carriedCount)+'\u00d7</span>':'')+'</div>').join('')||'<div class=empty>\u2014</div>')+'</div>';}).join('')+'</div>';
 }
 function agents(){
   const st=d.loop.agents||{};
