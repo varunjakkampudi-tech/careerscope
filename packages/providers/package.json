@@ -22,7 +22,7 @@
     "@job-radar/matching": "1.0.0",
     "@job-radar/shared": "1.0.0",
     "cheerio": "^1.2.0",
-    "google-auth-library": "^11.0.2"
+    "google-auth-library": "^11.1.0"
   },
   "optionalDependencies": {
     "playwright": "^1.63.0"
