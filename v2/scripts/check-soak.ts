@@ -267,6 +267,7 @@ try {
               [
                 {
                   fingerprint: `soak-${command.aggregateId}`,
+                  sourceJobId: `soak-${command.aggregateId}`,
                   title: 'React engineer',
                   company: 'Synthetic Systems',
                   location: 'Remote',

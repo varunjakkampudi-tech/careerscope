@@ -32,6 +32,17 @@ x-environment: &environment
   RESUME_STORAGE_KEY_FILE: /private/encryption.key
   NODE_OPTIONS: --max-old-space-size=512
 
+# CS-34: the web service is a Next.js server that proxies /api/* to a
+# hardcoded loopback address (apps/web/next.config.ts) and reads no other
+# environment variable at all - not DATABASE_URL, not the resume storage
+# encryption key path, not the LocalStack queue endpoint. It inherited the
+# full *environment anchor purely because it shares the *app anchor with
+# api/publisher/search/files, which do need all of those. This is its own,
+# deliberately minimal environment: only NODE_OPTIONS, which is generic Node
+# process tuning, not application configuration or a credential.
+x-web-environment: &web-environment
+  NODE_OPTIONS: --max-old-space-size=512
+
 x-app: &app
   <<: *hardening
   image: careerscope:v3
@@ -189,6 +200,7 @@ services:
 
   web:
     <<: *app
+    environment: *web-environment
     working_dir: /app/v2/apps/web
     command:
       [

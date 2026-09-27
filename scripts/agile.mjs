@@ -11,6 +11,8 @@
  *   npm run agile:plan       open Monday sprint planning
  *   npm run agile:scrum      open today's daily scrum record
  *   npm run agile:feature    check WIP and show the feature pipeline
+ *   npm run tickets:update   open today's ticket review and validate the board
+ *   npm run tickets:verify   refuse until every ticket has a recorded outcome
  *   npm run agile:review     sprint review readiness
  *   npm run agile:release    release gate
  *   npm run agile:retro      open the retrospective
@@ -47,6 +49,21 @@ const git = (args, fallback = null) => {
 };
 
 const ACTIVE = ['IN_PROGRESS', 'CODE_REVIEW', 'QA', 'SECURITY'];
+const STATUSES = [
+  'IDEA',
+  'DISCOVERY',
+  'READY',
+  'PLANNED',
+  'IN_PROGRESS',
+  'CODE_REVIEW',
+  'SECURITY',
+  'QA',
+  'UAT',
+  'BLOCKED',
+  'RELEASED',
+  'DROPPED',
+];
+const STALE_DAYS = 7;
 // One definition of finished. `review` and `carry` disagreeing on this meant a
 // released item was reviewed as done and carried forward as unfinished.
 const COMPLETE = 'RELEASED';
@@ -424,11 +441,287 @@ function carry() {
   record('carry', 'carried', []);
 }
 
-const commands = { status, plan, scrum, feature, review, retro, release, carry };
+/**
+ * Daily ticket review. Validates every ticket, names what has gone stale, and
+ * opens the dated record the agents fill in. It cannot run the discussion —
+ * nothing here invokes an agent — so `--verify` exists to refuse the claim that
+ * a review happened when no record says who reviewed what.
+ */
+function tickets() {
+  const verify = process.argv.includes('--verify');
+  const backlog = readRequired(join(AI, 'backlog.json'));
+  const findings = readRequired(join(AI, 'findings.json'));
+  if (!Array.isArray(backlog.items)) {
+    console.error(
+      '\n  .ai/backlog.json has no items array. Refusing to review a board I cannot read.\n',
+    );
+    record('tickets', 'backlog-unreadable', ['backlog has no items array']);
+    process.exitCode = 1;
+    return;
+  }
+
+  const errors = [];
+  const seen = new Set();
+  for (const item of backlog.items) {
+    const id = typeof item?.id === 'string' && item.id ? item.id : '(missing id)';
+    if (id === '(missing id)') errors.push('A ticket has no id');
+    else if (seen.has(id)) errors.push(`${id} is duplicated`);
+    seen.add(id);
+    for (const field of ['title', 'status', 'priority', 'updatedAt'])
+      if (typeof item?.[field] !== 'string' || !item[field])
+        errors.push(`${id} is missing ${field}`);
+    if (typeof item?.status === 'string' && item.status && !STATUSES.includes(item.status))
+      errors.push(`${id} has unknown status ${item.status}`);
+    if (ACTIVE.includes(item?.status) && !item?.ownerAgent)
+      errors.push(`${id} is ${item.status} with no owner agent`);
+  }
+
+  const days = (date) => Math.floor((Date.now() - Date.parse(`${date}T00:00:00Z`)) / 86400000);
+  const stale = backlog.items.filter(
+    (i) =>
+      typeof i.updatedAt === 'string' &&
+      Number.isFinite(days(i.updatedAt)) &&
+      days(i.updatedAt) >= STALE_DAYS,
+  );
+  const active = backlog.items.filter((i) => ACTIVE.includes(i.status));
+  const blocked = backlog.items.filter((i) => i.status === 'BLOCKED');
+  const open = (findings.findings ?? []).filter(
+    (f) => f.status !== 'FIXED' && f.status !== 'CLOSED',
+  );
+
+  mkdirSync(join(AI, 'tickets'), { recursive: true });
+  const path = join(AI, 'tickets', `${today()}.json`);
+  const existing = read(path);
+  if (!existing && !verify)
+    write(path, {
+      date: today(),
+      commit: git(['rev-parse', 'HEAD']),
+      participants: [],
+      reviewed: [],
+      added: [],
+      dropped: [],
+      decisions: [],
+      risks: [],
+    });
+
+  console.log(`\n  TICKET REVIEW  ${today()}   ${backlog.items.length} tickets\n`);
+  for (const s of STATUSES) {
+    const n = backlog.items.filter((i) => i.status === s).length;
+    if (n) console.log(`    ${s.padEnd(18)} ${n}`);
+  }
+  console.log(
+    `\n  WIP           ${active.length}/${MAX_ACTIVE_FEATURES}${active.length > MAX_ACTIVE_FEATURES ? '   OVER LIMIT' : ''}`,
+  );
+  console.log(`  Blocked       ${blocked.length}`);
+  console.log(`  Open findings ${open.length}`);
+  console.log(`  Untouched ${STALE_DAYS}d+ ${stale.length}`);
+  for (const item of stale)
+    console.log(
+      `    ${item.id.padEnd(7)} ${String(item.status).padEnd(12)} ${days(item.updatedAt)}d  ${item.title}`,
+    );
+
+  if (errors.length) {
+    console.error(`\n  ${errors.length} ticket(s) are not reviewable:`);
+    for (const message of errors) console.error(`    - ${message}`);
+    console.error('\n  Fix the board before discussing it.\n');
+    record('tickets', 'invalid', errors);
+    process.exitCode = 1;
+    return;
+  }
+
+  if (verify) {
+    const problems = [];
+    if (!existing) problems.push(`no review recorded at ${path}`);
+    else {
+      if (!Array.isArray(existing.participants) || existing.participants.length === 0)
+        problems.push('no participating agents recorded');
+      const reviewed = Array.isArray(existing.reviewed) ? existing.reviewed : [];
+      const covered = new Set(
+        reviewed.filter((r) => r && typeof r.id === 'string' && r.outcome).map((r) => r.id),
+      );
+      // A record that lists a ticket without saying what was decided is not a review.
+      for (const item of backlog.items)
+        if (!covered.has(item.id)) problems.push(`${item.id} has no recorded outcome`);
+    }
+    if (problems.length) {
+      console.error(`\n  Today's review is not complete:`);
+      for (const message of problems.slice(0, 12)) console.error(`    - ${message}`);
+      if (problems.length > 12) console.error(`    ... and ${problems.length - 12} more`);
+      console.error('');
+      record('tickets', 'unverified', problems);
+      process.exitCode = 1;
+      return;
+    }
+    console.log(
+      `\n  Review complete: ${existing.participants.length} agents, every ticket has an outcome.\n`,
+    );
+    record('tickets', 'verified');
+    return;
+  }
+
+  console.log(`\n  Record: ${path}${existing ? '  (already open)' : '  (created)'}\n`);
+  console.log('  Convene only the agents the current tickets need. Each contributes');
+  console.log('  from its own responsibility and cites evidence, never a status opinion:');
+  console.log('    Product Discovery → Project Manager → System Designer/UX → owning builder');
+  console.log('    → QA → Security → Independent Reviewer → Orchestrator\n');
+  console.log('  For every ticket record: outcome, what changed, and the evidence for it.');
+  console.log('  Then run  npm run tickets:verify  — it refuses until that is true.\n');
+  record('tickets', 'opened');
+}
+
+/**
+ * QA → UAT. Promotion is a claim that QA finished, so it refuses
+ * any ticket that cannot show acceptance criteria, evidence and a completed QA
+ * step, and refuses the whole batch while a P0 or P1 finding is open.
+ */
+function promote() {
+  const backlog = readRequired(join(AI, 'backlog.json'));
+  const findings = readRequired(join(AI, 'findings.json'));
+  if (!Array.isArray(backlog.items) || !Array.isArray(findings.findings)) {
+    console.error('\n  Backlog or findings have no array to read. Refusing to promote.\n');
+    record('promote', 'state-unreadable', ['backlog or findings unreadable']);
+    process.exitCode = 1;
+    return;
+  }
+
+  const blockers = findings.findings.filter(
+    (f) =>
+      f.status !== 'FIXED' && f.status !== 'CLOSED' && (f.severity === 'P0' || f.severity === 'P1'),
+  );
+  const queue = backlog.items.filter((i) => i.status === 'QA');
+  const refusals = blockers.map((f) => `open ${f.severity} finding ${f.id}`);
+  for (const item of queue) {
+    if (!Array.isArray(item.acceptanceCriteria) || item.acceptanceCriteria.length === 0)
+      refusals.push(`${item.id} has no acceptance criteria`);
+    if (!Array.isArray(item.evidence) || item.evidence.length === 0)
+      refusals.push(`${item.id} has no recorded evidence`);
+    if (!(item.completedSteps ?? []).includes('QA'))
+      refusals.push(`${item.id} has not completed the QA step`);
+  }
+
+  console.log(`\n  PROMOTE QA → UAT   ${queue.length} ticket(s)\n`);
+  if (refusals.length) {
+    for (const message of refusals) console.error(`    REFUSED  ${message}`);
+    console.error('\n  Promotion is a claim that QA finished. Earn it, do not assert it.\n');
+    record('promote', 'refused', refusals);
+    process.exitCode = 1;
+    return;
+  }
+  if (queue.length === 0) {
+    console.log('  Nothing in QA.\n');
+    record('promote', 'empty');
+    return;
+  }
+
+  for (const item of queue) {
+    item.status = 'UAT';
+    item.currentStep = 'Release Manager';
+    item.updatedAt = today();
+  }
+  backlog.updatedAt = new Date().toISOString();
+  write(join(AI, 'backlog.json'), backlog);
+  for (const item of queue) console.log(`    ${item.id.padEnd(7)} ${item.title}`);
+  console.log('\n  Promoted. Release still has to pass scripts/release-gate.mjs.\n');
+  record('promote', 'promoted', []);
+}
+
+/**
+ * UAT → RELEASED, proven against the running site.
+ *
+ * "Released" has meant "merged" here before. The live version is asked for
+ * directly, so a ticket cannot be closed by a deployment that did not happen.
+ */
+async function released() {
+  const value = (flag) => {
+    const index = process.argv.indexOf(flag);
+    return index === -1 ? null : (process.argv[index + 1] ?? null);
+  };
+  const version = value('--version');
+  const commit = value('--commit');
+  const url = value('--health-url') ?? 'https://careerscope.tech/api/health';
+  const backlog = readRequired(join(AI, 'backlog.json'));
+  if (!Array.isArray(backlog.items)) {
+    console.error('\n  .ai/backlog.json has no items array. Refusing to close tickets.\n');
+    record('released', 'backlog-unreadable', ['backlog unreadable']);
+    process.exitCode = 1;
+    return;
+  }
+  if (!version || !/^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$/.test(version)) {
+    console.error('\n  Usage: agile.mjs released --version <semver> --commit <sha>\n');
+    record('released', 'bad-arguments', ['missing or invalid --version']);
+    process.exitCode = 1;
+    return;
+  }
+  if (!commit || !/^[0-9a-f]{7,40}$/.test(commit)) {
+    console.error('\n  A release needs the exact deployed commit: --commit <sha>\n');
+    record('released', 'bad-arguments', ['missing or invalid --commit']);
+    process.exitCode = 1;
+    return;
+  }
+
+  let live;
+  try {
+    const response = await fetch(url, {
+      headers: { accept: 'application/json' },
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!response.ok) throw new Error(`health returned ${response.status}`);
+    live = await response.json();
+  } catch (error) {
+    console.error(`\n  Cannot read the live version from ${url}: ${error.message}`);
+    console.error('  Unreachable is not released.\n');
+    record('released', 'live-unreachable', [error.message]);
+    process.exitCode = 1;
+    return;
+  }
+  if (live?.status !== 'ok' || live?.version !== version) {
+    console.error(
+      `\n  Live site reports ${JSON.stringify(live?.version)} (status ${JSON.stringify(live?.status)}), not ${version}.`,
+    );
+    console.error('  The deployment did not land. Nothing is released.\n');
+    record('released', 'version-mismatch', [`live ${live?.version} != ${version}`]);
+    process.exitCode = 1;
+    return;
+  }
+
+  const shipped = backlog.items.filter((i) => i.status === 'UAT');
+  if (shipped.length === 0) {
+    console.log(`\n  Live site confirms ${version}, but no ticket was UAT.\n`);
+    record('released', 'nothing-ready');
+    return;
+  }
+  for (const item of shipped) {
+    item.status = 'RELEASED';
+    item.currentStep = null;
+    item.releasedIn = version;
+    item.releasedCommit = commit;
+    item.updatedAt = today();
+  }
+  backlog.updatedAt = new Date().toISOString();
+  write(join(AI, 'backlog.json'), backlog);
+  console.log(`\n  RELEASED  ${version} at ${commit}   ${shipped.length} ticket(s)\n`);
+  for (const item of shipped) console.log(`    ${item.id.padEnd(7)} ${item.title}`);
+  console.log('');
+  record('released', 'closed', []);
+}
+
+const commands = {
+  status,
+  plan,
+  scrum,
+  feature,
+  review,
+  retro,
+  release,
+  carry,
+  tickets,
+  promote,
+  released,
+};
 const command = process.argv[2];
 if (!commands[command]) {
   console.error(`Usage: node scripts/agile.mjs <${Object.keys(commands).join('|')}>`);
   process.exit(2);
 }
 // release is a safety control, and status only reports. Neither is ceremony.
-if (!refuseWhilePaused(command)) commands[command]();
+if (!refuseWhilePaused(command)) await commands[command]();

@@ -1,4 +1,9 @@
-import { extractSkills, normalizeSkillList } from '@job-radar/shared';
+import {
+  extractSkills,
+  isRefusedCodePoint,
+  normalizeSkillList,
+  REFUSED_SYNTAX,
+} from '@job-radar/shared';
 import { headerBlock, splitSections, type Sections } from './sections.js';
 
 /* -------------------------------------------------------------------------- */
@@ -353,6 +358,21 @@ function mergeRanges(ranges: DateRange[]): { start: number; end: number }[] {
 /* Titles                                                                     */
 /* -------------------------------------------------------------------------- */
 
+// ROLE_WORDS is a hard gate: a line containing none of these words is never
+// considered a title, in the experience block or the headline, with no
+// fallback. It is therefore ENGLISH-ONLY BY CONSTRUCTION — "Ingénieur logiciel
+// senior", "Softwareentwickler" and "Desarrollador de software" each derive
+// zero titles, verified directly rather than assumed.
+//
+// The character allowlist below is NOT the cause and must not be blamed for it:
+// it permits \p{M} so accents survive, and "Ingénieur Software Engineer"
+// derives intact. This list is the sole gate.
+//
+// The failure is SILENT - a non-English resume parses fine and simply
+// contributes no titles, which is indistinguishable from a resume that had no
+// recognisable role. Documented in docs/KNOWN-LIMITATIONS.md; which languages
+// to support is an owner product decision, so do not extend this list
+// piecemeal without one.
 const ROLE_WORDS =
   /\b(engineer|developer|architect|programmer|analyst|consultant|designer|scientist|administrator|specialist|manager|associate|principal|director|founder|president|lead|head|intern|sde|swe|cto|vp)\b/i;
 
@@ -398,6 +418,104 @@ function presentTitle(segment: string): string {
 }
 
 /**
+ * CS-56: a title is the one derived fact that is not taxonomy-bound — techStack
+ * and recentSkills can only ever be names the skill taxonomy already knows,
+ * while a title is whatever the resume says. Length alone is not a content
+ * constraint, so the character set is constrained here, at extraction, rather
+ * than trusting every future consumer of derived.titles (an email digest, a PDF
+ * export, an admin snapshot) to escape it the way today's JSX does.
+ *
+ * Two tiers, because the two problems are different:
+ *
+ * REFUSED — characters that carry meaning in a markup, template or shell-ish
+ * renderer, plus the non-whitespace control characters and the bidirectional
+ * and zero-width formatting characters used to make a string read as something
+ * other than what it is. None of these appear in a real job title, so a segment
+ * containing one is not a title that needs cleaning: it is not a title.
+ *
+ * ALLOWED — everything a real title legitimately uses: Unicode letters and the
+ * combining marks that accent them (Développeur), digits (Engineer II, Tier 3),
+ * and the punctuation real titles carry — "Full-Stack", "Sr.", "R&D",
+ * "Front End Developer/Designer", "C++", "C#", "Engineer, Platform",
+ * "Women's Health Lead". Anything else outside that set is a stray character
+ * (a bullet glyph, a decorative symbol) and is replaced with a space instead of
+ * costing the whole title, so a real title is never silently dropped.
+ *
+ * `$` was in this refusal set until 2026-09-25 and was moved out deliberately
+ * (re-review finding F-4). A refused character costs the ENTIRE segment, and
+ * nine of the ten refusals have effectively zero probability in a real job
+ * title — but `$` does not: "Engineer, $1B Platform segment" would have been
+ * dropped silently, which is the over-strict failure mode this constraint is
+ * explicitly not allowed to have. Refusing it was also redundant: template
+ * interpolation needs `${`, and `{` is still refused, so `${...}` still costs
+ * the segment. `$` now falls through to TITLE_STRAY_RE and is neutralised to a
+ * space, keeping the rest of the title.
+ *
+ * MOVED TO `@job-radar/shared` as `REFUSED_SYNTAX` (CS-66 re-review, AC2). It
+ * had stayed here while only the invisible-character predicate moved, and that
+ * asymmetry was the live gap: `matching` neutralised the invisible half of the
+ * refusal set when assembling stored evidence and let markup and template
+ * syntax through verbatim, so a target role typed as
+ * `<img src=x onerror=alert(1)> Engineer` was refused at this inlet and
+ * renderable through the other. Two packages, one set, two operations.
+ */
+const TITLE_STRAY_RE = /[^\p{L}\p{M}\p{N} .,&/'’+#()\-–—]/gu;
+
+/**
+ * Control and invisible-formatting code points.
+ *
+ * MOVED TO `@job-radar/shared` (CS-66) rather than copied: `matching` needs the
+ * same refusal set when it assembles the `reason` string that becomes stored
+ * match evidence, and two copies of a security-relevant character set is a
+ * divergence waiting to happen — a code point refused here but renderable there
+ * is exactly the gap. The operations still differ and should: extraction
+ * REJECTS a segment outright, evidence assembly NEUTRALISES. Only the set is
+ * shared.
+ */
+
+/** Empty when the segment must not become a title at all. */
+function constrainTitleCharacters(segment: string): string {
+  for (const character of segment) {
+    if (REFUSED_SYNTAX.has(character)) return '';
+    if (isRefusedCodePoint(character.codePointAt(0) ?? 0)) return '';
+  }
+  return segment
+    .replace(TITLE_STRAY_RE, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/^[,;:\s]+|[,;:.\s]+$/g, '')
+    .trim();
+}
+
+/**
+ * Why a title set is what it is.
+ *
+ * CS-64 AC2. `deriveTitles` used to return `[]` for a resume it could not read
+ * and `[]` for a resume that genuinely names no role, and no caller could tell
+ * the two apart — a silent failure dressed as a finding. The extractor's role
+ * vocabulary (ROLE_WORDS) is English-only, so "no match" is very often an
+ * inability rather than a result, and reporting it as a result is the defect.
+ *
+ * NOT A LANGUAGE CLAIM, deliberately. Which languages this product supports is
+ * CS-64 AC1 and belongs to the owner; nothing here detects, names or decides a
+ * language. The three states are about what the extractor could see:
+ *
+ * - `derived`         — at least one title was recognised.
+ * - `no-content`      — there was nothing to read: no experience text and no
+ *                       header block. "Determined nothing", honestly.
+ * - `undeterminable`  — there WAS text and none of it was recognisable as a
+ *                       role. That covers a resume written in a language this
+ *                       extractor does not read, and equally an English resume
+ *                       whose roles it failed to match. Both are "could not
+ *                       determine", which is exactly what it now says.
+ */
+export type TitleDerivationStatus = 'derived' | 'no-content' | 'undeterminable';
+
+export interface TitleDerivation {
+  status: TitleDerivationStatus;
+  titles: string[];
+}
+
+/**
  * Job titles held, most recent first, followed by the header headline (the line
  * under the name) when it names a role.
  *
@@ -405,8 +523,11 @@ function presentTitle(segment: string): string {
  * ladder titles are often useless for matching — "Senior Associate" at a
  * consultancy says nothing about the craft, while the headline right above it
  * says "Full Stack Software Engineer".
+ *
+ * Returns a STATUS alongside the titles, never a bare array: see
+ * TitleDerivationStatus for why an empty array was not an honest answer.
  */
-export function deriveTitles(text: string, experience: string): string[] {
+export function deriveTitles(text: string, experience: string): TitleDerivation {
   const found: string[] = [];
   const push = (raw: string) => {
     const cleaned = raw
@@ -421,10 +542,13 @@ export function deriveTitles(text: string, experience: string): string[] {
 
     // "Senior Engineer | Acme Corp, Hyderabad" — the role is one segment and the
     // employer and city are others. Keep only the segment naming a role.
+    // Constraining per segment, not per line, keeps a real title that merely
+    // shares a line with something unusable.
     const segment = cleaned
       .split(/\s*[|•·]\s*/)
       .map((part) => part.replace(/^[,;:\s]+|[,;:.\s]+$/g, ''))
-      .find((part) => ROLE_WORDS.test(part));
+      .map(constrainTitleCharacters)
+      .find((part) => part !== '' && ROLE_WORDS.test(part));
     if (!segment) return;
 
     if (segment.length < 3 || segment.length > 60) return;
@@ -448,7 +572,13 @@ export function deriveTitles(text: string, experience: string): string[] {
       break;
     }
   }
-  return found;
+  if (found.length) return { status: 'derived', titles: found };
+  // Everything this function was ever able to look at. If it holds no letters
+  // there was nothing to read, and saying "no titles" is honest. If it holds
+  // text and nothing matched, the extractor could not determine the answer -
+  // which is a different statement, and the one that used to be silent.
+  const readable = `${experience}\n${headerBlock(text)}`;
+  return { status: /\p{L}/u.test(readable) ? 'undeterminable' : 'no-content', titles: [] };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -541,6 +671,8 @@ export interface DerivedFields {
   techStack: string[];
   recentSkills: string[];
   titles: string[];
+  /** Why `titles` is what it is (CS-64 AC2). Never inferrable from the array. */
+  titlesStatus: TitleDerivationStatus;
   yearsOfExperience: number | null;
 }
 
@@ -548,6 +680,7 @@ export function deriveFields(text: string, now = Date.now()): DerivedFields {
   const sections = splitSections(text);
   const contact = deriveContact(text);
   const { techStack, recentSkills } = deriveSkills(text, sections, now);
+  const titles = deriveTitles(text, sections.experience);
 
   return {
     fullName: deriveName(text, contact.email),
@@ -559,7 +692,8 @@ export function deriveFields(text: string, now = Date.now()): DerivedFields {
     portfolio: contact.portfolio,
     techStack,
     recentSkills,
-    titles: deriveTitles(text, sections.experience),
+    titles: titles.titles,
+    titlesStatus: titles.status,
     yearsOfExperience: deriveYears(text, sections.experience, now),
   };
 }

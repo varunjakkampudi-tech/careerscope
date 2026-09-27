@@ -2,7 +2,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { fromBufferPromise } from 'yauzl';
 import DOMMatrix from '@thednp/dommatrix';
-import { parseResume, detectFormat } from '../../../../packages/resume/dist/index.js';
+import { parseResume, detectFormat } from '@job-radar/resume';
 import { maximumResumeBytes } from './storage.js';
 import { maximumResumeText, parsedResumeSchema } from './resume-parser.js';
 
@@ -54,12 +54,18 @@ async function checkDocx(data: Buffer) {
 }
 
 async function main() {
+  // Node 25.0.0 added a real --allow-net permission scope (this previously and
+  // incorrectly assumed Node never would, copying Deno's flag name); on the
+  // Node versions before that, allowedNodeEnvironmentFlags.has('--allow-net')
+  // is always false, so the net check only applies once the runtime actually
+  // supports it. The spawn call below never passes --allow-net, so on a
+  // Node >=25 runtime process.permission.has('net') must be false; if it were
+  // ever true, that would mean network access leaked in and this refuses.
   if (
-    !process.allowedNodeEnvironmentFlags.has('--allow-net') ||
     !process.permission ||
-    process.permission.has('net') ||
     process.permission.has('child') ||
-    process.permission.has('fs.write')
+    process.permission.has('fs.write') ||
+    (process.allowedNodeEnvironmentFlags.has('--allow-net') && process.permission.has('net'))
   ) {
     throw Object.assign(new Error('Parser permissions unavailable'), {
       code: 'PARSER_UNAVAILABLE',

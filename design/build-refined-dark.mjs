@@ -575,13 +575,26 @@ const html = `<!doctype html>
       <div class="panel">
         <header class="topbar">
           <a class="brand" href="/">
-            <svg width="20" height="20" viewBox="0 0 56 56" aria-hidden="true" fill="none">
-              <path
-                fill="currentColor"
-                fill-rule="evenodd"
-                d="M52 26C52 39.255 41.255 50 28 50C14.745 50 4 39.255 4 26C4 12.745 14.745 2 28 2C38.1 2 46.9 8.15 50.25 17H40.2C37.8 13.75 33.35 11 28 11C19.715 11 13 17.715 13 26C13 34.285 19.715 41 28 41C33.35 41 37.8 38.25 40.2 35H50.25C46.9 43.85 38.1 50 28 50Z"
-              />
-              <circle cx="39" cy="26" r="4.25" fill="currentColor" />
+            <svg width="20" height="20" viewBox="0 0 64 64" aria-hidden="true" fill="none">
+              <defs>
+                <linearGradient
+                  id="brand-arc"
+                  x1="9"
+                  y1="12"
+                  x2="55"
+                  y2="53"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop offset="0" stop-color="#10b981" />
+                  <stop offset="1" stop-color="#3b82f6" />
+                </linearGradient>
+              </defs>
+              <g stroke="url(#brand-arc)" stroke-width="9">
+                <path d="M31.23 10.01A22 22 0 1 0 42.33 51.42" />
+                <path d="M34.3 10.12A22 22 0 0 1 42.33 12.58" />
+              </g>
+              <path d="M46.6 17.4 36.1 36.1 27.9 27.9Z" fill="#fff" />
+              <path d="M20.2 43.8 36.1 36.1 27.9 27.9Z" fill="#3b82f6" />
             </svg>
             CareerScope
           </a>

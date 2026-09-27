@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { isRefusedCodePoint, REFUSED_SYNTAX } from '@job-radar/shared';
 import type { JobDemands } from '@job-radar/shared';
 import {
   scoreCompensation,
@@ -265,5 +266,102 @@ describe('scoreRecency', () => {
   it('stays neutral when the date is unknown', () => {
     expect(scoreRecency(job({ postedAt: null }), 30, NOW).score).toBe(0.6);
     expect(scoreRecency(job({ postedAt: 'not a date' }), 30, NOW).score).toBe(0.6);
+  });
+});
+
+describe('CS-66: reason is constrained at the boundary both inlets converge on', () => {
+  // candidate.titles is the union of preferences.titles - validated by
+  // packages/shared/src/schemas.ts as trim + non-empty only, with NO character
+  // constraint - and resume-derived titles, which CS-56 constrained at
+  // extraction. scoreTitle interpolates the best match verbatim into `reason`,
+  // which becomes stored, renderable match evidence.
+  const hostile = [
+    ['bidirectional override', 'Senior \u202eEngineer'],
+    ['zero-width space', 'Senior\u200bEngineer'],
+    ['variation selector', 'Senior Engineer\ufe0f'],
+    ['C0 control', 'Senior\u0007Engineer'],
+    ['zero-width no-break space', 'Senior Engineer\ufeff'],
+  ] as const;
+
+  for (const [label, title] of hostile) {
+    it(`strips a ${label} typed into a target role`, () => {
+      const { reason } = scoreTitle('Senior Engineer', candidate({ titles: [title] }));
+      for (const character of reason) {
+        const point = character.codePointAt(0) ?? 0;
+        expect(isRefusedCodePoint(point)).toBe(false);
+      }
+      // Paired positive on the same surface: the reason must still NAME the
+      // role, or an assertion that "no hostile character survives" would pass
+      // just as well against an empty string.
+      expect(reason).toMatch(/Engineer/);
+    });
+  }
+
+  it('leaves a legitimate accented title untouched', () => {
+    const { reason } = scoreTitle(
+      'Software Engineer',
+      candidate({ titles: ['Ingénieur Software Engineer'] }),
+    );
+    expect(reason).toContain('Ingénieur Software Engineer');
+  });
+
+  it('never returns an empty reason, because a score nobody can audit is the failure it prevents', () => {
+    const { reason } = scoreTitle('Senior Engineer', candidate({ titles: ['\u202e\u200b\ufeff'] }));
+    expect(reason.length).toBeGreaterThan(0);
+  });
+
+  // AC2 names FIVE hostile classes and the five cases above are all invisible
+  // ones. Markup and template syntax were named too, and until this block
+  // existed they were neither refused nor neutralised: `constrainEvidenceText`
+  // dropped only invisible code points, so `<` and `${` reached stored evidence
+  // verbatim through the owner-typed inlet, which has no character constraint.
+  const hostileSyntax = [
+    ['an HTML element', '<img src=x onerror=alert(1)> Engineer', ['<img', 'onerror=']],
+    ['a script tag', '<script>alert(1)</script> Engineer', ['<script', '</script']],
+    ['template interpolation', 'Engineer ${constructor.constructor(1)}', ['${']],
+    ['handlebars interpolation', 'Engineer {{7*7}}', ['{{']],
+    ['an attribute break-out', 'Engineer" onmouseover="alert(1)', ['="', '"']],
+    ['a backtick template', 'Engineer `${x}`', ['`']],
+  ] as const;
+
+  for (const [label, title, forbidden] of hostileSyntax) {
+    it(`neutralises ${label} typed into a target role`, () => {
+      const { reason } = scoreTitle('Engineer', candidate({ titles: [title] }));
+
+      // Paired positive FIRST and on the same surface. Every assertion below is
+      // an absence, and an absence passes trivially against an empty string or
+      // a reason that stopped naming the role at all.
+      expect(reason).toMatch(/Engineer/);
+
+      for (const character of REFUSED_SYNTAX)
+        expect(
+          reason.includes(character),
+          `refused syntax ${JSON.stringify(character)} survived into stored evidence: ${reason}`,
+        ).toBe(false);
+      // Named explicitly as well as by set membership, so the test still says
+      // out loud which attack it is about if the set is ever edited.
+      for (const fragment of forbidden) expect(reason).not.toContain(fragment);
+    });
+  }
+
+  it('keeps `$`, which is deliberately NOT refused, so the constraint is not over-strict', () => {
+    // The counterpart to the block above, and the reason it must be a separate
+    // set from the invisible one: `$` was removed from the refusal set on
+    // purpose (CS-56 F-4) because "Engineer, $1B Platform segment" is a real
+    // title. `${` is still defused, because `{` is refused.
+    const { reason } = scoreTitle(
+      'Engineer',
+      candidate({ titles: ['Engineer, $1B Platform segment'] }),
+    );
+    expect(reason).toContain('$1B Platform segment');
+  });
+
+  it('keeps the quotes that delimit the owner’s own text', () => {
+    // scoreTitle wraps the title in typographic quotes precisely because the
+    // ASCII ones are refused syntax; if someone changes them back, the
+    // delimiter silently vanishes and the sentence reads as though the title
+    // were part of it. This is that regression, asserted.
+    const { reason } = scoreTitle('Engineer', candidate({ titles: ['Staff Engineer'] }));
+    expect(reason).toContain('“Staff Engineer”');
   });
 });

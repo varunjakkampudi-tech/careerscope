@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "objective": "Extend the existing local Copilot engineering OS with baseline-bound task lifecycle, risk, bounded failure records, executable checks and truthful evidence; preserve application behavior and existing work.",
+  "status": "BLOCKED",
+  "revision": "5239b0a87796bd26792c525408342970894759cb",
+  "createdAt": "2026-09-19T19:11:51.983Z",
+  "updatedAt": "2026-09-19T23:23:28.657Z",
+  "blockedReason": "Parent native specialist invocations completed local implementation, independent QA (209/209) and Independent Reviewer APPROVED. Implementation 3/3 and code review 3/3 reached policy bounds: stop BLOCKED, no further loops. Schema-1 completion evidence and all twelve gates remain incomplete; strict schema-2 baseline, actual SessionStart/Agent Sessions UI, final audit and host provenance remain unverified. Unavailable nested tools are not a current session-wide blocker.",
+  "tasks": [
+    {
+      "id": "engineering-setup",
+      "owner": "careerscope-senior-engineer",
+      "files": [
+        "scripts/engineering.mjs",
+        "scripts/engineering.test.mjs",
+        "scripts/engineering-contract.mjs",
+        "scripts/engineering-contract.test.mjs",
+        "scripts/engineering-runner.mjs",
+        "scripts/engineering-runner.test.mjs",
+        ".ai/engineering.json",
+        "quality-gates.json"
+      ],
+      "dependencies": [],
+      "attempts": 3,
+      "attemptLimit": 3,
+      "status": "BLOCKED",
+      "acceptanceCriteria": [
+        {
+          "id": "cli",
+          "description": "check, ready, status, verify and help are read-only Node built-in commands; verify refuses incomplete objectives."
+        },
+        {
+          "id": "validation",
+          "description": "Isolated mutation tests reject malformed records, invalid DAGs, overlapping active claims, exhausted attempts and stale or insufficient completion evidence."
+        },
+        {
+          "id": "boundaries",
+          "description": "No backlog mutation, package changes, agent execution, deployment or secret reads; scoped lint and formatting pass."
+        }
+      ],
+      "evidence": [],
+      "review": null,
+      "createdAt": "2026-09-19T19:11:51.983Z",
+      "updatedAt": "2026-09-19T23:23:28.657Z",
+      "blockedReason": "Parent-native Senior Engineer attempts 1-3, independent QA final 209/209 and Independent Reviewer loop 3 APPROVED are recorded in review.txt. IR01-IR03 closed; no blocking code findings reported. Implementation and code review bounds reached 3/3; current-content completion evidence, gates and outstanding acceptance remain incomplete. No further implementation or review loops authorized."
+    },
+    {
+      "id": "engineering-docs",
+      "owner": "careerscope-documentation",
+      "files": ["docs/ai", "docs/architecture/README.md"],
+      "dependencies": [],
+      "attempts": 2,
+      "attemptLimit": 3,
+      "status": "BLOCKED",
+      "acceptanceCriteria": [
+        {
+          "id": "contract",
+          "description": "Document supported native capabilities, risk, lifecycle, ownership, evidence, bounded retries and limitations without inventing runtime assurance."
+        },
+        {
+          "id": "reuse",
+          "description": "Reuse current agents, skills, prompts and JSON quality gates; retain pre-change baseline and historic evidence."
+        }
+      ],
+      "evidence": [],
+      "review": null,
+      "createdAt": "2026-09-19T19:11:51.983Z",
+      "updatedAt": "2026-09-19T23:23:28.657Z",
+      "blockedReason": "Parent-native Documentation completed two passes: 17 documents with 235 links initially, then evidence-model.md and limitations.md with scoped Prettier and 15 retained links/anchor passing after final QA. Final documentation changes have no fresh independent digest-bound approval. Overall implementation/code-review bounds exhausted; canonical completion evidence and gates remain incomplete."
+    }
+  ]
+}

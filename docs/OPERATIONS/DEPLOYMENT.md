@@ -13,20 +13,31 @@ host — provenance checking exists because that has happened.
 
 All under [infra/v3](../../infra/v3).
 
-| Script                           | Purpose                                                                                   |
-| -------------------------------- | ----------------------------------------------------------------------------------------- |
-| `provision-host.sh`              | Prepares a fresh Ubuntu 24.04 host. Idempotent. Installs Docker from Docker's repository. |
-| `ship.sh`                        | Ships a build context to the host. **Preserves `infra/v3/.env`.**                         |
-| `build-images.sh`                | Builds both images, recording the source revision in each                                 |
-| `deploy.sh`                      | Brings the stack up. Generates secrets on the host; they never leave it.                  |
-| `apply-migrations.sh`            | Applies pending migrations and reports the publisher's hot query plan                     |
-| `restart-stack.sh`               | **The only supported way to restart the proxy**                                           |
-| `maintenance.sh`                 | Proxy-level maintenance page: `enable` / `disable` / `status`                             |
-| `check-provenance.sh`            | Asserts the deployed revision agrees everywhere                                           |
-| `check-live-origin.sh`           | Verifies cookie attributes, CSRF origin check, proxy headers                              |
-| `check-host-firewall.sh`         | Firewall and Docker networking assertions                                                 |
-| `scan-images.sh`                 | Trivy scan of both images with a clean cache                                              |
-| `purge-verification-accounts.sh` | Removes `verify-*` throwaway accounts                                                     |
+| Script                           | Purpose                                                                                           |
+| -------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `provision-host.sh`              | Prepares a fresh Ubuntu 24.04 host. Idempotent. Installs Docker from Docker's repository.         |
+| `ship.sh`                        | Ships a build context to the host. **Preserves `infra/v3/.env`.**                                 |
+| `build-images.sh`                | Builds both images, recording the source revision in each                                         |
+| `deploy.sh`                      | Brings the stack up. Generates secrets on the host; they never leave it.                          |
+| `apply-migrations.sh`            | Applies pending migrations and reports the publisher's hot query plan                             |
+| `restart-stack.sh`               | **The only supported way to restart the proxy**                                                   |
+| `maintenance.sh`                 | Proxy-level maintenance page: `enable` / `disable` / `status`                                     |
+| `check-provenance.sh`            | Asserts the deployed revision agrees everywhere                                                   |
+| `check-live-origin.sh`           | Verifies cookie attributes, CSRF origin check, proxy headers                                      |
+| `check-host-firewall.sh`         | Firewall and Docker networking assertions                                                         |
+| `scan-images.sh`                 | Trivy scan of both images with a clean cache                                                      |
+| `purge-verification-accounts.sh` | Removes `verify-*` throwaway accounts                                                             |
+| `setup-monitoring.sh`            | Installs the host monitor (systemd timer). See [MONITORING.md](MONITORING.md)                     |
+| `monitor.sh`                     | The monitor itself — unreachable/unhealthy/stopped/stale/ok, alerts on change                     |
+| `check-monitoring.sh`            | Proves the monitor's classification and alerting logic against stub `docker`/`curl`               |
+| `setup-backup.sh`                | Installs the host backup job (systemd timer). See [BACKUP.md](BACKUP.md)                          |
+| `backup.sh`                      | Dumps, verifies by restoring into a scratch database, promotes, retains                           |
+| `check-backup.sh`                | Proves the pipeline against a real disposable Postgres container                                  |
+| `setup-discovery.sh`             | Installs the scheduled-discovery timer. See [DISCOVERY-SCHEDULE.md](DISCOVERY-SCHEDULE.md)        |
+| `setup-lead-lifecycle.sh`        | Installs the liveness/retention timers. See [LEAD-LIFECYCLE.md](LEAD-LIFECYCLE.md)                |
+| `setup-proxy-recovery.sh`        | Installs the proxy split-brain detector/auto-recovery. See [PROXY-RECOVERY.md](PROXY-RECOVERY.md) |
+| `recover-proxy.sh`               | The detector/recovery itself - confirms an outage, runs `restart-stack.sh`, circuit-breaks        |
+| `check-proxy-recovery.sh`        | Proves the confirm-then-act-then-cooldown state machine against stub `curl`/`restart-stack.sh`    |
 
 ---
 
@@ -67,6 +78,182 @@ bash maintenance.sh disable
 
 The maintenance flag is a **file**, not application state, so the page still
 serves while the stack is down. `/api/health` stays reachable throughout.
+
+---
+
+## One-time follow-up required for the CS-28 release
+
+CS-28 ("two different openings can be merged into one") changed how a job
+posting's identity is computed and added `npm run db:backfill-job-sightings`
+(`v2/scripts/backfill-job-sightings.ts`) to recompute `job_sightings` from
+`search_jobs` under the corrected rule. It is idempotent and safe to re-run,
+but it is **not** wired into `apply-migrations.sh` and must be run once,
+manually, the first time this release reaches production — after migrations,
+before traffic resumes:
+
+```bash
+ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
+  cd /opt/careerscope/infra/v3 &&
+  docker exec careerscope-api-1 node --import tsx /app/v2/scripts/backfill-job-sightings.ts
+"
+```
+
+Corrected 2026-09-23: the `bootstrap` service's compose definition only
+mounts `bootstrap.mjs` (`volumes: ['private:/private',
+'./bootstrap.mjs:/app/v2/bootstrap.mjs:ro']`), not the rest of `v2/scripts` —
+the original `docker compose run --rm --no-deps bootstrap ...` form here
+would have failed with "file not found" the first time anyone actually ran
+it. `backfill-job-sightings.ts` (and CS-26's `run-scheduled-discovery.ts`)
+are now copied into the runtime image in `infra/v3/Dockerfile`, and the
+corrected command targets the always-running `api` container via
+`docker exec` instead, matching how CS-24/CS-25's own scripts reach the
+database. This gap was caught while implementing CS-26, before this step had
+ever been exercised against production, and this file's edit is the fix.
+
+See `docs/KNOWN-LIMITATIONS.md` for what this does and does not fix (it stops
+future drift; a false merge that predates CS-28 keeps its inflated evidence
+permanently, which is a disclosed, accepted limitation, not an oversight).
+Remove this section once the step has been exercised against production for
+this release.
+
+---
+
+## One-time follow-up required for the CS-24 release
+
+CS-24 ("nothing watches the running system") adds a host-native monitor that
+must be installed once, manually, on the production host — it is
+intentionally not part of `apply-migrations.sh` or the deploy sequence, since
+it is host state (a systemd timer), not application state:
+
+```bash
+ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
+  cd /opt/careerscope/infra/v3 &&
+  bash setup-monitoring.sh
+"
+```
+
+Then set `MONITOR_WEBHOOK_URL` in `/etc/careerscope-monitor.env` on the host
+and re-run `setup-monitoring.sh` (idempotent) so the timer picks it up. See
+[docs/OPERATIONS/MONITORING.md](MONITORING.md) for the full design, the
+manual "stop a container and observe" proof this ticket's acceptance criteria
+require, and the known limitation (nothing currently watches the watcher).
+Remove this section once the step has been exercised against production.
+
+---
+
+## One-time follow-up required for the CS-25 release
+
+CS-25 ("no scheduled database dump exists, even on the host") adds a
+host-native daily backup, same reasoning as CS-24: it is host state, not
+application state, so it is installed once, manually, not via
+`apply-migrations.sh`:
+
+```bash
+ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
+  cd /opt/careerscope/infra/v3 &&
+  bash setup-backup.sh
+"
+```
+
+`setup-backup.sh` runs one real backup immediately (dump, restore-verify,
+promote) so the first proof doesn't wait for 03:30. See
+[docs/OPERATIONS/BACKUP.md](BACKUP.md) for the full design, how to actually
+restore from a produced dump, and the known limitation (nothing currently
+watches the watcher — shared with CS-24). Remove this section once the step
+has been exercised against production.
+
+---
+
+## One-time follow-up required for the CS-26 release
+
+CS-26 ("nothing runs discovery on a schedule") adds a scheduled-discovery
+timer, same reasoning as CS-24/CS-25 - host state, installed once manually:
+
+```bash
+ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
+  cd /opt/careerscope/infra/v3 &&
+  bash setup-discovery.sh
+"
+```
+
+Installing the timer does **not** turn discovery on for anyone - it defaults
+off per owner and stays off until explicitly enabled (see
+[DISCOVERY-SCHEDULE.md](DISCOVERY-SCHEDULE.md) for why, and how to enable it
+for now with no UI). Remove this section once the step has been exercised
+against production.
+
+Also corrected as part of this release: the CS-28 follow-up step above used
+to invoke `docker compose run --rm --no-deps bootstrap ...`, which would have
+failed - `bootstrap`'s compose definition only mounts `bootstrap.mjs`, not
+the rest of `v2/scripts`. Both `backfill-job-sightings.ts` and this ticket's
+`run-scheduled-discovery.ts` are now copied into the runtime image
+(`infra/v3/Dockerfile`), and the corrected command targets the
+always-running `api` container via `docker exec` instead.
+
+---
+
+## One-time follow-up required for the CS-27 release
+
+CS-27 ("postings never expire or get re-checked") adds two host-native
+timers - lead liveness checking and search-results retention - same
+reasoning as CS-24/25/26:
+
+```bash
+ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
+  cd /opt/careerscope/infra/v3 &&
+  bash setup-lead-lifecycle.sh
+"
+```
+
+See [LEAD-LIFECYCLE.md](LEAD-LIFECYCLE.md) for the full design and the
+SSRF-hardening rationale. Remove this section once the step has been
+exercised against production.
+
+Also caught and fixed while building this: `infra/v3/Dockerfile.dockerignore`
+is an **allowlist** (`**` first, then specific paths un-ignored) - CS-26's
+own new scripts had been added to the `Dockerfile`'s `COPY` instructions but
+never to this allowlist, which would have made those `COPY` steps fail
+during an actual image build (the files would never have reached the build
+context at all), not merely at runtime as the CS-28 fix above assumed. Caught
+by actually building the runtime image locally rather than only trusting the
+Dockerfile edit, and confirmed by running the built image and listing
+`/app/v2/scripts` directly. Fixed by adding all four scripts
+(`backfill-job-sightings.ts`, `run-scheduled-discovery.ts`,
+`check-lead-liveness.ts`, `enforce-search-retention.ts`) to the allowlist.
+
+Also fixed: CS-26 added a required `origin` field to every search-creation
+call, and the same real build caught `apps/web/src/app/page.tsx`'s two
+existing search-trigger call sites (`next build`'s own type check, which
+`tsc`/ESLint alone do not run) - both are genuinely user-initiated clicks, so
+both now explicitly pass `origin: 'manual'`.
+
+**Neither this v3 Docker build nor the images it produces run in CI** - the
+`image` job in `.github/workflows/ci.yml` builds `infra/Dockerfile` (the
+legacy V1 image), not `infra/v3/Dockerfile`. This gap already exists
+independent of CS-27 and matches CS-9's own tracked scope; verifying a v3
+image build is currently a manual step, which is what caught the two defects
+above.
+
+---
+
+## One-time follow-up required for the CS-3 release
+
+CS-3 ("proxy restart strands every service behind a healthy-looking 502")
+adds host-native proxy split-brain detection and auto-recovery, same
+reasoning as CS-24/25/26/27:
+
+```bash
+ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
+  cd /opt/careerscope/infra/v3 &&
+  bash setup-proxy-recovery.sh
+"
+```
+
+See [PROXY-RECOVERY.md](PROXY-RECOVERY.md) for the full design (a System
+Designer review evaluated five options before any code was written) and the
+literal "kill Caddy and observe the automatic recovery" proof this ticket's
+own acceptance criteria require. Remove this section once the step has been
+exercised against production.
 
 ---
 

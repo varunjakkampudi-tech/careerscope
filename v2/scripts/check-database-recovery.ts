@@ -121,6 +121,7 @@ test(
         [
           {
             fingerprint: 'recovery-fixture',
+            sourceJobId: 'recovery-fixture',
             title: 'Synthetic Engineer',
             company: 'Synthetic Company',
             location: 'Remote',

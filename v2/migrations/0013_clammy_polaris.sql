@@ -1,0 +1,1 @@
+ALTER TABLE "candidate_profiles" ADD COLUMN "scheduled_discovery_enabled" boolean DEFAULT false NOT NULL;

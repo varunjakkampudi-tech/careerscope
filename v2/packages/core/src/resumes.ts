@@ -10,7 +10,7 @@ import {
   type ResumeObject,
   type ResumeObjectStore,
 } from './storage.js';
-import { detectFormat } from '../../../../packages/resume/dist/extract.js';
+import { detectFormat } from '@job-radar/resume';
 import { commandSchema } from './commands.js';
 import { parsedResumeSchema, parseResumeIsolated, ResumeDocumentError } from './resume-parser.js';
 import type { Handler } from './dispatch.js';
@@ -187,7 +187,10 @@ export class ResumeUploadRepository {
           record.bytes !== metadata.bytes ||
           record.contentType !== metadata.contentType
         ) {
-          throw new Conflict('Upload idempotency key reused with different metadata');
+          throw new Conflict(
+            'Upload idempotency key reused with different metadata',
+            'IDEMPOTENCY_KEY_REUSED',
+          );
         }
       }
       await client.query('COMMIT');
@@ -263,7 +266,7 @@ export class ResumeUploadRepository {
       const existing = await this.get(ownerId, id);
       if (!existing || (existing.status === 'cancelled' && existing.bucket === bucket))
         return existing;
-      throw new Conflict('Upload cannot be cancelled');
+      throw new Conflict('Upload cannot be cancelled', 'UPLOAD_NOT_CANCELLABLE');
     }
     await cancelObject(record);
     await this.database.pool.query(
@@ -295,11 +298,11 @@ export class ResumeUploadRepository {
       }
       if (record.status === 'queued') {
         if (record.objectVersion !== objectVersion)
-          throw new Conflict('Upload object version changed');
+          throw new Conflict('Upload object version changed', 'UPLOAD_VERSION_CONFLICT');
         await client.query('COMMIT');
         return record;
       }
-      if (record.status !== 'uploading') throw new Conflict('Upload cancelled');
+      if (record.status !== 'uploading') throw new Conflict('Upload cancelled', 'UPLOAD_CANCELLED');
       const command: Command = {
         id: randomUUID(),
         type: 'resume.parse',
@@ -387,7 +390,7 @@ export class ResumeUploadCoordinator {
     });
     const record = await this.uploads.reserve(ownerId, key, this.storage.bucket, metadata);
     if (record.status === 'queued') return record;
-    if (record.status !== 'uploading') throw new Conflict('Upload cancelled');
+    if (record.status !== 'uploading') throw new Conflict('Upload cancelled', 'UPLOAD_CANCELLED');
     const object = this.object(record);
     await this.initialize(deadline);
     let version = await this.storage.recoverVersion(object, deadline);

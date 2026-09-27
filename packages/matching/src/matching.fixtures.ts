@@ -72,6 +72,8 @@ export const CANDIDATE: CandidateContext = {
   excludeKeywords: [],
   excludeCompanies: [],
   resumeText: 'Full Stack Software Engineer with 4 years building React and Node.js products.',
+  resumeConsidered: true,
+  resumeSkills: [],
 };
 
 export function candidate(overrides: Partial<CandidateContext> = {}): CandidateContext {

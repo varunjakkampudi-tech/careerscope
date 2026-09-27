@@ -1,0 +1,25 @@
+[Unit]
+Description=CareerScope host database backup (dump, verify-by-restore, retain)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+# Load CS-24's monitor env file first so MONITOR_WEBHOOK_URL is actually
+# available for backup.sh's documented fallback, then the backup-specific
+# file so BACKUP_WEBHOOK_URL (if set) takes precedence - EnvironmentFile
+# only loads what it's given, so without this second line the fallback in
+# docs/OPERATIONS/BACKUP.md was never actually reachable (Security review
+# finding, P2, fixed).
+EnvironmentFile=-/etc/careerscope-monitor.env
+EnvironmentFile=-/etc/careerscope-backup.env
+ExecStart=/usr/local/bin/careerscope-backup.sh
+
+# Same reasoning as careerscope-monitor.service: this needs root for
+# docker exec, but nothing beyond that, the docker socket, and its own
+# backup/state directory.
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/backups/careerscope

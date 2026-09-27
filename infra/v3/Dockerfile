@@ -86,6 +86,14 @@ COPY --from=build /app/v2/apps/web/.next ./v2/apps/web/.next
 COPY --from=build /app/v2/migrations ./v2/migrations
 COPY --from=build /app/v2/scripts/migrate.ts ./v2/scripts/migrate.ts
 COPY --from=build /app/v2/scripts/setup-owner.ts ./v2/scripts/setup-owner.ts
+# backfill-job-sightings.ts (CS-28) was documented as a one-time production
+# step but never actually reached the runtime image until now - the fix
+# landed here, alongside the same gap for CS-26's script, rather than in two
+# separate changes.
+COPY --from=build /app/v2/scripts/backfill-job-sightings.ts ./v2/scripts/backfill-job-sightings.ts
+COPY --from=build /app/v2/scripts/run-scheduled-discovery.ts ./v2/scripts/run-scheduled-discovery.ts
+COPY --from=build /app/v2/scripts/check-lead-liveness.ts ./v2/scripts/check-lead-liveness.ts
+COPY --from=build /app/v2/scripts/enforce-search-retention.ts ./v2/scripts/enforce-search-retention.ts
 RUN mkdir -p /private/objects /app/v2/apps/web/.next/cache \
     && chown -R node:node /private /app/v2/apps/web/.next/cache \
     && chmod 700 /private /private/objects

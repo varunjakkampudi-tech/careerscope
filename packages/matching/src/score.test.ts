@@ -142,6 +142,31 @@ describe('scoreJob — breakdown', () => {
     const args = [job({ descriptionText: NEAR_EXACT_JD }), candidate(), opts] as const;
     expect(scoreJob(...args)).toEqual(scoreJob(...args));
   });
+
+  // CS-22: resumeConsidered/resumeSkills must reach the breakdown honestly -
+  // "no resume" is a candidate-level fact, not something scoring can guess at.
+  it('reports resumeConsidered false when the candidate has no resume', () => {
+    const breakdown = scoreJob(
+      job({ descriptionText: NEAR_EXACT_JD }),
+      candidate({ resumeConsidered: false, resumeSkills: [] }),
+      opts,
+    );
+    expect(breakdown.resumeConsidered).toBe(false);
+    expect(breakdown.resumeSkills).toEqual([]);
+  });
+
+  it('reports only the resume skills that actually matched this job, not every resume skill', () => {
+    const breakdown = scoreJob(
+      job({ title: 'Full Stack Software Engineer', descriptionText: NEAR_EXACT_JD }),
+      candidate({ resumeConsidered: true, resumeSkills: ['React', 'Cobol'] }),
+      opts,
+    );
+    // React is in the JD (matched); Cobol is a resume skill this job never asked
+    // for, so it must not appear as if it moved this particular score.
+    expect(breakdown.resumeConsidered).toBe(true);
+    expect(breakdown.resumeSkills).toEqual(expect.arrayContaining(['React']));
+    expect(breakdown.resumeSkills).not.toEqual(expect.arrayContaining(['Cobol']));
+  });
 });
 
 /* -------------------------------------------------------------------------- */
@@ -204,6 +229,26 @@ describe('scoreJob — excluded listings', () => {
     expect(breakdown.matchedSkills).toEqual([]);
     // The drawer still renders — every dimension is present, just not scored.
     expect(Object.keys(breakdown.dimensions)).toHaveLength(7);
+  });
+
+  // A hard gate must not swallow whether a resume was on file - an excluded
+  // listing's evidence should still say so accurately, not default silently.
+  it('still reports resumeConsidered accurately on a gated listing', () => {
+    const me = candidate({
+      excludeKeywords: ['Backend'],
+      resumeConsidered: true,
+      resumeSkills: ['React'],
+    });
+    const breakdown = scoreJob(
+      job({ title: 'Backend Engineer', descriptionText: NEAR_EXACT_JD }),
+      me,
+      opts,
+    );
+    expect(breakdown.resumeConsidered).toBe(true);
+    // An excluded listing was never scored against, so no resume skill can be
+    // credited with matching it - resumeSkills stays empty, unlike matchedSkills
+    // in a scored breakdown where it would be a real subset.
+    expect(breakdown.resumeSkills).toEqual([]);
   });
 });
 

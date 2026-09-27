@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import process from 'node:process';
 import { publishPages } from './publish-pages.mjs';
+import { versionFiles } from './sync-version.mjs';
 
 function fixture(
   env,
@@ -117,5 +118,54 @@ test('version bump or synchronization failures never commit or push', () => {
     const runner = fixture('ADMIN_SNAPSHOT_PASSPHRASE=valid-synthetic-secret-123', { failStep });
     assert.throws(() => publishPages(runner));
     assert.ok(!runner.calls.some((call) => ['add', 'commit', 'push'].includes(call.args[0])));
+  }
+});
+
+// CS-4: the commit's file list must be derived from versionFiles(), never a
+// second hand-maintained copy that can drift when a version-bearing file is
+// added to one list and not the other.
+test('every versionFiles() key is staged in the release commit', () => {
+  const runner = fixture('ADMIN_SNAPSHOT_PASSPHRASE=valid-synthetic-secret-123');
+  publishPages(runner);
+  const commit = runner.calls.find((call) => call.args[0] === 'commit');
+  const staged = new Set(commit.args.slice(commit.args.indexOf('--') + 1));
+  for (const file of Object.keys(versionFiles('1.0.1'))) {
+    assert.ok(staged.has(file), `${file} from versionFiles() must be in the release commit`);
+  }
+});
+
+// Independent Reviewer finding on CS-4: the test above passes identically
+// whether the file list is genuinely derived or merely re-hardcoded to match
+// today's two real keys - it cannot fail against the bug this ticket
+// describes until a third key is actually added to production
+// sync-version.mjs, which nothing in the suite ever does. Injecting a
+// synthetic three-key versionFiles here proves the derivation mechanism
+// itself, using a key ('mobile-site/newly-added-file.js') that does not
+// exist in the real file list today and never needs to - it fails
+// immediately against any hardcoded or load-time-frozen implementation,
+// without touching production sync-version.mjs.
+test('a version-bearing file added to versionFiles() is staged, proven with a synthetic third key', () => {
+  const synthetic = {
+    'apps/web/src/lib/brand.ts': 'unused fixture content',
+    'mobile-site/version.js': 'unused fixture content',
+    'mobile-site/newly-added-file.js': 'unused fixture content',
+  };
+  const getVersionFiles = (version) => {
+    assert.equal(
+      version,
+      '1.0.1',
+      'must be called with the real post-bump version, not a placeholder',
+    );
+    return synthetic;
+  };
+  const runner = fixture('ADMIN_SNAPSHOT_PASSPHRASE=valid-synthetic-secret-123');
+  publishPages({ ...runner, getVersionFiles });
+  const commit = runner.calls.find((call) => call.args[0] === 'commit');
+  const staged = new Set(commit.args.slice(commit.args.indexOf('--') + 1));
+  for (const file of Object.keys(synthetic)) {
+    assert.ok(
+      staged.has(file),
+      `${file} from the injected versionFiles must be in the release commit`,
+    );
   }
 });

@@ -1,0 +1,83 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--dash-muted, #6b7280);
+}
+
+.loadingIcon {
+  animation: spin 0.9s linear infinite;
+  color: var(--dash-primary, #2563eb);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorWrap {
+  composes: wrap;
+  color: #b3261e;
+}
+
+.errorIcon {
+  color: #b3261e;
+}
+
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: inherit;
+}
+
+.description {
+  margin: 0;
+  font-size: 13px;
+  max-width: 32em;
+}
+
+.actionRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.retryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  border-radius: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.actionLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--dash-primary, #2563eb);
+  color: #fff;
+  text-decoration: none;
+}
+
+.emptyIcon {
+  color: var(--dash-muted, #9ca3af);
+  opacity: 0.7;
+}

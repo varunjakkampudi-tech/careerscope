@@ -6,6 +6,7 @@ import {
   timestamp,
   jsonb,
   integer,
+  boolean,
   uniqueIndex,
   index,
   check,
@@ -48,6 +49,14 @@ export const profiles = pgTable(
     data: jsonb('data').$type<WritableProfile>().notNull(),
     revision: integer('revision').notNull().default(1),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+    // CS-26: unattended discovery is a distinct trust decision from the
+    // owner's candidate/preferences data, so it is its own column, not part
+    // of the revision-guarded `data` blob - toggling it is not "editing your
+    // profile" and must never collide with a profile-save's optimistic
+    // concurrency check. Defaults false: matches this project's standing
+    // rule for anything that acts on the owner's behalf without them present
+    // at the moment of action (AI, auto-apply, scrapers all default off too).
+    scheduledDiscoveryEnabled: boolean('scheduled_discovery_enabled').notNull().default(false),
   },
   (table) => [check('profile_revision_positive', sql`${table.revision} > 0`)],
 );
@@ -73,6 +82,12 @@ export const searches = pgTable(
   },
   (table) => [
     uniqueIndex('search_owner_key').on(table.ownerId, table.idempotencyKey),
+    // CS-53 PREREQUISITE, not an optimisation. A composite foreign key can only
+    // reference a UNIQUE set of columns, so without this Postgres refuses the
+    // (owner_id, run_id) references on run_events and search_jobs with 42830.
+    // `saved_leads` and `resume_uploads` already carry exactly this helper for
+    // exactly this reason.
+    uniqueIndex('search_owner_id').on(table.ownerId, table.id),
     index('search_owner_created').on(table.ownerId, table.createdAt),
     check(
       'search_status_valid',
@@ -124,32 +139,46 @@ export const events = pgTable(
   {
     id: uuid('id').primaryKey(),
     sequence: bigserial('sequence', { mode: 'bigint' }).notNull(),
-    runId: uuid('run_id')
-      .notNull()
-      .references(() => searches.id),
-    ownerId: uuid('owner_id')
-      .notNull()
-      .references(() => users.id),
+    runId: uuid('run_id').notNull(),
+    ownerId: uuid('owner_id').notNull(),
     type: text('type').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
-  (table) => [index('event_owner_run_sequence').on(table.ownerId, table.runId, table.sequence)],
+  (table) => [
+    // CS-53: ONE composite reference, not two separate ones. Referencing
+    // search_runs.id and users.id independently let the database hold an event
+    // whose owner_id is not the owner of its run - the application has always
+    // scoped correctly, so nothing reachable produced such a row, but the
+    // schema permitted it and only the application stopped it. As a composite
+    // key the row is UNREPRESENTABLE, which is how lead_history and
+    // resume_results already work. The users reference is not lost: it comes
+    // transitively through search_runs.owner_id, exactly as saved_leads
+    // provides it for lead_history.
+    foreignKey({
+      columns: [table.ownerId, table.runId],
+      foreignColumns: [searches.ownerId, searches.id],
+    }),
+    index('event_owner_run_sequence').on(table.ownerId, table.runId, table.sequence),
+  ],
 );
 
 export const jobs = pgTable(
   'search_jobs',
   {
     id: uuid('id').primaryKey(),
-    runId: uuid('run_id')
-      .notNull()
-      .references(() => searches.id),
-    ownerId: uuid('owner_id')
-      .notNull()
-      .references(() => users.id),
+    runId: uuid('run_id').notNull(),
+    ownerId: uuid('owner_id').notNull(),
     fingerprint: text('fingerprint').notNull(),
     data: jsonb('data').$type<CollectedJob>().notNull(),
   },
   (table) => [
+    // CS-53, same reasoning as run_events above: a job whose owner_id differs
+    // from its run's owner_id is now a foreign-key violation rather than a row
+    // the application is trusted never to write.
+    foreignKey({
+      columns: [table.ownerId, table.runId],
+      foreignColumns: [searches.ownerId, searches.id],
+    }),
     uniqueIndex('run_job_fingerprint').on(table.runId, table.fingerprint),
     index('job_owner_run').on(table.ownerId, table.runId),
   ],
@@ -174,6 +203,16 @@ export const leads = pgTable(
     // Stamped on every status change so "nothing has moved in three weeks" is a
     // question the data can answer.
     statusChangedAt: timestamp('status_changed_at', { withTimezone: true }).defaultNow().notNull(),
+    // CS-27: a fact this system actually checked (did applyUrl still respond
+    // last time someone looked?), never inferred from age. 'unknown' - not a
+    // guessed 'live' - until a real HTTP check has run at least once, and
+    // stays 'unknown' after an ambiguous check (timeout, 5xx, anything that
+    // isn't a clear 200 or a clear 404/410) rather than asserting either way.
+    livenessStatus: text('liveness_status')
+      .$type<'unknown' | 'live' | 'stale'>()
+      .notNull()
+      .default('unknown'),
+    livenessCheckedAt: timestamp('liveness_checked_at', { withTimezone: true }),
     revision: integer('revision').notNull().default(1),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
@@ -182,10 +221,17 @@ export const leads = pgTable(
     uniqueIndex('lead_owner_fingerprint').on(table.ownerId, table.fingerprint),
     uniqueIndex('lead_owner_id').on(table.ownerId, table.id),
     index('lead_owner_status_created').on(table.ownerId, table.status, table.createdAt, table.id),
+    // The liveness checker's own work queue: leads never checked, or checked
+    // longest ago, first - independent of status/created ordering.
+    index('lead_liveness_checked').on(table.livenessCheckedAt),
     check('lead_revision_positive', sql`${table.revision} > 0`),
     check(
       'lead_status_valid',
       sql`${table.status} IN ('saved', 'applied', 'interviewing', 'offer', 'rejected', 'archived')`,
+    ),
+    check(
+      'lead_liveness_status_valid',
+      sql`${table.livenessStatus} IN ('unknown', 'live', 'stale')`,
     ),
     check('lead_notes_bounded', sql`length(${table.notes}) <= 10000`),
   ],

@@ -3,7 +3,7 @@ import test from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
 import { collect } from './collect.js';
 import { matchingProfile, writableProfileSchema } from '@careerscope/core';
-import { LOW_CONFIDENCE_SCORE_CEILING } from '../../../../../packages/shared/dist/index.js';
+import { LOW_CONFIDENCE_SCORE_CEILING } from '@job-radar/shared';
 import {
   createRemoteOkProvider,
   createHimalayasProvider,
@@ -11,7 +11,7 @@ import {
   createLeverProvider,
   createWorkableProvider,
   HttpClient,
-} from '../../../../../packages/providers/dist/index.js';
+} from '@job-radar/providers';
 
 const request = { query: 'React', sources: ['remoteok'] as ['remoteok'] };
 const signal = new AbortController().signal;
@@ -219,6 +219,113 @@ test('multi-source collection retains validated partial results and preserves ca
     name: 'AbortError',
   });
   assert.equal(secondCalled, false);
+});
+
+test('two distinct reqs from one source with the same title, company and city stay two leads', async () => {
+  const base = {
+    source: 'remoteok' as const,
+    title: 'Senior Backend Engineer',
+    companyName: 'Acme',
+    location: 'Bangalore',
+    isRemote: false,
+    hasFullDescription: true,
+    applyUrl: 'https://example.test/apply',
+  };
+  const remote = {
+    ...createRemoteOkProvider(),
+    async *search() {
+      yield {
+        ...base,
+        sourceJobId: 'req-1',
+        description: 'Owns the payments platform.',
+        sourceUrl: 'https://remoteok.com/remote-jobs/req-1',
+      };
+      yield {
+        ...base,
+        sourceJobId: 'req-2',
+        description: 'Owns the fraud-detection platform.',
+        sourceUrl: 'https://remoteok.com/remote-jobs/req-2',
+      };
+    },
+  };
+  const { jobs, status } = await collect({ ...request, sources: ['remoteok'] }, signal, remote);
+  assert.equal(status, 'completed');
+  assert.equal(jobs.length, 2);
+  const fingerprints = new Set(jobs.map((job) => job.fingerprint));
+  assert.equal(fingerprints.size, 2, 'each req must keep its own identity');
+  // Each req's own sourceLinks must not pick up the sibling's link — that
+  // would be exactly the false-merge evidence corruption this fixes.
+  for (const job of jobs) {
+    assert.deepEqual(
+      job.sourceLinks,
+      [{ source: 'remoteok', url: job.sourceUrl }],
+      `sourceLinks for ${job.description} must contain only its own posting`,
+    );
+  }
+});
+
+// Independent Reviewer finding CS28-5: the two-cluster case above was tested
+// end-to-end through collect(), but the three-cluster ambiguous case (the
+// one resolveFingerprintGroup itself calls out as "never guess which pair
+// goes together") was only unit-tested at the normalize.ts layer, without
+// sourceLinks in scope - the part of this fix collect.ts actually owns.
+test('a three-way ambiguous split keeps every posting apart with only its own sourceLinks', async () => {
+  const base = {
+    title: 'Senior Backend Engineer',
+    companyName: 'Acme',
+    location: 'Bangalore',
+    isRemote: false,
+    hasFullDescription: true,
+    applyUrl: 'https://example.test/apply',
+  };
+  const remote = {
+    ...createRemoteOkProvider(),
+    async *search() {
+      yield {
+        ...base,
+        source: 'remoteok' as const,
+        sourceJobId: 'req-1',
+        description: 'Owns the payments platform.',
+        sourceUrl: 'https://remoteok.com/remote-jobs/req-1',
+      };
+      yield {
+        ...base,
+        source: 'remoteok' as const,
+        sourceJobId: 'req-2',
+        description: 'Owns the fraud-detection platform.',
+        sourceUrl: 'https://remoteok.com/remote-jobs/req-2',
+      };
+    },
+  };
+  const himalayas = {
+    ...createHimalayasProvider(),
+    async *search() {
+      // Same title/company/city as both remoteok reqs, but nothing says
+      // which of the two this actually is - a genuinely ambiguous third.
+      yield {
+        ...base,
+        source: 'himalayas' as const,
+        sourceJobId: 'h-1',
+        description: 'Backend role, ambiguous which req this scrape is.',
+        sourceUrl: 'https://himalayas.app/jobs/req-either',
+      };
+    },
+  };
+  const threeWayRequest = {
+    ...request,
+    sources: ['remoteok', 'himalayas'] as ['remoteok', 'himalayas'],
+  };
+  const { jobs, status } = await collect(threeWayRequest, signal, [remote, himalayas]);
+  assert.equal(status, 'completed');
+  assert.equal(jobs.length, 3, 'no pair is guessed at - all three stay separate');
+  assert.equal(new Set(jobs.map((job) => job.fingerprint)).size, 3);
+  for (const job of jobs) {
+    assert.deepEqual(
+      job.sourceLinks,
+      [{ source: job.source, url: job.sourceUrl }],
+      `sourceLinks for ${job.description} must contain only its own posting, never a sibling's`,
+    );
+  }
 });
 
 test('search uses the established provider normalization and attribution', async () => {
@@ -589,6 +696,12 @@ test(
     assert.ok(total >= 54_500 && total < 60_000, `Acquisition took ${total}ms`);
     assert.equal(result.status, 'failed');
     assert.equal(result.jobs.length, 0);
+    // Pinned for the same reason `started` and `elapsed` are pinned two lines
+    // up, and this one had missed the file's own convention: `every()` over an
+    // empty array is true, so a regression returning `outcomes: []` alongside
+    // 'failed' and zero jobs satisfied all three assertions and the per-source
+    // timeout classification would have stopped being checked, silently.
+    assert.equal(result.outcomes.length, 5);
     assert.ok(result.outcomes.every((outcome) => outcome.errorCode === 'source_timeout'));
   },
 );
@@ -723,6 +836,74 @@ test('profile matching preserves exclusions, confidence ceilings and company fla
   );
 });
 
+// CS-22: collect.ts hardcoded derived: null when building the candidate
+// context, so no score was ever influenced by a parsed resume regardless of
+// what searchHandler passed in. This proves the fix end-to-end through the
+// real collect() entry point, not just the database/matching layers in
+// isolation - with a skill that exists ONLY in the resume, never in the
+// profile's typed tech stack, so a match here cannot be explained any other
+// way.
+test('a skill known only from the parsed resume still reaches scoring through collect()', async () => {
+  const now = Date.parse('2026-09-13T12:00:00Z');
+  const profile = matchingProfile(
+    writableProfileSchema.parse({
+      candidate: { fullName: 'Example', email: 'example@example.test', location: 'Hyderabad' },
+      preferences: { titles: ['Platform Engineer'], techStack: ['React'] },
+      application: { yearsOfExperience: 4 },
+    }),
+    { techStack: ['Kubernetes'], recentSkills: [], titles: [], yearsOfExperience: null },
+  );
+  const job = {
+    source: 'remoteok' as const,
+    sourceJobId: 'k8s-role',
+    title: 'Platform Engineer',
+    companyName: 'Example',
+    location: 'Remote',
+    isRemote: true,
+    employmentType: 'fulltime' as const,
+    hasFullDescription: true,
+    postedAt: new Date(now).toISOString(),
+    description: 'Own our Kubernetes platform end to end. '.repeat(20),
+    sourceUrl: 'https://remoteok.com/remote-jobs/k8s-fixture',
+    applyUrl: 'https://example.test/apply',
+  };
+  const provider = {
+    ...createRemoteOkProvider(),
+    async *search() {
+      yield job;
+    },
+  };
+  const { jobs: results } = await collect(request, signal, provider, undefined, { profile, now });
+  const scored = results[0]!;
+  assert.equal(scored.match?.resumeConsidered, true);
+  assert.ok(scored.match!.matchedSkills.includes('Kubernetes'));
+  assert.deepEqual(scored.match!.resumeSkills, ['Kubernetes']);
+
+  // Same request, profile with no resume at all: resumeConsidered must say so
+  // plainly, never be indistinguishable from "resume present but irrelevant".
+  const profileWithoutResume = matchingProfile(
+    writableProfileSchema.parse({
+      candidate: { fullName: 'Example', email: 'example@example.test', location: 'Hyderabad' },
+      preferences: { titles: ['Platform Engineer'], techStack: ['React'] },
+      application: { yearsOfExperience: 4 },
+    }),
+  );
+  const withoutResume = (
+    await collect(request, signal, provider, undefined, { profile: profileWithoutResume, now })
+  ).jobs[0]!;
+  assert.equal(withoutResume.match?.resumeConsidered, false);
+  assert.deepEqual(withoutResume.match!.resumeSkills, []);
+  assert.ok(!withoutResume.match!.matchedSkills.includes('Kubernetes'));
+
+  // The literal acceptance criterion: identical profiles differing only in
+  // resume-derived skills must produce different scores, not merely different
+  // evidence fields alongside an unchanged number.
+  assert.ok(
+    scored.match!.score > withoutResume.match!.score,
+    `resume-derived Kubernetes must raise the score: with=${scored.match!.score} without=${withoutResume.match!.score}`,
+  );
+});
+
 test('source failure and cancellation cannot masquerade as successful empty searches', async () => {
   const http = new HttpClient({
     retries: 0,
@@ -737,7 +918,7 @@ test('source failure and cancellation cannot masquerade as successful empty sear
   });
 });
 
-test('malformed source rows are excluded while successful empty sources remain explicit', async () => {
+test('malformed source rows are excluded while successful empty sources are marked empty, not completed', async () => {
   const valid = {
     source: 'remoteok' as const,
     sourceJobId: 'safe',
@@ -775,15 +956,21 @@ test('malformed source rows are excluded while successful empty sources remain e
   assert.equal(result.jobs.length, 1);
   assert.equal(result.outcomes[0]!.errorCode, 'invalid_response');
   assert.equal(result.outcomes[0]!.accepted, 1);
+  // CS-23: a provider that ran without error but yielded nothing is 'empty',
+  // never 'completed' - that silence is exactly what a job board's markup
+  // breaking looks like, and must not be reported as an ordinary success.
   assert.deepEqual(result.outcomes[1], {
     source: 'himalayas',
-    status: 'completed',
+    status: 'empty',
     accepted: 0,
     limited: false,
     errorCode: null,
   });
   const successfulEmpty = await collect({ ...request, sources: ['himalayas'] }, signal, empty);
-  assert.equal(successfulEmpty.status, 'completed');
+  // Every source in this run was empty, not completed - the run as a whole
+  // must not read as an unqualified success either.
+  assert.equal(successfulEmpty.status, 'partial');
+  assert.equal(successfulEmpty.outcomes[0]!.status, 'empty');
   assert.deepEqual(successfulEmpty.jobs, []);
   await assert.rejects(collect(request, signal, [invalid, invalid]), /Providers must match/);
 });

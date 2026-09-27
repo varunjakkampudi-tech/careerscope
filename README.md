@@ -1,5 +1,7 @@
 # CareerScope
 
+Repository-local engineering: [Copilot agents, prompts and evidence gates](docs/ai/README.md).
+
 A private, single-owner job-search workspace, formerly Job Radar.
 The product release version is defined in [package.json](package.json) and displayed
 in the app and mobile-site footers. See [versioned publishing](docs/ENCRYPTED-ADMIN.md#change-the-passphrase-and-publish)

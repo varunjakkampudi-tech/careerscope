@@ -14,18 +14,130 @@
  */
 import { execFileSync } from 'node:child_process';
 import { createServer } from 'node:http';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import process from 'node:process';
 
 const AI = '.ai';
 const PORT = Number(process.env.PORT ?? 7777);
+const BRAND_ICON = `data:image/svg+xml,${encodeURIComponent(
+  readFileSync(new URL('../apps/web/public/favicon.svg', import.meta.url), 'utf8'),
+)}`;
+
+// Collected fresh by snapshot() on every call (Node is single-threaded and
+// snapshot() reads synchronously, so there is no cross-request interleaving).
+let stateErrors = [];
+
+/**
+ * The board columns, and the single source of truth for which ticket statuses
+ * this UI knows about.
+ *
+ * Defined SERVER-SIDE and injected into the page below, rather than written out
+ * again in the client script, because the server validates against this list
+ * and the client renders from it. Two copies would let a status be renderable
+ * but unvalidated, or validated but unrenderable — which is how BLOCKED ended
+ * up in an unnamed bucket in the first place.
+ *
+ * BLOCKED has its own column deliberately. It previously matched no column and
+ * fell into "Not mapped", so the seven tickets whose visibility is the whole
+ * point — the ones waiting on an owner decision or an operator session — were
+ * rendered in a bucket the board could not name, while the header cheerfully
+ * reported "In Progress: 0 — Nothing in flight".
+ */
+const BOARD_COLUMNS = [
+  [
+    'Backlog',
+    ['IDEA', 'DISCOVERY'],
+    'var(--dim)',
+    'No ideas captured',
+    'New ideas will appear here.',
+  ],
+  ['To Do', ['READY', 'PLANNED'], 'var(--info)', 'Nothing queued', 'Ready work will appear here.'],
+  [
+    'In Progress',
+    ['IN_PROGRESS', 'CODE_REVIEW', 'SECURITY'],
+    'var(--warn)',
+    'Nothing in flight',
+    'Work being built will appear here.',
+  ],
+  [
+    'Blocked',
+    ['BLOCKED'],
+    'var(--bad)',
+    'Nothing blocked',
+    'Work that cannot proceed without an owner decision, an approval or host access.',
+  ],
+  [
+    'QA',
+    ['QA'],
+    'var(--purple)',
+    'No items in QA',
+    'Items will appear here when ready for testing.',
+  ],
+  [
+    'UAT',
+    ['UAT'],
+    'var(--ok)',
+    'No items in UAT',
+    'Completed work awaiting owner acceptance before release.',
+  ],
+  [
+    'Production',
+    ['RELEASED'],
+    'var(--ok)',
+    'Nothing released yet',
+    'Shipped work will appear here.',
+  ],
+];
+const KNOWN_STATUSES = new Set(BOARD_COLUMNS.flatMap((column) => column[1]));
+
+/** Finding severities this UI counts. Anything else is reported, not dropped. */
+const KNOWN_SEVERITIES = ['P0', 'P1', 'P2', 'P3'];
+
+// Per-severity emphasis, as a lookup rather than inline conditionals. A
+// severity with no entry here renders unstyled but still renders: styling must
+// never be what decides whether a number is visible.
+const SEVERITY_EMPHASIS = { P0: 'bad', P1: 'warn' };
+
+/**
+ * The severity cells for the summary strip, one per known severity, by
+ * construction.
+ *
+ * CS-67 F-67-1. The strip wrote these out as four literal cell() calls, and P3
+ * had been counted by nothing and rendered nowhere - open findings could exist
+ * that no cell on the board accounted for. Adding a fourth literal fixed that
+ * instance and left the class alone: a fifth severity added to the constant
+ * would have been counted, validated and invisible again, and deleting one line
+ * would have restored the original defect with every test still green.
+ *
+ * This is the function the browser actually runs. It is injected into the page
+ * script by source (see PAGE), so the module scope a test exercises and the
+ * client scope the owner sees can never be two different implementations -
+ * which is the same two-copies mistake, one level up. Everything it needs is a
+ * parameter for exactly that reason: stringified source carries no closure.
+ */
+function severityCells(countFor, cell, severities, emphasis) {
+  return severities
+    .map(function (severity) {
+      const count = countFor(severity);
+      // Emphasis only when there is something to emphasise, matching the
+      // previous behaviour of n('P0') ? 'bad' : ''.
+      return cell(count, severity + ' open findings', count ? emphasis[severity] || '' : '');
+    })
+    .join('');
+}
 
 const read = (p, fallback = null) => {
   if (!existsSync(p)) return fallback;
   try {
     return JSON.parse(readFileSync(p, 'utf8').replace(/\r\n/g, '\n'));
-  } catch {
+  } catch (error) {
+    // Unreadable is not "absent". Silently falling back here previously made
+    // a corrupt findings.json / backlog.json / progress.json render as "zero
+    // findings" / "empty backlog" / "no progress data" - an all-clear that is
+    // not true, the exact failure mode this project keeps rediscovering.
+    stateErrors.push(`${p} is not valid JSON: ${error.message}`);
     return fallback;
   }
 };
@@ -68,6 +180,7 @@ function agentsFromDisk() {
 }
 
 function snapshot() {
+  stateErrors = [];
   const week = isoWeek();
   const loop = read(join(AI, 'LOOP-STATE.json'), {});
   const beat = loop.lastHeartbeat ? Date.now() - Date.parse(loop.lastHeartbeat) : null;
@@ -76,6 +189,44 @@ function snapshot() {
   );
   const scrumDir = join(AI, 'scrum');
   const scrums = existsSync(scrumDir) ? readdirSync(scrumDir).sort().reverse() : [];
+
+  // Validate the two files whose shape the board depends on, BEFORE rendering.
+  // An unrecognised status previously landed in a "Not mapped" bucket the board
+  // could not name, and an unrecognised severity was simply not counted by any
+  // of the P0/P1/P2 cells - both are the same failure this project keeps
+  // rediscovering, an unreadable input treated as nothing to report. They are
+  // now reported through stateErrors, which the client already renders as a
+  // persistent, unmissable banner.
+  const backlog = read(join(AI, 'backlog.json'), { items: [] });
+  const findings = read(join(AI, 'findings.json'), { findings: [] });
+  const unknownStatuses = new Map();
+  for (const item of backlog.items ?? []) {
+    if (KNOWN_STATUSES.has(item.status)) continue;
+    const ids = unknownStatuses.get(item.status) ?? [];
+    ids.push(item.id);
+    unknownStatuses.set(item.status, ids);
+  }
+  for (const [status, ids] of unknownStatuses) {
+    stateErrors.push(
+      `.ai/backlog.json uses status ${JSON.stringify(status)} which this board has no column for` +
+        ` (${ids.join(', ')}). Those items are shown under "Not mapped" and are NOT counted in any column.`,
+    );
+  }
+  const unknownSeverities = new Map();
+  for (const finding of findings.items ?? findings.findings ?? []) {
+    if (finding.status === 'FIXED' || finding.status === 'CLOSED') continue;
+    if (KNOWN_SEVERITIES.includes(finding.severity)) continue;
+    const ids = unknownSeverities.get(finding.severity) ?? [];
+    ids.push(finding.id ?? '(no id)');
+    unknownSeverities.set(finding.severity, ids);
+  }
+  for (const [severity, ids] of unknownSeverities) {
+    stateErrors.push(
+      `.ai/findings.json has open finding(s) with severity ${JSON.stringify(severity)}, which this` +
+        ` board does not count (${ids.join(', ')}). The findings totals below exclude them.`,
+    );
+  }
+
   return {
     generatedAt: new Date().toISOString(),
     repo: {
@@ -92,8 +243,8 @@ function snapshot() {
     sprint: read(join(AI, 'sprints', `${week}.json`)),
     retro: read(join(AI, 'sprints', `${week}-retrospective.json`)),
     scrum: scrums[0] ? read(join(scrumDir, scrums[0])) : null,
-    backlog: read(join(AI, 'backlog.json'), { items: [] }),
-    findings: read(join(AI, 'findings.json'), { findings: [] }),
+    backlog,
+    findings,
     releasePlan: read(join(AI, 'release-plan.json'), {}),
     progress: read(join(AI, 'progress.json'), { areas: [] }),
     discovery: read(join(AI, 'product-discovery.json'), { candidates: [] }),
@@ -107,6 +258,12 @@ function snapshot() {
     agents: agentsFromDisk(),
     history: dailyProgress(),
     activity: dailyActivity(),
+    // Non-empty means one or more .ai/*.json files above fell back to a safe
+    // default because they could not be parsed. That default keeps every
+    // render function below from throwing, but it is not "no data" - the
+    // client renders this list as a persistent, unmissable banner instead of
+    // silently showing zero findings, an empty backlog or unmeasured progress.
+    stateErrors: [...stateErrors],
   };
 }
 
@@ -175,6 +332,7 @@ function dailyActivity() {
 const PAGE = `<!doctype html>
 <html lang="en" data-theme="dark"><head><meta charset="utf-8"><title>CareerScope Engineering</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="${BRAND_ICON}">
 <style>
 :root{--bg:#080B10;--surface:#0F141A;--panel:#141B22;--line:#1F2937;--ink:#F4F7FA;--muted:#AEB8C4;--ok:#2DD4A5;--info:#38BDF8;--warn:#F59E0B;--bad:#EF4444;--dim:#64748B;--unmeasured:#94A3B8;--focus:#7DE7CF;--hover:#151E26;--purple:#A78BFA;color-scheme:dark}
 html[data-theme=light]{--bg:#F5F7FA;--surface:#FFFFFF;--panel:#FFFFFF;--line:#D8E0E8;--ink:#10151B;--muted:#52606D;--ok:#0B7F68;--info:#1E64D6;--warn:#B45309;--bad:#DC2626;--dim:#64748B;--unmeasured:#6B7A8A;--focus:#0B7F68;--hover:#EEF2F5;--purple:#6D4AE0;color-scheme:light}
@@ -186,7 +344,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 13px/1.5 ui-sans-se
 /* Sidebar */
 aside{background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px;gap:6px;position:sticky;top:0;height:100vh}
 .brand{display:flex;align-items:center;gap:10px;padding:0 8px 16px}
-.brand b{font-size:17px;font-weight:700;letter-spacing:-.02em;display:block;line-height:1.15}
+.brand img{width:32px;height:32px;flex-shrink:0}
+.brand b{font-size:17px;font-weight:700;letter-spacing:0;color:var(--ink);display:block;line-height:1.15}
 .brand span{color:var(--muted);font-size:12px}
 nav{display:flex;flex-direction:column;gap:2px}
 nav button{display:flex;align-items:center;gap:10px;background:none;border:0;border-radius:6px;color:var(--muted);padding:9px 10px;cursor:pointer;font:inherit;font-size:13px;font-weight:500;text-align:left}
@@ -287,7 +446,7 @@ main:focus{outline:none}
 <a class="skip" href="#main">Skip to content</a>
 <aside>
   <div class="brand">
-    <svg width="26" height="26" viewBox="0 0 56 56" aria-hidden="true" fill="none" style="color:var(--ok)"><path fill="currentColor" fill-rule="evenodd" d="M52 26C52 39.255 41.255 50 28 50C14.745 50 4 39.255 4 26C4 12.745 14.745 2 28 2C38.1 2 46.9 8.15 50.25 17H40.2C37.8 13.75 33.35 11 28 11C19.715 11 13 17.715 13 26C13 34.285 19.715 41 28 41C33.35 41 37.8 38.25 40.2 35H50.25C46.9 43.85 38.1 50 28 50Z"/><circle cx="39" cy="26" r="4.25" fill="currentColor"/></svg>
+    <img src="${BRAND_ICON}" width="32" height="32" alt="">
     <span><b>CareerScope</b>Engineering</span>
   </div>
   <nav id="nav"></nav>
@@ -377,30 +536,30 @@ function agentsCard(){
 
 // Six columns over the internal statuses. Anything unmapped gets its own column
 // rather than vanishing; a board that drops work is worse than no board.
-const COLS=[
-  ['Backlog',['IDEA','DISCOVERY'],'var(--dim)','No ideas captured','New ideas will appear here.'],
-  ['To Do',['READY','PLANNED'],'var(--info)','Nothing queued','Ready work will appear here.'],
-  ['In Progress',['IN_PROGRESS','CODE_REVIEW','SECURITY'],'var(--warn)','Nothing in flight','Work being built will appear here.'],
-  ['QA',['QA'],'var(--purple)','No items in QA','Items will appear here when ready for testing.'],
-  ['Ready',['READY_FOR_RELEASE'],'var(--ok)','No items ready','Completed work awaiting release.'],
-  ['Production',['RELEASED'],'var(--ok)','Nothing released yet','Shipped work will appear here.'],
-];
+const COLS=${JSON.stringify(BOARD_COLUMNS)};
+// Injected from the module, not restated here (CS-67): the board renders one
+// severity cell per entry, so a severity cannot be counted-but-unrendered, and
+// the function below is literally the one the module's tests exercise.
+const SEVS=${JSON.stringify(KNOWN_SEVERITIES)};
+const SEVCLS=${JSON.stringify(SEVERITY_EMPHASIS)};
+const severityCells=${severityCells.toString()};
 function boardCard(limit){
   const items=d.backlog.items||[];
   const mapped=new Set(COLS.flatMap(c=>c[1]));
   const loose=items.filter(i=>!mapped.has(i.status));
-  const cols=loose.length?[...COLS,['Not mapped',[],'var(--bad)','—','These statuses match no column.']]:COLS;
+  const cols=loose.length?[...COLS,['Not mapped — UNRECOGNISED STATUS',[],'var(--bad)','—','These statuses match no column. This is a defect in the data or in this board, not a category of work.']]:COLS;
   const tile=i=>'<div class="bcard'+(i.status==='BLOCKED'?' blocked':'')+'"><div class="bid">'+esc(i.id)+'</div><div class="btitle">'+esc(i.title)+'</div><div class="tags"><span class="tag '+esc(i.priority)+'">'+esc(i.priority)+'</span><span class="tag '+esc(i.dimension||'')+'">'+esc(i.dimension||'?')+'</span>'+(i.carriedCount?'<span class="tag P2">carried '+i.carriedCount+'×</span>':'')+'</div></div>';
   return '<div class="card"><div class="boardhead"><div><h2>Work Backlog</h2><p>From idea to production</p></div><span class="grow"></span><span class="muted" style="font-size:12px">'+num(items.length)+' items</span>'
     +(limit?'<button class="more" data-goto="Backlog">View all →</button>':'')+'</div>'
     +'<div class="board">'+cols.map(([name,st,c,t,sub])=>{
-      const list=name==='Not mapped'?loose:items.filter(i=>st.includes(i.status));
+      const list=name.startsWith('Not mapped')?loose:items.filter(i=>st.includes(i.status));
       const show=limit?list.slice(0,3):list;
       return '<section class="col"><div class="colhead" style="--c:'+c+'">'+esc(name)+'<span class="count">'+list.length+'</span></div><div class="colbody">'
         +(list.length?show.map(tile).join('')+(list.length>show.length?'<button class="more" data-goto="Backlog">+ '+(list.length-show.length)+' more</button>':'')
           :'<div class="mt"><b>'+esc(t)+'</b><small>'+esc(sub)+'</small></div>')
         +'</div></section>';}).join('')+'</div></div>';
 }
+// Per-severity emphasis, as a lookup rather than inline conditionals. A
 function strip(){
   const f=d.findings.items||d.findings.findings||[];
   const open=f.filter(x=>x.status!=='FIXED'&&x.status!=='CLOSED');
@@ -409,9 +568,17 @@ function strip(){
   const active=items.filter(i=>['IN_PROGRESS','CODE_REVIEW','QA','SECURITY'].includes(i.status)).length;
   const cell=(v,k,cls)=>'<div class="stat"><div><div class="sv '+(cls||'')+'">'+esc(v)+'</div><div class="sk">'+esc(k)+'</div></div></div>';
   return '<div class="strip">'+cell(num(items.length),'Total items')
-    +cell(n('P0'),'P0 findings',n('P0')?'bad':'')
-    +cell(n('P1'),'P1 findings',n('P1')?'warn':'')
-    +cell(n('P2'),'P2 findings')
+    // These count OPEN ENTRIES IN .ai/findings.json - review findings - NOT
+    // ticket priorities. The board tiles above carry P0/P1/P2 tags from the
+    // BACKLOG, so "P1 findings" next to a P1 ticket read as a contradiction
+    // when both were on screen: 0 P1 findings while CS-30, CS-52, CS-3 and
+    // CS-24 are all P1 tickets. Both numbers were correct; the labels did not
+    // say which thing they were counting. The fix is the label, not the number
+    // - making a correct count wrong to satisfy an ambiguous label would have
+    // been the real defect.
+    // The severity cells are generated from KNOWN_SEVERITIES, not written out
+    // one by one, so a severity cannot be counted-but-unrendered (CS-67).
+    +severityCells(n, cell, SEVS, SEVCLS)
     +cell(active+'/2','WIP',active>2?'bad':'ok')
     +cell(d.sprint&&d.sprint.targetReleaseDate?d.sprint.targetReleaseDate:'—','Target release')+'</div>';
 }
@@ -441,13 +608,19 @@ function markNav(){
     else b.removeAttribute('aria-current');
   }
 }
+function stateErrorBanner(){
+  if(!d.stateErrors||!d.stateErrors.length)return'';
+  return '<div class="card" role="alert" style="border-color:var(--bad)"><h2 style="color:var(--bad)">State unreadable — not "no data"</h2>'
+    +'<p class="muted" style="margin:0 0 6px">The figures below fell back to an empty default so this screen can still render. That default is not evidence of zero findings, an empty backlog or unmeasured progress — fix the file(s) below before trusting this screen.</p>'
+    +'<ul style="margin:0;padding-left:18px">'+d.stateErrors.map(e=>'<li>'+esc(e)+'</li>').join('')+'</ul></div>';
+}
 function paint(){
   markNav();
   const paused=d.mode&&d.mode.mode==='PAUSED';
   document.getElementById('proc').innerHTML='<span class="dot '+(paused?'warn':'ok')+'" style="margin-top:5px"></span><div><span class="k">Process</span><b style="color:var(--'+(paused?'warn':'ok')+')">'+(paused?'PAUSED':'ACTIVE')+'</b>'+(paused?'<small>until '+esc(d.mode.resumeOn||'—')+'</small>':'')+'</div>';
   document.getElementById('stamp').textContent=new Date(d.generatedAt).toLocaleString();
   document.getElementById('hdr').textContent=stamp();
-  document.getElementById('main').innerHTML=VIEWS[tab]();
+  document.getElementById('main').innerHTML=stateErrorBanner()+VIEWS[tab]();
   document.title=tab+' — CareerScope Engineering';
 }
 function go(t){
@@ -494,7 +667,7 @@ async function load(){
     document.querySelector('.top').classList.remove('down');
     // Repaint only when something changed, so the page does not flicker and a
     // reader does not lose their place every few seconds.
-    const sig=JSON.stringify([next.repo,next.loop,next.backlog,next.findings,next.sprint,next.mode,next.progress]);
+    const sig=JSON.stringify([next.repo,next.loop,next.backlog,next.findings,next.sprint,next.mode,next.progress,next.stateErrors]);
     d=next;
     if(sig!==lastSig){const first=lastSig==='';lastSig=sig;paint();if(!first)say('Updated');}
     else{document.getElementById('hdr').textContent=stamp();}
@@ -507,7 +680,7 @@ buildNav();
 load();setInterval(load,3000);
 </script></body></html>`;
 
-createServer((req, res) => {
+const server = createServer((req, res) => {
   if (req.url === '/state') {
     res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
     res.end(JSON.stringify(snapshot()));
@@ -516,8 +689,33 @@ createServer((req, res) => {
   res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
   res.end(PAGE);
   // Loopback only: this exposes engineering state and is not authenticated.
-}).listen(PORT, '127.0.0.1', () => {
-  process.stdout.write(
-    `\n  Engineering Control Center  http://127.0.0.1:${PORT}\n  Read-only, loopback only, reads .ai/ — Ctrl+C to stop\n\n`,
-  );
 });
+
+export {
+  snapshot,
+  BOARD_COLUMNS,
+  KNOWN_STATUSES,
+  KNOWN_SEVERITIES,
+  severityCells,
+  SEVERITY_EMPHASIS,
+  // Exported so a test can assert what the browser is actually sent. Testing
+  // severityCells alone proved the helper correct and left the defect
+  // restorable at the call site: reverting strip() to literal cells and
+  // dropping one kept every test green, which is the original CS-67 failure
+  // reached from a different direction.
+  PAGE,
+};
+
+// Starting the server is a side effect that a test importing snapshot() for
+// mutation testing must not trigger; only run it when this file is the entry
+// point, matching the guard already used by engineering.mjs and friends.
+if (
+  process.argv[1] &&
+  realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))
+) {
+  server.listen(PORT, '127.0.0.1', () => {
+    process.stdout.write(
+      `\n  Engineering Control Center  http://127.0.0.1:${PORT}\n  Read-only, loopback only, reads .ai/ — Ctrl+C to stop\n\n`,
+    );
+  });
+}

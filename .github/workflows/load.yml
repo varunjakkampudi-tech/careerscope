@@ -1,0 +1,133 @@
+name: Load
+
+# The two checks that are real, thorough and deliberately NOT on the push path.
+#
+# CS-52 classifies every executable check as ci, deploy, on-demand,
+# operator-only or manual, and `npm run checks:registry` verifies each
+# classification against what the workflows actually do. These two are
+# `on-demand`, and this workflow is what makes that classification true rather
+# than a euphemism for "nobody runs it".
+#
+# They are not on every push for a reason that is worth stating, because the
+# tempting alternatives are both forbidden here:
+#
+#   check-performance.ts asserts hard p95 and p99 ceilings (750ms, 500ms,
+#   1000ms). A shared GitHub runner's variance would make those flake, and the
+#   only two ways to make a flaky ceiling go green are to inflate it or to
+#   retry it — this repository forbids both, so the honest option is to run it
+#   deliberately and treat a failure as a real regression.
+#
+#   check-soak.ts runs sustained mixed load for thirty minutes by default.
+#   Shortening it until it fitted a push budget would stop it being a soak, so
+#   the duration is an input instead, and the default stays long.
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_performance:
+        description: 'Run the latency and concurrency check'
+        required: false
+        default: true
+        type: boolean
+      run_soak:
+        description: 'Run the sustained-load soak'
+        required: false
+        default: false
+        type: boolean
+      soak_duration_ms:
+        description: 'Soak duration in milliseconds (default 1800000 = 30 minutes)'
+        required: false
+        default: '1800000'
+        type: string
+
+concurrency:
+  group: load-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '24'
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+jobs:
+  load:
+    name: Latency and soak
+    runs-on: ubuntu-latest
+    # The soak's own default is thirty minutes and it needs room to report
+    # afterwards; a job that is killed mid-soak produces no verdict at all.
+    timeout-minutes: 75
+
+    services:
+      postgres:
+        image: postgres:17.6-alpine
+        env:
+          POSTGRES_DB: careerscope
+          POSTGRES_USER: careerscope
+          POSTGRES_PASSWORD: ci-load-password
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd="pg_isready -U careerscope -d careerscope"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+      localstack:
+        image: localstack/localstack:4.7.0
+        env:
+          SERVICES: sqs,s3
+          AWS_DEFAULT_REGION: us-east-1
+          DEBUG: '0'
+        ports: ['4566:4566']
+
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install root workspace
+        run: npm ci
+
+      - name: Install V2
+        run: npm --prefix v2 ci
+
+      - name: Build the shared domain packages V2 depends on
+        run: npm --prefix v2 run build:domain
+
+      # Refuse rather than default. A dispatch with both inputs off would
+      # otherwise finish green having measured nothing, which is the "passed
+      # while unable to look" shape in a different costume.
+      - name: Require something to actually run
+        if: ${{ !inputs.run_performance && !inputs.run_soak }}
+        run: |
+          echo "::error::Neither check was selected. A green run that measured nothing is not evidence." >&2
+          exit 1
+
+      - name: Write a CI-built environment file
+        run: |
+          cat > v2/.env <<'EOF'
+          DATABASE_URL=******127.0.0.1:5432/careerscope
+          LOCAL_AWS_ENDPOINT=http://127.0.0.1:4566
+          AWS_ACCESS_KEY_ID=test
+          AWS_SECRET_ACCESS_KEY=test
+          AWS_DEFAULT_REGION=us-east-1
+          EOF
+
+      # Percentiles are recorded, not invented: the check reports the full
+      # distribution and fails only on ceilings that would be user-visible.
+      - name: Measure authenticated read latency and concurrency
+        if: ${{ inputs.run_performance }}
+        run: npm --prefix v2 run test:performance
+
+      # Deterministic local fixtures only — no live provider, owner data or
+      # network acquisition takes part. Discovery is published by the real
+      # outbox publisher through a disposable queue and consumed by the real
+      # dispatch path, so an outbox defect cannot be hidden by the harness.
+      - name: Sustained mixed-load soak
+        if: ${{ inputs.run_soak }}
+        env:
+          SOAK_DURATION_MS: ${{ inputs.soak_duration_ms }}
+        run: npm --prefix v2 run test:soak

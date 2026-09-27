@@ -429,6 +429,63 @@ describe('dedupeJobs', () => {
   it('returns an empty array for no input', () => {
     expect(dedupeJobs([])).toEqual([]);
   });
+
+  it('keeps two distinct reqs from the same source apart, even with an identical title, company and city', () => {
+    const reqOne = normalizeJob(
+      rawJob({ sourceJobId: '9001', description: 'Owns the payments platform.' }),
+      { now: NOW },
+    );
+    const reqTwo = normalizeJob(
+      rawJob({ sourceJobId: '9002', description: 'Owns the fraud-detection platform.' }),
+      { now: NOW },
+    );
+
+    const result = dedupeJobs([reqOne, reqTwo]);
+
+    expect(result).toHaveLength(2);
+    expect(result[0]?.fingerprint).not.toBe(result[1]?.fingerprint);
+    // Distinct from the raw content fingerprint too: a genuinely different req
+    // must not silently keep the identity a *merged* posting would have used.
+    expect(result.map((job) => job.fingerprint)).not.toContain(reqOne.fingerprint);
+  });
+
+  it('gives a split posting a fingerprint that is the same on every call, not run-dependent', () => {
+    const reqOne = normalizeJob(rawJob({ sourceJobId: '9001' }), { now: NOW });
+    const reqTwo = normalizeJob(rawJob({ sourceJobId: '9002' }), { now: NOW });
+
+    const first = dedupeJobs([reqOne, reqTwo]);
+    const second = dedupeJobs([reqTwo, reqOne]);
+
+    expect(new Set(first.map((job) => job.fingerprint))).toEqual(
+      new Set(second.map((job) => job.fingerprint)),
+    );
+  });
+
+  it('does not guess which of two same-source reqs an unrelated source belongs to', () => {
+    const reqOne = normalizeJob(rawJob({ sourceJobId: '9001' }), { now: NOW });
+    const reqTwo = normalizeJob(rawJob({ sourceJobId: '9002' }), { now: NOW });
+    const viaAnotherBoard = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'n-1',
+        companyName: 'Acme',
+        location: 'Bangalore',
+        sourceUrl: 'https://naukri.com/job/1',
+      }),
+      { now: NOW },
+    );
+
+    const result = dedupeJobs([reqOne, reqTwo, viaAnotherBoard]);
+
+    expect(result).toHaveLength(3);
+    expect(new Set(result.map((job) => job.fingerprint)).size).toBe(3);
+  });
+
+  it('still collapses a genuine cross-source duplicate when no source reports a split', () => {
+    // Confirms the split logic did not regress the ordinary multi-board case
+    // above: greenhouse + naukri here contribute one id each.
+    expect(dedupeJobs([atsFull, scrapedThin])).toHaveLength(1);
+  });
 });
 
 describe('mergeDuplicates', () => {

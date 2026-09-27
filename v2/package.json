@@ -13,18 +13,21 @@
   ],
   "scripts": {
     "test": "npm run build:core && node --env-file=.env --import tsx --test packages/core/src/*.test.ts apps/workers/search/src/*.test.ts",
-    "test:unit": "npm run build:core && node --import tsx --test packages/core/src/commands.test.ts packages/core/src/file-storage.test.ts packages/core/src/inference.test.ts packages/core/src/profile.test.ts apps/workers/search/src/collect.test.ts",
+    "test:unit": "npm run build:core && node --import tsx --test packages/core/src/ai-provider.test.ts packages/core/src/commands.test.ts packages/core/src/file-storage.test.ts packages/core/src/inference.test.ts packages/core/src/profile.test.ts apps/workers/search/src/collect.test.ts apps/web/src/lib/api.test.ts",
     "benchmark:llm": "node --import tsx scripts/benchmark-llm.ts",
     "test:ui": "node --env-file=.env --import tsx scripts/check-ui.ts",
+    "test:visual": "node --import tsx scripts/visual-regression.ts",
     "test:queue-runtime": "npm run build:core && node --env-file=.env --import tsx --test scripts/check-queue-runtime.ts",
     "test:database-recovery": "npm run build:core && node --env-file=.env --import tsx --test scripts/check-database-recovery.ts",
+    "test:backfill-job-sightings": "npm run build:core && node --env-file=.env --import tsx --test scripts/backfill-job-sightings.test.ts",
     "test:crash-recovery": "npm run build:core && node --env-file=.env --import tsx scripts/check-crash-recovery.ts",
     "test:performance": "npm run build:core && node --env-file=.env --import tsx scripts/check-performance.ts",
     "test:soak": "npm run build:core && node --env-file=.env --import tsx scripts/check-soak.ts",
-    "typecheck": "tsc -b && npm exec --workspace @careerscope/web -- next typegen && tsc --noEmit --project apps/web/tsconfig.json",
+    "typecheck": "tsc -b --force && npm exec --workspace @careerscope/web -- next typegen && tsc --noEmit --project apps/web/tsconfig.json && npm run typecheck:tests",
+    "typecheck:tests": "node scripts/check-test-types.mjs",
     "build:core": "tsc -b",
     "build:domain": "npm --prefix .. run build --workspace @job-radar/providers --workspace @job-radar/matching --workspace @job-radar/resume",
-    "build": "tsc -b && npm run build --workspace @careerscope/web",
+    "build": "node scripts/clean-dist.mjs && tsc -b && npm run build --workspace @careerscope/web",
     "lint": "eslint packages apps/api apps/workers scripts drizzle.config.ts eslint.config.mjs && npm run lint --workspace @careerscope/web",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
@@ -32,6 +35,7 @@
     "setup:owner": "node --env-file=.env --import tsx scripts/setup-owner.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node --env-file=.env --import tsx scripts/migrate.ts",
+    "db:backfill-job-sightings": "node --env-file=.env --import tsx scripts/backfill-job-sightings.ts",
     "services": "docker compose --env-file .env -f compose.yml up -d --wait",
     "services:queue": "docker compose --env-file .env -f compose.yml --profile bullmq up -d --wait --no-deps redis-queue",
     "start": "concurrently --kill-others -n api,publisher,worker,files,web \"npm run start:api\" \"npm run start:publisher\" \"npm run start:worker\" \"npm run start:files\" \"npm run start:web\"",
@@ -40,20 +44,27 @@
     "start:worker": "node --env-file=.env apps/workers/search/dist/main.js",
     "start:files": "node --env-file=.env apps/workers/search/dist/files.js",
     "start:web": "npm run start --workspace @careerscope/web",
-    "test:integration": "npm run build:core && node --env-file=.env --import tsx --test packages/core/src/bull-queue.test.ts packages/core/src/database.test.ts packages/core/src/market.test.ts packages/core/src/queue.test.ts packages/core/src/resumes.test.ts packages/core/src/runtime.test.ts"
+    "test:integration": "npm run build:core && node --env-file=.env --import tsx --test packages/core/src/bull-queue.test.ts packages/core/src/database.test.ts packages/core/src/market.test.ts packages/core/src/queue.test.ts packages/core/src/resumes.test.ts packages/core/src/runtime.test.ts scripts/run-scheduled-discovery.test.ts scripts/check-lead-liveness.test.ts scripts/enforce-search-retention.test.ts",
+    "test:registration": "node --import tsx scripts/check-test-registration.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^24.0.0",
     "@types/pg": "^8.15.0",
+    "@types/pngjs": "^6.0.5",
     "axe-core": "^4.12.1",
     "concurrently": "^10.0.5",
     "drizzle-kit": "^0.31.10",
     "eslint": "^10.10.0",
     "globals": "^17.12.0",
+    "pixelmatch": "^7.2.0",
+    "pngjs": "^7.0.0",
     "prettier": "^3.9.6",
     "tsx": "^4.23.0",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.70.0"
+  },
+  "dependencies": {
+    "undici": "^8.11.0"
   }
 }

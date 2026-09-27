@@ -25,20 +25,40 @@ export const candidateSchema = z.object({
   portfolio: z.string().trim().url().or(z.literal('')).default(''),
 });
 
+/**
+ * Per-entry length bound for the free-text arrays an owner types.
+ *
+ * F-66-3. Every one of these arrays bounded its LENGTH and left each entry
+ * unbounded, while the single-value fields beside them (`fullName`,
+ * `location`) have been capped at 120 all along. That asymmetry was not a
+ * decision, and it mattered: `preferences.titles` flows through
+ * `candidate.titles` into the match `reason` string, which becomes stored,
+ * renderable evidence repeated across every scored job in a run. CS-66
+ * constrained which CHARACTERS may reach that evidence; length was the second
+ * unconstrained property of the same inlet and nobody had named it.
+ *
+ * The request body cap (16 KiB) bounds the damage but does not bound the
+ * field, and "some other layer happens to stop it" is what this file exists
+ * not to rely on. 120 matches the neighbouring single-value fields, and is
+ * twice the 60 the resume extractor already allows for a derived title.
+ */
+const OWNER_TEXT_MAX = 120;
+const ownerText = () => z.string().trim().min(1).max(OWNER_TEXT_MAX);
+
 export const preferencesSchema = z.object({
   /** Role titles the candidate is targeting, e.g. "Senior Software Engineer". */
-  titles: z.array(z.string().trim().min(1)).min(1, 'Add at least one target role').max(25),
+  titles: z.array(ownerText()).min(1, 'Add at least one target role').max(25),
   /** Skills the candidate has. Seeded from the resume, editable by the user. */
-  techStack: z.array(z.string().trim().min(1)).min(1, 'Add at least one skill').max(120),
-  locations: z.array(z.string().trim().min(1)).max(25).default([]),
+  techStack: z.array(ownerText()).min(1, 'Add at least one skill').max(120),
+  locations: z.array(ownerText()).max(25).default([]),
   remoteOnly: z.boolean().default(false),
   /** Annual figure in the profile currency. null = no floor. */
   minSalary: z.number().int().nonnegative().nullable().default(null),
   employmentTypes: z.array(z.enum(EMPLOYMENT_TYPES)).min(1).default(['fulltime']),
   /** A listing containing any of these is excluded outright. */
-  excludeKeywords: z.array(z.string().trim().min(1)).max(60).default([]),
+  excludeKeywords: z.array(ownerText()).max(60).default([]),
   /** Shown in results but flagged — never auto-applied to. */
-  excludeCompanies: z.array(z.string().trim().min(1)).max(200).default([]),
+  excludeCompanies: z.array(ownerText()).max(200).default([]),
 });
 
 export const applicationSchema = z.object({
@@ -90,6 +110,17 @@ export const derivedResumeSchema = z.object({
   recentSkills: z.array(z.string()).default([]),
   /** Job titles found in the experience section, most recent first. */
   titles: z.array(z.string()).default([]),
+  /**
+   * Why `titles` is empty when it is (CS-64 AC2). An empty array used to mean
+   * both "this resume names no role" and "this extractor could not read this
+   * resume", and no consumer could tell them apart.
+   *
+   * OPTIONAL WITHOUT A DEFAULT, on purpose: resumes parsed before this field
+   * existed have no honest value for it, and inventing one ('derived' for an
+   * empty list, say) would put the silence back inside the field that exists
+   * to end it. Undefined means "parsed before this was recorded".
+   */
+  titlesStatus: z.enum(['derived', 'no-content', 'undeterminable']).optional(),
   yearsOfExperience: z.number().nullable(),
 });
 export type DerivedResume = z.infer<typeof derivedResumeSchema>;
@@ -155,7 +186,15 @@ export type Salary = z.infer<typeof salarySchema>;
 
 export const jobSchema = z.object({
   id: z.string(),
-  /** Stable hash of normalised title+company+location — dedupes across sources. */
+  /**
+   * Stable identity for this posting. Normally a hash of normalised
+   * title+company+location, so the same role posted to several boards
+   * dedupes to one row. When a source itself reports more than one distinct
+   * posting under that same title+company+location — two real reqs, not a
+   * repost — this becomes a hash that also includes the source and its own
+   * job id, so the two openings do not collapse into one. See
+   * `resolveFingerprintGroup` in `@job-radar/providers`.
+   */
   fingerprint: z.string(),
   source: z.enum(ALL_SOURCES),
   sourceJobId: z.string(),
@@ -241,6 +280,12 @@ export const matchBreakdownSchema = z.object({
   flaggedCompany: z.boolean().default(false),
   llmScore: z.number().min(0).max(1).nullable().default(null),
   llmRationale: z.string().nullable().default(null),
+  /** False when no parsed resume was available for this candidate - shown so
+   * "no resume" is never indistinguishable from "resume matched nothing". */
+  resumeConsidered: z.boolean().default(false),
+  /** Matched skills that came from the resume specifically, not the profile's
+   * typed tech stack, so the resume's contribution is visible in the evidence. */
+  resumeSkills: z.array(z.string()).default([]),
 });
 export type MatchBreakdown = z.infer<typeof matchBreakdownSchema>;
 

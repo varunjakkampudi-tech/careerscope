@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "baseline_id": "OS-BASELINE-20260919",
+  "timestamp": "2026-09-19T21:09:10.128Z",
+  "started_at": "2026-09-19T21:03:33.727Z",
+  "git_commit": "5239b0a87796bd26792c525408342970894759cb",
+  "git_branch": "main",
+  "dirty_entries": 62,
+  "environment": {
+    "platform": "Windows",
+    "default_node": "22.23.2",
+    "verified_node": "26.8.1",
+    "npm": "11.19.0",
+    "worktrees": 1,
+    "agent": "CareerScope QA",
+    "clock_note": "Execution clock reported September 19; conversation date reports September 20. Preserve measured timestamps."
+  },
+  "build": { "status": "PASS", "command": "npm run build", "exit_code": 0 },
+  "lint": { "status": "PASS", "command": "npm run lint", "exit_code": 0, "warnings": 1 },
+  "typecheck": { "status": "PASS", "command": "npm run typecheck", "exit_code": 0 },
+  "unit_tests": {
+    "status": "PASS",
+    "control_plane": {
+      "command": "node --test scripts/engineering.test.mjs scripts/engineering-hook.test.mjs",
+      "exit_code": 0,
+      "passed": 131
+    },
+    "application": {
+      "command": "Vitest startVitest API with isolated envDir/cacheDir; see baseline.md",
+      "exit_code": 0,
+      "passed": 1047,
+      "files": 67,
+      "skipped": 0
+    }
+  },
+  "integration_tests": {
+    "status": "NOT_RUN",
+    "reason": "V2 launcher reads private environment and persistent storage; isolated prerequisites not established."
+  },
+  "e2e_tests": {
+    "status": "NOT_RUN",
+    "reason": "No product behavior changes planned; isolated application browser prerequisites not established."
+  },
+  "security": {
+    "status": "NOT_RUN",
+    "reason": "No current security verdict or dependency scan; do not infer security from green tests."
+  },
+  "dependency_status": {
+    "status": "NOT_RUN",
+    "reason": "External advisory lookup not performed in baseline; no dependencies added."
+  },
+  "known_failures": [
+    {
+      "id": "BASELINE-REVIEW",
+      "classification": "BASELINE_EXISTING",
+      "command": "node scripts/check-customizations.mjs",
+      "exit_code": 1,
+      "signature": "latest review snapshot lacks required metadata/sections"
+    },
+    {
+      "id": "BASELINE-FORMAT",
+      "classification": "BASELINE_EXISTING",
+      "command": "npm run format:check",
+      "exit_code": 1,
+      "signature": "docs/ai/initial-repository-audit.md formatting"
+    },
+    {
+      "id": "BASELINE-INCOMPLETE",
+      "classification": "BASELINE_EXISTING",
+      "command": "node scripts/engineering.mjs verify",
+      "exit_code": 1,
+      "signature": "objective unfinished; twelve gates unverified; expected fail-closed refusal"
+    }
+  ],
+  "configuration": {
+    "agents": "PASS: 53 checks",
+    "skills": "PASS: 20 skills",
+    "engineering_check": "PASS: valid, incomplete"
+  },
+  "side_effects": "474 existing ignored generated outputs/build-info metadata refreshed. No added/removed build outputs. Git status unchanged; 191 engineering/customization file fingerprints unchanged.",
+  "limitations": [
+    "This is a dirty-worktree baseline, not a clean-commit qualification.",
+    "Results are attributed to the actual native QA invocation, not signed runtime attestations.",
+    "Historical failures before this baseline cannot be attributed to this task without additional evidence."
+  ]
+}

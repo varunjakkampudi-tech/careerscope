@@ -5,6 +5,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { FileText, LoaderCircle, RefreshCw, Trash2, Upload, X } from 'lucide-react';
 import type { ResumeParseOutcome } from '@careerscope/core';
 import { api } from '../lib/api';
+import { useOwner, ownerKey } from '../lib/session';
+import { EmptyState, ErrorState, LoadingState } from './ui-states';
 
 export type ResumeProposal = Extract<ResumeParseOutcome, { status: 'parsed' }>['parsed']['derived'];
 type ResumeRow = { id: string; bytes: number; createdAt: string; status: string };
@@ -17,13 +19,19 @@ export default function ResumePanel({
   onReview: (proposal: ResumeProposal) => void;
 }) {
   const cache = useQueryClient();
+  // CS-61: owner-scoped query keys. Present exactly when authenticated.
+  const owner = useOwner();
   const input = useRef<HTMLInputElement>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [file, setFile] = useState<{ value: File; key: string } | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
   const resumes = useQuery({
-    queryKey: ['resumes'],
+    queryKey: ownerKey(owner, 'resumes'),
+    // CS-61: MANDATORY. Without this the query can run before the session
+    // resolves, building `[name, undefined, ...]` - which merges every owner
+    // back into one bucket and looks owner-scoped in the source.
+    enabled: !!owner,
     queryFn: ({ signal }) =>
       api<{ enabled: boolean; cancellationEnabled?: boolean; items: ResumeRow[] }>('/resumes', {
         signal,
@@ -35,8 +43,8 @@ export default function ResumePanel({
         : false,
   });
   const detail = useQuery({
-    queryKey: ['resume', selected],
-    enabled: !!selected,
+    queryKey: ownerKey(owner, 'resume', selected),
+    enabled: !!owner && !!selected,
     queryFn: ({ signal }) =>
       api<{ id: string; status: string; result: ResumeParseOutcome | null }>(
         `/resumes/${selected}`,
@@ -121,10 +129,10 @@ export default function ResumePanel({
         <FileText size={19} aria-hidden="true" /> Resume
       </h2>
       {resumes.isPending ? (
-        <p role="status">Loading resumes...</p>
+        <LoadingState variant="inline" message="Loading resumes..." />
       ) : resumes.isError ? (
         <div role="alert">
-          <p>{resumes.error.message}</p>
+          <p>Could not load your resumes. {resumes.error.message}</p>
           <button type="button" onClick={() => resumes.refetch()}>
             <RefreshCw size={16} />
             Retry
@@ -155,7 +163,10 @@ export default function ResumePanel({
             </button>
           </form>
           {error && <p role="alert">{error}</p>}
-          {resumes.data.items.length === 0 && <p>No resumes uploaded.</p>}
+          {resumes.data.items.length === 0 && (
+            // This list has no filter — its only empty is "nothing yet".
+            <EmptyState variant="inline" reason="nothing-yet" message="No resumes uploaded." />
+          )}
           <ul className="resume-list">
             {resumes.data.items.map((item) => (
               <li key={item.id}>
@@ -226,19 +237,41 @@ export default function ResumePanel({
               </li>
             ))}
           </ul>
-          {remove.error && <p role="alert">{remove.error.message}</p>}
+          {remove.error && (
+            <ErrorState
+              variant="inline"
+              what="Could not delete that resume."
+              detail={remove.error.message}
+            />
+          )}
           {recover.isPending && <p role="status">Recovering upload...</p>}
-          {recover.error && <p role="alert">{recover.error.message}</p>}
+          {recover.error && (
+            <ErrorState
+              variant="inline"
+              what="Could not recover that upload."
+              detail={recover.error.message}
+            />
+          )}
           {cancel.isPending && <p role="status">Cancelling upload...</p>}
-          {cancel.error && <p role="alert">{cancel.error.message}</p>}
+          {cancel.error && (
+            <ErrorState
+              variant="inline"
+              what="Could not cancel that upload."
+              detail={cancel.error.message}
+            />
+          )}
           {recover.data?.status === 'uploading' && (
             <p role="status">No complete file was found. Upload the document again.</p>
           )}
           {selected &&
             (detail.isPending ? (
-              <p role="status">Loading resume...</p>
+              <LoadingState variant="inline" message="Loading resume..." />
             ) : detail.error ? (
-              <p role="alert">{detail.error.message}</p>
+              <ErrorState
+                variant="inline"
+                what="Could not load that resume."
+                detail={`${detail.error.message} Reload the page to try again.`}
+              />
             ) : (
               <div className="resume-review">
                 {!result && <p role="status">Resume processing: {detail.data?.status}</p>}

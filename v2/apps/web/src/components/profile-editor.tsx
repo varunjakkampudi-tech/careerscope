@@ -2,8 +2,10 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, LoaderCircle, RefreshCw, Save } from 'lucide-react';
 import type { WritableProfile } from '@careerscope/core';
-import { api, ApiError } from '../lib/api';
+import { api, offersDiscardAndReload } from '../lib/api';
+import { useOwner, ownerKey } from '../lib/session';
 import ResumePanel, { type ResumeProposal } from './resume-panel';
+import { ErrorState, LoadingState } from './ui-states';
 
 type ProfileResponse = {
   revision: number;
@@ -345,14 +347,23 @@ function ProfileForm({
           {save.isPending ? <LoaderCircle className="spin" size={18} /> : <Save size={18} />}Save
           Profile
         </button>
-        {save.error instanceof ApiError && save.error.status === 409 && (
+        {/* CS-35: only a revision conflict is repaired by reloading. Offering
+            it for, say, PROFILE_NOT_SAVED would invite the owner to destroy
+            edits that are not stale. */}
+        {offersDiscardAndReload(save.error) && (
           <button type="button" onClick={onReload}>
             <RefreshCw size={16} />
             Discard Edits and Reload
           </button>
         )}
       </div>
-      {save.error && <p role="alert">{save.error.message}</p>}
+      {save.error && (
+        <ErrorState
+          variant="inline"
+          what="Could not save your profile."
+          detail={save.error.message}
+        />
+      )}
     </form>
   );
 }
@@ -367,6 +378,8 @@ export default function ProfileEditor({
   onDirty: (dirty: boolean) => void;
 }) {
   const cache = useQueryClient();
+  // CS-61: owner-scoped query keys. Present exactly when authenticated.
+  const owner = useOwner();
   const [dirty, setDirty] = useState(false);
   const [saved, setSaved] = useState(false);
   const [generation, setGeneration] = useState(0);
@@ -380,8 +393,16 @@ export default function ProfileEditor({
     window.addEventListener('beforeunload', preventUnload);
     return () => window.removeEventListener('beforeunload', preventUnload);
   }, [dirty]);
+  // CS-36: clears the caller's dirty signal when this whole screen unmounts
+  // (e.g. the sidebar's plain <Link> navigation away from /resume), the
+  // same reasoning as saved-leads.tsx's equivalent cleanup.
+  useEffect(() => () => onDirty(false), [onDirty]);
   const profile = useQuery({
-    queryKey: ['profile'],
+    queryKey: ownerKey(owner, 'profile'),
+    // CS-61: MANDATORY. Without this the query can run before the session
+    // resolves, building `[name, undefined, ...]` - which merges every owner
+    // back into one bucket and looks owner-scoped in the source.
+    enabled: !!owner,
     queryFn: ({ signal }) => api<ProfileResponse>('/profile', { signal }),
     staleTime: Infinity,
     refetchOnWindowFocus: false,
@@ -423,10 +444,10 @@ export default function ProfileEditor({
         }}
       />
       {profile.isPending ? (
-        <p role="status">Loading profile...</p>
+        <LoadingState variant="inline" message="Loading profile..." />
       ) : profile.isError ? (
         <div role="alert">
-          <p>{profile.error.message}</p>
+          <p>Could not load your profile. {profile.error.message}</p>
           <button onClick={reload}>
             <RefreshCw size={16} />
             Retry

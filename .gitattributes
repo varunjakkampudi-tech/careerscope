@@ -23,3 +23,49 @@ Caddyfile.* text eol=lf
 *.tsx text eol=lf
 *.css text eol=lf
 *.html text eol=lf
+
+# `.txt` was the extension that rule forgot, and `review.txt` is the file that
+# proves it matters: it is parsed in nine places across check-agents.mjs,
+# control-center.mjs, check-customizations.mjs, backup-session.mjs and
+# engineering-hook.test.mjs, and with `core.autocrlf=true` and no attribute it
+# was `eol: unspecified` and had accumulated genuinely mixed endings (2200 CRLF
+# against 844 bare LF). That is the exact condition described above — a
+# multiline regex matching nothing and a validator reporting "No entries yet"
+# for a file that has entries — waiting to happen on the append-only audit log,
+# where a parser silently seeing nothing is the worst possible failure.
+#
+# The working copy stays mixed until someone runs `git add --renormalize`; this
+# attribute stops it getting worse and fixes it at the next commit. review.txt
+# is append-only, so it must NOT be rewritten in place to tidy the bytes.
+*.txt text eol=lf
+
+# CS-65 AC1: "every tracked text file has an explicit eol attribute". Adding
+# `*.txt` closed the file the ticket was written about; it did not close the
+# criterion. `check-line-endings.mjs` derives its universe from this file, so an
+# undeclared file could not be checked at all - it could not even be seen. The
+# second half of that check now asks the inverse question directly of
+# `git ls-files`, and it named 43 text files that had no attribute: every SQL
+# migration applied to production, every SVG shipped to the browser, the config
+# files parsed line by line, and this file itself.
+#
+# Binary files are deliberately absent below. They are exempt by content - a NUL
+# byte near the start - not by being listed, so a new image needs no edit here
+# and cannot be mistaken for an oversight.
+*.sql text eol=lf
+*.svg text eol=lf
+*.xml text eol=lf
+*.webmanifest text eol=lf
+*.conf text eol=lf
+*.inc text eol=lf
+*.service text eol=lf
+
+# Dotfiles carry no extension, and several are parsed one line at a time, where
+# a stray CR becomes part of the pattern rather than terminating it.
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.dockerignore text eol=lf
+.prettierignore text eol=lf
+.editorconfig text eol=lf
+.nvmrc text eol=lf
+.env.example text eol=lf
+*.timer text eol=lf

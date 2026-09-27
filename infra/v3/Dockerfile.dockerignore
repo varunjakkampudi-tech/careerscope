@@ -23,6 +23,10 @@
 !v2/scripts/
 !v2/scripts/migrate.ts
 !v2/scripts/setup-owner.ts
+!v2/scripts/backfill-job-sightings.ts
+!v2/scripts/run-scheduled-discovery.ts
+!v2/scripts/check-lead-liveness.ts
+!v2/scripts/enforce-search-retention.ts
 **/node_modules/**
 **/dist/**
 **/dist-types/**

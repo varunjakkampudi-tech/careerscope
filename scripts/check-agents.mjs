@@ -12,6 +12,23 @@ const check = (condition, message) => {
   if (!condition) failures += 1;
 };
 
+// Absent, valid and unparseable are three different states. An uncaught
+// JSON.parse would crash the whole validator mid-run on a corrupt file,
+// silently skipping every check after it; that is worse than reporting a
+// clear FAIL and continuing, which is what this does instead.
+const readJSON = (path) => {
+  if (!existsSync(path)) {
+    check(false, `${path} is readable (missing)`);
+    return null;
+  }
+  try {
+    return JSON.parse(readFileSync(path, 'utf8'));
+  } catch (error) {
+    check(false, `${path} is valid JSON (${error.message})`);
+    return null;
+  }
+};
+
 const agents = {};
 for (const file of readdirSync(dir)) {
   const text = readFileSync(`${dir}/${file}`, 'utf8');
@@ -144,9 +161,14 @@ check(existsSync('review.txt'), 'review.txt exists at the repository root');
 // The progress file must carry a real overall status line. Parse it rather than
 // scanning for a substring: an earlier version of this validator passed because
 // its regex silently failed to match, which is the exact failure mode being
-// guarded against here.
-const progress = readFileSync('.ai/CAREERSCOPE-PROGRESS.md', 'utf8');
-const overall = /^\*\*Overall Status:\*\*\s*(.+)$/m.exec(progress);
+// guarded against here. Absent must report a named FAIL, not crash the rest of
+// this validator uncaught - that was itself a live CS-8 defect (see finding R4).
+const progressText = existsSync('.ai/CAREERSCOPE-PROGRESS.md')
+  ? readFileSync('.ai/CAREERSCOPE-PROGRESS.md', 'utf8')
+  : null;
+check(progressText !== null, '.ai/CAREERSCOPE-PROGRESS.md is readable');
+const overall =
+  progressText !== null ? /^\*\*Overall Status:\*\*\s*(.+)$/m.exec(progressText) : null;
 check(overall !== null, 'progress file states an overall status');
 check(
   overall !== null && /^(IN PROGRESS|BLOCKED|COMPLETE)\b/.test(overall[1]),
@@ -164,9 +186,12 @@ const allowed = new Set([
   'BLOCKED',
 ]);
 // Scoped to the matrices: the Open items table records dispositions, not statuses.
-const matrices = progress.slice(
-  progress.indexOf('## Overall Progress'),
-  progress.indexOf('## Open items'),
+// progressText is null when the file was absent (already reported above); an
+// empty string here makes matrices come back empty and the next two checks
+// fail loudly and by name, instead of throwing on progressText.slice(...).
+const matrices = (progressText ?? '').slice(
+  (progressText ?? '').indexOf('## Overall Progress'),
+  (progressText ?? '').indexOf('## Open items'),
 );
 const statuses = [...matrices.matchAll(/^\|[^|]+\|\s*([A-Z][A-Z ]+?)\s*\|/gm)].map((m) => m[1]);
 const unknown = [...new Set(statuses)].filter((s) => !allowed.has(s));
@@ -189,12 +214,12 @@ for (const file of [
 }
 check(existsSync('scripts/release-gate.mjs'), 'release gate script exists');
 // The scheduler must stay off until the gates it depends on are proven.
-const releasePlan = JSON.parse(readFileSync('.ai/release-plan.json', 'utf8'));
+const releasePlan = readJSON('.ai/release-plan.json');
 check(
-  releasePlan.schedulerEnabled === false,
-  `scheduled operation is disabled (${releasePlan.schedulerEnabled})`,
+  releasePlan !== null && releasePlan.schedulerEnabled === false,
+  `scheduled operation is disabled (${releasePlan?.schedulerEnabled})`,
 );
-const canonical = JSON.parse(readFileSync('.ai/progress.json', 'utf8'));
+const canonical = readJSON('.ai/progress.json');
 // An em dash means deliberately unmeasured and must equal null in the JSON.
 // This widens what the projection can read, not what counts as agreement:
 // 70 against 85, or a dash against a number, still drift.
@@ -204,22 +229,33 @@ const projected = new Map(
     m[2] === '—' ? null : Number(m[2].slice(0, -1)),
   ]),
 );
-const drifted = canonical.areas.filter((a) => projected.get(a.area) !== a.percent);
-check(canonical.areas.length === 12, `progress.json covers 12 areas (${canonical.areas.length})`);
+const areas = canonical?.areas ?? [];
+const drifted = areas.filter((a) => projected.get(a.area) !== a.percent);
 check(
-  drifted.length === 0,
+  canonical !== null && areas.length === 12,
+  `progress.json covers 12 areas (${canonical === null ? 'unreadable' : areas.length})`,
+);
+check(
+  canonical !== null && drifted.length === 0,
   `progress.json and the Markdown agree ${drifted.map((a) => `${a.area} json=${a.percent} md=${projected.get(a.area)}`).join(', ')}`,
 );
 
-const loop = JSON.parse(readFileSync('.ai/LOOP-STATE.json', 'utf8'));
-check(loop.status !== 'COMPLETE', `LOOP-STATE not falsely complete (${loop.status})`);
+const loop = readJSON('.ai/LOOP-STATE.json');
 check(
-  Object.keys(loop.agents ?? {}).length === files.length,
-  `LOOP-STATE tracks every agent (${Object.keys(loop.agents ?? {}).length} of ${files.length})`,
+  loop !== null && loop.status !== 'COMPLETE',
+  `LOOP-STATE not falsely complete (${loop?.status})`,
+);
+check(
+  loop !== null && Object.keys(loop.agents ?? {}).length === files.length,
+  `LOOP-STATE tracks every agent (${loop === null ? 'unreadable' : Object.keys(loop.agents ?? {}).length} of ${files.length})`,
 );
 
 // The control center renders these, so their absence would silently degrade it
 // to a screen that shows nothing rather than one that reports a problem.
+// loop is null when LOOP-STATE.json was missing or unparseable; readJSON
+// already recorded that FAIL above, so these fall through to their own
+// clear FAILs instead of throwing on a null dereference.
+const loopSafe = loop ?? {};
 check(
   [
     'activeAgent',
@@ -229,30 +265,39 @@ check(
     'updatedAt',
     'agents',
     'activity',
-  ].every((key) => key in loop),
+  ].every((key) => key in loopSafe),
   'LOOP-STATE carries the fields the control center renders',
 );
 // An agent recorded as running while no agent is active is the exact lie the
 // dashboard exists to prevent.
-const busy = Object.entries(loop.agents ?? {}).filter(
+const busy = Object.entries(loopSafe.agents ?? {}).filter(
   ([, state]) => !['WAITING', 'COMPLETE', 'PASSED', 'FAILED', 'BLOCKED'].includes(state),
 );
 check(
-  loop.activeAgent !== null || busy.length === 0,
+  loop !== null && (loopSafe.activeAgent !== null || busy.length === 0),
   `no agent is recorded busy without an active agent ${busy.map(([id]) => id).join(', ')}`,
 );
 check(existsSync('scripts/control-center.mjs'), 'control center script exists');
 check(
-  loop.limits.planReview === 5 && loop.limits.implementation === 3 && loop.limits.finalAudit === 2,
+  loop !== null &&
+    loopSafe.limits?.planReview === 5 &&
+    loopSafe.limits?.implementation === 3 &&
+    loopSafe.limits?.finalAudit === 2,
   'loop bounds present',
 );
 
-// A secret in shared state would be read by every agent and committed.
-const leaky = state.filter((f) =>
-  /BEGIN (?:RSA|OPENSSH|EC) PRIVATE|ghp_[A-Za-z0-9]{20}|postgres:\/\/[^\s]*:[^\s@]+@/.test(
+// A secret in shared state would be read by every agent and committed. An
+// absent file is already reported by the "all 20 .ai files exist" check
+// above; it is not re-reported here, and it must not crash this scan the way
+// it previously did (Independent Reviewer finding on CS-8: this unconditional
+// readFileSync threw uncaught on the very file readJSON() was fixed to guard,
+// skipping every check after it, including this one and the final summary).
+const leaky = state.filter((f) => {
+  if (!existsSync(`.ai/${f}`)) return false;
+  return /BEGIN (?:RSA|OPENSSH|EC) PRIVATE|ghp_[A-Za-z0-9]{20}|postgres:\/\/[^\s]*:[^\s@]+@/.test(
     readFileSync(`.ai/${f}`, 'utf8'),
-  ),
-);
+  );
+});
 check(leaky.length === 0, `no secrets in .ai ${leaky.join(', ')}`);
 
 console.log(failures === 0 ? '\nagent configuration valid' : `\n${failures} failure(s)`);

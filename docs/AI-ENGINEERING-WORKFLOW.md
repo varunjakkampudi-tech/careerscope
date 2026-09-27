@@ -1,131 +1,92 @@
-# AI engineering workflow
+# AI Engineering Workflow
 
-How CareerScope work gets planned, built and reviewed by three agents, and why
-it is shaped this way.
+How CareerScope work gets planned, built and independently reviewed inside
+VS Code Copilot. Start at the [repository-local setup](ai/README.md) for prompts,
+role mapping, evidence gates and troubleshooting.
 
 The rule everything else serves: **the agent that implements a change is never
 the sole authority that it is correct.**
 
-## The three roles
+## Roles And Execution
 
-| Role                 | Agent                      | Writes code?             | Model                      |
-| -------------------- | -------------------------- | ------------------------ | -------------------------- |
-| Orchestrator         | `CareerScope Orchestrator` | coordinates, owns `.ai/` | current Copilot session    |
-| Architect / Reviewer | `CareerScope Architect`    | **no — no edit tool**    | a Claude model             |
-| Builder              | `CareerScope Builder`      | yes                      | **not pinned — see below** |
+The repository has 24 specialist agents, not the former three-role system.
+There is no current `CareerScope Architect` or `CareerScope Builder` target:
+use Product Architect/System Designer and the assigned tier builder or Senior
+Engineer. The [agent matrix](ai/agent-matrix.md) maps fifteen engineering
+responsibilities to the existing files and twenty local skills.
 
-Read-only for the Architect is not a promise in a prompt. The agent is granted
-`search` and `read` and is not granted `edit`, so it cannot modify
-implementation files even if instructed to. That is the one capability VS Code
-lets us actually enforce.
+The default team is Orchestrator, one builder, QA and Independent Reviewer.
+Add specialists only for distinct risk or evidence. The Orchestrator is the CTO
+role and owns routing and the completion decision, not unilateral self-approval.
 
-### The builder model is unresolved
+Native subagent calls require the `agent` tool and the Orchestrator's allowlist.
+Configured handoffs are user-triggered Chat transitions. Separate Agent Sessions
+and worktrees can isolate work when available; a fresh manual chat is the
+fallback. Neither a role mention nor a script invocation means an agent ran.
+See [agent system](ai/agent-system.md) for runtime and permission limits.
 
-GPT-6 Astra was requested. It is **not available** in this installation:
+Reviewers lack edit and general execution tools. QA and Performance have
+execution tools and are **not read-only by capability**: shell commands can
+write. Tool restrictions, prompts and preview hooks are not an OS sandbox.
+VS Code supports model frontmatter; the current roster leaves models unpinned.
+Historical intended-model prose is not a runtime model selection.
 
-```
-$ copilot --model gpt-6-astra -p "..."
-Error: Model "gpt-6-astra" from --model flag is not available.
-```
+## The Loop
 
-No substitute has been written into the agent file, because silently swapping
-the model is precisely what this workflow forbids. Pick the builder model in the
-VS Code model picker and add a `model:` key with the exact identifier shown
-there. Do not guess one.
+Audit all [twelve areas](ai/quality-gates.md#twelve-audit-areas), prioritize
+testable tasks, review risky design, implement claimed ready tasks, run QA,
+obtain independent review, reconcile docs, then verify completion or block.
+The [orchestration diagram](architecture/README.md#orchestration) shows the
+dependency structure; the [workflow guide](ai/workflow.md) provides entry points.
 
-## The loop
+An explicit acyclic graph and exact file/resource claims precede delegation.
+Independent builders can run concurrently with approval and disjoint claims;
+shared manifests, generated outputs, state and overlapping resources serialize.
+QA follows the settled implementation, and review binds to its current content.
+Readers of changing files and tests sharing a database are not independent.
 
-```mermaid
-flowchart LR
-    R[recon] --> P[plan]
-    P --> AR{architect review}
-    AR -->|REVISE| P
-    AR -->|BLOCKED| X[blocked]
-    AR -->|APPROVED| B[builder implements]
-    B --> QA[automated QA]
-    QA --> I{fresh inspection}
-    I -->|P0/P1| F[builder fixes]
-    F --> QA
-    I -->|clean| C[complete]
-```
+Bounds remain: plan review 5, system design 3, implementation 3, code review 3,
+security 2, performance 2 and final audit 2. Unresolved work at a bound is
+**BLOCKED**. Reassignment cannot reset counters or replace an unwelcome verdict.
 
-Bounds: **5** plan-review rounds, **3** implementation rounds, **3**
-inspections. Hitting a bound sets `status: "blocked"` in
-`.ai/LOOP-STATE.json` with the unresolved findings recorded. It never becomes
-`complete`.
+## Durable Evidence
 
-Each inspection is a **fresh** Architect session. An inspection that remembers
-the build conversation is not independent.
+The [product backlog](../.ai/backlog.json) remains canonical for priority.
+The approved new execution projection is `.ai/engineering.json`; existing
+progress, findings and release records retain their consumers. Its schema is
+owned by the delivered validator, not inferred from Markdown. Read-only
+reviewers return evidence; the Orchestrator records actual attributed results.
 
-## State lives in the repository
+Append dated, content-bound snapshots to [review.txt](../review.txt), never
+overwrite its history. Reports contain actual commands, outputs, participants,
+skips and missing prerequisites, without secrets or private data. A dashboard
+shows recorded state, not an independent observation of the runtime.
 
-Conversation memory does not survive a session, and fresh sessions are the
-point. So every handoff reads and writes `.ai/` — eighteen files:
+## Done Means Evidence
 
-`PROJECT-CONTEXT` · `REQUIREMENTS` · `ARCHITECTURE` · `SYSTEM-DESIGN` ·
-`UX-DESIGN` · `DECISIONS` · `ACTIVE-TASK` · `PLAN` · `PLAN-REVIEW` ·
-`IMPLEMENTATION-LOG` · `CODE-REVIEW` · `SECURITY-REPORT` ·
-`PERFORMANCE-REPORT` · `QA-REPORT` · `FINAL-AUDIT` · `DOCUMENTATION-AUDIT` ·
-`CLEANUP-REPORT` · `LOOP-STATE.json`
+Use the [quality-gate contract](ai/quality-gates.md). `check` validates structure;
+it is not `ready`. Execution readiness is not completion. `verify` must require
+all applicable acceptance evidence and independent review bound to current
+content. A SHA alone does not identify dirty worktree content.
 
-No secrets in any of them; the validator checks.
+P0/P1 findings block. Material P2 findings require resolution or explicit
+evidence-based disposition; minor accepted risks remain visible. Required checks
+that cannot run stay BLOCKED. Prove critical validators reject violating and
+malformed input as well as accepting valid input. Never change the meaning of a
+gate to obtain green output.
 
-Because read-only agents have no edit tool, the **Orchestrator** transcribes
-their findings into the reports verbatim.
+## Release And Other Workflows
 
-## Using it
+The new [release prompt](../.github/prompts/careerscope-release.prompt.md) is
+preparation only. The [initial audit](ai/initial-repository-audit.md) records
+release/deployment enforcement gaps that this setup does not fix. No prompt or
+passing local validator authorizes commit, push, publish or deployment.
 
-Open Copilot Chat, pick **CareerScope Orchestrator**, and describe the task.
-It will run recon, write `ACTIVE-TASK.md` and `PLAN.md`, then hand off with:
+[Claudex Loop](../.github/CLAUDEX-WORKFLOW.md) remains a separate cross-CLI
+workflow, not a dependency of this native setup. Use one workflow per task;
+do not invoke it here or install anything to make native discovery appear to work.
 
-```
-#CareerScope Architect  Review .ai/PLAN.md against .ai/ACTIVE-TASK.md.
-                        Round 1 of 5. Severity-tagged findings + verdict.
-
-#CareerScope Builder    Implement approved .ai/PLAN.md items 1-4.
-                        Run the validation block and report real output.
-```
-
-Switch the model in the picker when switching roles. The agent file does not
-change the picker for you.
-
-## Severity
-
-`P0` blocker · `P1` serious · `P2` important · `P3` minor
-
-P0 and P1 must be fixed. P2 must be fixed when it affects correctness,
-maintainability, accessibility, UX, security or architecture. P3 may remain only
-if genuinely non-blocking and written down with the reason.
-
-## Done
-
-Requirements and acceptance criteria met; no open P0 or P1; P2s fixed or
-justified; typecheck, lint, tests and build pass; accessibility and smoke checks
-pass where applicable; docs and architecture current; diff reviewed with no
-unrelated changes; final independent inspection passed; `LOOP-STATE.json` says
-`complete`.
-
-None of these count as done: a zero exit code, an output file existing, a model
-saying "done". On this machine `claude auth status` exits **0** while reporting
-`loggedIn: false` — that is the trap, live, in the first command anyone runs.
-
-## Relationship to Claudex Loop
-
-`.github/CLAUDEX-WORKFLOW.md` documents a separate cross-CLI workflow
-(`chaseai-yt/claudex-loop`) whose host is a Claude Code or Codex terminal
-session. Both exist deliberately and do not overlap:
-
-- **This workflow** — inside VS Code + Copilot, for everyday CareerScope work.
-- **Claudex Loop** — cross-CLI, when you want a genuinely different provider
-  and account reviewing the plan.
-
-They share the same principle and different machinery. Use one per task, not
-both at once.
-
-## Known limitations of the setup
-
-- VS Code cannot restrict which model an agent file gets; the picker governs.
-  Role/model pairing is a convention the Orchestrator states in each handoff.
-- Agent files cannot force a _fresh_ session. Starting one is manual.
-- The Architect's read-only guarantee holds only for tools. It cannot stop a
-  human pasting its suggestions in and calling that a review.
+Native discovery and the full UI execution loop remain end-to-end unverified.
+Source/configuration checks do not establish production readiness. The
+[setup specification](../.ai/AGENT-SETUP.md) and
+[troubleshooting guide](ai/troubleshooting.md) make those limits explicit.

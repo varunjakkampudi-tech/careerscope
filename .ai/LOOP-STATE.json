@@ -1,23 +1,23 @@
 {
-  "phase": "RECON",
-  "task": null,
-  "iteration": 0,
+  "phase": "CODE_REVIEW",
+  "task": "Three-session partition: this session owns v2/apps/web, .ai, review.txt and docs; it is the sole writer of .ai and review.txt while two other sessions write code.",
+  "iteration": 2,
   "activeAgent": null,
   "model": null,
   "stateSource": "REPORTED",
-  "currentOperation": null,
-  "sourceCommit": null,
-  "startedAt": null,
-  "lastHeartbeat": null,
-  "updatedAt": "2026-09-18T18:00:00.000Z",
+  "currentOperation": "HALTED BY OWNER 2026-09-26 05:11 to conserve tokens. No work in progress. All files verified valid; nothing committed, pushed, reset, stashed or cleaned. Resume from current state.",
+  "sourceCommit": "5239b0a87796bd26792c525408342970894759cb",
+  "startedAt": "2026-09-24T13:30:00.000Z",
+  "lastHeartbeat": "2026-09-25T09:43:53.258Z",
+  "updatedAt": "2026-09-26T05:12:00+05:30",
   "agents": {
-    "careerscope-orchestrator": "WAITING",
+    "careerscope-orchestrator": "COMPLETE",
     "careerscope-project-manager-client": "WAITING",
     "careerscope-product-architect": "WAITING",
     "careerscope-system-designer": "WAITING",
     "careerscope-ux-agent": "WAITING",
     "careerscope-senior-engineer": "WAITING",
-    "careerscope-frontend-agent": "WAITING",
+    "careerscope-frontend-agent": "COMPLETE",
     "careerscope-backend-agent": "WAITING",
     "careerscope-infrastructure-agent": "WAITING",
     "careerscope-security-agent": "WAITING",
@@ -27,20 +27,20 @@
     "careerscope-visual-designer": "WAITING",
     "careerscope-documentation": "WAITING",
     "careerscope-repository": "WAITING",
-    "careerscope-independent-reviewer": "WAITING",
+    "careerscope-independent-reviewer": "COMPLETE",
     "careerscope-research-agent": "WAITING",
     "careerscope-research-reference": "WAITING",
     "careerscope-final-auditor": "WAITING",
     "careerscope-product-discovery": "WAITING",
     "careerscope-release-manager": "WAITING",
-    "careerscope-agent-operations": "WAITING",
+    "careerscope-agent-operations": "COMPLETE",
     "careerscope-skills-curator": "WAITING"
   },
   "counts": {
     "planReview": 0,
     "systemDesign": 0,
-    "implementation": 0,
-    "codeReview": 0,
+    "implementation": 3,
+    "codeReview": 1,
     "securityReview": 0,
     "performanceReview": 0,
     "finalAudit": 0
@@ -55,21 +55,288 @@
     "finalAudit": 2
   },
   "subsystems": {
-    "frontend": "not-started",
-    "backend": "not-started",
-    "infrastructure": "not-started",
-    "documentation": "not-started",
-    "architecture": "not-started"
+    "frontend": "check-ui.ts repaired, hardened, WCAG 2.2, green on three engines. CS-51 id-drop family fixed (4 of 5) and promoted. CS-13 rollout outstanding (2 of 8 routes).",
+    "backend": "CS-33 promoted. CS-35/CS-56/CS-57 dispatch in flight. CS-53/CS-55 documented, not fixed.",
+    "infrastructure": "CS-47 built and locally verified 69/69; NOT installed on any host. CI wiring added for check-ui and ai-provider. Seven-ticket operator runbook written.",
+    "documentation": "KNOWN-LIMITATIONS, MONITORING runbook, AGENT-SETUP activation policy and two standing rules, UAT-READINESS, two operator artefacts. progress.json and the Markdown resynced and validator-agreed.",
+    "architecture": "unchanged - no architectural change made this objective."
   },
-  "qa": "not-run",
+  "qa": "Orchestrator-executed 2026-09-25: root npm test 1055/1055 exit 0; v2 test:unit 49/49 exit 0 (was 37 before ai-provider was wired); v2 test:integration 42/42 exit 0 on a quiet database; v2 test:ui exit 0 on chromium/firefox/webkit with WCAG 2.2 AA enabled and ZERO new violations; infra/v3/check-scheduler-health.sh 69/69 exit 0; format:check 0; eol:check 0; check-agents valid. NOT CI-EXECUTED: no pipeline has run check-ui.ts or ai-provider.test.ts. NOT LIVE-HOST VERIFIED: nothing in infra/v3 has ever run on a host.",
   "unresolved": {
     "P0": 0,
-    "P1": 0,
-    "P2": 0,
-    "P3": 0
+    "P1": 3,
+    "P2": 5,
+    "P3": 2
   },
-  "activity": [],
-  "lastVerdict": null,
-  "status": "RECON",
-  "notes": "Framework configured; no CareerScope task accepted. Reaching any limit sets BLOCKED, never COMPLETE."
+  "activity": [
+    {
+      "at": "2026-09-19T22:04:49.656Z",
+      "agent": "careerscope-orchestrator",
+      "action": "Resumed task; native agent invocation and tool discovery unavailable. No specialist call or reallocation attempted. Orchestrator ran three isolated Node suites: 173 passed, zero failed or skipped. check valid LEGACY_V1; verify refuses incomplete state. Both task attempts remain 1/3."
+    },
+    {
+      "at": "2026-09-19T23:23:28.657Z",
+      "agent": "careerscope-orchestrator",
+      "action": "Parent-reported sequence 1/12, recorded now (not an invocation timestamp): initial recovery ran 173 tests and reported nested invocation inability. Parent has actual native runSubagent; the earlier session-wide generalization is superseded. Historical event retained."
+    },
+    {
+      "at": "2026-09-19T23:23:28.657Z",
+      "agent": "careerscope-senior-engineer",
+      "action": "Parent-native sequence 2/12: implementation attempt 1 returned six scoped files, 179 tests and digest/runner issues. Recorded from parent continuation report, not self-invoked here."
+    },
+    {
+      "at": "2026-09-19T23:23:28.657Z",
+      "agent": "careerscope-documentation",
+      "action": "Parent-native sequence 3/12: initial reconciliation of 17 documents; 235 links and Prettier passed."
+    },
+    {
+      "at": "2026-09-19T23:23:28.657Z",
+      "agent": "careerscope-independent-reviewer",
+      "action": "Parent-native sequence 4/12: loop 1 REVISE. IR01 P1 bailout/inflated TAP totals; IR02 P2 review after PASSED; IR03 P2 help/baseline. Actual read-only source review, no execution."
+    },
+    {
+      "at": "2026-09-19T23:23:28.657Z",
+      "agent": "careerscope-qa-agent",
+      "action": "Parent-native sequence 5/12: first QA 201 tests passed, scoped lint/format passed, 24 agents valid; customization metadata failed and verify refused."
+    },
+    {
+      "at": "2026-09-19T23:23:28.657Z",
+      "agent": "careerscope-senior-engineer",
+      "action": "Parent-native sequence 6/12: implementation attempt 2 reproduced and fixed IR01-IR03; reported 187 runtime plus 22 hook tests passing."
+    },
+    {
+      "at": "2026-09-19T23:23:28.657Z",
+      "agent": "careerscope-independent-reviewer",
+      "action": "Parent-native sequence 7/12: loop 2 APPROVED; IR01-IR03 closed, two nonblocking documentation P3 findings."
+    },
+    {
+      "at": "2026-09-19T23:23:28.657Z",
+      "agent": "careerscope-qa-agent",
+      "action": "Parent-native sequence 8/12: second QA 208 passed, 1 failed of 209. Default --test nested fixture inherited NODE_TEST_CONTEXT=child-v8 and emitted binary output; source parser was sound."
+    },
+    {
+      "at": "2026-09-19T23:23:28.657Z",
+      "agent": "careerscope-senior-engineer",
+      "action": "Parent-native sequence 9/12: FINAL attempt 3 changed only scripts/engineering-runner.test.mjs to use existing childEnvironment(process.env) and assert NODE_TEST_CONTEXT removal. RED 19/20 then GREEN 20/20; four suites 209/209 in default/TAP, scoped six-file lint/Prettier passed. No production code change."
+    },
+    {
+      "at": "2026-09-19T23:23:28.657Z",
+      "agent": "careerscope-qa-agent",
+      "action": "Parent-native sequence 10/12: FINAL independent execution with pinned Node 26.8.1, default runner 20/20 and four suites 209/209, no fail/skip/cancel/todo; ESLint/Prettier all eight runtime/test files passed. No app checks."
+    },
+    {
+      "at": "2026-09-19T23:23:28.657Z",
+      "agent": "careerscope-independent-reviewer",
+      "action": "Parent-native sequence 11/12: FINAL loop 3 APPROVED narrow fixture and maintained IR01-IR03 closure. No blocking code findings. Native UI/hooks/production unverified; nonblocking P3 nested-plan documentation specificity."
+    },
+    {
+      "at": "2026-09-19T23:23:28.657Z",
+      "agent": "careerscope-documentation",
+      "action": "Parent-native sequence 12/12: final pass only docs/ai/evidence-model.md and limitations.md corrected obsolete CLI-help accusations and recursive Node TAP counts/bailout; scoped Prettier and 15 retained links/anchor passed. No source changes after final QA. No subsequent independent review claimed."
+    },
+    {
+      "at": "2026-09-19T23:23:28.657Z",
+      "agent": "careerscope-orchestrator",
+      "action": "Final record reconciliation only. Stop BLOCKED at implementation 3/3 and code review 3/3; no more loops, schema migration, source work or delegation. Parent invocation outcomes supersede stale current no-native-tools blocker. Canonical evidence/gates, strict schema-2 baseline, actual SessionStart/UI, final audit and host provenance remain incomplete or unverified."
+    },
+    {
+      "at": "2026-09-23T17:58:51.590Z",
+      "agent": "careerscope-independent-reviewer",
+      "action": "Real dispatch (native runSubagent) against today's ticket-based work batch (CS-6/13/14/16-19/50), separate from the 2026-09-19 engineering-framework exercise above. Verdict REVISE. P1 finding: LeadEditor status <select> always showed all 6 statuses regardless of scope, silently breaking the saved/applications non-overlap. Fixed with an allowedStatuses prop. P2: inconsistent/missing 401 handling across routes, fixed by centralizing on a single SESSION_EXPIRED_EVENT listener. See .ai/backlog.json CS-50 for full text."
+    },
+    {
+      "at": "2026-09-23T18:10:00.000Z",
+      "agent": "careerscope-qa-agent",
+      "action": "Real dispatch against today's same batch. Found and reported real format:check failures (app file plus 6 stale doc files, fixed); confirmed 1054/1055 root vitest passing (1 flaky timeout, isolated re-run passed) and 63/63 v2 core+worker tests; confirmed v2/scripts/check-ui.ts is still broken against the CS-6 routing change (pre-existing, disclosed, not fixed here)."
+    },
+    {
+      "at": "2026-09-23T19:00:00.000Z",
+      "agent": "careerscope-visual-designer",
+      "action": "Real dispatch (model gpt-6-astra, per explicit owner request) to produce a code-ready design spec for the Application Details screen from the owner's reference mockup, explicitly excluding every fabricated field in that mockup (85% \"AI Application Strength\" score, 5-stage dated interview tracker, fake documents/company overview, fake avatar). Delivered exact CSS tokens, spacing scale, status-badge colors with contrast ratios, and grid breakpoints, implemented in application-details.module.css and saved-leads.tsx."
+    },
+    {
+      "at": "2026-09-24T13:35:00.000Z",
+      "agent": "careerscope-agent-operations",
+      "action": "Real dispatch (read-only, no edit tool) for CS-10: applied the four-part retention test to all 24 agents individually. Returned 24 KEEP / 0 MERGE / 0 REMOVE with per-agent artefact, permission boundary, decision, independent-evidence and observed-usage citations, plus 9 activation-policy defects. Second turn supplied the full 24-agent JSON map and a replacement activation table. Orchestrator transcribed both verbatim; the agent wrote nothing."
+    },
+    {
+      "at": "2026-09-24T14:10:00.000Z",
+      "agent": "careerscope-frontend-agent",
+      "action": "Implementation round 1 of 3 on v2/scripts/check-ui.ts: replaced the stale nav[aria-label=\"Career workspace\"] block (dead since CS-6, aborting the suite at line 327 and leaving ~700 downstream lines unexecuted) and retargeted 15 further stale steps to real routes. No assertion deleted or weakened."
+    },
+    {
+      "at": "2026-09-24T15:05:00.000Z",
+      "agent": "careerscope-independent-reviewer",
+      "action": "Real dispatch (read-only). Verdict APPROVED WITH FINDINGS. Confirmed by direct read that every new deepEqual compares DOM-derived data against a hardcoded literal, that the test-only session DELETE is confined to the per-run test_<uuid> database, and that the page-error gate was not loosened. Stated plainly that it could NOT verify the strict-superset claim or any exit code, having no shell - it declined to imply agreement. Raised F-1: the WebKit Tab carve-out was a genuine, unfalsifiable coverage drop whose justifying comment was false for anchors."
+    },
+    {
+      "at": "2026-09-24T15:40:00.000Z",
+      "agent": "careerscope-frontend-agent",
+      "action": "Implementation round 2 of 3: fixed F-1 through F-4. Ran Required Experiment 5 rather than guessing - un-gating the Tab walk on WebKit printed reachable=[], so the platform premise holds and is now ASSERTED, making the carve-out self-expiring. Honestly reported that its own first F-2 falsification attempt PASSED because Playwright matches accessible names by substring."
+    },
+    {
+      "at": "2026-09-24T16:30:00.000Z",
+      "agent": "careerscope-infrastructure-agent",
+      "action": "Real dispatch for CS-47: built one scheduler-health checker for all six host timers plus service/timer/setup units, deriving each expected interval from the unit itself. Reports 63/63 assertions passing. NOT DEPLOYED, NOT installed on any host, no webhook posted. Orchestrator independent re-run was killed by the owner pause, so that 63/63 remains builder-reported."
+    },
+    {
+      "at": "2026-09-24T17:15:00.000Z",
+      "agent": "careerscope-frontend-agent",
+      "action": "Implementation round 3 of 3: fixed an intermittent WebKit page-error failure the Orchestrator found by running the suite four times (1 green, then red). The agent DISPROVED the Orchestrator own root-cause hypothesis with a controlled 5-variant probe, then found the real cause (a reload landing 30ms into React commit) and fixed it with a request-settled barrier. 4/4 consecutive green."
+    },
+    {
+      "at": "2026-09-24T18:25:00.000Z",
+      "agent": "careerscope-infrastructure-agent",
+      "action": "Dispatched for two P1 audit findings: v2/scripts/check-ui.ts and v2 ai-provider.test.ts both run in NO workflow (ci.yml line 132 runs the V1 root scripts/check-ui.mjs instead; ai-provider.test.ts is in neither test:unit five nor test:integration nine). IN FLIGHT."
+    },
+    {
+      "at": "2026-09-25T03:30:00.000Z",
+      "agent": "careerscope-orchestrator",
+      "action": "Wrote .ai/OPERATOR-RUNBOOK-host-evidence.md - exact commands, expected output and pass criterion for all seven host-blocked tickets in one operator pass, including the CS-25 restore drill into a scratch database with sanity queries whose pass criterion (13 tables, plausible row counts) makes an empty restore impossible to read as success. Linked it into all seven ticket evidence arrays. Resynced progress.json and CAREERSCOPE-PROGRESS.md; the check-agents validator caught the drift between them, which is the validator working."
+    },
+    {
+      "at": "2026-09-25T06:58:58.681Z",
+      "agent": "orchestrator",
+      "event": "STATE CORRECTION",
+      "detail": "This file recorded activeAgent=careerscope-backend-agent status=RUNNING with updatedAt=2026-09-25T03:30:00.000Z, roughly nine hours stale. That agent had long since returned. Corrected to IDLE with activeAgent null. A dashboard that lies is worse than no dashboard."
+    },
+    {
+      "at": "2026-09-25T06:58:58.681Z",
+      "agent": "orchestrator",
+      "event": "CS-43 DESIGN DELIVERED",
+      "detail": "docs/ALERTS-DOMAIN.md written and 9 evidence entries recorded. Held at DISCOVERY - AC1 and AC3 met, AC2 specified but no executable fixtures. NO SUB-AGENT WAS DISPATCHED for this cycle; the Orchestrator did the work directly. Recorded that way rather than attributed to a specialist."
+    },
+    {
+      "at": "2026-09-25T06:58:58.681Z",
+      "agent": "orchestrator",
+      "event": "CS-44 DESIGN DELIVERED + BLOCKER FOUND",
+      "detail": "docs/ACCOUNT-RECOVERY-THREAT-MODEL.md written, 10 evidence entries recorded, and CS-59 added to CS-44.dependencies (previously empty). AC2 bounded-attempts cannot be honestly met while request.ip is 127.0.0.1 for every production request. Held at DISCOVERY. Again no sub-agent - Orchestrator direct."
+    },
+    {
+      "at": "2026-09-25T06:58:58.681Z",
+      "agent": "orchestrator",
+      "event": "REVIEW.TXT GAP DISCLOSED",
+      "detail": "Appending tripped its own precondition: review.txt had no CS-42 history. Seventh save from the precondition rule and the first catching my own false assumption about prior state. review.txt ended at 2951 lines predating CS-57; cycles CS-57, CS-56, CS-35, CS-39, CS-36, CS-38 and CS-42 were never appended. Disclosed in the file rather than reconstructed from memory - .ai/backlog.json evidence arrays remain authoritative for those cycles."
+    },
+    {
+      "at": "2026-09-25T06:59:40.373Z",
+      "agent": "orchestrator",
+      "event": "PRE-EXISTING DASHBOARD LIE EXPOSED AND CLEARED",
+      "detail": "Setting activeAgent to null made check-agents.mjs fail: \"no agent is recorded busy without an active agent careerscope-orchestrator, careerscope-infrastructure-agent\". Those two were stale RUNNING entries from earlier cycles, and a non-null activeAgent had been MASKING them - the assertion only fires when activeAgent is null, so the honest correction is what surfaced a pre-existing inconsistency rather than creating one. careerscope-orchestrator set COMPLETE (it did finish this cycle). careerscope-infrastructure-agent set WAITING, NOT COMPLETE: a prior cycle left it RUNNING and never closed it, so its real outcome is unknown and COMPLETE would claim a success with no evidence behind it."
+    },
+    {
+      "at": "2026-09-25T09:43:53.258Z",
+      "agent": "orchestrator",
+      "event": "SCOPE PARTITIONED ACROSS THREE SESSIONS",
+      "detail": "Single-writer preserved by PARTITION rather than by serialisation. This session owns v2/apps/web/**, .ai/**, review.txt and docs/** and is the ONLY writer to .ai and review.txt. Infrastructure session owns v2/scripts, .github/workflows, root scripts, infra and the package.json scripts blocks. API session owns v2/apps/api, v2/packages, packages and v2/migrations. Changes needed outside owned paths are routed through the coordinator, never made directly."
+    },
+    {
+      "at": "2026-09-25T09:43:53.258Z",
+      "agent": "orchestrator",
+      "event": "PRE-PARTITION WRITE DISCLOSED",
+      "detail": "CS-62 work earlier today wrote v2/scripts/check-ui.ts, which is now the infrastructure session path. That edit PREDATES the partition. Disclosed rather than left for someone to find in a diff; no writes there since."
+    },
+    {
+      "at": "2026-09-25T09:43:53.258Z",
+      "agent": "orchestrator",
+      "event": "CS-62 COMPLETE (QA) - EmptyState reason contract",
+      "detail": "All 16 call sites in v2/apps/web migrated by hand. Reading them first corrected my own acceptance criterion twice: the split is 14 inline and 2 block (not block-only), and a binary nothing-yet/filtered would have forced five prompt states to lie, so the union is three values. Zero rendered-copy change, verified against a list of 14 strings catalogued before the migration. Proven able to fail three ways. test:ui green on all three engines first attempt."
+    },
+    {
+      "at": "2026-09-25T09:43:53.258Z",
+      "agent": "orchestrator",
+      "event": "CS-54 MEASURED, IMPLEMENTATION HANDED OFF (stays READY)",
+      "detail": "Measurement revises the ticket own assumption: all 13 app routes are prerendered and zero render per request, so every inline script IS known at build time and only 12 distinct sha256 hashes are needed. Static prerendering does NOT have to be abandoned. What blocks it is ORDERING - headers() runs during the build, before the HTML exists. Both fixes are build-pipeline changes owned by the infrastructure session, so the implementation was deliberately not started. docs/CSP-STRICT-SCRIPT-SRC.md written; the stale assumption in next.config.ts corrected."
+    },
+    {
+      "at": "2026-09-25T09:43:53.258Z",
+      "agent": "independent-reviewer",
+      "event": "REVIEWER D VERDICTS RECORDED BY ORCHESTRATOR",
+      "detail": "CS-48 NOT UAT-READY (AC7 cannot-fail test unfixed, AC10 unmet where cited, two new findings). CS-10 REJECTED (all four defects present in current bytes; AC2 unmet at the point of use; AC3 contradicted by the ticket own canonical record). CS-31 APPROVED WITH FINDINGS (AC1 partial, honestly recorded). NOT THIS SESSIONS WORK - attributed to the independent review and recorded because this session is the sole backlog writer. Nothing promoted. CS-15, CS-32 and CS-47 sections still to come."
+    },
+    {
+      "at": "2026-09-25T09:43:53.258Z",
+      "agent": "orchestrator",
+      "event": "GATE CHAIN RED - ROUTED, NOT FIXED",
+      "detail": "engineering:test now includes scripts/engineering-runner.test.mjs, the suite CS-68 recorded as red and deliberately excluded. Measured: 215 tests, 210 pass, 5 fail, exit 1. gates:test chains it, so the gate chain is red. package.json belongs to the infrastructure session, so this was reported for routing rather than edited. Method note: my own partition-compliance check flagged those files as MY violations - mtime says WHEN a file changed, never WHO changed it. With three writers, \"the working tree changed\" is not evidence that I changed it."
+    },
+    {
+      "at": "2026-09-25T17:40:00+05:30",
+      "agent": "Orchestrator",
+      "event": "CS-76 filed P1 READY after verifying at source that all three v2 project references exclude src/**/*.test.ts; 11 of 11 tracked v2 test files invisible to tsc. CS-55 DISCOVERY->QA. Caveat applied to CS-48 and CS-53 and explicitly NOT to CS-61, because apps/web includes tests."
+    },
+    {
+      "at": "2026-09-25T19:05:00+05:30",
+      "agent": "Orchestrator",
+      "event": "Discharged CS-35/56/57/63/65/66/71 with per-criterion evidence; retained CS-39 because its criteria are UI-level and not source-greppable. Filed CS-77 (createSearch typed against parsed output while hashing caller input). Confirmed CS-42 F-2 live: SAVED_SEARCH_REVISION_CONFLICT absent from conflictMessages and from all v2 source."
+    },
+    {
+      "at": "2026-09-25T19:05:00+05:30",
+      "agent": "Orchestrator",
+      "event": "Discharged CS-35/56/57/63/65/66/71 with per-criterion evidence; retained CS-39 because its criteria are UI-level and not source-greppable. Filed CS-77 (createSearch typed against parsed output while hashing caller input). Confirmed CS-42 F-2 live: SAVED_SEARCH_REVISION_CONFLICT absent from conflictMessages and from all v2 source."
+    },
+    {
+      "at": "2026-09-25T19:05:00+05:30",
+      "agent": "Orchestrator",
+      "event": "Discharged CS-35/56/57/63/65/66/71 with per-criterion evidence; retained CS-39 because its criteria are UI-level and not source-greppable. Filed CS-77 (createSearch typed against parsed output while hashing caller input). Confirmed CS-42 F-2 live: SAVED_SEARCH_REVISION_CONFLICT absent from conflictMessages and from all v2 source."
+    },
+    {
+      "at": "2026-09-25T19:05:00+05:30",
+      "agent": "Orchestrator",
+      "event": "Discharged CS-35/56/57/63/65/66/71 with per-criterion evidence; retained CS-39 because its criteria are UI-level and not source-greppable. Filed CS-77 (createSearch typed against parsed output while hashing caller input). Confirmed CS-42 F-2 live: SAVED_SEARCH_REVISION_CONFLICT absent from conflictMessages and from all v2 source."
+    },
+    {
+      "at": "2026-09-25T19:05:00+05:30",
+      "agent": "Orchestrator",
+      "event": "Discharged CS-35/56/57/63/65/66/71 with per-criterion evidence; retained CS-39 because its criteria are UI-level and not source-greppable. Filed CS-77 (createSearch typed against parsed output while hashing caller input). Confirmed CS-42 F-2 live: SAVED_SEARCH_REVISION_CONFLICT absent from conflictMessages and from all v2 source."
+    },
+    {
+      "at": "2026-09-25T19:05:00+05:30",
+      "agent": "Orchestrator",
+      "event": "Discharged CS-35/56/57/63/65/66/71 with per-criterion evidence; retained CS-39 because its criteria are UI-level and not source-greppable. Filed CS-77 (createSearch typed against parsed output while hashing caller input). Confirmed CS-42 F-2 live: SAVED_SEARCH_REVISION_CONFLICT absent from conflictMessages and from all v2 source."
+    },
+    {
+      "at": "2026-09-25T19:05:00+05:30",
+      "agent": "Orchestrator",
+      "event": "Discharged CS-35/56/57/63/65/66/71 with per-criterion evidence; retained CS-39 because its criteria are UI-level and not source-greppable. Filed CS-77 (createSearch typed against parsed output while hashing caller input). Confirmed CS-42 F-2 live: SAVED_SEARCH_REVISION_CONFLICT absent from conflictMessages and from all v2 source."
+    },
+    {
+      "at": "2026-09-25T19:05:00+05:30",
+      "agent": "Orchestrator",
+      "event": "Discharged CS-35/56/57/63/65/66/71 with per-criterion evidence; retained CS-39 because its criteria are UI-level and not source-greppable. Filed CS-77 (createSearch typed against parsed output while hashing caller input). Confirmed CS-42 F-2 live: SAVED_SEARCH_REVISION_CONFLICT absent from conflictMessages and from all v2 source."
+    },
+    {
+      "at": "2026-09-25T19:05:00+05:30",
+      "agent": "Orchestrator",
+      "event": "Discharged CS-35/56/57/63/65/66/71 with per-criterion evidence; retained CS-39 because its criteria are UI-level and not source-greppable. Filed CS-77 (createSearch typed against parsed output while hashing caller input). Confirmed CS-42 F-2 live: SAVED_SEARCH_REVISION_CONFLICT absent from conflictMessages and from all v2 source."
+    },
+    {
+      "at": "2026-09-26T05:35:00+05:30",
+      "agent": "Orchestrator",
+      "event": "Reviewer D (574aa16e) recorded NON_FUNCTIONAL on four consecutive empty turns; queue CS-10/15/31/32/47/48 absorbed by the coordinator. Third such failure after high-value output."
+    },
+    {
+      "at": "2026-09-26T05:45:00+05:30",
+      "agent": "Orchestrator",
+      "event": "Moved the reviewer-D record out of `agents` and into `externalSessions`. `agents` mirrors the 24-file .github/agents roster and is length-checked against it; recording a chat session there made the map disagree with the roster it exists to mirror, and check-agents failed with \"25 of 24\". The record is preserved, not deleted."
+    },
+    {
+      "at": "2026-09-26T05:12:00+05:30",
+      "agent": "Orchestrator",
+      "event": "Owner halt. Final batch (CS-61 -> QA, CS-38 rejected -> READY, CS-76/CS-36 evidence) confirmed applied before the interruption; backlog.json and LOOP-STATE.json verified as valid JSON and re-formatted. activeAgent cleared so the control center does not render a running agent that is not running."
+    }
+  ],
+  "lastVerdict": "Independent Reviewer on v2/scripts/check-ui.ts: APPROVED WITH FINDINGS, conditional on five experiments it could not run (read-only view tool, no shell). Orchestrator executed all five. Experiment 1 found exactly ONE deleted assertion across 411/61, with a strictly stronger replacement: no coverage regression. F-1 (a real WebKit coverage carve-out) and F-2 fixed in implementation round 2; an intermittent WebKit failure found by the Orchestrator was fixed in round 3.",
+  "status": "PAUSED",
+  "notes": "Three sessions writing concurrently. Nothing has been CI-executed today and the SHA has not moved (5239b0a), so \"locally verified, not CI-executed\" is the correct wording on every item touched today. Nothing promoted to UAT without an independent verdict.",
+  "externalSessions": {
+    "reviewer-d-574aa16e": {
+      "status": "NON_FUNCTIONAL",
+      "since": "2026-09-26T05:35:00+05:30",
+      "evidence": "Turns 4-9 produced substantive reviews (4,745 / 11,496 / 11,441 / 10,380 chars). Turns 10-13 all returned length 0, and a 22:13 ping does not appear in its session store at all. Four consecutive empty turns after a sharp cutoff. Confirmed from the session store rather than from the idle signal.",
+      "queueAbsorbedBy": "coordinator session a01e546b",
+      "queue": ["CS-10", "CS-15", "CS-31", "CS-32", "CS-47", "CS-48"],
+      "note": "Third session to fail this way after high-value output. Its CS-31 and CS-48 reviews were both load-bearing and are recorded on those tickets. Degradation is an infrastructure fact, not a quality judgement."
+    }
+  }
 }

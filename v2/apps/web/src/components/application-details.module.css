@@ -1,0 +1,590 @@
+/*
+ * Application Details visual spec — CareerScope Visual Designer (gpt-6-astra),
+ * 2026-09-23. Extends dashboard-shell.module.css's tokens (this component
+ * only ever renders inside .shell, so the --dash-* custom properties already
+ * cascade down) rather than declaring a competing visual language. Every
+ * section here binds only to real lead/history/resume data — see
+ * saved-leads.tsx for what was deliberately left out (fabricated interview
+ * stages, AI score, company profile, document versions, dated note feed).
+ */
+
+.header {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: var(--dash-card-radius);
+  box-shadow: 0 2px 8px rgba(13, 18, 36, 0.04);
+  padding: var(--dash-space-6);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dash-space-4);
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--dash-space-6);
+}
+:global([data-theme='dark']) .header {
+  box-shadow: none;
+}
+@media (max-width: 680px) {
+  .header {
+    padding: var(--dash-space-4);
+  }
+}
+
+.headerMain {
+  display: flex;
+  gap: var(--dash-space-4);
+  min-width: 0;
+}
+
+.companyTile {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--dash-surface-subtle);
+  color: var(--dash-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.headerText {
+  min-width: 0;
+}
+.headerText h1 {
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 680px) {
+  .headerText h1 {
+    font-size: 24px;
+    line-height: 32px;
+  }
+}
+.headerText .company {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  color: var(--dash-muted);
+  margin: 2px 0 var(--dash-space-2);
+}
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dash-space-3);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--dash-muted);
+}
+.metaRow span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.latestChange {
+  font-size: 13px;
+  color: var(--dash-muted);
+  margin-top: var(--dash-space-2);
+}
+
+.headerActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--dash-space-3);
+  min-width: 0;
+  max-width: 100%;
+}
+.headerButtons {
+  display: flex;
+  gap: var(--dash-space-2);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 100%;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.statusBadge[data-status='saved'] {
+  background: var(--dash-status-saved-bg);
+  color: var(--dash-status-saved-fg);
+}
+.statusBadge[data-status='applied'] {
+  background: var(--dash-status-applied-bg);
+  color: var(--dash-status-applied-fg);
+}
+.statusBadge[data-status='interviewing'] {
+  background: var(--dash-status-interviewing-bg);
+  color: var(--dash-status-interviewing-fg);
+}
+.statusBadge[data-status='offer'] {
+  background: var(--dash-status-offer-bg);
+  color: var(--dash-status-offer-fg);
+}
+.statusBadge[data-status='rejected'] {
+  background: var(--dash-status-rejected-bg);
+  color: var(--dash-status-rejected-fg);
+}
+.statusBadge[data-status='archived'] {
+  background: var(--dash-status-archived-bg);
+  color: var(--dash-status-archived-fg);
+}
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dash-space-2);
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition:
+    background-color 120ms,
+    border-color 120ms;
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.btnPrimary {
+  composes: btn;
+  background: var(--dash-accent);
+  color: var(--dash-on-accent);
+}
+.btnPrimary:hover:not(:disabled) {
+  background: var(--dash-accent-hover);
+}
+.btnSecondary {
+  composes: btn;
+  background: var(--dash-surface);
+  color: var(--dash-ink);
+  border-color: var(--dash-control-border);
+}
+.btnFullWidth {
+  width: 100%;
+}
+.btn:focus-visible {
+  outline: 3px solid var(--dash-focus);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+}
+
+/* Three-column grid: Job Details / Application Timeline / Application Actions */
+.grid {
+  display: grid;
+  grid-template-columns: 1.05fr 1.3fr 0.9fr;
+  gap: var(--dash-space-4);
+  margin-bottom: var(--dash-space-6);
+}
+@media (max-width: 1039px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .actionsCard {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 680px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .actionsCard {
+    grid-column: auto;
+  }
+}
+
+.card {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: var(--dash-card-radius);
+  box-shadow: 0 2px 8px rgba(13, 18, 36, 0.04);
+  padding: var(--dash-space-5);
+  min-width: 0;
+}
+:global([data-theme='dark']) .card {
+  box-shadow: none;
+}
+@media (max-width: 680px) {
+  .card {
+    padding: var(--dash-space-4);
+  }
+}
+.card h2 {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  margin: 0 0 var(--dash-space-4);
+}
+.cardSubtitle {
+  font-size: 13px;
+  color: var(--dash-muted);
+  margin: -8px 0 var(--dash-space-4);
+}
+
+/* Job details label/value list */
+.detailList {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: var(--dash-space-3);
+  margin: 0;
+}
+.detailList dt {
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--dash-muted);
+}
+.detailList dd {
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--dash-ink);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 360px) {
+  .detailList {
+    grid-template-columns: 1fr;
+  }
+  .detailList dd {
+    margin-top: 4px;
+  }
+}
+
+/* Application timeline */
+.timelineList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.timelineEntry {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: var(--dash-space-3);
+  position: relative;
+  padding-bottom: var(--dash-space-5);
+}
+.timelineEntry:last-child {
+  padding-bottom: 0;
+}
+.timelineEntry:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 24px;
+  bottom: 0;
+  width: 2px;
+  background: var(--dash-border);
+}
+.timelineMarker {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.timelineContent {
+  min-width: 0;
+}
+.timelineTitle {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+.timelineTime {
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--dash-muted);
+  margin: 4px 0 0;
+}
+.timelineMeta {
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--dash-muted);
+  margin: 4px 0 0;
+}
+.timelineLatest {
+  background: var(--dash-surface-subtle);
+  padding: var(--dash-space-3);
+  border-radius: 10px;
+  margin-top: var(--dash-space-1);
+}
+.timelineLatestLabel {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dash-muted);
+  margin-bottom: 4px;
+}
+.tzNote {
+  font-size: 12px;
+  color: var(--dash-muted);
+  margin: var(--dash-space-3) 0 0;
+}
+
+.actionsCard .btn {
+  width: 100%;
+}
+.actionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dash-space-2);
+}
+
+/* Documents + Notes */
+.lowerGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--dash-space-4);
+  margin-bottom: var(--dash-space-6);
+}
+@media (max-width: 680px) {
+  .lowerGrid {
+    grid-template-columns: 1fr;
+  }
+}
+.documentRow {
+  display: flex;
+  align-items: center;
+  gap: var(--dash-space-3);
+}
+.documentClarification {
+  font-size: 12px;
+  color: var(--dash-muted);
+  margin: var(--dash-space-2) 0 0;
+}
+.notesBody {
+  font-size: 14px;
+  line-height: 24px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 0 0 var(--dash-space-3);
+}
+
+/* Honest AI Insights card, matching the dashboard's disabled treatment */
+.aiPanel {
+  composes: card;
+  margin-bottom: var(--dash-space-6);
+}
+.aiPanelHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--dash-space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--dash-space-2);
+}
+.aiPanelHeader h2 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.aiBadge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--dash-border);
+  color: var(--dash-muted);
+}
+.aiBody {
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--dash-muted);
+  margin: var(--dash-space-2) 0 0;
+}
+
+.descriptionCard {
+  composes: card;
+  margin-bottom: var(--dash-space-6);
+}
+.descriptionBody {
+  font-size: 14px;
+  line-height: 24px;
+  max-width: 72ch;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Saved/Applications list panel - same token language as the detail view
+ * above, so the two halves of one screen do not read as two different
+ * applications. Reuses .statusBadge/.card rather than a parallel palette.
+ */
+.workspaceActions {
+  display: flex;
+  align-items: center;
+  gap: var(--dash-space-3);
+  margin-bottom: var(--dash-space-4);
+}
+.workspaceActions h1 {
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+.tabsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dash-space-2);
+  margin-bottom: var(--dash-space-5);
+}
+.tab {
+  min-height: 36px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface);
+  color: var(--dash-ink);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.tab[aria-pressed='true'] {
+  background: var(--dash-accent);
+  border-color: transparent;
+  color: var(--dash-on-accent);
+}
+.layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(0, 2.2fr);
+  gap: var(--dash-space-6);
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.list {
+  display: grid;
+  gap: var(--dash-space-3);
+  margin: 0 0 var(--dash-space-4);
+  padding: 0;
+  min-width: 0;
+}
+.leadCard {
+  composes: card;
+  display: grid !important;
+  gap: var(--dash-space-2) !important;
+  text-align: left;
+  min-width: 0;
+  cursor: pointer;
+  padding: var(--dash-space-4);
+}
+.leadCard[aria-current='true'] {
+  border-color: var(--dash-accent);
+  box-shadow: 0 0 0 1px var(--dash-accent);
+}
+.leadCardIdentity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.leadCardIdentity strong {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--dash-ink);
+  overflow-wrap: anywhere;
+}
+.leadCardIdentity span {
+  font-size: 13px;
+  color: var(--dash-muted);
+}
+.leadCardIdentity small {
+  font-size: 12px;
+  color: var(--dash-muted);
+}
+.leadCardMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--dash-space-2);
+}
+.leadCardMatch {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dash-status-offer-fg);
+}
+
+.statusSelect {
+  display: grid;
+  gap: 6px;
+  max-width: 260px;
+  font-size: 13px;
+  color: var(--dash-muted);
+  font-weight: 600;
+}
+.statusSelect select {
+  font: inherit;
+  padding: 10px 12px;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--dash-control-border);
+  background: var(--dash-surface);
+  color: var(--dash-ink);
+}
+.statusSelect select:focus-visible {
+  outline: 2px solid var(--dash-focus);
+  outline-offset: 2px;
+}
+
+.notesField {
+  display: grid;
+  gap: var(--dash-space-2);
+  margin-bottom: var(--dash-space-3);
+}
+.notesField textarea {
+  width: 100%;
+  min-height: 160px;
+  resize: vertical;
+  font: inherit;
+  font-size: 14px;
+  padding: var(--dash-space-3);
+  border: 1px solid var(--dash-control-border, var(--dash-border));
+  border-radius: 8px;
+  background: var(--dash-surface);
+  color: var(--dash-ink);
+}
+.notesField textarea:focus-visible {
+  outline: 2px solid var(--dash-focus);
+  outline-offset: 2px;
+}

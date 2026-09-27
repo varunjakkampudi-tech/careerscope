@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "areas": {
+    "architecture": {
+      "status": "NOT_STARTED",
+      "applicability": { "applicable": true, "reason": null },
+      "responsibleAgent": "careerscope-system-designer",
+      "evidence": [],
+      "checks": [
+        {
+          "id": "boundary",
+          "description": "Review local execution projection ownership and unchanged product backlog authority."
+        }
+      ],
+      "knownIssues": [],
+      "lastReviewed": null,
+      "reviewer": null
+    },
+    "frontend": {
+      "status": "NOT_STARTED",
+      "applicability": { "applicable": true, "reason": null },
+      "responsibleAgent": "careerscope-frontend-agent",
+      "evidence": [],
+      "checks": [
+        {
+          "id": "impact",
+          "description": "Assess frontend impact or document and independently review non-applicability."
+        }
+      ],
+      "knownIssues": [],
+      "lastReviewed": null,
+      "reviewer": null
+    },
+    "backend": {
+      "status": "NOT_STARTED",
+      "applicability": { "applicable": true, "reason": null },
+      "responsibleAgent": "careerscope-backend-agent",
+      "evidence": [],
+      "checks": [
+        {
+          "id": "impact",
+          "description": "Assess backend contract impact or document and independently review non-applicability."
+        }
+      ],
+      "knownIssues": [],
+      "lastReviewed": null,
+      "reviewer": null
+    },
+    "database": {
+      "status": "NOT_STARTED",
+      "applicability": { "applicable": true, "reason": null },
+      "responsibleAgent": "careerscope-backend-agent",
+      "evidence": [],
+      "checks": [
+        {
+          "id": "impact",
+          "description": "Assess stored-data and schema impact or document and independently review non-applicability."
+        }
+      ],
+      "knownIssues": [],
+      "lastReviewed": null,
+      "reviewer": null
+    },
+    "security": {
+      "status": "NOT_STARTED",
+      "applicability": { "applicable": true, "reason": null },
+      "responsibleAgent": "careerscope-security-agent",
+      "evidence": [],
+      "checks": [
+        {
+          "id": "isolation",
+          "description": "Review fail-closed parsing, path containment, evidence binding and absence of automatic execution or secret access."
+        }
+      ],
+      "knownIssues": [],
+      "lastReviewed": null,
+      "reviewer": null
+    },
+    "accessibility": {
+      "status": "NOT_STARTED",
+      "applicability": { "applicable": true, "reason": null },
+      "responsibleAgent": "careerscope-ux-agent",
+      "evidence": [],
+      "checks": [
+        {
+          "id": "impact",
+          "description": "Assess accessibility impact or document and independently review non-applicability."
+        }
+      ],
+      "knownIssues": [],
+      "lastReviewed": null,
+      "reviewer": null
+    },
+    "performance": {
+      "status": "NOT_STARTED",
+      "applicability": { "applicable": true, "reason": null },
+      "responsibleAgent": "careerscope-performance-agent",
+      "evidence": [],
+      "checks": [
+        {
+          "id": "bounded",
+          "description": "Verify local validation is scope-bounded and does not launch expensive global checks."
+        }
+      ],
+      "knownIssues": [],
+      "lastReviewed": null,
+      "reviewer": null
+    },
+    "seo": {
+      "status": "NOT_STARTED",
+      "applicability": { "applicable": true, "reason": null },
+      "responsibleAgent": "careerscope-frontend-agent",
+      "evidence": [],
+      "checks": [
+        {
+          "id": "impact",
+          "description": "Assess public indexing impact or document and independently review non-applicability."
+        }
+      ],
+      "knownIssues": [],
+      "lastReviewed": null,
+      "reviewer": null
+    },
+    "testing": {
+      "status": "NOT_STARTED",
+      "applicability": { "applicable": true, "reason": null },
+      "responsibleAgent": "careerscope-qa-agent",
+      "evidence": [],
+      "checks": [
+        {
+          "id": "mutations",
+          "description": "Run isolated valid, invalid, malformed and restored-input regression tests with real totals."
+        }
+      ],
+      "knownIssues": [],
+      "lastReviewed": null,
+      "reviewer": null
+    },
+    "ux": {
+      "status": "NOT_STARTED",
+      "applicability": { "applicable": true, "reason": null },
+      "responsibleAgent": "careerscope-ux-agent",
+      "evidence": [],
+      "checks": [
+        {
+          "id": "clarity",
+          "description": "Review CLI help and distinct validation, readiness and completion outcomes."
+        }
+      ],
+      "knownIssues": [],
+      "lastReviewed": null,
+      "reviewer": null
+    },
+    "documentation": {
+      "status": "NOT_STARTED",
+      "applicability": { "applicable": true, "reason": null },
+      "responsibleAgent": "careerscope-documentation",
+      "evidence": [],
+      "checks": [
+        {
+          "id": "contract",
+          "description": "Review schema and command documentation, evidence workflow and explicit trust limitations."
+        }
+      ],
+      "knownIssues": [],
+      "lastReviewed": null,
+      "reviewer": null
+    },
+    "production-readiness": {
+      "status": "NOT_STARTED",
+      "applicability": { "applicable": true, "reason": null },
+      "responsibleAgent": "careerscope-infrastructure-agent",
+      "evidence": [],
+      "checks": [
+        {
+          "id": "local-only",
+          "description": "Confirm local-only scope, no hook or deployment wiring, and no claim of production certification."
+        }
+      ],
+      "knownIssues": [],
+      "lastReviewed": null,
+      "reviewer": null
+    }
+  }
+}

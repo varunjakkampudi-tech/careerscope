@@ -77,6 +77,7 @@ try {
       [
         {
           fingerprint: `perf-${index}`,
+          sourceJobId: `perf-${index}`,
           title: 'React engineer',
           company: 'Synthetic Systems',
           location: 'Remote',

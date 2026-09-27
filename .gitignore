@@ -49,3 +49,9 @@ repomix-output*
 # Deployment build contexts are produced on demand and must never be committed.
 deploy.tgz
 *.tgz
+
+# Design scratch artefacts and external project clones - not part of this repo
+.codeatlas/
+page-designs/
+careerscope-pixel-perfect/
+2a333ef7-7f3c-459e-9f7b-e7a21b4e1741/

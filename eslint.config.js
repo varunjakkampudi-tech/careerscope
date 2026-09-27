@@ -16,6 +16,16 @@ export default tseslint.config(
       'data/**',
       '_site/**',
       'v2/**',
+      // Vendored external design-reference exports (Lovable). These are
+      // untracked working material the owner drops in the repository root to
+      // compare against; they are a separate project with their own
+      // package.json, tsconfig and eslint.config.js, and they are NOT
+      // CareerScope source. Linting them made `npm run lint` fail on somebody
+      // else's unused imports, which is exactly how a gate stops being read.
+      // Matched by their marker directory rather than by name, because the
+      // export directories are named with a fresh UUID each time.
+      '**/.lovable/**',
+      '2a333ef7-7f3c-459e-9f7b-e7a21b4e1741/**',
     ],
   },
   js.configs.recommended,
@@ -49,6 +59,7 @@ export default tseslint.config(
       'scripts/agile.mjs',
       'scripts/engineering-ui.mjs',
       'scripts/check-agile-gates.mjs',
+      'scripts/check-state-readers.mjs',
       'scripts/require-ci-success.mjs',
       'scripts/check-deploy-gate.mjs',
       'scripts/check-line-endings.mjs',
@@ -82,6 +93,7 @@ export default tseslint.config(
       'scripts/agile.mjs',
       'scripts/engineering-ui.mjs',
       'scripts/check-agile-gates.mjs',
+      'scripts/check-state-readers.mjs',
       'scripts/require-ci-success.mjs',
       'scripts/check-deploy-gate.mjs',
       'scripts/check-line-endings.mjs',

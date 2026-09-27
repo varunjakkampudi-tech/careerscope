@@ -19,10 +19,11 @@ import {
   createWorkableProvider,
   dedupeJobs,
   HttpClient,
+  jobFingerprint,
   normalizeJob,
   type JobProvider,
-} from '../../../../../packages/providers/dist/index.js';
-import { buildCandidateContext, scoreJob } from '../../../../../packages/matching/dist/index.js';
+} from '@job-radar/providers';
+import { buildCandidateContext, scoreJob } from '@job-radar/matching';
 
 const providerFactories = {
   remoteok: createRemoteOkProvider,
@@ -58,13 +59,22 @@ export async function collect(
       ].slice(0, 5)
     : [request.query];
   if (!titles.length) throw new Error('Saved target roles are required for profile discovery');
-  const candidate = profile
-    ? buildCandidateContext({
-        ...profile,
-        application: { ...profile.application, currentCtc: '', noticePeriodDays: 0 },
-        derived: null,
-      })
-    : null;
+  // CS-78: passed straight through, with no `application` override. What used
+  // to be here — `application: { ...profile.application, currentCtc: '',
+  // noticePeriodDays: 0 }` — was not blanking sensitive values that were
+  // present. `MatchingProfile` has never carried those two fields; the override
+  // FABRICATED them, because V1's `MatchableProfile` demanded the full
+  // `ApplicationDetails` and V2 deliberately snapshots only three fields.
+  //
+  // That stub was the actual hazard, and it was worse than a type mismatch: it
+  // satisfied the type, so if the matcher had ever started reading
+  // `noticePeriodDays` it would have read this fabricated `0` — a plausible
+  // value — and produced a silently wrong score with every check still green.
+  // `MatchableProfile['application']` is now narrowed to exactly the three
+  // fields `buildCandidateContext` reads, so the two shapes correspond, there
+  // is nothing to invent, and a fourth-field read is a compile error at the
+  // read site instead of a fabricated default two tiers away.
+  const candidate = profile ? buildCandidateContext(profile) : null;
   const selected = Array.isArray(providers) ? providers : [providers];
   if (
     selected.length !== request.sources.length ||
@@ -121,6 +131,7 @@ export async function collect(
           const normalized = normalizeJob(enriched, { now });
           collectedJobSchema.parse({
             fingerprint: normalized.fingerprint,
+            sourceJobId: normalized.sourceJobId,
             title: normalized.title,
             company: normalized.company.name,
             location: normalized.location,
@@ -132,12 +143,22 @@ export async function collect(
             match: null,
           });
           normalizedJobs.push(normalized);
-          const links = sourceLinks.get(normalized.fingerprint) ?? new Map();
-          links.set(`${normalized.source}:${normalized.sourceUrl}`, {
-            source: normalized.source,
-            url: normalized.sourceUrl,
-          });
-          sourceLinks.set(normalized.fingerprint, links);
+          // Recorded under both keys because dedup can later decide this
+          // fingerprint is ambiguous (two different reqs, not two sources for
+          // one role) and give the posting its own identity — at that point
+          // only the per-(source, id) bucket is still the right one to read
+          // back, since the shared-fingerprint bucket also holds a sibling
+          // posting's links.
+          const link = { source: normalized.source, url: normalized.sourceUrl };
+          const linkKey = `${normalized.source}:${normalized.sourceUrl}`;
+          for (const bucketKey of [
+            normalized.fingerprint,
+            `${normalized.source}:${normalized.sourceJobId}`,
+          ]) {
+            const links = sourceLinks.get(bucketKey) ?? new Map();
+            links.set(linkKey, link);
+            sourceLinks.set(bucketKey, links);
+          }
           collected += 1;
         } catch {
           errorCode = 'invalid_response';
@@ -154,7 +175,11 @@ export async function collect(
     outcomes.push(
       sourceOutcomeSchema.parse({
         source: provider.id,
-        status: errorCode ? 'failed' : 'completed',
+        // A provider that ran without throwing but yielded nothing is not the
+        // same claim as "found real results" - that silence is exactly what a
+        // job board changing its markup looks like, and it must be visible as
+        // its own state, not folded into 'completed'.
+        status: errorCode ? 'failed' : collected === 0 ? 'empty' : 'completed',
         accepted: collected,
         limited: limited || collected >= 100,
         errorCode,
@@ -164,16 +189,32 @@ export async function collect(
   for (const normalized of dedupeJobs(normalizedJobs)) {
     const match = candidate ? scoreJob(normalized, candidate, { now, windowDays: 30 }) : null;
     if (match?.excludedReason) continue;
+    // A fingerprint that no longer matches this job's own title/company/city
+    // was reassigned by dedup because the fingerprint was ambiguous; read the
+    // links back from the narrower per-(source, id) bucket in that case, not
+    // the shared one, which may also hold a sibling posting's links.
+    const wasDisambiguated =
+      normalized.fingerprint !==
+      jobFingerprint(
+        normalized.title,
+        normalized.company.name,
+        normalized.location,
+        normalized.isRemote,
+      );
+    const linkBucketKey = wasDisambiguated
+      ? `${normalized.source}:${normalized.sourceJobId}`
+      : normalized.fingerprint;
     jobs.push(
       collectedJobSchema.parse({
         fingerprint: normalized.fingerprint,
+        sourceJobId: normalized.sourceJobId,
         title: normalized.title,
         company: normalized.company.name,
         location: normalized.location,
         description: normalized.descriptionText,
         source: normalized.source,
         sourceUrl: normalized.sourceUrl,
-        sourceLinks: [...(sourceLinks.get(normalized.fingerprint)?.values() ?? [])],
+        sourceLinks: [...(sourceLinks.get(linkBucketKey)?.values() ?? [])],
         applyUrl: normalized.applyUrl,
         postedAt: normalized.postedAt,
         match,
@@ -215,6 +256,7 @@ export function searchHandler(database: Database, providers?: JobProvider[]): Ha
         durationMs: Math.round(performance.now() - started),
         accepted: result.jobs.length,
         failedSources: result.outcomes.filter((outcome) => outcome.status === 'failed').length,
+        emptySources: result.outcomes.filter((outcome) => outcome.status === 'empty').length,
         limitedSources: result.outcomes.filter((outcome) => outcome.limited).length,
         sources: result.outcomes.map((outcome) => ({
           source: outcome.source,
@@ -227,6 +269,33 @@ export function searchHandler(database: Database, providers?: JobProvider[]): Ha
       'Search collection finished',
     );
     signal.throwIfAborted();
-    return database.completeCollection(command, fence, result.jobs, result.outcomes);
+    const settled = await database.completeCollection(command, fence, result.jobs, result.outcomes);
+    // Checked after the current outcome is itself on record, so a streak that
+    // completes on this exact run is visible - not just streaks that were
+    // already five deep before this run started. A source ran without error
+    // but found nothing across several consecutive runs, system-wide - the
+    // exact shape a job board's markup breaking looks like from here. One
+    // empty run is unremarkable; a streak is not.
+    //
+    // This whole block is a diagnostic side effect on an already-successful
+    // search - a transient failure here (e.g. a momentary Postgres error)
+    // must never surface as if the search itself failed. Its own try/catch
+    // keeps that failure mode from riding on the handler's real exception
+    // path (Independent Reviewer finding CS-23-B).
+    try {
+      const EMPTY_STREAK_THRESHOLD = 5;
+      for (const outcome of result.outcomes) {
+        if (outcome.status !== 'empty') continue;
+        const recent = await database.recentSourceStatuses(outcome.source, EMPTY_STREAK_THRESHOLD);
+        if (recent.length >= EMPTY_STREAK_THRESHOLD && recent.every((status) => status === 'empty'))
+          logger.warn(
+            { source: outcome.source, consecutiveEmptyRuns: recent.length },
+            'Source has returned zero results for consecutive runs across all owners; its provider may need attention',
+          );
+      }
+    } catch (error) {
+      logger.error({ error }, 'Empty-streak check failed; the search itself still completed');
+    }
+    return settled;
   };
 }

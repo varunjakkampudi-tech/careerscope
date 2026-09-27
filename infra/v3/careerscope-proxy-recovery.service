@@ -1,0 +1,33 @@
+[Unit]
+Description=CareerScope proxy split-brain detection and auto-recovery
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/careerscope-monitor.env
+# recover-proxy.sh derives PROXY_RESTART_SCRIPT relative to its own location
+# by default, which is correct when run directly from a checkout but not
+# once installed to /usr/local/bin - set explicitly to the actual deployed
+# checkout path (see docs/OPERATIONS/DEPLOYMENT.md's deploy sequence).
+Environment=PROXY_RESTART_SCRIPT=/opt/careerscope/infra/v3/restart-stack.sh
+ExecStart=/usr/local/bin/careerscope-recover-proxy.sh
+
+# Security review (P1): restart-stack.sh runs 8 sequential `docker compose
+# restart` calls plus up to a 60s health-poll loop plus verification probes -
+# comfortably able to exceed systemd's DefaultTimeoutStartSec (90s on stock
+# Ubuntu 24.04). Being killed mid-run is worse than not running at all: it
+# can leave services mid-restart, AND it skips recover-proxy.sh's own
+# LAST_RESTART write (which happens only after restart-stack.sh returns),
+# silently disabling the circuit breaker the very next tick. Generous,
+# explicit bound rather than the implicit default, with margin over the
+# measured worst case.
+TimeoutStartSec=600
+
+# Needs the docker socket (invokes restart-stack.sh, which itself runs
+# `docker compose restart`), same trust level as careerscope-monitor.service.
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/careerscope-monitor

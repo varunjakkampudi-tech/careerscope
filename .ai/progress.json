@@ -1,27 +1,35 @@
 {
   "$comment": "Percentages require evidence. VERIFIED requires evidence. UNMEASURED carries no number at all. Enforced by scripts/check-progress.mjs.",
-  "updatedAt": "2026-09-19",
-  "overallStatus": "IN PROGRESS — deployed and working; core user journey not built",
+  "updatedAt": "2026-09-25",
+  "overallStatus": "IN PROGRESS — core discover-to-save journey now built and in UAT; Applications tracking and remaining page designs still open",
   "overall": null,
   "areas": [
     {
       "area": "Product",
-      "percent": 25,
+      "percent": 55,
       "status": "IN PROGRESS",
       "evidence": [
-        "Discovery, matching and storage work end to end on the deployed stack (/api/health returns 3.0.0)",
-        "The core user journey is not built: CS-16 to CS-19 are all READY, none started",
-        "No user-facing feature has been validated from the user perspective"
+        "CS-16 through CS-19 (the core discover -> detail -> match evidence -> save/shortlist journey) are all built, self-reviewed and promoted QA -> UAT via scripts/agile.mjs promote on 2026-09-23, not merely marked done",
+        "Verified live end-to-end in a real browser with a real network round trip: search real jobs, open match evidence (7 real per-dimension scores), save a job, undo the save (archives it), reload and see it persisted",
+        "Still not built: CS-50 Applications tracking (scoped to an honest v1, not started), CS-36 account-security journeys, CS-37 onboarding/profile journey are still DISCOVERY",
+        "A real, previously-undetected backend bug was found and fixed while verifying this slice: the local test fixture's match.dimensions failed schema validation, silently breaking every Save action - this was fixed at the data layer, not by loosening the schema"
       ]
     },
     {
       "area": "Frontend",
-      "percent": 20,
+      "percent": 48,
       "status": "IN PROGRESS",
       "evidence": [
-        "v2/apps/web builds, typechecks and lints clean",
-        "No shared loading, empty or error states (CS-13); Leads unusable on a phone (CS-14)",
-        "Known layout defect open at 768px on Linux WebKit (CS-2), fix written but unverified"
+        "CS-6: every real screen is now its own Next.js route under app/(app)/ behind one shared auth-boundary component, replacing the single 872-line page.tsx that faked navigation with a view variable",
+        "CS-13: shared LoadingState/ErrorState/EmptyState components exist and are used by the shell and the Jobs route; not yet rolled out inside Saved/Resume/Settings/Preparation/Career Resources' own internals",
+        "CS-14: the Leads screen now exposes all 6 real backend statuses (previously 2 of 6) and has a verified zero-overflow mobile layout at 320/768/1440px",
+        "CS-50: a real /applications route now exists (previously did not), reusing the reviewed SavedLeads component via a scope prop rather than a separate fabricated ATS UI - 4 real application statuses (applied/interviewing/offer/rejected), zero new schema or fake fields",
+        "The Saved/Applications lead-detail view was rebuilt end-to-end against a specialist-produced design spec (header, 3-col Job Details/Timeline/Actions grid, real match evidence, Documents+Notes, honest \"AI Insights - not available yet\"); every field is real data, no fabricated stage, score or document",
+        "A real CSS overflow regression introduced by that rebuild (27px horizontal scroll at 320px) was root-caused via live element-by-element bisection (not guessed) to a flex-shrink:0 header-actions block colliding with its own wrapped button row, and fixed; re-verified at 320/768/1440px with scrollWidth===clientWidth",
+        "v2/apps/web builds, typechecks, lints and formats clean across every file touched this round",
+        "Resume, Settings, Preparation and Career Resources routes are functionally real but still carry the pre-redesign plain CSS - no visual pass yet",
+        "UPDATE 2026-09-25: the disclosed check-ui.ts regression is RESOLVED - the suite is repaired, hardened and green on all three engines. Separately, CS-51 fixed a family of five defects where an identifier present at the call site was discarded before reaching its destination (Open Saved Lead opened the list but not the lead; clicking any Recent Discovery run opened the newest one). Four fixed, the fifth (SaveJob not hydrating already-saved state) blocked on a missing backend job-to-lead lookup and documented rather than faked.",
+        "CS-13 remains the clearest open frontend gap and its status was corrected from UAT to IN PROGRESS on 2026-09-24: the shared loading/empty/error components are imported by exactly TWO modules while the (app) route group has EIGHT routes."
       ]
     },
     {
@@ -29,9 +37,10 @@
       "percent": 70,
       "status": "IN PROGRESS",
       "evidence": [
-        "Root suite 1047/1047 passing locally",
-        "v2 unit layer 33/33 passing in CI",
-        "Six v2 integration files need Postgres and Redis and run nowhere (CS-9)"
+        "Root suite 1055/1055 and v2 unit 49/49 passing locally (re-measured 2026-09-25, not carried forward).",
+        "v2 test:integration 42/42 exit 0 on a quiet database. It now runs in CI with real PostgreSQL, Redis and LocalStack service containers - the gap this area previously recorded as \"six v2 integration files need Postgres and Redis and run nowhere (CS-9)\" is closed.",
+        "CS-33 and CS-35 were independently confirmed genuinely implemented at source level. CS-33 is now UAT; CS-35 returned REVISE because its AC2 is not implemented - the server emits typed conflict codes correctly but the client ApiError type carries no code field, so the contract terminates at the network boundary.",
+        "Open and ticketed: CS-53 composite FKs, CS-55 unrate-limited authenticated GETs, CS-56 title character allowlist, CS-57 logout non-null assertion."
       ]
     },
     {
@@ -39,7 +48,7 @@
       "percent": 65,
       "status": "IN PROGRESS",
       "evidence": [
-        "13 tables and 13 applied migrations, with 18 CHECK constraints, 10 indexes and 2 composite foreign keys — the schema is substantially complete, not a sketch",
+        "13 tables and 15 applied migrations, with 18 CHECK constraints, 10 indexes and 2 composite foreign keys — the schema is substantially complete, not a sketch",
         "Security review found search_jobs and run_events reference searches.id and users.id separately rather than a composite (owner_id, run_id) key, so a cross-owner row is representable at the database layer",
         "v2/scripts/check-database-recovery.ts exists but no recovery run has been recorded, and no scheduled dump exists (CS-25)",
         "Postings have no retention or liveness recheck (CS-27), and identity can merge two real openings (CS-28)"
@@ -57,13 +66,14 @@
     },
     {
       "area": "Security",
-      "percent": 72,
+      "percent": 66,
       "status": "IN PROGRESS",
       "evidence": [
-        "Security agent review 2026-09-19: all ten assessed areas IMPLEMENTED — Argon2id m=19456, session tokens stored only as SHA-256 with 8h expiry and fixation resistance, owner scoping enforced at the repository layer, origin plus timing-safe CSRF, helmet and Caddy headers, Zod strict validation at every boundary, magic-byte upload checks with 0600 files",
-        "No reachable cross-owner or injection path was found; publicLink rejects non-HTTPS and embedded credentials, and no dangerouslySetInnerHTML exists in v2/apps/web",
-        "Deduction is evidential: no security review had ever been recorded for v2 before this one, the v2 suite runs in no pipeline, and the live origin was not observed — these are code-level conclusions about a deployment that was not tested",
-        "Open gaps: auth and isolation tests never execute in CI (P1), non-composite FKs on search_jobs and run_events (P2), script-src unsafe-inline in the app CSP (P2)"
+        "THE NUMBER WENT DOWN from 72 on 2026-09-25, and no security control was weakened to cause that. Progress here is verified scope over REQUIRED scope, and a forensic security census enlarged the required scope by finding five previously untracked issues. The code did not get worse; what is known about it got more complete. Recording a drop is the honest result and this project instruction is explicit that the number must be able to fall.",
+        "VERIFIED CLEAN and not to be re-litigated - an independent read of all 34 route handlers confirmed: no route reads an owner identifier from the client (request.ownerId is assigned in exactly one place, the onRequest hook, from a server-side session lookup); all SQL parameterized in every file read; cookie flags correct (httpOnly, sameSite strict, path /api, secure derived from origin scheme rather than hardcoded); logging never records URLs or bodies and redact covers cookie/authorization/password/token; origin check is exact equality; Argon2id m=19456 t=2 p=1 not weakened; session fixation defence plus a FOR UPDATE re-read of the password hash inside the login transaction.",
+        "CRITICAL findings: NONE FOUND - stated as \"none found\", not \"none exist\", because the reviewer had no shell and no network and its conclusions are source-level.",
+        "NEW AND NOW TICKETED: CS-54 web CSP script-src unsafe-inline (VERIFIED by the Orchestrator at v2/apps/web/next.config.ts:27; the API-side CSP is strict and is a separate surface); CS-53 search_jobs/run_events use separate rather than composite FKs so a cross-owner row is representable at the database layer, defence-in-depth only with no reachable exploit; CS-55 eleven authenticated GET routes unrated-limited including the most expensive read, which the UI itself polls every 5-10s; CS-56 derived.titles length-bounded but not character-constrained, reaching stored match evidence verbatim - not exploitable under today only renderer (auto-escaping JSX) but a surface any future non-React renderer inherits silently; CS-57 a non-null assertion on the session cookie in POST /api/logout.",
+        "THE LARGEST SECURITY-ADJACENT GAP IS COVERAGE, NOT CODE (CS-52): ai-provider.test.ts carries the API-key-never-logged assertions, the 256 KiB bounded-read proof, the model-catalog fail-closed cases and the structural test asserting matching never imports AI - and it ran in NO pipeline. check-ui.ts, the only cross-engine E2E, exercises the auth boundary and ran nowhere either. Both are now wired; neither is CI-executed."
       ]
     },
     {
@@ -80,41 +90,48 @@
     },
     {
       "area": "Testing",
-      "percent": 55,
+      "percent": 58,
       "status": "IN PROGRESS",
       "evidence": [
-        "1047 root tests and 33 v2 unit tests pass; five gate suites proven by mutation",
-        "No database, queue or browser coverage runs in CI (CS-9)",
-        "CS-2 cannot be reproduced locally; only CI can adjudicate it"
+        "Root suite 1055/1055 (67 files) and v2 unit 49/49 pass locally, both re-run by the Orchestrator on 2026-09-25. The v2 unit count rose 37 -> 49 because ai-provider.test.ts was wired into test:unit; the 12 new cases are the OpenRouter matrix that previously ran nowhere.",
+        "RESOLVED 2026-09-24/25: the regression this area previously recorded - \"v2/scripts/check-ui.ts is stale against the CS-6 routing change and would fail as-is\" - is fixed. The suite runs green end-to-end on chromium, firefox and webkit, now enforces WCAG 2.2 AA (it had been pinned to 2.1 while its criterion said 2.2, with zero new violations once corrected), and is wired into ci.yml for the first time.",
+        "WIRED IS NOT CI-EXECUTED, and the distinction is the point: neither check-ui.ts nor ai-provider.test.ts has yet run in a real pipeline. Commit authorisation is the unlock. Do not read a green local run as enforcement.",
+        "THE NUMBER ONLY ROSE 3 POINTS DESPITE REAL WORK, DELIBERATELY. Four separate checks-that-cannot-fail were found in one night: the skip-link contract that would have stayed green with tabIndex={-1} removed; the nav assertion collecting [] from a selector deleted by CS-6; CS-47 curl stub that discards the POST body so json_escape() is exercised by no test; and CS-48 data-minimization test asserting the absence of strings that were never in its input. Two more are historical - R3 --allow-net (a Deno flag Node lacks, unconditionally true) and CS28-1 invisible test file. Finding them means prior confidence in this area was overstated, so wiring gains are partly offset by knowing the coverage was thinner than recorded.",
+        "ELEVEN executable checks still run in no pipeline (CS-52), four of which cover exactly the failure modes an audit had to mark NOT VERIFIED: crash recovery, database recovery, queue runtime, soak. The deploy gate runs no V2 tests at all.",
+        "Two unexplained intermittent failures now have a ticket and an owner for the first time (CS-58): a WebKit click-stability timeout in check-ui.ts, and an integration failure that survived a demonstrably quiet database with the failing test identity uncaptured."
       ]
     },
     {
       "area": "System Design",
-      "percent": 75,
+      "percent": 78,
       "status": "IN PROGRESS",
       "evidence": [
         "Architecture is documented and the V1/V2 split is recorded",
-        "No independent design review has been run this cycle",
-        "CS-6 records that frontend route architecture and the shared shell are inconsistent"
+        "CS-6 (the specific gap this area's evidence cited: 'frontend route architecture and the shared shell are inconsistent') is now closed - one shared auth-boundary component, real per-page routes",
+        "No independent design review has been run this cycle"
       ]
     },
     {
       "area": "UX/UI",
-      "percent": 15,
+      "percent": 39,
       "status": "IN PROGRESS",
       "evidence": [
-        "No design pass on the public Pages surface (CS-11)",
-        "No accessibility baseline has ever been measured (CS-15)",
-        "Frontend agent now owns senior UI/UX; nothing has been implemented under it yet"
+        "Real accessibility baseline now exists where it did not before: Lighthouse accessibility 100/100 on /dashboard, /jobs and /saved (re-verified after the lead-detail redesign, no regression); axe-core WCAG2A/AA 0 violations at 320/1440px on the Dashboard route (CS-15 is still open for the rest of the app)",
+        "A design pass has now happened on Dashboard, Jobs, Saved and the Saved/Applications lead-detail view specifically, using the owner's real design images plus a new objective visual-regression tool (v2/scripts/visual-regression.ts) - current measured parity is 66.32% on Dashboard, honestly reported rather than rounded up, with the un-closable remainder (fabricated stats/photos in the reference design) explicitly named",
+        "The lead-detail redesign followed a full specialist design spec (exact tokens, spacing scale, status-badge contrast ratios, grid breakpoints) rather than ad-hoc styling, and every design element that would have required fabricated data (85% \"AI Application Strength\" score, 5-stage dated interview tracker, fake documents/company overview) was deliberately excluded, not silently adopted",
+        "One real font now used everywhere (next/font/google Inter) replacing a font-family rule naming a font CareerScope never shipped, which had been rendering differently per OS",
+        "Applications now exists as a real route (CS-50) reusing the same reviewed list/detail UI as Saved - not a separate, unreviewed screen",
+        "Sign-in, Resume, Settings, Preparation and Career Resources have had no comparable design pass yet; Skills/Insights/AI Assistant pages do not exist",
+        "No design pass on the public Pages surface (CS-11)"
       ]
     },
     {
       "area": "Documentation",
-      "percent": 70,
+      "percent": 71,
       "status": "IN PROGRESS",
       "evidence": [
         "The documentation set is extensive and the Copilot contract is current",
-        "Two documents asserted agents could not be invoked; disproved on 2026-09-19, so drift is demonstrated not hypothetical",
+        "docs/FRONTEND-ADMIN-ROADMAP.md carries a full dated progress addendum for 2026-09-23 covering every ticket closed and every known gap left open this round",
         "Documentation now gates the release, but no release has passed that gate yet"
       ]
     },
@@ -128,5 +145,6 @@
         "The previous 90% VERIFIED predated any review actually being run"
       ]
     }
-  ]
+  ],
+  "lastUpdated": "2026-09-25"
 }

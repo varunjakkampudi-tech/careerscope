@@ -66,8 +66,10 @@ function progress() {
   if (!raw) return [];
   try {
     return JSON.parse(raw).areas ?? [];
-  } catch {
-    return [];
+  } catch (error) {
+    // Never render a parse failure as "no progress data" - that reads as
+    // unmeasured/all-clear, the exact failure mode this screen exists to catch.
+    return { parseError: error.message };
   }
 }
 
@@ -277,6 +279,11 @@ function render() {
   const before = previousProgress();
   line();
   line(bold('  PROGRESS') + dim('   (from .ai/progress.json)'));
+  if (!Array.isArray(rows)) {
+    line(red(`      UNREADABLE — ${rows.parseError}`));
+    line(red('      This is not "no progress data". Fix the file before trusting this screen.'));
+    return out.join('\n');
+  }
   if (rows.length === 0) {
     line(dim('  No progress matrix found.'));
   }

@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
-import { derivedResumeSchema } from '../../../../packages/shared/dist/index.js';
+import { derivedResumeSchema } from '@job-radar/shared';
 import { maximumResumeBytes } from './storage.js';
 
 export const maximumResumeText = 160_000;
@@ -35,8 +35,17 @@ export async function parseResumeIsolated(body: Uint8Array, now: number, signal?
         new URL('../dist/', import.meta.url),
         new URL('../../../node_modules/', import.meta.url),
         new URL('../../../../node_modules/', import.meta.url),
-        new URL('../../../../packages/resume/dist/', import.meta.url),
-        new URL('../../../../packages/shared/dist/', import.meta.url),
+        // package.json at each workspace package's root, not just its
+        // dist/, because these are npm workspace symlinks: the permission
+        // model checks the resolved real path, and ESM reads package.json
+        // at the package root before it ever gets to dist/. Granted as the
+        // whole package directory, not just package.json: narrowing to the
+        // exact file broke on Windows (its symlink/realpath resolution
+        // under --permission does not match Linux here), and this runs in
+        // both places during development, not only in the Linux CI/prod
+        // target.
+        new URL('../../../../packages/resume/', import.meta.url),
+        new URL('../../../../packages/shared/', import.meta.url),
       ].map((url) => fileURLToPath(url));
       const child = spawn(
         process.execPath,

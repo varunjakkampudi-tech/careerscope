@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import { ArrowLeft, KeyRound, LoaderCircle, LogOut } from 'lucide-react';
 import { api } from '../lib/api';
+import { ErrorState } from './ui-states';
 
 export default function AccountSecurity({
   csrf,
@@ -14,7 +15,19 @@ export default function AccountSecurity({
   onBack: () => void;
 }) {
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState('');
+  // CS-13 re-review: this component makes two real network calls but imports
+  // no react-query hook, so the F-4 census — which proxied "async-bearing" as
+  // "imports useQuery/useMutation/useInfiniteQuery" — excluded it by the
+  // stated rule while it was async-bearing in substance. The proxy and the
+  // property came apart here, and exactly here.
+  //
+  // `error` carries two different kinds of thing: CLIENT VALIDATION, which is
+  // correctly out of scope for the page-level state contract, and the API
+  // failure from the `catch` below, which is not. They are distinguished by
+  // whether `what` is present rather than by a separate state, because both
+  // render into the one element that `aria-describedby` points at and two
+  // states could both be set.
+  const [error, setError] = useState<{ what?: string; detail: string } | null>(null);
   const [revoking, setRevoking] = useState(false);
   const [sessionError, setSessionError] = useState('');
   const [notice, setNotice] = useState('');
@@ -34,7 +47,8 @@ export default function AccountSecurity({
       });
       setNotice('Other sessions signed out. This session remains signed in.');
     } catch (failure) {
-      setSessionError(failure instanceof Error ? failure.message : 'Session revocation failed.');
+      // The fallback no longer repeats the operation name — `what` carries it.
+      setSessionError(failure instanceof Error ? failure.message : 'Please try again.');
     } finally {
       setRevoking(false);
     }
@@ -47,14 +61,17 @@ export default function AccountSecurity({
     const data = new FormData(form);
     const currentPassword = String(data.get('currentPassword'));
     const newPassword = String(data.get('newPassword'));
-    setError('');
+    setError(null);
     if (newPassword !== data.get('confirmation')) {
-      setError('Passwords do not match.');
+      // Client validation: deliberately left as a bare detail. It is a
+      // field-level message, not a page-level error state, and it already
+      // names its own problem.
+      setError({ detail: 'Passwords do not match.' });
       form.querySelector<HTMLInputElement>('[name="confirmation"]')?.focus();
       return;
     }
     if (currentPassword === newPassword) {
-      setError('Choose a different password.');
+      setError({ detail: 'Choose a different password.' });
       return;
     }
     if (!window.confirm('Change password and sign out all sessions?')) return;
@@ -67,7 +84,12 @@ export default function AccountSecurity({
       });
       onChanged();
     } catch (failure) {
-      setError(failure instanceof Error ? failure.message : 'Password change failed.');
+      // The API failure, unlike the validation branches above, is a real
+      // operation failing and must name what failed.
+      setError({
+        what: 'Could not change your password.',
+        detail: failure instanceof Error ? failure.message : 'Please try again.',
+      });
     } finally {
       form.reset();
       setPending(false);
@@ -89,7 +111,13 @@ export default function AccountSecurity({
         )}
         {revoking ? 'Signing out other sessions' : 'Sign out other sessions'}
       </button>
-      {sessionError && <p role="alert">{sessionError}</p>}
+      {sessionError && (
+        <ErrorState
+          variant="inline"
+          what="Could not sign out other sessions."
+          detail={sessionError}
+        />
+      )}
       {notice && <p role="status">{notice}</p>}
       <form onSubmit={submit} aria-busy={pending}>
         <label>
@@ -131,11 +159,19 @@ export default function AccountSecurity({
             disabled={busy}
           />
         </label>
-        {error && (
-          <p id="security-error" role="alert">
-            {error}
-          </p>
-        )}
+        {error &&
+          (error.what ? (
+            <ErrorState
+              variant="inline"
+              id="security-error"
+              what={error.what}
+              detail={error.detail}
+            />
+          ) : (
+            <p id="security-error" role="alert">
+              {error.detail}
+            </p>
+          ))}
         <button className="primary" disabled={busy}>
           {pending ? (
             <LoaderCircle className="spin" size={18} aria-hidden="true" />

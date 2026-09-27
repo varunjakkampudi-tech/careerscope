@@ -1,0 +1,14 @@
+[Unit]
+Description=CareerScope search results retention enforcement
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/careerscope-monitor.env
+ExecStart=/usr/bin/docker exec careerscope-api-1 node --import tsx /app/v2/scripts/enforce-search-retention.ts
+
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes

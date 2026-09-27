@@ -6,12 +6,14 @@ import {
   rateLimiter,
   shutdownSignal,
 } from '@careerscope/core';
+import { configuredAiProvider } from '@careerscope/core/ai-provider';
 import { createApp } from './app.js';
 
 const env = configuration();
 const database = new Database(env.DATABASE_URL);
 const limiter = await rateLimiter(env.REDIS_URL);
 const resumeStorage = await configuredFileResumeStorage();
+const aiProvider = configuredAiProvider();
 const app = await createApp(database, env.APP_ORIGIN, limiter.consume, {
   registrationEnabled: env.REGISTRATION_ENABLED === 'true',
   resumeStorage: resumeStorage
@@ -24,6 +26,7 @@ const app = await createApp(database, env.APP_ORIGIN, limiter.consume, {
         delete: resumeStorage.delete.bind(resumeStorage),
       }
     : undefined,
+  aiProvider,
 });
 const shutdown = shutdownSignal();
 try {

@@ -24,6 +24,15 @@ x-environment: &environment
   RESUME_STORAGE_KEY_FILE: /private/encryption.key
   NODE_OPTIONS: --max-old-space-size=256
 
+# CS-34: mirrors the same fix in compose.production.yml - the web service
+# reads no environment variable other than NODE_OPTIONS (see next.config.ts;
+# the /api/* proxy destination is hardcoded, not env-configured), so it must
+# not inherit DATABASE_URL, the resume storage encryption key path or the
+# LocalStack queue endpoint just because it shares the *app anchor with the
+# services that actually need them.
+x-web-environment: &web-environment
+  NODE_OPTIONS: --max-old-space-size=256
+
 x-app: &app
   <<: *hardening
   image: careerscope:v3-local-acceptance
@@ -145,6 +154,7 @@ services:
     mem_limit: 512m
   web:
     <<: *app
+    environment: *web-environment
     working_dir: /app/v2/apps/web
     command:
       [

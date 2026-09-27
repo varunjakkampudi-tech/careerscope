@@ -6,6 +6,44 @@ in one file.
 
 For V1's separate, SQLite-backed API see [ARCHITECTURE](ARCHITECTURE.md).
 
+## Interactive OpenAPI Documentation
+
+The V2 source includes authenticated Swagger UI at `/api/docs/`, with the
+OpenAPI 3.0.3 specification at `/api/docs/json` and `/api/docs/yaml`. This is
+available only after running the updated API; adding it to source does not
+deploy it. Sign in through the application first, then open `/api/docs/` on
+that same origin. Expand an operation, select **Try it out**, supply its input,
+and select **Execute**. These are real operations, not a sandbox: use synthetic
+data for verification. Logout and password changes invalidate the current session.
+
+The browser uses the existing HttpOnly cookie and fetches a fresh CSRF token
+from `/api/session` before each authenticated mutation. Do not paste cookies or
+tokens into Swagger's authorization controls. The browser supplies `Origin`;
+the API still enforces its exact match. Idempotent operations require an
+`Idempotency-Key`: reuse one only to retry the same input. Resume uploads use
+raw `application/octet-stream`, not multipart form data. SSE output is buffered
+by Try It Out until the connection closes, rather than displayed as live events.
+
+The UI, redirects, JSON/YAML and local assets all require a valid session and
+return `Cache-Control: no-store`. External validation, query-string UI
+configuration and persistent authorization are disabled. Requests are limited to
+same-origin `/api/` URLs. The docs-only CSP allows local scripts/styles and
+inline style attributes; ordinary API security headers are unchanged.
+
+Schemas are added only by Swagger's documentation transform, not to Fastify's
+runtime validators or serializers. The regression in
+[database.test.ts](../v2/packages/core/src/database.test.ts) compares the spec
+to actual route registrations, including disabled resume capabilities. All
+resume routes remain registered when storage is disabled: listing reports
+`enabled: false`, while storage operations return 503. Cancellation depends on
+the injected `cancelUpload` capability, which the current `main.ts` adapter
+does not supply. The spec reports those configured capabilities and registration
+availability rather than hiding their routes.
+
+Dependencies are pinned to `@fastify/swagger` 9.8.1 and `@fastify/swagger-ui`
+6.1.1. The latter's published plugin metadata supports Fastify 5 and resolves
+a patched static server; older UI 5.x releases pull an affected static dependency.
+
 ---
 
 ## Global request contract
@@ -19,15 +57,15 @@ Applied by a single `onRequest` hook, in this order:
    rejected `403 Origin denied`. A missing `Origin` fails this check.
 4. `/api/login` and `/api/register` short-circuit here — they are the two
    unauthenticated mutating routes, and step 3 has already run.
-5. **Session.** The opaque token in the `session` cookie is looked up.
+5. **Session.** The opaque token in the `careerscope_v2_session` cookie is looked up.
    `/api/session` returns whatever it found, including "nothing".
 6. Everything else requires a session, or `401 Authentication required`.
 7. **CSRF.** Any non-`GET`/`HEAD`/`OPTIONS` request must carry `x-csrf-token`
    matching the session's token, or `403 CSRF check failed`.
 
-Consequences worth stating plainly: there is no endpoint that mutates state
-without both a valid `Origin` and a valid CSRF token, and `ownerId` is taken
-from the session — never from the request body or path.
+Authenticated mutations require both a valid `Origin` and a valid CSRF token;
+login and registration require Origin but not CSRF. `ownerId` is taken from
+the session, never from the request body or path.
 
 ### Server limits
 
@@ -49,7 +87,7 @@ from the session — never from the request body or path.
 | payload too large                                 | 413    | `Request too large`                    |
 | anything unhandled                                | 500    | `Service unavailable`                  |
 
-Every response carries `requestId`. Internal error detail is never returned;
+Every error response carries `requestId`. Internal error detail is never returned;
 500s are logged server-side against that id.
 
 ---
@@ -87,6 +125,13 @@ Every response carries `requestId`. Internal error detail is never returned;
 
 `PUT /api/profile` carries a revision. A stale revision is a 409, not a
 last-write-wins overwrite.
+
+`POST /api/preparation/:checkId/ai-elaborate` (yes/yes, 10/min per owner) —
+CS-48's only AI route. 503 unless `AI_ENABLED=true` with a valid, currently
+free OpenRouter model configured; 404 if `checkId` no longer matches the
+current report; 502/504 on upstream failure or timeout. Sends only the
+matched checklist/question's already-computed text and evidence values —
+never resume, contact or compensation data.
 
 ### Resumes
 
@@ -169,9 +214,26 @@ record.
 
 ---
 
+## Market And Pipeline
+
+These are authenticated, owner-scoped, read-only routes derived from the owner's
+search observations and saved leads:
+
+| Method | Path                                | Input                                                             |
+| ------ | ----------------------------------- | ----------------------------------------------------------------- |
+| GET    | `/api/market/postings`              | Optional `limit`, default 50                                      |
+| GET    | `/api/market/postings/:fingerprint` | Posting fingerprint, 1-256 characters                             |
+| GET    | `/api/market/companies`             | Optional `limit`, default 25                                      |
+| GET    | `/api/pipeline`                     | None                                                              |
+| GET    | `/api/pipeline/stalled`             | Optional `days` (default 21, clamped 1-365), `limit` (default 50) |
+
+Market page limits are coerced, floored and capped at 200; non-finite or
+non-positive inputs use the default. These are observed owner data, not a
+public job corpus or inferred market predictions.
+
 ## What is not here
 
-No admin endpoints. No public/unauthenticated job browsing. No company,
-market, skills or alert endpoints. If a frontend design calls for those, the
-API does not currently provide them — see
+No admin endpoints, public/unauthenticated job browsing, skills aggregates or
+alerts. The owner-scoped market routes above do not provide a public company
+directory. For planned surfaces see
 [FRONTEND-ADMIN-ROADMAP](FRONTEND-ADMIN-ROADMAP.md).

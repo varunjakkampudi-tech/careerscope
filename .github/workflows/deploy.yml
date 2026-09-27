@@ -143,6 +143,18 @@ jobs:
         working-directory: v2
         run: npm ci
 
+      # Recorded explicitly (CS-52): this gate runs NO V2 tests. `npm test`
+      # above is the V1 domain suite; everything below is typecheck, lint,
+      # format and build. The V2 unit, integration, browser and recovery suites
+      # — which cover the application actually serving careerscope.tech — run
+      # only in ci.yml.
+      #
+      # That is defensible, because `require-ci` refuses to deploy a commit
+      # whose CI run did not succeed, and a failing V2 job fails the whole CI
+      # run. It is written down rather than left implied because the gate's
+      # green tick otherwise reads as "V2 was tested against this commit here",
+      # which it is not: the evidence lives in the CI run for the same SHA, and
+      # the `override_ci` input can waive exactly that evidence.
       - name: Typecheck, lint and build
         working-directory: v2
         run: |

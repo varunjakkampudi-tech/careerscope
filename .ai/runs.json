@@ -1,79 +1,599 @@
 {
   "runs": [
     {
-      "runId": "discover-1789764660345",
-      "phase": "discover",
-      "startedAt": "2026-09-18T20:51:00.342Z",
-      "completedAt": "2026-09-18T20:51:00.345Z",
-      "commit": "a6294ddee8f4f88302bfba0b8055b9c2c32582de",
-      "result": "prepared",
+      "runId": "feature-1790331701257",
+      "phase": "feature",
+      "startedAt": "2026-09-25T10:21:41.238Z",
+      "completedAt": "2026-09-25T10:21:41.257Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "ok",
       "errors": []
     },
     {
-      "runId": "plan-1789764660774",
-      "phase": "plan",
-      "startedAt": "2026-09-18T20:51:00.771Z",
-      "completedAt": "2026-09-18T20:51:00.774Z",
-      "commit": "a6294ddee8f4f88302bfba0b8055b9c2c32582de",
+      "runId": "feature-1790331701657",
+      "phase": "feature",
+      "startedAt": "2026-09-25T10:21:41.625Z",
+      "completedAt": "2026-09-25T10:21:41.657Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1790331701998",
+      "phase": "feature",
+      "startedAt": "2026-09-25T10:21:41.935Z",
+      "completedAt": "2026-09-25T10:21:41.998Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "wip-exceeded",
+      "errors": [
+        "WIP limit exceeded"
+      ]
+    },
+    {
+      "runId": "feature-1790331705071",
+      "phase": "feature",
+      "startedAt": "2026-09-25T10:21:45.051Z",
+      "completedAt": "2026-09-25T10:21:45.071Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "paused",
+      "errors": []
+    },
+    {
+      "runId": "status-1790331706005",
+      "phase": "status",
+      "startedAt": "2026-09-25T10:21:45.477Z",
+      "completedAt": "2026-09-25T10:21:46.005Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
       "result": "reported",
       "errors": []
     },
     {
-      "runId": "plan-1789764872702",
-      "phase": "plan",
-      "startedAt": "2026-09-18T20:54:32.698Z",
-      "completedAt": "2026-09-18T20:54:32.702Z",
-      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "runId": "feature-1790331706440",
+      "phase": "feature",
+      "startedAt": "2026-09-25T10:21:46.408Z",
+      "completedAt": "2026-09-25T10:21:46.440Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "wip-exceeded",
+      "errors": [
+        "WIP limit exceeded"
+      ]
+    },
+    {
+      "runId": "release-1790331706925",
+      "phase": "release",
+      "startedAt": "2026-09-25T10:21:46.775Z",
+      "completedAt": "2026-09-25T10:21:46.925Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "gate-blocked",
+      "errors": [
+        "release gate refused"
+      ]
+    },
+    {
+      "runId": "tickets-1790331707470",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:21:47.256Z",
+      "completedAt": "2026-09-25T10:21:47.470Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "opened",
       "errors": []
     },
     {
-      "runId": "retro-1789764872955",
-      "phase": "retro",
-      "startedAt": "2026-09-18T20:54:32.950Z",
-      "completedAt": "2026-09-18T20:54:32.955Z",
-      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "runId": "tickets-1790331708012",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:21:47.822Z",
+      "completedAt": "2026-09-25T10:21:48.012Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 has unknown status NEARLY_DONE"
+      ]
+    },
+    {
+      "runId": "tickets-1790331708501",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:21:48.315Z",
+      "completedAt": "2026-09-25T10:21:48.501Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is missing updatedAt"
+      ]
+    },
+    {
+      "runId": "tickets-1790331709452",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:21:48.944Z",
+      "completedAt": "2026-09-25T10:21:49.452Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is QA with no owner agent"
+      ]
+    },
+    {
+      "runId": "tickets-1790331710283",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:21:50.045Z",
+      "completedAt": "2026-09-25T10:21:50.283Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is duplicated"
+      ]
+    },
+    {
+      "runId": "tickets-1790331711112",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:21:51.038Z",
+      "completedAt": "2026-09-25T10:21:51.112Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "unverified",
+      "errors": [
+        "no review recorded at .ai/tickets/2026-09-25.json"
+      ]
+    },
+    {
+      "runId": "tickets-1790331711535",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:21:51.479Z",
+      "completedAt": "2026-09-25T10:21:51.535Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "unverified",
+      "errors": [
+        "T1 has no recorded outcome"
+      ]
+    },
+    {
+      "runId": "tickets-1790331712128",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:21:52.062Z",
+      "completedAt": "2026-09-25T10:21:52.128Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "verified",
+      "errors": []
+    },
+    {
+      "runId": "promote-1790331712746",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:21:52.703Z",
+      "completedAt": "2026-09-25T10:21:52.746Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has not completed the QA step"
+      ]
+    },
+    {
+      "runId": "promote-1790331713195",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:21:53.155Z",
+      "completedAt": "2026-09-25T10:21:53.195Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has no recorded evidence"
+      ]
+    },
+    {
+      "runId": "promote-1790331713508",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:21:53.478Z",
+      "completedAt": "2026-09-25T10:21:53.508Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has no acceptance criteria"
+      ]
+    },
+    {
+      "runId": "promote-1790331713834",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:21:53.794Z",
+      "completedAt": "2026-09-25T10:21:53.834Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "open P1 finding X1"
+      ]
+    },
+    {
+      "runId": "promote-1790331714096",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:21:54.063Z",
+      "completedAt": "2026-09-25T10:21:54.096Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "promoted",
+      "errors": []
+    },
+    {
+      "runId": "released-1790331714643",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:21:54.597Z",
+      "completedAt": "2026-09-25T10:21:54.643Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "bad-arguments",
+      "errors": [
+        "missing or invalid --version"
+      ]
+    },
+    {
+      "runId": "released-1790331714948",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:21:54.921Z",
+      "completedAt": "2026-09-25T10:21:54.948Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "bad-arguments",
+      "errors": [
+        "missing or invalid --commit"
+      ]
+    },
+    {
+      "runId": "released-1790331715330",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:21:55.211Z",
+      "completedAt": "2026-09-25T10:21:55.330Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "live-unreachable",
+      "errors": [
+        "fetch failed"
+      ]
+    },
+    {
+      "runId": "released-1790331715686",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:21:55.561Z",
+      "completedAt": "2026-09-25T10:21:55.686Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "version-mismatch",
+      "errors": [
+        "live 9.9.9 != 9.9.8"
+      ]
+    },
+    {
+      "runId": "released-1790331716047",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:21:55.938Z",
+      "completedAt": "2026-09-25T10:21:56.047Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "closed",
+      "errors": []
+    },
+    {
+      "runId": "feature-1790332211644",
+      "phase": "feature",
+      "startedAt": "2026-09-25T10:30:11.272Z",
+      "completedAt": "2026-09-25T10:30:11.644Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1790332218384",
+      "phase": "feature",
+      "startedAt": "2026-09-25T10:30:17.306Z",
+      "completedAt": "2026-09-25T10:30:18.384Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "ok",
+      "errors": []
+    },
+    {
+      "runId": "feature-1790332224730",
+      "phase": "feature",
+      "startedAt": "2026-09-25T10:30:23.870Z",
+      "completedAt": "2026-09-25T10:30:24.730Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "wip-exceeded",
+      "errors": [
+        "WIP limit exceeded"
+      ]
+    },
+    {
+      "runId": "feature-1790332242273",
+      "phase": "feature",
+      "startedAt": "2026-09-25T10:30:42.259Z",
+      "completedAt": "2026-09-25T10:30:42.273Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "paused",
+      "errors": []
+    },
+    {
+      "runId": "status-1790332242753",
+      "phase": "status",
+      "startedAt": "2026-09-25T10:30:42.533Z",
+      "completedAt": "2026-09-25T10:30:42.753Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "reported",
+      "errors": []
+    },
+    {
+      "runId": "feature-1790332243150",
+      "phase": "feature",
+      "startedAt": "2026-09-25T10:30:43.117Z",
+      "completedAt": "2026-09-25T10:30:43.150Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "wip-exceeded",
+      "errors": [
+        "WIP limit exceeded"
+      ]
+    },
+    {
+      "runId": "release-1790332243584",
+      "phase": "release",
+      "startedAt": "2026-09-25T10:30:43.437Z",
+      "completedAt": "2026-09-25T10:30:43.584Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "gate-blocked",
+      "errors": [
+        "release gate refused"
+      ]
+    },
+    {
+      "runId": "tickets-1790332243993",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:30:43.886Z",
+      "completedAt": "2026-09-25T10:30:43.993Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "opened",
       "errors": []
     },
     {
-      "runId": "status-1789764873162",
-      "phase": "status",
-      "startedAt": "2026-09-18T20:54:33.046Z",
-      "completedAt": "2026-09-18T20:54:33.162Z",
-      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "runId": "tickets-1790332244340",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:30:44.218Z",
+      "completedAt": "2026-09-25T10:30:44.340Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "reported",
+      "result": "invalid",
+      "errors": [
+        "T1 has unknown status NEARLY_DONE"
+      ]
+    },
+    {
+      "runId": "tickets-1790332244650",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:30:44.566Z",
+      "completedAt": "2026-09-25T10:30:44.650Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is missing updatedAt"
+      ]
+    },
+    {
+      "runId": "tickets-1790332245087",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:30:44.979Z",
+      "completedAt": "2026-09-25T10:30:45.087Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is QA with no owner agent"
+      ]
+    },
+    {
+      "runId": "tickets-1790332245476",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:30:45.375Z",
+      "completedAt": "2026-09-25T10:30:45.476Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is duplicated"
+      ]
+    },
+    {
+      "runId": "tickets-1790332245840",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:30:45.807Z",
+      "completedAt": "2026-09-25T10:30:45.840Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "unverified",
+      "errors": [
+        "no review recorded at .ai/tickets/2026-09-25.json"
+      ]
+    },
+    {
+      "runId": "tickets-1790332246068",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:30:46.031Z",
+      "completedAt": "2026-09-25T10:30:46.068Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "unverified",
+      "errors": [
+        "T1 has no recorded outcome"
+      ]
+    },
+    {
+      "runId": "tickets-1790332246313",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:30:46.278Z",
+      "completedAt": "2026-09-25T10:30:46.313Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "verified",
       "errors": []
     },
     {
-      "runId": "feature-1789764911090",
+      "runId": "promote-1790332246571",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:30:46.536Z",
+      "completedAt": "2026-09-25T10:30:46.571Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has not completed the QA step"
+      ]
+    },
+    {
+      "runId": "promote-1790332246766",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:30:46.744Z",
+      "completedAt": "2026-09-25T10:30:46.766Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has no recorded evidence"
+      ]
+    },
+    {
+      "runId": "promote-1790332247000",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:30:46.979Z",
+      "completedAt": "2026-09-25T10:30:47.000Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has no acceptance criteria"
+      ]
+    },
+    {
+      "runId": "promote-1790332247222",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:30:47.196Z",
+      "completedAt": "2026-09-25T10:30:47.222Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "open P1 finding X1"
+      ]
+    },
+    {
+      "runId": "promote-1790332247429",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:30:47.399Z",
+      "completedAt": "2026-09-25T10:30:47.429Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "promoted",
+      "errors": []
+    },
+    {
+      "runId": "released-1790332247771",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:30:47.751Z",
+      "completedAt": "2026-09-25T10:30:47.771Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "bad-arguments",
+      "errors": [
+        "missing or invalid --version"
+      ]
+    },
+    {
+      "runId": "released-1790332247970",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:30:47.950Z",
+      "completedAt": "2026-09-25T10:30:47.970Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "bad-arguments",
+      "errors": [
+        "missing or invalid --commit"
+      ]
+    },
+    {
+      "runId": "released-1790332248295",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:30:48.216Z",
+      "completedAt": "2026-09-25T10:30:48.295Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "live-unreachable",
+      "errors": [
+        "fetch failed"
+      ]
+    },
+    {
+      "runId": "released-1790332248600",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:30:48.499Z",
+      "completedAt": "2026-09-25T10:30:48.600Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "version-mismatch",
+      "errors": [
+        "live 9.9.9 != 9.9.8"
+      ]
+    },
+    {
+      "runId": "released-1790332248919",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:30:48.818Z",
+      "completedAt": "2026-09-25T10:30:48.919Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "closed",
+      "errors": []
+    },
+    {
+      "runId": "feature-1790332705248",
       "phase": "feature",
-      "startedAt": "2026-09-18T20:55:11.086Z",
-      "completedAt": "2026-09-18T20:55:11.090Z",
-      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "startedAt": "2026-09-25T10:38:25.135Z",
+      "completedAt": "2026-09-25T10:38:25.248Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "ok",
       "errors": []
     },
     {
-      "runId": "feature-1789764911285",
+      "runId": "feature-1790332705730",
       "phase": "feature",
-      "startedAt": "2026-09-18T20:55:11.282Z",
-      "completedAt": "2026-09-18T20:55:11.285Z",
-      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "startedAt": "2026-09-25T10:38:25.702Z",
+      "completedAt": "2026-09-25T10:38:25.730Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "ok",
       "errors": []
     },
     {
-      "runId": "feature-1789764911480",
+      "runId": "feature-1790332705962",
       "phase": "feature",
-      "startedAt": "2026-09-18T20:55:11.477Z",
-      "completedAt": "2026-09-18T20:55:11.480Z",
-      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
+      "startedAt": "2026-09-25T10:38:25.940Z",
+      "completedAt": "2026-09-25T10:38:25.962Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "wip-exceeded",
       "errors": [
@@ -81,679 +601,31 @@
       ]
     },
     {
-      "runId": "feature-1789764979868",
+      "runId": "feature-1790332707487",
       "phase": "feature",
-      "startedAt": "2026-09-18T20:56:19.865Z",
-      "completedAt": "2026-09-18T20:56:19.868Z",
-      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789764980072",
-      "phase": "feature",
-      "startedAt": "2026-09-18T20:56:20.068Z",
-      "completedAt": "2026-09-18T20:56:20.072Z",
-      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789764980297",
-      "phase": "feature",
-      "startedAt": "2026-09-18T20:56:20.290Z",
-      "completedAt": "2026-09-18T20:56:20.297Z",
-      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789765085253",
-      "phase": "feature",
-      "startedAt": "2026-09-18T20:58:05.250Z",
-      "completedAt": "2026-09-18T20:58:05.253Z",
-      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789765085429",
-      "phase": "feature",
-      "startedAt": "2026-09-18T20:58:05.426Z",
-      "completedAt": "2026-09-18T20:58:05.429Z",
-      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789765085613",
-      "phase": "feature",
-      "startedAt": "2026-09-18T20:58:05.610Z",
-      "completedAt": "2026-09-18T20:58:05.613Z",
-      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "status-1789765086413",
-      "phase": "status",
-      "startedAt": "2026-09-18T20:58:06.296Z",
-      "completedAt": "2026-09-18T20:58:06.413Z",
-      "commit": "b1116b8dd877793df0ac25f0af7a63d815553ab0",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789765581792",
-      "phase": "feature",
-      "startedAt": "2026-09-18T21:06:21.790Z",
-      "completedAt": "2026-09-18T21:06:21.793Z",
-      "commit": "cbb56c414da0a64e4fc143f0ef0cbb2277d90326",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789765582070",
-      "phase": "feature",
-      "startedAt": "2026-09-18T21:06:22.064Z",
-      "completedAt": "2026-09-18T21:06:22.070Z",
-      "commit": "cbb56c414da0a64e4fc143f0ef0cbb2277d90326",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789765582326",
-      "phase": "feature",
-      "startedAt": "2026-09-18T21:06:22.322Z",
-      "completedAt": "2026-09-18T21:06:22.326Z",
-      "commit": "cbb56c414da0a64e4fc143f0ef0cbb2277d90326",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "status-1789766248334",
-      "phase": "status",
-      "startedAt": "2026-09-18T21:17:28.211Z",
-      "completedAt": "2026-09-18T21:17:28.334Z",
-      "commit": "388a67c6dd276814bbbcb2dd350f332a38ffc641",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789766559713",
-      "phase": "feature",
-      "startedAt": "2026-09-18T21:22:39.711Z",
-      "completedAt": "2026-09-18T21:22:39.713Z",
-      "commit": "388a67c6dd276814bbbcb2dd350f332a38ffc641",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789766559908",
-      "phase": "feature",
-      "startedAt": "2026-09-18T21:22:39.905Z",
-      "completedAt": "2026-09-18T21:22:39.908Z",
-      "commit": "388a67c6dd276814bbbcb2dd350f332a38ffc641",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789766560107",
-      "phase": "feature",
-      "startedAt": "2026-09-18T21:22:40.103Z",
-      "completedAt": "2026-09-18T21:22:40.107Z",
-      "commit": "388a67c6dd276814bbbcb2dd350f332a38ffc641",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789767404674",
-      "phase": "feature",
-      "startedAt": "2026-09-18T21:36:44.671Z",
-      "completedAt": "2026-09-18T21:36:44.674Z",
-      "commit": "bd1bd24a50df4f33da96bdc5951407a7be3e8025",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789767956499",
-      "phase": "feature",
-      "startedAt": "2026-09-18T21:45:56.496Z",
-      "completedAt": "2026-09-18T21:45:56.499Z",
-      "commit": "898866d00650e442ffbe5d854129d5a42437f27a",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789767956702",
-      "phase": "feature",
-      "startedAt": "2026-09-18T21:45:56.698Z",
-      "completedAt": "2026-09-18T21:45:56.702Z",
-      "commit": "898866d00650e442ffbe5d854129d5a42437f27a",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789767956971",
-      "phase": "feature",
-      "startedAt": "2026-09-18T21:45:56.968Z",
-      "completedAt": "2026-09-18T21:45:56.971Z",
-      "commit": "898866d00650e442ffbe5d854129d5a42437f27a",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789768971388",
-      "phase": "feature",
-      "startedAt": "2026-09-18T22:02:51.385Z",
-      "completedAt": "2026-09-18T22:02:51.388Z",
-      "commit": "60a10a76bd1af1912c523c4334f4dec1d8f778da",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789768971576",
-      "phase": "feature",
-      "startedAt": "2026-09-18T22:02:51.572Z",
-      "completedAt": "2026-09-18T22:02:51.576Z",
-      "commit": "60a10a76bd1af1912c523c4334f4dec1d8f778da",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789768971767",
-      "phase": "feature",
-      "startedAt": "2026-09-18T22:02:51.761Z",
-      "completedAt": "2026-09-18T22:02:51.767Z",
-      "commit": "60a10a76bd1af1912c523c4334f4dec1d8f778da",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789769107048",
-      "phase": "feature",
-      "startedAt": "2026-09-18T22:05:07.044Z",
-      "completedAt": "2026-09-18T22:05:07.048Z",
-      "commit": "60a10a76bd1af1912c523c4334f4dec1d8f778da",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789769107262",
-      "phase": "feature",
-      "startedAt": "2026-09-18T22:05:07.257Z",
-      "completedAt": "2026-09-18T22:05:07.262Z",
-      "commit": "60a10a76bd1af1912c523c4334f4dec1d8f778da",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789769107487",
-      "phase": "feature",
-      "startedAt": "2026-09-18T22:05:07.483Z",
-      "completedAt": "2026-09-18T22:05:07.487Z",
-      "commit": "60a10a76bd1af1912c523c4334f4dec1d8f778da",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789769149512",
-      "phase": "feature",
-      "startedAt": "2026-09-18T22:05:49.506Z",
-      "completedAt": "2026-09-18T22:05:49.512Z",
-      "commit": "60a10a76bd1af1912c523c4334f4dec1d8f778da",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789769149712",
-      "phase": "feature",
-      "startedAt": "2026-09-18T22:05:49.707Z",
-      "completedAt": "2026-09-18T22:05:49.712Z",
-      "commit": "60a10a76bd1af1912c523c4334f4dec1d8f778da",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789769149920",
-      "phase": "feature",
-      "startedAt": "2026-09-18T22:05:49.917Z",
-      "completedAt": "2026-09-18T22:05:49.920Z",
-      "commit": "60a10a76bd1af1912c523c4334f4dec1d8f778da",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789772251957",
-      "phase": "feature",
-      "startedAt": "2026-09-18T22:57:31.949Z",
-      "completedAt": "2026-09-18T22:57:31.957Z",
-      "commit": "6eb5933df94d32d7d70141404de009f093c49279",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789772252257",
-      "phase": "feature",
-      "startedAt": "2026-09-18T22:57:32.250Z",
-      "completedAt": "2026-09-18T22:57:32.257Z",
-      "commit": "6eb5933df94d32d7d70141404de009f093c49279",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789772252489",
-      "phase": "feature",
-      "startedAt": "2026-09-18T22:57:32.481Z",
-      "completedAt": "2026-09-18T22:57:32.489Z",
-      "commit": "6eb5933df94d32d7d70141404de009f093c49279",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789772607794",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:03:27.789Z",
-      "completedAt": "2026-09-18T23:03:27.794Z",
-      "commit": "82922fc69830826be724616903b19155c3c668dd",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789772608002",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:03:27.993Z",
-      "completedAt": "2026-09-18T23:03:28.002Z",
-      "commit": "82922fc69830826be724616903b19155c3c668dd",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789772608214",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:03:28.210Z",
-      "completedAt": "2026-09-18T23:03:28.214Z",
-      "commit": "82922fc69830826be724616903b19155c3c668dd",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789772716837",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:05:16.834Z",
-      "completedAt": "2026-09-18T23:05:16.837Z",
-      "commit": "b24402e9e7b4df3877e684f1cd03e3f67078741a",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789772717094",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:05:17.090Z",
-      "completedAt": "2026-09-18T23:05:17.094Z",
-      "commit": "b24402e9e7b4df3877e684f1cd03e3f67078741a",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789772717303",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:05:17.299Z",
-      "completedAt": "2026-09-18T23:05:17.303Z",
-      "commit": "b24402e9e7b4df3877e684f1cd03e3f67078741a",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789772918478",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:08:38.475Z",
-      "completedAt": "2026-09-18T23:08:38.478Z",
-      "commit": "eba1e90448841fa3493ea8addb205a43482b7b81",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789772918709",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:08:38.704Z",
-      "completedAt": "2026-09-18T23:08:38.709Z",
-      "commit": "eba1e90448841fa3493ea8addb205a43482b7b81",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789772918930",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:08:38.926Z",
-      "completedAt": "2026-09-18T23:08:38.930Z",
-      "commit": "eba1e90448841fa3493ea8addb205a43482b7b81",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789773146386",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:12:26.384Z",
-      "completedAt": "2026-09-18T23:12:26.386Z",
-      "commit": "aea6c2db8e9619cb8a990648f973921ebcad2220",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789773146577",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:12:26.573Z",
-      "completedAt": "2026-09-18T23:12:26.577Z",
-      "commit": "aea6c2db8e9619cb8a990648f973921ebcad2220",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789773146766",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:12:26.762Z",
-      "completedAt": "2026-09-18T23:12:26.766Z",
-      "commit": "aea6c2db8e9619cb8a990648f973921ebcad2220",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789773221512",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:13:41.507Z",
-      "completedAt": "2026-09-18T23:13:41.512Z",
-      "commit": "aea6c2db8e9619cb8a990648f973921ebcad2220",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789773221738",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:13:41.733Z",
-      "completedAt": "2026-09-18T23:13:41.738Z",
-      "commit": "aea6c2db8e9619cb8a990648f973921ebcad2220",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789773221951",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:13:41.947Z",
-      "completedAt": "2026-09-18T23:13:41.951Z",
-      "commit": "aea6c2db8e9619cb8a990648f973921ebcad2220",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789774691128",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:38:11.126Z",
-      "completedAt": "2026-09-18T23:38:11.128Z",
-      "commit": "5852cd892a76b9947f62f634a47deddc2b94cbdb",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789774691324",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:38:11.321Z",
-      "completedAt": "2026-09-18T23:38:11.324Z",
-      "commit": "5852cd892a76b9947f62f634a47deddc2b94cbdb",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789774691519",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:38:11.514Z",
-      "completedAt": "2026-09-18T23:38:11.519Z",
-      "commit": "5852cd892a76b9947f62f634a47deddc2b94cbdb",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "status-1789774694224",
-      "phase": "status",
-      "startedAt": "2026-09-18T23:38:14.093Z",
-      "completedAt": "2026-09-18T23:38:14.224Z",
-      "commit": "5852cd892a76b9947f62f634a47deddc2b94cbdb",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789774797889",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:39:57.886Z",
-      "completedAt": "2026-09-18T23:39:57.889Z",
-      "commit": "5852cd892a76b9947f62f634a47deddc2b94cbdb",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789774798088",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:39:58.084Z",
-      "completedAt": "2026-09-18T23:39:58.088Z",
-      "commit": "5852cd892a76b9947f62f634a47deddc2b94cbdb",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789774798282",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:39:58.278Z",
-      "completedAt": "2026-09-18T23:39:58.282Z",
-      "commit": "5852cd892a76b9947f62f634a47deddc2b94cbdb",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789775284897",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:48:04.893Z",
-      "completedAt": "2026-09-18T23:48:04.897Z",
-      "commit": "226ce46c026578afc5ff779e5a424babb335b58d",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789775285236",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:48:05.224Z",
-      "completedAt": "2026-09-18T23:48:05.236Z",
-      "commit": "226ce46c026578afc5ff779e5a424babb335b58d",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789775285626",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:48:05.616Z",
-      "completedAt": "2026-09-18T23:48:05.626Z",
-      "commit": "226ce46c026578afc5ff779e5a424babb335b58d",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789775401135",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:50:01.130Z",
-      "completedAt": "2026-09-18T23:50:01.135Z",
-      "commit": "226ce46c026578afc5ff779e5a424babb335b58d",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789775401638",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:50:01.630Z",
-      "completedAt": "2026-09-18T23:50:01.638Z",
-      "commit": "226ce46c026578afc5ff779e5a424babb335b58d",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789775402245",
-      "phase": "feature",
-      "startedAt": "2026-09-18T23:50:02.233Z",
-      "completedAt": "2026-09-18T23:50:02.245Z",
-      "commit": "226ce46c026578afc5ff779e5a424babb335b58d",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789809063106",
-      "phase": "feature",
-      "startedAt": "2026-09-19T09:11:03.100Z",
-      "completedAt": "2026-09-19T09:11:03.107Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789809063583",
-      "phase": "feature",
-      "startedAt": "2026-09-19T09:11:03.571Z",
-      "completedAt": "2026-09-19T09:11:03.583Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789809064093",
-      "phase": "feature",
-      "startedAt": "2026-09-19T09:11:04.082Z",
-      "completedAt": "2026-09-19T09:11:04.093Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789809065415",
-      "phase": "feature",
-      "startedAt": "2026-09-19T09:11:05.404Z",
-      "completedAt": "2026-09-19T09:11:05.415Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
+      "startedAt": "2026-09-25T10:38:27.474Z",
+      "completedAt": "2026-09-25T10:38:27.487Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "paused",
       "errors": []
     },
     {
-      "runId": "status-1789809066180",
+      "runId": "status-1790332707949",
       "phase": "status",
-      "startedAt": "2026-09-19T09:11:05.926Z",
-      "completedAt": "2026-09-19T09:11:06.180Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
+      "startedAt": "2026-09-25T10:38:27.752Z",
+      "completedAt": "2026-09-25T10:38:27.949Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "reported",
       "errors": []
     },
     {
-      "runId": "feature-1789809066727",
+      "runId": "feature-1790332708206",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:11:06.717Z",
-      "completedAt": "2026-09-19T09:11:06.727Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
+      "startedAt": "2026-09-25T10:38:28.181Z",
+      "completedAt": "2026-09-25T10:38:28.206Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "wip-exceeded",
       "errors": [
@@ -761,11 +633,11 @@
       ]
     },
     {
-      "runId": "release-1789809067567",
+      "runId": "release-1790332708440",
       "phase": "release",
-      "startedAt": "2026-09-19T09:11:07.375Z",
-      "completedAt": "2026-09-19T09:11:07.567Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
+      "startedAt": "2026-09-25T10:38:28.355Z",
+      "completedAt": "2026-09-25T10:38:28.440Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "gate-blocked",
       "errors": [
@@ -773,31 +645,239 @@
       ]
     },
     {
-      "runId": "feature-1789809177701",
+      "runId": "tickets-1790332708717",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:38:28.625Z",
+      "completedAt": "2026-09-25T10:38:28.717Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "opened",
+      "errors": []
+    },
+    {
+      "runId": "tickets-1790332709021",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:38:28.912Z",
+      "completedAt": "2026-09-25T10:38:29.021Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 has unknown status NEARLY_DONE"
+      ]
+    },
+    {
+      "runId": "tickets-1790332709333",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:38:29.229Z",
+      "completedAt": "2026-09-25T10:38:29.333Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is missing updatedAt"
+      ]
+    },
+    {
+      "runId": "tickets-1790332709632",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:38:29.537Z",
+      "completedAt": "2026-09-25T10:38:29.632Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is QA with no owner agent"
+      ]
+    },
+    {
+      "runId": "tickets-1790332709924",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:38:29.833Z",
+      "completedAt": "2026-09-25T10:38:29.924Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is duplicated"
+      ]
+    },
+    {
+      "runId": "tickets-1790332710244",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:38:30.210Z",
+      "completedAt": "2026-09-25T10:38:30.244Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "unverified",
+      "errors": [
+        "no review recorded at .ai/tickets/2026-09-25.json"
+      ]
+    },
+    {
+      "runId": "tickets-1790332710473",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:38:30.429Z",
+      "completedAt": "2026-09-25T10:38:30.473Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "unverified",
+      "errors": [
+        "T1 has no recorded outcome"
+      ]
+    },
+    {
+      "runId": "tickets-1790332710744",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T10:38:30.707Z",
+      "completedAt": "2026-09-25T10:38:30.744Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "verified",
+      "errors": []
+    },
+    {
+      "runId": "promote-1790332710985",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:38:30.962Z",
+      "completedAt": "2026-09-25T10:38:30.985Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has not completed the QA step"
+      ]
+    },
+    {
+      "runId": "promote-1790332711208",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:38:31.184Z",
+      "completedAt": "2026-09-25T10:38:31.208Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has no recorded evidence"
+      ]
+    },
+    {
+      "runId": "promote-1790332711414",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:38:31.392Z",
+      "completedAt": "2026-09-25T10:38:31.414Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has no acceptance criteria"
+      ]
+    },
+    {
+      "runId": "promote-1790332711655",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:38:31.628Z",
+      "completedAt": "2026-09-25T10:38:31.655Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "open P1 finding X1"
+      ]
+    },
+    {
+      "runId": "promote-1790332711909",
+      "phase": "promote",
+      "startedAt": "2026-09-25T10:38:31.880Z",
+      "completedAt": "2026-09-25T10:38:31.909Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "promoted",
+      "errors": []
+    },
+    {
+      "runId": "released-1790332712247",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:38:32.217Z",
+      "completedAt": "2026-09-25T10:38:32.247Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "bad-arguments",
+      "errors": [
+        "missing or invalid --version"
+      ]
+    },
+    {
+      "runId": "released-1790332712498",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:38:32.475Z",
+      "completedAt": "2026-09-25T10:38:32.498Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "bad-arguments",
+      "errors": [
+        "missing or invalid --commit"
+      ]
+    },
+    {
+      "runId": "released-1790332712819",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:38:32.751Z",
+      "completedAt": "2026-09-25T10:38:32.819Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "live-unreachable",
+      "errors": [
+        "fetch failed"
+      ]
+    },
+    {
+      "runId": "released-1790332713234",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:38:33.071Z",
+      "completedAt": "2026-09-25T10:38:33.234Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "version-mismatch",
+      "errors": [
+        "live 9.9.9 != 9.9.8"
+      ]
+    },
+    {
+      "runId": "released-1790332713602",
+      "phase": "released",
+      "startedAt": "2026-09-25T10:38:33.476Z",
+      "completedAt": "2026-09-25T10:38:33.602Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "closed",
+      "errors": []
+    },
+    {
+      "runId": "feature-1790335042899",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:12:57.695Z",
-      "completedAt": "2026-09-19T09:12:57.701Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
+      "startedAt": "2026-09-25T11:17:22.875Z",
+      "completedAt": "2026-09-25T11:17:22.899Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "ok",
       "errors": []
     },
     {
-      "runId": "feature-1789809178222",
+      "runId": "feature-1790335043232",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:12:58.204Z",
-      "completedAt": "2026-09-19T09:12:58.222Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
+      "startedAt": "2026-09-25T11:17:23.199Z",
+      "completedAt": "2026-09-25T11:17:23.232Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "ok",
       "errors": []
     },
     {
-      "runId": "feature-1789809178761",
+      "runId": "feature-1790335043516",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:12:58.746Z",
-      "completedAt": "2026-09-19T09:12:58.761Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
+      "startedAt": "2026-09-25T11:17:23.481Z",
+      "completedAt": "2026-09-25T11:17:23.516Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "wip-exceeded",
       "errors": [
@@ -805,31 +885,31 @@
       ]
     },
     {
-      "runId": "feature-1789809179701",
+      "runId": "feature-1790335047520",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:12:59.697Z",
-      "completedAt": "2026-09-19T09:12:59.701Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
+      "startedAt": "2026-09-25T11:17:27.457Z",
+      "completedAt": "2026-09-25T11:17:27.520Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "paused",
       "errors": []
     },
     {
-      "runId": "status-1789809180278",
+      "runId": "status-1790335048388",
       "phase": "status",
-      "startedAt": "2026-09-19T09:13:00.087Z",
-      "completedAt": "2026-09-19T09:13:00.278Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
+      "startedAt": "2026-09-25T11:17:28.027Z",
+      "completedAt": "2026-09-25T11:17:28.388Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "reported",
       "errors": []
     },
     {
-      "runId": "feature-1789809180695",
+      "runId": "feature-1790335048753",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:13:00.685Z",
-      "completedAt": "2026-09-19T09:13:00.695Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
+      "startedAt": "2026-09-25T11:17:28.722Z",
+      "completedAt": "2026-09-25T11:17:28.753Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "wip-exceeded",
       "errors": [
@@ -837,11 +917,11 @@
       ]
     },
     {
-      "runId": "release-1789809181313",
+      "runId": "release-1790335049279",
       "phase": "release",
-      "startedAt": "2026-09-19T09:13:01.118Z",
-      "completedAt": "2026-09-19T09:13:01.313Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
+      "startedAt": "2026-09-25T11:17:29.150Z",
+      "completedAt": "2026-09-25T11:17:29.279Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "gate-blocked",
       "errors": [
@@ -849,41 +929,239 @@
       ]
     },
     {
-      "runId": "scrum-1789809185269",
-      "phase": "scrum",
-      "startedAt": "2026-09-19T09:13:05.262Z",
-      "completedAt": "2026-09-19T09:13:05.269Z",
-      "commit": "3c55679336faab0d65da80e493b9fe739ee5d05f",
+      "runId": "tickets-1790335049805",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:17:29.614Z",
+      "completedAt": "2026-09-25T11:17:29.805Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "paused",
+      "result": "opened",
       "errors": []
     },
     {
-      "runId": "feature-1789809375466",
+      "runId": "tickets-1790335050297",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:17:30.124Z",
+      "completedAt": "2026-09-25T11:17:30.297Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 has unknown status NEARLY_DONE"
+      ]
+    },
+    {
+      "runId": "tickets-1790335050964",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:17:30.773Z",
+      "completedAt": "2026-09-25T11:17:30.964Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is missing updatedAt"
+      ]
+    },
+    {
+      "runId": "tickets-1790335051488",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:17:31.318Z",
+      "completedAt": "2026-09-25T11:17:31.488Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is QA with no owner agent"
+      ]
+    },
+    {
+      "runId": "tickets-1790335052016",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:17:31.876Z",
+      "completedAt": "2026-09-25T11:17:32.016Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is duplicated"
+      ]
+    },
+    {
+      "runId": "tickets-1790335052550",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:17:32.513Z",
+      "completedAt": "2026-09-25T11:17:32.550Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "unverified",
+      "errors": [
+        "no review recorded at .ai/tickets/2026-09-25.json"
+      ]
+    },
+    {
+      "runId": "tickets-1790335052854",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:17:32.801Z",
+      "completedAt": "2026-09-25T11:17:32.854Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "unverified",
+      "errors": [
+        "T1 has no recorded outcome"
+      ]
+    },
+    {
+      "runId": "tickets-1790335053251",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:17:33.197Z",
+      "completedAt": "2026-09-25T11:17:33.251Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "verified",
+      "errors": []
+    },
+    {
+      "runId": "promote-1790335053715",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:17:33.656Z",
+      "completedAt": "2026-09-25T11:17:33.715Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has not completed the QA step"
+      ]
+    },
+    {
+      "runId": "promote-1790335054096",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:17:34.049Z",
+      "completedAt": "2026-09-25T11:17:34.096Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has no recorded evidence"
+      ]
+    },
+    {
+      "runId": "promote-1790335054387",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:17:34.361Z",
+      "completedAt": "2026-09-25T11:17:34.387Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has no acceptance criteria"
+      ]
+    },
+    {
+      "runId": "promote-1790335054649",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:17:34.626Z",
+      "completedAt": "2026-09-25T11:17:34.649Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "open P1 finding X1"
+      ]
+    },
+    {
+      "runId": "promote-1790335054963",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:17:34.926Z",
+      "completedAt": "2026-09-25T11:17:34.963Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "promoted",
+      "errors": []
+    },
+    {
+      "runId": "released-1790335055380",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:17:35.358Z",
+      "completedAt": "2026-09-25T11:17:35.380Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "bad-arguments",
+      "errors": [
+        "missing or invalid --version"
+      ]
+    },
+    {
+      "runId": "released-1790335055653",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:17:35.626Z",
+      "completedAt": "2026-09-25T11:17:35.653Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "bad-arguments",
+      "errors": [
+        "missing or invalid --commit"
+      ]
+    },
+    {
+      "runId": "released-1790335056060",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:17:35.956Z",
+      "completedAt": "2026-09-25T11:17:36.060Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "live-unreachable",
+      "errors": [
+        "fetch failed"
+      ]
+    },
+    {
+      "runId": "released-1790335056527",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:17:36.294Z",
+      "completedAt": "2026-09-25T11:17:36.527Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "version-mismatch",
+      "errors": [
+        "live 9.9.9 != 9.9.8"
+      ]
+    },
+    {
+      "runId": "released-1790335056996",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:17:36.882Z",
+      "completedAt": "2026-09-25T11:17:36.996Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "closed",
+      "errors": []
+    },
+    {
+      "runId": "feature-1790335515908",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:16:15.460Z",
-      "completedAt": "2026-09-19T09:16:15.466Z",
-      "commit": "e8cb90b6fe4983bab0b1f694fb8a82e0dd1a37ad",
+      "startedAt": "2026-09-25T11:25:15.890Z",
+      "completedAt": "2026-09-25T11:25:15.908Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "ok",
       "errors": []
     },
     {
-      "runId": "feature-1789809375947",
+      "runId": "feature-1790335516112",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:16:15.941Z",
-      "completedAt": "2026-09-19T09:16:15.947Z",
-      "commit": "e8cb90b6fe4983bab0b1f694fb8a82e0dd1a37ad",
+      "startedAt": "2026-09-25T11:25:16.090Z",
+      "completedAt": "2026-09-25T11:25:16.112Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "ok",
       "errors": []
     },
     {
-      "runId": "feature-1789809376360",
+      "runId": "feature-1790335516326",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:16:16.352Z",
-      "completedAt": "2026-09-19T09:16:16.360Z",
-      "commit": "e8cb90b6fe4983bab0b1f694fb8a82e0dd1a37ad",
+      "startedAt": "2026-09-25T11:25:16.302Z",
+      "completedAt": "2026-09-25T11:25:16.326Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "wip-exceeded",
       "errors": [
@@ -891,31 +1169,31 @@
       ]
     },
     {
-      "runId": "feature-1789809378171",
+      "runId": "feature-1790335517910",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:16:18.163Z",
-      "completedAt": "2026-09-19T09:16:18.171Z",
-      "commit": "e8cb90b6fe4983bab0b1f694fb8a82e0dd1a37ad",
+      "startedAt": "2026-09-25T11:25:17.897Z",
+      "completedAt": "2026-09-25T11:25:17.910Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "paused",
       "errors": []
     },
     {
-      "runId": "status-1789809378829",
+      "runId": "status-1790335518259",
       "phase": "status",
-      "startedAt": "2026-09-19T09:16:18.580Z",
-      "completedAt": "2026-09-19T09:16:18.829Z",
-      "commit": "e8cb90b6fe4983bab0b1f694fb8a82e0dd1a37ad",
+      "startedAt": "2026-09-25T11:25:18.118Z",
+      "completedAt": "2026-09-25T11:25:18.259Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "reported",
       "errors": []
     },
     {
-      "runId": "feature-1789809379315",
+      "runId": "feature-1790335518510",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:16:19.303Z",
-      "completedAt": "2026-09-19T09:16:19.315Z",
-      "commit": "e8cb90b6fe4983bab0b1f694fb8a82e0dd1a37ad",
+      "startedAt": "2026-09-25T11:25:18.482Z",
+      "completedAt": "2026-09-25T11:25:18.510Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "wip-exceeded",
       "errors": [
@@ -923,11 +1201,11 @@
       ]
     },
     {
-      "runId": "release-1789809379955",
+      "runId": "release-1790335518860",
       "phase": "release",
-      "startedAt": "2026-09-19T09:16:19.786Z",
-      "completedAt": "2026-09-19T09:16:19.955Z",
-      "commit": "e8cb90b6fe4983bab0b1f694fb8a82e0dd1a37ad",
+      "startedAt": "2026-09-25T11:25:18.756Z",
+      "completedAt": "2026-09-25T11:25:18.860Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "gate-blocked",
       "errors": [
@@ -935,31 +1213,239 @@
       ]
     },
     {
-      "runId": "feature-1789809825249",
+      "runId": "tickets-1790335519141",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:25:19.066Z",
+      "completedAt": "2026-09-25T11:25:19.141Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "opened",
+      "errors": []
+    },
+    {
+      "runId": "tickets-1790335519460",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:25:19.348Z",
+      "completedAt": "2026-09-25T11:25:19.460Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 has unknown status NEARLY_DONE"
+      ]
+    },
+    {
+      "runId": "tickets-1790335519817",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:25:19.697Z",
+      "completedAt": "2026-09-25T11:25:19.817Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is missing updatedAt"
+      ]
+    },
+    {
+      "runId": "tickets-1790335520323",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:25:20.060Z",
+      "completedAt": "2026-09-25T11:25:20.323Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is QA with no owner agent"
+      ]
+    },
+    {
+      "runId": "tickets-1790335520815",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:25:20.713Z",
+      "completedAt": "2026-09-25T11:25:20.815Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is duplicated"
+      ]
+    },
+    {
+      "runId": "tickets-1790335521210",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:25:21.174Z",
+      "completedAt": "2026-09-25T11:25:21.210Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "unverified",
+      "errors": [
+        "no review recorded at .ai/tickets/2026-09-25.json"
+      ]
+    },
+    {
+      "runId": "tickets-1790335521465",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:25:21.420Z",
+      "completedAt": "2026-09-25T11:25:21.465Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "unverified",
+      "errors": [
+        "T1 has no recorded outcome"
+      ]
+    },
+    {
+      "runId": "tickets-1790335522019",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:25:21.937Z",
+      "completedAt": "2026-09-25T11:25:22.019Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "verified",
+      "errors": []
+    },
+    {
+      "runId": "promote-1790335522309",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:25:22.283Z",
+      "completedAt": "2026-09-25T11:25:22.309Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has not completed the QA step"
+      ]
+    },
+    {
+      "runId": "promote-1790335522566",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:25:22.543Z",
+      "completedAt": "2026-09-25T11:25:22.566Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has no recorded evidence"
+      ]
+    },
+    {
+      "runId": "promote-1790335522810",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:25:22.784Z",
+      "completedAt": "2026-09-25T11:25:22.810Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has no acceptance criteria"
+      ]
+    },
+    {
+      "runId": "promote-1790335523045",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:25:23.018Z",
+      "completedAt": "2026-09-25T11:25:23.045Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "open P1 finding X1"
+      ]
+    },
+    {
+      "runId": "promote-1790335523398",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:25:23.367Z",
+      "completedAt": "2026-09-25T11:25:23.398Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "promoted",
+      "errors": []
+    },
+    {
+      "runId": "released-1790335523750",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:25:23.732Z",
+      "completedAt": "2026-09-25T11:25:23.750Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "bad-arguments",
+      "errors": [
+        "missing or invalid --version"
+      ]
+    },
+    {
+      "runId": "released-1790335523948",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:25:23.929Z",
+      "completedAt": "2026-09-25T11:25:23.948Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "bad-arguments",
+      "errors": [
+        "missing or invalid --commit"
+      ]
+    },
+    {
+      "runId": "released-1790335524344",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:25:24.262Z",
+      "completedAt": "2026-09-25T11:25:24.344Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "live-unreachable",
+      "errors": [
+        "fetch failed"
+      ]
+    },
+    {
+      "runId": "released-1790335524992",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:25:24.805Z",
+      "completedAt": "2026-09-25T11:25:24.992Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "version-mismatch",
+      "errors": [
+        "live 9.9.9 != 9.9.8"
+      ]
+    },
+    {
+      "runId": "released-1790335525432",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:25:25.310Z",
+      "completedAt": "2026-09-25T11:25:25.432Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "closed",
+      "errors": []
+    },
+    {
+      "runId": "feature-1790336259854",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:23:45.245Z",
-      "completedAt": "2026-09-19T09:23:45.249Z",
-      "commit": "44596f0bb23e6af993f73803e243eeacfda989e4",
+      "startedAt": "2026-09-25T11:37:39.840Z",
+      "completedAt": "2026-09-25T11:37:39.854Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "ok",
       "errors": []
     },
     {
-      "runId": "feature-1789809825467",
+      "runId": "feature-1790336260076",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:23:45.463Z",
-      "completedAt": "2026-09-19T09:23:45.467Z",
-      "commit": "44596f0bb23e6af993f73803e243eeacfda989e4",
+      "startedAt": "2026-09-25T11:37:40.052Z",
+      "completedAt": "2026-09-25T11:37:40.076Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "ok",
       "errors": []
     },
     {
-      "runId": "feature-1789809825656",
+      "runId": "feature-1790336260296",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:23:45.652Z",
-      "completedAt": "2026-09-19T09:23:45.656Z",
-      "commit": "44596f0bb23e6af993f73803e243eeacfda989e4",
+      "startedAt": "2026-09-25T11:37:40.272Z",
+      "completedAt": "2026-09-25T11:37:40.296Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "wip-exceeded",
       "errors": [
@@ -967,31 +1453,31 @@
       ]
     },
     {
-      "runId": "feature-1789809826259",
+      "runId": "feature-1790336261816",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:23:46.256Z",
-      "completedAt": "2026-09-19T09:23:46.259Z",
-      "commit": "44596f0bb23e6af993f73803e243eeacfda989e4",
+      "startedAt": "2026-09-25T11:37:41.801Z",
+      "completedAt": "2026-09-25T11:37:41.816Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "paused",
       "errors": []
     },
     {
-      "runId": "status-1789809826556",
+      "runId": "status-1790336262218",
       "phase": "status",
-      "startedAt": "2026-09-19T09:23:46.446Z",
-      "completedAt": "2026-09-19T09:23:46.556Z",
-      "commit": "44596f0bb23e6af993f73803e243eeacfda989e4",
+      "startedAt": "2026-09-25T11:37:42.053Z",
+      "completedAt": "2026-09-25T11:37:42.218Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "reported",
       "errors": []
     },
     {
-      "runId": "feature-1789809826740",
+      "runId": "feature-1790336262446",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:23:46.736Z",
-      "completedAt": "2026-09-19T09:23:46.740Z",
-      "commit": "44596f0bb23e6af993f73803e243eeacfda989e4",
+      "startedAt": "2026-09-25T11:37:42.418Z",
+      "completedAt": "2026-09-25T11:37:42.446Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "wip-exceeded",
       "errors": [
@@ -999,11 +1485,11 @@
       ]
     },
     {
-      "runId": "release-1789809827031",
+      "runId": "release-1790336262791",
       "phase": "release",
-      "startedAt": "2026-09-19T09:23:46.940Z",
-      "completedAt": "2026-09-19T09:23:47.031Z",
-      "commit": "44596f0bb23e6af993f73803e243eeacfda989e4",
+      "startedAt": "2026-09-25T11:37:42.666Z",
+      "completedAt": "2026-09-25T11:37:42.791Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "gate-blocked",
       "errors": [
@@ -1011,31 +1497,239 @@
       ]
     },
     {
-      "runId": "feature-1789811085906",
+      "runId": "tickets-1790336263081",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:37:42.977Z",
+      "completedAt": "2026-09-25T11:37:43.081Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "opened",
+      "errors": []
+    },
+    {
+      "runId": "tickets-1790336263441",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:37:43.303Z",
+      "completedAt": "2026-09-25T11:37:43.441Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 has unknown status NEARLY_DONE"
+      ]
+    },
+    {
+      "runId": "tickets-1790336264026",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:37:43.730Z",
+      "completedAt": "2026-09-25T11:37:44.026Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is missing updatedAt"
+      ]
+    },
+    {
+      "runId": "tickets-1790336264508",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:37:44.353Z",
+      "completedAt": "2026-09-25T11:37:44.508Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is QA with no owner agent"
+      ]
+    },
+    {
+      "runId": "tickets-1790336265212",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:37:45.033Z",
+      "completedAt": "2026-09-25T11:37:45.212Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is duplicated"
+      ]
+    },
+    {
+      "runId": "tickets-1790336265828",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:37:45.794Z",
+      "completedAt": "2026-09-25T11:37:45.828Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "unverified",
+      "errors": [
+        "no review recorded at .ai/tickets/2026-09-25.json"
+      ]
+    },
+    {
+      "runId": "tickets-1790336266225",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:37:46.153Z",
+      "completedAt": "2026-09-25T11:37:46.225Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "unverified",
+      "errors": [
+        "T1 has no recorded outcome"
+      ]
+    },
+    {
+      "runId": "tickets-1790336266614",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:37:46.565Z",
+      "completedAt": "2026-09-25T11:37:46.614Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "verified",
+      "errors": []
+    },
+    {
+      "runId": "promote-1790336267127",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:37:47.085Z",
+      "completedAt": "2026-09-25T11:37:47.127Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has not completed the QA step"
+      ]
+    },
+    {
+      "runId": "promote-1790336267485",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:37:47.453Z",
+      "completedAt": "2026-09-25T11:37:47.485Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has no recorded evidence"
+      ]
+    },
+    {
+      "runId": "promote-1790336267782",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:37:47.756Z",
+      "completedAt": "2026-09-25T11:37:47.782Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has no acceptance criteria"
+      ]
+    },
+    {
+      "runId": "promote-1790336268097",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:37:48.068Z",
+      "completedAt": "2026-09-25T11:37:48.097Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "open P1 finding X1"
+      ]
+    },
+    {
+      "runId": "promote-1790336268514",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:37:48.392Z",
+      "completedAt": "2026-09-25T11:37:48.514Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "promoted",
+      "errors": []
+    },
+    {
+      "runId": "released-1790336269533",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:37:49.345Z",
+      "completedAt": "2026-09-25T11:37:49.533Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "bad-arguments",
+      "errors": [
+        "missing or invalid --version"
+      ]
+    },
+    {
+      "runId": "released-1790336270000",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:37:49.936Z",
+      "completedAt": "2026-09-25T11:37:50.000Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "bad-arguments",
+      "errors": [
+        "missing or invalid --commit"
+      ]
+    },
+    {
+      "runId": "released-1790336270596",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:37:50.401Z",
+      "completedAt": "2026-09-25T11:37:50.596Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "live-unreachable",
+      "errors": [
+        "fetch failed"
+      ]
+    },
+    {
+      "runId": "released-1790336271226",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:37:51.043Z",
+      "completedAt": "2026-09-25T11:37:51.226Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "version-mismatch",
+      "errors": [
+        "live 9.9.9 != 9.9.8"
+      ]
+    },
+    {
+      "runId": "released-1790336271746",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:37:51.572Z",
+      "completedAt": "2026-09-25T11:37:51.746Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "closed",
+      "errors": []
+    },
+    {
+      "runId": "feature-1790337170487",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:44:45.903Z",
-      "completedAt": "2026-09-19T09:44:45.906Z",
-      "commit": "d2c8d861bbad3095ce6dbe1bb27927a8e36c4248",
+      "startedAt": "2026-09-25T11:52:50.471Z",
+      "completedAt": "2026-09-25T11:52:50.487Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "ok",
       "errors": []
     },
     {
-      "runId": "feature-1789811086098",
+      "runId": "feature-1790337170692",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:44:46.094Z",
-      "completedAt": "2026-09-19T09:44:46.098Z",
-      "commit": "d2c8d861bbad3095ce6dbe1bb27927a8e36c4248",
+      "startedAt": "2026-09-25T11:52:50.672Z",
+      "completedAt": "2026-09-25T11:52:50.692Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "ok",
       "errors": []
     },
     {
-      "runId": "feature-1789811086282",
+      "runId": "feature-1790337170891",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:44:46.278Z",
-      "completedAt": "2026-09-19T09:44:46.282Z",
-      "commit": "d2c8d861bbad3095ce6dbe1bb27927a8e36c4248",
+      "startedAt": "2026-09-25T11:52:50.868Z",
+      "completedAt": "2026-09-25T11:52:50.891Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "wip-exceeded",
       "errors": [
@@ -1043,31 +1737,31 @@
       ]
     },
     {
-      "runId": "feature-1789811086834",
+      "runId": "feature-1790337172944",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:44:46.829Z",
-      "completedAt": "2026-09-19T09:44:46.834Z",
-      "commit": "d2c8d861bbad3095ce6dbe1bb27927a8e36c4248",
+      "startedAt": "2026-09-25T11:52:52.929Z",
+      "completedAt": "2026-09-25T11:52:52.944Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "paused",
       "errors": []
     },
     {
-      "runId": "status-1789811087130",
+      "runId": "status-1790337173417",
       "phase": "status",
-      "startedAt": "2026-09-19T09:44:47.022Z",
-      "completedAt": "2026-09-19T09:44:47.130Z",
-      "commit": "d2c8d861bbad3095ce6dbe1bb27927a8e36c4248",
+      "startedAt": "2026-09-25T11:52:53.223Z",
+      "completedAt": "2026-09-25T11:52:53.417Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "reported",
       "errors": []
     },
     {
-      "runId": "feature-1789811087315",
+      "runId": "feature-1790337173637",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:44:47.310Z",
-      "completedAt": "2026-09-19T09:44:47.315Z",
-      "commit": "d2c8d861bbad3095ce6dbe1bb27927a8e36c4248",
+      "startedAt": "2026-09-25T11:52:53.612Z",
+      "completedAt": "2026-09-25T11:52:53.637Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "wip-exceeded",
       "errors": [
@@ -1075,11 +1769,11 @@
       ]
     },
     {
-      "runId": "release-1789811087628",
+      "runId": "release-1790337173905",
       "phase": "release",
-      "startedAt": "2026-09-19T09:44:47.539Z",
-      "completedAt": "2026-09-19T09:44:47.628Z",
-      "commit": "d2c8d861bbad3095ce6dbe1bb27927a8e36c4248",
+      "startedAt": "2026-09-25T11:52:53.818Z",
+      "completedAt": "2026-09-25T11:52:53.905Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "gate-blocked",
       "errors": [
@@ -1087,31 +1781,239 @@
       ]
     },
     {
-      "runId": "feature-1789811175092",
+      "runId": "tickets-1790337174196",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:52:54.101Z",
+      "completedAt": "2026-09-25T11:52:54.196Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "opened",
+      "errors": []
+    },
+    {
+      "runId": "tickets-1790337174525",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:52:54.389Z",
+      "completedAt": "2026-09-25T11:52:54.525Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 has unknown status NEARLY_DONE"
+      ]
+    },
+    {
+      "runId": "tickets-1790337174911",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:52:54.791Z",
+      "completedAt": "2026-09-25T11:52:54.911Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is missing updatedAt"
+      ]
+    },
+    {
+      "runId": "tickets-1790337175234",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:52:55.138Z",
+      "completedAt": "2026-09-25T11:52:55.234Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is QA with no owner agent"
+      ]
+    },
+    {
+      "runId": "tickets-1790337175549",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:52:55.455Z",
+      "completedAt": "2026-09-25T11:52:55.549Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "invalid",
+      "errors": [
+        "T1 is duplicated"
+      ]
+    },
+    {
+      "runId": "tickets-1790337175874",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:52:55.838Z",
+      "completedAt": "2026-09-25T11:52:55.874Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "unverified",
+      "errors": [
+        "no review recorded at .ai/tickets/2026-09-25.json"
+      ]
+    },
+    {
+      "runId": "tickets-1790337176133",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:52:56.098Z",
+      "completedAt": "2026-09-25T11:52:56.133Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "unverified",
+      "errors": [
+        "T1 has no recorded outcome"
+      ]
+    },
+    {
+      "runId": "tickets-1790337176391",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T11:52:56.346Z",
+      "completedAt": "2026-09-25T11:52:56.391Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "verified",
+      "errors": []
+    },
+    {
+      "runId": "promote-1790337176626",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:52:56.603Z",
+      "completedAt": "2026-09-25T11:52:56.626Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has not completed the QA step"
+      ]
+    },
+    {
+      "runId": "promote-1790337176829",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:52:56.806Z",
+      "completedAt": "2026-09-25T11:52:56.829Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has no recorded evidence"
+      ]
+    },
+    {
+      "runId": "promote-1790337177076",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:52:57.056Z",
+      "completedAt": "2026-09-25T11:52:57.076Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "T1 has no acceptance criteria"
+      ]
+    },
+    {
+      "runId": "promote-1790337177297",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:52:57.274Z",
+      "completedAt": "2026-09-25T11:52:57.297Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "refused",
+      "errors": [
+        "open P1 finding X1"
+      ]
+    },
+    {
+      "runId": "promote-1790337177615",
+      "phase": "promote",
+      "startedAt": "2026-09-25T11:52:57.578Z",
+      "completedAt": "2026-09-25T11:52:57.615Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "promoted",
+      "errors": []
+    },
+    {
+      "runId": "released-1790337177953",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:52:57.932Z",
+      "completedAt": "2026-09-25T11:52:57.953Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "bad-arguments",
+      "errors": [
+        "missing or invalid --version"
+      ]
+    },
+    {
+      "runId": "released-1790337178228",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:52:58.201Z",
+      "completedAt": "2026-09-25T11:52:58.228Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "bad-arguments",
+      "errors": [
+        "missing or invalid --commit"
+      ]
+    },
+    {
+      "runId": "released-1790337178544",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:52:58.466Z",
+      "completedAt": "2026-09-25T11:52:58.544Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "live-unreachable",
+      "errors": [
+        "fetch failed"
+      ]
+    },
+    {
+      "runId": "released-1790337178876",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:52:58.771Z",
+      "completedAt": "2026-09-25T11:52:58.876Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "version-mismatch",
+      "errors": [
+        "live 9.9.9 != 9.9.8"
+      ]
+    },
+    {
+      "runId": "released-1790337179226",
+      "phase": "released",
+      "startedAt": "2026-09-25T11:52:59.117Z",
+      "completedAt": "2026-09-25T11:52:59.226Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
+      "branch": "main",
+      "result": "closed",
+      "errors": []
+    },
+    {
+      "runId": "feature-1790340987147",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:46:15.088Z",
-      "completedAt": "2026-09-19T09:46:15.092Z",
-      "commit": "7e48cc557f2ba452071dcc61e1bca0bbb84f2a12",
+      "startedAt": "2026-09-25T12:56:27.138Z",
+      "completedAt": "2026-09-25T12:56:27.147Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "ok",
       "errors": []
     },
     {
-      "runId": "feature-1789811175288",
+      "runId": "feature-1790340987806",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:46:15.284Z",
-      "completedAt": "2026-09-19T09:46:15.288Z",
-      "commit": "7e48cc557f2ba452071dcc61e1bca0bbb84f2a12",
+      "startedAt": "2026-09-25T12:56:27.791Z",
+      "completedAt": "2026-09-25T12:56:27.806Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "ok",
       "errors": []
     },
     {
-      "runId": "feature-1789811175480",
+      "runId": "feature-1790340988423",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:46:15.476Z",
-      "completedAt": "2026-09-19T09:46:15.480Z",
-      "commit": "7e48cc557f2ba452071dcc61e1bca0bbb84f2a12",
+      "startedAt": "2026-09-25T12:56:28.410Z",
+      "completedAt": "2026-09-25T12:56:28.423Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "wip-exceeded",
       "errors": [
@@ -1119,31 +2021,31 @@
       ]
     },
     {
-      "runId": "feature-1789811176081",
+      "runId": "feature-1790340989301",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:46:16.078Z",
-      "completedAt": "2026-09-19T09:46:16.081Z",
-      "commit": "7e48cc557f2ba452071dcc61e1bca0bbb84f2a12",
+      "startedAt": "2026-09-25T12:56:29.295Z",
+      "completedAt": "2026-09-25T12:56:29.301Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "paused",
       "errors": []
     },
     {
-      "runId": "status-1789811176440",
+      "runId": "status-1790340989679",
       "phase": "status",
-      "startedAt": "2026-09-19T09:46:16.319Z",
-      "completedAt": "2026-09-19T09:46:16.440Z",
-      "commit": "7e48cc557f2ba452071dcc61e1bca0bbb84f2a12",
+      "startedAt": "2026-09-25T12:56:29.549Z",
+      "completedAt": "2026-09-25T12:56:29.679Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "reported",
       "errors": []
     },
     {
-      "runId": "feature-1789811176633",
+      "runId": "feature-1790340989964",
       "phase": "feature",
-      "startedAt": "2026-09-19T09:46:16.629Z",
-      "completedAt": "2026-09-19T09:46:16.633Z",
-      "commit": "7e48cc557f2ba452071dcc61e1bca0bbb84f2a12",
+      "startedAt": "2026-09-25T12:56:29.956Z",
+      "completedAt": "2026-09-25T12:56:29.964Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "wip-exceeded",
       "errors": [
@@ -1151,11 +2053,11 @@
       ]
     },
     {
-      "runId": "release-1789811176934",
+      "runId": "release-1790340990287",
       "phase": "release",
-      "startedAt": "2026-09-19T09:46:16.846Z",
-      "completedAt": "2026-09-19T09:46:16.934Z",
-      "commit": "7e48cc557f2ba452071dcc61e1bca0bbb84f2a12",
+      "startedAt": "2026-09-25T12:56:30.190Z",
+      "completedAt": "2026-09-25T12:56:30.287Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
       "result": "gate-blocked",
       "errors": [
@@ -1163,927 +2065,213 @@
       ]
     },
     {
-      "runId": "feature-1789812454625",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:07:34.621Z",
-      "completedAt": "2026-09-19T10:07:34.625Z",
-      "commit": "5713120c01033e2a8d9a340b43b9b3241ff9982c",
+      "runId": "tickets-1790340990690",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T12:56:30.620Z",
+      "completedAt": "2026-09-25T12:56:30.690Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "ok",
+      "result": "opened",
       "errors": []
     },
     {
-      "runId": "feature-1789812454831",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:07:34.827Z",
-      "completedAt": "2026-09-19T10:07:34.831Z",
-      "commit": "5713120c01033e2a8d9a340b43b9b3241ff9982c",
+      "runId": "tickets-1790340990966",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T12:56:30.902Z",
+      "completedAt": "2026-09-25T12:56:30.966Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789812455100",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:07:35.095Z",
-      "completedAt": "2026-09-19T10:07:35.100Z",
-      "commit": "5713120c01033e2a8d9a340b43b9b3241ff9982c",
-      "branch": "main",
-      "result": "wip-exceeded",
+      "result": "invalid",
       "errors": [
-        "WIP limit exceeded"
+        "T1 has unknown status NEARLY_DONE"
       ]
     },
     {
-      "runId": "feature-1789812455724",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:07:35.719Z",
-      "completedAt": "2026-09-19T10:07:35.724Z",
-      "commit": "5713120c01033e2a8d9a340b43b9b3241ff9982c",
+      "runId": "tickets-1790340991214",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T12:56:31.158Z",
+      "completedAt": "2026-09-25T12:56:31.214Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "paused",
-      "errors": []
-    },
-    {
-      "runId": "status-1789812456096",
-      "phase": "status",
-      "startedAt": "2026-09-19T10:07:35.962Z",
-      "completedAt": "2026-09-19T10:07:36.096Z",
-      "commit": "5713120c01033e2a8d9a340b43b9b3241ff9982c",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789812456308",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:07:36.301Z",
-      "completedAt": "2026-09-19T10:07:36.308Z",
-      "commit": "5713120c01033e2a8d9a340b43b9b3241ff9982c",
-      "branch": "main",
-      "result": "wip-exceeded",
+      "result": "invalid",
       "errors": [
-        "WIP limit exceeded"
+        "T1 is missing updatedAt"
       ]
     },
     {
-      "runId": "release-1789812456585",
-      "phase": "release",
-      "startedAt": "2026-09-19T10:07:36.499Z",
-      "completedAt": "2026-09-19T10:07:36.585Z",
-      "commit": "5713120c01033e2a8d9a340b43b9b3241ff9982c",
+      "runId": "tickets-1790340991496",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T12:56:31.431Z",
+      "completedAt": "2026-09-25T12:56:31.496Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "gate-blocked",
+      "result": "invalid",
       "errors": [
-        "release gate refused"
+        "T1 is QA with no owner agent"
       ]
     },
     {
-      "runId": "feature-1789813497028",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:24:57.026Z",
-      "completedAt": "2026-09-19T10:24:57.029Z",
-      "commit": "06a5d34c08f4452e7274c1e395f7bc9e0407bfff",
+      "runId": "tickets-1790340991799",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T12:56:31.718Z",
+      "completedAt": "2026-09-25T12:56:31.799Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789813497258",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:24:57.253Z",
-      "completedAt": "2026-09-19T10:24:57.258Z",
-      "commit": "06a5d34c08f4452e7274c1e395f7bc9e0407bfff",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789813497463",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:24:57.459Z",
-      "completedAt": "2026-09-19T10:24:57.463Z",
-      "commit": "06a5d34c08f4452e7274c1e395f7bc9e0407bfff",
-      "branch": "main",
-      "result": "wip-exceeded",
+      "result": "invalid",
       "errors": [
-        "WIP limit exceeded"
+        "T1 is duplicated"
       ]
     },
     {
-      "runId": "feature-1789813498029",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:24:58.026Z",
-      "completedAt": "2026-09-19T10:24:58.029Z",
-      "commit": "06a5d34c08f4452e7274c1e395f7bc9e0407bfff",
+      "runId": "tickets-1790340992095",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T12:56:32.088Z",
+      "completedAt": "2026-09-25T12:56:32.095Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "paused",
-      "errors": []
-    },
-    {
-      "runId": "status-1789813498361",
-      "phase": "status",
-      "startedAt": "2026-09-19T10:24:58.226Z",
-      "completedAt": "2026-09-19T10:24:58.361Z",
-      "commit": "06a5d34c08f4452e7274c1e395f7bc9e0407bfff",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789813498599",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:24:58.595Z",
-      "completedAt": "2026-09-19T10:24:58.599Z",
-      "commit": "06a5d34c08f4452e7274c1e395f7bc9e0407bfff",
-      "branch": "main",
-      "result": "wip-exceeded",
+      "result": "unverified",
       "errors": [
-        "WIP limit exceeded"
+        "no review recorded at .ai\\tickets\\2026-09-25.json"
       ]
     },
     {
-      "runId": "release-1789813498908",
-      "phase": "release",
-      "startedAt": "2026-09-19T10:24:58.810Z",
-      "completedAt": "2026-09-19T10:24:58.908Z",
-      "commit": "06a5d34c08f4452e7274c1e395f7bc9e0407bfff",
+      "runId": "tickets-1790340992383",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T12:56:32.356Z",
+      "completedAt": "2026-09-25T12:56:32.383Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "gate-blocked",
+      "result": "unverified",
       "errors": [
-        "release gate refused"
+        "T1 has no recorded outcome"
       ]
     },
     {
-      "runId": "feature-1789814405888",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:40:05.883Z",
-      "completedAt": "2026-09-19T10:40:05.888Z",
-      "commit": "e15cfef24a737dcf70aed561770ee0f950d5a118",
+      "runId": "tickets-1790340992657",
+      "phase": "tickets",
+      "startedAt": "2026-09-25T12:56:32.646Z",
+      "completedAt": "2026-09-25T12:56:32.657Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "ok",
+      "result": "verified",
       "errors": []
     },
     {
-      "runId": "feature-1789814406094",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:40:06.090Z",
-      "completedAt": "2026-09-19T10:40:06.094Z",
-      "commit": "e15cfef24a737dcf70aed561770ee0f950d5a118",
+      "runId": "promote-1790340992961",
+      "phase": "promote",
+      "startedAt": "2026-09-25T12:56:32.954Z",
+      "completedAt": "2026-09-25T12:56:32.961Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789814406287",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:40:06.282Z",
-      "completedAt": "2026-09-19T10:40:06.287Z",
-      "commit": "e15cfef24a737dcf70aed561770ee0f950d5a118",
-      "branch": "main",
-      "result": "wip-exceeded",
+      "result": "refused",
       "errors": [
-        "WIP limit exceeded"
+        "T1 has not completed the QA step"
       ]
     },
     {
-      "runId": "feature-1789814406920",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:40:06.916Z",
-      "completedAt": "2026-09-19T10:40:06.921Z",
-      "commit": "e15cfef24a737dcf70aed561770ee0f950d5a118",
+      "runId": "promote-1790340993210",
+      "phase": "promote",
+      "startedAt": "2026-09-25T12:56:33.202Z",
+      "completedAt": "2026-09-25T12:56:33.210Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "paused",
-      "errors": []
-    },
-    {
-      "runId": "status-1789814407231",
-      "phase": "status",
-      "startedAt": "2026-09-19T10:40:07.115Z",
-      "completedAt": "2026-09-19T10:40:07.231Z",
-      "commit": "e15cfef24a737dcf70aed561770ee0f950d5a118",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789814407416",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:40:07.412Z",
-      "completedAt": "2026-09-19T10:40:07.416Z",
-      "commit": "e15cfef24a737dcf70aed561770ee0f950d5a118",
-      "branch": "main",
-      "result": "wip-exceeded",
+      "result": "refused",
       "errors": [
-        "WIP limit exceeded"
+        "T1 has no recorded evidence"
       ]
     },
     {
-      "runId": "release-1789814407705",
-      "phase": "release",
-      "startedAt": "2026-09-19T10:40:07.611Z",
-      "completedAt": "2026-09-19T10:40:07.705Z",
-      "commit": "e15cfef24a737dcf70aed561770ee0f950d5a118",
+      "runId": "promote-1790340993492",
+      "phase": "promote",
+      "startedAt": "2026-09-25T12:56:33.484Z",
+      "completedAt": "2026-09-25T12:56:33.492Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "gate-blocked",
+      "result": "refused",
       "errors": [
-        "release gate refused"
+        "T1 has no acceptance criteria"
       ]
     },
     {
-      "runId": "feature-1789814682024",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:44:42.021Z",
-      "completedAt": "2026-09-19T10:44:42.024Z",
-      "commit": "1c8f6d794015fc4012ad8bc83c5d38aac1b5cc63",
+      "runId": "promote-1790340993762",
+      "phase": "promote",
+      "startedAt": "2026-09-25T12:56:33.754Z",
+      "completedAt": "2026-09-25T12:56:33.762Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789814682231",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:44:42.224Z",
-      "completedAt": "2026-09-19T10:44:42.231Z",
-      "commit": "1c8f6d794015fc4012ad8bc83c5d38aac1b5cc63",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789814682440",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:44:42.436Z",
-      "completedAt": "2026-09-19T10:44:42.440Z",
-      "commit": "1c8f6d794015fc4012ad8bc83c5d38aac1b5cc63",
-      "branch": "main",
-      "result": "wip-exceeded",
+      "result": "refused",
       "errors": [
-        "WIP limit exceeded"
+        "open P1 finding X1"
       ]
     },
     {
-      "runId": "feature-1789814683047",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:44:43.043Z",
-      "completedAt": "2026-09-19T10:44:43.047Z",
-      "commit": "1c8f6d794015fc4012ad8bc83c5d38aac1b5cc63",
+      "runId": "promote-1790340994200",
+      "phase": "promote",
+      "startedAt": "2026-09-25T12:56:34.189Z",
+      "completedAt": "2026-09-25T12:56:34.200Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "paused",
+      "result": "promoted",
       "errors": []
     },
     {
-      "runId": "status-1789814683347",
-      "phase": "status",
-      "startedAt": "2026-09-19T10:44:43.238Z",
-      "completedAt": "2026-09-19T10:44:43.347Z",
-      "commit": "1c8f6d794015fc4012ad8bc83c5d38aac1b5cc63",
+      "runId": "released-1790340994598",
+      "phase": "released",
+      "startedAt": "2026-09-25T12:56:34.594Z",
+      "completedAt": "2026-09-25T12:56:34.598Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789814683537",
-      "phase": "feature",
-      "startedAt": "2026-09-19T10:44:43.533Z",
-      "completedAt": "2026-09-19T10:44:43.537Z",
-      "commit": "1c8f6d794015fc4012ad8bc83c5d38aac1b5cc63",
-      "branch": "main",
-      "result": "wip-exceeded",
+      "result": "bad-arguments",
       "errors": [
-        "WIP limit exceeded"
+        "missing or invalid --version"
       ]
     },
     {
-      "runId": "release-1789814683821",
-      "phase": "release",
-      "startedAt": "2026-09-19T10:44:43.730Z",
-      "completedAt": "2026-09-19T10:44:43.821Z",
-      "commit": "1c8f6d794015fc4012ad8bc83c5d38aac1b5cc63",
+      "runId": "released-1790340994871",
+      "phase": "released",
+      "startedAt": "2026-09-25T12:56:34.865Z",
+      "completedAt": "2026-09-25T12:56:34.871Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "gate-blocked",
+      "result": "bad-arguments",
       "errors": [
-        "release gate refused"
+        "missing or invalid --commit"
       ]
     },
     {
-      "runId": "feature-1789821548775",
-      "phase": "feature",
-      "startedAt": "2026-09-19T12:39:08.769Z",
-      "completedAt": "2026-09-19T12:39:08.775Z",
-      "commit": "e3c4e27fcf80bd26a3b942ab4dca2f3ad20682e6",
+      "runId": "released-1790340995153",
+      "phase": "released",
+      "startedAt": "2026-09-25T12:56:35.077Z",
+      "completedAt": "2026-09-25T12:56:35.153Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789821549014",
-      "phase": "feature",
-      "startedAt": "2026-09-19T12:39:09.010Z",
-      "completedAt": "2026-09-19T12:39:09.014Z",
-      "commit": "e3c4e27fcf80bd26a3b942ab4dca2f3ad20682e6",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789821549244",
-      "phase": "feature",
-      "startedAt": "2026-09-19T12:39:09.237Z",
-      "completedAt": "2026-09-19T12:39:09.244Z",
-      "commit": "e3c4e27fcf80bd26a3b942ab4dca2f3ad20682e6",
-      "branch": "main",
-      "result": "wip-exceeded",
+      "result": "live-unreachable",
       "errors": [
-        "WIP limit exceeded"
+        "fetch failed"
       ]
     },
     {
-      "runId": "feature-1789821549923",
-      "phase": "feature",
-      "startedAt": "2026-09-19T12:39:09.918Z",
-      "completedAt": "2026-09-19T12:39:09.923Z",
-      "commit": "e3c4e27fcf80bd26a3b942ab4dca2f3ad20682e6",
+      "runId": "released-1790340995455",
+      "phase": "released",
+      "startedAt": "2026-09-25T12:56:35.380Z",
+      "completedAt": "2026-09-25T12:56:35.455Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "paused",
-      "errors": []
-    },
-    {
-      "runId": "status-1789821550286",
-      "phase": "status",
-      "startedAt": "2026-09-19T12:39:10.146Z",
-      "completedAt": "2026-09-19T12:39:10.286Z",
-      "commit": "e3c4e27fcf80bd26a3b942ab4dca2f3ad20682e6",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789821550496",
-      "phase": "feature",
-      "startedAt": "2026-09-19T12:39:10.491Z",
-      "completedAt": "2026-09-19T12:39:10.496Z",
-      "commit": "e3c4e27fcf80bd26a3b942ab4dca2f3ad20682e6",
-      "branch": "main",
-      "result": "wip-exceeded",
+      "result": "version-mismatch",
       "errors": [
-        "WIP limit exceeded"
+        "live 9.9.9 != 9.9.8"
       ]
     },
     {
-      "runId": "release-1789821550779",
-      "phase": "release",
-      "startedAt": "2026-09-19T12:39:10.690Z",
-      "completedAt": "2026-09-19T12:39:10.779Z",
-      "commit": "e3c4e27fcf80bd26a3b942ab4dca2f3ad20682e6",
+      "runId": "released-1790340995721",
+      "phase": "released",
+      "startedAt": "2026-09-25T12:56:35.654Z",
+      "completedAt": "2026-09-25T12:56:35.721Z",
+      "commit": "5239b0a87796bd26792c525408342970894759cb",
       "branch": "main",
-      "result": "gate-blocked",
-      "errors": [
-        "release gate refused"
-      ]
-    },
-    {
-      "runId": "feature-1789822104114",
-      "phase": "feature",
-      "startedAt": "2026-09-19T12:48:24.111Z",
-      "completedAt": "2026-09-19T12:48:24.114Z",
-      "commit": "8ccf99b38b59d6e38b1cf3475a34282c2b7dd6e4",
-      "branch": "main",
-      "result": "ok",
+      "result": "closed",
       "errors": []
-    },
-    {
-      "runId": "feature-1789822104339",
-      "phase": "feature",
-      "startedAt": "2026-09-19T12:48:24.334Z",
-      "completedAt": "2026-09-19T12:48:24.339Z",
-      "commit": "8ccf99b38b59d6e38b1cf3475a34282c2b7dd6e4",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789822104596",
-      "phase": "feature",
-      "startedAt": "2026-09-19T12:48:24.589Z",
-      "completedAt": "2026-09-19T12:48:24.596Z",
-      "commit": "8ccf99b38b59d6e38b1cf3475a34282c2b7dd6e4",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789822105411",
-      "phase": "feature",
-      "startedAt": "2026-09-19T12:48:25.407Z",
-      "completedAt": "2026-09-19T12:48:25.411Z",
-      "commit": "8ccf99b38b59d6e38b1cf3475a34282c2b7dd6e4",
-      "branch": "main",
-      "result": "paused",
-      "errors": []
-    },
-    {
-      "runId": "status-1789822105895",
-      "phase": "status",
-      "startedAt": "2026-09-19T12:48:25.741Z",
-      "completedAt": "2026-09-19T12:48:25.895Z",
-      "commit": "8ccf99b38b59d6e38b1cf3475a34282c2b7dd6e4",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789822106198",
-      "phase": "feature",
-      "startedAt": "2026-09-19T12:48:26.193Z",
-      "completedAt": "2026-09-19T12:48:26.198Z",
-      "commit": "8ccf99b38b59d6e38b1cf3475a34282c2b7dd6e4",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "release-1789822106626",
-      "phase": "release",
-      "startedAt": "2026-09-19T12:48:26.481Z",
-      "completedAt": "2026-09-19T12:48:26.626Z",
-      "commit": "8ccf99b38b59d6e38b1cf3475a34282c2b7dd6e4",
-      "branch": "main",
-      "result": "gate-blocked",
-      "errors": [
-        "release gate refused"
-      ]
-    },
-    {
-      "runId": "feature-1789824014093",
-      "phase": "feature",
-      "startedAt": "2026-09-19T13:20:14.086Z",
-      "completedAt": "2026-09-19T13:20:14.093Z",
-      "commit": "4c94bbd8a2f6d6f2cf4019b8642e2412eb7b3f08",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789824014367",
-      "phase": "feature",
-      "startedAt": "2026-09-19T13:20:14.362Z",
-      "completedAt": "2026-09-19T13:20:14.367Z",
-      "commit": "4c94bbd8a2f6d6f2cf4019b8642e2412eb7b3f08",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789824014582",
-      "phase": "feature",
-      "startedAt": "2026-09-19T13:20:14.578Z",
-      "completedAt": "2026-09-19T13:20:14.582Z",
-      "commit": "4c94bbd8a2f6d6f2cf4019b8642e2412eb7b3f08",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789824015316",
-      "phase": "feature",
-      "startedAt": "2026-09-19T13:20:15.309Z",
-      "completedAt": "2026-09-19T13:20:15.316Z",
-      "commit": "4c94bbd8a2f6d6f2cf4019b8642e2412eb7b3f08",
-      "branch": "main",
-      "result": "paused",
-      "errors": []
-    },
-    {
-      "runId": "status-1789824015700",
-      "phase": "status",
-      "startedAt": "2026-09-19T13:20:15.562Z",
-      "completedAt": "2026-09-19T13:20:15.700Z",
-      "commit": "4c94bbd8a2f6d6f2cf4019b8642e2412eb7b3f08",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789824015922",
-      "phase": "feature",
-      "startedAt": "2026-09-19T13:20:15.916Z",
-      "completedAt": "2026-09-19T13:20:15.922Z",
-      "commit": "4c94bbd8a2f6d6f2cf4019b8642e2412eb7b3f08",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "release-1789824016278",
-      "phase": "release",
-      "startedAt": "2026-09-19T13:20:16.171Z",
-      "completedAt": "2026-09-19T13:20:16.278Z",
-      "commit": "4c94bbd8a2f6d6f2cf4019b8642e2412eb7b3f08",
-      "branch": "main",
-      "result": "gate-blocked",
-      "errors": [
-        "release gate refused"
-      ]
-    },
-    {
-      "runId": "feature-1789827265065",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:14:25.058Z",
-      "completedAt": "2026-09-19T14:14:25.065Z",
-      "commit": "1d197fac0f1393ca234facdf67379cb331b6c7fc",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789827265296",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:14:25.291Z",
-      "completedAt": "2026-09-19T14:14:25.296Z",
-      "commit": "1d197fac0f1393ca234facdf67379cb331b6c7fc",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789827265531",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:14:25.526Z",
-      "completedAt": "2026-09-19T14:14:25.531Z",
-      "commit": "1d197fac0f1393ca234facdf67379cb331b6c7fc",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789827266565",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:14:26.562Z",
-      "completedAt": "2026-09-19T14:14:26.565Z",
-      "commit": "1d197fac0f1393ca234facdf67379cb331b6c7fc",
-      "branch": "main",
-      "result": "paused",
-      "errors": []
-    },
-    {
-      "runId": "status-1789827266961",
-      "phase": "status",
-      "startedAt": "2026-09-19T14:14:26.823Z",
-      "completedAt": "2026-09-19T14:14:26.961Z",
-      "commit": "1d197fac0f1393ca234facdf67379cb331b6c7fc",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789827267179",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:14:27.171Z",
-      "completedAt": "2026-09-19T14:14:27.179Z",
-      "commit": "1d197fac0f1393ca234facdf67379cb331b6c7fc",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "release-1789827267522",
-      "phase": "release",
-      "startedAt": "2026-09-19T14:14:27.419Z",
-      "completedAt": "2026-09-19T14:14:27.522Z",
-      "commit": "1d197fac0f1393ca234facdf67379cb331b6c7fc",
-      "branch": "main",
-      "result": "gate-blocked",
-      "errors": [
-        "release gate refused"
-      ]
-    },
-    {
-      "runId": "status-1789828217552",
-      "phase": "status",
-      "startedAt": "2026-09-19T14:30:17.377Z",
-      "completedAt": "2026-09-19T14:30:17.552Z",
-      "commit": "4b4efb13d67c9cac0a10b0ed7923c9312188a15e",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789828485897",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:34:45.887Z",
-      "completedAt": "2026-09-19T14:34:45.897Z",
-      "commit": "4b4efb13d67c9cac0a10b0ed7923c9312188a15e",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789828486163",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:34:46.158Z",
-      "completedAt": "2026-09-19T14:34:46.163Z",
-      "commit": "4b4efb13d67c9cac0a10b0ed7923c9312188a15e",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789828486369",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:34:46.364Z",
-      "completedAt": "2026-09-19T14:34:46.369Z",
-      "commit": "4b4efb13d67c9cac0a10b0ed7923c9312188a15e",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789828487094",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:34:47.091Z",
-      "completedAt": "2026-09-19T14:34:47.094Z",
-      "commit": "4b4efb13d67c9cac0a10b0ed7923c9312188a15e",
-      "branch": "main",
-      "result": "paused",
-      "errors": []
-    },
-    {
-      "runId": "status-1789828487523",
-      "phase": "status",
-      "startedAt": "2026-09-19T14:34:47.359Z",
-      "completedAt": "2026-09-19T14:34:47.523Z",
-      "commit": "4b4efb13d67c9cac0a10b0ed7923c9312188a15e",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789828487742",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:34:47.734Z",
-      "completedAt": "2026-09-19T14:34:47.742Z",
-      "commit": "4b4efb13d67c9cac0a10b0ed7923c9312188a15e",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "release-1789828488033",
-      "phase": "release",
-      "startedAt": "2026-09-19T14:34:47.942Z",
-      "completedAt": "2026-09-19T14:34:48.033Z",
-      "commit": "4b4efb13d67c9cac0a10b0ed7923c9312188a15e",
-      "branch": "main",
-      "result": "gate-blocked",
-      "errors": [
-        "release gate refused"
-      ]
-    },
-    {
-      "runId": "feature-1789828815281",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:40:15.276Z",
-      "completedAt": "2026-09-19T14:40:15.281Z",
-      "commit": "d1c30e2303eecef59083e1368b2f07ab804259db",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789828815490",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:40:15.483Z",
-      "completedAt": "2026-09-19T14:40:15.490Z",
-      "commit": "d1c30e2303eecef59083e1368b2f07ab804259db",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789828815708",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:40:15.699Z",
-      "completedAt": "2026-09-19T14:40:15.708Z",
-      "commit": "d1c30e2303eecef59083e1368b2f07ab804259db",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789828816352",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:40:16.348Z",
-      "completedAt": "2026-09-19T14:40:16.352Z",
-      "commit": "d1c30e2303eecef59083e1368b2f07ab804259db",
-      "branch": "main",
-      "result": "paused",
-      "errors": []
-    },
-    {
-      "runId": "status-1789828816692",
-      "phase": "status",
-      "startedAt": "2026-09-19T14:40:16.568Z",
-      "completedAt": "2026-09-19T14:40:16.692Z",
-      "commit": "d1c30e2303eecef59083e1368b2f07ab804259db",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789828816963",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:40:16.957Z",
-      "completedAt": "2026-09-19T14:40:16.963Z",
-      "commit": "d1c30e2303eecef59083e1368b2f07ab804259db",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "release-1789828817506",
-      "phase": "release",
-      "startedAt": "2026-09-19T14:40:17.328Z",
-      "completedAt": "2026-09-19T14:40:17.506Z",
-      "commit": "d1c30e2303eecef59083e1368b2f07ab804259db",
-      "branch": "main",
-      "result": "gate-blocked",
-      "errors": [
-        "release gate refused"
-      ]
-    },
-    {
-      "runId": "feature-1789829355145",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:49:15.142Z",
-      "completedAt": "2026-09-19T14:49:15.145Z",
-      "commit": "19cbb2fddfffbe162ec5cfc174c89d79b23d962e",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789829355342",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:49:15.338Z",
-      "completedAt": "2026-09-19T14:49:15.342Z",
-      "commit": "19cbb2fddfffbe162ec5cfc174c89d79b23d962e",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789829355551",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:49:15.544Z",
-      "completedAt": "2026-09-19T14:49:15.551Z",
-      "commit": "19cbb2fddfffbe162ec5cfc174c89d79b23d962e",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789829356291",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:49:16.288Z",
-      "completedAt": "2026-09-19T14:49:16.291Z",
-      "commit": "19cbb2fddfffbe162ec5cfc174c89d79b23d962e",
-      "branch": "main",
-      "result": "paused",
-      "errors": []
-    },
-    {
-      "runId": "status-1789829356695",
-      "phase": "status",
-      "startedAt": "2026-09-19T14:49:16.539Z",
-      "completedAt": "2026-09-19T14:49:16.695Z",
-      "commit": "19cbb2fddfffbe162ec5cfc174c89d79b23d962e",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789829357290",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:49:17.281Z",
-      "completedAt": "2026-09-19T14:49:17.290Z",
-      "commit": "19cbb2fddfffbe162ec5cfc174c89d79b23d962e",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "release-1789829357756",
-      "phase": "release",
-      "startedAt": "2026-09-19T14:49:17.622Z",
-      "completedAt": "2026-09-19T14:49:17.756Z",
-      "commit": "19cbb2fddfffbe162ec5cfc174c89d79b23d962e",
-      "branch": "main",
-      "result": "gate-blocked",
-      "errors": [
-        "release gate refused"
-      ]
-    },
-    {
-      "runId": "feature-1789829618087",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:53:38.080Z",
-      "completedAt": "2026-09-19T14:53:38.087Z",
-      "commit": "19cbb2fddfffbe162ec5cfc174c89d79b23d962e",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789829618350",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:53:38.343Z",
-      "completedAt": "2026-09-19T14:53:38.350Z",
-      "commit": "19cbb2fddfffbe162ec5cfc174c89d79b23d962e",
-      "branch": "main",
-      "result": "ok",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789829618589",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:53:38.582Z",
-      "completedAt": "2026-09-19T14:53:38.589Z",
-      "commit": "19cbb2fddfffbe162ec5cfc174c89d79b23d962e",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "feature-1789829619257",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:53:39.254Z",
-      "completedAt": "2026-09-19T14:53:39.257Z",
-      "commit": "19cbb2fddfffbe162ec5cfc174c89d79b23d962e",
-      "branch": "main",
-      "result": "paused",
-      "errors": []
-    },
-    {
-      "runId": "status-1789829619596",
-      "phase": "status",
-      "startedAt": "2026-09-19T14:53:39.464Z",
-      "completedAt": "2026-09-19T14:53:39.597Z",
-      "commit": "19cbb2fddfffbe162ec5cfc174c89d79b23d962e",
-      "branch": "main",
-      "result": "reported",
-      "errors": []
-    },
-    {
-      "runId": "feature-1789829619831",
-      "phase": "feature",
-      "startedAt": "2026-09-19T14:53:39.824Z",
-      "completedAt": "2026-09-19T14:53:39.831Z",
-      "commit": "19cbb2fddfffbe162ec5cfc174c89d79b23d962e",
-      "branch": "main",
-      "result": "wip-exceeded",
-      "errors": [
-        "WIP limit exceeded"
-      ]
-    },
-    {
-      "runId": "release-1789829620166",
-      "phase": "release",
-      "startedAt": "2026-09-19T14:53:40.069Z",
-      "completedAt": "2026-09-19T14:53:40.166Z",
-      "commit": "19cbb2fddfffbe162ec5cfc174c89d79b23d962e",
-      "branch": "main",
-      "result": "gate-blocked",
-      "errors": [
-        "release gate refused"
-      ]
     }
   ],
-  "updatedAt": "2026-09-19T14:53:40.264Z"
+  "updatedAt": "2026-09-25T12:56:35.863Z"
 }

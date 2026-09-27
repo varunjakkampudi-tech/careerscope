@@ -43,7 +43,11 @@ const defaultReserveBytes = 256 * 1024 * 1024;
  */
 const defaultMarkerLimit = 10_000;
 
-export class ResumeUploadCancelled extends Conflict {}
+export class ResumeUploadCancelled extends Conflict {
+  constructor(message: string) {
+    super(message, 'UPLOAD_CANCELLED');
+  }
+}
 
 /** A concurrent writer replaced the object between inspection and reading. */
 class ResumeObjectChanged extends Error {}

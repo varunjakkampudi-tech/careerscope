@@ -1,7 +1,7 @@
 ---
 name: CareerScope Security And Privacy
 description: 'Use when handling authentication, authorization, external content, secrets, resumes, email, browser automation, public snapshots or deployment.'
-applyTo: 'apps/api/src/**,apps/web/src/lib/**,packages/providers/src/**,packages/shared/src/**,mobile-site/**,scripts/export-*.mjs,scripts/stage-pages.mjs,scripts/publish-pages.mjs,infra/**,.github/workflows/**'
+applyTo: 'apps/api/src/**,apps/web/src/lib/**,v2/apps/**,v2/packages/core/src/**,packages/providers/src/**,packages/shared/src/**,mobile-site/**,scripts/export-*.mjs,scripts/stage-pages.mjs,scripts/publish-pages.mjs,infra/**,.github/workflows/**'
 ---
 
 # Security And Privacy Rules

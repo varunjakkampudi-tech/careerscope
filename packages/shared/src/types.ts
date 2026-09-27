@@ -113,6 +113,16 @@ export interface CandidateContext {
   excludeCompanies: string[];
   /** Full resume text, used by the optional LLM rerank pass. */
   resumeText: string;
+  /**
+   * False when no parsed resume was available to build this context — distinct
+   * from a resume that was considered and simply contributed nothing. Without
+   * this, "no resume" and "resume matched zero skills" render identically.
+   */
+  resumeConsidered: boolean;
+  /** Skills sourced from the resume specifically, not the profile's typed tech
+   * stack — so the resume's contribution is visible in match evidence, not
+   * silently folded into the combined skills list. */
+  resumeSkills: string[];
 }
 
 /** A skill demanded by a job description, weighted by how hard the ask was. */
@@ -146,10 +156,36 @@ export interface Paginated<T> {
 /**
  * Profile fields the matching engine actually consumes. `Profile` satisfies this
  * structurally, so the API can pass a stored profile straight through.
+ *
+ * THE CONSUMER DECLARES ITS OWN MINIMUM, and `application` is narrowed here for
+ * the same reason `candidate` always has been. It used to be the full
+ * `ApplicationDetails` while the comment above claimed this type listed what the
+ * engine consumes — the comment was the intent and the type had not followed it.
+ *
+ * That gap was load-bearing across the V1/V2 boundary. V2's `MatchingProfile`
+ * (v2/packages/core/src/profile.ts) deliberately snapshots only
+ * `expectedCtc`, `yearsOfExperience` and `willingToRelocate` — data
+ * minimisation, the same discipline that keeps `parsed.text` inside Postgres —
+ * and `packages/matching/src/context.ts` reads exactly those three. Nothing
+ * enforced that correspondence. The day `context.ts` reads a fourth field, V2's
+ * snapshot would not carry it, and the symptom would not be a crash: it would
+ * be `undefined` inside deterministic scoring, i.e. a silently wrong match
+ * score on the deployed stack.
+ *
+ * Narrowing here makes that a COMPILE ERROR IN THE FILE THAT READS IT, rather
+ * than a runtime `undefined` two tiers away. Widening `MatchingProfile` to the
+ * full type would have discarded a deliberate minimisation to satisfy a
+ * compiler, and a cast would have deleted the only signal the shapes had
+ * diverged. Deriving V2's `Pick` from this type was the other defensible shape
+ * and was not chosen: V2's snapshot is a storage decision about what leaves its
+ * own tier, and it should not silently follow a V1 internal.
+ *
+ * Every caller passing a wider object — V1's stored `Profile` included — still
+ * satisfies this structurally. Nothing at a call site needs to change.
  */
 export type MatchableProfile = {
   candidate: Pick<Candidate, 'location'>;
   preferences: Preferences;
-  application: ApplicationDetails;
+  application: Pick<ApplicationDetails, 'expectedCtc' | 'yearsOfExperience' | 'willingToRelocate'>;
   derived: DerivedResume | null;
 };

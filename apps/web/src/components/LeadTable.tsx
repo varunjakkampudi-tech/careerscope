@@ -217,12 +217,23 @@ export function LeadTable({
     layout.current = compact;
     virtualizer.measure();
     // WebKit delivers ResizeObserver entries before React's layout effects, so
-    // the rows are measured and then `measure()` above discards those heights.
-    // Nothing resizes again, so the cache is never refilled and every row keeps
-    // the estimate: at 390px they render 261px tall on a 233px pitch and overlap.
-    for (const node of list.current?.querySelectorAll<HTMLDivElement>('[data-index]') ?? []) {
-      virtualizer.measureElement(node);
-    }
+    // measuring synchronously here reads the mounted rows before the browser has
+    // actually painted the new compact/card styling: the rect it captures is
+    // still the old layout's, and nothing resizes again to correct it. A
+    // double rAF runs after the browser has committed and painted the new
+    // styles from this same effect, so the measurement reads the real size.
+    let raf1 = 0;
+    let raf2 = 0;
+    raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        for (const node of list.current?.querySelectorAll<HTMLDivElement>('[data-index]') ?? [])
+          virtualizer.measureElement(node);
+      });
+    });
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
   }, [compact, virtualizer]);
 
   const items = virtualizer.getVirtualItems();

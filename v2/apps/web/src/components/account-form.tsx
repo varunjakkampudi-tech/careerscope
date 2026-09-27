@@ -100,7 +100,9 @@ export default function AccountForm({
           </label>
         )}
         {(error || (expired && !registering)) && (
-          <p role="alert">{error || 'Your session has expired.'}</p>
+          <p role="alert">
+            {error || 'Your session has expired. Any unsaved changes were not saved.'}
+          </p>
         )}
         {(message || (!registering && notice)) && <p role="status">{message || notice}</p>}
         <button className="primary" disabled={pending}>

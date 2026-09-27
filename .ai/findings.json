@@ -1,6 +1,6 @@
 {
   "$comment": "Canonical machine-readable review findings. The Orchestrator appends; reviewers have no edit tool and hand findings over as text. Severity: P0 data loss/security/catastrophic, P1 serious correctness, P2 quality, P3 minor.",
-  "updatedAt": "2026-09-19T00:00:00.000Z",
+  "updatedAt": "2026-09-22T00:00:00.000Z",
   "findings": [
     {
       "id": "R1",
@@ -8,11 +8,11 @@
       "foundBy": "Infrastructure recon",
       "file": ".github/workflows/ci.yml, deploy.yml",
       "symbol": "test coverage of the deployed application",
-      "what": "The V2 test suite never runs in any pipeline. ci.yml runs only the root suite; deploy.yml runs v2 typecheck, lint, format and build but no tests. There are only two workflows.",
-      "cost": "The 49 tests covering the application that actually serves careerscope.tech execute nowhere in CI or Deploy. A V2 regression is caught only by someone running the suite locally.",
-      "evidence": "git grep -nE 'working-directory: v2|prefix v2|cd v2' -- .github/workflows -> deploy.yml lines 69, 73, 81 (npm ci, typecheck/lint/build, audit) and nothing else; git grep -n 'npm test' -- .github/workflows -> ci.yml:76 only",
-      "fix": "Run the v2 suite in CI. It needs --env-file=.env plus Postgres, Redis and LocalStack, so it requires service containers rather than a one-line addition.",
-      "status": "OPEN",
+      "what": "The V2 test suite never runs in any pipeline. ci.yml runs only the root suite; deploy.yml runs v2 typecheck, lint, format and build but no tests. There are only two workflows. UPDATE 2026-09-21: CS-1 landed a 'Test V2 (unit only — no database, queue or browser coverage)' step in ci.yml; verified locally 33/33 passing, exit 0. CS-9 then added a v2-integration job with real Postgres/Redis/LocalStack service containers, verified in a genuine Linux container: 24/24 of the six previously-unrun integration files now pass.",
+      "cost": "The 49 tests covering the application that actually serves careerscope.tech execute nowhere in CI or Deploy. A V2 regression is caught only by someone running the suite locally. UPDATE 2026-09-21: both the unit subset (33 tests) and the service-backed integration subset (24 tests) are now proven to run and pass in a CI-equivalent environment.",
+      "evidence": "git grep -nE 'working-directory: v2|prefix v2|cd v2' -- .github/workflows -> deploy.yml lines 69, 73, 81 (npm ci, typecheck/lint/build, audit) and nothing else; git grep -n 'npm test' -- .github/workflows -> ci.yml:76 only. 2026-09-21: .github/workflows/ci.yml now has a v2-integration job (services: postgres 17.6-alpine, redis 7.4.5-alpine, localstack 4.7.0; CI-built .env; npm --prefix v2 run test:integration), reproduced locally in a real Linux container: 24/24 passed.",
+      "fix": "Run the v2 suite in CI. It needs --env-file=.env plus Postgres, Redis and LocalStack, so it requires service containers rather than a one-line addition. CS-1 (unit-only) and CS-9 (service-backed integration) are both done.",
+      "status": "FIXED",
       "assignedTo": "Infrastructure"
     },
     {
@@ -29,6 +29,32 @@
       "assignedTo": "Infrastructure"
     },
     {
+      "id": "R3",
+      "severity": "P1",
+      "foundBy": "Backend, while wiring CS-9's real Postgres/Redis/LocalStack CI job",
+      "file": "v2/packages/core/src/resume-parser-child.ts, resume-parser.ts",
+      "symbol": "main() self-check; readable allow-list",
+      "what": "The isolated resume parser's own startup self-check tested process.allowedNodeEnvironmentFlags.has('--allow-net') as a precondition. That flag does not exist in Node.js (it is a Deno permission flag); Node's permission model has no network scope at all. The check was therefore unconditionally true and the parser threw PARSER_UNAVAILABLE on every real Node runtime, on any platform. Separately, the --allow-fs-read grants covered packages/resume/dist and packages/shared/dist but not the package.json at each workspace package's root; since those are npm workspace symlinks, ESM resolution needs read access to the resolved real path's package.json before it ever reaches dist/, which was never granted.",
+      "cost": "Resume parsing could never succeed in any real deployment. This was undetected because the six integration tests that exercise it never ran in CI (see R1/CS-9) and had not been run against real services locally either.",
+      "evidence": "2026-09-21: process.allowedNodeEnvironmentFlags.has('--allow-net') === false on Node v24.21.0 (confirmed directly); direct invocation of the compiled child under the exact production --permission flags reproduced ERR_ACCESS_DENIED on packages/@job-radar/shared/package.json before the fix; after the fix, isolated parser accepts synthetic documents... and all 24 v2 integration tests pass on a real Linux container against real Postgres/Redis/LocalStack.",
+      "fix": "Removed the nonexistent --allow-net flag check and the equally meaningless process.permission.has('net') check, keeping the real fs.write/child-process checks; documented that network isolation for this child is not enforceable via --permission and must come from the OS/container. Broadened resume-parser.ts's readable allow-list to the packages/resume and packages/shared package roots, not just their dist/ subfolders.",
+      "status": "FIXED",
+      "assignedTo": "Backend"
+    },
+    {
+      "id": "R4",
+      "severity": "P1",
+      "foundBy": "Senior Engineer, auditing CS-8's readers of .ai/*.json",
+      "file": "scripts/engineering-ui.mjs, scripts/control-center.mjs, scripts/check-agents.mjs",
+      "symbol": "read() in engineering-ui.mjs; progress() in control-center.mjs; the three uncaught JSON.parse(readFileSync(...)) calls in check-agents.mjs",
+      "what": "The exact defect release-gate.mjs was fixed for (R1's evidence trail: 'a corrupt findings.json made the release gate print PASS no open P0 or P1 and exit 0') was still present, unaudited, in two other readers. engineering-ui.mjs's generic read(p, fallback) helper collapsed absent and unparseable into the same fallback with zero distinction: a corrupted .ai/findings.json or .ai/backlog.json rendered the live control-center dashboard (npm run agile:ui) as zero findings / an empty backlog, not an error. control-center.mjs's progress() function had the same bug for .ai/progress.json specifically - the sibling loopState() and findings() functions in the same file already returned a distinguishable {parseError}/{unreadable} shape on catch, but progress() silently returned [] instead, so its own render call site printed 'No progress matrix found.', identical to a legitimately empty file. Separately, check-agents.mjs read .ai/release-plan.json, .ai/progress.json and .ai/LOOP-STATE.json with three bare JSON.parse(readFileSync(...)) calls with no try/catch at all: a malformed file crashed the whole validator with an uncaught SyntaxError stack trace, silently skipping every check after the crash point rather than reporting a specific, named FAIL and continuing.",
+      "cost": "The engineering control center - the dashboard this project's own tooling exists to make trustworthy - could show 'all clear' on a corrupted state file. The agent-config validator could silently stop checking partway through its 259 lines with no clear diagnostic naming which file was unreadable.",
+      "evidence": "2026-09-22: reproduced against the actual shipped code before fixing. Corrupting .ai/findings.json and querying the real running engineering-ui.mjs server's /state endpoint returned findings: {} with no error field (proof via a live HTTP request, not a unit test). Corrupting .ai/progress.json and running control-center.mjs printed 'No progress matrix found.' with no UNREADABLE marker. Corrupting .ai/progress.json and running check-agents.mjs crashed with an uncaught SyntaxError at line 197, never reaching the final summary line. After the initial fix, a real Independent Reviewer invocation (native runSubagent, read-only, no edit tool used) returned REVISE, not APPROVED: it found that readJSON() correctly guarded three reads in check-agents.mjs, but two other unconditional reads in the same file (readFileSync('.ai/CAREERSCOPE-PROGRESS.md', ...) and the secret-scan's readFileSync loop over all 20 .ai/ files, which includes LOOP-STATE.json) were never guarded, so absence of .ai/LOOP-STATE.json - the very file readJSON() was fixed to protect - still crashed the validator uncaught; the reviewer also flagged that the mutation-test suite only exercised malformed input for check-agents.mjs and never absence, which is exactly why that gap went undetected. Reproduced live before fixing (rename .ai/LOOP-STATE.json away, run check-agents.mjs, get an uncaught ENOENT stack trace with 'agent configuration valid'/'N failure(s)' never printed) and confirmed fixed afterward (7 named FAILs, reaches the summary line, exits 1; same for absent CAREERSCOPE-PROGRESS.md, 6 named FAILs). scripts/check-state-readers.mjs was extended from 19 to 24 cases to add the missing absence coverage for both files, and a withAbsent() helper with a try/finally was added to close a second, minor reviewer finding (a bare rename pair could leak a renamed file on a mid-test exception). Final gates:test run clean after all of this.",
+      "fix": "engineering-ui.mjs: read() now records a distinct stateErrors entry per unparseable file instead of silently substituting the fallback; snapshot() exposes stateErrors, and the client renders it as a persistent, unmissable banner rather than letting the normal empty-state UI imply all-clear. Also added a process.argv[1] entry-point guard (matching the existing convention in engineering.mjs/engineering-runner.mjs/engineering-hook.mjs) and exported snapshot so it can be imported and mutation-tested without starting the HTTP server as a side effect. control-center.mjs: progress() now returns {parseError} on catch, matching loopState()'s existing pattern, and its render call site prints an UNREADABLE line and returns early, matching findings()'s existing pattern. check-agents.mjs: added a readJSON() helper that reports a named check(false, ...) FAIL for both missing and unparseable for the three JSON reads, made the downstream loop-dependent checks null-safe, AND (after Independent Reviewer REVISE) guarded the two remaining unconditional reads it missed - the CAREERSCOPE-PROGRESS.md read and the secret-scan's file loop - so the script always reaches its final summary line and exits with the correct code regardless of which .ai/ file is absent or malformed.",
+      "status": "FIXED",
+      "assignedTo": "Senior Engineer"
+    },
+    {
       "id": "Q1",
       "severity": "P2",
       "foundBy": "Code Quality",
@@ -36,10 +62,10 @@
       "symbol": "versionPaths",
       "what": "Second hand-maintained copy of the version-file list owned by sync-version.mjs versionFiles()",
       "cost": "publishPages runs sync-version.mjs then commits against its own list. A third version-bearing file would be written but not committed, publishing a stale version string. Only visible after a push to main.",
-      "evidence": "grep -rn 'mobile-site/version.js' scripts/*.mjs -> publish-pages.mjs:15 and sync-version.mjs:13, independently maintained, nothing asserts they agree",
-      "fix": "Derive the list by importing versionFiles from sync-version.mjs",
-      "status": "OPEN",
-      "assignedTo": "unassigned"
+      "evidence": "grep -rn 'mobile-site/version.js' scripts/*.mjs -> publish-pages.mjs:15 and sync-version.mjs:13, independently maintained, nothing asserts they agree. 2026-09-22: fixed as CS-4, then Independent Reviewer found the first fix's own regression test could pass identically against the old hardcoded list (no third key exists in production to discriminate); closed by making versionFiles injectable and proving the test fails against the old code via git stash before restoring the fix.",
+      "fix": "versionPaths is now computed inside publishPages() from the real post-bump version via an injectable getVersionFiles parameter (default: the real versionFiles from sync-version.mjs), not a hardcoded array or a load-time placeholder version. scripts/publish-pages.test.mjs: 7/7 pass, including a synthetic 3-key fixture proving the derivation itself, not just today's 2-key reality.",
+      "status": "FIXED",
+      "assignedTo": "Senior Engineer"
     },
     {
       "id": "Q2",
@@ -64,6 +90,45 @@
       "cost": "Reads as public surface and implies test coverage that does not exist - it is the one of three functions with no test",
       "evidence": "grep -rn 'readAdminSnapshot' --include=*.mjs --include=*.ts --include=*.tsx . -> declaration and one same-file call site only",
       "fix": "Add the missing unit test and keep the export deliberate; do not delete the function, only the modifier is unused",
+      "status": "OPEN",
+      "assignedTo": "unassigned"
+    },
+    {
+      "id": "R5",
+      "severity": "P3",
+      "foundBy": "Security, during the CS-22 resume-to-matching review",
+      "file": "packages/resume/src/derive.ts, packages/matching/src/dimensions.ts, packages/shared/src/schemas.ts",
+      "symbol": "derived.titles; MatchDimensionScore.reason",
+      "what": "CS-22 wired a parsed resume's derived data into scoring for the first time. techStack/recentSkills are taxonomy-bound (extractSkills() only ever returns a canonical skill name from a fixed allowlist, never raw resume substrings), but derived.titles is freeform text extracted by regex (bounded to <=9 entries, 3-60 chars each, but no character allowlist). Now that collect.ts no longer hardcodes derived: null, a resume-derived title flows into candidate.titles and gets interpolated verbatim into MatchDimensionScore.reason (z.string(), no content restriction), which is stored in MatchBreakdown and served through the authenticated, owner-scoped API.",
+      "cost": "Not currently exploitable: the only renderer (v2/apps/web/src/components/match-evidence.tsx) uses plain JSX, which React auto-escapes; no dangerouslySetInnerHTML anywhere in that component. The data is also same-owner only and never reaches the public export (verified: export-mobile.mjs and export-admin.mjs both operate on a different, allowlisted V1 SQLite schema with no path to MatchBreakdown; the V2 /api/searches/:id/export route is behind the global auth hook and owner-scoped). Cost is purely a defense-in-depth gap for any future renderer of `reason` outside React (email digest, PDF export, admin snapshot).",
+      "evidence": "packages/resume/src/derive.ts:409-448 (regex-extracted titles, length-bounded, no char allowlist); packages/matching/src/dimensions.ts:224-227 (verbatim interpolation into reason); packages/shared/src/schemas.ts:212 (reason: z.string(), unrestricted); v2/apps/web/src/components/match-evidence.tsx:17 (plain JSX, auto-escaped, confirmed no dangerouslySetInnerHTML)",
+      "fix": "Not fixed as part of CS-22 (non-blocking, not currently reachable). Follow-up: either constrain derived.titles to a safe character set at extraction time, or explicitly escape MatchDimensionScore.reason at any future non-React render site before this field is consumed outside a JSX context.",
+      "status": "OPEN",
+      "assignedTo": "unassigned"
+    },
+    {
+      "id": "CS28-F2",
+      "severity": "P2",
+      "foundBy": "Product Architect, during the CS-28 job-identity review",
+      "file": "packages/providers/src/normalize.ts, v2/scripts/backfill-job-sightings.ts",
+      "symbol": "dedupeJobs, rebuildJobSightings",
+      "what": "search_jobs.data never retained a board's own per-posting id (sourceJobId) before this fix, so a role that was silently merged with a different, same-title/company/city req before CS-28 shipped cannot be split apart retroactively - the losing duplicate was dropped by the old in-memory dedup pass before it was ever written to search_jobs, so there is nothing left to replay it from.",
+      "cost": "db:backfill-job-sightings stops any future drift and correctly separates every new split going forward, but a fingerprint that was already falsely merged keeps whatever sightings/repostCount it had accumulated, frozen - it keeps asserting persistent/reposted signals in /api/market/postings indefinitely, indistinguishable from a legitimately-observed one.",
+      "evidence": "v2/packages/core/src/jobs.ts (collectedJobSchema.sourceJobId added by this ticket, optional only for pre-existing rows); v2/scripts/backfill-job-sightings.ts replays search_jobs as currently stored, so it cannot recover data never persisted; documented in docs/KNOWN-LIMITATIONS.md",
+      "fix": "Not fixed as part of CS-28 (accepted, disclosed limitation, given time constraints). Follow-up: a cutover marker so classify() suppresses persistent/reposted for a row that predates the fix and has not been freshly re-observed since. Revisit if a stale, over-confident market signal is ever reported as misleading in practice.",
+      "status": "OPEN",
+      "assignedTo": "unassigned"
+    },
+    {
+      "id": "CS28-2",
+      "severity": "P2",
+      "foundBy": "Independent Reviewer, during the CS-28 job-identity review",
+      "file": "v2/scripts/backfill-job-sightings.ts",
+      "symbol": "replay",
+      "what": "job_sightings backfill replays search_jobs ordered by the parent search run's created_at, because search_jobs itself carries no per-row insertion timestamp. Under redelivery/retry, a run created earlier can have its Database.settle() write commit later than a run created after it.",
+      "cost": "replay()'s accumulation (sightings/repost_count/last_seen) is an order-sensitive fold, so a fingerprint whose runs were reordered by a retry could replay to slightly different final counts than the live incremental upsert actually produced. Does not affect which postings are recognized as distinct - only the exact evidence numbers for the rare fingerprint whose runs were reordered by a retry.",
+      "evidence": "v2/scripts/backfill-job-sightings.ts (replay, order by runCreatedAt); v2/packages/core/src/schema.ts (search_jobs has no created_at column); documented in docs/KNOWN-LIMITATIONS.md and the script's docstring",
+      "fix": "Not fixed as part of CS-28 (deferred, needs a schema migration rather than a script change). Follow-up: add a created_at column to search_jobs and order the replay by that instead, if this is ever observed to matter in practice.",
       "status": "OPEN",
       "assignedTo": "unassigned"
     }

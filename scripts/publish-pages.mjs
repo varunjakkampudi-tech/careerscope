@@ -5,17 +5,16 @@ import { fileURLToPath, URL } from 'node:url';
 import { parseEnv } from 'node:util';
 import process from 'node:process';
 import { configuredPassphrase } from './export-admin.mjs';
+import { versionFiles } from './sync-version.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 
-const versionPaths = [
-  'package.json',
-  'package-lock.json',
-  'apps/web/src/lib/brand.ts',
-  'mobile-site/version.js',
-];
-
-export function publishPages({ read = readFileSync, run = execFileSync, bump = 'patch' } = {}) {
+export function publishPages({
+  read = readFileSync,
+  run = execFileSync,
+  bump = 'patch',
+  getVersionFiles = versionFiles,
+} = {}) {
   if (!['patch', 'minor', 'major'].includes(bump)) throw new Error('Choose patch, minor or major.');
   const local = parseEnv(read(resolve(root, '.env'), 'utf8'));
   if (!configuredPassphrase(local.ADMIN_SNAPSHOT_PASSPHRASE)) {
@@ -43,7 +42,21 @@ export function publishPages({ read = readFileSync, run = execFileSync, bump = '
   );
   run(process.execPath, ['scripts/sync-version.mjs'], options);
   const { version } = JSON.parse(read(resolve(root, 'package.json'), 'utf8'));
-  const files = [...versionPaths, 'mobile-site/admin.enc.json'];
+  // Derived from versionFiles(version), not duplicated, and computed with the
+  // real post-bump version rather than a load-time placeholder: a hand-
+  // maintained second copy of this list - or one frozen at import time - is
+  // exactly how a new version-bearing file gets written by sync-version.mjs
+  // but never staged for the commit, publishing a stale version string.
+  // package.json/package-lock.json are added separately - npm version writes
+  // those directly, they are not part of versionFiles(). getVersionFiles is
+  // injectable so a test can prove the derivation itself, not just today's
+  // fixed set of keys (Independent Reviewer finding on CS-4).
+  const files = [
+    'package.json',
+    'package-lock.json',
+    ...Object.keys(getVersionFiles(version)),
+    'mobile-site/admin.enc.json',
+  ];
   git('add', '--', ...files);
   git('commit', '--only', '-m', `Release v${version}`, '--', ...files);
   git('push', 'origin', 'main');

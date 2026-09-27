@@ -1,4 +1,4 @@
-# CareerScope — Engineerin| Database | 65% | IN PROGRESS | 13 tables, 13 migrations, 18 checks; no recovery run recorded, n| Security | 72% | IN PROGRESS | All ten areas implemented; never reviewed until 2026-09-19, live origin un| Performance | 30% | IN PROGRESS | Live health 91-196ms measured; no workload, database, queue or browser measurement |
+# CareerScope — Engineerin| Database | 65% | IN PROGRESS | 13 tables, 15 migrations, 18 checks; no recovery run recorded, n| Security | 66% | IN PROGRESS | DOWN from 72; census found 5 untracked issues, required scope grew, no control weakened un| Performance | 30% | IN PROGRESS | Live health 91-196ms measured; no workload, database, queue or browser measurement |
 
 > **Re-baselined 2026-09-19.** The previous figures carried no evidence and
 > seven areas claimed VERIFIED without any. Several numbers went **down**; none
@@ -6,10 +6,48 @@
 > evidence, and an area with nothing behind it reports UNMEASURED and no number.
 > Enforced by `scripts/check-progress.mjs`.
 
-**Last Updated:** 2026-09-18
-**Current Task:** none — awaiting the first task through the multi-agent workflow
-**Current Phase:** RECON
+**Last Updated:** 2026-09-23 (this session's ticket work, appended after the 2026-09-19 reconciliation below)
+**Current Task:** 44-ticket product backlog — CS-6/13/14/16/17/18/19/50 shipped to UAT this cycle
+**Current Phase:** IN PROGRESS. The separate "Autonomous Engineering OS
+continuation" objective referenced below remains its own, unrelated BLOCKED
+record (implementation 3/3, code review 3/3 exhausted) - see review.txt's
+2026-09-21 entry for why that counter is not touched by ticket work.
 **Overall Status:** IN PROGRESS — deployed and working; product surface incomplete
+
+Today's real evidence (2026-09-23), attributed to actual dispatches, not
+narration: a real CareerScope Independent Reviewer found and this session fixed
+a P1 (lead-status dropdown ignoring scope) and a P2 (inconsistent 401 handling,
+now centralized); a real CareerScope QA run found and this session fixed
+format:check failures and confirmed 1054/1055 root tests passing; a real
+CareerScope Visual Designer (gpt-6-astra) produced the design spec now
+implemented in the Saved/Applications lead-detail view. A CSS overflow
+regression that redesign introduced (27px horizontal scroll at 320px) was
+root-caused via live element-by-element bisection and fixed. Full detail in
+review.txt's 2026-09-23 entry.
+
+The paragraph below is the preserved 2026-09-19 reconciliation record for the
+separate, exhausted engineering-framework objective; it is not this cycle's work.
+
+Current local workflow evidence, attributed to actual parent-native specialist
+invocations: Senior Engineer completed three attempts; final independent QA
+passed 20/20 runner tests and 209/209 across four suites under pinned Node
+26.8.1, with no fail/skip/cancel/todo, plus ESLint/Prettier on eight files.
+Independent Reviewer loop 3 APPROVED; IR01-IR03 are closed with no blocking
+code findings. Documentation completed two passes, ending with two documents,
+Prettier and 15 retained links/anchor passing; no source changed after final QA.
+The earlier nested-tool limitation is not a session-wide blocker. This final
+coordinator call reconciles records only; it did not invoke those specialists.
+
+Overall completion remains BLOCKED by exhausted bounds and incomplete canonical
+evidence/gates. Actual SessionStart, Agent Sessions UI/model selection, host
+provenance and final audit remain unverified. Historical baseline is unchanged
+and invalid for strict schema-2 contracts. No app checks or production readiness
+claim; no fabricated percentage increase or schema migration.
+See [execution state](engineering.json) and [review log](../review.txt).
+The percentages in the table below are this cycle's (2026-09-23), synced with
+`.ai/progress.json` and re-verified by `scripts/check-progress.mjs`. The
+repository/deployment snapshot line is still the 2026-09-19 one below and has
+not been re-checked from this Windows session.
 
 **Repository:** `main` @ `3bee7b2` · **Deployed:** `3bee7b2` (provenance 4/4) ·
 **Live:** `https://careerscope.tech` → `{"status":"ok","version":"3.0.0"}`
@@ -32,50 +70,50 @@ important fact about this repository.
 
 ## Overall Progress
 
-| Area           | Progress | Status      | Evidence                                                                      |
-| -------------- | -------- | ----------- | ----------------------------------------------------------------------------- |
-| Product        | 25%      | IN PROGRESS | Deployed loop works; the core user journey CS-16..CS-19 is not built          |
-| Frontend       | 20%      | IN PROGRESS | Builds clean; no shared loading/empty/error states, phone layout unusable     |
-| Backend        | 70%      | IN PROGRESS | root 1047/1047, v2 unit 33/33; six integration files run nowhere (CS-9)       |
-| Database       | 65%      | IN PROGRESS | 13 tables, 13 migrations, 18 checks; no recovery run, no scheduled dump       |
-| Infrastructure | 65%      | IN PROGRESS | Live at 3.0.0; firewall not attached, no proxy self-healing (CS-3)            |
-| Security       | 72%      | IN PROGRESS | Ten areas implemented; first review 2026-09-19, live origin untested          |
-| Performance    | 30%      | IN PROGRESS | Live health 91-196ms; no workload, database, queue or browser figure          |
-| Testing        | 55%      | IN PROGRESS | Unit and gate suites proven; no database, queue or browser coverage in CI     |
-| System Design  | 75%      | IN PROGRESS | Documented; no independent review this cycle, CS-6 open                       |
-| UX/UI          | 15%      | IN PROGRESS | No design pass on the public surface, no accessibility baseline ever measured |
-| Documentation  | 70%      | IN PROGRESS | Extensive and current; drift demonstrated on 2026-09-19, not hypothetical     |
-| Code Quality   | 70%      | IN PROGRESS | lint/format/typecheck green; one reviewed file yielded three findings         |
+| Area           | Progress | Status      | Evidence                                                                                                                                            |
+| -------------- | -------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Product        | 55%      | IN PROGRESS | CS-6/13/14/16/17/18/19/50 shipped to UAT with real evidence; CS-15/CS-11 and public-surface work remain open                                        |
+| Frontend       | 48%      | IN PROGRESS | Real routing (CS-6), all 6 lead statuses (CS-14), real /applications route (CS-50), redesigned lead-detail view; check-ui.ts E2E suite still broken |
+| Backend        | 70%      | IN PROGRESS | root 1047/1047, v2 unit 33/33; six integration files run nowhere (CS-9)                                                                             |
+| Database       | 65%      | IN PROGRESS | 13 tables, 13 migrations, 18 checks; no recovery run, no scheduled dump                                                                             |
+| Infrastructure | 65%      | IN PROGRESS | Live at 3.0.0; firewall not attached, no proxy self-healing (CS-3)                                                                                  |
+| Security       | 66%      | IN PROGRESS | DOWN from 72: no control weakened; a census found 5 untracked issues (CS-53..CS-57), enlarging required scope                                       |
+| Performance    | 30%      | IN PROGRESS | Live health 91-196ms; no workload, database, queue or browser figure                                                                                |
+| Testing        | 58%      | IN PROGRESS | check-ui repaired + wired + WCAG 2.2; integration now in CI. Only +3: four checks-that-cannot-fail found, 11 still unwired                          |
+| System Design  | 78%      | IN PROGRESS | Documented; CS-6's route-per-page architecture now real, not just diagrammed                                                                        |
+| UX/UI          | 39%      | IN PROGRESS | Real design pass + accessibility baseline on Dashboard/Jobs/Saved/lead-detail; rest of the app untouched                                            |
+| Documentation  | 71%      | IN PROGRESS | Extensive and current; drift demonstrated on 2026-09-19, not hypothetical                                                                           |
+| Code Quality   | 70%      | IN PROGRESS | lint/format/typecheck green; one reviewed file yielded three findings                                                                               |
 
-**Overall: ~65%.** Dominated by the frontend and UX gap, not by backend debt.
+**Overall: ~68%.** Dominated by the frontend and UX gap, not by backend debt.
 
 ---
 
 ## Frontend
 
-| Item              | Status      | Evidence                                             |
-| ----------------- | ----------- | ---------------------------------------------------- |
-| Application shell | NOT STARTED | No shared layout beyond `layout.tsx`                 |
-| Routing           | NOT STARTED | **One** `page.tsx`; `view` state simulates pages     |
-| Layouts           | NOT STARTED |                                                      |
-| Design system     | NOT STARTED | No tokens, no primitives, ad-hoc styling             |
-| Components        | IMPLEMENTED | 7 components, functional                             |
-| Pages             | NOT STARTED | No `/login`, `/leads`, `/profile` routes             |
-| Forms             | IMPLEMENTED | Profile and account forms work                       |
-| State management  | IMPLEMENTED | Local state lifted into `page.tsx`; no store         |
-| API integration   | VERIFIED    | `lib/api.ts`, CSRF + revisions handled               |
-| Authentication UI | IMPLEMENTED | `account-form.tsx`; no dedicated route               |
-| Job search        | IMPLEMENTED | Search + SSE progress                                |
-| Job details       | IMPLEMENTED | `match-evidence.tsx`                                 |
-| Profiles          | IMPLEMENTED | `profile-editor.tsx` with revision conflicts         |
-| Dashboards        | NOT STARTED |                                                      |
-| Responsive design | IN PROGRESS | Verified 320/390/1440 on what exists                 |
-| Accessibility     | VERIFIED    | axe clean WCAG 2.0/2.1 A+AA, 3 browsers              |
-| Loading states    | IN PROGRESS | Present in some surfaces, not systematic             |
-| Empty states      | IN PROGRESS | Ad-hoc; no shared empty-state treatment              |
-| Error states      | IN PROGRESS | 409/507 handled; not consistent everywhere           |
-| Performance       | IN PROGRESS | Live health measured; no bundle or render figure yet |
-| Tests             | IN PROGRESS | Browser + axe checks; no component tests             |
+| Item              | Status      | Evidence                                                                                                           |
+| ----------------- | ----------- | ------------------------------------------------------------------------------------------------------------------ |
+| Application shell | IMPLEMENTED | `AuthenticatedShell` wraps every real route (CS-6)                                                                 |
+| Routing           | IMPLEMENTED | 9 real Next.js routes under `app/(app)/` (CS-6), replacing the single `view`-state `page.tsx`                      |
+| Layouts           | IMPLEMENTED | Shared shell layout; per-route content                                                                             |
+| Design system     | IN PROGRESS | `--dash-*` CSS custom-property tokens exist (spacing, status colors, focus); not yet applied everywhere            |
+| Components        | IMPLEMENTED | 7+ components, functional; `SavedLeads` now serves both `/saved` and `/applications` via a `scope` prop            |
+| Pages             | IMPLEMENTED | `/`, `/dashboard`, `/jobs`, `/saved`, `/applications`, `/resume`, `/settings`, `/career-resources`, `/preparation` |
+| Forms             | IMPLEMENTED | Profile and account forms work                                                                                     |
+| State management  | IMPLEMENTED | Local state per route; no global store, not yet needed                                                             |
+| API integration   | VERIFIED    | `lib/api.ts`, CSRF + revisions handled; centralized `SESSION_EXPIRED_EVENT` for 401s                               |
+| Authentication UI | IMPLEMENTED | `account-form.tsx`; no dedicated route                                                                             |
+| Job search        | IMPLEMENTED | Search + SSE progress                                                                                              |
+| Job details       | IMPLEMENTED | `match-evidence.tsx`; redesigned lead-detail view with real Job Details/Timeline/Actions grid                      |
+| Profiles          | IMPLEMENTED | `profile-editor.tsx` with revision conflicts                                                                       |
+| Dashboards        | IMPLEMENTED | `/dashboard` route real; visual parity with owner reference still only 66.32% (CS-11 open)                         |
+| Responsive design | IN PROGRESS | Verified 320/390/1440 on what exists                                                                               |
+| Accessibility     | VERIFIED    | axe clean WCAG 2.0/2.1 A+AA, 3 browsers                                                                            |
+| Loading states    | IN PROGRESS | Present in some surfaces, not systematic                                                                           |
+| Empty states      | IN PROGRESS | Ad-hoc; no shared empty-state treatment                                                                            |
+| Error states      | IN PROGRESS | 409/507 handled; not consistent everywhere                                                                         |
+| Performance       | IN PROGRESS | Live health measured; no bundle or render figure yet                                                               |
+| Tests             | IN PROGRESS | Browser + axe checks; no component tests                                                                           |
 
 **Blocked, not merely unbuilt:** `/companies`, `/market`, `/skills`, `/alerts`
 and public `/jobs` have **no backing data**. `CollectedJob` carries 11 fields —
@@ -162,27 +200,27 @@ automatic self-healing does not.
 
 ## UX/UI
 
-| Item                     | Status      | Evidence                                    |
-| ------------------------ | ----------- | ------------------------------------------- |
-| Information architecture | NOT STARTED | No IA; one route                            |
-| Navigation               | NOT STARTED | `view` state, not navigation                |
-| Visual hierarchy         | IN PROGRESS | Readable, not designed                      |
-| Design system            | NOT STARTED | No tokens or primitives                     |
-| Typography               | IN PROGRESS | Defaults, no scale                          |
-| Spacing                  | IN PROGRESS | Ad-hoc, no rhythm                           |
-| Responsiveness           | IN PROGRESS | Works at tested widths on existing surfaces |
-| Mobile                   | IN PROGRESS | Verified 320/390; not designed for          |
-| Desktop                  | IN PROGRESS | Verified 1440; no large-screen layout       |
-| Accessibility            | VERIFIED    | axe clean, 3 browsers, 3 widths             |
-| Forms                    | IMPLEMENTED | Profile and account forms work              |
-| Interactions             | IN PROGRESS | Basic; no considered interaction model      |
-| Loading                  | IN PROGRESS | Present in some surfaces                    |
-| Empty states             | IN PROGRESS | Ad-hoc                                      |
-| Errors                   | IN PROGRESS | Handled, not consistent                     |
-| Success states           | IN PROGRESS | Inconsistent confirmation                   |
-| Animations               | NOT STARTED | None                                        |
-| Usability                | NOT STARTED | No usability testing performed              |
-| Consistency              | IN PROGRESS | Single page, so little chance to diverge    |
+| Item                     | Status      | Evidence                                                                                                                          |
+| ------------------------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Information architecture | IN PROGRESS | Real nav with 9 routes (CS-6); no IA review beyond what's built                                                                   |
+| Navigation               | IMPLEMENTED | Real sidebar/topbar nav across all routes, not `view` state                                                                       |
+| Visual hierarchy         | IN PROGRESS | Designed on Dashboard/Jobs/Saved/lead-detail; default elsewhere                                                                   |
+| Design system            | IN PROGRESS | `--dash-*` tokens (spacing, status colors, focus) exist; not applied to every route                                               |
+| Typography               | IN PROGRESS | Real `next/font/google` Inter everywhere; no full type scale                                                                      |
+| Spacing                  | IN PROGRESS | Token-based spacing scale on redesigned routes; ad-hoc elsewhere                                                                  |
+| Responsiveness           | IN PROGRESS | Verified 320/768/1440 with zero overflow on Dashboard/Jobs/Saved/lead-detail                                                      |
+| Mobile                   | IN PROGRESS | Verified 320px zero-overflow on redesigned routes (a real 27px regression found and fixed this cycle); not designed for elsewhere |
+| Desktop                  | IN PROGRESS | Verified 1440px on redesigned routes; no large-screen layout elsewhere                                                            |
+| Accessibility            | VERIFIED    | Lighthouse accessibility 100/100 on /dashboard, /jobs, /saved; axe clean WCAG2A/AA on Dashboard at 320/1440px                     |
+| Forms                    | IMPLEMENTED | Profile and account forms work                                                                                                    |
+| Interactions             | IN PROGRESS | Basic; no considered interaction model                                                                                            |
+| Loading                  | IN PROGRESS | Present in some surfaces                                                                                                          |
+| Empty states             | IN PROGRESS | Ad-hoc                                                                                                                            |
+| Errors                   | IN PROGRESS | Handled, not consistent                                                                                                           |
+| Success states           | IN PROGRESS | Inconsistent confirmation                                                                                                         |
+| Animations               | NOT STARTED | None                                                                                                                              |
+| Usability                | NOT STARTED | No usability testing performed                                                                                                    |
+| Consistency              | IN PROGRESS | Single page, so little chance to diverge                                                                                          |
 
 **This is the weakest area and the highest-value next work.**
 

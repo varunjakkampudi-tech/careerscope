@@ -33,11 +33,19 @@ const historySchema = z
   })
   .strict();
 
+export const livenessStatusSchema = z.enum(['unknown', 'live', 'stale']);
+
 export type LeadRecord = {
   id: string;
   data: CollectedJob;
   notes: string;
   status: z.infer<typeof leadStatusSchema>;
+  // CS-27: a real, checked fact - distinct from status (the owner's own
+  // pipeline stage) and from createdAt/updatedAt (age). 'unknown' until an
+  // actual HTTP check has run; only ever 'live'/'stale' after a genuinely
+  // unambiguous result.
+  livenessStatus: z.infer<typeof livenessStatusSchema>;
+  livenessCheckedAt: Date | null;
   revision: number;
   createdAt: Date;
   updatedAt: Date;
@@ -48,9 +56,28 @@ export type LeadHistoryRecord = {
   notesChanged: boolean;
   createdAt: Date;
 };
-export class LeadRevisionConflict extends Conflict {}
+export class LeadRevisionConflict extends Conflict {
+  constructor(message: string) {
+    super(message, 'LEAD_REVISION_CONFLICT');
+  }
+}
 const columns =
-  'id, data, notes, status, revision, created_at AS "createdAt", updated_at AS "updatedAt"';
+  'id, data, notes, status, revision, created_at AS "createdAt", updated_at AS "updatedAt",' +
+  ' liveness_status AS "livenessStatus", liveness_checked_at AS "livenessCheckedAt"';
+
+// CS-33 (Security review, 2026-09-24): every read below previously returned
+// `data` straight from Postgres, trusting that LeadRepository.save()'s own
+// write-time collectedJobSchema.strip().parse() call was the only writer
+// this table would ever have. That is true today, but it is a write-path
+// invariant, not something the read path enforced or could prove - a future
+// direct write, migration or backfill touching saved_leads.data would
+// silently reach every caller of get/list/save/update unfiltered. Re-
+// validating on every read closes that gap the same way GET .../export
+// already did, rather than leaving detail/list/save/update as the two
+// (now: none) read surfaces relying on trust alone.
+function hydrate(row: LeadRecord): LeadRecord {
+  return { ...row, data: collectedJobSchema.strip().parse(row.data) };
+}
 
 export class LeadRepository {
   constructor(private readonly database: Database) {}
@@ -60,7 +87,7 @@ export class LeadRepository {
       `SELECT ${columns} FROM saved_leads WHERE owner_id = $1 AND id = $2`,
       [ownerId, id],
     );
-    return result.rows[0] ?? null;
+    return result.rows[0] ? hydrate(result.rows[0]) : null;
   }
 
   async list(ownerId: string, input: unknown) {
@@ -72,7 +99,7 @@ export class LeadRepository {
        ORDER BY created_at DESC, id DESC LIMIT $4`,
       [ownerId, status, before ?? null, limit + 1],
     );
-    const items = result.rows.slice(0, limit);
+    const items = result.rows.slice(0, limit).map(hydrate);
     return { items, nextCursor: result.rows.length > limit ? items.at(-1)!.id : null };
   }
 
@@ -125,7 +152,7 @@ export class LeadRepository {
         ).rows[0];
       }
       await client.query('COMMIT');
-      return lead ?? null;
+      return lead ? hydrate(lead) : null;
     } catch (error) {
       await client.query('ROLLBACK');
       throw error;
@@ -153,7 +180,7 @@ export class LeadRepository {
         throw new LeadRevisionConflict('Lead revision changed');
       if (current.notes === changes.notes && current.status === changes.status) {
         await client.query('COMMIT');
-        return current;
+        return hydrate(current);
       }
       const updated = await client.query<LeadRecord>(
         `UPDATE saved_leads SET notes = $3, status = $4, revision = revision + 1, updated_at = now(),
@@ -176,12 +203,60 @@ export class LeadRepository {
         ],
       );
       await client.query('COMMIT');
-      return updated.rows[0]!;
+      return hydrate(updated.rows[0]!);
     } catch (error) {
       await client.query('ROLLBACK');
       throw error;
     } finally {
       client.release();
     }
+  }
+
+  /**
+   * CS-27: the liveness checker's own work queue - every owner, oldest
+   * (or never-)checked first, bounded so one run cannot become an unbounded
+   * scan. Archived/rejected leads are excluded on purpose: re-verifying a
+   * listing the owner has already moved past wastes the same outbound
+   * requests this ticket exists to make useful. A lead checked more
+   * recently than `staleAfterHours` is not due yet either - otherwise a
+   * confirmed-live lead would be re-fetched on every single run forever,
+   * for no new information.
+   */
+  async dueForLivenessCheck(
+    limit: number,
+    staleAfterHours = 24,
+  ): Promise<Array<{ ownerId: string; id: string; applyUrl: string }>> {
+    const result = await this.database.pool.query<{
+      ownerId: string;
+      id: string;
+      applyUrl: string;
+    }>(
+      `SELECT owner_id AS "ownerId", id, data->>'applyUrl' AS "applyUrl"
+       FROM saved_leads
+       WHERE status NOT IN ('archived', 'rejected')
+       AND (liveness_checked_at IS NULL
+         OR liveness_checked_at < now() - ($2 || ' hours')::interval)
+       ORDER BY liveness_checked_at ASC NULLS FIRST
+       LIMIT $1`,
+      [limit, staleAfterHours],
+    );
+    return result.rows;
+  }
+
+  /**
+   * Always stamps liveness_checked_at, even for an 'unknown' (ambiguous)
+   * result - otherwise a URL that errors consistently would sort first in
+   * dueForLivenessCheck() forever and starve every other lead's turn.
+   */
+  async recordLivenessCheck(
+    ownerId: string,
+    id: string,
+    livenessStatus: z.infer<typeof livenessStatusSchema>,
+  ): Promise<void> {
+    await this.database.pool.query(
+      `UPDATE saved_leads SET liveness_status = $3, liveness_checked_at = now()
+       WHERE owner_id = $1 AND id = $2`,
+      [ownerId, id, livenessStatus],
+    );
   }
 }

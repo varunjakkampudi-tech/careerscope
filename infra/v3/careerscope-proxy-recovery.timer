@@ -1,0 +1,14 @@
+[Unit]
+Description=Run the CareerScope proxy recovery check every 2 minutes
+
+[Timer]
+# Faster than careerscope-monitor.timer's 5 minutes on purpose: this is
+# outage detection with an automated fix, not routine observability - a
+# confirmed outage (2 consecutive bad checks by default) recovers within
+# roughly 4 minutes of it starting, not 10-15.
+OnBootSec=1min
+OnUnitActiveSec=2min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

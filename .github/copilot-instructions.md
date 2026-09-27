@@ -90,8 +90,10 @@ These have each already caused a real incident on this project.
 - Keep the resume storage single-writer contract. Never delete cancellation
   markers by age — they are authoritative.
 - Keep AI **off**, auto-apply on **hold**, and Naukri legitimate-access only.
-- Never move `main` without explicit release intent. `main` is the V1 line;
-  V2 work belongs on `feature/v2-local-migration`.
+- `main` is the integration and deploy branch: every push to it is a deployment
+  candidate, so work lands through short-lived `feat/`, `fix/`, `chore/`,
+  `docs/`, `infra/` or `hotfix/` branches. Tag `v<semver>` only after the live
+  version check passes.
 - Update the documentation whenever architecture or behaviour changes, and
   verify the live deployment after any runtime-affecting change.
 
@@ -170,6 +172,13 @@ Bounds: plan review 5, implementation 3, code review 3, security 2, performance
 2, final audit 2. Reaching one means `BLOCKED`, never `COMPLETE`.
 
 Validate the configuration with `node scripts/check-agents.mjs`.
+The native CTO workflow is in `docs/ai/README.md`. Use
+`node scripts/engineering.mjs check|ready|status|verify` for the task execution
+projection and twelve content-bound quality gates. `check` is not completion.
+Parallel builders need validated disjoint claims and completed prerequisites;
+QA shell commands can mutate files and must be isolated. No script schedules
+agents. Record actual native invocations and append status to `review.txt`.
+No setup prompt grants push, deployment, publication or release authorization.
 
 Full description in [docs/AI-ENGINEERING-WORKFLOW.md](../docs/AI-ENGINEERING-WORKFLOW.md).
 A separate cross-CLI workflow is documented in
@@ -180,13 +189,24 @@ A separate cross-CLI workflow is documented in
 Work is planned in one-week sprints against `.ai/backlog.json`, with a WIP limit
 of 2 enforced by exit code. Use `npm run agile:status`, `agile:plan`,
 `agile:scrum`, `agile:feature`, `agile:review`, `agile:retro`, `agile:release`.
-`npm run ui:engineering` serves a read-only control centre on 127.0.0.1:7777.
+`npm run engineering:center` serves a read-only control centre on 127.0.0.1:7777.
 
-`scripts/release-gate.mjs` refuses by default and must be satisfied, not
-argued with. It distinguishes three states — present-and-valid, absent, and
-**unparseable** — because a corrupt `findings.json` once made it report
-"no open P0 or P1" and exit 0. Its behaviour is pinned by mutation tests in
-`check-release-gate.mjs`; the agile gates are pinned by `check-agile-gates.mjs`.
+The daily ticket review is the `/update-tickets` prompt in `.github/prompts`.
+It runs `npm run tickets:update`, convenes the agents the current tickets
+actually need, and records one evidenced outcome per ticket in
+`.ai/tickets/<date>.json`. `npm run tickets:verify` refuses while any ticket has
+no recorded outcome, so a review cannot be reported as done when it was not.
+
+The release procedure is the `/ship-release` prompt. `npm run release:promote`
+refuses to move a QA ticket that has no acceptance criteria, no evidence or an
+unfinished QA step, and `npm run release:close` refuses to mark anything
+`RELEASED` unless the live `/api/health` reports that exact version.
+
+Legacy release gates must be satisfied, not argued with. The initial AI audit
+records that absent findings still default to an empty list and release closure
+does not bind supplied commit or ticket scope to provenance. Do not claim these
+gaps are fixed or treat a passing legacy gate as sufficient shipping evidence.
+Legacy mutation tests write canonical state: run them only in an isolated copy.
 
 ## Verification And References
 

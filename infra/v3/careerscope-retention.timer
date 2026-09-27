@@ -1,0 +1,13 @@
+[Unit]
+Description=Run CareerScope search-results retention weekly
+
+[Timer]
+# Weekly, not daily: this deletes rows, and a 30-day-default retention
+# window does not need to be enforced more often than that to stay useful -
+# a routine cleanup task, not a time-sensitive one.
+OnCalendar=Sun *-*-* 05:00:00
+RandomizedDelaySec=600
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -58,7 +58,7 @@ export function scoreJob(
 
   const flaggedCompany = isFlaggedCompany(job, candidate);
   const gate = hardGate(job, candidate);
-  if (gate) return excludedBreakdown(gate, flaggedCompany);
+  if (gate) return excludedBreakdown(gate, flaggedCompany, candidate.resumeConsidered);
 
   // Recomputed rather than read off `job.techStack`, because scoring needs the
   // required/preferred weighting that the stored list has already flattened away.
@@ -78,6 +78,7 @@ export function scoreJob(
   const heuristicScore = combine(dimensions);
   const confidence = hasReadableDescription(job) ? 'high' : 'low';
   const score = applyConfidenceCeiling(heuristicScore, confidence);
+  const resumeSkillSet = new Set(candidate.resumeSkills.map((skill) => skill.toLowerCase()));
 
   return {
     score,
@@ -90,6 +91,11 @@ export function scoreJob(
     flaggedCompany,
     llmScore: null,
     llmRationale: null,
+    resumeConsidered: candidate.resumeConsidered,
+    // Only the matched skills that actually came from the resume - not every
+    // resume skill regardless of whether this job needed it - so the evidence
+    // reads as "the resume moved this score", not "here is the whole resume".
+    resumeSkills: skills.matched.filter((skill) => resumeSkillSet.has(skill.toLowerCase())),
   };
 }
 
@@ -204,7 +210,11 @@ export function applyRerank(
 
 /* -------------------------------------------------------------------------- */
 
-function excludedBreakdown(reason: string, flaggedCompany: boolean): MatchBreakdown {
+function excludedBreakdown(
+  reason: string,
+  flaggedCompany: boolean,
+  resumeConsidered: boolean,
+): MatchBreakdown {
   return {
     score: 0,
     heuristicScore: 0,
@@ -216,6 +226,8 @@ function excludedBreakdown(reason: string, flaggedCompany: boolean): MatchBreakd
     flaggedCompany,
     llmScore: null,
     llmRationale: null,
+    resumeConsidered,
+    resumeSkills: [],
   };
 }
 

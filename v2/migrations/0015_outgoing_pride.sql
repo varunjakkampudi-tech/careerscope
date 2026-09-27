@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "search_owner_id" ON "search_runs" USING btree ("owner_id","id");

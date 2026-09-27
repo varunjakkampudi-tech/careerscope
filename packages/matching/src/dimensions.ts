@@ -1,6 +1,7 @@
 import {
   FAMILY_CREDIT,
   MATCH_WEIGHTS,
+  constrainEvidenceText,
   daysSince,
   skillFamily,
   skillRarity,
@@ -23,7 +24,27 @@ const dim = (
 ): MatchDimensionScore => ({
   score: clamp01(score),
   weight: MATCH_WEIGHTS[key],
-  reason,
+  // CS-66: every dimension scored FROM CANDIDATE DATA is built here, so this is
+  // the one boundary where owner-typed and resume-derived text converge before
+  // becoming stored, renderable evidence. Constraining here rather than
+  // per-inlet is the point: `candidate.titles` is the union of
+  // preferences.titles — validated by packages/shared/src/schemas.ts as trim +
+  // non-empty only, with NO character constraint — and derived.titles, which
+  // CS-56 constrained at extraction. Fixing the typed inlet the way the resume
+  // inlet was fixed would leave the same class open for a third inlet;
+  // constraining the convergence point covers all of them, including ones not
+  // written yet.
+  //
+  // THE ONE OTHER CONSTRUCTION SITE is `notScoredDimensions` in score.ts, whose
+  // `reason` is the fixed literal 'Not scored — excluded'. It takes no inlet, so
+  // it needs no constraint — stated here rather than left for a reader to
+  // rediscover, because "every score is built here" would have been false and a
+  // future third site must come through this function or justify itself the
+  // same way.
+  //
+  // Neutralise, never reject: a reason explains a score, and discarding it
+  // would leave a number nobody can audit.
+  reason: constrainEvidenceText(reason),
 });
 
 export function clamp01(value: number): number {
@@ -222,12 +243,19 @@ export function scoreTitle(jobTitle: string, candidate: CandidateContext): Match
     }
   }
 
+  // TYPOGRAPHIC QUOTES, not ASCII `"`, and deliberately so (CS-66 AC2). The
+  // delimiter matters here — it is what tells the owner where their own typed
+  // role ends and our sentence resumes — but `"` is refused syntax, so `dim()`
+  // would neutralise these delimiters to spaces and the sentence would read as
+  // if the title were part of it. U+201C/U+201D carry no meaning in a markup or
+  // template renderer, so they survive the constraint without weakening it.
+  // Do not "fix" these back to ASCII quotes: they would silently disappear.
   const reason =
     best >= 0.6
-      ? `Close to your target "${bestTitle}"`
+      ? `Close to your target “${bestTitle}”`
       : best > 0.25
-        ? `Partly overlaps "${bestTitle}"`
-        : `Different role family to "${bestTitle}"`;
+        ? `Partly overlaps “${bestTitle}”`
+        : `Different role family to “${bestTitle}”`;
   return dim('title', best, reason);
 }
 

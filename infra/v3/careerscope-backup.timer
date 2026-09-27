@@ -1,0 +1,13 @@
+[Unit]
+Description=Run the CareerScope database backup daily
+
+[Timer]
+# Off-peak, low-traffic hour. RandomizedDelaySec avoids every host in a
+# hypothetical fleet dumping at the exact same second - harmless here with
+# one host, but costs nothing and is the right default.
+OnCalendar=*-*-* 03:30:00
+RandomizedDelaySec=300
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Run the CareerScope host monitor every 5 minutes
+
+[Timer]
+# 5 minutes gives three chances to notify inside the 15-minute AC1 window
+# even if one run is skipped (host under load, Docker briefly unresponsive).
+OnBootSec=2min
+OnUnitActiveSec=5min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

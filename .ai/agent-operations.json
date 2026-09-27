@@ -1,6 +1,535 @@
 {
-  "$comment": "Agent health. Loop counters never reset on reassignment. A reviewer returning REVISE has succeeded, not failed. Metrics exist for improvement, not ranking.",
-  "updatedAt": "2026-09-19T00:00:00.000Z",
-  "agents": {},
-  "incidents": []
+  "$comment": "Agent health. Loop counters never reset on reassignment. A reviewer returning REVISE has succeeded, not failed. Metrics exist for improvement, not ranking. retention.* records the CS-10 four-part test; a verdict here is a recommendation transcribed from Agent Operations, not a self-report. updatedAt is transcription time, not an invocation timestamp. attemptCount counts task dispatches only; a returned sprint-discussion contribution is recorded in invocationEvidence and does not increment it. lastError null means no failure was found, never an unread or unreadable record.",
+  "updatedAt": "2026-09-24T00:00:00.000Z",
+  "retentionPolicy": {
+    "appliedAt": "2026-09-24",
+    "ticket": "CS-10",
+    "test": [
+      "unique artefact",
+      "distinct permission boundary",
+      "materially different decision",
+      "independent evidence"
+    ],
+    "rule": "Retain on any one leg. Merge only where artefact AND boundary AND decision are all duplicated. Never invoked is not grounds for removal.",
+    "result": {
+      "keep": 24,
+      "merge": 0,
+      "remove": 0
+    },
+    "criterion3Satisfied": false,
+    "criterion3Note": "Zero agents merged or removed, correctly on the evidence. The criterion's intent is met by justification, not by action. Do not record as satisfied.",
+    "reviewedBy": "careerscope-agent-operations",
+    "recordedBy": "careerscope-orchestrator"
+  },
+  "agents": {
+    "careerscope-orchestrator": {
+      "failureCount": 0,
+      "attemptCount": 4,
+      "lastError": null,
+      "lastEvidence": "LOOP-STATE.activity seq 1 (173 tests, nested invocation limitation) and final reconciliation entry; review.txt 2026-09-19 and 2026-09-21 entries. LOOP-STATE.agents records BLOCKED.",
+      "fallbackAgent": null,
+      "blockingReason": "Autonomous Engineering OS continuation reached policy bounds: implementation 3/3 and code review 3/3, with acceptance and canonical gates incomplete. Reaching a bound is BLOCKED by rule, never COMPLETE, and is not an agent failure. Superseded by the ticket-based workflow per review.txt 2026-09-21; counters deliberately not reset.",
+      "invocationEvidence": "task-dispatch",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/LOOP-STATE.json, .ai/PLAN.md, the COMPLETE/BLOCKED decision",
+        "permissionBoundary": "R W X Web todos A — sole holder of the agent delegation tool",
+        "distinctDecision": "completion; routing; ownership of .ai/ execution state",
+        "independentEvidence": false,
+        "note": "Consumes others' evidence rather than supplying it, by design. fallbackAgent null — there is no second coordinator."
+      }
+    },
+    "careerscope-project-manager-client": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "review.txt 2026-09-20 sprint discussion: returned contribution only, explicitly 'not 24 approvals, implementation participants or executed acceptance tests'. No task dispatch recorded.",
+      "fallbackAgent": null,
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": "GO | NO-GO | GO WITH EXPLICIT EXCEPTION | BLOCKED release recommendation; acceptance criteria; deployment-precondition block",
+        "permissionBoundary": "R O Web, no edit — identical to careerscope-product-discovery",
+        "distinctDecision": "priority, scope, minimum-complete, and the release recommendation",
+        "independentEvidence": true,
+        "overlapsWith": ["careerscope-product-discovery"],
+        "flag": "O-2: retained on a unique verdict vocabulary held by no other agent. Boundary leg fails against Product Discovery; the separation is proposer-vs-approver, and collapsing it re-creates proposer-approves-own-feature."
+      }
+    },
+    "careerscope-product-architect": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "review.txt 2026-09-20 sprint discussion contribution only.",
+      "fallbackAgent": "careerscope-system-designer",
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/PLAN-REVIEW.md",
+        "permissionBoundary": "R O Web mermaid — IDENTICAL to careerscope-system-designer",
+        "distinctDecision": "is the domain model and requirement set right",
+        "independentEvidence": false,
+        "flag": "O-1: boundary and independent-evidence legs both fail. Retained on artefact + decision. Fallback ladder treats it as interchangeable with System Designer (defect D-7); resolve before the next roster review."
+      }
+    },
+    "careerscope-system-designer": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "review.txt 2026-09-20 sprint discussion contribution only.",
+      "fallbackAgent": "careerscope-product-architect",
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/SYSTEM-DESIGN.md; sole owner of the IMPLEMENTED / TARGET / PROPOSED labelling and named partial-failure paths",
+        "permissionBoundary": "R O Web mermaid — IDENTICAL to careerscope-product-architect",
+        "distinctDecision": "boundaries, topology, failure modes; the modular-monolith gate against unjustified distribution",
+        "independentEvidence": false,
+        "overlapsWith": ["careerscope-product-architect"],
+        "flag": "O-1: architectural-drift detection is unique in method, not in capability. Retained on artefact + decision. See D-7."
+      }
+    },
+    "careerscope-ux-agent": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "review.txt 2026-09-20 sprint discussion contribution only.",
+      "fallbackAgent": null,
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/UX-DESIGN.md findings and verdict",
+        "permissionBoundary": "R Web only — the most restricted grant on the roster; no edit, not even execute/getTerminalOutput",
+        "distinctDecision": "code that works can still be bad UX; plus the standing anti-pattern rule against copying LinkedIn/Naukri",
+        "independentEvidence": true,
+        "note": "Named as Visual Designer's fallback for direction only — UX cannot produce assets, so that fallback is partial by construction."
+      }
+    },
+    "careerscope-senior-engineer": {
+      "failureCount": 0,
+      "attemptCount": 3,
+      "lastError": null,
+      "lastEvidence": "LOOP-STATE.activity seq 2, 6, 9. Attempt 3 FINAL changed only scripts/engineering-runner.test.mjs, RED 19/20 then GREEN 20/20, four suites 209/209, no production code change. LOOP-STATE.agents = PASSED.",
+      "fallbackAgent": "careerscope-frontend-agent | careerscope-backend-agent | careerscope-infrastructure-agent",
+      "blockingReason": null,
+      "invocationEvidence": "task-dispatch",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": "cross-tier implementation and .ai/IMPLEMENTATION-LOG.md",
+        "permissionBoundary": "R W X Web todos mermaid — near-identical to the three tier builders, differing only by todos and mermaid",
+        "distinctDecision": "work that fits no single tier; named fallback for all three tier builders",
+        "independentEvidence": false,
+        "overlapsWith": [
+          "careerscope-frontend-agent",
+          "careerscope-backend-agent",
+          "careerscope-infrastructure-agent"
+        ],
+        "flag": "O-5: boundary leg fails; separated from the tier builders by path claim, not by tool grant. Retained on artefact + decision.",
+        "note": "attemptCount 3 is the exhausted implementation bound for the 2026-09-19 objective. It must not be reset by reassignment to a tier builder."
+      }
+    },
+    "careerscope-frontend-agent": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "No task dispatch recorded. The 2026-09-23 work in its scope (saved-leads.tsx, application-details.module.css, the 320px overflow fix) was performed in-session and is NOT attributed to a Frontend dispatch in review.txt or LOOP-STATE. LOOP-STATE.agents = WAITING.",
+      "fallbackAgent": "careerscope-senior-engineer",
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": "v2/apps/web components, routes and state",
+        "permissionBoundary": "R W X Web, scoped to v2/apps/web; apps/web only when a task names V1. Path-distinct, tool-duplicated.",
+        "distinctDecision": "layout, hierarchy, interaction, responsive and empty/error state design — explicitly its call, not UX's or Visual Designer's",
+        "independentEvidence": false,
+        "overlapsWith": ["careerscope-senior-engineer", "careerscope-visual-designer"],
+        "note": "Must never run concurrently with Visual Designer; both write the same tree and Visual Designer's stricter rule takes precedence per docs/ai/agent-matrix.md."
+      }
+    },
+    "careerscope-backend-agent": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "No recorded invocation beyond the 2026-09-20 sprint discussion. LOOP-STATE.agents = WAITING.",
+      "fallbackAgent": "careerscope-senior-engineer",
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": "v2/apps/api, v2/packages/core, v2/apps/workers, v2/migrations",
+        "permissionBoundary": "R W X Web, scoped to V2 server paths; V1 not granted",
+        "distinctDecision": "owns the load-bearing invariants — ownerId from session, outbox in the same transaction, forward-only migrations, Argon2id cost, single-writer storage",
+        "independentEvidence": false,
+        "overlapsWith": ["careerscope-senior-engineer"],
+        "note": "Highest-consequence decision boundary in the repository. Dormancy is not a retention failure."
+      }
+    },
+    "careerscope-infrastructure-agent": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "No recorded invocation beyond the 2026-09-20 sprint discussion. LOOP-STATE.agents = WAITING.",
+      "fallbackAgent": "careerscope-senior-engineer",
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": "infra/v3, .github/workflows, v2/compose.yml, docs/OPERATIONS/*",
+        "permissionBoundary": "R W X Web on host and CI paths no other agent may touch",
+        "distinctDecision": "deploy topology and the incident rules — never nft flush ruleset, never restart the proxy alone, never docker system prune -a",
+        "independentEvidence": true,
+        "note": "check-provenance.sh 4/4 and check-host-firewall.sh 14 assertions are evidence no other agent produces. Passes all four criteria."
+      }
+    },
+    "careerscope-security-agent": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "review.txt 2026-09-20: 'Security retrieved adjacent Teal/Huntr help.' Real retrieval in a discussion context; no security-review dispatch recorded. LOOP-STATE.agents = WAITING.",
+      "fallbackAgent": null,
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/SECURITY-REPORT.md",
+        "permissionBoundary": "R O Web — no edit AND no general execute; deliberately cannot exploit what it finds",
+        "distinctDecision": "is there a reachable path; owns cross-owner access, the stated highest-value bug class here",
+        "independentEvidence": true,
+        "note": "Passes all four criteria. Currently routed past on the New dependency change class despite owning dependency and supply-chain risk — see defect D-6."
+      }
+    },
+    "careerscope-qa-agent": {
+      "failureCount": 0,
+      "attemptCount": 4,
+      "lastError": null,
+      "lastEvidence": "LOOP-STATE.activity seq 5, 8, 10 plus the 2026-09-23 dispatch: found real format:check failures (app file plus 6 stale doc files), confirmed 1054/1055 root vitest and 63/63 v2, and refused to carry the broken v2/scripts/check-ui.ts forward as passing. LOOP-STATE.agents = PASSED.",
+      "fallbackAgent": "careerscope-performance-agent",
+      "blockingReason": null,
+      "invocationEvidence": "task-dispatch",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/QA-REPORT.md with real command totals",
+        "permissionBoundary": "R X — execute without edit; cannot make a failing test pass. Shared only with Performance, which additionally holds web.",
+        "distinctDecision": "did the declared command actually produce that output",
+        "independentEvidence": true,
+        "note": "Passes all four criteria. Its seq 8 result (208 passed, 1 failed of 209) and its 2026-09-23 refusal are both successes, not failures. Fallback is Performance for execution only — Performance cannot substitute for QA's correctness judgement."
+      }
+    },
+    "careerscope-performance-agent": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "No recorded invocation beyond the 2026-09-20 sprint discussion. LOOP-STATE.counts.performanceReview = 0. LOOP-STATE.agents = WAITING.",
+      "fallbackAgent": null,
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/PERFORMANCE-REPORT.md; sole owner of npm --prefix v2 run test:performance",
+        "permissionBoundary": "R X Web — execute without edit, shared with QA, but QA holds no web",
+        "distinctDecision": "is a measured regression a regression even when absolute numbers look acceptable; owns the these-are-not-an-SLO guard",
+        "independentEvidence": true,
+        "overlapsWith": ["careerscope-qa-agent"],
+        "note": "p50/p95/p99 under 8-concurrent load is evidence QA does not produce. Distinct artefact plus distinct measurement."
+      }
+    },
+    "careerscope-code-quality": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "review.txt 2026-09-20 sprint discussion contribution only. LOOP-STATE.agents = WAITING.",
+      "fallbackAgent": "careerscope-independent-reviewer",
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": "maintainability findings for .ai/CLEANUP-REPORT.md; the CLEAN | DEBT NOTED | REFACTOR RECOMMENDED verdict vocabulary, held by no other agent",
+        "permissionBoundary": "R O — the only reviewer without web. Distinct, if narrowly.",
+        "distinctDecision": "can we keep changing it, as against Independent Reviewer's does it work",
+        "independentEvidence": false,
+        "overlapsWith": ["careerscope-independent-reviewer"],
+        "flag": "O-3: the weakest KEEP on the roster. The independent-evidence leg fails outright — it supplies nothing the Independent Reviewer could not also see. Retained on artefact + decision + read-only-so-it-cannot-clean-what-it-grades. Re-test at the next roster review."
+      }
+    },
+    "careerscope-visual-designer": {
+      "failureCount": 0,
+      "attemptCount": 1,
+      "lastError": null,
+      "lastEvidence": "LOOP-STATE.activity final entry, 2026-09-23T19:00:00.000Z, model gpt-6-astra per explicit owner request: delivered a code-ready Application Details spec with exact CSS tokens, spacing scale, status-badge contrast ratios and grid breakpoints, explicitly excluding every fabricated field in the reference mockup. LOOP-STATE.agents = PASSED.",
+      "fallbackAgent": "careerscope-ux-agent",
+      "blockingReason": null,
+      "invocationEvidence": "task-dispatch",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": "design tokens, the --dash-* set in dashboard-shell.module.css, and asset-generation scripts",
+        "permissionBoundary": "R W X Web todos mermaid, restricted to tokens, global styles and assets; forbidden from components, routes and state",
+        "distinctDecision": "what the design system is — type scale, spacing rhythm, contrast ratios stated as numbers",
+        "independentEvidence": true,
+        "overlapsWith": ["careerscope-frontend-agent"],
+        "note": "Passes all four criteria with executed evidence, including refusal evidence: it enumerated which mockup fields were fabricated and must not be built. Never run concurrently with Frontend. Fallback to UX is direction-only; UX cannot produce assets."
+      }
+    },
+    "careerscope-documentation": {
+      "failureCount": 0,
+      "attemptCount": 2,
+      "lastError": null,
+      "lastEvidence": "LOOP-STATE.activity seq 3 (17 documents, 235 links, Prettier passed) and seq 12 (evidence-model.md and limitations.md corrected; scoped Prettier and 15 retained links/anchors passed). LOOP-STATE.agents = PASSED.",
+      "fallbackAgent": null,
+      "blockingReason": null,
+      "invocationEvidence": "task-dispatch",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": "README.md, docs/, START-HERE/, human-facing .ai/*.md; sole authority over acceptance.documentation in the release gate",
+        "permissionBoundary": "R W X Web todos mermaid; forbidden from source, tests, migrations and workflows",
+        "distinctDecision": "where docs and code disagree, which one is wrong — the rule being that code wins",
+        "independentEvidence": true,
+        "note": "Passes all four criteria and holds a release gate nobody else may set. Fallback per the ladder is the builder who made the change, so no fixed agent is named. Open risk from the 2026-09-19 record: its final P3 documentation pass followed the last review and was never independently re-reviewed."
+      }
+    },
+    "careerscope-repository": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "No recorded invocation beyond the 2026-09-20 sprint discussion. Consistent with the record: no commit, branch, push or tag was performed in any session. LOOP-STATE.agents = WAITING.",
+      "fallbackAgent": null,
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".gitignore, repository configuration, tags, commit messages",
+        "permissionBoundary": "R W X todos; forbidden from source, tests and documentation content",
+        "distinctDecision": "what is safe to stage, commit or tag; the public-repo secret-rotation call",
+        "independentEvidence": true,
+        "overlapsWith": ["careerscope-release-manager"],
+        "flag": "O-6: its frontmatter claims 'release preparation', which Release Manager also claims. Disambiguate by artefact — release scope and gate to Release Manager, git operations to Repository.",
+        "note": "fallbackAgent null is deliberate and load-bearing: the ladder forbids delegating git history or a push to any substitute."
+      }
+    },
+    "careerscope-independent-reviewer": {
+      "failureCount": 0,
+      "attemptCount": 6,
+      "lastError": null,
+      "lastEvidence": "review.txt 2026-09-23: REVISE, P1 LeadEditor status <select> listed all 6 statuses regardless of scope; fixed via allowedStatuses prop. Confirmed under live invocation that it held no file-editing capability (review.txt 2026-09-21).",
+      "fallbackAgent": "careerscope-code-quality",
+      "blockingReason": null,
+      "invocationEvidence": "task-dispatch",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/CODE-REVIEW.md + APPROVED|REVISE|BLOCKED verdict",
+        "permissionBoundary": "R O Web; no edit — verified empirically under invocation",
+        "distinctDecision": "correctness; what broken state would make this check fail",
+        "independentEvidence": true,
+        "overlapsWith": ["careerscope-code-quality", "careerscope-final-auditor"]
+      }
+    },
+    "careerscope-research-agent": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "review.txt 2026-09-20 sprint discussion contribution only. LOOP-STATE.agents = WAITING.",
+      "fallbackAgent": null,
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/DECISIONS.md adoption proposals",
+        "permissionBoundary": "R Web + fetch — the only agent on the roster holding fetch",
+        "distinctDecision": "adopt or do not adopt a dependency; recommending no new dependency is a valid outcome",
+        "independentEvidence": true,
+        "overlapsWith": ["careerscope-research-reference"],
+        "note": "Unique tool grant plus unique artefact. Named as Research Reference's fallback; the reverse is not granted."
+      }
+    },
+    "careerscope-research-reference": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "review.txt 2026-09-20: 'Research Reference retrieved four official public LinkedIn/Naukri pages.' Real retrieval in a discussion context; no task dispatch recorded. LOOP-STATE.agents = WAITING.",
+      "fallbackAgent": "careerscope-research-agent",
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/references.json records — topic, source, url, accessedAt, claim, confidence",
+        "permissionBoundary": "R O Web; no fetch — the inverse of careerscope-research-agent",
+        "distinctDecision": "what is currently true externally, with FACT/INFERENCE/RECOMMENDATION labelling and a dated citation",
+        "independentEvidence": true,
+        "overlapsWith": ["careerscope-research-agent"],
+        "flag": "O-4: the highest-overlap pair on the roster by description. Retained because artefact, tool grant and question all differ. Disambiguate by source of truth: repo-first adoption to Research, current external fact to Research Reference."
+      }
+    },
+    "careerscope-final-auditor": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "review.txt 2026-09-19 FINAL: 'Final Auditor and fresh digest-bound approval of the final aggregate have not occurred.' Returned a discussion contribution 2026-09-20 only.",
+      "fallbackAgent": null,
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/FINAL-AUDIT.md",
+        "permissionBoundary": "R O Web + execute/testFailure, held by no other agent; fresh context",
+        "distinctDecision": "is this actually complete",
+        "independentEvidence": true,
+        "note": "fallbackAgent is null by design — substituting any agent that already saw the work destroys the only independent check."
+      }
+    },
+    "careerscope-product-discovery": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "review.txt 2026-09-20 sprint discussion contribution only. LOOP-STATE.agents = WAITING.",
+      "fallbackAgent": null,
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/product-discovery.json candidate records",
+        "permissionBoundary": "R O Web — IDENTICAL to careerscope-project-manager-client",
+        "distinctDecision": "proposes, and is explicitly forbidden from deciding what ships",
+        "independentEvidence": true,
+        "overlapsWith": ["careerscope-project-manager-client"],
+        "flag": "O-2: boundary leg fails. Retained on the separation-of-powers ground — the proposer must not be the sole approver — plus the never-fabricate-user-demand constraint and the rejected-check against .ai/backlog.json."
+      }
+    },
+    "careerscope-release-manager": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "review.txt 2026-09-20 sprint discussion contribution only. npm run release:promote was run for real on 2026-09-21 and 2026-09-23, but by the session, NOT by a Release Manager dispatch. LOOP-STATE.agents = WAITING.",
+      "fallbackAgent": null,
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/release-plan.json and .ai/releases/; owns node scripts/release-gate.mjs",
+        "permissionBoundary": "R W X todos — edit without web, scoped to release records, explicitly forbidden from agent files",
+        "distinctDecision": "does this release ship or become BLOCKED; the XL-never-enters-a-two-day-release sizing rule",
+        "independentEvidence": true,
+        "overlapsWith": ["careerscope-repository"],
+        "flag": "O-6: least-disambiguated pair in any current document. Both claim release preparation and both hold edit + execute. Split by artefact, not by seniority.",
+        "note": "Explicitly may not declare its own deployment successful."
+      }
+    },
+    "careerscope-agent-operations": {
+      "failureCount": 0,
+      "attemptCount": 1,
+      "lastError": null,
+      "lastEvidence": "CS-10 retention audit, 2026-09-24: read all 24 agent definitions, the activation policy, docs/ai/agent-matrix.md and the invocation record; returned 24 KEEP, 6 flagged overlap pairs and 9 policy defects. Prior record was the 2026-09-20 sprint discussion contribution only; agents map was {} before this entry.",
+      "fallbackAgent": null,
+      "blockingReason": null,
+      "invocationEvidence": "task-dispatch",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/agent-operations.json records and incidents[]",
+        "permissionBoundary": "R O, no edit, and explicitly forbidden from .github/agents/ — the monitor cannot rewrite what it monitors",
+        "distinctDecision": "is this an agent failure or a succeeded review; is a RUNNING state actually STALE; loop counters never reset on reassignment",
+        "independentEvidence": true,
+        "note": "Self-interested verdict, disclosed. It rests on the permission boundary, which is checkable independently of this agent's opinion."
+      }
+    },
+    "careerscope-skills-curator": {
+      "failureCount": 0,
+      "attemptCount": 0,
+      "lastError": null,
+      "lastEvidence": "review.txt 2026-09-20 sprint discussion contribution only. The same entry records that no installation or access entitlement was added in any session, consistent with its brief. LOOP-STATE.agents = WAITING.",
+      "fallbackAgent": null,
+      "blockingReason": null,
+      "invocationEvidence": "discussion-contribution",
+      "retention": {
+        "verdict": "KEEP",
+        "uniqueArtefact": ".ai/skill-registry.json records with pinned ref or tree SHA",
+        "permissionBoundary": "R O Web — no edit and no general execute; it cannot install what it reviews. The purest capability-enforced boundary after Final Auditor.",
+        "distinctDecision": "is this skill, extension or MCP server safe to admit; owns the supply-chain veto",
+        "independentEvidence": true,
+        "note": "Reads SKILL.md and every referenced resource for runtime fetches, credential access and instructions to bypass review. Nobody else may make a supply-chain call."
+      }
+    }
+  },
+  "incidents": [],
+  "policyDefects": {
+    "$comment": "Defects found by Agent Operations while applying the CS-10 retention test. Items in .github/agents/ are OPERATOR-ACTION-REQUIRED: the Orchestrator deliberately does not edit agent definitions, because every permission guarantee in this system rests on agent tool-grants being operator-owned.",
+    "operatorActionRequired": [
+      {
+        "id": "D-1",
+        "severity": "CRITICAL",
+        "file": ".github/agents/careerscope-orchestrator.agent.md",
+        "lines": "63-72",
+        "finding": "The activation-policy table is duplicated here and in .ai/AGENT-SETUP.md (lines 167-176) and the two CONTRADICT. Orchestrator copy line 72 says system redesign => \"all\"; AGENT-SETUP says \"Orchestrator selects distinct specialists from the matrix; not all by default\". AGENT-SETUP own retention rule says \"Activate per task - never run all agents\". The Orchestrator reads its own file, so the contradicting copy is the one that will be obeyed.",
+        "fix": "Delete the duplicate table from careerscope-orchestrator.agent.md and replace it with a pointer to .ai/AGENT-SETUP.md."
+      },
+      {
+        "id": "D-2",
+        "severity": "MINOR",
+        "file": ".github/agents/careerscope-orchestrator.agent.md",
+        "lines": "60",
+        "finding": "Says \"Invoking all ten agents for a CSS fix\" - the roster is 24.",
+        "fix": "Correct the count to 24."
+      },
+      {
+        "id": "D-7",
+        "severity": "MAJOR",
+        "file": ".github/agents/careerscope-orchestrator.agent.md",
+        "lines": "fallback table",
+        "finding": "Makes Product Architect and System Designer mutual fallbacks, while .ai/AGENT-SETUP.md lines 96-99 defends them as NOT duplicates. A role that can substitute for another is being treated as interchangeable with it. Both cannot be true.",
+        "fix": "Either drop the mutual fallback or drop the not-duplicates defence; this is the strongest available argument for merging overlap pair O-1."
+      },
+      {
+        "id": "D-8",
+        "severity": "MAJOR",
+        "file": ".github/agents/careerscope-orchestrator.agent.md",
+        "lines": "fallback table",
+        "finding": "Independent Reviewer falls back to Final Auditor. The Final Auditor is given no fallback precisely because it is the last independent check; spending it mid-loop leaves nothing fresh for FINAL_AUDIT.",
+        "fix": "Make a failed Independent Reviewer fall back to Code Quality + Security in combination, or to BLOCKED - never to the Final Auditor."
+      },
+      {
+        "id": "A-D1",
+        "severity": "COSMETIC",
+        "file": ".ai/AGENT-SETUP.md",
+        "lines": "90",
+        "finding": "Says \"Nine roles were added beyond the original eleven\" = 20, not the 24 rows immediately above.",
+        "fix": "Arithmetic correction."
+      },
+      {
+        "id": "A-D2",
+        "severity": "COSMETIC",
+        "file": ".github/agents/careerscope-orchestrator.agent.md",
+        "lines": "79",
+        "finding": "Says \"Five roles were added\"; contradicts AGENT-SETUP \"nine\" for the same event.",
+        "fix": "Reconcile to one number."
+      }
+    ],
+    "resolvedByOrchestrator": [
+      {
+        "id": "D-3",
+        "finding": "The activation policy covered only 11 of 24 agents; 13 appeared in no row, including the Independent Reviewer - by the evidence the most-invoked specialist.",
+        "status": "FIXED 2026-09-24 in .ai/AGENT-SETUP.md"
+      },
+      {
+        "id": "D-4",
+        "finding": "Seven change classes had no row at all: documentation-only, design-system/token, release cut or deploy execution, git/tag/commit, new skill/extension/MCP server, agent failure or blocked loop, backlog intake/feature proposal.",
+        "status": "FIXED 2026-09-24 in .ai/AGENT-SETUP.md"
+      },
+      {
+        "id": "D-5",
+        "finding": "The \"Copy or CSS\" row omitted Visual Designer, which owns tokens and global stylesheets and was the agent actually dispatched for the real 2026-09-23 CSS/token change.",
+        "status": "FIXED 2026-09-24 in .ai/AGENT-SETUP.md"
+      },
+      {
+        "id": "D-6",
+        "finding": "The \"New dependency\" row routed past both supply-chain reviewers (Security, Skills Curator).",
+        "status": "FIXED 2026-09-24 in .ai/AGENT-SETUP.md"
+      },
+      {
+        "id": "D-9",
+        "finding": ".ai/LOOP-STATE.json records 18 of 24 agents WAITING while review.txt 2026-09-20 records contributions returned from all 24. Both true under different senses of \"ran\".",
+        "status": "DISCLOSED 2026-09-24 via the invocationEvidence field on every agent record, which distinguishes task-dispatch from discussion-contribution from none. Only task-dispatch is retention evidence."
+      }
+    ]
+  }
 }

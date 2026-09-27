@@ -6,6 +6,7 @@ import Fastify, { LogController } from 'fastify';
 import cookie from '@fastify/cookie';
 import helmet from '@fastify/helmet';
 import { z } from 'zod';
+import { registerOpenApi } from './openapi.js';
 import {
   Auth,
   sessionCookie,
@@ -14,10 +15,8 @@ import {
   collectedJobSchema,
   sourceOutcomesSchema,
   ProfileRepository,
-  ProfileRevisionConflict,
   prepareProfile,
   LeadRepository,
-  LeadRevisionConflict,
   ResumeUploadRepository,
   ResumeUploadCoordinator,
   InvalidResumeUpload,
@@ -27,6 +26,12 @@ import {
   type UploadStorage,
   type Database,
 } from '@careerscope/core';
+// Subpath imports, not the barrel (CS-48 re-review, finding 4). The AI modules
+// are no longer re-exported from '@careerscope/core', so every use of them is
+// visible at the import site rather than indistinguishable from deterministic
+// core symbols.
+import { AiProviderError, type AiConfig } from '@careerscope/core/ai-provider';
+import { findElaborationTarget, elaborate } from '@careerscope/core/ai-assist';
 
 export type RateLimit = (key: string, limit: number, seconds: number) => Promise<boolean>;
 
@@ -75,6 +80,7 @@ export async function createApp(
         signal?: AbortSignal,
       ) => Promise<void>;
     };
+    aiProvider?: AiConfig;
   } = {},
 ) {
   const auth = new Auth(database);
@@ -116,6 +122,20 @@ export async function createApp(
     if (path === '/api/login' || path === '/api/register') return;
     const session = await auth.session(request.cookies[sessionCookie]);
     if (path === '/api/session') return;
+    // CS-57: logging out is the one mutation that must succeed with no
+    // session. Origin was already enforced above, and a caller with no
+    // session has nothing to CSRF away, so answering identically whether or
+    // not the cookie named a live session keeps the route non-enumerating
+    // instead of turning "no cookie" into a 401 (or, with the old non-null
+    // assertion in the handler, a 500).
+    //
+    // METHOD-QUALIFIED DELIBERATELY (Security review P3, 2026-09-25). Only
+    // POST /api/logout is registered today, so matching on the path alone was
+    // inert — but it was a trapdoor: a future `app.get('/api/logout')`, the
+    // obvious way someone would add a plain sign-out link, would silently
+    // inherit anonymity AND skip the Origin check above, which excludes GET.
+    // The method term costs nothing and removes that.
+    if (!session && request.method === 'POST' && path === '/api/logout') return;
     if (!session) throw new HttpError(401, 'Authentication required');
     request.ownerId = session.ownerId;
     if (
@@ -140,6 +160,23 @@ export async function createApp(
     else if (reply.statusCode >= 400) app.log.warn(record, 'Request rejected');
     else app.log.info(record, 'Request completed');
   });
+  // CS-35: distinct, actionable messages per stable Conflict.code, not one
+  // "Idempotency conflict" string for every 409. 'CONFLICT' (the default
+  // code for internal/worker-only invariants not given a specific one) and
+  // any code this table does not recognise fall back to the same safe
+  // generic message a client cannot rely on for anything more specific -
+  // never expose the raw internal Error.message for those, since it is not
+  // a stable, client-facing contract.
+  const conflictMessages: Record<string, string> = {
+    PROFILE_REVISION_CONFLICT: 'Record changed; reload before saving',
+    LEAD_REVISION_CONFLICT: 'Record changed; reload before saving',
+    PROFILE_NOT_SAVED: 'Save your profile before enabling this option',
+    MISSING_TARGET_ROLES: 'Add target roles to your profile before starting this search',
+    IDEMPOTENCY_KEY_REUSED: 'This request already completed with different details; try again',
+    UPLOAD_CANCELLED: 'This upload was already cancelled',
+    UPLOAD_NOT_CANCELLABLE: 'This upload can no longer be cancelled',
+    UPLOAD_VERSION_CONFLICT: 'This upload changed; refresh and try again',
+  };
   app.setErrorHandler((error, request, reply) => {
     const frameworkStatus =
       error instanceof Error && 'statusCode' in error ? error.statusCode : undefined;
@@ -161,8 +198,8 @@ export async function createApp(
     const messages: Record<number, string> = {
       400: 'Invalid request',
       409:
-        error instanceof ProfileRevisionConflict || error instanceof LeadRevisionConflict
-          ? 'Record changed; reload before saving'
+        error instanceof Conflict
+          ? (conflictMessages[error.code] ?? 'Idempotency conflict')
           : 'Idempotency conflict',
       413: 'Request too large',
       500: 'Service unavailable',
@@ -170,7 +207,13 @@ export async function createApp(
     };
     const fallbackMessage = messages[status] ?? 'Request failed';
     const message = error instanceof HttpError ? error.message : fallbackMessage;
-    reply.code(status).send({ error: message, requestId: request.id });
+    const code = status === 409 && error instanceof Conflict ? error.code : undefined;
+    reply.code(status).send({ error: message, ...(code ? { code } : {}), requestId: request.id });
+  });
+  await registerOpenApi(app, version, {
+    registrationEnabled: options.registrationEnabled,
+    resumes: !!coordinator,
+    cancellation: !!options.resumeStorage?.cancelUpload,
   });
   app.get('/api/health', async () => {
     await database.pool.query('SELECT 1');
@@ -178,9 +221,47 @@ export async function createApp(
   });
   app.get('/api/session', async (request) => {
     const session = await auth.session(request.cookies[sessionCookie]);
-    return session
-      ? { authenticated: true, csrf: session.csrf }
-      : { authenticated: false, registrationEnabled: options.registrationEnabled === true };
+    if (!session) {
+      return { authenticated: false, registrationEnabled: options.registrationEnabled === true };
+    }
+    // Returning the owner's own email to their own authenticated session is
+    // not a privacy leak (never used for anything but a real initials
+    // avatar on the Dashboard, CS-49) - deliberately not joined into
+    // Auth.session() itself, which many other routes rely on staying minimal.
+    const owner = await database.pool.query<{ email: string }>(
+      'SELECT email FROM users WHERE id = $1',
+      [session.ownerId],
+    );
+    return {
+      authenticated: true,
+      csrf: session.csrf,
+      email: owner.rows[0]?.email,
+      // CS-61: a stable per-owner value the client can put INSIDE its cache
+      // keys. React Query keys such as ['leads', status] carry no owner, which
+      // is precisely why one owner's cached response can be handed to the next
+      // owner signed in to the same tab. Keying every owner-scoped query on
+      // this makes that bug class unrepresentable rather than merely tested
+      // for — four separate test designs failed to catch it.
+      //
+      // A DIGEST, deliberately, not `session.ownerId`. The client needs to
+      // tell owners apart, nothing more. Every route derives ownerId from the
+      // session and never from input, and publishing the raw id would put the
+      // one value that must never be client-supplied into client hands. The
+      // digest is stable across logins of the same owner (so an owner keeps
+      // their own cache) and unequal between owners, which is the whole
+      // contract. It is NOT derived from the session token: a per-session
+      // value would churn the cache on every sign-in for no extra isolation.
+      owner: createHash('sha256').update(`owner:${session.ownerId}`).digest('hex'),
+      // CS-48 F-1 / CS-39 AC2: the preparation screen used to render the fixed
+      // string "AI inference off" directly above per-item "Get AI coaching"
+      // buttons. That line is FALSE on screen the moment AI_ENABLED is true,
+      // in the one surface AI actually reaches — and CS-39's AC2 requires the
+      // screen distinguish its states "without implying AI". A screen cannot
+      // honestly describe a capability it is not told about, so the capability
+      // is reported here rather than assumed there. Only whether the feature
+      // is configured, never the key, the model or the provider.
+      aiEnabled: options.aiProvider !== undefined,
+    };
   });
   app.post('/api/register', async (request, reply) => {
     if (options.registrationEnabled !== true) throw new HttpError(404, 'Registration unavailable');
@@ -210,7 +291,31 @@ export async function createApp(
     return { authenticated: true };
   });
   app.post('/api/logout', async (request, reply) => {
-    await auth.logout(request.cookies[sessionCookie]!);
+    // CS-57: the onRequest hook does not guarantee a cookie on this path, so
+    // the token is checked rather than asserted. With no token there is no
+    // session to destroy; the cookie is still cleared and the same body is
+    // returned, so the response reveals nothing about whether one existed.
+    //
+    // NOT RATE LIMITED — deliberately, and recorded as an open finding rather
+    // than an oversight. The 2026-09-25 Security review is right that exempting
+    // logout from the session requirement made it the only unauthenticated
+    // WRITE path in the API (a SELECT plus a DELETE per call).
+    //
+    // A `logout:<sha256(request.ip)>` limiter at 30/60 was implemented and then
+    // REVERTED, because it broke a property that matters more than the finding
+    // it fixed: database.test.ts deliberately exhausts the LOGIN limiter and
+    // then asserts logout still returns 200 — being locked out of signing in
+    // must not lock you out of signing out. The limiter turned that into a 429.
+    //
+    // The deeper problem is the keying, and it is why the number was not simply
+    // raised. `trustProxy: false` above (correctly) makes `request.ip` the real
+    // peer, but the deployed topology puts Caddy in front of the API, so every
+    // request arrives from one address and a per-IP limit is effectively a
+    // GLOBAL one. Choosing a number big enough to stop the test failing would
+    // have been tuning to green, not designing a control. The fix needs a key
+    // that is not the client IP, and that is its own ticket.
+    const token = request.cookies[sessionCookie];
+    if (token !== undefined) await auth.logout(token);
     reply.clearCookie(sessionCookie, { path: '/api' });
     return { authenticated: false };
   });
@@ -378,9 +483,35 @@ export async function createApp(
       return reply.code(204).send();
     });
   });
+  // CS-55: the eleven authenticated GET routes below had no budget at all,
+  // while every other route on this app has one. They are owner-keyed like the
+  // seventeen existing owner-scoped limiters, NOT IP-keyed - which is what
+  // makes them implementable without waiting on CS-59: `request.ip` is exactly
+  // 127.0.0.1 for every production request (the proxy shares the API's network
+  // namespace and Caddy strips X-Forwarded-For), so an IP key here would be a
+  // global limit shared by every reader. `request.ownerId` is taken from the
+  // session and never from input, so the bucket cannot be chosen by a caller.
+  //
+  // The budgets are deliberately far above the client's real polling rate
+  // rather than tuned to it. The Jobs page polls /api/searches every 5s (12
+  // per minute) unconditionally and /api/searches/:id every 10s while a run is
+  // active, and an owner may have several tabs open; a budget that a normal
+  // session could reach is a budget that will be raised the first time it
+  // fires, which is how a control becomes decoration. These bound the damage a
+  // runaway client or a stolen session can do - they are not a tuning knob.
+  const readBudget = async (request: { ownerId: string | null }, bucket: string, limit: number) => {
+    if (!(await rateLimit(`${bucket}:${request.ownerId!}`, limit, 60)))
+      throw new HttpError(429, 'Too many requests');
+  };
   app.get('/api/profile', async (request) => {
+    await readBudget(request, 'profile-read', 120);
     return (
-      (await profiles.get(request.ownerId!)) ?? { revision: 0, profile: null, updatedAt: null }
+      (await profiles.get(request.ownerId!)) ?? {
+        revision: 0,
+        profile: null,
+        updatedAt: null,
+        scheduledDiscoveryEnabled: false,
+      }
     );
   });
   app.get('/api/preparation', async (request) => {
@@ -389,20 +520,73 @@ export async function createApp(
       throw new HttpError(429, 'Too many preparation requests');
     return prepareProfile(await profiles.get(request.ownerId!));
   });
+  // CS-48: the sole real AI use case shipped in this initial release. Reuses
+  // the already-computed, schema-bounded PreparationReport - never a new
+  // allowlist, never resume/profile fields this report does not already
+  // decide are safe to show the owner. Disabled by default (options.aiProvider
+  // is undefined unless AI_ENABLED=true and a valid model was configured at
+  // startup); every failure kind maps to a distinct, safe status/message,
+  // never a silent fallback to a different model or provider.
+  app.post('/api/preparation/:checkId/ai-elaborate', async (request) => {
+    if (!options.aiProvider) throw new HttpError(503, 'AI features are not enabled');
+    const { checkId } = z.object({ checkId: z.string().min(1).max(60) }).parse(request.params);
+    if (!(await rateLimit(`ai-elaborate:${request.ownerId!}`, 10, 60)))
+      throw new HttpError(429, 'Too many AI requests');
+    const report = prepareProfile(await profiles.get(request.ownerId!));
+    const target = findElaborationTarget(report, checkId);
+    if (!target) throw new HttpError(404, 'Preparation item not found');
+    try {
+      const result = await elaborate(options.aiProvider, target);
+      return { checkId, text: result.text, source: result.source, model: result.model };
+    } catch (error) {
+      if (!(error instanceof AiProviderError)) throw error;
+      const status: Record<typeof error.kind, number> = {
+        disabled: 503,
+        missing_key: 503,
+        missing_model: 503,
+        unauthorized: 502,
+        payment_required: 502,
+        rate_limited: 429,
+        server_error: 502,
+        timeout: 504,
+        malformed_response: 502,
+        model_unavailable: 502,
+        model_no_longer_free: 502,
+      };
+      throw new HttpError(status[error.kind], error.message);
+    }
+  });
   app.put('/api/profile', async (request) => {
     if (!(await rateLimit(`profile:${request.ownerId!}`, 30, 60)))
       throw new HttpError(429, 'Too many profile updates');
     return profiles.save(request.ownerId!, request.body);
   });
+  // CS-26: a distinct endpoint from PUT /api/profile on purpose - enabling or
+  // disabling unattended discovery is not an edit to profile revision 0..N
+  // candidate data, and must never be blocked by (or consume) a profile
+  // revision conflict. No UI wires this yet (frontend work is paused
+  // pending design); the owner can enable it directly via this endpoint.
+  app.put('/api/profile/scheduled-discovery', async (request) => {
+    if (!(await rateLimit(`profile:${request.ownerId!}`, 30, 60)))
+      throw new HttpError(429, 'Too many profile updates');
+    const { enabled } = z.object({ enabled: z.boolean() }).strict().parse(request.body);
+    const scheduledDiscoveryEnabled = await profiles.setScheduledDiscoveryEnabled(
+      request.ownerId!,
+      enabled,
+    );
+    return { scheduledDiscoveryEnabled };
+  });
   // Market evidence. Read-only, owner-scoped, derived entirely from what this
   // owner's own searches have already seen — no shared corpus, no other user's
   // data, nothing inferred.
   app.get('/api/market/postings', async (request) => {
+    await readBudget(request, 'market-read', 120);
     const query = request.query as Record<string, unknown>;
     return { entries: await market.stalePostings(request.ownerId!, { limit: query.limit }) };
   });
 
   app.get('/api/market/postings/:fingerprint', async (request) => {
+    await readBudget(request, 'market-read', 120);
     const { fingerprint } = z
       .object({ fingerprint: z.string().min(1).max(256) })
       .parse(request.params);
@@ -412,20 +596,28 @@ export async function createApp(
   });
 
   app.get('/api/market/companies', async (request) => {
+    await readBudget(request, 'market-read', 120);
     const query = request.query as Record<string, unknown>;
     return { entries: await market.companies(request.ownerId!, { limit: query.limit }) };
   });
 
-  app.get('/api/pipeline', async (request) => market.pipeline(request.ownerId!));
+  app.get('/api/pipeline', async (request) => {
+    await readBudget(request, 'market-read', 120);
+    return market.pipeline(request.ownerId!);
+  });
 
   app.get('/api/pipeline/stalled', async (request) => {
+    await readBudget(request, 'market-read', 120);
     const query = request.query as Record<string, unknown>;
     return {
       entries: await market.stalled(request.ownerId!, { days: query.days, limit: query.limit }),
     };
   });
 
-  app.get('/api/leads', async (request) => leads.list(request.ownerId!, request.query));
+  app.get('/api/leads', async (request) => {
+    await readBudget(request, 'leads-read', 240);
+    return leads.list(request.ownerId!, request.query);
+  });
   app.post('/api/leads', async (request) => {
     if (!(await rateLimit(`leads:${request.ownerId!}`, 60, 60)))
       throw new HttpError(429, 'Too many lead updates');
@@ -434,12 +626,14 @@ export async function createApp(
     return lead;
   });
   app.get('/api/leads/:id', async (request) => {
+    await readBudget(request, 'leads-read', 240);
     const { id } = identifier.parse(request.params);
     const lead = await leads.get(request.ownerId!, id);
     if (!lead) throw new HttpError(404, 'Lead not found');
     return lead;
   });
   app.get('/api/leads/:id/history', async (request) => {
+    await readBudget(request, 'leads-read', 240);
     const { id } = identifier.parse(request.params);
     const history = await leads.history(request.ownerId!, id, request.query);
     if (!history) throw new HttpError(404, 'Lead not found');
@@ -469,6 +663,7 @@ export async function createApp(
     return reply.code(202).send({ runId: search.id, status: search.status });
   });
   app.get('/api/searches', async (request) => {
+    await readBudget(request, 'searches-read', 240);
     const result = await database.pool.query(
       `SELECT id, request, status, created_at AS "createdAt"
       FROM search_runs WHERE owner_id = $1 ORDER BY created_at DESC, id DESC LIMIT 50`,
@@ -516,6 +711,14 @@ export async function createApp(
     const query = z.object({ after: eventCursor.optional() }).strict().parse(request.query);
     let cursor = eventCursor.parse(request.headers['last-event-id'] ?? query.after ?? '0');
     const ownerId = request.ownerId!;
+    // BUDGET BEFORE THE DATABASE, after parsing. This limiter used to sit
+    // below the run lookup and the retained-window query, so a caller over
+    // their budget still cost two queries per rejected attempt — the work the
+    // limit exists to bound was done before the limit was consulted. Parsing
+    // stays above it so malformed input is still a deterministic 400 rather
+    // than a 429 that depends on how often the client has retried.
+    if (!(await rateLimit(`events:${ownerId}`, 30, 60)))
+      throw new HttpError(429, 'Too many event streams');
     if (!(await database.getSearch(ownerId, id))) throw new HttpError(404, 'Search not found');
     // A cursor that predates the retained window means the client missed events,
     // which is recoverable by resynchronising rather than a client error.
@@ -543,8 +746,6 @@ export async function createApp(
         }
       }
     }
-    if (!(await rateLimit(`events:${ownerId}`, 30, 60)))
-      throw new HttpError(429, 'Too many event streams');
     if (
       streams.size >= 32 ||
       [...streams.values()].filter((owner) => owner === ownerId).length >= 2
@@ -630,6 +831,10 @@ export async function createApp(
       .send(body);
   });
   app.get('/api/searches/:id', async (request) => {
+    // The most expensive read in the application: two 100-row JSONB queries
+    // plus a 100-row event scan, every row re-parsed through Zod - and the one
+    // the Jobs page polls while a run is active.
+    await readBudget(request, 'searches-read', 240);
     const { id } = identifier.parse(request.params);
     const search = await database.getSearch(request.ownerId!, id);
     if (!search) throw new HttpError(404, 'Search not found');
@@ -651,7 +856,18 @@ export async function createApp(
       sourceOutcomes: search.sourceOutcomes
         ? sourceOutcomesSchema.parse(search.sourceOutcomes)
         : null,
-      jobs: jobs.rows,
+      // CS-33 (Security review, 2026-09-24): this route previously returned
+      // jobs.rows straight from Postgres, relying entirely on write-time
+      // discipline (Database.settle()'s collectedJobsSchema.parse before
+      // insert) to keep the shape safe. That trust is not something this
+      // read path can verify - a future direct write to search_jobs.data or
+      // a schema tightening would silently reach the client unfiltered here
+      // while GET .../export (which does parse) would correctly reject it.
+      // Now shares the identical validated projection as export.
+      jobs: jobs.rows.map((row) => ({
+        id: row.id,
+        data: collectedJobSchema.strip().parse(row.data),
+      })),
       events: events.rows,
     };
   });

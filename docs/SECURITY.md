@@ -40,12 +40,43 @@ Enforced globally; see [API-SURFACE](API-SURFACE.md#global-request-contract).
   `X-Forwarded-For` cannot influence anything.
 - `Cache-Control: no-store` on every response.
 
+### Which rate limits are per-owner, per-account and global
+
+`trustProxy: false` is a deliberate safety property, and the sentence above
+states it correctly. **It also has an availability consequence that was not
+recorded here, and this section exists to record it** (CS-59).
+
+| Limiter                                                                                                                                                               | Keyed on              | Effective scope in production                                                                                         |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `password:<ownerId>` (5/hour), the read budgets `searches-read`/`leads-read` (240/min), `profile-read`/`market-read` (120/min), and every other authenticated limiter | The session's owner   | **Per owner.** Correct and unaffected — `ownerId` comes from the session, so the bucket cannot be chosen by a caller. |
+| `login-account:<sha256(email)>` (20/min)                                                                                                                              | The submitted address | **Per account.** Correct.                                                                                             |
+| `login:<sha256(request.ip)>` (10/min)                                                                                                                                 | The client IP         | **GLOBAL — a single shared bucket.**                                                                                  |
+| `register:<sha256(request.ip)>` (5/hour)                                                                                                                              | The client IP         | **GLOBAL — a single shared bucket.** Registration is disabled, so this is currently inert.                            |
+
+**Why the two IP-keyed limiters are global in production.** Caddy proxies to the
+API over loopback inside a shared network namespace
+(`CAREERSCOPE_UPSTREAM: 127.0.0.1:5280`, `network_mode: service:proxy`), and its
+`header_up -X-Forwarded-For` **deletes** the forwarded header. With
+`trustProxy: false` the application therefore sees `request.ip` as `127.0.0.1`
+for **every** production request, so every client hashes to the same key.
+
+**The consequence is availability, not disclosure.** No request is attributed to
+the wrong owner and nothing leaks — but the login limiter bounds _everyone
+together_, so a single client can exhaust the shared budget and deny logins to
+all users, while doing nothing to bound a distributed attacker per-source.
+
+**Do not "fix" this by setting `trustProxy: true`.** That would believe a header
+the proxy is currently deleting, turning an availability problem into a
+spoofable one. The fix belongs at the proxy layer — a trustworthy forwarded
+identity the application can key on — and is tracked in CS-59.
+
 ## Owner isolation
 
 `ownerId` always comes from the session, never from the request. The database
-enforces it independently through composite foreign keys — `lead_history` and
-`resume_results` key on `(ownerId, id)` of the owning row, so a cross-owner
-reference is not representable. Guessed identifiers return 404.
+enforces it independently through composite foreign keys — `lead_history`,
+`resume_results`, `run_events` and `search_jobs` key on `(ownerId, id)` of the
+owning row, so a cross-owner reference is not representable. Guessed
+identifiers return 404.
 
 ## Transport and headers
 
@@ -100,23 +131,24 @@ into the log.
 
 ## Threat model
 
-| Threat                       | Mitigation                                                                  | Residual risk                                           |
-| ---------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------- |
-| Anonymous attacker           | 401 on every route but health/session/login/register; registration disabled | —                                                       |
-| Cross-owner access           | Session-derived `ownerId` plus composite FKs                                | —                                                       |
-| CSRF                         | Strict `Origin` **and** token; `SameSite=Strict`                            | —                                                       |
-| Session theft via XSS        | `HttpOnly`, strict CSP, no `unsafe-eval`                                    | `unsafe-inline` styles/scripts remain in CSP            |
-| Host header / proxy spoofing | 421 on foreign `Host`; `trustProxy: false`                                  | —                                                       |
-| Malicious resume             | Type and size validated; parsing runs in a **child process**                | Parser crash is contained, not eliminated               |
-| Malicious provider payload   | Per-source deadlines, failure isolation, normalization                      | A source can return plausible-but-wrong data            |
-| Storage exhaustion           | `statfs` reservation, typed `ResumeStorageLimit`/507                        | Single-writer only; see limitations                     |
-| Duplicate queue delivery     | Fenced executions, idempotency keys                                         | —                                                       |
-| Stale worker                 | Lease expiry plus fence mismatch rejection                                  | —                                                       |
-| SSH brute force              | Key-only auth; fail2ban                                                     | —                                                       |
-| Compromised container        | Read-only, all capabilities dropped, no new privileges                      | Shares the proxy network namespace                      |
-| Leaked secret                | Gitignored, redacted, never in docs                                         | `infra/v3/.env` is the only copy of the DB password     |
-| Accidental operator action   | Scripts validate prerequisites and refuse unsafe input                      | —                                                       |
-| Malicious GitHub change      | Actions pinned to SHAs; Dependabot                                          | Repository is **public**; no branch protection verified |
+| Threat                                    | Mitigation                                                                                                                              | Residual risk                                                                                                    |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Anonymous attacker                        | 401 on every route but health/session/login/register; registration disabled                                                             | —                                                                                                                |
+| Cross-owner access                        | Session-derived `ownerId` plus composite FKs                                                                                            | —                                                                                                                |
+| CSRF                                      | Strict `Origin` **and** token; `SameSite=Strict`                                                                                        | —                                                                                                                |
+| Session theft via XSS                     | `HttpOnly`, strict CSP, no `unsafe-eval`                                                                                                | `unsafe-inline` styles/scripts remain in CSP                                                                     |
+| Host header / proxy spoofing              | 421 on foreign `Host`; `trustProxy: false`                                                                                              | —                                                                                                                |
+| Malicious resume                          | Type and size validated; parsing runs in a **child process**                                                                            | Parser crash is contained, not eliminated                                                                        |
+| Malicious provider payload                | Per-source deadlines, failure isolation, normalization                                                                                  | A source can return plausible-but-wrong data                                                                     |
+| Compromised/malicious OpenRouter response | `redirect:'manual'` (never forwards the API key to a redirect target); response bytes bounded before JSON parsing; API key never logged | Only one hardcoded host is called; no DNS pinning (deemed unnecessary since the URL is never derived from input) |
+| Storage exhaustion                        | `statfs` reservation, typed `ResumeStorageLimit`/507                                                                                    | Single-writer only; see limitations                                                                              |
+| Duplicate queue delivery                  | Fenced executions, idempotency keys                                                                                                     | —                                                                                                                |
+| Stale worker                              | Lease expiry plus fence mismatch rejection                                                                                              | —                                                                                                                |
+| SSH brute force                           | Key-only auth; fail2ban                                                                                                                 | —                                                                                                                |
+| Compromised container                     | Read-only, all capabilities dropped, no new privileges                                                                                  | Shares the proxy network namespace                                                                               |
+| Leaked secret                             | Gitignored, redacted, never in docs                                                                                                     | `infra/v3/.env` is the only copy of the DB password                                                              |
+| Accidental operator action                | Scripts validate prerequisites and refuse unsafe input                                                                                  | —                                                                                                                |
+| Malicious GitHub change                   | Actions pinned to SHAs; Dependabot                                                                                                      | Repository is **public**; no branch protection verified                                                          |
 
 ## Rules that must not be relaxed
 
@@ -126,4 +158,9 @@ into the log.
 4. Never set `trustProxy: true` without a verified header-overwriting proxy.
 5. Never log a URL, body, cookie or token.
 6. Never disable a lint, type or test rule to get CI green.
-7. AI stays off. Auto-apply stays on hold.
+7. Auto-apply stays on hold. AI stays off **by default**; the one AI use case
+   that exists (CS-48, preparation-coaching elaboration) must stay narrowly
+   scoped to already-computed, schema-bounded `PreparationReport` fields,
+   never resume/contact/compensation data, and must never be reachable from
+   or able to influence matching, scoring, exclusions, deduplication or
+   application decisions.

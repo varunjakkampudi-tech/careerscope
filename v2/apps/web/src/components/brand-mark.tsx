@@ -1,0 +1,25 @@
+export default function BrandMark() {
+  return (
+    <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient
+          id="brand-mark-arc"
+          x1="9"
+          y1="12"
+          x2="55"
+          y2="53"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0" stopColor="#10b981" />
+          <stop offset="1" stopColor="#3b82f6" />
+        </linearGradient>
+      </defs>
+      <g stroke="url(#brand-mark-arc)" strokeWidth="9">
+        <path d="M31.23 10.01A22 22 0 1 0 42.33 51.42" />
+        <path d="M34.3 10.12A22 22 0 0 1 42.33 12.58" />
+      </g>
+      <path d="M46.6 17.4 36.1 36.1 27.9 27.9Z" fill="#fff" />
+      <path d="M20.2 43.8 36.1 36.1 27.9 27.9Z" fill="#3b82f6" />
+    </svg>
+  );
+}

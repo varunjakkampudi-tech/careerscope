@@ -1,0 +1,16 @@
+[Unit]
+Description=Run the CareerScope scheduler health check hourly
+
+[Timer]
+# Hourly is the resolution that matters for the strictest watched timer:
+# careerscope-backup.timer runs daily and is allowed 10% (about 2.4h) of
+# grace, so an hourly check detects a silently dead backup timer within
+# roughly three hours of it becoming overdue. Checking more often than that
+# would only re-report the same steady state - the checker is edge-triggered
+# anyway (SCHEDULER_RENOTIFY_SECONDS, default 6h).
+OnBootSec=10min
+OnUnitActiveSec=1h
+Persistent=true
+
+[Install]
+WantedBy=timers.target

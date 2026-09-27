@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { searchSourceSchema } from './commands.js';
-import { matchBreakdownSchema } from '../../../../packages/shared/dist/index.js';
+import { matchBreakdownSchema } from '@job-radar/shared';
 
 const match = z.unknown().transform((value, context) => {
   if (value == null) return null;
@@ -24,6 +24,14 @@ const publicLink = z
 export const collectedJobSchema = z
   .object({
     fingerprint: z.string().min(1).max(256),
+    /**
+     * The board's own id for this specific posting. Kept alongside the
+     * fingerprint (which only records title+company+location) for
+     * transparency and any future reconciliation. Optional so that rows
+     * stored before this field existed keep parsing; every job collected
+     * from now on carries it.
+     */
+    sourceJobId: z.string().min(1).max(256).optional(),
     title: z.string().min(1).max(500),
     company: z.string().min(1).max(500),
     location: z.string().max(500),
@@ -47,13 +55,20 @@ export const collectedJobsSchema = z.array(collectedJobSchema).max(100);
 export const sourceOutcomeSchema = z
   .object({
     source: searchSourceSchema,
-    status: z.enum(['completed', 'failed']),
+    // 'empty' is distinct from 'completed': the provider ran without error but
+    // yielded zero rows on an HTTP 200. That is exactly what a job board
+    // changing its markup looks like from the inside, and it must never be
+    // reported the same way as "found real results" - a source that has
+    // silently broken looks identical to a quiet day unless this is tracked
+    // as its own state.
+    status: z.enum(['completed', 'empty', 'failed']),
     accepted: z.number().int().min(0).max(100),
     limited: z.boolean(),
     errorCode: z.enum(['source_failed', 'source_timeout', 'invalid_response']).nullable(),
   })
   .strict()
-  .refine((value) => (value.status === 'completed') === (value.errorCode === null));
+  .refine((value) => (value.status !== 'failed') === (value.errorCode === null))
+  .refine((value) => value.status !== 'empty' || value.accepted === 0);
 
 export const sourceOutcomesSchema = z
   .array(sourceOutcomeSchema)
@@ -65,7 +80,8 @@ export type SourceOutcome = z.infer<typeof sourceOutcomeSchema>;
 
 export function collectionStatus(jobs: CollectedJobInput[], outcomes: SourceOutcome[]) {
   if (outcomes.every((outcome) => outcome.status === 'completed')) return 'completed';
-  return jobs.length || outcomes.some((outcome) => outcome.status === 'completed')
+  return jobs.length || outcomes.some((outcome) => outcome.status !== 'failed')
     ? 'partial'
     : 'failed';
 }
+

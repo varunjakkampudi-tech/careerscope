@@ -169,6 +169,10 @@ try {
 
     // Retrying the identical upload converges on exactly one object and one command.
     const retried = await coordinator.upload(ownerId, key, body);
+    // `upload` can return null. Dereferencing it would throw a TypeError and
+    // the phase would fail for a reason unrelated to what it asserts — assert
+    // the precondition so a null result reads as "the retry returned nothing".
+    assert.ok(retried, 'retrying the identical upload must return the reconciled record');
     assert.equal(retried.id, stranded.id);
     assert.equal(retried.status, 'queued');
     assert.ok(retried.objectVersion);
@@ -183,6 +187,7 @@ try {
 
     // A repeated retry stays idempotent instead of publishing a second object.
     const repeated = await coordinator.upload(ownerId, key, body);
+    assert.ok(repeated, 'a repeated retry must return the same reconciled record');
     assert.equal(repeated.objectVersion, retried.objectVersion);
     assert.equal(await published(), 1);
     assert.equal((await database.unpublished()).length, 1);
@@ -234,6 +239,7 @@ try {
               [
                 {
                   fingerprint: `crash-${command.aggregateId}`,
+                  sourceJobId: `crash-${command.aggregateId}`,
                   title: 'React engineer',
                   company: 'Synthetic Systems',
                   location: 'Remote',
@@ -402,7 +408,13 @@ async function uploadIdFor(uploadKey: string) {
 }
 
 /** Runs a child in the given crash mode and returns it stalled at the kill point. */
-async function killAtPause(mode: 'upload' | 'publish', env: Record<string, string>) {
+// 'consume' was missing from this union while phase four calls it, and the
+// child-mode dispatch at the top of this file implements it. The value only
+// ever flows into CRASH_MODE, so the phase did run correctly — the annotation
+// was narrower than the function. Nothing had noticed because v2/scripts is in
+// no tsconfig: `tsc -b` references only packages/core, apps/workers/search and
+// apps/api, so these files were never type-checked at all.
+async function killAtPause(mode: 'upload' | 'publish' | 'consume', env: Record<string, string>) {
   const child = spawn(
     process.execPath,
     ['--import', 'tsx', fileURLToPath(import.meta.url), '--child'],

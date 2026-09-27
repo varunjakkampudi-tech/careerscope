@@ -24,8 +24,18 @@ here, because they described intent as though it were fact:
   rather than silently ignored.
 - **Resume storage is an encrypted private filesystem**, not S3-compatible
   object storage and not MinIO.
-- **Inference is off.** Ollama is not running and no external model is called.
-  Matching is fully deterministic. AI is DEFERRED — INTENTIONAL.
+- **Local/self-hosted inference (Ollama) is still off; matching stays fully
+  deterministic.** As of CS-48, one narrow, off-by-default exception exists:
+  a single AI use case (preparation-coaching elaboration) calls the external
+  OpenRouter API using an explicitly configured `:free` model, gated by
+  `AI_ENABLED` (default `false`). It reads only already-computed,
+  schema-bounded `PreparationReport` fields (checklist/question text and
+  evidence values) — never resume text, contact details or compensation —
+  and cannot influence matching, scoring, exclusions, deduplication or
+  applications (enforced by a structural test, not just convention; see
+  `v2/packages/core/src/ai-provider.ts` and `ai-assist.ts`). The broader
+  local Ollama AI-worker architecture described later in this document
+  remains DEFERRED — INTENTIONAL; CS-48 did not build it.
 
 v2 is deployed at `https://careerscope.tech` on a single Hostinger VPS behind
 Caddy. See [docs/OPERATIONS/DEPLOYMENT.md](../docs/OPERATIONS/DEPLOYMENT.md).
@@ -686,23 +696,23 @@ yet. Do not remove the PostgreSQL volume or use production data for tests.
 
 ## Remaining v2 Work
 
-| Area                                                                | Status                                                                                                                                                  |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Private search UI/API and real search handler                       | Implemented; synthetic browser/provider and service tests                                                                                               |
-| Public Next.js jobs/SEO and public cache invalidation               | Not migrated; existing Pages remains unchanged                                                                                                          |
-| Profiles and preferences                                            | Implemented with revision conflicts and immutable search inputs                                                                                         |
-| Resume metadata and resume-derived matching facts                   | Metadata/internal parse results implemented; owner approval and matching integration pending                                                            |
-| Private S3 upload/download, validation, retention and resume worker | Adapter, coordinator/recovery and isolated durable parse handler tested; runtime acceptance, owner UI/review, retention and restore pending             |
-| BullMQ transport and persistent queue Redis                         | Opt-in adapter tested including isolated restart/AOF restore and process lifecycle; cutover/soak pending                                                |
-| Deterministic matching                                              | Connected with exclusions, confidence guards and UI evidence                                                                                            |
-| Isolated optional AI rank worker                                    | Existing v1 implementation remains; v2 not connected                                                                                                    |
-| Company enrichment and multi-source collection                      | Selection/deduplication, durable partial outcomes and targeted retry implemented; other sources/enrichment pending                                      |
-| Gmail ingestion and email worker                                    | Not migrated                                                                                                                                            |
-| Saved leads, application history and exports                        | Saved leads/notes/archive/restore/audit and search JSON export implemented; application history and bulk exports pending                                |
-| Approval-gated isolated browser/application worker                  | Not implemented; no automatic submissions                                                                                                               |
-| Resumable SSE, cancellation and detailed progress                   | Fenced running/terminal replay, browser SSE and cancellation implemented; detailed live source events, retention/reset and Nginx/TLS acceptance pending |
-| OTel metrics/traces and operational dashboards                      | Dependencies installed; configuration/instrumentation pending                                                                                           |
-| Data migration, backup/restore and load/soak acceptance             | Not verified                                                                                                                                            |
+| Area                                                                | Status                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Private search UI/API and real search handler                       | Implemented; synthetic browser/provider and service tests                                                                                                                                                                                                                                                  |
+| Public Next.js jobs/SEO and public cache invalidation               | Not migrated; existing Pages remains unchanged                                                                                                                                                                                                                                                             |
+| Profiles and preferences                                            | Implemented with revision conflicts and immutable search inputs                                                                                                                                                                                                                                            |
+| Resume metadata and resume-derived matching facts                   | Metadata/internal parse results implemented; matching integration implemented (CS-22) - derived skills/titles/years now reach scoring, always-on and additive, visible in match evidence; owner approval/exclusion of specific resume-derived facts before they reach matching remains pending (see CS-46) |
+| Private S3 upload/download, validation, retention and resume worker | Adapter, coordinator/recovery and isolated durable parse handler tested; runtime acceptance, owner UI/review, retention and restore pending                                                                                                                                                                |
+| BullMQ transport and persistent queue Redis                         | Opt-in adapter tested including isolated restart/AOF restore and process lifecycle; cutover/soak pending                                                                                                                                                                                                   |
+| Deterministic matching                                              | Connected with exclusions, confidence guards and UI evidence                                                                                                                                                                                                                                               |
+| Isolated optional AI rank worker                                    | Existing v1 implementation remains; v2 not connected                                                                                                                                                                                                                                                       |
+| Company enrichment and multi-source collection                      | Selection/deduplication, durable partial outcomes and targeted retry implemented; other sources/enrichment pending                                                                                                                                                                                         |
+| Gmail ingestion and email worker                                    | Not migrated                                                                                                                                                                                                                                                                                               |
+| Saved leads, application history and exports                        | Saved leads/notes/archive/restore/audit and search JSON export implemented; application history and bulk exports pending                                                                                                                                                                                   |
+| Approval-gated isolated browser/application worker                  | Not implemented; no automatic submissions                                                                                                                                                                                                                                                                  |
+| Resumable SSE, cancellation and detailed progress                   | Fenced running/terminal replay, browser SSE and cancellation implemented; detailed live source events, retention/reset and Nginx/TLS acceptance pending                                                                                                                                                    |
+| OTel metrics/traces and operational dashboards                      | Dependencies installed; configuration/instrumentation pending                                                                                                                                                                                                                                              |
+| Data migration, backup/restore and load/soak acceptance             | Not verified                                                                                                                                                                                                                                                                                               |
 
 The complete architecture request is therefore **still in progress**. A working
 search slice is not feature parity and must not be presented as v2 complete.

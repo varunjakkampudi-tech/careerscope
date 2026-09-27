@@ -10,17 +10,28 @@ import {
  *
  * Built once per run and reused for every job, so the engine never reaches for
  * the database mid-scoring. Two sources feed it — what the user typed and what
- * the resume said — and where they disagree the user wins, because they edited
- * the form after seeing the parse.
+ * the resume said.
+ *
+ * They are not treated the same way. Years of experience is a real conflict -
+ * a typed non-zero value always wins over the resume's guess (see
+ * resolveYears), because the user edited the form after seeing the parse.
+ * Skills and titles are not a conflict to resolve: the resume's contribution
+ * is unioned into the typed list, additive and permanent for as long as the
+ * resume is on file. There is no per-skill exclusion - the only way to remove
+ * a resume-derived skill or title from every future match is to delete the
+ * resume itself (see resumeSkills/resumeConsidered on CandidateContext, which
+ * exist specifically so this always-on contribution is visible in match
+ * evidence, not silently folded into "skills" as if the user had typed it).
  */
 export function buildCandidateContext(
   profile: MatchableProfile,
   resumeText = '',
 ): CandidateContext {
   const { candidate, preferences, application, derived } = profile;
+  const resumeSkills = normalizeSkillList(derived?.techStack ?? []);
 
   return {
-    skills: normalizeSkillList([...preferences.techStack, ...(derived?.techStack ?? [])]),
+    skills: normalizeSkillList([...preferences.techStack, ...resumeSkills]),
     recentSkills: normalizeSkillList(derived?.recentSkills ?? []),
     titles: dedupe([...preferences.titles, ...(derived?.titles ?? [])]),
     yearsOfExperience: resolveYears(application.yearsOfExperience, derived?.yearsOfExperience),
@@ -34,6 +45,8 @@ export function buildCandidateContext(
     excludeKeywords: preferences.excludeKeywords,
     excludeCompanies: preferences.excludeCompanies,
     resumeText,
+    resumeConsidered: derived != null,
+    resumeSkills,
   };
 }
 

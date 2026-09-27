@@ -96,7 +96,7 @@ export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Stable id for "the same opening", used to collapse the copies that appear
+ * Candidate id for "the same opening", used to collapse the copies that appear
  * when one role is posted to Greenhouse, syndicated to LinkedIn, and scraped
  * from Naukri.
  *
@@ -105,6 +105,12 @@ export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
  * differently, and merging them would hide one of them. Remote roles key on
  * "remote" instead, since the same remote posting is listed under a dozen
  * different office cities.
+ *
+ * Title, company and city are a resemblance, not a guarantee: a company can
+ * have two genuinely different reqs with the same title in the same city, and
+ * this function has no way to know that on its own. `resolveFingerprintGroup`
+ * is what tells the two cases apart, using the one signal this function
+ * cannot see — the board's own id for the posting.
  */
 export function jobFingerprint(
   title: string,
@@ -314,18 +320,89 @@ export function normalizeUrl(input: string | undefined | null): string | null {
  * ceiling at all. After that, a disclosed salary, then a longer description,
  * then an ATS source — an ATS link applies directly, while an aggregator link
  * usually bounces through a redirect that may already be dead.
+ *
+ * A shared fingerprint only says two postings *might* be the same opening —
+ * title, company and city are not an identity, they are a resemblance. See
+ * `resolveFingerprintGroup` for how a genuine collision is told apart from a
+ * coincidence.
  */
 export function dedupeJobs(jobs: readonly Job[]): Job[] {
-  const best = new Map<string, Job>();
+  const groups = new Map<string, Job[]>();
   for (const job of jobs) {
-    const existing = best.get(job.fingerprint);
-    if (!existing) {
-      best.set(job.fingerprint, job);
-      continue;
-    }
-    best.set(job.fingerprint, mergeDuplicates(existing, job));
+    const list = groups.get(job.fingerprint);
+    if (list) list.push(job);
+    else groups.set(job.fingerprint, [job]);
   }
-  return [...best.values()];
+  const result: Job[] = [];
+  for (const group of groups.values()) result.push(...resolveFingerprintGroup(group));
+  return result;
+}
+
+/**
+ * A board's own id is authoritative for what *that board* considers one
+ * posting. So the fingerprint collision is resolved by first collapsing exact
+ * re-fetches of the same (source, sourceJobId) — always the same posting —
+ * and only then asking whether the result is safe to merge further:
+ *
+ *  - If every contributing source appears at most once, this is the ordinary
+ *    "same role, several boards" case the fingerprint exists to catch, and the
+ *    group collapses to one lead as before.
+ *  - If one source reports *more than one* distinct id under this fingerprint,
+ *    that source has just told us, directly, that these are different reqs —
+ *    two openings sharing a title, company and city, which is exactly what a
+ *    fingerprint built only from those three fields cannot tell apart on its
+ *    own. Merging any of them would silently drop a real opening, so none of
+ *    them are merged: every distinct posting in the group keeps its own
+ *    identity, one that does not depend on what else happened to be collected
+ *    alongside it in this particular run.
+ *
+ * A three-way case — two postings from one source plus an unrelated one from
+ * another — is deliberately never guessed at: there is no signal saying which
+ * of the two the third belongs with, so all three stay apart rather than risk
+ * merging the wrong pair (see docs/KNOWN-LIMITATIONS.md).
+ *
+ * Boundary this does not close: disambiguation only fires when *one* source
+ * demonstrates multiplicity. If two genuinely different reqs at the same
+ * company and city are each visible through a *different* single-appearing
+ * source — role A only ever seen via one board, role B only ever seen via
+ * another — no source ever proves there are two, and they still merge into
+ * one lead. See docs/KNOWN-LIMITATIONS.md ("Job identity disambiguation only
+ * fires when one source proves multiplicity").
+ */
+function resolveFingerprintGroup(jobs: readonly Job[]): Job[] {
+  const clusters = new Map<string, Job[]>();
+  for (const job of jobs) {
+    const key = `${job.source}:${job.sourceJobId}`;
+    const list = clusters.get(key);
+    if (list) list.push(job);
+    else clusters.set(key, [job]);
+  }
+  const merged = [...clusters.values()].map((list) => list.reduce(mergeDuplicates));
+  if (merged.length === 1) return merged;
+
+  const sourcesSeen = new Set<string>();
+  let split = false;
+  for (const job of merged) {
+    if (sourcesSeen.has(job.source)) split = true;
+    sourcesSeen.add(job.source);
+  }
+  if (!split) return [merged.reduce(mergeDuplicates)];
+
+  return merged.map(disambiguateFingerprint);
+}
+
+/**
+ * A stable identity for a posting once a source has shown its fingerprint is
+ * not unique. Derived only from the posting's own fields — never from what
+ * else is present in a given run — so the same real opening keeps the same
+ * identity in every future run, split or not.
+ */
+function disambiguateFingerprint(job: Job): Job {
+  const id = createHash('sha1')
+    .update(`${job.fingerprint}|${job.source}|${job.sourceJobId}`)
+    .digest('hex')
+    .slice(0, 16);
+  return { ...job, id, fingerprint: id };
 }
 
 const SOURCE_RANK: Record<string, number> = {

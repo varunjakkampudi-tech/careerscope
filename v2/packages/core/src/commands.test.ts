@@ -44,9 +44,29 @@ test('search commands only advertise implemented providers', () => {
   assert.deepEqual(createSearchSchema.parse({ query: ' React ', sources: ['remoteok'] }), {
     query: 'React',
     sources: ['remoteok'],
+    origin: 'manual',
   });
   assert.equal(
     createSearchSchema.safeParse({ query: 'React', sources: ['unknown'] }).success,
+    false,
+  );
+});
+
+// CS-26: origin distinguishes an unattended, scheduler-created run from a
+// human clicking "search" - every existing manual caller must be unaffected
+// (defaults to 'manual'), and only these two literal values are accepted.
+test('createSearch origin defaults to manual and rejects anything but the two known values', () => {
+  assert.equal(
+    createSearchSchema.parse({ query: 'React', sources: ['remoteok'] }).origin,
+    'manual',
+  );
+  assert.equal(
+    createSearchSchema.parse({ query: 'React', sources: ['remoteok'], origin: 'scheduled' }).origin,
+    'scheduled',
+  );
+  assert.equal(
+    createSearchSchema.safeParse({ query: 'React', sources: ['remoteok'], origin: 'automated' })
+      .success,
     false,
   );
 });

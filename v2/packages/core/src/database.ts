@@ -1,8 +1,9 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { and, eq, inArray, isNull, or, lt, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull, or, lt, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
-import type { Command, CreateSearch } from './commands.js';
+import type { DerivedResume } from '@job-radar/shared';
+import { createSearchSchema, type Command, type CreateSearchInput } from './commands.js';
 import * as tables from './schema.js';
 import {
   collectedJobsSchema,
@@ -31,7 +32,34 @@ export class Database {
     this.db = drizzle({ client: this.pool, schema: tables });
   }
 
-  async createSearch(ownerId: string, key: string, request: CreateSearch) {
+  async createSearch(ownerId: string, key: string, input: CreateSearchInput) {
+    // PARSED HERE, and this is not redundant with the route's own parse.
+    //
+    // The parameter takes `z.input`, not `z.infer`: `origin` is
+    // `.optional().default('manual')`, so it is optional on input and required
+    // on output, and typing this parameter with the OUTPUT type demanded a
+    // shape that only exists after parsing — it rejected every valid unparsed
+    // call. That was invisible for the life of the project because no v2 test
+    // file was type-checked; the suite had 36 such call sites.
+    //
+    // Widening the parameter alone is NOT sufficient, and I checked rather
+    // than assumed: with `input` passed straight through, the insert below
+    // fails to compile, because `searches.request` is `$type<CreateSearch>()`
+    // — the OUTPUT type. Storing an input-shaped value there would persist a
+    // run with no `origin`, which is precisely the "was this run automated"
+    // auditability CS-26 added the field for.
+    //
+    // Two things therefore depend on canonicalising here, not on trusting the
+    // caller to have done it:
+    //   - `request` is STORED, and must always carry `origin`.
+    //   - `requestHash` is computed from it and drives idempotency. `sources`
+    //     is `.transform(sort)`, so an unsorted and a sorted spelling of the
+    //     same request would otherwise hash differently and collide as a false
+    //     IDEMPOTENCY_KEY_REUSED conflict.
+    // Re-parsing an already-parsed request is a fixed point (trim, sort and
+    // the default are all idempotent), so the API path is unchanged and no
+    // existing hash moves.
+    const request = createSearchSchema.parse(input);
     const requestHash = createHash('sha256').update(JSON.stringify(request)).digest('hex');
     return this.db.transaction(async (transaction) => {
       const id = randomUUID();
@@ -40,13 +68,29 @@ export class Database {
         .from(tables.profiles)
         .where(eq(tables.profiles.ownerId, ownerId))
         .limit(1);
+      // Snapshotted alongside the rest of the profile: the most recent
+      // successfully-parsed resume's derived skills/titles/years, or null when
+      // none exists. The SQL itself projects only the `derived` sub-key of the
+      // parsed JSONB document - the raw resume text in `parsed.text` never
+      // leaves Postgres for this query, let alone this process.
+      const [latestResume] = await transaction
+        .select({
+          derived: sql<DerivedResume | null>`${tables.resumeResults.parsed}->'derived'`,
+        })
+        .from(tables.resumeResults)
+        .where(
+          and(eq(tables.resumeResults.ownerId, ownerId), eq(tables.resumeResults.status, 'parsed')),
+        )
+        .orderBy(desc(tables.resumeResults.createdAt))
+        .limit(1);
+      const derivedResume = latestResume?.derived ?? null;
       const inserted = await transaction
         .insert(tables.searches)
         .values({
           id,
           ownerId,
           request,
-          matchingProfile: profile ? matchingProfile(profile.data) : null,
+          matchingProfile: profile ? matchingProfile(profile.data, derivedResume) : null,
           profileRevision: profile?.revision ?? null,
           requestHash,
           idempotencyKey: key,
@@ -61,7 +105,10 @@ export class Database {
             and(eq(tables.searches.ownerId, ownerId), eq(tables.searches.idempotencyKey, key)),
           );
         if (!existing || existing.requestHash !== requestHash)
-          throw new Conflict('Idempotency key reused with different input');
+          throw new Conflict(
+            'Idempotency key reused with different input',
+            'IDEMPOTENCY_KEY_REUSED',
+          );
         return existing;
       }
       if (
@@ -70,7 +117,10 @@ export class Database {
           (title) => title.trim().length >= 2 && title.trim().length <= 160,
         )
       )
-        throw new Conflict('Save target roles before starting profile discovery');
+        throw new Conflict(
+          'Save target roles before starting profile discovery',
+          'MISSING_TARGET_ROLES',
+        );
       const command: Command = {
         id: randomUUID(),
         type: 'search.collect',
@@ -205,6 +255,24 @@ export class Database {
       .update(tables.outbox)
       .set({ publishedAt: new Date() })
       .where(eq(tables.outbox.id, id));
+  }
+
+  /**
+   * The last `limit` recorded outcomes for one source, most recent first,
+   * across every owner - a source silently returning nothing is a job-board
+   * change, not a per-owner fact, so this looks system-wide rather than
+   * scoping to whoever happened to run the search that noticed it.
+   */
+  async recentSourceStatuses(source: string, limit = 5): Promise<string[]> {
+    const { rows } = await this.pool.query<{ status: string }>(
+      `SELECT elem->>'status' AS status
+       FROM search_runs, jsonb_array_elements(source_outcomes) elem
+       WHERE source_outcomes IS NOT NULL AND elem->>'source' = $1
+       ORDER BY created_at DESC
+       LIMIT $2`,
+      [source, limit],
+    );
+    return rows.map((row) => row.status);
   }
 
   async command(id: string) {

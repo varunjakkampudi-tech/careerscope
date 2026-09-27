@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "node scripts/engineering-hook.mjs",
+        "timeout": 10
+      }
+    ]
+  }
+}

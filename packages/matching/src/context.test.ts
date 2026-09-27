@@ -34,9 +34,7 @@ function profile(
       ...overrides.preferences,
     },
     application: {
-      currentCtc: '14 LPA',
       expectedCtc: '20 LPA',
-      noticePeriodDays: 60,
       willingToRelocate: true,
       yearsOfExperience: 4,
       ...overrides.application,
@@ -60,6 +58,17 @@ describe('buildCandidateContext', () => {
     expect(ctx.skills).toEqual(['React', 'Node.js']);
     expect(ctx.recentSkills).toEqual([]);
     expect(ctx.yearsOfExperience).toBe(4);
+    expect(ctx.resumeConsidered).toBe(false);
+    expect(ctx.resumeSkills).toEqual([]);
+  });
+
+  // The exact edge case CS-22's third acceptance criterion is written around:
+  // a resume that was considered and simply contributed nothing must not be
+  // indistinguishable from no resume at all.
+  it('says the resume was considered even when it contributed no skills', () => {
+    const ctx = buildCandidateContext(profile({ derived: derived({ techStack: [] }) }));
+    expect(ctx.resumeConsidered).toBe(true);
+    expect(ctx.resumeSkills).toEqual([]);
   });
 
   it('defaults the resume text to empty rather than undefined', () => {
@@ -78,6 +87,10 @@ describe('buildCandidateContext — skills and titles', () => {
     expect(ctx.skills).toEqual(
       expect.arrayContaining(['React', 'GraphQL', 'Node.js', 'PostgreSQL']),
     );
+    // resumeSkills is the resume's own contribution, not the whole union - so
+    // match evidence can show what the resume specifically added.
+    expect(ctx.resumeSkills).toEqual(expect.arrayContaining(['Node.js', 'PostgreSQL']));
+    expect(ctx.resumeSkills).not.toEqual(expect.arrayContaining(['React', 'GraphQL']));
   });
 
   it('collapses aliases so the same skill is not counted twice', () => {
@@ -167,5 +180,41 @@ describe('buildCandidateContext — home location', () => {
       }),
     );
     expect(ctx.homeLocation).toBe('Hyderabad, India');
+  });
+  // The narrowing of MatchableProfile['application'] (see types.ts) must not
+  // break the property its own doc comment promises: "`Profile` satisfies this
+  // structurally, so the API can pass a stored profile straight through." V1's
+  // stored profile carries currentCtc and noticePeriodDays, which the engine
+  // never reads — a wider object must still be accepted. Excess-property
+  // checking only applies to inline literals, so this passes through a variable
+  // exactly as the API does, which is the shape that actually ships.
+  it('accepts a stored profile carrying fields the engine does not consume', () => {
+    const stored = {
+      candidate: { location: 'Hyderabad, India' },
+      preferences: {
+        titles: ['Full Stack Software Engineer'],
+        techStack: ['React'],
+        locations: [],
+        remoteOnly: false,
+        minSalary: null,
+        employmentTypes: ['fulltime' as const],
+        excludeKeywords: [],
+        excludeCompanies: [],
+      },
+      application: {
+        currentCtc: '14 LPA',
+        expectedCtc: '20 LPA',
+        noticePeriodDays: 60,
+        willingToRelocate: true,
+        yearsOfExperience: 4,
+      },
+      derived: null,
+    };
+    const ctx = buildCandidateContext(stored);
+    // Paired positive: it did not merely compile, it produced the right values
+    // from the three fields the engine does consume.
+    expect(ctx.expectedSalary).toBe(2_000_000);
+    expect(ctx.willingToRelocate).toBe(true);
+    expect(ctx.yearsOfExperience).toBe(4);
   });
 });

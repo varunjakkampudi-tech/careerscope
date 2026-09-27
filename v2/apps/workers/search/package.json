@@ -4,6 +4,11 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@careerscope/core": "3.0.0"
+    "@careerscope/core": "3.0.0",
+    "@job-radar/matching": "file:../../../../packages/matching",
+    "@job-radar/providers": "file:../../../../packages/providers"
+  },
+  "devDependencies": {
+    "@job-radar/shared": "file:../../../../packages/shared"
   }
 }

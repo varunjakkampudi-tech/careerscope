@@ -1,0 +1,950 @@
+/*
+ * Visual language extracted from the four owner-supplied design images
+ * (page-designs/) — dark sidebar, light topbar, stat-card row, tabbed
+ * lists. Scoped entirely to this module so it cannot affect any other
+ * page's styling or existing visual-regression baselines (CS-13's shared
+ * treatment is a separate, not-yet-built concern).
+ */
+
+.shell {
+  --dash-canvas: #eef1f7;
+  --dash-surface: #ffffff;
+  --dash-ink: #101323;
+  --dash-muted: #5b6373;
+  --dash-border: #e1e5ee;
+  --dash-accent: #4055d6;
+  --dash-sidebar: #0d1224;
+  --dash-sidebar-ink: #e7eaf5;
+  --dash-sidebar-muted: #8891ad;
+  --dash-sidebar-active: #1c2340;
+  /* Application Details design spec (Visual Designer, 2026-09-23) — extends
+     rather than replaces the tokens above. */
+  --dash-accent-hover: #3447bd;
+  --dash-on-accent: #ffffff;
+  --dash-link: #4055d6;
+  --dash-surface-subtle: #f5f7fc;
+  --dash-control-border: #7c879f;
+  --dash-focus: #4055d6;
+  --dash-card-radius: 14px;
+  --dash-space-1: 4px;
+  --dash-space-2: 8px;
+  --dash-space-3: 12px;
+  --dash-space-4: 16px;
+  --dash-space-5: 20px;
+  --dash-space-6: 24px;
+  --dash-space-8: 32px;
+  --dash-space-10: 40px;
+  --dash-space-12: 48px;
+  --dash-status-saved-bg: #f1f5f9;
+  --dash-status-saved-fg: #475569;
+  --dash-status-applied-bg: #eaf0ff;
+  --dash-status-applied-fg: #3047b5;
+  --dash-status-interviewing-bg: #f3edff;
+  --dash-status-interviewing-fg: #6b38a6;
+  --dash-status-offer-bg: #e7f5ee;
+  --dash-status-offer-fg: #146440;
+  --dash-status-rejected-bg: #fdeced;
+  --dash-status-rejected-fg: #a3293c;
+  --dash-status-archived-bg: #eef0f4;
+  --dash-status-archived-fg: #555f70;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+  background: var(--dash-canvas);
+  color: var(--dash-ink);
+}
+
+.shell[data-theme='dark'] {
+  --dash-canvas: #0b0e19;
+  --dash-surface: #141a2e;
+  --dash-ink: #e7eaf5;
+  --dash-muted: #98a2bd;
+  --dash-border: #232b45;
+  --dash-link: #a5b4fc;
+  --dash-surface-subtle: #1b233b;
+  --dash-control-border: #687693;
+  --dash-focus: #a5b4fc;
+  --dash-status-saved-bg: #233047;
+  --dash-status-saved-fg: #cbd5e1;
+  --dash-status-applied-bg: #202e55;
+  --dash-status-applied-fg: #b7c6ff;
+  --dash-status-interviewing-bg: #34234f;
+  --dash-status-interviewing-fg: #d8baff;
+  --dash-status-offer-bg: #183c30;
+  --dash-status-offer-fg: #96e0b7;
+  --dash-status-rejected-bg: #482631;
+  --dash-status-rejected-fg: #f6b3bf;
+  --dash-status-archived-bg: #292e3d;
+  --dash-status-archived-fg: #b9c1d0;
+}
+
+.sidebar {
+  background: var(--dash-sidebar);
+  color: var(--dash-sidebar-ink);
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  /* Lovable reference: the sidebar's promo card and account identity are
+     always visible without scrolling the page, because its own nav list is
+     short enough to fit. CareerScope's real, honest route list (11 items,
+     including "Soon" placeholders for not-yet-built pages) is longer than
+     that reference nav, so a plain in-flow sidebar pushed the account card
+     and sign-out affordance below the fold on any normal-height screen -
+     the owner's own email/workspace identity was invisible without
+     scrolling the entire dashboard. Fix: pin the sidebar to the viewport and
+     let only the nav list itself scroll internally when it doesn't fit,
+     never the promo/account footer beneath it. */
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 14px;
+  flex: none;
+}
+
+.brandRow svg {
+  width: 28px;
+  height: 28px;
+}
+
+.brandName {
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.1;
+}
+
+.brandTagline {
+  font-size: 11px;
+  color: var(--dash-sidebar-muted);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: var(--dash-sidebar-ink);
+  font-size: 14px;
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.navItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.navItem[aria-current='page'] {
+  background: var(--dash-sidebar-active);
+  font-weight: 600;
+}
+
+.navItemDisabled {
+  composes: navItem;
+  color: var(--dash-sidebar-muted);
+  cursor: default;
+}
+
+.navItemDisabled:hover {
+  background: transparent;
+}
+
+.navSoon {
+  margin-left: auto;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--dash-sidebar-muted);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 1px 6px;
+}
+
+.sidebarFooter {
+  font-size: 11px;
+  color: var(--dash-sidebar-muted);
+}
+
+.sidebarIllustration {
+  flex: none;
+  margin-top: auto;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 14px;
+  color: var(--dash-sidebar-ink);
+}
+
+.sidebarIllustration svg {
+  margin-bottom: 8px;
+  color: var(--dash-sidebar-muted);
+}
+
+.sidebarIllustration strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.sidebarIllustration p {
+  font-size: 11px;
+  color: var(--dash-sidebar-muted);
+  margin: 0;
+}
+
+.sidebarAccount {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  flex: none;
+}
+
+.sidebarAccountEmail {
+  font-size: 12px;
+  color: var(--dash-sidebar-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
+}
+
+.avatar {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--dash-accent);
+  color: #fff;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/*
+ * CS-31: every authenticated route renders through this one shell (see
+ * AuthenticatedShell), so a keyboard user landing on any of them had no way
+ * to reach page content without first tabbing through the entire sidebar
+ * nav. Visually hidden until focused, matching the unauthenticated
+ * sign-in page's existing .skip-link pattern in globals.css, but scoped to
+ * this module's own tokens since this is the shell every real route uses.
+ */
+.skipLink {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 20;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  background: var(--dash-surface);
+  color: var(--dash-ink);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.skipLink:focus {
+  width: auto;
+  height: auto;
+  padding: 12px 16px;
+  clip-path: none;
+  outline: 2px solid var(--dash-focus);
+  outline-offset: 2px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 24px;
+  background: var(--dash-surface);
+  border-bottom: 1px solid var(--dash-border);
+}
+
+.topbarSearch {
+  flex: 1;
+  min-width: 0;
+  max-width: 560px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--dash-border);
+  color: var(--dash-muted);
+  text-decoration: none;
+  font-size: 13px;
+  overflow: hidden;
+}
+
+.topbarSearch span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbarActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface);
+  color: var(--dash-ink);
+  cursor: pointer;
+}
+
+.content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 1280px;
+}
+
+.masterGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 16px;
+  align-items: start;
+}
+
+.leftColumn,
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.splitPanels {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .masterGrid,
+  .splitPanels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--dash-accent) 0%, #2c3ea8 100%);
+  color: #fff;
+  border-radius: 14px;
+  padding: 26px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.heroIllustration {
+  position: absolute;
+  inset: 0;
+  width: 60%;
+  height: 100%;
+  margin-left: auto;
+  pointer-events: none;
+}
+
+.heroIllustration svg {
+  width: 100%;
+  height: 100%;
+}
+
+.heroEyebrow {
+  position: relative;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.hero h1 {
+  position: relative;
+  margin: 2px 0 0;
+  font-size: 26px;
+}
+
+.heroSubtext {
+  position: relative;
+  opacity: 0.9;
+  font-size: 13px;
+  margin: 4px 0 2px;
+}
+
+.heroSubtextSecondary {
+  position: relative;
+  opacity: 0.75;
+  font-size: 12px;
+  margin: 0 0 12px;
+}
+
+.heroActions {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.heroActions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 9px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.heroActions a[data-primary] {
+  background: #fff;
+  color: var(--dash-accent);
+}
+
+.heroActions a[data-secondary] {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.progressBarTrack {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--dash-border);
+  overflow: hidden;
+  margin: 8px 0 12px;
+}
+
+.progressBarFill {
+  height: 100%;
+  background: var(--dash-accent);
+  border-radius: 999px;
+}
+
+.checklist {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.checklist li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checklist [data-done='true'] {
+  color: #157539;
+}
+
+.checklist [data-done='false'] {
+  color: var(--dash-muted);
+}
+
+.aiPanel {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.aiPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.aiBadge {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 999px;
+  padding: 2px 8px;
+  background: var(--dash-border);
+  color: var(--dash-muted);
+}
+
+.jobCardList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+}
+
+.jobCard {
+  border: 1px solid var(--dash-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.jobCardHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.jobCardLogo {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--dash-accent);
+}
+
+.jobCardBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.jobCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.jobCardTitle {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.jobCardMeta {
+  font-size: 12px;
+  color: var(--dash-muted);
+}
+
+.jobCardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.jobCardFooter a {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dash-accent);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.matchBadge {
+  flex: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: #157539;
+  border: 1px solid #157539;
+  border-radius: 999px;
+  padding: 1px 8px;
+  white-space: nowrap;
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tagRow span {
+  font-size: 11px;
+  border: 1px solid var(--dash-border);
+  border-radius: 6px;
+  padding: 2px 6px;
+  color: var(--dash-muted);
+}
+
+.activityList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.activityIcon {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e6ecff;
+  color: #3452e0;
+}
+
+.activityList li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.activityText {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.activityList small {
+  color: var(--dash-muted);
+  white-space: nowrap;
+}
+
+.skillRankList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.skillRankList li {
+  display: flex;
+  justify-content: space-between;
+}
+
+.proTip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 13px;
+}
+
+.proTip a {
+  color: var(--dash-accent);
+  font-weight: 600;
+}
+
+.footerQuote {
+  text-align: center;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--dash-muted);
+  padding: 8px 0 4px;
+}
+
+.statRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.statCard {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.statIcon[data-tone='blue'] {
+  background: #e6ecff;
+  color: #3452e0;
+}
+.statIcon[data-tone='purple'] {
+  background: #f1e9ff;
+  color: #7c3aed;
+}
+.statIcon[data-tone='green'] {
+  background: #e3f7e9;
+  color: #157539;
+}
+.statIcon[data-tone='orange'] {
+  background: #fdedd9;
+  color: #b3560a;
+}
+
+.statValue {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: var(--dash-muted);
+}
+
+.statHint {
+  font-size: 11px;
+  color: var(--dash-muted);
+}
+
+.panel {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.panel h2 {
+  font-size: 15px;
+  margin: 0 0 12px;
+}
+
+.panelHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.panelHeaderRow h2 {
+  margin: 0 0 12px;
+}
+
+.viewAllLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dash-link);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.viewAllLink:hover {
+  text-decoration: underline;
+}
+
+.quickActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quickActions a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--dash-border);
+  text-decoration: none;
+  color: var(--dash-ink);
+  font-size: 13px;
+}
+
+.quickActions a .statIcon {
+  margin-bottom: 0;
+}
+
+.quickActionChevron {
+  margin-left: auto;
+  color: var(--dash-muted);
+}
+
+.ctaLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  color: var(--dash-accent);
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.runList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.runList li a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--dash-ink);
+  border: 1px solid var(--dash-border);
+  font-size: 13px;
+}
+
+.runList small {
+  display: block;
+  color: var(--dash-muted);
+  font-weight: 400;
+}
+
+.stateNotice {
+  font-size: 13px;
+  color: var(--dash-muted);
+}
+
+.stateNotice[role='alert'] {
+  color: #b3261e;
+}
+
+.retryButton {
+  margin-left: 8px;
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface);
+  border-radius: 6px;
+  padding: 3px 9px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.freshnessRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--dash-muted);
+  margin-bottom: 4px;
+}
+
+.freshnessRefresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--dash-border);
+  background: var(--dash-surface);
+  border-radius: 6px;
+  padding: 3px 9px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--dash-ink);
+}
+
+.freshnessRefresh:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.mobileNav {
+  display: none;
+  gap: 6px;
+  padding: 10px 16px;
+  overflow-x: auto;
+  background: var(--dash-surface);
+  border-bottom: 1px solid var(--dash-border);
+}
+
+.mobileNavItem {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--dash-border);
+  font-size: 12px;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--dash-ink);
+}
+
+.mobileNavItem[aria-current='page'] {
+  background: var(--dash-accent);
+  border-color: var(--dash-accent);
+  color: #fff;
+}
+
+.mobileNavItemDisabled {
+  composes: mobileNavItem;
+  color: var(--dash-muted);
+}
+
+@media (max-width: 768px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sidebar {
+    display: none;
+  }
+  .mobileNav {
+    display: flex;
+  }
+}
