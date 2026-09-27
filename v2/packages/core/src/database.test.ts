@@ -468,7 +468,7 @@ test('Swagger documents every runtime route without changing validation and prot
     }
   } finally {
     await database.close();
-    await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+    await admin.pool.query(`DROP DATABASE "${name}"`);
     await admin.close();
   }
 });
@@ -813,7 +813,7 @@ test('market and pipeline HTTP routes preserve evidence, query bounds and owner 
     }
   } finally {
     await database.pool.end();
-    await admin.pool.query(`DROP DATABASE IF EXISTS "${name}" WITH (FORCE)`);
+    await admin.pool.query(`DROP DATABASE IF EXISTS "${name}"`);
     await admin.pool.end();
   }
 });
@@ -986,7 +986,7 @@ test('global resume reservation budgets serialize across owners and preserve ret
     );
   } finally {
     await database.close();
-    await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+    await admin.pool.query(`DROP DATABASE "${name}"`);
     await admin.close();
   }
 });
@@ -2379,7 +2379,7 @@ test('partial search outcomes are atomic, owner-scoped, terminal and usable thro
   } finally {
     await rm(previousMigrations, { recursive: true, force: true });
     await database.close();
-    await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+    await admin.pool.query(`DROP DATABASE "${name}"`);
     await admin.close();
   }
 });
@@ -4042,7 +4042,7 @@ test('CS-61: the session carries a stable, opaque per-owner cache key that diffe
     }
   } finally {
     await database.close();
-    await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+    await admin.pool.query(`DROP DATABASE "${name}"`);
     await admin.close();
   }
 });
@@ -4266,7 +4266,7 @@ test('CS-48 AC10: ai-elaborate is owner-scoped, and a provider failure never rea
     _resetCatalogCacheForTests();
     await new Promise<void>((resolve) => server.close(() => resolve()));
     await database.close();
-    await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+    await admin.pool.query(`DROP DATABASE "${name}"`);
     await admin.close();
   }
 });
@@ -4401,7 +4401,7 @@ test('CS-55: every authenticated read carries an owner-keyed budget, and the buc
     }
   } finally {
     await database.close();
-    await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+    await admin.pool.query(`DROP DATABASE "${name}"`);
     await admin.close();
   }
 });
@@ -4505,7 +4505,7 @@ test('CS-53: a run event or job belonging to a different owner than its run is u
     assert.match(String(unique.rows[0]!.indexdef), /UNIQUE/);
   } finally {
     await database.close();
-    await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+    await admin.pool.query(`DROP DATABASE "${name}"`);
     await admin.close();
   }
 });
@@ -4571,7 +4571,7 @@ test('createSearch takes UNPARSED input, and canonicalises it before storing or 
     );
   } finally {
     await database.close();
-    await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+    await admin.pool.query(`DROP DATABASE "${name}"`);
     await admin.close();
   }
 });
