@@ -331,8 +331,8 @@ jobs:
           docker exec "$redis_id" redis-cli CONFIG SET appendfsync everysec
           docker exec "$redis_id" redis-cli CONFIG SET maxmemory 128mb
           docker exec "$redis_id" redis-cli CONFIG SET maxmemory-policy noeviction
-          docker exec "$redis_id" redis-cli INFO persistence | grep -Eq '^aof_enabled:1\r?$'
-          docker exec "$redis_id" redis-cli CONFIG GET maxmemory-policy | grep -Eq '^noeviction\r?$'
+          docker exec "$redis_id" redis-cli INFO persistence | tr -d '\r' | grep -qx 'aof_enabled:1'
+          docker exec "$redis_id" redis-cli CONFIG GET maxmemory-policy | tr -d '\r' | grep -qx 'noeviction'
 
       # A real file, not secrets in the job env, so a failure shows exactly
       # what the suite connected to. This is CI-built and thrown away with the
