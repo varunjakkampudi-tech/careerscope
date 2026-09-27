@@ -32,10 +32,23 @@ docker run -d --name "$pg_name" \
   -e POSTGRES_PASSWORD=test -e POSTGRES_USER=careerscope -e POSTGRES_DB=careerscope \
   postgres:17.6-alpine >/dev/null
 
+ready=0
 for _ in $(seq 1 30); do
-  if docker exec "$pg_name" pg_isready -U careerscope >/dev/null 2>&1; then break; fi
+  # The official image starts a temporary Unix-socket-only server during
+  # initdb, then stops it before starting the real TCP listener. A socket
+  # pg_isready can therefore succeed during that shutdown window and race the
+  # seed query. TCP readiness is true only for the final server we will test.
+  if docker exec "$pg_name" pg_isready -h 127.0.0.1 -U careerscope -d careerscope >/dev/null 2>&1; then
+    ready=1
+    break
+  fi
   sleep 1
 done
+if [ "$ready" != 1 ]; then
+  echo "disposable PostgreSQL never became ready" >&2
+  docker logs "$pg_name" >&2 || true
+  exit 1
+fi
 docker exec "$pg_name" psql -U careerscope -d careerscope -c \
   "CREATE TABLE widgets (id serial primary key, name text); INSERT INTO widgets (name) VALUES ('a'), ('b'), ('c');" >/dev/null
 

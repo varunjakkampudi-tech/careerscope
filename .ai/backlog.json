@@ -1194,7 +1194,8 @@
         "AC3 CLOSES NOW, independently of the host 2026-09-25: \"a failed dump is reported rather than leaving the last good file looking current\" is proven by check-backup.sh, which starts a REAL disposable Postgres container and runs the actual pg_dump/pg_restore pipeline rather than simulating it, and is CI-wired.",
         "AC2 STAYS HOST-BLOCKED, AND THAT IS THIS TICKETS OWN JUDGEMENT RATHER THAN A CONCESSION: its evidence states plainly that the container test \"is NOT what these criteria ask for\". Respected rather than argued past - a ticket refusing to over-claim on its own behalf is the behaviour this project wants, and overriding it here would teach the opposite lesson. AC1 remains host-only.",
         "REVIEW WINDOW CAVEAT: three sessions were writing concurrently; re-check if a cited file moved between roughly 15:05 and 16:10 IST on 2026-09-25.",
-        "RUNBOOK REFRAMED 2026-09-25 on a finding that changes this tickets cheapest path: backup.sh:8-13 describes its own second phase as restoring each dump into a disposable scratch database, so \"every single scheduled run proves its own dump is actually restorable\". The runbooks description of the restore drill as \"the part that has never been done\" is therefore INACCURATE IF THE TIMER HAS EVER FIRED. The cheapest and strongest AC2 evidence is a journalctl -u careerscope-backup.service extract showing the verify phase succeeding on a TIMER-TRIGGERED run - one command, real host evidence, and none of the manual drills container-name, dump-format or table-name risk. The runbook now puts that first and keeps the manual drill as an independent second opinion."
+        "RUNBOOK REFRAMED 2026-09-25 on a finding that changes this tickets cheapest path: backup.sh:8-13 describes its own second phase as restoring each dump into a disposable scratch database, so \"every single scheduled run proves its own dump is actually restorable\". The runbooks description of the restore drill as \"the part that has never been done\" is therefore INACCURATE IF THE TIMER HAS EVER FIRED. The cheapest and strongest AC2 evidence is a journalctl -u careerscope-backup.service extract showing the verify phase succeeding on a TIMER-TRIGGERED run - one command, real host evidence, and none of the manual drills container-name, dump-format or table-name risk. The runbook now puts that first and keeps the manual drill as an independent second opinion.",
+        "CI run 36338480336 exposed a startup race in check-backup.sh: pg_isready without -h accepted the official image temporary Unix-socket server during initdb, which then shut down before the seed psql. The check now waits for 127.0.0.1 TCP readiness and fails with container logs if the final server never becomes ready. This repairs CI fixture reliability only; it does not claim the still-missing live timer evidence."
       ],
       "securityImpact": "dumps contain private data and must be permission-restricted",
       "architectureImpact": "adds a scheduled job to the host",
@@ -4042,14 +4043,16 @@
       "evidence": [
         "Run 36328261899 wrote DATABASE_URL=******127.0.0.1:5432/careerscope and failed configuration validation",
         "The same run reported the PostgreSQL server terminated unexpectedly during backup/restore",
-        "2026-09-27 implementation replaces the malformed literal with postgres://careerscope:ci-recovery-password@127.0.0.1:5432/careerscope; backup diagnosis and a green workflow remain open"
+        "2026-09-27 implementation replaces the malformed literal with postgres://careerscope:ci-recovery-password@127.0.0.1:5432/careerscope",
+        "Run 36338480336 proves worker crash recovery and database backup/restore both pass after that repair; the earlier server-termination symptom was downstream of the malformed configuration, not a remaining database defect",
+        "Run 36338480336 then failed queue runtime because its isolated recovery runner had no redis:7.4.5-alpine image. The check intentionally inspects rather than implicitly pulls; CI now explicitly pulls the pinned Redis tag before running it"
       ],
       "securityImpact": "The test remains constrained to loopback and a disposable named container; no production endpoint is permitted.",
       "architectureImpact": "Recovery validation only.",
       "releaseTarget": "3.0.1",
       "ownerAgent": "Infrastructure",
       "reviewAgents": ["QA", "Independent Reviewer"],
-      "currentStep": "Root-cause the backup/restore termination after the configuration fix runs in CI.",
+      "currentStep": "Re-run CI with the explicit Redis image precondition; require queue runtime and full-disk checks to pass before promotion.",
       "completedSteps": ["Project Manager", "Infrastructure"],
       "createdAt": "2026-09-27",
       "updatedAt": "2026-09-27",

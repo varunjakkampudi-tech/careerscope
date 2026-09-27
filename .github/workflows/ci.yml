@@ -464,6 +464,11 @@ jobs:
       # somewhere real.
       - name: Start the services these checks drive directly
         run: |
+          # check-queue-runtime deliberately refuses an absent image instead of
+          # allowing `docker run` to hide an implicit network pull inside the
+          # acceptance test. Recovery jobs are isolated, so the integration
+          # job's Redis service image is not present on this runner.
+          docker pull redis:7.4.5-alpine
           docker run -d --name careerscope-v2-postgres-ci \
             -e POSTGRES_DB=careerscope \
             -e POSTGRES_USER=careerscope \
