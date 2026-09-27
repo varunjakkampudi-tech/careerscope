@@ -344,6 +344,7 @@ jobs:
           REDIS_URL=redis://127.0.0.1:6379
           SEARCH_QUEUE_REDIS_URL=redis://127.0.0.1:6379
           LOCAL_AWS_ENDPOINT=http://127.0.0.1:4566
+          APP_ORIGIN=http://127.0.0.1:5280
           EOF
 
       # test:unit deliberately excludes these: bull-queue, database, market,

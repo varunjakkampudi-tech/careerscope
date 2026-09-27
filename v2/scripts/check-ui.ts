@@ -74,7 +74,10 @@ try {
         RESUME_STORAGE_KEY_FILE: keyFile,
         FILES_QUEUE_NAME: filesQueueName,
       },
-      stdio: ['ignore', 'pipe', 'ignore'],
+      // Keep the readiness token machine-readable on stdout, while preserving
+      // startup diagnostics in CI instead of replacing the worker's real error
+      // with the generic early-exit message below.
+      stdio: ['ignore', 'pipe', 'inherit'],
     },
   );
   await new Promise<void>((resolve, reject) => {

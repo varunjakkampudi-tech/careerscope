@@ -4122,17 +4122,18 @@
         "v2/packages/core/src/bull-queue.test.ts read the retired QUEUE_REDIS_URL variable and otherwise selected redis://127.0.0.1:56480, while CI exposed Redis at 127.0.0.1:6379 and wrote only REDIS_URL",
         "Run 36339115982 reached the integration verdict in 1m42s instead of exhausting forty minutes. It exposed two deterministic prerequisites: the stock Redis service lacked the AOF durability BullSearchQueue requires, and parallel test-file database teardown terminated an active sibling connection",
         "Runs 36339477079 and 36354580452 prove all four Redis CONFIG SET commands succeed; the pre-test proof itself rejected redis-cli's CRLF output because GNU grep treated the attempted \\r ERE escape as a literal r. CI now strips carriage returns explicitly and retains exact-value assertions for aof_enabled:1 and noeviction",
-        "Local V2 unit tests pass; this ticket does not misclassify that as evidence for the service-backed or browser phases"
+        "Local V2 unit tests pass; this ticket does not misclassify that as evidence for the service-backed or browser phases",
+        "Run 36355198109 proves the serialized service-backed suite passes 48/48 and the job_sightings backfill passes 7/7, then exposes the next browser-phase precondition: the spawned files worker exits before readiness because the CI-built environment omits required APP_ORIGIN. The browser harness also discarded worker stderr, hiding the configuration error behind a generic early-exit message. CI now supplies the exact loopback browser origin and inherits worker stderr without weakening readiness detection."
       ],
       "securityImpact": "Restores execution of the browser authentication and axe accessibility checks already registered in this job.",
       "architectureImpact": "CI process lifecycle and observability only unless diagnosis finds an application shutdown defect.",
       "releaseTarget": "3.0.1",
       "ownerAgent": "QA",
       "reviewAgents": ["Infrastructure", "Independent Reviewer"],
-      "currentStep": "Validate the canonical queue endpoint, explicitly durable Redis service, and serialized disposable-database lifecycle in two consecutive CI runs without weakening any integration or browser coverage.",
+      "currentStep": "Validate the complete browser-worker runtime environment and all three browser engines in two consecutive CI runs without weakening any integration or accessibility coverage.",
       "completedSteps": ["Project Manager", "Repository", "QA"],
       "createdAt": "2026-09-27",
-      "updatedAt": "2026-09-27",
+      "updatedAt": "2026-09-28",
       "dimension": "engineering"
     }
   ]
