@@ -97,6 +97,7 @@ export function SaveJob({
   iconOnly?: boolean;
 }) {
   const cache = useQueryClient();
+  const owner = useOwner();
   const save = useMutation({
     mutationFn: () =>
       api<Lead>('/leads', {
@@ -105,7 +106,7 @@ export function SaveJob({
         body: JSON.stringify({ jobId }),
       }),
     onSuccess: (lead) => {
-      cache.setQueryData(['lead', lead.id], lead);
+      cache.setQueryData(ownerKey(owner, 'lead', lead.id), lead);
       void cache.invalidateQueries({ queryKey: ['leads'] });
     },
   });
@@ -122,7 +123,7 @@ export function SaveJob({
         body: JSON.stringify({ revision: lead.revision, notes: lead.notes, status: 'archived' }),
       }),
     onSuccess: (lead) => {
-      cache.setQueryData(['lead', lead.id], lead);
+      cache.setQueryData(ownerKey(owner, 'lead', lead.id), lead);
       void cache.invalidateQueries({ queryKey: ['leads'] });
     },
   });
@@ -230,9 +231,9 @@ function LeadEditor({
     onSuccess: (lead) => {
       onDirty(false);
       onStatus(lead.status);
-      cache.setQueryData(['lead', record.id], lead);
+      cache.setQueryData(ownerKey(owner, 'lead', record.id), lead);
       void cache.invalidateQueries({ queryKey: ['leads'] });
-      void cache.invalidateQueries({ queryKey: ['lead-history', record.id] });
+      void cache.invalidateQueries({ queryKey: ownerKey(owner, 'lead-history', record.id) });
     },
   });
   const reload = useMutation({
@@ -241,7 +242,7 @@ function LeadEditor({
       onDirty(false);
       setNotes(lead.notes);
       save.reset();
-      cache.setQueryData(['lead', record.id], lead);
+      cache.setQueryData(ownerKey(owner, 'lead', record.id), lead);
     },
   });
   const history = useInfiniteQuery({
