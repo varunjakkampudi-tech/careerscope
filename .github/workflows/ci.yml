@@ -316,6 +316,24 @@ jobs:
       - name: Build the shared domain packages V2 depends on
         run: npm --prefix v2 run build:domain
 
+      # BullMQ is intentionally stricter than the rate-limiter client: the
+      # queue must be noeviction and AOF-backed. The stock Redis service does
+      # not enable AOF, so configure and prove that contract before any test
+      # can mistake an unsuitable cache for the durable queue.
+      - name: Configure the durable queue Redis
+        run: |
+          redis_id="$(docker ps --filter ancestor=redis:7.4.5-alpine --format '{{.ID}}')"
+          if [ -z "$redis_id" ] || [ "$(printf '%s\n' "$redis_id" | wc -l)" -ne 1 ]; then
+            echo "::error::Expected exactly one pinned Redis service container" >&2
+            exit 1
+          fi
+          docker exec "$redis_id" redis-cli CONFIG SET appendonly yes
+          docker exec "$redis_id" redis-cli CONFIG SET appendfsync everysec
+          docker exec "$redis_id" redis-cli CONFIG SET maxmemory 128mb
+          docker exec "$redis_id" redis-cli CONFIG SET maxmemory-policy noeviction
+          docker exec "$redis_id" redis-cli INFO persistence | grep -Eq '^aof_enabled:1\r?$'
+          docker exec "$redis_id" redis-cli CONFIG GET maxmemory-policy | grep -qx 'noeviction'
+
       # A real file, not secrets in the job env, so a failure shows exactly
       # what the suite connected to. This is CI-built and thrown away with the
       # runner; it is not the gitignored local/production .env.
@@ -333,7 +351,9 @@ jobs:
       # check-lead-liveness, enforce-search-retention. None of them skip when
       # a service is missing — they assert the connection is configured and
       # fail loudly, so a missing service here is a red job, never a silent
-      # pass.
+      # pass. The files run serially because each one creates and force-drops
+      # disposable databases; parallel teardown can terminate another file's
+      # active PostgreSQL connections on a constrained shared service.
       - name: Test V2 (integration)
         run: npm --prefix v2 run test:integration
 

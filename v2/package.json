@@ -44,7 +44,7 @@
     "start:worker": "node --env-file=.env apps/workers/search/dist/main.js",
     "start:files": "node --env-file=.env apps/workers/search/dist/files.js",
     "start:web": "npm run start --workspace @careerscope/web",
-    "test:integration": "npm run build:core && node --env-file=.env --import tsx --test packages/core/src/bull-queue.test.ts packages/core/src/database.test.ts packages/core/src/market.test.ts packages/core/src/queue.test.ts packages/core/src/resumes.test.ts packages/core/src/runtime.test.ts scripts/run-scheduled-discovery.test.ts scripts/check-lead-liveness.test.ts scripts/enforce-search-retention.test.ts",
+    "test:integration": "npm run build:core && node --env-file=.env --import tsx --test --test-concurrency=1 packages/core/src/bull-queue.test.ts packages/core/src/database.test.ts packages/core/src/market.test.ts packages/core/src/queue.test.ts packages/core/src/resumes.test.ts packages/core/src/runtime.test.ts scripts/run-scheduled-discovery.test.ts scripts/check-lead-liveness.test.ts scripts/enforce-search-retention.test.ts",
     "test:registration": "node --import tsx scripts/check-test-registration.ts"
   },
   "devDependencies": {

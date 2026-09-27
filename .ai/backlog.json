@@ -4117,6 +4117,7 @@
         "Run 36328261899 remained active until the 40-minute job timeout and was cancelled without a completed integration verdict",
         "Run 36338480336 isolated the failure to the BullMQ integration test: repeated queue connection failures ended at its 60-second timeout before later integration phases could run",
         "v2/packages/core/src/bull-queue.test.ts read the retired QUEUE_REDIS_URL variable and otherwise selected redis://127.0.0.1:56480, while CI exposed Redis at 127.0.0.1:6379 and wrote only REDIS_URL",
+        "Run 36339115982 reached the integration verdict in 1m42s instead of exhausting forty minutes. It exposed two deterministic prerequisites: the stock Redis service lacked the AOF durability BullSearchQueue requires, and parallel test-file database teardown terminated an active sibling connection",
         "Local V2 unit tests pass; this ticket does not misclassify that as evidence for the service-backed or browser phases"
       ],
       "securityImpact": "Restores execution of the browser authentication and axe accessibility checks already registered in this job.",
@@ -4124,7 +4125,7 @@
       "releaseTarget": "3.0.1",
       "ownerAgent": "QA",
       "reviewAgents": ["Infrastructure", "Independent Reviewer"],
-      "currentStep": "Validate the canonical SEARCH_QUEUE_REDIS_URL correction in two consecutive CI runs without weakening any integration or browser coverage.",
+      "currentStep": "Validate the canonical queue endpoint, explicitly durable Redis service, and serialized disposable-database lifecycle in two consecutive CI runs without weakening any integration or browser coverage.",
       "completedSteps": ["Project Manager", "Repository", "QA"],
       "createdAt": "2026-09-27",
       "updatedAt": "2026-09-27",
