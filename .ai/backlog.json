@@ -2938,17 +2938,20 @@
         "FOURTH INTERMITTENT RECORDED 2026-09-25, AND IT IS IN v2 test:unit - THE SUITE BEING CITED AS 55/55 IN THE INTEGRATION PASS. Observed directly in this session: one run returned 53 pass / 2 FAIL / exit 1. An immediately preceding and an immediately following run both returned 55 pass / 0 fail / exit 0, as did two runs from the coordinating session. SO THE SUITE PASSES ABOUT THREE TIMES IN FOUR.",
         "LIMITATION STATED RATHER THAN GLOSSED: the failing test names were NOT captured - the output filter used at the time did not match the failure lines, and the next run was green so there was nothing left to read. WHAT IS ESTABLISHED IS THE FACT OF INTERMITTENCY, NOT ITS LOCATION. Anyone reproducing it should capture the whole log, not a filtered view.",
         "A PLAUSIBLE CAUSE, MARKED AS INFERENCE AND NOT ASSERTED: the AI provider tests in this suite exercise real network behaviour - the run log carries genuine 401, 402, 429, 500 and 503 responses plus an eight-second timeout case - and timing-sensitive network tests are the usual source of this pattern. That is a hypothesis; it has not been confirmed and must not be recorded as the cause.",
-        "CONSEQUENCE FOR HOW THE INTEGRATION PASS IS CITED, which matters more than the flake itself: \"55/55\" IS NOT A STABLE RESULT, IT IS THE COMMON RESULT. A gate that fails one run in four is not a gate yet. Cite the pass with this attached, or the number implies a stability nobody has measured."
+        "CONSEQUENCE FOR HOW THE INTEGRATION PASS IS CITED, which matters more than the flake itself: \"55/55\" IS NOT A STABLE RESULT, IT IS THE COMMON RESULT. A gate that fails one run in four is not a gate yet. Cite the pass with this attached, or the number implies a stability nobody has measured.",
+        "Run 36339115982 captured the V2 cross-talk precisely: bull-queue.test.ts and the password-change database test failed together while test files shared one PostgreSQL service; the latter received 'terminating connection due to administrator command'. test:integration now serializes its nine service-backed files while retaining every assertion.",
+        "Run 36339477079 captured the root browser failure rather than retrying it: Chromium at 320px had headerOverlap=true on /leads while Firefox and WebKit did not. The wordmark is now hidden below 360px, retaining the labelled compass link and the 40px theme and profile controls without overlap.",
+        "2026-09-28 local Node 24.19.0 verification after the responsive correction: root typecheck and production build pass; test:ui passes on Chromium, Firefox and WebKit with overflow=false and headerOverlap=false at 320/390/768/1024/1440px, plus the four additional 320px routes."
       ],
       "securityImpact": "None directly. It degrades the reliability of every other control that depends on these suites being believed.",
       "architectureImpact": "None expected. Likely a test-harness stability fix plus per-run database isolation.",
       "releaseTarget": null,
       "ownerAgent": "QA",
       "reviewAgents": ["Independent Reviewer", "Performance"],
-      "currentStep": "READY. Both flakes characterised with real captured output; neither root-caused.",
+      "currentStep": "QA the serialized V2 database lifecycle and 320px header correction in consecutive full CI runs; the older WebKit click-stability and Firefox network-idle cases remain open until separately reproduced and root-caused.",
       "completedSteps": [],
       "createdAt": "2026-09-25",
-      "updatedAt": "2026-09-25",
+      "updatedAt": "2026-09-28",
       "summary": "A WebKit click-stability timeout and an integration failure that survived a quiet database. Both observed with real output, neither explained, and until now neither owned.",
       "dimension": "engineering"
     },

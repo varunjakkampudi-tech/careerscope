@@ -341,7 +341,7 @@ boundary and needs its own review.
 
 ## One intermittent test failure is unexplained
 
-**Status: OPEN — RECURRED 2026-09-24, candidate file now named**
+**Status: PARTIALLY ADDRESSED 2026-09-27 — consecutive green runs still required**
 
 A reproduced intermittent failure implicated two test files. One was diagnosed:
 tests performing 14 and 8 password-hashing operations were running against a 5 s
@@ -367,6 +367,11 @@ runs:
 Most occurrences were explained: concurrent agents were creating and dropping
 `test_<uuid>` databases on the same PostgreSQL instance, and a `DROP DATABASE`
 terminates other backends. That is genuine cross-talk and not a product defect.
+GitHub Actions run `36339115982` reproduced that signature inside the single
+integration job: the BullMQ file and password-change database test failed
+together, with the latter receiving `terminating connection due to
+administrator command`. The integration script now runs its nine
+service-backed files serially. No file, engine or assertion was removed.
 
 **But it also failed once (41/42) on a demonstrably quiet database with no
 concurrent agent running**, and passed 42/42 on the immediately following run.
@@ -377,6 +382,13 @@ most but **not all** observed occurrences, and this stays OPEN.
 Do not treat this as closed, and do not treat a single green
 `test:integration` run as proof. `market.test.ts` is the strongest candidate
 for the never-identified second file and is where a fix attempt should start.
+
+The browser suite remains only partially addressed. Run `36339477079` captured
+a deterministic Chromium-only header overlap at 320 px; the wordmark now hides
+below 360 px while its labelled icon link and the 40 px theme and profile controls
+remain. The older WebKit click-stability timeout and Firefox network-idle case
+have not been root-caused. A single green browser run must still not be treated
+as stability evidence.
 
 ---
 

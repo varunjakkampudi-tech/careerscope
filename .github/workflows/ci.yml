@@ -332,7 +332,7 @@ jobs:
           docker exec "$redis_id" redis-cli CONFIG SET maxmemory 128mb
           docker exec "$redis_id" redis-cli CONFIG SET maxmemory-policy noeviction
           docker exec "$redis_id" redis-cli INFO persistence | grep -Eq '^aof_enabled:1\r?$'
-          docker exec "$redis_id" redis-cli CONFIG GET maxmemory-policy | grep -qx 'noeviction'
+          docker exec "$redis_id" redis-cli CONFIG GET maxmemory-policy | grep -Eq '^noeviction\r?$'
 
       # A real file, not secrets in the job env, so a failure shows exactly
       # what the suite connected to. This is CI-built and thrown away with the
