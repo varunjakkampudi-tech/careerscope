@@ -155,10 +155,10 @@ test(
       publisher = spawn(
         process.execPath,
         runtimeArguments(new URL('../apps/workers/search/dist/publisher.js', import.meta.url)),
-        { env, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] },
+        // Keep child diagnostics in the CI log. A dead child previously left only
+        // the parent-side delivery timeout, hiding the configuration failure.
+        { env, stdio: ['ignore', 'inherit', 'inherit', 'ipc'] },
       );
-      publisher.stdout?.resume();
-      publisher.stderr?.resume();
       await until(async () => Boolean(await queue!.queue.getJob(command.id)), 'publisher delivery');
       await until(
         async () => (await database!.unpublished()).length === 0,
@@ -207,11 +207,9 @@ test(
         runtimeArguments(new URL('../apps/workers/search/dist/main.js', import.meta.url)),
         {
           env: { ...env, SEARCH_QUEUE_REDIS_URL: restoredEndpoint },
-          stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+          stdio: ['ignore', 'inherit', 'inherit', 'ipc'],
         },
       );
-      worker.stdout?.resume();
-      worker.stderr?.resume();
       await until(
         async () =>
           (await queue!.queue.getJob(command.id))

@@ -47,7 +47,7 @@ test(
     await admin.pool.query(`CREATE DATABASE "${name}"`);
     url.pathname = `/${name}`;
     const database = new Database(url.href);
-    const endpoint = process.env.QUEUE_REDIS_URL ?? 'redis://127.0.0.1:56480';
+    const endpoint = process.env.SEARCH_QUEUE_REDIS_URL ?? 'redis://127.0.0.1:56480';
     const queue = new BullSearchQueue(database, endpoint, `test-${randomUUID()}`);
     const events = new QueueEvents(queue.name, {
       connection: { ...queueConnection(endpoint), maxRetriesPerRequest: null },

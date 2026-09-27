@@ -324,6 +324,7 @@ jobs:
           cat > v2/.env <<'EOF'
           DATABASE_URL=postgres://careerscope:ci-integration-password@127.0.0.1:5432/careerscope
           REDIS_URL=redis://127.0.0.1:6379
+          SEARCH_QUEUE_REDIS_URL=redis://127.0.0.1:6379
           LOCAL_AWS_ENDPOINT=http://127.0.0.1:4566
           EOF
 
@@ -502,7 +503,9 @@ jobs:
         run: |
           cat > v2/.env <<'EOF'
           DATABASE_URL=postgres://careerscope:ci-recovery-password@127.0.0.1:5432/careerscope
+          REDIS_URL=redis://127.0.0.1:6379
           LOCAL_AWS_ENDPOINT=http://127.0.0.1:4566
+          APP_ORIGIN=http://127.0.0.1:3000
           V2_POSTGRES_CONTAINER=careerscope-v2-postgres-ci
           AWS_ACCESS_KEY_ID=test
           AWS_SECRET_ACCESS_KEY=test

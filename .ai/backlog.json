@@ -4045,14 +4045,15 @@
         "The same run reported the PostgreSQL server terminated unexpectedly during backup/restore",
         "2026-09-27 implementation replaces the malformed literal with postgres://careerscope:ci-recovery-password@127.0.0.1:5432/careerscope",
         "Run 36338480336 proves worker crash recovery and database backup/restore both pass after that repair; the earlier server-termination symptom was downstream of the malformed configuration, not a remaining database defect",
-        "Run 36338480336 then failed queue runtime because its isolated recovery runner had no redis:7.4.5-alpine image. The check intentionally inspects rather than implicitly pulls; CI now explicitly pulls the pinned Redis tag before running it"
+        "Run 36338480336 then failed queue runtime because its isolated recovery runner had no redis:7.4.5-alpine image. The check intentionally inspects rather than implicitly pulls; CI now explicitly pulls the pinned Redis tag before running it",
+        "Run 36338726795 proves worker crash recovery and database restore pass and the Redis image precondition is satisfied; its real publisher then exited during configuration because the CI-built recovery environment omitted the required REDIS_URL and APP_ORIGIN keys. CI now supplies both loopback-only values explicitly"
       ],
       "securityImpact": "The test remains constrained to loopback and a disposable named container; no production endpoint is permitted.",
       "architectureImpact": "Recovery validation only.",
       "releaseTarget": "3.0.1",
       "ownerAgent": "Infrastructure",
       "reviewAgents": ["QA", "Independent Reviewer"],
-      "currentStep": "Re-run CI with the explicit Redis image precondition; require queue runtime and full-disk checks to pass before promotion.",
+      "currentStep": "Re-run CI with the complete loopback runtime environment; require queue runtime and full-disk checks to pass before promotion.",
       "completedSteps": ["Project Manager", "Infrastructure"],
       "createdAt": "2026-09-27",
       "updatedAt": "2026-09-27",
@@ -4095,12 +4096,12 @@
     },
     {
       "id": "CS-85",
-      "title": "V2 integration CI exceeds its forty-minute budget without identifying the blocking phase",
-      "userProblem": "The integration job is cancelled at its timeout, so database, browser, and accessibility coverage cannot produce a trustworthy release signal.",
+      "title": "V2 integration CI uses a dead local-default Redis endpoint",
+      "userProblem": "The BullMQ integration test reads a retired environment variable and silently falls back to a developer-only port, so CI cannot reach its Redis service or proceed to browser and accessibility coverage.",
       "source": "CI run 36328261899 and takeover audit, 2026-09-27",
       "area": "testing",
       "priority": "P1",
-      "status": "READY",
+      "status": "QA",
       "size": "M",
       "value": 4,
       "risk": 4,
@@ -4114,6 +4115,8 @@
       ],
       "evidence": [
         "Run 36328261899 remained active until the 40-minute job timeout and was cancelled without a completed integration verdict",
+        "Run 36338480336 isolated the failure to the BullMQ integration test: repeated queue connection failures ended at its 60-second timeout before later integration phases could run",
+        "v2/packages/core/src/bull-queue.test.ts read the retired QUEUE_REDIS_URL variable and otherwise selected redis://127.0.0.1:56480, while CI exposed Redis at 127.0.0.1:6379 and wrote only REDIS_URL",
         "Local V2 unit tests pass; this ticket does not misclassify that as evidence for the service-backed or browser phases"
       ],
       "securityImpact": "Restores execution of the browser authentication and axe accessibility checks already registered in this job.",
@@ -4121,8 +4124,8 @@
       "releaseTarget": "3.0.1",
       "ownerAgent": "QA",
       "reviewAgents": ["Infrastructure", "Independent Reviewer"],
-      "currentStep": "Add phase timing/evidence and reproduce the slow or hanging boundary without weakening coverage.",
-      "completedSteps": ["Project Manager"],
+      "currentStep": "Validate the canonical SEARCH_QUEUE_REDIS_URL correction in two consecutive CI runs without weakening any integration or browser coverage.",
+      "completedSteps": ["Project Manager", "Repository", "QA"],
       "createdAt": "2026-09-27",
       "updatedAt": "2026-09-27",
       "dimension": "engineering"
