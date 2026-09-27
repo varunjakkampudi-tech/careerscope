@@ -4,6 +4,7 @@ import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { QueueEvents, Worker, UnrecoverableError } from 'bullmq';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import { createClient } from 'redis';
 import { Database, users } from '@careerscope/core';
 import { BullSearchQueue, executeBullCommand, queueConnection } from './bull-queue.js';
 import { publishPending } from './dispatch.js';
@@ -20,10 +21,18 @@ test('BullMQ rejects remote endpoints and unsafe queue configuration', async () 
   }
   const database = new Database(process.env.DATABASE_URL!);
   const unsafe = new BullSearchQueue(database, process.env.REDIS_URL!, `test-${randomUUID()}`);
+  const client = createClient({ url: process.env.REDIS_URL! });
+  client.on('error', () => {});
+  await client.connect();
+  const originalAppendOnly = (await client.configGet('appendonly')).appendonly;
+  assert.ok(originalAppendOnly);
   try {
+    await client.configSet('appendonly', 'no');
     await assert.rejects(unsafe.initialize(), /noeviction and AOF/);
   } finally {
     await unsafe.close();
+    await client.configSet('appendonly', originalAppendOnly);
+    await client.quit();
     const cleanup = new BullSearchQueue(database, process.env.REDIS_URL!, unsafe.name);
     try {
       await cleanup.queue.obliterate();
