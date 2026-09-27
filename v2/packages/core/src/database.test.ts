@@ -1203,7 +1203,10 @@ test('password changes revoke sessions and serialize with login and competing ch
     }
   } finally {
     await database.close();
-    await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+    // Do not let cleanup manufacture an uncaught client failure that replaces
+    // the assertion which brought us here. pool.end() must prove this test owns
+    // no remaining connection; a plain DROP fails diagnostically if it does.
+    await admin.pool.query(`DROP DATABASE "${name}"`);
     await admin.close();
   }
 });
