@@ -255,12 +255,6 @@ jobs:
           wait "$server" 2>/dev/null || true
           test "$ok" = 1
 
-      - name: Upload validated Pages artifact
-        if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
-        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
-        with:
-          path: _site
-
   v2-integration:
     name: Test V2 (integration — database, queue, storage, browsers)
     runs-on: ubuntu-latest
@@ -502,7 +496,7 @@ jobs:
       - name: Write a CI-built environment file
         run: |
           cat > v2/.env <<'EOF'
-          DATABASE_URL=******127.0.0.1:5432/careerscope
+          DATABASE_URL=postgres://careerscope:ci-recovery-password@127.0.0.1:5432/careerscope
           LOCAL_AWS_ENDPOINT=http://127.0.0.1:4566
           V2_POSTGRES_CONTAINER=careerscope-v2-postgres-ci
           AWS_ACCESS_KEY_ID=test
@@ -539,31 +533,6 @@ jobs:
         run: |
           docker logs careerscope-v2-postgres-ci 2>&1 | tail -n 40 || true
           docker rm -f careerscope-v2-postgres-ci careerscope-v2-localstack-ci >/dev/null 2>&1 || true
-
-  pages:
-    name: Deploy public mobile jobs
-    needs: [verify, image]
-    if: ${{ always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && needs.verify.result == 'success' && (needs.image.result == 'success' || needs.image.result == 'skipped') }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
-      - uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
-        id: deployment
-
-      - name: Report deployed release
-        env:
-          RELEASE_VERSION: ${{ needs.verify.outputs.version }}
-          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
-        run: |
-          printf '## CareerScope v%s\n\n- Public: %s\n- Admin: %sadmin.html\n' "$RELEASE_VERSION" "$PAGES_URL" "$PAGES_URL" >> "$GITHUB_STEP_SUMMARY"
 
   image:
     name: Container image

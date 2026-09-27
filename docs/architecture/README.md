@@ -211,20 +211,21 @@ flowchart TD
     Change[PR main push or CI dispatch] --> CI[CI verify]
     CI --> Root[Root static checks tests build and browser checks]
     CI --> V2[V2 unit tests only]
-    CI --> Pages[Validated Pages artifact]
+    CI --> PagesCheck[Validate Pages assets]
     Change --> Image[Optional container job]
-    Pages --> PagesGate[Main-only Pages deployment conditions]
-    Image --> PagesGate
-    Trigger[Main push or deploy dispatch] --> Exact[Require exact-revision CI success]
-    Override[Explicit manual override with reason] -. bypasses CI requirement .-> Gate
+    PagesDispatch[Manual Pages dispatch with ref and environment] --> PagesExact[Require exact-revision CI success]
+    PagesExact --> PagesBuild[Revalidate stage and publish Pages]
+    Trigger[Manual deploy dispatch with ref and production environment] --> Exact[Require exact-revision CI success]
     Exact --> Gate[Deploy gate]
     Gate --> Domain[Build and test shared domain packages]
     Domain --> Checks[V2 typecheck lint format build dependency audit]
     Checks --> Ship[Ship committed archive and verify host]
 ```
 
-The existing CI V2 step explicitly excludes database, queue and browser coverage.
-The deployment workflow has an explicit CI override path. Testing release-gate
+CI runs V2 unit, integration, browser, accessibility and recovery jobs; the
+unit step remains explicitly labelled so it cannot imply that coverage alone.
+Deployment and Pages publication have no push, pull-request, schedule or
+workflow-run trigger, and neither exposes a CI bypass. Testing release-gate
 code is not the same as enforcing the current recorded release verdict; the
 audit records that gap. No new engineering check is depicted as a CI dependency
 until the actual workflow includes it.

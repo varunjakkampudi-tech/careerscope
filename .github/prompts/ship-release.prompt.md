@@ -19,8 +19,9 @@ do not use those commands as sufficient release authorization or closure proof.
 
 ## Branching and naming
 
-Trunk-based, because [deploy.yml](../workflows/deploy.yml) deploys `main` after
-a required green CI run for that exact commit.
+Trunk-based. [deploy.yml](../workflows/deploy.yml) is manual-only: an operator
+selects an explicit ref and production environment after CI is green for that
+exact commit. Pushing `main` never deploys.
 
 | Kind           | Branch                    | Example                        |
 | -------------- | ------------------------- | ------------------------------ |

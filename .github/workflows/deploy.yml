@@ -1,11 +1,11 @@
 name: Deploy
 
-# Deploys main to the Hostinger host.
+# Manually deploys an explicitly selected revision to the Hostinger host.
 #
 # Trigger is deliberately narrow. There is no `pull_request` trigger: this
 # repository is public, and a workflow that both runs fork-authored code and
 # holds a deployment key is a supply-chain hole. Secrets are only reachable from
-# pushes to main and from a manual dispatch, both of which require write access.
+# an explicit manual dispatch, which requires write access.
 #
 # The gate job is not decoration either. Deployment happens after the checks
 # below pass against the exact commit being deployed, not after a green run on
@@ -19,28 +19,25 @@ name: Deploy
 # because `needs:` does not span workflows.
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
-      revision:
-        description: 'Commit SHA to deploy (defaults to the current main)'
-        required: false
+      ref:
+        description: 'Branch, tag, or full commit SHA to deploy'
+        required: true
+        default: 'main'
         type: string
-      override_ci:
-        description: 'Deploy even though CI did not pass (requires a reason)'
-        required: false
-        default: false
-        type: boolean
-      override_reason:
-        description: 'Why the CI result is being overridden'
-        required: false
-        type: string
+      environment:
+        description: 'GitHub environment whose protected secrets and approvals apply'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
 
 # One deployment at a time. Cancelling mid-deploy would leave the host with a
 # shipped tree and unbuilt images, so in-progress runs are allowed to finish.
 concurrency:
-  group: deploy-production
+  group: deploy-${{ inputs.environment }}
   cancel-in-progress: false
 
 permissions:
@@ -66,41 +63,21 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
-          ref: ${{ inputs.revision || github.sha }}
+          ref: ${{ inputs.ref }}
 
       - name: Resolve the revision
         id: rev
         run: echo "sha=$(git rev-parse HEAD)" >>"$GITHUB_OUTPUT"
-
-      - name: Record the override
-        if: ${{ inputs.override_ci }}
-        env:
-          REASON: ${{ inputs.override_reason }}
-        run: |
-          set -euo pipefail
-          if [ -z "${REASON//[[:space:]]/}" ]; then
-            echo "::error::override_ci requires override_reason. Refusing to deploy." >&2
-            exit 1
-          fi
-          echo "::warning::CI result overridden for ${{ steps.rev.outputs.sha }}: ${REASON}"
-          {
-            echo "## CI gate overridden"
-            echo "Commit: \`${{ steps.rev.outputs.sha }}\`"
-            echo "By: @${{ github.actor }}"
-            echo "Reason: ${REASON}"
-          } >>"$GITHUB_STEP_SUMMARY"
 
       # Every failure path here refuses. An unreachable API, an unreadable
       # payload and an absent run are all "we cannot show CI passed", which is
       # not the same as "CI passed" - reading one as the other is how a corrupt
       # findings file once turned a blocked release into READY TO DEPLOY.
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        if: ${{ !inputs.override_ci }}
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Require CI success for this exact commit
-        if: ${{ !inputs.override_ci }}
         env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ steps.rev.outputs.sha }}
@@ -114,7 +91,7 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
-          ref: ${{ inputs.revision || github.sha }}
+          ref: ${{ inputs.ref }}
 
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
@@ -154,7 +131,7 @@ jobs:
       # run. It is written down rather than left implied because the gate's
       # green tick otherwise reads as "V2 was tested against this commit here",
       # which it is not: the evidence lives in the CI run for the same SHA, and
-      # the `override_ci` input can waive exactly that evidence.
+      # there is deliberately no input that can waive that evidence.
       - name: Typecheck, lint and build
         working-directory: v2
         run: |
@@ -172,11 +149,11 @@ jobs:
     needs: gate
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    environment: production
+    environment: ${{ inputs.environment }}
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
-          ref: ${{ inputs.revision || github.sha }}
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
 
       - name: Resolve the revision

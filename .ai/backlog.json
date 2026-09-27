@@ -1,6 +1,6 @@
 {
   "$comment": "Product backlog. Canonical machine state - automation reads this, not Markdown. Scores assist prioritisation only; the Project Manager, Client and Architect decide scope. A rejected item does not return without new evidence.",
-  "updatedAt": "2026-09-23T17:46:49.576Z",
+  "updatedAt": "2026-09-27T12:00:00.000Z",
   "items": [
     {
       "id": "CS-1",
@@ -3163,7 +3163,9 @@
         "All 16 existing EmptyState call sites migrated by hand, with the reason chosen from what the call site actually knows, not pattern-substituted",
         "Prove the constraint can fail before trusting it: omitting reason must fail typecheck, and the mutation must be asserted to have applied"
       ],
-      "currentStep": "QA - AC1 IS HALF UNMET AND THAT WAS BURIED IN EVIDENCE: the discriminator is required and enforced, but the half of AC1 saying it must DRIVE icon and copy is deliberately NOT done, because that changes rendered output and the UI is frozen. Promotable only when the freeze lifts or AC1 is re-scoped. Also not CI-executed, and locally verified on Node v22.23.2 against a floor of 24."
+      "currentStep": "QA - AC1 IS HALF UNMET AND THAT WAS BURIED IN EVIDENCE: the discriminator is required and enforced, but the half of AC1 saying it must DRIVE icon and copy is deliberately NOT done, because that changes rendered output and the UI is frozen. Promotable only when the freeze lifts or AC1 is re-scoped. Also not CI-executed, and locally verified on Node v22.23.2 against a floor of 24.",
+      "updatedAt": "2026-09-27",
+      "ownerAgent": "Frontend"
     },
     {
       "source": "Orchestrator self-surfaced during CS-13 re-review cycle 2026-09-25; owner queued the four explicitly",
@@ -3202,7 +3204,9 @@
         "The exact-set comparison is preserved, because it is an allowlist on what reaches the child process rather than a presence checklist",
         "A failure names the specific unexpected or missing keys and tells the reader to extend the allowlist rather than loosen the comparison"
       ],
-      "currentStep": "QA - 3 of 3 criteria met, COUNT RE-TAKEN WITH EVIDENCE 2026-09-25. F-63-1 is a CARRIED RESIDUAL outside the AC set, not an unmet criterion. Promotable on a green CI run; not promoted here."
+      "currentStep": "QA - 3 of 3 criteria met, COUNT RE-TAKEN WITH EVIDENCE 2026-09-25. F-63-1 is a CARRIED RESIDUAL outside the AC set, not an unmet criterion. Promotable on a green CI run; not promoted here.",
+      "updatedAt": "2026-09-27",
+      "ownerAgent": "Infrastructure"
     },
     {
       "source": "Orchestrator self-surfaced during CS-13 re-review cycle 2026-09-25; owner queued the four explicitly",
@@ -3239,7 +3243,8 @@
         "Any change proves itself with a non-English positive case and an English regression case in the same test"
       ],
       "blockedReason": "AC1 requires an owner product decision on which languages are in scope for resume title derivation. The engineering half is NOT blocked and was split out as CS-71 - AC2 and AC3 are decision-independent by their own wording.",
-      "currentStep": "BLOCKED on ONE owner decision only - AC1, which languages are in scope. The engineering half is DONE: AC2 and AC3 were split to CS-71, built and verified, so the silent failure has already ended. Nothing else is outstanding."
+      "currentStep": "BLOCKED on ONE owner decision only - AC1, which languages are in scope. The engineering half is DONE: AC2 and AC3 were split to CS-71, built and verified, so the silent failure has already ended. Nothing else is outstanding.",
+      "updatedAt": "2026-09-27"
     },
     {
       "source": "Orchestrator self-surfaced during CS-13 re-review cycle 2026-09-25; owner queued the four explicitly",
@@ -3306,7 +3311,9 @@
         "Every tracked text file has an explicit eol attribute",
         "review.txt is not rewritten in place, because it is append-only"
       ],
-      "currentStep": "QA - 2 of 2 criteria met, COUNT RE-TAKEN WITH EVIDENCE 2026-09-25. Note the denominator is TWO. Promotable on a green CI run; not promoted here."
+      "currentStep": "QA - 2 of 2 criteria met, COUNT RE-TAKEN WITH EVIDENCE 2026-09-25. Note the denominator is TWO. Promotable on a green CI run; not promoted here.",
+      "updatedAt": "2026-09-27",
+      "ownerAgent": "Infrastructure"
     },
     {
       "id": "CS-66",
@@ -3363,7 +3370,9 @@
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
         "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land."
       ],
-      "currentStep": "QA - 3 of 3 criteria met, COUNT RE-TAKEN WITH EVIDENCE 2026-09-25 (AC3 genuinely exercised only at re-take; the earlier positive control was ASCII). Promotable on a green CI run; not promoted here."
+      "currentStep": "QA - 3 of 3 criteria met, COUNT RE-TAKEN WITH EVIDENCE 2026-09-25 (AC3 genuinely exercised only at re-take; the earlier positive control was ASCII). Promotable on a green CI run; not promoted here.",
+      "updatedAt": "2026-09-27",
+      "ownerAgent": "Backend"
     },
     {
       "id": "CS-67",
@@ -3410,7 +3419,9 @@
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
         "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land."
       ],
-      "currentStep": "QA - F-67-1 IS STILL OPEN AND IT IS IN THE BOARD THE OWNER READS. strip() renders four LITERAL severity cells and never iterates KNOWN_SEVERITIES, so deleting one severity line leaves all six tests green and restores the original defect in one edit. The instance was fixed; the class was not. Otherwise blocked on CI execution alone."
+      "currentStep": "QA - F-67-1 IS STILL OPEN AND IT IS IN THE BOARD THE OWNER READS. strip() renders four LITERAL severity cells and never iterates KNOWN_SEVERITIES, so deleting one severity line leaves all six tests green and restores the original defect in one edit. The instance was fixed; the class was not. Otherwise blocked on CI execution alone.",
+      "updatedAt": "2026-09-27",
+      "ownerAgent": "Code Quality"
     },
     {
       "id": "CS-68",
@@ -3461,7 +3472,8 @@
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
         "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land."
       ],
-      "currentStep": "READY. Two green root suites were wired into engineering:test; the two red ones were deliberately NOT wired and are recorded with their diagnosis. The suite once mistaken for a release blocker is CORRECT - it detected a Node runtime below the declared floor, which is CS-74. AC2 may now be satisfied by the root registration guard the infrastructure session added; this session has not verified that and does not claim it."
+      "currentStep": "READY. Two green root suites were wired into engineering:test; the two red ones were deliberately NOT wired and are recorded with their diagnosis. The suite once mistaken for a release blocker is CORRECT - it detected a Node runtime below the declared floor, which is CS-74. AC2 may now be satisfied by the root registration guard the infrastructure session added; this session has not verified that and does not claim it.",
+      "updatedAt": "2026-09-27"
     },
     {
       "id": "CS-69",
@@ -3487,7 +3499,8 @@
         "A PIPELINE WILL NOT FIX THIS, which is why it is filed separately from every CI-execution item. CI would regenerate the baseline on every run and pass. The defect is that the artefact is not versioned, not that nothing runs.",
         "SCOPE: CS-32s rejection is ONE INSTANCE of this, not the whole of it. The same pattern makes the UI-freeze claim unverifiable on the tickets with untracked-only evidence, and it affects the PROOF rather than just the diff, so it is broader than the untracked-baseline problem already recorded elsewhere."
       ],
-      "currentStep": "READY. Verified at source rather than taken on report: test-results/ is gitignored in two places, the visual baseline directory sits inside it, and ZERO baselines are tracked. The structural consequence is the finding - on a fresh clone the first run generates its own baseline, so the check cannot fail. A pipeline will not fix it."
+      "currentStep": "READY. Verified at source rather than taken on report: test-results/ is gitignored in two places, the visual baseline directory sits inside it, and ZERO baselines are tracked. The structural consequence is the finding - on a fresh clone the first run generates its own baseline, so the check cannot fail. A pipeline will not fix it.",
+      "updatedAt": "2026-09-27"
     },
     {
       "id": "CS-70",
@@ -3512,7 +3525,8 @@
         "THIS IS THE BLOCKER UNDER TWO OTHER TICKETS. CS-19 AC4 cannot be met without it, and CS-51 recorded the same residual. Both said in their evidence that a backend ticket was needed; neither could file one, so the need was documented repeatedly and never scheduled. Filing it is the entire unlock.",
         "TEST TRAP RECORDED IN AC3 BEFORE IMPLEMENTATION: asserting that a duplicate save \"does not error\" passes against an implementation that silently creates a second lead. The assertion must be on the LEAD COUNT being unchanged, paired with a positive that a genuinely new job DOES create one - otherwise the negative passes against a save path that saves nothing at all."
       ],
-      "currentStep": "READY. Blocks CS-19 AC4 and carries CS-51 disclosed residual. The API exposes no job-to-lead lookup, so an already-saved job renders \"Save Job\" with aria-pressed=\"false\" - a control asserting a state it does not know. Both tickets asked for this in prose and neither could file it."
+      "currentStep": "READY. Blocks CS-19 AC4 and carries CS-51 disclosed residual. The API exposes no job-to-lead lookup, so an already-saved job renders \"Save Job\" with aria-pressed=\"false\" - a control asserting a state it does not know. Both tickets asked for this in prose and neither could file it.",
+      "updatedAt": "2026-09-27"
     },
     {
       "id": "CS-71",
@@ -3550,7 +3564,9 @@
         "TOKEN SCAN 2026-09-25 RETURNED CLEAN FOR THIS TICKET - every criterion is named by identifier somewhere in the evidence. RECORDED AT ITS REAL STRENGTH AND NO HIGHER: THAT MEANS \"NO CRITERION IS UNMENTIONED\", NOT \"ALL CRITERIA ARE MET\". The COUNT NOT YET RE-TAKEN label STAYS, because a proxy that asks whether the token AC2 appears is not asking whether AC2 is satisfied. Nothing suggests a problem here; nothing has verified one either.",
         "COUNT DISCHARGED 2026-09-25 - 3 OF 3, on the independent verification already recorded here: AC1 a three-state TitleDerivation WHERE THE CRITERION ASKED FOR TWO, AC2 a single test carrying Spanish -> undeterminable, English -> derived and empty -> no-content ASSERTED NOT-EQUAL to undeterminable, AC3 ROLE_WORDS confirmed unextended. The earlier label was UNDERSTATING a ticket in good shape, which was the safe direction; it is now stated at its real strength."
       ],
-      "currentStep": "QA - 3 of 3 criteria met, COUNT RE-TAKEN 2026-09-25. Promotable on a green CI run; not promoted here."
+      "currentStep": "QA - 3 of 3 criteria met, COUNT RE-TAKEN 2026-09-25. Promotable on a green CI run; not promoted here.",
+      "updatedAt": "2026-09-27",
+      "ownerAgent": "Backend"
     },
     {
       "id": "CS-72",
@@ -3615,7 +3631,9 @@
         "A NEW AND RARER ACT RECORDED FROM CS-31 F-4: PROTECTING A CHECK FROM A FUTURE WELL-INTENTIONED REPAIR. The 1x1 hidden assertion is knowingly over-strict and was left over-strict, with the reason written down, BECAUSE LOOSENING IT WOULD REOPEN THE DEFECT IT CLOSES. Everything else this run has been about making checks able to fail; THIS IS ABOUT KEEPING A CHECK ABLE TO FAIL AFTER THE NEXT PERSON READS IT AND THINKS IT TOO STRICT.",
         "IT IS THE SAME INSIGHT AS THE RUNBOOK REMOVAL NOTE - \"do not reintroduce a second criterion here\" - arrived at independently in a different medium. BOTH ANTICIPATE A PLAUSIBLE, WELL-MEANT FUTURE EDIT AND LEAVE THE ARGUMENT AGAINST IT IN PLACE. A rule with its reason attached survives a reader who disagrees with it; a bare rule does not."
       ],
-      "currentStep": "QA - the namesCriterion defect is FIXED and re-proven on the experiment that found it. The gate is proven able to fail for the four founding cases, proven to still discriminate against three negative controls, and reports 1 blocking across 17 UAT tickets. It runs in ADVISORY mode (exit 0) and does not yet fail the build. DO NOT restate the earlier \"0 blocking\" claim."
+      "currentStep": "QA - the namesCriterion defect is FIXED and re-proven on the experiment that found it. The gate is proven able to fail for the four founding cases, proven to still discriminate against three negative controls, and reports 1 blocking across 17 UAT tickets. It runs in ADVISORY mode (exit 0) and does not yet fail the build. DO NOT restate the earlier \"0 blocking\" claim.",
+      "updatedAt": "2026-09-27",
+      "ownerAgent": "Code Quality"
     },
     {
       "id": "CS-73",
@@ -3643,7 +3661,8 @@
         "THE GENERAL FORM, AND IT IS WHY THIS BELONGS IN THE SAME VALIDATOR: CHANGING `status` AND CHANGING THE FIELDS THAT DESCRIBE THE STATUS ARE TWO SEPARATE ACTS, AND NOTHING ENFORCES THAT THE SECOND FOLLOWS THE FIRST. The board renders currentStep, so every one of those six was showing a reader a status the ticket did not hold. This is the same class as ownerAgent/architectureImpact drift and should be one check, not two.",
         "RECORDED AGAINST THIS SESSION RATHER THAN AS AN OBSERVATION ABOUT THE BOARD: the defect was introduced by the same session that spent the day correcting it on other tickets. That is the argument for the validator rather than for more care."
       ],
-      "currentStep": "READY. Filed after the same shape appeared three times (CS-59 safe, CS-61 contradicted, CS-54 disclosed only in evidence). Its second criterion is the load-bearing one: it must FAIL on CS-54 as it stood and PASS on CS-59. Note that status-versus-currentStep drift belongs in the same validator - five instances of it were found and fixed on this board today."
+      "currentStep": "READY. Filed after the same shape appeared three times (CS-59 safe, CS-61 contradicted, CS-54 disclosed only in evidence). Its second criterion is the load-bearing one: it must FAIL on CS-54 as it stood and PASS on CS-59. Note that status-versus-currentStep drift belongs in the same validator - five instances of it were found and fixed on this board today.",
+      "updatedAt": "2026-09-27"
     },
     {
       "id": "CS-74",
@@ -3681,7 +3700,9 @@
         "AND THE SUSPICION THAT POINTED AT A HARDCODED FLOOR WAS MISLEADING, checked rather than relayed: every literal 24 in that file is IN A COMMENT (lines 7, 70, 71, 185, 187), including the one documenting the N-2 fix. The comparison itself uses the parsed value. The reviewer hedged correctly - \"if it is hardcoded, AC2 is not merely unevidenced, it is unmet\" - and the check settled it the other way.",
         "AC3 IS GENUINELY HALF-MET, AND THE MISSING HALF IS THE PAIRED POSITIVE CONTROL: the criterion demands a below-floor rejection AND a compliant version passing IN THE SAME RUN. The rejection is live and recorded; the compliant half is nowhere, AND CANNOT BE PRODUCED ON A MACHINE RUNNING NODE 22. The acceptance criterion that most explicitly demands a positive control is the one missing it. Unlock is a Node 24 runtime - which makes this the fifth ticket blocked by something environmental rather than by work."
       ],
-      "currentStep": "QA - COUNT CORRECTED: 2 of 3 criteria met, AC3 HALF-MET. AC1 met and evidenced. AC2 met in code and NOW evidenced (the floor is parsed from engines.node, not hardcoded). AC3 requires a below-floor rejection AND a compliant version passing IN THE SAME RUN - only the rejection exists, and the compliant half CANNOT be produced on this machine, which runs Node 22. Unlock is a Node 24 runtime. Not CI-executed."
+      "currentStep": "QA - COUNT CORRECTED: 2 of 3 criteria met, AC3 HALF-MET. AC1 met and evidenced. AC2 met in code and NOW evidenced (the floor is parsed from engines.node, not hardcoded). AC3 requires a below-floor rejection AND a compliant version passing IN THE SAME RUN - only the rejection exists, and the compliant half CANNOT be produced on this machine, which runs Node 22. Unlock is a Node 24 runtime. Not CI-executed.",
+      "updatedAt": "2026-09-27",
+      "ownerAgent": "Code Quality"
     },
     {
       "id": "CS-75",
@@ -3706,7 +3727,8 @@
         "WHY IT IS MORE THAN AN ORDINARY ORPHAN: CS-51s AC3 IS ACCEPTED, and its browser assertions pass PARTLY BECAUSE THE HARNESS COMPENSATES FOR THIS DEFECT. The error state does render, so AC3 is genuinely met - but the evidence for an accepted criterion is standing on a workaround for a live production-path defect, and that was invisible to anyone reading the verdict.",
         "THE SECOND CRITERION IS THE LOAD-BEARING ONE: removing the harness workaround and having CS-51s assertions still pass is what distinguishes \"the production path was fixed\" from \"the test was re-tuned around it\". Without that step this ticket could be closed by changing the test."
       ],
-      "currentStep": "READY. Filed from CS-51 ev[7]. Its second criterion is the one that matters: removing CS-51 harness workaround and having its AC3 assertions STILL pass is what distinguishes \"the production path was fixed\" from \"the test was re-tuned around it\"."
+      "currentStep": "READY. Filed from CS-51 ev[7]. Its second criterion is the one that matters: removing CS-51 harness workaround and having its AC3 assertions STILL pass is what distinguishes \"the production path was fixed\" from \"the test was re-tuned around it\".",
+      "updatedAt": "2026-09-27"
     },
     {
       "id": "CS-76",
@@ -3769,7 +3791,9 @@
         "SITE 11 IS THE EXCEPTION AND BELONGS IN THE RECORD: the synthetic provider yielded a job MISSING hasFullDescription, so it was never a valid RawJob. NOT A DISABLED ASSERTION - A FIXTURE THAT DID NOT MATCH THE PRODUCTION SHAPE, invisible until v2 tests were type-checked for the first time. The field is load-bearing at collect.ts:121 (whether to fetch detail) and normalize.ts:83 and :463 (description handling and dedup ranking), so the fixture was exercising a path the real shape would never take.",
         "A QUESTION ANSWERED \"NONE, BUT HERE IS WHAT I FOUND INSTEAD\" IS WORTH MORE THAN ONE ANSWERED WITH A NUMBER. The question asked how many assertions were disabled; the honest answer was none, plus one defect of a class nobody had asked about."
       ],
-      "currentStep": "QA - 4 of 5 criteria met and the chain is GREEN: npm run typecheck exits 0 with \"PASS 15 v2 test files type-check clean (no emit)\", verified independently. AC1 IS STILL NOT MET: 16 of 17 v2 test files are covered, and v2/apps/workers/search/src/collect.test.ts is deliberately out of scope. Not promotable until AC1 is satisfied or amended with the exclusion written into the criterion. AC3 falsification of the new project is not yet recorded."
+      "currentStep": "QA - 4 of 5 criteria met and the chain is GREEN: npm run typecheck exits 0 with \"PASS 15 v2 test files type-check clean (no emit)\", verified independently. AC1 IS STILL NOT MET: 16 of 17 v2 test files are covered, and v2/apps/workers/search/src/collect.test.ts is deliberately out of scope. Not promotable until AC1 is satisfied or amended with the exclusion written into the criterion. AC3 falsification of the new project is not yet recorded.",
+      "updatedAt": "2026-09-27",
+      "ownerAgent": "Code Quality"
     },
     {
       "id": "CS-77",
@@ -3820,7 +3844,9 @@
         "THE BEST ARTEFACT OF THE RUN IS A SENTENCE IN THAT COMMENT BLOCK: \"Widening the parameter alone is NOT sufficient, AND I CHECKED RATHER THAN ASSUMED.\" It is the rule this entire run discovered, WRITTEN INTO THE CODE BY THE SESSION THAT APPLIED IT, AT THE MOMENT IT APPLIED IT - not into a retrospective. Anyone who later tries the simpler fix finds the reason it fails, in the file, BEFORE they try it. A retrospective is read by people who already know; a comment is read by the person about to make the mistake.",
         "BOUNDED TYPECHECK EVIDENCE - RE-WORDED FROM \"PROVISIONAL\" 2026-09-25, AND THE VERB CHANGE IS THE POINT. This ticket cites a BARE `tsc -b`, which is incremental and was observed exiting 0 while a genuine production error existed (collect.ts TS2353) because a stale .tsbuildinfo declared the project up to date. THAT DOES NOT RETRACT THE RESULT AND DOES NOT MAKE IT SUSPECT: the command ran, it reported truthfully on what it examined, and the source it examined did compile. IT BOUNDS THE RESULT. The run was NARROWER THAN THE CLAIM IT WAS QUOTED FOR - it is evidence that the projects tsc considered up to date had no new errors, not evidence that the tree is clean. \"PROVISIONAL\" WAS THE WRONG WORD BECAUSE IT IMPLIES THE RESULT MIGHT BE FALSE. It was not false; it was narrow. Re-verify the wider claim with `tsc -b --force` or a cleared .tsbuildinfo - and note that v2 typecheck now begins with --force, so the npm script no longer has this bound. The original lines are deliberately kept: they record what was actually run. NOTHING IS DEMOTED FOR THIS."
       ],
-      "currentStep": "QA - implemented and independently verified. Parse precedes hash (database.ts:62 then :63), so the idempotency hash is over the canonical form; production compile clean after a change to a deployed-path file. AC3 falsification of the collision fix is still not recorded, so this stays QA."
+      "currentStep": "QA - implemented and independently verified. Parse precedes hash (database.ts:62 then :63), so the idempotency hash is over the canonical form; production compile clean after a change to a deployed-path file. AC3 falsification of the collision fix is still not recorded, so this stays QA.",
+      "updatedAt": "2026-09-27",
+      "ownerAgent": "Backend"
     },
     {
       "id": "CS-78",
@@ -3865,7 +3891,9 @@
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
         "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land."
       ],
-      "currentStep": "QA - fixed in v2/apps/workers/search/src/collect.ts at 18:41:29 by removing the application override entirely. AC1 and AC2 appear satisfied; the mutation proof required by AC4 and the architecture-record statement required by AC3 are NOT yet recorded."
+      "currentStep": "QA - fixed in v2/apps/workers/search/src/collect.ts at 18:41:29 by removing the application override entirely. AC1 and AC2 appear satisfied; the mutation proof required by AC4 and the architecture-record statement required by AC3 are NOT yet recorded.",
+      "updatedAt": "2026-09-27",
+      "ownerAgent": "Senior Engineer"
     },
     {
       "id": "CS-79",
@@ -3892,7 +3920,8 @@
         "THIS IS A LIVE HAZARD RATHER THAN A THEORETICAL ONE: it was hit tonight during the L-1 falsification, and three sessions have been making exactly this kind of scripted edit. It also bit in a second way - an Add-Content append with a PowerShell backtick-n writes CRLF on Windows, which introduced CR bytes into an LF-only file and tripped the COMPLIANCE half of the check rather than the completeness half being tested.",
         "P3 BECAUSE THE BLAST RADIUS IS SMALL AND THE FIX IS ONE BYTE, NOT BECAUSE THE FAILURE IS MILD. A silently overridden eol declaration on the file that governs line endings would be found the way CS-65 was found - late, by its consequences."
       ],
-      "currentStep": "READY. Append a single newline to .gitattributes and prove an appended rule lands on its own line. Shared root file - not owned by the orchestrator; route to the session holding .gitattributes (CS-65 work)."
+      "currentStep": "READY. Append a single newline to .gitattributes and prove an appended rule lands on its own line. Shared root file - not owned by the orchestrator; route to the session holding .gitattributes (CS-65 work).",
+      "updatedAt": "2026-09-27"
     },
     {
       "id": "CS-80",
@@ -3922,7 +3951,8 @@
         "CS-31 IS A CONCRETE INSTANCE OF THE COST AND SHOULD BE COUNTED AS SUCH: all three of its acceptance criteria are independently verified met, its evidence ends \"awaiting promotion on the next green CI run\", AND NO SUCH RUN CAN OCCUR WHILE NOTHING IS COMMITTED. It is FINISHED WORK PARKED BEHIND AUTHORISATION, and recording it as outstanding would misrepresent both the work and the blocker.",
         "THAT IS A SECOND, DIFFERENT COST FROM THE NO-BASELINE ONE THIS TICKET WAS FILED ABOUT. No baseline means reviews CANNOT BE COMPLETED; no CI run means completed work CANNOT BE PROMOTED. THE FIRST CORRUPTS EVIDENCE, THE SECOND STALLS DELIVERY, and they are independent - fixing one would not fix the other."
       ],
-      "currentStep": "BLOCKED on owner authorisation. Escalated to the owner blocker list. No agent may commit, and this ticket does not change that."
+      "currentStep": "BLOCKED on owner authorisation. Escalated to the owner blocker list. No agent may commit, and this ticket does not change that.",
+      "updatedAt": "2026-09-27"
     },
     {
       "id": "CS-81",
@@ -3952,7 +3982,147 @@
         "DO NOT SIMPLY WIDEN THE RANGE TO ALLOW ZWNJ AND ZWJ. They are genuinely used in homograph and spoofing attacks, which is WHY they sit in refusal sets. Unicode UTS #39 treats them as restricted BUT PERMITS THEM IN SPECIFIC CONTEXTS, such as between Indic consonants around a virama. THE CORRECT FIX IS CONTEXT-SENSITIVE AND IS A REAL DESIGN DECISION, NOT A ONE-LINE RANGE EDIT.",
         "FILED SEPARATELY FROM CS-66 DELIBERATELY: CS-66 IS ABOUT HOSTILE INPUT BEING CONSTRAINED; THIS IS ABOUT LEGITIMATE INPUT BEING DESTROYED. They will want different answers, and folding this into CS-66 would let a hostile-input verdict close a correctness defect."
       ],
-      "currentStep": "READY. Add the ZWNJ Devanagari fixture and prove it RED first, then decide the joiner policy with the failure visible. Touches packages/shared (V1) and both consuming paths. Not owned by the orchestrator."
+      "currentStep": "READY. Add the ZWNJ Devanagari fixture and prove it RED first, then decide the joiner policy with the failure visible. Touches packages/shared (V1) and both consuming paths. Not owned by the orchestrator.",
+      "updatedAt": "2026-09-27"
+    },
+    {
+      "id": "CS-82",
+      "title": "Deployment and Pages publication must be manual-only",
+      "userProblem": "A push to main could deploy the production host and publish GitHub Pages without an explicit release decision.",
+      "source": "owner takeover directive, 2026-09-27",
+      "area": "infrastructure",
+      "priority": "P0",
+      "status": "QA",
+      "size": "S",
+      "value": 5,
+      "risk": 5,
+      "complexity": 2,
+      "dependencies": ["CS-7"],
+      "acceptanceCriteria": [
+        "Every deployment, release, or publication workflow has workflow_dispatch as its only trigger",
+        "Host deployment requires explicit ref and environment inputs, exact-revision CI, environment protection, and exposes no CI bypass",
+        "GitHub Pages publication requires explicit ref and environment inputs and a green CI run for the resolved commit",
+        "An executable repository check fails if push-triggered deployment or Pages publication returns"
+      ],
+      "evidence": [
+        "2026-09-27 baseline: deploy.yml had push: branches: [main] and ci.yml contained actions/deploy-pages in a main-push-reachable job",
+        "Implementation removes the deploy push trigger, moves Pages publication to publish-pages.yml, and extends check-deploy-gate.mjs with negative trigger/publication assertions",
+        "QA remains open until the updated checks pass and the committed workflow is observed on GitHub"
+      ],
+      "securityImpact": "Removes implicit production mutation from ordinary source-control events and keeps protected-environment approvals in the release path.",
+      "architectureImpact": "Separates continuous validation from explicit host and Pages publication workflows.",
+      "releaseTarget": "3.0.1",
+      "ownerAgent": "Infrastructure",
+      "reviewAgents": ["QA", "Security", "Independent Reviewer"],
+      "currentStep": "QA",
+      "completedSteps": ["Project Manager", "System Designer", "Infrastructure"],
+      "createdAt": "2026-09-27",
+      "updatedAt": "2026-09-27",
+      "dimension": "engineering"
+    },
+    {
+      "id": "CS-83",
+      "title": "Recovery CI uses a malformed PostgreSQL URL and backup restore still terminates",
+      "userProblem": "The recovery job cannot establish credible crash and restore evidence because one connection string is invalid and the backup check loses its database connection.",
+      "source": "CI run 36328261899 and takeover audit, 2026-09-27",
+      "area": "testing",
+      "priority": "P0",
+      "status": "READY",
+      "size": "M",
+      "value": 5,
+      "risk": 5,
+      "complexity": 3,
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "The CI-built recovery DATABASE_URL is syntactically valid and uses only the disposable loopback database",
+        "Crash recovery, database backup and restore, queue runtime, and full-disk checks all complete in the recovery job",
+        "The backup failure is root-caused from logs; no retry or widened timeout is accepted as the fix",
+        "A successful GitHub Actions run records evidence for the committed revision"
+      ],
+      "evidence": [
+        "Run 36328261899 wrote DATABASE_URL=******127.0.0.1:5432/careerscope and failed configuration validation",
+        "The same run reported the PostgreSQL server terminated unexpectedly during backup/restore",
+        "2026-09-27 implementation replaces the malformed literal with postgres://careerscope:ci-recovery-password@127.0.0.1:5432/careerscope; backup diagnosis and a green workflow remain open"
+      ],
+      "securityImpact": "The test remains constrained to loopback and a disposable named container; no production endpoint is permitted.",
+      "architectureImpact": "Recovery validation only.",
+      "releaseTarget": "3.0.1",
+      "ownerAgent": "Infrastructure",
+      "reviewAgents": ["QA", "Independent Reviewer"],
+      "currentStep": "Root-cause the backup/restore termination after the configuration fix runs in CI.",
+      "completedSteps": ["Project Manager", "Infrastructure"],
+      "createdAt": "2026-09-27",
+      "updatedAt": "2026-09-27",
+      "dimension": "engineering"
+    },
+    {
+      "id": "CS-84",
+      "title": "Reconcile grouped dependency updates after the baseline CI is green",
+      "userProblem": "Eleven overlapping Dependabot pull requests obscure the release signal, while accepting them independently would create an unreviewable dependency state.",
+      "source": "GitHub hygiene inventory, 2026-09-27",
+      "area": "dependencies",
+      "priority": "P2",
+      "status": "BLOCKED",
+      "size": "M",
+      "value": 3,
+      "risk": 3,
+      "complexity": 3,
+      "dependencies": ["CS-83"],
+      "acceptanceCriteria": [
+        "Root, V2, and GitHub Actions updates are regenerated as non-overlapping groups against current main",
+        "Lockfiles, declared engine compatibility, audit results, typechecks, builds, unit and integration suites pass",
+        "Major upgrades are reviewed for migration notes rather than accepted solely because Dependabot opened them"
+      ],
+      "evidence": [
+        "2026-09-27 inventory found 11 open bot PRs, including grouped PRs that supersede individual TypeScript, ESLint, globals, plugin-react and @types/node PRs",
+        "Current PR checks inherit baseline workflow failures, so no bot PR provides a clean compatibility decision",
+        "Automated changes are reproducible; the obsolete PRs may be closed without losing unique human-authored work"
+      ],
+      "securityImpact": "Keeps dependency remediation visible while avoiding unreviewed major-version churn.",
+      "architectureImpact": "No intended product architecture change.",
+      "releaseTarget": "backlog",
+      "ownerAgent": "Code Quality",
+      "reviewAgents": ["Security", "QA"],
+      "currentStep": "Blocked until baseline CI is green; then regenerate one coherent dependency change set.",
+      "completedSteps": ["Project Manager", "Repository"],
+      "createdAt": "2026-09-27",
+      "updatedAt": "2026-09-27",
+      "dimension": "engineering",
+      "blockedReason": "Dependency compatibility cannot be distinguished from baseline CI failures until CS-83 and the long-running integration job are resolved."
+    },
+    {
+      "id": "CS-85",
+      "title": "V2 integration CI exceeds its forty-minute budget without identifying the blocking phase",
+      "userProblem": "The integration job is cancelled at its timeout, so database, browser, and accessibility coverage cannot produce a trustworthy release signal.",
+      "source": "CI run 36328261899 and takeover audit, 2026-09-27",
+      "area": "testing",
+      "priority": "P1",
+      "status": "READY",
+      "size": "M",
+      "value": 4,
+      "risk": 4,
+      "complexity": 3,
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "The exact phase consuming the budget is identified from timestamped CI evidence",
+        "The underlying process lifecycle, wait, or workload defect is fixed without skipping an engine, assertion, or service-backed suite",
+        "Failure artifacts and child-process cleanup survive every exit path",
+        "Two consecutive integration workflow runs complete within the declared budget"
+      ],
+      "evidence": [
+        "Run 36328261899 remained active until the 40-minute job timeout and was cancelled without a completed integration verdict",
+        "Local V2 unit tests pass; this ticket does not misclassify that as evidence for the service-backed or browser phases"
+      ],
+      "securityImpact": "Restores execution of the browser authentication and axe accessibility checks already registered in this job.",
+      "architectureImpact": "CI process lifecycle and observability only unless diagnosis finds an application shutdown defect.",
+      "releaseTarget": "3.0.1",
+      "ownerAgent": "QA",
+      "reviewAgents": ["Infrastructure", "Independent Reviewer"],
+      "currentStep": "Add phase timing/evidence and reproduce the slow or hanging boundary without weakening coverage.",
+      "completedSteps": ["Project Manager"],
+      "createdAt": "2026-09-27",
+      "updatedAt": "2026-09-27",
+      "dimension": "engineering"
     }
   ]
 }

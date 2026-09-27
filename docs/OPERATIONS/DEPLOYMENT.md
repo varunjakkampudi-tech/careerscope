@@ -43,6 +43,17 @@ All under [infra/v3](../../infra/v3).
 
 ## Normal deployment
 
+The supported release path is the GitHub Actions **Deploy** workflow. It has
+only a `workflow_dispatch` trigger. Supply the reviewed branch, tag, or full
+commit SHA in `ref` and select `production`; protected-environment approvals
+and secrets apply. The workflow resolves the ref once, requires a successful CI
+run for that exact SHA, builds an archive from that commit, and verifies live
+provenance. A push to `main` runs CI but never deploys.
+
+The commands below document the equivalent operator procedure for recovery.
+They are not an automatic release path and do not replace the exact-revision CI
+gate.
+
 ```bash
 # 1. Commit. The archive comes from a revision, not from the working tree.
 git status --porcelain     # must be empty

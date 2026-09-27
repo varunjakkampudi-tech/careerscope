@@ -5,7 +5,8 @@ is running right now". Every other document is scoped to one area; this one is
 the map. If something here disagrees with another document, this file is wrong
 and should be fixed — not worked around.
 
-Last reconciled against the running system: 2026-09-18.
+Last reconciled against repository state: 2026-09-27. Live production was not
+changed during this reconciliation.
 
 ---
 
@@ -45,18 +46,20 @@ and `packages/resume` libraries that V2 builds against (`v2 build:domain`).
 
 ## Branch semantics
 
-Trunk-based. `main` is the integration branch and the only branch that deploys:
-[deploy.yml](../.github/workflows/deploy.yml) ships `main` to the host after a
-required green CI run for that exact commit.
+Trunk-based. `main` is the integration branch. Nothing deploys automatically:
+[deploy.yml](../.github/workflows/deploy.yml) is manual-only and ships an
+explicitly selected ref after a required green CI run for that exact commit.
+[publish-pages.yml](../.github/workflows/publish-pages.yml) separately performs
+manual-only GitHub Pages publication with the same exact-revision CI gate.
 
-| Branch                       | Meaning                       | Rule                                 |
-| ---------------------------- | ----------------------------- | ------------------------------------ |
-| `main`                       | integration and deploy branch | Every push is a deployment candidate |
-| `feat/<ticket>-<slug>`       | one ticket's work             | Short-lived, rebased on `main`       |
-| `fix/<ticket>-<slug>`        | defect fix                    | Short-lived                          |
-| `chore/` `docs/` `infra/`    | cleanup, docs, infrastructure | Short-lived                          |
-| `hotfix/<version>-<slug>`    | production emergency          | Straight to `main`, then tagged      |
-| `feature/v2-local-migration` | historical V2 baseline        | Superseded; `main` now carries V2    |
+| Branch                       | Meaning                       | Rule                              |
+| ---------------------------- | ----------------------------- | --------------------------------- |
+| `main`                       | integration branch            | Pushes run CI; they never deploy  |
+| `feat/<ticket>-<slug>`       | one ticket's work             | Short-lived, rebased on `main`    |
+| `fix/<ticket>-<slug>`        | defect fix                    | Short-lived                       |
+| `chore/` `docs/` `infra/`    | cleanup, docs, infrastructure | Short-lived                       |
+| `hotfix/<version>-<slug>`    | production emergency          | Straight to `main`, then tagged   |
+| `feature/v2-local-migration` | historical V2 baseline        | Superseded; `main` now carries V2 |
 
 Tags are `v<semver>`, applied to the deployed commit **after** the live version
 check passes. Commits follow Conventional Commits and name their ticket, for

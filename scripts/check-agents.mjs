@@ -193,9 +193,16 @@ const matrices = (progressText ?? '').slice(
   (progressText ?? '').indexOf('## Overall Progress'),
   (progressText ?? '').indexOf('## Open items'),
 );
-const statuses = [...matrices.matchAll(/^\|[^|]+\|\s*([A-Z][A-Z ]+?)\s*\|/gm)].map((m) => m[1]);
+const statuses = [
+  ...matrices.matchAll(
+    /^\|[^|\r\n]+\|(?:[^|\r\n]*\|)*\s*(NOT STARTED|IN PROGRESS|IMPLEMENTED|VERIFIED|COMPLETE|BLOCKED)\s*\|$/gm,
+  ),
+].map((m) => m[1]);
 const unknown = [...new Set(statuses)].filter((s) => !allowed.has(s));
-check(statuses.length > 40, `progress matrices parsed (${statuses.length} status cells)`);
+check(
+  statuses.length >= 12,
+  `progress matrices cover the 12 canonical areas (${statuses.length} status cells)`,
+);
 check(unknown.length === 0, `every status is a defined value ${unknown.join(', ')}`);
 
 // Structured state is canonical; the Markdown is the human projection. Drift

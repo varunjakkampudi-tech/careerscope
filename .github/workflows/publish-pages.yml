@@ -1,0 +1,89 @@
+name: Publish Pages
+
+# Publication is deliberately manual. CI validates and stages the same assets,
+# but no push, pull request, schedule, or upstream workflow may publish them.
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch, tag, or full commit SHA to publish'
+        required: true
+        default: 'main'
+        type: string
+      environment:
+        description: 'GitHub Pages environment whose approvals apply'
+        required: true
+        default: 'github-pages'
+        type: choice
+        options:
+          - github-pages
+
+concurrency:
+  group: pages-${{ inputs.environment }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+
+env:
+  NODE_VERSION: '24'
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+jobs:
+  publish:
+    name: Validate and publish the selected revision
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Resolve the revision
+        id: rev
+        run: echo "sha=$(git rev-parse HEAD)" >>"$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Require CI success for this exact commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ steps.rev.outputs.sha }}
+        run: node scripts/require-ci-success.mjs
+
+      - name: Install
+        run: npm ci
+
+      - name: Validate and stage Pages assets
+        run: |
+          npm run version:check
+          npm run pages:test
+          npm run pages:stage
+          npm run pages:workspace:test
+
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+
+      - name: Upload the validated Pages artifact
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+        with:
+          path: _site
+
+      - name: Publish
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+
+      - name: Report the published revision
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+          SHA: ${{ steps.rev.outputs.sha }}
+        run: |
+          printf '## Published Pages\n\n- Revision: `%s`\n- URL: %s\n' "$SHA" "$PAGES_URL" >>"$GITHUB_STEP_SUMMARY"

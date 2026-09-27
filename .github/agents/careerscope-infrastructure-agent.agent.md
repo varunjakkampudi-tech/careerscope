@@ -46,7 +46,8 @@ while reporting `loggedIn: false`.
 
 ## Deployment
 
-Push to `main` triggers `.github/workflows/deploy.yml`: gate → ship → build →
-migrate → provenance → health → maintenance lifted. A gate failure must stop the
-run **before** maintenance mode is enabled, so a broken build never leaves the
-site behind a holding page.
+Only an explicit manual dispatch triggers `.github/workflows/deploy.yml`:
+selected ref → exact-revision CI gate → ship → build → migrate → provenance →
+health → maintenance lifted. A push to `main` runs CI and never deploys. A gate
+failure must stop the run **before** maintenance mode is enabled, so a broken
+build never leaves the site behind a holding page.

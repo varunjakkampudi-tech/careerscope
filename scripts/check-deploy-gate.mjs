@@ -88,6 +88,8 @@ check(
 
 // A passing decision function is useless if the workflow never calls it.
 const workflow = readFileSync('.github/workflows/deploy.yml', 'utf8');
+const ciWorkflow = readFileSync('.github/workflows/ci.yml', 'utf8');
+const pagesWorkflow = readFileSync('.github/workflows/publish-pages.yml', 'utf8');
 check(
   'deploy.yml runs the gate script',
   workflow.includes('node scripts/require-ci-success.mjs'),
@@ -95,9 +97,25 @@ check(
 );
 check('the gate job exists', /^\s{2}require-ci:/m.test(workflow), true);
 check('the verify gate depends on it', /needs:\s*require-ci/.test(workflow), true);
+check('deploy exposes no CI bypass', workflow.includes('override_ci'), false);
+check('deploy is manual-only', /^on:\r?\n\s{2}workflow_dispatch:/m.test(workflow), true);
+check('deploy has no push trigger', /^\s{2}push:/m.test(workflow), false);
+check('deploy requires an explicit ref', /^\s{6}ref:\r?\n\s{8}description:/m.test(workflow), true);
 check(
-  'the override demands a reason',
-  workflow.includes('override_ci requires override_reason'),
+  'deploy requires an explicit environment',
+  /^\s{6}environment:\r?\n\s{8}description:/m.test(workflow),
+  true,
+);
+check('CI does not publish Pages', ciWorkflow.includes('actions/deploy-pages@'), false);
+check(
+  'Pages publication is manual-only',
+  /^on:\r?\n\s{2}workflow_dispatch:/m.test(pagesWorkflow),
+  true,
+);
+check('Pages publication has no push trigger', /^\s{2}push:/m.test(pagesWorkflow), false);
+check(
+  'Pages publication requires exact-revision CI',
+  pagesWorkflow.includes('node scripts/require-ci-success.mjs'),
   true,
 );
 

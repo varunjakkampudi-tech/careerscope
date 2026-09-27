@@ -84,4 +84,3 @@ export function collectionStatus(jobs: CollectedJobInput[], outcomes: SourceOutc
     ? 'partial'
     : 'failed';
 }
-
