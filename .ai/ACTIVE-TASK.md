@@ -4,7 +4,7 @@
 
 Reconciled 2026-09-28 from starting `main` SHA
 `8adbe89c74d8a52c295f11638d937012cb5cc27f`. The current committed main SHA is
-`2ef5bba67bd81231ddfbf66d87aecf1728355977`. No production deployment or
+`9866643f3ebec3379dfcc03b103eb5b021b254d2`. No production deployment or
 publication has been run.
 
 ## Delivered in this batch
@@ -55,6 +55,10 @@ publication has been run.
 - CS-55's fourteen authenticated-GET rate-limit matrix and ordering
   falsification are covered by consecutive Node 24 green CI runs; it is now
   UAT for release-manager acceptance.
+- The promotion gate was re-run after the batch. Six tickets with historical
+  or criterion-specific blocking findings were correctly returned from UAT to
+  QA; the remaining 24 UAT tickets now produce zero blocking findings (only
+  five advisory disclosures).
 
 ## Current evidence and next action
 
