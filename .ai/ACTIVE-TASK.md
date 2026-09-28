@@ -3,7 +3,7 @@
 **Status: IN PROGRESS — QA completion and blocker reconciliation.**
 
 Reconciled 2026-09-28 on synchronized `main` SHA
-`b3f284cdc42cf297710123df63e0ca7c66300a20`. No production deployment or
+`93a29d7bce6c0407619fc08795ad840313606167`. No production deployment or
 publication has been run.
 
 ## Delivered in this batch
@@ -37,8 +37,9 @@ publication has been run.
   promotion evidence passes for the named batch.
 - CS-61's deliberate two-owner cache-transition experiment is complete and is
   now UAT with exact green CI evidence.
-- CS-58 still requires consecutive full-CI confirmation of older unexplained
-  flakes.
+- CS-58 is now UAT with hosted run 36424073277 evidence; the remaining release-manager action is acceptance.
+- CS-53 and CS-58 were promoted from READY to UAT after their existing implementation evidence was re-confirmed against hosted run 36424073277.
+- CS-38 is now UAT after hosted run 36431239057 passed the new real saved-count fixture covering paginated, complete and stale-until-refresh responses.
 - CS-82 deployment/Pages gate evidence is complete, has exact hosted-run
   locators, and is now UAT for release-manager acceptance.
 - Recreate a coherent dependency update after baseline CI is green (CS-84).
@@ -72,7 +73,7 @@ publication has been run.
 
 ## Remaining QA and blockers
 
-- CS-13, CS-15, CS-72 and CS-79 completed QA and moved to UAT on 2026-09-28.
+- CS-13, CS-15, CS-72 and CS-79 completed QA and moved to UAT on 2026-09-28. CS-38, CS-53 and CS-58 are also now UAT with exact hosted CI evidence.
   CS-13 is covered by hosted browser/axe checks; CS-15 by the hosted public
   Pages accessibility/visual matrix; CS-72 by hosted promotion-evidence and
   consistency checks; and CS-79 by the dated programmatic append/parsed-rule
