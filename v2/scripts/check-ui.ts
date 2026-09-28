@@ -2344,7 +2344,6 @@ try {
 
         // AC2: an error state names what failed and offers the next action in
         // the same live region — never a bare message.
-        await quiet(`cs-13 error state ${width}`);
         await page.route(searchListRequest, failedSearchList);
         await page.goto(`${origin}/dashboard`);
         const discoveryError = page
@@ -2364,8 +2363,6 @@ try {
         await page.unroute(searchListRequest, failedSearchList);
       }
       await page.setViewportSize({ width: 1440, height: 900 });
-      await quiet('cs-13 states');
-
       // The shared topbar's sign-out confirms first (authenticated-shell.tsx).
       page.once('dialog', (dialog) => dialog.accept());
       await page.getByRole('button', { name: 'Sign out', exact: true }).click();
