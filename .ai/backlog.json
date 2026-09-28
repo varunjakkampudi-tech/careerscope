@@ -1689,7 +1689,7 @@
       "source": "ChatGPT TICKET-PLAN-20260920 proposal and supplied CQ-03 observation; source validation pending",
       "area": "backend",
       "priority": "P2",
-      "status": "UAT",
+      "status": "QA",
       "size": "M",
       "value": 4,
       "risk": 3,
@@ -2305,7 +2305,7 @@
       "source": "Owner, 2026-09-23 - full written specification supplied directly",
       "area": "backend",
       "priority": "P2",
-      "status": "UAT",
+      "status": "QA",
       "size": "L",
       "value": 4,
       "risk": 4,
@@ -2816,7 +2816,7 @@
       "source": "Forensic security audit finding M-4, 2026-09-25",
       "area": "matching",
       "priority": "P2",
-      "status": "UAT",
+      "status": "QA",
       "size": "S",
       "value": 3,
       "risk": 3,
@@ -3437,7 +3437,7 @@
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
         "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land."
       ],
-      "status": "UAT",
+      "status": "QA",
       "currentStep": "Release Manager - F-67-1 was subsequently closed at source: severity cells are generated from KNOWN_SEVERITIES and the mutation proof fails when a severity cell is removed. Node 24 CI runs 36385161068 and 36385785464 completed green, including the engineering test suite. No acceptance criterion remains open.",
       "updatedAt": "2026-09-27",
       "ownerAgent": "Code Quality"
@@ -3910,7 +3910,7 @@
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
         "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land."
       ],
-      "status": "UAT",
+      "status": "QA",
       "currentStep": "Release Manager - all five acceptance criteria are now evidenced: the fabricated application override is removed, the narrowed V2 projection is preserved, the architecture boundary is recorded, and a Node 24 mutation proves a fourth-field read fails typecheck. CI-backed green evidence remains the release gate.",
       "updatedAt": "2026-09-27",
       "ownerAgent": "Senior Engineer"
@@ -4012,7 +4012,7 @@
       "source": "owner takeover directive, 2026-09-27",
       "area": "infrastructure",
       "priority": "P0",
-      "status": "UAT",
+      "status": "QA",
       "size": "S",
       "value": 5,
       "risk": 5,
