@@ -32,7 +32,9 @@
         "RUNTIME CAVEAT ON THAT REFRESH: the 55/55 run was executed on Node v22.23.2, two major versions below the declared floor of >=24. The number is current for this runtime; it has not been confirmed on Node 24.",
         "REVIEW WINDOW CAVEAT: three sessions were writing concurrently; re-check if a cited file moved between roughly 15:05 and 17:00 IST on 2026-09-25.",
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
-        "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land."
+        "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land.",
+        "AC3 CLOSED in v2/ARCHITECTURE.md: the V2 search worker depends on the legacy V1 matcher only through the deliberately narrowed MatchableProfile projection, with V2 owning the source shape and projection and V1 owning the deterministic matcher API. The record explicitly forbids casts/any and states that a fourth-field read must fail type-check.",
+        "AC4 MUTATION PROOF RETAKEN on Node 24: temporarily adding `void application.currentCtc` at the matcher boundary made npm run typecheck fail with TS2339 because the narrowed application type excludes currentCtc; removing the mutation restored a zero-exit typecheck. The source was restored byte-identically after the falsification."
       ],
       "securityImpact": "none directly; removes a blind spot in the release path",
       "architectureImpact": "CI topology only; no application change",
@@ -3872,7 +3874,6 @@
       "source": "v2 test typecheck after CS-76, traced to source by the orchestrator",
       "area": "architecture",
       "priority": "P2",
-      "status": "QA",
       "size": "S",
       "value": "high",
       "risk": "medium",
@@ -3908,7 +3909,8 @@
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
         "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land."
       ],
-      "currentStep": "QA - fixed in v2/apps/workers/search/src/collect.ts at 18:41:29 by removing the application override entirely. AC1 and AC2 appear satisfied; the mutation proof required by AC4 and the architecture-record statement required by AC3 are NOT yet recorded.",
+      "status": "UAT",
+      "currentStep": "Release Manager - all five acceptance criteria are now evidenced: the fabricated application override is removed, the narrowed V2 projection is preserved, the architecture boundary is recorded, and a Node 24 mutation proves a fourth-field read fails typecheck. CI-backed green evidence remains the release gate.",
       "updatedAt": "2026-09-27",
       "ownerAgent": "Senior Engineer"
     },

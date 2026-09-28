@@ -37,6 +37,18 @@ here, because they described intent as though it were fact:
   local Ollama AI-worker architecture described later in this document
   remains DEFERRED — INTENTIONAL; CS-48 did not build it.
 
+### V1/V2 type boundary for search scoring
+
+The V2 search worker depends on the legacy V1 matching package in the
+repository's dependency graph. `v2/apps/workers/search/src/collect.ts` projects
+the V2 `MatchingProfile` into the deliberately smaller V1
+`MatchableProfile` shape at that boundary; it must not widen the projection to
+the full V1 `ApplicationDetails` contract. This is a compatibility boundary,
+not a V2 domain dependency: V2 owns the source shape and the projection, while
+V1 owns the deterministic matcher API. Removing the projection or adding a
+field read on the matcher side must fail the V2 type-check rather than being
+silenced with a cast or `any`.
+
 v2 is deployed at `https://careerscope.tech` on a single Hostinger VPS behind
 Caddy. See [docs/OPERATIONS/DEPLOYMENT.md](../docs/OPERATIONS/DEPLOYMENT.md).
 
