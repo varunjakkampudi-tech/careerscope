@@ -1,6 +1,6 @@
 {
   "$comment": "Percentages require evidence. VERIFIED requires evidence. UNMEASURED carries no number at all. Enforced by scripts/check-progress.mjs.",
-  "updatedAt": "2026-09-25",
+  "updatedAt": "2026-09-28",
   "overallStatus": "IN PROGRESS — core discover-to-save journey now built and in UAT; Applications tracking and remaining page designs still open",
   "overall": null,
   "areas": [
@@ -17,7 +17,7 @@
     },
     {
       "area": "Frontend",
-      "percent": 48,
+      "percent": 52,
       "status": "IN PROGRESS",
       "evidence": [
         "CS-6: every real screen is now its own Next.js route under app/(app)/ behind one shared auth-boundary component, replacing the single 872-line page.tsx that faked navigation with a view variable",
@@ -28,7 +28,7 @@
         "A real CSS overflow regression introduced by that rebuild (27px horizontal scroll at 320px) was root-caused via live element-by-element bisection (not guessed) to a flex-shrink:0 header-actions block colliding with its own wrapped button row, and fixed; re-verified at 320/768/1440px with scrollWidth===clientWidth",
         "v2/apps/web builds, typechecks, lints and formats clean across every file touched this round",
         "Resume, Settings, Preparation and Career Resources routes are functionally real but still carry the pre-redesign plain CSS - no visual pass yet",
-        "UPDATE 2026-09-25: the disclosed check-ui.ts regression is RESOLVED - the suite is repaired, hardened and green on all three engines. Separately, CS-51 fixed a family of five defects where an identifier present at the call site was discarded before reaching its destination (Open Saved Lead opened the list but not the lead; clicking any Recent Discovery run opened the newest one). Four fixed, the fifth (SaveJob not hydrating already-saved state) blocked on a missing backend job-to-lead lookup and documented rather than faked.",
+        "UPDATE 2026-09-28: CS-13 shared loading/empty/error treatment and CS-15 accessibility baseline are promoted to UAT after hosted Chromium/Firefox/WebKit and Pages visual evidence. The remaining frontend gaps are explicitly tracked rather than hidden: CS-37 onboarding/profile, CS-40/41/42/43/45 discovery work, and the owner-dependent blockers.",
         "CS-13 remains the clearest open frontend gap and its status was corrected from UAT to IN PROGRESS on 2026-09-24: the shared loading/empty/error components are imported by exactly TWO modules while the (app) route group has EIGHT routes."
       ]
     },
@@ -90,7 +90,7 @@
     },
     {
       "area": "Testing",
-      "percent": 58,
+      "percent": 62,
       "status": "IN PROGRESS",
       "evidence": [
         "Root suite 1055/1055 (67 files) and v2 unit 49/49 pass locally, both re-run by the Orchestrator on 2026-09-25. The v2 unit count rose 37 -> 49 because ai-provider.test.ts was wired into test:unit; the 12 new cases are the OpenRouter matrix that previously ran nowhere.",
@@ -98,6 +98,7 @@
         "WIRED IS NOT CI-EXECUTED, and the distinction is the point: neither check-ui.ts nor ai-provider.test.ts has yet run in a real pipeline. Commit authorisation is the unlock. Do not read a green local run as enforcement.",
         "THE NUMBER ONLY ROSE 3 POINTS DESPITE REAL WORK, DELIBERATELY. Four separate checks-that-cannot-fail were found in one night: the skip-link contract that would have stayed green with tabIndex={-1} removed; the nav assertion collecting [] from a selector deleted by CS-6; CS-47 curl stub that discards the POST body so json_escape() is exercised by no test; and CS-48 data-minimization test asserting the absence of strings that were never in its input. Two more are historical - R3 --allow-net (a Deno flag Node lacks, unconditionally true) and CS28-1 invisible test file. Finding them means prior confidence in this area was overstated, so wiring gains are partly offset by knowing the coverage was thinner than recorded.",
         "ELEVEN executable checks still run in no pipeline (CS-52), four of which cover exactly the failure modes an audit had to mark NOT VERIFIED: crash recovery, database recovery, queue runtime, soak. The deploy gate runs no V2 tests at all.",
+        "UPDATE 2026-09-28: the remaining QA batch is closed: hosted run 36424073277 passed browser/axe, Pages visual, promotion-evidence, ticket-consistency and eol checks; the programmatic CS-79 append/parse proof also passed.",
         "Two unexplained intermittent failures now have a ticket and an owner for the first time (CS-58): a WebKit click-stability timeout in check-ui.ts, and an integration failure that survived a demonstrably quiet database with the failing test identity uncaptured."
       ]
     },
@@ -127,21 +128,23 @@
     },
     {
       "area": "Documentation",
-      "percent": 71,
+      "percent": 73,
       "status": "IN PROGRESS",
       "evidence": [
         "The documentation set is extensive and the Copilot contract is current",
         "docs/FRONTEND-ADMIN-ROADMAP.md carries a full dated progress addendum for 2026-09-23 covering every ticket closed and every known gap left open this round",
+        "UPDATE 2026-09-28: .ai/ACTIVE-TASK.md and .ai/backlog.json now record CS-13, CS-15, CS-72 and CS-79 as UAT, with hosted-run and reproduction evidence; blocked tickets remain unchanged.",
         "Documentation now gates the release, but no release has passed that gate yet"
       ]
     },
     {
       "area": "Code Quality",
-      "percent": 70,
+      "percent": 74,
       "status": "IN PROGRESS",
       "evidence": [
         "lint 0, format 0, typecheck 0 across the workspace",
         "Code Quality agent reviewed ONE file on 2026-09-19 and found duplication, unreadable-as-empty reads and a status-vocabulary defect",
+        "UPDATE 2026-09-28: the promotion evidence gate is proven by 21 passing fixture tests, including the CS-19/CS-51 opposite-outcome control; CS-72 is promoted to UAT without weakening the gate.",
         "The previous 90% VERIFIED predated any review actually being run"
       ]
     }

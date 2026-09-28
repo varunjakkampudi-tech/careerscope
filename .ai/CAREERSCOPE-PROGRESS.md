@@ -1,6 +1,6 @@
 # CareerScope engineering progress
 
-Last reconciled: 2026-09-27.
+Last reconciled: 2026-09-28.
 
 CareerScope V2 is the deployed product; V1 remains a build dependency and owns
 the legacy Pages/mobile surface. The product is functional but not release
@@ -28,20 +28,21 @@ Production was not changed during this repository-takeover batch.
 | Area           | Progress | Status      |
 | -------------- | -------- | ----------- |
 | Product        | 55%      | IN PROGRESS |
-| Frontend       | 48%      | IN PROGRESS |
+| Frontend       | 52%      | IN PROGRESS |
 | Backend        | 70%      | IN PROGRESS |
 | Database       | 65%      | IN PROGRESS |
 | Infrastructure | 65%      | IN PROGRESS |
 | Security       | 66%      | IN PROGRESS |
 | Performance    | 30%      | IN PROGRESS |
-| Testing        | 58%      | IN PROGRESS |
+| Testing        | 62%      | IN PROGRESS |
 | System Design  | 78%      | IN PROGRESS |
 | UX/UI          | 39%      | IN PROGRESS |
-| Documentation  | 71%      | IN PROGRESS |
-| Code Quality   | 70%      | IN PROGRESS |
+| Documentation  | 73%      | IN PROGRESS |
+| Code Quality   | 74%      | IN PROGRESS |
 
-These values are synchronized with `progress.json`; this cleanup did not invent
-new percentage changes from repository hygiene alone.
+These values are synchronized with `progress.json`. The 2026-09-28 changes
+reflect hosted evidence and the completed CS-13/CS-15/CS-72/CS-79 QA batch; they
+do not imply that blocked or discovery work is complete.
 
 ## Open items
 
