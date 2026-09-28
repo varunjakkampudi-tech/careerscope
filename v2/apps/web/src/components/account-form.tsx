@@ -13,7 +13,7 @@ export default function AccountForm({
   registrationEnabled: boolean;
   expired: boolean;
   notice?: string;
-  onAuthenticated: () => void;
+  onAuthenticated: () => void | Promise<void>;
 }) {
   const [registering, setRegistering] = useState(false);
   const [pending, setPending] = useState(false);
@@ -45,7 +45,7 @@ export default function AccountForm({
         setMessage('You can now try signing in with your credentials.');
         form.querySelector<HTMLInputElement>('[name="email"]')?.focus();
       } else {
-        onAuthenticated();
+        await onAuthenticated();
       }
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : 'Request failed. Please try again.');

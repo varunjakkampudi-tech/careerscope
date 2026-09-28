@@ -61,8 +61,12 @@ function SignIn() {
             registrationEnabled={session.data?.registrationEnabled === true}
             expired={expired}
             notice={notice}
-            onAuthenticated={() => {
+            onAuthenticated={async () => {
               clearAuthQueryCache(cache);
+              // Authentication changes the identity discovered by this shared
+              // query. Refresh it explicitly even when the CS-61 experiment
+              // deliberately keeps owner-private cache entries intact.
+              await session.refetch();
               router.replace('/dashboard');
             }}
           />
