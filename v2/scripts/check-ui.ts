@@ -2309,16 +2309,20 @@ try {
           .getByRole('navigation', { name: 'Saved lead list' })
           .getByRole('button', { name: /Senior React Engineer/ })
           .waitFor();
-        await settled(`cs-13 saved sibling ${width}`);
-        await page
+        const archivedTab = page
           .getByRole('group', { name: 'Lead status' })
-          .getByRole('button', { name: 'Archived', exact: true })
-          .click();
-        await page
-          .getByRole('group', { name: 'Lead status' })
-          .getByRole('button', { name: 'Archived', exact: true })
-          .waitFor({ state: 'visible' });
-        await settled(`cs-13 archived filter ${width}`);
+          .getByRole('button', { name: 'Archived', exact: true });
+        await archivedTab.click();
+        const pressedDeadline = Date.now() + 5000;
+        while (Date.now() < pressedDeadline) {
+          if ((await archivedTab.getAttribute('aria-pressed')) === 'true') break;
+          await page.waitForTimeout(25);
+        }
+        assert.equal(
+          await archivedTab.getAttribute('aria-pressed'),
+          'true',
+          `${engine} ${width}px: Archived tab did not become selected`,
+        );
         await page.getByText(cs13FilteredEmpty, { exact: true }).waitFor();
         assert.equal(
           await page.getByText(cs13NothingYet, { exact: true }).count(),
