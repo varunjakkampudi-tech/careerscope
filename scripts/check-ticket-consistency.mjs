@@ -71,4 +71,6 @@ assert.deepEqual(
   'synthetic declared cross-tier dependency unexpectedly failed',
 );
 assert.deepEqual(failures, [], failures.join('\n'));
-process.stdout.write(`PASS  ${backlog.items.length} tickets have consistent ownership and status metadata\n`);
+process.stdout.write(
+  `PASS  ${backlog.items.length} tickets have consistent ownership and status metadata\n`,
+);
