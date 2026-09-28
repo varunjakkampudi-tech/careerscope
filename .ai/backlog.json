@@ -9,7 +9,7 @@
       "source": "finding R1; external review",
       "area": "infrastructure",
       "priority": "P1",
-      "status": "BLOCKED",
+      "status": "UAT",
       "size": "M",
       "value": 5,
       "risk": 5,
@@ -34,7 +34,9 @@
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
         "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land.",
         "AC3 CLOSED in v2/ARCHITECTURE.md: the V2 search worker depends on the legacy V1 matcher only through the deliberately narrowed MatchableProfile projection, with V2 owning the source shape and projection and V1 owning the deterministic matcher API. The record explicitly forbids casts/any and states that a fourth-field read must fail type-check.",
-        "AC4 MUTATION PROOF RETAKEN on Node 24: temporarily adding `void application.currentCtc` at the matcher boundary made npm run typecheck fail with TS2339 because the narrowed application type excludes currentCtc; removing the mutation restored a zero-exit typecheck. The source was restored byte-identically after the falsification."
+        "AC4 MUTATION PROOF RETAKEN on Node 24: temporarily adding `void application.currentCtc` at the matcher boundary made npm run typecheck fail with TS2339 because the narrowed application type excludes currentCtc; removing the mutation restored a zero-exit typecheck. The source was restored byte-identically after the falsification.",
+        "Hosted baseline CI run 36446068242 for commit 113935eef08dc3a988d3c17fa928725e57a34c10 passed the complete root, V2 integration, recovery and browser/axe coverage.",
+        "Hosted mutation proof run 36448394587 for temporary PR #19 commit a092f220c81bd4468047a6b9019b9124e46fe1e2 failed exactly at 'Test V2 (unit only — mocked HTTP, no database, queue or browser coverage)' after the intentional assertion mutation; recovery and integration jobs passed. The PR was closed and its branch deleted without merging."
       ],
       "securityImpact": "none directly; removes a blind spot in the release path",
       "architectureImpact": "CI topology only; no application change",
@@ -84,7 +86,8 @@
         "REVIEW WINDOW CAVEAT: three sessions were writing concurrently; re-check if a cited file moved between roughly 15:05 and 16:30 IST on 2026-09-25.",
         "RUNTIME CAVEAT ADDED 2026-09-25 TO EVERY RESULT RECORDED TODAY: all local verification in this run was executed on Node v22.23.2, while package.json requires >=24.0.0, .nvmrc says 24 and CI uses 24. This does not invalidate the passes, but it RECLASSIFIES them - each was obtained on a runtime the project does not support, and any could differ on Node 24. Applies to typecheck, lint, test:unit, deploy:gate:test, eol:check and the three-engine test:ui runs alike.",
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
-        "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land."
+        "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land.",
+        "Hosted baseline CI run 36446068242 for commit 113935eef08dc3a988d3c17fa928725e57a34c10 executed the root and V2 test-registration guards plus checks:registry successfully. Its verify job completed green; the remaining open criterion is the owner-facing deploy-gate policy decision."
       ],
       "securityImpact": "none",
       "architectureImpact": "none",
@@ -313,7 +316,7 @@
       "source": "external review (ChatGPT), confirmed against workflow files",
       "area": "infrastructure",
       "priority": "P0",
-      "status": "BLOCKED",
+      "status": "UAT",
       "size": "S",
       "value": 5,
       "risk": 5,
@@ -335,7 +338,10 @@
         "WHY IT IS NOT AN ORDINARY CI-PENDING ITEM, AND THIS IS THE ARGUMENT: this project has already adjudicated this exact criterion shape FIVE TIMES IN THE OPPOSITE DIRECTION. CS-3, CS-24, CS-25, CS-26 and CS-27 were each demoted UAT -> BLOCKED on the stated principle that the ticket has a criterion of the form \"proven by doing X on a real host\" with no live evidence recorded. ALL FIVE VERIFIED STILL BLOCKED IN THIS SESSION. CS-7 AC3 IS THAT SAME SENTENCE WITH \"PIPELINE\" IN PLACE OF \"HOST\", and it was not demoted with them.",
         "AND IT IS THE TICKET A RELEASE DECISION RESTS ON. It is the control that stops a deployment shipping code CI rejected, and its own evidence records that \"deploy succeeded at least four times while CI was red\". ACCEPTING CS-7 AT UAT MEANS ACCEPTING, ON LOCAL EVIDENCE ALONE, THAT THE GUARD AGAINST SHIPPING REJECTED CODE WORKS. If a release proceeds on the strength of the UAT tier, this is the one ticket where an unproven criterion carries the highest possible cost.",
         "BE PRECISE ABOUT WHAT IS PROVEN, BECAUSE THE WORK IS GOOD: AC1 require-ci querying the Actions API for the exact head SHA, and AC2 override requiring explicit intent, are both recorded with mutation-tested gate logic (22 checks, 5 mutations detected; deploy-gate 9/9). THE DECISION LOGIC IS WELL PROVEN. WHAT IS UNPROVEN IS THAT THE WORKFLOW WIRING AROUND IT DOES WHAT THE LOGIC SAYS. That distinction is the whole finding, and it is why local mutation testing - however good - cannot discharge AC3.",
-        "REVIEW WINDOW CAVEAT: three sessions were writing concurrently; re-check if a cited file moved between roughly 15:05 and 17:00 IST on 2026-09-25."
+        "REVIEW WINDOW CAVEAT: three sessions were writing concurrently; re-check if a cited file moved between roughly 15:05 and 17:00 IST on 2026-09-25.",
+        "Hosted baseline CI run 36446068242 for commit 113935eef08dc3a988d3c17fa928725e57a34c10 passed all complete verification jobs.",
+        "Hosted mutation PR run 36448394587 for commit a092f220c81bd4468047a6b9019b9124e46fe1e2 failed the exact V2 unit job as intended; this supplied a real red CI result for the candidate SHA.",
+        "Deploy dispatch run 36449424977 was manually invoked with ref a092f220c81bd4468047a6b9019b9124e46fe1e2. 'Require a green CI run for this commit' failed, while 'Verify the commit being deployed' and 'Ship, build and verify' were skipped. No deployment or Hostinger secret step ran."
       ],
       "securityImpact": "ships unreviewed code to the public origin",
       "architectureImpact": "workflow dependency graph",
@@ -394,7 +400,7 @@
     },
     {
       "releaseTarget": "3.0.1",
-      "currentStep": "BLOCKED on the commit gate, by this ticket own wording. AC1 names CI explicitly and no CI run exists for this work. Caught by promotion:check rather than by a reviewer - the eighth demotion, and the first found by a machine.",
+      "currentStep": "Release Manager",
       "completedSteps": [
         "Added v2-integration job to .github/workflows/ci.yml: Postgres 17.6-alpine, Redis 7.4.5-alpine and LocalStack 4.7.0 service containers, a CI-built (not gitignored) .env file, running npm --prefix v2 run test:integration",
         "Verified the job design for real: ran the exact six files (bull-queue, database, market, queue, resumes, runtime) against disposable Postgres/Redis/LocalStack in a genuine Linux container matching CI",
@@ -410,7 +416,7 @@
       "source": "scoped during CS-1",
       "area": "testing",
       "priority": "P1",
-      "status": "BLOCKED",
+      "status": "UAT",
       "size": "L",
       "value": 4,
       "risk": 4,
@@ -429,7 +435,9 @@
         "2026-09-21: real Independent Reviewer invocation (native runSubagent, no edit tool available or used, confirmed by the reviewer) examined the resume-parser fix; verdict APPROVED. Findings: (P2) the --allow-fs-read grant to packages/resume/ and packages/shared/ is broader than the package.json each needs; attempted narrowing to the exact file broke on Windows (platform-specific symlink/realpath resolution), so the directory grant was kept deliberately, not from oversight. (P3) Node 25.0.0 actually added a real --allow-net permission scope (confirmed against nodejs.org/en/blog/release/v25.0.0), so the check was rewritten to be version-aware — process.allowedNodeEnvironmentFlags.has('--allow-net') && process.permission.has('net') — rather than assuming Node can never gate network access. Re-verified 24/24 after this refinement, both on Windows (parser test passing in isolation) and a fresh Linux container (full six-file suite).",
         "DEMOTED UAT -> BLOCKED 2026-09-25, AND THIS ONE WAS FOUND BY THE GATE RATHER THAN BY A REVIEWER - the first of the eight demotions to be caught mechanically. Verified independently in this session: AC1 is \"Postgres and Redis service containers RUN IN CI with a CI-built environment file\", and ZERO of the five evidence entries cite a workflow run URL or a run id. The only entry mentioning CI says \"the CI step is named to say unit only so the gap is not misread\", which describes the gap rather than closing it.",
         "THE GATE WORDING IS EXACTLY RIGHT AND IS KEPT: \"A LOCAL RUN - EVEN A CONTAINERISED ONE - IS NOT CI, AND A SENTENCE MENTIONING CI IS NOT A CI RESULT.\" Containerised local execution is the specific thing most likely to be mistaken for the criterion here, because it looks like the CI environment.",
-        "CLUSTER RECORDED, because these are no longer four separate tickets: CS-1, CS-2, CS-7 AND CS-9 ALL HAVE ACCEPTANCE CRITERIA THAT NAME CI OR A REAL PIPELINE RUN IN THEIR OWN TEXT. Four tickets - INCLUDING THE ONLY P0 (CS-7) - are blocked by the commit gate BY THEIR OWN WORDING, not by anyone judgement. That is the most concrete statement of the commit value available, and it should go to the owner in exactly those terms."
+        "CLUSTER RECORDED, because these are no longer four separate tickets: CS-1, CS-2, CS-7 AND CS-9 ALL HAVE ACCEPTANCE CRITERIA THAT NAME CI OR A REAL PIPELINE RUN IN THEIR OWN TEXT. Four tickets - INCLUDING THE ONLY P0 (CS-7) - are blocked by the commit gate BY THEIR OWN WORDING, not by anyone judgement. That is the most concrete statement of the commit value available, and it should go to the owner in exactly those terms.",
+        "Hosted baseline CI run 36446068242 for commit 113935eef08dc3a988d3c17fa928725e57a34c10 completed the V2 integration job successfully. Its steps show service initialization, a CI-built environment file, integration tests, backfill tests, and Chromium/Firefox/WebKit plus axe acceptance all completed successfully; no integration step was skipped.",
+        "Hosted mutation PR run 36448394587 independently completed the V2 integration job successfully while the intentional unit mutation failed, confirming the service-backed job is separate and still executes rather than being reported as passed by transitive success."
       ],
       "securityImpact": "none directly; the resume-parser fix REMOVES a permanently-broken safety self-check rather than weakening a working one — network isolation for that child was never actually enforced by it and must come from the OS/container, which this change documents rather than hides",
       "architectureImpact": "CI service topology; no application behavior change beyond making the isolated resume parser actually able to run",
@@ -4129,7 +4137,10 @@
       "evidence": [
         "2026-09-27 inventory found 11 open bot PRs, including grouped PRs that supersede individual TypeScript, ESLint, globals, plugin-react and @types/node PRs",
         "Current PR checks inherit baseline workflow failures, so no bot PR provides a clean compatibility decision",
-        "Automated changes are reproducible; the obsolete PRs may be closed without losing unique human-authored work"
+        "Automated changes are reproducible; the obsolete PRs may be closed without losing unique human-authored work",
+        "Baseline CI is now green: hosted run 36446068242 passed all complete verification jobs for commit 113935eef08dc3a988d3c17fa928725e57a34c10, and CS-83 is already UAT.",
+        "Current GitHub repository inspection shows no open dependency PRs. A fresh root and V2 npm outdated inventory identifies patch/minor wanted updates and separately identifies major upgrades requiring migration review; no dependency group was merged or claimed complete without that review.",
+        "CS-84 remains BLOCKED until one coherent, non-overlapping root/V2/Actions dependency change set is regenerated and independently verified."
       ],
       "securityImpact": "Keeps dependency remediation visible while avoiding unreviewed major-version churn.",
       "architectureImpact": "No intended product architecture change.",
