@@ -4,7 +4,7 @@
 
 Reconciled 2026-09-28 from starting `main` SHA
 `8adbe89c74d8a52c295f11638d937012cb5cc27f`. The current committed main SHA is
-`1ba20d6d5d9cadc2f4e13976129845c64300b547`. No production deployment or
+`281ace8b0f256113c55fca2cecf0a4f0fd9c7224`. No production deployment or
 publication has been run.
 
 ## Delivered in this batch
@@ -32,6 +32,9 @@ publication has been run.
 - CS-85 has two consecutive complete green integration runs, including
   Chromium, Firefox, WebKit, and axe; it is now UAT for release manager
   acceptance.
+- Fully re-taken, Node 24 CI-backed QA evidence promoted CS-35, CS-48, CS-56,
+  CS-57, CS-63, CS-65, CS-66, and CS-71 to UAT. No ticket was promoted from
+  an open, partial, host-bound, or advisory-only criterion.
 - CS-61 still requires its deliberate two-owner cache-transition experiment;
   CS-58 still requires consecutive full-CI confirmation of older unexplained
   flakes.
