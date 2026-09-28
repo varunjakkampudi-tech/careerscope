@@ -1864,8 +1864,8 @@ try {
       await settled('dashboard');
       const resumeViewLoaded = page
         .waitForResponse(
-        (response) =>
-          response.url().endsWith('/api/resumes') && response.request().method() === 'GET',
+          (response) =>
+            response.url().endsWith('/api/resumes') && response.request().method() === 'GET',
           { timeout: 5000 },
         )
         .catch(() => undefined);
@@ -2387,8 +2387,9 @@ try {
       // created at the top of this file, so this also re-proves owner
       // isolation across a session boundary rather than only within one.
       await page.evaluate(() => {
-        (window as Window & { __CAREERSCOPE_DISABLE_CACHE_CLEAR__?: boolean })
-          .__CAREERSCOPE_DISABLE_CACHE_CLEAR__ = true;
+        (
+          window as Window & { __CAREERSCOPE_DISABLE_CACHE_CLEAR__?: boolean }
+        ).__CAREERSCOPE_DISABLE_CACHE_CLEAR__ = true;
       });
       await page.getByLabel('Email', { exact: true }).fill('foreign-owner@example.test');
       await page.getByLabel('Password', { exact: true }).fill(password);
@@ -2463,12 +2464,16 @@ try {
       // B; otherwise the control would be unable to distinguish a real proof
       // from a vacuous pass.
       await page.evaluate(() => {
-        (window as Window & {
-          __CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__?: boolean;
-        }).__CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__ = true;
+        (
+          window as Window & {
+            __CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__?: boolean;
+          }
+        ).__CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__ = true;
       });
-      await page.getByLabel('Email', { exact: true }).fill(accountEmail);
-      await page.getByLabel('Password', { exact: true }).fill(changedPassword);
+      // The profile mutated above belongs to the seeded UI owner, not the
+      // per-engine signup account used by the password-change journey.
+      await page.getByLabel('Email', { exact: true }).fill('ui@example.test');
+      await page.getByLabel('Password', { exact: true }).fill(password);
       await page.getByRole('button', { name: 'Sign in', exact: true }).click();
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
       await page.getByRole('link', { name: 'Resume', exact: true }).first().click();
@@ -2494,9 +2499,11 @@ try {
         `${engine} positive control did not reproduce owner-agnostic cache leakage`,
       );
       await page.evaluate(() => {
-        (window as Window & {
-          __CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__?: boolean;
-        }).__CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__ = false;
+        (
+          window as Window & {
+            __CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__?: boolean;
+          }
+        ).__CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__ = false;
       });
       assert.deepEqual(errors, []);
       console.log(
