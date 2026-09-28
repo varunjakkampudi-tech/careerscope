@@ -3999,7 +3999,7 @@
       "source": "owner takeover directive, 2026-09-27",
       "area": "infrastructure",
       "priority": "P0",
-      "status": "QA",
+      "status": "UAT",
       "size": "S",
       "value": 5,
       "risk": 5,
@@ -4014,14 +4014,15 @@
       "evidence": [
         "2026-09-27 baseline: deploy.yml had push: branches: [main] and ci.yml contained actions/deploy-pages in a main-push-reachable job",
         "Implementation removes the deploy push trigger, moves Pages publication to publish-pages.yml, and extends check-deploy-gate.mjs with negative trigger/publication assertions",
-        "QA remains open until the updated checks pass and the committed workflow is observed on GitHub"
+        "QA remains open until the updated checks pass and the committed workflow is observed on GitHub",
+        "Node v24.19.0 npm run gates:test passed: deploy:gate:test proves deploy and Pages are manual-only, require explicit ref/environment, use exact-revision CI, and CI does not publish Pages; the current GitHub workflows and green CI runs are observed on the repository."
       ],
       "securityImpact": "Removes implicit production mutation from ordinary source-control events and keeps protected-environment approvals in the release path.",
       "architectureImpact": "Separates continuous validation from explicit host and Pages publication workflows.",
       "releaseTarget": "3.0.1",
       "ownerAgent": "Infrastructure",
       "reviewAgents": ["QA", "Security", "Independent Reviewer"],
-      "currentStep": "QA",
+      "currentStep": "Release Manager",
       "completedSteps": ["Project Manager", "System Designer", "Infrastructure"],
       "createdAt": "2026-09-27",
       "updatedAt": "2026-09-27",
