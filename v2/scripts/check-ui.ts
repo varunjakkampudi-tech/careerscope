@@ -2302,7 +2302,6 @@ try {
         // AC3, "nothing matches your filters": the same list, same width, but
         // the Saved status really does hold a lead — so the empty Archived tab
         // must read differently and say which status has them.
-        await quiet(`cs-13 filtered-empty ${width}`);
         await page.route(archivedLeadListRequest, emptyLeadList);
         await page.goto(`${origin}/saved`);
         await page
