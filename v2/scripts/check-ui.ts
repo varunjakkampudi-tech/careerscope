@@ -2366,7 +2366,10 @@ try {
             items: [
               {
                 id: randomUUID(),
-                data: { title: paginated ? 'Paged saved job' : 'Complete saved job', company: 'Fixture Co' },
+                data: {
+                  title: paginated ? 'Paged saved job' : 'Complete saved job',
+                  company: 'Fixture Co',
+                },
                 createdAt: '2026-09-28T12:00:00.000Z',
               },
               ...(paginated

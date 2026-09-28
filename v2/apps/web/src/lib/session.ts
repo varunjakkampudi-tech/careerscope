@@ -66,10 +66,7 @@ export function ownerKey(
   name: string,
   ...rest: readonly unknown[]
 ): readonly unknown[] {
-  if (
-    typeof window !== 'undefined' &&
-    window.__CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__ === true
-  )
+  if (typeof window !== 'undefined' && window.__CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__ === true)
     return [name, ...rest];
   return [name, owner ?? NO_OWNER, ...rest];
 }
