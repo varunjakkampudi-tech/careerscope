@@ -4293,6 +4293,42 @@
       "updatedAt": "2026-09-28",
       "dimension": "product",
       "blockedReason": "The owner must provide the admin-page design before frontend system design and implementation can proceed."
+    },
+    {
+      "id": "CS-89",
+      "title": "OpenRouter production configuration and guarded AI activation",
+      "userProblem": "The OpenRouter capability is implemented and default-off, but enabling it in production requires an owner-approved secret, a currently free model and a deliberate release verification without exposing credentials or changing deterministic matching.",
+      "source": "Owner request, 2026-09-28; CS-48 follow-up",
+      "area": "security",
+      "priority": "P1",
+      "status": "BLOCKED",
+      "size": "S",
+      "value": 4,
+      "risk": 5,
+      "complexity": 3,
+      "dependencies": ["CS-48", "CS-87"],
+      "acceptanceCriteria": [
+        "Owner explicitly approves enabling AI_ENABLED in the production environment and supplies the secret through the approved Hostinger secret path, never chat or Git",
+        "OPENROUTER_MODEL is a specific currently-free :free model verified by the provider catalog immediately before activation",
+        "Production verification proves AI-disabled behavior remains safe, AI-enabled preparation coaching is owner-scoped and escaped, and deterministic matching/ranking is unchanged",
+        "The deployment records only redacted configuration state and exact commit provenance; no API key or prompt content is logged or committed",
+        "A rollback procedure returns AI_ENABLED=false without redeploying unrelated application state"
+      ],
+      "evidence": [
+        "CS-48 already implements the provider abstraction, preparation-coaching use case, fail-closed catalog check, secret-safe logging, mocked test matrix and default-off behavior.",
+        "The repository and production contract deliberately keep AI_ENABLED=false by default; enabling it requires owner-controlled secret and deployment authority not available from source alone."
+      ],
+      "securityImpact": "Introduces outbound owner-authored preparation fields to OpenRouter only after explicit configuration and preserves a fast default-off rollback.",
+      "architectureImpact": "Operational configuration of the existing optional provider; no expansion of deterministic decision-making or new AI use cases.",
+      "releaseTarget": "backlog",
+      "ownerAgent": "Infrastructure",
+      "reviewAgents": ["Security", "System Designer", "Release Manager", "Independent Reviewer"],
+      "currentStep": "BLOCKED on owner approval, secret provisioning and live Hostinger release verification; AI remains safely disabled.",
+      "completedSteps": ["Project Manager", "Backend"],
+      "createdAt": "2026-09-28",
+      "updatedAt": "2026-09-28",
+      "dimension": "engineering",
+      "blockedReason": "Enabling OpenRouter requires an owner-approved production secret/model and live deployment authority; the agent must not invent or transmit either."
     }
   ]
 }
