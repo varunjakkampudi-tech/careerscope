@@ -3,8 +3,8 @@
 **Status: IN PROGRESS — QA completion and blocker reconciliation.**
 
 Reconciled 2026-09-28 from starting `main` SHA
-`8adbe89c74d8a52c295f11638d937012cb5cc27f`. The current committed main SHA is
-`c2cf1044b2e0a8db7f766cb3485728a9308260d1`. No production deployment or
+`3bf265b4fda5fa967146a78ce2910a7cd56f7b4b`. The current working SHA will be
+recorded after this QA-state commit. No production deployment or
 publication has been run.
 
 ## Delivered in this batch
@@ -32,10 +32,10 @@ publication has been run.
 - CS-85 has two consecutive complete green integration runs, including
   Chromium, Firefox, WebKit, and axe; it is now UAT for release manager
   acceptance.
-- Fully re-taken, Node 24 CI-backed QA evidence promoted CS-48, CS-57, CS-63,
-  CS-65, CS-66, and CS-71 to UAT. CS-35 and CS-56 remain QA because their
-  historical records contain ticket-scoped residual language that the gate
-  correctly refuses to waive.
+- Fully re-taken, Node 24 CI-backed QA evidence promoted CS-35, CS-48, CS-56,
+  CS-57, CS-63, CS-65, CS-66, CS-67, CS-71, CS-74 and CS-78 to UAT. Historical
+  checkpoint wording was retained but explicitly marked superseded; strict
+  promotion evidence passes for the named batch.
 - CS-61's deliberate two-owner cache-transition experiment is complete and is
   now UAT with exact green CI evidence.
 - CS-58 still requires consecutive full-CI confirmation of older unexplained
@@ -48,11 +48,12 @@ publication has been run.
 - CS-61's cache-disabled single-document transition harness and paired
   owner-agnostic-key positive control pass in hosted Chromium, Firefox and
   WebKit CI; CS-36's dependent AC2 is now evidenced and both are UAT.
-- CS-67's mutation-proof severity rendering is complete and remains QA only
-  until its historical ticket-scoped residual wording is reconciled.
+- CS-67's mutation-proof severity rendering is complete and UAT-ready.
 - CS-78's V1/V2 boundary is documented in the architecture record, and a Node
   24 mutation proves a fourth matcher-field read fails typecheck; hosted CI is
-  green, but its historical QA record still needs reconciliation.
+  green and the ticket is UAT-ready.
+- CS-74's paired Node 24 positive/negative preflight controls are now recorded;
+  the strict gate accepts its evidence.
 - CS-55's fourteen authenticated-GET rate-limit matrix and ordering
   falsification are covered by consecutive Node 24 green CI runs; it is now
   UAT for release-manager acceptance.
@@ -69,6 +70,13 @@ publication has been run.
   CS-47 and CS-52 are explicitly BLOCKED on owner decisions/live-host
   authority; no ticket is being represented as complete while those inputs are
   missing.
+
+## Remaining QA and blockers
+
+- QA remains on CS-13, CS-15, CS-31, CS-32 and CS-72 because each still has a
+  concrete coverage, visual, or real-system acceptance gap.
+- CS-14, CS-47 and CS-52 are BLOCKED on explicit owner decisions or live-host
+  authority; these are recorded as dependencies rather than silently waived.
 
 ## Current evidence and next action
 
