@@ -153,3 +153,28 @@ test('CS-35: non-conflict statuses keep their existing messages and carry no cod
     }
   }
 });
+
+test('CS-75: non-OK responses cancel their unread body before rejecting', async () => {
+  for (const status of [400, 404]) {
+    let cancelled = false;
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode('server detail that must not be echoed'));
+      },
+      cancel() {
+        cancelled = true;
+      },
+    });
+    const original = globalThis.fetch;
+    globalThis.fetch = async () =>
+      new Response(stream, { status, headers: { 'Content-Type': 'text/plain' } });
+    try {
+      await assert.rejects(api('/profile'), (error: unknown) => {
+        return error instanceof ApiError && error.status === status;
+      });
+      assert.equal(cancelled, true, `${status} response body must be cancelled`);
+    } finally {
+      globalThis.fetch = original;
+    }
+  }
+});

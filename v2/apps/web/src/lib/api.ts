@@ -116,6 +116,10 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
       window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
     }
     const conflict = response.status === 409 ? await readConflict(response) : undefined;
+    // A non-409 error has no structured body contract in this client. Cancel
+    // it before throwing so the underlying connection is not left with an
+    // unread response stream when callers immediately retry or navigate away.
+    if (response.status !== 409) await response.body?.cancel();
     throw new ApiError(
       response.status,
       conflict?.message ?? messages[response.status] ?? 'Request failed. Please try again.',

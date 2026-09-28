@@ -80,6 +80,9 @@ publication has been run.
 - CS-15's public Pages audit is now wired into `.github/workflows/ci.yml` via
   `npm run pages:visual`; local Chromium, Firefox and WebKit execution passed
   192 cases. Hosted Node 24 confirmation is the remaining release gate.
+- CS-75 moved from READY to QA: non-OK API responses now cancel unread bodies,
+  the CS-51 browser harness workaround was removed, 400/404 cancellation is
+  falsification-tested, and V2 typecheck passes. Hosted browser CI remains.
 - CS-14, CS-47 and CS-52 are BLOCKED on explicit owner decisions or live-host
   authority; these are recorded as dependencies rather than silently waived.
 

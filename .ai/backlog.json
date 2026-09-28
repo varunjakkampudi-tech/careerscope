@@ -3747,7 +3747,7 @@
       "source": "Filed 2026-09-25 from CS-51 ev[7], which disclosed it and said it needs its own ticket. CS-52 through CS-74 were checked and no such ticket existed - the same orphan pattern as CS-70.",
       "area": "frontend",
       "priority": "P2",
-      "status": "READY",
+      "status": "QA",
       "size": "S",
       "value": 3,
       "risk": 2,
@@ -3761,10 +3761,12 @@
       "evidence": [
         "DISCLOSED BY CS-51, NOT PATCHED THERE, AND CORRECTLY SO: its evidence records that api.ts throws on a non-OK response WITHOUT READING THE BODY, measured as two never-finished /api/searches requests, and that it was \"worked around locally in the test harness rather than changing api()\". Confirmed at source in this session: v2/apps/web/src/lib/api.ts:106 tests response.ok and :119 throws, with the body read only on the 409 conflict path at :74.",
         "WHY IT IS MORE THAN AN ORDINARY ORPHAN: CS-51s AC3 IS ACCEPTED, and its browser assertions pass PARTLY BECAUSE THE HARNESS COMPENSATES FOR THIS DEFECT. The error state does render, so AC3 is genuinely met - but the evidence for an accepted criterion is standing on a workaround for a live production-path defect, and that was invisible to anyone reading the verdict.",
-        "THE SECOND CRITERION IS THE LOAD-BEARING ONE: removing the harness workaround and having CS-51s assertions still pass is what distinguishes \"the production path was fixed\" from \"the test was re-tuned around it\". Without that step this ticket could be closed by changing the test."
+        "THE SECOND CRITERION IS THE LOAD-BEARING ONE: removing the harness workaround and having CS-51s assertions still pass is what distinguishes \"the production path was fixed\" from \"the test was re-tuned around it\". Without that step this ticket could be closed by changing the test.",
+        "IMPLEMENTED 2026-09-28: v2/apps/web/src/lib/api.ts now cancels every unread non-409 response body before throwing. The 409 path still consumes its structured body through readConflict(). The CS-51 check-ui workaround that waited for response arrival is removed; its deep-link and foreign-owner error paths now use the normal request-settlement gate.",
+        "LOCAL FALSIFICATION 2026-09-28: api.test.ts drives real Response objects backed by ReadableStreams for deliberate 400 and 404 failures, asserts both promises reject with the matching ApiError, and asserts the stream cancel callback fires. The positive control remains the existing successful API path. v2 typecheck passes with all 16 test files. Hosted browser CI is still required before UAT."
       ],
-      "currentStep": "READY. Filed from CS-51 ev[7]. Its second criterion is the one that matters: removing CS-51 harness workaround and having its AC3 assertions STILL pass is what distinguishes \"the production path was fixed\" from \"the test was re-tuned around it\".",
-      "updatedAt": "2026-09-27"
+      "currentStep": "QA - production response-body cancellation and the CS-51 harness-workaround removal are implemented and locally falsification-tested. Awaiting hosted browser CI before UAT.",
+      "updatedAt": "2026-09-28"
     },
     {
       "id": "CS-76",

@@ -2091,27 +2091,9 @@ try {
         `${engine} fixture: the run used for the deep-link check must not be the newest one`,
       );
       const resultHeading = page.locator('.result-toolbar h2');
-      // `settled()` cannot be used for the navigations below. Some of them
-      // deliberately ask the API for an id it must refuse, and lib/api.ts
-      // throws on a non-OK response without reading its body — so Playwright
-      // never marks that 400/404 fetch as finished and the page never looks
-      // idle, no matter how long it is left (measured: two permanently
-      // "in-flight" /api/searches/not-a-uuid fetches). A response having
-      // ARRIVED is the honest signal here; that is exactly what these checks
-      // are about — what the screen renders once the API has refused.
-      const answered = new WeakSet<import('playwright').Request>();
-      page.on('response', (response) => answered.add(response.request()));
-      const quiet = async (label: string) => {
-        const deadline = Date.now() + 15000;
-        let quietSince = Date.now();
-        while (Date.now() < deadline) {
-          if ([...inflight].some((request) => !answered.has(request))) quietSince = Date.now();
-          else if (Date.now() - quietSince >= 250) return;
-          await page.waitForTimeout(25);
-        }
-        throw new Error(`${engine}: ${label} never stopped issuing requests`);
-      };
-      await quiet('run deep link');
+      // CS-75: api() now cancels unread non-OK response bodies, so the normal
+      // request-settlement gate is valid for these deliberately refused IDs.
+      await settled('run deep link');
       await page.goto(`${origin}/jobs?run=${search.id}`);
       await page.getByRole('heading', { name: 'Find Your Next Role', exact: true }).waitFor();
       await resultHeading.waitFor();
@@ -2127,7 +2109,7 @@ try {
         `${engine} /jobs?run= does not mark the requested run as current`,
       );
       // Absent parameter: unchanged fallback to the most recent run.
-      await quiet('run deep link fallback');
+      await settled('run deep link fallback');
       await page.goto(`${origin}/jobs`);
       await resultHeading.waitFor();
       assert.match(
@@ -2138,7 +2120,7 @@ try {
       // Selecting a run keeps the URL in sync, and Back returns to the run
       // that was showing before — the view is genuinely linkable, not merely
       // readable from the URL once.
-      await quiet('run url sync');
+      await settled('run url sync');
       await page.goto(`${origin}/jobs?run=${search.id}`);
       await resultHeading.waitFor();
       await history
@@ -2162,7 +2144,7 @@ try {
         ['unknown', randomUUID(), 'Request failed. Please try again.'],
         ['foreign-owner', foreignRun.id, 'Request failed. Please try again.'],
       ] as const) {
-        await quiet(`run ${label}`);
+        await settled(`run ${label}`);
         await page.goto(`${origin}/jobs?run=${runId}`);
         await page.getByRole('heading', { name: 'Find Your Next Role', exact: true }).waitFor();
         await page.getByRole('alert').filter({ hasText: message }).first().waitFor();
@@ -2189,7 +2171,7 @@ try {
           'Request failed. Please try again.',
         ],
       ] as const) {
-        await quiet(`lead ${label}`);
+        await settled(`lead ${label}`);
         await page.goto(`${origin}${route}?lead=${leadParam}`);
         await page.getByRole('heading', { name: heading, exact: true }).waitFor();
         await page.getByRole('alert').filter({ hasText: message }).first().waitFor();
@@ -2204,7 +2186,7 @@ try {
           `${engine} ${route}?lead=<${label}> exposed another owner's lead`,
         );
       }
-      await quiet('deep link checks');
+      await settled('deep link checks');
       await page.goto(`${origin}/dashboard`);
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
       // Dashboard "Recent Discovery" names the run it renders (F-3's other
