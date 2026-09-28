@@ -2309,10 +2309,16 @@ try {
           .getByRole('navigation', { name: 'Saved lead list' })
           .getByRole('button', { name: /Senior React Engineer/ })
           .waitFor();
+        await settled(`cs-13 saved sibling ${width}`);
         await page
           .getByRole('group', { name: 'Lead status' })
           .getByRole('button', { name: 'Archived', exact: true })
           .click();
+        await page
+          .getByRole('group', { name: 'Lead status' })
+          .getByRole('button', { name: 'Archived', exact: true })
+          .waitFor({ state: 'visible' });
+        await settled(`cs-13 archived filter ${width}`);
         await page.getByText(cs13FilteredEmpty, { exact: true }).waitFor();
         assert.equal(
           await page.getByText(cs13NothingYet, { exact: true }).count(),
