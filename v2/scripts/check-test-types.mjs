@@ -10,10 +10,10 @@
 // a file holding three.
 //
 // So the file count is asserted against a floor before any green result is
-// believed. Today the project resolves 15 of v2's 17 test files — 11 in
-// packages/core, 4 in scripts; apps/api has none yet, and the two outside are
-// apps/web (covered by its own Next project) and apps/workers/search
-// (deliberately out of scope, see tsconfig.test.json). If that number falls,
+// believed. Today the project resolves 16 of v2's 17 test files — 11 in
+// packages/core, 4 in scripts, and apps/workers/search; apps/api has none yet,
+// and the one outside is apps/web (covered by its own Next project). If that
+// number falls,
 // something stopped being checked and this says so instead of passing.
 //
 // The project also covers the 19 non-test `.ts` files in v2/scripts, which were
@@ -26,12 +26,9 @@
 // same run.
 //
 // A precise note on scope, because the earlier wording here was wrong.
-// tsconfig.test.json's `include` deliberately omits apps/workers/search. That
-// is true of the include LIST and false of what actually gets checked: files
-// under apps/workers are reached as dependencies of included files — verified,
-// `apps/workers/search/src/collect.ts` is in the resolved file set — so errors
-// there are reported by this script. "Out of the include list" and "out of
-// scope" are different claims, and only the first one is true.
+// tsconfig.test.json explicitly includes apps/workers/search so its test file
+// is checked directly rather than relying on a production-file dependency to
+// pull only collect.ts into the resolved file set.
 
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath, URL } from 'node:url';
@@ -41,7 +38,7 @@ const write = (message) => process.stdout.write(`${message}\n`);
 const warn = (message) => process.stderr.write(`${message}\n`);
 
 // Raising this is a decision; it should never drift down silently.
-const MINIMUM_TEST_FILES = 15;
+const MINIMUM_TEST_FILES = 16;
 
 const root = fileURLToPath(new URL('..', import.meta.url)).replace(/[\\/]$/, '');
 // Invoke the compiler's own entry point with this Node, rather than going

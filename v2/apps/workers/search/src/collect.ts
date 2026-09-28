@@ -5,7 +5,7 @@ import {
   sourceOutcomeSchema,
   sourceOutcomesSchema,
   type CollectedJob,
-  type CreateSearch,
+  type CreateSearchInput,
   type Database,
   type Handler,
   type MatchingProfile,
@@ -34,7 +34,7 @@ const providerFactories = {
 };
 
 export async function collect(
-  request: CreateSearch,
+  request: CreateSearchInput,
   signal: AbortSignal,
   providers: JobProvider | JobProvider[] = request.sources.map((source) =>
     providerFactories[source](),

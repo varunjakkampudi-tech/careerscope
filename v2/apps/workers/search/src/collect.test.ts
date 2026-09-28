@@ -753,6 +753,7 @@ test('combined collection bounds each provider and returns at most 100 unique re
           companyName: 'Example',
           location: 'Remote',
           description: 'React',
+          hasFullDescription: true,
           sourceUrl: `https://remoteok.com/remote-jobs/${index}`,
           applyUrl: 'https://example.test/apply',
         };
@@ -926,6 +927,7 @@ test('malformed source rows are excluded while successful empty sources are mark
     companyName: 'Synthetic',
     location: 'Remote',
     description: 'Validated fixture',
+    hasFullDescription: true,
     sourceUrl: 'https://remoteok.com/remote-jobs/safe',
     applyUrl: 'https://example.test/apply',
   };
