@@ -1,10 +1,10 @@
 # Active task
 
-**Status: IN PROGRESS — release evidence reconciliation after CS-85 acceptance.**
+**Status: IN PROGRESS — CS-61 owner-transition experiment planning.**
 
 Reconciled 2026-09-28 from starting `main` SHA
 `8adbe89c74d8a52c295f11638d937012cb5cc27f`. The current committed main SHA is
-`fe8aa2479892ef6fb104f8fe292676a3eee7419b`. No production deployment or
+`1ba20d6d5d9cadc2f4e13976129845c64300b547`. No production deployment or
 publication has been run.
 
 ## Delivered in this batch
@@ -35,6 +35,8 @@ publication has been run.
 - CS-61 still requires its deliberate two-owner cache-transition experiment;
   CS-58 still requires consecutive full-CI confirmation of older unexplained
   flakes.
+- CS-82 deployment/Pages gate evidence is complete and recorded; it is now UAT
+  for release-manager acceptance.
 - Recreate a coherent dependency update after baseline CI is green (CS-84).
 - Review and integrate or intentionally retire the unique work on
   `feature/frontend-pages-admin-console`.
@@ -47,8 +49,10 @@ publication has been run.
   consecutive complete green integration workflow. Both include recovery,
   48/48 service-backed integration tests, 7/7 backfill tests, and all browser
   and axe engines.
-- Next exact action: reconcile this state and the external report, then leave
-  deployment/publication untouched. Release Manager owns UAT acceptance.
+- Next exact action: implement the CS-61 single-document owner A → sign out →
+  owner B experiment with cache.clear disabled through an explicit test-only
+  harness switch; retain the positive control with owner-agnostic keys. Leave
+  deployment/publication untouched.
 
 The authoritative ticket state is [backlog.json](backlog.json); the truthful
 product/runtime map is [PROJECT-STATE.md](../docs/PROJECT-STATE.md).
