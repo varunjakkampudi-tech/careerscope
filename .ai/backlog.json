@@ -4182,6 +4182,75 @@
       "createdAt": "2026-09-27",
       "updatedAt": "2026-09-28",
       "dimension": "engineering"
+    },
+    {
+      "id": "CS-86",
+      "title": "Harden Hostinger firewall and verify public exposure",
+      "userProblem": "The host OS firewall and container namespace are tested, but the Hostinger managed firewall layer is not configured or independently verified, leaving a defence-in-depth gap.",
+      "source": "Owner request, Hostinger security review, 2026-09-28",
+      "area": "infrastructure",
+      "priority": "P1",
+      "status": "BLOCKED",
+      "size": "S",
+      "value": 5,
+      "risk": 5,
+      "complexity": 2,
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "Hostinger managed firewall allows only 22, 80 and 443 inbound and denies unsolicited traffic on every other port",
+        "The production host retains the nftables inet careerscope drop policy, Docker NAT, SSH safety and required ICMP/ICMPv6 rules",
+        "check-host-firewall.sh passes from a second SSH session and confirms only the proxy publishes ports",
+        "The exact Hostinger firewall policy and verification timestamp are recorded without exposing credentials or host secrets"
+      ],
+      "evidence": [
+        "Repository audit confirms the OS firewall and network-namespace checks exist, but docs/OPERATIONS/FIREWALL.md records the Hostinger managed firewall as NOT CONFIGURED.",
+        "This ticket requires an authenticated hPanel or host-console action; it cannot be completed from repository changes alone."
+      ],
+      "securityImpact": "Reduces exposure if the host firewall or Docker publishing policy regresses.",
+      "architectureImpact": "Host perimeter configuration only; no application topology change.",
+      "releaseTarget": "backlog",
+      "ownerAgent": "Infrastructure",
+      "reviewAgents": ["Security", "Independent Reviewer"],
+      "currentStep": "BLOCKED on Hostinger hPanel access and a second live SSH verification session.",
+      "completedSteps": ["Project Manager", "Infrastructure"],
+      "createdAt": "2026-09-28",
+      "updatedAt": "2026-09-28",
+      "dimension": "engineering",
+      "blockedReason": "Managed Hostinger firewall configuration and live verification require owner-controlled hPanel/SSH authority not available in the repository."
+    },
+    {
+      "id": "CS-87",
+      "title": "Make CI failures diagnosable and deployment-gating",
+      "userProblem": "Recent CI failures are split between a deterministic root lint error and an integration job failure whose public logs are difficult to retrieve, so deployment readiness is not consistently diagnosable.",
+      "source": "GitHub Actions audit of runs 36425407226 through 36433446070, 2026-09-28",
+      "area": "testing",
+      "priority": "P1",
+      "status": "IN_PROGRESS",
+      "size": "M",
+      "value": 5,
+      "risk": 4,
+      "complexity": 3,
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "The deterministic design/build-refined-dark.mjs lint failure is fixed without weakening no-console policy",
+        "Every failing CI job uploads actionable logs and failure artifacts before exit, including integration child-process stderr",
+        "A green CI run is required for the exact deployment SHA and the deploy workflow fails closed when CI evidence is unavailable",
+        "Two consecutive complete CI runs pass the root, V2 integration, recovery and browser/axe suites"
+      ],
+      "evidence": [
+        "GitHub annotation on run 36425407226 identifies design/build-refined-dark.mjs:663 as an unexpected console statement; this repository change replaces it with explicit stdout output.",
+        "The latest repository state already has exact-SHA CI gating in deploy.yml; remaining acceptance is the hosted confirmation after the fix and diagnosis of any integration failure."
+      ],
+      "securityImpact": "Prevents a red or unauditable validation path from being treated as deployable.",
+      "architectureImpact": "CI observability and release gating only.",
+      "releaseTarget": "3.0.1",
+      "ownerAgent": "QA",
+      "reviewAgents": ["Infrastructure", "Security", "Independent Reviewer"],
+      "currentStep": "IN PROGRESS - deterministic lint failure fixed locally; hosted CI confirmation and integration-failure evidence remain.",
+      "completedSteps": ["Project Manager", "Repository"],
+      "createdAt": "2026-09-28",
+      "updatedAt": "2026-09-28",
+      "dimension": "engineering"
     }
   ]
 }

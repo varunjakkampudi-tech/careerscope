@@ -660,4 +660,6 @@ ${jobs.slice(0, FIRST_PAGE).map(row).join('\n')}
 `;
 
 writeFileSync('design/home-variants/refined-dark.html', html);
-console.log(`wrote refined-dark.html with ${FIRST_PAGE} of ${jobs.length} rows inlined`);
+globalThis.process.stdout.write(
+  `wrote refined-dark.html with ${FIRST_PAGE} of ${jobs.length} rows inlined\n`,
+);
