@@ -4,7 +4,7 @@
 
 Reconciled 2026-09-28 from starting `main` SHA
 `8adbe89c74d8a52c295f11638d937012cb5cc27f`. The current committed main SHA is
-`157cbd8d7347b3a53c7c72c8d6b1463221fb7f3f`. No production deployment or
+`07e79fd0f4b0fd4ee5ec4e678c225422fc5e33eb`. No production deployment or
 publication has been run.
 
 ## Delivered in this batch
@@ -46,6 +46,9 @@ publication has been run.
 - CS-61's cache-disabled single-document transition harness and paired
   owner-agnostic-key positive control both pass locally across Chromium,
   Firefox, and WebKit; hosted CI verification remains open.
+- CS-67's mutation-proof severity rendering is re-taken and promoted to UAT
+  on consecutive Node 24 green CI evidence; no acceptance criterion remains
+  open.
 
 ## Current evidence and next action
 
