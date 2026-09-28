@@ -6351,3 +6351,19 @@ BOARD  80 items - QA 27 . BLOCKED 18 . UAT 16 . READY 10 . DISCOVERY 9
   this one was cheap, specific, and caught a defect its author could not see.
 
   agent configuration valid. 24 of 24.
+
+2026-09-28 — Batch 2 host-evidence session
+
+Read-only provenance and health verification passed on the Hostinger VPS:
+deployed revision 1401597f84368e87d8f7e637e034a15d83b9b352 matched runtime
+labels, and /api/health returned version 3.0.0. The host has no CareerScope
+systemd service/timer units installed, so CS-3, CS-24, CS-25, CS-26 and CS-27
+could not honestly receive timer/recovery evidence and remain BLOCKED. No
+production installation or deployment was performed.
+
+Host firewall verification passed all repository assertions and external TCP
+probes from this client reached only SSH/HTTPS; PostgreSQL, Redis and the
+internal API were not reachable. Hostinger hPanel reported Firewall rules 0,
+so CS-30 remains BLOCKED pending a managed-firewall policy/attachment decision
+and IPv4/IPv6 evidence. CS-47 remains blocked by its existing owner-priority
+sequencing. Raw journals and secrets were not copied into the public repo.
