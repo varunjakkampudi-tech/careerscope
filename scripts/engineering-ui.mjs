@@ -48,7 +48,7 @@ let stateErrors = [];
 const BOARD_COLUMNS = [
   [
     'Backlog',
-    ['IDEA', 'DISCOVERY'],
+    ['BACKLOG', 'IDEA', 'DISCOVERY'],
     'var(--dim)',
     'No ideas captured',
     'New ideas will appear here.',
