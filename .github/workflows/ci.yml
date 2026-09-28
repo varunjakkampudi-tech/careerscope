@@ -222,6 +222,13 @@ jobs:
       - name: Verify the public workspace
         run: npm run pages:workspace:test
 
+      # CS-15: the public Pages surface is part of the accessibility baseline,
+      # not only a locally runnable visual tool. Keep this consumer beside the
+      # other Pages checks so a regression cannot pass CI while the public
+      # surface remains unaudited.
+      - name: Verify public Pages accessibility and visual baseline
+        run: npm run pages:visual
+
       - name: Verify the encrypted admin
         run: node scripts/check-admin-ui.mjs
 

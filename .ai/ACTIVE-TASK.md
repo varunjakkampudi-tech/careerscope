@@ -77,6 +77,9 @@ publication has been run.
   concrete coverage, visual, or real-system acceptance gap. CS-31 is now UAT
   after hosted run 36398473010 attempt 2 proved the 1440px and 320px checks
   across Chromium, Firefox and WebKit.
+- CS-15's public Pages audit is now wired into `.github/workflows/ci.yml` via
+  `npm run pages:visual`; local Chromium, Firefox and WebKit execution passed
+  192 cases. Hosted Node 24 confirmation is the remaining release gate.
 - CS-14, CS-47 and CS-52 are BLOCKED on explicit owner decisions or live-host
   authority; these are recorded as dependencies rather than silently waived.
 
