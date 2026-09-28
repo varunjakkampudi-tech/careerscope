@@ -4147,7 +4147,7 @@
       "releaseTarget": "backlog",
       "ownerAgent": "Code Quality",
       "reviewAgents": ["Security", "QA"],
-      "currentStep": "Blocked until baseline CI is green; then regenerate one coherent dependency change set.",
+      "currentStep": "BLOCKED pending regeneration and independent verification of one coherent, non-overlapping root/V2/Actions dependency change set; baseline CI is now green.",
       "completedSteps": ["Project Manager", "Repository"],
       "createdAt": "2026-09-27",
       "updatedAt": "2026-09-27",
