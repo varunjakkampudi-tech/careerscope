@@ -60,6 +60,10 @@ publication has been run.
   pre-parsed retry under one idempotency key, with a different-request conflict
   control retained. Node 24 typecheck passes; local integration was blocked by
   an unavailable Redis dependency, so hosted CI evidence remains required.
+- CS-76's worker test coverage gap is closed: the noEmit project includes
+  collect.test.ts, its input-boundary and fixture errors are fixed, and a
+  deliberate TS2322 mutation made the checker fail before restoration. Hosted
+  CI evidence remains required before promotion.
 - The promotion gate was re-run after the batch. Six tickets with historical
   or criterion-specific blocking findings were correctly returned from UAT to
   QA. CS-48 and CS-82 were then promoted with exact hosted-run locators; the
