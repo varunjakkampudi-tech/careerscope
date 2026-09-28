@@ -6388,3 +6388,14 @@ managed IPv4/IPv6 policy was guessed; CS-47 retains its owner-priority
 blocker. Sanitized evidence is recorded in .ai/backlog.json. The working
 tree keeps only the user-owned .ai/runs.json dirty, and main equals
 origin/main at d3af411.
+
+Follow-up Batch 2 evidence: CS-24's real stopped-worker proof used the
+configured careerscope-search-1 worker and recorded `stopped - not running`
+followed by `ok - recovered`. CS-25's guarded scratch restore verified 13
+public tables, users=1 and search_runs=0, then removed restore_drill. The
+first host scheduler-health run exposed that Ubuntu includes fractional
+seconds in monotonic timestamps; c71b158 fixed that parser and protected
+Deploy #18 succeeded. The corrected checker now evaluates all six timers and
+reports only the three that have never had calendar-triggered runs:
+backup, discovery and liveness. No production owner data or raw journals
+were copied into the repository.
