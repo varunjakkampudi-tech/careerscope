@@ -1,12 +1,11 @@
 # Active task
 
-**Status: IN PROGRESS — CS-85 integration and browser acceptance recovery.**
+**Status: IN PROGRESS — release evidence reconciliation after CS-85 acceptance.**
 
 Reconciled 2026-09-28 from starting `main` SHA
 `8adbe89c74d8a52c295f11638d937012cb5cc27f`. The current committed main SHA is
-`0476f064a90fecea4a73560ca3bede5e38bb5e96`; work is isolated on
-`fix/CS-85-browser-worker-runtime`. No production deployment or publication has
-been run.
+`4cb574086df4e0e4a8e80defc2cdc35a3d384a79`. No production deployment or
+publication has been run.
 
 ## Delivered in this batch
 
@@ -28,11 +27,14 @@ been run.
 
 ## Still open
 
-- Commit and push the CS-85 browser-worker environment repair.
-- Require two consecutive complete integration workflow runs within budget,
-  including Chromium, Firefox, WebKit, and axe acceptance.
-- Promote CS-83 only after its successful recovery evidence is recorded on the
-  board; promote CS-85 only after the two-run acceptance criterion is met.
+- CS-83 recovery evidence is complete and recorded; it is now UAT for release
+  manager acceptance.
+- CS-85 has two consecutive complete green integration runs, including
+  Chromium, Firefox, WebKit, and axe; it is now UAT for release manager
+  acceptance.
+- CS-61 still requires its deliberate two-owner cache-transition experiment;
+  CS-58 still requires consecutive full-CI confirmation of older unexplained
+  flakes.
 - Recreate a coherent dependency update after baseline CI is green (CS-84).
 - Review and integrate or intentionally retire the unique work on
   `feature/frontend-pages-admin-console`.
@@ -41,11 +43,12 @@ been run.
 
 - Local: V2 formatting passes; all 15 V2 test files type-check; root formatting
   passes; diff whitespace is clean.
-- CI: run 36355198109 is red only in the browser phase described above; recovery
-  is green. Its root job was still running when this state was written.
-- Next exact action: commit and push this branch, monitor the resulting CI run,
-  fix any real failure, then dispatch one manual CI run for the required second
-  consecutive result. Keep CS-85 in QA until both are green.
+- CI: run 36385161068 is complete green; run 36385785464 is the required
+  consecutive complete green integration workflow. Both include recovery,
+  48/48 service-backed integration tests, 7/7 backfill tests, and all browser
+  and axe engines.
+- Next exact action: reconcile this state and the external report, then leave
+  deployment/publication untouched. Release Manager owns UAT acceptance.
 
 The authoritative ticket state is [backlog.json](backlog.json); the truthful
 product/runtime map is [PROJECT-STATE.md](../docs/PROJECT-STATE.md).
