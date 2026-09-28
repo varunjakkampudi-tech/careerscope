@@ -2,9 +2,8 @@
 
 **Status: IN PROGRESS — QA completion and blocker reconciliation.**
 
-Reconciled 2026-09-28 from starting `main` SHA
-`3bf265b4fda5fa967146a78ce2910a7cd56f7b4b`. Current working SHA:
-`680ba0cd5949dd0a3b271ec44a85990cef16e98f`. No production deployment or
+Reconciled 2026-09-28 on synchronized `main` SHA
+`b3f284cdc42cf297710123df63e0ca7c66300a20`. No production deployment or
 publication has been run.
 
 ## Delivered in this batch
