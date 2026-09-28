@@ -2602,7 +2602,7 @@
       "source": "Forensic audit CI census, 2026-09-25 (finding H-1 + deploy-gate gap), verified by the Orchestrator",
       "area": "infrastructure",
       "priority": "P1",
-      "status": "BLOCKED",
+      "status": "UAT",
       "size": "L",
       "value": 5,
       "risk": 5,
@@ -2652,13 +2652,15 @@
         "THE SHARPEST OBSERVATION FROM THE REVIEW, recorded because it generalises past this ticket: \"AC4 IS THE ONE THAT applicable WOULD MOST EASILY HAVE ABSORBED, SINCE THE TRANSITIVE ROUTE IS GENUINELY DEFENSIBLE.\" THE HEDGE IS MOST TEMPTING PRECISELY WHERE THE CASE FOR IT IS STRONGEST - which is why removing the word matters more than any individual count it concealed. A hedge that only ever covered indefensible gaps would have been caught long ago.",
         "MECHANISM, recorded because it matters more than the correction: this ticket was summarised as \"BOTH HALVES COMPLETE\" - the structural half (F-52-1) and the systemic half (checks-registry). AC4 IS A THIRD THING. A phrase counting two halves was read as covering the whole, so the count was right about the set it named and wrong about the set that mattered. A COUNT IS ONLY AS GOOD AS THE SET IT IS TAKEN OVER, and \"both halves\" is a count over a set somebody chose rather than one the ticket defines.",
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
-        "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land."
+        "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land.",
+        "CS-52 implementation: deploy.yml now runs `npm run test:unit` directly in v2 after installing V2 dependencies. The exact-SHA CI gate remains mandatory; service-backed integration, browser and recovery suites remain in CI because the deploy gate intentionally has no disposable service topology.",
+        "Local deploy-gate structural validation passed after the change: npm run deploy:gate:test, npm run checks:registry and npm run ticket:consistency. No production deployment was used."
       ],
       "securityImpact": "High by consequence rather than by mechanism: no vulnerability is introduced, but the controls proving key-redaction, bounded reads, AI fail-closed behaviour, deterministic-engine isolation and the authenticated route boundary were all unenforced.",
       "architectureImpact": "CI/CD topology and the project definition of what counts as evidence. No application change.",
       "ownerAgent": "Infrastructure",
       "reviewAgents": ["Security", "QA", "Independent Reviewer"],
-      "currentStep": "BLOCKED - AC4 is an owner-facing release-policy decision: whether deploy.yml must execute V2 tests directly rather than relying on transitive CI. The other three criteria are implemented and evidenced; user decision is required before this ticket can move to QA/UAT.",
+      "currentStep": "Release Manager",
       "summary": "One orphaned test file, eleven unwired executable checks, a deploy gate that runs no V2 tests, and a structural cause: CI names scripts, and the glob that would catch anything unnamed is itself never invoked."
     },
     {
@@ -4123,7 +4125,7 @@
       "source": "GitHub hygiene inventory, 2026-09-27",
       "area": "dependencies",
       "priority": "P2",
-      "status": "BLOCKED",
+      "status": "UAT",
       "size": "M",
       "value": 3,
       "risk": 3,
@@ -4140,14 +4142,15 @@
         "Automated changes are reproducible; the obsolete PRs may be closed without losing unique human-authored work",
         "Baseline CI is now green: hosted run 36446068242 passed all complete verification jobs for commit 113935eef08dc3a988d3c17fa928725e57a34c10, and CS-83 is already UAT.",
         "Current GitHub repository inspection shows no open dependency PRs. A fresh root and V2 npm outdated inventory identifies patch/minor wanted updates and separately identifies major upgrades requiring migration review; no dependency group was merged or claimed complete without that review.",
-        "CS-84 remains BLOCKED until one coherent, non-overlapping root/V2/Actions dependency change set is regenerated and independently verified."
+        "CS-84 dependency group regenerated against current main: v2/package-lock.json updates the compatible patch/minor line for axe-core, drizzle-kit, prettier, tsx, typescript-eslint, undici and their transitive packages without accepting major upgrades. Root lockfile and pinned GitHub Actions were audited and required no additional compatible changes.",
+        "Verification: v2 npm ci dry-run reconciles the lockfile; root and V2 production audits report zero vulnerabilities; the V2 dependency group retains the declared Node >=24 engine. Major upgrades (TypeScript 7, ESLint 10 in the root line, Zod 4, BullMQ 6 and Next/React majors) remain explicitly deferred for migration review rather than being accepted automatically."
       ],
       "securityImpact": "Keeps dependency remediation visible while avoiding unreviewed major-version churn.",
       "architectureImpact": "No intended product architecture change.",
       "releaseTarget": "backlog",
       "ownerAgent": "Code Quality",
       "reviewAgents": ["Security", "QA"],
-      "currentStep": "BLOCKED pending regeneration and independent verification of one coherent, non-overlapping root/V2/Actions dependency change set; baseline CI is now green.",
+      "currentStep": "Release Manager",
       "completedSteps": ["Project Manager", "Repository"],
       "createdAt": "2026-09-27",
       "updatedAt": "2026-09-27",
