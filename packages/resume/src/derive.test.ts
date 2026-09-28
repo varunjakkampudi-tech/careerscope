@@ -268,6 +268,12 @@ Principal Platform Engineer | Acme, Pune | Jan 2020 - Feb 2023
       ]);
     });
 
+    it('keeps an orthographic Devanagari ZWNJ and rejects a boundary joiner', () => {
+      const orthographic = titlesOf('', 'क\u200cष Engineer');
+      expect(orthographic).toEqual(['क\u200cष Engineer']);
+      expect(titlesOf('', 'क\u200cSenior Engineer')).toEqual([]);
+    });
+
     // Moving `$` out of the refusal set must NOT re-open template
     // interpolation: `${` needs `{`, which is still refused, so the segment
     // still dies. This asserts that composition rather than assuming it.

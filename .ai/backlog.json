@@ -1,6 +1,6 @@
 {
   "$comment": "Product backlog. Canonical machine state - automation reads this, not Markdown. Scores assist prioritisation only; the Project Manager, Client and Architect decide scope. A rejected item does not return without new evidence.",
-  "updatedAt": "2026-09-28T10:05:00.000Z",
+  "updatedAt": "2026-09-28T17:30:00.000Z",
   "items": [
     {
       "id": "CS-1",
@@ -1547,7 +1547,7 @@
       "releaseTarget": null,
       "ownerAgent": "Frontend",
       "reviewAgents": ["Visual Designer", "QA", "Independent Reviewer"],
-      "currentStep": "QA - independent verdict REVISE. NOT promoted. See evidence for the blocking findings.",
+      "currentStep": "QA - versioned baselines and perceptual comparison are implemented; hosted CI must confirm the 192-case matrix before UAT.",
       "completedSteps": [
         {
           "step": "Frontend",
@@ -3039,7 +3039,7 @@
       "source": "Security review of CS-57, 2026-09-25 - the reviewer could not locate an assertion that does exist, precisely because of this",
       "area": "testing",
       "priority": "P3",
-      "status": "READY",
+      "status": "QA",
       "size": "S",
       "value": 3,
       "risk": 2,
@@ -3065,14 +3065,15 @@
         "ONE REAL RESIDUAL FROM THE 2026-09-25 TEST SWEEP, RECORDED HERE FOR THE WORKERS SESSION - v2/apps/workers/search/src/collect.test.ts:699 iterates result.outcomes with .every(o => o.errorCode === \"source_timeout\") AND result.outcomes HAS NO LENGTH GUARD. Verified by reading from the construction site forward rather than from the assertion backward.",
         "IT IS A SHARPER SHAPE THAN \"NO GUARD\", WHICH IS WHY IT SURVIVED REVIEW: a count assertion IS present seven lines above - assert.equal(elapsed.length, 5) - and elapsed is pushed once per provider inside a finally block, so it genuinely proves all five sources ran and timed out. BUT elapsed AND result.outcomes ARE TWO DIFFERENT COLLECTIONS. If the collector dropped outcomes, result.outcomes would be empty, every() would return true, and a five-source-timeout test would pass having verified no outcome at all.",
         "THE GUARD IS ON A DIFFERENT COLLECTION THAN THE ONE BEING ITERATED. That is distinct from a missing guard and harder to see, because the nearby count assertion satisfies the eye. FIX: assert.equal(result.outcomes.length, 5) before the every(). One line; not blocking; changes no ticket status.",
-        "LINE NUMBER CORRECTED IN THIS RECORD FROM :698 TO :699 BEFORE IT WAS RELIED ON. The first write cited :698, which is assert.equal(result.jobs.length, 0) - a DIFFERENT and correctly-guarded assertion. An off-by-one in a citation is not cosmetic: it points the next reader at a line that looks fine, and the finding then reads as already fixed. It was caught because the recording script asserted the cited line actually contained result.outcomes.every before writing anything."
+        "LINE NUMBER CORRECTED IN THIS RECORD FROM :698 TO :699 BEFORE IT WAS RELIED ON. The first write cited :698, which is assert.equal(result.jobs.length, 0) - a DIFFERENT and correctly-guarded assertion. An off-by-one in a citation is not cosmetic: it points the next reader at a line that looks fine, and the finding then reads as already fixed. It was caught because the recording script asserted the cited line actually contained result.outcomes.every before writing anything.",
+        "IMPLEMENTED 2026-09-28: v2/apps/api/TESTING.md now provides an explicit pointer beside the API source to packages/core/src/database.test.ts and its unchanged test:integration command. No assertions moved or weakened; the test surface is identical by construction."
       ],
       "securityImpact": "None directly. It caused a security reviewer to report a coverage gap that does not exist, which is a meaningful second-order risk - a false negative in the other direction would be worse.",
       "architectureImpact": "Test file placement only. No production code change. Note database.test.ts is large and shared, so a move must be careful and must not split a suite that shares fixtures.",
       "releaseTarget": null,
       "ownerAgent": "Backend",
       "reviewAgents": ["QA", "Independent Reviewer"],
-      "currentStep": "READY. Defect confirmed and already demonstrated to mislead a reviewer.",
+      "currentStep": "QA - API HTTP tests are discoverable from v2/apps/api/TESTING.md; hosted integration confirmation remains required.",
       "completedSteps": [],
       "createdAt": "2026-09-25",
       "updatedAt": "2026-09-25",
@@ -3505,7 +3506,8 @@
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
         "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land."
       ],
-      "currentStep": "READY. Two green root suites were wired into engineering:test; the two red ones were deliberately NOT wired and are recorded with their diagnosis. The suite once mistaken for a release blocker is CORRECT - it detected a Node runtime below the declared floor, which is CS-74. AC2 may now be satisfied by the root registration guard the infrastructure session added; this session has not verified that and does not claim it.",
+      "status": "QA",
+      "currentStep": "QA - root registration guard and workflow wiring are present; hosted CI confirmation remains required.",
       "updatedAt": "2026-09-27"
     },
     {
@@ -3515,7 +3517,7 @@
       "source": "Independent review 2026-09-25, D's third cross-cutting pattern; verified independently at source by the orchestrator before filing",
       "area": "tooling",
       "priority": "P2",
-      "status": "READY",
+      "status": "QA",
       "size": "M",
       "value": 4,
       "risk": 4,
@@ -3530,9 +3532,10 @@
         "VERIFIED AT SOURCE by the orchestrator, not taken on report. .gitignore:21 is \"test-results/\". check-pages-ui.mjs:16 sets the baseline directory to test-results/pages-baseline - INSIDE the ignored tree. ZERO visual baselines are tracked: the 20 repository files matching baseline/snapshot/png patterns are drizzle migration snapshots, design concept images and unrelated crypto helpers. test-results/ currently holds 1864 files including 534 PNGs, none of them in the repository.",
         "THE STRUCTURAL CONSEQUENCE, which is worse than \"the evidence is missing\": on a fresh clone there is no baseline, so the first run must create one from whatever the code renders at that moment. A visual check whose baseline is produced by its own first run CANNOT FAIL on a fresh clone. This is a check-that-cannot-fail at the REPOSITORY level rather than inside a single assertion - the same class the whole batch has been hunting, one layer up.",
         "A PIPELINE WILL NOT FIX THIS, which is why it is filed separately from every CI-execution item. CI would regenerate the baseline on every run and pass. The defect is that the artefact is not versioned, not that nothing runs.",
-        "SCOPE: CS-32s rejection is ONE INSTANCE of this, not the whole of it. The same pattern makes the UI-freeze claim unverifiable on the tickets with untracked-only evidence, and it affects the PROOF rather than just the diff, so it is broader than the untracked-baseline problem already recorded elsewhere."
+        "SCOPE: CS-32s rejection is ONE INSTANCE of this, not the whole of it. The same pattern makes the UI-freeze claim unverifiable on the tickets with untracked-only evidence, and it affects the PROOF rather than just the diff, so it is broader than the untracked-baseline problem already recorded elsewhere.",
+        "IMPLEMENTED 2026-09-28: scripts/pages-baseline contains the reviewed 192-case matrix; a missing file now fails loudly, and npm run pages:visual matched every case locally. The chromium-search-light-320 case produced no diff and the threshold comment now states pixelmatch's actual 0.1 setting."
       ],
-      "currentStep": "READY. Verified at source rather than taken on report: test-results/ is gitignored in two places, the visual baseline directory sits inside it, and ZERO baselines are tracked. The structural consequence is the finding - on a fresh clone the first run generates its own baseline, so the check cannot fail. A pipeline will not fix it.",
+      "currentStep": "QA - visual baselines are versioned under scripts/pages-baseline and missing files fail loudly; hosted CI must confirm the matrix.",
       "updatedAt": "2026-09-27"
     },
     {
@@ -3676,7 +3679,7 @@
       "source": "Filed 2026-09-25 from the READY-tier audit, after the same shape appeared three times: CS-59, CS-61 and CS-54.",
       "area": "tooling",
       "priority": "P2",
-      "status": "READY",
+      "status": "QA",
       "size": "M",
       "value": 4,
       "risk": 3,
@@ -3695,7 +3698,7 @@
         "THE GENERAL FORM, AND IT IS WHY THIS BELONGS IN THE SAME VALIDATOR: CHANGING `status` AND CHANGING THE FIELDS THAT DESCRIBE THE STATUS ARE TWO SEPARATE ACTS, AND NOTHING ENFORCES THAT THE SECOND FOLLOWS THE FIRST. The board renders currentStep, so every one of those six was showing a reader a status the ticket did not hold. This is the same class as ownerAgent/architectureImpact drift and should be one check, not two.",
         "RECORDED AGAINST THIS SESSION RATHER THAN AS AN OBSERVATION ABOUT THE BOARD: the defect was introduced by the same session that spent the day correcting it on other tickets. That is the argument for the validator rather than for more care."
       ],
-      "currentStep": "READY. Filed after the same shape appeared three times (CS-59 safe, CS-61 contradicted, CS-54 disclosed only in evidence). Its second criterion is the load-bearing one: it must FAIL on CS-54 as it stood and PASS on CS-59. Note that status-versus-currentStep drift belongs in the same validator - five instances of it were found and fixed on this board today.",
+      "currentStep": "QA - scripts/check-ticket-consistency.mjs validates explicit ownership contradictions, status markers, and synthetic CS-54/CS-59 fail/pass controls; hosted gate confirmation remains required.",
       "updatedAt": "2026-09-27"
     },
     {
@@ -3948,7 +3951,7 @@
       "source": "L-1 falsification experiment, 2026-09-25, reproduced and confirmed at source",
       "area": "tooling",
       "priority": "P3",
-      "status": "READY",
+      "status": "QA",
       "size": "XS",
       "value": "medium",
       "risk": "low",
@@ -3966,7 +3969,7 @@
         "THIS IS A LIVE HAZARD RATHER THAN A THEORETICAL ONE: it was hit tonight during the L-1 falsification, and three sessions have been making exactly this kind of scripted edit. It also bit in a second way - an Add-Content append with a PowerShell backtick-n writes CRLF on Windows, which introduced CR bytes into an LF-only file and tripped the COMPLIANCE half of the check rather than the completeness half being tested.",
         "P3 BECAUSE THE BLAST RADIUS IS SMALL AND THE FIX IS ONE BYTE, NOT BECAUSE THE FAILURE IS MILD. A silently overridden eol declaration on the file that governs line endings would be found the way CS-65 was found - late, by its consequences."
       ],
-      "currentStep": "READY. Append a single newline to .gitattributes and prove an appended rule lands on its own line. Shared root file - not owned by the orchestrator; route to the session holding .gitattributes (CS-65 work).",
+      "currentStep": "QA - .gitattributes ends in LF and a programmatic append proof confirms the existing final rule remains unchanged and the new rule is separate.",
       "updatedAt": "2026-09-27"
     },
     {
@@ -4007,7 +4010,7 @@
       "source": "reviewer E, CS-66 review 2026-09-26, reproduced executably by the orchestrator",
       "area": "backend",
       "priority": "P2",
-      "status": "READY",
+      "status": "QA",
       "size": "M",
       "value": "high",
       "risk": "medium",
@@ -4028,7 +4031,7 @@
         "DO NOT SIMPLY WIDEN THE RANGE TO ALLOW ZWNJ AND ZWJ. They are genuinely used in homograph and spoofing attacks, which is WHY they sit in refusal sets. Unicode UTS #39 treats them as restricted BUT PERMITS THEM IN SPECIFIC CONTEXTS, such as between Indic consonants around a virama. THE CORRECT FIX IS CONTEXT-SENSITIVE AND IS A REAL DESIGN DECISION, NOT A ONE-LINE RANGE EDIT.",
         "FILED SEPARATELY FROM CS-66 DELIBERATELY: CS-66 IS ABOUT HOSTILE INPUT BEING CONSTRAINED; THIS IS ABOUT LEGITIMATE INPUT BEING DESTROYED. They will want different answers, and folding this into CS-66 would let a hostile-input verdict close a correctness defect."
       ],
-      "currentStep": "READY. Add the ZWNJ Devanagari fixture and prove it RED first, then decide the joiner policy with the failure visible. Touches packages/shared (V1) and both consuming paths. Not owned by the orchestrator.",
+      "currentStep": "QA - context-sensitive ZWNJ/ZWJ handling is implemented across shared evidence and resume extraction, with paired orthographic and script-boundary tests passing.",
       "updatedAt": "2026-09-27"
     },
     {

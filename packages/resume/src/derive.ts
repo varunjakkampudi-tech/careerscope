@@ -1,6 +1,6 @@
 import {
   extractSkills,
-  isRefusedCodePoint,
+  isRefusedCodePointAt,
   normalizeSkillList,
   REFUSED_SYNTAX,
 } from '@job-radar/shared';
@@ -459,7 +459,7 @@ function presentTitle(segment: string): string {
  * `<img src=x onerror=alert(1)> Engineer` was refused at this inlet and
  * renderable through the other. Two packages, one set, two operations.
  */
-const TITLE_STRAY_RE = /[^\p{L}\p{M}\p{N} .,&/'’+#()\-–—]/gu;
+const TITLE_STRAY_RE = /[^\p{L}\p{M}\p{N} .,&/'’+#()\-–—\u200c\u200d]/gu;
 
 /**
  * Control and invisible-formatting code points.
@@ -475,9 +475,11 @@ const TITLE_STRAY_RE = /[^\p{L}\p{M}\p{N} .,&/'’+#()\-–—]/gu;
 
 /** Empty when the segment must not become a title at all. */
 function constrainTitleCharacters(segment: string): string {
-  for (const character of segment) {
+  for (let index = 0; index < segment.length;) {
+    const character = String.fromCodePoint(segment.codePointAt(index) ?? 0);
     if (REFUSED_SYNTAX.has(character)) return '';
-    if (isRefusedCodePoint(character.codePointAt(0) ?? 0)) return '';
+    if (isRefusedCodePointAt(segment, index)) return '';
+    index += character.length;
   }
   return segment
     .replace(TITLE_STRAY_RE, ' ')

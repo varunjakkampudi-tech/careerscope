@@ -34,6 +34,44 @@ export function isRefusedCodePoint(point: number): boolean {
   );
 }
 
+const ORTHOGRAPHIC_JOINER_SCRIPTS = [
+  /\p{Script=Arabic}/u,
+  /\p{Script=Bengali}/u,
+  /\p{Script=Devanagari}/u,
+  /\p{Script=Gujarati}/u,
+  /\p{Script=Gurmukhi}/u,
+  /\p{Script=Kannada}/u,
+  /\p{Script=Malayalam}/u,
+  /\p{Script=Oriya}/u,
+  /\p{Script=Tamil}/u,
+  /\p{Script=Telugu}/u,
+];
+
+function scriptOf(character: string): RegExp | undefined {
+  return ORTHOGRAPHIC_JOINER_SCRIPTS.find((script) => script.test(character));
+}
+
+/**
+ * Apply the refusal set with the small amount of context Unicode joiners need.
+ * U+200C/U+200D remain refused by the base predicate (the security default),
+ * but are accepted only between letters/marks in the same Indic or Arabic
+ * script. At a script boundary, or next to punctuation/Latin text, they stay
+ * refused so decorative and spoofing uses are still neutralised/rejected.
+ */
+export function isRefusedCodePointAt(text: string, index: number): boolean {
+  const point = text.codePointAt(index) ?? 0;
+  if (point !== 0x200c && point !== 0x200d) return isRefusedCodePoint(point);
+
+  const previous = Array.from(text.slice(0, index)).at(-1);
+  const next = Array.from(text.slice(index + 1))[0];
+  if (!previous || !next || !/[\p{L}\p{M}]/u.test(previous) || !/[\p{L}\p{M}]/u.test(next)) {
+    return true;
+  }
+  const previousScript = scriptOf(previous);
+  const nextScript = scriptOf(next);
+  return previousScript === undefined || previousScript !== nextScript;
+}
+
 /**
  * Characters that carry meaning in a markup, template or shell-ish renderer.
  *
@@ -85,9 +123,14 @@ export const REFUSED_SYNTAX: ReadonlySet<string> = new Set([
  */
 export function constrainEvidenceText(text: string): string {
   let out = '';
-  for (const character of text) {
-    if (isRefusedCodePoint(character.codePointAt(0) ?? 0)) continue;
+  for (let index = 0; index < text.length;) {
+    const character = String.fromCodePoint(text.codePointAt(index) ?? 0);
+    if (isRefusedCodePointAt(text, index)) {
+      index += character.length;
+      continue;
+    }
     out += REFUSED_SYNTAX.has(character) ? ' ' : character;
+    index += character.length;
   }
   return out.replace(/\s+/g, ' ').trim();
 }

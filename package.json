@@ -82,12 +82,13 @@
     "deploy:gate:test": "node scripts/check-deploy-gate.mjs",
     "eol:check": "node scripts/check-line-endings.mjs",
     "progress:check": "node scripts/check-progress.mjs",
+    "ticket:consistency": "node scripts/check-ticket-consistency.mjs",
     "test:registration": "node scripts/check-test-registration.mjs",
     "checks:registry": "node scripts/check-checks-registry.mjs",
     "node:check": "node scripts/check-node-version.mjs",
     "promotion:check": "node scripts/check-promotion-evidence.mjs",
     "promotion:test": "node --test scripts/promotion-evidence.test.mjs",
-    "gates:test": "npm run node:check && npm run release:gate:test && npm run agile:gate:test && npm run state-readers:test && npm run deploy:gate:test && npm run eol:check && npm run progress:check && npm run agents:check && npm run engineering:test && npm run promotion:test && npm run promotion:check"
+    "gates:test": "npm run node:check && npm run release:gate:test && npm run agile:gate:test && npm run state-readers:test && npm run deploy:gate:test && npm run eol:check && npm run progress:check && npm run ticket:consistency && npm run agents:check && npm run engineering:test && npm run promotion:test && npm run promotion:check"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",

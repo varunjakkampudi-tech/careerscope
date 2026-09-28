@@ -305,6 +305,16 @@ describe('CS-66: reason is constrained at the boundary both inlets converge on',
     expect(reason).toContain('Ingénieur Software Engineer');
   });
 
+  it('preserves an orthographic Devanagari ZWNJ but strips a script-boundary joiner', () => {
+    const orthographic = 'क\u200cष Engineer';
+    const { reason } = scoreTitle('Engineer', candidate({ titles: [orthographic] }));
+    expect(reason).toContain(orthographic);
+
+    const boundary = scoreTitle('Engineer', candidate({ titles: ['क\u200cEngineer'] })).reason;
+    expect(boundary).not.toContain('\u200c');
+    expect(boundary).toContain('कEngineer');
+  });
+
   it('never returns an empty reason, because a score nobody can audit is the failure it prevents', () => {
     const { reason } = scoreTitle('Senior Engineer', candidate({ titles: ['\u202e\u200b\ufeff'] }));
     expect(reason.length).toBeGreaterThan(0);

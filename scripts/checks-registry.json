@@ -140,8 +140,8 @@
     },
     {
       "path": "scripts/check-pages-ui.mjs",
-      "classification": "manual",
-      "reason": "Compares screenshots against baselines under test-results/, which .gitignore excludes. The baselines are machine-local and font-dependent, so a runner has nothing to compare against and would fail on rendering differences rather than on regressions."
+      "classification": "ci",
+      "reason": "Compares the committed Pages screenshots in scripts/pages-baseline on every push and pull request, so visual regressions are release evidence rather than a developer-only check."
     },
     {
       "path": "scripts/check-node-version.mjs",
@@ -182,6 +182,11 @@
       "path": "scripts/check-test-registration.mjs",
       "classification": "ci",
       "reason": "CS-68's guard over root-workspace test files. It has to run on every push, or the two files it just rescued could drift out of CI again unnoticed."
+    },
+    {
+      "path": "scripts/check-ticket-consistency.mjs",
+      "classification": "ci",
+      "reason": "Validates ticket ownership, architecture disclosures and displayed status metadata on every push so the engineering board cannot silently contradict its evidence."
     },
     {
       "path": "scripts/check-ui.mjs",

@@ -13,7 +13,10 @@ import { pageFiles, stagePages } from './stage-pages.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const release = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
 const output = join(root, 'test-results/pages');
-const baseline = join(root, 'test-results/pages-baseline');
+// Keep approval artefacts in the repository, not under ignored test output.
+// A fresh clone without these files must fail comparison rather than creating
+// its own reference image and approving the first run by construction.
+const baseline = join(root, 'scripts/pages-baseline');
 const update = process.argv.includes('--update-baselines');
 await mkdir(output, { recursive: true });
 await mkdir(baseline, { recursive: true });
@@ -201,15 +204,23 @@ async function capture(page, name) {
   await writeFile(join(output, `${name}.png`), image);
   if (update) await writeFile(join(baseline, `${name}.png`), image);
   else {
-    const baselineBuffer = await readFile(join(baseline, `${name}.png`));
+    let baselineBuffer;
+    try {
+      baselineBuffer = await readFile(join(baseline, `${name}.png`));
+    } catch (error) {
+      if (error?.code === 'ENOENT') {
+        assert.fail(
+          `Missing committed visual baseline: ${join(baseline, `${name}.png`)}. Run --update-baselines only after reviewing the rendered diff.`,
+        );
+      }
+      throw error;
+    }
     // CS-32: a raw Buffer.equals() byte comparison here previously failed
     // spuriously on genuinely-identical renders, because Playwright's PNG
-    // encoding is not byte-stable across runs (confirmed: two separate
-    // reproductions, on different engines/pages each time, both showed 0
-    // mismatched pixels under pixelmatch). Perceptual comparison at a near-
-    // zero tolerance catches real regressions while not chasing encoder
-    // noise; anti-aliasing-only differences are pre-filtered by pixelmatch
-    // itself, not by loosening this threshold.
+    // encoding is not byte-stable across runs. Perceptual comparison at
+    // pixelmatch's documented 0.1 threshold catches real regressions while
+    // not chasing encoder noise; anti-aliasing-only differences are
+    // pre-filtered by pixelmatch itself, not by loosening this threshold.
     if (image.length === baselineBuffer.length && image.equals(baselineBuffer)) {
       results.push(name);
       return;

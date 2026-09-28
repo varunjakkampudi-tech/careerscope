@@ -73,7 +73,8 @@ publication has been run.
 
 ## Remaining QA and blockers
 
-- QA remains on CS-13, CS-15, CS-32 and CS-72 because each still has a
+- QA remains on CS-13, CS-15, CS-32, CS-60, CS-68, CS-69, CS-72, CS-73,
+  CS-75, CS-79 and CS-81 because each still has a
   concrete coverage, visual, or real-system acceptance gap. CS-31 is now UAT
   after hosted run 36398473010 attempt 2 proved the 1440px and 320px checks
   across Chromium, Firefox and WebKit.
@@ -83,6 +84,15 @@ publication has been run.
 - CS-75 moved from READY to QA: non-OK API responses now cancel unread bodies,
   the CS-51 browser harness workaround was removed, 400/404 cancellation is
   falsification-tested, and V2 typecheck passes. Hosted browser CI remains.
+- CS-69 moved to QA: visual baselines are tracked under `scripts/pages-baseline`,
+  missing baselines fail loudly, and 192 Chromium/Firefox/WebKit cases match
+  locally. CS-32 now consumes that reproducible baseline and its threshold
+  comment matches the actual pixelmatch configuration.
+- CS-60 moved to QA with an explicit `v2/apps/api/TESTING.md` pointer to the
+  unchanged HTTP integration suite. CS-68's root registration guard is wired
+  and classified in CI. CS-73's ownership validator includes synthetic
+  contradictory/consistent controls. CS-79's newline append proof and CS-81's
+  context-sensitive Devanagari joiner tests pass locally.
 - CS-14, CS-47 and CS-52 are BLOCKED on explicit owner decisions or live-host
   authority; these are recorded as dependencies rather than silently waived.
 
@@ -95,6 +105,10 @@ publication has been run.
   service-backed integration tests, backfill, all browser engines and axe.
   Isolated run 36397888648 records CS-77's deliberate normalization-reversion
   failure. Leave deployment/publication untouched.
+- New source state is locally verified but not yet hosted: `npm run checks:registry`,
+  `npm run ticket:consistency`, the focused 110-test V1 suite, V2 typecheck,
+  and `npm run pages:visual` all pass. Commit and rerun the hosted Node 24 gate;
+  only then promote the QA batch to UAT.
 
 The authoritative ticket state is [backlog.json](backlog.json); the truthful
 product/runtime map is [PROJECT-STATE.md](../docs/PROJECT-STATE.md).
