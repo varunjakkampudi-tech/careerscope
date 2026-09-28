@@ -321,7 +321,17 @@ try {
     try {
       const page = await browser.newPage();
       const errors: string[] = [];
-      page.on('pageerror', (error) => errors.push(error.message));
+      page.on('pageerror', (error) => {
+        // WebKit reports Next's cross-host prefetches as access-control page
+        // errors when the app is served from the loopback origin. This exact
+        // localhost-only message is a browser artifact; every other page
+        // error remains fatal at the end of the engine run.
+        const isWebKitPrefetchArtifact =
+          engine === 'webkit' &&
+          error.message.includes('due to access control checks.') &&
+          error.message.includes('/localhost:5280/');
+        if (!isWebKitPrefetchArtifact) errors.push(error.message);
+      });
       // A full-document navigation (goto/reload) that lands while the current
       // client-side route is still issuing its data fetches strands those
       // fetches, and WebKit reports a fetch started against a document that is
