@@ -229,15 +229,6 @@ jobs:
       - name: Verify public Pages accessibility and visual baseline
         run: npm run pages:visual
 
-      # Temporary capture path for the first platform-specific baseline review.
-      # It never participates in the pass/fail check and is removed after the
-      # Linux matrix is committed under scripts/pages-baseline/linux.
-      - name: Capture Linux Pages matrix for baseline review
-        if: failure()
-        env:
-          PAGES_CAPTURE_ONLY: '1'
-        run: npm run pages:visual
-
       # Keep the actual rendered capture and diff when the committed baseline
       # rejects a change. Reviewers must inspect the Linux output before any
       # baseline is refreshed; a red visual check must never be self-approved.

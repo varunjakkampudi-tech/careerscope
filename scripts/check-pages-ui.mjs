@@ -21,7 +21,6 @@ const baseline = join(root, 'scripts/pages-baseline');
 const platformBaseline = join(baseline, process.platform);
 const selectedBaseline = existsSync(platformBaseline) ? platformBaseline : baseline;
 const update = process.argv.includes('--update-baselines');
-const captureOnly = process.env.PAGES_CAPTURE_ONLY === '1';
 await mkdir(output, { recursive: true });
 await mkdir(selectedBaseline, { recursive: true });
 const passphrase = 'synthetic-visual-fixture-only';
@@ -206,9 +205,8 @@ async function capture(page, name) {
     capturing = false;
   }
   await writeFile(join(output, `${name}.png`), image);
-  if (update || captureOnly) {
+  if (update) {
     await writeFile(join(selectedBaseline, `${name}.png`), image);
-    if (captureOnly) results.push(name);
     return;
   } else {
     let baselineBuffer;
