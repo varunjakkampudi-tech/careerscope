@@ -336,6 +336,15 @@ try {
           await page.getByRole('button', { name: 'Unlock', exact: true }).click();
           await page.getByRole('table', { name: 'My leads' }).waitFor();
         }
+        // The first public capture can otherwise race the browser's initial
+        // font/layout settle on Linux, producing a fallback-font snapshot that
+        // differs from every subsequent capture. Wait for the document font
+        // set and two paints before any approved visual is taken.
+        await page.evaluate(() => document.fonts.ready);
+        await page.evaluate(
+          () =>
+            new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
         for (const theme of ['light', 'dark']) {
           await page.locator('#theme').selectOption(theme);
           for (const width of [320, 390, 768, 1024, 1440, 1920]) {
