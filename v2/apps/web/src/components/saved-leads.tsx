@@ -686,7 +686,7 @@ export default function SavedLeads({
     (value) =>
       value !== status &&
       (cache
-        .getQueryData<{ pages: { items: Lead[] }[] }>(['leads', value])
+        .getQueryData<{ pages: { items: Lead[] }[] }>(ownerKey(owner, 'leads', value))
         ?.pages.some((page) => page.items.length > 0) ??
         false),
   );
