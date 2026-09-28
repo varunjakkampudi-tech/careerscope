@@ -2279,7 +2279,6 @@ try {
         // AC3, "nothing yet": no status on this screen holds anything, so the
         // message must not claim another status does, and must name the one
         // action that populates the list.
-        await quiet(`cs-13 nothing-yet ${width}`);
         await page.route(leadListRequest, emptyLeadList);
         await page.goto(`${origin}/saved`);
         await page.getByRole('heading', { name: 'Saved Leads', exact: true }).waitFor();
