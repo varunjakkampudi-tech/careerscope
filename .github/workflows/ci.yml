@@ -229,6 +229,17 @@ jobs:
       - name: Verify public Pages accessibility and visual baseline
         run: npm run pages:visual
 
+      # Keep the actual rendered capture and diff when the committed baseline
+      # rejects a change. Reviewers must inspect the Linux output before any
+      # baseline is refreshed; a red visual check must never be self-approved.
+      - name: Keep Pages visual failure evidence
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: pages-visual-failure-${{ github.run_id }}
+          path: test-results/pages/
+          if-no-files-found: error
+
       - name: Verify the encrypted admin
         run: node scripts/check-admin-ui.mjs
 
