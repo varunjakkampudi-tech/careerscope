@@ -420,7 +420,11 @@ test('explicit renderer and mutation proofs stay in-repository demonstrations', 
   ];
   for (const [label, criterion] of cases) {
     const findings = assess(
-      { id: label, acceptanceCriteria: [criterion], evidence: ['2026-09-28: repository mutation and test proof recorded'] },
+      {
+        id: label,
+        acceptanceCriteria: [criterion],
+        evidence: ['2026-09-28: repository mutation and test proof recorded'],
+      },
       context,
     );
     assert.equal(

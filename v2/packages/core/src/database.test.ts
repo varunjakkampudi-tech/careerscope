@@ -49,6 +49,7 @@ import { createApp } from '../../../apps/api/src/app.js';
 import type { SourceOutcome } from './jobs.js';
 import { searchHandler } from '../../../apps/workers/search/src/collect.js';
 import { createRemoteOkProvider, createHimalayasProvider } from '@job-radar/providers';
+import { createSearchSchema } from './commands.js';
 
 function assertOpenApiRequiredDeclarations(document: unknown): void {
   assert.ok(document && typeof document === 'object' && !Array.isArray(document));
@@ -4547,11 +4548,16 @@ test('createSearch takes UNPARSED input, and canonicalises it before storing or 
     // spelling of the SAME request is the same request. Before the parse moved
     // inside, these two hashed differently and the second call would have been
     // rejected as a reused key - a false conflict on identical intent.
-    const reordered = await database.createSearch(ownerId, 'canonical-key', {
+    const preParsed = createSearchSchema.parse({
       query: 'Platform Engineer',
       sources: ['greenhouse', 'himalayas'],
     });
-    assert.equal(reordered.id, run.id, 'the same request under the same key is idempotent');
+    const reordered = await database.createSearch(ownerId, 'canonical-key', preParsed);
+    assert.equal(
+      reordered.id,
+      run.id,
+      'a literal and a pre-parsed form of the same request are idempotent',
+    );
 
     // PAIRED POSITIVE: conflict detection is not weakened. A genuinely
     // different request under the same key must still be refused, or the
