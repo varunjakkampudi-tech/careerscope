@@ -1,6 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from './api';
 
+declare global {
+  interface Window {
+    /** Explicitly enabled only by the CS-61 paired positive control. */
+    __CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__?: boolean;
+  }
+}
+
 export type Session = {
   authenticated: boolean;
   csrf?: string;
@@ -59,6 +66,11 @@ export function ownerKey(
   name: string,
   ...rest: readonly unknown[]
 ): readonly unknown[] {
+  if (
+    typeof window !== 'undefined' &&
+    window.__CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__ === true
+  )
+    return [name, ...rest];
   return [name, owner ?? NO_OWNER, ...rest];
 }
 

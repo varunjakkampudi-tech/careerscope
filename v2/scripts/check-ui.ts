@@ -2456,6 +2456,48 @@ try {
       page.once('dialog', (dialog) => dialog.accept());
       await page.getByRole('button', { name: 'Sign out', exact: true }).click();
       await page.getByRole('heading', { name: 'Sign in', exact: true }).waitFor();
+
+      // Paired positive control for CS-61 AC3. Deliberately restore the
+      // pre-fix owner-agnostic key shape while retaining cache-clear disabled.
+      // The staleTime-Infinity profile query must leak owner A's name to owner
+      // B; otherwise the control would be unable to distinguish a real proof
+      // from a vacuous pass.
+      await page.evaluate(() => {
+        (window as Window & {
+          __CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__?: boolean;
+        }).__CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__ = true;
+      });
+      await page.getByLabel('Email', { exact: true }).fill(accountEmail);
+      await page.getByLabel('Password', { exact: true }).fill(changedPassword);
+      await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+      await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+      await page.getByRole('link', { name: 'Resume', exact: true }).first().click();
+      await page.waitForURL('**/resume');
+      await page.getByLabel('Full Name', { exact: true }).waitFor();
+      assert.equal(
+        await page.getByLabel('Full Name', { exact: true }).inputValue(),
+        'Updated In Another Session',
+        `${engine} positive control did not load owner A profile`,
+      );
+      page.once('dialog', (dialog) => dialog.accept());
+      await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+      await page.getByRole('heading', { name: 'Sign in', exact: true }).waitFor();
+      await page.getByLabel('Email', { exact: true }).fill('foreign-owner@example.test');
+      await page.getByLabel('Password', { exact: true }).fill(password);
+      await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+      await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+      await page.getByRole('link', { name: 'Resume', exact: true }).first().click();
+      await page.waitForURL('**/resume');
+      assert.equal(
+        await page.getByLabel('Full Name', { exact: true }).inputValue(),
+        'Updated In Another Session',
+        `${engine} positive control did not reproduce owner-agnostic cache leakage`,
+      );
+      await page.evaluate(() => {
+        (window as Window & {
+          __CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__?: boolean;
+        }).__CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__ = false;
+      });
       assert.deepEqual(errors, []);
       console.log(
         `${engine}: search/export/cancellation, saved leads/notes/archive/conflicts, profile, logout, 320/390/1440px passed`,

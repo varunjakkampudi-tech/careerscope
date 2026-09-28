@@ -3123,14 +3123,14 @@
         "Run 36356076721 exposed an incomplete part of the owner-key migration in real browser acceptance: LeadEditor queried history with ownerKey(owner, 'lead-history', id) but invalidated ['lead-history', id], so a successful notes PUT refreshed the saved list but never refreshed history and the unchanged 30-second assertion failed. Four direct lead cache writes also still used unscoped ['lead', id] keys. All five operations now use ownerKey; broad ['leads'] invalidation remains valid by the documented prefix convention. This fixes real cache behavior but does not satisfy AC3's deliberate owner-transition falsification experiment.",
         "Run 36382060368 then exposed the remaining sibling-status lookup using raw ['leads', status] while the query itself was ownerKey(owner, 'leads', status); the Archived empty-filter copy could not observe the populated Saved sibling. The lookup now uses ownerKey as well. AC3's two-owner experiment remains outstanding.",
         "Implemented the explicit CS-61 browser harness switch and exercised the owner A -> sign out -> owner B path locally on Chromium, Firefox and WebKit via npm run test:ui. The switch disables auth-boundary cache.clear only when the experiment sets the dedicated window flag; production behavior remains reset-by-default. The transition checks now use in-app navigation without page.goto, reload or context recreation and assert positive owner-B anchors plus absence of owner-A secrets, including the staleTime-Infinity profile field.",
-        "AC3 remains open: the paired positive control with deliberately owner-agnostic keys has not yet been implemented and the hosted CI run for this exact revision is still required. Ticket stays QA."
+        "The paired positive control is now implemented and passed locally on Chromium, Firefox and WebKit: with deliberately owner-agnostic keys and cache clearing disabled, owner B reproduces owner A's stale profile value. The control therefore fails as expected when isolation is removed. Hosted CI for this exact revision remains required before promotion; ticket stays QA until that result is recorded."
       ],
       "securityImpact": "Owner isolation defence in depth on the client. Server-side isolation is unaffected and remains the real boundary; this concerns what a browser may still hold after a session change.",
       "architectureImpact": "Query key convention across every React Query consumer in v2/apps/web, AND a server change that was REQUIRED AND TAKEN DELIBERATELY: GET /api/session returns an opaque per-owner digest, never the raw owner id. The original \"No server change\" was false.",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
       "reviewAgents": ["Independent Reviewer", "Security", "QA"],
-      "currentStep": "QA harness implemented and local three-engine acceptance passes. AC3 remains open pending the paired owner-agnostic-key positive control and hosted CI verification; do not promote.",
+      "currentStep": "QA harness and paired owner-agnostic-key positive control both pass locally on three engines. Hosted CI for this exact revision remains required before promotion; do not promote yet.",
       "completedSteps": [],
       "createdAt": "2026-09-25",
       "updatedAt": "2026-09-28",
