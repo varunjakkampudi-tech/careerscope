@@ -238,7 +238,11 @@ jobs:
         with:
           name: pages-visual-failure-${{ github.run_id }}
           path: test-results/pages/
-          if-no-files-found: error
+          # A failure before the Pages visual step (for example format or
+          # typecheck) legitimately has no Pages output. Do not replace the
+          # original failure with an artifact-upload failure; preserve logs and
+          # upload visual evidence only when that directory exists.
+          if-no-files-found: warn
 
       - name: Verify the encrypted admin
         run: node scripts/check-admin-ui.mjs
