@@ -4316,7 +4316,8 @@
       ],
       "evidence": [
         "CS-48 already implements the provider abstraction, preparation-coaching use case, fail-closed catalog check, secret-safe logging, mocked test matrix and default-off behavior.",
-        "The repository and production contract deliberately keep AI_ENABLED=false by default; enabling it requires owner-controlled secret and deployment authority not available from source alone."
+        "The repository and production contract deliberately keep AI_ENABLED=false by default; enabling it requires owner-controlled secret and deployment authority not available from source alone.",
+        "Added docs/OPERATIONS/OPENROUTER.md with the exact activation, verification and rollback runbook; it deliberately records procedure, not fabricated production evidence."
       ],
       "securityImpact": "Introduces outbound owner-authored preparation fields to OpenRouter only after explicit configuration and preserves a fast default-off rollback.",
       "architectureImpact": "Operational configuration of the existing optional provider; no expansion of deterministic decision-making or new AI use cases.",
