@@ -3397,7 +3397,6 @@
       "source": "Owner direct request 2026-09-25 after trying to check progress on the board",
       "area": "tooling",
       "priority": "P2",
-      "status": "QA",
       "size": "M",
       "value": 4,
       "risk": 2,
@@ -3435,7 +3434,8 @@
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
         "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land."
       ],
-      "currentStep": "QA - F-67-1 IS STILL OPEN AND IT IS IN THE BOARD THE OWNER READS. strip() renders four LITERAL severity cells and never iterates KNOWN_SEVERITIES, so deleting one severity line leaves all six tests green and restores the original defect in one edit. The instance was fixed; the class was not. Otherwise blocked on CI execution alone.",
+      "status": "UAT",
+      "currentStep": "Release Manager - F-67-1 was subsequently closed at source: severity cells are generated from KNOWN_SEVERITIES and the mutation proof fails when a severity cell is removed. Node 24 CI runs 36385161068 and 36385785464 completed green, including the engineering test suite. No acceptance criterion remains open.",
       "updatedAt": "2026-09-27",
       "ownerAgent": "Code Quality"
     },
