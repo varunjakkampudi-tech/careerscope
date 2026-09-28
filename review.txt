@@ -6399,3 +6399,9 @@ Deploy #18 succeeded. The corrected checker now evaluates all six timers and
 reports only the three that have never had calendar-triggered runs:
 backup, discovery and liveness. No production owner data or raw journals
 were copied into the repository.
+
+Owner scope decision (2026-09-29): CS-25 database backup is deferred to a
+future release because no VPS backup was taken for this release. The installed
+careerscope-backup.timer was disabled without deleting its implementation or
+removing any data. CS-25 is now BACKLOG, and scheduler-health records the
+backup gap as intentional release scope rather than an active outage.

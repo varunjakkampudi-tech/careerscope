@@ -95,3 +95,7 @@ rollback verification. AI remains default-off until then.
 Execute one batch at a time. Before moving a ticket to QA or UAT, record the
 current-content evidence required by every acceptance criterion, run the
 applicable quality gates, and preserve any unresolved dependency as BLOCKED.
+Owner decision (2026-09-29): database backup (CS-25) is intentionally deferred
+to a future release because no VPS backup was taken for this release. The
+host timer was disabled without deleting its implementation or any data; CS-25
+is tracked in BACKLOG until the future backup design and acceptance window.
