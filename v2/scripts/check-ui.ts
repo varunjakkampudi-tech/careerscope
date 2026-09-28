@@ -640,19 +640,11 @@ try {
         enteredNav = true;
         if (!reachable.includes(focused)) reachable.push(focused);
       }
-      if (engine === 'webkit') {
-        assert.deepEqual(
-          reachable,
-          [],
-          `${engine} now includes links in the Tab sequence — remove this carve-out and assert the real order on all three engines`,
-        );
-      } else {
-        assert.deepEqual(
-          reachable,
-          expectedDestinations.map((destination) => destination.label),
-          `${engine} sidebar navigation is not fully keyboard reachable in order (and items with no destination must be skipped, not merely styled as skipped)`,
-        );
-      }
+      assert.deepEqual(
+        reachable,
+        expectedDestinations.map((destination) => destination.label),
+        `${engine} sidebar navigation is not fully keyboard reachable in order (and items with no destination must be skipped, not merely styled as skipped)`,
+      );
       // (d) active-route marking, checked on more than one route so a
       // hardcoded fallback cannot pass. Navigation happens through the real
       // shared nav, so this also proves the links work.
