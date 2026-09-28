@@ -4,7 +4,7 @@
 
 Reconciled 2026-09-28 from starting `main` SHA
 `8adbe89c74d8a52c295f11638d937012cb5cc27f`. The current committed main SHA is
-`632229e8a5e4b18fd5edfd0c06c7f759b7dfab09`. No production deployment or
+`157cbd8d7347b3a53c7c72c8d6b1463221fb7f3f`. No production deployment or
 publication has been run.
 
 ## Delivered in this batch
@@ -43,9 +43,9 @@ publication has been run.
 - Recreate a coherent dependency update after baseline CI is green (CS-84).
 - Review and integrate or intentionally retire the unique work on
   `feature/frontend-pages-admin-console`.
-- CS-61's cache-disabled single-document transition harness is implemented and
-  locally green across Chromium, Firefox, and WebKit; the owner-agnostic-key
-  positive control and hosted CI verification remain open.
+- CS-61's cache-disabled single-document transition harness and paired
+  owner-agnostic-key positive control both pass locally across Chromium,
+  Firefox, and WebKit; hosted CI verification remains open.
 
 ## Current evidence and next action
 
@@ -55,9 +55,9 @@ publication has been run.
   consecutive complete green integration workflow. Both include recovery,
   48/48 service-backed integration tests, 7/7 backfill tests, and all browser
   and axe engines.
-- Next exact action: add the CS-61 paired positive control with deliberately
-  owner-agnostic keys, then require the hosted CI result for this revision.
-  Leave deployment/publication untouched.
+- Next exact action: require the hosted CI result for the CS-61 experiment
+  revision, then promote only if every required job is green. Leave
+  deployment/publication untouched.
 
 The authoritative ticket state is [backlog.json](backlog.json); the truthful
 product/runtime map is [PROJECT-STATE.md](../docs/PROJECT-STATE.md).
