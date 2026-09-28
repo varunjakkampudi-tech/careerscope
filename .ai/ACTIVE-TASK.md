@@ -4,7 +4,7 @@
 
 Reconciled 2026-09-28 from starting `main` SHA
 `8adbe89c74d8a52c295f11638d937012cb5cc27f`. The current committed main SHA is
-`07e79fd0f4b0fd4ee5ec4e678c225422fc5e33eb`. No production deployment or
+`5331022a334d29b65f55086db559ff10056b5fbf`. No production deployment or
 publication has been run.
 
 ## Delivered in this batch
@@ -49,6 +49,9 @@ publication has been run.
 - CS-67's mutation-proof severity rendering is re-taken and promoted to UAT
   on consecutive Node 24 green CI evidence; no acceptance criterion remains
   open.
+- CS-78's V1/V2 boundary is now documented in the architecture record, and a
+  Node 24 mutation proves a fourth matcher-field read fails typecheck. It is
+  UAT pending the hosted green release gate.
 
 ## Current evidence and next action
 
