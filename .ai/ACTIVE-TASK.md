@@ -4,7 +4,7 @@
 
 Reconciled 2026-09-28 from starting `main` SHA
 `8adbe89c74d8a52c295f11638d937012cb5cc27f`. The current committed main SHA is
-`4cb574086df4e0e4a8e80defc2cdc35a3d384a79`. No production deployment or
+`fe8aa2479892ef6fb104f8fe292676a3eee7419b`. No production deployment or
 publication has been run.
 
 ## Delivered in this batch
