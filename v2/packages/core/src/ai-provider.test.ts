@@ -102,7 +102,7 @@ test('requestCompletion: success returns the completion text', async () => {
         { apiKey: 'k', model: 'test/model:free' },
         { systemPrompt: 'sys', userPrompt: 'user', maxOutputTokens: 50 },
       );
-      assert.equal(text, 'Real coaching text.');
+      assert.equal(text, 'INTENTIONAL CI MUTATION');
     },
   );
 });
