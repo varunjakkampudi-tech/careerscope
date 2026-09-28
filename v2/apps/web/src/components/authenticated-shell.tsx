@@ -80,8 +80,12 @@ export default function AuthenticatedShell({ children }: { children: ReactNode }
   const logout = useMutation({
     mutationFn: () =>
       api('/logout', { method: 'POST', headers: { 'x-csrf-token': session.data?.csrf ?? '' } }),
-    onSuccess: () => {
+    onSuccess: async () => {
       clearAuthQueryCache(cache);
+      // Logout changes the owner-discovery query just as login does. Refresh
+      // it explicitly so the CS-61 experiment can retain owner-private cache
+      // entries without retaining an authenticated session identity.
+      await session.refetch();
       router.replace('/');
     },
   });
