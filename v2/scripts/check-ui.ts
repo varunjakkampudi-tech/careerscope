@@ -2346,6 +2346,72 @@ try {
         await page.unroute(searchListRequest, failedSearchList);
       }
       await page.setViewportSize({ width: 1440, height: 900 });
+
+      // CS-38 AC3: the dashboard must distinguish a capped page from a
+      // complete list, and a stale value must change only after the owner's
+      // explicit refresh. The response is synthetic but uses the real API
+      // shape and the real dashboard query; the handler assertion prevents a
+      // route mismatch from turning this into a vacuous UI check.
+      let dashboardSavedResponses = 0;
+      let dashboardSavedVersion = 0;
+      const dashboardSavedRequest = (url: URL) =>
+        url.pathname === '/api/leads' && url.searchParams.get('status') === 'saved';
+      await page.route(dashboardSavedRequest, async (route) => {
+        dashboardSavedResponses += 1;
+        const paginated = dashboardSavedVersion === 0;
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            items: [
+              {
+                id: randomUUID(),
+                data: { title: paginated ? 'Paged saved job' : 'Complete saved job', company: 'Fixture Co' },
+                createdAt: '2026-09-28T12:00:00.000Z',
+              },
+              ...(paginated
+                ? []
+                : [
+                    {
+                      id: randomUUID(),
+                      data: { title: 'Second saved job', company: 'Fixture Co' },
+                      createdAt: '2026-09-28T11:00:00.000Z',
+                    },
+                  ]),
+            ],
+            nextCursor: paginated ? 'fixture-next-cursor' : null,
+          }),
+        });
+      });
+      await page.goto(`${origin}/dashboard`);
+      const dashboardSavedCount = page.getByTestId('dashboard-saved-count');
+      await dashboardSavedCount.waitFor();
+      await page.waitForFunction(
+        () => document.querySelector('[data-testid="dashboard-saved-count"]')?.textContent === '1+',
+      );
+      assert.equal(
+        await dashboardSavedCount.textContent(),
+        '1+',
+        `${engine}: paginated dashboard count was presented as an exact total`,
+      );
+      assert.ok(dashboardSavedResponses > 0, `${engine}: CS-38 saved-leads fixture was never used`);
+      assert.equal(
+        await dashboardSavedCount.textContent(),
+        '1+',
+        `${engine}: stale dashboard value changed without an explicit refresh`,
+      );
+      dashboardSavedVersion = 1;
+      await page.getByRole('button', { name: 'Refresh', exact: true }).click();
+      await page.waitForFunction(
+        () => document.querySelector('[data-testid="dashboard-saved-count"]')?.textContent === '2',
+      );
+      assert.equal(
+        await dashboardSavedCount.textContent(),
+        '2',
+        `${engine}: complete dashboard count did not replace the stale paginated value`,
+      );
+      await page.unroute(dashboardSavedRequest);
+
       // The shared topbar's sign-out confirms first (authenticated-shell.tsx).
       page.once('dialog', (dialog) => dialog.accept());
       await page.getByRole('button', { name: 'Sign out', exact: true }).click();

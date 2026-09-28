@@ -282,7 +282,7 @@ function DashboardContent() {
               <span className={styles.statIcon} data-tone="blue">
                 <Bookmark size={16} aria-hidden="true" />
               </span>
-              <span className={styles.statValue}>
+              <span className={styles.statValue} data-testid="dashboard-saved-count">
                 {savedLeads.isPending
                   ? '—'
                   : savedLeads.isError

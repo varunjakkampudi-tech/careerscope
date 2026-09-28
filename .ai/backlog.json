@@ -1,6 +1,6 @@
 {
   "$comment": "Product backlog. Canonical machine state - automation reads this, not Markdown. Scores assist prioritisation only; the Project Manager, Client and Architect decide scope. A rejected item does not return without new evidence.",
-  "updatedAt": "2026-09-28T19:45:00.000Z",
+  "updatedAt": "2026-09-28T20:15:00.000Z",
   "items": [
     {
       "id": "CS-1",
@@ -1852,7 +1852,7 @@
       "source": "ChatGPT TICKET-PLAN-20260920 proposal; owner approved backlog addition; source validation pending",
       "area": "frontend",
       "priority": "P2",
-      "status": "READY",
+      "status": "IN_PROGRESS",
       "size": "M",
       "value": 4,
       "risk": 3,
@@ -1884,19 +1884,21 @@
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
         "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land.",
         "REJECTED BY REVIEWER E 2026-09-26 AND MOVED QA -> READY. AC3 is uncovered for THREE STATES - populated, stale and paginated - and findings CS38-1 and CS38-2 are both open.",
-        "MOVED RATHER THAN LEFT IN PLACE BECAUSE A REJECTION IS NOT A BLOCKED PROMOTION. Leaving it in QA would have read as work finished and waiting on CI - which is exactly what CS-31 legitimately is, and this is not. Two tickets sitting in the same column for opposite reasons is how a board stops carrying information."
+        "MOVED RATHER THAN LEFT IN PLACE BECAUSE A REJECTION IS NOT A BLOCKED PROMOTION. Leaving it in QA would have read as work finished and waiting on CI - which is exactly what CS-31 legitimately is, and this is not. Two tickets sitting in the same column for opposite reasons is how a board stops carrying information.",
+        "IMPLEMENTED 2026-09-28: dashboard/page.tsx exposes a testable saved-count anchor, and check-ui.ts now intercepts the real owner-scoped saved-leads query to assert a capped 1+ value, preserves it until explicit Refresh, then replaces it with the complete exact count. The route handler is required to fire, preventing a vacuous pass.",
+        "LOCAL VERIFICATION 2026-09-28: v2 typecheck passed with all 16 test files and lint passed. test:ui could not start because PostgreSQL at 127.0.0.1:55433 is unavailable; no local browser pass is claimed."
       ],
       "securityImpact": "Owner-scoped summaries and session-reset behavior",
       "architectureImpact": "Extends the existing dashboard view after route/shared-state work; unsupported aggregates require separate contract approval",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
       "reviewAgents": ["Product Architect", "UX", "QA", "Independent Reviewer"],
-      "currentStep": "READY - REJECTED at review 2026-09-26 and routed back. AC3 is uncovered for the populated, stale and paginated states, and CS38-1 and CS38-2 are both open. Returned to READY rather than left in QA, where it would read as finished work awaiting a gate.",
+      "currentStep": "IN PROGRESS - added a real dashboard saved-count test fixture covering paginated, complete and stale-until-refresh responses; typecheck and lint pass. Hosted browser CI is required because the local PostgreSQL service is unavailable.",
       "completedSteps": [
         "2026-09-24: added the missing 'freshness semantics' UI (Updated Xm ago + manual Refresh) to the already-shipped CS-49 Dashboard implementation; verified live, accessible, and building cleanly. CORRECTED 2026-09-25: this step previously claimed 'all other acceptance criteria confirmed already met by direct inspection'. That was wrong - AC3 is not met, by this ticket's own later admission."
       ],
       "createdAt": "2026-09-20",
-      "updatedAt": "2026-09-25",
+      "updatedAt": "2026-09-28",
       "summary": "Post-acceptance improvement of an existing dashboard, not a claim that no dashboard exists. NOT CLOSED: the freshness indicator was added on 2026-09-24, but CS38-1 and CS38-2 remain open and the AC3 state matrix is not built. A 2026-09-25 attempt at the CS38-1 guard was reverted without delivering it.",
       "dimension": "product"
     },
@@ -2653,7 +2655,7 @@
       "releaseTarget": null,
       "completedSteps": [],
       "createdAt": "2026-09-25",
-      "updatedAt": "2026-09-25",
+      "updatedAt": "2026-09-28",
       "dimension": "engineering",
       "id": "CS-53",
       "title": "search_jobs and run_events use separate foreign keys where a composite would make a cross-owner row unrepresentable",
@@ -2661,7 +2663,7 @@
       "source": "Forensic security audit finding M-1, 2026-09-25",
       "area": "backend",
       "priority": "P2",
-      "status": "READY",
+      "status": "UAT",
       "size": "M",
       "value": 3,
       "risk": 3,
@@ -2688,13 +2690,14 @@
         "TYPECHECK IS THE LOAD-BEARING RESULT FOR THIS TICKET SPECIFICALLY, and is cited here rather than only on CS-61: the composite foreign keys changed the SHAPE of run_events and search_jobs, and `tsc -b` exit 0 across the v2 project is what proves NO CONSUMER WAS LEFT REFERENCING THE OLD SINGLE-COLUMN FORM. A migration that applies cleanly but leaves a stale consumer is the failure mode this rules out.",
         "CEILING, WHICH TRAVELS WITH THE NUMBERS: produced on Node v22.23.2 against a declared floor of 24 (.nvmrc, both engines.node fields, ci.yml NODE_VERSION). NONE OF IT IS EVIDENCE ABOUT THE SUPPORTED RUNTIME AND NONE OF IT IS CI EVIDENCE - the SHA has not moved.",
         "CAVEAT ADDED 2026-09-25 AFTER CS-76, AND IT NARROWS RATHER THAN RETRACTS THE CLAIM. The load-bearing result cited here is that tsc -b proves no consumer was left referencing the pre-composite single-column form of run_events and search_jobs. THAT REMAINS TRUE FOR SOURCE CONSUMERS. It was never true for TEST consumers: all ten packages/core test files are excluded from the build, so A TEST STILL REFERENCING THE OLD SHAPE WOULD NOT HAVE BEEN CAUGHT BY THE TYPECHECK. The runtime suites passing is the evidence covering that gap, not tsc.",
-        "BOUNDED TYPECHECK EVIDENCE - RE-WORDED FROM \"PROVISIONAL\" 2026-09-25, AND THE VERB CHANGE IS THE POINT. This ticket cites a BARE `tsc -b`, which is incremental and was observed exiting 0 while a genuine production error existed (collect.ts TS2353) because a stale .tsbuildinfo declared the project up to date. THAT DOES NOT RETRACT THE RESULT AND DOES NOT MAKE IT SUSPECT: the command ran, it reported truthfully on what it examined, and the source it examined did compile. IT BOUNDS THE RESULT. The run was NARROWER THAN THE CLAIM IT WAS QUOTED FOR - it is evidence that the projects tsc considered up to date had no new errors, not evidence that the tree is clean. \"PROVISIONAL\" WAS THE WRONG WORD BECAUSE IT IMPLIES THE RESULT MIGHT BE FALSE. It was not false; it was narrow. Re-verify the wider claim with `tsc -b --force` or a cleared .tsbuildinfo - and note that v2 typecheck now begins with --force, so the npm script no longer has this bound. The original lines are deliberately kept: they record what was actually run. NOTHING IS DEMOTED FOR THIS."
+        "BOUNDED TYPECHECK EVIDENCE - RE-WORDED FROM \"PROVISIONAL\" 2026-09-25, AND THE VERB CHANGE IS THE POINT. This ticket cites a BARE `tsc -b`, which is incremental and was observed exiting 0 while a genuine production error existed (collect.ts TS2353) because a stale .tsbuildinfo declared the project up to date. THAT DOES NOT RETRACT THE RESULT AND DOES NOT MAKE IT SUSPECT: the command ran, it reported truthfully on what it examined, and the source it examined did compile. IT BOUNDS THE RESULT. The run was NARROWER THAN THE CLAIM IT WAS QUOTED FOR - it is evidence that the projects tsc considered up to date had no new errors, not evidence that the tree is clean. \"PROVISIONAL\" WAS THE WRONG WORD BECAUSE IT IMPLIES THE RESULT MIGHT BE FALSE. It was not false; it was narrow. Re-verify the wider claim with `tsc -b --force` or a cleared .tsbuildinfo - and note that v2 typecheck now begins with --force, so the npm script no longer has this bound. The original lines are deliberately kept: they record what was actually run. NOTHING IS DEMOTED FOR THIS.",
+        "2026-09-28: hosted workflow run https://github.com/varunjakkampudi-tech/careerscope/actions/runs/36424073277 passed the V2 typecheck, service-backed integration, recovery and browser/axe suites on the revision containing the composite foreign-key migrations. The existing database tests include the cross-owner rejection at the database layer."
       ],
       "securityImpact": "Defence-in-depth on owner isolation. No reachable cross-owner access today.",
       "architectureImpact": "Schema change on two tables; forward-only migration.",
       "ownerAgent": "Backend",
       "reviewAgents": ["System Designer", "Security", "QA"],
-      "currentStep": "READY. The schema confirmation that held this in DISCOVERY is done and was independently re-verified: the divergence is real and the composite-FK precedent exists twice in the same file. ONE PREREQUISITE IS RECORDED AS THE EXPLICIT FIRST MIGRATION STEP - add uniqueIndex(\"search_owner_id\").on(ownerId, id), without which the migration fails with Postgres 42830. Second clean pick-up alongside CS-60, and the better one to hand over since it is P2 and security-adjacent.",
+      "currentStep": "Release Manager - hosted workflow run 36424073277 passed typecheck, service-backed integration, recovery and browser/axe coverage on the composite-FK implementation; promoted to UAT.",
       "summary": "Two tables enforce owner isolation only in the application layer where a composite foreign key, already used elsewhere in this schema, would make a cross-owner row impossible."
     },
     {
@@ -2925,7 +2928,7 @@
       "source": "Observed directly by the Orchestrator across many runs on 2026-09-24/25; owed as a ticket per owner instruction",
       "area": "testing",
       "priority": "P2",
-      "status": "READY",
+      "status": "UAT",
       "size": "M",
       "value": 4,
       "risk": 4,
@@ -2952,14 +2955,15 @@
         "Run 36339115982 captured the V2 cross-talk precisely: bull-queue.test.ts and the password-change database test failed together while test files shared one PostgreSQL service; the latter received 'terminating connection due to administrator command'. test:integration now serializes its nine service-backed files while retaining every assertion.",
         "Run 36339477079 captured the root browser failure rather than retrying it: Chromium at 320px had headerOverlap=true on /leads while Firefox and WebKit did not. The wordmark is now hidden below 360px, retaining the labelled compass link and the 40px theme and profile controls without overlap.",
         "2026-09-28 local Node 24.19.0 verification after the responsive correction: root typecheck and production build pass; test:ui passes on Chromium, Firefox and WebKit with overflow=false and headerOverlap=false at 320/390/768/1024/1440px, plus the four additional 320px routes.",
-        "Runs 36355556149 and 36355820525 reproduce the quiet-database case with file concurrency already fixed at one. The first attributed 'terminating connection due to administrator command' to the password-change case. Removing FORCE from that case made the next run identify the source precisely: the partial-search test generated asynchronous activity after it ended, and its own DROP DATABASE WITH (FORCE) terminated that client, replacing the cleanup boundary with an uncaught exception. Every database.test.ts teardown now uses ordinary DROP after pool.end(); this is stricter, not a retry, because a surviving client must produce an explicit ownership failure instead of being killed. CI verification is pending."
+        "Runs 36355556149 and 36355820525 reproduce the quiet-database case with file concurrency already fixed at one. The first attributed 'terminating connection due to administrator command' to the password-change case. Removing FORCE from that case made the next run identify the source precisely: the partial-search test generated asynchronous activity after it ended, and its own DROP DATABASE WITH (FORCE) terminated that client, replacing the cleanup boundary with an uncaught exception. Every database.test.ts teardown now uses ordinary DROP after pool.end(); this is stricter, not a retry, because a surviving client must produce an explicit ownership failure instead of being killed. CI verification is pending.",
+        "2026-09-28: hosted workflow run https://github.com/varunjakkampudi-tech/careerscope/actions/runs/36424073277 passed the serialized V2 integration and all three browser engines after the teardown and narrow-layout corrections; no retry or timeout inflation was introduced."
       ],
       "securityImpact": "None directly. It degrades the reliability of every other control that depends on these suites being believed.",
       "architectureImpact": "None expected. Likely a test-harness stability fix plus per-run database isolation.",
       "releaseTarget": null,
       "ownerAgent": "QA",
       "reviewAgents": ["Independent Reviewer", "Performance"],
-      "currentStep": "Verify the quiet-database teardown candidate in CI, then QA the serialized V2 lifecycle and 320px correction in consecutive full runs; the older WebKit click-stability and Firefox network-idle cases remain open until separately reproduced and root-caused.",
+      "currentStep": "Release Manager - hosted workflow run 36424073277 passed the serialized V2 integration and browser matrix after the teardown and narrow-layout corrections; promoted to UAT.",
       "completedSteps": [],
       "createdAt": "2026-09-25",
       "updatedAt": "2026-09-28",
