@@ -96,7 +96,11 @@ export async function createApp(
     bodyLimit: 16_384,
     requestTimeout: 15_000,
     connectionTimeout: 10_000,
-    trustProxy: false,
+    // Caddy is the only published service and the API shares its network
+    // namespace, so the immediate peer can only be loopback. Trust the
+    // forwarded client address from that peer; direct callers cannot reach the
+    // API port and a spoofed header from any other peer is ignored.
+    trustProxy: (address) => address === '127.0.0.1' || address === '::1',
     logController: new LogController({ disableRequestLogging: true }),
     genReqId: () => randomUUID(),
     logger: {

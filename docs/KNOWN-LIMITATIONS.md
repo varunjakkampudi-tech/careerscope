@@ -286,29 +286,29 @@ not the full dependency closure. Do not claim reproducibility.
 
 ---
 
-## Two rate limiters are global rather than per-client
+## Proxy supplies the client address for the two IP-keyed rate limiters
 
-**Status: OPEN — VERIFIED 2026-09-25 (CS-59)**
+**Status: RESOLVED — VERIFIED 2026-09-29 (CS-59)**
 
-`request.ip` is `127.0.0.1` for **every** request in the deployed topology, for
-three independent and mutually confirming reasons:
+The API receives the real client address from Caddy through a constrained trust
+boundary:
 
 - `infra/v3/compose.production.yml:72` sets `CAREERSCOPE_UPSTREAM` to
   `127.0.0.1:5280`, so Caddy proxies over loopback.
 - The `api` service runs `network_mode: service:proxy`, sharing the proxy's
-  network namespace — there is no separate peer address to observe.
-- `infra/v3/Caddyfile.production` lines 57 and 78 carry
-  `header_up -X-Forwarded-For`, which **deletes** the header. That is the
-  correct hardening choice given `trustProxy: false`, but it means no client
-  address reaches the API by any route.
+  network namespace, so the immediate peer is loopback.
+- `infra/v3/Caddyfile.production` replaces `X-Forwarded-For` with
+  `{http.request.remote.host}` in both proxy handlers.
+- Fastify trusts forwarded addresses only from `127.0.0.1` or `::1`; a direct
+  peer or spoofed header cannot select a bucket.
 
 **Scope is narrow, and this is the important part.** Of the nineteen
 `rateLimit` call sites in `v2/apps/api/src/app.ts`, only **two** are IP-keyed:
 
-| Limiter     | Line | Key                  | Effect     |
-| ----------- | ---- | -------------------- | ---------- |
-| `register:` | 238  | `sha256(request.ip)` | **global** |
-| `login:`    | 247  | `sha256(request.ip)` | **global** |
+| Limiter     | Line | Key                  | Effect            |
+| ----------- | ---- | -------------------- | ----------------- |
+| `register:` | 238  | `sha256(request.ip)` | **per client IP** |
+| `login:`    | 247  | `sha256(request.ip)` | **per client IP** |
 
 The other seventeen are keyed on `request.ownerId` or on the account, and are
 **unaffected**.
@@ -321,21 +321,12 @@ profile, leads, search, cancel, export and events. Login also carries a
 **second**, per-account limiter (`login-account:`, 20/60, `app.ts:249`), which
 is the real control against credential stuffing and is intact.
 
-**Actual impact:**
+**Result:**
 
-- **Register** — global 5/hour, but `REGISTRATION_ENABLED` defaults to `false`
-  in `compose.production.yml:30`, so the route is disabled in the deployed
-  configuration. Negligible.
-- **Login** — global 10/minute means any third party that can reach the origin
-  can exhaust the bucket and **lock the legitimate owner out of signing in**,
-  repeatedly. A real availability defect, cheap to trigger. Not a
-  confidentiality defect: the per-account limiter and Argon2id are untouched.
-
-**The fix is not `trustProxy: true`.** That would let any client forge
-`X-Forwarded-For` and choose its own bucket, defeating the limiter entirely —
-strictly worse than global. Caddy currently strips the header, so it would also
-have to be changed to set a trustworthy one. That is a change to the security
-boundary and needs its own review.
+Login and registration buckets are now per client IP in production, while the
+per-account login limiter remains in place as a second control. Registration
+stays disabled by default. The API never enables unrestricted `trustProxy`; the
+loopback-only predicate and Caddy replacement are part of the security control.
 
 ---
 

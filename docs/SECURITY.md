@@ -36,8 +36,10 @@ Enforced globally; see [API-SURFACE](API-SURFACE.md#global-request-contract).
   A missing `Origin` fails.
 - Every mutating authenticated request requires `x-csrf-token` matching the
   session.
-- `trustProxy: false`. Forwarded headers are never believed, so a spoofed
-  `X-Forwarded-For` cannot influence anything.
+- `trustProxy` accepts forwarded client addresses only from the loopback Caddy
+  peer. Caddy replaces `X-Forwarded-For` with the actual TCP peer address;
+  direct callers cannot reach the API port and a spoofed header from any other
+  peer is ignored.
 - `Cache-Control: no-store` on every response.
 
 ### Which rate limits are per-owner, per-account and global
@@ -50,25 +52,15 @@ recorded here, and this section exists to record it** (CS-59).
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `password:<ownerId>` (5/hour), the read budgets `searches-read`/`leads-read` (240/min), `profile-read`/`market-read` (120/min), and every other authenticated limiter | The session's owner   | **Per owner.** Correct and unaffected — `ownerId` comes from the session, so the bucket cannot be chosen by a caller. |
 | `login-account:<sha256(email)>` (20/min)                                                                                                                              | The submitted address | **Per account.** Correct.                                                                                             |
-| `login:<sha256(request.ip)>` (10/min)                                                                                                                                 | The client IP         | **GLOBAL — a single shared bucket.**                                                                                  |
-| `register:<sha256(request.ip)>` (5/hour)                                                                                                                              | The client IP         | **GLOBAL — a single shared bucket.** Registration is disabled, so this is currently inert.                            |
+| `login:<sha256(request.ip)>` (10/min)                                                                                                                                 | The client IP         | **Per client IP.** Caddy supplies the real peer address; the API trusts it only from loopback.                        |
+| `register:<sha256(request.ip)>` (5/hour)                                                                                                                              | The client IP         | **Per client IP.** Registration is disabled, so this is currently inert.                                              |
 
-**Why the two IP-keyed limiters are global in production.** Caddy proxies to the
-API over loopback inside a shared network namespace
-(`CAREERSCOPE_UPSTREAM: 127.0.0.1:5280`, `network_mode: service:proxy`), and its
-`header_up -X-Forwarded-For` **deletes** the forwarded header. With
-`trustProxy: false` the application therefore sees `request.ip` as `127.0.0.1`
-for **every** production request, so every client hashes to the same key.
-
-**The consequence is availability, not disclosure.** No request is attributed to
-the wrong owner and nothing leaks — but the login limiter bounds _everyone
-together_, so a single client can exhaust the shared budget and deny logins to
-all users, while doing nothing to bound a distributed attacker per-source.
-
-**Do not "fix" this by setting `trustProxy: true`.** That would believe a header
-the proxy is currently deleting, turning an availability problem into a
-spoofable one. The fix belongs at the proxy layer — a trustworthy forwarded
-identity the application can key on — and is tracked in CS-59.
+**Why the proxy boundary is safe.** Caddy proxies to the API over loopback
+inside a shared network namespace (`CAREERSCOPE_UPSTREAM: 127.0.0.1:5280`,
+`network_mode: service:proxy`) and replaces, rather than forwards, the inbound
+`X-Forwarded-For`. Fastify trusts that header only when the immediate peer is
+loopback. A public caller therefore cannot forge an address, while distinct
+clients receive distinct login/register buckets.
 
 ## Owner isolation
 

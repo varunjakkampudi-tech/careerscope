@@ -54,7 +54,10 @@ https://{$CAREERSCOPE_DOMAIN} {
 	# see the truth. It exposes no infrastructure detail.
 	handle /api/health {
 		reverse_proxy {$CAREERSCOPE_UPSTREAM} {
-			header_up -X-Forwarded-For
+			# The API trusts this only from its loopback proxy peer. Caddy replaces
+			# any inbound value with the actual TCP peer address, so clients cannot
+			# choose their login/register rate-limit bucket.
+			header_up X-Forwarded-For {http.request.remote.host}
 			header_up -X-Forwarded-Host
 			header_up -X-Forwarded-Proto
 		}
@@ -75,7 +78,9 @@ https://{$CAREERSCOPE_DOMAIN} {
 
 	reverse_proxy {$CAREERSCOPE_UPSTREAM} {
 		flush_interval -1
-		header_up -X-Forwarded-For
+		# See the health handler above: this is the only trusted source of the
+		# client address used by the API's IP-keyed limits.
+		header_up X-Forwarded-For {http.request.remote.host}
 		header_up -X-Forwarded-Host
 		header_up -X-Forwarded-Proto
 		transport http {
