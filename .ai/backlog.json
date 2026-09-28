@@ -1964,7 +1964,7 @@
       "source": "ChatGPT TICKET-PLAN-20260920 proposal; owner approved discovery recording only; source validation pending",
       "area": "architecture",
       "priority": "P2",
-      "status": "DISCOVERY",
+      "status": "BLOCKED",
       "size": "L",
       "value": 3,
       "risk": 5,
@@ -1981,12 +1981,13 @@
       "releaseTarget": null,
       "ownerAgent": "System Designer",
       "reviewAgents": ["Product Architect", "Security", "UX", "Independent Reviewer"],
-      "currentStep": "Deferred discovery; design and security approval required",
+      "currentStep": "BLOCKED on owner-provided admin design and separate security/system-design approval before any admin endpoint or page is implemented.",
       "completedSteps": [],
       "createdAt": "2026-09-20",
       "updatedAt": "2026-09-20",
       "summary": "Investigate read-only overview, queue, outbox, runs, provider, storage and security views only after their authorization and backing contracts are approved.",
-      "dimension": "product"
+      "dimension": "product",
+      "blockedReason": "Admin authorization, role model, redaction boundaries and the requested page design require owner input and independent security/system-design approval."
     },
     {
       "id": "CS-41",
@@ -4251,6 +4252,41 @@
       "createdAt": "2026-09-28",
       "updatedAt": "2026-09-28",
       "dimension": "engineering"
+    },
+    {
+      "id": "CS-88",
+      "title": "Admin pages UX and frontend system design",
+      "userProblem": "The product has no approved design for an administrative console, so implementing admin pages now would invent privileged workflows, information hierarchy and visual behavior.",
+      "source": "Owner request, 2026-09-28",
+      "area": "frontend",
+      "priority": "P1",
+      "status": "BLOCKED",
+      "size": "L",
+      "value": 4,
+      "risk": 5,
+      "complexity": 5,
+      "dependencies": ["CS-40", "CS-6"],
+      "acceptanceCriteria": [
+        "Owner supplies the admin-page design or approved wireframes covering navigation, dashboard, queue/outbox/run views, storage/security views and responsive states",
+        "Frontend system design maps each proposed page to an approved server-enforced authorization contract and redacted data shape",
+        "UX, Product Architect, System Designer and Security review the design before implementation begins",
+        "Implementation is split into independently testable tickets only after the design baseline is accepted"
+      ],
+      "evidence": [
+        "docs/FRONTEND-ADMIN-ROADMAP.md and CS-40 establish that admin endpoints, role provisioning and privileged data contracts do not currently exist.",
+        "No admin page implementation was invented; this ticket records the required design handoff as a deliberate blocker."
+      ],
+      "securityImpact": "Prevents an unauthorised or over-broad privileged UI from being built before role and redaction boundaries exist.",
+      "architectureImpact": "Defines the frontend route/component boundaries only after the server authorization architecture is approved.",
+      "releaseTarget": "backlog",
+      "ownerAgent": "Frontend",
+      "reviewAgents": ["UX", "Product Architect", "System Designer", "Security", "Independent Reviewer"],
+      "currentStep": "BLOCKED on owner-provided admin design; no implementation authorized until CS-40 and the design review complete.",
+      "completedSteps": [],
+      "createdAt": "2026-09-28",
+      "updatedAt": "2026-09-28",
+      "dimension": "product",
+      "blockedReason": "The owner must provide the admin-page design before frontend system design and implementation can proceed."
     }
   ]
 }
