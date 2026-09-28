@@ -2735,7 +2735,7 @@
       "releaseTarget": null,
       "completedSteps": [],
       "createdAt": "2026-09-25",
-      "updatedAt": "2026-09-25",
+      "updatedAt": "2026-09-29",
       "dimension": "engineering",
       "id": "CS-54",
       "title": "Web CSP allows script-src 'unsafe-inline'",
@@ -2785,15 +2785,16 @@
         "RE-CONFIRMED BLOCKED 2026-09-26 AND DELIBERATELY NOT ATTEMPTED. Branch 2 of the AC1 disjunction - retain unsafe-inline with a documented reason and a recorded compensating control - IS STILL SATISFIED AT SOURCE: next.config.ts carries \"CS-54: script-src unsafe-inline is a real, disclosed weakness and it is STILL HERE - deliberately, with the reason measured rather than assumed\", and the middleware history is recorded beside it.",
         "NO WORK WAS ATTEMPTED THIS CYCLE, WHICH IS THE CORRECT OUTCOME RATHER THAN AN OMISSION. The remaining options are (a) close on branch 2, marking AC2 vacuous-and-disclosed, or (b) pursue branch 1, whose only surviving path rests on an UNTESTED byte-identical-HTML premise. BOTH ARE OWNER DECISIONS ABOUT ACCEPTED RISK, NOT ENGINEERING TASKS, so attempting either would be an agent deciding a security posture unilaterally.",
         "AND THE PROHIBITION HOLDS AND IS RESTATED SO IT SURVIVES A FUTURE READER WITH FRESH ENTHUSIASM: DO NOT RETRY THE NONCE MIDDLEWARE. A production run already proved that route ships an application THAT DOES NOT LOAD. That is a stronger disqualification than a failing test, because it was observed against a real build rather than inferred.",
-        "2026-09-29 implemented a two-pass production build in v2/apps/web/scripts/build-with-csp.mjs. The first pass discovers 12 inline-script SHA-256 hashes from generated static HTML; a deterministic Next build ID makes the second pass converge and injects those hashes into routes-manifest.json. The shipped policy contains script-src 'self' plus the 12 hashes and no script-src unsafe-inline. A real production next start browser smoke at http://127.0.0.1:5280 rendered the CareerScope workspace shell (not a blank page); the only console errors were expected API-unavailable messages because the local API was not running."
+        "2026-09-29 implemented a two-pass production build in v2/apps/web/scripts/build-with-csp.mjs. The first pass discovers 12 inline-script SHA-256 hashes from generated static HTML; a deterministic Next build ID makes the second pass converge and injects those hashes into routes-manifest.json. The shipped policy contains script-src 'self' plus the 12 hashes and no script-src unsafe-inline. A real production next start browser smoke at http://127.0.0.1:5280 rendered the CareerScope workspace shell (not a blank page); the only console errors were expected API-unavailable messages because the local API was not running.",
+        "2026-09-29 CI #157 passed all required lanes for cdb81e7 (typecheck/lint/test/build, V2 integration, V2 recovery). Protected Deploy #20 then verified the exact SHA and successfully shipped to production. Live https://careerscope.tech returned HTTP 200 with a hash-based script-src policy containing no unsafe-inline, and /api/health returned {status:ok,version:3.0.0}."
       ],
       "securityImpact": "Directly weakens the XSS-to-session-theft defence on the authenticated surface. Session cookies are httpOnly, which is the compensating control, so this is a defence-in-depth weakening rather than an open path.",
       "architectureImpact": "Next.js CSP/nonce strategy for the App Router.",
       "ownerAgent": "Infrastructure",
       "reviewAgents": ["Security", "Independent Reviewer", "QA"],
-      "currentStep": "BLOCKED on one owner binary. AC1 is a DISJUNCTION and branch 2 - retain unsafe-inline with a documented reason and recorded compensating controls - is ALREADY SATISFIED at source in next.config.ts. Either close on branch 2 with AC2 marked vacuous-and-disclosed, or pursue branch 1, whose only remaining path rests on an untested byte-identical-HTML premise. DO NOT RETRY THE NONCE MIDDLEWARE: a production run proved it ships an application that does not load.",
+      "currentStep": "UAT: strict hash-based script CSP is deployed and live health/provenance checks passed. Owner acceptance remains the final release decision; do not retry nonce middleware.",
       "summary": "The web CSP permits inline scripts. Verified true in source. The API CSP is strict and is not affected.",
-      "blockedReason": "AC1 is a disjunction and branch 2 (retain with a documented reason and recorded compensating controls) is ALREADY SATISFIED at source. Needs one owner binary: close today on branch 2 with AC2 marked vacuous-and-disclosed, or pursue branch 1, whose only remaining path rests on an untested byte-identical-HTML premise. Sixth owner gate."
+      "blockedReason": null
     },
     {
       "releaseTarget": null,
