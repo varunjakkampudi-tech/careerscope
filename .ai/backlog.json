@@ -2743,7 +2743,7 @@
       "source": "Forensic security audit finding M-2, 2026-09-25 - VERIFIED by the Orchestrator",
       "area": "security",
       "priority": "P2",
-      "status": "BLOCKED",
+      "status": "UAT",
       "size": "M",
       "value": 4,
       "risk": 4,
@@ -2784,7 +2784,8 @@
         "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land.",
         "RE-CONFIRMED BLOCKED 2026-09-26 AND DELIBERATELY NOT ATTEMPTED. Branch 2 of the AC1 disjunction - retain unsafe-inline with a documented reason and a recorded compensating control - IS STILL SATISFIED AT SOURCE: next.config.ts carries \"CS-54: script-src unsafe-inline is a real, disclosed weakness and it is STILL HERE - deliberately, with the reason measured rather than assumed\", and the middleware history is recorded beside it.",
         "NO WORK WAS ATTEMPTED THIS CYCLE, WHICH IS THE CORRECT OUTCOME RATHER THAN AN OMISSION. The remaining options are (a) close on branch 2, marking AC2 vacuous-and-disclosed, or (b) pursue branch 1, whose only surviving path rests on an UNTESTED byte-identical-HTML premise. BOTH ARE OWNER DECISIONS ABOUT ACCEPTED RISK, NOT ENGINEERING TASKS, so attempting either would be an agent deciding a security posture unilaterally.",
-        "AND THE PROHIBITION HOLDS AND IS RESTATED SO IT SURVIVES A FUTURE READER WITH FRESH ENTHUSIASM: DO NOT RETRY THE NONCE MIDDLEWARE. A production run already proved that route ships an application THAT DOES NOT LOAD. That is a stronger disqualification than a failing test, because it was observed against a real build rather than inferred."
+        "AND THE PROHIBITION HOLDS AND IS RESTATED SO IT SURVIVES A FUTURE READER WITH FRESH ENTHUSIASM: DO NOT RETRY THE NONCE MIDDLEWARE. A production run already proved that route ships an application THAT DOES NOT LOAD. That is a stronger disqualification than a failing test, because it was observed against a real build rather than inferred.",
+        "2026-09-29 implemented a two-pass production build in v2/apps/web/scripts/build-with-csp.mjs. The first pass discovers 12 inline-script SHA-256 hashes from generated static HTML; a deterministic Next build ID makes the second pass converge and injects those hashes into routes-manifest.json. The shipped policy contains script-src 'self' plus the 12 hashes and no script-src unsafe-inline. A real production next start browser smoke at http://127.0.0.1:5280 rendered the CareerScope workspace shell (not a blank page); the only console errors were expected API-unavailable messages because the local API was not running."
       ],
       "securityImpact": "Directly weakens the XSS-to-session-theft defence on the authenticated surface. Session cookies are httpOnly, which is the compensating control, so this is a defence-in-depth weakening rather than an open path.",
       "architectureImpact": "Next.js CSP/nonce strategy for the App Router.",

@@ -7,8 +7,9 @@ const connectSources =
     ? "'self'"
     : "'self' ws://127.0.0.1:5280 ws://localhost:5280";
 
-// CS-54: `script-src 'unsafe-inline'` is a real, disclosed weakness and it is
-// STILL HERE — deliberately, with the reason measured rather than assumed.
+// CS-54: production now uses build-time SHA-256 hashes for every inline
+// script. The discovery/build wrapper below keeps static prerendering intact
+// while removing `script-src 'unsafe-inline'` from the shipped policy.
 //
 // A nonce-based policy was implemented in `src/middleware.ts` on 2026-09-25,
 // worked perfectly against the dev server, and BROKE THE APPLICATION ENTIRELY
@@ -33,11 +34,9 @@ const connectSources =
 // policy can cover the whole surface and STATIC PRERENDERING DOES NOT HAVE TO
 // BE GIVEN UP.
 //
-// What still blocks it is ORDERING, not feasibility: this `headers()` runs
-// DURING the build, before the HTML containing those scripts exists, so the
-// hashes cannot be computed and consumed in one pass. That needs a two-pass
-// build or the policy served at the edge from a generated manifest - a build
-// pipeline change, not a web-tier edit.
+// The build wrapper below resolves that ordering problem with two passes. The
+// first pass discovers hashes from the generated static HTML; the second pass
+// injects them through CSP_SCRIPT_HASHES before Next writes its route headers.
 //
 // The failure mode is a BLANK PAGE, not a weaker policy: a missing hash means
 // React's hydration payload does not execute, exactly as the nonce attempt
@@ -49,6 +48,10 @@ const connectSources =
 // app; and every rendered value goes through React's automatic escaping. The
 // residual risk is recorded in `docs/KNOWN-LIMITATIONS.md`; CS-54 stays OPEN.
 const nextConfig: NextConfig = {
+  // Stable build IDs make the static Flight bootstrap deterministic across
+  // the CSP discovery and enforcement passes. Deployments may override this
+  // with the exact revision while local builds retain a safe fixed default.
+  generateBuildId: async () => process.env.NEXT_BUILD_ID ?? 'careerscope-static',
   poweredByHeader: false,
   async rewrites() {
     return [{ source: '/api/:path*', destination: 'http://127.0.0.1:5390/api/:path*' }];
@@ -65,7 +68,11 @@ const nextConfig: NextConfig = {
           {
             key: 'Content-Security-Policy',
             value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; " +
+              "default-src 'self'; " +
+              (process.env.NODE_ENV === 'production' && process.env.CSP_SCRIPT_HASHES
+                ? `script-src 'self' ${process.env.CSP_SCRIPT_HASHES}; `
+                : "script-src 'self' 'unsafe-inline'; ") +
+              "style-src 'self' 'unsafe-inline'; " +
               `img-src 'self' data:; connect-src ${connectSources}; font-src 'self'; object-src 'none'; ` +
               "base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
           },

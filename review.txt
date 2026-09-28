@@ -6405,3 +6405,12 @@ future release because no VPS backup was taken for this release. The installed
 careerscope-backup.timer was disabled without deleting its implementation or
 removing any data. CS-25 is now BACKLOG, and scheduler-health records the
 backup gap as intentional release scope rather than an active outage.
+
+CS-54 security implementation (2026-09-29): replaced the disclosed
+production `script-src 'unsafe-inline'` policy with a two-pass build-time hash
+policy. A deterministic Next build ID makes the generated static HTML stable;
+the production route manifest now contains 12 SHA-256 inline-script hashes and
+no script-src unsafe-inline. A real next start browser smoke rendered the
+workspace shell without a blank page; API-unavailable console errors were
+expected because only the web process was started. The change is ready for
+CI and protected deployment verification.
