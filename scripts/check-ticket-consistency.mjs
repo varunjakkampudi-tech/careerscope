@@ -5,6 +5,7 @@
 // item is rendered as READY.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import process from 'node:process';
 
 const backlog = JSON.parse(readFileSync('.ai/backlog.json', 'utf8'));
 assert.ok(Array.isArray(backlog.items) && backlog.items.length > 20, 'backlog is not readable');
