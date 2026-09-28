@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { fileURLToPath, URL } from 'node:url';
 import { join } from 'node:path';
 import process from 'node:process';
@@ -17,9 +18,12 @@ const output = join(root, 'test-results/pages');
 // A fresh clone without these files must fail comparison rather than creating
 // its own reference image and approving the first run by construction.
 const baseline = join(root, 'scripts/pages-baseline');
+const platformBaseline = join(baseline, process.platform);
+const selectedBaseline = existsSync(platformBaseline) ? platformBaseline : baseline;
 const update = process.argv.includes('--update-baselines');
+const captureOnly = process.env.PAGES_CAPTURE_ONLY === '1';
 await mkdir(output, { recursive: true });
-await mkdir(baseline, { recursive: true });
+await mkdir(selectedBaseline, { recursive: true });
 const passphrase = 'synthetic-visual-fixture-only';
 const leads = Array.from({ length: 65 }, (_, index) => ({
   title:
@@ -202,15 +206,18 @@ async function capture(page, name) {
     capturing = false;
   }
   await writeFile(join(output, `${name}.png`), image);
-  if (update) await writeFile(join(baseline, `${name}.png`), image);
-  else {
+  if (update || captureOnly) {
+    await writeFile(join(selectedBaseline, `${name}.png`), image);
+    if (captureOnly) results.push(name);
+    return;
+  } else {
     let baselineBuffer;
     try {
-      baselineBuffer = await readFile(join(baseline, `${name}.png`));
+      baselineBuffer = await readFile(join(selectedBaseline, `${name}.png`));
     } catch (error) {
       if (error?.code === 'ENOENT') {
         assert.fail(
-          `Missing committed visual baseline: ${join(baseline, `${name}.png`)}. Run --update-baselines only after reviewing the rendered diff.`,
+          `Missing committed visual baseline: ${join(selectedBaseline, `${name}.png`)}. Run --update-baselines only after reviewing the rendered diff.`,
         );
       }
       throw error;
