@@ -80,14 +80,14 @@ publication has been run.
 - CS-15's public Pages audit is now wired into `.github/workflows/ci.yml` via
   `npm run pages:visual`; local Chromium, Firefox and WebKit execution passed
   192 cases. Hosted Node 24 confirmation is the remaining release gate.
-- CS-75 moved from READY to QA: non-OK API responses now cancel unread bodies,
+- CS-75 is now UAT: non-OK API responses cancel unread bodies,
   the CS-51 browser harness workaround was removed, 400/404 cancellation is
   falsification-tested, and V2 typecheck passes. Hosted browser CI remains.
 - CS-69 is now UAT: visual baselines are tracked under `scripts/pages-baseline`,
   missing baselines fail loudly, and 192 Chromium/Firefox/WebKit cases match
   locally. CS-32 now consumes that reproducible baseline and its threshold
   comment matches the actual pixelmatch configuration.
-- CS-60 moved to QA with an explicit `v2/apps/api/TESTING.md` pointer to the
+- CS-60 is now UAT with an explicit `v2/apps/api/TESTING.md` pointer to the
   unchanged HTTP integration suite. CS-68's root registration guard is wired
   and classified in CI. CS-73's ownership validator includes synthetic
   contradictory/consistent controls. CS-79's newline append proof and CS-81's
