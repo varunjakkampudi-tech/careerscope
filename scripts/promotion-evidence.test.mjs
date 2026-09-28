@@ -407,6 +407,30 @@ test('an in-repository demonstration is not a real-system one (live false positi
   }
 });
 
+test('explicit renderer and mutation proofs stay in-repository demonstrations', () => {
+  const cases = [
+    [
+      'CS-67 AC2',
+      'An unrecognised status or severity produces a visible error rather than a silent bucket, proven by feeding the renderer a bogus value',
+    ],
+    [
+      'CS-78 AC5',
+      'Proven by mutation: making the matcher read a fourth application field must fail v2 typecheck, and reverting it must make it pass again',
+    ],
+  ];
+  for (const [label, criterion] of cases) {
+    const findings = assess(
+      { id: label, acceptanceCriteria: [criterion], evidence: ['2026-09-28: repository mutation and test proof recorded'] },
+      context,
+    );
+    assert.equal(
+      shapes(findings).has('real-system-demonstration-missing'),
+      false,
+      `${label} names an in-repository proof and must not require a host observation`,
+    );
+  }
+});
+
 test('a runbook that is ready is not a run (CS-30 shape)', () => {
   const criterion = 'Proven by killing Caddy and observing the result';
   const ready = assess(

@@ -32,33 +32,35 @@ publication has been run.
 - CS-85 has two consecutive complete green integration runs, including
   Chromium, Firefox, WebKit, and axe; it is now UAT for release manager
   acceptance.
-- Fully re-taken, Node 24 CI-backed QA evidence promoted CS-35, CS-48, CS-56,
-  CS-57, CS-63, CS-65, CS-66, and CS-71 to UAT. No ticket was promoted from
-  an open, partial, host-bound, or advisory-only criterion.
+- Fully re-taken, Node 24 CI-backed QA evidence promoted CS-48, CS-57, CS-63,
+  CS-65, CS-66, and CS-71 to UAT. CS-35 and CS-56 remain QA because their
+  historical records contain ticket-scoped residual language that the gate
+  correctly refuses to waive.
 - CS-61 still requires its deliberate two-owner cache-transition experiment;
   CS-58 still requires consecutive full-CI confirmation of older unexplained
   flakes.
-- CS-82 deployment/Pages gate evidence is complete and recorded; it is now UAT
-  for release-manager acceptance.
+- CS-82 deployment/Pages gate evidence is complete, has exact hosted-run
+  locators, and is now UAT for release-manager acceptance.
 - Recreate a coherent dependency update after baseline CI is green (CS-84).
 - Review and integrate or intentionally retire the unique work on
   `feature/frontend-pages-admin-console`.
 - CS-61's cache-disabled single-document transition harness and paired
   owner-agnostic-key positive control both pass locally across Chromium,
   Firefox, and WebKit; hosted CI verification remains open.
-- CS-67's mutation-proof severity rendering is re-taken and promoted to UAT
-  on consecutive Node 24 green CI evidence; no acceptance criterion remains
-  open.
-- CS-78's V1/V2 boundary is now documented in the architecture record, and a
-  Node 24 mutation proves a fourth matcher-field read fails typecheck. It is
-  UAT pending the hosted green release gate.
+- CS-67's mutation-proof severity rendering remains QA because an historical
+  ticket-scoped “remains BLOCKED” record must be resolved in the ticket before
+  promotion.
+- CS-78's V1/V2 boundary is documented in the architecture record, and a Node
+  24 mutation proves a fourth matcher-field read fails typecheck. It remains QA
+  pending a clean ticket record and hosted release evidence.
 - CS-55's fourteen authenticated-GET rate-limit matrix and ordering
   falsification are covered by consecutive Node 24 green CI runs; it is now
   UAT for release-manager acceptance.
 - The promotion gate was re-run after the batch. Six tickets with historical
   or criterion-specific blocking findings were correctly returned from UAT to
-  QA; the remaining 24 UAT tickets now produce zero blocking findings (only
-  five advisory disclosures).
+  QA. CS-48 and CS-82 were then promoted with exact hosted-run locators; the
+  resulting 26 UAT tickets produce zero blocking findings (only seven advisory
+  disclosures).
 
 ## Current evidence and next action
 

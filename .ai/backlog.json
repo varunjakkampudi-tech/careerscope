@@ -2305,7 +2305,7 @@
       "source": "Owner, 2026-09-23 - full written specification supplied directly",
       "area": "backend",
       "priority": "P2",
-      "status": "QA",
+      "status": "UAT",
       "size": "L",
       "value": 4,
       "risk": 4,
@@ -2390,10 +2390,11 @@
         "Self-found and fixed a real production bug before it shipped: the new route had no entry in apps/api/src/openapi.ts's route-documentation map, which made GET /api/docs/json - the Swagger spec endpoint itself - return 500 for every request (caught by the existing 'Swagger documents every runtime route' integration test failing, not assumed). Fixed by adding the missing operation() entry with the correct raw fastify :checkId param syntax and by adding 502/504 to the shared error-description table (previously only 500/503 existed). Full v2 integration suite: 42/42 passing after the fix.",
         "Independent-review-equivalent Security review of the finished implementation (native agent, 2026-09-23), scoped to code + docs + UI, not just the design: verdict REVISE. H1 (High) - the structural isolation test resolved four '../' from ai-provider.test.ts and landed on the unrelated, legacy top-level V1 packages/matching/src, not V2's own deterministic modules (dispatch.ts/jobs.ts/commands.ts/market.ts/database.ts), which live in the SAME package as ai-provider.ts with no package boundary between them - the test would have passed regardless of what V2's real pipeline did. Fixed by rewriting the test to scan every sibling .ts source file in packages/core/src (excluding ai-provider.ts/ai-assist.ts/index.ts's intentional barrel exports and *.test.ts files) for a literal ai-provider/ai-assist reference, then PROVEN by temporarily injecting a real import into jobs.ts, confirming the test failed with the exact expected assertion message, and reverting. M1 (Medium) - both outbound fetches called response.json() with no byte cap, so a compromised/misbehaving upstream could have its full body buffered into memory before the existing 4000-char text truncation ever applied; fixed with a Content-Length pre-check plus a 256 KiB streaming read cap (readBoundedJson()) on both the catalog and completion fetches, proven with a new real test sending an actual 400KB oversized response body and asserting it fails safely as malformed_response rather than buffering it. L1 (Low, informational) - AiFailureKind's three model-catalog-related kinds all map to the same HTTP 502 at the route boundary, losing some operator-facing distinction (not a security issue, left as-is). L2 (Low, informational) - reviewer could not check .env git history with available tooling; confirmed .env is gitignored today and AI_ENABLED=false is the current default. Confirmed satisfied from the original design-review requirements: rate limiting (10/60s, owner-scoped), never-log-the-key (enforced by a real test), redirect:'manual' (present on both fetches), escaped plain-text rendering with a visible AI-generated badge, CSRF matches every other mutating route, fail-closed on disabled/missing config, model-catalog check cannot be bypassed and fetch-failure is kept distinct from not-free, data minimization traced end-to-end and confirmed (evidence.field is a five-value enum, never resume/email/phone/CTC), and prompt injection correctly assessed as out of scope for this single-owner tool since all prompt input originates solely from the account owner's own saved profile fields.",
         "All fixes re-verified after the implementation-review findings: ai-provider.test.ts 12/12 passing (was 10/10 pre-review, plus the fixed structural test and the new oversized-response test); full v2 typecheck/lint/prettier clean; full v2 integration suite 42/42 passing (one transient, previously-documented pre-existing flake in run-scheduled-discovery.test.ts observed once, did not reproduce on immediate re-run); full next build 13/13 routes clean.",
-        "v2/ARCHITECTURE.md, docs/KNOWN-LIMITATIONS.md, docs/SECURITY.md and docs/API-SURFACE.md updated to accurately describe the new default-off capability instead of continuing to assert 'AI is DEFERRED' - explicitly documents that only 1 of the 6 originally-scoped use cases (preparation-coaching elaboration) is implemented, the other five remain not built, and auto-apply/broader local-Ollama-worker plans remain unchanged and deferred."
+        "v2/ARCHITECTURE.md, docs/KNOWN-LIMITATIONS.md, docs/SECURITY.md and docs/API-SURFACE.md updated to accurately describe the new default-off capability instead of continuing to assert 'AI is DEFERRED' - explicitly documents that only 1 of the 6 originally-scoped use cases (preparation-coaching elaboration) is implemented, the other five remain not built, and auto-apply/broader local-Ollama-worker plans remain unchanged and deferred.",
+        "Hosted CI evidence: https://github.com/varunjakkampudi-tech/careerscope/actions/runs/36385161068 and https://github.com/varunjakkampudi-tech/careerscope/actions/runs/36385785464 completed green on Node 24; the engineering suite includes the mocked OpenRouter matrix, owner-isolation and deterministic-operation coverage recorded above."
       ],
       "createdAt": "2026-09-23",
-      "updatedAt": "2026-09-25",
+      "updatedAt": "2026-09-28",
       "summary": "First-ever AI capability for CareerScope: OpenRouter free-model-only, off by default, strictly scoped away from any deterministic decision, with real fail-fast behavior and data minimization. Implemented 2026-09-23 (preparation-coaching elaboration only, 1 of 6 originally-scoped use cases); a real design review, a real end-to-end live OpenRouter verification, a self-found-and-fixed Swagger-spec 500 bug, and a real post-implementation Security review (2 findings fixed and re-verified: wrong-directory structural test, unbounded response body) all completed before moving to QA.",
       "dimension": "engineering"
     },
@@ -4012,7 +4013,7 @@
       "source": "owner takeover directive, 2026-09-27",
       "area": "infrastructure",
       "priority": "P0",
-      "status": "QA",
+      "status": "UAT",
       "size": "S",
       "value": 5,
       "risk": 5,
@@ -4028,7 +4029,8 @@
         "2026-09-27 baseline: deploy.yml had push: branches: [main] and ci.yml contained actions/deploy-pages in a main-push-reachable job",
         "Implementation removes the deploy push trigger, moves Pages publication to publish-pages.yml, and extends check-deploy-gate.mjs with negative trigger/publication assertions",
         "QA remains open until the updated checks pass and the committed workflow is observed on GitHub",
-        "Node v24.19.0 npm run gates:test passed: deploy:gate:test proves deploy and Pages are manual-only, require explicit ref/environment, use exact-revision CI, and CI does not publish Pages; the current GitHub workflows and green CI runs are observed on the repository."
+        "Node v24.19.0 npm run gates:test passed: deploy:gate:test proves deploy and Pages are manual-only, require explicit ref/environment, use exact-revision CI, and CI does not publish Pages; the current GitHub workflows and green CI runs are observed on the repository.",
+        "Hosted CI evidence: https://github.com/varunjakkampudi-tech/careerscope/actions/runs/36385161068 and https://github.com/varunjakkampudi-tech/careerscope/actions/runs/36385785464 completed green on Node 24, including the repository deployment-gate checks for the committed workflow."
       ],
       "securityImpact": "Removes implicit production mutation from ordinary source-control events and keeps protected-environment approvals in the release path.",
       "architectureImpact": "Separates continuous validation from explicit host and Pages publication workflows.",
@@ -4038,7 +4040,7 @@
       "currentStep": "Release Manager",
       "completedSteps": ["Project Manager", "System Designer", "Infrastructure"],
       "createdAt": "2026-09-27",
-      "updatedAt": "2026-09-27",
+      "updatedAt": "2026-09-28",
       "dimension": "engineering"
     },
     {

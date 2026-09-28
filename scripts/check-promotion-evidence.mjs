@@ -428,7 +428,7 @@ export function assess(ticket, context) {
     // `shown` was also dropped as a trigger outright: CS-18's "per-dimension
     // contributions SHOWN" means displayed in a UI, not demonstrated on a host.
     const satisfiedInRepository =
-      /\b(test|tests|assertion|assertions|suite|vitest|playwright|unit|fixture|fixtures|synthetic|mock|mocked|stub|stubbed|harness|browser|browsers|engine|engines)\b/i.test(
+      /\b(test|tests|assertion|assertions|suite|vitest|playwright|unit|fixture|fixtures|synthetic|mock|mocked|stub|stubbed|harness|browser|browsers|engine|engines|renderer|mutation|typecheck|compile)\b/i.test(
         criterion,
       );
 
