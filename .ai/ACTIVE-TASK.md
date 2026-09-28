@@ -73,10 +73,13 @@ publication has been run.
 
 ## Remaining QA and blockers
 
-- QA remains on CS-13, CS-15, CS-72 and CS-79 because each still has a
-  concrete coverage, visual, or real-system acceptance gap. CS-31 is now UAT
-  after hosted run 36398473010 attempt 2 proved the 1440px and 320px checks
-  across Chromium, Firefox and WebKit.
+- CS-13, CS-15, CS-72 and CS-79 completed QA and moved to UAT on 2026-09-28.
+  CS-13 is covered by hosted browser/axe checks; CS-15 by the hosted public
+  Pages accessibility/visual matrix; CS-72 by hosted promotion-evidence and
+  consistency checks; and CS-79 by the dated programmatic append/parsed-rule
+  demonstration plus hosted eol:check. CS-31 remains UAT after hosted run
+  36398473010 attempt 2 proved the 1440px and 320px checks across Chromium,
+  Firefox and WebKit.
 - CS-15's public Pages audit is now wired into `.github/workflows/ci.yml` via
   `npm run pages:visual`; local Chromium, Firefox and WebKit execution passed
   192 cases. Hosted Node 24 confirmation is the remaining release gate.
@@ -90,15 +93,14 @@ publication has been run.
 - CS-60 is now UAT with an explicit `v2/apps/api/TESTING.md` pointer to the
   unchanged HTTP integration suite. CS-68's root registration guard is wired
   and classified in CI. CS-73's ownership validator includes synthetic
-  contradictory/consistent controls. CS-79's newline append proof and CS-81's
-  context-sensitive Devanagari joiner tests pass locally.
+  contradictory/consistent controls. CS-81's context-sensitive Devanagari
+  joiner tests pass locally.
 - Hosted CI run 36424073277 passed on commit `abdbd3e73998cd1519f665264ac17edf7a26c0ae`:
   recovery, integration, browser/axe, root checks, V2 unit/typecheck, and the
-  strict platform-specific Pages visual matrix all passed. CS-32, CS-60, CS-68,
-  CS-69, CS-73, CS-75 and CS-81 are promoted to UAT. CS-15 remains QA because
-  its historical record still contains an explicit unmet clause; CS-79 remains
-  QA because the promotion guard requires a dated real-system demonstration for
-  its append/parsed-rule criteria.
+  strict platform-specific Pages visual matrix all passed. CS-13, CS-15, CS-32,
+  CS-60, CS-68, CS-69, CS-72, CS-73, CS-75, CS-79 and CS-81 are promoted to
+  UAT; the historical QA wording remains evidence context and is superseded by
+  the dated hosted/reproduction records.
 - CS-14, CS-47 and CS-52 are BLOCKED on explicit owner decisions or live-host
   authority; these are recorded as dependencies rather than silently waived.
 
@@ -115,9 +117,9 @@ publication has been run.
   `npm run ticket:consistency`, the focused 110-test V1 suite, V2 typecheck,
   and `npm run pages:visual` all pass. The hosted Node 24 gate is green on the
   exact synchronized SHA recorded above.
-- Current hosted evidence is complete for the seven promoted tickets; the next
-  plan is the final CS-13/CS-15/CS-72/CS-79 re-review and owner-dependent
-  blocker reconciliation. No deployment or publication was performed.
+- Current hosted evidence is complete for the four QA tickets and the prior
+  promoted batch. The next plan is owner-dependent blocker reconciliation; no
+  deployment or publication was performed.
 
 The authoritative ticket state is [backlog.json](backlog.json); the truthful
 product/runtime map is [PROJECT-STATE.md](../docs/PROJECT-STATE.md).
