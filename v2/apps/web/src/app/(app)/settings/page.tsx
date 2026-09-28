@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSession } from '@/lib/session';
 import { LoadingState } from '@/components/ui-states';
+import { clearAuthQueryCache } from '@/lib/query-cache';
 
 const AccountSecurity = lazy(() => import('@/components/account-security'));
 
@@ -22,7 +23,7 @@ export default function SettingsPage() {
           // one — the server has already signed everyone out, so the
           // client must land back on the sign-in screen rather than keep
           // presenting authenticated routes it can no longer use.
-          cache.clear();
+          clearAuthQueryCache(cache);
           router.replace('/?notice=security-changed');
         }}
       />

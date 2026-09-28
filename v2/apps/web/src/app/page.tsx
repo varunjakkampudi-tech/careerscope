@@ -7,6 +7,7 @@ import { LoaderCircle, RefreshCw } from 'lucide-react';
 import AccountForm from '@/components/account-form';
 import BrandMark from '@/components/brand-mark';
 import { useSession } from '@/lib/session';
+import { clearAuthQueryCache } from '@/lib/query-cache';
 
 const notices: Record<string, string> = {
   'security-changed': 'Password changed. All sessions signed out. Sign in again.',
@@ -61,7 +62,7 @@ function SignIn() {
             expired={expired}
             notice={notice}
             onAuthenticated={() => {
-              cache.clear();
+              clearAuthQueryCache(cache);
               router.replace('/dashboard');
             }}
           />

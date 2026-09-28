@@ -2386,6 +2386,10 @@ try {
       // The foreign owner is a real account with its own run, job and lead,
       // created at the top of this file, so this also re-proves owner
       // isolation across a session boundary rather than only within one.
+      await page.evaluate(() => {
+        (window as Window & { __CAREERSCOPE_DISABLE_CACHE_CLEAR__?: boolean })
+          .__CAREERSCOPE_DISABLE_CACHE_CLEAR__ = true;
+      });
       await page.getByLabel('Email', { exact: true }).fill('foreign-owner@example.test');
       await page.getByLabel('Password', { exact: true }).fill(password);
       await page.getByRole('button', { name: 'Sign in', exact: true }).click();
@@ -2398,14 +2402,15 @@ try {
       // suite keeps finding. `quiet()` is deliberately not used here: /jobs
       // polls /api/searches every 5s unconditionally (see CS-55), so it never
       // goes quiet and the helper would time out on a healthy page.
-      for (const [route, heading, anchor] of [
-        ['/jobs', 'Find Your Next Role', 'Foreign Owner Secret Query'],
-        ['/saved', 'Saved Leads', 'Foreign Owner Secret Role'],
-        ['/applications', 'Applications', 'No leads with status'],
-        ['/resume', 'Candidate Profile', 'No resumes uploaded.'],
-        ['/preparation', 'Resume & Interview Prep', 'Save a profile to prepare'],
+      for (const [route, navLabel, heading, anchor] of [
+        ['/jobs', 'Jobs', 'Find Your Next Role', 'Foreign Owner Secret Query'],
+        ['/saved', 'Saved', 'Saved Leads', 'Foreign Owner Secret Role'],
+        ['/applications', 'Applications', 'Applications', 'No leads with status'],
+        ['/resume', 'Resume', 'Candidate Profile', 'No resumes uploaded.'],
+        ['/preparation', 'Preparation', 'Resume & Interview Prep', 'Save a profile to prepare'],
       ] as const) {
-        await page.goto(`${origin}${route}`);
+        await page.getByRole('link', { name: navLabel, exact: true }).first().click();
+        await page.waitForURL(`**${route}`);
         await page.getByRole('heading', { name: heading, exact: true }).waitFor();
         await page.getByText(anchor, { exact: false }).first().waitFor();
         for (const secret of [
@@ -2439,7 +2444,8 @@ try {
       // The name asserted is the one the IMMEDIATELY PRECEDING session held
       // (:1843), not an older one from a session already cleared at :1265 —
       // asserting a stale-by-two-boundaries value would be vacuous.
-      await page.goto(`${origin}/resume`);
+      await page.getByRole('link', { name: 'Resume', exact: true }).first().click();
+      await page.waitForURL('**/resume');
       await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
       assert.notEqual(
         await page.getByLabel('Full Name', { exact: true }).inputValue(),

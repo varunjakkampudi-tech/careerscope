@@ -7,6 +7,7 @@ import { api, SESSION_EXPIRED_EVENT } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import { useTheme } from '@/lib/theme';
 import { hasUnsavedChanges } from '@/lib/unsaved-changes';
+import { clearAuthQueryCache } from '@/lib/query-cache';
 import {
   DashboardMobileNav,
   DashboardSidebar,
@@ -40,7 +41,7 @@ export default function AuthenticatedShell({ children }: { children: ReactNode }
     // a session ends — but a teardown path that skips the reset is exactly the
     // kind of gap that stops being narrow after one unrelated refactor.
     if (session.isSuccess && !authenticated) {
-      cache.clear();
+      clearAuthQueryCache(cache);
       router.replace('/');
     }
   }, [authenticated, cache, router, session.isSuccess]);
@@ -66,7 +67,7 @@ export default function AuthenticatedShell({ children }: { children: ReactNode }
         !window.confirm('Your session expired. Unsaved changes will be lost. Continue to sign in?')
       )
         return;
-      cache.clear();
+      clearAuthQueryCache(cache);
       router.replace('/?expired=1');
     };
     window.addEventListener(SESSION_EXPIRED_EVENT, onExpired);
@@ -80,7 +81,7 @@ export default function AuthenticatedShell({ children }: { children: ReactNode }
     mutationFn: () =>
       api('/logout', { method: 'POST', headers: { 'x-csrf-token': session.data?.csrf ?? '' } }),
     onSuccess: () => {
-      cache.clear();
+      clearAuthQueryCache(cache);
       router.replace('/');
     },
   });
