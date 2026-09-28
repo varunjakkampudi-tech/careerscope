@@ -56,6 +56,10 @@ publication has been run.
 - CS-55's fourteen authenticated-GET rate-limit matrix and ordering
   falsification are covered by consecutive Node 24 green CI runs; it is now
   UAT for release-manager acceptance.
+- CS-77's canonicalisation test now exercises the required literal-versus-
+  pre-parsed retry under one idempotency key, with a different-request conflict
+  control retained. Node 24 typecheck passes; local integration was blocked by
+  an unavailable Redis dependency, so hosted CI evidence remains required.
 - The promotion gate was re-run after the batch. Six tickets with historical
   or criterion-specific blocking findings were correctly returned from UAT to
   QA. CS-48 and CS-82 were then promoted with exact hosted-run locators; the
