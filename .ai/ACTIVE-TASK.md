@@ -6,6 +6,12 @@ Reconciled 2026-09-28 on synchronized `main` SHA
 `93a29d7bce6c0407619fc08795ad840313606167`. No production deployment or
 publication has been run.
 
+## Current execution plan
+
+The 34 tickets outside UAT are organized into ten dependency-aware batches in
+`.ai/BATCH-PLAN.md`. Batch membership is planning only; owner, live-host, and
+admin-design blockers remain BLOCKED until their required evidence exists.
+
 ## Delivered in this batch
 
 - Deployment and GitHub Pages publication are manual-only and require explicit
