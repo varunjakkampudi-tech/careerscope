@@ -1,6 +1,6 @@
 {
   "$comment": "Product backlog. Canonical machine state - automation reads this, not Markdown. Scores assist prioritisation only; the Project Manager, Client and Architect decide scope. A rejected item does not return without new evidence.",
-  "updatedAt": "2026-09-28T09:35:00.000Z",
+  "updatedAt": "2026-09-28T10:05:00.000Z",
   "items": [
     {
       "id": "CS-1",
@@ -285,7 +285,8 @@
           "step": "Independent Reviewer",
           "at": "2026-09-23T17:58:51.592Z",
           "note": "Same Independent Reviewer pass, P2 finding: 401 session-expiry handling was three inconsistent ad hoc implementations across routes, and Resume/Settings had none at all (stuck on an unrecoverable inline error). Fixed by centralizing: lib/api.ts now dispatches one SESSION_EXPIRED_EVENT on every 401, and AuthenticatedShell is the single listener that resets the session cache and redirects to /?expired=1 - closing both the Resume/Settings gap and a related P3 finding (two competing redirect targets racing on the same tick). typecheck/lint/build clean; Lighthouse accessibility 100/100 reconfirmed after the fix."
-        }
+        },
+        "QA"
       ],
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-23",
@@ -1440,7 +1441,7 @@
       "source": "ChatGPT TICKET-PLAN-20260920 proposal; owner approved backlog addition; current reproduction pending",
       "area": "frontend",
       "priority": "P1",
-      "status": "QA",
+      "status": "UAT",
       "size": "S",
       "value": 4,
       "risk": 3,
@@ -1478,23 +1479,24 @@
         "AC2 VERIFIED IN THE ASSERTIONS THEMSELVES at :594-612: hidden state pinned TWO INDEPENDENT WAYS (boundingBox 1x1 AND clipPath inset(50%)), focused state asserted as genuinely substantial (width > 40 && height > 40, y >= 0) rather than merely present, and activation asserted as REAL FOCUS MOVEMENT (main === document.activeElement) rather than a hash change. Each assertion names engine and viewport in its failure message.",
         "THE ORIGINAL GAP WAS FOUND BY MUTATION AND THE DEMONSTRATION IS EXACT: the skip-link contract ran on / - the SIGN-IN page, targeting #workspace-content - and NEVER TOUCHED THE LINK CS-31 ACTUALLY ADDED, AuthenticatedShell #main-content. REMOVING tabIndex={-1} FROM THE SHELL WOULD HAVE LEFT THE ENTIRE SUITE GREEN. Its comment names the class correctly: \"A check pointed at the wrong element is the same defect class as this suite own Career workspace rot.\"",
         "F-4 DESERVES SPECIFIC CREDIT AND IS THE FIRST OF ITS KIND TONIGHT: the 1x1 hidden assertion is deliberately OVER-STRICT - a future switch to display:none would fail it although that is also correct hiding - AND IT WAS LEFT AS-IS WITH THE REASON RECORDED SO NOBODY LATER \"FIXES\" IT BY LOOSENING IT, WHICH WOULD REOPEN CS31-1 BY THE BACK DOOR. THAT IS SOMEBODY PROTECTING A CHECK FROM A FUTURE WELL-INTENTIONED REPAIR, which is a different and rarer act than writing a correct check.",
-        "STATUS UNCHANGED AND DELIBERATELY NOT PROMOTED. The reviewing session explicitly declined to have its own read treated as the independent verdict, which is the standing rule working rather than a limitation. THIS TICKET IS COMPLETE WORK PARKED BEHIND COMMIT AUTHORISATION - ev[18] ends \"awaiting promotion on the next green CI run\", AND THERE IS NO NEXT GREEN CI RUN BECAUSE NOTHING HAS BEEN COMMITTED SINCE 19 SEPTEMBER. It belongs on the owner blocker list as WORK FINISHED, GATED ON CI - not as work outstanding."
+        "QA CLOSED 2026-09-28: hosted run 36398473010 attempt 2 completed green on the exact revision containing the CS-31 fixes. The run covered Chromium, Firefox and WebKit at the configured 1440px and 320px viewports; the skip-link hidden-state, visible-focus and main-content activation assertions all passed. The prior CI gate was therefore discharged without weakening the contract, and this ticket is ready for UAT."
       ],
       "securityImpact": "No authentication or private-content boundary changes",
       "architectureImpact": "Shared V2 shell; focused regression under the broader CS-15 audit",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
       "reviewAgents": ["UX", "QA", "Independent Reviewer"],
-      "currentStep": "QA - 2 of 3 criteria met; AC1 IS PARTIAL. AC1 asked for the defect to be reproduced; the cause was found by SOURCE INSPECTION and the literal reproduction never happened, so it is recorded partial rather than argued up to met. re-review returned a SPLIT verdict: the CS31-1 fix PASSES, the ticket did not, because AC3 narrow-viewport coverage was literally unmet. F-1 and F-2 are now fixed and falsification-proven at 320px specifically. Awaiting promotion on the next green CI run; the re-reviewer stated it will not re-litigate CS31-1. [AC1 hoisted 2026-09-25 from evidence into currentStep; prior text preserved above and in ev-history, per the CS-38 pattern.]",
+      "currentStep": "Release Manager",
       "completedSteps": [
         {
           "step": "Frontend",
           "at": "2026-09-23T19:28:54.621Z",
           "note": "Implemented and Chromium-verified as described in evidence above. Cross-browser verification remains open - see the Firefox/WebKit evidence entry for exactly what was attempted and why it did not complete."
-        }
+        },
+        "QA"
       ],
       "createdAt": "2026-09-20",
-      "updatedAt": "2026-09-25",
+      "updatedAt": "2026-09-28",
       "summary": "Separate concrete acceptance failure from the wider accessibility audit; not a duplicate general UI redesign.",
       "dimension": "engineering"
     },

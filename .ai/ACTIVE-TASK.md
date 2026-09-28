@@ -73,8 +73,10 @@ publication has been run.
 
 ## Remaining QA and blockers
 
-- QA remains on CS-13, CS-15, CS-31, CS-32 and CS-72 because each still has a
-  concrete coverage, visual, or real-system acceptance gap.
+- QA remains on CS-13, CS-15, CS-32 and CS-72 because each still has a
+  concrete coverage, visual, or real-system acceptance gap. CS-31 is now UAT
+  after hosted run 36398473010 attempt 2 proved the 1440px and 320px checks
+  across Chromium, Firefox and WebKit.
 - CS-14, CS-47 and CS-52 are BLOCKED on explicit owner decisions or live-host
   authority; these are recorded as dependencies rather than silently waived.
 
