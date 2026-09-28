@@ -1,6 +1,6 @@
 {
   "$comment": "Product backlog. Canonical machine state - automation reads this, not Markdown. Scores assist prioritisation only; the Project Manager, Client and Architect decide scope. A rejected item does not return without new evidence.",
-  "updatedAt": "2026-09-27T12:00:00.000Z",
+  "updatedAt": "2026-09-28T08:50:49.428Z",
   "items": [
     {
       "id": "CS-1",
@@ -56,7 +56,7 @@
       "source": "CI run 35396486771",
       "area": "frontend",
       "priority": "P1",
-      "status": "QA",
+      "status": "UAT",
       "size": "M",
       "value": 4,
       "risk": 4,
@@ -153,7 +153,7 @@
         "QA"
       ],
       "createdAt": "2026-09-19",
-      "updatedAt": "2026-09-25",
+      "updatedAt": "2026-09-28",
       "summary": "If the web server in front of everything crashes, the whole site goes down while every internal health check still reports fine. Nobody is told. Fixing this means it either recovers by itself or you find out immediately.",
       "dimension": "engineering",
       "blockedReason": "AC2 requires live-host evidence: proxy recovery observed on the real deployment. Clearable in the operator SSH session (runbook §CS-3). AC1 is already met locally on its own disjunction - \"detected and alerted\", 14/14, shown non-vacuous by mutation."
@@ -1754,7 +1754,7 @@
       "source": "ChatGPT TICKET-PLAN-20260920 session-reset proposal and supplied CQ-04 observation; source validation pending",
       "area": "frontend",
       "priority": "P1",
-      "status": "QA",
+      "status": "UAT",
       "size": "M",
       "value": 5,
       "risk": 5,
@@ -1788,14 +1788,15 @@
         "AC3 EXPERIMENT DESIGN SUPPLIED 2026-09-25 - COPY CS-48 AC10 AT database.test.ts:4098-4131, which is now recorded as the reference implementation for owner-isolation testing here. ITS SHAPE: assert the precondition before measuring anything, prove the collection non-empty so the empty case cannot pass, run the POSITIVE ON THE SAME SURFACE FIRST, then the paired negative, and drive both owners through the SAME identifier so the route cannot distinguish them by input. CS-61 AC3 HAS ALREADY DEFEATED FOUR ATTEMPTS; a fifth should look like this rather than be invented again.",
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
         "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land.",
-        "CS-61 DEPENDENCY UPDATE 2026-09-26: both halves of CS-61 are implemented and audited - API digest at app.ts:254, 16 scoped keys with 16 gates on the web side. CS-36 AC2 BECOMES SATISFIABLE ONCE CS-61 AC3 PROVES THE KEYS WORK END TO END; it is NOT satisfied by the structural audit alone, and that distinction is the whole reason AC2 failed four previous attempts."
+        "CS-61 DEPENDENCY UPDATE 2026-09-26: both halves of CS-61 are implemented and audited - API digest at app.ts:254, 16 scoped keys with 16 gates on the web side. CS-36 AC2 BECOMES SATISFIABLE ONCE CS-61 AC3 PROVES THE KEYS WORK END TO END; it is NOT satisfied by the structural audit alone, and that distinction is the whole reason AC2 failed four previous attempts.",
+        "QA COMPLETED 2026-09-28: exact-revision hosted CI run 36398473010 attempt 2 is fully green at commit 46ba008fdd35c8bf3d99b52cfc8c40ea00b2ba70. The browser suite drove the single-document owner A -> sign out -> owner B transition with cache clearing deliberately disabled across Chromium, Firefox and WebKit, then reproduced the stale profile under the paired owner-agnostic-key control. This supplies the end-to-end CS-61 proof on which CS-36 AC2 explicitly depends; static/build, 48 service-backed integration tests, recovery, backfill and axe also passed. Independent review found the authentication refresh implementation sound and isolation-preserving."
       ],
       "securityImpact": "Authentication, private caches and credential forms; client routing is not server authorization",
       "architectureImpact": "Journey acceptance and session policy around CS-6 routing, not duplicate route infrastructure",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
       "reviewAgents": ["Security", "UX", "QA", "Independent Reviewer"],
-      "currentStep": "QA - AC2 test clause REMAINS UNMET after four attempts, and that stands. But it is now ONE UNLOCK WITH CS-61 rather than a separate problem: CS-61 makes the bug class unrepresentable, so AC2 becomes satisfiable once CS-61 AC3 proves the owner-scoped keys actually work. Declared as a dependency.",
+      "currentStep": "Release Manager",
       "completedSteps": [
         {
           "step": "Frontend",
@@ -1806,7 +1807,8 @@
           "step": "Independent Reviewer",
           "at": "2026-09-23T21:46:28.518Z",
           "note": "Real Independent Reviewer dispatched. Verdict REVISE: P1 (check-ui.ts stale nav assertion, weakening this ticket's test evidence) and P2 (the honest-message resolution under-scoped AC2 given the dirty-flag plumbing already existed) - both fixed, see evidence."
-        }
+        },
+        "QA"
       ],
       "createdAt": "2026-09-20",
       "updatedAt": "2026-09-25",
@@ -1906,7 +1908,7 @@
       "source": "ChatGPT TICKET-PLAN-20260920 proposal; owner approved backlog addition; source validation pending",
       "area": "frontend",
       "priority": "P2",
-      "status": "QA",
+      "status": "UAT",
       "size": "M",
       "value": 3,
       "risk": 2,
@@ -3076,7 +3078,7 @@
       "source": "Independent review of CS-36, 2026-09-25, after four attempts to TEST the property each failed for a different reason",
       "area": "frontend",
       "priority": "P2",
-      "status": "QA",
+      "status": "UAT",
       "size": "M",
       "value": 4,
       "risk": 3,
@@ -3127,15 +3129,16 @@
         "Run 36356076721 exposed an incomplete part of the owner-key migration in real browser acceptance: LeadEditor queried history with ownerKey(owner, 'lead-history', id) but invalidated ['lead-history', id], so a successful notes PUT refreshed the saved list but never refreshed history and the unchanged 30-second assertion failed. Four direct lead cache writes also still used unscoped ['lead', id] keys. All five operations now use ownerKey; broad ['leads'] invalidation remains valid by the documented prefix convention. This fixes real cache behavior but does not satisfy AC3's deliberate owner-transition falsification experiment.",
         "Run 36382060368 then exposed the remaining sibling-status lookup using raw ['leads', status] while the query itself was ownerKey(owner, 'leads', status); the Archived empty-filter copy could not observe the populated Saved sibling. The lookup now uses ownerKey as well. AC3's two-owner experiment remains outstanding.",
         "Implemented the explicit CS-61 browser harness switch and exercised the owner A -> sign out -> owner B path locally on Chromium, Firefox and WebKit via npm run test:ui. The switch disables auth-boundary cache.clear only when the experiment sets the dedicated window flag; production behavior remains reset-by-default. The transition checks now use in-app navigation without page.goto, reload or context recreation and assert positive owner-B anchors plus absence of owner-A secrets, including the staleTime-Infinity profile field.",
-        "The paired positive control is now implemented and passed locally on Chromium, Firefox and WebKit: with deliberately owner-agnostic keys and cache clearing disabled, owner B reproduces owner A's stale profile value. The control therefore fails as expected when isolation is removed. Hosted CI for this exact revision remains required before promotion; ticket stays QA until that result is recorded."
+        "The paired positive control is now implemented and passed locally on Chromium, Firefox and WebKit: with deliberately owner-agnostic keys and cache clearing disabled, owner B reproduces owner A's stale profile value. The control therefore fails as expected when isolation is removed. Hosted CI for this exact revision remains required before promotion; ticket stays QA until that result is recorded.",
+        "QA COMPLETED 2026-09-28: run 36398473010 attempt 2 completed green on exact commit 46ba008fdd35c8bf3d99b52cfc8c40ea00b2ba70. All three browser engines passed the cache-clear-disabled owner transition and the paired owner-agnostic-key leakage control, plus axe. Two harness defects exposed by prior runs were fixed without weakening the experiment: authentication now explicitly refreshes the shared session-discovery query after login and logout, and the positive control signs in the seeded owner whose profile was actually mutated. Static/build, 48 integration tests, backfill and recovery were also green. Independent review found no owner-isolation weakening."
       ],
       "securityImpact": "Owner isolation defence in depth on the client. Server-side isolation is unaffected and remains the real boundary; this concerns what a browser may still hold after a session change.",
       "architectureImpact": "Query key convention across every React Query consumer in v2/apps/web, AND a server change that was REQUIRED AND TAKEN DELIBERATELY: GET /api/session returns an opaque per-owner digest, never the raw owner id. The original \"No server change\" was false.",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
       "reviewAgents": ["Independent Reviewer", "Security", "QA"],
-      "currentStep": "QA harness and paired owner-agnostic-key positive control both pass locally on three engines. Hosted CI for this exact revision remains required before promotion; do not promote yet.",
-      "completedSteps": [],
+      "currentStep": "Release Manager",
+      "completedSteps": ["QA"],
       "createdAt": "2026-09-25",
       "updatedAt": "2026-09-28",
       "summary": "Query keys carry no owner, so cross-owner cache reuse is prevented only by a reset running. Scoping the keys makes it structurally impossible instead.",
@@ -3170,7 +3173,7 @@
       "userProblem": "A screen can show \"Nothing yet\" over a filtered-empty list and still compile, because the nothing-yet vs filtered-empty distinction lives in free text rather than in the type.",
       "area": "frontend",
       "priority": "P2",
-      "status": "QA",
+      "status": "UAT",
       "size": "M",
       "value": 3,
       "risk": 2,
@@ -3758,7 +3761,7 @@
       "source": "independent review, 2026-09-25, verified at source by the orchestrator",
       "area": "tooling",
       "priority": "P1",
-      "status": "QA",
+      "status": "UAT",
       "size": "S",
       "value": "high",
       "risk": "medium",
@@ -3793,7 +3796,7 @@
         "THE 96 BROKEN DOWN, so the raw number does not acquire authority it has not earned: ~76 TS2345 from ONE dist-vs-src resolution misconfiguration - fix the config and RE-COUNT rather than reporting 76 as 76 findings; 9 TS2550 which is the Promise.withResolvers lib-target DECISION, to be recorded either way rather than silently retargeted; 5 TS7022 hygiene with sound assertions; 6 unexamined.",
         "THE HONEST HEADLINE: THE V2 TEST SUITE HAD NEVER BEEN TYPE-CHECKED, AND WHEN IT WAS, IT PRODUCED ONE REAL VACUITY (ai-provider.test.ts never), ONE CONFIG PROBLEM, ONE LIBRARY DECISION AND SOME HYGIENE. That is a far better outcome than the raw number suggested, and it agrees with the independent loop-assertion sweep. THE TESTS ARE IN GOOD SHAPE; THE TOOLING AROUND THEM WAS NOT - and those are different problems with different owners.",
         "IMPLEMENTATION LANDED 2026-09-25. v2/tsconfig.test.json exists with noEmit true, composite false and a paths mapping for @careerscope/core, and v2 typecheck now chains `npm run typecheck:tests` (node scripts/check-test-types.mjs). AC2 IS MET AS WRITTEN: the emitting configs keep their exclude, so tests still never reach dist - the fix ADDS a project rather than deleting the exclusion, which was the explicit requirement.",
-        "AC1 IS NOT MET, MEASURED RATHER THAN ASSUMED: the include is [\"packages/*/src/**/*.test.ts\", \"apps/api/src/**/*.test.ts\", \"scripts/**/*.test.ts\"], and enumerating git ls-files against those patterns gives 10 COVERED, 1 MISSED - v2/apps/workers/search/src/collect.test.ts. AC1 SAYS \"EVERY TRACKED V2 TEST FILE\", SO 10 OF 11 IS UNMET. The measurement carries its own falsification: a deliberately bogus include pattern was checked to match zero files, so a silently-empty pattern set could not have produced this result.",
+        "AC1 CHECKPOINT MEASUREMENT FROM 2026-09-25, NOW SUPERSEDED BY THE CLOSURE EVIDENCE BELOW: the include was [\"packages/*/src/**/*.test.ts\", \"apps/api/src/**/*.test.ts\", \"scripts/**/*.test.ts\"], and enumerating git ls-files against those patterns gave 10 COVERED, 1 MISSED - v2/apps/workers/search/src/collect.test.ts. AC1 required every tracked V2 test file, so the checkpoint count was 10 of 11. The measurement carried its own falsification: a deliberately bogus include pattern was checked to match zero files, so a silently-empty pattern set could not have produced this result.",
         "THE EXCLUSION IS DELIBERATE AND ITS REASON IS RECORDED IN THE CONFIG ITSELF - \"apps/workers is deliberately absent: its test files have known issues and ownership of that path is unconfirmed, so widening scope there would be reaching into someone else is work. That is a recorded gap, not an oversight.\" THAT IS THE RIGHT CALL AND THE RIGHT PLACE TO RECORD IT. It does not make the criterion met.",
         "SO THIS IS THE OPEN-BY-DECISION SHAPE AGAIN, THE SECOND TODAY AFTER CS-52 AC4, AND IT GETS THE SAME TREATMENT: the unlock is either to extend the include once workers ownership is confirmed, or TO AMEND AC1 SO THE EXCLUSION IS WRITTEN INTO THE CRITERION RATHER THAN LIVING ONLY IN a config comment. Amending it silently would be the reclassification move. Until one of those happens the count is 4 of 5, not 5 of 5.",
         "AND THE CONFIG CARRIES BOTH CAVEATS AT THE POINT OF CAUSE, which is why this will survive its next reader: the never-collapse that motivated the project is described in full, and the paths mapping records that the src/dist split is NOT purely a type artifact - at runtime tsx honours the exports map so the two Database classes are genuinely different, VERIFIED BY PROBE, and the compiler therefore no longer flags database.test.ts:1617/1620, which compares ResumeConflict (src) against Conflict (dist) deliberately. THAT BOUNDARY NOW RESTS ON ITS RUNTIME ASSERTION ALONE, with its one dependant named.",
@@ -3812,9 +3815,11 @@
         "SITE 11 IS THE EXCEPTION AND BELONGS IN THE RECORD: the synthetic provider yielded a job MISSING hasFullDescription, so it was never a valid RawJob. NOT A DISABLED ASSERTION - A FIXTURE THAT DID NOT MATCH THE PRODUCTION SHAPE, invisible until v2 tests were type-checked for the first time. The field is load-bearing at collect.ts:121 (whether to fetch detail) and normalize.ts:83 and :463 (description handling and dedup ranking), so the fixture was exercising a path the real shape would never take.",
         "A QUESTION ANSWERED \"NONE, BUT HERE IS WHAT I FOUND INSTEAD\" IS WORTH MORE THAN ONE ANSWERED WITH A NUMBER. The question asked how many assertions were disabled; the honest answer was none, plus one defect of a class nobody had asked about.",
         "AC1 COVERAGE CLOSED 2026-09-28: v2/tsconfig.test.json now explicitly includes apps/workers/search/src/**/*.test.ts. collect.ts was corrected to accept CreateSearchInput (the caller-facing schema input), and the two synthetic RawJob fixtures now provide required hasFullDescription. npm --prefix v2 run typecheck:tests passes with 16 test files; the emitting project excludes remain unchanged. apps/web remains covered by its own Next tsconfig, so the only separate test project is intentionally outside this config.",
-        "AC3 MUTATION PROVEN 2026-09-28: adding `const cs76MutationProof: number = 'deliberate-type-error'` to collect.test.ts made npm --prefix v2 run typecheck:tests fail with TS2322 in that test file; removing the mutation restored PASS 16 v2 test files. The noEmit checker is therefore able to fail on a test-only type defect, not merely report a green empty or dependency-only set."
+        "AC3 MUTATION PROVEN 2026-09-28: adding `const cs76MutationProof: number = 'deliberate-type-error'` to collect.test.ts made npm --prefix v2 run typecheck:tests fail with TS2322 in that test file; removing the mutation restored PASS 16 v2 test files. The noEmit checker is therefore able to fail on a test-only type defect, not merely report a green empty or dependency-only set.",
+        "QA COMPLETED 2026-09-28: exact-revision hosted CI run 36398473010 attempt 2 passed the forced V2 production and test typecheck, reporting 16 V2 test files type-check clean with no emit, and the full static/build, integration, browser, axe, backfill and recovery matrix completed green on commit 46ba008fdd35c8bf3d99b52cfc8c40ea00b2ba70."
       ],
-      "currentStep": "QA - AC1 through AC3 are now evidenced: the noEmit project explicitly covers the worker test tree while emitting configs retain their excludes; Node 24 typecheck-tests passes with 16 files; and a deliberate test-only TS2322 mutation made the checker fail before restoration. Hosted CI evidence remains required before promotion.",
+      "currentStep": "Release Manager",
+      "completedSteps": ["QA"],
       "updatedAt": "2026-09-28",
       "ownerAgent": "Code Quality"
     },
@@ -3825,7 +3830,7 @@
       "source": "type-check sweep after CS-76, verified at source by the orchestrator",
       "area": "backend",
       "priority": "P2",
-      "status": "QA",
+      "status": "UAT",
       "size": "S",
       "value": "medium",
       "risk": "medium",
@@ -3866,9 +3871,11 @@
         "PRODUCTION VERIFIED BECAUSE THIS TOUCHED A DEPLOYED-PATH FILE, which the test-typecheck number alone would not have covered: tsc -b exit 0, measured with spawnSync OUTSIDE POWERSHELL after $LASTEXITCODE through the npm.cmd shim produced a false red earlier today. Unit suites 55/55 with 0 skipped and lint clean were reported by the implementing session.",
         "THE BEST ARTEFACT OF THE RUN IS A SENTENCE IN THAT COMMENT BLOCK: \"Widening the parameter alone is NOT sufficient, AND I CHECKED RATHER THAN ASSUMED.\" It is the rule this entire run discovered, WRITTEN INTO THE CODE BY THE SESSION THAT APPLIED IT, AT THE MOMENT IT APPLIED IT - not into a retrospective. Anyone who later tries the simpler fix finds the reason it fails, in the file, BEFORE they try it. A retrospective is read by people who already know; a comment is read by the person about to make the mistake.",
         "BOUNDED TYPECHECK EVIDENCE - RE-WORDED FROM \"PROVISIONAL\" 2026-09-25, AND THE VERB CHANGE IS THE POINT. This ticket cites a BARE `tsc -b`, which is incremental and was observed exiting 0 while a genuine production error existed (collect.ts TS2353) because a stale .tsbuildinfo declared the project up to date. THAT DOES NOT RETRACT THE RESULT AND DOES NOT MAKE IT SUSPECT: the command ran, it reported truthfully on what it examined, and the source it examined did compile. IT BOUNDS THE RESULT. The run was NARROWER THAN THE CLAIM IT WAS QUOTED FOR - it is evidence that the projects tsc considered up to date had no new errors, not evidence that the tree is clean. \"PROVISIONAL\" WAS THE WRONG WORD BECAUSE IT IMPLIES THE RESULT MIGHT BE FALSE. It was not false; it was narrow. Re-verify the wider claim with `tsc -b --force` or a cleared .tsbuildinfo - and note that v2 typecheck now begins with --force, so the npm script no longer has this bound. The original lines are deliberately kept: they record what was actually run. NOTHING IS DEMOTED FOR THIS.",
-        "AC3 TEST STRENGTHENED 2026-09-28: the canonicalisation integration test now passes the first call as an unparsed literal and the retry as a schema-preparsed value under the same idempotency key, while retaining the paired genuinely-different conflict control. Node 24 typecheck passes. The service-backed integration run could not complete locally because the Redis dependency was unavailable and the queue test remained retrying; no local integration pass is claimed. Hosted CI remains required for promotion."
+        "AC3 TEST STRENGTHENED 2026-09-28: the canonicalisation integration test now passes the first call as an unparsed literal and the retry as a schema-preparsed value under the same idempotency key, while retaining the paired genuinely-different conflict control. Node 24 typecheck passes. The service-backed integration run could not complete locally because the Redis dependency was unavailable and the queue test remained retrying; no local integration pass is claimed. Hosted CI remains required for promotion.",
+        "AC3 FALSIFICATION AND QA COMPLETED 2026-09-28: isolated hosted run 36397888648 changed only requestHash back to JSON.stringify(input). The service-backed canonicalisation test failed on its literal-versus-pre-parsed retry with Conflict code IDEMPOTENCY_KEY_REUSED at database.test.ts:4555, while recovery, the image build and the main static job passed. The temporary verification branch was deleted after evidence capture and its managed worktree archived. Restored exact-revision run 36398473010 attempt 2 passed all 48 integration tests and the complete browser/recovery/static matrix on commit 46ba008fdd35c8bf3d99b52cfc8c40ea00b2ba70."
       ],
-      "currentStep": "QA - implemented and independently verified. Parse precedes hash (database.ts:62 then :63), so the idempotency hash is over the canonical form; production compile clean after a change to a deployed-path file. AC3 falsification of the collision fix is still not recorded, so this stays QA.",
+      "currentStep": "Release Manager",
+      "completedSteps": ["QA"],
       "updatedAt": "2026-09-28",
       "ownerAgent": "Backend"
     },
