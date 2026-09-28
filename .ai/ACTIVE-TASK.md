@@ -73,8 +73,7 @@ publication has been run.
 
 ## Remaining QA and blockers
 
-- QA remains on CS-13, CS-15, CS-32, CS-60, CS-68, CS-69, CS-72, CS-73,
-  CS-75, CS-79 and CS-81 because each still has a
+- QA remains on CS-13, CS-15, CS-72 and CS-79 because each still has a
   concrete coverage, visual, or real-system acceptance gap. CS-31 is now UAT
   after hosted run 36398473010 attempt 2 proved the 1440px and 320px checks
   across Chromium, Firefox and WebKit.
@@ -84,7 +83,7 @@ publication has been run.
 - CS-75 moved from READY to QA: non-OK API responses now cancel unread bodies,
   the CS-51 browser harness workaround was removed, 400/404 cancellation is
   falsification-tested, and V2 typecheck passes. Hosted browser CI remains.
-- CS-69 moved to QA: visual baselines are tracked under `scripts/pages-baseline`,
+- CS-69 is now UAT: visual baselines are tracked under `scripts/pages-baseline`,
   missing baselines fail loudly, and 192 Chromium/Firefox/WebKit cases match
   locally. CS-32 now consumes that reproducible baseline and its threshold
   comment matches the actual pixelmatch configuration.
@@ -93,6 +92,13 @@ publication has been run.
   and classified in CI. CS-73's ownership validator includes synthetic
   contradictory/consistent controls. CS-79's newline append proof and CS-81's
   context-sensitive Devanagari joiner tests pass locally.
+- Hosted CI run 36424073277 passed on commit `abdbd3e73998cd1519f665264ac17edf7a26c0ae`:
+  recovery, integration, browser/axe, root checks, V2 unit/typecheck, and the
+  strict platform-specific Pages visual matrix all passed. CS-32, CS-60, CS-68,
+  CS-69, CS-73, CS-75 and CS-81 are promoted to UAT. CS-15 remains QA because
+  its historical record still contains an explicit unmet clause; CS-79 remains
+  QA because the promotion guard requires a dated real-system demonstration for
+  its append/parsed-rule criteria.
 - CS-14, CS-47 and CS-52 are BLOCKED on explicit owner decisions or live-host
   authority; these are recorded as dependencies rather than silently waived.
 
@@ -105,10 +111,13 @@ publication has been run.
   service-backed integration tests, backfill, all browser engines and axe.
   Isolated run 36397888648 records CS-77's deliberate normalization-reversion
   failure. Leave deployment/publication untouched.
-- New source state is locally verified but not yet hosted: `npm run checks:registry`,
+- Local and hosted evidence agree: `npm run checks:registry`,
   `npm run ticket:consistency`, the focused 110-test V1 suite, V2 typecheck,
-  and `npm run pages:visual` all pass. Commit and rerun the hosted Node 24 gate;
-  only then promote the QA batch to UAT.
+  and `npm run pages:visual` all pass. The hosted Node 24 gate is green on the
+  exact synchronized SHA recorded above.
+- Current hosted evidence is complete for the seven promoted tickets; the next
+  plan is the final CS-13/CS-15/CS-72/CS-79 re-review and owner-dependent
+  blocker reconciliation. No deployment or publication was performed.
 
 The authoritative ticket state is [backlog.json](backlog.json); the truthful
 product/runtime map is [PROJECT-STATE.md](../docs/PROJECT-STATE.md).
