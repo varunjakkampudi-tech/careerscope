@@ -1,6 +1,6 @@
 {
   "$comment": "Product backlog. Canonical machine state - automation reads this, not Markdown. Scores assist prioritisation only; the Project Manager, Client and Architect decide scope. A rejected item does not return without new evidence.",
-  "updatedAt": "2026-09-28T19:30:00.000Z",
+  "updatedAt": "2026-09-28T19:45:00.000Z",
   "items": [
     {
       "id": "CS-1",
@@ -3951,7 +3951,7 @@
       "source": "L-1 falsification experiment, 2026-09-25, reproduced and confirmed at source",
       "area": "tooling",
       "priority": "P3",
-      "status": "UAT",
+      "status": "QA",
       "size": "XS",
       "value": "medium",
       "risk": "low",
