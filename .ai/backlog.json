@@ -670,7 +670,7 @@
       "source": "operator request — frontend workstream",
       "area": "frontend",
       "priority": "P2",
-      "status": "QA",
+      "status": "BLOCKED",
       "size": "M",
       "value": 4,
       "risk": 2,
@@ -754,7 +754,7 @@
     },
     {
       "releaseTarget": null,
-      "currentStep": "Release Manager",
+      "currentStep": "BLOCKED - owner decision required for the criterion's explicit human screen-reader validation (NVDA, JAWS or VoiceOver); automated accessibility-tree and Lighthouse evidence cannot satisfy AC4. CS-2 is also a prerequisite and remains contradicted by its own recorded reproduction gaps.",
       "completedSteps": [
         {
           "step": "Frontend",
@@ -2255,7 +2255,7 @@
       "source": "Owner + ChatGPT second opinion, 2026-09-23, following CS-24/25/26/27/3 all reaching UAT in the same session",
       "area": "infrastructure",
       "priority": "P2",
-      "status": "QA",
+      "status": "BLOCKED",
       "size": "M",
       "value": 3,
       "risk": 4,
@@ -2293,7 +2293,7 @@
       "releaseTarget": null,
       "ownerAgent": "Infrastructure",
       "reviewAgents": ["System Designer", "QA"],
-      "currentStep": "QA - APPROVED WITH FINDINGS, not UAT. Reviewer tried to make the check vacuous and failed. Stays QA pending live-host evidence; one real test gap (F-1) to close.",
+      "currentStep": "BLOCKED - the ticket explicitly sequences this work after owner prioritization against held frontend tickets, and AC1 still requires live-host scheduler-health evidence. User decision and live-host authority are required before implementation can be honestly completed.",
       "completedSteps": [],
       "createdAt": "2026-09-23",
       "updatedAt": "2026-09-25",
@@ -2591,7 +2591,7 @@
       "source": "Forensic audit CI census, 2026-09-25 (finding H-1 + deploy-gate gap), verified by the Orchestrator",
       "area": "infrastructure",
       "priority": "P1",
-      "status": "QA",
+      "status": "BLOCKED",
       "size": "L",
       "value": 5,
       "risk": 5,
@@ -2647,7 +2647,7 @@
       "architectureImpact": "CI/CD topology and the project definition of what counts as evidence. No application change.",
       "ownerAgent": "Infrastructure",
       "reviewAgents": ["Security", "QA", "Independent Reviewer"],
-      "currentStep": "QA - 3 of 4 criteria met. AC4 IS OPEN BY DECISION, NOT UNFINISHED, and the distinction is the point: deploy.yml:145-156 deliberately runs no V2 test and says so in a comment. Unmet for an owner-facing reason, so it belongs on the gate list rather than in a work queue. The remaining three are met and asserted; promotable only after AC4 is resolved, and then only on a green CI run.",
+      "currentStep": "BLOCKED - AC4 is an owner-facing release-policy decision: whether deploy.yml must execute V2 tests directly rather than relying on transitive CI. The other three criteria are implemented and evidenced; user decision is required before this ticket can move to QA/UAT.",
       "summary": "One orphaned test file, eleven unwired executable checks, a deploy gate that runs no V2 tests, and a structural cause: CI names scripts, and the glob that would catch anything unnamed is itself never invoked."
     },
     {
