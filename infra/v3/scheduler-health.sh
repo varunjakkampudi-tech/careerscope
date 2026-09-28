@@ -167,9 +167,12 @@ parse_timespan() { # -> whole seconds on stdout, non-zero exit if unusable
   local spaced total=0 matched=0 num='' tok
   spaced=$(printf '%s' "$v" | sed -E 's/([0-9])([A-Za-z])/\1 \2/g; s/([A-Za-z])([0-9])/\1 \2/g')
   for tok in $spaced; do
-    if [[ "$tok" =~ ^[0-9]+$ ]]; then
+    if [[ "$tok" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
       [ -z "$num" ] || return 1   # two numbers in a row: not a timespan
-      num=$tok
+      # systemd may include fractional seconds in monotonic timestamps
+      # (for example, `1w 3d 8h 22min 3.108322s`). The checker only needs
+      # whole seconds for overdue/grace arithmetic, so floor the fraction.
+      num=${tok%%.*}
       continue
     fi
     [ -n "$num" ] || return 1     # a unit with no number before it
