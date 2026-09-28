@@ -6367,3 +6367,24 @@ internal API were not reachable. Hostinger hPanel reported Firewall rules 0,
 so CS-30 remains BLOCKED pending a managed-firewall policy/attachment decision
 and IPv4/IPv6 evidence. CS-47 remains blocked by its existing owner-priority
 sequencing. Raw journals and secrets were not copied into the public repo.
+
+2026-09-29 — Batch 2 activation and recovery proof
+
+Protected Deploy #16 shipped a5b1947 successfully. Batch 2 installers enabled
+monitor, backup, discovery, liveness/retention and proxy-recovery timers on
+the Hostinger VPS. The backup installer completed its built-in dump/restore
+verification with STATUS=ok and 13 tables; monitor and proxy checks reported
+healthy. A controlled proxy outage exposed that restart-stack.sh had been
+archived non-executable, so the defect was fixed as commit 05fe963, CI #148
+passed, and protected Deploy #17 (latest retry) completed successfully. The
+second outage proof recorded two timer failures, automatic restart completion,
+and a healthy public API. CS-3 is now UAT.
+
+CS-24 remains BLOCKED because its stopped-worker alert branch was not
+disrupted; CS-25 remains BLOCKED until a calendar-triggered backup is
+observed; CS-26 and CS-27 remain BLOCKED until their scheduled runs fire;
+CS-30 remains BLOCKED because hPanel still reports Firewall rules 0 and no
+managed IPv4/IPv6 policy was guessed; CS-47 retains its owner-priority
+blocker. Sanitized evidence is recorded in .ai/backlog.json. The working
+tree keeps only the user-owned .ai/runs.json dirty, and main equals
+origin/main at d3af411.
