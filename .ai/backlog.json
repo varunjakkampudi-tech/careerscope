@@ -1687,7 +1687,7 @@
       "source": "ChatGPT TICKET-PLAN-20260920 proposal and supplied CQ-03 observation; source validation pending",
       "area": "backend",
       "priority": "P2",
-      "status": "QA",
+      "status": "UAT",
       "size": "M",
       "value": 4,
       "risk": 3,
@@ -1699,6 +1699,7 @@
         "Test every supported code plus unknown codes and malformed responses; fall back to a safe generic error without treating malformed input as success or exposing server details"
       ],
       "evidence": [
+        "Current Node 24 CI verification: runs 36385161068 and 36385785464 completed green, including the service-backed V2 integration path that exercises this contract.",
         "Traced every Conflict-throwing call site across packages/core (30 sites). Confirmed most are internal worker/command-pipeline invariants never reachable from a route response (left with the generic default code, not rewritten - bounded scope, not a blanket rewrite). Identified the real, route-reachable conflicts the acceptance criteria names: revision conflicts (profile, lead - already distinct), idempotency-key reuse (search creation, resume upload), and the missing-target-role path (POST /api/searches with useProfileTitles and no saved title) - this last one was previously mislabeled with the exact same \"Idempotency conflict\" string as an unrelated case, which is precisely the bug this ticket exists to fix.",
         "Added a stable `code` property to the Conflict base class (packages/core/src/errors.ts) and assigned distinct codes to every route-reachable subclass/throw site: PROFILE_REVISION_CONFLICT, LEAD_REVISION_CONFLICT, PROFILE_NOT_SAVED, MISSING_TARGET_ROLES, IDEMPOTENCY_KEY_REUSED (shared by both the search and resume-upload idempotency cases, since the correct client action is identical for both), UPLOAD_CANCELLED, UPLOAD_NOT_CANCELLABLE, UPLOAD_VERSION_CONFLICT. Anything not explicitly assigned falls back to the generic 'CONFLICT' code and its existing safe message - never the raw internal Error.message.",
         "Rewrote the API's global error handler (v2/apps/api/src/app.ts) to emit `{error, code, requestId}` (code only present for 409s) with a distinct, actionable message per code, replacing the old instanceof-based special-casing that only distinguished 2 of 8 real cases.",
@@ -1731,7 +1732,7 @@
       "releaseTarget": null,
       "ownerAgent": "Backend",
       "reviewAgents": ["Frontend", "Security", "QA", "Independent Reviewer"],
-      "currentStep": "QA - 3 of 3 criteria met, COUNT RE-TAKEN BY SOURCE READ on 2026-09-25 (AC1 verified path by path; AC2/AC3 by re-review). Promotable on a green CI run; NOT promoted here. Blocked on two independent grounds: not CI-executed (the SHA has not moved), and locally executed on Node v22.23.2 against a declared floor of 24.",
+      "currentStep": "Release Manager",
       "completedSteps": [
         {
           "step": "Backend",
@@ -2302,7 +2303,7 @@
       "source": "Owner, 2026-09-23 - full written specification supplied directly",
       "area": "backend",
       "priority": "P2",
-      "status": "QA",
+      "status": "UAT",
       "size": "L",
       "value": 4,
       "risk": 4,
@@ -2322,6 +2323,7 @@
         "v2/ARCHITECTURE.md, docs/KNOWN-LIMITATIONS.md and docs/SECURITY.md updated to accurately describe the new (default-off) capability rather than continuing to assert \"AI is DEFERRED\" once code exists"
       ],
       "evidence": [
+        "Current Node 24 CI verification: runs 36385161068 and 36385785464 completed green, including the service-backed V2 integration path that exercises this provider contract.",
         "v2/ARCHITECTURE.md:27 - \"Inference is off. Ollama is not running and no external model is called... AI is DEFERRED - INTENTIONAL.\"",
         "docs/KNOWN-LIMITATIONS.md:189-197 - \"AI and auto-apply\" - Status DEFERRED - INTENTIONAL",
         "docs/SECURITY.md:129 - \"AI stays off. Auto-apply stays on hold.\"",
@@ -2376,7 +2378,7 @@
       "releaseTarget": null,
       "ownerAgent": "Backend",
       "reviewAgents": ["System Designer", "Security", "QA"],
-      "currentStep": "QA - ALL ACCEPTANCE CRITERIA MET. Both CI-INDEPENDENT rejection grounds are closed: AC7 rebuilt with falsifiability guards and withdrawn by the reviewer, AC10 located and verified in database.test.ts. Promotable on a green CI run; NOT promoted here. The chain is database.test.ts -> test:integration -> ci.yml v2-integration, and that final hop has never fired.",
+      "currentStep": "Release Manager",
       "completedSteps": [
         "Real System Designer review (native agent) of the design (AI-elaborated preparation coaching as the sole first use case; separate ai-provider.ts/ai-assist.ts modules; nullable-optional-subsystem DI pattern matching configuredFileResumeStorage(); model-catalog TTL cache) - Verdict PROCEED WITH CHANGES: (1) add single-flight de-duplication for the model-catalog fetch to avoid a cache-miss stampede; (2) split the catalog-check TTL into three states not two - fetch-failure (short/negative), confirmed-absent-or-no-longer-free (long, it is a fact not a transient failure), confirmed-present-and-free (long); (3) state explicit sub-timeout budgets for catalog-check + completion call that stay comfortably under Fastify's global 15s requestTimeout; (4) add a CI-checkable structural assertion (e.g. grep-based) that packages/matching/** never imports ai-provider/ai-assist, making \"deterministic engine stays authoritative\" mechanically enforced, not true by omission; (5) explicit logging discipline in ai-provider.ts - never log OpenRouter request/response bodies or the API key, log only status/error codes and the configured model id; (6) explicit 404 contract for a checkId absent from a freshly re-derived report (profile changed between view and click), reusing the existing 404/409 idiom; (7) document explicitly why preparation-coaching beats lead-note-summarization as the first use case (already schema-bounded by preparationReportSchema vs. would need a new allowlist built from scratch); (8) explicitly state this feature deliberately does not use the outbox/lease/idempotency machinery (synchronous, stateless, non-durable read-then-elaborate), so its absence is never mistaken for a gap. Also flagged: a docs/UI-copy sequencing dependency with CS-49, whose Dashboard already ships an \"AI Assistant panel: Not available yet\" placeholder independently - if CS-48 ships before that copy is reconciled, there is a short window where the Dashboard claims AI is unavailable while a narrow real AI endpoint exists elsewhere.",
         "Real Security review (native agent) of the same design - Verdict REVISE (fixable, not a redesign): P1 - no stated per-owner rate limit on POST /api/preparation/:checkId/ai-elaborate, breaking this app's own established convention (every comparable route in app.ts enforces one); P1 - the \"API key never logged\" guarantee has no enforcing mechanism where it is actually used (runtime.ts's shared logger used by packages/core has no redact array; the Fastify-instance redact config in app.ts does not reach ai-provider.ts) - every error-path log call in that module must build an explicit minimal object (status/kind only), never pass through a raw request/response/error object, plus a test asserting the mock API key string never appears in captured log output across 401/429/5xx/timeout/malformed; P2 - default fetch redirect-follow behavior risks forwarding the Authorization header if OpenRouter's edge ever issues an unexpected redirect (fix: redirect:\"manual\"/\"error\", a legitimate /chat/completions response is never a 3xx); P2 - the design never states how returned AI text will be rendered client-side, and since evidence values include user-typed free text that reaches the prompt, the model's output is provider-influenceable content in the same category this codebase's own docs already flag for job postings - must be rendered as escaped plain text, never dangerouslySetInnerHTML/raw interpolation, as an explicit acceptance line before any UI touches it. Confirmed clean and NOT flagged: the actual PreparationReport fields sent genuinely exclude email/phone/portfolio-URL/resume/CTC (verified by reading preparation.ts directly); the fixed-hostname direct-HTTPS-to-OpenRouter approach (no DNS-pinning/redirect-hardening machinery) is the CORRECT level of caution here, not under-engineering - CS-27's DNS-pinning exists specifically because applyUrl is attacker-controlled, OpenRouter's hostname here is a hardcoded literal never derived from request input, so replicating that machinery would be over-engineering; response size bounding needed (add .max(N) to the response text schema and a request-side max_tokens cap, since even a free model has cost/latency/context limits); a P3 no-reachable-path note that evidenceSchema.field already permits 'candidate.portfolio' as a value even though nothing populates it yet - worth revisiting once portfolio evidence is ever wired up.",
@@ -2811,7 +2813,7 @@
       "source": "Forensic security audit finding M-4, 2026-09-25",
       "area": "matching",
       "priority": "P2",
-      "status": "QA",
+      "status": "UAT",
       "size": "S",
       "value": 3,
       "risk": 3,
@@ -2823,6 +2825,7 @@
         "Existing legitimate titles continue to extract correctly; the constraint must not silently discard real data"
       ],
       "evidence": [
+        "Current Node 24 CI verification: runs 36385161068 and 36385785464 completed green; no acceptance criterion remains open in the ticket record.",
         "AUDIT FINDING M-4: packages/resume/src/derive.ts extracts derived.titles by regex, length-bounded but with NO CHARACTER ALLOWLIST - unlike techStack and recentSkills, which are taxonomy-bound and therefore cannot carry arbitrary content. Orchestrator partially verified: regex-based, non-taxonomy extraction confirmed present in derive.ts (ROLE_WORDS, DATE_STRIP_RE around line 353). The absence of an allowlist is carried forward from the audit and should be confirmed precisely before implementing.",
         "THE PATH: since CS-22 removed collect.ts derived: null override, a resume-derived title flows into candidate.titles, is interpolated VERBATIM into MatchDimensionScore.reason - typed z.string() with no content restriction - and is stored in MatchBreakdown and served over the authenticated API.",
         "NOT EXPLOITABLE TODAY, stated plainly so the priority is not inflated: the only renderer is match-evidence.tsx, which is plain auto-escaping JSX; the auditor found no dangerouslySetInnerHTML anywhere it read; the data is same-owner only; and it is absent from both public export paths.",
@@ -2854,7 +2857,7 @@
       "architectureImpact": "Extraction-time constraint in packages/resume; no schema change.",
       "ownerAgent": "Backend",
       "reviewAgents": ["Security", "Product Architect", "QA"],
-      "currentStep": "QA - 3 of 3 criteria met, COUNT RE-TAKEN 2026-09-25 (AC2 confirmed by independent source verification of the thirteen hostile fixtures; AC1 and AC3 named and evidenced). Promotable on a green CI run; not promoted here.",
+      "currentStep": "Release Manager",
       "summary": "Resume-derived titles are length-bounded but not character-constrained, and reach stored match evidence verbatim. Safe under today only renderer; unsafe for any future one."
     },
     {
@@ -2869,7 +2872,7 @@
       "source": "Forensic security audit LOW finding, 2026-09-25 - VERIFIED by the Orchestrator",
       "area": "backend",
       "priority": "P3",
-      "status": "QA",
+      "status": "UAT",
       "size": "S",
       "value": 2,
       "risk": 2,
@@ -2881,6 +2884,7 @@
         "A test covers the missing-cookie path and is proven able to fail"
       ],
       "evidence": [
+        "Current Node 24 CI verification: runs 36385161068 and 36385785464 completed green; no acceptance criterion remains open in the ticket record.",
         "VERIFIED BY THE ORCHESTRATOR 2026-09-25 against current bytes. v2/apps/api/src/app.ts line 249, inside app.post(/api/logout) declared at line 248: \"await auth.logout(request.cookies[sessionCookie]!);\" - a non-null assertion on a value the onRequest hook does not guarantee exists on this path.",
         "Worst case is a 500 rather than any security failure, so the severity is genuinely LOW. It is recorded because an unjustified non-null assertion in an auth-adjacent route is exactly the kind of thing that stops being harmless when the surrounding code changes, and because the engineering contract forbids using a type escape hatch to hide a real nullability question.",
         "FIXED 2026-09-25, and the cold criteria read changed the scope - this was NOT the one-line fix the ticket predicted. AC1 was the easy half: app.ts now reads the cookie into a const and calls auth.logout only when it is defined; the non-null assertion is gone. AC2 (\"a logout with no cookie returns the SAME safe, non-enumerating response as a normal logout\") required more. The onRequest hook at app.ts:118-122 returned 401 BEFORE the handler whenever there was no session, so the handler was unreachable with a missing cookie and a no-cookie logout answered 401 - which is not the same response as a normal logout, and is mildly enumerating. A narrow exemption was added: no session AND path === /api/logout returns early. SECURITY REASONING, recorded because this is an auth-path change: ONLY /api/logout is exempt and ONLY when there is no session. Origin is still matched above that line. CSRF is still enforced whenever a session exists - asserted directly (a forged request with a live session returns 403). With no session there is nothing to revoke, so the exemption grants no capability. trustProxy, security headers, rate limits and Argon2id are untouched. OpenAPI needed no change and now matches reality better, since POST /api/logout documents only 200/500.",
@@ -2905,7 +2909,7 @@
       "architectureImpact": "None.",
       "ownerAgent": "Backend",
       "reviewAgents": ["Independent Reviewer", "QA"],
-      "currentStep": "QA - 3 of 3 criteria met, COUNT RE-TAKEN 2026-09-25 (AC1 verified at source). Promotable on a green CI run; not promoted here.",
+      "currentStep": "Release Manager",
       "summary": "A non-null assertion on the session cookie in the logout route, where the request hook makes no such guarantee."
     },
     {
@@ -3178,6 +3182,7 @@
       "source": "Orchestrator self-surfaced during CS-13 re-review cycle 2026-09-25; owner queued the four explicitly",
       "dependencies": [],
       "evidence": [
+        "Current Node 24 CI verification: runs 36385161068 and 36385785464 completed green; all three acceptance criteria were re-taken and the residual remains explicitly out of scope.",
         "REPRODUCED AGAINST REALITY, not inferred: v2/.env parsed with the SAME node:util parseEnv the launcher uses contains 8 keys, not 5 - CS-48 added AI_ENABLED, OPENROUTER_API_KEY and OPENROUTER_MODEL without updating the list. assert.deepEqual at data/windows-v2/run.mjs:13 would FAIL, so the launcher aborted before doing anything. No value from .env was read or printed at any point; key names only.",
         "WHY THE EXACT SET WAS KEPT RATHER THAN RELAXED TO A SUBSET CHECK: `settings` is spread wholesale into the child process environment at the Object.assign below it, so every key in v2/.env reaches the child. The exactness IS the control - an unexpected key is precisely the thing worth failing on. Relaxing it to \"these five are present\" would have made the launcher run while silently removing the guard.",
         "PROVEN ABLE TO FAIL in all three required directions, with a positive control: real v2/.env PASSES; an extra unexpected key FAILS naming \"Unexpected: SOMETHING_UNEXPECTED\"; a missing REDIS_URL FAILS naming \"Missing: REDIS_URL\"; an EMPTY env FAILS rather than being treated as nothing to report. node --check on run.mjs passes.",
@@ -3201,7 +3206,7 @@
       "userProblem": "data/windows-v2/run.mjs asserted v2/.env contained exactly five keys, so it failed outright once the AI integration added three more.",
       "area": "infrastructure",
       "priority": "P2",
-      "status": "QA",
+      "status": "UAT",
       "size": "S",
       "value": 2,
       "risk": 2,
@@ -3211,7 +3216,7 @@
         "The exact-set comparison is preserved, because it is an allowlist on what reaches the child process rather than a presence checklist",
         "A failure names the specific unexpected or missing keys and tells the reader to extend the allowlist rather than loosen the comparison"
       ],
-      "currentStep": "QA - 3 of 3 criteria met, COUNT RE-TAKEN WITH EVIDENCE 2026-09-25. F-63-1 is a CARRIED RESIDUAL outside the AC set, not an unmet criterion. Promotable on a green CI run; not promoted here.",
+      "currentStep": "Release Manager",
       "updatedAt": "2026-09-27",
       "ownerAgent": "Infrastructure"
     },
@@ -3257,6 +3262,7 @@
       "source": "Orchestrator self-surfaced during CS-13 re-review cycle 2026-09-25; owner queued the four explicitly",
       "dependencies": [],
       "evidence": [
+        "Current Node 24 CI verification: runs 36385161068 and 36385785464 completed green; both acceptance criteria were re-taken with the append-only constraint preserved.",
         "QUANTIFIED, not asserted: review.txt held 2200 CRLF against 844 bare LF. git check-attr reported \"review.txt: text: unspecified, eol: unspecified\" while core.autocrlf=true. .gitattributes already covered .md .json .js .cjs .ts .tsx .css .html .yml .yaml .sh and the container files - .txt was the one extension the rule forgot.",
         "CONSEQUENCE IS NOT COSMETIC AND IS ALREADY DOCUMENTED IN THAT FILE: its own comment records that \"a CRLF file made a multiline regex match nothing, and the validator that depended on it reported No entries yet for a file with three entries\". review.txt is parsed in NINE places across check-agents.mjs, control-center.mjs, check-customizations.mjs, backup-session.mjs and engineering-hook.test.mjs - a parser silently seeing nothing is the worst possible failure for an append-only audit log.",
         "FIXED BY ATTRIBUTE, NOT BY REWRITE: added \"*.txt text eol=lf\". git check-attr now reports \"text: set, eol: lf\" for review.txt, robots.txt and llms.txt, and a sweep of every tracked .txt/.md/.json/.ts/.tsx/.mjs/.cjs/.js/.yml/.yaml/.sh/.css/.html file returns ZERO still-unspecified. The working copy stays mixed until someone runs git add --renormalize at commit time; review.txt was deliberately NOT rewritten in place because it is append-only.",
@@ -3309,7 +3315,7 @@
       "userProblem": "review.txt is parsed in nine places but had no line-ending attribute, so it accumulated mixed CRLF/LF - the exact condition that previously made a validator report \"No entries yet\" for a file with entries.",
       "area": "infrastructure",
       "priority": "P2",
-      "status": "QA",
+      "status": "UAT",
       "size": "S",
       "value": 2,
       "risk": 3,
@@ -3318,7 +3324,7 @@
         "Every tracked text file has an explicit eol attribute",
         "review.txt is not rewritten in place, because it is append-only"
       ],
-      "currentStep": "QA - 2 of 2 criteria met, COUNT RE-TAKEN WITH EVIDENCE 2026-09-25. Note the denominator is TWO. Promotable on a green CI run; not promoted here.",
+      "currentStep": "Release Manager",
       "updatedAt": "2026-09-27",
       "ownerAgent": "Infrastructure"
     },
@@ -3329,7 +3335,7 @@
       "source": "CS-56 F-3, explicitly deferred there: \"The durable fix is to constrain at the reason boundary rather than per-inlet... it needs its own ticket\". Filed 2026-09-25 after the owner asked which reason-boundary item was outstanding.",
       "area": "backend",
       "priority": "P2",
-      "status": "QA",
+      "status": "UAT",
       "size": "M",
       "value": 3,
       "risk": 3,
@@ -3341,6 +3347,7 @@
         "Legitimate titles including accented and non-Latin text continue to render unchanged; the constraint must not silently discard real data"
       ],
       "evidence": [
+        "Current Node 24 CI verification: runs 36385161068 and 36385785464 completed green; all three acceptance criteria were re-taken, including the non-ASCII positive controls.",
         "GROUNDED AT SOURCE, three hops traced rather than assumed. INLET 1 (resume-derived) is now constrained at extraction by CS-56 in packages/resume/src/derive.ts. INLET 2 (owner-typed) is packages/shared/src/schemas.ts:30 - titles: z.array(z.string().trim().min(1)).min(1).max(25) - trim and non-empty only, capped at 25 entries, NO CHARACTER CONSTRAINT. CONVERGENCE: packages/matching/src/dimensions.ts:211-230, where bestTitle is selected from candidate.titles and interpolated VERBATIM into the reason string - `Close to your target \"${bestTitle}\"`, `Partly overlaps \"${bestTitle}\"`, `Different role family to \"${bestTitle}\"`. candidate.titles is the union of both inlets, so CS-56 closed one of two.",
         "WHY THIS IS THE DURABLE SHAPE AND NOT A SECOND PER-INLET PATCH: constraining inlet 2 the way inlet 1 was constrained leaves the same class open for inlet 3. The reason string is the single place both paths converge and the only place the value becomes stored evidence, so it is the boundary that makes the defect unrepresentable rather than merely fixed twice. This is the same convergence the other tickets reached - replace a rule someone must follow with a state that cannot be expressed.",
         "THREAT MODEL IS GENUINELY WEAKER THAN CS-56s AND IS RECORDED AS SUCH RATHER THAN INFLATED: the resume inlet accepts a crafted file, whereas the typed inlet is the single owner typing into their own workspace and rendering it back to themselves - self-inflicted, not attacker-controlled. That is exactly why CS-56 scoped it out and why this is P2 rather than higher. The rationale is NOT fully eliminated though: a future email digest, PDF export or admin snapshot renders MatchDimensionScore.reason regardless of which inlet the title came from, and at that point the audience is no longer only the author.",
@@ -3377,7 +3384,7 @@
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
         "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land."
       ],
-      "currentStep": "QA - 3 of 3 criteria met, COUNT RE-TAKEN WITH EVIDENCE 2026-09-25 (AC3 genuinely exercised only at re-take; the earlier positive control was ASCII). Promotable on a green CI run; not promoted here.",
+      "currentStep": "Release Manager",
       "updatedAt": "2026-09-27",
       "ownerAgent": "Backend"
     },
@@ -3542,7 +3549,7 @@
       "source": "Split from CS-64 on 2026-09-25. CS-64's AC2 and AC3 are decision-independent by their own wording; only AC1 needs an owner decision, and the BLOCKED label was hiding available engineering work.",
       "area": "backend",
       "priority": "P2",
-      "status": "QA",
+      "status": "UAT",
       "size": "S",
       "value": 4,
       "risk": 2,
@@ -3554,6 +3561,7 @@
         "No new language support is added and ROLE_WORDS is not extended - that is CS-64 AC1 and needs an owner decision"
       ],
       "evidence": [
+        "Current Node 24 CI verification: runs 36385161068 and 36385785464 completed green; all three acceptance criteria were re-taken and the owner decision remains correctly isolated to CS-64.",
         "MEASURED BASIS, carried from CS-64 and verified there at source: deriveTitles returns 0 titles for \"Ingenieur logiciel senior\", \"Softwareentwickler\", \"Desarrollador de software\" and \"Sviluppatore software\", while returning 1 for \"Senior Software Engineer\" and \"Data Analyst\". The CS-56 character allowlist is NOT the cause - it permits \\p{M} so accents survive, and an accented title containing an English role word derives intact.",
         "THE DEFECT IS THE SILENCE, NOT THE VOCABULARY. Which languages to recognise is a product decision and stays in CS-64. Ending the silence is not, and it is the smallest honest improvement available.",
         "TEST TRAP RECORDED BEFORE IMPLEMENTATION: a test asserting only that a non-English resume now reports \"undeterminable\" would pass against an implementation that reports undeterminable for EVERYTHING, including English. The English regression case in the same test is what makes the non-English assertion mean anything - AC2 requires both, on the same surface.",
@@ -3571,7 +3579,7 @@
         "TOKEN SCAN 2026-09-25 RETURNED CLEAN FOR THIS TICKET - every criterion is named by identifier somewhere in the evidence. RECORDED AT ITS REAL STRENGTH AND NO HIGHER: THAT MEANS \"NO CRITERION IS UNMENTIONED\", NOT \"ALL CRITERIA ARE MET\". The COUNT NOT YET RE-TAKEN label STAYS, because a proxy that asks whether the token AC2 appears is not asking whether AC2 is satisfied. Nothing suggests a problem here; nothing has verified one either.",
         "COUNT DISCHARGED 2026-09-25 - 3 OF 3, on the independent verification already recorded here: AC1 a three-state TitleDerivation WHERE THE CRITERION ASKED FOR TWO, AC2 a single test carrying Spanish -> undeterminable, English -> derived and empty -> no-content ASSERTED NOT-EQUAL to undeterminable, AC3 ROLE_WORDS confirmed unextended. The earlier label was UNDERSTATING a ticket in good shape, which was the safe direction; it is now stated at its real strength."
       ],
-      "currentStep": "QA - 3 of 3 criteria met, COUNT RE-TAKEN 2026-09-25. Promotable on a green CI run; not promoted here.",
+      "currentStep": "Release Manager",
       "updatedAt": "2026-09-27",
       "ownerAgent": "Backend"
     },
