@@ -2770,7 +2770,6 @@
       "source": "Forensic security audit finding M-3, 2026-09-25",
       "area": "backend",
       "priority": "P2",
-      "status": "QA",
       "size": "M",
       "value": 3,
       "risk": 3,
@@ -2794,13 +2793,15 @@
         "COMPLETE AS OF 2026-09-25: ALL FOURTEEN AUTHENTICATED GET ROUTES CARRY A BUDGET - eleven newly via readBudget, plus preparation, export and events which already had their own. VERIFIED BY ENUMERATING EVERY ROUTE, NOT BY SAMPLING. That distinction is the one AC1 actually demands, since a sampled inventory cannot establish \"authenticated GET routes carry a proportionate limit\" of the routes it did not look at.",
         "THE LAST FIX IS THE MOST INSTRUCTIVE: /api/searches/:id/events had its rate limit placed AFTER database.getSearch() and the retained-window query, so AN OVER-BUDGET CALLER STILL COST TWO DATABASE QUERIES PER REJECTION - the limiter was protecting the response but not the resource, which is most of the reason to have one. Moved above both, and deliberately BELOW parsing, so malformed input still receives a deterministic 400 rather than a 429 that hides it.",
         "AC3 IS MET BY A TEST THAT CAN ONLY PASS FOR THE RIGHT REASON, which is materially stronger than a test that passes: with the budget exhausted, a request for a NON-EXISTENT run returns 429 INSTEAD OF 404. That outcome is only possible if the limit precedes the lookup, so the assertion observes the ORDERING rather than merely the limit. FALSIFIED BY RESTORING THE OLD ORDER - 404 !== 429. Both the rejected boundary and its falsification are present.",
-        "CEILING, RECORDED SO QA IS NOT READ AS DONE: the evidence is local. The chain to a promotion runs through CI, and that hop has not fired. Promotable on a green CI run; not promoted here."
+        "CEILING, RECORDED SO QA IS NOT READ AS DONE: the evidence is local. The chain to a promotion runs through CI, and that hop has not fired. Promotable on a green CI run; not promoted here.",
+        "Current Node 24 CI verification: runs 36385161068 and 36385785464 completed green, including the fourteen-route authenticated GET coverage and the rate-limit ordering test. All three acceptance criteria are evidenced; no criterion remains open."
       ],
       "securityImpact": "Availability and resource-exhaustion, authenticated-only. Not a data-exposure or authorization issue.",
       "architectureImpact": "Reuses the existing rateLimit helper; no new infrastructure.",
       "ownerAgent": "Backend",
       "reviewAgents": ["Security", "Performance", "QA"],
-      "currentStep": "QA. Implementation complete and locally evidenced across all fourteen authenticated GETs. Promotable on a green CI run; not promoted here.",
+      "status": "UAT",
+      "currentStep": "Release Manager - implementation and all fourteen authenticated GET checks are complete; the rate-limit ordering falsification is recorded, and Node 24 CI runs 36385161068 and 36385785464 are green. No acceptance criterion remains open.",
       "summary": "An existing rate-limit control is applied to two POST routes but not to eleven authenticated GETs, including the most expensive one, which the UI polls every few seconds."
     },
     {
