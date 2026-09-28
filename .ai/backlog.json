@@ -4280,7 +4280,13 @@
       "architectureImpact": "Defines the frontend route/component boundaries only after the server authorization architecture is approved.",
       "releaseTarget": "backlog",
       "ownerAgent": "Frontend",
-      "reviewAgents": ["UX", "Product Architect", "System Designer", "Security", "Independent Reviewer"],
+      "reviewAgents": [
+        "UX",
+        "Product Architect",
+        "System Designer",
+        "Security",
+        "Independent Reviewer"
+      ],
       "currentStep": "BLOCKED on owner-provided admin design; no implementation authorized until CS-40 and the design review complete.",
       "completedSteps": [],
       "createdAt": "2026-09-28",
