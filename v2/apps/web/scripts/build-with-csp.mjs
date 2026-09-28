@@ -49,7 +49,9 @@ for (let pass = 2; pass <= 4; pass += 1) {
   const policy = new Set(hashes.split(' '));
   const missing = [...generated].filter((hash) => !policy.has(hash));
   if (missing.length === 0) {
-    console.log(`CSP verification: pass ${pass} covers all ${generated.size} generated inline script hash(es)`);
+    console.log(
+      `CSP verification: pass ${pass} covers all ${generated.size} generated inline script hash(es)`,
+    );
     process.exit(0);
   }
   for (const hash of missing) policy.add(hash);
