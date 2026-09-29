@@ -95,16 +95,14 @@ export class LeadRepository {
   // sides and requires the source run to be visible to the same owner.
   async forJob(ownerId: string, jobId: string): Promise<LeadRecord | null> {
     const result = await this.database.pool.query<LeadRecord>(
-      `SELECT lead.id, lead.data, lead.notes, lead.status, lead.revision,
-              lead.created_at AS "createdAt", lead.updated_at AS "updatedAt",
-              lead.liveness_status AS "livenessStatus",
-              lead.liveness_checked_at AS "livenessCheckedAt"
-       FROM saved_leads lead
-       JOIN search_jobs job ON job.owner_id = lead.owner_id AND job.fingerprint = lead.fingerprint
-       JOIN search_runs run ON run.id = job.run_id AND run.owner_id = job.owner_id
-       WHERE lead.owner_id = $1 AND job.id = $2
-         AND run.status IN ('completed', 'partial')
-       ORDER BY lead.created_at DESC, lead.id DESC LIMIT 1`,
+      `SELECT ${columns} FROM saved_leads
+       WHERE owner_id = $1 AND fingerprint = (
+         SELECT job.fingerprint FROM search_jobs AS job
+         JOIN search_runs AS run ON run.id = job.run_id AND run.owner_id = job.owner_id
+         WHERE job.owner_id = $1 AND job.id = $2
+           AND run.status IN ('completed', 'partial')
+       )
+       ORDER BY created_at DESC, id DESC LIMIT 1`,
       [ownerId, jobId],
     );
     return result.rows[0] ? hydrate(result.rows[0]) : null;
