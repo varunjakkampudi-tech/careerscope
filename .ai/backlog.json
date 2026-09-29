@@ -2212,7 +2212,7 @@
       "source": "owner request, 2026-09-21",
       "area": "tooling",
       "priority": "P2",
-      "status": "DISCOVERY",
+      "status": "QA",
       "size": "M",
       "value": 4,
       "risk": 4,
@@ -2225,16 +2225,20 @@
         "Remote ticket CREATION/editing is treated as an explicitly separate, higher-risk sub-scope and is NOT authorized by this ticket: it needs its own owner-authenticated write path, integrity/audit trail, and a defined sync back into the git-tracked .ai/backlog.json (or a replacement store) — recorded here as a design question, not implemented",
         "No new always-on public server, database, or credential store is introduced without a separate architecture/security review; the loopback control center's read-only, local-only contract is unchanged for its existing use"
       ],
-      "evidence": [],
+      "evidence": [
+        "DESIGN DELIVERED 2026-09-29: docs/REMOTE-ENGINEERING-CONTROL-CENTER.md defines a manually published, read-only encrypted Pages snapshot reusing the existing encrypted-admin envelope, an explicit allowlist/schema version, stale-export provenance, fail-closed behavior and browser lock/refresh semantics.",
+        "SECURITY SCOPE 2026-09-29: the design excludes secrets, credentials, private profile/resume/lead data, raw findings and exploit details; it introduces no server, token, polling loop, write API or Hostinger dependency. Remote ticket creation/editing remains a separately gated design question with authentication, replay, revision, audit and sync requirements.",
+        "VERIFICATION PLAN 2026-09-29: unit, browser and Pages allowlist gates are specified with paired positive/negative fixtures; implementation is intentionally not claimed complete until those gates exist."
+      ],
       "securityImpact": "Publishing any engineering/ticket detail beyond localhost is a real exposure change and needs the same discipline as the existing encrypted admin snapshot; remote write access is a materially larger risk (integrity, replay, unauthorized ticket tampering) and stays unapproved until separately designed",
       "architectureImpact": "Read path: reuse of the existing static-Pages + encrypted-snapshot pipeline, no new service. Write path: undesigned; likely needs a real authenticated backend distinct from GitHub Pages, out of scope here",
       "releaseTarget": null,
       "ownerAgent": "Infrastructure",
       "reviewAgents": ["Security", "System Designer", "Documentation", "Independent Reviewer"],
-      "currentStep": "Deferred discovery; read-only export approach identified, write path unresolved",
+      "currentStep": "QA - read-only remote control-center design complete; implementation and independent security review remain separate gates",
       "completedSteps": [],
       "createdAt": "2026-09-21",
-      "updatedAt": "2026-09-21",
+      "updatedAt": "2026-09-29",
       "summary": "The owner wants to check tickets from a phone or another computer. The safe, buildable half is a manually-published encrypted read-only snapshot using the pattern already built for the public admin view. Being able to add tickets remotely is a much bigger, separately-gated problem and is recorded here rather than assumed.",
       "dimension": "engineering"
     },
