@@ -424,13 +424,21 @@ async function killAtPause(mode: 'upload' | 'publish' | 'consume', env: Record<s
     },
   );
   await new Promise<void>((resolve, reject) => {
+    // Cold CI runners can spend more than a minute loading tsx and opening
+    // their first LocalStack/Postgres connection. This is a readiness budget,
+    // not a correctness timeout: the child still has to report the exact
+    // pause point before the parent is allowed to kill it.
     const timeout = setTimeout(
-      () => reject(new Error(`${mode} never reached its kill point`)),
-      60000,
+      () => reject(new Error(`${mode} never reached its kill point within 180s`)),
+      180000,
     );
-    child.once('exit', () => {
+    child.once('exit', (code, signal) => {
       clearTimeout(timeout);
-      reject(new Error(`${mode} process exited before its kill point`));
+      reject(
+        new Error(
+          `${mode} process exited before its kill point (code=${code ?? 'null'}, signal=${signal ?? 'none'})`,
+        ),
+      );
     });
     child.on('message', (message: { paused?: boolean }) => {
       if (!message.paused) return;
