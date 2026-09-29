@@ -532,7 +532,8 @@
         "DESIGN/IMPLEMENTATION EVIDENCE 2026-09-29: the static Pages surface uses shared CSS custom properties for color, typography, spacing and state styling; public, empty, error, storage-blocked and admin/locked states are explicit in index.html/admin.html and their controllers. No external origin, build step or public snapshot allowlist was added.",
         "QA 2026-09-29: npm run pages:test passed 24/24; npm run pages:visual passed the Chromium visual matrix, theme persistence, keyboard and semantics/contrast checks; npm run pages:workspace:test passed public filters, saved jobs, refresh, clear confirmation, blocked storage and responsive screenshots in Chromium, Firefox and WebKit, including 320/390/768px breakpoints.",
         "PORTABILITY FIX 2026-09-29: setup-admin-secret.test.mjs now asserts POSIX 0600 only on POSIX hosts because NTFS does not enforce POSIX mode bits; secret generation, preservation and non-overwrite assertions remain active on every platform.",
-        "REGRESSION GATE 2026-09-29: root Vitest suite passed 68 files and 1,111 tests. Hosted CI run 36506816188 for commit 90d2266 was still queued at capture time and is not claimed as passing."
+        "REGRESSION GATE 2026-09-29: root Vitest suite passed 68 files and 1,111 tests; npm run test:ui built both app trees and passed Chromium, Firefox and WebKit layout, keyboard-focus and error checks at 320/390/768/1024/1440px.",
+        "HOSTED CI 2026-09-29: GitHub Actions run 36506816188 (#172) completed successfully for commit b625c6f. The explicit accesslint-audit skill required by AC4 is not installed in this environment, so this ticket remains QA rather than being promoted on an inferred substitute."
       ],
       "securityImpact": "public artifact — allowlist must not widen",
       "architectureImpact": "none; static artifact only",
