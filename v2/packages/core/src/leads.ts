@@ -90,24 +90,6 @@ export class LeadRepository {
     return result.rows[0] ? hydrate(result.rows[0]) : null;
   }
 
-  // Resolve a search result to the owner's existing lead without exposing
-  // another owner's row. The join is intentionally owner-scoped on both
-  // sides and requires the source run to be visible to the same owner.
-  async forJob(ownerId: string, jobId: string): Promise<LeadRecord | null> {
-    const result = await this.database.pool.query<LeadRecord>(
-      `SELECT ${columns} FROM saved_leads
-       WHERE owner_id = $1 AND fingerprint = (
-         SELECT job.fingerprint FROM search_jobs AS job
-         JOIN search_runs AS run ON run.id = job.run_id AND run.owner_id = job.owner_id
-         WHERE job.owner_id = $1 AND job.id = $2
-           AND run.status IN ('completed', 'partial')
-       )
-       ORDER BY created_at DESC, id DESC LIMIT 1`,
-      [ownerId, jobId],
-    );
-    return result.rows[0] ? hydrate(result.rows[0]) : null;
-  }
-
   async list(ownerId: string, input: unknown) {
     const { status, before, limit } = listSchema.parse(input);
     const result = await this.database.pool.query<LeadRecord>(

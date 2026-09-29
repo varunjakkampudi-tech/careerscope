@@ -98,12 +98,6 @@ export function SaveJob({
 }) {
   const cache = useQueryClient();
   const owner = useOwner();
-  const existing = useQuery({
-    queryKey: ownerKey(owner, 'lead-by-job', jobId),
-    queryFn: () => api<Lead | null>(`/leads/by-job/${jobId}`),
-    enabled: owner !== null,
-    staleTime: 30_000,
-  });
   const save = useMutation({
     mutationFn: () =>
       api<Lead>('/leads', {
@@ -113,7 +107,6 @@ export function SaveJob({
       }),
     onSuccess: (lead) => {
       cache.setQueryData(ownerKey(owner, 'lead', lead.id), lead);
-      cache.setQueryData(ownerKey(owner, 'lead-by-job', jobId), lead);
       void cache.invalidateQueries({ queryKey: ['leads'] });
     },
   });
@@ -134,18 +127,16 @@ export function SaveJob({
       void cache.invalidateQueries({ queryKey: ['leads'] });
     },
   });
-  const persistedLead = save.data ?? existing.data ?? null;
-  const currentLead = undo.data ?? persistedLead;
   const justSaved = save.data && !undo.data && save.data.status === 'saved';
-  const currentStatus = currentLead?.status ?? null;
+  const currentStatus = save.data ? (undo.data ?? save.data).status : null;
   if (iconOnly) {
     // Compact variant: a single toggle-styled icon button. Undo is still a
     // real action (not omitted) - once saved, the same control becomes an
     // "unsave" (archive) button rather than opening a separate confirmation,
     // since a small card corner has no room for a second control.
-    const label = save.isPending || existing.isPending
+    const label = save.isPending
       ? 'Saving…'
-      : !currentLead
+      : !save.data
         ? 'Save job'
         : currentStatus === 'archived'
           ? 'Removed from saved — open archived lead'
@@ -157,11 +148,11 @@ export function SaveJob({
         aria-label={label}
         title={label}
         aria-pressed={currentStatus === 'saved'}
-        disabled={save.isPending || existing.isPending || undo.isPending}
+        disabled={save.isPending || undo.isPending}
         onClick={() => {
-          if (!currentLead) save.mutate();
-          else if (currentStatus === 'saved') undo.mutate(currentLead);
-          else onOpen(currentLead.id);
+          if (!save.data) save.mutate();
+          else if (currentStatus === 'saved') undo.mutate(save.data);
+          else onOpen(save.data.id);
         }}
       >
         {save.isPending || undo.isPending ? (
@@ -176,15 +167,15 @@ export function SaveJob({
     <div className="save-job">
       <button
         type="button"
-        onClick={() => (currentLead ? onOpen(currentLead.id) : save.mutate())}
-        disabled={save.isPending || existing.isPending}
+        onClick={() => (save.data ? onOpen(save.data.id) : save.mutate())}
+        disabled={save.isPending}
       >
-        {save.isPending || existing.isPending ? (
-          <LoaderCircle size={16} className="spin" />
-        ) : (
-          <Bookmark size={16} />
-        )}
-        {currentLead ? `Open ${statusLabel(currentStatus!)}` : 'Save Job'}
+        {save.isPending ? <LoaderCircle size={16} className="spin" /> : <Bookmark size={16} />}
+        {save.data
+          ? (undo.data ?? save.data).status === 'archived'
+            ? 'Open Archived Lead'
+            : 'Open Saved Lead'
+          : 'Save Job'}
       </button>
       {justSaved && (
         <button
