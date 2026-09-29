@@ -513,7 +513,7 @@
       "source": "operator request",
       "area": "frontend",
       "priority": "P2",
-      "status": "DISCOVERY",
+      "status": "QA",
       "size": "L",
       "value": 4,
       "risk": 2,
@@ -528,14 +528,19 @@
       ],
       "evidence": [
         "mobile-site/ and _site/ are plain HTML, CSS and ES modules with no design system applied",
-        "CS-2 shows breakpoint behaviour here is not currently trustworthy"
+        "CS-2 shows breakpoint behaviour here is not currently trustworthy",
+        "DESIGN/IMPLEMENTATION EVIDENCE 2026-09-29: the static Pages surface uses shared CSS custom properties for color, typography, spacing and state styling; public, empty, error, storage-blocked and admin/locked states are explicit in index.html/admin.html and their controllers. No external origin, build step or public snapshot allowlist was added.",
+        "QA 2026-09-29: npm run pages:test passed 24/24; npm run pages:visual passed the Chromium visual matrix, theme persistence, keyboard and semantics/contrast checks; npm run pages:workspace:test passed public filters, saved jobs, refresh, clear confirmation, blocked storage and responsive screenshots in Chromium, Firefox and WebKit, including 320/390/768px breakpoints.",
+        "PORTABILITY FIX 2026-09-29: setup-admin-secret.test.mjs now asserts POSIX 0600 only on POSIX hosts because NTFS does not enforce POSIX mode bits; secret generation, preservation and non-overwrite assertions remain active on every platform."
       ],
       "securityImpact": "public artifact — allowlist must not widen",
       "architectureImpact": "none; static artifact only",
       "ownerAgent": "Frontend",
       "reviewAgents": ["Visual Designer", "UX", "Security", "QA"],
       "summary": "The public job page is the only part of CareerScope a stranger ever sees, and it was built to be correct rather than to be read. This is a proper design pass over it.",
-      "dimension": "product"
+      "dimension": "product",
+      "currentStep": "QA - design and cross-engine Pages verification complete; accesslint-audit evidence and hosted CI are the remaining gates before UAT.",
+      "updatedAt": "2026-09-29"
     },
     {
       "releaseTarget": "3.0.1",
