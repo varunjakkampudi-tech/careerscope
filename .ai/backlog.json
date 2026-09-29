@@ -439,7 +439,8 @@
         "THE GATE WORDING IS EXACTLY RIGHT AND IS KEPT: \"A LOCAL RUN - EVEN A CONTAINERISED ONE - IS NOT CI, AND A SENTENCE MENTIONING CI IS NOT A CI RESULT.\" Containerised local execution is the specific thing most likely to be mistaken for the criterion here, because it looks like the CI environment.",
         "CLUSTER RECORDED, because these are no longer four separate tickets: CS-1, CS-2, CS-7 AND CS-9 ALL HAVE ACCEPTANCE CRITERIA THAT NAME CI OR A REAL PIPELINE RUN IN THEIR OWN TEXT. Four tickets - INCLUDING THE ONLY P0 (CS-7) - are blocked by the commit gate BY THEIR OWN WORDING, not by anyone judgement. That is the most concrete statement of the commit value available, and it should go to the owner in exactly those terms.",
         "Hosted baseline CI run 36446068242 for commit 113935eef08dc3a988d3c17fa928725e57a34c10 completed the V2 integration job successfully. Its steps show service initialization, a CI-built environment file, integration tests, backfill tests, and Chromium/Firefox/WebKit plus axe acceptance all completed successfully; no integration step was skipped.",
-        "Hosted mutation PR run 36448394587 independently completed the V2 integration job successfully while the intentional unit mutation failed, confirming the service-backed job is separate and still executes rather than being reported as passed by transitive success."
+        "Hosted mutation PR run 36448394587 independently completed the V2 integration job successfully while the intentional unit mutation failed, confirming the service-backed job is separate and still executes rather than being reported as passed by transitive success.",
+        "Direct hosted CI links: https://github.com/varunjakkampudi-tech/careerscope/actions/runs/36446068242 and https://github.com/varunjakkampudi-tech/careerscope/actions/runs/36448394587."
       ],
       "securityImpact": "none directly; the resume-parser fix REMOVES a permanently-broken safety self-check rather than weakening a working one — network isolation for that child was never actually enforced by it and must come from the OS/container, which this change documents rather than hides",
       "architectureImpact": "CI service topology; no application behavior change beyond making the isolated resume parser actually able to run",
@@ -447,7 +448,7 @@
       "reviewAgents": ["QA", "Infrastructure", "Security"],
       "summary": "The tests that need a real database, queue and browser do not run in the pipeline at all. That is the layer where this application actually breaks, so the current pipeline proves less than it appears to. Wiring this up surfaced a real, previously-undetected defect that made resume parsing permanently unable to run; that defect is now fixed and proven 24/24 on real services.",
       "dimension": "engineering",
-      "blockedReason": "AC1 requires a result IN CI - \"Postgres and Redis service containers run in CI with a CI-built environment file\". No commit has been pushed, so no CI run exists. Zero evidence entries cite a workflow run URL or run id."
+      "blockedReason": "Historical gate note superseded by the directly linked hosted CI evidence now recorded above; re-run the promotion check before returning this ticket to UAT."
     },
     {
       "releaseTarget": null,
@@ -4285,7 +4286,8 @@
         "GitHub annotation on run 36425407226 identifies design/build-refined-dark.mjs:663 as an unexpected console statement; this repository change replaces it with explicit stdout output.",
         "The latest repository state already has exact-SHA CI gating in deploy.yml; remaining acceptance is the hosted confirmation after the fix and diagnosis of any integration failure.",
         "Hosted CI run 36440190520 for commit 2c67add3ae12e021ee88c62e8c593caa1b7d5a45 passed all complete jobs: verify/typecheck-lint-test-build, V2 integration database/queue/storage/browsers, and V2 recovery crash/database restore/queue/full disk; container image was correctly skipped.",
-        "Hosted CI run 36441119667 for commit d37034522ad65f54ed96a25faea66977722133da passed the same complete verification set after the OpenRouter runbook change. These are two consecutive complete green runs after the deterministic lint and failure-artifact fixes."
+        "Hosted CI run 36441119667 for commit d37034522ad65f54ed96a25faea66977722133da passed the same complete verification set after the OpenRouter runbook change. These are two consecutive complete green runs after the deterministic lint and failure-artifact fixes.",
+        "Direct hosted CI links for the two consecutive complete runs: https://github.com/varunjakkampudi-tech/careerscope/actions/runs/36440190520 and https://github.com/varunjakkampudi-tech/careerscope/actions/runs/36441119667."
       ],
       "securityImpact": "Prevents a red or unauditable validation path from being treated as deployable.",
       "architectureImpact": "CI observability and release gating only.",
