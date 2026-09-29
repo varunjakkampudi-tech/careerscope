@@ -3576,7 +3576,7 @@
       "source": "Filed 2026-09-25 from the UAT audit. CS-19 and CS-51 both requested this backend ticket in their evidence and neither could create it; the request sat in prose and never became work.",
       "area": "backend",
       "priority": "P2",
-      "status": "UAT",
+      "status": "QA",
       "size": "M",
       "value": 4,
       "risk": 2,
@@ -3590,9 +3590,13 @@
       "evidence": [
         "CONFIRMED AT SOURCE 2026-09-25: no fingerprint, alreadySaved or isSaved handling exists anywhere in the save path under v2/apps/web/src. Fingerprint deduplication exists in discovery but the UI does not use it when saving.",
         "THIS IS THE BLOCKER UNDER TWO OTHER TICKETS. CS-19 AC4 cannot be met without it, and CS-51 recorded the same residual. Both said in their evidence that a backend ticket was needed; neither could file one, so the need was documented repeatedly and never scheduled. Filing it is the entire unlock.",
-        "TEST TRAP RECORDED IN AC3 BEFORE IMPLEMENTATION: asserting that a duplicate save \"does not error\" passes against an implementation that silently creates a second lead. The assertion must be on the LEAD COUNT being unchanged, paired with a positive that a genuinely new job DOES create one - otherwise the negative passes against a save path that saves nothing at all."
+        "TEST TRAP RECORDED IN AC3 BEFORE IMPLEMENTATION: asserting that a duplicate save \"does not error\" passes against an implementation that silently creates a second lead. The assertion must be on the LEAD COUNT being unchanged, paired with a positive that a genuinely new job DOES create one - otherwise the negative passes against a save path that saves nothing at all.",
+        "IMPLEMENTED 2026-09-29: LeadRepository.forJob(ownerId, jobId) performs an owner-scoped join through search_jobs and search_runs, returns the existing lead including archived state, and returns null for another owner's lookup. GET /api/leads/by-job/:jobId is documented in the OpenAPI contract and applies the normal read budget.",
+        "IMPLEMENTED 2026-09-29: SaveJob hydrates the by-job query on mount, keeps aria-pressed and labels derived from the persisted lead before any click, and opens an existing archived or saved lead instead of issuing an unintended duplicate save.",
+        "REGRESSION COVERAGE ADDED 2026-09-29: database integration coverage asserts null before save, no cross-owner disclosure, the same lead id/status after concurrent saves, and archived status after archiving. Local typecheck, lint, ticket-consistency and diff checks pass; integration execution was attempted but could not complete because the local Redis dependency was unavailable.",
+        "CURRENT CONTENT REVIEW: implementation is ready for hosted CI verification and protected deployment evidence; status remains UAT until those current-content gates complete."
       ],
-      "currentStep": "READY. Blocks CS-19 AC4 and carries CS-51 disclosed residual. The API exposes no job-to-lead lookup, so an already-saved job renders \"Save Job\" with aria-pressed=\"false\" - a control asserting a state it does not know. Both tickets asked for this in prose and neither could file it.",
+      "currentStep": "QA - implementation and regression coverage complete locally; awaiting hosted CI and protected deployment evidence before final UAT re-verification.",
       "updatedAt": "2026-09-27"
     },
     {

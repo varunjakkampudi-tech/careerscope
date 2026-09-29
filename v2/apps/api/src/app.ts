@@ -629,6 +629,11 @@ export async function createApp(
     if (!lead) throw new HttpError(404, 'Completed job not found');
     return lead;
   });
+  app.get('/api/leads/by-job/:jobId', async (request) => {
+    await readBudget(request, 'leads-read', 240);
+    const { id: jobId } = identifier.parse({ id: (request.params as { jobId?: unknown }).jobId });
+    return leads.forJob(request.ownerId!, jobId);
+  });
   app.get('/api/leads/:id', async (request) => {
     await readBudget(request, 'leads-read', 240);
     const { id } = identifier.parse(request.params);
