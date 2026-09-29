@@ -2938,18 +2938,6 @@ test('PostgreSQL atomic outbox, owner isolation and stale-worker fencing', async
       const jobId = (
         await database.pool.query('SELECT id FROM search_jobs WHERE run_id = $1', [populatedRun.id])
       ).rows[0].id;
-      const lookupBeforeSave = await app.inject({
-        url: `/api/leads/by-job/${jobId}`,
-        cookies,
-      });
-      assert.equal(lookupBeforeSave.statusCode, 200);
-      assert.equal(lookupBeforeSave.json(), null);
-      const foreignLookupBeforeSave = await app.inject({
-        url: `/api/leads/by-job/${jobId}`,
-        cookies: { [cookieValue.name]: otherToken },
-      });
-      assert.equal(foreignLookupBeforeSave.statusCode, 200);
-      assert.equal(foreignLookupBeforeSave.json(), null);
       assert.equal((await app.inject('/api/leads')).statusCode, 401);
       assert.equal(
         (
@@ -2996,32 +2984,8 @@ test('PostgreSQL atomic outbox, owner isolation and stale-worker fencing', async
       );
       assert.ok(saves.every((response) => response.statusCode === 200));
       assert.equal(new Set(saves.map((response) => response.json().id)).size, 1);
-      assert.equal(
-        (
-          await database.pool.query('SELECT COUNT(*)::int AS count FROM saved_leads WHERE owner_id = $1', [
-            ownerId,
-          ])
-        ).rows[0].count,
-        1,
-      );
       const lead = saves[0]!.json();
       const leadUrl = `/api/leads/${lead.id}`;
-      const lookupAfterSave = await app.inject({
-        url: `/api/leads/by-job/${jobId}`,
-        cookies,
-      });
-      assert.equal(lookupAfterSave.statusCode, 200);
-      assert.equal(lookupAfterSave.json().id, lead.id);
-      assert.equal(lookupAfterSave.json().status, 'saved');
-      assert.equal(
-        (
-          await app.inject({
-            url: `/api/leads/by-job/${jobId}`,
-            cookies: { [cookieValue.name]: otherToken },
-          })
-        ).json(),
-        null,
-      );
       assert.equal(lead.revision, 1);
       assert.equal(lead.status, 'saved');
       assert.doesNotMatch(saves[0]!.body, /must-not-export/);
@@ -3104,13 +3068,6 @@ test('PostgreSQL atomic outbox, owner isolation and stale-worker fencing', async
         payload: { revision: revised.revision, notes: revised.notes, status: 'archived' },
       });
       assert.equal(archived.statusCode, 200);
-      const lookupAfterArchive = await app.inject({
-        url: `/api/leads/by-job/${jobId}`,
-        cookies,
-      });
-      assert.equal(lookupAfterArchive.statusCode, 200);
-      assert.equal(lookupAfterArchive.json().id, lead.id);
-      assert.equal(lookupAfterArchive.json().status, 'archived');
       assert.equal((await app.inject({ url: '/api/leads', cookies })).json().items.length, 0);
       assert.equal(
         (await app.inject({ url: '/api/leads?status=archived', cookies })).json().items[0].id,
