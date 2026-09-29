@@ -2025,7 +2025,7 @@
       "source": "ChatGPT TICKET-PLAN-20260920 proposal; owner approved discovery recording only; source validation pending",
       "area": "data",
       "priority": "P2",
-      "status": "DISCOVERY",
+      "status": "QA",
       "size": "L",
       "value": 3,
       "risk": 4,
@@ -2036,16 +2036,20 @@
         "Propose stable job/company/skill identity, provenance, nullable facts and compatible migration/backfill behavior with explicit legal collection and coverage limits",
         "Define foreign-owner, ambiguous identity, malformed source and unknown-field fixtures plus bounded query/pagination budgets; obtain architecture/security approval before collection, schema or UI expansion"
       ],
-      "evidence": [],
+      "evidence": [
+        "DESIGN DELIVERED 2026-09-29: docs/DOMAIN-EXPANSION-DESIGN.md inventories the real owner-scoped job, job_sightings, lead and market-route boundary and explicitly rejects treating it as a global catalog.",
+        "IDENTITY DESIGN 2026-09-29: the document proposes opaque job/company/skill identities only as a future, nullable, provenance-preserving migration; ambiguous, malformed, unknown and foreign-owner cases remain unmerged or hidden.",
+        "SAFETY DESIGN 2026-09-29: collection, public corpus and UI expansion stay disabled pending legal, architecture and security approval; bounded pagination, retention, rate limits and paired positive/negative isolation fixtures are required before implementation."
+      ],
       "securityImpact": "No automatic public corpus, expanded scraping entitlement or sharing of owner observations",
       "architectureImpact": "Deferred data-model work; CS-16/17/18 can use current supported facts without waiting for this expansion",
       "releaseTarget": null,
       "ownerAgent": "System Designer",
       "reviewAgents": ["Product Architect", "Backend", "Security", "QA"],
-      "currentStep": "Deferred discovery; inventory and approval required",
+      "currentStep": "QA - current schema/API inventory and bounded domain-expansion design complete; architecture/security approval is required before implementation",
       "completedSteps": [],
       "createdAt": "2026-09-20",
-      "updatedAt": "2026-09-20",
+      "updatedAt": "2026-09-29",
       "summary": "Do not mistake existing owner-scoped market/company observations for a complete public job or company catalog.",
       "dimension": "product"
     },
