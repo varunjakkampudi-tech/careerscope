@@ -6,7 +6,7 @@ Two frontends exist. Know which one you are in.
 | --------- | -------------------------------------- | ------------------------------- |
 | Location  | `apps/web`                             | `v2/apps/web`                   |
 | Framework | React 18 + Vite, React Router          | Next.js 16 App Router, React 19 |
-| Routes    | 10                                     | **1**                           |
+| Routes    | 10                                     | **9**                           |
 | Serves    | GitHub Pages artifact, local workspace | `https://careerscope.tech`      |
 
 ---
@@ -16,23 +16,31 @@ Two frontends exist. Know which one you are in.
 ```
 v2/apps/web/src/
 ├── app/
-│   ├── layout.tsx        root layout
-│   ├── page.tsx          the entire application
-│   ├── globals.css
-│   └── robots.ts         generated robots.txt
+│   ├── layout.tsx, providers.tsx, globals.css, robots.ts
+│   ├── page.tsx                 public/auth entry point
+│   └── (app)/                   authenticated real routes
+│       ├── dashboard, jobs, applications, saved, resume
+│       ├── career-resources, preparation, settings
+│       └── layout.tsx            shared AuthenticatedShell boundary
 ├── components/
-│   ├── account-form.tsx
-│   ├── account-security.tsx
-│   ├── profile-editor.tsx
-│   ├── resume-panel.tsx
-│   ├── match-evidence.tsx
-│   ├── saved-leads.tsx
-│   └── preparation-panel.tsx
+│   ├── ui-states.tsx/.module.css  shared atom-level async states
+│   ├── dashboard-shell.tsx/.module.css  shared layout/navigation
+│   ├── account/profile/resume/match primitives
+│   └── feature views composed from those primitives
+├── styles/                       global reset/tokens when added
 └── lib/
-    └── api.ts            every API call goes through here
+    ├── api.ts                    the only browser API client
+    └── session.ts                owner-scoped session/cache contract
 ```
 
-That is the whole frontend. One route, seven components, one API client.
+The V2 frontend uses a route-group shell and feature components. New UI must
+follow the atomic boundary: primitives/atoms first, composed molecules next,
+feature organisms last, and route pages only compose them. A route must not
+invent a second button, state, card, token or API client. CSS Modules are the
+default isolation mechanism; global CSS is reserved for reset, tokens and
+cross-route primitives. SCSS is not required merely for naming: adding a
+preprocessor or custom webpack configuration without a measured need would
+increase the build surface and weaken the existing Next.js pipeline.
 
 State is local to components and lifted into `page.tsx` where it is shared.
 There is no Redux, no Zustand, no React Query, and no global store. For a

@@ -1,3 +1,5 @@
+@import '../styles/reset.css';
+
 :root {
   --canvas: #f6f7f9;
   --surface: #fff;
@@ -330,25 +332,6 @@
     gap: 10px;
   }
 }
-* {
-  box-sizing: border-box;
-}
-body {
-  margin: 0;
-  background: var(--canvas);
-  color: var(--ink);
-  font-family: var(--font-sans), 'Segoe UI', sans-serif;
-  font-size: 14px;
-  letter-spacing: 0;
-}
-button,
-input {
-  font: inherit;
-}
-button,
-a {
-  -webkit-tap-highlight-color: transparent;
-}
 button {
   display: inline-flex;
   align-items: center;
@@ -368,13 +351,6 @@ button:disabled {
 }
 button:hover:not(:disabled) {
   border-color: var(--accent);
-}
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-summary:focus-visible {
-  outline: 3px solid #7087ea;
-  outline-offset: 3px;
 }
 input {
   min-width: 0;
