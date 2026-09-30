@@ -183,13 +183,13 @@ describe('BrowserPool — context configuration', () => {
   it('sends a user agent only when one was asked for', async () => {
     const record = fakeBrowser();
     const pool = new BrowserPool({
-      userAgent: 'job-radar/1.0',
+      userAgent: 'CareerScope/1.0',
       launch: async () => record.browser,
     });
 
     await pool.open();
 
-    expect(record.contexts[0]?.options.userAgent).toBe('job-radar/1.0');
+    expect(record.contexts[0]?.options.userAgent).toBe('CareerScope/1.0');
   });
 
   it('sets locale and timezone, because the results depend on them', async () => {

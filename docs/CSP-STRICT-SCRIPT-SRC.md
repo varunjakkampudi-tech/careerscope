@@ -23,7 +23,7 @@ execute. It was reverted.
 
 ## What is now measured
 
-Against the production build in `v2/apps/web/.next` (`BUILD_ID`,
+Against the production build in `apps/web/.next` (`BUILD_ID`,
 `prerender-manifest.json` and `routes-manifest.json` all present; no dev static
 directory — confirmed a real build, not a dev artefact):
 

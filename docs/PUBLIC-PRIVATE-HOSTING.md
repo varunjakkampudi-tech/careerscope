@@ -20,7 +20,7 @@ publish changes. This is not live database synchronization.
 GitHub Pages still serves the separate static jobs site. It cannot run the
 API, owner sessions, or SQLite. Publishing the combined app requires a server
 with persistent storage and HTTPS, using the existing deployment setup in
-`infra/` and `docs/RUNBOOK.md`.
+`infra/` and `docs/archive/RUNBOOK-HISTORICAL.md`.
 
 Use a single HTTPS origin for both the React app and `/api`. Production must
 have `LOGIN_ENABLED=true`, `AUTH_DISABLED=false`, `SERVE_WEB=true`, and

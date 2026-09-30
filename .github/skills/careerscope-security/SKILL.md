@@ -21,20 +21,20 @@ bearing. None of them may be weakened to make a test pass or a flow convenient.
 
 ## Where the code lives
 
-| Concern                      | Path                                                            |
-| ---------------------------- | --------------------------------------------------------------- |
-| Auth, sessions, CSRF tokens  | `v2/packages/core/src/auth.ts`                                  |
-| Hooks, routes, error mapping | `v2/apps/api/src/app.ts`                                        |
-| Origin and config validation | `v2/packages/core/src/runtime.ts`                               |
-| Proxy headers and TLS        | `infra/v3/Caddyfile.production`                                 |
-| Live checks                  | `infra/v3/check-live-origin.sh`, `infra/v3/check-live-flow.mjs` |
+| Concern                      | Path                                                      |
+| ---------------------------- | --------------------------------------------------------- |
+| Auth, sessions, CSRF tokens  | `packages/core/src/auth.ts`                               |
+| Hooks, routes, error mapping | `apps/api/src/app.ts`                                     |
+| Origin and config validation | `packages/core/src/runtime.ts`                            |
+| Proxy headers and TLS        | `infra/Caddyfile.production`                              |
+| Live checks                  | `infra/check-live-origin.sh`, `infra/check-live-flow.mjs` |
 
 ## Verified live behaviour
 
 These are measured against the deployed origin, not asserted:
 
 ```
-Set-Cookie: careerscope_v2_session=…; Max-Age=28800; Path=/api; HttpOnly; Secure; SameSite=Strict
+Set-Cookie: careerscope_CareerScope_session=…; Max-Age=28800; Path=/api; HttpOnly; Secure; SameSite=Strict
 cross-origin write  -> 403
 origin-less write   -> 403
 missing CSRF token  -> 403
@@ -56,7 +56,7 @@ foreign Host + valid SNI -> 421
   raise the test timeout. This has already been done deliberately for three auth
   tests.
 - **Registration is disabled in the deployed stack.** The owner account is
-  created interactively with `v2/scripts/setup-owner.ts`. Do not enable public
+  created interactively with `scripts/setup-owner.ts`. Do not enable public
   registration as a convenience.
 
 ## Rate limits
@@ -110,8 +110,8 @@ from outside the host.
 ```sh
 npm test -- apps/api/src/routes/auth.test.ts
 npm test -- apps/api/src/db/repo/auth.test.ts
-npm --prefix v2 test
-npm audit --omit=dev && npm --prefix v2 audit --omit=dev
+npm test
+npm audit --omit=dev && npm audit --omit=dev
 
-bash infra/v3/check-live-origin.sh https://careerscope.tech
+bash infra/check-live-origin.sh https://careerscope.tech
 ```

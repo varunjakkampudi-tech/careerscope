@@ -4,7 +4,7 @@ import {
   type DemandedSkill,
   type EmploymentType,
   type JobDemands,
-} from '@job-radar/shared';
+} from '@careerscope/shared';
 import { seniorityOf } from './seniority.js';
 
 /**

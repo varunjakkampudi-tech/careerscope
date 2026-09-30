@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 
 const alias = Object.fromEntries(
   ['shared', 'resume', 'matching', 'providers'].map((name) => [
-    `@job-radar/${name}`,
+    `@careerscope/${name}`,
     fileURLToPath(new URL(`./packages/${name}/src/index.ts`, import.meta.url)),
   ]),
 );

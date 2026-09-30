@@ -18,8 +18,8 @@ code and the nearest test.
 
 ## Scope
 
-`v2/apps/api` (one `app.ts`), `v2/packages/core`, `v2/apps/workers`,
-`v2/migrations`.
+`apps/api` (one `app.ts`), `packages/core`, `apps/workers`,
+`migrations`.
 
 ## Invariants you must not break
 
@@ -47,13 +47,13 @@ generated `DROP TABLE`, `DROP COLUMN` or `TRUNCATE` and report it.
 ## Validation you must actually run
 
 ```bash
-npm --prefix v2 run typecheck
-npm --prefix v2 run lint
-npm --prefix v2 run build
-npm --prefix v2 test
+npm run typecheck
+npm run lint
+npm run build
+npm test
 ```
 
-On Windows only, run these through `data/windows-v2/run.mjs` instead — Windows
+On Windows only, run these through `data/windows-run.mjs` instead — Windows
 reserves TCP 55403-55502, so the launcher remaps the Postgres port.
 
 **Never claim a check passed unless you ran it.** Never weaken or delete a test

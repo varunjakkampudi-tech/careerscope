@@ -13,7 +13,7 @@
  * not.
  */
 
-import type { RawJob } from '@job-radar/shared';
+import type { RawJob } from '@careerscope/shared';
 import type { JobProvider } from '../types.js';
 import { employmentTypeFrom, periodFrom } from '../normalize.js';
 import {

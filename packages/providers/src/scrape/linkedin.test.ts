@@ -14,7 +14,7 @@
  * as an empty page and not as a crash.
  */
 
-import type { ProviderQuery } from '@job-radar/shared';
+import type { ProviderQuery } from '@careerscope/shared';
 import { describe, expect, it } from 'vitest';
 import { context, query, routedFetch } from '../harness.fixtures.js';
 import type { ScrapeContext, ScrapePage } from './base.js';

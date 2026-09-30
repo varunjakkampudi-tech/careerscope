@@ -20,15 +20,15 @@ or lose messages. Every rule here protects that separation.
 
 ## Where the code lives
 
-| Concern                          | Path                                         |
-| -------------------------------- | -------------------------------------------- |
-| Command schemas and retry policy | `v2/packages/core/src/commands.ts`           |
-| Dispatch, fencing, outcomes      | `v2/packages/core/src/dispatch.ts`           |
-| SQS-compatible adapter           | `v2/packages/core/src/queue.ts`              |
-| BullMQ adapter                   | `v2/packages/core/src/bull-queue.ts`         |
-| Outbox reads, leases, backlog    | `v2/packages/core/src/database.ts`           |
-| Publisher                        | `v2/apps/workers/search/src/publisher.ts`    |
-| Workers                          | `v2/apps/workers/search/src/{main,files}.ts` |
+| Concern                          | Path                                      |
+| -------------------------------- | ----------------------------------------- |
+| Command schemas and retry policy | `packages/core/src/commands.ts`           |
+| Dispatch, fencing, outcomes      | `packages/core/src/dispatch.ts`           |
+| SQS-compatible adapter           | `packages/core/src/queue.ts`              |
+| BullMQ adapter                   | `packages/core/src/bull-queue.ts`         |
+| Outbox reads, leases, backlog    | `packages/core/src/database.ts`           |
+| Publisher                        | `apps/workers/search/src/publisher.ts`    |
+| Workers                          | `apps/workers/search/src/{main,files}.ts` |
 
 ## The rule
 
@@ -109,8 +109,8 @@ exceeding retries; operator restarts the whole stack.
 ## Verification
 
 ```sh
-npm --prefix v2 test
-npm --prefix v2 run test:crash-recovery   # four real SIGKILL phases
+npm test
+npm run test:crash-recovery   # four real SIGKILL phases
 ```
 
 The crash harness asserts: outbox work retained and the duplicate collapsed to

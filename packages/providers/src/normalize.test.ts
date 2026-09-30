@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { RawJob } from '@job-radar/shared';
+import type { RawJob } from '@careerscope/shared';
 import {
   canonicalCompany,
   canonicalLocation,

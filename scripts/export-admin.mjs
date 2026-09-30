@@ -83,7 +83,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       configuredPassphrase(process.env.ADMIN_SNAPSHOT_PASSPHRASE) ?? (await askPassphrase());
     delete process.env.ADMIN_SNAPSHOT_PASSPHRASE;
     const database = new DatabaseSync(
-      resolve(root, process.env.DATA_DIR || 'data', 'job-radar.db'),
+      resolve(root, process.env.DATA_DIR || 'data', 'careerscope.db'),
       { readOnly: true },
     );
     let snapshot;

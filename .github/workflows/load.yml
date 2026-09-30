@@ -91,11 +91,11 @@ jobs:
       - name: Install root workspace
         run: npm ci
 
-      - name: Install V2
-        run: npm --prefix v2 ci
+      - name: Install CareerScope
+        run: npm ci
 
-      - name: Build the shared domain packages V2 depends on
-        run: npm --prefix v2 run build:domain
+      - name: Build the shared domain packages CareerScope depends on
+        run: npm run build:domain
 
       # Refuse rather than default. A dispatch with both inputs off would
       # otherwise finish green having measured nothing, which is the "passed
@@ -108,7 +108,7 @@ jobs:
 
       - name: Write a CI-built environment file
         run: |
-          cat > v2/.env <<'EOF'
+          cat > .env <<'EOF'
           DATABASE_URL=******127.0.0.1:5432/careerscope
           LOCAL_AWS_ENDPOINT=http://127.0.0.1:4566
           AWS_ACCESS_KEY_ID=test
@@ -120,7 +120,7 @@ jobs:
       # distribution and fails only on ceilings that would be user-visible.
       - name: Measure authenticated read latency and concurrency
         if: ${{ inputs.run_performance }}
-        run: npm --prefix v2 run test:performance
+        run: npm run test:performance
 
       # Deterministic local fixtures only — no live provider, owner data or
       # network acquisition takes part. Discovery is published by the real
@@ -130,4 +130,4 @@ jobs:
         if: ${{ inputs.run_soak }}
         env:
           SOAK_DURATION_MS: ${{ inputs.soak_duration_ms }}
-        run: npm --prefix v2 run test:soak
+        run: npm run test:soak

@@ -6,7 +6,7 @@ another CLI, an installation, or another MCP server.
 
 ## Start Here
 
-1. Read [project state](../PROJECT-STATE.md) to choose V1 or V2.
+1. Read [project state](../PROJECT-STATE.md) to choose previous implementation or CareerScope.
 2. Use [workflow](workflow.md) for the six repository prompts and their boundaries.
 3. Check [quality gates](quality-gates.md) before making a completion claim.
 

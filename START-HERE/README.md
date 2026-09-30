@@ -52,7 +52,7 @@ Most mistakes here come from assuming otherwise.
 - **`data/` is entirely gitignored** and holds the database, resumes and `.env`.
   Nothing in it survives a clone. It is not broken — it is private.
 - **Local `HEAD` and the deployed revision are often legitimately different.**
-  Confirm with `infra/v3/check-provenance.sh`; never assume.
+  Confirm with `infra/check-provenance.sh`; never assume.
 - **The repository is public.** Never commit personal data, transcripts,
   databases, credentials or editor state.
 
@@ -62,11 +62,11 @@ Most mistakes here come from assuming otherwise.
    container egress. The symptom is an unrelated timeout, not a firewall error.
 2. **Never restart the proxy alone.** Every service joins its network namespace;
    restarting it strands them all behind a 502 _while they still report
-   healthy_. Use `infra/v3/restart-stack.sh`.
+   healthy_. Use `infra/restart-stack.sh`.
 3. **Never run `docker system prune -a`.** It removes the images a rollback
    needs. Prune build cache only.
 4. **Never regenerate `POSTGRES_PASSWORD`** against an existing database volume.
-   The host's `infra/v3/.env` is the only copy.
+   The host's `infra/.env` is the only copy.
 5. **Never deploy uncommitted code.** Deploy from a reviewed commit, then prove
    it with `check-provenance.sh`.
 

@@ -19,7 +19,7 @@ reporting standard, [baseline](baseline.md) the actual pre-change comparison,
 and [limitations](limitations.md) the unresolved enforcement gaps. Use the
 [pinned runtime](capability-matrix.md#environment) on this Windows host.
 
-The CLI supports schema 1 (`LEGACY_V1`) and schema 2 (`EXPANDED_V2`). Schema 2
+The CLI supports schema 1 (`LEGACY_previous implementation`) and schema 2 (`EXPANDED_CareerScope`). Schema 2
 adds validated task contracts; objective and gate shapes remain schema 1.
 The [contract validator](../../scripts/engineering-contract.mjs) owns lifecycle,
 risk, baseline and failure rules. A separate opt-in
@@ -53,20 +53,20 @@ each. The twelve names below match the source's `AREAS` list. Inspect the
 delivered policy before recording machine state; this table does not define its
 record schema.
 
-| Area                   | Minimum evidence to consider                                                              |
-| ---------------------- | ----------------------------------------------------------------------------------------- |
-| `architecture`         | V1/V2 ownership, module/data boundaries, source-linked diagrams                           |
-| `frontend`             | Components, state handling and responsive browser checks when affected                    |
-| `backend`              | API validation, contracts, failure isolation, cancellation and retries                    |
-| `database`             | Schema/migrations, owner isolation, transactions, recovery and query risks                |
-| `security`             | Sessions, CSRF/origin, authorization, secret handling and external input                  |
-| `accessibility`        | Automated audit, keyboard/reflow, explicit human-validation gaps                          |
-| `performance`          | Measured relevant workload, budgets and resource limits                                   |
-| `seo`                  | Public metadata/indexing controls; private routes must remain private                     |
-| `testing`              | Behavior coverage, negative/malformed cases, skips and realistic isolation                |
-| `ux`                   | User journeys, loading/empty/error states, navigation and task completion                 |
-| `documentation`        | Claims, links, commands, architecture drift and unverified behavior                       |
-| `production-readiness` | CI/CD, build order, deployment/recovery, operational gaps and applicable tooling evidence |
+| Area                   | Minimum evidence to consider                                                                  |
+| ---------------------- | --------------------------------------------------------------------------------------------- |
+| `architecture`         | previous implementation/CareerScope ownership, module/data boundaries, source-linked diagrams |
+| `frontend`             | Components, state handling and responsive browser checks when affected                        |
+| `backend`              | API validation, contracts, failure isolation, cancellation and retries                        |
+| `database`             | Schema/migrations, owner isolation, transactions, recovery and query risks                    |
+| `security`             | Sessions, CSRF/origin, authorization, secret handling and external input                      |
+| `accessibility`        | Automated audit, keyboard/reflow, explicit human-validation gaps                              |
+| `performance`          | Measured relevant workload, budgets and resource limits                                       |
+| `seo`                  | Public metadata/indexing controls; private routes must remain private                         |
+| `testing`              | Behavior coverage, negative/malformed cases, skips and realistic isolation                    |
+| `ux`                   | User journeys, loading/empty/error states, navigation and task completion                     |
+| `documentation`        | Claims, links, commands, architecture drift and unverified behavior                           |
+| `production-readiness` | CI/CD, build order, deployment/recovery, operational gaps and applicable tooling evidence     |
 
 Audit native discovery, tools/allowlists, graph/claims and evidence/state honesty
 across architecture, security, testing and production-readiness. These are not a

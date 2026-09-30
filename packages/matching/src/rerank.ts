@@ -2,9 +2,9 @@ import type Anthropic from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 // `zod/v4` rather than the package root, because `zodOutputFormat` is typed
 // against the v4 API. The rest of the repo is on v3 classic; this schema is
-// local to the module and never crosses into `@job-radar/shared`.
+// local to the module and never crosses into `@careerscope/shared`.
 import { z } from 'zod/v4';
-import type { CandidateContext, Job, MatchBreakdown } from '@job-radar/shared';
+import type { CandidateContext, Job, MatchBreakdown } from '@careerscope/shared';
 import { applyRerank } from './score.js';
 
 /**

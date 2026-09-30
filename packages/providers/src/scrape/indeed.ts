@@ -63,7 +63,7 @@
  * whole difference between a source that is down and a city with no jobs in it.
  */
 
-import type { ProviderQuery, RawJob } from '@job-radar/shared';
+import type { ProviderQuery, RawJob } from '@careerscope/shared';
 import { htmlToText, tidyText } from '../html.js';
 import { employmentTypeFrom } from '../normalize.js';
 import type { ScrapeAdapter, ScrapeContext, ScrapePage } from './base.js';

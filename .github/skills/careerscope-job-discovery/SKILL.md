@@ -27,11 +27,11 @@ stage and break the next.
 
 | Concern                               | Path                                                      |
 | ------------------------------------- | --------------------------------------------------------- |
-| Collection orchestration              | `v2/apps/workers/search/src/collect.ts`                   |
+| Collection orchestration              | `apps/workers/search/src/collect.ts`                      |
 | Source adapters                       | `packages/providers/src/{ats,remote,keyed,email,scrape}/` |
 | Normalization and fingerprinting      | `packages/providers/src/normalize.ts`                     |
 | HTTP client, retries, in-flight dedup | `packages/providers/src/http.ts`                          |
-| Collected job schema                  | `v2/packages/core/src/jobs.ts`                            |
+| Collected job schema                  | `packages/core/src/jobs.ts`                               |
 
 ## Bounds that are load-bearing
 
@@ -130,8 +130,8 @@ sources with different titles; a source claims another source's id.
 
 ```sh
 npm test -- packages/providers
-npm --prefix v2 test
+npm test
 ```
 
 Live discovery through the deployed queue and workers is exercised by
-`infra/v3/check-live-flow.mjs`, which asserts a run settles to `completed`.
+`infra/check-live-flow.mjs`, which asserts a run settles to `completed`.

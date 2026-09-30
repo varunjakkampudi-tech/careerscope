@@ -22,7 +22,7 @@ need to also say "unhealthy" when the host is fully unreachable.
 
 ## How it runs
 
-[monitor.sh](../../infra/v3/monitor.sh) runs **on the host**, not in a
+[monitor.sh](../../infra/monitor.sh) runs **on the host**, not in a
 container, via `careerscope-monitor.timer` (every 5 minutes — three chances to
 notify inside the 15-minute detection window this ticket's acceptance
 criterion asks for, even if one run is skipped). Running on the host, outside
@@ -36,7 +36,7 @@ already-available host-to-container operations, not a new network route.
 ## Install
 
 ```sh
-bash infra/v3/setup-monitoring.sh
+bash infra/setup-monitoring.sh
 ```
 
 Idempotent — re-run after editing `monitor.sh` or after changing
@@ -65,7 +65,7 @@ the channel every 5 minutes either.
 ## Verification
 
 ```sh
-bash infra/v3/check-monitoring.sh
+bash infra/check-monitoring.sh
 ```
 
 Runs entirely against stub `docker`/`curl` binaries — every classification,
@@ -118,7 +118,7 @@ Six systemd timers now run unattended: `careerscope-monitor.timer`,
 nothing alerted on that absence. The worst case is the backup timer: the
 owner would believe recoverability exists when it does not.
 
-`infra/v3/scheduler-health.sh` is **one** checker for all six, not six
+`infra/scheduler-health.sh` is **one** checker for all six, not six
 watchdogs.
 
 ## What it checks, per timer
@@ -195,7 +195,7 @@ no environment value, no command output body and no host path ever reaches it.
 ## Install (operator-only — not yet performed)
 
 ```sh
-bash infra/v3/setup-scheduler-health.sh
+bash infra/setup-scheduler-health.sh
 ```
 
 Requires root, `systemctl` and `systemd-analyze`. Install the six watched
@@ -206,7 +206,7 @@ cannot confirm that timer has ever fired.
 ## Verification
 
 ```sh
-bash infra/v3/check-scheduler-health.sh
+bash infra/check-scheduler-health.sh
 ```
 
 Runs entirely against stub `systemctl`, `systemd-analyze` and `curl` binaries:

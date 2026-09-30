@@ -8,7 +8,7 @@ Audit the requested scope using [workflow](../../docs/ai/workflow.md),
 [quality gates](../../docs/ai/quality-gates.md), and the
 [agent matrix](../../docs/ai/agent-matrix.md).
 
-Establish V1/V2 ownership, revision and dirty paths. Inspect relevant source and
+Establish previous implementation/CareerScope ownership, revision and dirty paths. Inspect relevant source and
 nearby tests, not secrets or real environment files. Cover all twelve audit
 areas before prioritizing findings; give explicit evidence for each finding or
 not-applicable decision. Distinguish implemented, target, deployed and unverified.

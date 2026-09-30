@@ -1,14 +1,14 @@
 ---
 name: CareerScope Frontend
 description: 'Use when changing React routes, components, styling or the static Pages UI: state, accessibility, responsive behavior and browser compatibility.'
-applyTo: 'apps/web/src/**,v2/apps/web/src/**,mobile-site/**'
+applyTo: 'apps/web/src/**,apps/web/src/**,mobile-site/**'
 ---
 
 # Frontend Rules
 
-- Identify the stack first: V1 uses React/Vite and its existing primitives;
-  V2 uses Next.js App Router and its own components. Reuse the owning stack's
-  icons, data-fetching patterns and design tokens; do not transplant V1 routing.
+- Identify the canonical stack first: CareerScope uses Next.js App Router and its
+  own components. Reuse the owning stack's icons, data-fetching patterns and design
+  tokens; do not invent a parallel application stack.
 - Keep this operational UI compact and useful for scanning jobs. Preserve visual
   hierarchy, theme behavior, focus visibility and consistent navigation; do not
   replace working screens with marketing layouts or unrelated visual redesigns.

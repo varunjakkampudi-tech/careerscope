@@ -35,8 +35,8 @@ change.
 
 ## Scope
 
-`v2/apps/web` is the deployed frontend: Next.js 16 App Router, React 19,
-TypeScript. `apps/web` is the V1 Vite SPA — do not touch it unless the task
+`apps/web` is the deployed frontend: Next.js 16 App Router, React 19,
+TypeScript. `apps/web` is the previous implementation Vite SPA — do not touch it unless the task
 names it.
 
 ## Rules
@@ -101,13 +101,13 @@ and no server there. Rules that are easy to break:
 ## Validation you must actually run
 
 ```bash
-npm --prefix v2 run typecheck
-npm --prefix v2 run lint
-npm --prefix v2 run build
-npm --prefix v2 test
+npm run typecheck
+npm run lint
+npm run build
+npm test
 ```
 
-On Windows only, run these through `data/windows-v2/run.mjs` — Windows reserves
+On Windows only, run these through `data/windows-run.mjs` — Windows reserves
 TCP 55403-55502, so the launcher remaps the Postgres port.
 
 **Never report a check as passed unless you ran it and it passed.** Paste the

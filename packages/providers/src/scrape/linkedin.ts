@@ -37,7 +37,7 @@
  * rather than reporting an empty market.
  */
 
-import type { ProviderQuery, RawJob } from '@job-radar/shared';
+import type { ProviderQuery, RawJob } from '@careerscope/shared';
 import { htmlToText, tidyText } from '../html.js';
 import { HttpError } from '../http.js';
 import { employmentTypeFrom } from '../normalize.js';

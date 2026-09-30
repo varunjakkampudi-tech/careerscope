@@ -47,7 +47,7 @@ Recorded 2026-09-18 on this machine. Re-verify rather than trusting this table.
 | Component      | Status                                                          |
 | -------------- | --------------------------------------------------------------- |
 | `git`          | 2.55.0.windows.4                                                |
-| `node`         | v22.23.2 (repo tooling pins its own newer Node)                 |
+| `node`         | CareerScope2.23.2 (repo tooling pins its own newer Node)        |
 | `npm`          | 11.19.0                                                         |
 | `python`       | 3.14.6 — meets the 3.10+ requirement                            |
 | `codex`        | codex-cli 0.155.0 — **logged in (ChatGPT)**                     |
@@ -179,11 +179,11 @@ The reviewer should be given commands that actually prove the deliverable, and
 for this repository those are:
 
 ```bash
-# V2 (the deployed stack)
-npm --prefix v2 run typecheck
-npm --prefix v2 run lint
-npm --prefix v2 run build
-npm --prefix v2 test
+# CareerScope (the deployed stack)
+npm --prefix CareerScope run typecheck
+npm --prefix CareerScope run lint
+npm --prefix CareerScope run build
+npm --prefix CareerScope test
 
 # Root workspace
 npm run typecheck
@@ -195,8 +195,8 @@ npm run format:check
 Deployment-related claims are proved on the host, not asserted:
 
 ```bash
-bash /opt/careerscope/infra/v3/check-provenance.sh
-bash /opt/careerscope/infra/v3/check-host-firewall.sh
+bash /opt/careerscope/infra/check-provenance.sh
+bash /opt/careerscope/infra/check-host-firewall.sh
 ```
 
 ---

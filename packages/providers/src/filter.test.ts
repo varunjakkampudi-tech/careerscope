@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { ProviderQuery, RawJob } from '@job-radar/shared';
+import type { ProviderQuery, RawJob } from '@careerscope/shared';
 import {
   employmentTypeAllowed,
   hasExcludedKeyword,

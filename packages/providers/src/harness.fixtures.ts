@@ -8,7 +8,7 @@
  * the file is invisible to both.
  */
 
-import type { ProviderQuery, RawJob } from '@job-radar/shared';
+import type { ProviderQuery, RawJob } from '@careerscope/shared';
 import { HttpClient, type FetchLike } from './http.js';
 import type { ProviderContext, ProviderEvent } from './types.js';
 

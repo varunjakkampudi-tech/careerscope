@@ -30,7 +30,7 @@
  * and without a key.
  */
 
-import type { ApiSource, ProviderQuery, RawJob } from '@job-radar/shared';
+import type { ApiSource, ProviderQuery, RawJob } from '@careerscope/shared';
 import { matchesQuery } from '../filter.js';
 import { isAbortError } from '../http.js';
 import { describeFailure, rankByRelevance } from '../rank.js';

@@ -10,7 +10,7 @@ assistance without any personal setup.
 | Field      | Value                                      |
 | ---------- | ------------------------------------------ |
 | Catalog    | `sickn33/agentic-awesome-skills`           |
-| Pinned tag | `v17.5.0`                                  |
+| Pinned tag | `previous implementation7.5.0`             |
 | Commit     | `ebffb8789f6f36047ba76ed7233380b4d837d371` |
 
 Skills are **not** verified by GitHub. Every skill below was read in full before
@@ -26,7 +26,7 @@ after that is reported as "not found". Install from a pinned local clone
 instead:
 
 ```sh
-git clone --depth 1 --branch v17.5.0 --filter=blob:none --sparse \
+git clone --depth 1 --branch previous implementation7.5.0 --filter=blob:none --sparse \
   https://github.com/sickn33/agentic-awesome-skills.git /tmp/aas
 cd /tmp/aas && git sparse-checkout set skills && cd -
 
@@ -40,7 +40,7 @@ gh skill install /tmp/aas <skill-id> --from-local \
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `react-best-practices`         | The web tier is React 19 on Next.js 16. Vercel-maintained, 73 KB including 80 rule files.                                            |
 | `postgres-best-practices`      | PostgreSQL is the source of truth for runs, outbox, leads, profiles and resume metadata. Supabase-maintained.                        |
-| `drizzle-orm-expert`           | Schema and migrations are Drizzle; `v2/migrations` is generated from it.                                                             |
+| `drizzle-orm-expert`           | Schema and migrations are Drizzle; `migrations` is generated from it.                                                                |
 | `accesslint-audit`             | WCAG 2.2 report/fix modes. Accessibility is an open sign-off gate and axe alone is not sufficient.                                   |
 | `nextjs-seo-indexing`          | Canonical, robots and indexing behaviour for a Next.js app, where the deployed workspace must stay unindexed.                        |
 | `container-security-hardening` | The stack ships as hardened containers: read-only rootfs, dropped capabilities, non-root users, pinned digests.                      |

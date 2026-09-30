@@ -42,8 +42,8 @@
  * walk stops and says it was refused rather than reporting an empty market.
  */
 
-import { MIN_FULL_DESCRIPTION_CHARS } from '@job-radar/matching';
-import type { ProviderQuery, RawJob } from '@job-radar/shared';
+import { MIN_FULL_DESCRIPTION_CHARS } from '@careerscope/matching';
+import type { ProviderQuery, RawJob } from '@careerscope/shared';
 import { htmlToText, tidyText } from '../html.js';
 import { employmentTypeFrom } from '../normalize.js';
 import type { ScrapeAdapter, ScrapeContext, ScrapePage } from './base.js';

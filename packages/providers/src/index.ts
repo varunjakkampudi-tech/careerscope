@@ -1,5 +1,5 @@
 /**
- * @job-radar/providers — every job source behind one interface.
+ * @careerscope/providers — every job source behind one interface.
  *
  * The API layer should need nothing from this package but `createProviders`,
  * `resolveProviders` and `normalizeJob`. Everything else is exported because

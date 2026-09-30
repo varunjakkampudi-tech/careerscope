@@ -5,7 +5,7 @@ date_added: '2026-04-17'
 description: Use when building high-agency frontend interfaces with strict design taste, calibrated color, responsive layout, and motion rules.
 metadata:
   upstream: sickn33/agentic-awesome-skills
-  pinned-tag: v17.5.0
+  pinned-tag: previous implementation7.5.0
   pinned-commit: ebffb8789f6f36047ba76ed7233380b4d837d371
 name: design-taste-frontend
 risk: safe

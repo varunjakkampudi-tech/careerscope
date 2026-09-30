@@ -49,7 +49,7 @@ logic — that is Frontend's. Hand it a specification, not a rewrite.
 
 `--spacing-app-header` exists; a design system does not. The progress matrix
 records **Design system: NOT STARTED** — no tokens, no primitives, ad-hoc
-styling — and UX/UI at 15%. The V2 frontend is one route.
+styling — and UX/UI at 15%. The CareerScope frontend is one route.
 
 So your first job is almost never "make this prettier". It is to establish the
 decisions everything else will depend on: a type scale, a spacing rhythm, a

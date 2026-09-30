@@ -24,4 +24,4 @@ applyTo: 'apps/api/src/container.ts,apps/api/src/app.ts,apps/web/src/App.tsx,inf
   target, test TLS/proxy readiness, non-root operation, limits, persistent sessions,
   restart behavior, backup/restore and rollback. Do not expose VNC publicly.
 - See [architecture](../../docs/ARCHITECTURE.md) and
-  [runbook](../../docs/RUNBOOK.md) for implementation context.
+  [runbook](../../docs/archive/RUNBOOK-HISTORICAL.md) for implementation context.

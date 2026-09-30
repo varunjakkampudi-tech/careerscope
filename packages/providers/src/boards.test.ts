@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ALL_SOURCES } from '@job-radar/shared';
+import { ALL_SOURCES } from '@careerscope/shared';
 import { DEFAULT_BOARDS, boardsFor, mergeBoards, type BoardRef } from './boards.js';
 
 describe('DEFAULT_BOARDS', () => {

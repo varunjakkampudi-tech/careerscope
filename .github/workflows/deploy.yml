@@ -97,17 +97,17 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      # v2 type-checks against the root workspace's *built* packages, so those
-      # have to exist before anything in v2 runs. The same order is what the
+      # canonical type-checks against the root workspace's *built* packages, so those
+      # have to exist before anything in canonical runs. The same order is what the
       # runtime image does; skipping it here only appeared to work locally
       # because a previous build had left the dist directories behind.
-      - name: Build the domain packages v2 depends on
+      - name: Build the domain packages canonical depends on
         run: |
           npm ci
-          npm run build --workspace @job-radar/shared
-          npm run build --workspace @job-radar/resume
-          npm run build --workspace @job-radar/matching
-          npm run build --workspace @job-radar/providers
+          npm run build --workspace @careerscope/shared
+          npm run build --workspace @careerscope/resume
+          npm run build --workspace @careerscope/matching
+          npm run build --workspace @careerscope/providers
 
       # `packages/` is copied into the runtime image, so a regression in matching
       # or providers reaches production. The gate built them and never ran their
@@ -116,22 +116,22 @@ jobs:
       - name: Test the domain packages being shipped
         run: npm test
 
-      - name: Install V2 dependencies
-        working-directory: v2
+      - name: Install CareerScope dependencies
+        working-directory: .
         run: npm ci
 
-      # CS-52: exercise the V2 unit suite in the deploy gate itself. The exact
+      # CS-52: exercise the CareerScope unit suite in the deploy gate itself. The exact
       # SHA CI requirement above remains mandatory, but this direct run prevents
       # a future workflow split from making the deploy gate green while the
       # application suite is absent or miswired. Service-backed integration,
       # browser and recovery suites remain in ci.yml because this gate has no
       # disposable Postgres/Redis/LocalStack service topology.
-      - name: Test V2 unit suite directly
-        working-directory: v2
+      - name: Test CareerScope unit suite directly
+        working-directory: .
         run: npm run test:unit
 
       - name: Typecheck, lint and build
-        working-directory: v2
+        working-directory: .
         run: |
           npm run typecheck
           npm run lint
@@ -139,7 +139,7 @@ jobs:
           npm run build
 
       - name: Production dependency audit
-        working-directory: v2
+        working-directory: .
         run: npm audit --omit=dev
 
   deploy:
@@ -200,7 +200,7 @@ jobs:
           ssh $SSH_OPTIONS "$DEPLOY_USER@$DEPLOY_HOST" \
             'set -e
              for script in ship.sh build-images.sh apply-migrations.sh check-provenance.sh maintenance.sh; do
-               test -f "/opt/careerscope/infra/v3/$script" || { echo "missing $script" >&2; exit 1; }
+               test -f "/opt/careerscope/infra/$script" || { echo "missing $script" >&2; exit 1; }
              done
              echo "deployment tree present on $(hostname)"'
 
@@ -210,19 +210,19 @@ jobs:
       - name: Enable maintenance mode
         run: |
           ssh $SSH_OPTIONS "$DEPLOY_USER@$DEPLOY_HOST" \
-            "bash /opt/careerscope/infra/v3/maintenance.sh enable 'Deploying' 'about 10 minutes'"
+            "bash /opt/careerscope/infra/maintenance.sh enable 'Deploying' 'about 10 minutes'"
 
       - name: Ship
         run: |
           scp $SSH_OPTIONS /tmp/deploy.tgz "$DEPLOY_USER@$DEPLOY_HOST:/tmp/deploy.tgz"
           ssh $SSH_OPTIONS "$DEPLOY_USER@$DEPLOY_HOST" \
-            "bash /opt/careerscope/infra/v3/ship.sh /tmp/deploy.tgz ${{ steps.rev.outputs.sha }}"
+            "bash /opt/careerscope/infra/ship.sh /tmp/deploy.tgz ${{ steps.rev.outputs.sha }}"
 
       - name: Build images, migrate and start
         run: |
           ssh $SSH_OPTIONS "$DEPLOY_USER@$DEPLOY_HOST" "
             set -e
-            cd /opt/careerscope/infra/v3
+            cd /opt/careerscope/infra
             bash build-images.sh ${{ steps.rev.outputs.sha }}
             bash apply-migrations.sh
             docker compose -f compose.production.yml up -d --wait
@@ -231,12 +231,12 @@ jobs:
       - name: Verify provenance
         run: |
           ssh $SSH_OPTIONS "$DEPLOY_USER@$DEPLOY_HOST" \
-            "bash /opt/careerscope/infra/v3/check-provenance.sh ${{ steps.rev.outputs.sha }}"
+            "bash /opt/careerscope/infra/check-provenance.sh ${{ steps.rev.outputs.sha }}"
 
       - name: Verify the origin answers
         run: |
           ssh $SSH_OPTIONS "$DEPLOY_USER@$DEPLOY_HOST" \
-            "bash /opt/careerscope/infra/v3/maintenance.sh disable"
+            "bash /opt/careerscope/infra/maintenance.sh disable"
           for attempt in 1 2 3 4 5; do
             code=$(curl -s -o /dev/null -w '%{http_code}' https://careerscope.tech/)
             health=$(curl -s https://careerscope.tech/api/health)
@@ -256,7 +256,7 @@ jobs:
         if: always()
         run: |
           ssh $SSH_OPTIONS "$DEPLOY_USER@$DEPLOY_HOST" \
-            "bash /opt/careerscope/infra/v3/maintenance.sh disable" || true
+            "bash /opt/careerscope/infra/maintenance.sh disable" || true
 
       - name: Remove the deployment key
         if: always()

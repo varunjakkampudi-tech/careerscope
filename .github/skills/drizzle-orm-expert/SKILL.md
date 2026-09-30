@@ -3,7 +3,7 @@ date_added: '2026-03-04'
 description: Expert in Drizzle ORM for TypeScript — schema design, relational queries, migrations, and serverless database integration. Use when building type-safe database layers with Drizzle.
 metadata:
   upstream: sickn33/agentic-awesome-skills
-  pinned-tag: v17.5.0
+  pinned-tag: previous implementation7.5.0
   pinned-commit: ebffb8789f6f36047ba76ed7233380b4d837d371
 name: drizzle-orm-expert
 risk: safe

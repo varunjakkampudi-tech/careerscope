@@ -103,7 +103,7 @@ By default all pods in a cluster can reach all other pods on any port. Lock down
 Apply a default-deny to every namespace that holds workloads:
 
 ```yaml
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/previous implementation
 kind: NetworkPolicy
 metadata:
   name: default-deny-all
@@ -119,7 +119,7 @@ spec:
 
 ```yaml
 # Allow ingress from nginx ingress controller, egress to postgres + DNS
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/previous implementation
 kind: NetworkPolicy
 metadata:
   name: allow-myapp
@@ -201,7 +201,7 @@ kubectl exec -it deploy/myapp -- calicoctl get networkpolicy -n production
 
 ```yaml
 # ❌ DANGEROUS — grants everything to everything
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/previous implementation
 kind: ClusterRoleBinding
 metadata:
   name: full-admin
@@ -216,7 +216,7 @@ roleRef:
 
 ---
 # ✅ CORRECT — minimal namespace-scoped role with specific resource names
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/previous implementation
 kind: Role
 metadata:
   name: myapp-role
@@ -232,7 +232,7 @@ rules:
     verbs: ['get']
 
 ---
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/previous implementation
 kind: RoleBinding
 metadata:
   name: myapp-rolebinding
@@ -285,7 +285,7 @@ helm install kyverno kyverno/kyverno -n kyverno --create-namespace
 
 ```yaml
 # 1. Require non-root containers
-apiVersion: kyverno.io/v1
+apiVersion: kyverno.io/previous implementation
 kind: ClusterPolicy
 metadata:
   name: require-non-root
@@ -306,7 +306,7 @@ spec:
 
 ---
 # 2. Require image digest pinning
-apiVersion: kyverno.io/v1
+apiVersion: kyverno.io/previous implementation
 kind: ClusterPolicy
 metadata:
   name: require-image-digest
@@ -326,7 +326,7 @@ spec:
 
 ---
 # 3. Disallow privileged containers
-apiVersion: kyverno.io/v1
+apiVersion: kyverno.io/previous implementation
 kind: ClusterPolicy
 metadata:
   name: disallow-privileged
@@ -347,7 +347,7 @@ spec:
 
 ---
 # 4. Require resource limits (prevents resource starvation)
-apiVersion: kyverno.io/v1
+apiVersion: kyverno.io/previous implementation
 kind: ClusterPolicy
 metadata:
   name: require-resource-limits
@@ -370,7 +370,7 @@ spec:
 
 ---
 # 5. Auto-mutate: add drop ALL capabilities if not set
-apiVersion: kyverno.io/v1
+apiVersion: kyverno.io/previous implementation
 kind: ClusterPolicy
 metadata:
   name: drop-all-capabilities
@@ -399,7 +399,7 @@ kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/
 
 ```yaml
 # ConstraintTemplate — define the Rego policy
-apiVersion: templates.gatekeeper.sh/v1
+apiVersion: templates.gatekeeper.sh/previous implementation
 kind: ConstraintTemplate
 metadata:
   name: k8srequiredlabels
@@ -429,7 +429,7 @@ spec:
 
 ---
 # Constraint — apply the policy
-apiVersion: constraints.gatekeeper.sh/v1beta1
+apiVersion: constraints.gatekeeper.sh/previous implementationbeta1
 kind: K8sRequiredLabels
 metadata:
   name: require-app-label
@@ -449,7 +449,7 @@ spec:
 
 ```yaml
 # Dedicated service account per workload (never use 'default')
-apiVersion: v1
+apiVersion: previous implementation
 kind: ServiceAccount
 metadata:
   name: myapp-sa
@@ -531,7 +531,7 @@ helm install falco falcosecurity/falco \
 
 ```yaml
 # External Secrets Operator — sync from AWS Secrets Manager
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/previous implementationbeta1
 kind: ExternalSecret
 metadata:
   name: myapp-db-creds
@@ -555,7 +555,7 @@ spec:
 # Enable etcd encryption at rest (K8s)
 # In kube-apiserver: --encryption-provider-config=encryption-config.yaml
 # encryption-config.yaml:
-apiVersion: apiserver.config.k8s.io/v1
+apiVersion: apiserver.config.k8s.io/previous implementation
 kind: EncryptionConfiguration
 resources:
   - resources: [secrets]

@@ -16,7 +16,7 @@ the initial audit document failed formatting. Strict engineering verification
 correctly refused the unfinished objective. Do not reinterpret that refusal as
 a successful completion check.
 
-V2 integration and browser checks were not run: the known launcher consumes
+CareerScope integration and browser checks were not run: the known launcher consumes
 private runtime configuration and persistent storage. Production provenance,
 security review and dependency advisories were not established by this run.
 

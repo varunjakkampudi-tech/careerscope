@@ -85,7 +85,7 @@ test is not a passing test. A zero exit code is not proof — read the output.
 
 ```bash
 npm run typecheck && npm run lint && npm test && npm run format:check
-npm --prefix v2 run typecheck && npm --prefix v2 test
+npm run typecheck && npm test
 ```
 
-On Windows only, run the V2 commands through `data/windows-v2/run.mjs`.
+On Windows only, run the CareerScope commands through `data/windows-run.mjs`.

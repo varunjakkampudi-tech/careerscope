@@ -1,621 +1,657 @@
 # CareerScope
 
-Repository-local engineering: [Copilot agents, prompts and evidence gates](docs/ai/README.md).
+CareerScope is the canonical authenticated job-search workspace. The current
+checkout is an engineering build, not a production-release certification.
 
-A private, single-owner job-search workspace, formerly Job Radar.
-The product release version is defined in [package.json](package.json) and displayed
-in the app and mobile-site footers. See [versioned publishing](docs/ENCRYPTED-ADMIN.md#change-the-passphrase-and-publish)
-for patch, minor and major releases.
-See [release verification](docs/RELEASE-REVIEW.md) for the verification scope.
+## Revised Architecture Target
 
-## Versions And Readiness
+The [CareerScope specification](ARCHITECTURE.md) now targets Docker Compose, PostgreSQL,
+BullMQ with dedicated persistent Redis, private S3-compatible storage, configurable local-only Ollama,
+Nginx and optional bounded observability. No paid infrastructure or hosted inference
+service is required by the design. Hardware, electricity and independent backups
+still have costs; this is not a high-availability or production-readiness claim.
 
-The root application is the preserved **v1.3.4** runtime. The separate
-[V2 migration](v2/README.md) is **2.0.0-alpha.1**, not a finished replacement or
-production release. Its [architecture and acceptance gaps](v2/ARCHITECTURE.md)
-are authoritative for V2; the root stack below describes V1 only.
+This is a target specification, **not a completed production certification**. The setup
+below runs the verified LocalStack/SQS-based implementation. Do not replace
+its disposable throttle Redis with queue traffic or remove existing volumes.
+Native Ollama with Metal is preferred on this Mac; container CPU inference is an
+alternative to benchmark. No model is enabled for application inference.
 
-V2 currently supports authenticated accounts, encrypted resume upload with isolated
-parsing and explicit profile review, five-source discovery, deterministic matching,
-saved leads, rules-based interview preparation, cancellation and JSON export.
-AI inference stays off by design, and full provider parity, account recovery email and
-cutover remain incomplete. The planned MinIO runtime is blocked by upstream
-maintenance/distribution changes; synthetic S3 tests do not establish MinIO readiness.
+Latest September 15 verification: 31 CareerScope tests, static/build/format gates, isolated queue
+restart/AOF restore, and Chromium/Firefox/WebKit workflows at 320/390/1440px passed.
+The root regression suite has 1,043 passing tests. These checks cover implemented
+workflows only, not the missing resume/AI/recovery/cutover gates. September 17:
+the Fastify logging deprecation is resolved without enabling request-body logging.
+The current multi-user product requirements and release gates are tracked in
+[PRODUCT-ACCEPTANCE.md](PRODUCT-ACCEPTANCE.md); this is not a production release.
 
-**Public jobs:** <https://varunjakkampudi-tech.github.io/careerscope/>
+## Accounts And Database Recovery
 
-CareerScope runs job collection, resume matching, profile storage and optional
-Copilot application preparation locally on your Mac. GitHub Pages serves a
-separate mobile-friendly snapshot for browsing results and applying manually.
+Registration is opt-in through `REGISTRATION_ENABLED=true` (default `false`).
+The Windows local launcher explicitly enables it; open http://localhost:5280 and
+select **Create an account**. Other runtimes must set the flag deliberately.
+The existing `setup:owner` command remains available and refuses existing users.
+previous implementation accounts and data are not imported or shared with CareerScope.
 
-- **Public view:** sanitized posting metadata and employer links, with search,
-  source filtering and shared System / Light / Dark themes.
-- **Admin snapshot:** a passphrase-encrypted, read-only export of your leads,
-  match scores and statuses. Decryption happens in your browser; this is not a
-  server account login or a live connection to your Mac.
-- **Private workspace:** resumes, contact details, notes, credentials and browser
-  state remain local and are excluded from both snapshot exports.
+Signup normalizes email, uses Argon2id, relies on database uniqueness under
+concurrent requests, and never changes an existing account. New and duplicate
+emails receive the same 202 response without an automatic session. Login is
+separate. Origin checks, IP signup throttling, IP/account login throttling,
+HTTP-only SameSite cookies and CSRF enforcement remain required. Redis failure
+rejects signup rather than bypassing throttling. The form does not place passwords
+in query-cache mutation variables, URLs or browser storage. These local accounts
+do not yet verify email ownership or support password recovery, MFA or deletion;
+do not enable public registration as a production service.
 
-Each admin release requires a locally generated encrypted export. See
-[encrypted admin setup](docs/ENCRYPTED-ADMIN.md),
-[release verification and remaining gates](docs/PAGES-RELEASE-REVIEW.md), and
-[the architecture guide](docs/ARCHITECTURE.md).
+`npm run test:database-recovery` exercises real `pg_dump`/`pg_restore`
+using a unique synthetic source database and a fresh temporary PostgreSQL 17.6
+container. It compares all 13 current tables, verifies session/login, profile,
+saved notes/history, owner isolation and claimable pending outbox work. The dump
+stays in memory; temporary resources are removed. Docker must have access to the
+local CareerScope PostgreSQL container (`CareerScope_POSTGRES_CONTAINER` defaults to
+`careerscope-postgres-1`). The check also restores encrypted filesystem objects,
+compares exact versions and parsed results, and reparses the restored document.
+The synthetic snapshot is quiesced; this is not an online/off-host backup system,
+key-loss recovery, RPO/RTO measurement or complete queue replay.
 
-![CareerScope architecture](docs/architecture.svg)
+## Private Resume Workflow (September 17)
 
-## How It Fits Together
+The user explicitly approved private filesystem storage for this single-host app,
+superseding the earlier S3-only activation dependency. S3 remains an optional
+adapter; its failed candidates and unchanged acceptance contract remain documented
+below as historical evaluation, not blockers for the approved filesystem route.
 
-```mermaid
-flowchart LR
-    User([Owner]) --> Web["Next.js workspace"]
-    Web --> Proxy["Caddy TLS proxy<br/>HSTS - host check - body cap"]
-    Proxy --> API["Fastify API<br/>session - CSRF - rate limit"]
-    API --> DB[("PostgreSQL<br/>source of truth")]
-    API --> Store[["Encrypted resume store<br/>AES-256-GCM"]]
-    DB -- transactional outbox --> Pub["Publisher"]
-    Pub --> Queue{{"Queue"}}
-    Queue --> SearchW["Search worker"]
-    Queue --> FilesW["Files worker"]
-    SearchW --> Providers["Job sources"]
-    FilesW --> Parser["Isolated resume parser"]
-    SearchW --> DB
-    FilesW --> DB
+Configure both `RESUME_STORAGE_DIRECTORY` and `RESUME_STORAGE_KEY_FILE` as absolute
+paths to enable uploads. The Windows launcher now supplies an independent ignored
+directory and a 64-character hex key file created with cryptographic randomness.
+Its directory, key and object-folder ACLs were verified to allow only the current
+Windows user and SYSTEM. Other installations must provision private permissions;
+POSIX mode checks are enforced, but POSIX runtime acceptance has not been performed.
+Never regenerate the key for existing objects. Filesystem encryption does not
+protect a compromised application account or encrypt parsed text inside PostgreSQL.
+
+The adapter uses AES-256-GCM with unique nonces, authenticated owner/object/type/
+size/hash/version metadata, exclusive temporary writes, file fsync and atomic
+hard-link publication. It rejects traversal, linked roots, wrong keys/versions,
+changed lengths and tampered ciphertext. It never serves files from a public URL.
+Version identity is immutable per object, not a general-purpose versioned filesystem.
+Directory fsync is POSIX-only; Windows power-loss durability remains unverified.
+
+In **Candidate Profile**, upload PDF/DOCX (5 MiB maximum), wait for queued parsing,
+review extracted text and choose **Review profile draft**. Edit the proposed fields
+and explicitly **Save Profile**. Subsequent searches capture that revision and
+matching skills. Parsed data never silently replaces the profile. Settled resumes
+can be deleted with confirmation; saved profile fields remain. Deletion removes
+the encrypted file and parsed text/metadata, retaining ID-only execution records.
+
+The API checks session, origin, CSRF, idempotency and rate limits. Reservations are
+serialized per account and limited to 50 objects/100 MiB. Both API and UI enforce
+the byte bound; no client filename/checksum determines storage identity. A separate
+`start:files` process uses the existing SQS transport, ID-only outbox commands,
+leases/fencing, finite retries and isolated parser. The supervisor starts five
+processes; without storage configuration the files process stays disabled.
+`FILES_QUEUE_NAME` exists for isolated runtime tests; normal use defaults to
+`careerscope-files`. Search transport selection does not switch the files queue.
+
+Verified with synthetic data: encrypted read/restart/restore, eight-writer race,
+wrong-key/tamper/ownership/version denial, quota races, deletion rollback/retry,
+real API and separate files process, and Chromium/Firefox/WebKit signup/upload/
+review/profile-save/matching-snapshot/deletion at 320/390/1440px. No real resume
+was uploaded or owner account created by these tests. Current CareerScope suite: 34 tests.
+
+Remaining gates: interrupted-upload/orphan reconciliation and deletion before
+parsing settles, global disk/admission limits, key rotation and independent backup,
+full DB/file/queue outage recovery, graceful files-process runtime acceptance,
+malicious-document threat review, email verification/recovery and production TLS.
+Do not present this local workflow as a public production release.
+
+## Implemented
+
+- Next.js 16 / React 19 private workspace with TanStack Query and Lucide.
+- Fastify 5 API: opaque PostgreSQL sessions, Argon2id passwords, origin and CSRF
+  enforcement, Redis login/search throttling, bounded owner-scoped reads.
+- PostgreSQL 17 / Drizzle migrations: users, sessions, searches, normalized search
+  results, transactional outbox, fenced executions and durable run events.
+- Separate publisher and search-worker processes. Search submission returns 202
+  with a run ID; collection never runs inside the request handler.
+- Local SQS-compatible queues and dead-letter queues. Send-before-mark publication,
+  durable duplicate detection, bounded jitter, renewable leases, fenced result
+  commits, retry exhaustion and dead-letter reconciliation.
+- Remote OK, Himalayas, Greenhouse, Lever and Workable collection reuse existing providers and normalization
+  packages. Source warnings/errors produce failed source outcomes, retaining
+  validated jobs; cancellation still aborts the attempt. Select any supported subset;
+  duplicate/unknown source selections are rejected. Shared deduplication keeps the
+  richer normalized record before deterministic matching. Limits: 100 candidates
+  per source, 100 final results, 30-day window, up to 25 seconds per source within
+  a shared 55-second acquisition budget and a 60-second combined deadline. ATSs use
+  curated company boards, with at most 20 description fetches per source. This is
+  not exhaustive ATS coverage. Failed detail requests retain low-confidence listings.
+  Himalayas scans at most 20 pages (2,000 recent postings), not its full inventory.
+  Source failures persist a `partial` run when validated jobs or a successful source
+  remain; all failed sources without retained jobs persist a `failed` run. Outcomes
+  include accepted counts, limits and fixed error codes. API/UI/export preserve the
+  distinction; targeted retry creates a new run. Detailed live source progress
+  remains pending. Remotive is not enabled until
+  a restart-safe shared fetch budget/cache can honor its low request allowance.
+  The UI preserves selected sources per run and retains all validated source links
+  for merged duplicates in search, export and saved leads. Old records use their
+  existing primary link. LinkedIn, Naukri and Indeed remain disabled pending supported
+  acquisition access; auto-apply is on hold. See CS-P0-06 in the acceptance ledger.
+  September 14 live Himalayas smoke returned four jobs in about seven seconds;
+  it used a generic query without a profile and did not persist jobs.
+- Real PostgreSQL, Redis and LocalStack integration checks plus browser checks.
+- Opt-in BullMQ search transport with a dedicated AOF/noeviction Redis service.
+  It reuses durable outbox publication, fenced completion and attempt budgets;
+  integration tests cover transport loss, duplicates, failed-job repair, lock-loss
+  notification cancellation and sanitized failures. SQS remains the default.
+- Owner-scoped candidate profiles and preferences, strict input validation and
+  revision-based updates. Conflicts retain local edits until an explicit reload.
+- Searches capture a minimal immutable matching profile and its revision.
+  Deterministic matching reuses the existing engine with exclusions, description
+  confidence ceilings, company flags and visible dimension evidence. Searches
+  without a profile remain unscored; no AI reranking is connected yet.
+- Confirmed search cancellation through `POST /api/searches/:id/cancel`, with
+  owner, origin, CSRF and rate-limit enforcement. One transaction marks the search
+  cancelled, fences existing execution and emits one durable `SearchCancelled` event.
+  The command is marked handled (`completed`) for transport acknowledgement, not
+  successful search completion. Both transports skip it on redelivery. Active
+  provider work receives cancellation when its next 15-second heartbeat fails;
+  stale workers cannot commit after cancellation. A completion that wins the race
+  remains completed. Repeated cancel requests are idempotent.
+- Completed/partial-search JSON downloads through `GET /api/searches/:id/export` and the
+  result toolbar. The authenticated, owner-scoped endpoint is limited to 30 requests
+  per minute and 100 jobs, with `no-store` and an attachment filename based on the
+  validated run ID. Version 1 contains `schemaVersion`, `runId`, `status`, `sourceOutcomes`, `request` and
+  allowlisted normalized `jobs`, ordered like the result view. Empty completed runs
+  export an empty array; other run states return 409. Downloads include all results
+  from the run regardless of the local text filter. Profiles, matching snapshots,
+  sessions and unexpected stored fields are excluded; job descriptions and derived
+  match evidence are included, so downloads remain private. JSON preserves literal
+  text without interpreting spreadsheet formulas. This bounded synchronous read
+  does not need a queue or object store; background/bulk exports, CSV, saved-lead
+  exports and backup/import workflows remain pending.
+  Browser checks verify downloaded contents, pending state, failure/keyboard retry
+  and expired-session reauthentication in Chromium, Firefox and WebKit.
+
+## Search Outcomes And Live Events
+
+Migration `0007` adds bounded source outcomes and the `partial` terminal state;
+`0008` indexes owner/run/cursor replay. Fenced settlement validates the selected
+sources and source-specific counts before persisting jobs, outcomes and one terminal
+event. Recorded provider failures are handled commands, not transport failures;
+the search stays visibly failed or partial. Infrastructure exceptions retain their
+existing retry/DLQ policy. Matching snapshots remain immutable. Partial jobs can be
+saved without changing existing notes or lead statuses.
+
+`GET /api/searches/:id/events` accepts a validated `Last-Event-ID` header (preferred)
+or `after` query cursor. It replays 50 events per batch, with two streams per owner,
+32 per API process and 30 opens/minute. Connections last 25 seconds; the one-second
+loop sends heartbeats and rechecks sessions. Disconnect/shutdown cancels streams;
+terminal events end replay. Invalid/foreign cursors return400. There is no event
+retention yet; implement a reset/snapshot protocol before deleting event history.
+Payloads contain event cursors, types and timestamps, not job/profile content.
+Native EventSource uses a two-second reconnect hint, with ten-second detail polling
+as fallback. SearchStarted is fenced/idempotent; state/event writes serialize per
+run, so replay does not depend on global cross-run allocation/commit order.
+
+Tests cover populated `0006` upgrades, fresh/repeat migrations, competing start/
+terminal writes, partial/total source failure through SQS and BullMQ execution
+policy, duplicate suppression, rollback, owner isolation, replay/reconnect, bad
+cursors, concurrent stream limits and live-session revocation. Three browsers verify
+SSE-driven running state, targeted retry, partial exports and saved leads. Normal
+CareerScope data is not migrated by the tests. Apply reviewed migrations and complete owner
+setup before owner use. Nginx/TLS, retention and mixed-load acceptance remain pending.
+
+## Private Storage Foundation
+
+Resume objects are stored by `PrivateFileResumeStorage`: authenticated AES-256-GCM
+envelopes on a private local directory, with immutable version identity, exclusive
+publication and exact-version integrity reads. The API process is the only writer.
+
+An S3-compatible adapter was previously carried alongside it. Nothing in the
+application, workers or scripts ever used it, so it was removed with its tests and
+the `@aws-sdk/client-s3` dependency rather than maintained as unused surface. The
+decision it represented is recorded here: object storage remains a viable future
+option, but it would be reintroduced only when a concrete deployment needs it, and
+only against the `ResumeObjectStore` contract in `packages/core/src/storage.ts`.
+No new dependency, bucket, secret or production configuration
+is installed automatically. Keep credentials in ignored owner-only files.
+
+Initialization checks versioning, owner-only ACL grants and absence of a bucket
+policy. Configure least-privilege identity policies externally; the runtime never
+creates buckets or grants public access. The adapter bounds PDF/DOCX objects to
+**5 MiB (5,242,880 bytes)**, validates UUID-scoped keys and SHA-256, uses conditional immutable writes,
+checks exact read versions/length/type/checksum, and deletes only a supplied object
+version. Operations have a 15-second deadline, cancellation and no automatic retries.
+The authenticated repository must supply owner identity; a key prefix is not an
+authorization system. MIME allowlisting is not content validation or safe parsing.
+This CareerScope limit intentionally differs from previous implementation's 10 MiB; future CareerScope API/UI upload
+controls must share the 5 MiB bound, not copy the legacy limit.
+
+Tests use synthetic HTTP responses and an isolated LocalStack S3 bucket. They
+cover private/versioned readiness, tampering, ownership-key separation, duplicate
+writes (including an eight-writer race with exactly one version), cancellation and
+deletion. They do **not** validate a production runtime, malicious-file
+parsing, durable orphan recovery, retention or database/object restoration.
+
+On September 15, 2026, the [upstream MinIO repository](https://github.com/minio/minio)
+was verified as archived and explicitly unmaintained; it describes source-only
+distribution. The attempted versioned Docker Hub image pull was denied. Do not
+work around this with an unreviewed mirror or assume old images receive security
+updates. A maintained S3-compatible implementation or explicitly accepted
+source-maintenance plan must be selected and tested before enabling uploads.
+AIStor licensing/account requirements are not implicitly accepted. Durable parsing,
+review and matching integration remain pending.
+
+The required abstraction is private S3-compatible storage, not MinIO. Local ARM64
+candidate evaluation found two blockers: SeaweedFS 4.47 passes the object lifecycle
+and anonymous/wrong-secret denial but rejects empty-bucket deletion with
+nonempty-bucket deletion disabled; RustFS
+1.0.0-rc.6 omits the ACL grantee ID and fails private readiness. Neither is accepted.
+Pinned digests and selection requirements are in [ARCHITECTURE.md](ARCHITECTURE.md#storage-acceptance-blocker-2026-09-15).
+Do not weaken either guard to make a candidate pass. Persistence/restart and isolated
+version-preserving backup/restore remain unverified for both candidates.
+
+September 17 Windows/Linux-amd64 evaluation of upstream RustFS 1.0.0, digest
+`sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff`,
+also failed the unchanged `Resume bucket must be private` readiness assertion.
+Versioning initialization and final synthetic bucket/version cleanup succeeded.
+The isolated container was removed; no owner files or credentials were used.
+The exact cause for 1.0.0 was not established; the rc6 source diagnosis must not
+be assumed to apply. No replacement storage was activated.
+
+The existing integration test can target a disposable local candidate using
+`S3_CONTRACT_ENDPOINT`, `S3_CONTRACT_ACCESS_KEY` and `S3_CONTRACT_SECRET_KEY`.
+Provide all three through the local environment; do not use owner credentials or
+an owner bucket. It creates and deletes its own unique synthetic bucket, briefly
+tests a public policy on that bucket, and additionally checks anonymous/wrong-secret
+denial for real candidates. Without a candidate endpoint it uses `LOCAL_AWS_ENDPOINT`
+for emulator compatibility; emulator execution is not authentication acceptance.
+From `CareerScope`, run `node --env-file=.env --import tsx --test packages/core/src/storage.integration.test.ts`.
+
+### Upload Metadata And Outbox
+
+Migration `0005_resume_upload_reservations` adds owner-scoped metadata reservations.
+`ResumeUploadRepository.reserve` accepts a trusted owner ID, an idempotency key,
+the configured bucket and strictly validated checksum/size/MIME metadata. Concurrent
+retries return the same reservation; different metadata or bucket under the same
+owner/key returns a conflict. Binary content and filenames are not stored in PostgreSQL.
+
+`queueStoredUpload` locks the owner's reservation and atomically binds an immutable
+object version plus one ID-only `resume.parse` command. Same-version retries are
+idempotent; a conflicting version is rejected. This is an internal persistence
+operation, not object validation: a trusted coordinator must verify the exact stored
+object before calling it. No API exposes this operation, and no parser route has
+been enabled in the publisher or worker. Queued means durably scheduled, not parsed.
+
+The publisher filters supported command types before its 20-row limit, preventing
+unsupported resume backlogs from starving search commands. Tests cover eight-way
+reservation/finalization races, cross-owner denial, strict metadata, database
+constraints, failures before/after outbox insertion and retry recovery. The full
+CareerScope suite now has 31 passing tests; static/build/format and queue restart/AOF checks
+also pass. Browser checks from the previous UI pass were not rerun for this slice.
+
+Migration `0005` was applied only to disposable fresh test databases and rerun for
+idempotency, not to the normal owner database. It is additive; rollback means using
+the previous application without dropping reservations or outbox data. Populated
+upgrade/restore, unattended orphan recovery, retention/deletion,
+container resource isolation and owner review remain acceptance gates. Storage configuration
+must remain stable for reserved objects; moving endpoints/buckets needs a migration
+and restore procedure, not an environment-only switch.
+
+### Internal Upload And Parsing Pipeline
+
+`ResumeUploadCoordinator` now computes SHA-256, length and the container signature
+from a copied, bounded body, reserves the owner/idempotency key, checks storage
+readiness and verifies the exact stored object before queuing parsing. A PDF/ZIP
+signature permits quarantine only; it is not document validation. No filename,
+client checksum, MIME claim or client version determines the stored metadata.
+The configured bucket comes from the storage adapter, avoiding a second independent
+bucket setting. Conflicting retries fail; already queued retries return the durable
+record. Caller cancellation and a 45-second storage-operation deadline are propagated.
+
+`recoverVersion` discovers a version with HEAD and verifies it by exact-version
+GET and SHA-256. It distinguishes missing objects from other errors. Lost PUT
+responses are reconciled without overwriting or deleting existing objects. An
+explicit owner-scoped `reconcile` call can finish a reservation left behind by a
+database failure without requiring another upload. Missing objects remain pending;
+there is no unattended sweeper or destructive orphan cleanup yet.
+
+`resumeParseHandler` validates the durable command and stored owner/version before
+reading the object. Parsing runs in a separate child process using the existing
+resume extraction/derivation package. The child receives no inherited environment
+or credentials, has read access only to code/dependencies, and is denied network,
+filesystem writes, native addons and child-process spawning. It fails closed when
+the host lacks Node's network permission capability (verified here on Node 26.8.1;
+the repository's Node >=24 declaration alone does not prove parser compatibility).
+The 30-second deadline kills the child and waits for process closure; one parse is
+admitted per worker process. V8 old-space is limited to 192 MiB, **not a total RSS or
+OS sandbox guarantee**. Container CPU/RSS/egress acceptance remains required.
+
+DOCX preflight uses `yauzl`: at most 200 entries, 20 MiB expanded data, 100:1
+per-entry expansion, consistent streamed sizes, required document parts, and no
+encrypted entries, macro projects or embedded objects. PDF preflight bounds pages
+to 50. Text is limited to 160,000 characters and IPC output to 1 MiB. The MIT
+`@thednp/dommatrix` implementation supplies PDF text extraction's matrix dependency
+without native canvas permissions. `jszip` is test-only for synthetic documents.
+Parser errors use fixed codes; raw document text and internal diagnostics are not logged.
+
+Migration `0006_amazing_ares` adds owner-scoped `resume_results`. Parsed output or a
+fixed rejection code commits in the same transaction as fenced command completion.
+Expired/stale fences, altered commands and duplicate completions cannot replace a
+result. Invalid documents are durably handled; exhausted infrastructure retries use
+`processing_failed`. The queue consumer accepts an explicit resume failure callback
+instead of invoking search completion. Real local SQS delivery/duplicate/exhaustion
+checks and a synthetic DOCX upload-to-result test pass, as do rollback, cross-owner,
+lost-response, corruption, cancellation, macro/archive and PDF page-limit checks.
+
+**This is internal implementation, not an enabled owner upload feature.** Migration
+0006 ran only on disposable databases (fresh and repeat migration), not the normal
+CareerScope database. No persistent files-worker process, publisher route, upload API/UI or
+review action is enabled. Parsed facts do not modify the candidate profile or
+matching snapshot. Maintained storage acceptance and restore, worker deployment,
+owner approval, retention/deletion and the remaining workflows still block release.
+
+## Saved Leads Workflow
+
+Save a job from a completed search to retain its normalized snapshot independently
+of search navigation. Saved Leads supports notes (up to 10,000 characters),
+archive/restore, source links, matching evidence and paginated revision history.
+It does not submit applications or accept an Applied status. Archived leads are
+not deleted, and saving a duplicate does not restore them or overwrite notes,
+status or the original snapshot. Snapshot refresh is not implemented.
+
+The API exposes `POST /api/leads` with `{ jobId }`, `GET /api/leads` with optional
+`status=saved|archived`, `limit=1..50` and UUID `before`, `GET /api/leads/:id`,
+`PUT /api/leads/:id` with `{ revision, notes, status }`, and
+`GET /api/leads/:id/history` with optional revision `before`. Lists default to 25
+records and return `nextCursor`; cursors use immutable creation order, including
+timestamp ties. History pages contain at most 25 revisions, newest first.
+All routes enforce owner access and no-store; writes additionally enforce
+origin/CSRF and 60 updates per minute. Repeated saves are idempotent by owner/job
+fingerprint. Stale updates return 409 and retain the user's unsaved notes.
+
+Migration `0004` adds `saved_leads` and `lead_history` without changing existing
+records. Save/update and their audit row commit together. Composite ownership
+constraints reject cross-owner history references. Audit records capture status
+and whether notes changed, not historical copies of private notes. The generated
+migration creates the owner/id unique index before its dependent foreign key.
+It was tested on fresh databases and applied to the local CareerScope database; no previous implementation data
+was imported. Roll back application code without dropping these additive tables
+or discarding saved data. Versioned destructive rollback is not provided.
+
+Browser acceptance covers save failure/retry, note persistence after reload,
+unsaved-navigation confirmation, stale-edit recovery, archive confirmation,
+restore and 320/390/1440px layouts in Chromium, Firefox and WebKit.
+
+Profile edits now also block accidental header navigation/sign-out and register
+an unload warning until saved or explicitly discarded. Failed sign-out retains
+dirty-state protection. The workspace has a keyboard skip link with hidden/focused
+rendering assertions. Browser checks exercise dismissed navigation, retained input,
+and unload-handler removal after saving. Browser unload prompts remain subject to
+platform policy and cannot guarantee preservation after a crash or forced close.
+
+## Local Inference Benchmark
+
+The local-only client and synthetic benchmark harness are implemented, but are
+not connected to API/search execution. The dedicated durable AI worker is still
+pending. The client requires an explicit 9B/4B model, fixes context at 4096 tokens,
+bounds input/output, rejects redirects, validates JSON results and admits one
+request per process. `keep_alive: 0` requests unloading after each call. A single
+worker deployment and Ollama's own limits are still required across processes.
+
+After explicit model-download approval, start native Ollama in its own terminal:
+
+```sh
+OLLAMA_NO_CLOUD=1 OLLAMA_HOST=127.0.0.1:11434 OLLAMA_MAX_LOADED_MODELS=1 OLLAMA_NUM_PARALLEL=1 OLLAMA_CONTEXT_LENGTH=4096 ollama serve
 ```
 
-The API is the only process that writes resume objects. Workers read. Every unit of
-durable work is claimed with a fence, so a crashed worker cannot settle a run twice.
+With an already installed model, run from the repository root:
 
-## Discovery To Lead
-
-```mermaid
-sequenceDiagram
-    participant U as Owner
-    participant A as API
-    participant D as PostgreSQL
-    participant W as Search worker
-    participant S as Job sources
-    U->>A: Start search
-    A->>D: Create run + immutable profile snapshot + outbox command
-    D-->>W: Published command (claimed with a fence)
-    W->>S: Bounded queries, per-source deadlines
-    S-->>W: Listings (partial failures isolated)
-    W->>W: Deduplicate, score against the snapshot
-    W->>D: Atomic completion with per-source outcomes
-    D-->>U: Results with match evidence
-    U->>A: Save lead
+```sh
+OLLAMA_MODEL=qwen3.5:4b npm run benchmark:llm
+OLLAMA_MODEL=qwen3.5:9b npm run benchmark:llm
 ```
 
-Matching uses the profile snapshot taken when the search started, so results stay
-explainable even after the profile changes.
+The command does not pull models, load private environment files, use owner data,
+or activate AI. It checks explicit skills, absent facts and injected instructions;
+reports per-fixture latency/tokens per second; stops on runtime failure; and exits
+nonzero when checks fail. This cold-load smoke harness is not a warm p95, ranking
+quality, license or mixed-workload acceptance gate. Host suspension can delay timer
+delivery; late responses are rejected, but this is not a hard real-time deadline.
 
-## Capabilities
+Observed native trial: Ollama 0.33.3 detected Apple M1 Pro Metal; authorized 4B
+download completed (3.4 GB, manifest prefix `2a654d98e6fb`). The 9B download timed
+out and is incomplete. The 4B runner failed to load for all three initial fixtures;
+no valid output or throughput measurement was obtained. Wall-clock durations were
+approximately 1032/1041/943 seconds despite a 300-second configured timeout, so
+they are invalid performance samples. Host swap was about 9.1 GB at inspection;
+the cause of the scheduling/load delays is not established. The benchmark server
+was stopped, downloaded files preserved, and neither model approved for activation.
+Resolve load failures and host resource/suspend conditions before retrying 9B.
 
-```mermaid
-mindmap
-  root((CareerScope))
-    Discover
-      Five job sources
-      Saved target roles
-      Bounded deadlines
-      Per-source outcomes
-    Understand
-      Deterministic scoring
-      Readable evidence
-      Exclusion rules
-    Organize
-      Saved leads
-      Notes and archive
-      JSON export
-    Prepare
-      Profile readiness checks
-      Clarification questions
-      Interview practice
-    Protect
-      Encrypted resumes
-      Owner-scoped access
-      Local-only by default
-```
+Follow-up on 2026-09-14: native Ollama 0.34.0 with Metal and cloud disabled passed
+all three 4B fixtures in 7.20/3.96/4.70 seconds at approximately 32/41/32 output
+tokens per second. The Mac had no swap in use before the run; after concurrent
+build/test workloads it had about 2.1 GB in use. This is a successful synthetic
+smoke check, not sustained-memory or ranking-quality acceptance. The 9B download
+was not resumed, neither model was activated, and the benchmark server was stopped.
 
-Upload a resume, say what you want, and get job leads that actually match it —
-scored, explained, and complete enough to act on.
+## Local Setup
 
-Each lead can carry the company, role, package, location, full job description,
-detected tech stack, the direct apply link, the company's careers portal and
-website, and — when one can be **verified** — a careers email. Everything is
-scored against your resume with a breakdown you can read, so an "87%" is
-auditable rather than a number the app asserts. Availability depends on the source;
-missing salaries and snippet-only descriptions are not invented or treated as complete.
+Requirements: Node >=24, npm, Docker, and the root repository dependencies.
+No new Node installation is required on the current host. Use `npm --prefix CareerScope`
+from the repository root to avoid host directory-switch runtime-manager hooks.
 
----
-
-## What it does
-
-1. **Parse a resume.** PDF or DOCX in, skills / titles / years of experience out,
-   all of it editable before you use it.
-2. **Take your terms.** Current and expected CTC, notice period, target titles,
-   preferred locations, remote-only, minimum salary, employment types, companies
-   and keywords to exclude. New searches start at **85%**; the Leads view defaults
-   to **0%** so all collected leads can be reviewed.
-3. **Search 12 job sources at once**, streaming progress and leads as they land.
-4. **Score every job** against your resume across seven weighted dimensions and
-   keep what clears your threshold.
-5. **Show them**, filterable and sortable, with a detail view holding the full
-   JD, matched-versus-missing skill chips, the score breakdown, and every link.
-6. **Export** to XLSX or CSV when you want to work through them elsewhere.
-
-The profile editor also imports JSON, merging extra details such as CTC, notice
-period, and locations without replacing the attached resume. **Gmail job alerts**
-are an optional read-only source, and searches can run automatically while the
-API is running. See [Gmail and automatic search setup](docs/GMAIL.md).
-
-### Profile JSON
-
-Upload your resume, then import a JSON file in the profile editor and save the
-merged profile. A partial file can contain just your additional details:
-
-```json
-{
-  "preferences": {
-    "locations": ["Bengaluru", "Hyderabad"],
-    "remoteOnly": false
-  },
-  "application": {
-    "currentCtc": "20 LPA",
-    "expectedCtc": "30 LPA",
-    "noticePeriodDays": 30,
-    "willingToRelocate": true,
-    "yearsOfExperience": 5
-  }
-}
-```
-
-Full files can also include `candidate` and `preferences.titles` /
-`preferences.techStack`. Omitted fields keep their current values; supplied
-arrays replace the existing array. Imported resume IDs are ignored because an
-ID from another installation does not identify a local upload.
-
-An opt-in local **Apply with Copilot** workflow prepares applications in a separate
-browser and displays progress, questions and explicit submission approval in the app.
-See [Application agent setup and limits](docs/APPLICATIONS.md).
-
----
-
-## Quickstart
-
-Requires **Node 24 or newer** (`node:sqlite` is only stable from 24.0 — see
-[Why Node 24](#why-node-24)).
-
-```bash
-npm install
-cp .env.example .env          # then edit it — see Configuration
-npm run build                 # compile workspace dependencies for API and CLI commands
+```sh
+npm ci
+npm ci --ignore-scripts
+npm run build:domain
+npm run setup:local
+npm run services
+npm run build
 npm run db:migrate
-npm run seed:companies        # optional: 112 pre-verified employers
-npm run dev                   # API on :8080, web on :5173
+npm run setup:owner
 ```
 
-Open <http://localhost:5173/login> and create the owner account on the local machine.
-Subsequent visits require sign-in. Browser sessions use revocable HttpOnly JWT
-cookies, not browser-stored tokens. See [Login and deployment](docs/AUTHENTICATION.md).
+`setup:local` refuses to overwrite its private, mode-0600 environment file. On an
+already configured checkout, skip it. `setup:owner` must be run in your own
+interactive terminal: all input is hidden and an existing owner is never replaced.
+Do not paste credentials into chat, command arguments or environment files.
+Dependency scripts remain disabled; review any package-specific requirement before
+approving lifecycle scripts on another host.
 
-For mobile snapshots, follow [Publish Mobile Results](#publish-mobile-results).
-Use a local HTTP preview, not a `file://` URL: the pages fetch their JSON assets.
-The full private app still requires its API and database; Pages cannot run them.
-
-**Out of the box, with no API keys at all**, nine of the twelve sources work:
-the six ATS boards and the three remote boards are keyless. The three
-aggregators tell you which variable they need instead of failing silently.
-
----
-
-## Configuration
-
-Everything is read from the environment and validated by Zod at boot, so a bad
-value fails immediately with the variable's name rather than at 3am with a
-stack trace. `.env.example` is the annotated reference; this is the summary.
-
-| Variable                           | Default                 | Notes                                                                                        |
-| ---------------------------------- | ----------------------- | -------------------------------------------------------------------------------------------- |
-| `PORT` / `HOST`                    | `8080` / `0.0.0.0`      |                                                                                              |
-| `DATA_DIR`                         | `./data`                | SQLite database, uploaded resumes, exports                                                   |
-| `APP_API_KEY`                      | —                       | Required in production. Minimum 24 characters; generate with the one-liner in `.env.example` |
-| `AUTH_DISABLED`                    | `false`                 | Refused outright when `NODE_ENV=production`                                                  |
-| `CORS_ORIGINS`                     | empty                   | Empty means same-origin only. Set this to the Pages origin for the split deploy              |
-| `SERVE_WEB` / `WEB_DIST`           | `false` / `../web/dist` | Makes the API serve the SPA — the single-origin EC2 setup                                    |
-| `ENABLE_SCRAPERS`                  | `false`                 | Browser-backed LinkedIn / Naukri / Indeed ([what that means](#the-three-big-boards))         |
-| `ENABLE_LLM_RERANK`                | `false`                 | Needs `ANTHROPIC_API_KEY`                                                                    |
-| `ADZUNA_APP_ID` / `ADZUNA_APP_KEY` | —                       | Free tier at developer.adzuna.com                                                            |
-| `JOOBLE_API_KEY`                   | —                       | Free at jooble.org/api/about                                                                 |
-| `RAPIDAPI_KEY`                     | —                       | Enables JSearch, which aggregates LinkedIn / Indeed / Glassdoor                              |
-| `SEARCH_CONCURRENCY`               | `4`                     | Providers queried in parallel                                                                |
-| `RUN_TIMEOUT_MS`                   | `900000`                | 15 minutes                                                                                   |
-
-**Keys are never echoed.** `GET /api/sources` reports _which variable_ is
-missing, never a value; the log redacts credential paths; and the settings
-screen shows `set` / `unset` and nothing more.
-
----
-
-## Publish Mobile Results
-
-After local setup and job collection:
+After schema and owner setup, start the four application processes together:
 
 ```sh
-npm run mobile:export       # sanitized public job metadata
-npm run mobile:admin        # encrypted private matching snapshot
-npm run pages:preview       # http://127.0.0.1:5176/
+npm start
 ```
 
-`mobile:admin` prompts for a hidden passphrase, or reads
-`ADMIN_SNAPSHOT_PASSPHRASE` from the ignored root `.env`. Use a strong, unique
-passphrase of at least 16 characters, preferably generated by a password manager.
-Never use a `VITE_` variable for it, commit it, or put it in GitHub Actions secrets.
-Known dummy placeholders are rejected. The local owner login password is separate.
-
-Open `/admin.html` in the preview and verify that your passphrase unlocks your
-leads. Only ciphertext is written to `mobile-site/admin.enc.json`; no plaintext
-admin JSON is created. Public files exclude scores/statuses; the encrypted
-snapshot includes them but excludes resume files, personal contact details,
-notes and credentials. Only minimal matching-profile metadata is included.
-
-Before publishing:
+The supervisor stops siblings if any process exits. It does not restart failed
+processes or keep the app running after closing its terminal or sleeping the Mac.
+It does not start Docker, run migrations, create an owner or enable inference.
+Alternatively, for diagnostics, start these in separate terminals:
 
 ```sh
-npm run pages:test          # encryption, export privacy, theme and staging guards
-npm run pages:stage         # requires admin.enc.json and a new/absent _site directory
+npm run start:api
+npm run start:publisher
+npm run start:worker
+npm run start:web
 ```
 
-Commit only reviewed source/docs and the public/encrypted snapshot files, then
-push to `main`. In GitHub Settings > Pages, select **GitHub Actions**. The
-workflow validates the exports and stages an explicit file allowlist. A missing
-or malformed encrypted export stops the deployment rather than silently
-publishing a broken admin view. Never include `.env`, databases, resumes,
-browser state, or local test artifacts in the commit or Pages artifact.
+Open **http://localhost:5280**. Use that hostname consistently because the
+configured origin check is exact. All services bind only to loopback:
 
-After a successful deployment, **Admin login** on the public page opens
-`https://varunjakkampudi-tech.github.io/careerscope/admin.html`. Verify unlocking
-on your phone before considering the release complete.
+| Service           | Port  | Persistence                     |
+| ----------------- | ----- | ------------------------------- |
+| Next.js           | 5280  | No private browser storage      |
+| Fastify           | 5390  | PostgreSQL                      |
+| PostgreSQL        | 55433 | `careerscope_postgres-data`     |
+| Redis             | 56479 | Disposable throttle state       |
+| LocalStack SQS/S3 | 54566 | Disposable local emulator state |
 
-Both views work while the Mac is off, using the last published snapshot. New
-results require another local export and push. `mobile:watch` only refreshes
-the public JSON locally; it does not publish or refresh the encrypted snapshot.
-Manual mobile applications do not automatically update the Mac's lead statuses.
+The S3 service is available in the emulator, but **resume/object workflows are not
+implemented**. No real AWS credentials are used. Local endpoint validation rejects
+non-loopback hosts. Nothing here provisions AWS, publishes Pages or migrates previous implementation data.
 
-**Privacy:** public jobs are downloadable by anyone. The encrypted snapshot is
-also publicly downloadable, so weak passphrases are vulnerable to offline
-guessing. Old copies cannot be revoked by changing the next export's passphrase.
-Only theme preference is persisted in browser storage; decrypted leads stay in
-page memory and are cleared on lock. See the
-[security boundaries](docs/ENCRYPTED-ADMIN.md#security-boundaries).
+## Production Deployment
 
-### Verification
-
-The reviewed local build passed 956 repository tests, 7 static security/theme
-checks, typecheck and production build. Lint had zero errors and three existing
-warnings. A synthetic-data visual suite matched 120 screenshots across Chromium,
-Firefox and WebKit, light/dark themes, and 320-1920px widths.
-
-```sh
-npm run pages:visual:update # create/review initial local baselines
-npm run pages:visual        # compare against those baselines; do not auto-update
-```
-
-These commands use already-installed Playwright browsers. Baselines and reports
-live under ignored `test-results/`. They are initial local baselines, not a
-guarantee of accessibility conformance or production readiness. WebKit tooling
-limitations, physical-device checks and real-export/deployment gates are recorded
-in the [release review](docs/PAGES-RELEASE-REVIEW.md).
-
----
-
-## Job sources
-
-|                   | Sources                                                        | Key needed             |
-| ----------------- | -------------------------------------------------------------- | ---------------------- |
-| **ATS boards**    | Greenhouse, Lever, Ashby, Workable, SmartRecruiters, Recruitee | No                     |
-| **Remote boards** | Remotive, RemoteOK, Himalayas                                  | No                     |
-| **Aggregators**   | Adzuna, Jooble, JSearch                                        | Yes, all free tiers    |
-| **Browser**       | LinkedIn, Naukri, Indeed                                       | No — opt-in            |
-| **Email**         | Gmail alerts from LinkedIn, Naukri, Indeed                     | Read-only Google OAuth |
-
-The ATS boards are the highest-quality leads: they return the **full JD** and a
-**direct apply link**, because they _are_ the employer's application system.
-
-### The three big boards
-
-LinkedIn, Naukri and Indeed have no public API, so they are reached two ways and
-you can use either or both.
-
-**Through JSearch** (`RAPIDAPI_KEY`), which aggregates LinkedIn, Indeed and
-Glassdoor under agreement and names the original publisher — a lead reads
-`JSearch · via LinkedIn` and links back.
-
-**Directly, with a browser** (`ENABLE_SCRAPERS=true`), which opens the same
-public search pages a person would, logged out. What that tier does and does not
-do is worth stating plainly, because "scraper" covers a wide range:
-
-- **No disguise.** No stealth plugin, no fingerprint patching, no client-hint
-  forgery, no captcha solving, no signed-token reimplementation, no signed-in
-  session. Chromium runs _headed_ — not as a trick, but because Naukri's edge
-  refuses a headless one and headed is the literal thing it checks for. On a
-  server that means an X server; the `api-scrape` image supplies one.
-- **`robots.txt` is obeyed.** Indeed disallows `/viewjob`, so its job detail
-  pages are never fetched. Indeed leads therefore carry only the search snippet
-  plus Indeed's own structured skill tags, stay marked low-confidence, and are
-  **capped at 80%** — which is below the default 85% threshold, so Indeed
-  contributes nothing until you move the slider. That is the honest cost of not
-  reading a page we were asked not to read.
-- **A wall is reported as a wall.** Rate limits, login walls, captchas and
-  Cloudflare interstitials each get named in the run log. A blocked source never
-  returns "0 postings matched", because that reads as a quiet market and sends
-  you looking in the wrong place.
-
-Remotive and RemoteOK both require attribution, so the source is always shown on
-the lead and always links back. Remotive's public feed is also delayed roughly
-24 hours; that is their API, not a bug here.
-
-### Verified, never guessed
-
-Company enrichment writes `"Not yet verified"` rather than inventing a value:
-
-- **Careers URL** — from the ATS payload, or a confirmed 200 on `/careers`,
-  `/jobs`, `/about/careers`.
-- **Portal URL** — detected from ATS signatures in the careers page HTML.
-  Six platforms are recognised without having a provider for them (Workday,
-  iCIMS, Zoho Recruit, Keka, Freshteam, Darwinbox); those get a portal link and
-  nothing more.
-- **Careers email** — **only** from a real `mailto:` on a fetched careers or
-  contact page, and only when the local part is one of
-  `careers · jobs · hr · recruitment · talent · hiring · apply`. Never
-  constructed from the domain. When there isn't one, the UI says
-  "apply via portal", because a plausible-looking wrong address costs you an
-  application.
-
----
-
-## How the matching works
-
-The threshold requirement is the whole point, so this is worth stating plainly.
-
-Every job is scored 0–1 across seven dimensions, combined by weight:
-
-| Dimension    | Weight | Basis                                                              |
-| ------------ | ------ | ------------------------------------------------------------------ |
-| Skills       | 0.40   | IDF-weighted coverage of the skills **the JD demands**             |
-| Title        | 0.15   | Token overlap with your target titles, plus a role-family bonus    |
-| Seniority    | 0.12   | Distance on the ladder; capped hard at a gap of two or more        |
-| Experience   | 0.10   | Inside the JD's year range, tapering outside; neutral if unstated  |
-| Location     | 0.10   | Exact city · same metro · remote · willing to relocate             |
-| Compensation | 0.08   | Against your expected CTC; **neutral, not zero, when undisclosed** |
-| Recency      | 0.05   | Full marks inside a week, decaying to the search window edge       |
-
-Two decisions carry most of the accuracy:
-
-**Skills are scored against what the JD asks for, not against everything you
-know.** The obvious implementation — matched skills ÷ your whole tech stack —
-punishes you for being broad: 20 skills on your resume and a JD naming 5 of them
-scores 25%, however perfect the fit. The original code in this repository did
-exactly that, which is why its 85% threshold returned nothing at all. Required
-and preferred sections are weighted 1.0 and 0.5, matched through an alias table
-(React ↔ React.js, Node ↔ Express, MySQL ↔ SQL), and weighted by inverse
-document frequency so FastAPI counts for more than JavaScript.
-
-**A job whose full JD could not be read is capped at 80%.** So crossing 85%
-always means the description was actually fetched and parsed. Thin snippets
-cannot fake a strong match — which also means Jooble, which only ever returns a
-snippet, tops out at 80% by construction.
-
-Hard gates exclude a job outright: an excluded keyword, an employment-type
-mismatch, or `remoteOnly` against an on-site role. A company on your
-do-not-apply list is shown but flagged, never hidden.
-
-With `ENABLE_LLM_RERANK=true` and an `ANTHROPIC_API_KEY`, the top 40 heuristic
-matches go to Claude for a semantic score and a one-line rationale; the final
-score is `0.6 × heuristic + 0.4 × LLM`. The app is fully functional without it.
-
----
-
-## Deployment
-
-Two shapes, both supported, and they differ in two build-time variables.
-
-### GitHub Pages (SPA) + EC2 (API)
-
-The SPA is static and can live on Pages; the API cannot — Pages has no Node, no
-filesystem and no way to accept a file upload.
-
-- `.github/workflows/deploy-pages.yml` builds `apps/web` with
-  `VITE_BASE_PATH=/<repo>/` and `VITE_API_BASE_URL` from the repository variable
-  `API_BASE_URL`, copies `index.html` to `404.html` so deep links survive a hard
-  refresh, and publishes. It **fails the build** if `API_BASE_URL` is unset,
-  rather than shipping a site whose every request resolves to github.io.
-- The API host must then set `CORS_ORIGINS` to the Pages origin.
-
-### EC2 alone (single origin)
-
-The API serves the SPA itself, so there is no CORS and one hostname.
+The stack runs on a single Ubuntu host behind Caddy and is served at
+`https://careerscope.tech`. Everything below lives in `infra`.
 
 ```bash
-# on the box, once
-git clone <repo> /opt/job-radar && cd /opt/job-radar
-cp .env.example .env && $EDITOR .env    # APP_API_KEY, provider keys
-docker compose -f infra/docker-compose.yml up -d --build
+# 1. Prepare the host: Docker, unattended security upgrades and an nftables
+#    ruleset that drops everything except 22/80/443. Idempotent.
+bash provision-host.sh
+
+# 2. Ship the build context, then build both images.
+DOCKER_BUILDKIT=1 docker build -f infra/Dockerfile --target runtime -t careerscope:v3 .
+DOCKER_BUILDKIT=1 docker build -f infra/Dockerfile --target proxy   -t careerscope:v3-proxy .
+
+# 3. Start the stack. The database password is generated on the host on first
+#    run and never leaves it. Pass `internal` instead of an email to use a
+#    self-signed certificate while testing.
+bash deploy.sh careerscope.tech operator@example.com
+
+# 4. Create the owner account interactively. Registration stays disabled.
+docker exec -it careerscope-api-1 node /app/scripts/setup-owner.ts
 ```
 
-`infra/` holds the pieces: a multi-stage `Dockerfile`, `docker-compose.yml`
-(API + nginx + certbot behind a profile), three nginx configs, and
-`job-radar.service` for running under systemd instead of Docker.
-This is the V1 self-hosted path; the deployed V2 stack uses `infra/v3` instead.
+Only the proxy publishes ports. Every other service joins the proxy network
+namespace and binds loopback, so Postgres, Redis, the queue, the API and the web
+server have no address reachable from outside the host. Issued certificates live
+on a persistent volume, so restarts do not re-request them.
 
-nginx proxies but does **not** serve the SPA — the API does, so client-side
-route fallback lives in exactly one place. `proxy_buffering` is off on
-`/api/runs/*/events`, or search progress arrives in one lump at the moment it
-stops being useful.
+Verification scripts, all of which run against the live origin:
 
-Step-by-step, including TLS and the ownership trap on the data volume:
-**[docs/RUNBOOK.md](docs/RUNBOOK.md)**.
+| Script                           | What it proves                                                              |
+| -------------------------------- | --------------------------------------------------------------------------- |
+| `check-live-origin.sh <origin>`  | Session cookie attributes, CSRF origin rejection, forwarded-header handling |
+| `check-live-flow.mjs <origin>`   | Full workspace flow from registration to session revocation                 |
+| `check-tls.ts`                   | TLS topology and Host handling                                              |
+| `purge-verification-accounts.sh` | Removes the throwaway `verify-*` accounts the checks create                 |
 
----
+`check-live-flow.mjs` needs registration temporarily enabled:
+`REGISTRATION_ENABLED=true bash deploy.sh …`. Turn it off again afterwards and
+run the purge script.
 
-## Project layout
+## Optional BullMQ Transport
 
-npm workspaces, TypeScript project references, one build graph.
+Start the separate queue service without restarting other services:
 
-```
-packages/
-  shared/       Zod schemas + inferred types — one source of truth for API and UI
-  resume/       PDF/DOCX → text → derived profile
-  matching/     the scoring engine + optional LLM rerank
-  providers/    job sources behind one interface, including Gmail alerts,
-                plus HTTP retry/cache/rate-limit
-                and a Playwright tier for the three boards that have no API
-apps/
-  api/          Fastify, SQLite, queue, SSE, company enrichment, exports, MCP bridge
-  web/          React 19 + Vite + Tailwind v4 + TanStack Query
-infra/          Dockerfile, compose, nginx, systemd
-mobile-site/    public static site and encrypted read-only admin for GitHub Pages
-scripts/        snapshot exporters, publishing tools, and browser verification
-seed/           versioned source data — 112 employers, 117 postings, hand-verified
-data/           runtime only: the SQLite database, uploaded resumes. Gitignored
-docs/           architecture, operations, and Gmail setup
+```sh
+npm run services:queue
 ```
 
-Tests stay next to their owning modules (`score.ts` and `score.test.ts`), with
-shared test builders in `*.fixtures.ts`. VS Code nests those related files so
-the source tree stays readable without splitting a feature across directories.
-Tests and test helpers are excluded from production output.
+Queue Redis binds to loopback port 56480 and persists in
+`careerscope_queue-data`. The existing throttle Redis on 56479 is disposable
+and must not host BullMQ. Adapter initialization rejects Redis without AOF and
+noeviction. Producer commands have finite timeouts; workers reconnect with capped
+delay and retain database fencing as the completion authority.
 
-`dist/`, `dist-types/`, and `*.tsbuildinfo` are generated, not source. Stop the
-development server before `npm run clean`; it removes these outputs from every
-workspace without touching resumes, profile data, or dependencies. `npm test`
-runs directly against workspace source and works immediately after cleanup.
-`npm run dev` rebuilds its dependencies before starting the servers.
+After database/owner setup and a deliberate transport cutover, use these settings
+in **both** publisher and worker terminals before their existing start commands:
 
-Dependencies run one way: `shared ← matching ← providers ← api`, and
-`shared ← web`.
-
-Why it is built this way — the module graph, the run pipeline, the invariants,
-and how to add a source or a scoring dimension:
-**[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
-
-The [release review](docs/RELEASE-REVIEW.md) records the September 2026 cleanup,
-test coverage and deployment limits.
-
-### API
-
-```
-GET    /api/health · /api/health/ready          public — for load balancer probes
-GET    /api/sources                             what is enabled, and what each needs
-GET    /api/profile · POST · PUT · DELETE
-GET    /api/profile/status
-POST   /api/resume                              multipart → { resumeId, derived }
-GET    /api/resume · /api/resume/:id · /:id/file · DELETE
-POST   /api/search                              → { run, events }
-GET    /api/runs · /runs/active · /runs/:id · /runs/:id/logs
-POST   /api/runs/:id/cancel
-GET    /api/runs/:id/events                     SSE: progress · log · lead · done · error
-GET    /api/leads · /leads/counts · /leads/skill-gap · /leads/:id
-PATCH  /api/leads/:id · POST /api/leads/bulk · DELETE /api/leads/:id
-GET    /api/companies · /api/companies/:id
-GET    /api/export/leads.xlsx · .csv
+```sh
+export SEARCH_QUEUE_TRANSPORT=bullmq
+export SEARCH_QUEUE_REDIS_URL=redis://127.0.0.1:56480
 ```
 
-Everything under `/api` needs `x-api-key` (or `Authorization: Bearer`) except
-the two health routes. Everything _outside_ `/api` — the SPA shell and its
-assets — is public, because on the single-origin deploy this server has to hand
-you the screen where you enter the key.
+`SEARCH_QUEUE_TRANSPORT` selects the transport for the **search** queue only. Resume
+parsing is always dispatched over the loopback SQS endpoint, on both the
+publisher and the files worker, so `LOCAL_AWS_ENDPOINT` stays required and the
+emulator still has to be running in BullMQ mode. The deployed stack runs the SQS
+transport for both queues; that is the path the crash matrix and queue
+reconciliation evidence was produced against.
 
-The API key is never accepted in a query string, SSE included, since a URL lands
-in proxy logs, browser history and `Referer` headers. The web client therefore
-consumes the event stream with `fetch` and a streaming reader rather than
-`EventSource`, which cannot set headers.
+The queue is a delivery hint, not a durability boundary. The transactional outbox
+in PostgreSQL is the source of truth, which is what makes the emulator's
+ephemeral state acceptable: work survives queue loss and is republished. The
+emulator itself is not durable and must not be described as such.
 
-### MCP
+No private environment file is changed automatically. Stop old SQS publishers and
+consumers, quiesce submissions and reconcile outstanding commands before switching.
+Do not run both transports against the same workload. Existing LocalStack settings
+are still required by the shared configuration while compatibility is retained.
+No owner-data cutover or rollback rehearsal has been performed. The isolated
+`test:queue-runtime` check verifies real publisher/worker lifecycle, graceful Redis
+restart, offline AOF restoration into a fresh volume, duplicate acknowledgement
+and bounded unavailable-Redis startup. Prolonged outage/soak, sudden power-loss
+and PostgreSQL/object disaster recovery remain unverified.
+Cancellation tests cover queued/claimed runs, completion races, duplicate events,
+both transport redeliveries and the authenticated API. Browser checks cover cancel
+confirmation dismissal, request failure/retry, persisted cancellation and mobile UI.
 
-The same services are exposed to VS Code Copilot as 11 tools over stdio:
+## Verification
 
-```bash
-npm run build && npm run mcp
+```sh
+npm run services:queue
+npm run typecheck
+npm run lint
+npm test
+npm run test:queue-runtime
+npm run build
+npm run format:check
 ```
 
-`get_profile`, `set_profile`, `parse_resume`, `list_sources`, `search_jobs`,
-`run_status`, `cancel_run`, `list_leads`, `get_lead`, `update_lead`,
-`export_leads`. Thin wrappers over the same code the HTTP routes call, so the
-editor and the browser share one brain.
+Integration checks require the CareerScope local services including queue Redis and create unique synthetic
+databases/queues/Redis keys. They never connect to the owner's previous implementation database.
+Queue-runtime additionally requires Docker and redis:7.4.5-alpine already present;
+it cleans only its uniquely named temporary containers, volumes and database.
+`test:unit` runs command, profile and matching/provider fixtures without local services.
 
----
+For `test:ui`, start the built CareerScope web server on 5280 and leave API port 5390 free.
+The test starts its own real API with a temporary database and verifies Chromium,
+Firefox and WebKit at 320, 390 and 1440 pixels. It checks authentication, result
+rendering and score ordering, matching evidence, profile persistence and revision
+conflicts, filtering, asynchronous submission, cancellation and logout. Restart the preview after
+rebuilding so it serves the current asset manifest. The check does not call live
+providers or exercise real application submission. Screenshots are ignored.
 
-## Scripts
+## Windows Verification
 
-|                           |                                                                             |
-| ------------------------- | --------------------------------------------------------------------------- |
-| `npm run dev`             | API and web together, with the dev proxy                                    |
-| `npm run build`           | every workspace, in dependency order                                        |
-| `npm test`                | Vitest against source, in two projects: `node` and `web` (jsdom)            |
-| `npm run clean`           | remove generated workspace output; preserve runtime data and dependencies   |
-| `npm run typecheck`       | `tsc --build`, then two passes over the test files the build graph excludes |
-| `npm run lint` / `format` | ESLint / Prettier                                                           |
-| `npm run db:migrate`      | idempotent; safe to run on every boot                                       |
-| `npm run seed:companies`  | 112 pre-verified employers. Takes an optional path argument                 |
-| `npm start`               | the built API                                                               |
-| `npm run mcp`             | the MCP server over stdio                                                   |
+On September 17, 2026, the implemented CareerScope stack passed verification on Windows
+with Node 26.8.1 and Docker Desktop's Linux engine. Filesystem paths in migration,
+integration and browser scripts now use `fileURLToPath`. The queue runtime test
+uses a Windows-only IPC bridge to exercise existing graceful shutdown handlers;
+Unix still uses SIGTERM, and clean-exit assertions remain required.
 
-CI runs formatting, lint, typechecking, tests, and builds on every pull request,
-then boots the built server and health-checks it. Docker/browser-image checks run
-on manual CI runs or when repository variable `ENABLE_CONTAINER_CI=true`.
+All 31 CareerScope tests, the isolated queue restart/AOF restore test, typecheck, lint,
+production build and formatting passed. Chromium, Firefox and WebKit passed
+search/export/cancellation, saved-lead and profile workflows at 320/390/1440px.
+The root gates also passed, including 1,047 tests. The production dependency audit
+reported no vulnerabilities; four moderate development-tool findings remain in
+the `drizzle-kit` dependency chain. No forced dependency downgrade was applied.
 
-Cloud deployment workflows remain available but do not deploy automatically by
-default. Set `ENABLE_PAGES_DEPLOY=true` in GitHub
-repository variables only for the hosting you use, after configuring its
-credentials. Both workflows can also be launched manually. Local development
-needs none of these variables or GitHub Actions.
+This host reserves TCP port 55433, so an ignored local Compose override maps
+PostgreSQL to loopback port 5435. A private launcher supplies the matching database
+URL without modifying the existing `.env`. Migrations were applied to the fresh
+CareerScope database, not previous implementation. Web, API, publisher and worker run as native Node processes;
+PostgreSQL, both Redis services and LocalStack run in dedicated Docker containers.
+The live web proxy returned health 200 and unauthenticated search 401.
 
-`vite build` is
-in CI deliberately: a Rollup manual-chunk name is a plain string invisible to the
-TypeScript project graph, and a stale one has already broken a build here after
-both `tsc` and ESLint passed clean.
+Local browser registration is now available through the explicit launcher flag;
+interactive owner setup remains an alternative before any accounts exist. No previous implementation data was
+imported, real searches submitted, or upload/AI/application workflows activated.
+This acceptance covers the implemented alpha, not full previous implementation parity or the pending
+storage, files-worker, AI-worker, recovery and release requirements above.
 
----
+## Source Layout
 
-## Deliberate omissions
+```text
+CareerScope/
+  apps/api/src/                 Fastify boundary and API process
+  apps/web/src/app/             Next.js private search workspace
+  apps/workers/search/src/      Provider handler, consumer and publisher processes
+  packages/core/src/            Contracts, auth, repositories, queue and runtime
+  migrations/                  Generated SQL and Drizzle metadata
+  scripts/                     Local bootstrap, migration and UI checks
+  compose.yml                  Isolated local PostgreSQL, Redis and LocalStack
+  ARCHITECTURE.md               Ownership, failure semantics and migration status
+```
 
-**No unattended submission.** The local Copilot application worker requires a
-human to approve page actions and final submission. It is not available in
-production/server mode, does not solve CAPTCHA, and does not accept passwords
-or verification codes through its UI. Unsupported portals remain manual.
-
-**No scrapers for Foundit and Cutshort.** `SCRAPE_SOURCES` in
-`packages/shared/src/constants.ts` lists five identifiers; only three —
-LinkedIn, Naukri, Indeed — have a provider. The other two exist so the leads
-seeded from the old spreadsheet keep their real provenance instead of being
-relabelled. A test asserts the gap, so it stays visible rather than becoming a
-source that silently returns nothing.
-
-**Single owner.** One owner account protects this installation's existing profile,
-resume and leads. There is no public registration or multi-user data isolation.
-API keys remain supported for trusted automation clients.
-
----
-
-## Known issues
-
-- `npm audit` reports **two moderate advisories**, both from `exceljs → uuid`.
-  Accepted: `exceljs` has no fixed release, the path is only reached when _you_
-  click export, and the input is your own leads.
-- The container image and the nginx configuration have never been built on a
-  developer machine here — Docker was not available. CI's `image` job is what
-  exercises them; treat the first `docker compose up` as the real test.
-
-### Why Node 24
-
-`node:sqlite` is a built-in, which is why there is no `better-sqlite3`, no
-native build step and no compiler on the deploy host. It was added flagged in
-22.5, unflagged in 23.4, and only **stable in 24.0** — so `engines.node` pins
-`>=24.0.0`, CI runs 24, and the image is `node:24-slim`. Anything older is a
-different database layer.
-
----
-
-## License
-
-Private.
+The search worker deliberately imports the existing provider and matching packages'
+built entry points; profile and score contracts reuse the shared schemas.
+This monorepo bridge prevents duplicate domain implementations;
+it requires root dependencies and `build:domain` on a fresh checkout. The API and
+core do not import the previous implementation API or its SQLite repositories.

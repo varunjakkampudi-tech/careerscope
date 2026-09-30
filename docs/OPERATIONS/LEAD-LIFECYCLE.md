@@ -10,7 +10,7 @@ that actually enforce a retention policy instead of only documenting one.
 
 ## Liveness: a checked fact, never a guess
 
-[check-lead-liveness.ts](../../v2/scripts/check-lead-liveness.ts) periodically
+[check-lead-liveness.ts](../../scripts/check-lead-liveness.ts) periodically
 re-verifies a saved lead's `applyUrl` against the real world. A lead is
 marked:
 
@@ -75,7 +75,7 @@ hop's already-spent trust.
 
 ## Retention: enforced, not just documented
 
-[enforce-search-retention.ts](../../v2/scripts/enforce-search-retention.ts)
+[enforce-search-retention.ts](../../scripts/enforce-search-retention.ts)
 deletes `search_jobs` rows (and their parent `search_runs`, once
 out of the outbox/execution pipeline entirely) older than
 `SEARCH_RETENTION_DAYS` (default 30). `search_jobs` itself carries no
@@ -97,7 +97,7 @@ from under it.
 ## Install
 
 ```sh
-bash infra/v3/setup-lead-lifecycle.sh
+bash infra/setup-lead-lifecycle.sh
 ```
 
 Idempotent. Installs both timers: liveness daily at 04:00, retention weekly
@@ -106,8 +106,8 @@ Idempotent. Installs both timers: liveness daily at 04:00, retention weekly
 ## Verification
 
 ```sh
-node --env-file=.env --import tsx --test v2/scripts/check-lead-liveness.test.ts
-node --env-file=.env --import tsx --test v2/scripts/enforce-search-retention.test.ts
+node --env-file=.env --import tsx --test scripts/check-lead-liveness.test.ts
+node --env-file=.env --import tsx --test scripts/enforce-search-retention.test.ts
 ```
 
 Both need a real Postgres (same disposable-per-test-database pattern as

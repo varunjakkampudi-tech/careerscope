@@ -1,6 +1,6 @@
 {
-  "name": "@job-radar/shared",
-  "version": "1.0.0",
+  "name": "@careerscope/shared",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
   "main": "./dist/index.js",

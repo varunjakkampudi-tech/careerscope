@@ -16,12 +16,12 @@ test pass by changing it. If a fix is needed, hand it to the relevant builder.
 ## Run all of these
 
 ```bash
-# V2 — the deployed stack
-npm --prefix v2 run typecheck
-npm --prefix v2 run lint
-npm --prefix v2 run format:check
-npm --prefix v2 run build
-npm --prefix v2 test
+# CareerScope — the deployed stack
+npm run typecheck
+npm run lint
+npm run format:check
+npm run build
+npm test
 
 # Root workspace
 npm run typecheck
@@ -30,7 +30,7 @@ npm run format:check
 npm test
 ```
 
-On Windows only, run the V2 commands through `data/windows-v2/run.mjs` — Windows
+On Windows only, run the CareerScope commands through `data/windows-run.mjs` — Windows
 reserves TCP 55403-55502, so the launcher remaps the Postgres port.
 
 Where the task touches storage, queues or crash behaviour, also run the suites

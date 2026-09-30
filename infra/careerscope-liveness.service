@@ -1,0 +1,16 @@
+[Unit]
+Description=CareerScope lead liveness check (applyUrl re-verification)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/careerscope-monitor.env
+ExecStart=/usr/bin/docker exec careerscope-api-1 node --import tsx /app/scripts/check-lead-liveness.ts
+
+# No docker-socket access needed (runs inside an already-running container
+# via `docker exec`), same reasoning as careerscope-discovery.service.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes

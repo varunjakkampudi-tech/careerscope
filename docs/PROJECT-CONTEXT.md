@@ -5,13 +5,14 @@ Read the owning module and its neighboring tests, not the entire repository.
 
 ## Architecture
 
-- This module map describes preserved V1. V2 is a separate incomplete migration;
-  consult [V2 architecture](../v2/ARCHITECTURE.md) and [V2 status](../v2/README.md).
-- V2's private S3 adapter is tested but not enabled. MinIO upstream is archived;
-  runtime selection, resume workflows and full migration acceptance remain open.
+- This module map describes the canonical CareerScope implementation; consult
+  [architecture](../ARCHITECTURE.md) and [project state](PROJECT-STATE.md).
+- Resume storage uses the approved encrypted private filesystem adapter. S3 is
+  not enabled; runtime selection and full production acceptance remain explicit
+  operational gates.
 
-- npm-workspaces TypeScript monorepo; Node 24+; React/Vite frontend and Fastify API.
-- The Mac-local API owns SQLite, resumes, profile, matching, job collection and applications.
+- npm-workspaces TypeScript monorepo; Node 24+; Next.js/React frontend and Fastify API.
+- The API owns PostgreSQL-backed sessions, resumes, profile, matching, job collection and applications.
 - GitHub Pages hosts a separate public jobs export and encrypted read-only admin snapshot.
   It has no live connection to the API and cannot run browser automation.
 - Shared Zod schemas define API data. `container.ts` wires repositories and services.
@@ -65,7 +66,7 @@ Read the owning module and its neighboring tests, not the entire repository.
 
 - [Architecture and invariants](ARCHITECTURE.md)
 - [Application workflows and limits](APPLICATIONS.md)
-- [Local operations](RUNBOOK.md)
+- [Local operations](archive/RUNBOOK-HISTORICAL.md)
 - [Public/private snapshot boundary](ENCRYPTED-ADMIN.md)
 
 Do not attach this map or its generated export to every turn. Use it for orientation,

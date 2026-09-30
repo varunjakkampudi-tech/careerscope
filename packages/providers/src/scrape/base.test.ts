@@ -15,7 +15,7 @@
  * real objects here are `BrowserPool` and a Chromium made of counters.
  */
 
-import type { ProviderQuery, RawJob, ScrapeSource } from '@job-radar/shared';
+import type { ProviderQuery, RawJob, ScrapeSource } from '@careerscope/shared';
 import type { Browser, BrowserContext, Page } from 'playwright';
 import { describe, expect, it, vi } from 'vitest';
 import { collect, query } from '../harness.fixtures.js';

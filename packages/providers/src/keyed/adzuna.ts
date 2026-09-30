@@ -29,7 +29,7 @@
  * where the user's leads are, so that is the default.
  */
 
-import type { RawJob } from '@job-radar/shared';
+import type { RawJob } from '@careerscope/shared';
 import { employmentTypeFrom } from '../normalize.js';
 import type { JobProvider } from '../types.js';
 import {

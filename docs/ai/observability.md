@@ -9,8 +9,8 @@ healthy dashboard. See [capabilities](capability-matrix.md) for pinned Node usag
 ## Supported Measures
 
 These are record-derived measures, not a claim that a dashboard already renders
-them. Use only records that pass validation and retain the CLI's LEGACY_V1 or
-EXPANDED_V2 assurance distinction. Neither authenticates agent activity.
+them. Use only records that pass validation and retain the CLI's LEGACY_previous implementation or
+EXPANDED_CareerScope assurance distinction. Neither authenticates agent activity.
 
 | Measure                      | Definition and limitation                                                                             |
 | ---------------------------- | ----------------------------------------------------------------------------------------------------- |

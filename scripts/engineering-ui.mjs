@@ -232,11 +232,7 @@ function snapshot() {
     repo: {
       branch: git(['branch', '--show-current'], 'unknown'),
       commit: git(['rev-parse', '--short', 'HEAD'], '?'),
-      // v2 is what serves careerscope.tech. The root package.json is the V1
-      // line and reads 1.3.4, so showing it here labelled "Version" claimed the
-      // deployed application was three major versions older than it is.
-      version: read('v2/package.json', {}).version ?? '?',
-      legacyVersion: read('package.json', {}).version ?? '?',
+      version: read('package.json', {}).version ?? '?',
     },
     week,
     mode: read(join(AI, 'process-mode.json'), { mode: 'ACTIVE' }),

@@ -11,12 +11,12 @@ host — provenance checking exists because that has happened.
 
 ## Scripts
 
-All under [infra/v3](../../infra/v3).
+All under [infra](../../infra).
 
 | Script                           | Purpose                                                                                           |
 | -------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `provision-host.sh`              | Prepares a fresh Ubuntu 24.04 host. Idempotent. Installs Docker from Docker's repository.         |
-| `ship.sh`                        | Ships a build context to the host. **Preserves `infra/v3/.env`.**                                 |
+| `ship.sh`                        | Ships a build context to the host. **Preserves `infra/.env`.**                                    |
 | `build-images.sh`                | Builds both images, recording the source revision in each                                         |
 | `deploy.sh`                      | Brings the stack up. Generates secrets on the host; they never leave it.                          |
 | `apply-migrations.sh`            | Applies pending migrations and reports the publisher's hot query plan                             |
@@ -63,11 +63,11 @@ git archive --format=tar.gz -o deploy.tgz "$REV"
 # 2. Ship. This preserves the host's .env and records the revision.
 scp -i ~/.ssh/careerscope_deploy deploy.tgz root@201.18.193.230:/tmp/
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 \
-  "bash /opt/careerscope/infra/v3/ship.sh /tmp/deploy.tgz $REV"
+  "bash /opt/careerscope/infra/ship.sh /tmp/deploy.tgz $REV"
 
 # 3. Build with provenance, migrate, bring up.
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
-  cd /opt/careerscope/infra/v3 &&
+  cd /opt/careerscope/infra &&
   bash build-images.sh $REV &&
   bash apply-migrations.sh &&
   docker compose -f compose.production.yml up -d --wait
@@ -75,7 +75,7 @@ ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
 
 # 4. Prove it.
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 \
-  "bash /opt/careerscope/infra/v3/check-provenance.sh $REV"
+  "bash /opt/careerscope/infra/check-provenance.sh $REV"
 ```
 
 For a deployment expected to take more than a few seconds, enable maintenance
@@ -96,7 +96,7 @@ serves while the stack is down. `/api/health` stays reachable throughout.
 
 CS-28 ("two different openings can be merged into one") changed how a job
 posting's identity is computed and added `npm run db:backfill-job-sightings`
-(`v2/scripts/backfill-job-sightings.ts`) to recompute `job_sightings` from
+(`scripts/backfill-job-sightings.ts`) to recompute `job_sightings` from
 `search_jobs` under the corrected rule. It is idempotent and safe to re-run,
 but it is **not** wired into `apply-migrations.sh` and must be run once,
 manually, the first time this release reaches production — after migrations,
@@ -104,18 +104,18 @@ before traffic resumes:
 
 ```bash
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
-  cd /opt/careerscope/infra/v3 &&
-  docker exec careerscope-api-1 node --import tsx /app/v2/scripts/backfill-job-sightings.ts
+  cd /opt/careerscope/infra &&
+  docker exec careerscope-api-1 node --import tsx /app/scripts/backfill-job-sightings.ts
 "
 ```
 
 Corrected 2026-09-23: the `bootstrap` service's compose definition only
 mounts `bootstrap.mjs` (`volumes: ['private:/private',
-'./bootstrap.mjs:/app/v2/bootstrap.mjs:ro']`), not the rest of `v2/scripts` —
+'./bootstrap.mjs:/app/bootstrap.mjs:ro']`), not the rest of `CareerScope/scripts` —
 the original `docker compose run --rm --no-deps bootstrap ...` form here
 would have failed with "file not found" the first time anyone actually ran
 it. `backfill-job-sightings.ts` (and CS-26's `run-scheduled-discovery.ts`)
-are now copied into the runtime image in `infra/v3/Dockerfile`, and the
+are now copied into the runtime image in `infra/Dockerfile`, and the
 corrected command targets the always-running `api` container via
 `docker exec` instead, matching how CS-24/CS-25's own scripts reach the
 database. This gap was caught while implementing CS-26, before this step had
@@ -138,7 +138,7 @@ it is host state (a systemd timer), not application state:
 
 ```bash
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
-  cd /opt/careerscope/infra/v3 &&
+  cd /opt/careerscope/infra &&
   bash setup-monitoring.sh
 "
 ```
@@ -161,7 +161,7 @@ application state, so it is installed once, manually, not via
 
 ```bash
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
-  cd /opt/careerscope/infra/v3 &&
+  cd /opt/careerscope/infra &&
   bash setup-backup.sh
 "
 ```
@@ -182,7 +182,7 @@ timer, same reasoning as CS-24/CS-25 - host state, installed once manually:
 
 ```bash
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
-  cd /opt/careerscope/infra/v3 &&
+  cd /opt/careerscope/infra &&
   bash setup-discovery.sh
 "
 ```
@@ -196,9 +196,9 @@ against production.
 Also corrected as part of this release: the CS-28 follow-up step above used
 to invoke `docker compose run --rm --no-deps bootstrap ...`, which would have
 failed - `bootstrap`'s compose definition only mounts `bootstrap.mjs`, not
-the rest of `v2/scripts`. Both `backfill-job-sightings.ts` and this ticket's
+the rest of `CareerScope/scripts`. Both `backfill-job-sightings.ts` and this ticket's
 `run-scheduled-discovery.ts` are now copied into the runtime image
-(`infra/v3/Dockerfile`), and the corrected command targets the
+(`infra/Dockerfile`), and the corrected command targets the
 always-running `api` container via `docker exec` instead.
 
 ---
@@ -211,7 +211,7 @@ reasoning as CS-24/25/26:
 
 ```bash
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
-  cd /opt/careerscope/infra/v3 &&
+  cd /opt/careerscope/infra &&
   bash setup-lead-lifecycle.sh
 "
 ```
@@ -220,7 +220,7 @@ See [LEAD-LIFECYCLE.md](LEAD-LIFECYCLE.md) for the full design and the
 SSRF-hardening rationale. Remove this section once the step has been
 exercised against production.
 
-Also caught and fixed while building this: `infra/v3/Dockerfile.dockerignore`
+Also caught and fixed while building this: `infra/Dockerfile.dockerignore`
 is an **allowlist** (`**` first, then specific paths un-ignored) - CS-26's
 own new scripts had been added to the `Dockerfile`'s `COPY` instructions but
 never to this allowlist, which would have made those `COPY` steps fail
@@ -228,7 +228,7 @@ during an actual image build (the files would never have reached the build
 context at all), not merely at runtime as the CS-28 fix above assumed. Caught
 by actually building the runtime image locally rather than only trusting the
 Dockerfile edit, and confirmed by running the built image and listing
-`/app/v2/scripts` directly. Fixed by adding all four scripts
+`/app/scripts` directly. Fixed by adding all four scripts
 (`backfill-job-sightings.ts`, `run-scheduled-discovery.ts`,
 `check-lead-liveness.ts`, `enforce-search-retention.ts`) to the allowlist.
 
@@ -240,7 +240,7 @@ both now explicitly pass `origin: 'manual'`.
 
 **Neither this v3 Docker build nor the images it produces run in CI** - the
 `image` job in `.github/workflows/ci.yml` builds `infra/Dockerfile` (the
-legacy V1 image), not `infra/v3/Dockerfile`. This gap already exists
+legacy previous implementation image), not `infra/Dockerfile`. This gap already exists
 independent of CS-27 and matches CS-9's own tracked scope; verifying a v3
 image build is currently a manual step, which is what caught the two defects
 above.
@@ -255,7 +255,7 @@ reasoning as CS-24/25/26/27:
 
 ```bash
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
-  cd /opt/careerscope/infra/v3 &&
+  cd /opt/careerscope/infra &&
   bash setup-proxy-recovery.sh
 "
 ```
@@ -291,7 +291,7 @@ stated, not hidden.
 ## Restarting
 
 ```bash
-bash /opt/careerscope/infra/v3/restart-stack.sh
+bash /opt/careerscope/infra/restart-stack.sh
 ```
 
 Restarting the proxy on its own is an outage. Docker gives it a fresh network
@@ -305,7 +305,7 @@ See [KNOWN-LIMITATIONS](../KNOWN-LIMITATIONS.md#restarting-the-proxy-alone-is-an
 
 ## Database credentials
 
-The generated `POSTGRES_PASSWORD` lives in `/opt/careerscope/infra/v3/.env` on
+The generated `POSTGRES_PASSWORD` lives in `/opt/careerscope/infra/.env` on
 the host and **that is the only copy**. An earlier version of the procedure
 replaced the deployment directory wholesale and destroyed it; the next deploy
 would have generated a fresh password that the existing database volume
@@ -322,4 +322,4 @@ Actions are pinned to commit SHAs, with Dependabot maintaining them.
 
 It does **not** deploy. There are no deployment credentials in the repository,
 and automatic "merge to `main` → deploy" is not wired up, because `main` still
-carries V1. Promoting V2 to `main` is a release decision that has not been made.
+carries previous implementation. Promoting CareerScope to `main` is a release decision that has not been made.

@@ -107,7 +107,7 @@ export interface BrowserPoolOptions {
  * is a deployment detail rather than a code one.
  *
  * **No user-agent override.** Everywhere else in this codebase the client
- * announces itself as `job-radar/1.0` rather than pretending to be a browser.
+ * announces itself as `CareerScope/1.0` rather than pretending to be a browser.
  * Here that would produce a *less* accurate self-description, not a more honest
  * one: real Chrome also sends `Sec-CH-UA` client hints, which Playwright does
  * not rewrite, so an overridden UA string leaves the request describing itself

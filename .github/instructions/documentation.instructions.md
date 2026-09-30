@@ -5,7 +5,7 @@ applyTo: 'README.md,AGENTS.md,docs/**/*.md,START-HERE/**/*.md,.ai/*.md,.github/p
 
 # Documentation Engineering
 
-- Read affected source before asserting behavior. Distinguish V1 from V2,
+- Read affected source before asserting behavior. Distinguish historical evidence from the canonical CareerScope product,
   target design from implemented code, and local source from live deployment.
   Link [project state](../../docs/PROJECT-STATE.md); do not repeat version or
   source-count claims without checking their current authority.

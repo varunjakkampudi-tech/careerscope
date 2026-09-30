@@ -125,7 +125,7 @@ describe('HttpClient', () => {
     await client(impl).getJson('https://a.test/jobs');
 
     const headers = calls[0]!.init.headers as Record<string, string>;
-    expect(headers['user-agent']).toContain('job-radar');
+    expect(headers['user-agent']).toContain('CareerScope');
   });
 
   it('lets a caller override a header', async () => {
@@ -136,7 +136,7 @@ describe('HttpClient', () => {
 
     const headers = calls[0]!.init.headers as Record<string, string>;
     expect(headers['authorization']).toBe('Bearer k');
-    expect(headers['user-agent']).toContain('job-radar');
+    expect(headers['user-agent']).toContain('CareerScope');
   });
 
   it('turns an HTML error page into an HttpError naming the URL', async () => {

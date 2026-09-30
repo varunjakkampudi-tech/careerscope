@@ -51,7 +51,7 @@ const root = rootArgument
 const report = process.argv.includes('--report');
 
 const CLASSIFICATIONS = new Set(['ci', 'deploy', 'on-demand', 'operator-only', 'manual']);
-const searched = ['scripts', 'v2/scripts', 'infra/v3'];
+const searched = ['scripts', 'scripts', 'infra'];
 const isCheck = (entry) =>
   /^(?:check|benchmark|visual)-[\w.-]+\.(?:ts|mjs|sh)$/.test(entry) && !entry.includes('.test.');
 

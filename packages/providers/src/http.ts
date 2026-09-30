@@ -127,7 +127,7 @@ export interface HttpResponse {
 }
 
 export const DEFAULT_USER_AGENT =
-  'job-radar/1.0 (+https://github.com/job-radar; personal job search tool)';
+  'CareerScope/1.0 (+https://github.com/varunjakkampudi-tech/careerscope; personal job search tool)';
 
 const DEFAULTS = {
   timeoutMs: 20_000,

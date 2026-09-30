@@ -1,10 +1,10 @@
 # Architecture Index
 
 Start with [project state](../PROJECT-STATE.md). The root
-[V1 architecture](../ARCHITECTURE.md) describes Fastify/SQLite and React/Vite;
-[V2 architecture](../../v2/ARCHITECTURE.md) describes the PostgreSQL/Next.js
-stack and also contains explicitly historical target sections. V1 domain
-packages remain V2 build dependencies. Do not infer deployed revision from the
+[previous implementation architecture](../ARCHITECTURE.md) describes Fastify/SQLite and React/Vite;
+[CareerScope architecture](../../ARCHITECTURE.md) describes the PostgreSQL/Next.js
+stack and also contains explicitly historical target sections. previous implementation domain
+packages remain CareerScope build dependencies. Do not infer deployed revision from the
 local tree or treat a target diagram as implementation.
 
 These eight diagrams summarize inspected source, not new components or live
@@ -14,9 +14,9 @@ links its owning source so later changes can be reconciled locally.
 
 ## System
 
-Sources: [production Compose](../../infra/v3/compose.production.yml),
-[implemented V2 topology](../../v2/ARCHITECTURE.md#implemented-topology),
-[publisher](../../v2/apps/workers/search/src/publisher.ts).
+Sources: [production Compose](../../infra/compose.production.yml),
+[implemented CareerScope topology](../../ARCHITECTURE.md#implemented-topology),
+[publisher](../../apps/workers/search/src/publisher.ts).
 
 ```mermaid
 flowchart TD
@@ -45,9 +45,9 @@ steady-state diagram. No inference service is shown because inference is off.
 
 ## Frontend
 
-Sources: [V2 page](../../v2/apps/web/src/app/page.tsx),
-[API client](../../v2/apps/web/src/lib/api.ts),
-[V1 architecture](../ARCHITECTURE.md). This is V2's current local source, not
+Sources: [CareerScope page](../../apps/web/src/app/page.tsx),
+[API client](../../apps/web/src/lib/api.ts),
+[previous implementation architecture](../ARCHITECTURE.md). This is CareerScope's current local source, not
 the older no-React-Query claim in [frontend architecture](../FRONTEND-ARCHITECTURE.md).
 
 ```mermaid
@@ -77,11 +77,11 @@ credentials and bounded requests; callers supply mutation CSRF headers.
 
 ## Backend
 
-Sources: [API routes](../../v2/apps/api/src/app.ts),
-[database](../../v2/packages/core/src/database.ts),
-[publisher](../../v2/apps/workers/search/src/publisher.ts),
-[consumer](../../v2/apps/workers/search/src/main.ts),
-[collection handler](../../v2/apps/workers/search/src/collect.ts).
+Sources: [API routes](../../apps/api/src/app.ts),
+[database](../../packages/core/src/database.ts),
+[publisher](../../apps/workers/search/src/publisher.ts),
+[consumer](../../apps/workers/search/src/main.ts),
+[collection handler](../../apps/workers/search/src/collect.ts).
 
 ```mermaid
 flowchart LR
@@ -103,7 +103,7 @@ results; a search must not be described as successful solely because it queued.
 
 ## Data
 
-Source: [Drizzle schema](../../v2/packages/core/src/schema.ts). These are selected
+Source: [Drizzle schema](../../packages/core/src/schema.ts). These are selected
 declared relationships, not an exhaustive schema or a new database design.
 
 ```mermaid
@@ -127,8 +127,8 @@ a live link that changes when the candidate profile is edited.
 
 ## Authentication
 
-Sources: [request guards and login](../../v2/apps/api/src/app.ts),
-[Auth](../../v2/packages/core/src/auth.ts).
+Sources: [request guards and login](../../apps/api/src/app.ts),
+[Auth](../../packages/core/src/auth.ts).
 
 ```mermaid
 sequenceDiagram
@@ -210,7 +210,7 @@ automation; it is not authorization to push or run deployment.
 flowchart TD
     Change[PR main push or CI dispatch] --> CI[CI verify]
     CI --> Root[Root static checks tests build and browser checks]
-    CI --> V2[V2 unit tests only]
+    CI --> CareerScope[CareerScope unit tests only]
     CI --> PagesCheck[Validate Pages assets]
     Change --> Image[Optional container job]
     PagesDispatch[Manual Pages dispatch with ref and environment] --> PagesExact[Require exact-revision CI success]
@@ -218,11 +218,11 @@ flowchart TD
     Trigger[Manual deploy dispatch with ref and production environment] --> Exact[Require exact-revision CI success]
     Exact --> Gate[Deploy gate]
     Gate --> Domain[Build and test shared domain packages]
-    Domain --> Checks[V2 typecheck lint format build dependency audit]
+    Domain --> Checks[CareerScope typecheck lint format build dependency audit]
     Checks --> Ship[Ship committed archive and verify host]
 ```
 
-CI runs V2 unit, integration, browser, accessibility and recovery jobs; the
+CI runs CareerScope unit, integration, browser, accessibility and recovery jobs; the
 unit step remains explicitly labelled so it cannot imply that coverage alone.
 Deployment and Pages publication have no push, pull-request, schedule or
 workflow-run trigger, and neither exposes a CI bypass. Testing release-gate
@@ -232,9 +232,9 @@ until the actual workflow includes it.
 
 ## User Journey
 
-Sources: [workspace](../../v2/apps/web/src/app/page.tsx),
-[API](../../v2/apps/api/src/app.ts),
-[implemented V2 flow](../../v2/ARCHITECTURE.md#implemented-topology).
+Sources: [workspace](../../apps/web/src/app/page.tsx),
+[API](../../apps/api/src/app.ts),
+[implemented CareerScope flow](../../ARCHITECTURE.md#implemented-topology).
 
 ```mermaid
 flowchart LR

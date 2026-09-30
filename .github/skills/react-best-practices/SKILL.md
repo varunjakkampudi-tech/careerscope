@@ -3,7 +3,7 @@ date_added: '2026-02-27'
 description: Comprehensive performance optimization guide for React and Next.js applications, maintained by Vercel. Use when writing new React components or Next.js pages, implementing data fetching (client or server-side), or reviewing code for performance issues.
 metadata:
   upstream: sickn33/agentic-awesome-skills
-  pinned-tag: v17.5.0
+  pinned-tag: previous implementation7.5.0
   pinned-commit: ebffb8789f6f36047ba76ed7233380b4d837d371
 name: react-best-practices
 risk: safe

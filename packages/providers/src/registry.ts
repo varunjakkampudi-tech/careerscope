@@ -19,7 +19,7 @@
  * in the database can never produce a provider that throws on first request.
  */
 
-import { ALL_SOURCES, type SourceId } from '@job-radar/shared';
+import { ALL_SOURCES, type SourceId } from '@careerscope/shared';
 import { createAshbyProvider } from './ats/ashby.js';
 import { createGreenhouseProvider } from './ats/greenhouse.js';
 import { createLeverProvider } from './ats/lever.js';

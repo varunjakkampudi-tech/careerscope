@@ -30,7 +30,7 @@ current external documentation. Cite which.
 
 Read before you imagine. `.ai/CAREERSCOPE-PROGRESS.md` records what is missing.
 `docs/KNOWN-LIMITATIONS.md` records what is deliberately absent. `.ai/findings.json`
-records defects. The single largest gap is that the V2 frontend is one route,
+records defects. The single largest gap is that the CareerScope frontend is one route,
 and four surfaces — `/companies`, `/market`, `/skills`, `/alerts` — have **no
 backing data model**, so proposing them as UI work is proposing a data project
 in disguise. Say so when it applies.

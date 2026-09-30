@@ -15,21 +15,21 @@ found and fixed.
 
 ## When to use
 
-- Touching `v2/packages/core/src/file-storage.ts`
-- Changing the upload or cancel routes in `v2/apps/api/src/app.ts`
+- Touching `packages/core/src/file-storage.ts`
+- Changing the upload or cancel routes in `apps/api/src/app.ts`
 - Changing the files worker or anything that reads `/private`
 - Investigating 500s that should have been 507s, or stranded files
 
 ## Where the code lives
 
-| Concern                     | Path                                        |
-| --------------------------- | ------------------------------------------- |
-| Storage implementation      | `v2/packages/core/src/file-storage.ts`      |
-| Shared contracts            | `v2/packages/core/src/storage.ts`           |
-| Upload coordination         | `v2/packages/core/src/resumes.ts`           |
-| API routes                  | `v2/apps/api/src/app.ts`                    |
-| Tests                       | `v2/packages/core/src/file-storage.test.ts` |
-| Physical exhaustion harness | `infra/v3/check-full-disk.mjs`              |
+| Concern                     | Path                                     |
+| --------------------------- | ---------------------------------------- |
+| Storage implementation      | `packages/core/src/file-storage.ts`      |
+| Shared contracts            | `packages/core/src/storage.ts`           |
+| Upload coordination         | `packages/core/src/resumes.ts`           |
+| API routes                  | `apps/api/src/app.ts`                    |
+| Tests                       | `packages/core/src/file-storage.test.ts` |
+| Physical exhaustion harness | `infra/check-full-disk.mjs`              |
 
 ## The write path, in order
 
@@ -116,9 +116,9 @@ foreign marker for another owner's key.
 ## Verification
 
 ```sh
-npm --prefix v2 test                     # includes file-storage.test.ts
+npm test                     # includes file-storage.test.ts
 npm run test:full-disk                   # real 2 MB tmpfs, reserveBytes=0
-npm --prefix v2 run test:crash-recovery  # four real SIGKILL phases
+npm run test:crash-recovery  # four real SIGKILL phases
 ```
 
 The full-disk harness asserts `exhaustionError=ResumeStorageLimit`,

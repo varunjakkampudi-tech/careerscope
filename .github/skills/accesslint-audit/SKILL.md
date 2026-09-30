@@ -3,7 +3,7 @@ date_added: '2026-06-02'
 description: Find and fix WCAG 2.2 accessibility issues. Two modes — report (sweep a codebase or page, produce a prioritized written report, no edits) and fix (audit→edit→verify loop on a target). Prefers direct-CDP live-DOM auditing; falls back to a browser-MCP composition or HTML-string audits.
 metadata:
   upstream: sickn33/agentic-awesome-skills
-  pinned-tag: v17.5.0
+  pinned-tag: previous implementation7.5.0
   pinned-commit: ebffb8789f6f36047ba76ed7233380b4d837d371
 name: accesslint-audit
 risk: safe

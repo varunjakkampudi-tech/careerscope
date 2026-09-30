@@ -19,77 +19,77 @@
   },
   "checks": [
     {
-      "path": "infra/v3/check-backup.sh",
+      "path": "infra/check-backup.sh",
       "classification": "ci",
       "reason": "Starts and tears down its own disposable Postgres container, so pg_dump/pg_restore is genuinely exercised on a GitHub runner."
     },
     {
-      "path": "infra/v3/check-full-disk.mjs",
+      "path": "infra/check-full-disk.mjs",
       "classification": "ci",
-      "reason": "Re-executes itself in a container whose object directory is a 2MB tmpfs, so the filesystem genuinely exhausts. Needs only Docker and the built V2 core, both of which a runner has."
+      "reason": "Re-executes itself in a container whose object directory is a 2MB tmpfs, so the filesystem genuinely exhausts. Needs only Docker and the built CareerScope core, both of which a runner has."
     },
     {
-      "path": "infra/v3/check-host-firewall.sh",
+      "path": "infra/check-host-firewall.sh",
       "classification": "operator-only",
       "reason": "Asserts fourteen properties of the live host's nftables ruleset. There is no ruleset on a runner, so its existence proves nothing about the firewall."
     },
     {
-      "path": "infra/v3/check-live-flow.mjs",
+      "path": "infra/check-live-flow.mjs",
       "classification": "operator-only",
       "reason": "Drives a real account through the deployed origin over real TLS and needs registration temporarily enabled. Cannot run unattended, and never in CI."
     },
     {
-      "path": "infra/v3/check-live-origin.sh",
+      "path": "infra/check-live-origin.sh",
       "classification": "operator-only",
       "reason": "Probes the deployed origin's behaviour and headers. Only meaningful against careerscope.tech, so a green repository says nothing about it."
     },
     {
-      "path": "infra/v3/check-maintenance.sh",
+      "path": "infra/check-maintenance.sh",
       "classification": "operator-only",
       "reason": "Verifies the holding page and its lift on the live proxy. Requires the deployed Caddy instance; nothing in CI can stand in for it."
     },
     {
-      "path": "infra/v3/check-monitoring.sh",
+      "path": "infra/check-monitoring.sh",
       "classification": "ci",
       "reason": "Self-contained against stub docker and curl binaries, needing no real host, container or webhook (CS-24)."
     },
     {
-      "path": "infra/v3/check-owner-login.sh",
+      "path": "infra/check-owner-login.sh",
       "classification": "operator-only",
       "reason": "Authenticates the real owner against the deployed origin. It touches owner credentials and must never run unattended in CI."
     },
     {
-      "path": "infra/v3/check-provenance.sh",
+      "path": "infra/check-provenance.sh",
       "classification": "deploy",
       "reason": "Proves the running containers, the shipped tree and the recorded revision all agree. deploy.yml runs it over ssh after shipping; it is evidence about production, not about the commit."
     },
     {
-      "path": "infra/v3/check-proxy-recovery.sh",
+      "path": "infra/check-proxy-recovery.sh",
       "classification": "ci",
       "reason": "Self-contained against stub curl and restart-stack.sh binaries, so the recovery logic is exercised without a proxy (CS-3)."
     },
     {
-      "path": "infra/v3/check-query-plans.sh",
+      "path": "infra/check-query-plans.sh",
       "classification": "operator-only",
       "reason": "Reads EXPLAIN output from the production database, whose plans depend on real data volume and statistics. A runner's empty database would produce plans that prove nothing."
     },
     {
-      "path": "infra/v3/check-queue-contract.sh",
+      "path": "infra/check-queue-contract.sh",
       "classification": "operator-only",
-      "reason": "Inspects the deployed queue's live state. The runtime half of the same contract is covered in CI by v2/scripts/check-queue-runtime.ts."
+      "reason": "Inspects the deployed queue's live state. The runtime half of the same contract is covered in CI by scripts/check-queue-runtime.ts."
     },
     {
-      "path": "infra/v3/check-runtime.mjs",
+      "path": "infra/check-runtime.mjs",
       "classification": "manual",
       "reason": "Brings up compose.acceptance.yml with --no-build, so it requires production images already built locally. CI builds no such images, and building them here would duplicate the deploy path."
     },
     {
-      "path": "infra/v3/check-scheduler-health.sh",
+      "path": "infra/check-scheduler-health.sh",
       "classification": "ci",
       "reason": "Self-contained against stub systemctl, systemd-analyze and curl binaries. It exists mainly to keep proving its negative cases (CS-47)."
     },
     {
-      "path": "infra/v3/check-tls.ts",
+      "path": "infra/check-tls.ts",
       "classification": "operator-only",
       "reason": "Verifies certificate issuance and renewal behaviour, which depends on the live domain, its DNS and the ACME account. No runner can reproduce that."
     },
@@ -121,7 +121,7 @@
     {
       "path": "scripts/check-container.mjs",
       "classification": "manual",
-      "reason": "Probes SQLite durability inside a prebuilt careerscope:local image. The V1 container line is not deployed, and CI's opt-in image job builds a different tag."
+      "reason": "Probes SQLite durability inside a prebuilt careerscope:local image. The obsolete container line is not deployed, and CI's opt-in image job builds a different tag."
     },
     {
       "path": "scripts/check-customizations.mjs",
@@ -191,60 +191,60 @@
     {
       "path": "scripts/check-ui.mjs",
       "classification": "ci",
-      "reason": "The V1 browser acceptance suite, run in the verify job against the built app."
+      "reason": "The browser acceptance suite, run in the verify job against the built app."
     },
     {
-      "path": "v2/scripts/benchmark-llm.ts",
+      "path": "scripts/benchmark-llm.ts",
       "classification": "manual",
       "reason": "Measures a local inference server's throughput. No runner has one, AI is off by policy, and a benchmark asserts nothing a CI pass could rely on."
     },
     {
-      "path": "v2/scripts/check-crash-recovery.ts",
+      "path": "scripts/check-crash-recovery.ts",
       "classification": "ci",
       "reason": "Kills real child processes between a durable write and its visible effect, then proves the survivor reconciles. Needs Postgres, LocalStack and a filesystem — all obtainable on a runner (CS-52)."
     },
     {
-      "path": "v2/scripts/check-database-recovery.ts",
+      "path": "scripts/check-database-recovery.ts",
       "classification": "ci",
       "reason": "Dumps a live Postgres and restores it into a fresh disposable container, comparing per-table fingerprints. Needs a Docker-controlled source container, which is why the recovery job starts Postgres itself rather than using a service container (CS-52)."
     },
     {
-      "path": "v2/scripts/check-lead-liveness.ts",
+      "path": "scripts/check-lead-liveness.ts",
       "classification": "operator-only",
       "reason": "Not a check but a scheduled job, invoked by careerscope-liveness.timer on the host; it re-verifies saved leads against the real internet. Its logic is covered in CI by check-lead-liveness.test.ts in test:integration."
     },
     {
-      "path": "v2/scripts/check-performance.ts",
+      "path": "scripts/check-performance.ts",
       "classification": "on-demand",
       "reason": "Asserts hard p95/p99 ceilings. A shared runner's variance would make those flake, and the only ways to make a flaky ceiling green are to inflate it or retry — both forbidden. Dispatched deliberately instead, so a failure means a regression."
     },
     {
-      "path": "v2/scripts/check-queue-runtime.ts",
+      "path": "scripts/check-queue-runtime.ts",
       "classification": "ci",
       "reason": "Restarts an isolated Redis, restores from AOF and drives a real publisher and worker process lifecycle. It starts its own Redis container, so it needs only Docker and Postgres (CS-52)."
     },
     {
-      "path": "v2/scripts/check-soak.ts",
+      "path": "scripts/check-soak.ts",
       "classification": "on-demand",
       "reason": "Sustained mixed load, thirty minutes by default. Too long for every push, and shortening it until it fitted would stop it being a soak."
     },
     {
-      "path": "v2/scripts/check-test-types.mjs",
+      "path": "scripts/check-test-types.mjs",
       "classification": "ci",
       "reason": "Type-checks the 15 v2 test files that `tsc -b` never saw, because the package builds exclude test files so they never reach dist. Asserts the resolved file count first: a tsconfig that includes nothing type-checks perfectly."
     },
     {
-      "path": "v2/scripts/check-test-registration.ts",
+      "path": "scripts/check-test-registration.ts",
       "classification": "ci",
-      "reason": "CS-52's structural half for the V2 workspace: every v2 test file must be claimed by an npm script. Runs early in the verify job."
+      "reason": "CS-52's structural half for the canonical workspace: every canonical test file must be claimed by an npm script. Runs early in the verify job."
     },
     {
-      "path": "v2/scripts/check-ui.ts",
+      "path": "scripts/check-ui.ts",
       "classification": "ci",
-      "reason": "V2 browser acceptance and the axe-core accessibility baseline, run in the integration job against a production build (CS-15)."
+      "reason": "browser acceptance and the axe-core accessibility baseline, run in the integration job against a production build (CS-15)."
     },
     {
-      "path": "v2/scripts/visual-regression.ts",
+      "path": "scripts/visual-regression.ts",
       "classification": "manual",
       "reason": "A tool, not a check: it takes a name, a URL and a reference PNG as arguments and reports a percentage. No reference images are committed, and it has no pass threshold to enforce."
     }

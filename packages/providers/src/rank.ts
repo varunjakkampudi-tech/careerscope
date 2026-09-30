@@ -8,7 +8,7 @@
  * copies of a comparator should be allowed to disagree about.
  */
 
-import type { RawJob } from '@job-radar/shared';
+import type { RawJob } from '@careerscope/shared';
 import { titleRelevance } from './filter.js';
 import { HttpError } from './http.js';
 

@@ -3,7 +3,7 @@ date_added: '2026-03-28'
 description: Use when debugging any bug. Enforces a 5-phase protocol where code edits are blocked until root cause is confirmed. Prevents premature fix attempts.
 metadata:
   upstream: sickn33/agentic-awesome-skills
-  pinned-tag: v17.5.0
+  pinned-tag: previous implementation7.5.0
   pinned-commit: ebffb8789f6f36047ba76ed7233380b4d837d371
 name: phase-gated-debugging
 risk: safe

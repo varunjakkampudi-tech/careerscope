@@ -1,15 +1,15 @@
 ---
-description: 'Use when changing database schema, migrations, SQL, repositories, query performance or transactional data invariants in V1 or V2.'
-applyTo: 'apps/api/src/db/**,v2/packages/core/src/**,v2/migrations/**,v2/drizzle.config.*'
+description: 'Use when changing database schema, migrations, SQL, repositories, query performance or transactional data invariants in CareerScope.'
+applyTo: 'apps/api/src/db/**,packages/core/src/**,migrations/**,drizzle.config.*'
 ---
 
 # Database Engineering
 
-- Establish the stack first: V1 uses SQLite under `apps/api/src/db`; V2 uses
-  PostgreSQL/Drizzle under `v2/packages/core/src`. Do not copy one stack's
-  migration, locking or query assumptions into the other.
+- Establish the stack first: CareerScope uses PostgreSQL/Drizzle under
+  `packages/core/src` and the canonical API repositories. Do not introduce
+  SQLite runtime assumptions into production code.
 - Backend owns database implementation. Consult the existing Drizzle and
-  Postgres skills for V2, and the architecture, outbox and security skills when
+  Postgres skills for CareerScope, and the architecture, outbox and security skills when
   their invariants apply. QA independently executes checks; no extra DB agent
   or server is required. See [role mapping](../../docs/ai/agent-matrix.md).
 - Read the schema, affected query, callers and nearest tests before editing.

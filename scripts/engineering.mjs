@@ -723,7 +723,7 @@ PASSED and COMPLETE. Approval must follow REVIEW and all role reviews.
 Role reviews, evidence, failure resolvedBy links and the trailing finding-free
 REVIEW/PASSED/COMPLETE events are excluded from digest self-reference;
 resolution links still require successful current reruns. Execution/failure history,
-all other contract fields and baseline bytes remain bound. V2 final review adds
+all other contract fields and baseline bytes remain bound. The final review adds
 findings: [] for APPROVED, nonempty findings for CHANGES_REQUESTED.
 Gate rules and gate failure retention stay v1 (no gate supersession).
 Legacy check outputs assurance LEGACY_V1, never expanded v2 assurance.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_MATCH_THRESHOLD, LOW_CONFIDENCE_SCORE_CEILING } from '@job-radar/shared';
+import { DEFAULT_MATCH_THRESHOLD, LOW_CONFIDENCE_SCORE_CEILING } from '@careerscope/shared';
 import {
   applyRerank,
   hardGate,

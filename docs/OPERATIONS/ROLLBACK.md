@@ -12,7 +12,7 @@ Establish what is actually running:
 
 ```bash
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 \
-  "bash /opt/careerscope/infra/v3/check-provenance.sh"
+  "bash /opt/careerscope/infra/check-provenance.sh"
 ```
 
 Record that SHA. It is what you are rolling back _from_, and it is what you roll
@@ -85,10 +85,10 @@ recovery.
    namespace, not an application fault. The proxy was restarted alone.
 
    ```bash
-   bash /opt/careerscope/infra/v3/restart-stack.sh
+   bash /opt/careerscope/infra/restart-stack.sh
    ```
 
-3. **Postgres refuses the password.** `infra/v3/.env` was lost or regenerated
+3. **Postgres refuses the password.** `infra/.env` was lost or regenerated
    against the existing volume. The password in the file must match the one the
    volume was initialised with. If the file is gone, the value can sometimes be
    recovered from a still-running container's environment:

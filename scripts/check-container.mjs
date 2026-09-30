@@ -59,7 +59,7 @@ try {
   assert.equal((await request('/api/auth/logout', {
     method: 'POST', headers: { Cookie: cookie, Origin: 'https://untrusted.example' },
   })).status, 403);
-  const database = new DatabaseSync('/app/data/job-radar.db', { readOnly: true });
+  const database = new DatabaseSync('/app/data/careerscope.db', { readOnly: true });
   await backup(database, '/app/data/backup.db');
   database.close();
   const restored = new DatabaseSync('/app/data/backup.db');
@@ -67,9 +67,9 @@ try {
   assert.equal(restored.prepare('SELECT COUNT(*) count FROM auth_owner').get().count, 1);
   restored.close();
   await stop();
-  copyFileSync('/app/data/backup.db', '/app/data/job-radar.db');
-  rmSync('/app/data/job-radar.db-wal', { force: true });
-  rmSync('/app/data/job-radar.db-shm', { force: true });
+  copyFileSync('/app/data/backup.db', '/app/data/careerscope.db');
+  rmSync('/app/data/careerscope.db-wal', { force: true });
+  rmSync('/app/data/careerscope.db-shm', { force: true });
   await start();
   assert.equal((await request('/api/leads', { headers: { Cookie: cookie } })).status, 200);
   const login = await request('/api/auth/login', {
@@ -148,7 +148,7 @@ try {
 if (process.argv.includes('--llm')) {
   const modelCheck = String.raw`
     import assert from 'node:assert/strict';
-    import { rerankLeads } from '@job-radar/matching';
+    import { rerankLeads } from '@careerscope/matching';
     import { OllamaRerankClient } from './apps/api/dist/services/ollamaRerank.js';
     const candidate = {
       titles: ['Frontend Engineer'], yearsOfExperience: 4,

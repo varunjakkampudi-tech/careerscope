@@ -1,6 +1,6 @@
 {
-  "name": "@job-radar/providers",
-  "version": "1.0.0",
+  "name": "@careerscope/providers",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
   "main": "./dist/index.js",
@@ -19,8 +19,8 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@job-radar/matching": "1.0.0",
-    "@job-radar/shared": "1.0.0",
+    "@careerscope/matching": "3.0.0",
+    "@careerscope/shared": "3.0.0",
     "cheerio": "^1.2.0",
     "google-auth-library": "^11.0.2"
   },

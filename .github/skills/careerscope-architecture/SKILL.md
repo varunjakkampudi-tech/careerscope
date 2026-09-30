@@ -1,6 +1,6 @@
 ---
 name: careerscope-architecture
-description: 'Ownership boundaries, the V1/V2 split and the non-negotiable architectural constraints of the CareerScope repository. Use before adding a module, moving code between workspaces, introducing a dependency, or changing how a tier talks to another.'
+description: 'Ownership boundaries, the previous implementation/CareerScope split and the non-negotiable architectural constraints of the CareerScope repository. Use before adding a module, moving code between workspaces, introducing a dependency, or changing how a tier talks to another.'
 ---
 
 # CareerScope Architecture
@@ -15,30 +15,30 @@ own. This skill exists to make the boundaries explicit before code moves.
 ## When to use
 
 - Adding a package, service or worker
-- Moving code between the root workspace and `v2/`
+- Moving code between the root workspace and ``
 - Introducing a runtime dependency
 - Changing how the web tier reaches the API, or the API reaches storage
 - Any change that touches `container.ts`, `app.ts`, compose files or `tsconfig` references
 
 ## Two workspaces, one repository
 
-|             | Root workspace | `v2/` workspace                    |
+|             | Root workspace | `` workspace                       |
 | ----------- | -------------- | ---------------------------------- |
-| Package     | `job-radar`    | `careerscope-v2`                   |
+| Package     | `careerscope`  | `careerscope`                      |
 | Store       | SQLite         | PostgreSQL 17 + Drizzle            |
 | API         | Fastify        | Fastify                            |
 | UI          | React + Vite   | React 19 + Next.js 16              |
 | Test runner | Vitest         | `node:test`                        |
 | Deployed    | no             | yes, at `https://careerscope.tech` |
 
-They are **not** duplicates to be merged. V1 owns the mature application and
-Pages pipeline; V2 owns the deployed workspace. Shared domain logic lives in
-root `packages/*` and is consumed by both — `v2/packages/core/src/profile.ts`
+They are **not** duplicates to be merged. previous implementation owns the mature application and
+Pages pipeline; CareerScope owns the deployed workspace. Shared domain logic lives in
+root `packages/*` and is consumed by both — `packages/core/src/profile.ts`
 imports candidate schemas from `packages/shared/dist`. Do not fork a shared
-schema into `v2/` to avoid a build step.
+schema into `` to avoid a build step.
 
-Lead statuses differ on purpose: V1 has six workflow states, V2 has exactly
-`['saved', 'archived']`. Resume size limits differ on purpose: V1 10 MiB, V2
+Lead statuses differ on purpose: previous implementation has six workflow states, CareerScope has exactly
+`['saved', 'archived']`. Resume size limits differ on purpose: previous implementation 10 MiB, CareerScope
 5 MiB. Neither is a bug; do not "harmonise" them.
 
 ## Request path in the deployed stack
@@ -63,7 +63,7 @@ flowchart LR
 Only the proxy publishes ports. Every other service joins the proxy network
 namespace and binds loopback. The browser never talks to the API directly; it
 uses a same-origin `/api` path that Next.js rewrites. This is why
-`v2/apps/web/src/lib/api.ts` uses relative URLs and `credentials: 'same-origin'`.
+`apps/web/src/lib/api.ts` uses relative URLs and `credentials: 'same-origin'`.
 
 ## Constraints that must not be broken
 
@@ -77,7 +77,7 @@ uses a same-origin `/api` path that Next.js rewrites. This is why
 - **Auto-apply is on hold.** Nothing may submit an application without explicit
   per-step human approval.
 - **Infrastructure endpoints stay loopback.** `configuration()` in
-  `v2/packages/core/src/runtime.ts` enforces this for the database, Redis and the
+  `packages/core/src/runtime.ts` enforces this for the database, Redis and the
   queue. `APP_ORIGIN` is the single exception and must be HTTPS when it is not
   loopback.
 
@@ -95,10 +95,10 @@ Architecture changes must survive both workspaces:
 
 ```sh
 npm run typecheck && npm run lint && npm test && npm run build
-npm --prefix v2 run typecheck && npm --prefix v2 test && npm --prefix v2 run build
+npm run typecheck && npm test && npm run build
 ```
 
 ## Related documentation
 
-`v2/ARCHITECTURE.md`, `v2/README.md`, `docs/ARCHITECTURE.md`,
+`ARCHITECTURE.md`, `README.md`, `docs/ARCHITECTURE.md`,
 `.github/copilot-instructions.md`.

@@ -17,17 +17,18 @@ For broad changes or a release, run everything below.
 
 ---
 
-## Root workspace (V1)
+## Canonical workspace
 
 Run from the repository root.
 
 | Command                        | Proves                                                                                 |
 | ------------------------------ | -------------------------------------------------------------------------------------- |
-| `npm test`                     | Vitest suite — 1046 passed, 1 skipped                                                  |
+| `npm test`                     | Core and worker node:test suite                                                        |
 | `npm run typecheck`            | Project references, plus both test tsconfigs                                           |
 | `npm run lint`                 | ESLint across the workspace                                                            |
 | `npm run format:check`         | Prettier                                                                               |
-| `npm run build`                | All packages and both apps compile                                                     |
+| `npm run build`                | All packages and the Next.js app compile                                               |
+| `npm run test:domain`          | Shared matching/provider/resume/schema Vitest suites                                   |
 | `npm run pages:test`           | GitHub Pages export, snapshot crypto, admin session, staging and publishing — 21 tests |
 | `npm run pages:workspace:test` | Public workspace snapshot integrity                                                    |
 | `npm run pages:visual`         | Pages visual baselines                                                                 |
@@ -36,25 +37,7 @@ Run from the repository root.
 | `npm run skills:check`         | Agent skill manifests — 20 valid                                                       |
 | `npm audit --omit=dev`         | Production dependency advisories                                                       |
 
-## V2 workspace
-
-Run from `v2/`.
-
-| Command                          | Proves                                  |
-| -------------------------------- | --------------------------------------- |
-| `npm test`                       | `node:test` suite — 47 tests            |
-| `npm run typecheck`              | `tsc -b`, Next typegen, web tsconfig    |
-| `npm run lint`                   | ESLint including the web workspace      |
-| `npm run format:check`           | Prettier                                |
-| `npm run build`                  | Core plus the Next app                  |
-| `npm run test:queue-runtime`     | The queue contract against a real queue |
-| `npm run test:database-recovery` | Database recovery behaviour             |
-| `npm run test:crash-recovery`    | **Real SIGKILL crash matrix**           |
-| `npm run test:performance`       | Declared sustained workload             |
-| `npm run test:soak`              | Long-running stability                  |
-| `npm run test:ui`                | Browser UI checks                       |
-
-`npm test` and most of the above need the local services up:
+The service-backed commands need the local services up:
 
 ```bash
 npm run services          # postgres, redis, localstack
@@ -106,7 +89,7 @@ be reported as one. See [KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md).
 
 ## Live verification
 
-Against `https://careerscope.tech`, from `infra/v3`:
+Against `https://careerscope.tech`, from `infra`:
 
 | Script                   | Proves                                                         |
 | ------------------------ | -------------------------------------------------------------- |

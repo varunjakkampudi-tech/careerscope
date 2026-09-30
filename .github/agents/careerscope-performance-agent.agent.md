@@ -28,7 +28,7 @@ backlog age.
 The declared workload for this repository:
 
 ```bash
-npm --prefix v2 run test:performance
+npm --prefix CareerScope run test:performance
 ```
 
 8 concurrent readers, 30 seconds, authenticated read routes, zero failures, with

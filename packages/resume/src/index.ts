@@ -1,4 +1,4 @@
-import type { DerivedResume } from '@job-radar/shared';
+import type { DerivedResume } from '@careerscope/shared';
 import { detectFormat, extractText, ResumeParseError, type ResumeFormat } from './extract.js';
 import { deriveFields } from './derive.js';
 

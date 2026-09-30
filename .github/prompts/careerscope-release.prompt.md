@@ -20,7 +20,7 @@ review and updates, not setting a key to satisfy a gate.
 
 Distinguish validator `check`, execution `ready` and completion `verify`.
 Require all applicable evidence plus independent review of current content.
-Account explicitly for audited release-state/deployment flaws, missing V2
+Account explicitly for audited release-state/deployment flaws, missing CareerScope
 integration coverage, live provenance and human validation. Do not claim those
 gaps are fixed by this setup or silently inherit an old pass.
 

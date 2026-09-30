@@ -25,7 +25,7 @@ them.
 **Duplication that will diverge.** Two implementations of one idea are a defect
 waiting for someone to fix one of them. This repository has real history here:
 two agent files duplicating one role, and a shared domain layer that exists
-precisely so V1 and V2 do not each own a copy of the matching logic.
+precisely so previous implementation and CareerScope do not each own a copy of the matching logic.
 
 **Dead code.** Exports nobody imports, routes nobody calls, branches that cannot
 be reached, dependencies nothing requires, configuration for a system that was

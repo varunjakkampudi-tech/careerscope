@@ -21,13 +21,13 @@ with 502. Docker neither detects nor repairs this.
 Discovered by restarting the proxy to prove certificates survive a restart. They
 did; the site went down.
 
-**Mitigation:** [restart-stack.sh](../infra/v3/restart-stack.sh) is the only
+**Mitigation:** [restart-stack.sh](../infra/restart-stack.sh) is the only
 supported way to restart the proxy. It reattaches dependents in order and
 verifies both upstreams from inside the proxy namespace.
 
 **Residual risk:** if Caddy crashes, `restart: unless-stopped` restarts it
 automatically and produces the same outage **unattended**. CS-24's host
-monitor (`infra/v3/monitor.sh`) now detects the resulting outage from outside
+monitor (`infra/monitor.sh`) now detects the resulting outage from outside
 the stack — the health endpoint becomes unreachable or unhealthy through the
 dead namespace — and alerts within its 5-minute check interval. It does not
 diagnose _why_ (that still takes a human reading `restart-stack.sh`'s own
@@ -293,11 +293,11 @@ not the full dependency closure. Do not claim reproducibility.
 The API receives the real client address from Caddy through a constrained trust
 boundary:
 
-- `infra/v3/compose.production.yml:72` sets `CAREERSCOPE_UPSTREAM` to
+- `infra/compose.production.yml:72` sets `CAREERSCOPE_UPSTREAM` to
   `127.0.0.1:5280`, so Caddy proxies over loopback.
 - The `api` service runs `network_mode: service:proxy`, sharing the proxy's
   network namespace, so the immediate peer is loopback.
-- `infra/v3/Caddyfile.production` replaces `X-Forwarded-For` with
+- `infra/Caddyfile.production` replaces `X-Forwarded-For` with
   `{http.request.remote.host}` in both proxy handlers.
 - Fastify trusts forwarded addresses only from `127.0.0.1` or `::1`; a direct
   peer or spoofed header cannot select a bucket.
@@ -522,7 +522,7 @@ NOT built**
 
 ### What CS-47 added (built, tested locally, NOT yet installed on the host)
 
-`infra/v3/scheduler-health.sh`, run hourly by
+`infra/scheduler-health.sh`, run hourly by
 `careerscope-scheduler-health.timer`, is one host-native checker for all six
 existing timers — `careerscope-monitor.timer` (CS-24),
 `careerscope-backup.timer` (CS-25), `careerscope-discovery.timer` (CS-26),
@@ -546,7 +546,7 @@ all. Strictness follows the second-opinion ranking below: backup gets the
 smallest grace of any timer (10% of its own derived interval), monitor and
 proxy-recovery 50%, discovery and liveness 100%, retention 200%.
 
-Verified locally by `infra/v3/check-scheduler-health.sh` against stub
+Verified locally by `infra/check-scheduler-health.sh` against stub
 `systemctl`/`systemd-analyze`/`curl` binaries, which asserts both that a
 healthy six-timer host passes and that each failure mode above fails loudly.
 

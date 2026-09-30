@@ -67,14 +67,14 @@ Documentation is a release deliverable, and the release gate asserts it.
 - [docs/PROJECT-STATE.md](../../docs/PROJECT-STATE.md) — feature status, what is deployed
 - [docs/API-SURFACE.md](../../docs/API-SURFACE.md) — if any route or contract changed
 - [docs/KNOWN-LIMITATIONS.md](../../docs/KNOWN-LIMITATIONS.md) — anything newly known
-- `v2/ARCHITECTURE.md` — if a boundary, flow or topology changed
+- `ARCHITECTURE.md` — if a boundary, flow or topology changed
 - `npm run version:sync` after a version bump
 
 ## 4. Gates
 
 ```
 npm run typecheck && npm run lint && npm run test && npm run build && npm run format:check
-npm --prefix v2 test
+npm test
 npm run gates:test
 npm run pages:test            # if the static site or its pipeline changed
 npm run test:ui               # if the UI changed
@@ -94,12 +94,12 @@ CI must go green for that commit; the Deploy workflow then ships it, builds the
 images on the host and runs `check-provenance.sh` itself. Do not deploy around
 CI, and do not use `override_ci` to bypass a failed or missing check.
 
-Never restart the proxy alone — use `infra/v3/restart-stack.sh`.
+Never restart the proxy alone — use `infra/restart-stack.sh`.
 
 ## 6. Verify it actually landed
 
 ```
-bash infra/v3/check-provenance.sh
+bash infra/check-provenance.sh
 node scripts/check-api-surface.mjs
 npm run release:close -- --version <semver> --commit <sha>
 npx prettier --write .ai/backlog.json

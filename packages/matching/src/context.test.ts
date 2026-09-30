@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { DerivedResume, MatchableProfile } from '@job-radar/shared';
+import type { DerivedResume, MatchableProfile } from '@careerscope/shared';
 import { buildCandidateContext } from './context.js';
 
 function derived(overrides: Partial<DerivedResume> = {}): DerivedResume {
@@ -183,7 +183,7 @@ describe('buildCandidateContext — home location', () => {
   });
   // The narrowing of MatchableProfile['application'] (see types.ts) must not
   // break the property its own doc comment promises: "`Profile` satisfies this
-  // structurally, so the API can pass a stored profile straight through." V1's
+  // structurally, so the API can pass a stored profile straight through." The
   // stored profile carries currentCtc and noticePeriodDays, which the engine
   // never reads — a wider object must still be accepted. Excess-property
   // checking only applies to inline literals, so this passes through a variable

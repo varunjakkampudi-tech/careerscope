@@ -14,7 +14,7 @@ CareerScope Product Architect (architecture, commands and automation).
 The parent inspected the Orchestrator, configuration validator, project state,
 testing policy, architecture, environment example and known limitations.
 `node scripts/check-agents.mjs` passed before changes, including its 24-agent check.
-Live provenance remains unverified: `infra/v3/check-provenance.sh` is host-local
+Live provenance remains unverified: `infra/check-provenance.sh` is host-local
 and requires the deployed filesystem and Docker images. No production access,
 credentials, user data or real environment files were read.
 
@@ -22,26 +22,26 @@ credentials, user data or real environment files were read.
 
 | Surface                | Actual ownership                                                                                                 |
 | ---------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Root workspace         | npm workspaces, TypeScript references, V1 job-radar 1.3.4                                                        |
-| Frontend               | V1 React/Vite in apps/web; deployed V2 Next.js/React in v2/apps/web                                              |
-| Backend                | Fastify; V1 SQLite; V2 PostgreSQL 17/Drizzle                                                                     |
-| Domain libraries       | packages/shared, providers, matching, resume; reused by V2                                                       |
+| Root workspace         | npm workspaces, TypeScript references, previous implementation careerscope 1.3.4                                 |
+| Frontend               | previous implementation React/Vite in apps/web; deployed CareerScope Next.js/React in CareerScope/apps/web       |
+| Backend                | Fastify; previous implementation SQLite; CareerScope PostgreSQL 17/Drizzle                                       |
+| Domain libraries       | packages/shared, providers, matching, resume; reused by CareerScope                                              |
 | Asynchronous work      | PostgreSQL transactional outbox, publisher, SQS/LocalStack; optional BullMQ search transport                     |
 | Storage                | API-owned encrypted private filesystem; files worker reads                                                       |
 | Public static artifact | mobile-site and Pages scripts; _site is generated                                                                |
-| Infrastructure         | infra/v3, Caddy, single-host Compose, nine services; only proxy publishes                                        |
-| Tests                  | Root Vitest, Pages node:test, V2 node:test, Playwright browser scripts                                           |
+| Infrastructure         | infra, Caddy, single-host Compose, nine services; only proxy publishes                                           |
+| Tests                  | Root Vitest, Pages node:test, CareerScope node:test, Playwright browser scripts                                  |
 | CI                     | .github/workflows/ci.yml and deploy.yml; push to main is a deployment candidate                                  |
 | Native customization   | Initial snapshot: 24 agents, 20 skills, scoped instructions, two prompts; hook/prompt additions reconciled below |
-| MCP                    | .vscode/mcp.json declares job-radar stdio; metadata inspected only                                               |
+| MCP                    | .vscode/mcp.json declares careerscope stdio; metadata inspected only                                             |
 | Engineering state      | .ai backlog, findings, progress, release and loop records; review.txt; agile and gate scripts                    |
-| Documentation          | docs/ARCHITECTURE.md, v2/ARCHITECTURE.md, testing, operations and existing Mermaid diagrams                      |
+| Documentation          | docs/ARCHITECTURE.md, CareerScope/ARCHITECTURE.md, testing, operations and existing Mermaid diagrams             |
 
 ## Commands
 
 Use Node >=24 and npm. Commands are manifest inventory unless marked executed.
 
-| Purpose        | Root                                                                | Inside v2                                                                      |
+| Purpose        | Root                                                                | Inside CareerScope                                                             |
 | -------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | Install        | npm ci                                                              | npm ci                                                                         |
 | Development    | npm run dev                                                         | npm start; npm run dev -w @careerscope/web                                     |
@@ -55,7 +55,7 @@ Use Node >=24 and npm. Commands are manifest inventory unless marked executed.
 Database and owner commands are documented, not authorized for production by
 this audit. Runtime/browser tests require isolated synthetic services and browsers.
 The Windows workspace provides a pinned Node executable under
-data/windows-toolchain and a private-configuration launcher under data/windows-v2.
+data/windows-toolchain and a private-configuration launcher under data/windows-CareerScope.
 Neither is a cross-platform prerequisite for the new engineering workflow.
 
 ## Prioritized Findings
@@ -68,10 +68,10 @@ Neither is a cross-platform prerequisite for the new engineering workflow.
 | AI-04 | P1       | agile.mjs released() trusts caller commit and closes every ready ticket after a version check. Not proof of exact deployed revision or scoped release. Do not use this as completion evidence. |
 | AI-05 | P1       | Legacy mutation gate tests overwrite canonical .ai records with fixed backups. Do not parallelize these; new tests must use isolated temporary fixtures.                                       |
 | AI-06 | P2       | check-agents.mjs rejects every COMPLETE state, lacks delegation-tool validation, and parses YAML with regex. Extend checks without pretending syntax proves runtime discovery.                 |
-| AI-07 | P2       | AI-ENGINEERING-WORKFLOW.md describes removed three-agent roles; instruction globs omit V2. Reconcile native workflow and scope.                                                                |
-| AI-08 | P2       | V2 profile imports root compiled outputs; clean-build ordering is significant. Preserve both stacks; no evidence supports deleting V1.                                                         |
+| AI-07 | P2       | AI-ENGINEERING-WORKFLOW.md describes removed three-agent roles; instruction globs omit CareerScope. Reconcile native workflow and scope.                                                       |
+| AI-08 | P2       | CareerScope profile imports root compiled outputs; clean-build ordering is significant. Preserve both stacks; no evidence supports deleting previous implementation.                           |
 | AI-09 | P2       | Version-file lists duplicated across publication/sync scripts; proxy build uses floating dependencies. Record debt; no unrelated cleanup.                                                      |
-| AI-10 | P1       | CI lacks full deployed V2 integration/E2E coverage. Configuration validation cannot establish product or production readiness.                                                                 |
+| AI-10 | P1       | CI lacks full deployed CareerScope integration/E2E coverage. Configuration validation cannot establish product or production readiness.                                                        |
 
 No application symbol has been proven unused by this audit; no dead code is
 deleted. Dependency vulnerability scanning is still required before a security
@@ -99,7 +99,7 @@ CareerScope QA recorded 131 engineering/hook tests and 1,047 root tests in 67
 files passing, with isolated Vitest envDir/cacheDir; typecheck/lint/build passed
 and lint had one warning. The baseline also preserves audit-format failure,
 missing latest-review metadata, and the correct incomplete-objective refusal.
-V2 integration, browser, live provenance, dependency advisories and security
+CareerScope integration, browser, live provenance, dependency advisories and security
 clearance were not established. Preserve its measured clock discrepancy.
 
 The operator reports real native `functions.runSubagent` invocations for QA and
@@ -134,18 +134,18 @@ unverified. Handoffs are user actions; no autonomous background scheduler exists
 
 ### Remaining Observed Gaps
 
-| ID    | Observation and disposition                                                                                                                                                                                                                                                      |
-| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| OS-01 | Schema-2 contracts and the fixed-ID runner now exist. Original schema-1 state remains legacy; schema 2 limits retained remediation failures per task, not aggregate rounds. Historical baseline JSON is incompatible with the strict contract baseline shape; preserve it        |
-| OS-02 | Records/reviews are attributed, not signed or tamperproof. Digests cannot prove command execution or reviewer identity; actual native results and independent inspection remain required                                                                                         |
-| OS-03 | Claims/tool grants are not OS isolation. One existing dirty worktree; use literal disjoint claims, isolated QA resources and serialized integration, never blind merges                                                                                                          |
-| OS-04 | Actual Windows workspace differs from supplied Mac paths. Default Node 22 is unsupported; pinned Node 26 worked. Hook config uses bare node, so its actual runtime is unverified                                                                                                 |
-| OS-05 | SessionStart firing and Agent Sessions/worktrees UI activation remain unverified; browser tool visibility and MCP metadata do not prove service health                                                                                                                           |
-| OS-06 | True tokens, provider latency and live agent liveness are unavailable; supported record-derived metrics must not invent those values                                                                                                                                             |
-| OS-07 | Parent-owned latest review metadata still fails customization validation; engineering completion remains intentionally incomplete                                                                                                                                                |
-| OS-08 | Current gate policy's production-readiness check says "no hook ... wiring", but a SessionStart hook exists. Parent must reconcile the approved scope without weakening the original local-only/no-deployment condition                                                           |
-| OS-09 | Visual Designer forbids concurrent Frontend work while Orchestrator permits disjoint builders. Honor the stricter role rule pending parent reconciliation. Backend scope lists only V2 although responsibility prose includes V1; route explicit V1 work through Senior Engineer |
-| OS-10 | Repository agent says main is the V1 line, contrary to project-state's integration/deploy branch for both stacks. Parent owns the agent correction; no Git actions authorized here                                                                                               |
+| ID    | Observation and disposition                                                                                                                                                                                                                                                                                                         |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OS-01 | Schema-2 contracts and the fixed-ID runner now exist. Original schema-1 state remains legacy; schema 2 limits retained remediation failures per task, not aggregate rounds. Historical baseline JSON is incompatible with the strict contract baseline shape; preserve it                                                           |
+| OS-02 | Records/reviews are attributed, not signed or tamperproof. Digests cannot prove command execution or reviewer identity; actual native results and independent inspection remain required                                                                                                                                            |
+| OS-03 | Claims/tool grants are not OS isolation. One existing dirty worktree; use literal disjoint claims, isolated QA resources and serialized integration, never blind merges                                                                                                                                                             |
+| OS-04 | Actual Windows workspace differs from supplied Mac paths. Default Node 22 is unsupported; pinned Node 26 worked. Hook config uses bare node, so its actual runtime is unverified                                                                                                                                                    |
+| OS-05 | SessionStart firing and Agent Sessions/worktrees UI activation remain unverified; browser tool visibility and MCP metadata do not prove service health                                                                                                                                                                              |
+| OS-06 | True tokens, provider latency and live agent liveness are unavailable; supported record-derived metrics must not invent those values                                                                                                                                                                                                |
+| OS-07 | Parent-owned latest review metadata still fails customization validation; engineering completion remains intentionally incomplete                                                                                                                                                                                                   |
+| OS-08 | Current gate policy's production-readiness check says "no hook ... wiring", but a SessionStart hook exists. Parent must reconcile the approved scope without weakening the original local-only/no-deployment condition                                                                                                              |
+| OS-09 | Visual Designer forbids concurrent Frontend work while Orchestrator permits disjoint builders. Honor the stricter role rule pending parent reconciliation. Backend scope lists only CareerScope although responsibility prose includes previous implementation; route explicit previous implementation work through Senior Engineer |
+| OS-10 | Repository agent says main is the previous implementation line, contrary to project-state's integration/deploy branch for both stacks. Parent owns the agent correction; no Git actions authorized here                                                                                                                             |
 
 Except for the explicit source updates above, OS findings describe the earlier
 inspection; their metadata and policy observations need fresh owner validation.

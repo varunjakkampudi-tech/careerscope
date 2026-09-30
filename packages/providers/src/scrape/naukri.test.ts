@@ -18,7 +18,7 @@
  * `"Full Time, Permanent"` spelling of an employment type.
  */
 
-import type { ProviderQuery, RawJob } from '@job-radar/shared';
+import type { ProviderQuery, RawJob } from '@careerscope/shared';
 import { describe, expect, it, vi } from 'vitest';
 import { query } from '../harness.fixtures.js';
 import type { ScrapeContext, ScrapePage } from './base.js';

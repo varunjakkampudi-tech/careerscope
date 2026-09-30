@@ -20,7 +20,7 @@
  * card after the offending one while still returning a plausible array.
  */
 
-import type { ProviderQuery } from '@job-radar/shared';
+import type { ProviderQuery } from '@careerscope/shared';
 import { describe as suite, expect, it, vi } from 'vitest';
 import { query } from '../harness.fixtures.js';
 import type { ScrapeContext, ScrapePage } from './base.js';

@@ -98,7 +98,7 @@ One Hostinger VPS, Ubuntu 24.04, 2 vCPU / 7.8 GiB. Caddy terminates TLS. **Every
 service joins the proxy's network namespace, and only the proxy publishes
 ports.** That is why restarting the proxy alone strands everything else behind a
 502 while healthchecks stay green — a known open defect, mitigated by
-`infra/v3/restart-stack.sh` but not yet self-healing.
+`infra/restart-stack.sh` but not yet self-healing.
 
 CI and Deploy both run on push to `main`.
 
@@ -108,7 +108,7 @@ CI and Deploy both run on push to `main`.
 apps/api, apps/web      V1 application
 v2/                     V2 application (apps + packages/core)
 packages/               shared, matching, providers, resume
-infra/v3/               provisioning, deploy, restart, provenance
+infra/               provisioning, deploy, restart, provenance
 scripts/                tooling, checks, control center, backup
 .github/agents/         16 specialist agents
 .ai/                    durable engineering state (JSON canonical)

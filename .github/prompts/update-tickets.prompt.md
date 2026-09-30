@@ -41,7 +41,7 @@ Each agent contributes only from its own responsibility.
 
 - A status change needs evidence: a command and its output, a diff, or a
   deployment check. An opinion is not a status.
-- `RELEASED` requires proof the change is deployed — `infra/v3/check-provenance.sh`,
+- `RELEASED` requires proof the change is deployed — `infra/check-provenance.sh`,
   not a merged branch.
 - `BLOCKED` names the blocker and who or what unblocks it. Blocked is never a
   parking space for work nobody wants.

@@ -99,12 +99,12 @@ declarations.push({
   major: majorFromRange(rootManifest.engines.node, 'package.json'),
 });
 
-const v2Manifest = readJson('v2/package.json');
-if (!v2Manifest.engines?.node) fail('v2/package.json declares no engines.node.');
+const canonicalManifest = readJson('package.json');
+if (!canonicalManifest.engines?.node) fail('package.json declares no engines.node.');
 declarations.push({
-  source: 'v2/package.json engines.node',
-  raw: v2Manifest.engines.node,
-  major: majorFromRange(v2Manifest.engines.node, 'v2/package.json'),
+  source: 'package.json engines.node',
+  raw: canonicalManifest.engines.node,
+  major: majorFromRange(canonicalManifest.engines.node, 'package.json'),
 });
 
 let nvmrc;
@@ -153,7 +153,7 @@ for (const name of workflowNames) {
 // Structural, not just numeric: the three file-based declarations are each
 // required by name, so losing one cannot be absorbed by a count. A bare
 // threshold tolerated dropping two silently once the workflows were globbed.
-for (const required of ['package.json engines.node', 'v2/package.json engines.node', '.nvmrc']) {
+for (const required of ['package.json engines.node', '.nvmrc']) {
   if (!declarations.some((declaration) => declaration.source === required)) {
     fail(
       `The declaration from ${required} is missing. Every source must be present, not merely enough of them.`,

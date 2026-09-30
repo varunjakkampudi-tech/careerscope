@@ -162,12 +162,13 @@ export interface Paginated<T> {
  * `ApplicationDetails` while the comment above claimed this type listed what the
  * engine consumes — the comment was the intent and the type had not followed it.
  *
- * That gap was load-bearing across the V1/V2 boundary. V2's `MatchingProfile`
- * (v2/packages/core/src/profile.ts) deliberately snapshots only
+ * That gap was load-bearing across the application/domain boundary. The
+ * `MatchingProfile`
+ * (packages/core/src/profile.ts) deliberately snapshots only
  * `expectedCtc`, `yearsOfExperience` and `willingToRelocate` — data
  * minimisation, the same discipline that keeps `parsed.text` inside Postgres —
  * and `packages/matching/src/context.ts` reads exactly those three. Nothing
- * enforced that correspondence. The day `context.ts` reads a fourth field, V2's
+ * enforced that correspondence. The day `context.ts` reads a fourth field, the
  * snapshot would not carry it, and the symptom would not be a crash: it would
  * be `undefined` inside deterministic scoring, i.e. a silently wrong match
  * score on the deployed stack.
@@ -176,11 +177,11 @@ export interface Paginated<T> {
  * than a runtime `undefined` two tiers away. Widening `MatchingProfile` to the
  * full type would have discarded a deliberate minimisation to satisfy a
  * compiler, and a cast would have deleted the only signal the shapes had
- * diverged. Deriving V2's `Pick` from this type was the other defensible shape
- * and was not chosen: V2's snapshot is a storage decision about what leaves its
- * own tier, and it should not silently follow a V1 internal.
+ * diverged. Deriving a `Pick` from this type was the other defensible shape
+ * and was not chosen: the snapshot is a storage decision about what leaves its
+ * own tier, and it should not silently follow an unrelated internal type.
  *
- * Every caller passing a wider object — V1's stored `Profile` included — still
+ * Every caller passing a wider object — a stored `Profile` included — still
  * satisfies this structurally. Nothing at a call site needs to change.
  */
 export type MatchableProfile = {

@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { detectEmploymentType, detectRemote, extractYears } from '@job-radar/matching';
+import { detectEmploymentType, detectRemote, extractYears } from '@careerscope/matching';
 import {
   extractSkills,
   parseCompensation,
@@ -8,7 +8,7 @@ import {
   type Job,
   type RawJob,
   type Salary,
-} from '@job-radar/shared';
+} from '@careerscope/shared';
 import { descriptionToText, snippet } from './html.js';
 
 /**

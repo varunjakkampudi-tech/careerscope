@@ -26,7 +26,7 @@ is session-specific; configuration is not execution evidence.
 Actual workspace: Windows, `C:\Users\Admin\Desktop\careerscope`. Supplied Mac
 paths are not paths on this host. The [baseline](baseline.md) records default
 Node 22 as unsupported and existing pinned Node 26 as working; both
-[root](../../package.json) and [V2](../../v2/package.json) require Node >=24.
+[root](../../package.json) and [CareerScope](../../package.json) require Node >=24.
 
 From the repository root in PowerShell, this invocation was executed here:
 

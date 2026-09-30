@@ -201,7 +201,7 @@ export function reachableCommands(root = process.cwd()) {
  *
  * A reference counts when the command text names the path either in full or
  * relative to the directory the command runs in — `npm --prefix v2 run
- * test:unit` names `packages/core/src/x.test.ts`, which is `v2/packages/...`
+ * test:unit` names `packages/core/src/x.test.ts`, which is `packages/...`
  * from the repository root.
  */
 export function workflowsExecuting(path, resolution) {

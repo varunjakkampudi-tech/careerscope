@@ -10,7 +10,7 @@
  * job is to stop tens of thousands of obviously-unrelated postings from being
  * fetched in detail and scored — an accountant role does not need a 4 KB
  * description download to be rejected. Everything that survives is scored
- * properly in `@job-radar/matching`, which is the authority on whether a job is
+ * properly in `@careerscope/matching`, which is the authority on whether a job is
  * an 85% match.
  *
  * The asymmetry matters: a false positive here costs one detail request. A
@@ -19,7 +19,7 @@
  * target titles configured passes.
  */
 
-import type { EmploymentType, ProviderQuery, RawJob } from '@job-radar/shared';
+import type { EmploymentType, ProviderQuery, RawJob } from '@careerscope/shared';
 
 /**
  * How much of a target title must appear in the job title. One word out of two

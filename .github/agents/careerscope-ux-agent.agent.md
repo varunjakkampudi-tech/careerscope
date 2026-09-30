@@ -15,7 +15,7 @@ it.
 ## Read first
 
 `.ai/ACTIVE-TASK.md`, `.ai/UX-DESIGN.md`, then the actual components under
-`v2/apps/web/src`. Judge what is implemented, not what was intended.
+`apps/web/src`. Judge what is implemented, not what was intended.
 
 ## Review
 
@@ -48,5 +48,5 @@ Verdict: `APPROVED`, `REVISE`, `BLOCKED`.
 
 ## Current reality
 
-The V2 frontend is **one route** with seven components and no shared shell.
+The CareerScope frontend is **one route** with seven components and no shared shell.
 Plan against that, not against a route tree that does not exist yet.

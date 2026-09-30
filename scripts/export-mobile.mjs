@@ -50,9 +50,12 @@ export function publicJobs(rows) {
 }
 
 export async function exportMobile() {
-  const database = new DatabaseSync(resolve(root, process.env.DATA_DIR || 'data', 'job-radar.db'), {
-    readOnly: true,
-  });
+  const database = new DatabaseSync(
+    resolve(root, process.env.DATA_DIR || 'data', 'careerscope.db'),
+    {
+      readOnly: true,
+    },
+  );
   let rows;
   try {
     rows = database

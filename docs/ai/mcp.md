@@ -2,7 +2,7 @@
 
 Native MCP configuration belongs to the existing
 [.vscode/mcp.json](../../.vscode/mcp.json), not to a new workflow-specific server.
-Metadata inspection on 2026-09-20 found one server, **job-radar**, with **stdio**
+Metadata inspection on 2026-09-20 found one server, **careerscope**, with **stdio**
 transport. That is configuration evidence only, not proof of connection,
 authorization or tool behavior. Commands, arguments and environment values were
 not printed. Do not read secrets or real environment files to diagnose discovery.

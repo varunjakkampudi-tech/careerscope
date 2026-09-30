@@ -1,4 +1,4 @@
-import { SENIORITY_LEVELS, type SeniorityLabel } from '@job-radar/shared';
+import { SENIORITY_LEVELS, type SeniorityLabel } from '@careerscope/shared';
 
 /**
  * Reading a level out of a job title, and comparing two levels.

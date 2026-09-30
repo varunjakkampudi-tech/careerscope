@@ -26,7 +26,7 @@
  * `sourceUrl` is always the RemoteOK page even when a direct `apply_url` exists.
  */
 
-import type { RawJob } from '@job-radar/shared';
+import type { RawJob } from '@careerscope/shared';
 import { repairMojibake } from '../html.js';
 import type { JobProvider } from '../types.js';
 import {

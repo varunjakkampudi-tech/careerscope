@@ -33,7 +33,7 @@ curl -X PUT https://careerscope.tech/api/profile/scheduled-discovery \
 
 ## What runs, and how
 
-[run-scheduled-discovery.ts](../../v2/scripts/run-scheduled-discovery.ts),
+[run-scheduled-discovery.ts](../../scripts/run-scheduled-discovery.ts),
 invoked by `careerscope-discovery.timer` via `docker exec` into the `api`
 container, twice a day. For every owner with the flag enabled:
 
@@ -64,7 +64,7 @@ reverse-engineering the idempotency-key string format.
 ## Install
 
 ```sh
-bash infra/v3/setup-discovery.sh
+bash infra/setup-discovery.sh
 ```
 
 Idempotent. Installing the timer does **not** turn discovery on for anyone —
@@ -74,7 +74,7 @@ install scripts.
 ## Verification
 
 ```sh
-node --env-file=.env --import tsx --test v2/scripts/run-scheduled-discovery.test.ts
+node --env-file=.env --import tsx --test scripts/run-scheduled-discovery.test.ts
 ```
 
 Runs against a real disposable Postgres database (same per-test-database

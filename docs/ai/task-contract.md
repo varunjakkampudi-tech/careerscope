@@ -13,7 +13,7 @@ actual events, a compatible baseline and the [risk-role mapping](risk-model.md).
 
 | Item                 | Required content                                                                           |
 | -------------------- | ------------------------------------------------------------------------------------------ |
-| Identity and purpose | Task/requirement IDs, objective, non-goals, V1/V2/tooling boundary                         |
+| Identity and purpose | Task/requirement IDs, objective, non-goals, single-architecture/tooling boundary           |
 | Acceptance           | Observable behavior, negative/malformed cases, exact evidence needed                       |
 | Authority and risk   | Existing user authorization, [risk class](risk-model.md), approval gaps                    |
 | Ownership            | Existing agent, literal allowed paths, explicit forbidden paths, generated side effects    |

@@ -5,7 +5,7 @@ import { join, resolve } from 'node:path';
 import { chromium, firefox, webkit } from 'playwright';
 import { buildTestApp, seedLeads } from '../apps/api/src/routes/routes.fixtures.ts';
 
-const screenshots = mkdtempSync(join(tmpdir(), 'job-radar-ui-'));
+const screenshots = mkdtempSync(join(tmpdir(), 'careerscope-ui-'));
 const results = [];
 for (const engine of [chromium, firefox, webkit]) {
   const fixture = await buildTestApp({

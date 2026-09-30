@@ -1,181 +1,130 @@
-/**
- * The HTTP client.
- *
- * One function — {@link request} — behind a small set of typed wrappers. It
- * exists so three decisions are made once rather than at every call site:
- *
- *  1. **Where the API is.** `VITE_API_BASE_URL` is baked in at build time. Empty
- *     means "same origin", which is both the dev-proxy case and the EC2
- *     single-origin case. The Pages build sets it to the API's absolute origin.
- *  2. **How the key travels.** In the `x-api-key` header, never in the URL. A
- *     query-string key would be written to nginx's access log, the browser's
- *     history, and the `Referer` of every subsequent request from the page. The
- *     API refuses it for the same reason (see `runs.ts`).
- *  3. **What an error is.** The API answers failures with a consistent
- *     `{ error: { code, message, details } }` body. {@link ApiError} carries all
- *     three, so a component can branch on `code` — `profile_missing`,
- *     `run_in_progress` — instead of pattern-matching English.
- */
-
-import type { ApiError as ApiErrorBody } from '@job-radar/shared';
-import { getApiKey } from './auth';
-
-/**
- * Trailing slash trimmed so `${BASE}/api/leads` cannot become `//api/leads`,
- * which some proxies normalise and others 404.
- */
-export const API_BASE_URL: string = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '');
-
-/** A failed request, with the API's own error code attached. */
 export class ApiError extends Error {
-  readonly status: number;
-  readonly code: string;
-  readonly details: unknown;
-
-  constructor(status: number, code: string, message: string, details?: unknown) {
+  constructor(
+    readonly status: number,
+    message: string,
+    // CS-35 AC2: the stable machine code the API emits with a 409, carried
+    // through to consumers so a caller can offer the recovery action that
+    // actually fits the conflict. `undefined` whenever the response did not
+    // carry a code this client knows about - callers must treat that as the
+    // generic conflict, never as a new kind of success.
+    readonly code?: string,
+  ) {
     super(message);
-    this.name = 'ApiError';
-    this.status = status;
-    this.code = code;
-    this.details = details;
-  }
-
-  /** True when the key is missing or wrong — the settings screen prompts on this. */
-  get isAuthFailure(): boolean {
-    return this.status === 401 || this.status === 403;
   }
 }
 
-export interface RequestOptions {
-  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  /** Serialised as JSON. Use `form` for multipart. */
-  body?: unknown;
-  form?: FormData;
-  query?: QueryInput;
-  signal?: AbortSignal;
-}
+// CS-35: the client's own allowlist of the codes the API is contracted to
+// emit, each mapped to the message this client shows. Deliberately a
+// client-side table rather than the server's `error` string: the server text
+// is not a client-facing contract and echoing it would put server-chosen
+// content on screen. An unknown code - a newer server, a proxy, a hostile
+// response - is not in this table, so it falls back to the generic conflict
+// message below and leaves `code` undefined. A Map rather than an object
+// literal because the lookup key arrives off the wire: `{}['__proto__']` is
+// Object.prototype, not undefined, and a plain object would hand that back as
+// though it were a message.
+const CONFLICT_MESSAGES = new Map<string, string>([
+  [
+    'PROFILE_REVISION_CONFLICT',
+    'This record changed in another session. Your edits have not been saved.',
+  ],
+  [
+    'LEAD_REVISION_CONFLICT',
+    'This record changed in another session. Your edits have not been saved.',
+  ],
+  [
+    'PROFILE_NOT_SAVED',
+    'Save your profile before enabling this option. Your edits are still here.',
+  ],
+  ['MISSING_TARGET_ROLES', 'Add target roles to your profile before starting this search.'],
+  ['IDEMPOTENCY_KEY_REUSED', 'This request already completed with different details. Try again.'],
+  ['UPLOAD_CANCELLED', 'This upload was already cancelled.'],
+  ['UPLOAD_NOT_CANCELLABLE', 'This upload can no longer be cancelled.'],
+  ['UPLOAD_VERSION_CONFLICT', 'This upload changed. Refresh and try again.'],
+]);
 
-export type QueryValue = string | number | boolean | null | undefined | readonly string[];
-export type QueryInput = Record<string, QueryValue>;
+// The only conflicts whose correct recovery is to throw local edits away and
+// reload. Every other known code is a conflict the edits survive.
+const REVISION_CONFLICT_CODES = ['PROFILE_REVISION_CONFLICT', 'LEAD_REVISION_CONFLICT'];
 
-/** Builds a fully-qualified API URL. Exported for the SSE reader, which needs one. */
-export function apiUrl(path: string, query?: QueryInput): string {
-  const search = buildQuery(query);
-  return `${API_BASE_URL}/api${path}${search}`;
-}
-
-/** The headers every request carries, including the key when one is stored. */
-export function authHeaders(extra?: Record<string, string>): Record<string, string> {
-  const headers: Record<string, string> = { ...extra };
-  const key = getApiKey();
-  if (key) headers['x-api-key'] = key;
-  return headers;
-}
-
-export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, form, query, signal } = options;
-
-  const headers = authHeaders();
-  // Deliberately not set for `form`: the browser has to append the multipart
-  // boundary itself, and setting the header by hand strips it, producing a body
-  // the server cannot parse.
-  if (body !== undefined) headers['content-type'] = 'application/json';
-
-  const response = await fetch(apiUrl(path, query), {
-    method,
-    headers,
-    body: form ?? (body === undefined ? undefined : JSON.stringify(body)),
-    signal: signal ?? null,
-    credentials: 'include',
-  });
-
-  if (!response.ok) throw await toApiError(response);
-
-  // 204, and 200 with an empty body, are both legitimate — DELETE returns the
-  // former. `T` is `void` at those call sites.
-  if (response.status === 204) return undefined as T;
-  const text = await response.text();
-  if (!text) return undefined as T;
-  return JSON.parse(text) as T;
+/**
+ * Whether a failed mutation should offer "discard edits and reload".
+ *
+ * True for a revision conflict, and for a 409 whose code this client does not
+ * recognise (an older or newer server, or a malformed body) - that is the
+ * pre-CS-35 behaviour and stays the safe fallback, because a stale record is
+ * the only conflict a reload can repair. False for every other known code, so
+ * unsaved profile or lead edits are not offered for destruction over a
+ * conflict that has nothing to do with staleness.
+ */
+export function offersDiscardAndReload(error: unknown): boolean {
+  if (!(error instanceof ApiError) || error.status !== 409) return false;
+  return error.code === undefined || REVISION_CONFLICT_CODES.includes(error.code);
 }
 
 /**
- * Downloads a file that needs the API key.
- *
- * A plain `<a download href>` cannot carry a header, so the file is fetched,
- * turned into a blob and handed to a synthetic anchor. The object URL is revoked
- * afterwards — without that, an XLSX export sits in memory until the tab closes.
+ * Reads the machine code off a 409 body without ever letting a malformed body
+ * become a success or a thrown parse error: anything that is not an object
+ * carrying a known string `code` yields `undefined`.
  */
-export async function downloadFile(path: string, query?: QueryInput): Promise<void> {
-  const response = await fetch(apiUrl(path, query), {
-    headers: authHeaders(),
-    credentials: 'include',
-  });
-  if (!response.ok) throw await toApiError(response);
-
-  const blob = await response.blob();
-  const url = URL.createObjectURL(blob);
+async function readConflict(
+  response: Response,
+): Promise<{ code: string; message: string } | undefined> {
   try {
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = filenameFrom(response.headers.get('content-disposition')) ?? 'download';
-    document.body.append(anchor);
-    anchor.click();
-    anchor.remove();
-  } finally {
-    // A tick of grace: revoking synchronously races the download in Safari.
-    setTimeout(() => URL.revokeObjectURL(url), 10_000);
-  }
-}
-
-/* -------------------------------------------------------------------------- */
-/* Internals                                                                  */
-/* -------------------------------------------------------------------------- */
-
-function buildQuery(query?: QueryInput): string {
-  if (!query) return '';
-  const params = new URLSearchParams();
-
-  for (const [key, value] of Object.entries(query)) {
-    if (value === undefined || value === null || value === '') continue;
-    // Arrays are comma-joined, not repeated — `leadQuerySchema` splits on commas
-    // (`sources`, `statuses`), and `?sources=a&sources=b` would arrive as an
-    // array Zod's `.string()` would reject.
-    if (Array.isArray(value)) {
-      if (value.length > 0) params.set(key, value.join(','));
-      continue;
-    }
-    params.set(key, String(value));
-  }
-
-  const search = params.toString();
-  return search ? `?${search}` : '';
-}
-
-async function toApiError(response: Response): Promise<ApiError> {
-  let code = `http_${response.status}`;
-  let message = response.statusText || 'Request failed';
-  let details: unknown;
-
-  try {
-    const body = (await response.json()) as Partial<ApiErrorBody>;
-    if (body.error) {
-      code = body.error.code ?? code;
-      message = body.error.message ?? message;
-      details = body.error.details;
-    }
+    const body: unknown = await response.json();
+    if (typeof body !== 'object' || body === null || Array.isArray(body)) return undefined;
+    const code = (body as { code?: unknown }).code;
+    if (typeof code !== 'string') return undefined;
+    const message = CONFLICT_MESSAGES.get(code);
+    return message === undefined ? undefined : { code, message };
   } catch {
-    // A proxy timeout or an nginx error page is HTML, not JSON. The status line
-    // is all there is, and it is enough to say what happened.
-    if (response.status === 0) message = 'Could not reach the API';
+    return undefined;
   }
-
-  return new ApiError(response.status, code, message, details);
 }
 
-/** Pulls the server's suggested filename out of `Content-Disposition`. */
-function filenameFrom(header: string | null): string | null {
-  if (!header) return null;
-  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(header);
-  return match?.[1] ? decodeURIComponent(match[1]) : null;
+// A single, real place a 401 is announced, rather than each route deciding
+// for itself whether to react (Independent Reviewer finding 2, 2026-09-23:
+// three different, inconsistent 401-handling implementations existed across
+// seven routes, and two routes — Resume and Settings — had none at all, so
+// an expired session there showed an unrecoverable inline error with a Retry
+// button that could only ever fail again). AuthenticatedShell is the one
+// listener, matching CS-6's "single auth boundary" design.
+export const SESSION_EXPIRED_EVENT = 'careerscope:session-expired';
+
+export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const headers = new Headers(options.headers);
+  if (options.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+  const response = await fetch(`/api${path}`, {
+    ...options,
+    cache: 'no-store',
+    credentials: 'same-origin',
+    signal: options.signal
+      ? AbortSignal.any([options.signal, AbortSignal.timeout(15_000)])
+      : AbortSignal.timeout(15_000),
+    headers,
+  });
+  if (!response.ok) {
+    const messages: Record<number, string> = {
+      400: 'Check the fields and try again.',
+      401: path === '/login' ? 'Invalid email or password.' : 'Please sign in again.',
+      409: 'This record changed in another session. Your edits have not been saved.',
+      413: 'The submitted data is too large.',
+      429: 'Too many requests. Try again shortly.',
+      507: 'Resume storage capacity reached. Remove an unneeded completed resume or try again later.',
+    };
+    if (response.status === 401 && path !== '/login' && typeof window !== 'undefined') {
+      window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
+    }
+    const conflict = response.status === 409 ? await readConflict(response) : undefined;
+    // A non-409 error has no structured body contract in this client. Cancel
+    // it before throwing so the underlying connection is not left with an
+    // unread response stream when callers immediately retry or navigate away.
+    if (response.status !== 409) await response.body?.cancel();
+    throw new ApiError(
+      response.status,
+      conflict?.message ?? messages[response.status] ?? 'Request failed. Please try again.',
+      conflict?.code,
+    );
+  }
+  return response.status === 204 ? (undefined as T) : response.json();
 }

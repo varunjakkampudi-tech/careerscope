@@ -14,6 +14,8 @@ packages/providers/src/scrape/__fixtures__/
 dist/
 dist-types/
 *.tsbuildinfo
+.next/
+next-env.d.ts
 
 # Runtime data: the SQLite database, uploaded resumes, generated exports.
 data/
@@ -24,6 +26,7 @@ mobile-site/admin.enc.json
 # Checking a file that a script regenerates on each run means CI breaks whenever
 # anyone uses the tooling. The rest of .ai/ is hand-maintained and still checked.
 .ai/runs.json
+.ai/*.json
 
 # Dependencies.
 node_modules/
@@ -37,6 +40,4 @@ playwright-report/
 test-results/
 
 infra/nginx/*.inc
-
-# The nested v2 workspace runs its own formatting gate.
-v2/
+migrations/meta/*.json

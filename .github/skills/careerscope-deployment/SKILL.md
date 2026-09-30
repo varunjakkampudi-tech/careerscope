@@ -1,6 +1,6 @@
 ---
 name: careerscope-deployment
-description: 'The deployed single-host topology, provisioning, TLS and certificate handling, and the live verification scripts. Use when changing infra/v3, compose files, the Caddyfile, the Dockerfile, or anything affecting the deployed origin.'
+description: 'The deployed single-host topology, provisioning, TLS and certificate handling, and the live verification scripts. Use when changing infra, compose files, the Caddyfile, the Dockerfile, or anything affecting the deployed origin.'
 ---
 
 # CareerScope Deployment
@@ -14,7 +14,7 @@ bring-up.
 
 ## When to use
 
-- Changing anything under `infra/v3`
+- Changing anything under `infra`
 - Changing the Dockerfile, compose files or the Caddyfile
 - Changing firewall, DNS or TLS configuration
 - Verifying a change against the live origin
@@ -69,10 +69,10 @@ the API and the web server have no externally reachable address.
 
 ```sh
 bash provision-host.sh
-DOCKER_BUILDKIT=1 docker build -f infra/v3/Dockerfile --target runtime -t careerscope:v3 .
-DOCKER_BUILDKIT=1 docker build -f infra/v3/Dockerfile --target proxy   -t careerscope:v3-proxy .
+DOCKER_BUILDKIT=1 docker build -f infra/Dockerfile --target runtime -t careerscope:release .
+DOCKER_BUILDKIT=1 docker build -f infra/Dockerfile --target proxy   -t careerscope:release-proxy .
 bash deploy.sh careerscope.tech operator@example.com
-docker exec -it careerscope-api-1 node /app/v2/scripts/setup-owner.ts
+docker exec -it careerscope-api-1 node /app/scripts/setup-owner.ts
 ```
 
 ## Verification

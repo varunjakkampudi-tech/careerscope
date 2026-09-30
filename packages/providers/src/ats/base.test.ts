@@ -1,6 +1,6 @@
 import { employmentTypeFrom, periodFrom } from '../normalize.js';
 import { describe, expect, it, vi } from 'vitest';
-import type { RawJob } from '@job-radar/shared';
+import type { RawJob } from '@careerscope/shared';
 import { HttpError, type FetchLike } from '../http.js';
 import type { BoardRef } from '../boards.js';
 import {

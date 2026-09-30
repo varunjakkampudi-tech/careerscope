@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { isRefusedCodePoint, REFUSED_SYNTAX } from '@job-radar/shared';
-import type { JobDemands } from '@job-radar/shared';
+import { isRefusedCodePoint, REFUSED_SYNTAX } from '@careerscope/shared';
+import type { JobDemands } from '@careerscope/shared';
 import {
   scoreCompensation,
   scoreExperience,

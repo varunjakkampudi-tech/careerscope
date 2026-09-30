@@ -63,7 +63,7 @@ boundary, authentication, authorization or encryption changes · production
 firewall or proxy topology changes · a migration that cannot be shown
 backwards-safe · billing · external provider accounts.
 
-`infra/v3/restart-stack.sh` is the only supported restart. Never restart the
+`infra/restart-stack.sh` is the only supported restart. Never restart the
 proxy alone — every service shares its network namespace and will be stranded
 behind a 502 while still reporting healthy.
 

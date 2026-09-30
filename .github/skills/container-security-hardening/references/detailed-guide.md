@@ -614,7 +614,7 @@ aws ecr put-registry-scanning-configuration \
 
 ```yaml
 # Kyverno policy — require signed images before admission
-apiVersion: kyverno.io/v1
+apiVersion: kyverno.io/previous implementation
 kind: ClusterPolicy
 metadata:
   name: require-signed-images
@@ -644,7 +644,7 @@ spec:
 ### 5.1 Pod Security Context
 
 ```yaml
-apiVersion: apps/v1
+apiVersion: apps/previous implementation
 kind: Deployment
 metadata:
   name: myapp
@@ -735,7 +735,7 @@ kubectl label namespace production \
 
 ```yaml
 # Step 1: Deny all ingress and egress by default in the namespace
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/previous implementation
 kind: NetworkPolicy
 metadata:
   name: default-deny-all
@@ -746,7 +746,7 @@ spec:
 
 ---
 # Step 2: Selectively allow only required traffic
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/previous implementation
 kind: NetworkPolicy
 metadata:
   name: allow-app
@@ -791,7 +791,7 @@ spec:
 
 ```yaml
 # Create minimal role — never use wildcards
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/previous implementation
 kind: Role
 metadata:
   name: app-reader
@@ -803,7 +803,7 @@ rules:
     verbs: ['get'] # Never ["*"]
 
 ---
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/previous implementation
 kind: RoleBinding
 metadata:
   name: app-reader-binding
@@ -831,7 +831,7 @@ kubectl get clusterrolebindings -o json | \
 
 ```yaml
 # Require non-root containers
-apiVersion: kyverno.io/v1
+apiVersion: kyverno.io/previous implementation
 kind: ClusterPolicy
 metadata:
   name: require-non-root
@@ -852,7 +852,7 @@ spec:
 
 ---
 # Require image digest pinning
-apiVersion: kyverno.io/v1
+apiVersion: kyverno.io/previous implementation
 kind: ClusterPolicy
 metadata:
   name: require-image-digest
@@ -872,7 +872,7 @@ spec:
 
 ---
 # Block privileged containers
-apiVersion: kyverno.io/v1
+apiVersion: kyverno.io/previous implementation
 kind: ClusterPolicy
 metadata:
   name: disallow-privileged

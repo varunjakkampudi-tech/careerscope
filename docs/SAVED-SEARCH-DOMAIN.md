@@ -14,7 +14,7 @@ kind. See [Execution is not implied](#execution-is-not-implied-ac3).
 ## The problem this separates
 
 CareerScope already stores search _runs_. `search_runs`
-(`v2/packages/core/src/`) holds `request: jsonb` — the exact `CreateSearch` that
+(`CareerScope/packages/core/src/`) holds `request: jsonb` — the exact `CreateSearch` that
 produced that run — alongside `matchingProfile`, `profileRevision`,
 `sourceOutcomes`, `requestHash`, `idempotencyKey` and `status`.
 
@@ -56,7 +56,7 @@ criteria the existing search pipeline already accepts.
 
 ### `criteria` is `CreateSearch` minus `origin`
 
-The current schema (`v2/packages/core/src/commands.ts`) is:
+The current schema (`CareerScope/packages/core/src/commands.ts`) is:
 
 ```ts
 const createSearchSchema = z
@@ -170,7 +170,7 @@ Every mutating call **must** supply the revision it believes it is editing. If
 that does not match the stored value, the write is rejected and nothing changes.
 
 This follows the existing profile pattern exactly. `ProfileRevisionConflict`
-(`v2/packages/core/src/profile.ts`) extends `Conflict` with the stable code
+(`CareerScope/packages/core/src/profile.ts`) extends `Conflict` with the stable code
 `PROFILE_REVISION_CONFLICT`. Saved searches add:
 
 ```ts
@@ -183,7 +183,7 @@ export class SavedSearchRevisionConflict extends Conflict {
 
 A distinct code, not a reused one — CS-35 established that route-reachable
 conflicts carry distinct, stable, client-actionable codes, and the client's
-allowlist in `v2/apps/web/src/lib/api.ts` maps each to its own message and
+allowlist in `CareerScope/apps/web/src/lib/api.ts` maps each to its own message and
 decides whether to offer "discard and reload". A saved-search conflict and a
 profile conflict need different offers.
 
@@ -194,7 +194,7 @@ this document named only the client one. That omission is enough for a reader
 to recreate the exact defect CS-35 was opened to fix, while believing they were
 following its precedent.
 
-The server holds its own map (`v2/apps/api/src/app.ts:168`):
+The server holds its own map (`CareerScope/apps/api/src/app.ts:168`):
 
 ```ts
 const conflictMessages: Record<string, string> = {
@@ -214,7 +214,7 @@ So the requirement is:
 
 1. **Server**: add `SAVED_SEARCH_REVISION_CONFLICT` to `conflictMessages` with
    its own message. Without this the fallback silently mislabels it.
-2. **Client**: add it to the allowlist in `v2/apps/web/src/lib/api.ts` so the
+2. **Client**: add it to the allowlist in `CareerScope/apps/web/src/lib/api.ts` so the
    recovery offer is chosen per code.
 
 **A design that cites CS-35 as its precedent must not leave the reader able to
@@ -250,7 +250,7 @@ cannot.
 
 Four operations. All owner-scoped: `ownerId` comes from the session, **never
 from the client**, matching the invariant already enforced in
-`v2/apps/api/src/app.ts` where `request.ownerId` is assigned in exactly one
+`CareerScope/apps/api/src/app.ts` where `request.ownerId` is assigned in exactly one
 place, the `onRequest` hook.
 
 | Operation            | Input                                  | Success                 | Failure modes                                                                  |

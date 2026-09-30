@@ -1,6 +1,6 @@
 # Product Surface
 
-What a user can actually do today. Written from the deployed V2 application, not
+What a user can actually do today. Written from the deployed CareerScope application, not
 from a design document.
 
 ---
@@ -18,19 +18,19 @@ register (the last disabled).
 
 ## The one page
 
-`v2/apps/web/src/app` contains exactly one route, `/`, plus a generated
+`apps/web/src/app` contains exactly one route, `/`, plus a generated
 `robots.ts`. Every capability below is a component on that page, not a
 navigable route.
 
-| Area              | Component               | What it does                                       |
-| ----------------- | ----------------------- | -------------------------------------------------- |
-| Sign in / account | `account-form.tsx`      | Email and password sign-in                         |
-| Account security  | `account-security.tsx`  | Change password; revoke other sessions             |
-| Profile           | `profile-editor.tsx`    | Edit the candidate profile; revision-checked saves |
-| Resume            | `resume-panel.tsx`      | Upload, watch parsing, cancel, delete              |
-| Search results    | `match-evidence.tsx`    | Per-job score with the evidence behind it          |
-| Leads             | `saved-leads.tsx`       | Save, note, archive, reopen, view history, export  |
-| Preparation       | `preparation-panel.tsx` | Rules-v1 readiness and interview questions         |
+| Area              | Component               | What it does                                                    |
+| ----------------- | ----------------------- | --------------------------------------------------------------- |
+| Sign in / account | `account-form.tsx`      | Email and password sign-in                                      |
+| Account security  | `account-security.tsx`  | Change password; revoke other sessions                          |
+| Profile           | `profile-editor.tsx`    | Edit the candidate profile; revision-checked saves              |
+| Resume            | `resume-panel.tsx`      | Upload, watch parsing, cancel, delete                           |
+| Search results    | `match-evidence.tsx`    | Per-job score with the evidence behind it                       |
+| Leads             | `saved-leads.tsx`       | Save, note, archive, reopen, view history, export               |
+| Preparation       | `preparation-panel.tsx` | Rules-previous implementation readiness and interview questions |
 
 All API access goes through `lib/api.ts`.
 
@@ -92,7 +92,7 @@ update. Leads export from the search they came from.
 
 ### Preparation
 
-Rules-v1 readiness assessment and interview questions, with evidence links.
+Rules-previous implementation readiness assessment and interview questions, with evidence links.
 Deterministic, like matching.
 
 ### Account security

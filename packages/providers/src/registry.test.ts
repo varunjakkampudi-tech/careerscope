@@ -15,7 +15,7 @@
  * trivial one to catch here.
  */
 
-import { ALL_SOURCES, type SourceId } from '@job-radar/shared';
+import { ALL_SOURCES, type SourceId } from '@careerscope/shared';
 import { describe, expect, it } from 'vitest';
 import {
   createProviders,

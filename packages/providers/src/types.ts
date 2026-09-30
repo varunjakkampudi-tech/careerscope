@@ -1,4 +1,4 @@
-import type { ProviderQuery, RawJob, SourceId, SourceKind } from '@job-radar/shared';
+import type { ProviderQuery, RawJob, SourceId, SourceKind } from '@careerscope/shared';
 import type { HttpClient } from './http.js';
 
 /**

@@ -5,7 +5,7 @@ is running right now". Every other document is scoped to one area; this one is
 the map. If something here disagrees with another document, this file is wrong
 and should be fixed — not worked around.
 
-Last reconciled against repository state: 2026-09-27. Live production was not
+Last reconciled against repository state: 2026-10-01. Live production was not
 changed during this reconciliation.
 
 ---
@@ -19,28 +19,19 @@ not use AI to decide anything.
 
 ---
 
-## The V1 / V2 split
+## Canonical architecture
 
-The repository contains two complete stacks. This is deliberate and is the
-single most common thing a newcomer gets wrong.
+CareerScope is one product and one root workspace. The production architecture
+is Next.js App Router + React, Fastify, PostgreSQL/Drizzle, transactional
+outbox, publisher/queue/workers, deterministic matching and encrypted resume
+storage. Executable applications live under `apps/`, shared domain libraries
+under `packages/`, operational code under `infra/` and `scripts/`, and
+authoritative engineering records under `docs/` and `.ai/`.
 
-|          | V1                                      | V2                                     |
-| -------- | --------------------------------------- | -------------------------------------- |
-| Location | repository root (`apps/`, `packages/`)  | `v2/`                                  |
-| Package  | `job-radar`                             | `careerscope-v2`                       |
-| API      | Fastify + **SQLite**                    | Fastify + **PostgreSQL**               |
-| Web      | React + Vite SPA (React Router)         | Next.js App Router                     |
-| Tests    | Vitest                                  | `node:test`                            |
-| Branch   | `main`                                  | `main`                                 |
-| Status   | **IMPLEMENTED** — last release `v1.3.4` | **IMPLEMENTED AND CURRENTLY DEPLOYED** |
-
-`https://careerscope.tech` runs **V2**, deployed from `main`, which carries
-both stacks: the repository root is V1 and `v2/` is what ships. Tag `v1.3.4`
-marks the V1 release point.
-
-V1 is not dead code: it holds the GitHub Pages publishing pipeline, the mobile
-site, the browser-import tooling and the `packages/providers`, `packages/matching`
-and `packages/resume` libraries that V2 builds against (`v2 build:domain`).
+The consolidation is recorded in
+[`SINGLE-CODEBASE-CONSOLIDATION.md`](SINGLE-CODEBASE-CONSOLIDATION.md). Older
+release notes may mention historical implementations, but no active build,
+runtime, deployment or agent workflow depends on a second application stack.
 
 ---
 
@@ -52,14 +43,14 @@ explicitly selected ref after a required green CI run for that exact commit.
 [publish-pages.yml](../.github/workflows/publish-pages.yml) separately performs
 manual-only GitHub Pages publication with the same exact-revision CI gate.
 
-| Branch                       | Meaning                       | Rule                              |
-| ---------------------------- | ----------------------------- | --------------------------------- |
-| `main`                       | integration branch            | Pushes run CI; they never deploy  |
-| `feat/<ticket>-<slug>`       | one ticket's work             | Short-lived, rebased on `main`    |
-| `fix/<ticket>-<slug>`        | defect fix                    | Short-lived                       |
-| `chore/` `docs/` `infra/`    | cleanup, docs, infrastructure | Short-lived                       |
-| `hotfix/<version>-<slug>`    | production emergency          | Straight to `main`, then tagged   |
-| `feature/v2-local-migration` | historical V2 baseline        | Superseded; `main` now carries V2 |
+| Branch                            | Meaning                       | Rule                             |
+| --------------------------------- | ----------------------------- | -------------------------------- |
+| `main`                            | integration branch            | Pushes run CI; they never deploy |
+| `feat/<ticket>-<slug>`            | one ticket's work             | Short-lived, rebased on `main`   |
+| `fix/<ticket>-<slug>`             | defect fix                    | Short-lived                      |
+| `chore/` `docs/` `infra/`         | cleanup, docs, infrastructure | Short-lived                      |
+| `hotfix/<version>-<slug>`         | production emergency          | Straight to `main`, then tagged  |
+| `feature/canonical-consolidation` | historical migration baseline | Superseded; `main` is canonical  |
 
 Tags are `v<semver>`, applied to the deployed commit **after** the live version
 check passes. Commits follow Conventional Commits and name their ticket, for
@@ -74,7 +65,7 @@ The release procedure is the `/ship-release` prompt in `.github/prompts`.
 Single Hostinger VPS, Ubuntu 24.04, 2 vCPU / 8 GB, behind Caddy, serving
 `https://careerscope.tech`.
 
-Nine containers, defined in [compose.production.yml](../infra/v3/compose.production.yml):
+Nine containers, defined in [compose.production.yml](../infra/compose.production.yml):
 
 | Container    | Role                                                         |
 | ------------ | ------------------------------------------------------------ |
@@ -119,7 +110,6 @@ Use only these words. Do not invent new ones.
 
 ### IMPLEMENTED, NOT DEPLOYED
 
-- V1 in its entirety, including GitHub Pages publishing and the mobile site
 - Cognito-hosted passwordless sign-in using authorization-code + PKCE. Email
   OTP and verified phone OTP are accepted; the provider access token is
   exchanged server-side and ends in the same opaque CareerScope session cookie.
@@ -166,18 +156,18 @@ Use only these words. Do not invent new ones.
 
 ## Where to go next
 
-| Question                               | Document                                                                            |
-| -------------------------------------- | ----------------------------------------------------------------------------------- |
-| How is it built?                       | [ARCHITECTURE](ARCHITECTURE.md) (V1), [v2/ARCHITECTURE](../v2/ARCHITECTURE.md) (V2) |
-| What endpoints exist?                  | [API-SURFACE](API-SURFACE.md)                                                       |
-| What does the user see?                | [PRODUCT-SURFACE](PRODUCT-SURFACE.md)                                               |
-| How is the frontend put together?      | [FRONTEND-ARCHITECTURE](FRONTEND-ARCHITECTURE.md)                                   |
-| How is it secured?                     | [SECURITY](SECURITY.md)                                                             |
-| How do I deploy?                       | [OPERATIONS/DEPLOYMENT](OPERATIONS/DEPLOYMENT.md)                                   |
-| How do I roll back?                    | [OPERATIONS/ROLLBACK](OPERATIONS/ROLLBACK.md)                                       |
-| What is the server?                    | [OPERATIONS/HOSTINGER](OPERATIONS/HOSTINGER.md)                                     |
-| What is the firewall?                  | [OPERATIONS/FIREWALL](OPERATIONS/FIREWALL.md)                                       |
-| Where do secrets live?                 | [OPERATIONS/SECRETS](OPERATIONS/SECRETS.md)                                         |
-| What do I run to prove a change works? | [TESTING](TESTING.md)                                                               |
-| What is broken or missing?             | [KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md)                                           |
-| What is the next phase?                | [FRONTEND-ADMIN-ROADMAP](FRONTEND-ADMIN-ROADMAP.md)                                 |
+| Question                               | Document                                            |
+| -------------------------------------- | --------------------------------------------------- |
+| How is it built?                       | [ARCHITECTURE](ARCHITECTURE.md)                     |
+| What endpoints exist?                  | [API-SURFACE](API-SURFACE.md)                       |
+| What does the user see?                | [PRODUCT-SURFACE](PRODUCT-SURFACE.md)               |
+| How is the frontend put together?      | [FRONTEND-ARCHITECTURE](FRONTEND-ARCHITECTURE.md)   |
+| How is it secured?                     | [SECURITY](SECURITY.md)                             |
+| How do I deploy?                       | [OPERATIONS/DEPLOYMENT](OPERATIONS/DEPLOYMENT.md)   |
+| How do I roll back?                    | [OPERATIONS/ROLLBACK](OPERATIONS/ROLLBACK.md)       |
+| What is the server?                    | [OPERATIONS/HOSTINGER](OPERATIONS/HOSTINGER.md)     |
+| What is the firewall?                  | [OPERATIONS/FIREWALL](OPERATIONS/FIREWALL.md)       |
+| Where do secrets live?                 | [OPERATIONS/SECRETS](OPERATIONS/SECRETS.md)         |
+| What do I run to prove a change works? | [TESTING](TESTING.md)                               |
+| What is broken or missing?             | [KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md)           |
+| What is the next phase?                | [FRONTEND-ADMIN-ROADMAP](FRONTEND-ADMIN-ROADMAP.md) |

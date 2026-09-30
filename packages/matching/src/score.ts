@@ -8,7 +8,7 @@ import {
   type MatchDimension,
   type MatchDimensions,
   type MatchDimensionScore,
-} from '@job-radar/shared';
+} from '@careerscope/shared';
 import { extractDemands } from './demands.js';
 import {
   clamp01,

@@ -1,4 +1,4 @@
-import type { RawJob } from '@job-radar/shared';
+import type { RawJob } from '@careerscope/shared';
 import { load } from 'cheerio';
 import { OAuth2Client } from 'google-auth-library';
 import { htmlToText } from '../html.js';

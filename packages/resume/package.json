@@ -1,6 +1,6 @@
 {
-  "name": "@job-radar/resume",
-  "version": "1.0.0",
+  "name": "@careerscope/resume",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
   "main": "./dist/index.js",
@@ -16,7 +16,7 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@job-radar/shared": "1.0.0",
+    "@careerscope/shared": "3.0.0",
     "mammoth": "^1.8.0",
     "pdf-parse": "^2.1.0"
   }

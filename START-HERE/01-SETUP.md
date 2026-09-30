@@ -54,28 +54,27 @@ node scripts/check-agents.mjs   # expect "agent configuration valid"
 If something here is red on a clean clone, that is a finding — record it before
 you start work, so it is not later attributed to your change.
 
-## 5. The V2 stack
+## 5. The CareerScope stack
 
 ```bash
-npm --prefix v2 run typecheck
-npm --prefix v2 test
-docker compose -f v2/compose.yml up -d --wait   # services
+npm run typecheck
+npm test
+docker compose --env-file .env -f infra/compose.canonical.yml up -d --wait   # services
 ```
 
 ### Windows only
 
-Windows reserves TCP **55403-55502**, which collides with the V2 Postgres port.
-A launcher at `data/windows-v2/run.mjs` remaps it and pins the Node runtime:
+Windows may reserve the default Postgres port. The local setup command pins the
+workspace runtime and writes the configured service environment:
 
 ```powershell
-node data/windows-v2/run.mjs run typecheck
-node data/windows-v2/run.mjs test
-node data/windows-v2/run.mjs --services up -d --wait
+npm run typecheck
+npm test
+npm run services
 ```
 
 That launcher lives under gitignored `data/`, so it does **not** arrive with a
-clone. On macOS and Linux you do not need it — the port collision does not
-exist, and plain `npm --prefix v2` works.
+clone. The same root commands work on macOS and Linux.
 
 ## 6. VS Code
 
@@ -83,7 +82,7 @@ Open the folder. The workspace ships:
 
 - `.github/agents/` — 16 specialist agents, available in the agent picker
 - `.vscode/tasks.json` — **CareerScope: Engineering Control Center** and others
-- `.vscode/mcp.json` — the `job-radar` MCP server
+- `.vscode/mcp.json` — the CareerScope MCP server
 
 **Known issue:** `.vscode/mcp.json` points into gitignored `data/` at a Windows
 `node.exe` and a launcher script. After a clone on any machine — and on macOS in
@@ -105,8 +104,8 @@ renders, the multi-agent system is ready. See [03-MULTI-AGENT.md](03-MULTI-AGENT
 triggers the Deploy workflow, which deploys to production.**
 
 ```bash
-infra/v3/check-provenance.sh   # what is actually deployed
-infra/v3/restart-stack.sh      # the ONLY supported restart
+infra/check-provenance.sh   # what is actually deployed
+infra/restart-stack.sh      # the ONLY supported restart
 ```
 
 Never restart the proxy alone. Never deploy uncommitted code.

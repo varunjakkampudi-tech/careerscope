@@ -30,7 +30,7 @@
  * `benefits`.
  */
 
-import type { RawJob } from '@job-radar/shared';
+import type { RawJob } from '@careerscope/shared';
 import type { JobProvider, ProviderContext } from '../types.js';
 import { employmentTypeFrom } from '../normalize.js';
 import {

@@ -9,7 +9,7 @@ import {
   type Job,
   type JobDemands,
   type MatchDimensionScore,
-} from '@job-radar/shared';
+} from '@careerscope/shared';
 import { candidateSeniority, levelOf, seniorityOf } from './seniority.js';
 
 /**

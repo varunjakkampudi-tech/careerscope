@@ -12,7 +12,7 @@ or the strongest available Copilot model — see `.ai/DECISIONS.md`.
 
 ## Scope
 
-`infra/v3` (deployed stack), `.github/workflows`, `v2/compose.yml`,
+`infra` (deployed stack), `.github/workflows`, compose files,
 `docs/OPERATIONS/*`.
 
 ## Rules that have each already caused a real incident
@@ -22,11 +22,11 @@ or the strongest available Copilot model — see `.ai/DECISIONS.md`.
   The firewall owns only the `inet careerscope` table.
 - **Never restart the proxy alone.** Every service joins its network namespace;
   restarting it strands them all behind a 502 while they still report healthy.
-  Use `infra/v3/restart-stack.sh`.
+  Use `infra/restart-stack.sh`.
 - **Never `docker system prune -a`.** It removes the images a rollback depends
   on. Prune build cache only.
 - **Never regenerate `POSTGRES_PASSWORD`** against an existing volume.
-  `infra/v3/.env` on the host is the only copy.
+  the protected host `.env` is the only copy.
 - **Never deploy uncommitted code.** Deploy `git archive` from a reviewed
   commit, then prove it with `check-provenance.sh`.
 - **Never publish an internal container port.** Only the proxy publishes.
@@ -36,9 +36,9 @@ or the strongest available Copilot model — see `.ai/DECISIONS.md`.
 ## Verify rather than assert
 
 ```bash
-bash /opt/careerscope/infra/v3/check-provenance.sh     # 4/4 must agree
-bash /opt/careerscope/infra/v3/check-host-firewall.sh  # 14 assertions
-bash /opt/careerscope/infra/v3/check-maintenance.sh
+bash /opt/careerscope/infra/check-provenance.sh     # 4/4 must agree
+bash /opt/careerscope/infra/check-host-firewall.sh  # 14 assertions
+bash /opt/careerscope/infra/check-maintenance.sh
 ```
 
 A zero exit code is not proof. On this machine `claude auth status` exits 0

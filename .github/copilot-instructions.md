@@ -10,14 +10,14 @@ Before the first change in a session, establish actual state rather than
 assuming it:
 
 1. Read [docs/PROJECT-STATE.md](../docs/PROJECT-STATE.md). It explains the
-   V1/V2 split, branch semantics and what is deployed. Most mistakes on this
-   repository come from editing V1 while thinking about V2.
-2. Read the architecture for the stack you are touching —
-   [V1](../docs/ARCHITECTURE.md) or [V2](../v2/ARCHITECTURE.md).
+   canonical workspace, branch semantics and what is deployed. Most mistakes on this
+   repository come from confusing historical records with the active product.
+2. Read [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) for the canonical
+   CareerScope stack.
 3. Check the current branch and commit: `git branch --show-current`,
    `git rev-parse HEAD`, `git status --porcelain`.
 4. Check what is actually deployed:
-   `infra/v3/check-provenance.sh`. Local `HEAD` and the deployed revision are
+   `infra/check-provenance.sh`. Local `HEAD` and the deployed revision are
    often legitimately different — confirm, never assume.
 5. Read [docs/TESTING.md](../docs/TESTING.md) and run the nearest test before
    you change anything, so you know what was already failing.
@@ -79,11 +79,11 @@ These have each already caused a real incident on this project.
   The firewall owns only the `inet careerscope` table.
 - **Never restart the proxy alone.** Every service joins its network namespace;
   restarting it orphans them all behind a 502 while they still report healthy.
-  Use `infra/v3/restart-stack.sh`.
+  Use `infra/restart-stack.sh`.
 - **Never run `docker system prune -a`.** It removes the images a rollback
   depends on. Prune build cache only.
 - **Never regenerate `POSTGRES_PASSWORD`** against an existing database volume.
-  `infra/v3/.env` on the host is the only copy; `ship.sh` preserves it.
+  the host's protected `.env` is the only copy; `ship.sh` preserves it.
 - **Never deploy uncommitted code.** Deploy `git archive` from a reviewed
   commit, then prove it with `check-provenance.sh`.
 - **Never publish an internal container port.** Only the proxy publishes.
@@ -100,7 +100,7 @@ These have each already caused a real incident on this project.
 ## Project Boundaries
 
 - Use Node.js >=24, npm workspaces and TypeScript project references. Keep the
-  modular monolith: Fastify/SQLite API, React/Vite UI and focused shared packages.
+  modular monolith: Fastify/PostgreSQL API, Next.js UI and focused shared packages.
 - Preserve ownership in `apps/api`, `apps/web`, `packages/*`, `mobile-site`,
   `scripts` and `infra`. Reuse existing validators, repositories and UI primitives.
 - GitHub Pages is a separate static artifact with public jobs and an encrypted
@@ -108,12 +108,11 @@ These have each already caused a real incident on this project.
 - Keep personal data, resumes, databases, credentials, browser state, generated
   builds and Repomix output out of Git and public artifacts. Preserve snapshot
   allowlists and the clean-worktree publication guard.
-- The v2 stack is deployed on a single Hostinger VPS behind Caddy and served at
-  `https://careerscope.tech`. Use `infra/v3` for host provisioning, deployment and
-  live verification. The deployed version is whatever `v2/package.json`
-  (`careerscope-v2`) states; the root `package.json` is the separate V1 line
-  (`job-radar`) and is several major versions behind. Reading the wrong one has
-  already put a three-major-version error on a dashboard. Confirm against
+- The CareerScope stack is deployed on a single Hostinger VPS behind Caddy and served at
+  `https://careerscope.tech`. Use `infra` for host provisioning, deployment and
+  live verification. The deployed version is whatever `package.json`
+  (`careerscope`) states; the root `package.json` is the canonical product workspace
+  (`careerscope`). Confirm against
   `/api/health` rather than either file. Do not provision additional infrastructure, change DNS or
   widen public exposure without explicit approval.
 - Job imports are not applications. Verify exact roles and duplicate history;
@@ -202,11 +201,11 @@ refuses to move a QA ticket that has no acceptance criteria, no evidence or an
 unfinished QA step, and `npm run release:close` refuses to mark anything
 `RELEASED` unless the live `/api/health` reports that exact version.
 
-Legacy release gates must be satisfied, not argued with. The initial AI audit
+Existing release gates must be satisfied, not argued with. The initial AI audit
 records that absent findings still default to an empty list and release closure
 does not bind supplied commit or ticket scope to provenance. Do not claim these
-gaps are fixed or treat a passing legacy gate as sufficient shipping evidence.
-Legacy mutation tests write canonical state: run them only in an isolated copy.
+gaps are fixed; a passing historical gate is not sufficient shipping evidence.
+Mutation tests write canonical state: run them only in an isolated copy.
 
 ## Verification And References
 

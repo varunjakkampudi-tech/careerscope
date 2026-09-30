@@ -57,5 +57,5 @@ provider behavior remain deployment-specific gates in
 - API runtime: `apps/api/dist/`
 - Internal package builds: `packages/*/dist/`
 
-Use [RUNBOOK.md](RUNBOOK.md) for a future production deployment. Never place the
+Use [archive/RUNBOOK-HISTORICAL.md](archive/RUNBOOK-HISTORICAL.md) for a future production deployment. Never place the
 local environment file, database, resumes, or recovery backups in public assets.

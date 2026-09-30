@@ -23,7 +23,7 @@ ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230
 ```
 
 Configuration is owned by `/etc/ssh/sshd_config.d/10-careerscope.conf`, written
-by [harden-ssh.sh](../../infra/v3/harden-ssh.sh):
+by [harden-ssh.sh](../../infra/harden-ssh.sh):
 
 | Setting                        | Value               |
 | ------------------------------ | ------------------- |
@@ -50,7 +50,7 @@ running `systemctl reload ssh`.
 
 ## Brute-force protection
 
-fail2ban, configured by [setup-fail2ban.sh](../../infra/v3/setup-fail2ban.sh).
+fail2ban, configured by [setup-fail2ban.sh](../../infra/setup-fail2ban.sh).
 
 - SSH jail only. 10 failures in 10 minutes, 15 minute ban.
 - `banaction = nftables-multiport`, which maintains its own `inet f2b-table`.
@@ -133,7 +133,7 @@ df -i /
 
 ## Read-only snapshot
 
-[audit-host.sh](../../infra/v3/audit-host.sh) records the real state of the host
+[audit-host.sh](../../infra/audit-host.sh) records the real state of the host
 — OS, updates, resources, systemd failures, time sync, listening sockets,
 Docker networks, published ports — and changes nothing. Run it before and after
 any host change.

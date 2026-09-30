@@ -22,7 +22,7 @@
  * nothing".
  */
 
-import type { ProviderQuery, RawJob, ScrapeSource } from '@job-radar/shared';
+import type { ProviderQuery, RawJob, ScrapeSource } from '@careerscope/shared';
 import { matchesQuery } from '../filter.js';
 import { isAbortError } from '../http.js';
 import { describeFailure, rankByRelevance } from '../rank.js';

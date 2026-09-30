@@ -1,20 +1,15 @@
 # Frontend Architecture
 
-Two frontends exist. Know which one you are in.
-
-|           | V1                                     | V2 (deployed)                   |
-| --------- | -------------------------------------- | ------------------------------- |
-| Location  | `apps/web`                             | `v2/apps/web`                   |
-| Framework | React 18 + Vite, React Router          | Next.js 16 App Router, React 19 |
-| Routes    | 10                                     | **9**                           |
-| Serves    | GitHub Pages artifact, local workspace | `https://careerscope.tech`      |
+CareerScope has one canonical frontend: Next.js App Router with React 19 in
+`apps/web`. Routes compose feature views, shared UI primitives and the single
+browser API client. There is no alternate application frontend.
 
 ---
 
-## V2 — what is actually there
+## Current application
 
 ```
-v2/apps/web/src/
+apps/web/src/
 ├── app/
 │   ├── layout.tsx, providers.tsx, globals.css, robots.ts
 │   ├── page.tsx                 public/auth entry point
@@ -33,7 +28,7 @@ v2/apps/web/src/
     └── session.ts                owner-scoped session/cache contract
 ```
 
-The V2 frontend uses a route-group shell and feature components. New UI must
+The frontend uses a route-group shell and feature components. New UI must
 follow the atomic boundary: primitives/atoms first, composed molecules next,
 feature organisms last, and route pages only compose them. A route must not
 invent a second button, state, card, token or API client. CSS Modules are the
@@ -43,9 +38,7 @@ preprocessor or custom webpack configuration without a measured need would
 increase the build surface and weaken the existing Next.js pipeline.
 
 State is local to components and lifted into `page.tsx` where it is shared.
-There is no Redux, no Zustand, no React Query, and no global store. For a
-single-page, single-owner workspace this is proportionate; it stops being
-proportionate the moment real routing is introduced.
+Introduce a global store only for a demonstrated cross-route requirement.
 
 ## The API client
 
@@ -127,13 +120,3 @@ first, because getting them wrong is expensive:
 See [FRONTEND-ADMIN-ROADMAP](FRONTEND-ADMIN-ROADMAP.md).
 
 ---
-
-## V1 frontend
-
-React Router SPA under `apps/web`, with routes for `/jobs`, `/login`,
-`/workspace`, `/onboarding`, `/profile`, `/search`, `/leads`, `/settings` and
-`/applications`. It backs the GitHub Pages artifact and the mobile site.
-
-It is not deployed at `careerscope.tech` and is not the target of new product
-work, but it is not dead — the Pages pipeline, the encrypted admin snapshot and
-the mobile site all depend on it.

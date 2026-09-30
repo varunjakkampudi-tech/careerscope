@@ -25,7 +25,7 @@
  * permanently unreachable, that message is the diagnosis.
  */
 
-import type { RawJob } from '@job-radar/shared';
+import type { RawJob } from '@careerscope/shared';
 import { HttpError } from '../http.js';
 import { employmentTypeFrom } from '../normalize.js';
 import type { JobProvider } from '../types.js';

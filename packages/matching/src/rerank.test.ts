@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import type Anthropic from '@anthropic-ai/sdk';
-import type { Job, MatchBreakdown } from '@job-radar/shared';
+import type { Job, MatchBreakdown } from '@careerscope/shared';
 import {
   MAX_DESCRIPTION_CHARS,
   RERANK_MAX_TOKENS,

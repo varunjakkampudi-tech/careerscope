@@ -1,7 +1,7 @@
 ---
 name: CareerScope Backend And Domain
 description: 'Use when changing API/MCP routes, repositories, matching, resume parsing, providers or workers: contracts, validation, concurrency and failure handling.'
-applyTo: 'apps/api/src/**,v2/apps/api/src/**,v2/apps/workers/**,v2/packages/core/src/**,packages/providers/src/**,packages/matching/src/**,packages/resume/src/**,packages/shared/src/**'
+applyTo: 'apps/api/src/**,apps/api/src/**,apps/workers/**,packages/core/src/**,packages/providers/src/**,packages/matching/src/**,packages/resume/src/**,packages/shared/src/**'
 ---
 
 # Backend And Domain Rules
@@ -10,7 +10,7 @@ applyTo: 'apps/api/src/**,v2/apps/api/src/**,v2/apps/workers/**,v2/packages/core
   Reuse shared Zod schemas, repository abstractions and typed API errors.
 - Validate external input and authentication/authorization at every entry point,
   including MCP. Test singular/plural filter mappings, defaults and unknown inputs.
-- Preserve V1 SQLite and V2 PostgreSQL transactions, their separate migration
+- Preserve the canonical PostgreSQL transactions, append-only migration
   conventions, outbox fencing and deduplication.
   Check constraints and query plans before adding indexes or caching. Never test
   migrations or seed scripts against the owner's data directory.

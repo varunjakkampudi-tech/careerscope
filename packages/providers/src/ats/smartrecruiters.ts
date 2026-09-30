@@ -15,7 +15,7 @@
  * marketing that would dilute them, so it is placed last rather than first.
  */
 
-import type { RawJob } from '@job-radar/shared';
+import type { RawJob } from '@careerscope/shared';
 import type { JobProvider } from '../types.js';
 import { employmentTypeFrom } from '../normalize.js';
 import {

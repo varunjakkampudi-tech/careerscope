@@ -17,7 +17,7 @@
  * The signatures below are matched to *report* a wall, never to get around one.
  */
 
-import type { SourceId } from '@job-radar/shared';
+import type { SourceId } from '@careerscope/shared';
 
 /** Why a request did not produce results, when the reason was not an error. */
 export type BlockKind =

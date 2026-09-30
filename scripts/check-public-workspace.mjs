@@ -92,7 +92,7 @@ try {
             await page.evaluate(() => document.documentElement.scrollWidth > innerWidth),
             false,
           );
-          await page.screenshot({ path: `/tmp/careerscope-v2-${name}-${theme}-${width}.png` });
+          await page.screenshot({ path: `/tmp/careerscope-${name}-${theme}-${width}.png` });
         }
       }
       await page.getByRole('button', { name: /^Saved / }).click();

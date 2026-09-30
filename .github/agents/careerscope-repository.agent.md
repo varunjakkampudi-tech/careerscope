@@ -52,7 +52,7 @@ harder to review and impossible to revert cleanly.
 
 ## Branches and releases
 
-`main` is the V1 line and is what deploys. Feature work belongs on a branch.
+`main` is the previous implementation line and is what deploys. Feature work belongs on a branch.
 Check for orphaned commits before declaring work shipped — this project has
 twice stranded a fix on a branch while believing it was on `main`.
 

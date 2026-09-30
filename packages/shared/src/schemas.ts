@@ -193,7 +193,7 @@ export const jobSchema = z.object({
    * posting under that same title+company+location — two real reqs, not a
    * repost — this becomes a hash that also includes the source and its own
    * job id, so the two openings do not collapse into one. See
-   * `resolveFingerprintGroup` in `@job-radar/providers`.
+   * `resolveFingerprintGroup` in `@careerscope/providers`.
    */
   fingerprint: z.string(),
   source: z.enum(ALL_SOURCES),

@@ -5,7 +5,7 @@ license: MIT
 license_source: https://github.com/ibelick/ui-skills/blob/main/LICENSE
 metadata:
   upstream: sickn33/agentic-awesome-skills
-  pinned-tag: v17.5.0
+  pinned-tag: previous implementation7.5.0
   pinned-commit: ebffb8789f6f36047ba76ed7233380b4d837d371
 name: baseline-ui
 risk: critical

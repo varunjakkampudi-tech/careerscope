@@ -1,4 +1,4 @@
-import type { CandidateContext, Job } from '@job-radar/shared';
+import type { CandidateContext, Job } from '@careerscope/shared';
 
 /**
  * Fixtures for the engine's tests. Modelled on the real resume in `data/` and on

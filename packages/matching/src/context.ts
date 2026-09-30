@@ -3,7 +3,7 @@ import {
   parseCompensation,
   type CandidateContext,
   type MatchableProfile,
-} from '@job-radar/shared';
+} from '@careerscope/shared';
 
 /**
  * Assembling the candidate side of a comparison.

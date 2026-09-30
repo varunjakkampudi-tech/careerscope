@@ -24,7 +24,7 @@
  * source id travels with every lead through to the leads table.
  */
 
-import type { ProviderQuery, RawJob, RemoteSource } from '@job-radar/shared';
+import type { ProviderQuery, RawJob, RemoteSource } from '@careerscope/shared';
 import { matchesQuery } from '../filter.js';
 import { isAbortError } from '../http.js';
 import { describeFailure, rankByRelevance } from '../rank.js';

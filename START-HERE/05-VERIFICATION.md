@@ -65,9 +65,9 @@ npm --prefix v2 run test:performance     # 8 concurrent, 30s, asserts p50/p95/p9
 ## Deployment
 
 ```bash
-infra/v3/check-provenance.sh        # what is ACTUALLY deployed
+infra/check-provenance.sh        # what is ACTUALLY deployed
 curl -s https://careerscope.tech/api/health
-infra/v3/restart-stack.sh           # the only supported restart
+infra/restart-stack.sh           # the only supported restart
 ```
 
 Never restart the proxy alone — every service shares its network namespace and

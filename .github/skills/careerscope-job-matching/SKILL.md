@@ -26,8 +26,8 @@ change to the product's credibility.
 | --------------------------- | ---------------------------------- |
 | Scoring                     | `packages/matching/src/score.ts`   |
 | Weights and thresholds      | `packages/shared/src/constants.ts` |
-| Profile schema and snapshot | `v2/packages/core/src/profile.ts`  |
-| Snapshot persistence        | `v2/packages/core/src/database.ts` |
+| Profile schema and snapshot | `packages/core/src/profile.ts`     |
+| Snapshot persistence        | `packages/core/src/database.ts`    |
 
 ## Weights
 
@@ -97,7 +97,7 @@ not be added to the snapshot.
 
 `scoreJob` is pure. Do not introduce I/O, `Date.now()`, randomness or caching
 keyed on mutable state. The optional rerank path blends
-`0.6 * heuristic + 0.4 * llm` but is **not active** in the v2 runtime, and even
+`0.6 * heuristic + 0.4 * llm` but is **not active** in the CareerScope runtime, and even
 when active it cannot resurrect an excluded job.
 
 ## Forbidden shortcuts
@@ -113,9 +113,9 @@ when active it cannot resurrect an excluded job.
 ```sh
 npm test -- packages/matching
 npm test -- packages/shared
-npm --prefix v2 test
+npm test
 ```
 
 Preparation output is separately asserted never to echo the candidate email —
-see `v2/packages/core/src/profile.test.ts` and the live check in
-`infra/v3/check-live-flow.mjs`.
+see `packages/core/src/profile.test.ts` and the live check in
+`infra/check-live-flow.mjs`.

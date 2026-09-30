@@ -21,7 +21,7 @@
  * rather than wasting it.
  */
 
-import type { AtsSource, ProviderQuery, RawJob } from '@job-radar/shared';
+import type { AtsSource, ProviderQuery, RawJob } from '@careerscope/shared';
 import { boardsFor, type BoardRef } from '../boards.js';
 import { matchesQuery } from '../filter.js';
 import { describeFailure, rankByRelevance } from '../rank.js';

@@ -1,243 +1,100 @@
-# syntax=docker/dockerfile:1.7
-#
-# CareerScope — API image (also serves the SPA).
-#
-# ## Why node:24
-#
-# The database layer uses `node:sqlite`, which is a *built-in* module rather
-# than a native dependency. Other packages can require native builds on ARM64,
-# so install stages include CMake and compiler tools; the runtime stage does not.
-# The project requires Node >=24 and uses its built-in SQLite and backup APIs.
-#
-# ## Two targets
-#
-# `api` is the default: no browser, no display. The three browser-backed
-# sources report themselves unavailable, with a reason, and every other source
-# works normally.
-#
-# `api-scrape` is that same image plus Chromium, its shared libraries and an X
-# server — several times the size, for one opt-in tier. Build it only if you
-# intend to set ENABLE_SCRAPERS=true; the code path is otherwise identical, and
-# a source that is switched off does not get cheaper for being installed.
-#
-# Build from the repository root:
-#   docker build -f infra/Dockerfile --target api        -t job-radar:latest .
-#   docker build -f infra/Dockerfile --target api-scrape -t job-radar:scrape .
+ARG NODE_IMAGE=node:26.8.1-bookworm-slim@sha256:367679cf9792759492a486e4aa4b421764d71a9546a6dae8aab81a99eb797b3e
+ARG GO_IMAGE=golang:1.26-alpine
+ARG ALPINE_IMAGE=alpine:3.23
 
-ARG NODE_IMAGE=node:24-slim
+# Upstream caddy:2-alpine ships a binary built with a vulnerable Go toolchain and
+# dependencies, so the proxy binary is rebuilt here instead of being consumed as-is.
+FROM ${GO_IMAGE} AS caddy-build
+ENV CGO_ENABLED=0 GOTOOLCHAIN=local
+WORKDIR /build
+RUN printf '%s\n' \
+    'package main' \
+    'import (' \
+    '  caddycmd "github.com/caddyserver/caddy/cmd"' \
+    '  _ "github.com/caddyserver/caddy/caddyconfig/caddyfile"' \
+    '  _ "github.com/caddyserver/caddy/modules/caddyhttp"' \
+    '  _ "github.com/caddyserver/caddy/modules/caddyhttp/fileserver"' \
+    '  _ "github.com/caddyserver/caddy/modules/caddyhttp/headers"' \
+    '  _ "github.com/caddyserver/caddy/modules/caddyhttp/requestbody"' \
+    '  _ "github.com/caddyserver/caddy/modules/caddyhttp/reverseproxy"' \
+    '  _ "github.com/caddyserver/caddy/modules/caddyhttp/rewrite"' \
+    ')' \
+    'func main() { caddycmd.Main() }' > main.go \
+    && go mod init careerscope/proxy \
+    && go get github.com/caddyserver/caddy/v2@latest \
+    && go get golang.org/x/net@latest golang.org/x/crypto@latest \
+    && go get google.golang.org/grpc@v1.83.2 \
+    && go mod tidy \
+    && go build -trimpath -ldflags '-s -w' -o /out/caddy .
 
+FROM ${ALPINE_IMAGE} AS proxy
+ARG CAREERSCOPE_REVISION=unknown
+LABEL org.opencontainers.image.revision="${CAREERSCOPE_REVISION}"
+LABEL org.opencontainers.image.source="https://github.com/varunjakkampudi-tech/careerscope"
+RUN apk upgrade --no-cache \
+    && apk add --no-cache ca-certificates mailcap \
+    && mkdir -p /config/caddy /data/caddy \
+    && chown -R 1000:1000 /config /data
+COPY --from=caddy-build /out/caddy /usr/bin/caddy
+USER 1000:1000
+ENV XDG_CONFIG_HOME=/config XDG_DATA_HOME=/data
+ENTRYPOINT ["/usr/bin/caddy"]
+CMD ["run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
 
-# --------------------------------------------------------------------------
-# manifests — the package.json files and nothing else
-#
-# Every install stage starts here, so editing a source file does not invalidate
-# any of them. The workspace manifests must be listed one by one: a COPY
-# wildcard flattens directories, which would break the layout npm needs.
-# --------------------------------------------------------------------------
-FROM ${NODE_IMAGE} AS manifests
+FROM ${NODE_IMAGE} AS build
 WORKDIR /app
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      build-essential cmake python3 \
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 NEXT_TELEMETRY_DISABLED=1
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential cmake python3 \
     && rm -rf /var/lib/apt/lists/*
-
-# Playwright's postinstall downloads ~150 MB of browsers. Two of the three
-# install stages below have no use for them, and the third wants them somewhere
-# it controls, so the download is switched off here and done explicitly in
-# `api-scrape`.
-ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
-
-COPY package.json package-lock.json ./
-COPY packages/shared/package.json packages/shared/
-COPY packages/resume/package.json packages/resume/
-COPY packages/matching/package.json packages/matching/
-COPY packages/providers/package.json packages/providers/
-COPY apps/api/package.json apps/api/
-COPY apps/web/package.json apps/web/
-
-
-# --------------------------------------------------------------------------
-# deps — full install, including dev
-# --------------------------------------------------------------------------
-FROM manifests AS deps
-
-RUN --mount=type=cache,target=/root/.npm npm ci
-
-
-# --------------------------------------------------------------------------
-# build — compile every workspace, then bundle the SPA
-# --------------------------------------------------------------------------
-FROM deps AS build
-WORKDIR /app
-
-COPY tsconfig.base.json tsconfig.json ./
-COPY packages packages
-COPY apps apps
-COPY mobile-site/jobs.json mobile-site/jobs.json
-
-# Empty API base URL means "same origin as this page", which is exactly right
-# for this image: the API serves the bundle itself. The Pages build overrides
-# both of these — see .github/workflows/deploy-pages.yml.
-ARG VITE_API_BASE_URL=""
-ARG VITE_BASE_PATH="/"
-ENV VITE_API_BASE_URL=${VITE_API_BASE_URL} \
-    VITE_BASE_PATH=${VITE_BASE_PATH}
-
+COPY package.json package-lock.json tsconfig.base.json tsconfig.json ./
+COPY packages ./packages
+COPY apps ./apps
+COPY migrations ./migrations
+COPY scripts ./scripts
+COPY drizzle.config.ts ./drizzle.config.ts
+RUN npm ci
+RUN npm run build --workspace @careerscope/shared \
+    && npm run build --workspace @careerscope/resume \
+    && npm run build --workspace @careerscope/matching \
+    && npm run build --workspace @careerscope/providers
 RUN npm run build
+RUN npm prune --omit=dev --omit=optional
 
-
-# --------------------------------------------------------------------------
-# prod-deps — the same lockfile, without anything only the build needed
-#
-# A separate stage rather than `npm prune` in place, so the runtime image
-# never contains a layer that once held TypeScript, Vite and Vitest.
-#
-# `--omit=optional` is what leaves Playwright out. It is an optional dependency
-# of @job-radar/providers precisely so this line can be a flag rather than a
-# second manifest: the code has a real path for its absence, and greying the
-# browser sources out with a reason is a supported state, not a failure.
-# --------------------------------------------------------------------------
-FROM manifests AS prod-deps
-
-RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev --omit=optional
-
-
-# --------------------------------------------------------------------------
-# scrape-deps — production dependencies plus Playwright
-#
-# Identical to prod-deps but for the omitted flag, and from the same lockfile,
-# so the two images cannot drift in anything except the browser.
-# --------------------------------------------------------------------------
-FROM manifests AS scrape-deps
-
-RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
-
-
-# --------------------------------------------------------------------------
-# api — the runtime image
-# --------------------------------------------------------------------------
-FROM ${NODE_IMAGE} AS api
+FROM ${NODE_IMAGE} AS runtime
+ARG CAREERSCOPE_REVISION=unknown
+LABEL org.opencontainers.image.revision="${CAREERSCOPE_REVISION}"
+LABEL org.opencontainers.image.source="https://github.com/varunjakkampudi-tech/careerscope"
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 CAREERSCOPE_REVISION=${CAREERSCOPE_REVISION}
+# The base image is digest-pinned for reproducibility, so it never picks up
+# Debian security updates on its own; apply them explicitly.
+RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-
-# WEB_DIST is absolute because it resolves against the working directory, and
-# the default `../web/dist` assumes a cwd of apps/api. Here the cwd is /app.
-ENV NODE_ENV=production \
-    HOST=0.0.0.0 \
-    PORT=8080 \
-    DATA_DIR=/app/data \
-    SERVE_WEB=true \
-    WEB_DIST=/app/apps/web/dist
-
-# node_modules first: it contains symlinks into packages/*, so those
-# directories have to exist by the time anything resolves an import.
-COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=prod-deps /app/package.json ./package.json
-
-COPY --from=build /app/packages/shared/package.json ./packages/shared/
-COPY --from=build /app/packages/shared/dist ./packages/shared/dist
-COPY --from=build /app/packages/resume/package.json ./packages/resume/
-COPY --from=build /app/packages/resume/dist ./packages/resume/dist
-COPY --from=build /app/packages/matching/package.json ./packages/matching/
-COPY --from=build /app/packages/matching/dist ./packages/matching/dist
-COPY --from=build /app/packages/providers/package.json ./packages/providers/
-COPY --from=build /app/packages/providers/dist ./packages/providers/dist
-
-COPY --from=build /app/apps/api/package.json ./apps/api/
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/packages ./packages
+COPY --from=build /app/apps/api/package.json ./apps/api/package.json
 COPY --from=build /app/apps/api/dist ./apps/api/dist
-COPY --from=build /app/apps/web/dist ./apps/web/dist
-
-# Seed data lives at /app/seed, NOT /app/data. The data directory is a mounted
-# volume, and a volume mounted over a directory hides whatever the image put
-# there — so seed files kept in `data/` would be invisible on the one boot
-# that actually needs them. WORKDIR is /app, so this is also exactly where
-# `seedFileArg()` looks by default.
-COPY seed ./seed
-
-COPY infra/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
-# The `node` user ships with the base image (uid 1000). Creating the data
-# directory here and handing it over means a *named* volume inherits this
-# ownership when Docker first populates it. A bind mount does not — the host
-# directory has to be chown'd to 1000 by hand (see docs/RUNBOOK.md).
-RUN mkdir -p /app/data && chown -R node:node /app/data /app/seed
+COPY --from=build /app/apps/workers/search/package.json ./apps/workers/search/package.json
+COPY --from=build /app/apps/workers/search/dist ./apps/workers/search/dist
+COPY --from=build /app/apps/web/package.json ./apps/web/package.json
+COPY --from=build /app/apps/web/next.config.ts ./apps/web/next.config.ts
+COPY --from=build /app/apps/web/.next ./apps/web/.next
+COPY --from=build /app/migrations ./migrations
+COPY --from=build /app/scripts/migrate.ts ./scripts/migrate.ts
+COPY --from=build /app/scripts/setup-owner.ts ./scripts/setup-owner.ts
+# backfill-job-sightings.ts (CS-28) was documented as a one-time production
+# step but never actually reached the runtime image until now - the fix
+# landed here, alongside the same gap for CS-26's script, rather than in two
+# separate changes.
+COPY --from=build /app/scripts/backfill-job-sightings.ts ./scripts/backfill-job-sightings.ts
+COPY --from=build /app/scripts/run-scheduled-discovery.ts ./scripts/run-scheduled-discovery.ts
+COPY --from=build /app/scripts/check-lead-liveness.ts ./scripts/check-lead-liveness.ts
+COPY --from=build /app/scripts/enforce-search-retention.ts ./scripts/enforce-search-retention.ts
+RUN mkdir -p /private/objects /app/apps/web/.next/cache \
+    && chown -R node:node /private /app/apps/web/.next/cache \
+    && chmod 700 /private /private/objects
+WORKDIR /app
 USER node
-
-EXPOSE 8080
-
-# `fetch` is global in Node 24, so this needs no curl in the image.
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||8080)+'/api/health/ready').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"
-
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-CMD ["node", "/app/apps/api/dist/index.js"]
-
-
-# --------------------------------------------------------------------------
-# api-scrape — the same server, with a browser and somewhere to draw it
-#
-# Derived from `api` rather than assembled alongside it, so the two images can
-# only differ in what is added below. Everything above — env, layout, seed,
-# entrypoint, healthcheck, ownership — is inherited and cannot drift.
-#
-# This target is only worth building with ENABLE_SCRAPERS=true. Without it the
-# browser sources stay off and this is `api` carrying a browser it never opens.
-# --------------------------------------------------------------------------
-FROM api AS api-scrape
-
-# `api` ended on USER node; apt and the browser install need root back.
-USER root
-
-# Playwright resolves browsers relative to this, at install time *and* at
-# launch. Left at its default they would land in root's home directory and be
-# unreadable by the user that actually runs them.
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-
-# Merges over the pruned tree from prod-deps: same lockfile, same resolution,
-# so the only new directory is playwright itself.
-COPY --from=scrape-deps /app/node_modules ./node_modules
-
-# xvfb is not among Playwright's dependencies — those are the libraries
-# Chromium links against, not an X server — so it is asked for by name.
-#
-# `--with-deps` shells out to apt with a distro-specific package list. If a
-# future base image is newer than the Playwright in the lockfile knows about,
-# it says so and stops; the fix is to build both stages on a release it does
-# know, e.g. --build-arg NODE_IMAGE=node:24-bookworm-slim.
-RUN apt-get update \
- && apt-get install -y --no-install-recommends xvfb \
- && ./node_modules/.bin/playwright install --with-deps chromium \
- && chmod -R a+rX /ms-playwright \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
-
-COPY infra/xvfb-exec.sh /usr/local/bin/xvfb-exec.sh
-RUN chmod +x /usr/local/bin/xvfb-exec.sh
-
-USER node
-
-# The entrypoint still runs first and still `exec`s this, so the X server comes
-# up between the migration and the server, and node still ends up as PID 1.
-CMD ["/usr/local/bin/xvfb-exec.sh", "node", "/app/apps/api/dist/index.js"]
-
-FROM api-scrape AS api-apply
-
-USER root
-ARG COPILOT_VERSION=1.0.83
-RUN apt-get update \
- && apt-get install -y --no-install-recommends ca-certificates git x11vnc novnc websockify \
- && npm install --global @github/copilot@${COPILOT_VERSION} \
- && copilot --version \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
-
-ENV APPLICATION_COPILOT_PATH=/usr/local/bin/copilot
-COPY infra/application-exec.sh /usr/local/bin/application-exec.sh
-RUN chmod +x /usr/local/bin/application-exec.sh \
- && mkdir -p /home/node/.copilot /home/node/.vnc \
- && chown -R node:node /home/node
-
-USER node
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD node -e "Promise.all(['http://127.0.0.1:8080/api/health/ready','http://127.0.0.1:6080/vnc.html'].map(url=>fetch(url).then(r=>{if(!r.ok)throw Error('not ready')}))).then(()=>process.exit(0),()=>process.exit(1))"
-CMD ["/usr/local/bin/xvfb-exec.sh", "/usr/local/bin/application-exec.sh", "node", "/app/apps/api/dist/index.js"]
+CMD ["node", "apps/api/dist/main.js"]

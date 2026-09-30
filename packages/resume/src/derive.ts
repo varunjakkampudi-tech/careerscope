@@ -3,7 +3,7 @@ import {
   isRefusedCodePointAt,
   normalizeSkillList,
   REFUSED_SYNTAX,
-} from '@job-radar/shared';
+} from '@careerscope/shared';
 import { headerBlock, splitSections, type Sections } from './sections.js';
 
 /* -------------------------------------------------------------------------- */
@@ -451,7 +451,7 @@ function presentTitle(segment: string): string {
  * the segment. `$` now falls through to TITLE_STRAY_RE and is neutralised to a
  * space, keeping the rest of the title.
  *
- * MOVED TO `@job-radar/shared` as `REFUSED_SYNTAX` (CS-66 re-review, AC2). It
+ * MOVED TO `@careerscope/shared` as `REFUSED_SYNTAX` (CS-66 re-review, AC2). It
  * had stayed here while only the invisible-character predicate moved, and that
  * asymmetry was the live gap: `matching` neutralised the invisible half of the
  * refusal set when assembling stored evidence and let markup and template
@@ -464,7 +464,7 @@ const TITLE_STRAY_RE = /[^\p{L}\p{M}\p{N} .,&/'’+#()\-–—\u200c\u200d]/gu;
 /**
  * Control and invisible-formatting code points.
  *
- * MOVED TO `@job-radar/shared` (CS-66) rather than copied: `matching` needs the
+ * MOVED TO `@careerscope/shared` (CS-66) rather than copied: `matching` needs the
  * same refusal set when it assembles the `reason` string that becomes stored
  * match evidence, and two copies of a security-relevant character set is a
  * divergence waiting to happen — a code point refused here but renderable there

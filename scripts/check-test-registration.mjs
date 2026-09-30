@@ -1,7 +1,7 @@
-// CS-68: the same guarantee `v2/scripts/check-test-registration.ts` gives the
-// V2 workspace, for the root workspace's own test files.
+// CS-68: the same guarantee `scripts/check-test-registration.ts` gives the
+// canonical workspace's own test files.
 //
-// The V2 guard globs `v2/**` only, so root `scripts/` and `infra/` were
+// The canonical guard globs `**` only, so root `scripts/` and `infra/` were
 // unguarded — and two files were already silently unrun:
 // `scripts/engineering-runner.test.mjs` (twenty cases covering the test runner
 // and its TAP parser, including the malformed-totals cases that stop a runner
@@ -10,7 +10,7 @@
 // generation and its refusal to overwrite). Neither was named by any npm
 // script or any workflow step.
 //
-// The bar here is deliberately higher than the V2 guard's. Being named by an
+// The bar here is deliberately higher than the package test globs. Being named by an
 // npm script is not enough, because an npm script no workflow invokes is
 // exactly the shape of the original defect: the safety net existing and being
 // unreachable. A file counts as registered only when some workflow actually
@@ -53,11 +53,6 @@ const root = process.argv[2]
 const SCANNED = ['scripts', 'infra', 'mobile-site'];
 
 const EXCLUDED = {
-  v2: {
-    kind: 'own-guard',
-    reason:
-      'v2/scripts/check-test-registration.ts guards it, to a higher bar. Two guards over one tree would make one of them the stale one.',
-  },
   apps: {
     kind: 'vitest',
     reason:
@@ -73,6 +68,7 @@ const EXCLUDED = {
   'START-HERE': { kind: 'no-tests', reason: 'Onboarding documents.' },
   design: { kind: 'no-tests', reason: 'Design references and one-off build scripts.' },
   docs: { kind: 'no-tests', reason: 'Documentation.' },
+  migrations: { kind: 'no-tests', reason: 'Append-only SQL and generated migration metadata.' },
   seed: { kind: 'no-tests', reason: 'Seed data.' },
 };
 
@@ -207,7 +203,7 @@ for (const steps of resolution.perWorkflow.values()) {
 }
 
 const missing = [...named].filter(
-  (path) => !path.startsWith('v2/') && !path.includes('fixture') && !present.includes(path),
+  (path) => !path.startsWith('') && !path.includes('fixture') && !present.includes(path),
 );
 
 const unreachable = present.filter((file) => workflowsExecuting(file, resolution).length === 0);

@@ -22,7 +22,7 @@
  * "Unknown company".
  */
 
-import type { AtsSource } from '@job-radar/shared';
+import type { AtsSource } from '@careerscope/shared';
 
 export interface BoardRef {
   source: AtsSource;

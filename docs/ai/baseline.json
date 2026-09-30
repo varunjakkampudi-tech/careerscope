@@ -35,7 +35,7 @@
   },
   "integration_tests": {
     "status": "NOT_RUN",
-    "reason": "V2 launcher reads private environment and persistent storage; isolated prerequisites not established."
+    "reason": "CareerScope launcher reads private environment and persistent storage; isolated prerequisites not established."
   },
   "e2e_tests": {
     "status": "NOT_RUN",

@@ -24,7 +24,7 @@ introduce a new root-equivalent privilege class this single-host deployment
 does not have today. Rejected for exactly that reason. The recommended path,
 implemented here:
 
-- **Detect** by symptom, not by event: [recover-proxy.sh](../../infra/v3/recover-proxy.sh)
+- **Detect** by symptom, not by event: [recover-proxy.sh](../../infra/recover-proxy.sh)
   checks whether the real public origin actually answers — the exact thing
   the split-brain failure breaks — the same way `careerscope-monitor.timer`
   (CS-24) already does, not by watching for a specific restart/deploy event
@@ -49,7 +49,7 @@ implemented here:
 ## Install
 
 ```sh
-bash infra/v3/setup-proxy-recovery.sh
+bash infra/setup-proxy-recovery.sh
 ```
 
 Idempotent. Shares `/etc/careerscope-monitor.env` (`MONITOR_URL`,
@@ -58,7 +58,7 @@ Idempotent. Shares `/etc/careerscope-monitor.env` (`MONITOR_URL`,
 ## Verification
 
 ```sh
-bash infra/v3/check-proxy-recovery.sh
+bash infra/check-proxy-recovery.sh
 ```
 
 Runs entirely against stub `curl`/`restart-stack.sh` binaries — proves the

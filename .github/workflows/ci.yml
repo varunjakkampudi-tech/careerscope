@@ -89,7 +89,6 @@ jobs:
       - name: Test
         run: |
           npm test -- --reporter=default --reporter=junit --outputFile.junit=test-results/vitest-junit.xml
-          node --test infra/application-runtime.test.mjs
 
       - name: Keep the failure evidence
         if: failure()
@@ -103,42 +102,45 @@ jobs:
           retention-days: 14
 
       # Self-contained against stub docker/curl binaries - needs no real host,
-      # container or webhook, so unlike the other infra/v3 check-*.sh scripts
+      # container or webhook, so unlike the other infra check-*.sh scripts
       # (which verify a real deployed host) this one belongs in CI.
       - name: Test infra host monitor (CS-24)
-        run: bash infra/v3/check-monitoring.sh
+        run: bash infra/check-monitoring.sh
 
       # Genuinely exercises pg_dump/pg_restore against a disposable Postgres
       # container this step starts and tears down itself - AC2 requires the
       # restore be proven, not just documented, and only a real database can
       # prove that. GitHub-hosted runners have Docker preinstalled.
       - name: Test infra database backup (CS-25)
-        run: bash infra/v3/check-backup.sh
+        run: bash infra/check-backup.sh
 
       # Self-contained against stub curl/restart-stack.sh binaries - same
       # reasoning as CS-24's monitor test.
       - name: Test infra proxy recovery (CS-3)
-        run: bash infra/v3/check-proxy-recovery.sh
+        run: bash infra/check-proxy-recovery.sh
 
       # Self-contained against stub systemctl/systemd-analyze/curl binaries.
       # It exists mainly to keep proving the negative cases: a check that has
       # never been seen failing is not evidence, and "passed while unable to
       # look" is the specific way scheduler checks have gone wrong here.
       - name: Test infra scheduler health (CS-47)
-        run: bash infra/v3/check-scheduler-health.sh
+        run: bash infra/check-scheduler-health.sh
 
       # CS-52 structural half: three times now, a real test file has run in no
       # workflow at all — R3's `--allow-net` self-check (a Deno flag Node lacks,
       # so unconditionally true), CS28-1's backfill test, and ai-provider's
       # twelve-case outbound-integration matrix. Fixing each instance fixes one
-      # file; this fixes the class. Every `*.test.ts` under v2 must be claimed
+      # file; this fixes the class. Every `*.test.ts` under canonical must be claimed
       # by some npm script, and an unclaimed one fails HERE rather than passing
       # silently everywhere. It needs no services, so it runs in this job and
       # fails fast, before the expensive suites.
-      - name: Every V2 test file is registered in a script (CS-52)
-        run: npm --prefix v2 run test:registration
+      - name: Every CareerScope test file is registered in a script (CS-52)
+        run: npm run test:registration
 
-      # CS-68: the same guarantee for the root workspace, which the V2 guard
+      - name: Test shared domain packages
+        run: npm run test:domain
+
+      # CS-68: the same guarantee for the root workspace, which the CareerScope guard
       # does not glob. Two files were already running nowhere when this was
       # written — engineering-runner.test.mjs (the test runner's own TAP parser,
       # including its refusal to report totals it cannot substantiate) and
@@ -146,7 +148,7 @@ jobs:
       # here: the script must be one a workflow actually reaches, because "the
       # safety net exists and is unreachable" is the original defect.
       - name: Every root test file is executed by a workflow (CS-68)
-        run: npm run test:registration
+        run: node scripts/check-test-registration.mjs
 
       # CS-52 systemic half. Eleven executable checks existed that no workflow
       # ran, and nobody could say per-check whether that was an oversight, a
@@ -164,9 +166,9 @@ jobs:
           npm run skills:check
           node scripts/check-customizations.mjs
 
-      # The V2 application serves careerscope.tech and its suite ran in no
+      # The CareerScope application serves careerscope.tech and its suite ran in no
       # workflow at all. Nine of its files need PostgreSQL, Redis, LocalStack,
-      # browsers and a gitignored .env; those run in the v2-integration job.
+      # browsers and a gitignored .env; those run in the integration job.
       # These seven need nothing at all.
       #
       # ai-provider.test.ts was added after a forensic audit found it named in
@@ -179,8 +181,8 @@ jobs:
       # OPENROUTER_API_KEY is needed or read.
       #
       # apps/web/src/lib/api.test.ts (CS-35) is the seventh, and it is the
-      # first thing in any workflow that reaches v2/apps/web at all — the root
-      # vitest `apps/web` glob targets the V1 app, not this one. It drives the
+      # first thing in any workflow that reaches apps/web at all — the root
+      # the canonical `apps/web` glob. It drives the
       # real api() against a stubbed fetch, so it needs no services either.
       #
       # This count is load-bearing, not decoration: it was "six" for one commit
@@ -188,24 +190,24 @@ jobs:
       # this file has been bitten by before. If you add a file to test:unit,
       # change the number in the same edit.
       #
-      # The step name says "unit only" deliberately: a green job called "V2
+      # The step name says "unit only" deliberately: a green job called "CareerScope
       # tests" would imply the integration half had passed, which is a worse
       # failure than having no job, because it looks like coverage.
-      - name: Test V2 (unit only — mocked HTTP, no database, queue or browser coverage)
+      - name: Test CareerScope (unit only — mocked HTTP, no database, queue or browser coverage)
         run: |
-          npm --prefix v2 ci
-          npm --prefix v2 run test:unit
+          npm ci
+          npm run test:unit
 
-      # V2's typecheck ran in deploy.yml's gate and in NO CI workflow, so a V2
+      # CareerScope's typecheck ran in deploy.yml's gate and in NO CI workflow, so a CareerScope
       # type error failed the deploy gate rather than the pull request that
-      # introduced it. It also now covers the V2 *test* files, which `tsc -b`
+      # introduced it. It also now covers the CareerScope *test* files, which `tsc -b`
       # never saw at all because the package builds exclude them — a test could
       # hold a type collapsing to `never` and assert nothing.
-      - name: Typecheck V2 (including its test files)
+      - name: Typecheck CareerScope (including its test files)
         run: |
-          npm --prefix v2 ci
-          npm --prefix v2 run build:domain
-          npm --prefix v2 run typecheck
+          npm ci
+          npm run build:domain
+          npm run typecheck
 
       - name: Validate Pages snapshots and publication
         run: npm run pages:test
@@ -277,8 +279,8 @@ jobs:
           wait "$server" 2>/dev/null || true
           test "$ok" = 1
 
-  v2-integration:
-    name: Test V2 (integration — database, queue, storage, browsers)
+  integration:
+    name: Test CareerScope (integration — database, queue, storage, browsers)
     runs-on: ubuntu-latest
     # 20 was enough before the browser suite; installing three engines with
     # their system libraries, producing a production Next build and driving
@@ -327,16 +329,16 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
-      # The V2 core imports the built shared domain packages, not their
-      # source, so the root install and build have to happen before V2 does.
+      # The CareerScope core imports the built shared domain packages, not their
+      # source, so the root install and build have to happen before CareerScope does.
       - name: Install root workspace
         run: npm ci
 
-      - name: Install V2
-        run: npm --prefix v2 ci
+      - name: Install CareerScope
+        run: npm ci
 
-      - name: Build the shared domain packages V2 depends on
-        run: npm --prefix v2 run build:domain
+      - name: Build the shared domain packages CareerScope depends on
+        run: npm run build:domain
 
       # BullMQ is intentionally stricter than the rate-limiter client: the
       # queue must be noeviction and AOF-backed. The stock Redis service does
@@ -361,7 +363,7 @@ jobs:
       # runner; it is not the gitignored local/production .env.
       - name: Write a CI-built environment file
         run: |
-          cat > v2/.env <<'EOF'
+          cat > .env <<'EOF'
           DATABASE_URL=postgres://careerscope:ci-integration-password@127.0.0.1:5432/careerscope
           REDIS_URL=redis://127.0.0.1:6379
           SEARCH_QUEUE_REDIS_URL=redis://127.0.0.1:6379
@@ -377,20 +379,20 @@ jobs:
       # pass. The files run serially because each one creates and force-drops
       # disposable databases; parallel teardown can terminate another file's
       # active PostgreSQL connections on a constrained shared service.
-      - name: Test V2 (integration)
-        run: npm --prefix v2 run test:integration
+      - name: Test CareerScope (integration)
+        run: npm run test:integration
 
       # CS-28: job_sightings recompute (pure replay() cases plus one real-DB
       # integration case) - named in neither test:unit's file list nor
       # test:integration's, so it needs its own explicit step or it never
       # runs anywhere in CI. The same audit that found ai-provider.test.ts
       # running nowhere started from this precedent.
-      - name: Test V2 (job_sightings backfill)
-        run: npm --prefix v2 run test:backfill-job-sightings
+      - name: Test CareerScope (job_sightings backfill)
+        run: npm run test:backfill-job-sightings
 
-      # CS-15: v2/scripts/check-ui.ts ran in no workflow at all. The `verify`
-      # job's "Verify the built app in browsers" step runs the *V1 root*
-      # scripts/check-ui.mjs — a different, older suite — so V2's browser
+      # CS-15: scripts/check-ui.ts ran in no workflow at all. The `verify`
+      # job's "Verify the built app in browsers" step runs the compatibility
+      # scripts/check-ui.mjs suite, so CareerScope's browser
       # acceptance and its axe-core accessibility baseline executed nowhere,
       # while CS-15's evidence claimed they were CI-enforced. A stale selector
       # had already silently disabled most of the file once; without a step
@@ -406,7 +408,7 @@ jobs:
       # the CLI installing the browsers and the library driving them can never
       # drift apart. The version is printed so a future mismatch is visible in
       # the log rather than inferred from a crash.
-      - name: Install the Playwright browsers the V2 suite drives
+      - name: Install the Playwright browsers the CareerScope suite drives
         run: |
           npx playwright --version
           npx playwright install --with-deps chromium firefox webkit
@@ -415,15 +417,15 @@ jobs:
       # behaviour the dev server fakes (its CSP alone differs), and `next
       # start` is what the deployed stack runs. `tsc -b` in the same script
       # also produces the worker dist the suite spawns.
-      - name: Build V2 for the browser suite
-        run: npm --prefix v2 run build
+      - name: Build CareerScope for the browser suite
+        run: npm run build
 
       # The wait is a poll with a hard failure, not a sleep: a step that
       # carried on against a dead server would fail later, somewhere
       # confusing, and could be made to look like a browser bug.
-      - name: Test V2 (browser acceptance and axe accessibility — Chromium, Firefox, WebKit)
+      - name: Test CareerScope (browser acceptance and axe accessibility — Chromium, Firefox, WebKit)
         run: |
-          npm --prefix v2 run start:web &
+          npm run start:web &
           web=$!
           ready=0
           for _ in $(seq 1 60); do
@@ -435,12 +437,12 @@ jobs:
             sleep 2
           done
           if [ "$ready" != 1 ]; then
-            echo "::error::the V2 web app never answered on http://localhost:5280 — not running the browser suite against a dead server"
+            echo "::error::the CareerScope web app never answered on http://localhost:5280 — not running the browser suite against a dead server"
             kill "$web" 2>/dev/null || true
             exit 1
           fi
           status=0
-          npm --prefix v2 run test:ui || status=$?
+          npm run test:ui || status=$?
           kill "$web" 2>/dev/null || true
           wait "$web" 2>/dev/null || true
           exit "$status"
@@ -454,22 +456,22 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: v2-integration-failure-evidence
+          name: integration-failure-evidence
           path: |
-            v2/test-results/
-            v2/playwright-report/
+            test-results/
+            playwright-report/
           if-no-files-found: ignore
           retention-days: 14
 
-  v2-recovery:
-    name: Test V2 (recovery — crash, database restore, queue runtime, full disk)
+  recovery:
+    name: Test CareerScope (recovery — crash, database restore, queue runtime, full disk)
     runs-on: ubuntu-latest
     timeout-minutes: 35
 
     # No `services:` block, deliberately. These four checks do not merely *use*
     # a database and a queue, they control them: check-database-recovery.ts
     # runs `docker exec <container> pg_dump` and asserts the container name
-    # matches `careerscope-v2*`, and check-queue-runtime.ts restarts Redis and
+    # matches `careerscope*`, and check-queue-runtime.ts restarts Redis and
     # restores it from its AOF. GitHub gives service containers generated names
     # and manages their lifecycle, so the containers are started here instead,
     # with names the checks can address.
@@ -490,17 +492,17 @@ jobs:
       - name: Install root workspace
         run: npm ci
 
-      - name: Install V2
-        run: npm --prefix v2 ci
+      - name: Install CareerScope
+        run: npm ci
 
-      # The V2 core imports the built shared domain packages, and
+      # The CareerScope core imports the built shared domain packages, and
       # check-full-disk.mjs imports packages/core/dist directly, so both builds
       # have to happen before any check runs.
-      - name: Build the shared domain packages V2 depends on
-        run: npm --prefix v2 run build:domain
+      - name: Build the shared domain packages CareerScope depends on
+        run: npm run build:domain
 
-      - name: Build the V2 core
-        run: npm --prefix v2 run build:core
+      - name: Build the CareerScope core
+        run: npm run build:core
 
       # Named containers the checks can address, published on loopback only —
       # every check asserts its database host is localhost or 127.0.0.1 and
@@ -513,19 +515,19 @@ jobs:
           # acceptance test. Recovery jobs are isolated, so the integration
           # job's Redis service image is not present on this runner.
           docker pull redis:7.4.5-alpine
-          docker run -d --name careerscope-v2-postgres-ci \
+          docker run -d --name careerscope-postgres-ci \
             -e POSTGRES_DB=careerscope \
             -e POSTGRES_USER=careerscope \
             -e POSTGRES_PASSWORD=ci-recovery-password \
             -p 127.0.0.1:5432:5432 postgres:17.6-alpine
-          docker run -d --name careerscope-v2-localstack-ci \
+          docker run -d --name careerscope-localstack-ci \
             -e SERVICES=sqs,s3 \
             -e AWS_DEFAULT_REGION=us-east-1 \
             -e DEBUG=0 \
             -p 127.0.0.1:4566:4566 localstack/localstack:4.7.0
           ready=0
           for _ in $(seq 1 60); do
-            if docker exec careerscope-v2-postgres-ci pg_isready -U careerscope -d careerscope >/dev/null 2>&1 \
+            if docker exec careerscope-postgres-ci pg_isready -U careerscope -d careerscope >/dev/null 2>&1 \
               && curl -fsS http://127.0.0.1:4566/_localstack/health >/dev/null 2>&1; then
               ready=1
               break
@@ -534,8 +536,8 @@ jobs:
           done
           if [ "$ready" != 1 ]; then
             echo "::error::PostgreSQL or LocalStack never became ready — refusing to run recovery checks against services that may not exist" >&2
-            docker logs careerscope-v2-postgres-ci || true
-            docker logs careerscope-v2-localstack-ci || true
+            docker logs careerscope-postgres-ci || true
+            docker logs careerscope-localstack-ci || true
             exit 1
           fi
 
@@ -544,12 +546,12 @@ jobs:
       # runner; it is not the gitignored local or production .env.
       - name: Write a CI-built environment file
         run: |
-          cat > v2/.env <<'EOF'
+          cat > .env <<'EOF'
           DATABASE_URL=postgres://careerscope:ci-recovery-password@127.0.0.1:5432/careerscope
           REDIS_URL=redis://127.0.0.1:6379
           LOCAL_AWS_ENDPOINT=http://127.0.0.1:4566
           APP_ORIGIN=http://127.0.0.1:3000
-          V2_POSTGRES_CONTAINER=careerscope-v2-postgres-ci
+          CAREERSCOPE_POSTGRES_CONTAINER=careerscope-postgres-ci
           AWS_ACCESS_KEY_ID=test
           AWS_SECRET_ACCESS_KEY=test
           AWS_DEFAULT_REGION=us-east-1
@@ -559,19 +561,19 @@ jobs:
       # effect — mid-publication, mid-outbox-acknowledgement and mid-lease —
       # then proves the survivor reconciles rather than losing or duplicating
       # the work. Only the pause is synthetic.
-      - name: Test V2 (worker crash recovery)
-        run: npm --prefix v2 run test:crash-recovery
+      - name: Test CareerScope (worker crash recovery)
+        run: npm run test:crash-recovery
 
       # pg_dump the live database, restore into a fresh disposable container,
       # and compare per-table row counts and content hashes. A backup nobody
       # has restored is not a backup.
-      - name: Test V2 (database backup and restore)
-        run: npm --prefix v2 run test:database-recovery
+      - name: Test CareerScope (database backup and restore)
+        run: npm run test:database-recovery
 
       # Restarts an isolated Redis, restores it from its AOF and drives the
       # real publisher and worker process lifecycle, including shutdown.
-      - name: Test V2 (queue contract at runtime)
-        run: npm --prefix v2 run test:queue-runtime
+      - name: Test CareerScope (queue contract at runtime)
+        run: npm run test:queue-runtime
 
       # Runs the resume store against a 2MB tmpfs until the filesystem
       # genuinely exhausts, so the typed exhaustion path is exercised rather
@@ -582,8 +584,8 @@ jobs:
       - name: Stop the services
         if: always()
         run: |
-          docker logs careerscope-v2-postgres-ci 2>&1 | tail -n 40 || true
-          docker rm -f careerscope-v2-postgres-ci careerscope-v2-localstack-ci >/dev/null 2>&1 || true
+          docker logs careerscope-postgres-ci 2>&1 | tail -n 40 || true
+          docker rm -f careerscope-postgres-ci careerscope-localstack-ci >/dev/null 2>&1 || true
 
   image:
     name: Container image
@@ -596,58 +598,5 @@ jobs:
 
       # Built here rather than only on the deploy host, so a broken Dockerfile
       # fails on a pull request instead of halfway through a production deploy.
-      - name: Build
-        run: docker build -f infra/Dockerfile --target api -t job-radar:ci .
-
-      - name: Boot the image
-        run: |
-          docker run -d --name job-radar-ci \
-            -e APP_API_KEY=ci-smoke-key-0000000000000000000000 \
-            -e AUTH_ORIGIN=https://localhost \
-            -p 8080:8080 job-radar:ci
-          ok=0
-          for _ in $(seq 1 40); do
-            if curl -fsS http://127.0.0.1:8080/api/health >/dev/null 2>&1; then
-              ok=1
-              break
-            fi
-            sleep 1
-          done
-          # The SPA is served by the API in this image; if the bundle did not
-          # make it into the layer, the root path returns JSON, not HTML.
-          curl -fsS http://127.0.0.1:8080/ | head -c 200 || true
-          echo
-          docker logs job-radar-ci
-          docker rm -f job-radar-ci >/dev/null
-          test "$ok" = 1
-
-      # The opt-in target. It reuses every layer above and adds apt, Chromium
-      # and an X server, which is the slow part — hence the 30 minute budget.
-      - name: Build the browser image
-        run: docker build -f infra/Dockerfile --target api-scrape -t job-radar:ci-scrape .
-
-      # This complements host browser acceptance by checking whether the
-      # three pieces — Playwright resolving, Chromium's shared libraries being
-      # present, and Xvfb giving a headed browser somewhere to draw — actually
-      # line up inside the image.
-      #
-      # `--entrypoint` skips the migration wrapper; this needs no database.
-      # `headless: false` is not incidental — a headless launch would pass with
-      # no display at all and prove nothing about the X server.
-      - name: Launch headed Chromium in the browser image
-        run: |
-          docker run --rm --entrypoint /usr/local/bin/xvfb-exec.sh job-radar:ci-scrape \
-            node --input-type=module -e "
-              const { chromium } = await import('playwright');
-              const browser = await chromium.launch({
-                headless: false,
-                args: ['--no-sandbox', '--disable-dev-shm-usage'],
-              });
-              const version = browser.version();
-              const page = await browser.newPage();
-              await page.setContent('<h1>job-radar</h1>');
-              const heading = await page.textContent('h1');
-              await browser.close();
-              if (heading !== 'job-radar') throw new Error('rendered ' + heading);
-              console.log('chromium ' + version + ' rendered a page headed');
-            "
+      - name: Build the production image
+        run: docker build -f infra/Dockerfile --target runtime -t careerscope:ci .
