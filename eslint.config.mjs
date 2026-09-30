@@ -45,7 +45,6 @@ export default tseslint.config(
   },
   {
     files: [
-      'scripts/check-ui.mjs',
       'scripts/check-admin-ui.mjs',
       'scripts/check-pages-ui.mjs',
       'scripts/check-public-workspace.mjs',

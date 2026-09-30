@@ -12,7 +12,7 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "npm run build:core && node --env-file=.env --import tsx --test packages/core/src/*.test.ts apps/workers/search/src/*.test.ts",
+    "test": "npm run test:unit",
     "test:unit": "npm run build:core && node --import tsx --test packages/core/src/ai-provider.test.ts packages/core/src/commands.test.ts packages/core/src/file-storage.test.ts packages/core/src/inference.test.ts packages/core/src/profile.test.ts apps/workers/search/src/collect.test.ts apps/web/src/lib/api.test.ts",
     "benchmark:llm": "node --import tsx scripts/benchmark-llm.ts",
     "test:ui": "node --env-file=.env --import tsx scripts/check-ui.ts",

@@ -10,7 +10,7 @@ Discovery entries with no release target, execution evidence or completed steps.
 Priorities, sizes and scores are provisional planning estimates, not readiness.
 
 This is a dated projection, not a second backlog. Consult
-[project state](PROJECT-STATE.md) for the V1/V2 split and deployment boundaries.
+[project state](PROJECT-STATE.md) for the canonical deployment boundaries.
 No branch, feature implementation, release promotion or deployment was performed
 for this planning update. Future implementation belongs on an authorized
 short-lived branch after current acceptance work, not directly on `main`.
@@ -22,7 +22,7 @@ The statuses below are recorded labels, not proof that current bytes passed QA.
 
 | ID    | Status      | Priority | Ticket                                                  |
 | ----- | ----------- | -------- | ------------------------------------------------------- |
-| CS-1  | QA          | P1       | CI proves the V2 unit layer                             |
+| CS-1  | QA          | P1       | CI proves the canonical unit layer                      |
 | CS-2  | QA          | P1       | Linux WebKit lead-header offset at 768px                |
 | CS-7  | QA          | P0       | Exact-commit CI deployment gate                         |
 | CS-20 | QA          | P1       | Agile commands reject unreadable canonical state        |
@@ -32,7 +32,7 @@ The statuses below are recorded labels, not proof that current bytes passed QA.
 | CS-4  | Ready       | P2       | Derive release version file list                        |
 | CS-6  | Ready       | P1       | Routing, shared layout and signed-in boundary           |
 | CS-8  | Ready       | P1       | Fail-closed canonical readers                           |
-| CS-9  | Ready       | P1       | Service-backed V2 integration CI                        |
+| CS-9  | Ready       | P1       | Service-backed integration CI                           |
 | CS-13 | Ready       | P2       | Shared loading, empty and error states                  |
 | CS-14 | Ready       | P2       | Mobile Leads experience                                 |
 | CS-16 | Ready       | P1       | Actionable Discovery results                            |
@@ -47,7 +47,7 @@ The statuses below are recorded labels, not proof that current bytes passed QA.
 | CS-27 | Ready       | P2       | Liveness, freshness and retention                       |
 | CS-28 | Ready       | P2       | Distinct posting identity and deduplication             |
 | CS-29 | Ready       | P1       | Explicit shared workspace dependency resolution         |
-| CS-5  | Discovery   | P3       | V1 retirement prerequisites                             |
+| CS-5  | Discovery   | P3       | Static artifact ownership and export prerequisites      |
 | CS-10 | Discovery   | P2       | Agent activation and retention policy                   |
 | CS-11 | Discovery   | P2       | Public Pages design review                              |
 | CS-15 | Discovery   | P2       | Signed-in and Pages accessibility audit                 |
@@ -63,7 +63,7 @@ completion is implied by adding these entries.
 | ID    | Priority | Ticket                                        | Prerequisites / disposition                                                       |
 | ----- | -------- | --------------------------------------------- | --------------------------------------------------------------------------------- |
 | CS-30 | P1       | Managed Hostinger firewall verification       | Operator authorization and actual external evidence; release acceptance candidate |
-| CS-31 | P1       | V2 skip-link regression                       | Reproduce current bytes; focused child scope of CS-15                             |
+| CS-31 | P1       | Skip-link regression                          | Reproduce current bytes; focused child scope of CS-15                             |
 | CS-32 | P1       | Pages 320px visual regression                 | Inspect actual/expected/diff; related to CS-11, no blind baseline approval        |
 | CS-33 | P1       | Job detail and evidence read contract         | Before CS-17/18 consumption; includes CQ-05 projection investigation              |
 | CS-34 | P2       | Web environment least privilege               | Verify configuration consumers; CQ-01 hardening candidate                         |
@@ -91,10 +91,10 @@ completion is implied by adding these entries.
   recorded release history and keeps scheduling disabled. That does not disprove
   the independently documented production deployment.
 - The saved [acceptance command log](../test-results/current-tree-baseline-20260920-053322/commands.jsonl)
-  records a partial run: root 1047, V2 57 and Pages 21 tests passed; root/V2
-  typecheck, lint and build, V2 format, and three-engine Pages workspace checks
+  records a partial run: canonical workspace 1047 and Pages 21 tests passed;
+  canonical typecheck, lint and build, format, and three-engine Pages workspace checks
   passed. These are historical run results, not current-byte revalidation.
-- That run failed root formatting, root WebKit 390px row-overlap checks, the V2
+- That run failed formatting, WebKit 390px row-overlap checks, the canonical
   skip-link check and a Pages visual comparison. CS-31 and CS-32 isolate the last
   two. The 390px failure is not automatically the same defect as CS-2's Linux
   768px offset; reproduce and triage it in acceptance before assigning a fix.
@@ -173,7 +173,7 @@ inventing UI requirements not supported by the design images.
 - NOT CURRENTLY IMPLEMENTED / DOES NOT MATCH REAL DATA: the design's status
   categories — **Interested, May Apply Later, Not Interested, Applied** — do
   not match `leadStatusSchema` (`saved, applied, interviewing, offer,
-rejected, archived`) defined in `v2/packages/core/src/leads.ts:7-13`. This
+rejected, archived`) defined in `packages/core/src/leads.ts`. This
   is a product-level reconciliation question, not a styling detail; mapping
   them 1:1 would misrepresent what the status field actually means. Left for
   CS-19's owner to resolve explicitly, not decided here.
@@ -238,7 +238,7 @@ rejected, archived`) defined in `v2/packages/core/src/leads.ts:7-13`. This
   with an "Application Strength" percentage.
 - NOT CURRENTLY IMPLEMENTED: none of the stage tracker, timeline events,
   per-document metadata, or multi-entry notes exist today. `saved_leads.notes`
-  is a single free-text field (`v2/packages/core/src/leads.ts`), not a list of
+  is a single free-text field (`packages/core/src/leads.ts`), not a list of
   timestamped entries — implementing this screen as designed would require a
   new notes-history table, not a UI change alone. Recorded under the same new
   CS-50 ticket as the Applications list screen, since a details view requires
@@ -359,7 +359,7 @@ forbidden. So the work splits into "buildable now" and "needs backend first".
 
 ## Frontend page-to-ticket map
 
-[V2 page.tsx](../v2/apps/web/src/app/page.tsx) currently selects Discovery,
+[Canonical page.tsx](../apps/web/src/app/page.tsx) currently selects Discovery,
 Dashboard, Leads, Preparation, Career Links, Profile and Security through local
 view state on `/`. Existing components are not evidence of separate routes.
 **Every additional path below is proposed**, not an implemented route or an
@@ -372,7 +372,7 @@ server-side owner authorization, not just a client guard.
 
 | Surface / proposed path                                   | Current basis and boundary                                       | Tickets                           | QA todo / prerequisite                                                                                                             |
 | --------------------------------------------------------- | ---------------------------------------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Shared shell `/`                                          | Existing V2 state views and session contract                     | CS-6, CS-13, CS-15, CS-31, CS-36  | Private deep links, back/refresh, focus, expiry, no private-data flash                                                             |
+| Shared shell `/`                                          | Existing canonical state views and session contract              | CS-6, CS-13, CS-15, CS-31, CS-36  | Private deep links, back/refresh, focus, expiry, no private-data flash                                                             |
 | Login `/login`                                            | Existing account form; session/login APIs                        | CS-6, CS-36                       | Success, invalid credentials, rate limits, retry and safe return destination                                                       |
 | Conditional registration `/register`                      | Registration capability stays off                                | CS-36; CS-44 for future lifecycle | Disabled UI/server behavior; no enablement or new public signup promise                                                            |
 | Onboarding `/onboarding`                                  | Proposed journey over existing profile/resume contracts          | CS-37                             | With/without resume, incomplete state and explicit save                                                                            |
@@ -394,7 +394,7 @@ server-side owner authorization, not just a client guard.
 | Alerts `/alerts`                                          | Notification lifecycle/channel unresolved                        | CS-43                             | Deferred replay/dedup, stale vs closed, bounded delivery and privacy                                                               |
 | Recovery `/forgot-password`, `/reset-password`, `/verify` | No approved transactional sender or self-service lifecycle       | CS-44                             | Deferred approval, non-enumeration, expiry, single use and abuse tests                                                             |
 | Admin `/admin/*`                                          | No approved role/read endpoint contract; Swagger is not admin    | CS-40                             | Deferred role provisioning, anonymous/non-admin denial and redacted reads                                                          |
-| Public Pages and encrypted admin                          | Separate `mobile-site` artifact, not V2 routes                   | CS-11, CS-15, CS-32               | Visual/mobile checks, allowlists, decryption boundary and no API/workflow claims                                                   |
+| Public Pages and encrypted admin                          | Separate `mobile-site` artifact, not application routes          | CS-11, CS-15, CS-32               | Visual/mobile checks, allowlists, decryption boundary and no API/workflow claims                                                   |
 
 The map is coverage, not extra acceptance criteria silently appended to old
 tickets. Before implementation, reconcile any newly discovered scope with the

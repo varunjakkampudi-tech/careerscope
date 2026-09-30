@@ -42,7 +42,8 @@ schedule publication automatically.
 
 ## Change The Passphrase And Publish
 
-Update `ADMIN_SNAPSHOT_PASSPHRASE` in the ignored root `.env`, then run:
+Update `ADMIN_SNAPSHOT_PASSPHRASE` and `PUBLIC_EXPORT_OWNER_ID` in the ignored root
+`.env`, then run:
 
 ```sh
 npm run pages:publish

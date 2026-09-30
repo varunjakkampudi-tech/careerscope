@@ -53,7 +53,7 @@ provider behavior remain deployment-specific gates in
 
 ## Artifacts
 
-- Web assets: `apps/web/dist/`
+- Web assets: `.next/` from `apps/web`
 - API runtime: `apps/api/dist/`
 - Internal package builds: `packages/*/dist/`
 

@@ -107,11 +107,11 @@ Until a human runs that smoke test, this stays open.
 
 **Status: PARTIALLY RESOLVED (CS-6)** — corrected 2026-09-24
 
-This section previously read "Frontend is a single page … `v2/apps/web/src/app`
+This section previously read "Frontend is a single page … `apps/web/src/app`
 contains exactly one route: `/`". That has been false since the CS-6 routing
 migration and is corrected here rather than left to mislead.
 
-`v2/apps/web/src/app` now contains nine real routes: `/` (sign-in) plus the
+`apps/web/src/app` now contains nine real routes: `/` (sign-in) plus the
 `(app)` route group — `/dashboard`, `/jobs`, `/applications`, `/saved`,
 `/resume`, `/career-resources`, `/settings` and `/preparation`. Every
 authenticated route renders through the single `AuthenticatedShell` auth
@@ -230,13 +230,13 @@ on CS-46 are:
 
 1. **Always-on supplementary evidence** — keep current behaviour, now accurately
    documented (this section, the `buildCandidateContext` docstring, and
-   `v2/ARCHITECTURE.md`'s resume-integration row are all already consistent with
+   `docs/ARCHITECTURE.md`'s resume-integration row are all already consistent with
    it). Zero code change.
 2. **Explicit per-fact exclusion gate** — add a per-skill/title exclude list that
    survives across searches until the resume is re-parsed, distinct from the
    profile-editor proposal-review flow, composing with the always-on union in
    `context.ts`. Requires a `MatchingProfile` change in
-   `v2/packages/core/src/profile.ts`.
+   `packages/core/src/profile.ts`.
 
 No exclusion mechanism has been invented in the absence of that decision, and
 option 1 has **not** been recorded as accepted — the ticket requires owner
@@ -303,7 +303,7 @@ boundary:
   peer or spoofed header cannot select a bucket.
 
 **Scope is narrow, and this is the important part.** Of the nineteen
-`rateLimit` call sites in `v2/apps/api/src/app.ts`, only **two** are IP-keyed:
+`rateLimit` call sites in `apps/api/src/app.ts`, only **two** are IP-keyed:
 
 | Limiter     | Line | Key                  | Effect            |
 | ----------- | ---- | -------------------- | ----------------- |
@@ -349,7 +349,7 @@ runs:
   `error: 'terminating connection due to administrator command'` raised inside
   `pg-protocol` — a PostgreSQL backend termination, not an assertion failure.
 - The named test on two separate occasions was in
-  `v2/packages/core/src/market.test.ts` — "the pipeline distinguishes neglected
+  `packages/core/src/market.test.ts` — "the pipeline distinguishes neglected
   work from finished work" and "posting evidence accumulates…" — with
   `scripts/enforce-search-retention.test.ts` also failing once.
 - A **different** test failed on each run, which is the signature of an
@@ -442,7 +442,7 @@ split apart retroactively — the losing duplicate was dropped by the old
 in-memory dedup pass before it was ever written to `search_jobs`, so there is
 nothing left to replay it from.
 
-`v2/scripts/backfill-job-sightings.ts` (`npm run db:backfill-job-sightings`)
+`scripts/backfill-job-sightings.ts` (`npm run db:backfill-job-sightings`)
 recomputes `job_sightings` from `search_jobs` as currently stored, which stops
 any _future_ drift and correctly separates every _new_ split going forward.
 But a fingerprint that was already falsely merged keeps whatever
@@ -496,7 +496,7 @@ recorded here, not only in the function's docstring.
 
 **Status: OPEN — LOW RISK (CS-28)**
 
-`v2/scripts/backfill-job-sightings.ts` replays `search_jobs` ordered by the
+`scripts/backfill-job-sightings.ts` replays `search_jobs` ordered by the
 parent search run's `created_at`, because `search_jobs` itself carries no
 per-row insertion timestamp. Under redelivery/retry, a run created earlier
 can have its `Database.settle()` write commit later than a run created after
@@ -640,7 +640,7 @@ unchanged, so every per-source/per-request budget in
 `.github/skills/careerscope-job-discovery/SKILL.md` already applies to a
 scheduled run exactly as it does to a manual one. What does not exist is any
 limiter across _multiple owners_' scheduled runs landing in the same window -
-this deployment is single-owner (`v2/scripts/setup-owner.ts` refuses to
+this deployment is single-owner (`scripts/setup-owner.ts` refuses to
 create a second one), so the realistic worst case today is one owner's
 handful of GETs against up to five saved titles, twice a day. If CareerScope
 ever became genuinely multi-owner with many people enabling scheduled

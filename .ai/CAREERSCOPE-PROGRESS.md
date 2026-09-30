@@ -2,8 +2,8 @@
 
 Last reconciled: 2026-10-01.
 
-CareerScope V2 is the deployed product; V1 remains a build dependency and owns
-the legacy Pages/mobile surface. The product is functional but not release
+CareerScope is the deployed product on the canonical root workspace. The
+product is functional but not release
 ready: repository checks are green on the pinned Node 24 runtime, while hosted
 deployment, live OTP delivery and service-backed browser/integration evidence
 remain external gates. Production was not changed during this batch.
@@ -13,12 +13,12 @@ remain external gates. Production was not changed during this batch.
 ## Current engineering state
 
 - Source and local build baseline: root lint, typecheck, formatting and build
-  pass; root tests pass 1111/1111; V2 lint, typecheck, formatting and Next
-  production build pass on Node 24.19.0 with Next 16.3.8 and CSP verification.
+  pass; canonical domain, Pages and engineering-control-center suites pass on
+  Node 24.19.0 with Next 16.3.8 and CSP verification.
 - Authentication: Cognito email OTP and verified phone-only OTP now terminate in
   the same opaque server-side session; migration 0018 adds a unique phone
   identity without exposing provider tokens to the browser.
-- Dependency hygiene: root and V2 production dependency audits report zero
+- Dependency hygiene: canonical production dependency audits report zero
   vulnerabilities after the lockfile refresh.
 - Release safety: host deployment and Pages publication are manual-only,
   explicit-ref, protected-environment workflows with exact-revision CI gates.

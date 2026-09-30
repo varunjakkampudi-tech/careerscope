@@ -1,9 +1,9 @@
-import { DatabaseSync } from 'node:sqlite';
 import { mkdir, copyFile, readFile, writeFile, rename } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { fileURLToPath, URL } from 'node:url';
 import process from 'node:process';
 import { setInterval, clearInterval } from 'node:timers';
+import pg from 'pg';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const publicHosts =
@@ -50,42 +50,46 @@ export function publicJobs(rows) {
 }
 
 export async function exportMobile() {
-  const database = new DatabaseSync(
-    resolve(root, process.env.DATA_DIR || 'data', 'careerscope.db'),
-    {
-      readOnly: true,
-    },
-  );
-  let rows;
+  const ownerId = process.env.PUBLIC_EXPORT_OWNER_ID;
+  if (!ownerId) throw new Error('PUBLIC_EXPORT_OWNER_ID is required for a public export.');
+  const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 1 });
   try {
-    rows = database
-      .prepare(
-        `SELECT DISTINCT j.title, c.name AS company, j.location,
-      j.source, j.posted_at, j.source_url FROM jobs j
-      JOIN companies c ON c.id = j.company_id JOIN leads l ON l.job_id = j.id
-      ORDER BY j.posted_at DESC, j.title, c.name, j.source_url`,
-      )
-      .all();
+    const { rows } = await pool.query(
+      `SELECT DISTINCT
+         data->>'title' AS title,
+         data->>'company' AS company,
+         data->>'location' AS location,
+         data->>'source' AS source,
+         data->>'postedAt' AS posted_at,
+         data->>'sourceUrl' AS source_url
+       FROM saved_leads
+       WHERE owner_id = $1 AND status <> 'archived'
+       ORDER BY posted_at DESC NULLS LAST, title, company, source_url`,
+      [ownerId],
+    );
+    const jobs = publicJobs(rows);
+    const destination = join(root, 'mobile-site');
+    await mkdir(destination, { recursive: true });
+    await copyFile(
+      join(root, 'apps/web/public/brand/logo-icon.png'),
+      join(destination, 'favicon.png'),
+    );
+    const previous = await readFile(join(destination, 'jobs.json'), 'utf8')
+      .then(JSON.parse)
+      .catch(() => null);
+    if (JSON.stringify(previous?.jobs) === JSON.stringify(jobs)) return false;
+    await writeFile(
+      join(destination, 'jobs.json.tmp'),
+      JSON.stringify({ updatedAt: new Date().toISOString(), jobs }),
+    );
+    await rename(join(destination, 'jobs.json.tmp'), join(destination, 'jobs.json'));
+    process.stdout.write(
+      `Mobile snapshot updated: ${jobs.length} public posting links; ${rows.length - jobs.length} unsupported or duplicate entries omitted.\n`,
+    );
+    return true;
   } finally {
-    database.close();
+    await pool.end();
   }
-  const jobs = publicJobs(rows);
-  const destination = join(root, 'mobile-site');
-  await mkdir(destination, { recursive: true });
-  await copyFile(join(root, 'apps/web/public/favicon.svg'), join(destination, 'favicon.svg'));
-  const previous = await readFile(join(destination, 'jobs.json'), 'utf8')
-    .then(JSON.parse)
-    .catch(() => null);
-  if (JSON.stringify(previous?.jobs) === JSON.stringify(jobs)) return false;
-  await writeFile(
-    join(destination, 'jobs.json.tmp'),
-    JSON.stringify({ updatedAt: new Date().toISOString(), jobs }),
-  );
-  await rename(join(destination, 'jobs.json.tmp'), join(destination, 'jobs.json'));
-  process.stdout.write(
-    `Mobile snapshot updated: ${jobs.length} public posting links; ${rows.length - jobs.length} unsupported or duplicate entries omitted.\n`,
-  );
-  return true;
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

@@ -16,7 +16,7 @@ Read the owning module and its neighboring tests, not the entire repository.
 - GitHub Pages hosts a separate public jobs export and encrypted read-only admin snapshot.
   It has no live connection to the API and cannot run browser automation.
 - Shared Zod schemas define API data. `container.ts` wires repositories and services.
-- Search flow: routes/MCP -> queue -> providers -> normalize/dedupe -> matching ->
+- Search flow: routes -> queue -> providers -> normalize/dedupe -> matching ->
   enrichment -> repositories. SSE reports durable search events.
 - Application automation is opt-in and local. Shared-browser requests are handoffs
   to VS Code Copilot chat, not background worker runs. Account creation and final
@@ -30,7 +30,6 @@ Read the owning module and its neighboring tests, not the entire repository.
 | `apps/api/src/routes/`                | Validated HTTP boundaries                                       |
 | `apps/api/src/services/`              | Search, scheduling, applications and browser controls           |
 | `apps/api/src/db/repo/`               | Persistence; schema and migrations live in the parent directory |
-| `apps/api/src/mcp/`                   | MCP adapters for local job operations                           |
 | `apps/web/src/routes/`                | Search, leads, profile, settings and applications views         |
 | `apps/web/src/components/`            | UI primitives, lead details and application panel               |
 | `apps/web/src/lib/`                   | API access, query hooks and shared-browser request generation   |

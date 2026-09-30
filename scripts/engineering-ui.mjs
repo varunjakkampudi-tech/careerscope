@@ -21,9 +21,9 @@ import process from 'node:process';
 
 const AI = '.ai';
 const PORT = Number(process.env.PORT ?? 7777);
-const BRAND_ICON = `data:image/svg+xml,${encodeURIComponent(
-  readFileSync(new URL('../apps/web/public/favicon.svg', import.meta.url), 'utf8'),
-)}`;
+const BRAND_ICON = `data:image/png;base64,${readFileSync(
+  new URL('../apps/web/public/brand/logo-icon-transparent.png', import.meta.url),
+).toString('base64')}`;
 
 // Collected fresh by snapshot() on every call (Node is single-threaded and
 // snapshot() reads synchronously, so there is no cross-request interleaving).

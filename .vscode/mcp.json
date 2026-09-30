@@ -1,9 +1,0 @@
-{
-  "servers": {
-    "careerscope": {
-      "type": "stdio",
-      "command": "${workspaceFolder}/data/windows-toolchain/node_modules/node/bin/node.exe",
-      "args": ["${workspaceFolder}/data/start-windows-mcp.mjs"]
-    }
-  }
-}

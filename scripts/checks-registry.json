@@ -119,11 +119,6 @@
       "reason": "This check. It must itself run on every push, or the classification it enforces becomes the next thing nobody executes."
     },
     {
-      "path": "scripts/check-container.mjs",
-      "classification": "manual",
-      "reason": "Probes SQLite durability inside a prebuilt careerscope:local image. The obsolete container line is not deployed, and CI's opt-in image job builds a different tag."
-    },
-    {
       "path": "scripts/check-customizations.mjs",
       "classification": "ci",
       "reason": "Static validation of the repository's prompts, instructions and skills. Needs nothing but the working tree, so there is no reason for it not to run on every push."
@@ -187,11 +182,6 @@
       "path": "scripts/check-ticket-consistency.mjs",
       "classification": "ci",
       "reason": "Validates ticket ownership, architecture disclosures and displayed status metadata on every push so the engineering board cannot silently contradict its evidence."
-    },
-    {
-      "path": "scripts/check-ui.mjs",
-      "classification": "ci",
-      "reason": "The browser acceptance suite, run in the verify job against the built app."
     },
     {
       "path": "scripts/benchmark-llm.ts",

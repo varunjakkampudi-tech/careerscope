@@ -14,19 +14,12 @@ sites.
 
 **One user. No public signup.** Every design decision follows from that.
 
-## Two stacks
+## Canonical stack
 
-|          | V1 (legacy)                  | V2 (current, deployed)   |
-| -------- | ---------------------------- | ------------------------ |
-| Line     | `main`                       | `main`, `v2/`            |
-| API      | Fastify                      | Fastify                  |
-| Database | SQLite                       | PostgreSQL 17 + Drizzle  |
-| UI       | React + Vite                 | Next.js 16 / React 19    |
-| Queue    | in-process                   | SQS (LocalStack locally) |
-| Also     | static GitHub Pages artifact | —                        |
-
-V2 at `3.0.0` is what serves https://careerscope.tech. V1 still exists, still
-has tests, and still ships the public Pages artifact.
+CareerScope `3.0.0` is one root workspace serving https://careerscope.tech.
+It uses Fastify, PostgreSQL 17 with Drizzle, SQS/LocalStack, transactional
+outbox workers, and Next.js 16 with React 19. The optional static GitHub Pages
+artifact is generated from the same PostgreSQL-backed workspace.
 
 ## Features, and their real state
 
@@ -105,12 +98,12 @@ CI and Deploy both run on push to `main`.
 ## Repository layout
 
 ```
-apps/api, apps/web      V1 application
-v2/                     V2 application (apps + packages/core)
-packages/               shared, matching, providers, resume
-infra/               provisioning, deploy, restart, provenance
+apps/                   API, web and workers
+packages/               core, shared, matching, providers and resume
+migrations/             PostgreSQL schema migrations
+infra/                  provisioning, deploy, restart, provenance
 scripts/                tooling, checks, control center, backup
-.github/agents/         16 specialist agents
+.github/agents/         specialist agents
 .ai/                    durable engineering state (JSON canonical)
 START-HERE/             this folder
 review.txt              append-only engineering audit log

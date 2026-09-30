@@ -28,11 +28,10 @@ Run from the repository root:
 npm run test:ui
 ```
 
-This builds the app and runs `scripts/check-ui.mjs`. Each browser receives its own
-temporary API server, in-memory database, synthetic owner account, and 120 sample
-leads. The check does not use personal credentials, saved leads or provider APIs.
-Servers and databases are cleaned up, including on failure. Screenshot paths are
-printed for manual review and remain in the OS temporary directory.
+This builds the app and runs `scripts/check-ui.ts` against disposable PostgreSQL,
+Redis and LocalStack services. Each browser receives a synthetic owner account and
+bounded fixture data. The check does not use personal credentials, saved leads or
+provider APIs. Service and browser processes are cleaned up, including on failure.
 
 Coverage includes:
 

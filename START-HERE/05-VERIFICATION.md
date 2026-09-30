@@ -22,28 +22,17 @@ A **skipped** test is not a passing test. Report skips and say why.
 ## Everyday
 
 ```bash
-npm run typecheck        # V1 + shared packages
+npm run typecheck        # canonical workspace and test files
 npm run lint
 npm test                 # expect 1047 passed (1047), 67 files
 npm run format:check
 node scripts/check-agents.mjs    # expect "agent configuration valid" (37 checks)
 ```
 
-## V2 — the deployed stack
-
-```bash
-npm --prefix v2 run typecheck
-npm --prefix v2 run lint
-npm --prefix v2 test     # expect 49 passed (49)
-npm --prefix v2 run build
-```
-
-On Windows, route these through `data/windows-v2/run.mjs` (reserved port range).
-
 ## Browser and accessibility
 
 ```bash
-npm run test:ui                  # V1: chromium, firefox, webkit at 320/390/1440
+npm run test:ui                  # canonical API/UI in Chromium, Firefox, WebKit
 npm run pages:workspace:test     # public Pages artifact
 node scripts/check-admin-ui.mjs  # encrypted admin
 ```
@@ -56,10 +45,10 @@ has shipped here before, so a chromium-only pass is not a pass.
 Run these when touching storage, workers, the outbox or migrations:
 
 ```bash
-npm --prefix v2 run test:crash-recovery
-npm --prefix v2 run test:database-recovery
-npm --prefix v2 run test:queue-runtime
-npm --prefix v2 run test:performance     # 8 concurrent, 30s, asserts p50/p95/p99
+npm run test:crash-recovery
+npm run test:database-recovery
+npm run test:queue-runtime
+npm run test:performance     # 8 concurrent, 30s, asserts p50/p95/p99
 ```
 
 ## Deployment

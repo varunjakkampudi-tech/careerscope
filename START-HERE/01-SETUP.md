@@ -11,7 +11,7 @@ with the Windows differences called out where they exist.
 | ---------------- | --------- | ---------------------------------------------------------------- |
 | Node.js          | **>= 24** | the repository pins 26.8.1 on Windows; any >= 24 works elsewhere |
 | npm              | bundled   | workspaces and TypeScript project references are used            |
-| Docker + Compose | current   | required only for the V2 stack                                   |
+| Docker + Compose | current   | required for the service-backed CareerScope stack                |
 | git              | current   | —                                                                |
 
 ```bash
@@ -23,8 +23,7 @@ node --version && npm --version && docker --version
 ```bash
 git clone https://github.com/varunjakkampudi-tech/careerscope.git
 cd careerscope
-npm ci              # root workspace (V1 + shared packages + tooling)
-npm --prefix v2 ci  # V2 workspace (the deployed stack)
+npm ci              # canonical root workspace
 ```
 
 ## 3. Configuration

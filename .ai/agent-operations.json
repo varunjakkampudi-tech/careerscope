@@ -142,8 +142,8 @@
       "invocationEvidence": "discussion-contribution",
       "retention": {
         "verdict": "KEEP",
-        "uniqueArtefact": "v2/apps/web components, routes and state",
-        "permissionBoundary": "R W X Web, scoped to v2/apps/web; apps/web only when a task names V1. Path-distinct, tool-duplicated.",
+        "uniqueArtefact": "apps/web components, routes and state",
+        "permissionBoundary": "R W X Web, scoped to apps/web; canonical root workspace only.",
         "distinctDecision": "layout, hierarchy, interaction, responsive and empty/error state design — explicitly its call, not UX's or Visual Designer's",
         "independentEvidence": false,
         "overlapsWith": ["careerscope-senior-engineer", "careerscope-visual-designer"],
@@ -160,8 +160,8 @@
       "invocationEvidence": "discussion-contribution",
       "retention": {
         "verdict": "KEEP",
-        "uniqueArtefact": "v2/apps/api, v2/packages/core, v2/apps/workers, v2/migrations",
-        "permissionBoundary": "R W X Web, scoped to V2 server paths; V1 not granted",
+        "uniqueArtefact": "apps/api, packages/core, apps/workers, migrations",
+        "permissionBoundary": "R W X Web, scoped to canonical server paths",
         "distinctDecision": "owns the load-bearing invariants — ownerId from session, outbox in the same transaction, forward-only migrations, Argon2id cost, single-writer storage",
         "independentEvidence": false,
         "overlapsWith": ["careerscope-senior-engineer"],
@@ -178,7 +178,7 @@
       "invocationEvidence": "discussion-contribution",
       "retention": {
         "verdict": "KEEP",
-        "uniqueArtefact": "infra/v3, .github/workflows, v2/compose.yml, docs/OPERATIONS/*",
+        "uniqueArtefact": "infra, .github/workflows, infra/compose*.yml, docs/OPERATIONS/*",
         "permissionBoundary": "R W X Web on host and CI paths no other agent may touch",
         "distinctDecision": "deploy topology and the incident rules — never nft flush ruleset, never restart the proxy alone, never docker system prune -a",
         "independentEvidence": true,

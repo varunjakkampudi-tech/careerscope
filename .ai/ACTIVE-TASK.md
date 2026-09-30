@@ -2,9 +2,13 @@
 
 **Status: IN PROGRESS — QA completion and blocker reconciliation.**
 
-Reconciled 2026-09-28 on synchronized `main` SHA
-`93a29d7bce6c0407619fc08795ad840313606167`. No production deployment or
+Reconciled 2026-10-01 on synchronized canonical `main` SHA
+`bd0309f0ba126e681ee92ba618c573133ad7b1ee`. No production deployment or
 publication has been run.
+
+The repository now has one active root workspace (`apps/`, `packages/`,
+`migrations/`, `infra/`); historical audit notes may still mention the former
+layout, but active commands and release paths must not depend on it.
 
 ## Current execution plan
 

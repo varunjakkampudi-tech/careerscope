@@ -1322,12 +1322,15 @@ test('a BLOCKED gate needs a known issue, but check does not equate it to readin
     assert.equal(validate().complete, false);
   }));
 
-test('CLI help describes schema 1 and 2 readiness from current policy', () => {
+test('CLI help describes baseline and expanded readiness from current policy', () => {
   const child = spawnSync(process.execPath, ['scripts/engineering.mjs', 'help'], {
     encoding: 'utf8',
   });
   assert.equal(child.status, 0, child.stderr);
-  assert.match(child.stdout, /ready: schema v1 NOT_STARTED; schema v2 READY, excluding R5/);
+  assert.match(
+    child.stdout,
+    /ready: baseline schema NOT_STARTED; expanded schema READY, excluding R5/,
+  );
   assert.match(child.stdout, /IN_PROGRESS objective at current revision/);
   assert.match(child.stdout, /attempts below attemptLimit, COMPLETE dependencies/);
   assert.match(child.stdout, /Readiness policy: validateEngineering in engineering\.mjs/);

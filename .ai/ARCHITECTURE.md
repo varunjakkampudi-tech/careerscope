@@ -1,8 +1,7 @@
 # Architecture
 
-Current V2 architecture as deployed. Detail lives in
-[docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) (V1) and
-[v2/ARCHITECTURE.md](../v2/ARCHITECTURE.md) (V2); this is the map an agent needs
+Current canonical CareerScope architecture as deployed. Detail lives in
+[docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md); this is the map an agent needs
 before touching anything.
 
 ## Topology
@@ -84,7 +83,7 @@ is no separate `traceId` because every trace here starts at an HTTP request.
 `command_executions`, `run_events`, `search_jobs`, `saved_leads`,
 `lead_history`, `resume_uploads`, `resume_results`, `job_sightings`.
 
-Migrations are forward-only under `v2/migrations/`. There are no down
+Migrations are forward-only under `migrations/`. There are no down
 migrations — a rollback past a migration needs the plan in
 `docs/OPERATIONS/ROLLBACK.md`.
 

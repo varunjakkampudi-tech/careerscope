@@ -571,7 +571,7 @@ export function validateEngineering(state, gates, { root, agents, revision, now 
         : [];
     return {
       valid: true,
-      assurance: expanded ? 'EXPANDED_V2' : 'LEGACY_V1',
+      assurance: expanded ? 'EXPANDED' : 'BASELINE',
       errors: [],
       digest,
       ready,
@@ -666,7 +666,7 @@ export function loadEngineering(root) {
 const HELP = `Usage: node scripts/engineering.mjs <check|ready|status|verify|help>
 Read-only local execution projection; product backlog is unchanged.
 check: validate records and claimed results; honest BLOCKED is valid (exit 0).
-ready: schema v1 NOT_STARTED; schema v2 READY, excluding R5. Requires an
+ready: baseline schema NOT_STARTED; expanded schema READY, excluding R5. Requires an
 IN_PROGRESS objective at current revision, attempts below attemptLimit, COMPLETE dependencies
 and no active file conflicts. No execution.
 Readiness policy: validateEngineering in engineering.mjs.
@@ -674,7 +674,7 @@ status: objective, task/gate statuses, digest, readiness and completion blockers
 verify: exit 0 only for a COMPLETE objective with all tasks COMPLETE and all
 applicable gates VERIFIED/COMPLETE. Invalid/incomplete records exit 1.
 
-Schema v1: .ai/engineering.json has objective, status, revision (Git HEAD),
+Baseline schema: .ai/engineering.json has objective, status, revision (Git HEAD),
 createdAt/updatedAt (canonical UTC ISO), blockedReason (null unless BLOCKED),
 tasks with id, owner, files, dependencies, attempts, attemptLimit, status,
 acceptanceCriteria [{id,description}], evidence, review and the same timestamps.
@@ -689,7 +689,7 @@ APPROVED/CHANGES_REQUESTED. The reviewer must differ from the owner/responsibleA
 Exclusions need a reason and independent current approval for completion.
 Statuses: ${STATUSES.join(', ')}. Active attempts must be below attemptLimit.
 
-Schema v2 keeps the objective/gates v1 shape and extends every task with contract.
+Expanded schema keeps the objective/gates shape and extends every task with contract.
 Task statuses: ${TASK_STATES.join(', ')}. files are existing regular files only.
 contract: {risk: 'R0'..'R5', baseline: 'docs/ai/workflow-baseline.json', forbiddenPaths: [],
 changedPaths: [], history: [{status:'CREATED',at:createdAt,actor:owner,findings:[]}],
@@ -714,8 +714,8 @@ Risk role/check requirements are exported as RISK_ROLES in engineering-contract.
 Only testing/performance in R1/R2 can be excluded with reason and role approval.
 R4 can declare approvalRequired; R5 requires approval before assignment and is
 never automatically ready. Absent required approval means BLOCKED, with findings.
-Replay starts CREATED; no fabricated migration history. Keep old records v1 when
-their actual history is unavailable; create a new v2 objective/task instead.
+Replay starts CREATED; no fabricated migration history. Keep old records when
+their actual history is unavailable; create a new objective/task instead.
 New tasks use attempts:0, attemptLimit:3, status:CREATED, evidence:[], review:null.
 After editing contract/execution history inputs, compute digest, record evidence,
 enter REVIEW, bind role reviews, then obtain final independent approval before
@@ -725,8 +725,8 @@ REVIEW/PASSED/COMPLETE events are excluded from digest self-reference;
 resolution links still require successful current reruns. Execution/failure history,
 all other contract fields and baseline bytes remain bound. The final review adds
 findings: [] for APPROVED, nonempty findings for CHANGES_REQUESTED.
-Gate rules and gate failure retention stay v1 (no gate supersession).
-Legacy check outputs assurance LEGACY_V1, never expanded v2 assurance.
+Gate rules and gate failure retention remain stable across revisions.
+Baseline check outputs assurance BASELINE; expanded checks output EXPANDED.
 Opt-in command execution is separate: engineering-runner.mjs help|list|run <id>.
 
 Digest binds scoped bytes (including missing paths and directory membership) and

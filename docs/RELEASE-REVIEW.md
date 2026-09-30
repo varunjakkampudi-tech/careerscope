@@ -67,7 +67,7 @@ Run on the final release revision:
 | `npm run pages:test`                             | Snapshot allowlists, encryption, release and browser-state logic          |
 | `node --test infra/application-runtime.test.mjs` | Startup password/display guards                                           |
 | `npm run build`                                  | All packages, API and production React bundle                             |
-| `node --import tsx scripts/check-ui.mjs`         | Built API/UI, login and responsive routes in three engines                |
+| `npm run test:ui`                                | Built canonical API/UI, login and responsive routes in three engines      |
 | `npm run pages:workspace:test`                   | Public filters, saved jobs, refresh and storage failures in three engines |
 | `node scripts/check-admin-ui.mjs`                | Synthetic encrypted-admin unlock, lock, safe DOM and responsive UI        |
 

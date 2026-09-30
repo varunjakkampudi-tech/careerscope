@@ -1,10 +1,10 @@
-import { DatabaseSync } from 'node:sqlite';
 import { writeFile, rename } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath, URL } from 'node:url';
 import { createInterface } from 'node:readline/promises';
 import { Writable } from 'node:stream';
 import process from 'node:process';
+import pg from 'pg';
 import { publicJobUrl } from './export-mobile.mjs';
 import { encryptSnapshot } from '../mobile-site/snapshot-crypto.mjs';
 
@@ -36,26 +36,6 @@ export function configuredPassphrase(value) {
   return value;
 }
 
-export function readAdminSnapshot(database) {
-  const profiles = database.prepare('SELECT id, updated_at, resume_id FROM profiles').all();
-  if (profiles.length !== 1) throw new Error('Export requires exactly one owner profile.');
-  const profile = profiles[0];
-  const rows = database
-    .prepare(
-      `SELECT j.title, c.name AS company, j.location, j.source,
-    j.posted_at, j.source_url, l.score, l.status FROM leads l
-    JOIN jobs j ON j.id = l.job_id JOIN companies c ON c.id = j.company_id
-    WHERE l.profile_id = ? ORDER BY l.score DESC, j.title, l.id`,
-    )
-    .all(profile.id);
-  return {
-    version: 1,
-    updatedAt: new Date().toISOString(),
-    profile: { updatedAt: profile.updated_at, hasResume: Boolean(profile.resume_id) },
-    leads: adminLeads(rows),
-  };
-}
-
 async function askPassphrase() {
   if (!process.stdin.isTTY) throw new Error('Run this command in your own interactive terminal.');
   const silent = new Writable({
@@ -82,15 +62,39 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     const passphrase =
       configuredPassphrase(process.env.ADMIN_SNAPSHOT_PASSPHRASE) ?? (await askPassphrase());
     delete process.env.ADMIN_SNAPSHOT_PASSPHRASE;
-    const database = new DatabaseSync(
-      resolve(root, process.env.DATA_DIR || 'data', 'careerscope.db'),
-      { readOnly: true },
-    );
+    const ownerId = process.env.PUBLIC_EXPORT_OWNER_ID;
+    if (!ownerId) throw new Error('PUBLIC_EXPORT_OWNER_ID is required for an admin export.');
+    const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 1 });
     let snapshot;
     try {
-      snapshot = readAdminSnapshot(database);
+      const profile = await pool.query(
+        `SELECT p.updated_at,
+          EXISTS (SELECT 1 FROM resume_results rr
+            WHERE rr.owner_id = p.owner_id AND rr.status = 'parsed') AS has_resume
+         FROM candidate_profiles p WHERE p.owner_id = $1`,
+        [ownerId],
+      );
+      if (profile.rowCount !== 1) throw new Error('Export requires exactly one owner profile.');
+      const leads = await pool.query(
+        `SELECT data->>'title' AS title, data->>'company' AS company,
+          data->>'location' AS location, data->>'source' AS source,
+          data->>'postedAt' AS posted_at, data->>'sourceUrl' AS source_url,
+          COALESCE((data->'match'->>'score')::numeric, 0) AS score, status
+         FROM saved_leads WHERE owner_id = $1
+         ORDER BY score DESC, title, id`,
+        [ownerId],
+      );
+      snapshot = {
+        version: 1,
+        updatedAt: new Date().toISOString(),
+        profile: {
+          updatedAt: profile.rows[0].updated_at,
+          hasResume: Boolean(profile.rows[0].has_resume),
+        },
+        leads: adminLeads(leads.rows),
+      };
     } finally {
-      database.close();
+      await pool.end();
     }
     const envelope = await encryptSnapshot(snapshot, passphrase);
     const destination = resolve(root, 'mobile-site/admin.enc.json');

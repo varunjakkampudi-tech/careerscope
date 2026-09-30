@@ -22,9 +22,7 @@ permissions:
   contents: read
 
 env:
-  # node:sqlite is a built-in module, but only an unflagged one from 23.4 and
-  # stable from 24.0 — which is what engines.node pins, and what production
-  # runs. Testing on anything older would test a different database layer.
+  # Node 24 is the supported runtime for the canonical PostgreSQL application.
   NODE_VERSION: '24'
 
   # Browser installation is explicit: verify installs Chromium, Firefox and
@@ -218,9 +216,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Verify the built app in browsers
-        run: node --import tsx scripts/check-ui.mjs
-
       - name: Verify the public workspace
         run: npm run pages:workspace:test
 
@@ -248,36 +243,6 @@ jobs:
 
       - name: Verify the encrypted admin
         run: node scripts/check-admin-ui.mjs
-
-      # A build that produces something which cannot boot is still a failure.
-      # The health route is public, so this needs no key beyond the one the
-      # production env parser insists on having.
-      - name: Boot the built server
-        env:
-          NODE_ENV: production
-          APP_API_KEY: ci-smoke-key-0000000000000000000000
-          AUTH_ORIGIN: https://localhost
-          DATA_DIR: ${{ runner.temp }}/smoke-data
-          PORT: '8080'
-          HOST: 127.0.0.1
-        run: |
-          mkdir -p "$DATA_DIR"
-          node apps/api/dist/db/migrate.js
-          node apps/api/dist/index.js &
-          server=$!
-          ok=0
-          for _ in $(seq 1 30); do
-            if curl -fsS http://127.0.0.1:8080/api/health >/dev/null 2>&1; then
-              ok=1
-              break
-            fi
-            kill -0 "$server" 2>/dev/null || break
-            sleep 1
-          done
-          curl -fsS http://127.0.0.1:8080/api/health || true
-          kill "$server" 2>/dev/null || true
-          wait "$server" 2>/dev/null || true
-          test "$ok" = 1
 
   integration:
     name: Test CareerScope (integration — database, queue, storage, browsers)
@@ -390,13 +355,9 @@ jobs:
       - name: Test CareerScope (job_sightings backfill)
         run: npm run test:backfill-job-sightings
 
-      # CS-15: scripts/check-ui.ts ran in no workflow at all. The `verify`
-      # job's "Verify the built app in browsers" step runs the compatibility
-      # scripts/check-ui.mjs suite, so CareerScope's browser
-      # acceptance and its axe-core accessibility baseline executed nowhere,
-      # while CS-15's evidence claimed they were CI-enforced. A stale selector
-      # had already silently disabled most of the file once; without a step
-      # that actually runs it, that can happen again and nothing would say so.
+      # CS-15: the canonical browser suite runs here with PostgreSQL, Redis,
+      # LocalStack and the built files worker available. Keeping it in the
+      # service-backed job prevents a false green result from a no-service run.
       #
       # It belongs in this job and not in `verify`: it creates a throwaway
       # database on the real Postgres, uses the LocalStack queue, spawns the

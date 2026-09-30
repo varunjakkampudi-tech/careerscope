@@ -61,7 +61,8 @@ public mobile jobs** job publishes both public and encrypted admin assets.
 Pull requests validate without deploying. An enabled container check must also
 pass; a failed check leaves the previous deployed site unchanged.
 
-Generate both snapshots with `mobile:export` and
+Set `PUBLIC_EXPORT_OWNER_ID` and `DATABASE_URL` in the ignored local `.env`, then
+generate both snapshots with `mobile:export` and
 `mobile:admin`, validate with `pages:test`, then commit the reviewed site files
 and snapshots and push to `main`. Export commands do not commit or push.
 

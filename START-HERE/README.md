@@ -35,10 +35,8 @@ CareerScope is a **single-owner** job-search platform. One user, no public
 signup. It discovers postings from multiple sources, deduplicates them by
 fingerprint, scores them deterministically against a frozen profile snapshot,
 and tracks a saved-lead pipeline. It is deployed at **https://careerscope.tech**
-on one VPS behind Caddy. There are two stacks in this repository: **V1** (legacy
-Fastify + SQLite + React/Vite, the `main` line) and **V2** (current, `3.0.0`:
-Fastify + PostgreSQL + Drizzle + Redis + SQS + Next.js/React 19). The V2 stack
-is what is deployed.
+on one VPS behind Caddy. The repository is one canonical `3.0.0` workspace:
+Fastify + PostgreSQL + Drizzle + Redis + SQS + Next.js/React 19.
 
 ## The things that are true and surprising
 
@@ -46,9 +44,9 @@ Most mistakes here come from assuming otherwise.
 
 - **AI generation is OFF. Auto-apply is ON HOLD. Naukri is legitimate-access
   only.** These are deliberate product positions, not unfinished work.
-- **The V2 frontend is one route.** An ~830-line `page.tsx` uses a `view` state
-  variable to simulate navigation between pages that do not exist. The backend
-  is mature; the product surface is not. This is the largest open gap.
+- **The frontend uses the App Router.** Authenticated product areas are composed
+  from real route segments and shared shell/components; service-backed browser
+  coverage remains a release gate.
 - **`data/` is entirely gitignored** and holds the database, resumes and `.env`.
   Nothing in it survives a clone. It is not broken — it is private.
 - **Local `HEAD` and the deployed revision are often legitimately different.**

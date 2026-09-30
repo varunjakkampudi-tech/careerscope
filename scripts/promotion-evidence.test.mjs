@@ -96,7 +96,7 @@ test('a criterion demanding verification of an OPEN limitation is blocking (CS-1
     {
       id: 'T-14',
       acceptanceCriteria: ['Keyboard and screen-reader operable, verified not assumed'],
-      evidence: ['check-ui.mjs asserts no overflow at 320px'],
+      evidence: ['check-ui.ts asserts no overflow at 320px'],
     },
     context,
   );
@@ -150,7 +150,7 @@ test('a criterion naming CI with no CI run recorded is blocking (CS-2 shape)', (
   const withoutCi = assess(
     {
       id: 'T-2',
-      acceptanceCriteria: ['check-ui.mjs green on all three engines in CI'],
+      acceptanceCriteria: ['check-ui.ts green on all three engines in CI'],
       evidence: ['4 consecutive clean runs in a local Linux Playwright container'],
     },
     context,
@@ -160,7 +160,7 @@ test('a criterion naming CI with no CI run recorded is blocking (CS-2 shape)', (
   const withCi = assess(
     {
       id: 'T-2b',
-      acceptanceCriteria: ['check-ui.mjs green on all three engines in CI'],
+      acceptanceCriteria: ['check-ui.ts green on all three engines in CI'],
       evidence: ['https://github.com/o/r/actions/runs/123456 green on all three engines'],
     },
     context,
@@ -304,7 +304,7 @@ test('prose mentioning a CI run is not a CI result (CS-2 shape)', () => {
   const prose = assess(
     {
       id: 'T-2',
-      acceptanceCriteria: ['check-ui.mjs green on all three engines in CI'],
+      acceptanceCriteria: ['check-ui.ts green on all three engines in CI'],
       evidence: [
         'LeadTable.tsx is UNCOMMITTED, so every CI run that exists predates it. AC3 IS NOT MERELY UNPROVEN, IT IS UNPROVABLE.',
       ],
@@ -324,7 +324,7 @@ test('prose mentioning a CI run is not a CI result (CS-2 shape)', () => {
     const recorded = assess(
       {
         id: 'T-2b',
-        acceptanceCriteria: ['check-ui.mjs green on all three engines in CI'],
+        acceptanceCriteria: ['check-ui.ts green on all three engines in CI'],
         evidence: [locator],
       },
       context,
