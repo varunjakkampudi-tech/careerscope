@@ -15,6 +15,8 @@ This file records **where** each secret lives and **how** to rotate it.
 | SSH deployment key                    | operator workstation, `~/.ssh/careerscope_deploy`       | operator              | Backed by hPanel console access |
 | Session tokens                        | `sessions` table, stored hashed                         | API at login          | n/a                             |
 | Password hashes                       | `users` table, Argon2id                                 | API at registration   | n/a                             |
+| Cognito client identifier             | Host `.env` (`COGNITO_CLIENT_ID`)                       | AWS Cognito          | Public configuration            |
+| Cognito client secret (if client is confidential) | Host `.env` (`COGNITO_CLIENT_SECRET`) | AWS Cognito | **Never commit or print** |
 
 `infra/v3/.env` is gitignored. `.env` and `.env.*` are gitignored repository-wide,
 with `.env.example` the only exception.
@@ -33,6 +35,12 @@ with `.env.example` the only exception.
 - **Never** put one in documentation, an issue, a screenshot or a chat message.
 - **Never** regenerate `POSTGRES_PASSWORD` against an existing database volume.
   The volume will reject it and the stack will not start.
+- `COGNITO_ISSUER`, `COGNITO_CLIENT_ID` and `COGNITO_REDIRECT_URI` are a
+  required all-or-nothing set. The issuer and redirect URI must use HTTPS on a
+  public deployment. The current production compose defaults identify the
+  configured Cognito pool; keep any client secret out of the repository. If
+  the Cognito app client is confidential, provide `COGNITO_CLIENT_SECRET` only
+  in the host environment; the callback sends it only to Cognito's token endpoint.
 
 ---
 

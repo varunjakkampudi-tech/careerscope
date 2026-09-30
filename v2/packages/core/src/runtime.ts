@@ -46,6 +46,13 @@ export function configuration(source: NodeJS.ProcessEnv = process.env) {
       LOCAL_AWS_ENDPOINT: z.string().min(1),
       APP_ORIGIN: z.string().min(1),
       REGISTRATION_ENABLED: z.enum(['true', 'false']).default('false'),
+      COGNITO_ISSUER: z.string().url().optional(),
+      COGNITO_CLIENT_ID: z.string().min(1).optional(),
+      COGNITO_REDIRECT_URI: z.string().url().optional(),
+      COGNITO_CLIENT_SECRET: z.preprocess(
+        (value) => (value === '' ? undefined : value),
+        z.string().min(1).optional(),
+      ),
       SEARCH_QUEUE_TRANSPORT: z.enum(['sqs', 'bullmq']).default('sqs'),
       SEARCH_QUEUE_REDIS_URL: z.string().min(1).optional(),
     })
@@ -60,6 +67,21 @@ export function configuration(source: NodeJS.ProcessEnv = process.env) {
     localUrl(env.SEARCH_QUEUE_REDIS_URL, ['redis:']);
   }
   appOrigin(env.APP_ORIGIN);
+  const cognitoValues = [env.COGNITO_ISSUER, env.COGNITO_CLIENT_ID, env.COGNITO_REDIRECT_URI];
+  if (
+    cognitoValues.some((value) => value !== undefined) &&
+    cognitoValues.some((value) => value === undefined)
+  )
+    throw new Error(
+      'COGNITO_ISSUER, COGNITO_CLIENT_ID and COGNITO_REDIRECT_URI must be configured together',
+    );
+  if (env.COGNITO_ISSUER) {
+    if (new URL(env.COGNITO_ISSUER).protocol !== 'https:')
+      throw new Error('COGNITO_ISSUER must use https');
+    const redirect = new URL(env.COGNITO_REDIRECT_URI!);
+    if (redirect.protocol !== 'https:' && !['localhost', '127.0.0.1'].includes(redirect.hostname))
+      throw new Error('COGNITO_REDIRECT_URI must use https outside local development');
+  }
   return env;
 }
 

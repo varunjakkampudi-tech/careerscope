@@ -1,4 +1,4 @@
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { Readable } from 'node:stream';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -34,6 +34,12 @@ import { AiProviderError, type AiConfig } from '@careerscope/core/ai-provider';
 import { findElaborationTarget, elaborate } from '@careerscope/core/ai-assist';
 
 export type RateLimit = (key: string, limit: number, seconds: number) => Promise<boolean>;
+export type CognitoConfig = {
+  issuer: string;
+  clientId: string;
+  redirectUri: string;
+  clientSecret?: string;
+};
 
 // Read rather than hardcode: the literal that used to live here was still
 // reporting 2.0.0-alpha.1 after the package had moved on.
@@ -81,6 +87,7 @@ export async function createApp(
       ) => Promise<void>;
     };
     aiProvider?: AiConfig;
+    cognito?: CognitoConfig;
   } = {},
 ) {
   const auth = new Auth(database);
@@ -123,7 +130,13 @@ export async function createApp(
     if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method) && request.headers.origin !== origin) {
       throw new HttpError(403, 'Origin denied');
     }
-    if (path === '/api/login' || path === '/api/register') return;
+    if (
+      path === '/api/login' ||
+      path === '/api/register' ||
+      path === '/api/auth/cognito/start' ||
+      path === '/api/auth/cognito/callback'
+    )
+      return;
     const session = await auth.session(request.cookies[sessionCookie]);
     if (path === '/api/session') return;
     // CS-57: logging out is the one mutation that must succeed with no
@@ -218,6 +231,7 @@ export async function createApp(
     registrationEnabled: options.registrationEnabled,
     resumes: !!coordinator,
     cancellation: !!options.resumeStorage?.cancelUpload,
+    cognito: options.cognito !== undefined,
   });
   app.get('/api/health', async () => {
     await database.pool.query('SELECT 1');
@@ -226,7 +240,11 @@ export async function createApp(
   app.get('/api/session', async (request) => {
     const session = await auth.session(request.cookies[sessionCookie]);
     if (!session) {
-      return { authenticated: false, registrationEnabled: options.registrationEnabled === true };
+      return {
+        authenticated: false,
+        registrationEnabled: options.registrationEnabled === true,
+        cognitoEnabled: options.cognito !== undefined,
+      };
     }
     // Returning the owner's own email to their own authenticated session is
     // not a privacy leak (never used for anything but a real initials
@@ -293,6 +311,118 @@ export async function createApp(
       maxAge: 8 * 3600,
     });
     return { authenticated: true };
+  });
+  app.get('/api/auth/cognito/start', async (_request, reply) => {
+    if (!options.cognito) throw new HttpError(404, 'Cognito authentication unavailable');
+    const key = createHash('sha256').update(_request.ip).digest('hex');
+    if (!(await rateLimit(`cognito-start:${key}`, 20, 60)))
+      throw new HttpError(429, 'Too many attempts');
+    const state = randomBytes(32).toString('base64url');
+    const verifier = randomBytes(32).toString('base64url');
+    const challenge = createHash('sha256').update(verifier).digest('base64url');
+    const authorize = new URL('/oauth2/authorize', options.cognito.issuer);
+    authorize.search = new URLSearchParams({
+      response_type: 'code',
+      client_id: options.cognito.clientId,
+      redirect_uri: options.cognito.redirectUri,
+      scope: 'openid email phone',
+      state,
+      code_challenge: challenge,
+      code_challenge_method: 'S256',
+    }).toString();
+    const secure = new URL(origin).protocol === 'https:';
+    const cookieOptions = {
+      httpOnly: true,
+      secure,
+      sameSite: 'lax' as const,
+      path: '/api/auth/cognito',
+      maxAge: 10 * 60,
+    };
+    reply.setCookie('careerscope_cognito_state', state, cookieOptions);
+    reply.setCookie('careerscope_cognito_verifier', verifier, cookieOptions);
+    return reply.redirect(authorize.toString());
+  });
+  app.get('/api/auth/cognito/callback', async (request, reply) => {
+    const fail = (reason: string) => {
+      reply.clearCookie('careerscope_cognito_state', { path: '/api/auth/cognito' });
+      reply.clearCookie('careerscope_cognito_verifier', { path: '/api/auth/cognito' });
+      const target = new URL('/', origin);
+      target.searchParams.set('authError', reason);
+      return reply.redirect(target.toString());
+    };
+    if (!options.cognito) return fail('unavailable');
+    const key = createHash('sha256').update(request.ip).digest('hex');
+    if (!(await rateLimit(`cognito-callback:${key}`, 30, 60))) return fail('rate_limited');
+    const query = request.query as { code?: unknown; state?: unknown; error?: unknown };
+    const expectedState = request.cookies.careerscope_cognito_state;
+    const verifier = request.cookies.careerscope_cognito_verifier;
+    if (
+      typeof query.code !== 'string' ||
+      typeof query.state !== 'string' ||
+      !expectedState ||
+      !verifier ||
+      query.state.length !== expectedState.length ||
+      !timingSafeEqual(Buffer.from(query.state), Buffer.from(expectedState))
+    )
+      return fail(query.error === 'access_denied' ? 'cancelled' : 'invalid_callback');
+    try {
+      const tokenRequest = {
+        grant_type: 'authorization_code',
+        client_id: options.cognito.clientId,
+        code: query.code,
+        redirect_uri: options.cognito.redirectUri,
+        code_verifier: verifier,
+        ...(options.cognito.clientSecret ? { client_secret: options.cognito.clientSecret } : {}),
+      };
+      const tokenResponse = await fetch(new URL('/oauth2/token', options.cognito.issuer), {
+        method: 'POST',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(tokenRequest),
+        signal: AbortSignal.timeout(10_000),
+      });
+      if (!tokenResponse.ok) return fail('provider_error');
+      const tokenText = await tokenResponse.text();
+      if (tokenText.length > 64 * 1024) return fail('provider_error');
+      const tokenBody: unknown = JSON.parse(tokenText);
+      if (typeof tokenBody !== 'object' || tokenBody === null) return fail('provider_error');
+      const accessToken = (tokenBody as { access_token?: unknown }).access_token;
+      if (typeof accessToken !== 'string' || accessToken.length < 20 || accessToken.length > 8192)
+        return fail('provider_error');
+      const userResponse = await fetch(new URL('/oauth2/userInfo', options.cognito.issuer), {
+        headers: { authorization: `Bearer ${accessToken}` },
+        signal: AbortSignal.timeout(10_000),
+      });
+      if (!userResponse.ok) return fail('provider_error');
+      const profileText = await userResponse.text();
+      if (profileText.length > 64 * 1024) return fail('provider_error');
+      const profile: unknown = JSON.parse(profileText);
+      if (typeof profile !== 'object' || profile === null) return fail('provider_error');
+      const subject = (profile as { sub?: unknown }).sub;
+      const email = (profile as { email?: unknown }).email;
+      const emailVerified = (profile as { email_verified?: unknown }).email_verified;
+      const phoneVerified = (profile as { phone_number_verified?: unknown }).phone_number_verified;
+      if (
+        typeof subject !== 'string' ||
+        typeof email !== 'string' ||
+        (emailVerified !== true && phoneVerified !== true)
+      )
+        return fail('email_required');
+      const token = await auth.loginExternal(subject, email, request.cookies[sessionCookie]);
+      if (!token) return fail('account_link_required');
+      reply.setCookie(sessionCookie, token, {
+        httpOnly: true,
+        secure: new URL(origin).protocol === 'https:',
+        sameSite: 'strict',
+        path: '/api',
+        maxAge: 8 * 3600,
+      });
+      reply.clearCookie('careerscope_cognito_state', { path: '/api/auth/cognito' });
+      reply.clearCookie('careerscope_cognito_verifier', { path: '/api/auth/cognito' });
+      return reply.redirect(new URL('/dashboard', origin).toString());
+    } catch (error) {
+      request.log.warn({ error }, 'Cognito callback failed');
+      return fail('provider_error');
+    }
   });
   app.post('/api/logout', async (request, reply) => {
     // CS-57: the onRequest hook does not guarantee a cookie on this path, so

@@ -28,6 +28,10 @@ x-environment: &environment
   LOCAL_AWS_ENDPOINT: http://127.0.0.1:4566
   APP_ORIGIN: ${APP_ORIGIN:?Public origin required}
   REGISTRATION_ENABLED: ${REGISTRATION_ENABLED:-false}
+  COGNITO_ISSUER: ${COGNITO_ISSUER:-https://ap-south-2q26nnevnc.auth.ap-south-2.amazoncognito.com}
+  COGNITO_CLIENT_ID: ${COGNITO_CLIENT_ID:-7dcllt5s1gmneerlrb7t7s7tft}
+  COGNITO_CLIENT_SECRET: ${COGNITO_CLIENT_SECRET:-}
+  COGNITO_REDIRECT_URI: ${COGNITO_REDIRECT_URI:-https://careerscope.tech/api/auth/cognito/callback}
   RESUME_STORAGE_DIRECTORY: /private/objects
   RESUME_STORAGE_KEY_FILE: /private/encryption.key
   NODE_OPTIONS: --max-old-space-size=512

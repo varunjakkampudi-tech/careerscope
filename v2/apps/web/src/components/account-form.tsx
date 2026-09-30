@@ -6,11 +6,13 @@ import { api } from '../lib/api';
 
 export default function AccountForm({
   registrationEnabled,
+  cognitoEnabled,
   expired,
   notice = '',
   onAuthenticated,
 }: {
   registrationEnabled: boolean;
+  cognitoEnabled: boolean;
   expired: boolean;
   notice?: string;
   onAuthenticated: () => void | Promise<void>;
@@ -115,6 +117,11 @@ export default function AccountForm({
           )}
           {registering ? 'Create account' : 'Sign in'}
         </button>
+        {cognitoEnabled && (
+          <a className="button" href="/api/auth/cognito/start">
+            Continue with email or phone OTP
+          </a>
+        )}
         {registrationEnabled && (
           <button
             type="button"

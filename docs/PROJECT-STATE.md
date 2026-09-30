@@ -120,6 +120,10 @@ Use only these words. Do not invent new ones.
 ### IMPLEMENTED, NOT DEPLOYED
 
 - V1 in its entirety, including GitHub Pages publishing and the mobile site
+- Cognito-hosted passwordless sign-in using authorization-code + PKCE. The
+  provider access token is exchanged server-side and ends in the same opaque
+  CareerScope session cookie; deployment still requires the Cognito environment
+  values and a hosted callback verification.
 
 ### OPTIONAL
 
@@ -139,8 +143,9 @@ Use only these words. Do not invent new ones.
 
 ### NOT IMPLEMENTED
 
-- Email verification, forgot-password, password reset. There is no email
-  sender. See [KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md).
+- Local-password email verification, forgot-password and password reset. There
+  is no local email sender; Cognito-hosted OTP is the supported passwordless
+  path when enabled. See [KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md).
 - Admin console. See [FRONTEND-ADMIN-ROADMAP](FRONTEND-ADMIN-ROADMAP.md).
 - Public job browsing, company pages, market/skills aggregates, saved searches
   and alerts. The data model does not currently support them.

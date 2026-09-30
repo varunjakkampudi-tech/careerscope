@@ -11,6 +11,14 @@ import { clearAuthQueryCache } from '@/lib/query-cache';
 
 const notices: Record<string, string> = {
   'security-changed': 'Password changed. All sessions signed out. Sign in again.',
+  cancelled: 'Sign-in was cancelled.',
+  invalid_callback: 'The sign-in response could not be verified. Try again.',
+  provider_error: 'The sign-in provider is temporarily unavailable. Try again later.',
+  rate_limited: 'Too many sign-in attempts. Try again shortly.',
+  email_required: 'Your sign-in profile needs a verified email address.',
+  account_link_required:
+    'This email already has a password account. Sign in with your password; automatic linking is disabled.',
+  unavailable: 'Passwordless sign-in is not enabled on this deployment.',
 };
 
 function SignIn() {
@@ -59,6 +67,7 @@ function SignIn() {
         ) : authenticated ? null : (
           <AccountForm
             registrationEnabled={session.data?.registrationEnabled === true}
+            cognitoEnabled={session.data?.cognitoEnabled === true}
             expired={expired}
             notice={notice}
             onAuthenticated={async () => {

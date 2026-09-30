@@ -13,6 +13,7 @@ export type Session = {
   csrf?: string;
   email?: string;
   registrationEnabled?: boolean;
+  cognitoEnabled?: boolean;
   /**
    * Whether an AI provider is actually configured on the server (CS-48 F-1).
    * Screens must derive what they say about AI from this rather than from a

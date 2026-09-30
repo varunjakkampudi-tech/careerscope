@@ -85,6 +85,73 @@ export class Auth {
     return token;
   }
 
+  /** Finish Cognito auth without exposing Cognito tokens to the browser. */
+  async loginExternal(subject: string, email: string, previous?: string) {
+    const externalSubject = z.string().min(1).max(256).parse(subject);
+    const normalized = z.string().email().max(254).parse(email.trim().toLowerCase());
+    const token = randomBytes(32).toString('hex');
+    const client = await this.database.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const found = await client.query<{
+        id: string;
+        email: string;
+        external_subject: string | null;
+      }>(
+        'SELECT id, email, external_subject FROM users WHERE external_subject = $1 OR email = $2 FOR UPDATE',
+        [externalSubject, normalized],
+      );
+      const bySubject = found.rows.find((row) => row.external_subject === externalSubject);
+      const byEmail = found.rows.find((row) => row.email === normalized);
+      let ownerId: string;
+      if (bySubject && (!byEmail || byEmail.id === bySubject.id)) ownerId = bySubject.id;
+      else if (bySubject && byEmail) {
+        await client.query('ROLLBACK');
+        return null;
+      } else if (byEmail) {
+        // Never silently link to a password account based only on an email
+        // claim. Explicit re-authenticated account linking is safer.
+        await client.query('ROLLBACK');
+        return null;
+      } else {
+        ownerId = randomUUID();
+        const unusablePassword = await passwordHash(randomBytes(32).toString('hex'));
+        const inserted = await client.query<{ id: string }>(
+          `INSERT INTO users (id, email, password_hash, external_subject)
+           VALUES ($1, $2, $3, $4)
+           ON CONFLICT (external_subject) DO NOTHING
+           RETURNING id`,
+          [ownerId, normalized, unusablePassword, externalSubject],
+        );
+        if (!inserted.rowCount) {
+          const concurrent = await client.query<{ id: string }>(
+            'SELECT id FROM users WHERE external_subject = $1 FOR UPDATE',
+            [externalSubject],
+          );
+          if (!concurrent.rows[0]) {
+            await client.query('ROLLBACK');
+            return null;
+          }
+          ownerId = concurrent.rows[0].id;
+        }
+      }
+      if (previous)
+        await client.query('DELETE FROM sessions WHERE token_hash = $1', [digest(previous)]);
+      await client.query(
+        `INSERT INTO sessions (token_hash, owner_id, expires_at)
+         VALUES ($1, $2, now() + interval '8 hours')`,
+        [digest(token), ownerId],
+      );
+      await client.query('COMMIT');
+      return token;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
   async session(token?: string) {
     if (!token || !/^[a-f0-9]{64}$/.test(token)) return null;
     const result = await this.database.pool.query<{ owner_id: string }>(

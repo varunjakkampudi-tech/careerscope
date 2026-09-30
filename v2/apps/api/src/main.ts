@@ -16,6 +16,15 @@ const resumeStorage = await configuredFileResumeStorage();
 const aiProvider = configuredAiProvider();
 const app = await createApp(database, env.APP_ORIGIN, limiter.consume, {
   registrationEnabled: env.REGISTRATION_ENABLED === 'true',
+  cognito:
+    env.COGNITO_ISSUER && env.COGNITO_CLIENT_ID && env.COGNITO_REDIRECT_URI
+      ? {
+          issuer: env.COGNITO_ISSUER,
+          clientId: env.COGNITO_CLIENT_ID,
+          redirectUri: env.COGNITO_REDIRECT_URI,
+          ...(env.COGNITO_CLIENT_SECRET ? { clientSecret: env.COGNITO_CLIENT_SECRET } : {}),
+        }
+      : undefined,
   resumeStorage: resumeStorage
     ? {
         bucket: resumeStorage.bucket,

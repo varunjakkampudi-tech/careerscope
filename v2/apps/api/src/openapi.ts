@@ -220,6 +220,7 @@ function contracts(options: {
   registrationEnabled?: boolean;
   resumes: boolean;
   cancellation: boolean;
+  cognito?: boolean;
 }): Record<string, Documentation> {
   const resumeDescription = `Uploads ${options.resumes ? 'enabled' : 'disabled (503 for storage operations)'}. Cancellation ${options.cancellation ? 'enabled' : 'disabled (503)'}. PDF/DOCX only, maximum ${maximumResumeBytes} bytes. Parsed proposals never automatically update the profile.`;
   return {
@@ -238,7 +239,11 @@ function contracts(options: {
           owner: text({ pattern: '^[a-f0-9]{64}$' }),
           aiEnabled: bool,
         }),
-        object({ authenticated: { ...bool, enum: [false] }, registrationEnabled: bool }),
+        object({
+          authenticated: { ...bool, enum: [false] },
+          registrationEnabled: bool,
+          cognitoEnabled: bool,
+        }, ['authenticated', 'registrationEnabled']),
       ],
     }),
     'POST /api/register': operation(
@@ -255,6 +260,24 @@ function contracts(options: {
       'Sign in and set the HttpOnly session cookie',
       object({ authenticated: { ...bool, enum: [true] } }),
       { body: credentials, failures: [400, 401, 429] },
+    ),
+    'GET /api/auth/cognito/start': operation(
+      'Start Cognito authorization-code login',
+      { type: 'null' },
+      {
+        code: 302,
+        failures: [404],
+        description: `Cognito login is ${options.cognito ? 'enabled' : 'disabled (404)'}. PKCE state is stored in short-lived HttpOnly cookies.`,
+      },
+    ),
+    'GET /api/auth/cognito/callback': operation(
+      'Complete Cognito login and set the local HttpOnly session cookie',
+      { type: 'null' },
+      {
+        code: 302,
+        failures: [302],
+        description: 'The provider callback never exposes access or refresh tokens to the browser.',
+      },
     ),
     'POST /api/logout': operation(
       'Sign out and clear the session cookie',
@@ -579,7 +602,12 @@ function contracts(options: {
 export async function registerOpenApi(
   app: FastifyInstance,
   version: string,
-  options: { registrationEnabled?: boolean; resumes: boolean; cancellation: boolean },
+  options: {
+    registrationEnabled?: boolean;
+    resumes: boolean;
+    cancellation: boolean;
+    cognito?: boolean;
+  },
 ) {
   const documentation = contracts(options);
   await app.register(swagger, {
