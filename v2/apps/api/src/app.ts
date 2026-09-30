@@ -50,6 +50,7 @@ const loginSchema = z
   .object({ email: z.string().trim().email().max(254), password: z.string().min(12).max(256) })
   .strict();
 const identifier = z.object({ id: z.string().uuid() });
+const jobIdentifier = z.object({ jobId: z.string().uuid() });
 const idempotencyKey = z.string().regex(/^[a-zA-Z0-9_-]{8,128}$/);
 const eventCursor = z
   .string()
@@ -763,6 +764,11 @@ export async function createApp(
     const lead = await leads.save(request.ownerId!, request.body);
     if (!lead) throw new HttpError(404, 'Completed job not found');
     return lead;
+  });
+  app.get('/api/leads/by-job/:jobId', async (request) => {
+    await readBudget(request, 'leads-read', 240);
+    const { jobId } = jobIdentifier.parse(request.params);
+    return { lead: await leads.getByJob(request.ownerId!, jobId) };
   });
   app.get('/api/leads/:id', async (request) => {
     await readBudget(request, 'leads-read', 240);

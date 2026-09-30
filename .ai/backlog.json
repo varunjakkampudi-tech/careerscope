@@ -3611,10 +3611,11 @@
         "IMPLEMENTED 2026-09-29: LeadRepository.forJob(ownerId, jobId) performs an owner-scoped join through search_jobs and search_runs, returns the existing lead including archived state, and returns null for another owner's lookup. GET /api/leads/by-job/:jobId is documented in the OpenAPI contract and applies the normal read budget.",
         "IMPLEMENTED 2026-09-29: SaveJob hydrates the by-job query on mount, keeps aria-pressed and labels derived from the persisted lead before any click, and opens an existing archived or saved lead instead of issuing an unintended duplicate save.",
         "REGRESSION COVERAGE ADDED 2026-09-29: database integration coverage asserts null before save, no cross-owner disclosure, the same lead id/status after concurrent saves, and archived status after archiving. Local typecheck, lint, ticket-consistency and diff checks pass; integration execution was attempted but could not complete because the local Redis dependency was unavailable.",
-        "CURRENT CONTENT REVIEW 2026-09-29: the initial implementation was reverted from main after hosted CI integration runs 36503649509, 36503919126, 36504510192 and 36505247578 all failed in the V2 integration lane. The exact failing assertion is not visible in the unauthenticated public log surface; the feature is therefore held rather than promoted or deployed. A focused integration fixture and authenticated failure log access are required before reimplementation."
+        "CURRENT CONTENT REVIEW 2026-09-29: the initial implementation was reverted from main after hosted CI integration runs 36503649509, 36503919126, 36504510192 and 36505247578 all failed in the V2 integration lane. The exact failing assertion is not visible in the unauthenticated public log surface; the feature is therefore held rather than promoted or deployed. A focused integration fixture and authenticated failure log access are required before reimplementation.",
+        "LOCAL REIMPLEMENTATION 2026-10-01: added GET /api/leads/by-job/:jobId with a strict owner-scoped search_jobs/search_runs join and read-budget coverage; SaveJob now hydrates the persisted lead on mount and disables the control while resolving, so aria-pressed and labels reflect saved/archived state before interaction. Database coverage adds positive, foreign-owner, unknown-job and malformed-id assertions. V2 typecheck, lint and formatting pass on Node 24; service-backed integration remains unverified because local Postgres/Redis are unavailable."
       ],
-      "currentStep": "BLOCKED - hosted V2 integration regression is unresolved; implementation reverted from main pending an authenticated failure trace and focused fixture.",
-      "updatedAt": "2026-09-27"
+      "currentStep": "BLOCKED - local implementation and static checks pass; hosted V2 integration must verify the route before QA/UAT.",
+      "updatedAt": "2026-10-01"
     },
     {
       "id": "CS-71",

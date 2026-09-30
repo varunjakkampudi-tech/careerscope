@@ -2986,6 +2986,26 @@ test('PostgreSQL atomic outbox, owner isolation and stale-worker fencing', async
       assert.equal(new Set(saves.map((response) => response.json().id)).size, 1);
       const lead = saves[0]!.json();
       const leadUrl = `/api/leads/${lead.id}`;
+      const hydrated = await app.inject({ url: `/api/leads/by-job/${jobId}`, cookies });
+      assert.equal(hydrated.statusCode, 200);
+      assert.equal(hydrated.json().lead.id, lead.id);
+      assert.equal(
+        (
+          await app.inject({
+            url: `/api/leads/by-job/${jobId}`,
+            cookies: { [cookieValue.name]: otherToken },
+          })
+        ).json().lead,
+        null,
+      );
+      assert.equal(
+        (await app.inject({ url: `/api/leads/by-job/${randomUUID()}`, cookies })).json().lead,
+        null,
+      );
+      assert.equal(
+        (await app.inject({ url: '/api/leads/by-job/not-a-uuid', cookies })).statusCode,
+        400,
+      );
       assert.equal(lead.revision, 1);
       assert.equal(lead.status, 'saved');
       assert.doesNotMatch(saves[0]!.body, /must-not-export/);

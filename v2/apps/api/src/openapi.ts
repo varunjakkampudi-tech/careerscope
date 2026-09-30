@@ -463,6 +463,11 @@ function contracts(options: {
       body: object({ jobId: uuid }),
       failures: [400, 404, 429],
     }),
+    'GET /api/leads/by-job/:jobId': operation(
+      "Resolve the current owner's saved lead for a search job without exposing other owners",
+      object({ lead: nullable(lead) }),
+      { failures: [400, 429] },
+    ),
     'GET /api/leads/:id': operation('Read a saved lead', lead, { failures: [400, 404, 429] }),
     'PUT /api/leads/:id': operation('Update notes and stage using optimistic concurrency', lead, {
       body: object({ revision, notes: text({ maxLength: 10000 }), status }),

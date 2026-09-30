@@ -82,6 +82,22 @@ function hydrate(row: LeadRecord): LeadRecord {
 export class LeadRepository {
   constructor(private readonly database: Database) {}
 
+  /** Resolve an owner's saved lead for a run-local search job. */
+  async getByJob(ownerId: string, jobId: string): Promise<LeadRecord | null> {
+    const result = await this.database.pool.query<LeadRecord>(
+      `SELECT ${columns}
+       FROM saved_leads lead
+       JOIN search_jobs job ON job.owner_id = lead.owner_id
+         AND job.data->>'fingerprint' = lead.fingerprint
+       JOIN search_runs run ON run.id = job.run_id AND run.owner_id = job.owner_id
+       WHERE lead.owner_id = $1 AND job.id = $2
+       ORDER BY job.created_at DESC, lead.created_at DESC
+       LIMIT 1`,
+      [ownerId, jobId],
+    );
+    return result.rows[0] ? hydrate(result.rows[0]) : null;
+  }
+
   async get(ownerId: string, id: string): Promise<LeadRecord | null> {
     const result = await this.database.pool.query<LeadRecord>(
       `SELECT ${columns} FROM saved_leads WHERE owner_id = $1 AND id = $2`,
