@@ -59,33 +59,33 @@ export function navKeyForPath(pathname: string): NavKey {
   return match?.key ?? 'dashboard';
 }
 
-// A real initials avatar derived from the signed-in owner's own email
+// A real initials avatar derived from the signed-in owner's own verified contact
 // (never a fabricated photo/portrait of anyone) — ChatGPT-reviewed choice,
 // 2026-09-23, for the avatar position both the sidebar footer and topbar
 // show in the owner-supplied design. Falls back to a generic mark when the
-// email genuinely isn't available yet (still loading, or none returned).
-function initialsFrom(email: string | undefined) {
-  if (!email) return '·';
-  const local = email.split('@')[0] ?? email;
+// identity genuinely isn't available yet (still loading, or none returned).
+function initialsFrom(identity: string | undefined) {
+  if (!identity) return '·';
+  const local = identity.split('@')[0] ?? identity;
   const parts = local.split(/[._-]+/).filter(Boolean);
   const letters = parts.length > 1 ? `${parts[0]![0]}${parts[1]![0]}` : local.slice(0, 2);
   return letters.toUpperCase();
 }
 
-function InitialsAvatar({ email }: { email: string | undefined }) {
+function InitialsAvatar({ identity }: { identity: string | undefined }) {
   return (
-    <span className={styles.avatar} aria-hidden="true" title={email ?? 'Signed in'}>
-      {initialsFrom(email)}
+    <span className={styles.avatar} aria-hidden="true" title={identity ?? 'Signed in'}>
+      {initialsFrom(identity)}
     </span>
   );
 }
 
 export function DashboardSidebar({
   active,
-  email,
+  identity,
 }: {
   active: (typeof navItems)[number]['key'];
-  email?: string;
+  identity?: string;
 }) {
   return (
     <nav className={styles.sidebar} aria-label="CareerScope">
@@ -131,9 +131,9 @@ export function DashboardSidebar({
         <p>Your next chapter is closer than you think.</p>
       </div>
       <div className={styles.sidebarAccount}>
-        <InitialsAvatar email={email} />
+        <InitialsAvatar identity={identity} />
         <div>
-          <div className={styles.sidebarAccountEmail}>{email ?? 'Signed in'}</div>
+          <div className={styles.sidebarAccountEmail}>{identity ?? 'Signed in'}</div>
           <div className={styles.sidebarFooter}>Private, single-owner workspace.</div>
         </div>
       </div>
@@ -181,13 +181,13 @@ export function DashboardMobileNav({ active }: { active: (typeof navItems)[numbe
 export function DashboardTopbar({
   theme,
   onToggleTheme,
-  email,
+  identity,
   onSignOut,
   signOutPending,
 }: {
   theme: 'light' | 'dark';
   onToggleTheme: () => void;
-  email?: string;
+  identity?: string;
   onSignOut: () => void;
   signOutPending: boolean;
 }) {
@@ -231,7 +231,7 @@ export function DashboardTopbar({
         >
           <Bell size={17} style={{ opacity: 0.35 }} />
         </span>
-        <InitialsAvatar email={email} />
+        <InitialsAvatar identity={identity} />
       </div>
     </header>
   );

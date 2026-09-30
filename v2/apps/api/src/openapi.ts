@@ -230,20 +230,27 @@ function contracts(options: {
     ),
     'GET /api/session': operation('Current browser session', {
       oneOf: [
-        object({
-          authenticated: { ...bool, enum: [true] },
-          csrf: text(),
-          email: text(),
-          // CS-61: a stable, opaque per-owner value for client cache keys.
-          // Not the owner id — see the handler for why it is a digest.
-          owner: text({ pattern: '^[a-f0-9]{64}$' }),
-          aiEnabled: bool,
-        }),
-        object({
-          authenticated: { ...bool, enum: [false] },
-          registrationEnabled: bool,
-          cognitoEnabled: bool,
-        }, ['authenticated', 'registrationEnabled']),
+        object(
+          {
+            authenticated: { ...bool, enum: [true] },
+            csrf: text(),
+            email: nullable(text({ format: 'email' })),
+            phone: nullable(text({ pattern: '^\\+[1-9][0-9]{7,14}$' })),
+            // CS-61: a stable, opaque per-owner value for client cache keys.
+            // Not the owner id — see the handler for why it is a digest.
+            owner: text({ pattern: '^[a-f0-9]{64}$' }),
+            aiEnabled: bool,
+          },
+          ['authenticated', 'csrf', 'owner', 'aiEnabled'],
+        ),
+        object(
+          {
+            authenticated: { ...bool, enum: [false] },
+            registrationEnabled: bool,
+            cognitoEnabled: bool,
+          },
+          ['authenticated', 'registrationEnabled'],
+        ),
       ],
     }),
     'POST /api/register': operation(

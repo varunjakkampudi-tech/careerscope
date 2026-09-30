@@ -86,29 +86,46 @@ export class Auth {
   }
 
   /** Finish Cognito auth without exposing Cognito tokens to the browser. */
-  async loginExternal(subject: string, email: string, previous?: string) {
+  async loginExternal(subject: string, email?: string, phone?: string, previous?: string) {
     const externalSubject = z.string().min(1).max(256).parse(subject);
-    const normalized = z.string().email().max(254).parse(email.trim().toLowerCase());
+    const normalized = email ? z.string().email().max(254).parse(email.trim().toLowerCase()) : null;
+    const normalizedPhone = phone
+      ? z
+          .string()
+          .regex(/^\+[1-9]\d{7,14}$/)
+          .parse(phone.trim())
+      : null;
+    if (!normalized && !normalizedPhone)
+      throw new Error('External identity has no verified contact');
     const token = randomBytes(32).toString('hex');
     const client = await this.database.pool.connect();
     try {
       await client.query('BEGIN');
       const found = await client.query<{
         id: string;
-        email: string;
+        email: string | null;
+        phone: string | null;
         external_subject: string | null;
       }>(
-        'SELECT id, email, external_subject FROM users WHERE external_subject = $1 OR email = $2 FOR UPDATE',
-        [externalSubject, normalized],
+        `SELECT id, email, phone, external_subject FROM users
+         WHERE external_subject = $1
+            OR ($2::text IS NOT NULL AND email = $2)
+            OR ($3::text IS NOT NULL AND phone = $3)
+         FOR UPDATE`,
+        [externalSubject, normalized, normalizedPhone],
       );
       const bySubject = found.rows.find((row) => row.external_subject === externalSubject);
-      const byEmail = found.rows.find((row) => row.email === normalized);
+      const byContact = found.rows.find(
+        (row) =>
+          (normalized && row.email === normalized) ||
+          (normalizedPhone && row.phone === normalizedPhone),
+      );
       let ownerId: string;
-      if (bySubject && (!byEmail || byEmail.id === bySubject.id)) ownerId = bySubject.id;
-      else if (bySubject && byEmail) {
+      if (bySubject && (!byContact || byContact.id === bySubject.id)) ownerId = bySubject.id;
+      else if (bySubject && byContact) {
         await client.query('ROLLBACK');
         return null;
-      } else if (byEmail) {
+      } else if (byContact) {
         // Never silently link to a password account based only on an email
         // claim. Explicit re-authenticated account linking is safer.
         await client.query('ROLLBACK');
@@ -117,11 +134,11 @@ export class Auth {
         ownerId = randomUUID();
         const unusablePassword = await passwordHash(randomBytes(32).toString('hex'));
         const inserted = await client.query<{ id: string }>(
-          `INSERT INTO users (id, email, password_hash, external_subject)
-           VALUES ($1, $2, $3, $4)
+          `INSERT INTO users (id, email, password_hash, phone, external_subject)
+           VALUES ($1, $2, $3, $4, $5)
            ON CONFLICT (external_subject) DO NOTHING
            RETURNING id`,
-          [ownerId, normalized, unusablePassword, externalSubject],
+          [ownerId, normalized, unusablePassword, normalizedPhone, externalSubject],
         );
         if (!inserted.rowCount) {
           const concurrent = await client.query<{ id: string }>(

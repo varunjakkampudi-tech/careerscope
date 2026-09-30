@@ -24,8 +24,12 @@ export const users = pgTable(
   'users',
   {
     id: uuid('id').primaryKey(),
-    email: text('email').notNull().unique(),
+    // Password accounts always have an email. Cognito phone-only accounts do
+    // not necessarily expose one, so the external identity may use phone as
+    // its verified contact instead.
+    email: text('email').unique(),
     passwordHash: text('password_hash').notNull(),
+    phone: text('phone'),
     // Cognito subject for passwordless/OIDC sign-in. Nullable keeps existing
     // password accounts intact; the unique index prevents one external identity
     // from being attached to two local owners.

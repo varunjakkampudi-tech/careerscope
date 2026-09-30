@@ -12,6 +12,7 @@ export type Session = {
   authenticated: boolean;
   csrf?: string;
   email?: string;
+  phone?: string;
   registrationEnabled?: boolean;
   cognitoEnabled?: boolean;
   /**

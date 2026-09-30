@@ -250,14 +250,15 @@ export async function createApp(
     // not a privacy leak (never used for anything but a real initials
     // avatar on the Dashboard, CS-49) - deliberately not joined into
     // Auth.session() itself, which many other routes rely on staying minimal.
-    const owner = await database.pool.query<{ email: string }>(
-      'SELECT email FROM users WHERE id = $1',
+    const owner = await database.pool.query<{ email: string | null; phone: string | null }>(
+      'SELECT email, phone FROM users WHERE id = $1',
       [session.ownerId],
     );
     return {
       authenticated: true,
       csrf: session.csrf,
       email: owner.rows[0]?.email,
+      phone: owner.rows[0]?.phone,
       // CS-61: a stable per-owner value the client can put INSIDE its cache
       // keys. React Query keys such as ['leads', status] carry no owner, which
       // is precisely why one owner's cached response can be handed to the next
@@ -399,15 +400,19 @@ export async function createApp(
       if (typeof profile !== 'object' || profile === null) return fail('provider_error');
       const subject = (profile as { sub?: unknown }).sub;
       const email = (profile as { email?: unknown }).email;
+      const phone = (profile as { phone_number?: unknown }).phone_number;
       const emailVerified = (profile as { email_verified?: unknown }).email_verified;
       const phoneVerified = (profile as { phone_number_verified?: unknown }).phone_number_verified;
-      if (
-        typeof subject !== 'string' ||
-        typeof email !== 'string' ||
-        (emailVerified !== true && phoneVerified !== true)
-      )
-        return fail('email_required');
-      const token = await auth.loginExternal(subject, email, request.cookies[sessionCookie]);
+      const verifiedEmail = emailVerified === true && typeof email === 'string' ? email : undefined;
+      const verifiedPhone = phoneVerified === true && typeof phone === 'string' ? phone : undefined;
+      if (typeof subject !== 'string' || (!verifiedEmail && !verifiedPhone))
+        return fail('contact_required');
+      const token = await auth.loginExternal(
+        subject,
+        verifiedEmail,
+        verifiedPhone,
+        request.cookies[sessionCookie],
+      );
       if (!token) return fail('account_link_required');
       reply.setCookie(sessionCookie, token, {
         httpOnly: true,

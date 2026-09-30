@@ -120,10 +120,11 @@ Use only these words. Do not invent new ones.
 ### IMPLEMENTED, NOT DEPLOYED
 
 - V1 in its entirety, including GitHub Pages publishing and the mobile site
-- Cognito-hosted passwordless sign-in using authorization-code + PKCE. The
-  provider access token is exchanged server-side and ends in the same opaque
-  CareerScope session cookie; deployment still requires the Cognito environment
-  values and a hosted callback verification.
+- Cognito-hosted passwordless sign-in using authorization-code + PKCE. Email
+  OTP and verified phone OTP are accepted; the provider access token is
+  exchanged server-side and ends in the same opaque CareerScope session cookie.
+  Deployment still requires the Cognito environment values, hosted callback
+  verification and AWS SMS delivery approval for phone sign-in.
 
 ### OPTIONAL
 

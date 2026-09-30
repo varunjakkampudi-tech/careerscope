@@ -16,9 +16,9 @@ const notices: Record<string, string> = {
   invalid_callback: 'The sign-in response could not be verified. Try again.',
   provider_error: 'The sign-in provider is temporarily unavailable. Try again later.',
   rate_limited: 'Too many sign-in attempts. Try again shortly.',
-  email_required: 'Your sign-in profile needs a verified email address.',
+  contact_required: 'Your sign-in profile needs a verified email address or phone number.',
   account_link_required:
-    'This email already has a password account. Sign in with your password; automatic linking is disabled.',
+    'This verified contact already has a password account. Sign in with your password; automatic linking is disabled.',
   unavailable: 'Passwordless sign-in is not enabled on this deployment.',
 };
 
