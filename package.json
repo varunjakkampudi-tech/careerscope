@@ -107,7 +107,7 @@
     "axe-core": "^4.12.1",
     "concurrently": "^10.0.5",
     "drizzle-kit": "^0.31.10",
-    "eslint": "^9.39.5",
+    "eslint": "^10.11.0",
     "eslint-plugin-jsx-a11y": "^6.10.0",
     "eslint-plugin-react-hooks": "^7.0.0",
     "globals": "^17.12.0",
