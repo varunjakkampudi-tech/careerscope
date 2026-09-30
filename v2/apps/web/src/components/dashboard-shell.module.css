@@ -109,9 +109,9 @@
   flex: none;
 }
 
-.brandRow svg {
-  width: 28px;
-  height: 28px;
+.brandRow img {
+  width: 32px;
+  height: 32px;
 }
 
 .brandName {

@@ -18,7 +18,7 @@ import {
   Sun,
   TrendingUp,
 } from 'lucide-react';
-import BrandMark from './brand-mark';
+import BrandLogo from './brand-logo';
 import styles from './dashboard-shell.module.css';
 
 // Every entry here was seen consistently across the owner-supplied design
@@ -90,9 +90,8 @@ export function DashboardSidebar({
   return (
     <nav className={styles.sidebar} aria-label="CareerScope">
       <div className={styles.brandRow}>
-        <BrandMark />
+        <BrandLogo compact />
         <div>
-          <div className={styles.brandName}>CareerScope</div>
           <div className={styles.brandTagline}>Discover · Prepare · Grow</div>
         </div>
       </div>

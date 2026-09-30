@@ -118,7 +118,7 @@ export default function AccountForm({
           {registering ? 'Create account' : 'Sign in'}
         </button>
         {cognitoEnabled && (
-          <a className="button" href="/api/auth/cognito/start">
+          <a className="auth-provider" href="/api/auth/cognito/start">
             Continue with email or phone OTP
           </a>
         )}

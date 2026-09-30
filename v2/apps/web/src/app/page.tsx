@@ -3,9 +3,10 @@
 import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-import { LoaderCircle, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import AccountForm from '@/components/account-form';
-import BrandMark from '@/components/brand-mark';
+import BrandLogo from '@/components/brand-logo';
+import { LoadingState } from '@/components/ui-states';
 import { useSession } from '@/lib/session';
 import { clearAuthQueryCache } from '@/lib/query-cache';
 
@@ -44,17 +45,12 @@ function SignIn() {
         Skip to content
       </a>
       <header className="topbar">
-        <span className="brand">
-          <BrandMark />
-          CareerScope<span>v2 alpha</span>
-        </span>
+        <BrandLogo />
+        <span className="brand-version">Private career workspace</span>
       </header>
       <main id="workspace-content" tabIndex={-1}>
         {session.isPending ? (
-          <div className="state" role="status">
-            <LoaderCircle className="spin" />
-            Loading workspace
-          </div>
+          <LoadingState message="Loading workspace…" />
         ) : session.isError ? (
           <div className="state">
             <h1>Workspace unavailable</h1>
