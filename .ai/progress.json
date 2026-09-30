@@ -1,7 +1,7 @@
 {
   "$comment": "Percentages require evidence. VERIFIED requires evidence. UNMEASURED carries no number at all. Enforced by scripts/check-progress.mjs.",
-  "updatedAt": "2026-09-28",
-  "overallStatus": "IN PROGRESS — core discover-to-save journey now built and in UAT; Applications tracking and remaining page designs still open",
+  "updatedAt": "2026-10-01",
+  "overallStatus": "IN PROGRESS — repository quality and Cognito phone OTP hardening verified locally; hosted service, live OTP and remaining product/design gates still open",
   "overall": null,
   "areas": [
     {
@@ -149,5 +149,5 @@
       ]
     }
   ],
-  "lastUpdated": "2026-09-25"
+  "lastUpdated": "2026-10-01"
 }

@@ -1,23 +1,32 @@
 # CareerScope engineering progress
 
-Last reconciled: 2026-09-28.
+Last reconciled: 2026-10-01.
 
 CareerScope V2 is the deployed product; V1 remains a build dependency and owns
 the legacy Pages/mobile surface. The product is functional but not release
-ready: current `main` CI is red in recovery and times out in V2 integration.
-Production was not changed during this repository-takeover batch.
+ready: repository checks are green on the pinned Node 24 runtime, while hosted
+deployment, live OTP delivery and service-backed browser/integration evidence
+remain external gates. Production was not changed during this batch.
 
 **Overall Status:** IN PROGRESS
 
 ## Current engineering state
 
-- Source and local build baseline: root and V2 typechecks/builds passed in the
-  takeover audit; root tests passed 1109 cases and V2 unit tests passed 55.
+- Source and local build baseline: root lint, typecheck, formatting and build
+  pass; root tests pass 1111/1111; V2 lint, typecheck, formatting and Next
+  production build pass on Node 24.19.0 with Next 16.3.8 and CSP verification.
+- Authentication: Cognito email OTP and verified phone-only OTP now terminate in
+  the same opaque server-side session; migration 0018 adds a unique phone
+  identity without exposing provider tokens to the browser.
+- Dependency hygiene: root and V2 production dependency audits report zero
+  vulnerabilities after the lockfile refresh.
 - Release safety: host deployment and Pages publication are manual-only,
   explicit-ref, protected-environment workflows with exact-revision CI gates.
 - GitHub hygiene: 0 open PRs; only `main` and the unique admin-console branch
   remain remotely; four evidence-bearing Actions runs remain from 120.
-- P0/P1 delivery blockers: CS-83 recovery CI and CS-85 integration duration.
+- P0/P1 delivery blockers: service-backed V2 integration/browser checks require
+  local or CI Postgres/Redis/Playwright services; live Hostinger/Cognito
+  acceptance still requires deployment and AWS SMS delivery approval.
 - Dependency maintenance is preserved as CS-84 and intentionally waits for a
   green baseline.
 - Off-host backup remains absent by recorded owner decision; local volumes are
