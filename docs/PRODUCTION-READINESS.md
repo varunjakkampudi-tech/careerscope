@@ -85,7 +85,7 @@ The app must not bypass portal blocks or fabricate results to fill a source.
    ```
 
 5. Follow the runbook's certificate issuance steps. Set
-   `NGINX_CONFIG=./nginx/job-radar-tls.conf`, replace the example domain in the TLS
+   `CADDYFILE=infra/Caddyfile.production`, replace the example domain in the TLS
    file, recreate nginx, and run `docker compose -f infra/docker-compose.yml exec -T nginx nginx -t`.
 6. Verify HTTP redirects to HTTPS after TLS activation, HTTPS readiness is 200,
    anonymous `/api/leads` is 401, owner sign-in works, and logout revokes access.
