@@ -45,6 +45,10 @@ Thumbs.db
 .repomix/
 repomix-output*
 
+# Agile/engineering execution history is local runtime state. The canonical
+# ticket, progress, and evidence records remain versioned under .ai/.
+.ai/runs.json
+
 # Deployment build contexts are produced on demand and must never be committed.
 deploy.tgz
 *.tgz
