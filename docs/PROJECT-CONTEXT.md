@@ -15,6 +15,9 @@ Read the owning module and its neighboring tests, not the entire repository.
 - The API owns PostgreSQL-backed sessions, resumes, profile, matching, job collection and applications.
 - GitHub Pages hosts a separate public jobs export and encrypted read-only admin snapshot.
   It has no live connection to the API and cannot run browser automation.
+- `seed/` contains an explicitly historical, hand-collected import corpus for
+  local/bootstrap work. It is not production data and is not loaded by the
+  runtime or deployment workflows.
 - Shared Zod schemas define API data. `container.ts` wires repositories and services.
 - Search flow: routes -> queue -> providers -> normalize/dedupe -> matching ->
   enrichment -> repositories. SSE reports durable search events.
