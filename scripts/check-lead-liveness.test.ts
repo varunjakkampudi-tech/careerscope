@@ -282,7 +282,8 @@ test('LeadRepository: due-for-check ordering, status exclusion, and recording a 
     assert.deepEqual(due.map((d) => d.id).sort(), [leadA.id, leadB.id].sort());
   } finally {
     await database.close();
-    await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+    // Do not mask an unfinished liveness query with an administrator kill.
+    await admin.pool.query(`DROP DATABASE "${name}"`);
     await admin.close();
   }
 });

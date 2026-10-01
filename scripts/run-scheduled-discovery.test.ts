@@ -253,7 +253,10 @@ test('runForOwner: disabled, missing-titles, and a settled run are all classifie
     assert.match(alerts[0]!, /failed/);
   } finally {
     await database.close();
-    await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+    // FORCE can terminate a still-running discovery query and surface as an
+    // administrator-command error. Plain DROP makes teardown prove that all
+    // scheduled work has settled before the database is removed.
+    await admin.pool.query(`DROP DATABASE "${name}"`);
     await admin.close();
   }
 });

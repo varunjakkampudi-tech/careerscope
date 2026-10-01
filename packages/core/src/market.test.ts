@@ -116,7 +116,10 @@ test('posting evidence accumulates across searches and detects a refreshed listi
     assert.ok((await market.stalePostings(owner, { limit: 100000 })).length <= 200);
   } finally {
     await database.pool.end();
-    await root.pool.query(`DROP DATABASE IF EXISTS "${name}" WITH (FORCE)`);
+    // A plain drop is intentional: FORCE would terminate a leaked query and
+    // turn teardown into the misleading "administrator command" failure.
+    // If ownership is incomplete, PostgreSQL must fail cleanup diagnostically.
+    await root.pool.query(`DROP DATABASE IF EXISTS "${name}"`);
     await root.pool.end();
   }
 });
@@ -179,7 +182,8 @@ test('the pipeline distinguishes neglected work from finished work', async () =>
     assert.equal((await market.stalled(owner, { days: 365 })).length, 0);
   } finally {
     await database.pool.end();
-    await root.pool.query(`DROP DATABASE IF EXISTS "${name}" WITH (FORCE)`);
+    // Keep teardown diagnostic; never hide an in-flight query with FORCE.
+    await root.pool.query(`DROP DATABASE IF EXISTS "${name}"`);
     await root.pool.end();
   }
 });

@@ -125,7 +125,8 @@ test('enforceRetention deletes only old, settled runs and their jobs - never lea
     assert.equal(stillSaved!.data.fingerprint, savedLead!.data.fingerprint);
   } finally {
     await database.close();
-    await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+    // A plain drop keeps teardown diagnostic if retention left work in flight.
+    await admin.pool.query(`DROP DATABASE "${name}"`);
     await admin.close();
   }
 });

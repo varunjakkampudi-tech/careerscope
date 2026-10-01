@@ -344,9 +344,9 @@ jobs:
       # check-lead-liveness, enforce-search-retention. None of them skip when
       # a service is missing — they assert the connection is configured and
       # fail loudly, so a missing service here is a red job, never a silent
-      # pass. The files run serially because each one creates and force-drops
-      # disposable databases; parallel teardown can terminate another file's
-      # active PostgreSQL connections on a constrained shared service.
+      # pass. The files run serially because each one creates and drops a
+      # disposable database; this keeps teardown ownership explicit on a
+      # constrained shared service.
       - name: Test CareerScope (integration)
         run: npm run test:integration
 

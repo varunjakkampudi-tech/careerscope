@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { contractInputs, replayHistory, transitionTask } from './engineering-contract.mjs';
 
@@ -56,4 +58,22 @@ test('digest projection excludes only clean forward reporting and validated reso
   assert.deepEqual(contractInputs(contract), before);
   contract.failures[0].signature = 'different failure';
   assert.notDeepEqual(contractInputs(contract), before);
+});
+
+test('service-backed integration teardown never force-terminates PostgreSQL sessions', () => {
+  const root = fileURLToPath(new URL('..', import.meta.url));
+  const integrationFiles = [
+    'packages/core/src/market.test.ts',
+    'scripts/run-scheduled-discovery.test.ts',
+    'scripts/check-lead-liveness.test.ts',
+    'scripts/enforce-search-retention.test.ts',
+  ];
+  for (const relative of integrationFiles) {
+    const source = readFileSync(`${root}/${relative}`, 'utf8');
+    assert.doesNotMatch(
+      source,
+      /DROP DATABASE[^\n]*WITH\s*\(\s*FORCE\s*\)/i,
+      `${relative} must let PostgreSQL report an unfinished connection instead of killing it`,
+    );
+  }
 });

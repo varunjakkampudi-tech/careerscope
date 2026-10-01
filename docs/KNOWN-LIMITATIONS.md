@@ -6,6 +6,28 @@ closed by wishful wording. Status uses only the vocabulary in
 
 ---
 
+## Redis may warn when Linux overcommit is disabled
+
+**Status: OPEN — ENVIRONMENT VALIDATION**
+
+The pinned Redis service can emit `vm.overcommit_memory` warnings when the
+Linux host reports `vm.overcommit_memory=0`. This is a kernel-level advisory,
+not an application failure: Redis can still serve requests, and CI must not
+silence it by changing a runner setting blindly. It matters to both CI and a
+Linux production host if the same kernel setting is disabled, because Redis
+background persistence uses forked processes and can fail under memory
+pressure.
+
+The CI workflow intentionally configures the queue's AOF and `noeviction`
+contract but does not mutate host sysctls. Before production acceptance, verify
+the Hostinger host's setting and memory headroom with the operations runbook;
+that live check is external validation. If the production host is confirmed to
+have overcommit enabled, the warning is CI-runner-only. If not, it remains a
+production operational risk requiring an explicit host change and rollback
+plan.
+
+---
+
 ## Restarting the proxy alone is an outage
 
 **Status: DEFERRED — INTENTIONAL** (mitigated, not eliminated)
