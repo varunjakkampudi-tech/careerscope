@@ -100,11 +100,21 @@ check('the verify gate depends on it', /needs:\s*require-ci/.test(workflow), tru
 check('deploy exposes no CI bypass', workflow.includes('override_ci'), false);
 check('deploy is manual-only', /^on:\r?\n\s{2}workflow_dispatch:/m.test(workflow), true);
 check('deploy has no push trigger', /^\s{2}push:/m.test(workflow), false);
-check('deploy requires an explicit ref', /^\s{6}ref:\r?\n\s{8}description:/m.test(workflow), true);
+check('deploy has no arbitrary ref input', /^\s{6}ref:\r?\n/m.test(workflow), false);
+check('deploy checks out main', /with:\s*\r?\n\s{10}ref: main/m.test(workflow), true);
+check('deploy verifies origin/main', workflow.includes('git rev-parse origin/main'), true);
+check('deploy fails on a stale checkout', workflow.includes('differs from origin/main'), true);
 check(
-  'deploy requires an explicit environment',
-  /^\s{6}environment:\r?\n\s{8}description:/m.test(workflow),
+  'deploy uses the protected production environment',
+  /^\s{4}environment: production$/m.test(workflow),
   true,
+);
+check(
+  'deploy has no automatic trigger',
+  /(^|\n)\s{2}(push|pull_request|pull_request_target|workflow_run|release|schedule|repository_dispatch):/m.test(
+    workflow,
+  ),
+  false,
 );
 check('CI does not publish Pages', ciWorkflow.includes('actions/deploy-pages@'), false);
 check(

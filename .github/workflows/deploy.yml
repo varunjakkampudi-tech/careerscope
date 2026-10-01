@@ -1,6 +1,6 @@
 name: Deploy
 
-# Manually deploys an explicitly selected revision to the Hostinger host.
+# Manually deploys the current `main` HEAD to the Hostinger host.
 #
 # Trigger is deliberately narrow. There is no `pull_request` trigger: this
 # repository is public, and a workflow that both runs fork-authored code and
@@ -20,24 +20,11 @@ name: Deploy
 
 on:
   workflow_dispatch:
-    inputs:
-      ref:
-        description: 'Branch, tag, or full commit SHA to deploy'
-        required: true
-        default: 'main'
-        type: string
-      environment:
-        description: 'GitHub environment whose protected secrets and approvals apply'
-        required: true
-        default: 'production'
-        type: choice
-        options:
-          - production
 
 # One deployment at a time. Cancelling mid-deploy would leave the host with a
 # shipped tree and unbuilt images, so in-progress runs are allowed to finish.
 concurrency:
-  group: deploy-${{ inputs.environment }}
+  group: deploy-production
   cancel-in-progress: false
 
 permissions:
@@ -63,11 +50,21 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
-          ref: ${{ inputs.ref }}
+          ref: main
+          fetch-depth: 0
 
-      - name: Resolve the revision
+      - name: Verify current main HEAD
         id: rev
-        run: echo "sha=$(git rev-parse HEAD)" >>"$GITHUB_OUTPUT"
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main
+          checked_out_sha=$(git rev-parse HEAD)
+          main_sha=$(git rev-parse origin/main)
+          test "$checked_out_sha" = "$main_sha" || {
+            echo "::error::checked-out main ($checked_out_sha) differs from origin/main ($main_sha)" >&2
+            exit 1
+          }
+          echo "sha=$checked_out_sha" >>"$GITHUB_OUTPUT"
 
       # Every failure path here refuses. An unreachable API, an unreadable
       # payload and an absent run are all "we cannot show CI passed", which is
@@ -91,7 +88,14 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
-          ref: ${{ inputs.ref }}
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify current main HEAD
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
 
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
@@ -147,16 +151,25 @@ jobs:
     needs: gate
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    environment: ${{ inputs.environment }}
+    environment: production
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
-          ref: ${{ inputs.ref }}
+          ref: main
           fetch-depth: 0
 
-      - name: Resolve the revision
+      - name: Verify current main HEAD
         id: rev
-        run: echo "sha=$(git rev-parse HEAD)" >>"$GITHUB_OUTPUT"
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main
+          checked_out_sha=$(git rev-parse HEAD)
+          main_sha=$(git rev-parse origin/main)
+          test "$checked_out_sha" = "$main_sha" || {
+            echo "::error::checked-out main ($checked_out_sha) differs from origin/main ($main_sha)" >&2
+            exit 1
+          }
+          echo "sha=$checked_out_sha" >>"$GITHUB_OUTPUT"
 
       - name: Authorise the deployment key
         env:

@@ -74,8 +74,9 @@ containers or the production-like services unavailable on every workstation.
 
 ## Deployment and operations
 
-Production deployment is manual and exact-revision gated. A push to `main`
-starts CI but does not deploy. Follow
+Production deployment is manual and main-only. The Deploy workflow accepts no
+branch, tag, or SHA input: it verifies and ships the current `main` HEAD only.
+A push or pull-request merge to `main` starts CI but does not deploy. Follow
 [docs/OPERATIONS/DEPLOYMENT.md](docs/OPERATIONS/DEPLOYMENT.md), use the
 provenance and rollback checks, and restart the complete stack rather than the
 proxy alone. Firewall, secrets, backup and restore procedures are documented

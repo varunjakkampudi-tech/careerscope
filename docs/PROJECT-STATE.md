@@ -39,19 +39,19 @@ runtime, deployment or agent workflow depends on a second application stack.
 ## Branch semantics
 
 Trunk-based. `main` is the integration branch. Nothing deploys automatically:
-[deploy.yml](../.github/workflows/deploy.yml) is manual-only and ships an
-explicitly selected ref after a required green CI run for that exact commit.
+[deploy.yml](../.github/workflows/deploy.yml) is manual-only and ships the
+current `main` HEAD after verifying that exact revision has a green CI run.
 [publish-pages.yml](../.github/workflows/publish-pages.yml) separately performs
 manual-only GitHub Pages publication with the same exact-revision CI gate.
 
-| Branch                            | Meaning                       | Rule                             |
-| --------------------------------- | ----------------------------- | -------------------------------- |
-| `main`                            | integration branch            | Pushes run CI; they never deploy |
-| `feat/<ticket>-<slug>`            | one ticket's work             | Short-lived, rebased on `main`   |
-| `fix/<ticket>-<slug>`             | defect fix                    | Short-lived                      |
-| `chore/` `docs/` `infra/`         | cleanup, docs, infrastructure | Short-lived                      |
-| `hotfix/<version>-<slug>`         | production emergency          | Straight to `main`, then tagged  |
-| `feature/canonical-consolidation` | historical migration baseline | Superseded; `main` is canonical  |
+| Branch                            | Meaning                       | Rule                                                                    |
+| --------------------------------- | ----------------------------- | ----------------------------------------------------------------------- |
+| `main`                            | integration branch            | Pushes run CI; they never deploy; manual Deploy ships current HEAD only |
+| `feat/<ticket>-<slug>`            | one ticket's work             | Short-lived, rebased on `main`                                          |
+| `fix/<ticket>-<slug>`             | defect fix                    | Short-lived                                                             |
+| `chore/` `docs/` `infra/`         | cleanup, docs, infrastructure | Short-lived                                                             |
+| `hotfix/<version>-<slug>`         | production emergency          | Straight to `main`, then tagged                                         |
+| `feature/canonical-consolidation` | historical migration baseline | Superseded; `main` is canonical                                         |
 
 Tags are `v<semver>`, applied to the deployed commit **after** the live version
 check passes. Commits follow Conventional Commits and name their ticket, for

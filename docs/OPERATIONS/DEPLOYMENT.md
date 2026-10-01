@@ -44,28 +44,35 @@ All under [infra](../../infra).
 ## Normal deployment
 
 The supported release path is the GitHub Actions **Deploy** workflow. It has
-only a `workflow_dispatch` trigger. Supply the reviewed branch, tag, or full
-commit SHA in `ref` and select `production`; protected-environment approvals
-and secrets apply. The workflow resolves the ref once, requires a successful CI
-run for that exact SHA, builds an archive from that commit, and verifies live
-provenance. A push to `main` runs CI but never deploys.
+only a `workflow_dispatch` trigger and always deploys the current `main` HEAD;
+it accepts no branch, tag, or commit-SHA input. The workflow fetches
+`origin/main`, fails closed if the checked-out revision differs, requires a
+successful CI run for that exact SHA, builds an archive from that commit, and
+verifies live provenance. The protected `production` environment applies its
+approvals and secrets. A push or pull-request merge to `main` runs CI but never
+deploys.
 
 The commands below document the equivalent operator procedure for recovery.
 They are not an automatic release path and do not replace the exact-revision CI
 gate.
 
 ```bash
-# 1. Commit. The archive comes from a revision, not from the working tree.
+# 1. Break-glass recovery only. Normal releases use GitHub Actions → Deploy →
+#    Run workflow and deploy the current main HEAD. These commands are not the
+#    normal release path.
+#
+# 2. Commit. The archive comes from a revision, not from the working tree.
 git status --porcelain     # must be empty
-REV=$(git rev-parse HEAD)
+git fetch --no-tags origin main
+REV=$(git rev-parse origin/main)
 git archive --format=tar.gz -o deploy.tgz "$REV"
 
-# 2. Ship. This preserves the host's .env and records the revision.
+# 3. Ship. This preserves the host's .env and records the revision.
 scp -i ~/.ssh/careerscope_deploy deploy.tgz root@201.18.193.230:/tmp/
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 \
   "bash /opt/careerscope/infra/ship.sh /tmp/deploy.tgz $REV"
 
-# 3. Build with provenance, migrate, bring up.
+# 4. Build with provenance, migrate, bring up.
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
   cd /opt/careerscope/infra &&
   bash build-images.sh $REV &&
@@ -73,7 +80,7 @@ ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 "
   docker compose -f compose.production.yml up -d --wait
 "
 
-# 4. Prove it.
+# 5. Prove it.
 ssh -i ~/.ssh/careerscope_deploy root@201.18.193.230 \
   "bash /opt/careerscope/infra/check-provenance.sh $REV"
 ```
@@ -321,5 +328,7 @@ GitHub Actions runs tests, type checking, linting, formatting and builds.
 Actions are pinned to commit SHAs, with Dependabot maintaining them.
 
 It does **not** deploy. There are no deployment credentials in the repository,
-and automatic "merge to `main` → deploy" is not wired up, because `main` still
-carries previous implementation. Promoting CareerScope to `main` is a release decision that has not been made.
+and automatic push, pull-request, merge, tag, schedule, or upstream-workflow
+deployment triggers are not wired up. Production deployment is exclusively an
+authorized operator's manual `workflow_dispatch` of the protected Deploy
+workflow, which checks and ships the current `main` HEAD.
