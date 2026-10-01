@@ -2,8 +2,11 @@
 
 ## Current Release Status
 
-The product is now **CareerScope v1.0.0**. See [release notes](RELEASE-1.0.0.md)
-for the local release scope, compatibility details, and UI verification gates.
+This document is a retained, historical readiness record for the legacy
+single-owner deployment rehearsal. It is not the current release authority and
+does not mean that `v1.0.0` has been published. The canonical release status
+and production gates are maintained in [PROJECT-STATE.md](PROJECT-STATE.md),
+[RELEASE-1.0.0.md](RELEASE-1.0.0.md), and [RELEASE-STATUS.md](RELEASE-STATUS.md).
 
 Application-level hardening and local verification are complete for a single-owner,
 same-origin deployment. This is not a claim that every portal is live or that a
