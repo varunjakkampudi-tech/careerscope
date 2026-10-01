@@ -35,8 +35,8 @@ if (!process.env.FULL_DISK_ROOT) {
 }
 
 const { PrivateFileResumeStorage, ResumeUploadCancelled } =
-  await import('../../packages/core/dist/file-storage.js');
-const { ResumeStorageLimit } = await import('../../packages/core/dist/resumes.js');
+  await import('../packages/core/dist/file-storage.js');
+const { ResumeStorageLimit } = await import('../packages/core/dist/resumes.js');
 
 const root = process.env.FULL_DISK_ROOT;
 const objects = `${root}/objects`;
