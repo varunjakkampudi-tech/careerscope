@@ -199,6 +199,15 @@ async function capture(page, name) {
   });
   capturing = true;
   let image;
+  // The release badge is asserted semantically below and intentionally changes
+  // with every product release. Keep visual approval focused on layout and
+  // styling rather than requiring a new binary baseline for version text.
+  const dynamicRegions = [];
+  const appVersion = page.locator('[data-app-version]');
+  if (await appVersion.count()) {
+    const box = await appVersion.boundingBox();
+    if (box) dynamicRegions.push(box);
+  }
   try {
     image = await page.screenshot({ animations: 'allow', caret: 'initial' });
   } finally {
@@ -236,6 +245,21 @@ async function capture(page, name) {
       assert.fail(
         `Visual difference: ${name}. Dimensions changed (${actual.width}x${actual.height} vs baseline ${expected.width}x${expected.height}); inspect before updating the baseline.`,
       );
+    }
+    for (const region of dynamicRegions) {
+      const left = Math.max(0, Math.floor(region.x));
+      const top = Math.max(0, Math.floor(region.y));
+      const right = Math.min(actual.width, Math.ceil(region.x + region.width));
+      const bottom = Math.min(actual.height, Math.ceil(region.y + region.height));
+      for (let y = top; y < bottom; y += 1) {
+        for (let x = left; x < right; x += 1) {
+          const offset = (y * actual.width + x) * 4;
+          actual.data[offset] = expected.data[offset];
+          actual.data[offset + 1] = expected.data[offset + 1];
+          actual.data[offset + 2] = expected.data[offset + 2];
+          actual.data[offset + 3] = expected.data[offset + 3];
+        }
+      }
     }
     const diff = new PNG({ width: actual.width, height: actual.height });
     const mismatchedPixels = pixelmatch(

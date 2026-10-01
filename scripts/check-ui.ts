@@ -317,6 +317,15 @@ try {
     }
   };
   for (const [engine, browserType] of Object.entries({ chromium, firefox, webkit })) {
+    // Each browser engine runs the same end-to-end scenario against the shared
+    // temporary database. The scenario intentionally creates a saved lead and
+    // then exercises its failure/retry path; without resetting only this
+    // owner's lead rows, the next engine correctly hydrates that lead as
+    // already saved and the assertion that starts from "Save Job" becomes
+    // order-dependent. Keep the unrelated foreign-owner fixture intact so the
+    // authorization checks still exercise a real cross-owner record.
+    await database.pool.query('DELETE FROM lead_history WHERE owner_id = $1', [ownerId]);
+    await database.pool.query('DELETE FROM saved_leads WHERE owner_id = $1', [ownerId]);
     const browser = await browserType.launch();
     try {
       const page = await browser.newPage();
