@@ -35,9 +35,9 @@ change.
 
 ## Scope
 
-`apps/web` is the deployed frontend: Next.js 16 App Router, React 19,
-TypeScript. `apps/web` is the previous implementation Vite SPA — do not touch it unless the task
-names it.
+`apps/web` is the canonical deployed frontend: Next.js 16 App Router, React 19
+and TypeScript. Work in this root application unless a task explicitly names a
+separate static artifact such as the Pages export.
 
 ## Rules
 

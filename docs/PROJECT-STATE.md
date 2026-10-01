@@ -28,8 +28,9 @@ storage. Executable applications live under `apps/`, shared domain libraries
 under `packages/`, operational code under `infra/` and `scripts/`, and
 authoritative engineering records under `docs/` and `.ai/`.
 
-The consolidation is recorded in
-[`SINGLE-CODEBASE-CONSOLIDATION.md`](SINGLE-CODEBASE-CONSOLIDATION.md). Older
+The completed consolidation is recorded in the historical engineering record
+[`SINGLE-CODEBASE-CONSOLIDATION.md`](SINGLE-CODEBASE-CONSOLIDATION.md) and its
+original plan is retained under [`archive/`](archive/). Older
 release notes may mention historical implementations, but no active build,
 runtime, deployment or agent workflow depends on a second application stack.
 
@@ -155,6 +156,9 @@ Use only these words. Do not invent new ones.
 ---
 
 ## Where to go next
+
+The documentation index is [docs/README](README.md). Use the links below for
+the scoped contract that answers a specific question.
 
 | Question                               | Document                                            |
 | -------------------------------------- | --------------------------------------------------- |

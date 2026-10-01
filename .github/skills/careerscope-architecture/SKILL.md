@@ -1,6 +1,6 @@
 ---
 name: careerscope-architecture
-description: 'Ownership boundaries, the previous implementation/CareerScope split and the non-negotiable architectural constraints of the CareerScope repository. Use before adding a module, moving code between workspaces, introducing a dependency, or changing how a tier talks to another.'
+description: 'Ownership boundaries and the non-negotiable architectural constraints of the CareerScope repository. Use before adding a module, introducing a dependency, or changing how a tier talks to another.'
 ---
 
 # CareerScope Architecture
@@ -15,31 +15,27 @@ own. This skill exists to make the boundaries explicit before code moves.
 ## When to use
 
 - Adding a package, service or worker
-- Moving code between the root workspace and ``
+- Moving code between application or package boundaries
 - Introducing a runtime dependency
 - Changing how the web tier reaches the API, or the API reaches storage
 - Any change that touches `container.ts`, `app.ts`, compose files or `tsconfig` references
 
-## Two workspaces, one repository
+## One canonical workspace
 
-|             | Root workspace | `` workspace                       |
-| ----------- | -------------- | ---------------------------------- |
-| Package     | `careerscope`  | `careerscope`                      |
-| Store       | SQLite         | PostgreSQL 17 + Drizzle            |
-| API         | Fastify        | Fastify                            |
-| UI          | React + Vite   | React 19 + Next.js 16              |
-| Test runner | Vitest         | `node:test`                        |
-| Deployed    | no             | yes, at `https://careerscope.tech` |
+The root `careerscope` workspace is the only active application architecture:
 
-They are **not** duplicates to be merged. previous implementation owns the mature application and
-Pages pipeline; CareerScope owns the deployed workspace. Shared domain logic lives in
-root `packages/*` and is consumed by both — `packages/core/src/profile.ts`
-imports candidate schemas from `packages/shared/dist`. Do not fork a shared
-schema into `` to avoid a build step.
+| Area        | Canonical implementation                      |
+| ----------- | --------------------------------------------- |
+| Store       | PostgreSQL 17 + Drizzle                       |
+| API         | Fastify                                       |
+| UI          | React 19 + Next.js App Router                 |
+| Async work  | Transactional outbox, SQS and focused workers |
+| Test runner | Node's built-in test runner plus Vitest       |
+| Deployment  | Hostinger VPS at `https://careerscope.tech`   |
 
-Lead statuses differ on purpose: previous implementation has six workflow states, CareerScope has exactly
-`['saved', 'archived']`. Resume size limits differ on purpose: previous implementation 10 MiB, CareerScope
-5 MiB. Neither is a bug; do not "harmonise" them.
+GitHub Pages and the mobile export are separate static artifacts generated
+from the same root packages. They do not introduce a second product runtime.
+Keep their contracts explicit and do not add duplicate domain implementations.
 
 ## Request path in the deployed stack
 

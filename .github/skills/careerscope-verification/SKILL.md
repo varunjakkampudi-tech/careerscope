@@ -19,22 +19,21 @@ that actually supports it, so a report can cite evidence instead of confidence.
 
 ## Command to claim
 
-| Command                                            | What it actually proves                                                 |
-| -------------------------------------------------- | ----------------------------------------------------------------------- |
-| `npm run typecheck`                                | Types resolve. Nothing about behaviour.                                 |
-| `npm run lint`                                     | Style and a few correctness rules.                                      |
-| `npm run format:check`                             | Formatting only.                                                        |
-| `npm run build`                                    | It compiles and bundles.                                                |
-| `npm test`                                         | Root previous implementation behaviour. Expect 1046 passed / 1 skipped. |
-| `npm --prefix CareerScope test`                    | CareerScope behaviour. Expect 47 passed.                                |
-| `npm run pages:test`                               | Static Pages pipeline. Expect 21 passed.                                |
-| `npm run test:ui`                                  | Three-browser UI, axe, 320 px reflow, keyboard.                         |
-| `npm run test:full-disk`                           | Real 2 MB tmpfs exhaustion, typed 507, no stranded temporaries.         |
-| `npm --prefix CareerScope run test:crash-recovery` | Four real `SIGKILL` phases.                                             |
-| `npm --prefix CareerScope run test:performance`    | Sustained concurrent load with asserted thresholds.                     |
-| `npm audit --omit=dev`                             | Known advisories in shipped dependencies.                               |
-| `infra/check-live-origin.sh`                       | Cookie attributes and CSRF on the real origin.                          |
-| `infra/check-live-flow.mjs`                        | End-to-end workspace flow on the real origin.                           |
+| Command                       | What it actually proves                                                  |
+| ----------------------------- | ------------------------------------------------------------------------ |
+| `npm run typecheck`           | Types resolve. Nothing about behaviour.                                  |
+| `npm run lint`                | Style and a few correctness rules.                                       |
+| `npm run format:check`        | Formatting only.                                                         |
+| `npm run build`               | It compiles and bundles.                                                 |
+| `npm test`                    | Canonical core and worker behaviour. Counts vary with the current suite. |
+| `npm run pages:test`          | Static Pages pipeline. Expect 21 passed.                                 |
+| `npm run test:ui`             | Three-browser UI, axe, 320 px reflow, keyboard.                          |
+| `npm run test:full-disk`      | Real 2 MB tmpfs exhaustion, typed 507, no stranded temporaries.          |
+| `npm run test:crash-recovery` | Four real `SIGKILL` phases.                                              |
+| `npm run test:performance`    | Sustained concurrent load with asserted thresholds.                      |
+| `npm audit --omit=dev`        | Known advisories in shipped dependencies.                                |
+| `infra/check-live-origin.sh`  | Cookie attributes and CSRF on the real origin.                           |
+| `infra/check-live-flow.mjs`   | End-to-end workspace flow on the real origin.                            |
 
 ## Scope your run
 

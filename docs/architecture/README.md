@@ -1,11 +1,11 @@
 # Architecture Index
 
-Start with [project state](../PROJECT-STATE.md). The root
-[previous implementation architecture](../ARCHITECTURE.md) describes Fastify/SQLite and React/Vite;
-[CareerScope architecture](../../ARCHITECTURE.md) describes the PostgreSQL/Next.js
-stack and also contains explicitly historical target sections. previous implementation domain
-packages remain CareerScope build dependencies. Do not infer deployed revision from the
-local tree or treat a target diagram as implementation.
+Start with [project state](../PROJECT-STATE.md). CareerScope is one root
+workspace: [ARCHITECTURE](../ARCHITECTURE.md) describes the PostgreSQL/Next.js
+production stack, while the diagrams below are implementation maps. Historical
+release material is retained for auditability and is not an alternate runtime.
+Do not infer the deployed revision from the local tree; use the provenance
+check documented in [deployment](../OPERATIONS/DEPLOYMENT.md).
 
 These eight diagrams summarize inspected source, not new components or live
 verification. The orchestration diagram is the approved engineering workflow;
@@ -47,8 +47,8 @@ steady-state diagram. No inference service is shown because inference is off.
 
 Sources: [CareerScope page](../../apps/web/src/app/page.tsx),
 [API client](../../apps/web/src/lib/api.ts),
-[previous implementation architecture](../ARCHITECTURE.md). This is CareerScope's current local source, not
-the older no-React-Query claim in [frontend architecture](../FRONTEND-ARCHITECTURE.md).
+[frontend architecture](../FRONTEND-ARCHITECTURE.md). These are the current
+root source paths; older release diagrams are historical only.
 
 ```mermaid
 flowchart TD

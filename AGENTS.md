@@ -5,7 +5,8 @@ This file is a navigation layer for tools that discover `AGENTS.md`, not a
 second copy of that contract or a grant of additional permissions.
 
 - Start with [project state](docs/PROJECT-STATE.md), then the affected stack's
-  architecture and source. V1 and V2 coexist; do not infer deployment from HEAD.
+  architecture and source. The repository is one canonical root workspace; do
+  not infer deployment from HEAD.
 - Use the [repository-local Copilot setup](docs/ai/README.md),
   [agent/skill mapping](docs/ai/agent-matrix.md), and
   [architecture index](docs/architecture/README.md).

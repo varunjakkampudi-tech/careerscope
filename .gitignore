@@ -4,14 +4,13 @@ node_modules/
 # Build output
 dist/
 *.tsbuildinfo
-# The web app's typecheck-only declaration output. Vite does the real build; a
-# project referenced by `tsc -b` must be composite, and composite forbids
-# `noEmit`, so the declarations go here and are thrown away.
+# Typecheck-only declaration output for composite TypeScript projects. The
+# Next.js web app owns the production build; declarations here are disposable.
 dist-types/
 
-# Runtime data — SQLite database, uploaded resumes, exports. NEVER commit.
-# Ignored wholesale, with no exceptions: `seed/` holds the versioned source
-# data, so nothing under `data/` is ever worth tracking.
+# Runtime data, local uploads and exports. NEVER commit production data.
+# Versioned seed fixtures live in `seed/`; only the disposable `data/` runtime
+# directory is ignored.
 data/
 !data/.gitkeep
 
