@@ -9,7 +9,7 @@ import process from 'node:process';
 // On the host this re-runs itself in a container whose object directory is a
 // small tmpfs, so the filesystem genuinely exhausts instead of being simulated.
 if (!process.env.FULL_DISK_ROOT) {
-  const repository = fileURLToPath(new URL('../../', import.meta.url)).replace(/[\\/]$/, '');
+  const repository = fileURLToPath(new URL('../', import.meta.url)).replace(/[\\/]$/, '');
   execFileSync(
     'docker',
     [
