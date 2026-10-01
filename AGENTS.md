@@ -4,6 +4,9 @@ Follow the existing [engineering contract](.github/copilot-instructions.md).
 This file is a navigation layer for tools that discover `AGENTS.md`, not a
 second copy of that contract or a grant of additional permissions.
 
+All repository agents and Copilot sessions also follow the shared
+[zero-trust agent security contract](.github/AGENT-SECURITY.md).
+
 - Start with [project state](docs/PROJECT-STATE.md), then the affected stack's
   architecture and source. The repository is one canonical root workspace; do
   not infer deployment from HEAD.

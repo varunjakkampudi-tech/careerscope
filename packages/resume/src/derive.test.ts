@@ -20,7 +20,7 @@ const NOW = Date.parse('2026-09-05T12:00:00Z');
  */
 const RESUME = `JAKKAMPUDI VARUN
 FULL STACK SOFTWARE ENGINEER
-Hyderabad, India | +91 6301655098 | varun.jakkampudi14@gmail.com
+Hyderabad, India | +91 9000000001 | varun.jakkampudi14@example.invalid
 linkedin.com/in/jakkampudi-varun | github.com/varunjakkampudi-tech
 
 PROFESSIONAL EXPERIENCE
@@ -49,8 +49,8 @@ B.Tech in Information Technology, JNTU Hyderabad, 2021
 describe('deriveContact', () => {
   it('reads email, phone and profile links', () => {
     const contact = deriveContact(RESUME);
-    expect(contact.email).toBe('varun.jakkampudi14@gmail.com');
-    expect(contact.phone).toBe('+91 6301655098');
+    expect(contact.email).toBe('varun.jakkampudi14@example.invalid');
+    expect(contact.phone).toBe('+91 9000000001');
     expect(contact.linkedin).toBe('https://www.linkedin.com/in/jakkampudi-varun');
     expect(contact.github).toBe('https://www.github.com/varunjakkampudi-tech');
   });
@@ -74,7 +74,7 @@ describe('deriveContact', () => {
 
 describe('deriveName', () => {
   it('orders surname-first headers using the email local part', () => {
-    expect(deriveName(RESUME, 'varun.jakkampudi14@gmail.com')).toBe('Varun Jakkampudi');
+    expect(deriveName(RESUME, 'varun.jakkampudi14@example.invalid')).toBe('Varun Jakkampudi');
   });
 
   it('leaves an already-first-name-first header alone', () => {
@@ -377,8 +377,8 @@ describe('deriveFields', () => {
     const fields = deriveFields(RESUME, NOW);
     expect(fields).toMatchObject({
       fullName: 'Varun Jakkampudi',
-      email: 'varun.jakkampudi14@gmail.com',
-      phone: '+91 6301655098',
+      email: 'varun.jakkampudi14@example.invalid',
+      phone: '+91 9000000001',
       location: 'Hyderabad, India',
       portfolio: undefined,
     });

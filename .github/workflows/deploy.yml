@@ -124,6 +124,10 @@ jobs:
         working-directory: .
         run: npm ci
 
+      - name: Privacy and secret guard
+        working-directory: .
+        run: npm run privacy:test && npm run privacy:check
+
       # CS-52: exercise the CareerScope unit suite in the deploy gate itself. The exact
       # SHA CI requirement above remains mandatory, but this direct run prevents
       # a future workflow split from making the deploy gate green while the

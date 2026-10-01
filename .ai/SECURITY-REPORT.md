@@ -1,25 +1,90 @@
-# Security report
+# CareerScope R1 Security & Privacy Review
 
-Review scope: canonical root CareerScope workspace at `ba1ebbe` plus the
-CI-stabilisation changes in this cycle. This is a source/configuration review
-and local evidence pass; it is not a live Hostinger, AWS or network-penetration
-assessment.
+Review baseline: canonical root workspace, 2026-10-01. This is an evidence-
+backed source, configuration and local-test review; it is not live Hostinger,
+AWS, container-image or network-penetration certification.
 
-Adversarial findings. Evidence means a reachable path, not a concern.
+## Executive verdict
 
-| Severity | File / symbol                                              | Evidence                                                                                                                                               | Impact                                                              | Remediation                                                             | Status                     |
-| -------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | ----------------------------------------------------------------------- | -------------------------- |
-| P0/P1    | Authentication, sessions, CSRF, origin and ownership paths | `apps/api/src/app.ts`, `packages/core/src/auth.ts`, owner-scoped repository queries, domain authorization tests                                        | No reachable P0/P1 defect found in locally reviewable paths         | Keep regression and service-backed isolation tests in CI                | No open local P0/P1        |
-| P0/P1    | CSP/XSS                                                    | Production build emits hash-based `script-src`; React escaping is used and no `dangerouslySetInnerHTML` path is present; CSP build verification passed | No locally evidenced script injection path                          | Maintain hash discovery/enforcement and re-run on every build           | No open local P0/P1        |
-| P0/P1    | Upload/path traversal/parser isolation                     | Resume bytes are bounded, format-detected, parsed in a permission-scoped child, and encrypted storage is owner-scoped; isolated parser test passes     | Hostile documents are rejected without network/child-process access | Keep parser and storage tests; service-backed recovery remains required | No open local P0/P1        |
-| P2       | Disaster recovery                                          | Off-host backup is explicitly owner-deferred; local backup/restore is not VPS-loss protection                                                          | Host loss can destroy local data and local backups                  | Owner must approve and validate encrypted off-host retention/restore    | Open — owner decision      |
-| P2       | Live network exposure                                      | Caddy/Compose configuration limits published services; live Hostinger firewall was not reachable for this review                                       | Host firewall drift cannot be excluded locally                      | Perform documented Hostinger firewall validation                        | Open — external validation |
-| P3       | Dependency/runtime assurance                               | `npm audit --omit=dev --audit-level=high` reports 0 vulnerabilities; container scan/live TLS were not run here                                         | Remaining assurance is environment-dependent                        | Run hosted/container/TLS checks before production certification         | Open — external evidence   |
+No locally evidenced P0/P1 defect or current tracked secret was found. The
+repository privacy gate is enforced by CI. Release security remains **BLOCKED**
+by external infrastructure validation, hosted service-backed isolation and
+recovery evidence, manual screen-reader acceptance, and the owner-deferred
+off-host backup decision.
 
-A theoretical issue with no reachable path is P3 and must say so. Inflated
-severity destroys the signal.
+## Control matrix
 
-**Verdict:** No locally evidenced P0/P1 security defect. Release security
-certification remains BLOCKED by live infrastructure validation, hosted
-service-backed authorization/recovery evidence and the owner-deferred
-off-host-backup decision.
+| Security area           | Status                | Evidence                                                                           | Residual risk                                            |
+| ----------------------- | --------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Authentication          | PASS locally          | Opaque server sessions, Argon2id, rotation/revocation tests                        | Hosted Cognito callback/OTP configuration is external    |
+| Authorization           | PASS locally          | Server-derived owner scope and cross-owner tests                                   | Hosted Postgres/Redis isolation evidence remains         |
+| Sessions                | PASS locally          | HttpOnly/Secure/SameSite cookies, expiry and revocation                            | Live TLS/cookie acceptance is external                   |
+| CSRF / Origin / CORS    | PASS locally          | Exact origin and CSRF checks in API tests                                          | Recheck on the live origin                               |
+| Secrets                 | PASS current tree     | `npm run privacy:check`; `.env` ignored; no high-confidence current secret         | Immutable history has historical private-path names only |
+| GitHub/Copilot/agents   | PASS locally          | `.github/AGENT-SECURITY.md`, common contract links, least-privilege grants         | Platform-side retention/permissions require owner review |
+| PII                     | PASS current tree     | Synthetic fixtures and reserved domains; real resume contact replaced              | Public job-source data can contain company contacts      |
+| Logging                 | PASS by source review | Fastify redaction excludes cookies, authorization, passwords and tokens            | Live retention/redaction needs host evidence             |
+| Uploads/resumes         | PASS locally          | Bounded parsing, owner-scoped encrypted storage and cleanup tests                  | Hosted storage and restore proof remain                  |
+| Database                | PASS locally          | Parameterized queries, owner predicates, append-only migrations                    | Hosted backup/restore and constraints remain             |
+| SSRF                    | PASS locally          | URL validation, redirect restrictions and bounded responses                        | Provider behaviour can change                            |
+| XSS / HTML              | PASS locally          | React escaping, sanitized provider HTML, no production raw HTML path               | Browser CSP acceptance is external                       |
+| SQL / command injection | PASS locally          | Parameterized SQL and fixed child-process arguments                                | None known locally                                       |
+| CSP / headers           | PASS locally          | Production CSP hash verification and Caddy headers                                 | Live proxy/TLS verification remains                      |
+| Dependencies            | REVIEW                | Current lockfile audit is the release check; no blind major upgrades               | Exact-SHA audit/container scan required                  |
+| CI/CD                   | PASS locally          | Privacy check runs before release gates; permissions read-only; action SHAs pinned | Hosted exact-SHA run required                            |
+| Containers/network      | PASS configuration    | Compose/Caddy publish only the proxy; internal services isolated                   | Host firewall and image scan external                    |
+| Encryption              | PASS by design        | Resume encryption and secret runbooks                                              | Key rotation and host custody external                   |
+| Backups                 | PARTIAL               | Local backup/restore check exists and is CI-wired                                  | Off-host disaster recovery is OWNER-DEFERRED             |
+| Incident/recovery       | PARTIAL               | Crash, queue, database and full-disk checks are wired                              | Live recovery/RTO acceptance external                    |
+
+## Automated privacy gate
+
+`scripts/check-privacy.mjs` scans Git-tracked paths only. It fails closed on
+high-confidence private filenames, private artifact directories, private-key
+headers, cloud/GitHub/provider tokens, JWTs and credential-bearing remote
+database URLs. It reports category and path, never matched values. It also
+detects obvious non-synthetic email/phone data outside approved fixture, seed,
+documentation and infrastructure contexts.
+
+```text
+npm run privacy:test  PASS (3 tests)
+npm run privacy:check PASS
+```
+
+`npm run privacy:check -- --history` performs a non-destructive historical
+path scan. It found three historical private-path names (including retired
+local tooling); no secret value was printed and no history rewrite was made.
+If a live credential is ever confirmed, rotate it through the owner-approved
+process rather than rewriting history or force-pushing.
+
+## Agent permissions
+
+The 24 repository agents are covered by the shared contract. Read-only roles
+(Security, UX, Architecture, Research, QA and audit roles) have no `edit`
+tool in their frontmatter. Builders and release/repository roles have edit or
+execute only where their responsibility requires it; no agent has a general
+secret store or deployment authorization. The contract forbids prompt
+injection from resumes/provider content, data copying into `.ai` or reports,
+permission expansion and security-control bypasses.
+
+## Findings
+
+- **P0:** none locally evidenced.
+- **P1:** none locally evidenced in the current tree. Hosted service-backed
+  authorization/recovery and live deployment checks remain required.
+- **P2:** owner-deferred off-host backup; live Hostinger firewall/TLS and hosted
+  recovery; manual screen-reader smoke test; historical private path names.
+- **P3:** dependency/container/runtime assurance must be refreshed on the exact
+  release commit. Theoretical concerns without a reachable path are not defects.
+
+## Data handling limitations
+
+The privacy gate is a guardrail, not proof that external systems contain no
+private data. Production logs, Hostinger storage, AWS/Cognito, GitHub issue/PR
+retention and provider responses require owner-authorized review. Local backups
+do not provide VPS-loss recovery. See [docs/PRIVACY.md](../docs/PRIVACY.md),
+[docs/SECURITY.md](../docs/SECURITY.md) and
+[docs/OPERATIONS/SECRETS.md](../docs/OPERATIONS/SECRETS.md).
+
+**Final security engineering gate: BLOCKED** — no local P0/P1 remains, but
+external and owner/human acceptance is outstanding.

@@ -52,6 +52,9 @@ jobs:
       - name: Format
         run: npm run format:check
 
+      - name: Privacy and secret guard
+        run: npm run privacy:test && npm run privacy:check
+
       - name: Check release version consistency
         run: npm run version:check && node --test scripts/sync-version.test.mjs
 

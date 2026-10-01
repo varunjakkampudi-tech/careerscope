@@ -11,6 +11,7 @@ or historical behaviour as deployed functionality.
 - [API-SURFACE](API-SURFACE.md) — authenticated HTTP contract
 - [PRODUCT-SURFACE](PRODUCT-SURFACE.md) — supported user journeys
 - [SECURITY](SECURITY.md) — controls, threat review and open findings
+- [PRIVACY](PRIVACY.md) — runtime data boundaries and agent/Copilot handling
 - [TESTING](TESTING.md) — commands and evidence standards
 - [KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md) — explicit residual limitations
 - [Design source of truth](../design/README.md) — visual references, approval status and implementation ownership

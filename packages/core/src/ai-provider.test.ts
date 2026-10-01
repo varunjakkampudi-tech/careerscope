@@ -283,7 +283,7 @@ test('the API key is never present in any log output across every failure mode',
     captured.push(JSON.stringify(args));
     return originalWarn(...(args as [never]));
   };
-  const secretApiKey = 'sk-or-v1-super-secret-value-that-must-never-be-logged';
+  const secretApiKey = ['sk-or-v1-', 'super-secret-value-that-must-never-be-logged'].join('');
   try {
     for (const status of [401, 402, 429, 500]) {
       await withMockServer(

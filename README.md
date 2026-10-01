@@ -97,6 +97,7 @@ acceptance items are listed in [docs/KNOWN-LIMITATIONS.md](docs/KNOWN-LIMITATION
 - [API surface](docs/API-SURFACE.md) — authenticated endpoint contract
 - [Product surface](docs/PRODUCT-SURFACE.md) — supported user journeys
 - [Security](docs/SECURITY.md) — security controls and findings
+- [Privacy](docs/PRIVACY.md) — data boundaries and agent/Copilot handling
 - [Testing](docs/TESTING.md) — evidence commands and acceptance boundaries
 - [Operations](docs/OPERATIONS/DEPLOYMENT.md) — deploy, rollback and live checks
 - [Known limitations](docs/KNOWN-LIMITATIONS.md) — explicit remaining work
