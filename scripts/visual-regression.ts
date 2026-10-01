@@ -115,7 +115,7 @@ async function main() {
   if (flag === '--update') {
     const buffer = await screenshot(url, { width: 1440, height: 900, fullPage: false, signIn });
     writeFileSync(referencePath, buffer);
-    console.log(`Baseline updated: ${referencePath}`);
+    process.stdout.write(`Baseline updated: ${referencePath}\n`);
     return;
   }
   const result = await compare(name, url, referencePath, {
@@ -124,9 +124,9 @@ async function main() {
     fullPage: false,
     signIn,
   });
-  console.log(`${name}: ${result.matchPercent}% match`);
-  console.log(`  actual: ${result.actualPath}`);
-  console.log(`  diff:   ${result.diffPath}`);
+  process.stdout.write(`${name}: ${result.matchPercent}% match\n`);
+  process.stdout.write(`  actual: ${result.actualPath}\n`);
+  process.stdout.write(`  diff:   ${result.diffPath}\n`);
 }
 
 await main();

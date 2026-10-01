@@ -2566,8 +2566,8 @@ try {
         ).__CAREERSCOPE_TEST_OWNER_AGNOSTIC_KEYS__ = false;
       });
       assert.deepEqual(errors, []);
-      console.log(
-        `${engine}: search/export/cancellation, saved leads/notes/archive/conflicts, profile, logout, 320/390/1440px passed`,
+      process.stdout.write(
+        `${engine}: search/export/cancellation, saved leads/notes/archive/conflicts, profile, logout, 320/390/1440px passed\n`,
       );
     } finally {
       await browser.close();

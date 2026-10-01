@@ -306,14 +306,14 @@ test(
           pendingBefore.find((entry) => entry.command.aggregateId === queued.id)!.command.id,
         ),
       );
-      console.log(
-        JSON.stringify({
+      process.stdout.write(
+        `${JSON.stringify({
           databaseRestore: 'passed',
           tablesCompared: Object.keys(before).length,
           dumpSha256: createHash('sha256').update(dump).digest('hex'),
           ownerDataUsed: false,
           objectRecovery: 'encrypted filesystem version and parsed result restored',
-        }),
+        })}\n`,
       );
     } finally {
       sourceStorage.close();

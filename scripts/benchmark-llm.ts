@@ -8,7 +8,7 @@ process.once('SIGTERM', stop);
 try {
   const client = new LocalInference(inferenceConfiguration(process.env));
   const report = await benchmarkInference(client, control.signal);
-  console.log(JSON.stringify(report, null, 2));
+  process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
   if (!report.fixtureChecksPassed) process.exitCode = 1;
 } catch {
   console.error(

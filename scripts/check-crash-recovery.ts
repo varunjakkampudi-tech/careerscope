@@ -194,7 +194,9 @@ try {
   } finally {
     storage.close();
   }
-  console.log('crash before publication: no partial object, temporary reclaimed, retry converged');
+  process.stdout.write(
+    'crash before publication: no partial object, temporary reclaimed, retry converged\n',
+  );
 
   // Phase two: the publisher dies after the queue accepts the message but
   // before the outbox row is acknowledged, so the work must not be lost.
@@ -278,7 +280,9 @@ try {
     assert.equal(settled.rowCount, 1);
     assert.equal(settled.rows[0]!.type, 'SearchCompleted');
     assert.deepEqual(await queue.depth(), { ready: 0, inFlight: 0, deadLetter: 0 });
-    console.log('crash after queue publish: outbox work retained, duplicate collapsed to one run');
+    process.stdout.write(
+      'crash after queue publish: outbox work retained, duplicate collapsed to one run\n',
+    );
 
     // Phase four: a worker dies holding a valid lease mid-execution.
     const leased = await database.createSearch(ownerId, `lease-${randomUUID()}`, {
@@ -317,7 +321,7 @@ try {
       [leased.id],
     );
     assert.equal(settledLease.rowCount, 1);
-    console.log(
+    process.stdout.write(
       'crash holding a lease: no concurrent claim, stale fence rejected, run settled once',
     );
   } finally {
@@ -369,7 +373,9 @@ try {
   } finally {
     recovery.close();
   }
-  console.log('crash during publication: orphaned object adopted, no duplicate, alias reclaimed');
+  process.stdout.write(
+    'crash during publication: orphaned object adopted, no duplicate, alias reclaimed\n',
+  );
 } finally {
   await database.close();
   await admin.pool.query(`DROP DATABASE IF EXISTS "${name}" WITH (FORCE)`);

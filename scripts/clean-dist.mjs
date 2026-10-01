@@ -83,7 +83,7 @@ for (const workspace of workspaces()) {
   }
 }
 
-console.log(
+process.stdout.write(
   removed.length > 0
     ? `Cleaned ${removed.length} build artefact(s): ${removed.join(', ')}`
     : 'No build output to clean',

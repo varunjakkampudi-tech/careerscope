@@ -95,7 +95,9 @@ const missing = [...claimed.keys()].filter((file) => !present.includes(file));
 
 for (const [file, scripts] of claimed) {
   if (scripts.length > 1) {
-    console.log(`note: ${file} is claimed by ${scripts.length} scripts (${scripts.join(', ')})`);
+    process.stdout.write(
+      `note: ${file} is claimed by ${scripts.length} scripts (${scripts.join(', ')})\n`,
+    );
   }
 }
 
@@ -128,7 +130,7 @@ assert.equal(
   `${orphans.length} unexecuted and ${missing.length} missing test file(s)`,
 );
 
-console.log(
+process.stdout.write(
   `PASS  all ${present.length} canonical test files are executed by a workflow ` +
-    `(${resolution.workflowFiles.join(', ')})`,
+    `(${resolution.workflowFiles.join(', ')})\n`,
 );

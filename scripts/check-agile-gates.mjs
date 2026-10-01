@@ -24,6 +24,18 @@ copyFileSync(BACKLOG, bBak);
 copyFileSync(LOOP, lBak);
 copyFileSync(MODE, mBak);
 
+// Restore every fixture even when a child process or assertion throws. This
+// check is itself a repository gate and must never leave canonical state
+// unreadable after a failed run.
+process.on('exit', () => {
+  copyFileSync(bBak, BACKLOG);
+  copyFileSync(lBak, LOOP);
+  copyFileSync(mBak, MODE);
+  rmSync(bBak, { force: true });
+  rmSync(lBak, { force: true });
+  rmSync(mBak, { force: true });
+});
+
 const mode = JSON.parse(readFileSync(MODE, 'utf8'));
 const setMode = (patch) =>
   writeFileSync(MODE, `${JSON.stringify({ ...mode, ...patch }, null, 2)}\n`);
@@ -44,8 +56,21 @@ const run = (script, args = []) => {
 const backlog = JSON.parse(readFileSync(BACKLOG, 'utf8'));
 const today = new Date().toISOString().slice(0, 10);
 const item = (id, status) => ({ id, title: `synthetic ${id}`, status, size: 'S', priority: 'P2' });
+const writeFixture = (path, contents) => {
+  let lastError;
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    try {
+      writeFileSync(path, contents);
+      return;
+    } catch (error) {
+      lastError = error;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50);
+    }
+  }
+  throw lastError;
+};
 const setBacklog = (items) =>
-  writeFileSync(BACKLOG, `${JSON.stringify({ ...backlog, items }, null, 2)}\n`);
+  writeFixture(BACKLOG, `${JSON.stringify({ ...backlog, items }, null, 2)}\n`);
 
 const results = [];
 const expect = (name, actual, wanted) => {
@@ -247,12 +272,6 @@ health.kill();
 rmSync(readyFile, { force: true });
 copyFileSync(fBak, FINDINGS);
 unlinkSync(fBak);
-
-copyFileSync(bBak, BACKLOG);
-copyFileSync(lBak, LOOP);
-unlinkSync(bBak);
-unlinkSync(lBak);
-unlinkSync(mBak);
 
 const failures = results.filter((r) => !r).length;
 console.log(
