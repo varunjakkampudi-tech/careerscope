@@ -237,6 +237,11 @@
       "path": "scripts/visual-regression.ts",
       "classification": "manual",
       "reason": "A tool, not a check: it takes a name, a URL and a reference PNG as arguments and reports a percentage. No reference images are committed, and it has no pass threshold to enforce."
+    },
+    {
+      "path": "scripts/check-privacy.mjs",
+      "classification": "ci",
+      "reason": "Scans the Git-tracked tree for high-confidence secrets, private artifact paths and obvious non-synthetic contact data; the privacy boundary runs on every push and pull request before release gates."
     }
   ]
 }
