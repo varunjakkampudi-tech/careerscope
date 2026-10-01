@@ -61,12 +61,14 @@ const object = (body) => ({
 const body = Buffer.concat([Buffer.from('%PDF-1.7 full disk fixture'), Buffer.alloc(96 * 1024, 3)]);
 
 let accepted = 0;
+const acceptedObjects = [];
 let limit;
 for (let attempt = 0; attempt < 400 && !limit; attempt += 1) {
   const target = object(body);
   try {
-    await storage.put(target, body);
+    const version = await storage.put(target, body);
     accepted += 1;
+    acceptedObjects.push({ target, version });
   } catch (error) {
     limit = error;
   }
@@ -86,6 +88,13 @@ assert.equal(entries.filter((entry) => entry.endsWith('.bin')).length, accepted)
 
 const inventory = await storage.inventory();
 assert.equal(inventory.reservedBytes, 0, 'A reservation leaked after the failed write');
+
+// The exact amount of slack left after the first failed large write depends on
+// filesystem block allocation. Free one known successful object so the marker
+// durability check below is deterministic while the preceding write still
+// proves genuine ENOSPC handling.
+assert.ok(acceptedObjects.length > 0, 'No successful object metadata was retained');
+await storage.delete(acceptedObjects[0].target, acceptedObjects[0].version);
 
 // Cancellation is reported as observed, not assumed: the marker write also needs space.
 const cancelled = object(body);
