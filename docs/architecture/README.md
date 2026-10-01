@@ -37,8 +37,9 @@ flowchart TD
     Files --> DB
 ```
 
-Only the proxy publishes host ports. Other services share its network namespace;
-the proxy must not restart alone. The API writes resume objects; the files
+Only the network anchor publishes host ports. The proxy and other services share
+the anchor's network namespace; the proxy may restart independently. The API
+writes resume objects; the files
 worker mounts the store read-only. BullMQ is an optional search transport, not
 the files transport. Bootstrap is a one-shot dependency, omitted from the
 steady-state diagram. No inference service is shown because inference is off.

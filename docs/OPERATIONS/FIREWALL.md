@@ -43,10 +43,11 @@ Table `inet careerscope`, input policy `drop`, allowing:
 
 ### 3. Network namespace
 
-The strongest layer, and the one that is easy to miss. Every container except
-the proxy uses `network_mode: service:proxy` and binds loopback. Postgres,
-Redis, LocalStack and the API do not listen on any routable address. Even with
-no firewall at all, they would be unreachable from the network.
+The strongest layer, and the one that is easy to miss. The proxy and every
+application container uses `network_mode: service:network-anchor` and binds
+loopback. Postgres, Redis, LocalStack and the API do not listen on any routable
+address. Even with no firewall at all, they would be unreachable from the
+network.
 
 ### 4. fail2ban
 
@@ -62,7 +63,7 @@ no firewall at all, they would be unreachable from the network.
 | Ownership  | the `careerscope` table exists; input policy is `drop`                                     |
 | **Docker** | `ip nat` table present; Docker NAT rules present; a container can still reach the internet |
 | Exposure   | 22, 80, 443 listening; 5280, 5390, 5432, 6379, 4566 not externally reachable               |
-| Publishing | only the proxy publishes ports                                                             |
+| Publishing | only the network-anchor publishes the edge ports                                           |
 
 The Docker group exists specifically to catch a repeat of the flush regression.
 Run this script after any firewall change, after restarting Docker, and after a

@@ -2,13 +2,11 @@
 
 ## Why this exists
 
-Every service uses `network_mode: service:proxy`, so the proxy owns the
-single network namespace everything else joins. If the proxy crashes and
-Docker restarts it alone, it gets a **new** namespace — every other
-container keeps running against the old, dead one, healthy on its own
-checks while the proxy answers every request with 502. This is CS-3: the
-site can be entirely down while every internal health check says otherwise,
-and nobody was told, let alone recovered automatically.
+The dedicated `network-anchor` owns the single network namespace and the edge
+ports. The proxy and application services join it. If Caddy crashes and Docker
+restarts it alone, the namespace remains stable and dependents stay reachable;
+the split-brain failure this runbook was created for is eliminated. Replacing
+the anchor still requires an intentional full-stack recreation.
 
 `restart-stack.sh` (see [FIREWALL](FIREWALL.md) and its own header comment)
 was already the one supported _manual_ fix. This adds detection and

@@ -82,7 +82,8 @@ recovery.
    ```
 
 2. **502 on every request, containers healthy.** This is the orphaned network
-   namespace, not an application fault. The proxy was restarted alone.
+   namespace, not an application fault. The network anchor was replaced without
+   a full stack recreation.
 
    ```bash
    bash /opt/careerscope/infra/restart-stack.sh

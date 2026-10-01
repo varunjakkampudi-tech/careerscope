@@ -56,8 +56,8 @@ recorded here, and this section exists to record it** (CS-59).
 | `register:<sha256(request.ip)>` (5/hour)                                                                                                                              | The client IP         | **Per client IP.** Registration is disabled, so this is currently inert.                                              |
 
 **Why the proxy boundary is safe.** Caddy proxies to the API over loopback
-inside a shared network namespace (`CAREERSCOPE_UPSTREAM: 127.0.0.1:5280`,
-`network_mode: service:proxy`) and replaces, rather than forwards, the inbound
+inside the stable shared network namespace (`CAREERSCOPE_UPSTREAM: 127.0.0.1:5280`,
+`network_mode: service:network-anchor`) and replaces, rather than forwards, the inbound
 `X-Forwarded-For`. Fastify trusts that header only when the immediate peer is
 loopback. A public caller therefore cannot forge an address, while distinct
 clients receive distinct login/register buckets.
@@ -99,8 +99,8 @@ Defence in depth, strongest layer last:
    [KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md).
 2. nftables `inet careerscope`, input policy `drop`.
 3. fail2ban SSH jail.
-4. **Network namespace.** Every service except the proxy binds loopback inside
-   the proxy's namespace. Postgres, Redis, LocalStack and the API have no
+4. **Network namespace.** The proxy and every application service binds
+   loopback inside the stable anchor namespace. Postgres, Redis, LocalStack and the API have no
    routable address at all.
 
 See [OPERATIONS/FIREWALL](OPERATIONS/FIREWALL.md).
@@ -137,7 +137,7 @@ into the log.
 | Duplicate queue delivery                  | Fenced executions, idempotency keys                                                                                                     | —                                                                                                                |
 | Stale worker                              | Lease expiry plus fence mismatch rejection                                                                                              | —                                                                                                                |
 | SSH brute force                           | Key-only auth; fail2ban                                                                                                                 | —                                                                                                                |
-| Compromised container                     | Read-only, all capabilities dropped, no new privileges                                                                                  | Shares the proxy network namespace                                                                               |
+| Compromised container                     | Read-only, all capabilities dropped, no new privileges                                                                                  | Shares the stable anchor namespace                                                                               |
 | Leaked secret                             | Gitignored, redacted, never in docs                                                                                                     | `infra/.env` is the only copy of the DB password                                                                 |
 | Accidental operator action                | Scripts validate prerequisites and refuse unsafe input                                                                                  | —                                                                                                                |
 | Malicious GitHub change                   | Actions pinned to SHAs; Dependabot                                                                                                      | Repository is **public**; no branch protection verified                                                          |

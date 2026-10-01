@@ -304,7 +304,8 @@ bash /opt/careerscope/infra/restart-stack.sh
 Restarting the proxy on its own is an outage. Docker gives it a fresh network
 namespace and leaves every other container attached to the dead one; they stay
 healthy on their own healthchecks while the proxy answers every request with 502. `restart-stack.sh` restarts the proxy, reattaches the dependents in
-dependency order, and verifies both upstreams from inside the proxy namespace.
+dependency order, and verifies both upstreams from inside the stable anchor
+namespace.
 
 See [KNOWN-LIMITATIONS](../KNOWN-LIMITATIONS.md#restarting-the-proxy-alone-is-an-outage).
 

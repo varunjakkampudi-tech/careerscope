@@ -37,7 +37,7 @@ x-app: &app
   <<: *hardening
   image: careerscope:v3-local-acceptance
   user: '1000:1000'
-  network_mode: service:proxy
+  network_mode: service:network-anchor
   environment: *environment
   depends_on:
     bootstrap: { condition: service_completed_successfully }
@@ -45,11 +45,20 @@ x-app: &app
     localstack: { condition: service_healthy }
 
 services:
+  network-anchor:
+    <<: *hardening
+    image: careerscope:v3-local-proxy
+    user: '1000:1000'
+    command: ['sh', '-c', 'exec tail -f /dev/null']
+    ports: ['127.0.0.1:${V3_TEST_PORT:-5380}:8080']
+
   proxy:
     <<: *hardening
     image: careerscope:v3-local-proxy
     user: '1000:1000'
-    ports: ['127.0.0.1:${V3_TEST_PORT:-5380}:8080']
+    network_mode: service:network-anchor
+    depends_on:
+      network-anchor: { condition: service_started }
     volumes: ['./Caddyfile:/etc/caddy/Caddyfile:ro']
     tmpfs: ['/tmp:size=16m,mode=1777', '/data:size=8m,uid=1000,gid=1000,mode=0700']
     mem_limit: 128m
@@ -57,7 +66,7 @@ services:
     <<: *hardening
     image: postgres:17.6-alpine@sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94
     user: postgres
-    network_mode: service:proxy
+    network_mode: service:network-anchor
     command: ['postgres', '-c', 'listen_addresses=127.0.0.1']
     environment:
       POSTGRES_DB: careerscope
@@ -75,7 +84,7 @@ services:
     <<: *hardening
     image: redis:7.4.5-alpine@sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08
     user: redis
-    network_mode: service:proxy
+    network_mode: service:network-anchor
     command:
       [
         'redis-server',
@@ -98,7 +107,7 @@ services:
     <<: *hardening
     image: localstack/localstack:4.7.0@sha256:12253acd9676770e9bd31cbfcf17c5ca6fd7fb5c0c62f3c46dd701f20304260c
     user: '1000:1000'
-    network_mode: service:proxy
+    network_mode: service:network-anchor
     environment:
       SERVICES: sqs
       GATEWAY_LISTEN: 127.0.0.1:4566
@@ -120,7 +129,7 @@ services:
     <<: *hardening
     image: careerscope:v3-local-acceptance
     user: '1000:1000'
-    network_mode: service:proxy
+    network_mode: service:network-anchor
     environment: *environment
     command: ['node', '/app/bootstrap.mjs']
     volumes: ['private:/private', './bootstrap.mjs:/app/bootstrap.mjs:ro']

@@ -68,24 +68,25 @@ Single Hostinger VPS, Ubuntu 24.04, 2 vCPU / 8 GB, behind Caddy, serving
 
 Nine containers, defined in [compose.production.yml](../infra/compose.production.yml):
 
-| Container    | Role                                                         |
-| ------------ | ------------------------------------------------------------ |
-| `proxy`      | Caddy. **The only container that publishes ports** (80, 443) |
-| `web`        | Next.js server                                               |
-| `api`        | Fastify API                                                  |
-| `postgres`   | PostgreSQL 17                                                |
-| `redis`      | Rate limiting, and the optional BullMQ search transport      |
-| `localstack` | SQS                                                          |
-| `publisher`  | Drains the transactional outbox onto the queues              |
-| `search`     | Runs discovery and matching                                  |
-| `files`      | Parses uploaded resumes                                      |
+| Container        | Role                                                                           |
+| ---------------- | ------------------------------------------------------------------------------ |
+| `network-anchor` | Stable shared namespace; **the only container that publishes ports** (80, 443) |
+| `proxy`          | Caddy edge proxy                                                               |
+| `web`            | Next.js server                                                                 |
+| `api`            | Fastify API                                                                    |
+| `postgres`       | PostgreSQL 17                                                                  |
+| `redis`          | Rate limiting, and the optional BullMQ search transport                        |
+| `localstack`     | SQS                                                                            |
+| `publisher`      | Drains the transactional outbox onto the queues                                |
+| `search`         | Runs discovery and matching                                                    |
+| `files`          | Parses uploaded resumes                                                        |
 
-Every service except the proxy uses `network_mode: service:proxy` and binds
-loopback. Postgres, Redis, LocalStack and the API therefore have **no reachable
-address from any network** — not merely a firewalled one.
-
-The cost of that design is documented in
-[KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md#restarting-the-proxy-alone-is-an-outage).
+The proxy and every application service uses
+`network_mode: service:network-anchor` and binds loopback. Postgres, Redis,
+LocalStack and the API therefore have **no reachable address from any network**
+— not merely a firewalled one. The stable anchor prevents a Caddy restart from
+orphaning the other containers; replacing the anchor remains a deliberate
+full-stack operation.
 
 ---
 

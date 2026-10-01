@@ -77,3 +77,23 @@ test('service-backed integration teardown never force-terminates PostgreSQL sess
     );
   }
 });
+
+test('production and acceptance Compose keep namespace ownership outside Caddy', () => {
+  const root = fileURLToPath(new URL('..', import.meta.url));
+  for (const relative of ['infra/compose.production.yml', 'infra/compose.acceptance.yml']) {
+    const source = readFileSync(`${root}/${relative}`, 'utf8');
+    assert.match(source, /network-anchor:/, `${relative} must define a stable namespace owner`);
+    assert.match(
+      source,
+      /network_mode:\s*service:network-anchor/g,
+      `${relative} must attach runtime services to the stable namespace`,
+    );
+    const proxyBlock =
+      source.match(/\n\s{2}proxy:\n([\s\S]*?)(?=\n\s{2}[a-z-]+:|\nvolumes:)/)?.[1] ?? '';
+    assert.doesNotMatch(
+      proxyBlock,
+      /^\s+ports:/m,
+      `${relative} must publish edge ports from the anchor`,
+    );
+  }
+});

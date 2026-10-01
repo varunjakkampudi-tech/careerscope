@@ -568,7 +568,8 @@ signup/login, encrypted DOCX upload, real isolated parsing, foreign-owner denial
 password revocation and deletion. Stack recreation preserves the session, database,
 parsed result and decryptable object/key. All ten containers have non-root users,
 read-only roots, dropped capabilities, no-new-privileges and memory/PID limits;
-only the proxy publishes a loopback port. Test resources are removed afterward.
+only the network anchor publishes the loopback port. Test resources are removed
+afterward.
 The application image also passes a network-disabled Argon2/isolated-parser smoke
 test on Node 26.8.1. Caddy's unnecessary binary capability is stripped at build time;
 bounded tmpfs mounts provide the proxy and emulator's required writable caches.

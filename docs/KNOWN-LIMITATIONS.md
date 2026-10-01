@@ -30,35 +30,18 @@ plan.
 
 ## Restarting the proxy alone is an outage
 
-**Status: DEFERRED — INTENTIONAL** (mitigated, not eliminated)
+**Status: IMPLEMENTED LOCALLY — HOST RESTART VALIDATION REQUIRED.** The
+production and acceptance Compose files now use a dedicated long-lived
+`network-anchor` container as the shared network-namespace owner. The anchor
+publishes only ports 80/443 (or the loopback-only acceptance port); Caddy and
+every application service join it and bind loopback. Restarting Caddy therefore
+cannot create a new namespace while leaving healthy dependents stranded in the
+old one.
 
-Every service uses `network_mode: service:proxy`. That is what keeps Postgres,
-Redis, LocalStack and the API bound to loopback with no routable address.
-
-The cost: restarting the proxy container gives it a **new** network namespace,
-and Docker leaves every other container attached to the old, dead one. They
-continue to pass their own healthchecks while the proxy answers every request
-with 502. Docker neither detects nor repairs this.
-
-Discovered by restarting the proxy to prove certificates survive a restart. They
-did; the site went down.
-
-**Mitigation:** [restart-stack.sh](../infra/restart-stack.sh) is the only
-supported way to restart the proxy. It reattaches dependents in order and
-verifies both upstreams from inside the proxy namespace.
-
-**Residual risk:** if Caddy crashes, `restart: unless-stopped` restarts it
-automatically and produces the same outage **unattended**. CS-24's host
-monitor (`infra/monitor.sh`) now detects the resulting outage from outside
-the stack — the health endpoint becomes unreachable or unhealthy through the
-dead namespace — and alerts within its 5-minute check interval. It does not
-diagnose _why_ (that still takes a human reading `restart-stack.sh`'s own
-verification), but the outage is no longer silent.
-
-**Proper fix, not yet done:** move namespace ownership to a dedicated do-nothing
-container that the proxy also joins, so no internet-facing process owns the
-namespace. This is the Kubernetes pause-container pattern. It requires an infra
-change, a rebuild and full revalidation.
+`infra/restart-stack.sh` now restarts only Caddy and probes both the internal
+origin and API health. Replacing the anchor still requires an intentional full
+stack recreation because it necessarily replaces the namespace. A real
+Hostinger restart test remains an external operational acceptance gate.
 
 ---
 
@@ -317,8 +300,8 @@ boundary:
 
 - `infra/compose.production.yml:72` sets `CAREERSCOPE_UPSTREAM` to
   `127.0.0.1:5280`, so Caddy proxies over loopback.
-- The `api` service runs `network_mode: service:proxy`, sharing the proxy's
-  network namespace, so the immediate peer is loopback.
+- The `api` service runs `network_mode: service:network-anchor`, sharing the
+  stable namespace, so the immediate peer is loopback.
 - `infra/Caddyfile.production` replaces `X-Forwarded-For` with
   `{http.request.remote.host}` in both proxy handlers.
 - Fastify trusts forwarded addresses only from `127.0.0.1` or `::1`; a direct
