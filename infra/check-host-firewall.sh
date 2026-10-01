@@ -48,7 +48,7 @@ for port in 5280 5390 5432 6379 4566; do
 done
 
 echo "== published container ports"
-check "only the proxy publishes ports" \
+check "only the edge network anchor publishes ports" \
   "$(docker ps --format '{{.Names}} {{.Ports}}' 2>/dev/null | grep -c '0\.0\.0\.0')" "1"
 
 if [ "$failures" -gt 0 ]; then

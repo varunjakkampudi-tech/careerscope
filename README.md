@@ -38,7 +38,8 @@ START-HERE                optional onboarding and session-restoration guide
 The runtime is a modular monolith: Next.js and Fastify sit behind Caddy;
 PostgreSQL is authoritative; Redis provides rate limiting; the transactional
 outbox feeds the publisher and workers; resume files are encrypted at rest.
-Only the proxy publishes host ports.
+Only the stable network anchor publishes host ports; the proxy shares its
+namespace without publishing additional ports.
 
 `mobile-site/` is not a second application stack: it is the source for the
 sanitized, static Pages publication and its encrypted read-only admin snapshot.
