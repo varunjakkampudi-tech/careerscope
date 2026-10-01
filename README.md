@@ -100,7 +100,11 @@ acceptance items are listed in [docs/KNOWN-LIMITATIONS.md](docs/KNOWN-LIMITATION
 - [Testing](docs/TESTING.md) — evidence commands and acceptance boundaries
 - [Operations](docs/OPERATIONS/DEPLOYMENT.md) — deploy, rollback and live checks
 - [Known limitations](docs/KNOWN-LIMITATIONS.md) — explicit remaining work
+- [Documentation index](docs/README.md) — detailed documentation hierarchy
+- [Design source of truth](design/README.md) — visual references and approval status
 
-Historical release reviews and append-only engineering logs remain available
-under `docs/archive/`, `docs/` and `.ai/`; they are evidence, not alternate
-product instructions.
+The optional [START-HERE](START-HERE/README.md) guide provides an extended
+operator/session orientation. It supplements this README; it is not a second
+product architecture or deployment source of truth. Historical release reviews
+and append-only engineering logs remain available under `docs/archive/`,
+`docs/` and `.ai/`; they are evidence, not alternate product instructions.

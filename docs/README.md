@@ -13,6 +13,7 @@ or historical behaviour as deployed functionality.
 - [SECURITY](SECURITY.md) — controls, threat review and open findings
 - [TESTING](TESTING.md) — commands and evidence standards
 - [KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md) — explicit residual limitations
+- [Design source of truth](../design/README.md) — visual references, approval status and implementation ownership
 
 ## Operations
 
