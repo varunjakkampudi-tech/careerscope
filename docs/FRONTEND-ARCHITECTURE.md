@@ -107,7 +107,8 @@ and will usually work fine in development — check before adopting it.
 
 ## Before adding a page
 
-The single-route structure is the next phase's main work. Two things to settle
+The canonical multi-route structure is implemented; the remaining work is
+route-level refinement and acceptance evidence. Two things to settle
 first, because getting them wrong is expensive:
 
 1. **The API may not support it.** There are no company, market, skills, alert

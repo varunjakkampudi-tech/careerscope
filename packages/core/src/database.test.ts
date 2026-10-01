@@ -231,7 +231,15 @@ test('Swagger documents every runtime route without changing validation and prot
           )) {
             assert.ok(operation.summary.length > 5);
             assert.ok(operation.responses['500']);
-            assert.ok(Object.keys(operation.responses).some((code) => code.startsWith('2')));
+            // Redirect-only authentication routes (Cognito start/callback)
+            // truthfully document 302 rather than inventing a JSON 200. A
+            // 2xx response is required for ordinary operations; a documented
+            // 3xx is the successful terminal response for redirect routes.
+            assert.ok(
+              Object.keys(operation.responses).some(
+                (code) => code.startsWith('2') || code.startsWith('3'),
+              ),
+            );
           }
         }
         assert.deepEqual(spec.paths['/api/health'].get.security, []);

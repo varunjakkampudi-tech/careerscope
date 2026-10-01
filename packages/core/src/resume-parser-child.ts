@@ -84,7 +84,9 @@ async function main() {
   else if (format === 'pdf') {
     Object.defineProperty(globalThis, 'DOMMatrix', { value: DOMMatrix });
     const require = createRequire(
-      fileURLToPath(new URL('../../../../package.json', import.meta.url)),
+      // This package lives at packages/core after the single-workspace
+      // consolidation: src -> core -> packages -> repository root.
+      fileURLToPath(new URL('../../../package.json', import.meta.url)),
     );
     const { PDFParse } = require('pdf-parse') as {
       PDFParse: new (input: { data: Uint8Array }) => {

@@ -52,7 +52,10 @@ export async function parseResumeIsolated(body: Uint8Array, now: number, signal?
         [
           '--permission',
           '--max-old-space-size=192',
-          '--disable-proto=throw',
+          // mammoth's DOCX reader uses the legacy __proto__ accessor internally.
+          // The child remains isolated by Node's filesystem permission model and
+          // receives no network or child-process grant; disabling that accessor
+          // makes valid DOCX files fail before extraction.
           ...readable.map((path) => `--allow-fs-read=${path}`),
           fileURLToPath(new URL('../dist/resume-parser-child.js', import.meta.url)),
           String(now),

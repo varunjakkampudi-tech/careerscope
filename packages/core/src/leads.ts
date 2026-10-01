@@ -64,6 +64,10 @@ export class LeadRevisionConflict extends Conflict {
 const columns =
   'id, data, notes, status, revision, created_at AS "createdAt", updated_at AS "updatedAt",' +
   ' liveness_status AS "livenessStatus", liveness_checked_at AS "livenessCheckedAt"';
+const qualifiedColumns = (alias: string) =>
+  `${alias}.id, ${alias}.data, ${alias}.notes, ${alias}.status, ${alias}.revision,` +
+  ` ${alias}.created_at AS "createdAt", ${alias}.updated_at AS "updatedAt",` +
+  ` ${alias}.liveness_status AS "livenessStatus", ${alias}.liveness_checked_at AS "livenessCheckedAt"`;
 
 // CS-33 (Security review, 2026-09-24): every read below previously returned
 // `data` straight from Postgres, trusting that LeadRepository.save()'s own
@@ -85,7 +89,7 @@ export class LeadRepository {
   /** Resolve an owner's saved lead for a run-local search job. */
   async getByJob(ownerId: string, jobId: string): Promise<LeadRecord | null> {
     const result = await this.database.pool.query<LeadRecord>(
-      `SELECT ${columns}
+      `SELECT ${qualifiedColumns('lead')}
        FROM saved_leads lead
        JOIN search_jobs job ON job.owner_id = lead.owner_id
          AND job.data->>'fingerprint' = lead.fingerprint
