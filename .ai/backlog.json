@@ -1,6 +1,6 @@
 {
   "$comment": "Product backlog. Canonical machine state - automation reads this, not Markdown. Scores assist prioritisation only; the Project Manager, Client and Architect decide scope. A rejected item does not return without new evidence.",
-  "updatedAt": "2026-10-01T00:00:00.000Z",
+  "updatedAt": "2026-10-02T00:00:00.000Z",
   "items": [
     {
       "id": "CS-1",
@@ -42,9 +42,17 @@
       "architectureImpact": "CI topology only; no application change",
       "releaseTarget": "3.0.1",
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["QA", "Independent Reviewer"],
+      "reviewAgents": [
+        "QA",
+        "Independent Reviewer"
+      ],
       "currentStep": "Release Manager",
-      "completedSteps": ["Project Manager", "System Designer", "Backend", "QA"],
+      "completedSteps": [
+        "Project Manager",
+        "System Designer",
+        "Backend",
+        "QA"
+      ],
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-21",
       "summary": "The application that actually runs the website had tests that no pipeline ever executed. Now the quick ones run on every change, so an obvious break is caught before it ships. The slower half still does not run — that is CS-9.",
@@ -93,7 +101,11 @@
       "architectureImpact": "none",
       "releaseTarget": "3.0.1",
       "ownerAgent": "Frontend",
-      "reviewAgents": ["UX", "QA", "Independent Reviewer"],
+      "reviewAgents": [
+        "UX",
+        "QA",
+        "Independent Reviewer"
+      ],
       "currentStep": "Release Manager",
       "completedSteps": [
         "Project Manager",
@@ -139,7 +151,11 @@
       "architectureImpact": "compose topology",
       "releaseTarget": "3.0.1",
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["System Designer", "Security", "QA"],
+      "reviewAgents": [
+        "System Designer",
+        "Security",
+        "QA"
+      ],
       "currentStep": "BLOCKED / FUTURE RELEASE — owner-deferred off-host and scheduled-backup acceptance; local backup/restore implementation remains documented and verified where possible.",
       "completedSteps": [
         "Real CareerScope System Designer invocation (native runSubagent, read-only) produced a full design review before any infra/v3 edit, given this ticket's own reviewAgents require System Designer + Security first and a naive self-healing approach (a Docker-socket-mounted watchdog) would introduce a new root-equivalent privilege class on this single-host system.",
@@ -194,7 +210,9 @@
       "architectureImpact": "none",
       "releaseTarget": null,
       "ownerAgent": "Senior Engineer",
-      "reviewAgents": ["Independent Reviewer"],
+      "reviewAgents": [
+        "Independent Reviewer"
+      ],
       "currentStep": "Release Manager",
       "completedSteps": [
         "Derived versionPaths from sync-version.mjs's versionFiles(), removing the hand-maintained duplicate list",
@@ -238,9 +256,17 @@
       "architectureImpact": "large",
       "releaseTarget": null,
       "ownerAgent": "System Designer",
-      "reviewAgents": ["Product Architect", "Project Manager"],
+      "reviewAgents": [
+        "Product Architect",
+        "Project Manager"
+      ],
       "currentStep": "UAT - consolidation implementation and local validation complete; hosted CI and Pages publication remain acceptance gates.",
-      "completedSteps": ["System Designer", "Backend", "Infrastructure", "QA"],
+      "completedSteps": [
+        "System Designer",
+        "Backend",
+        "Infrastructure",
+        "QA"
+      ],
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-19",
       "summary": "CareerScope now has one canonical root workspace. Optional static Pages export remains supported through owner-scoped PostgreSQL reads; the obsolete SQLite/MCP application layer is removed.",
@@ -272,7 +298,11 @@
       "architectureImpact": "frontend structure",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
-      "reviewAgents": ["UX", "System Designer", "Security"],
+      "reviewAgents": [
+        "UX",
+        "System Designer",
+        "Security"
+      ],
       "currentStep": "Release Manager",
       "completedSteps": [
         {
@@ -348,7 +378,11 @@
       "securityImpact": "ships unreviewed code to the public origin",
       "architectureImpact": "workflow dependency graph",
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["Release Manager", "Security", "QA"],
+      "reviewAgents": [
+        "Release Manager",
+        "Security",
+        "QA"
+      ],
       "summary": "Deployment could put code on the live site that the test pipeline had already rejected, because the two were checking different things. Now a deployment refuses unless the tests genuinely passed for that exact version.",
       "dimension": "engineering",
       "blockedReason": "AC3 requires a real pipeline refusal: \"proven by pushing a commit with a deliberately failing check and observing deploy refuse\". No commit has been pushed and the SHA has not moved. Same status, reasoning and wording as its five siblings CS-3, CS-24, CS-25, CS-26 and CS-27."
@@ -396,7 +430,10 @@
       "securityImpact": "defeats the release gate",
       "architectureImpact": "state-reading contract",
       "ownerAgent": "Senior Engineer",
-      "reviewAgents": ["Independent Reviewer", "QA"],
+      "reviewAgents": [
+        "Independent Reviewer",
+        "QA"
+      ],
       "summary": "Several internal checks read a status file and, if that file was damaged or unreadable, concluded there was nothing wrong. That is how a blocked release once reported itself ready. Every such reader needs to treat unreadable as a refusal.",
       "dimension": "engineering"
     },
@@ -423,7 +460,9 @@
       "value": 4,
       "risk": 4,
       "complexity": 4,
-      "dependencies": ["CS-1"],
+      "dependencies": [
+        "CS-1"
+      ],
       "acceptanceCriteria": [
         "Postgres and Redis service containers run in CI with a CI-built environment file",
         "The six integration files execute rather than being skipped",
@@ -445,7 +484,11 @@
       "securityImpact": "none directly; the resume-parser fix REMOVES a permanently-broken safety self-check rather than weakening a working one — network isolation for that child was never actually enforced by it and must come from the OS/container, which this change documents rather than hides",
       "architectureImpact": "CI service topology; no application behavior change beyond making the isolated resume parser actually able to run",
       "ownerAgent": "Backend",
-      "reviewAgents": ["QA", "Infrastructure", "Security"],
+      "reviewAgents": [
+        "QA",
+        "Infrastructure",
+        "Security"
+      ],
       "summary": "The tests that need a real database, queue and browser do not run in the pipeline at all. That is the layer where this application actually breaks, so the current pipeline proves less than it appears to. Wiring this up surfaced a real, previously-undetected defect that made resume parsing permanently unable to run; that defect is now fixed and proven 24/24 on real services.",
       "dimension": "engineering",
       "blockedReason": "Historical gate note superseded by the directly linked hosted CI evidence now recorded above; re-run the promotion check before returning this ticket to UAT."
@@ -496,17 +539,20 @@
       "securityImpact": "none",
       "architectureImpact": "review topology",
       "ownerAgent": "Agent Operations",
-      "reviewAgents": ["Orchestrator", "Project Manager"],
+      "reviewAgents": [
+        "Orchestrator",
+        "Project Manager"
+      ],
       "summary": "There are twenty-four defined review roles and nothing said how many should take part in a given change. An activation policy now sets a default of four; this item is the follow-up audit of which roles genuinely earn their place.",
       "dimension": "engineering",
       "blockedReason": "Blocked on operator action: the D-1..D-8 remediation in .ai/OPERATOR-ACTION-orchestrator-agent-file.md must be applied to .github/agents/ by the operator in a reviewed commit. No agent may edit agent definitions, because an agent that can do so can grant itself the edit tool."
     },
     {
       "releaseTarget": null,
-      "currentStep": "DISCOVERY. Held for an owner decision; not examined in this run.",
+      "currentStep": "QA - design and cross-engine Pages verification complete; accesslint-audit evidence and hosted CI are the remaining gates before UAT.",
       "completedSteps": [],
       "createdAt": "2026-09-19",
-      "updatedAt": "2026-09-19",
+      "updatedAt": "2026-09-29",
       "id": "CS-11",
       "title": "The public Pages surface has had no design pass",
       "userProblem": "The public job list is the only part of CareerScope a stranger ever sees, and it was built to be correct rather than to be read.",
@@ -539,11 +585,14 @@
       "securityImpact": "public artifact — allowlist must not widen",
       "architectureImpact": "none; static artifact only",
       "ownerAgent": "Frontend",
-      "reviewAgents": ["Visual Designer", "UX", "Security", "QA"],
+      "reviewAgents": [
+        "Visual Designer",
+        "UX",
+        "Security",
+        "QA"
+      ],
       "summary": "The public job page is the only part of CareerScope a stranger ever sees, and it was built to be correct rather than to be read. This is a proper design pass over it.",
-      "dimension": "product",
-      "currentStep": "QA - design and cross-engine Pages verification complete; accesslint-audit evidence and hosted CI are the remaining gates before UAT.",
-      "updatedAt": "2026-09-29"
+      "dimension": "product"
     },
     {
       "releaseTarget": "3.0.1",
@@ -588,7 +637,11 @@
       "securityImpact": "none directly; removes assumed review assurance",
       "architectureImpact": "review topology",
       "ownerAgent": "Documentation",
-      "reviewAgents": ["Orchestrator", "Project Manager", "Final Auditor"],
+      "reviewAgents": [
+        "Orchestrator",
+        "Project Manager",
+        "Final Auditor"
+      ],
       "summary": "Two documents, and an external review built on them, stated that the specialist agents could not be run automatically. Running one disproved it in a single attempt — and that agent immediately found a real defect. What is actually manual is the sequencing between agents, not the invocation. A second real invocation today confirmed the read-only boundary holds and produces genuinely useful, non-trivial findings.",
       "dimension": "engineering"
     },
@@ -668,7 +721,10 @@
       "securityImpact": "error text must not leak internal detail",
       "architectureImpact": "shared UI primitives",
       "ownerAgent": "Frontend",
-      "reviewAgents": ["UX", "QA"],
+      "reviewAgents": [
+        "UX",
+        "QA"
+      ],
       "dimension": "product"
     },
     {
@@ -696,7 +752,9 @@
       "value": 4,
       "risk": 2,
       "complexity": 3,
-      "dependencies": ["CS-2"],
+      "dependencies": [
+        "CS-2"
+      ],
       "acceptanceCriteria": [
         "A layout designed for narrow widths, not a horizontally scrolled table",
         "Score, title, company and status remain readable without zooming",
@@ -713,7 +771,10 @@
       "securityImpact": "none",
       "architectureImpact": "none",
       "ownerAgent": "Frontend",
-      "reviewAgents": ["UX", "QA"],
+      "reviewAgents": [
+        "UX",
+        "QA"
+      ],
       "dimension": "product"
     },
     {
@@ -771,7 +832,10 @@
       "securityImpact": "none",
       "architectureImpact": "none",
       "ownerAgent": "Frontend",
-      "reviewAgents": ["UX", "QA"],
+      "reviewAgents": [
+        "UX",
+        "QA"
+      ],
       "dimension": "product"
     },
     {
@@ -800,22 +864,29 @@
       "value": 5,
       "risk": 2,
       "complexity": 3,
-      "dependencies": ["CS-13"],
+      "dependencies": [
+        "CS-13"
+      ],
       "acceptanceCriteria": [
         "A result row shows enough to decide whether to open it: role, company, location, recency, salary when known, and why it matched",
         "Filters that exist in the API are reachable from the UI",
         "Ranking order is visible and explainable, never an unexplained number",
         "Readable at 320, 768 and 1440 widths in all three engines"
       ],
-      "evidence": ["The matching package produces dimension scores that the UI does not surface"],
+      "evidence": [
+        "The matching package produces dimension scores that the UI does not surface"
+      ],
       "securityImpact": "none",
       "architectureImpact": "none",
       "ownerAgent": "Frontend",
-      "reviewAgents": ["UX", "QA"]
+      "reviewAgents": [
+        "UX",
+        "QA"
+      ]
     },
     {
       "releaseTarget": null,
-      "currentStep": "Release Manager",
+      "currentStep": "OWNER DECISION RESOLVED — design and implement owner/job dismissal persistence as a reversible discovery disposition, then satisfy AC4.",
       "completedSteps": [
         {
           "step": "Frontend",
@@ -825,7 +896,7 @@
         "QA"
       ],
       "createdAt": "2026-09-19",
-      "updatedAt": "2026-09-23",
+      "updatedAt": "2026-10-02",
       "dimension": "product",
       "id": "CS-17",
       "title": "There is no job detail view worth opening",
@@ -839,7 +910,9 @@
       "value": 5,
       "risk": 2,
       "complexity": 3,
-      "dependencies": ["CS-16"],
+      "dependencies": [
+        "CS-16"
+      ],
       "acceptanceCriteria": [
         "Full description, requirements, company, location, salary and source link",
         "Original posting always reachable, and clearly marked as leaving the app",
@@ -851,13 +924,18 @@
         "DEMOTED UAT -> BLOCKED 2026-09-25. AC4 requires \"save, dismiss and apply actions available without returning to the list\". The tickets OWN EVIDENCE says there is no dismiss action and no schema to persist one, and the orchestrator confirmed it at source: v2/packages/core/src/leads.ts:7-14 is z.enum([\"saved\",\"applied\",\"interviewing\",\"offer\",\"rejected\",\"archived\"]). NO \"dismissed\". No hidden state.",
         "CREDIT RECORDED EXPLICITLY, because the judgement was right and only the bookkeeping was wrong: DECLINING TO SHIP A DISMISS BUTTON WITH NOTHING TO PERSIST TO WAS EXACTLY CORRECT. That is the anti-fabrication rule working as intended. What was not followed through is the consequence - AN AC THE TICKET RECORDS AS UNMET, AND CORRECTLY DECLINES TO BUILD, IS AN OPEN AC.",
         "BLOCKED RATHER THAN QA DELIBERATELY: nothing can proceed without deciding whether \"dismissed\" becomes a lead status, which is a domain-model decision rather than unbuilt work. QA would imply something awaits testing; nothing does. This matches how CS-46 records an owner-decision block. If the coordinator prefers QA, it is a one-line change - the reasoning is recorded here either way.",
-        "REVIEW WINDOW CAVEAT: three sessions were writing concurrently; if a cited file moved between roughly 15:05 and 15:55 IST on 2026-09-25 this verdict should be re-taken rather than trusted."
+        "REVIEW WINDOW CAVEAT: three sessions were writing concurrently; if a cited file moved between roughly 15:05 and 15:55 IST on 2026-09-25 this verdict should be re-taken rather than trusted.",
+        "OWNER DECISION 2026-10-02: support Dismiss as a reversible per-owner/job discovery disposition, separate from saved/applied/interviewing/offer/rejected/archive application lifecycle. Do not enable UI until persistence exists. Recorded in docs/OWNER-DECISIONS-2026-10-02.md."
       ],
       "securityImpact": "renders third-party content — sanitisation is mandatory",
       "architectureImpact": "none",
       "ownerAgent": "Frontend",
-      "reviewAgents": ["Security", "UX", "QA"],
-      "blockedReason": "AC4 requires a dismiss action; there is no `dismissed` value in leadStatusSchema and no schema to persist one. Adding it is a domain-model decision, not unbuilt work, so this is blocked on the schema/product decision the ticket own evidence requests - the same shape as CS-46."
+      "reviewAgents": [
+        "Security",
+        "UX",
+        "QA"
+      ],
+      "blockedReason": "Owner domain decision is resolved: Dismiss is a separate discovery disposition, not an application lifecycle status. Remaining blocker is domain/API persistence and verification before the UI action can be enabled."
     },
     {
       "releaseTarget": null,
@@ -885,7 +963,9 @@
       "value": 5,
       "risk": 2,
       "complexity": 3,
-      "dependencies": ["CS-17"],
+      "dependencies": [
+        "CS-17"
+      ],
       "acceptanceCriteria": [
         "Per-dimension contributions shown, including the ones that scored badly",
         "Hard exclusions state which rule excluded the job",
@@ -903,7 +983,11 @@
       "securityImpact": "none",
       "architectureImpact": "must read weights from the matching package, not duplicate them",
       "ownerAgent": "Frontend",
-      "reviewAgents": ["Product Architect", "UX", "QA"]
+      "reviewAgents": [
+        "Product Architect",
+        "UX",
+        "QA"
+      ]
     },
     {
       "releaseTarget": null,
@@ -931,7 +1015,11 @@
       "value": 5,
       "risk": 2,
       "complexity": 3,
-      "dependencies": ["CS-18", "CS-14", "CS-70"],
+      "dependencies": [
+        "CS-18",
+        "CS-14",
+        "CS-70"
+      ],
       "acceptanceCriteria": [
         "Save from both list and detail, with immediate confirmation and an undo",
         "Status changes persist and survive a reload",
@@ -956,13 +1044,20 @@
       "securityImpact": "owner isolation must hold on every lead mutation",
       "architectureImpact": "none",
       "ownerAgent": "Frontend",
-      "reviewAgents": ["Backend", "Security", "UX", "QA"],
+      "reviewAgents": [
+        "Backend",
+        "Security",
+        "UX",
+        "QA"
+      ],
       "blockedReason": "AC4 (a duplicate posting already saved is recognised, not saved twice) is unmet and cannot be met from the frontend: the API exposes no job-to-lead lookup, so the UI cannot know a job is already saved. Blocked on CS-70, which this audit filed."
     },
     {
       "releaseTarget": null,
       "currentStep": "Release Manager",
-      "completedSteps": ["QA"],
+      "completedSteps": [
+        "QA"
+      ],
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-21",
       "dimension": "engineering",
@@ -992,12 +1087,17 @@
       "securityImpact": "none",
       "architectureImpact": "state-reading contract",
       "ownerAgent": "Senior Engineer",
-      "reviewAgents": ["Independent Reviewer", "QA"]
+      "reviewAgents": [
+        "Independent Reviewer",
+        "QA"
+      ]
     },
     {
       "releaseTarget": null,
       "currentStep": "Release Manager",
-      "completedSteps": ["QA"],
+      "completedSteps": [
+        "QA"
+      ],
       "createdAt": "2026-09-19",
       "updatedAt": "2026-09-21",
       "dimension": "engineering",
@@ -1027,7 +1127,10 @@
       "securityImpact": "none",
       "architectureImpact": "none",
       "ownerAgent": "Senior Engineer",
-      "reviewAgents": ["Independent Reviewer", "QA"]
+      "reviewAgents": [
+        "Independent Reviewer",
+        "QA"
+      ]
     },
     {
       "releaseTarget": null,
@@ -1077,7 +1180,11 @@
       "securityImpact": "resume content must stay private; never surfaced in public export",
       "architectureImpact": "closes the resume-to-matching path",
       "ownerAgent": "Backend",
-      "reviewAgents": ["Product Architect", "Security", "QA"]
+      "reviewAgents": [
+        "Product Architect",
+        "Security",
+        "QA"
+      ]
     },
     {
       "releaseTarget": null,
@@ -1121,7 +1228,10 @@
       "securityImpact": "none",
       "architectureImpact": "per-source health reporting",
       "ownerAgent": "Backend",
-      "reviewAgents": ["Independent Reviewer", "QA"]
+      "reviewAgents": [
+        "Independent Reviewer",
+        "QA"
+      ]
     },
     {
       "releaseTarget": null,
@@ -1175,7 +1285,10 @@
       "securityImpact": "must not expose internals publicly",
       "architectureImpact": "adds a monitoring path",
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["Security", "QA"],
+      "reviewAgents": [
+        "Security",
+        "QA"
+      ],
       "blockedReason": "AC1 and AC3 require live-host evidence - the timer running on the real host, and the stop-a-container alert observed. Clearable in the operator SSH session (runbook §CS-24). AC2 is already satisfied independently of the host by check-monitoring.sh, which is CI-wired."
     },
     {
@@ -1231,7 +1344,10 @@
       "securityImpact": "dumps contain private data and must be permission-restricted",
       "architectureImpact": "adds a scheduled job to the host",
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["Security", "QA"],
+      "reviewAgents": [
+        "Security",
+        "QA"
+      ],
       "blockedReason": "AC1 requires a dump produced by a real timer run on the host. AC2 stays host-blocked by this ticket own judgement - its evidence states the container test \"is NOT what these criteria ask for\". Clearable in the operator SSH session (runbook §CS-25). AC3 is already closed by check-backup.sh, which starts a real disposable Postgres and runs the actual pg_dump/pg_restore pipeline."
     },
     {
@@ -1265,7 +1381,9 @@
       "value": 4,
       "risk": 3,
       "complexity": 3,
-      "dependencies": ["CS-23"],
+      "dependencies": [
+        "CS-23"
+      ],
       "acceptanceCriteria": [
         "With no user interaction for 48 hours, sighting counts increase",
         "A failed scheduled run is visible rather than silently skipped",
@@ -1282,7 +1400,11 @@
       "securityImpact": "unattended runs must honour source terms and rate limits",
       "architectureImpact": "introduces scheduled execution",
       "ownerAgent": "Backend",
-      "reviewAgents": ["System Designer", "Security", "QA"],
+      "reviewAgents": [
+        "System Designer",
+        "Security",
+        "QA"
+      ],
       "blockedReason": "Requires live-host evidence that discovery runs on a schedule - the timer installed, fired, and its journal captured. Clearable in the operator SSH session (runbook §CS-26). This is also the activation gate every other scheduling ticket defers to."
     },
     {
@@ -1333,7 +1455,10 @@
       "securityImpact": "corrected from 'none' during Product Architect review: this ticket is the first place CareerScope's own server issues unattended outbound HTTP requests to arbitrary, provider-sourced third-party applyUrls - a real new surface. Hardened with DNS-resolve-then-validate-then-pin (an undici dispatcher pinned to the exact validated address, closing a DNS-rebinding TOCTOU an earlier version had), full IPv4-mapped-IPv6 coverage of the private/reserved ranges, and per-redirect-hop re-validation.",
       "architectureImpact": "retention and re-verification",
       "ownerAgent": "Backend",
-      "reviewAgents": ["Product Architect", "QA"],
+      "reviewAgents": [
+        "Product Architect",
+        "QA"
+      ],
       "blockedReason": "Requires live-host evidence that postings are re-checked on a schedule and that liveness outcomes are recorded. Clearable in the operator SSH session (runbook §CS-27)."
     },
     {
@@ -1378,7 +1503,11 @@
       "securityImpact": "none",
       "architectureImpact": "changes identity, so migration of existing rows is required",
       "ownerAgent": "Backend",
-      "reviewAgents": ["Product Architect", "Independent Reviewer", "QA"]
+      "reviewAgents": [
+        "Product Architect",
+        "Independent Reviewer",
+        "QA"
+      ]
     },
     {
       "releaseTarget": null,
@@ -1426,7 +1555,10 @@
       "securityImpact": "none",
       "architectureImpact": "dependency resolution",
       "ownerAgent": "Senior Engineer",
-      "reviewAgents": ["System Designer", "QA"]
+      "reviewAgents": [
+        "System Designer",
+        "QA"
+      ]
     },
     {
       "id": "CS-30",
@@ -1453,20 +1585,25 @@
         "THIS IS THE LIMIT OF THE CS-67 FIX, and worth recording as such: CS-67 made UNRECOGNISED statuses fail visibly. CS-30 status was RECOGNISED and simply WRONG, so no amount of rendering correctness could catch it. CS-67 closed the rendering hole; this is the data hole behind it, and it needs a different check - one that compares a tickets status against what its own evidence says.",
         "REVIEW WINDOW CAVEAT: three sessions were writing concurrently; re-check if a cited file moved between roughly 15:05 and 16:10 IST on 2026-09-25.",
         "2026-09-28 external verification: Hostinger hPanel overview reports Firewall rules 0. From a separate client, careerscope.tech:22 and :443 accepted TCP, while :5432, :6379 and :8080 were not reachable. The host-native firewall check passed all assertions, but managed-firewall attachment/policy and IPv6 rule evidence are absent; CS-30 remains BLOCKED.",
-        "2026-09-29 Hostinger hPanel still reports Firewall rules 0; no managed rule change was guessed. Host firewall remains healthy and internal ports are not externally reachable, but managed IPv4/IPv6 policy evidence is still absent; CS-30 remains BLOCKED."
+        "2026-09-29 Hostinger hPanel still reports Firewall rules 0; no managed rule change was guessed. Host firewall remains healthy and internal ports are not externally reachable, but managed IPv4/IPv6 policy evidence is still absent; CS-30 remains BLOCKED.",
+        "OWNER DECISION 2026-10-02: defence-in-depth managed firewall required. Public TCP 443 and required TCP 80; SSH restricted to narrowest practical trusted admin source while preserving recovery access; 5432/6379/8080 and internal ports never public. No hPanel change or IPv6 proof is fabricated. See docs/OWNER-DECISIONS-2026-10-02.md."
       ],
       "securityImpact": "Defence in depth; lockout and unintended exposure require operator-reviewed verification",
       "architectureImpact": "No new infrastructure; verify the existing single-host boundary",
       "releaseTarget": null,
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["Security", "QA", "Independent Reviewer"],
-      "currentStep": "BLOCKED: host firewall check and external port probes pass, but Hostinger hPanel currently reports Firewall rules 0 (no managed policy attached). A managed-firewall attachment/policy decision and IPv4/IPv6 rule evidence are still required.",
+      "reviewAgents": [
+        "Security",
+        "QA",
+        "Independent Reviewer"
+      ],
+      "currentStep": "OWNER POLICY APPROVED — apply through Hostinger hPanel only after confirming recovery access, then capture managed IPv4/IPv6 policy and external probes.",
       "completedSteps": [],
       "createdAt": "2026-09-20",
-      "updatedAt": "2026-09-25",
+      "updatedAt": "2026-10-02",
       "summary": "Release acceptance candidate, not permission to mutate the host or a claim that the firewall is configured.",
       "dimension": "engineering",
-      "blockedReason": "Requires the Hostinger hPanel (a web console, not SSH) AND verification from a machine that is not the VPS. Not clearable in the SSH session that clears the other five."
+      "blockedReason": "Owner firewall policy decision is resolved: attach a Hostinger managed firewall with public 80/443, tightly restricted SSH, and no public internal service ports. Remaining blocker is hPanel execution plus external IPv4/IPv6 evidence."
     },
     {
       "id": "CS-31",
@@ -1519,7 +1656,11 @@
       "architectureImpact": "Shared V2 shell; focused regression under the broader CS-15 audit",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
-      "reviewAgents": ["UX", "QA", "Independent Reviewer"],
+      "reviewAgents": [
+        "UX",
+        "QA",
+        "Independent Reviewer"
+      ],
       "currentStep": "Release Manager",
       "completedSteps": [
         {
@@ -1580,7 +1721,11 @@
       "architectureImpact": "Static Pages artifact only; focused regression related to CS-11",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
-      "reviewAgents": ["Visual Designer", "QA", "Independent Reviewer"],
+      "reviewAgents": [
+        "Visual Designer",
+        "QA",
+        "Independent Reviewer"
+      ],
       "currentStep": "Release Manager - hosted CI run 36424073277 passed the strict 192-case platform baseline matrix; chromium-search-light-320 is reproducible with no diff.",
       "completedSteps": [
         {
@@ -1656,7 +1801,12 @@
       "architectureImpact": "Contract prerequisite for CS-17 and CS-18; those page tickets are consumers, not prerequisites of this ticket",
       "releaseTarget": null,
       "ownerAgent": "Backend",
-      "reviewAgents": ["System Designer", "Security", "QA", "Independent Reviewer"],
+      "reviewAgents": [
+        "System Designer",
+        "Security",
+        "QA",
+        "Independent Reviewer"
+      ],
       "currentStep": "UAT. Independent verdict APPROVED WITH FINDINGS; findings explicitly do NOT block UAT. HARDENING OPEN (not blocking): six unchecked UPDATE rowCounts in the CS-33 negative-path test make the strip half sound only by emergent coupling to the malformed half; a one-line rowCount assertion per site would make it local. Owned by the v2/packages/core session.",
       "completedSteps": [
         {
@@ -1708,7 +1858,11 @@
       "architectureImpact": "Existing Compose environment separation, not a topology expansion",
       "releaseTarget": null,
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["Security", "QA", "Independent Reviewer"],
+      "reviewAgents": [
+        "Security",
+        "QA",
+        "Independent Reviewer"
+      ],
       "currentStep": "UAT. Independent verdict APPROVED WITH FINDINGS; findings explicitly do NOT block UAT.",
       "completedSteps": [
         "Local-only verification and fix (2026-09-24): inspected v2/apps/web source and next.config.ts to establish the actual required environment (none beyond generic NODE_OPTIONS); fixed infra/v3/compose.production.yml and compose.acceptance.yml to give the web service its own minimal environment instead of inheriting the full *app anchor; verified with docker compose config (synthetic values only) and with a real, standalone-run production container proving both the absence of DATABASE_URL/etc. in the live process and correct web startup/HTTP response."
@@ -1770,9 +1924,16 @@
       "architectureImpact": "Shared API/client error contract; no blanket replacement of HTTP conflict semantics",
       "releaseTarget": null,
       "ownerAgent": "Backend",
-      "reviewAgents": ["Frontend", "Security", "QA", "Independent Reviewer"],
+      "reviewAgents": [
+        "Frontend",
+        "Security",
+        "QA",
+        "Independent Reviewer"
+      ],
       "currentStep": "Release Manager",
-      "completedSteps": ["QA"],
+      "completedSteps": [
+        "QA"
+      ],
       "createdAt": "2026-09-20",
       "updatedAt": "2026-09-28",
       "summary": "Shared error-contract work for profile, searches and lead editing; not a second shared-state ticket.",
@@ -1790,7 +1951,10 @@
       "value": 5,
       "risk": 5,
       "complexity": 3,
-      "dependencies": ["CS-6", "CS-61"],
+      "dependencies": [
+        "CS-6",
+        "CS-61"
+      ],
       "acceptanceCriteria": [
         "Verify login, private deep-link entry, logout, expiry and reauthentication without transient protected rendering; keep registration disabled unless separately authorized",
         "Define and test a shared reset policy across search SSE, preparation, leads, profile and resumes so old requests or caches cannot restore prior-session data; explicitly define unsaved-edit handling",
@@ -1826,7 +1990,12 @@
       "architectureImpact": "Journey acceptance and session policy around CS-6 routing, not duplicate route infrastructure",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
-      "reviewAgents": ["Security", "UX", "QA", "Independent Reviewer"],
+      "reviewAgents": [
+        "Security",
+        "UX",
+        "QA",
+        "Independent Reviewer"
+      ],
       "currentStep": "Release Manager",
       "completedSteps": [
         {
@@ -1858,7 +2027,11 @@
       "value": 5,
       "risk": 4,
       "complexity": 4,
-      "dependencies": ["CS-6", "CS-22", "CS-35"],
+      "dependencies": [
+        "CS-6",
+        "CS-22",
+        "CS-35"
+      ],
       "acceptanceCriteria": [
         "Support establishing a profile with or without a resume, then upload, parse, review, edit and explicitly save proposed fields; unapproved parsed data never changes matching inputs",
         "Preserve edits on revision conflicts and show actionable invalid-file, parse-failure, pending and capacity-refusal states using existing storage and API contracts",
@@ -1873,9 +2046,18 @@
       "architectureImpact": "Reuses existing profile/resume contracts; CS-22 owns matching verification, not implicit resume approval",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
-      "reviewAgents": ["Backend", "Security", "UX", "QA"],
+      "reviewAgents": [
+        "Backend",
+        "Security",
+        "UX",
+        "QA"
+      ],
       "currentStep": "QA — canonical onboarding/profile/resume implementation and local contract evidence complete; independent journey and service-backed acceptance remain.",
-      "completedSteps": ["Frontend", "Backend", "QA"],
+      "completedSteps": [
+        "Frontend",
+        "Backend",
+        "QA"
+      ],
       "createdAt": "2026-09-20",
       "updatedAt": "2026-09-20",
       "summary": "One profile/resume journey, not separate duplicate tickets for each form or upload control.",
@@ -1893,7 +2075,10 @@
       "value": 4,
       "risk": 3,
       "complexity": 3,
-      "dependencies": ["CS-6", "CS-13"],
+      "dependencies": [
+        "CS-6",
+        "CS-13"
+      ],
       "acceptanceCriteria": [
         "Map every displayed value to an owner-scoped API field, with pagination and freshness semantics; never label a capped list length as a total",
         "Show persisted recent searches, lead/profile state and working navigation only where supported; distinguish loading, empty, unavailable and partial data",
@@ -1929,7 +2114,12 @@
       "architectureImpact": "Extends the existing dashboard view after route/shared-state work; unsupported aggregates require separate contract approval",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
-      "reviewAgents": ["Product Architect", "UX", "QA", "Independent Reviewer"],
+      "reviewAgents": [
+        "Product Architect",
+        "UX",
+        "QA",
+        "Independent Reviewer"
+      ],
       "currentStep": "UAT - hosted CI run 36431239057 passed recovery, integration, browser/axe, typecheck, lint, test and build gates; awaiting release manager acceptance.",
       "completedSteps": [
         "2026-09-24: added the missing 'freshness semantics' UI (Updated Xm ago + manual Refresh) to the already-shipped CS-49 Dashboard implementation; verified live, accessible, and building cleanly. CORRECTED 2026-09-25: this step previously claimed 'all other acceptance criteria confirmed already met by direct inspection'. That was wrong - AC3 is not met, by this ticket's own later admission."
@@ -1951,7 +2141,10 @@
       "value": 3,
       "risk": 2,
       "complexity": 2,
-      "dependencies": ["CS-6", "CS-13"],
+      "dependencies": [
+        "CS-6",
+        "CS-13"
+      ],
       "acceptanceCriteria": [
         "Make existing preparation and Career Links views reachable through dedicated navigation with deep-link/back behavior and retained keyboard/mobile accessibility",
         "Keep preparation grounded in the saved profile and rules-v1 contract; distinguish absent profile, unavailable result and retry without implying AI or job-specific assessment",
@@ -1985,7 +2178,11 @@
       "architectureImpact": "Reuse existing components and contracts; AI remains off",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
-      "reviewAgents": ["UX", "Security", "QA"],
+      "reviewAgents": [
+        "UX",
+        "Security",
+        "QA"
+      ],
       "currentStep": "3 criteria; COUNT NOT YET RE-TAKEN since the wording correction - treat the per-criterion status as unverified, not as met. Promotable on a green CI run; NOT promoted here. Blocked on two independent grounds: not CI-executed (the SHA has not moved), and locally executed on Node v22.23.2 against a declared floor of 24.",
       "completedSteps": [],
       "createdAt": "2026-09-20",
@@ -2011,19 +2208,26 @@
         "Define server-enforced role authorization and minimal redacted endpoint contracts; future tests must reject both anonymous and ordinary authenticated users, not just hide navigation",
         "Keep Swagger separate from admin UI and exclude secrets, tokens and raw resumes; mutations, audit-storage design and destructive controls require separately approved scope"
       ],
-      "evidence": [],
+      "evidence": [
+        "OWNER APPROVAL 2026-10-02: approved the Admin Control Plane design baseline and server-enforced least-privilege RBAC direction. No raw DB editor; secrets/tokens/raw resume contents excluded; privileged mutations require confirmation/reason/audit. Independent Security/System Designer review remains mandatory. See docs/OWNER-DECISIONS-2026-10-02.md."
+      ],
       "securityImpact": "New privileged boundary; no admin capability is authorized by this backlog entry",
       "architectureImpact": "Authorization and data-contract design precede UI; any eventual routed console also requires CS-6",
       "releaseTarget": null,
       "ownerAgent": "System Designer",
-      "reviewAgents": ["Product Architect", "Security", "UX", "Independent Reviewer"],
-      "currentStep": "BLOCKED on owner-provided admin design and separate security/system-design approval before any admin endpoint or page is implemented.",
+      "reviewAgents": [
+        "Product Architect",
+        "Security",
+        "UX",
+        "Independent Reviewer"
+      ],
+      "currentStep": "OWNER DESIGN APPROVED — obtain independent Security/System Designer approval, then split minimal redacted admin contracts into implementation tickets.",
       "completedSteps": [],
       "createdAt": "2026-09-20",
-      "updatedAt": "2026-09-20",
+      "updatedAt": "2026-10-02",
       "summary": "Investigate read-only overview, queue, outbox, runs, provider, storage and security views only after their authorization and backing contracts are approved.",
       "dimension": "product",
-      "blockedReason": "Admin authorization, role model, redaction boundaries and the requested page design require owner input and independent security/system-design approval."
+      "blockedReason": "Owner admin design/role direction is approved. Remaining gate is the ticket-required independent Security/System Designer review of RBAC, redaction and endpoint contracts before implementation."
     },
     {
       "id": "CS-41",
@@ -2037,7 +2241,10 @@
       "value": 3,
       "risk": 4,
       "complexity": 5,
-      "dependencies": ["CS-28", "CS-33"],
+      "dependencies": [
+        "CS-28",
+        "CS-33"
+      ],
       "acceptanceCriteria": [
         "Inventory current posting, company and market APIs/schema before declaring entities absent; distinguish owner-retained observations from any proposed global corpus",
         "Propose stable job/company/skill identity, provenance, nullable facts and compatible migration/backfill behavior with explicit legal collection and coverage limits",
@@ -2052,7 +2259,12 @@
       "architectureImpact": "Deferred data-model work; CS-16/17/18 can use current supported facts without waiting for this expansion",
       "releaseTarget": null,
       "ownerAgent": "System Designer",
-      "reviewAgents": ["Product Architect", "Backend", "Security", "QA"],
+      "reviewAgents": [
+        "Product Architect",
+        "Backend",
+        "Security",
+        "QA"
+      ],
       "currentStep": "QA - current schema/API inventory and bounded domain-expansion design complete; architecture/security approval is required before implementation",
       "completedSteps": [],
       "createdAt": "2026-09-20",
@@ -2072,7 +2284,9 @@
       "value": 3,
       "risk": 3,
       "complexity": 4,
-      "dependencies": ["CS-23"],
+      "dependencies": [
+        "CS-23"
+      ],
       "acceptanceCriteria": [
         "Define versioned owner-scoped saved criteria, edit/disable semantics, validation and revision-conflict behavior separately from immutable run snapshots",
         "Specify and test create/read/edit/disable contracts with valid, malformed, foreign-owner and stale-revision fixtures before page implementation",
@@ -2105,7 +2319,12 @@
       "architectureImpact": "Deferred saved-search contract and eventual CS-6-based UI; CS-26 is an execution integration gate, not a prerequisite for design",
       "releaseTarget": null,
       "ownerAgent": "Backend",
-      "reviewAgents": ["System Designer", "Security", "UX", "QA"],
+      "reviewAgents": [
+        "System Designer",
+        "Security",
+        "UX",
+        "QA"
+      ],
       "currentStep": "BLOCKED / FUTURE RELEASE — design is complete, but executable saved-search schema, repository, routes and contract tests require an owner/product decision to include this domain in R1.",
       "completedSteps": [],
       "createdAt": "2026-09-20",
@@ -2125,7 +2344,10 @@
       "value": 3,
       "risk": 4,
       "complexity": 4,
-      "dependencies": ["CS-42", "CS-27"],
+      "dependencies": [
+        "CS-42",
+        "CS-27"
+      ],
       "acceptanceCriteria": [
         "Define owner-scoped alert identity, repeat-sighting deduplication, freshness, read/dismiss and retention semantics with no inference that an uncertain or old job is closed",
         "Specify replay, duplicate, malformed and foreign-owner negative cases and bounded delivery/retry budgets before choosing an implementation",
@@ -2153,7 +2375,12 @@
       "architectureImpact": "Deferred domain design dependent on saved criteria and liveness policy, not a new queue/framework",
       "releaseTarget": null,
       "ownerAgent": "Backend",
-      "reviewAgents": ["System Designer", "Security", "UX", "QA"],
+      "reviewAgents": [
+        "System Designer",
+        "Security",
+        "UX",
+        "QA"
+      ],
       "currentStep": "BLOCKED / FUTURE RELEASE — alert semantics are documented, while executable schema/routes/tests and any delivery channel remain intentionally deferred behind saved-search scope and explicit activation approval.",
       "completedSteps": [],
       "createdAt": "2026-09-20",
@@ -2173,7 +2400,9 @@
       "value": 4,
       "risk": 5,
       "complexity": 4,
-      "dependencies": ["CS-59"],
+      "dependencies": [
+        "CS-59"
+      ],
       "acceptanceCriteria": [
         "Document recovery/verification requirements and threat model separately from existing authenticated password change and operator recovery",
         "Specify non-enumerating responses, bounded attempts, expiring single-use tokens, replay rejection, safe origin/link handling and session invalidation with positive, malformed and abuse fixtures",
@@ -2201,20 +2430,26 @@
         "BLOCKER PREMISE UPGRADED TO FACT 2026-09-25: this documents CS-59 dependency rested on \"request.ip is 127.0.0.1 for every production request\", which compose.production.yml now settles directly (CAREERSCOPE_UPSTREAM: 127.0.0.1:5280, network_mode: service:proxy on every app service). The bounded-attempts blocker is established fact rather than inference.",
         "MOVED DISCOVERY -> BLOCKED 2026-09-25, seventh owner gate. A ticket that ENUMERATES FOUR SPECIFIC APPROVAL CONDITIONS IS NOT EXPLORING A DESIGN SPACE - IT IS WAITING. Its own evidence already said so: gated on owner approval of sender, domain, secret handling and this security design, plus closure of CS-59, and \"until all four approval conditions hold the correct state is exactly the current one\". Same reasoning that moved CS-30 out of DISCOVERY earlier today; same class of misfiling.",
         "PRESENT IT TO THE OWNER AS A PARTIAL COMPLETION, because that is what it is: AC1 AND AC3 ARE ALREADY DELIVERED in docs/ACCOUNT-RECOVERY-THREAT-MODEL.md, and only AC2 is open and specification-only. MOST OF THE WORK IS DONE AND FOUR SIGNATURES ARE MISSING - the same shape as CS-46.",
-        "REVIEW WINDOW CAVEAT: three sessions were writing concurrently; re-check if a cited file moved between roughly 15:05 and 17:00 IST on 2026-09-25."
+        "REVIEW WINDOW CAVEAT: three sessions were writing concurrently; re-check if a cited file moved between roughly 15:05 and 17:00 IST on 2026-09-25.",
+        "OWNER APPROVAL 2026-10-02: sender domain careerscope.tech; default From no-reply@careerscope.tech; support@careerscope.tech as Reply-To once operational; secrets only via production secret store/environment; existing non-enumerating, expiring, single-use, replay-resistant recovery design approved subject to executable abuse fixtures and independent Security review. See docs/OWNER-DECISIONS-2026-10-02.md."
       ],
       "securityImpact": "High-risk account takeover boundary; no token, credential or private-data exposure",
       "architectureImpact": "External sender and lifecycle design remain unapproved; eventual UI requires CS-6 and coordination with CS-36",
       "releaseTarget": null,
       "ownerAgent": "System Designer",
-      "reviewAgents": ["Security", "Backend", "UX", "Independent Reviewer"],
-      "currentStep": "BLOCKED on four named owner approvals - sender, domain, secret handling and this security design - plus closure of CS-59. Present it as a PARTIAL COMPLETION: AC1 and AC3 are already delivered in docs/ACCOUNT-RECOVERY-THREAT-MODEL.md, and only AC2 is open and specification-only. Most of the work is done; four signatures are missing.",
+      "reviewAgents": [
+        "Security",
+        "Backend",
+        "UX",
+        "Independent Reviewer"
+      ],
+      "currentStep": "OWNER APPROVALS RECORDED — no-reply@careerscope.tech, careerscope.tech, secret-store/env-only handling, and existing non-enumerating recovery design approved; finish remaining technical/review gates.",
       "completedSteps": [],
       "createdAt": "2026-09-20",
-      "updatedAt": "2026-09-20",
+      "updatedAt": "2026-10-02",
       "summary": "Record the missing lifecycle without claiming a working reset flow or authorizing external email infrastructure.",
       "dimension": "product",
-      "blockedReason": "Gated on owner approval of four named conditions - sender, domain, secret handling and this security design - plus closure of CS-59. Seventh owner gate. AC1 and AC3 are already delivered; only AC2 is open and it is specification-only."
+      "blockedReason": "Owner approvals for sender, domain, secret handling and recovery security direction are resolved. Remaining gates: CS-59 final acceptance/required review plus executable AC2 fixtures and provider/DNS operational evidence before enabling email recovery."
     },
     {
       "id": "CS-45",
@@ -2245,7 +2480,12 @@
       "architectureImpact": "Read path: reuse of the existing static-Pages + encrypted-snapshot pipeline, no new service. Write path: undesigned; likely needs a real authenticated backend distinct from GitHub Pages, out of scope here",
       "releaseTarget": null,
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["Security", "System Designer", "Documentation", "Independent Reviewer"],
+      "reviewAgents": [
+        "Security",
+        "System Designer",
+        "Documentation",
+        "Independent Reviewer"
+      ],
       "currentStep": "QA - read-only remote control-center design complete; implementation and independent security review remain separate gates",
       "completedSteps": [],
       "createdAt": "2026-09-21",
@@ -2280,20 +2520,25 @@
         "DONE 2026-09-24: added a \"Resume-derived matching facts cannot be excluded individually\" section to docs/KNOWN-LIMITATIONS.md recording the verified current behaviour, the quoted code, the profile-editor vs buildCandidateContext divergence, the product-trust (not data-exposure) framing, and BOTH options stated neutrally for the owner to choose between. The limitation was previously absent from that file entirely.",
         "NOT DONE, and deliberately so: option 1 has NOT been recorded as accepted and no exclusion mechanism was invented. AC1 says \"owner-confirmed product decision\"; the owner was unavailable for this run. Recording current behaviour as the decision would be exactly the silent reinterpretation the ticket exists to prevent. OWNER ACTION REQUIRED: choose option 1 (zero code change, ticket closes) or option 2 (per-fact exclusion gate, needs a MatchingProfile change in v2/packages/core/src/profile.ts).",
         "COST TO CLEAR MEASURED 2026-09-25, and it is the cheapest ticket on the board: AC3 IS ALREADY SATISFIED AGAINST CURRENT BYTES (the docstring at packages/matching/src/context.ts:19-24), and AC2 applies ONLY IF OPTION 2 IS CHOSEN. So the whole ticket reduces to one binary owner choice, and OPTION 1 MEANS ZERO CODE CHANGE AND IMMEDIATE CLOSURE. What is outstanding is about sixty seconds of owner attention, not engineering.",
-        "REVIEW WINDOW CAVEAT: three sessions were writing concurrently; re-check if a cited file moved between roughly 15:05 and 16:10 IST on 2026-09-25."
+        "REVIEW WINDOW CAVEAT: three sessions were writing concurrently; re-check if a cited file moved between roughly 15:05 and 16:10 IST on 2026-09-25.",
+        "OWNER DECISION 2026-10-02: chose option 2, explicit per-fact exclusion. Resume-derived skills/titles are evidence proposals; a candidate can exclude individual facts without deleting the resume, and exclusions persist across searches until re-parse/reconciliation. Recorded in docs/OWNER-DECISIONS-2026-10-02.md."
       ],
       "securityImpact": "none directly; a product-trust concern (silently reintroducing declined data), not a data-exposure one - see CS-22's Security review, which confirmed no cross-owner or public-export leakage in the current always-on design",
       "architectureImpact": "packages/matching/src/context.ts's candidate-assembly logic; v2/packages/core/src/profile.ts's MatchingProfile if an exclusion list is added",
       "releaseTarget": null,
       "ownerAgent": "Product Architect",
-      "reviewAgents": ["Product Architect", "UX", "Independent Reviewer"],
-      "currentStep": "BLOCKED on an owner product decision. AC1 explicitly requires an OWNER-CONFIRMED choice between always-on supplementary evidence and an explicit per-fact exclusion gate; an agent cannot confirm on the owner behalf. AC3 (documentation accuracy) is now verified satisfied. AC2 applies only if option 2 is chosen.",
+      "reviewAgents": [
+        "Product Architect",
+        "UX",
+        "Independent Reviewer"
+      ],
+      "currentStep": "OWNER DECISION RESOLVED — implement persistent per-skill/title exclusion, reconcile on resume re-parse, then update matching docs/tests.",
       "completedSteps": [],
       "createdAt": "2026-09-22",
-      "updatedAt": "2026-09-24",
+      "updatedAt": "2026-10-02",
       "summary": "CS-22 wired the parsed resume into matching for the first time. Doing so activated a pre-existing, previously-dormant design characteristic: resume-derived skills and titles are unioned into every match permanently, with no way to exclude a specific one short of deleting the whole resume - which conflicts with the product's own documented 'explicit editable proposal' review step for the rest of the profile. This ticket is where that gets an actual decision instead of staying an accident of activation order.",
       "dimension": "product",
-      "blockedReason": "AC1 explicitly requires an OWNER-CONFIRMED product decision about whether resume-derived matching facts can be excluded individually; an agent cannot confirm on the owner behalf, and recording current behaviour as the decision would be the silent reinterpretation this ticket exists to prevent. Cheapest gate on the board: AC3 is already satisfied against current bytes and AC2 applies only if option 2 is chosen, so option 1 means zero code change and immediate closure."
+      "blockedReason": "Owner decision is resolved: explicit per-fact exclusion is required. Remaining blocker is implementation and verification of the persistent exclusion mechanism required by AC2."
     },
     {
       "id": "CS-47",
@@ -2342,7 +2587,10 @@
       "architectureImpact": "new host-native systemd unit following the same install/verify pattern as CS-24/25/26/27/3; no application-code or schema change expected",
       "releaseTarget": null,
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["System Designer", "QA"],
+      "reviewAgents": [
+        "System Designer",
+        "QA"
+      ],
       "currentStep": "BLOCKED - the ticket explicitly sequences this work after owner prioritization against held frontend tickets, and AC1 still requires live-host scheduler-health evidence. User decision and live-host authority are required before implementation can be honestly completed.",
       "completedSteps": [],
       "createdAt": "2026-09-23",
@@ -2431,7 +2679,11 @@
       "architectureImpact": "New provider abstraction and (at least) one new API route surface; new outbound egress destination; contradicts and must update the \"AI is deferred\" architecture/security docs rather than leaving them stale.",
       "releaseTarget": null,
       "ownerAgent": "Backend",
-      "reviewAgents": ["System Designer", "Security", "QA"],
+      "reviewAgents": [
+        "System Designer",
+        "Security",
+        "QA"
+      ],
       "currentStep": "Release Manager",
       "completedSteps": [
         "Real System Designer review (native agent) of the design (AI-elaborated preparation coaching as the sole first use case; separate ai-provider.ts/ai-assist.ts modules; nullable-optional-subsystem DI pattern matching configuredFileResumeStorage(); model-catalog TTL cache) - Verdict PROCEED WITH CHANGES: (1) add single-flight de-duplication for the model-catalog fetch to avoid a cache-miss stampede; (2) split the catalog-check TTL into three states not two - fetch-failure (short/negative), confirmed-absent-or-no-longer-free (long, it is a fact not a transient failure), confirmed-present-and-free (long); (3) state explicit sub-timeout budgets for catalog-check + completion call that stay comfortably under Fastify's global 15s requestTimeout; (4) add a CI-checkable structural assertion (e.g. grep-based) that packages/matching/** never imports ai-provider/ai-assist, making \"deterministic engine stays authoritative\" mechanically enforced, not true by omission; (5) explicit logging discipline in ai-provider.ts - never log OpenRouter request/response bodies or the API key, log only status/error codes and the configured model id; (6) explicit 404 contract for a checkId absent from a freshly re-derived report (profile changed between view and click), reusing the existing 404/409 idiom; (7) document explicitly why preparation-coaching beats lead-note-summarization as the first use case (already schema-bounded by preparationReportSchema vs. would need a new allowlist built from scratch); (8) explicitly state this feature deliberately does not use the outbox/lease/idempotency machinery (synchronous, stateless, non-durable read-then-elaborate), so its absence is never mistaken for a gap. Also flagged: a docs/UI-copy sequencing dependency with CS-49, whose Dashboard already ships an \"AI Assistant panel: Not available yet\" placeholder independently - if CS-48 ships before that copy is reconciled, there is a short window where the Dashboard claims AI is unavailable while a narrow real AI endpoint exists elsewhere.",
@@ -2462,7 +2714,10 @@
       "value": 4,
       "risk": 3,
       "complexity": 3,
-      "dependencies": ["CS-6", "CS-13"],
+      "dependencies": [
+        "CS-6",
+        "CS-13"
+      ],
       "acceptanceCriteria": [
         "Every displayed value maps to a real, owner-scoped API field already returned today (recent search runs via GET /api/searches, lead counts via GET /api/leads by status) - no invented totals, trend deltas, or analytics not backed by a real endpoint",
         "Reuses the shared shell/visual system extracted from the four real design images (sidebar structure, topbar, stat-card pattern, card/badge/tag language). Does not implement the \"Upgrade Plan/Free Plan\" widget (single-owner app has no billing). An AI Assistant panel MAY be shown, since the owner subsequently supplied the real Dashboard design directly (2026-09-23) and it includes one, but it must always read \"Not available yet\" (never \"Active\") and must never claim AI produced any of the real, deterministic content shown elsewhere on the page - CS-48 owns the actual OpenRouter implementation, this panel is a disabled placeholder only",
@@ -2481,7 +2736,11 @@
       "architectureImpact": "Extends the existing dashboard pane after CS-6 route/shared-state work; no schema or API change required for the criteria above",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
-      "reviewAgents": ["UX", "QA", "Independent Reviewer"],
+      "reviewAgents": [
+        "UX",
+        "QA",
+        "Independent Reviewer"
+      ],
       "currentStep": "Release Manager",
       "completedSteps": [
         "Rebuilt against the real owner-supplied Dashboard design image (shown directly in chat 2026-09-23, not saved to page-designs/) as a real Next.js route (/dashboard), using only real, owner-scoped API data (GET /api/profile, /api/resumes, /api/leads, /api/searches, /api/searches/:id) - every stat card, checklist item, recommended job, activity entry and skill ranking traces to a real field; no invented totals, trend deltas or profile-match percentage.",
@@ -2507,12 +2766,14 @@
       "source": "Owner design-image audit, 2026-09-23 (docs/FRONTEND-ADMIN-ROADMAP.md, \"Planning snapshot: 2026-09-23\")",
       "area": "frontend",
       "priority": "P3",
-      "status": "BLOCKED",
+      "status": "UAT",
       "size": "L",
       "value": 3,
       "risk": 4,
       "complexity": 5,
-      "dependencies": ["CS-19"],
+      "dependencies": [
+        "CS-19"
+      ],
       "acceptanceCriteria": [
         "An explicit, owner-confirmed product decision on whether CareerScope adopts an ATS-style multi-stage interview timeline at all, and whether/how that interacts with docs/PROJECT-STATE.md's \"it does not apply to jobs\" positioning - CareerScope tracking stages the owner manually updates is a different claim than CareerScope automating applications, but the two must not be allowed to blur in the UI copy or the data model",
         "If proceeded: a schema for dated sub-stage events distinct from the current single leadStatusSchema value, and a notes-history model distinct from the current single saved_leads.notes field - designed by Product Architect/System Designer before any code, per this session's established practice for architecture-impacting changes",
@@ -2528,14 +2789,19 @@
         "THE DECIDING PRECEDENT, and it is ours: CS-46 is BLOCKED with currentStep stating \"AC1 explicitly requires an OWNER-CONFIRMED choice... an agent cannot confirm on the owners behalf\", and that recording current behaviour as the decision \"would be exactly the silent reinterpretation the ticket exists to prevent\". TWO TICKETS WITH THE SAME CRITERION SHAPE CANNOT HONESTLY HOLD BLOCKED AND UAT SIMULTANEOUSLY.",
         "THE DECISION ITSELF LOOKS RIGHT and is not in question: declining the fabricated ATS timeline, the fake AI insights panel and the documents manager, and exposing the four real statuses with the real dated status-history log as the honest timeline. WHAT IS MISSING IS ONE OWNER SIGN-OFF, NOT ONE LINE OF CODE - the cheapest demotion in the backlog to clear.",
         "SUMMARY CORRECTED in the same edit. It read that the screens \"require a genuinely new interview-timeline data model... recorded as its own PRE-DESIGN ticket\" while the ticket sat in UAT with a built, reviewed /applications route. THE BOARD WAS DESCRIBING SHIPPED WORK AS NOT YET DESIGNED. This is the INVERSE of the CS-38 defect, where a summary still said \"closed\" after currentStep had been honestly corrected. Under-reporting is the safer direction; the systemic point holds either way.",
-        "REVIEW WINDOW CAVEAT: three sessions were writing concurrently; if a cited file moved between roughly 15:05 and 15:55 IST on 2026-09-25 this verdict should be re-taken rather than trusted."
+        "REVIEW WINDOW CAVEAT: three sessions were writing concurrently; if a cited file moved between roughly 15:05 and 15:55 IST on 2026-09-25 this verdict should be re-taken rather than trusted.",
+        "OWNER DECISION 2026-10-02: approved the existing honest lifecycle decision. CareerScope does not infer employer outcomes; opening an external apply URL never marks Applied; status/history are user-entered unless a future authorized integration supplies a verified event. No fabricated ATS timeline or AI insights. Recorded in docs/OWNER-DECISIONS-2026-10-02.md."
       ],
       "securityImpact": "New document-metadata and notes-history concepts would need the same private-data handling review as existing resume storage and lead notes - not assessed yet, this ticket is pre-design",
       "architectureImpact": "Likely new tables/columns (sub-stage events, notes history, document metadata) and new API surface - explicitly not scoped or approved by this entry alone",
       "releaseTarget": null,
       "ownerAgent": "Product Architect",
-      "reviewAgents": ["Product Architect", "System Designer", "Security"],
-      "currentStep": "Release Manager",
+      "reviewAgents": [
+        "Product Architect",
+        "System Designer",
+        "Security"
+      ],
+      "currentStep": "UAT — owner explicitly approved the honest user-controlled lifecycle; no automatic employer-stage inference.",
       "completedSteps": [
         {
           "step": "Frontend",
@@ -2570,10 +2836,9 @@
         }
       ],
       "createdAt": "2026-09-23",
-      "updatedAt": "2026-09-23",
+      "updatedAt": "2026-10-02",
       "summary": "DELIVERED AND IN REVIEW, NOT PRE-DESIGN: the /applications route is built and independently reviewed. The product decision declined the fabricated ATS timeline, the fake AI insights panel and the documents manager, and exposes the four real statuses with the real dated status-history log as the honest timeline. BLOCKED on one owner sign-off for AC1, not on any engineering. (Summary corrected 2026-09-25: it previously described this as a pre-design ticket needing a new interview-timeline data model, which described shipped work as not yet designed.)",
-      "dimension": "product",
-      "blockedReason": "AC1 requires an explicit, OWNER-CONFIRMED product decision. The decision was recorded as made with ChatGPT as the review loop, and ChatGPT is not the owner. One owner sign-off clears it; no code is outstanding. Fifth item on the owner-gate list."
+      "dimension": "product"
     },
     {
       "id": "CS-51",
@@ -2587,7 +2852,10 @@
       "value": 4,
       "risk": 3,
       "complexity": 2,
-      "dependencies": ["CS-70", "CS-75"],
+      "dependencies": [
+        "CS-70",
+        "CS-75"
+      ],
       "acceptanceCriteria": [
         "Every identifier that exists at a call site reaches its destination: SaveJob onOpen, initialId on /saved and /applications, and the Dashboard Recent Discovery run link",
         "A selected run is addressable by URL on /jobs and falls back to current behaviour when the parameter is absent",
@@ -2621,7 +2889,11 @@
       "architectureImpact": "?run= and ?lead= become part of the public URL surface of three screens. Anything that later deep-links must use them rather than adding a second mechanism.",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
-      "reviewAgents": ["UX", "Independent Reviewer", "QA"],
+      "reviewAgents": [
+        "UX",
+        "Independent Reviewer",
+        "QA"
+      ],
       "currentStep": "UAT. Independent verdict APPROVED WITH FINDINGS, non-blocking. One carried follow-up (aria-pressed on an unhydrated toggle) and one genuinely unverifiable claim, both recorded below.",
       "completedSteps": [],
       "createdAt": "2026-09-24",
@@ -2699,7 +2971,11 @@
       "securityImpact": "High by consequence rather than by mechanism: no vulnerability is introduced, but the controls proving key-redaction, bounded reads, AI fail-closed behaviour, deterministic-engine isolation and the authenticated route boundary were all unenforced.",
       "architectureImpact": "CI/CD topology and the project definition of what counts as evidence. No application change.",
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["Security", "QA", "Independent Reviewer"],
+      "reviewAgents": [
+        "Security",
+        "QA",
+        "Independent Reviewer"
+      ],
       "currentStep": "Release Manager",
       "summary": "One orphaned test file, eleven unwired executable checks, a deploy gate that runs no V2 tests, and a structural cause: CI names scripts, and the glob that would catch anything unnamed is itself never invoked."
     },
@@ -2748,7 +3024,11 @@
       "securityImpact": "Defence-in-depth on owner isolation. No reachable cross-owner access today.",
       "architectureImpact": "Schema change on two tables; forward-only migration.",
       "ownerAgent": "Backend",
-      "reviewAgents": ["System Designer", "Security", "QA"],
+      "reviewAgents": [
+        "System Designer",
+        "Security",
+        "QA"
+      ],
       "currentStep": "Release Manager - hosted workflow run 36424073277 passed typecheck, service-backed integration, recovery and browser/axe coverage on the composite-FK implementation; promoted to UAT.",
       "summary": "Two tables enforce owner isolation only in the application layer where a composite foreign key, already used elsewhere in this schema, would make a cross-owner row impossible."
     },
@@ -2812,7 +3092,11 @@
       "securityImpact": "Directly weakens the XSS-to-session-theft defence on the authenticated surface. Session cookies are httpOnly, which is the compensating control, so this is a defence-in-depth weakening rather than an open path.",
       "architectureImpact": "Next.js CSP/nonce strategy for the App Router.",
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["Security", "Independent Reviewer", "QA"],
+      "reviewAgents": [
+        "Security",
+        "Independent Reviewer",
+        "QA"
+      ],
       "currentStep": "UAT: strict hash-based script CSP is deployed and live health/provenance checks passed. Owner acceptance remains the final release decision; do not retry nonce middleware.",
       "summary": "The web CSP permits inline scripts. Verified true in source. The API CSP is strict and is not affected.",
       "blockedReason": null
@@ -2858,14 +3142,20 @@
       "securityImpact": "Availability and resource-exhaustion, authenticated-only. Not a data-exposure or authorization issue.",
       "architectureImpact": "Reuses the existing rateLimit helper; no new infrastructure.",
       "ownerAgent": "Backend",
-      "reviewAgents": ["Security", "Performance", "QA"],
+      "reviewAgents": [
+        "Security",
+        "Performance",
+        "QA"
+      ],
       "status": "UAT",
       "currentStep": "Release Manager - implementation and all fourteen authenticated GET checks are complete; the rate-limit ordering falsification is recorded, and Node 24 CI runs 36385161068 and 36385785464 are green. No acceptance criterion remains open.",
       "summary": "An existing rate-limit control is applied to two POST routes but not to eleven authenticated GETs, including the most expensive one, which the UI polls every few seconds."
     },
     {
       "releaseTarget": null,
-      "completedSteps": ["QA"],
+      "completedSteps": [
+        "QA"
+      ],
       "createdAt": "2026-09-25",
       "updatedAt": "2026-09-25",
       "dimension": "engineering",
@@ -2919,7 +3209,11 @@
       "securityImpact": "No reachable exploit today. A latent injection surface that a future renderer would inherit silently.",
       "architectureImpact": "Extraction-time constraint in packages/resume; no schema change.",
       "ownerAgent": "Backend",
-      "reviewAgents": ["Security", "Product Architect", "QA"],
+      "reviewAgents": [
+        "Security",
+        "Product Architect",
+        "QA"
+      ],
       "currentStep": "Release Manager",
       "summary": "Resume-derived titles are length-bounded but not character-constrained, and reach stored match evidence verbatim. Safe under today only renderer; unsafe for any future one."
     },
@@ -2971,7 +3265,10 @@
       "securityImpact": "None directly. Robustness in an auth-adjacent route.",
       "architectureImpact": "None.",
       "ownerAgent": "Backend",
-      "reviewAgents": ["Independent Reviewer", "QA"],
+      "reviewAgents": [
+        "Independent Reviewer",
+        "QA"
+      ],
       "currentStep": "Release Manager",
       "summary": "A non-null assertion on the session cookie in the logout route, where the request hook makes no such guarantee."
     },
@@ -3016,7 +3313,10 @@
       "architectureImpact": "None expected. Likely a test-harness stability fix plus per-run database isolation.",
       "releaseTarget": null,
       "ownerAgent": "QA",
-      "reviewAgents": ["Independent Reviewer", "Performance"],
+      "reviewAgents": [
+        "Independent Reviewer",
+        "Performance"
+      ],
       "currentStep": "Release Manager - hosted workflow run 36424073277 passed the serialized V2 integration and browser matrix after the teardown and narrow-layout corrections; promoted to UAT.",
       "completedSteps": [],
       "createdAt": "2026-09-25",
@@ -3071,17 +3371,22 @@
         "AC1 STILL NEEDS THE SECURITY AND SYSTEM DESIGNER PASS and has NOT been pre-empted. CS-44 now depends on this ticket.",
         "IMPLEMENTED 2026-09-29: Caddy now replaces X-Forwarded-For with the actual TCP peer address, and Fastify trusts forwarded addresses only from loopback. Login and registration hashes therefore use the real client IP in production without enabling unrestricted trustProxy. Logout remains deliberately unrate-limited so the existing exhaustion property is preserved.",
         "LOCAL VERIFICATION 2026-09-29: v2 typecheck passed, v2 lint passed, and the complete 56-test unit suite passed. Documentation now describes the two IP-keyed limits as per-client-IP and records the loopback-only trust boundary. Production Caddy syntax and live behavior remain deployment-gated.",
-        "CI #159 passed all required lanes for 5580c1c (typecheck/lint/test/build, V2 integration, V2 recovery). Protected Deploy #21 verified that exact SHA and shipped successfully to Hostinger. Live https://careerscope.tech returned HTTP 200 and /api/health returned {status:ok,version:3.0.0}; the deployed Caddy/Fastify trust boundary is now active."
+        "CI #159 passed all required lanes for 5580c1c (typecheck/lint/test/build, V2 integration, V2 recovery). Protected Deploy #21 verified that exact SHA and shipped successfully to Hostinger. Live https://careerscope.tech returned HTTP 200 and /api/health returned {status:ok,version:3.0.0}; the deployed Caddy/Fastify trust boundary is now active.",
+        "OWNER ACCEPTANCE 2026-10-02: approved the per-client-IP limiter architecture using Caddy header replacement plus loopback-only Fastify proxy trust, with logout remaining unrate-limited. This is owner acceptance, not a substitute for the ticket-required independent review/release evidence."
       ],
       "securityImpact": "Availability and resource-exhaustion on an unauthenticated write path. No confidentiality or integrity impact: the DELETE keys on sha256 of a caller-supplied token, so it can only destroy a session whose token the caller already holds.",
       "architectureImpact": "Rate-limit keying strategy across the API; possibly requires the proxy to pass a trustworthy client identifier, which is a deployment change and needs its own review.",
       "releaseTarget": null,
       "ownerAgent": "Backend",
-      "reviewAgents": ["Security", "System Designer", "QA"],
-      "currentStep": "UAT: per-client-IP login/register limiting is deployed with a loopback-only proxy trust boundary. Owner acceptance remains the final release decision.",
+      "reviewAgents": [
+        "Security",
+        "System Designer",
+        "QA"
+      ],
+      "currentStep": "UAT — owner accepts the loopback-only Caddy/Fastify trust-boundary direction; independent Security/System Designer acceptance and release-manager evidence remain authoritative.",
       "completedSteps": [],
       "createdAt": "2026-09-25",
-      "updatedAt": "2026-09-29",
+      "updatedAt": "2026-10-02",
       "summary": "Logout became the only unauthenticated write when CS-57 exempted it. The obvious per-IP limiter both breaks a correct property test and is near-global behind the proxy, so this needs a key that is not the client IP.",
       "dimension": "engineering"
     },
@@ -3125,7 +3430,10 @@
       "architectureImpact": "Test file placement only. No production code change. Note database.test.ts is large and shared, so a move must be careful and must not split a suite that shares fixtures.",
       "releaseTarget": null,
       "ownerAgent": "Backend",
-      "reviewAgents": ["QA", "Independent Reviewer"],
+      "reviewAgents": [
+        "QA",
+        "Independent Reviewer"
+      ],
       "currentStep": "Release Manager - hosted CI run 36424073277 passed the integration suite with the discoverability pointer in place and the unchanged test:integration command.",
       "completedSteps": [],
       "createdAt": "2026-09-25",
@@ -3198,9 +3506,15 @@
       "architectureImpact": "Query key convention across every React Query consumer in v2/apps/web, AND a server change that was REQUIRED AND TAKEN DELIBERATELY: GET /api/session returns an opaque per-owner digest, never the raw owner id. The original \"No server change\" was false.",
       "releaseTarget": null,
       "ownerAgent": "Frontend",
-      "reviewAgents": ["Independent Reviewer", "Security", "QA"],
+      "reviewAgents": [
+        "Independent Reviewer",
+        "Security",
+        "QA"
+      ],
       "currentStep": "Release Manager",
-      "completedSteps": ["QA"],
+      "completedSteps": [
+        "QA"
+      ],
       "createdAt": "2026-09-25",
       "updatedAt": "2026-09-28",
       "summary": "Query keys carry no owner, so cross-owner cache reuse is prevented only by a reset running. Scoping the keys makes it structurally impossible instead.",
@@ -3308,14 +3622,15 @@
         "WHAT REMAINS IS EXACTLY ONE OWNER DECISION: AC1, which languages are in scope. No code is outstanding. If the answer is \"none for now\", this ticket closes on the strength of CS-71 alone, because the defect that mattered - the SILENCE - is already fixed.",
         "RUNTIME CAVEAT: verified on Node v22.23.2, below the declared minimum of 24. Real, but not evidence about the supported runtime.",
         "PROVISIONAL MARKING WITHDRAWN 2026-09-25, SAME DAY IT WAS APPLIED, BECAUSE IT WAS TOO BROAD AND THE WITHDRAWAL IS RECORDED RATHER THAN SILENT. The #19 finding was real - tsc -b exited 0 with a production type error - BUT IT WAS OVERSTATED AS \"the gate could not fail\". THE GATE COULD FAIL; ONLY ITS FIRST LINK COULD NOT. `npm run typecheck` chains four commands and the last, check-test-types.mjs, filters on /^\\S+\\.ts\\(\\d+,\\d+\\): error TS\\d+/ - WHICH MATCHES A PRODUCTION FILE AS READILY AS A TEST FILE - and exits 1. Anyone running the npm script WOULD have been told.",
-        "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land."
+        "THIS TICKET DOES NOT CITE A BARE `tsc -b`, so its typecheck evidence was never in the unfalsifiable form and stands unqualified. The narrowed set is 4 of the original 29: CS-53, CS-62, CS-76, CS-77 - ALL FOUR WRITTEN BY THE ORCHESTRATOR, which is the correct place for the correction to land.",
+        "OWNER DECISION 2026-10-02: English title derivation only for the current release. Non-English/undeterminable title sets must be reported as undetermined, never silently empty. Future language support is separately versioned. Recorded in docs/OWNER-DECISIONS-2026-10-02.md."
       ],
       "id": "CS-64",
       "title": "Resume title derivation silently recognises English role words only",
       "userProblem": "A non-English resume parses successfully, reports no error, and contributes zero titles to matching, which is indistinguishable from a resume that had no recognisable role.",
       "area": "backend",
       "priority": "P2",
-      "status": "BLOCKED",
+      "status": "UAT",
       "size": "M",
       "value": 3,
       "risk": 3,
@@ -3325,9 +3640,8 @@
         "Whatever the decision, the SILENT failure ends: an undeterminable title set must be reported as such rather than returned as an empty list",
         "Any change proves itself with a non-English positive case and an English regression case in the same test"
       ],
-      "blockedReason": "AC1 requires an owner product decision on which languages are in scope for resume title derivation. The engineering half is NOT blocked and was split out as CS-71 - AC2 and AC3 are decision-independent by their own wording.",
-      "currentStep": "BLOCKED on ONE owner decision only - AC1, which languages are in scope. The engineering half is DONE: AC2 and AC3 were split to CS-71, built and verified, so the silent failure has already ended. Nothing else is outstanding.",
-      "updatedAt": "2026-09-27"
+      "currentStep": "UAT — owner chose English-only title derivation for the current release; CS-71 already closed the silent-failure engineering half.",
+      "updatedAt": "2026-10-02"
     },
     {
       "source": "Orchestrator self-surfaced during CS-13 re-review cycle 2026-09-25; owner queued the four explicitly",
@@ -3506,7 +3820,9 @@
       ],
       "status": "UAT",
       "currentStep": "Release Manager",
-      "completedSteps": ["QA"],
+      "completedSteps": [
+        "QA"
+      ],
       "updatedAt": "2026-09-28",
       "ownerAgent": "Code Quality"
     },
@@ -3797,7 +4113,9 @@
         "QA CLOSED 2026-09-28: hosted run 36398473010 attempt 2 completed green on Node 24 across typecheck, lint, unit/API, recovery, integration, browser acceptance and accessibility suites. All three acceptance criteria are now evidenced and the ticket is ready for UAT."
       ],
       "currentStep": "Release Manager",
-      "completedSteps": ["QA"],
+      "completedSteps": [
+        "QA"
+      ],
       "updatedAt": "2026-09-28",
       "ownerAgent": "Code Quality"
     },
@@ -3894,7 +4212,9 @@
         "QA COMPLETED 2026-09-28: exact-revision hosted CI run 36398473010 attempt 2 passed the forced V2 production and test typecheck, reporting 16 V2 test files type-check clean with no emit, and the full static/build, integration, browser, axe, backfill and recovery matrix completed green on commit 46ba008fdd35c8bf3d99b52cfc8c40ea00b2ba70."
       ],
       "currentStep": "Release Manager",
-      "completedSteps": ["QA"],
+      "completedSteps": [
+        "QA"
+      ],
       "updatedAt": "2026-09-28",
       "ownerAgent": "Code Quality"
     },
@@ -3910,7 +4230,9 @@
       "value": "medium",
       "risk": "medium",
       "complexity": "low",
-      "dependencies": ["CS-76"],
+      "dependencies": [
+        "CS-76"
+      ],
       "acceptanceCriteria": [
         "createSearch accepts unparsed input at its type boundary without any caller having to construct the parsed shape by hand, and the 36 existing call sites compile unchanged",
         "The idempotency request hash is computed over the NORMALISED request, so two logically identical calls hash identically regardless of whether the caller parsed first, whether origin was supplied, and in what order sources were given",
@@ -3950,7 +4272,9 @@
         "AC3 FALSIFICATION AND QA COMPLETED 2026-09-28: isolated hosted run 36397888648 changed only requestHash back to JSON.stringify(input). The service-backed canonicalisation test failed on its literal-versus-pre-parsed retry with Conflict code IDEMPOTENCY_KEY_REUSED at database.test.ts:4555, while recovery, the image build and the main static job passed. The temporary verification branch was deleted after evidence capture and its managed worktree archived. Restored exact-revision run 36398473010 attempt 2 passed all 48 integration tests and the complete browser/recovery/static matrix on commit 46ba008fdd35c8bf3d99b52cfc8c40ea00b2ba70."
       ],
       "currentStep": "Release Manager",
-      "completedSteps": ["QA"],
+      "completedSteps": [
+        "QA"
+      ],
       "updatedAt": "2026-09-28",
       "ownerAgent": "Backend"
     },
@@ -3965,7 +4289,9 @@
       "value": "high",
       "risk": "medium",
       "complexity": "low",
-      "dependencies": ["CS-76"],
+      "dependencies": [
+        "CS-76"
+      ],
       "acceptanceCriteria": [
         "A fourth application field read by the matcher fails to compile against what V2 supplies, rather than arriving as undefined inside deterministic scoring",
         "V2 narrowing is PRESERVED, not widened to the full ApplicationDetails - the minimisation is deliberate and must not be discarded to satisfy a type checker",
@@ -3998,7 +4324,9 @@
       ],
       "status": "UAT",
       "currentStep": "Release Manager",
-      "completedSteps": ["QA"],
+      "completedSteps": [
+        "QA"
+      ],
       "updatedAt": "2026-09-28",
       "ownerAgent": "Senior Engineer"
     },
@@ -4105,7 +4433,9 @@
       "value": 5,
       "risk": 5,
       "complexity": 2,
-      "dependencies": ["CS-7"],
+      "dependencies": [
+        "CS-7"
+      ],
       "acceptanceCriteria": [
         "Every deployment, release, or publication workflow has workflow_dispatch as its only trigger",
         "Host deployment requires explicit ref and environment inputs, exact-revision CI, environment protection, and exposes no CI bypass",
@@ -4123,9 +4453,17 @@
       "architectureImpact": "Separates continuous validation from explicit host and Pages publication workflows.",
       "releaseTarget": "3.0.1",
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["QA", "Security", "Independent Reviewer"],
+      "reviewAgents": [
+        "QA",
+        "Security",
+        "Independent Reviewer"
+      ],
       "currentStep": "Release Manager",
-      "completedSteps": ["Project Manager", "System Designer", "Infrastructure"],
+      "completedSteps": [
+        "Project Manager",
+        "System Designer",
+        "Infrastructure"
+      ],
       "createdAt": "2026-09-27",
       "updatedAt": "2026-09-28",
       "dimension": "engineering"
@@ -4161,9 +4499,15 @@
       "architectureImpact": "Recovery validation only.",
       "releaseTarget": "3.0.1",
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["QA", "Independent Reviewer"],
+      "reviewAgents": [
+        "QA",
+        "Independent Reviewer"
+      ],
       "currentStep": "Release Manager",
-      "completedSteps": ["Project Manager", "Infrastructure"],
+      "completedSteps": [
+        "Project Manager",
+        "Infrastructure"
+      ],
       "createdAt": "2026-09-27",
       "updatedAt": "2026-09-27",
       "dimension": "engineering"
@@ -4180,7 +4524,9 @@
       "value": 3,
       "risk": 3,
       "complexity": 3,
-      "dependencies": ["CS-83"],
+      "dependencies": [
+        "CS-83"
+      ],
       "acceptanceCriteria": [
         "Root, V2, and GitHub Actions updates are regenerated as non-overlapping groups against current main",
         "Lockfiles, declared engine compatibility, audit results, typechecks, builds, unit and integration suites pass",
@@ -4200,9 +4546,15 @@
       "architectureImpact": "No intended product architecture change.",
       "releaseTarget": "backlog",
       "ownerAgent": "Code Quality",
-      "reviewAgents": ["Security", "QA"],
+      "reviewAgents": [
+        "Security",
+        "QA"
+      ],
       "currentStep": "Release Manager",
-      "completedSteps": ["Project Manager", "Repository"],
+      "completedSteps": [
+        "Project Manager",
+        "Repository"
+      ],
       "createdAt": "2026-09-27",
       "updatedAt": "2026-09-27",
       "dimension": "engineering",
@@ -4242,9 +4594,16 @@
       "architectureImpact": "CI process lifecycle and observability only unless diagnosis finds an application shutdown defect.",
       "releaseTarget": "3.0.1",
       "ownerAgent": "QA",
-      "reviewAgents": ["Infrastructure", "Independent Reviewer"],
+      "reviewAgents": [
+        "Infrastructure",
+        "Independent Reviewer"
+      ],
       "currentStep": "Release Manager",
-      "completedSteps": ["Project Manager", "Repository", "QA"],
+      "completedSteps": [
+        "Project Manager",
+        "Repository",
+        "QA"
+      ],
       "createdAt": "2026-09-27",
       "updatedAt": "2026-09-28",
       "dimension": "engineering"
@@ -4270,19 +4629,26 @@
       ],
       "evidence": [
         "Repository audit confirms the OS firewall and network-namespace checks exist, but docs/OPERATIONS/FIREWALL.md records the Hostinger managed firewall as NOT CONFIGURED.",
-        "This ticket requires an authenticated hPanel or host-console action; it cannot be completed from repository changes alone."
+        "This ticket requires an authenticated hPanel or host-console action; it cannot be completed from repository changes alone.",
+        "OWNER DECISION 2026-10-02: same managed-firewall policy as CS-30 approved; implementation/live evidence remains operator-controlled."
       ],
       "securityImpact": "Reduces exposure if the host firewall or Docker publishing policy regresses.",
       "architectureImpact": "Host perimeter configuration only; no application topology change.",
       "releaseTarget": "backlog",
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["Security", "Independent Reviewer"],
-      "currentStep": "BLOCKED on Hostinger hPanel access and a second live SSH verification session.",
-      "completedSteps": ["Project Manager", "Infrastructure"],
+      "reviewAgents": [
+        "Security",
+        "Independent Reviewer"
+      ],
+      "currentStep": "OWNER POLICY APPROVED — execute and verify the managed firewall policy using real hPanel/host authority; preserve recovery access.",
+      "completedSteps": [
+        "Project Manager",
+        "Infrastructure"
+      ],
       "createdAt": "2026-09-28",
-      "updatedAt": "2026-09-28",
+      "updatedAt": "2026-10-02",
       "dimension": "engineering",
-      "blockedReason": "Managed Hostinger firewall configuration and live verification require owner-controlled hPanel/SSH authority not available in the repository."
+      "blockedReason": "Owner firewall-hardening policy is approved. Remaining blocker is owner-controlled Hostinger hPanel/SSH execution and live verification."
     },
     {
       "id": "CS-87",
@@ -4314,9 +4680,17 @@
       "architectureImpact": "CI observability and release gating only.",
       "releaseTarget": "3.0.1",
       "ownerAgent": "QA",
-      "reviewAgents": ["Infrastructure", "Security", "Independent Reviewer"],
+      "reviewAgents": [
+        "Infrastructure",
+        "Security",
+        "Independent Reviewer"
+      ],
       "currentStep": "Release Manager",
-      "completedSteps": ["Project Manager", "Repository", "QA"],
+      "completedSteps": [
+        "Project Manager",
+        "Repository",
+        "QA"
+      ],
       "createdAt": "2026-09-28",
       "updatedAt": "2026-09-28",
       "dimension": "engineering"
@@ -4333,7 +4707,10 @@
       "value": 4,
       "risk": 5,
       "complexity": 5,
-      "dependencies": ["CS-40", "CS-6"],
+      "dependencies": [
+        "CS-40",
+        "CS-6"
+      ],
       "acceptanceCriteria": [
         "Owner supplies the admin-page design or approved wireframes covering navigation, dashboard, queue/outbox/run views, storage/security views and responsive states",
         "Frontend system design maps each proposed page to an approved server-enforced authorization contract and redacted data shape",
@@ -4342,7 +4719,8 @@
       ],
       "evidence": [
         "docs/FRONTEND-ADMIN-ROADMAP.md and CS-40 establish that admin endpoints, role provisioning and privileged data contracts do not currently exist.",
-        "No admin page implementation was invented; this ticket records the required design handoff as a deliberate blocker."
+        "No admin page implementation was invented; this ticket records the required design handoff as a deliberate blocker.",
+        "OWNER DESIGN APPROVAL 2026-10-02: the frozen CareerScope Admin design handoff is approved as the frontend baseline, including dashboard/users/CMS/analytics/AI FinOps/system/logs/flags/integrations/security/privacy/queues/backups/releases. Required independent reviews remain. See docs/OWNER-DECISIONS-2026-10-02.md."
       ],
       "securityImpact": "Prevents an unauthorised or over-broad privileged UI from being built before role and redaction boundaries exist.",
       "architectureImpact": "Defines the frontend route/component boundaries only after the server authorization architecture is approved.",
@@ -4355,12 +4733,12 @@
         "Security",
         "Independent Reviewer"
       ],
-      "currentStep": "BLOCKED on owner-provided admin design; no implementation authorized until CS-40 and the design review complete.",
+      "currentStep": "OWNER DESIGN PROVIDED/APPROVED — perform required cross-discipline reviews and split implementation tickets; do not invent privileged endpoints before CS-40 approval.",
       "completedSteps": [],
       "createdAt": "2026-09-28",
-      "updatedAt": "2026-09-28",
+      "updatedAt": "2026-10-02",
       "dimension": "product",
-      "blockedReason": "The owner must provide the admin-page design before frontend system design and implementation can proceed."
+      "blockedReason": "Owner-provided admin design is now approved. Remaining gates are UX/Product Architect/System Designer/Security review and decomposition into independently testable implementation tickets."
     },
     {
       "id": "CS-89",
@@ -4374,7 +4752,10 @@
       "value": 4,
       "risk": 5,
       "complexity": 3,
-      "dependencies": ["CS-48", "CS-87"],
+      "dependencies": [
+        "CS-48",
+        "CS-87"
+      ],
       "acceptanceCriteria": [
         "Owner explicitly approves enabling AI_ENABLED in the production environment and supplies the secret through the approved Hostinger secret path, never chat or Git",
         "OPENROUTER_MODEL is a specific currently-free :free model verified by the provider catalog immediately before activation",
@@ -4385,19 +4766,28 @@
       "evidence": [
         "CS-48 already implements the provider abstraction, preparation-coaching use case, fail-closed catalog check, secret-safe logging, mocked test matrix and default-off behavior.",
         "The repository and production contract deliberately keep AI_ENABLED=false by default; enabling it requires owner-controlled secret and deployment authority not available from source alone.",
-        "Added docs/OPERATIONS/OPENROUTER.md with the exact activation, verification and rollback runbook; it deliberately records procedure, not fabricated production evidence."
+        "Added docs/OPERATIONS/OPENROUTER.md with the exact activation, verification and rollback runbook; it deliberately records procedure, not fabricated production evidence.",
+        "OWNER DECISION 2026-10-02: guarded production AI activation is authorized only for approved use cases; AI remains default-off, deterministic matching/ranking remains AI-independent, and rollback to AI_ENABLED=false is mandatory. No secret/model/live activation is fabricated. See docs/OWNER-DECISIONS-2026-10-02.md."
       ],
       "securityImpact": "Introduces outbound owner-authored preparation fields to OpenRouter only after explicit configuration and preserves a fast default-off rollback.",
       "architectureImpact": "Operational configuration of the existing optional provider; no expansion of deterministic decision-making or new AI use cases.",
       "releaseTarget": "backlog",
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["Security", "System Designer", "Release Manager", "Independent Reviewer"],
-      "currentStep": "BLOCKED on owner approval, secret provisioning and live Hostinger release verification; AI remains safely disabled.",
-      "completedSteps": ["Project Manager", "Backend"],
+      "reviewAgents": [
+        "Security",
+        "System Designer",
+        "Release Manager",
+        "Independent Reviewer"
+      ],
+      "currentStep": "OWNER ACTIVATION POLICY APPROVED — provision secret out-of-band, select a currently-free catalog-verified model, then execute the protected production verification/rollback runbook.",
+      "completedSteps": [
+        "Project Manager",
+        "Backend"
+      ],
       "createdAt": "2026-09-28",
-      "updatedAt": "2026-09-28",
+      "updatedAt": "2026-10-02",
       "dimension": "engineering",
-      "blockedReason": "Enabling OpenRouter requires an owner-approved production secret/model and live deployment authority; the agent must not invent or transmit either."
+      "blockedReason": "Owner authorizes guarded OpenRouter activation under the documented controls. Remaining blockers are real production secret provisioning, current-free model catalog verification and live deployment/rollback evidence."
     },
     {
       "id": "CS-90",
@@ -4420,19 +4810,25 @@
       ],
       "evidence": [
         "Current production authentication is an Argon2id plus server-side opaque-session system; no Cognito integration exists.",
-        "This ticket intentionally records the owner decision and architecture handoff required before changing the authentication authority."
+        "This ticket intentionally records the owner decision and architecture handoff required before changing the authentication authority.",
+        "OWNER DECISION 2026-10-02: ap-south-1 is the default region; Cognito is the future external identity authority after acceptance; CareerScope owner identity/data stays canonical during migration; successful Cognito auth exchanges into server-side opaque CareerScope sessions; current Argon2/session flow remains rollback until E2E acceptance. Real AWS identifiers/DNS are not invented. See docs/OWNER-DECISIONS-2026-10-02.md."
       ],
       "securityImpact": "Changes the identity provider and credential boundary for the entire product.",
       "architectureImpact": "Introduces Cognito as an external identity authority and defines the application session exchange.",
       "releaseTarget": "backlog",
       "ownerAgent": "Security",
-      "reviewAgents": ["System Designer", "Backend", "Infrastructure", "Independent Reviewer"],
-      "currentStep": "BLOCKED on owner-approved Cognito architecture and migration/rollback decisions.",
+      "reviewAgents": [
+        "System Designer",
+        "Backend",
+        "Infrastructure",
+        "Independent Reviewer"
+      ],
+      "currentStep": "OWNER ARCHITECTURE DIRECTION APPROVED — bind to real AWS account/pool/domain values, complete threat-model reviews, then implement migration-safe Cognito tickets.",
       "completedSteps": [],
       "createdAt": "2026-09-29",
-      "updatedAt": "2026-09-29",
+      "updatedAt": "2026-10-02",
       "dimension": "security",
-      "blockedReason": "The owner must choose the Cognito account, region, domain and migration policy before implementation can safely begin."
+      "blockedReason": "Owner architecture direction is approved (ap-south-1 default, opaque-session exchange, duplicate-owner prevention, Argon2 rollback). Remaining blockers are real AWS account/pool/domain identifiers and required Security/System Designer review."
     },
     {
       "id": "CS-91",
@@ -4446,7 +4842,9 @@
       "value": 5,
       "risk": 5,
       "complexity": 5,
-      "dependencies": ["CS-90"],
+      "dependencies": [
+        "CS-90"
+      ],
       "acceptanceCriteria": [
         "Signup, email OTP verification, resend throttling, login, logout and failure states are implemented against the approved Cognito contract",
         "OTP values and Cognito tokens never enter logs, URLs, browser storage or repository files",
@@ -4458,7 +4856,12 @@
       "architectureImpact": "Replaces or bridges the current login/session route contracts.",
       "releaseTarget": "backlog",
       "ownerAgent": "Backend",
-      "reviewAgents": ["Security", "System Designer", "QA", "Independent Reviewer"],
+      "reviewAgents": [
+        "Security",
+        "System Designer",
+        "QA",
+        "Independent Reviewer"
+      ],
       "currentStep": "BLOCKED pending CS-90 architecture approval and Cognito environment provisioning.",
       "completedSteps": [],
       "createdAt": "2026-09-29",
@@ -4478,25 +4881,34 @@
       "value": 4,
       "risk": 4,
       "complexity": 3,
-      "dependencies": ["CS-90"],
+      "dependencies": [
+        "CS-90"
+      ],
       "acceptanceCriteria": [
         "Owner approves sender domain, From/Reply-To identities, branding and supported locales",
         "Templates never include passwords, access tokens or unnecessary personal data and clearly state OTP expiry and support guidance",
         "SES/Cognito sending limits, bounce/complaint handling, DNS verification and sandbox-to-production transition are documented",
         "A real test message is verified without recording the OTP or recipient personal data in repository evidence"
       ],
-      "evidence": [],
+      "evidence": [
+        "OWNER DECISION 2026-10-02: sender domain careerscope.tech; default From no-reply@careerscope.tech; Reply-To support@careerscope.tech once operational; CareerScope branding; secrets/OTP/recipient PII never committed or logged. Live DNS/SES/Cognito evidence remains required."
+      ],
       "securityImpact": "Email content and sender configuration can disclose authentication material or enable phishing if misconfigured.",
       "architectureImpact": "Adds Cognito/SES delivery configuration and domain verification to infrastructure.",
       "releaseTarget": "backlog",
       "ownerAgent": "Infrastructure",
-      "reviewAgents": ["Security", "Product Architect", "QA", "Independent Reviewer"],
-      "currentStep": "BLOCKED pending CS-90 provider/domain decisions and owner-controlled DNS/email access.",
+      "reviewAgents": [
+        "Security",
+        "Product Architect",
+        "QA",
+        "Independent Reviewer"
+      ],
+      "currentStep": "OWNER SENDER DECISION APPROVED — verify careerscope.tech identities/DNS in the real AWS environment and prove deliverability without logging OTP/recipient PII.",
       "completedSteps": [],
       "createdAt": "2026-09-29",
-      "updatedAt": "2026-09-29",
+      "updatedAt": "2026-10-02",
       "dimension": "infrastructure",
-      "blockedReason": "Sender identity, domain verification and email-provider access require owner decisions and credentials."
+      "blockedReason": "Owner sender/domain/branding direction is approved. Remaining blockers are real DNS/domain verification, SES/Cognito provider access, sending-limit transition and deliverability evidence."
     },
     {
       "id": "CS-93",
@@ -4510,25 +4922,35 @@
       "value": 4,
       "risk": 4,
       "complexity": 4,
-      "dependencies": ["CS-90", "CS-91"],
+      "dependencies": [
+        "CS-90",
+        "CS-91"
+      ],
       "acceptanceCriteria": [
         "Approved designs cover signup, OTP input, resend countdown, invalid/expired OTP, provider outage, recovery and signed-out states at mobile and desktop breakpoints",
         "The implementation never renders secrets or tokens and preserves accessible labels, focus movement, announcements and no-store handling",
         "Browser tests cover Chromium, Firefox and WebKit with keyboard-only and responsive checks",
         "The current authenticated workspace remains reachable after successful Cognito session exchange"
       ],
-      "evidence": [],
+      "evidence": [
+        "OWNER APPROVAL 2026-10-02: frozen CareerScope auth designs cover signup/sign-in/OTP/recovery/error/resend/mobile/accessibility direction. This does not claim Cognito backend behavior exists."
+      ],
       "securityImpact": "Prevents token leakage and confused-deputy behavior in provider-backed browser flows.",
       "architectureImpact": "Changes the public authentication surface and its client/server state machine.",
       "releaseTarget": "backlog",
       "ownerAgent": "Frontend",
-      "reviewAgents": ["UX", "Security", "QA", "Independent Reviewer"],
-      "currentStep": "BLOCKED pending approved Cognito contract and backend endpoint behavior.",
+      "reviewAgents": [
+        "UX",
+        "Security",
+        "QA",
+        "Independent Reviewer"
+      ],
+      "currentStep": "OWNER AUTH UI DESIGN APPROVED — implement only after backend/session contract is finalized; preserve keyboard, focus, announcements, no-store and three-engine responsive tests.",
       "completedSteps": [],
       "createdAt": "2026-09-29",
-      "updatedAt": "2026-09-29",
+      "updatedAt": "2026-10-02",
       "dimension": "frontend",
-      "blockedReason": "Frontend states cannot be finalized until the provider and backend session contract are approved."
+      "blockedReason": "Owner UI design baseline is approved. Remaining blocker is the finalized Cognito backend/session contract from CS-90/91 before implementation and browser verification."
     },
     {
       "id": "CS-94",
@@ -4542,25 +4964,37 @@
       "value": 5,
       "risk": 5,
       "complexity": 4,
-      "dependencies": ["CS-90", "CS-91", "CS-92", "CS-93"],
+      "dependencies": [
+        "CS-90",
+        "CS-91",
+        "CS-92",
+        "CS-93"
+      ],
       "acceptanceCriteria": [
         "A disposable-account end-to-end matrix proves signup, OTP, login, logout, recovery, throttling and Cognito outage behavior without touching the owner's account",
         "Production monitoring covers authentication error rates, OTP delivery failures, throttling and rollback signals without logging credentials or tokens",
         "A protected deployment proves exact-commit provenance and a documented rollback returns the previous authentication path safely",
         "Owner acceptance is recorded only after live evidence is reviewed"
       ],
-      "evidence": [],
+      "evidence": [
+        "OWNER DECISION 2026-10-02: authorize a protected Cognito rollout only after full disposable-account E2E, monitoring and rollback proof; current auth remains rollback until evidence passes."
+      ],
       "securityImpact": "Prevents an authentication rollout from becoming an unobserved account-lockout or credential-disclosure event.",
       "architectureImpact": "Defines release gates and rollback for the new identity-provider boundary.",
       "releaseTarget": "backlog",
       "ownerAgent": "QA",
-      "reviewAgents": ["Security", "Infrastructure", "Backend", "Independent Reviewer"],
-      "currentStep": "BLOCKED pending completion of the Cognito implementation tickets and owner-approved live test access.",
+      "reviewAgents": [
+        "Security",
+        "Infrastructure",
+        "Backend",
+        "Independent Reviewer"
+      ],
+      "currentStep": "OWNER ROLLOUT POLICY APPROVED — execute only after CS-90..93 implementation/reviews; acceptance requires real disposable-account E2E and rollback evidence.",
       "completedSteps": [],
       "createdAt": "2026-09-29",
-      "updatedAt": "2026-09-29",
+      "updatedAt": "2026-10-02",
       "dimension": "testing",
-      "blockedReason": "Live Cognito credentials, disposable email access and rollout approval are owner-controlled prerequisites."
+      "blockedReason": "Owner rollout policy is approved in principle. Remaining blockers are completed Cognito implementation, real credentials/disposable test mailbox, monitoring and protected live rollout/rollback evidence."
     }
   ]
 }
