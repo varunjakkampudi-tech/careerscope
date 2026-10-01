@@ -95,7 +95,7 @@ export class LeadRepository {
          AND job.data->>'fingerprint' = lead.fingerprint
        JOIN search_runs run ON run.id = job.run_id AND run.owner_id = job.owner_id
        WHERE lead.owner_id = $1 AND job.id = $2
-       ORDER BY job.created_at DESC, lead.created_at DESC
+       ORDER BY run.created_at DESC, lead.created_at DESC
        LIMIT 1`,
       [ownerId, jobId],
     );
