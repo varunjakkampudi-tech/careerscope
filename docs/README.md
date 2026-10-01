@@ -8,6 +8,7 @@ or historical behaviour as deployed functionality.
 
 - [ARCHITECTURE](ARCHITECTURE.md) — runtime boundaries and invariants
 - [Architecture diagrams](architecture/README.md) — current system and flow maps
+- [GitHub release lifecycle](GITHUB-RELEASE-LIFECYCLE.md) — manual release and provenance contract
 - [FRONTEND-ARCHITECTURE](FRONTEND-ARCHITECTURE.md) — Next.js route and UI boundaries
 - [API-SURFACE](API-SURFACE.md) — authenticated HTTP contract
 - [PRODUCT-SURFACE](PRODUCT-SURFACE.md) — supported user journeys

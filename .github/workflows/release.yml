@@ -1,0 +1,100 @@
+name: Release
+
+# A release records an already accepted production deployment. It is never
+# created by a push, pull request, CI completion, or tag event.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Product version to publish (for example, v1.0.0)'
+        required: true
+        type: string
+      target_sha:
+        description: 'Full SHA of the accepted production deployment'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  actions: read
+  deployments: read
+
+concurrency:
+  group: release-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish accepted production release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '24'
+
+      - name: Validate the requested release and deployment provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+          TARGET_SHA: ${{ inputs.target_sha }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          const version = process.env.VERSION;
+          const sha = process.env.TARGET_SHA;
+          if (!/^v\d+\.\d+\.\d+$/.test(version)) throw new Error(`Invalid release version: ${version}`);
+          if (!/^[0-9a-f]{40}$/.test(sha)) throw new Error('target_sha must be a full 40-character commit SHA');
+          const response = await fetch(`https://api.github.com/repos/${process.env.REPOSITORY}/deployments?environment=production&per_page=20`, { headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${process.env.GH_TOKEN}`, 'User-Agent': 'careerscope-release' } });
+          if (!response.ok) throw new Error(`Unable to read production deployments (${response.status})`);
+          const deployments = await response.json();
+          const matching = deployments.find((deployment) => deployment.sha === sha);
+          if (!matching) throw new Error(`No production deployment exists for ${sha}`);
+          const statusResponse = await fetch(`${matching.url}/statuses?per_page=20`, { headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${process.env.GH_TOKEN}`, 'User-Agent': 'careerscope-release' } });
+          if (!statusResponse.ok) throw new Error(`Unable to read deployment status (${statusResponse.status})`);
+          const statuses = await statusResponse.json();
+          if (!statuses.some((status) => status.state === 'success')) throw new Error(`Production deployment ${matching.id} has no successful status`);
+          console.log(`Accepted production deployment ${matching.id} for ${sha}`);
+          NODE
+
+      - name: Require green CI for the exact deployed commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ inputs.target_sha }}
+        run: node scripts/require-ci-success.mjs
+
+      - name: Refuse an existing tag
+        env:
+          VERSION: ${{ inputs.version }}
+        run: test -z "$(git ls-remote --tags origin "refs/tags/$VERSION" "refs/tags/$VERSION^{}")"
+
+      - name: Create the annotated tag
+        env:
+          VERSION: ${{ inputs.version }}
+          TARGET_SHA: ${{ inputs.target_sha }}
+        run: |
+          set -euo pipefail
+          git tag -a "$VERSION" "$TARGET_SHA" -m "CareerScope $VERSION"
+          git push origin "refs/tags/$VERSION"
+
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+          TARGET_SHA: ${{ inputs.target_sha }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          const body = `## Highlights\n\nCareerScope production release ${process.env.VERSION}.\n\n## Engineering and Operations\n\n- Exact production deployment and green CI were verified before publication.\n- Release provenance is anchored to commit ${process.env.TARGET_SHA}.\n\n## Security, Privacy and Known Limitations\n\nRefer to the repository security, privacy and known-limitations documentation.`;
+          const response = await fetch(`https://api.github.com/repos/${process.env.REPOSITORY}/releases`, { method: 'POST', headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${process.env.GH_TOKEN}`, 'User-Agent': 'careerscope-release', 'Content-Type': 'application/json' }, body: JSON.stringify({ tag_name: process.env.VERSION, target_commitish: process.env.TARGET_SHA, name: `CareerScope ${process.env.VERSION}`, body, draft: false, prerelease: false, generate_release_notes: false }) });
+          if (!response.ok) throw new Error(`Release creation failed (${response.status}): ${await response.text()}`);
+          console.log(`Published ${process.env.VERSION} for ${process.env.TARGET_SHA}`);
+          NODE

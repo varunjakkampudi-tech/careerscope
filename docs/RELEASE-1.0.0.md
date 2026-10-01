@@ -1,6 +1,10 @@
-# CareerScope v1.0.0
+# CareerScope v1.0.0 — release preparation
 
-Release date: 2026-09-09.
+This is the prepared release-note template for the first accepted canonical
+production release. `v1.0.0` has **not** been published. It must only be tagged
+after the manual production deployment, exact-SHA CI, provenance, health and
+production-acceptance gates pass. See
+[GitHub release lifecycle](GITHUB-RELEASE-LIFECYCLE.md).
 
 ## Scope
 
@@ -8,8 +12,8 @@ CareerScope is the new product name for Job Radar. Internal npm workspace names,
 storage keys, API routes, database schema, and deployment service names remain
 unchanged for compatibility. No account reset or data migration is required.
 
-This release is prepared for local production-build verification. It is not a
-remote deployment, and no domain, TLS certificate, or cloud resource was changed.
+This is release preparation evidence only. It is not a remote deployment, and
+no domain, TLS certificate, or cloud resource was changed by this document.
 
 ## Improvements
 
