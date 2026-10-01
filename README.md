@@ -1,5 +1,10 @@
 # CareerScope
 
+![CI](https://github.com/varunjakkampudi-tech/careerscope/actions/workflows/ci.yml/badge.svg?branch=main)
+![Node.js 24+](https://img.shields.io/badge/Node.js-24%2B-339933?logo=node.js&logoColor=white)
+
+**DISCOVER · MATCH · TRACK · GROW**
+
 CareerScope is a private job-search workspace. It collects postings from
 public sources, scores them deterministically against the owner's profile,
 keeps useful leads, and tracks applications. The user remains in control:
@@ -31,6 +36,10 @@ The runtime is a modular monolith: Next.js and Fastify sit behind Caddy;
 PostgreSQL is authoritative; Redis provides rate limiting; the transactional
 outbox feeds the publisher and workers; resume files are encrypted at rest.
 Only the proxy publishes host ports.
+
+See the [architecture index](docs/architecture/README.md) for current system,
+request, discovery, outbox, resume, authentication, lifecycle, deployment and
+trust-boundary diagrams.
 
 ## Requirements
 
@@ -94,6 +103,7 @@ acceptance items are listed in [docs/KNOWN-LIMITATIONS.md](docs/KNOWN-LIMITATION
 
 - [Project state](docs/PROJECT-STATE.md) — current product and deployment truth
 - [Architecture](docs/ARCHITECTURE.md) — runtime boundaries and invariants
+- [Architecture diagrams](docs/architecture/README.md) — implementation flow maps
 - [API surface](docs/API-SURFACE.md) — authenticated endpoint contract
 - [Product surface](docs/PRODUCT-SURFACE.md) — supported user journeys
 - [Security](docs/SECURITY.md) — security controls and findings

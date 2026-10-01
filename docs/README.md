@@ -7,6 +7,7 @@ or historical behaviour as deployed functionality.
 ## Current contracts
 
 - [ARCHITECTURE](ARCHITECTURE.md) — runtime boundaries and invariants
+- [Architecture diagrams](architecture/README.md) — current system and flow maps
 - [FRONTEND-ARCHITECTURE](FRONTEND-ARCHITECTURE.md) — Next.js route and UI boundaries
 - [API-SURFACE](API-SURFACE.md) — authenticated HTTP contract
 - [PRODUCT-SURFACE](PRODUCT-SURFACE.md) — supported user journeys
@@ -33,3 +34,10 @@ Operational runbooks are under [OPERATIONS](OPERATIONS/):
 traceability. Append-only release reviews and `.ai/` ticket/evidence records
 are also historical unless a document explicitly identifies itself as current.
 Do not use an archived report as proof of the current deployment.
+
+## Canonical reading path
+
+New engineers should read `README.md`, then this index, then the relevant
+architecture, testing, security or operations contract. Release-specific CI
+runs, ticket evidence and historical migration notes are evidence records,
+not alternate product instructions.

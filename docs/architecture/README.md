@@ -257,3 +257,147 @@ Resume parsing does not silently replace the profile used for matching. A saved
 lead is not proof of an application; imported jobs and preparation do not
 submit anything. AI remains off and auto-apply on hold. Source-level presence
 of this flow is not a fresh end-to-end browser or production test.
+
+## Current flow maps
+
+These diagrams are current implementation maps. A box appears here only when
+the root workspace has a corresponding source or operational contract.
+
+### Authenticated request
+
+```mermaid
+sequenceDiagram
+    participant B as Browser
+    participant C as Caddy
+    participant W as Next.js/API
+    participant A as Session + authorization
+    participant D as PostgreSQL
+    B->>C: HTTPS request
+    C->>W: Same-origin request
+    W->>A: Validate opaque session
+    A->>D: Resolve owner and expiry
+    A-->>W: Authenticated owner or safe denial
+    W->>D: Owner-scoped operation
+    D-->>W: Result
+    W-->>B: Redacted response
+```
+
+Mutations additionally require expected Origin and CSRF controls. Client owner
+identifiers are never authorization inputs.
+
+### Job discovery and matching
+
+```mermaid
+flowchart LR
+    Request[User search or scheduled discovery] --> API[Fastify API]
+    API --> Tx[Search transaction]
+    Tx --> Outbox[Durable outbox command]
+    Outbox --> Publisher[Publisher]
+    Publisher --> Queue[Selected queue transport]
+    Queue --> Worker[Search worker]
+    Worker --> Adapters[Bounded provider adapters]
+    Adapters --> Normalize[Normalize + provenance]
+    Normalize --> Dedup[Deduplicate canonical postings]
+    Dedup --> Match[Deterministic matching]
+    Match --> Persist[Persist jobs, leads and run events]
+    Persist --> UI[Owner-scoped API/SSE results]
+```
+
+Provider timeouts and failures are isolated per source. Unknown fields remain
+unknown; they are not fabricated. Matching is reproducible from frozen inputs.
+
+### Transactional outbox and worker effects
+
+```mermaid
+flowchart LR
+    Business[Business write] --> Atomic[One PostgreSQL transaction]
+    Atomic --> State[Business state]
+    Atomic --> Event[Outbox event]
+    Event --> Publisher[Publisher + retry/reconciliation]
+    Publisher --> Queue[At-least-once queue]
+    Queue --> Lease[Worker lease + fence]
+    Lease --> Effect[Idempotent effect]
+    Effect --> Complete[Execution completion]
+```
+
+Delivery is at-least-once. Exactly-once delivery is not claimed; idempotency,
+leases and fencing provide exactly-once effects for supported commands.
+
+### Resume lifecycle
+
+```mermaid
+flowchart TD
+    Upload[Authenticated upload] --> Authz[Owner authorization]
+    Authz --> Validate[Size, type and content validation]
+    Validate --> Reserve[Capacity reservation]
+    Reserve --> StoreId[Generated storage identity]
+    StoreId --> Encrypt[Encrypted private filesystem publication]
+    Encrypt --> Parse[Isolated bounded parser]
+    Parse --> Persist[Owner-scoped metadata and parse result]
+    Persist --> Review[User reviews editable proposal]
+    Review --> Profile[Explicit profile save]
+    Profile --> Match[Matching snapshot]
+    Parse --> Cleanup[Failure/cancellation cleanup]
+```
+
+Resume bytes never become public URLs by default and are not written to logs.
+
+### Application lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> DISCOVERED
+    DISCOVERED --> SAVED
+    SAVED --> REVIEWING
+    REVIEWING --> APPLIED
+    APPLIED --> SCREENING
+    SCREENING --> INTERVIEW
+    INTERVIEW --> OFFER
+    APPLIED --> REJECTED
+    SCREENING --> REJECTED
+    INTERVIEW --> REJECTED
+    SAVED --> WITHDRAWN
+    REVIEWING --> WITHDRAWN
+    APPLIED --> WITHDRAWN
+```
+
+Opening an external application URL never changes the lifecycle. The user
+must explicitly record an application transition.
+
+### Manual production deployment
+
+```mermaid
+flowchart LR
+    Change[Push / pull request] --> CI[Automatic CI]
+    CI --> NoDeploy[No deployment]
+    Operator[Authorized operator] --> Dispatch[Manual Deploy workflow]
+    Dispatch --> Main[Resolve current main HEAD]
+    Main --> Exact[Require exact-SHA green CI]
+    Exact --> Protected[Protected production environment]
+    Protected --> Host[Hostinger + maintenance mode]
+    Host --> Verify[Health + provenance verification]
+    Verify --> Live[Production]
+```
+
+Deployments are manual and main-only. CI and pull-request workflows cannot
+access the production deployment key.
+
+### Security and trust boundaries
+
+```mermaid
+flowchart LR
+    Internet[Browser / provider / upload - UNTRUSTED DATA] --> Proxy[Caddy TLS + host boundary]
+    Proxy --> App[Next.js + Fastify]
+    App --> Auth[Session, CSRF, Origin, rate limits]
+    App --> DB[(PostgreSQL owner-scoped state)]
+    App --> Redis[(Redis rate limiting)]
+    DB --> Workers[Publisher and workers]
+    Workers --> Providers[External providers - UNTRUSTED DATA]
+    Workers --> Files[Encrypted resume storage]
+    Actions[GitHub Actions] --> Artifact[Redacted diagnostics only]
+    Actions -. protected secret .-> Deploy[Manual production job]
+```
+
+Provider text, resumes and tool output are data rather than instructions. The
+agent/Copilot contract is documented in
+[AGENT-SECURITY](../../.github/AGENT-SECURITY.md).
