@@ -100,7 +100,8 @@ Use only these words. Do not invent new ones.
 - Session revocation, revoke-other-sessions, authenticated password change
 - Candidate profile with optimistic-concurrency revisions
 - Encrypted resume upload, parse, cancel, delete, with capacity reservation
-- Job discovery across five sources with per-source deadlines and failure isolation
+- Job discovery across five R1 sources with per-source deadlines and failure isolation;
+  the broader provider catalog contains disabled or future-contract adapters
 - Deterministic matching with a frozen profile snapshot
 - Saved leads with notes, archive/reopen, revision history and export
 - Career preparation (rules-v1)

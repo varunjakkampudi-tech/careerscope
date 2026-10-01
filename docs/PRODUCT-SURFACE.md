@@ -58,7 +58,7 @@ Limits: 5 uploads/hour, 10 recovery attempts/hour, 20 cancels or deletes/minute.
 
 ### Discovery
 
-Start a search. It runs across five sources — RemoteOK, Himalayas, Greenhouse,
+Start a search. It runs across five R1 sources — RemoteOK, Himalayas, Greenhouse,
 Lever and Workable — each with its own deadline and failure isolation, so one
 slow or broken source cannot poison the run or another source's results. A run
 that partially fails reports which sources failed rather than silently

@@ -143,7 +143,7 @@ flowchart TD
   Publisher --> Queue[(SQS-compatible queue)]
   Queue --> Search[Search worker]
   Queue --> Files[Files worker]
-  Search --> Providers[Five job sources]
+  Search --> Providers[Five R1 job sources]
   Search --> PG
   Files --> Parser[Isolated resume parser]
   Files --> Objects
