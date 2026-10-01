@@ -191,7 +191,7 @@ const manifest = {
     '5. Reopen VS Code.',
     'state.vscdb is included for reference. Overwriting it replaces all workspace UI state,',
     'not just the chat, so prefer the two folders above unless you accept that.',
-    'The engineering state that actually matters - .ai/, review.txt, .github/agents/ - is in',
+    'The engineering state that actually matters - .ai/, .ai/review-log.txt, .github/agents/ - is in',
     'git and needs none of this.',
   ],
 };

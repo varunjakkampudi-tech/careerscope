@@ -33,7 +33,7 @@ telemetry; never fabricate them for legacy records.
 
 ## Audit Trail
 
-The parent appends dated content-bound snapshots to [review.txt](../../review.txt)
+The parent appends dated content-bound snapshots to [.ai/review-log.txt](../../.ai/review-log.txt)
 and records actual invocations, checks, failures and decisions. Preserve history;
 review labels are attributed, not signed or tamperproof. Baseline and post-change
 results remain distinguishable. Sanitized errors should identify causes without

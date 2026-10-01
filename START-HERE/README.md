@@ -24,7 +24,7 @@ Then the live state:
 ```bash
 node scripts/control-center.mjs     # what the engineering system is doing
 cat .ai/CAREERSCOPE-PROGRESS.md     # what is done, with evidence
-tail -120 review.txt                # what the last cycle actually did
+tail -120 .ai/review-log.txt        # what the last cycle actually did
 ```
 
 ---

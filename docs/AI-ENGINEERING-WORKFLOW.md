@@ -57,7 +57,7 @@ progress, findings and release records retain their consumers. Its schema is
 owned by the delivered validator, not inferred from Markdown. Read-only
 reviewers return evidence; the Orchestrator records actual attributed results.
 
-Append dated, content-bound snapshots to [review.txt](../review.txt), never
+Append dated, content-bound snapshots to [.ai/review-log.txt](../.ai/review-log.txt), never
 overwrite its history. Reports contain actual commands, outputs, participants,
 skips and missing prerequisites, without secrets or private data. A dashboard
 shows recorded state, not an independent observation of the runtime.

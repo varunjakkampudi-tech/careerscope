@@ -306,11 +306,12 @@ test('isolated customization inventory passes and missing or malformed requireme
       }
     }
     mkdirSync(join(root, '.github/hooks'));
+    mkdirSync(join(root, '.ai'));
     writeFileSync(
       join(root, '.github/hooks/engineering.json'),
       readFileSync(join(source, '.github/hooks/engineering.json')),
     );
-    writeFileSync(join(root, 'review.txt'), snapshot);
+    writeFileSync(join(root, '.ai', 'review-log.txt'), snapshot);
     assert.equal((await checkCustomizations(root)).valid, true);
     const mutations = [
       ['.github/prompts/careerscope-qa.prompt.md', null],
@@ -326,7 +327,7 @@ test('isolated customization inventory passes and missing or malformed requireme
       ],
       ['.github/instructions/testing.instructions.md', null],
       ['.github/hooks/engineering.json', '{'],
-      ['review.txt', `${snapshot}\nDate: 2026-09-21\n## FINAL STATUS\nCOMPLETE\n`],
+      ['.ai/review-log.txt', `${snapshot}\nDate: 2026-09-21\n## FINAL STATUS\nCOMPLETE\n`],
     ];
     for (const [file, replacement] of mutations) {
       const path = join(root, file);
@@ -336,7 +337,7 @@ test('isolated customization inventory passes and missing or malformed requireme
       assert.equal((await checkCustomizations(root)).valid, false, file);
       writeFileSync(path, original);
     }
-    assert.equal(readFileSync(join(root, 'review.txt'), 'utf8'), snapshot);
+    assert.equal(readFileSync(join(root, '.ai', 'review-log.txt'), 'utf8'), snapshot);
     assert.equal((await checkCustomizations(root)).valid, true);
   } finally {
     rmSync(root, { recursive: true, force: true });

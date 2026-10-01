@@ -106,7 +106,7 @@ scripts/                tooling, checks, control center, backup
 .github/agents/         specialist agents
 .ai/                    durable engineering state (JSON canonical)
 START-HERE/             this folder
-review.txt              append-only engineering audit log
+.ai/review-log.txt      append-only engineering audit log
 data/                   gitignored: database, resumes, .env, backups
 ```
 

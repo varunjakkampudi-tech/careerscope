@@ -34,7 +34,7 @@ credentials, user data or real environment files were read.
 | CI                     | .github/workflows/ci.yml and deploy.yml; push to main is a deployment candidate                                  |
 | Native customization   | Initial snapshot: 24 agents, 20 skills, scoped instructions, two prompts; hook/prompt additions reconciled below |
 | MCP                    | .vscode/mcp.json declares careerscope stdio; metadata inspected only                                             |
-| Engineering state      | .ai backlog, findings, progress, release and loop records; review.txt; agile and gate scripts                    |
+| Engineering state      | .ai backlog, findings, progress, release, loop and review-log records; agile and gate scripts                    |
 | Documentation          | docs/ARCHITECTURE.md, CareerScope/ARCHITECTURE.md, testing, operations and existing Mermaid diagrams             |
 
 ## Commands

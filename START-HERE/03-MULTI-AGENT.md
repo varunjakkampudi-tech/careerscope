@@ -114,7 +114,7 @@ Human projections — people read these:
 ```
 .ai/CAREERSCOPE-PROGRESS.md   progress, with evidence and prose
 .ai/AGENT-SETUP.md            this system, in full
-review.txt                    append-only audit log, never truncated
+.ai/review-log.txt            append-only audit log, never truncated
 ```
 
 The validator asserts the JSON and the Markdown **agree**, so the projection

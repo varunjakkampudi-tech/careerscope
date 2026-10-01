@@ -10,7 +10,7 @@
 // here, maintained by hand alongside the patterns in .gitattributes. Two
 // independent lists of "what is a text file" is one list too many, and they
 // duly diverged: `*.txt text eol=lf` was added to .gitattributes for
-// `review.txt` — an append-only audit log parsed in nine places — while this
+// `.ai/review-log.txt` — an append-only audit log parsed in nine places — while this
 // file went on skipping `.txt` entirely. The attribute existed and nothing
 // checked it.
 //
@@ -89,7 +89,7 @@ function lfOnlyMatchers() {
       // `docs/**/*.md`, `*.[ch]`, or any path-scoped form — contributed no
       // matcher and no warning, so the derivation was silently partial with
       // only the `< 10` floor as a backstop. Worse, a path-scoped bare name
-      // such as `.ai/review.txt` would have been compared against the basename
+      // such as `.ai/review-log.txt` would have been compared against the basename
       // and never matched. For a file whose whole point is "derived, not
       // duplicated", a pattern form it cannot express must be loud.
       unrepresentable.push(pattern);
@@ -122,13 +122,12 @@ const isLfOnly = (file) => matchers.some((matcher) => matcher.test(file));
 // The canonical state files are called out separately: these are the ones read
 // by gates, and a silent parse difference here changes a release decision.
 //
-// `review.txt` is named explicitly because it is the counter-example to a
-// directory-shaped rule: it sits at the repository root, not under .ai/ or
-// scripts/, yet it is parsed in nine places across check-agents.mjs,
+// `.ai/review-log.txt` is named explicitly because it is the counter-example to a
+// directory-shaped rule: it is parsed in nine places across check-agents.mjs,
 // control-center.mjs, check-customizations.mjs, backup-session.mjs and
 // engineering-hook.test.mjs. It is also append-only, which makes it the worst
 // possible place for a parser to silently see nothing.
-const CRITICAL = /^(\.ai\/|\.github\/(agents|workflows)\/|scripts\/|review\.txt$)/;
+const CRITICAL = /^(\.ai\/|\.github\/(agents|workflows)\/|scripts\/)/;
 
 let tracked;
 try {

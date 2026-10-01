@@ -24,7 +24,7 @@ import { join } from 'node:path';
 
 const AI = '.ai';
 const AGENTS = '.github/agents';
-const REVIEW = 'review.txt';
+const REVIEW = '.ai/review-log.txt';
 const STALE_AFTER_MS = 15 * 60 * 1000;
 
 const colour = process.stdout.isTTY && !process.argv.includes('--json');
@@ -124,7 +124,7 @@ function findings() {
   }
 }
 
-/** The newest review.txt entry, which is the last thing actually performed. */
+/** The newest audit-log entry, which is the last thing actually performed. */
 function lastEntry() {
   const body = read(REVIEW);
   if (!body) return null;
@@ -341,7 +341,7 @@ function render() {
   // Last / next
   const entry = lastEntry();
   line();
-  line(bold('  LAST RECORDED CYCLE') + dim('   (review.txt)'));
+  line(bold('  LAST RECORDED CYCLE') + dim('   (.ai/review-log.txt)'));
   if (!entry) {
     line(dim('      No entries yet.'));
   } else {

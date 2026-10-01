@@ -156,8 +156,8 @@ const state = [
 const missing = state.filter((f) => !existsSync(`.ai/${f}`));
 check(missing.length === 0, `all 20 .ai files exist ${missing.join(', ')}`);
 
-// The audit log is append-only and lives at the repository root on purpose.
-check(existsSync('review.txt'), 'review.txt exists at the repository root');
+// The audit log is append-only and lives in the canonical .ai state directory.
+check(existsSync('.ai/review-log.txt'), '.ai/review-log.txt exists');
 // The progress file must carry a real overall status line. Parse it rather than
 // scanning for a substring: an earlier version of this validator passed because
 // its regex silently failed to match, which is the exact failure mode being

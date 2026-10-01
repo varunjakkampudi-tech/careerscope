@@ -256,7 +256,7 @@ export async function checkCustomizations(directory = root) {
   );
   await check(
     'latest review snapshot: Revision, Digest, TESTING, FINAL STATUS, REMAINING ISSUES, NEXT ACTION required',
-    () => validateReviewSnapshot(read('review.txt')),
+    () => validateReviewSnapshot(read('.ai/review-log.txt')),
   );
   return { valid: failures.length === 0, counts, failures };
 }

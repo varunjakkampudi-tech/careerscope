@@ -104,4 +104,4 @@ Examples that should each produce a red:
 
 Requirements met · no open P0/P1 · gates green with output read · docs updated
 if behaviour changed · diff reviewed for unrelated changes · `.ai/` and
-`review.txt` updated · live verified if runtime-affecting.
+`.ai/review-log.txt` updated · live verified if runtime-affecting.

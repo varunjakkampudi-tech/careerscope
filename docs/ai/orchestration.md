@@ -77,7 +77,7 @@ schema belongs to the validator implementation; do not invent fields here.
 The Orchestrator is the single recorder unless an explicit claim delegates a
 specific record. Builders return evidence rather than racing to update state.
 
-Append dated, revision/content-bound snapshots to [review.txt](../../review.txt);
+Append dated, revision/content-bound snapshots to [.ai/review-log.txt](../../.ai/review-log.txt);
 never overwrite its history. Distinguish observed activity from planned work.
 Use [quality gates](quality-gates.md) to assess completion: a progress label, an
 agent's self-report, or a syntactically valid record is not proof.

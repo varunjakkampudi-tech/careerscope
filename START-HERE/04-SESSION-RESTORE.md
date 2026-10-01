@@ -6,7 +6,7 @@ Copilot chat lives in VS Code's `workspaceStorage`, in a folder named for a hash
 of the **workspace path**. `/Users/you/careerscope` and `C:\Users\you\careerscope`
 hash differently, so a clone on a new machine gets a new, empty folder.
 
-What _does_ transfer is everything that matters: `.ai/`, `review.txt`,
+What _does_ transfer is everything that matters: `.ai/`, `.ai/review-log.txt`,
 `.github/agents/`, the control center and this folder are all in git. Clone and
 the entire engineering system works, with full history and context. **The chat
 is a convenience; the durable records are the handoff.**
@@ -77,7 +77,7 @@ designed for exactly this:
 ```bash
 cat START-HERE/README.md          # orientation
 cat .ai/CAREERSCOPE-PROGRESS.md   # what is done, with evidence
-tail -200 review.txt              # what recent cycles actually did
+tail -200 .ai/review-log.txt     # what recent cycles actually did
 cat .ai/AGENT-SETUP.md            # how the agent system is configured
 node scripts/control-center.mjs   # current state
 ```

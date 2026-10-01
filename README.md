@@ -30,12 +30,21 @@ infra                     Compose, Caddy and Hostinger operations
 scripts                   development, export and verification tooling
 docs                      authoritative product and operations documentation
 .ai                       ticket and engineering projections
+mobile-site               sanitized GitHub Pages export and encrypted read-only admin snapshot
+seed                      historical local/bootstrap corpus; never loaded by production
+START-HERE                optional onboarding and session-restoration guide
 ```
 
 The runtime is a modular monolith: Next.js and Fastify sit behind Caddy;
 PostgreSQL is authoritative; Redis provides rate limiting; the transactional
 outbox feeds the publisher and workers; resume files are encrypted at rest.
 Only the proxy publishes host ports.
+
+`mobile-site/` is not a second application stack: it is the source for the
+sanitized, static Pages publication and its encrypted read-only admin snapshot.
+The canonical engineering audit log is `.ai/review-log.txt`; it is append-only
+evidence, not runtime input. `seed/` contains historical/bootstrap fixtures and
+is intentionally excluded from production builds.
 
 See the [architecture index](docs/architecture/README.md) for current system,
 request, discovery, outbox, resume, authentication, lifecycle, deployment and
