@@ -103,7 +103,7 @@
     "mobile:test": "node --test scripts/export-mobile.test.mjs"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.5",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^24.0.0",
     "@types/pg": "^8.15.0",
     "@types/pngjs": "^6.0.5",
