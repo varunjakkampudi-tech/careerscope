@@ -9,18 +9,18 @@
     "./ai-assist": "./dist/ai-assist.js"
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.1131.0",
+    "@aws-sdk/client-sqs": "^3.1149.0",
     "@careerscope/resume": "file:../resume",
     "@careerscope/shared": "file:../shared",
-    "@node-rs/argon2": "^2.2.1",
+    "@node-rs/argon2": "^2.2.2",
     "@thednp/dommatrix": "^3.1.2",
-    "bullmq": "^5.81.5",
-    "drizzle-orm": "^0.45.2",
-    "pg": "^8.23.0",
-    "pino": "^10.3.1",
-    "redis": "^6.2.1",
+    "bullmq": "^6.3.12",
+    "drizzle-orm": "^0.45.4",
+    "pg": "^8.23.1",
+    "pino": "^10.4.0",
+    "redis": "^6.3.0",
     "yauzl": "^3.4.0",
-    "zod": "^3.23.8"
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@careerscope/matching": "file:../matching",
