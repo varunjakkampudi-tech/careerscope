@@ -1,0 +1,284 @@
+{
+  "loggedIn": false,
+  "brandedJd": false,
+  "jobDetails": {
+    "savedJobFlag": 0,
+    "education": {
+      "degreeCombination": "ugorpg",
+      "premiumProcessed": false,
+      "eduPlaceholderText": "",
+      "ug": [
+        "Any Graduate"
+      ],
+      "pg": [
+        "Any Postgraduate"
+      ],
+      "ppg": [],
+      "label": "",
+      "isSchool": null
+    },
+    "hideApplyButton": false,
+    "applyCount": 3596,
+    "groupId": 1288,
+    "roleCategory": "Software Development",
+    "mode": "jp",
+    "tagLabels": [],
+    "jobRole": "Full Stack Developer",
+    "companyFollowFlowMetaData": {
+      "companyFollowFlow": false
+    },
+    "isTopGroup": 1,
+    "clientLogo": "https://img.naukimg.com/logo_images/groups/v1/1288.gif",
+    "wfhType": "0",
+    "companyDetail": {
+      "name": "Capgemini",
+      "websiteUrl": "",
+      "details": "Capgemini Technology Services India Limited",
+      "address": "Godrej and Boyce Compound, Plant No. 05,LBS Marg, Vikhroli - West, Mumbai, NAVI MUMBAI, Maharashtra, India",
+      "media": {
+        "ppt": [],
+        "video": [],
+        "photos": []
+      },
+      "hiringFor": "",
+      "isKycSuccessful": true,
+      "isCustomCompanyName": true
+    },
+    "jobIconType": "",
+    "shortDescription": "Deep understanding of programming concepts and software design|Lead software design and development activities, provide innovative solutions, and manage team performance",
+    "consent": false,
+    "jobId": "010926914885",
+    "showEducationAsPlaceholder": false,
+    "companyId": 7053,
+    "brandingTags": [],
+    "functionalArea": "Engineering - Software & QA",
+    "fatFooter": {},
+    "experienceText": "1-6 Yrs",
+    "referenceCode": "538770",
+    "vacancy": 0,
+    "template": "",
+    "locationGids": [
+      "97"
+    ],
+    "description": "<div> <div> <div> <br /><br /><b>Job Description</b> <br /></div> <br /><br /><div> <br /><br /><b>Job Description - Grade Specific</b> <br /><br />Is fully competent in its own area and has a deep understanding of related programming concepts software design and software development principles. Works autonomously with minimal supervision. Able to act as a key contributor in a complex environment, lead the activities of a team for software design and software development. Acts proactively to understand internalorexternal client needs and offers advice even when not asked. Able to assess and adapt to project issues, formulate innovative solutions, work under pressure and drive team to succeed against its technical and commercial goals. Aware of profitability needs and may manage costs for specific projectorwork area. Explains difficult concepts to a variety of audiences to ensure meaning is understood. Motivates other team members and creates informal networks with key contacts outside own area.</div> </div> </div>",
+    "staticCompanyName": "capgemini-jobs-careers-649",
+    "industry": "IT Services & Consulting",
+    "staticUrl": "https://www.naukri.com/job-listings-full-stack-developer-capgemini-technology-services-india-limited-bengaluru-1-to-6-years-010926914885",
+    "title": "Full Stack Developer",
+    "walkIn": false,
+    "maximumExperience": 6,
+    "logStr": "----F-0-1---",
+    "viewCount": 4512,
+    "jobType": "fulltime",
+    "companyPageUrl": "capgemini-overview-1288",
+    "minimumExperience": 1,
+    "employmentType": "Full Time, Permanent",
+    "banner": "https://img.naukimg.com/logo_images/groups/v1/1288.gif",
+    "microsite": false,
+    "createdDate": "2026-09-01 12:23:43",
+    "consultant": false,
+    "socialBanner": "https://img.naukimg.com/logo_images/groups/v1/1288.gif",
+    "showRecruiterDetail": false,
+    "locations": [
+      {
+        "localities": [],
+        "label": "Bengaluru",
+        "url": "https://www.naukri.com/jobs-in-bangalore"
+      }
+    ],
+    "keySkills": {
+      "other": [
+        {
+          "clickable": "software development",
+          "label": "Software Development"
+        },
+        {
+          "clickable": "programming",
+          "label": "Programming"
+        },
+        {
+          "clickable": "software designing",
+          "label": "Software Design"
+        }
+      ],
+      "preferred": [
+        {
+          "clickable": "",
+          "label": "Full Stack Developer"
+        }
+      ]
+    },
+    "salaryDetail": {
+      "minimumSalary": 0,
+      "maximumSalary": 0,
+      "currency": "INR",
+      "hideSalary": true,
+      "variablePercentage": 0,
+      "label": "Not Disclosed",
+      "salaryText": "Not Disclosed",
+      "minSalaryPerMonth": 0,
+      "maxSalaryPerMonth": 0,
+      "originalMaxSalary": 0,
+      "originalMinSalary": 0,
+      "salaryBreakup": "",
+      "ctcBreakup": ""
+    },
+    "board": "1"
+  },
+  "ambitionBoxDetails": {
+    "companyInfo": {
+      "Url": "https://www.ambitionbox.com/reviews/capgemini-reviews?jobId=naukri_010926914885&utm_source=naukri&utm_campaign=jd_ratings",
+      "Title": "Capgemini Reviews by Employees",
+      "AggregateRating": "3.6",
+      "ReviewsCount": "56558"
+    },
+    "reviews": [
+      {
+        "DisLikesText": "For fresher there is very less increament, No bonus \nNo gifts for dewali like festival as we are labour compalsary these things. But overall it's good",
+        "Title": "Full Stack Developer in Mumbai",
+        "LikesText": "Work life balance is good, leave easily approved, Offices are very well standard and facilitate mostly mumbai and Bangalore office. Various projects you can switch your skills or add on.",
+        "ReviewLink": "https://www.ambitionbox.com/reviews/capgemini-reviews?rid=65678972&utm_source=naukri&utm_campaign=jd_reviews",
+        "PublishedOn": "26 Jan 2025",
+        "OverallCompanyRating": "4",
+        "Name": "Anonymous"
+      },
+      {
+        "DisLikesText": "Very tough to get WFH approved and also recognition of work us less.",
+        "Title": "Full Stack Developer in Hyderabad",
+        "LikesText": "flexible work hours atleast for my project and support from management related to work.",
+        "ReviewLink": "https://www.ambitionbox.com/reviews/capgemini-reviews?rid=68960246&utm_source=naukri&utm_campaign=jd_reviews",
+        "PublishedOn": "26 Mar 2025",
+        "OverallCompanyRating": "4",
+        "Name": "Anonymous"
+      },
+      {
+        "DisLikesText": "Appraisal percentage is less, otherwise everything is awesome!",
+        "Title": "Full Stack Developer in New Delhi",
+        "LikesText": "Environment, you will find good intelligent people with whom you can enhance your skills and knowledge!",
+        "ReviewLink": "https://www.ambitionbox.com/reviews/capgemini-reviews?rid=60095556&utm_source=naukri&utm_campaign=jd_reviews",
+        "PublishedOn": "07 Sep 2024",
+        "OverallCompanyRating": "5",
+        "Name": "Anonymous"
+      }
+    ],
+    "salaries": {
+      "JobProfileName": "Full Stack Developer",
+      "AverageCtc": "7.4",
+      "SalariesUrl": "https://www.ambitionbox.com/salaries/capgemini-salaries/full-stack-developer?utm_source=naukri&utm_campaign=jd_salaries",
+      "MaxCtc": "8.0",
+      "MinCtc": "6.8"
+    },
+    "benefits": {
+      "Users": 3901,
+      "BenefitsUrl": "https://www.ambitionbox.com/benefits/capgemini-benefits?jobId=naukri_010926914885&utm_source=naukri&utm_campaign=jd_benefits",
+      "List": [
+        {
+          "newIconUrl": {
+            "dark": "https://static.ambitionbox.com/static/naukri-benefits/v2/dark/ProfessionalDegreeAssistance.png",
+            "default": "https://static.ambitionbox.com/static/naukri-benefits/v2/light/ProfessionalDegreeAssistance.png"
+          },
+          "BenefitImage": "https://static.ambitionbox.com/static/naukri-benefits/ProfessionalDegreeAssistance.png",
+          "BenefitName": "Learning & Development Support",
+          "Status": "true"
+        },
+        {
+          "newIconUrl": {
+            "dark": "https://static.ambitionbox.com/static/naukri-benefits/v2/dark/MentalWellbeing.png",
+            "default": "https://static.ambitionbox.com/static/naukri-benefits/v2/light/MentalWellbeing.png"
+          },
+          "BenefitImage": "https://static.ambitionbox.com/static/naukri-benefits/MentalWellbeing.png",
+          "BenefitName": "Health & Wellness Support",
+          "Status": "true"
+        },
+        {
+          "newIconUrl": {
+            "dark": "https://static.ambitionbox.com/static/naukri-benefits/v2/dark/Shuttle.png",
+            "default": "https://static.ambitionbox.com/static/naukri-benefits/v2/light/Shuttle.png"
+          },
+          "BenefitImage": "https://static.ambitionbox.com/static/naukri-benefits/Shuttle.png",
+          "BenefitName": "Transport / Travel Support",
+          "Status": "true"
+        },
+        {
+          "newIconUrl": {
+            "dark": "https://static.ambitionbox.com/static/naukri-benefits/v2/dark/FreeMeal.png",
+            "default": "https://static.ambitionbox.com/static/naukri-benefits/v2/light/FreeMeal.png"
+          },
+          "BenefitImage": "https://static.ambitionbox.com/static/naukri-benefits/FreeMeal.png",
+          "BenefitName": "Free Meal",
+          "Status": "true"
+        },
+        {
+          "newIconUrl": {
+            "dark": "https://static.ambitionbox.com/static/naukri-benefits/v2/dark/PerformanceBonus.png",
+            "default": "https://static.ambitionbox.com/static/naukri-benefits/v2/light/PerformanceBonus.png"
+          },
+          "BenefitImage": "https://static.ambitionbox.com/static/naukri-benefits/PerformanceBonus.png",
+          "BenefitName": "Performance Bonus",
+          "Status": "true"
+        },
+        {
+          "newIconUrl": {
+            "dark": "https://static.ambitionbox.com/static/naukri-benefits/v2/dark/Relocation.png",
+            "default": "https://static.ambitionbox.com/static/naukri-benefits/v2/light/Relocation.png"
+          },
+          "BenefitImage": "https://static.ambitionbox.com/static/naukri-benefits/Relocation.png",
+          "BenefitName": "Relocation Assistance",
+          "Status": "true"
+        },
+        {
+          "newIconUrl": {
+            "dark": "https://static.ambitionbox.com/static/naukri-benefits/v2/dark/CareerBreak.png",
+            "default": "https://static.ambitionbox.com/static/naukri-benefits/v2/light/CareerBreak.png"
+          },
+          "BenefitImage": "https://static.ambitionbox.com/static/naukri-benefits/CareerBreak.png",
+          "BenefitName": "Generous & Flexible Leaves",
+          "Status": "true"
+        },
+        {
+          "newIconUrl": {
+            "dark": "https://static.ambitionbox.com/static/naukri-benefits/v2/dark/StockOptions.png",
+            "default": "https://static.ambitionbox.com/static/naukri-benefits/v2/light/StockOptions.png"
+          },
+          "BenefitImage": "https://static.ambitionbox.com/static/naukri-benefits/StockOptions.png",
+          "BenefitName": "ESOPs / Stock Options",
+          "Status": "true"
+        }
+      ]
+    }
+  },
+  "seo": {
+    "classf": "Jobs & Career: Job Search, Apply Jobs, Post Jobs",
+    "flag": "JD",
+    "noindex": "n",
+    "bcrumb": "",
+    "id": 1763,
+    "title": "Full Stack Developer - Bengaluru - Capgemini - 1 to 6 years of experience",
+    "keyword": "Full Stack Developer in Capgemini Bengaluru",
+    "url": "job-listings-jobDesc",
+    "descp": "Job Description for Full Stack Developer in Capgemini in Bengaluru for 1 to 6 years of experience. Apply Now!",
+    "canon": null
+  },
+  "cardsSequence": [
+    {
+      "label": "Job Details",
+      "key": 1
+    },
+    {
+      "label": "About Company",
+      "key": 2
+    },
+    {
+      "label": "Reviews",
+      "key": 4
+    },
+    {
+      "label": "Benefits",
+      "key": 5
+    },
+    {
+      "label": "Salaries",
+      "key": 6
+    }
+  ]
+}

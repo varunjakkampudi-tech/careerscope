@@ -1,0 +1,119 @@
+# Frontend Architecture
+
+CareerScope has one canonical frontend: Next.js App Router with React 19 in
+`apps/web`. Routes compose feature views, shared UI primitives and the single
+browser API client. There is no alternate application frontend.
+
+---
+
+## Current application
+
+```
+apps/web/src/
+├── app/
+│   ├── layout.tsx, providers.tsx, globals.css, robots.ts
+│   ├── page.tsx                 public/auth entry point
+│   └── (app)/                   authenticated real routes
+│       ├── dashboard, jobs, applications, saved, resume
+│       ├── career-resources, preparation, settings
+│       └── layout.tsx            shared AuthenticatedShell boundary
+├── components/
+│   ├── ui-states.tsx/.module.css  shared atom-level async states
+│   ├── dashboard-shell.tsx/.module.css  shared layout/navigation
+│   ├── account/profile/resume/match primitives
+│   └── feature views composed from those primitives
+├── styles/                       global reset/tokens when added
+└── lib/
+    ├── api.ts                    the only browser API client
+    └── session.ts                owner-scoped session/cache contract
+```
+
+The frontend uses a route-group shell and feature components. New UI must
+follow the atomic boundary: primitives/atoms first, composed molecules next,
+feature organisms last, and route pages only compose them. A route must not
+invent a second button, state, card, token or API client. CSS Modules are the
+default isolation mechanism; global CSS is reserved for reset, tokens and
+cross-route primitives. SCSS is not required merely for naming: adding a
+preprocessor or custom webpack configuration without a measured need would
+increase the build surface and weaken the existing Next.js pipeline.
+
+State is local to components and lifted into `page.tsx` where it is shared.
+Introduce a global store only for a demonstrated cross-route requirement.
+
+## The API client
+
+`lib/api.ts` is the only place that talks to the API. Anything it must get right:
+
+- **CSRF.** Every mutating request carries `x-csrf-token` from the session.
+  A request without it is a 403 — the server does not make exceptions.
+- **Origin.** The browser sends it; the server requires it to match exactly.
+- **Credentials.** The session cookie is `Path=/api`, `HttpOnly`,
+  `Secure`, `SameSite=Strict`. JavaScript cannot read it and must not try.
+- **Revisions.** Profile and lead writes carry a revision. A 409 means
+  "reload before saving", not "retry".
+- **507** means resume storage is full — a real, expected state with a real
+  message, not a generic failure.
+
+## Server-sent events
+
+Search progress uses `EventSource` against `/api/searches/:id/events`.
+
+The contract the client must honour:
+
+- Track the last received `sequence` and send it as `Last-Event-ID` on
+  reconnect, so the server can resume rather than replay from zero.
+- Close the stream on unmount. The server aborts open streams on `preClose`,
+  but a leaked client-side `EventSource` will keep reconnecting.
+- Treat a reconnect gap as "resync", not "lost".
+
+## Rendering
+
+Next.js App Router with a server-rendered root layout. There is no static
+generation of authenticated content and there must not be: every response
+carries `Cache-Control: no-store`, and the workspace is private.
+
+`robots.ts` generates `robots.txt`. The authenticated workspace is not for
+indexing.
+
+## Accessibility
+
+Current automated state: axe clean for WCAG 2.0/2.1 A and AA, accessibility-tree
+assertions passing, keyboard-only traversal working, and correct reflow at 320,
+390 and 1440 px across Chromium, Firefox and WebKit.
+
+Rules for new UI:
+
+- Every control has an accessible name. Icon-only buttons need a label.
+- Errors are associated with their field and announced.
+- Async regions announce via a live region — a spinner alone tells a screen
+  reader nothing.
+- Dialogs trap focus, restore it on close, and close on Escape.
+- Focus indicators are never removed.
+- No information carried by colour alone.
+- Reflow at 320 px without horizontal scrolling.
+
+None of this substitutes for a screen-reader test. See
+[KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md).
+
+## The CSP constraint
+
+The deployed CSP allows `'unsafe-inline'` for scripts and styles, and nothing
+else off-origin: no `unsafe-eval`, `object-src 'none'`, `frame-ancestors 'none'`,
+`connect-src 'self'`.
+
+Practically: no CDN fonts, no third-party analytics, no external images, no
+remote script tags. A dependency that injects one will be blocked in production
+and will usually work fine in development — check before adopting it.
+
+## Before adding a page
+
+The canonical multi-route structure is implemented; the remaining work is
+route-level refinement and acceptance evidence. Two things to settle
+first, because getting them wrong is expensive:
+
+1. **The API may not support it.** There are no company, market, skills, alert
+   or admin endpoints, and `CollectedJob` has no salary, tech stack, employment
+   type or remote flag. Building a page for data that does not exist means
+   inventing it. Do not.
+2. **Auth is a session cookie scoped to `/api`.** Route protection is a client
+   concern against `GET /api/session`; there is no middleware-level gate today.

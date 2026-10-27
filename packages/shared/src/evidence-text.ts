@@ -1,0 +1,138 @@
+/**
+ * Shared character-refusal rules for text that becomes stored evidence. Used by `resume` (reject
+ * at extraction) and `matching` (neutralise when building match reasons).
+ */
+
+/**
+ * Control and invisible-formatting code points, expressed as code point ranges
+ * rather than a regular expression: a regex literal spelling out \u0000 is
+ * exactly what `no-control-regex` exists to stop, and the escape hatch is not
+ * available here.
+ *
+ * This lives in `shared` rather than in `resume` because two packages need the
+ * same refusal set for different operations, and the SET is the thing that must
+ * not drift. `resume` REJECTS a title segment containing any of these at
+ * extraction time; `matching` NEUTRALISES them when assembling the
+ * `reason` string that becomes stored match evidence. Rejecting a
+ * reason would discard the explanation of a score, so the two operations
+ * legitimately differ, but if their character sets diverged, a code point
+ * refused at one boundary would be renderable at the other.
+ */
+export function isRefusedCodePoint(point: number): boolean {
+  return (
+    point < 0x20 || // C0 controls; whitespace is collapsed to spaces by callers
+    point === 0x7f || // DEL
+    (point >= 0x80 && point <= 0x9f) || // C1 controls
+    (point >= 0x200b && point <= 0x200f) || // zero-width and directional marks
+    (point >= 0x202a && point <= 0x202e) || // bidirectional embedding/override
+    (point >= 0x2066 && point <= 0x2069) || // bidirectional isolates
+    // Variation selectors. These are category Mn, so `\p{M}` in a stray-character
+    // pattern — which exists so accents survive — would otherwise ALLOW them
+    // straight back in. They are invisible and exist to make a string render as something other than what
+    // it is, which is the stated purpose of this refusal set.
+    (point >= 0x180b && point <= 0x180d) || // Mongolian free variation selectors
+    (point >= 0xfe00 && point <= 0xfe0f) || // variation selectors 1-16
+    (point >= 0xe0100 && point <= 0xe01ef) || // variation selectors supplement
+    point === 0xfeff // zero-width no-break space
+  );
+}
+
+/** Scripts in which U+200C/U+200D are part of correct spelling, not decoration. */
+const ORTHOGRAPHIC_JOINER_SCRIPTS = [
+  /\p{Script=Arabic}/u,
+  /\p{Script=Bengali}/u,
+  /\p{Script=Devanagari}/u,
+  /\p{Script=Gujarati}/u,
+  /\p{Script=Gurmukhi}/u,
+  /\p{Script=Kannada}/u,
+  /\p{Script=Malayalam}/u,
+  /\p{Script=Oriya}/u,
+  /\p{Script=Tamil}/u,
+  /\p{Script=Telugu}/u,
+];
+
+function scriptOf(character: string): RegExp | undefined {
+  return ORTHOGRAPHIC_JOINER_SCRIPTS.find((script) => script.test(character));
+}
+
+/**
+ * Apply the refusal set with the small amount of context Unicode joiners need.
+ * U+200C/U+200D remain refused by the base predicate (the security default),
+ * but are accepted only between letters/marks in the same Indic or Arabic
+ * script. At a script boundary, or next to punctuation/Latin text, they stay
+ * refused so decorative and spoofing uses are still neutralised/rejected.
+ */
+export function isRefusedCodePointAt(text: string, index: number): boolean {
+  const point = text.codePointAt(index) ?? 0;
+  if (point !== 0x200c && point !== 0x200d) return isRefusedCodePoint(point);
+
+  const previous = Array.from(text.slice(0, index)).at(-1);
+  const next = Array.from(text.slice(index + 1))[0];
+  if (!previous || !next || !/[\p{L}\p{M}]/u.test(previous) || !/[\p{L}\p{M}]/u.test(next)) {
+    return true;
+  }
+  const previousScript = scriptOf(previous);
+  const nextScript = scriptOf(next);
+  return previousScript === undefined || previousScript !== nextScript;
+}
+
+/**
+ * Characters that carry meaning in a markup, template or shell-ish renderer.
+ *
+ * VISIBLE, unlike `isRefusedCodePoint`, and that is why they are a separate
+ * set: an invisible character can be deleted without changing what a string
+ * says, while deleting a visible one silently rewrites it. Both tiers must be
+ * handled, though: markup and template syntax such as `<img src=x onerror=...>`
+ * typed into a target role must not reach stored evidence verbatim.
+ *
+ * Shared for the same reason the code-point predicate is: `resume` REJECTS a
+ * title segment containing any of these at extraction and `matching`
+ * NEUTRALISES them when assembling stored evidence. The OPERATIONS
+ * differ deliberately; the SET must not, or a character refused at one
+ * boundary is renderable at the other.
+ *
+ * `$` is deliberately absent. A refused character costs a resume title segment
+ * entirely, and "Engineer, $1B Platform segment" is a real title that must not
+ * be dropped silently. Template interpolation needs `${`, and `{` is refused,
+ * so `${...}` is still defused without it.
+ */
+export const REFUSED_SYNTAX: ReadonlySet<string> = new Set([
+  '<',
+  '>',
+  '{',
+  '}',
+  '`',
+  '\\',
+  '"',
+  '=',
+  '|',
+]);
+
+/**
+ * Constrain text that is about to become stored, renderable evidence.
+ *
+ * NEUTRALISES rather than rejects, deliberately. A match `reason` explains a
+ * score; discarding it because one character was hostile would leave a number
+ * nobody can audit, which is the failure the reason string exists to prevent.
+ *
+ * Invisible refused code points are REMOVED — they say nothing, so removing
+ * them cannot change what a legitimate reason says. Refused syntax characters
+ * are replaced with a SPACE rather than removed, because deleting them would
+ * join neighbouring words into text the user never wrote, and because a
+ * space is what keeps `<img src=x onerror=alert(1)> Engineer` readable as the
+ * harmless words it then is. Whitespace is collapsed afterwards, so a run of
+ * them never widens the result.
+ */
+export function constrainEvidenceText(text: string): string {
+  let out = '';
+  for (let index = 0; index < text.length;) {
+    const character = String.fromCodePoint(text.codePointAt(index) ?? 0);
+    if (isRefusedCodePointAt(text, index)) {
+      index += character.length;
+      continue;
+    }
+    out += REFUSED_SYNTAX.has(character) ? ' ' : character;
+    index += character.length;
+  }
+  return out.replace(/\s+/g, ' ').trim();
+}

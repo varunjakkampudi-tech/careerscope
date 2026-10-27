@@ -1,0 +1,29 @@
+.fileInput {
+  min-height: 44px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.fileInput::file-selector-button {
+  min-height: 44px;
+  margin: -5px 10px -5px -5px;
+  padding: 8px 12px;
+  border: 0;
+  border-right: 1px solid var(--border);
+  background: var(--canvas);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.fileInput::file-selector-button:hover {
+  background: var(--surface);
+}
+
+.uploadHint {
+  flex-basis: 100%;
+  color: var(--muted);
+  font-size: 13px;
+}

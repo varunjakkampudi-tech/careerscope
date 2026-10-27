@@ -1,0 +1,27 @@
+[Unit]
+Description=CareerScope scheduler health (are the six host timers still firing?)
+# Deliberately no After=/Requires=docker.service: this reads systemd only,
+# and must still be able to report when Docker itself is broken.
+
+[Service]
+Type=oneshot
+# Reuses CS-24's webhook env file - one alerting channel, one place to
+# configure it. SCHEDULER_WEBHOOK_URL may be set there to separate this
+# alert from the others; it falls back to MONITOR_WEBHOOK_URL.
+EnvironmentFile=-/etc/careerscope-monitor.env
+ExecStart=/usr/local/bin/careerscope-scheduler-health.sh
+
+# A non-zero exit is the expected way this unit reports "a watched timer is
+# overdue", so systemd marking it failed is correct and intended: it makes
+# the condition visible in `systemctl list-units --failed` as well as in the
+# webhook alert. Exit 1 = a watched timer is unhealthy; exit 2 = this check
+# could not verify at all. No SuccessExitStatus= override is set on purpose:
+# only exit 0 may count as success here.
+
+# Reads systemd state only - no docker socket, no network except the webhook
+# POST - so it can be sandboxed more tightly than careerscope-monitor.service.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/careerscope-monitor

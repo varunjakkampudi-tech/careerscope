@@ -1,0 +1,268 @@
+.panel {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: var(--dash-card-radius);
+  box-shadow: 0 2px 8px rgba(13, 18, 36, 0.04);
+  padding: var(--dash-space-6);
+  margin-bottom: var(--dash-space-6);
+  color: var(--dash-ink);
+}
+
+:global([data-theme='dark']) .panel {
+  box-shadow: none;
+}
+
+.heading,
+.roundHeader,
+.formActions,
+.inlineAdd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dash-space-3);
+}
+
+.heading {
+  align-items: flex-start;
+  margin-bottom: var(--dash-space-4);
+}
+
+.heading h2,
+.form h3,
+.roundHeader h3 {
+  margin: 0;
+}
+
+.heading p,
+.roundHeader p {
+  margin: var(--dash-space-1) 0 0;
+  color: var(--dash-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.roundList {
+  display: grid;
+  gap: var(--dash-space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.round {
+  display: grid;
+  gap: var(--dash-space-3);
+  border: 1px solid var(--dash-border);
+  border-radius: 10px;
+  padding: var(--dash-space-4);
+}
+
+.roundHeader {
+  align-items: flex-start;
+}
+
+.roundHeader h3 {
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+
+.status {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--dash-surface-subtle);
+  color: var(--dash-ink);
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 4px 10px;
+  text-transform: capitalize;
+}
+
+.detailLine,
+.notes,
+.notice,
+.empty {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.notes {
+  white-space: pre-wrap;
+}
+
+.notice,
+.empty {
+  color: var(--dash-muted);
+}
+
+.checklist {
+  display: grid;
+  gap: var(--dash-space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+.form {
+  display: grid;
+  gap: var(--dash-space-4);
+  margin-top: var(--dash-space-5);
+  padding-top: var(--dash-space-5);
+  border-top: 1px solid var(--dash-border);
+}
+
+.form label {
+  display: grid;
+  gap: var(--dash-space-1);
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form input:not([type='checkbox']),
+.form select,
+.form textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--dash-control-border);
+  border-radius: 8px;
+  background: var(--dash-surface);
+  color: var(--dash-ink);
+  font: inherit;
+}
+
+.form select[multiple] {
+  min-height: 100px;
+}
+
+.form textarea {
+  resize: vertical;
+}
+
+.form input:focus-visible,
+.form select:focus-visible,
+.form textarea:focus-visible,
+.primaryButton:focus-visible,
+.secondaryButton:focus-visible,
+.iconButton:focus-visible {
+  outline: 3px solid var(--dash-focus);
+  outline-offset: 2px;
+}
+
+.form fieldset {
+  display: grid;
+  gap: var(--dash-space-3);
+  min-width: 0;
+  margin: 0;
+  padding: var(--dash-space-3);
+  border: 1px solid var(--dash-border);
+  border-radius: 8px;
+}
+
+.form legend {
+  padding-inline: 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.contact {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: var(--dash-space-2);
+}
+
+.checkItem {
+  display: flex;
+  align-items: center;
+  gap: var(--dash-space-2);
+  min-width: 0;
+  font-size: 14px;
+}
+
+.checkItem span {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+.checkItem input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--dash-primary);
+}
+
+.inlineAdd {
+  align-items: end;
+  justify-content: flex-start;
+}
+
+.inlineAdd label {
+  flex: 1;
+}
+
+.primaryButton,
+.secondaryButton,
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--dash-control-border);
+  border-radius: 8px;
+  background: var(--dash-surface);
+  color: var(--dash-ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primaryButton {
+  background: var(--dash-primary);
+  border-color: var(--dash-primary);
+  color: white;
+}
+
+.iconButton {
+  width: 44px;
+  padding: 8px;
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled,
+.iconButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (max-width: 680px) {
+  .panel {
+    padding: var(--dash-space-4);
+  }
+
+  .heading,
+  .formActions,
+  .inlineAdd {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .contact {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .contact label:first-child,
+  .contact label:nth-child(2),
+  .contact label:nth-child(3) {
+    grid-column: 1;
+  }
+
+  .contact .iconButton {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+  }
+}

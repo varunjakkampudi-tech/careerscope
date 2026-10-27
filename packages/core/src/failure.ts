@@ -1,0 +1,52 @@
+/**
+ * Failure logging for queue and worker code. Keeps the cause of an error visible in logs without
+ * recording personal data: messages are scrubbed of emails, URLs with credentials, bearer tokens,
+ * key=value secrets and long opaque strings before they are written.
+ */
+
+import { logger } from './runtime.js';
+
+/** Identifies the work that failed. All fields are optional because not every catch site knows them. */
+export type FailureContext = {
+  commandId?: string;
+  executionId?: string;
+  fence?: number;
+  attempt?: number;
+};
+
+const maxMessageLength = 300;
+
+/** Removes emails, credentials, tokens and long opaque strings from an error message and bounds its length. */
+export function scrubMessage(message: string) {
+  return message
+    .replace(/[a-z][a-z0-9+.-]*:\/\/[^\s/@]+@[^\s]+/gi, '[url]')
+    .replace(/[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+/g, '[email]')
+    .replace(/\bbearer\s+[^\s]+/gi, 'Bearer [token]')
+    .replace(
+      /\b([a-z0-9_-]*(?:token|secret|password|passwd|key|authorization|cookie|otp|code)[a-z0-9_-]*)\s*[=:]\s*[^\s,;&]+/gi,
+      '$1=[redacted]',
+    )
+    .replace(/\b[A-Za-z0-9_+/=-]{32,}\b/g, '[redacted]')
+    .slice(0, maxMessageLength);
+}
+
+/** Returns the error name and a scrubbed message. Non-Error values are reported by type only. */
+export function describeError(error: unknown) {
+  if (error instanceof Error) {
+    return { errorName: error.name, errorMessage: scrubMessage(error.message) };
+  }
+  return { errorName: typeof error, errorMessage: '' };
+}
+
+/**
+ * Logs a caught error with its name, a scrubbed message and the command, execution, fence and attempt
+ * when known. Call it in a catch block before rethrowing or translating the error. Never pass request
+ * bodies or personal data in `note`.
+ */
+export function logFailure(
+  error: unknown,
+  context: FailureContext = {},
+  note = 'Operation failed',
+) {
+  logger.error({ ...describeError(error), ...context }, note);
+}

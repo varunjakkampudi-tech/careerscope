@@ -1,0 +1,29 @@
+{
+  "name": "@careerscope/web",
+  "version": "3.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1 --port 5280",
+    "build": "node scripts/build-with-csp.mjs",
+    "start": "next start --hostname 127.0.0.1 --port 5280",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@careerscope/core": "3.0.0",
+    "@careerscope/shared": "3.0.0",
+    "@tanstack/react-query": "^5.62.7",
+    "lucide-react": "^1.43.0",
+    "next": "16.4.3",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.3",
+    "eslint-plugin-jsx-a11y": "^6.10.0",
+    "typescript": "^5"
+  }
+}

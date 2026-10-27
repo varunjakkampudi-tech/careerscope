@@ -1,0 +1,106 @@
+.page {
+  display: grid;
+  gap: 20px;
+  max-width: 960px;
+}
+
+.header {
+  display: grid;
+  gap: 8px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(1.7rem, 4vw, 2.25rem);
+}
+
+.header p,
+.panel > p {
+  margin: 0;
+  color: var(--dash-muted);
+  line-height: 1.6;
+}
+
+.eyebrow {
+  color: var(--dash-link) !important;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.panel {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--dash-border);
+  border-radius: var(--dash-card-radius);
+  background: var(--dash-surface);
+}
+
+.panel h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.dimensions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.dimension {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--dash-border);
+  border-radius: 10px;
+  background: var(--dash-surface-subtle);
+}
+
+.dimension dt {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-weight: 700;
+}
+
+.dimension dt strong {
+  flex: 0 0 auto;
+  color: var(--dash-link);
+}
+
+.dimension dd {
+  margin: 8px 0 0;
+  color: var(--dash-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.limits {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 22px;
+  line-height: 1.55;
+}
+
+.backLink {
+  margin: 0;
+}
+
+.backLink a {
+  color: var(--dash-link);
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .dimensions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel {
+    padding: 16px;
+  }
+}

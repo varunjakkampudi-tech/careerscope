@@ -1,0 +1,29 @@
+[Unit]
+Description=CareerScope host monitor (health, workers, durable-work backlog)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+# Populate MONITOR_WEBHOOK_URL (and any other MONITOR_* override) here rather
+# than in the unit file itself, so the webhook URL never lands in `systemctl
+# cat` output or version control.
+EnvironmentFile=-/etc/careerscope-monitor.env
+ExecStart=/usr/local/bin/careerscope-monitor.sh
+
+# Defense in depth: this runs as root (docker exec/inspect need it), but
+# nothing it does needs anything beyond outbound network, the docker socket,
+# and its own state directory. Security review finding (P2): a root service
+# with no sandboxing is a needless blast-radius increase even with no known
+# exploit path today.
+#
+# ProtectSystem=full (not strict): this process's whole purpose is talking to
+# the Docker socket via `docker exec`/`docker inspect`, and strict's broader
+# read-only scope has not been verified against a live host's socket path.
+# full is still real hardening (read-only /usr, /boot, /efi, /etc) without
+# that risk. Revisit once verified against production.
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/careerscope-monitor

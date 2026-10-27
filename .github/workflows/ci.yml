@@ -1,0 +1,360 @@
+name: CareerScope CI
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: Test suite to run in isolated GitHub-hosted services
+        type: choice
+        required: true
+        default: all
+        options:
+          - all
+          - checks
+          - integration
+          - browser
+          - cross-browser
+          - domain
+          - security
+          - performance
+          - soak
+          - recovery
+      browser:
+        description: Browser engine for the browser suite (nightly always runs all three)
+        type: choice
+        required: true
+        default: chromium
+        options:
+          - chromium
+          - firefox
+          - webkit
+          - all
+      scenario:
+        description: Optional focused diagnostic; full remains the acceptance default
+        type: choice
+        required: true
+        default: full
+        options:
+          - full
+          - notification-panel-close-before-mutation
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '24'
+
+concurrency:
+  group: careerscope-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    name: Format, gates, domain, build, and security
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: >-
+      github.event_name != 'workflow_dispatch' ||
+      contains(fromJSON('["all","checks","domain","security"]'), inputs.suite)
+    steps:
+      - name: Check out the triggering revision
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+
+      - name: Set up Node 24 with lockfile caching
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Run policy gates and the full local gate (npm run check)
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","checks"]'), inputs.suite)
+        run: npm run gates:test
+
+      - name: Run domain tests
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","domain"]'), inputs.suite)
+        run: npm run test:domain
+
+      - name: Build production artifacts
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","checks"]'), inputs.suite)
+        run: npm run build
+
+      - name: Reject unaccepted dependency vulnerabilities
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","checks","security"]'), inputs.suite)
+        run: npm audit --audit-level=high
+
+      - name: Scan for accidentally tracked secrets and private data
+        if: github.event_name == 'workflow_dispatch' && inputs.suite == 'security'
+        run: npm run privacy:check
+
+      - name: Summarize static-check provenance
+        if: always()
+        env:
+          SUITE: ${{ github.event_name == 'workflow_dispatch' && inputs.suite || 'scheduled-push-or-pull-request' }}
+          RESULT: ${{ job.status }}
+        run: |
+          {
+            echo "### CareerScope static CI evidence"
+            echo "- Event: \`${GITHUB_EVENT_NAME}\`"
+            echo "- Ref: \`${GITHUB_REF}\`"
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- Suite selection: \`${SUITE}\`"
+            echo "- Job result: \`${RESULT}\`"
+            echo "- Individual command output is retained in this workflow run's logs."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  services:
+    name: PostgreSQL, Redis, browser, recovery, and performance suites
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')) ||
+      (github.event_name == 'workflow_dispatch' &&
+      contains(fromJSON('["all","integration","browser","cross-browser","performance","soak","recovery"]'), inputs.suite))
+    env:
+      NODE_ENV: test
+      DEPLOYMENT_ENVIRONMENT: development
+      APP_ORIGIN: http://localhost:5280
+      REGISTRATION_ENABLED: 'false'
+      TEST_ACCESS_MODE: local
+      DATABASE_URL: postgresql://careerscope:careerscope_ci_only_synthetic@127.0.0.1:5432/careerscope
+      REDIS_URL: redis://127.0.0.1:6379
+      QUEUE_REDIS_URL: redis://127.0.0.1:6380
+      SEARCH_QUEUE_TRANSPORT: bullmq
+      SEARCH_QUEUE_REDIS_URL: redis://127.0.0.1:6380
+      CAREERSCOPE_POSTGRES_CONTAINER: careerscope-ci-postgres
+      CAREERSCOPE_UI_BROWSER: >-
+        ${{ (github.event_name == 'schedule' || github.event_name == 'pull_request') && 'all' || (github.event_name == 'workflow_dispatch' && contains(fromJSON('["all","cross-browser"]'), inputs.suite) && 'all') || (github.event_name == 'workflow_dispatch' && inputs.browser || 'chromium') }}
+      CAREERSCOPE_UI_SCENARIO: ${{ github.event_name == 'workflow_dispatch' && inputs.scenario != 'full' && inputs.scenario || '' }}
+    steps:
+      - name: Check out the triggering revision
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+
+      - name: Set up Node 24 with lockfile caching
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Validate focused diagnostic selection
+        if: env.CAREERSCOPE_UI_SCENARIO != ''
+        env:
+          SELECTED_SUITE: ${{ inputs.suite }}
+        run: |
+          test "$SELECTED_SUITE" = browser
+          test "$CAREERSCOPE_UI_BROWSER" = chromium
+          test "$CAREERSCOPE_UI_SCENARIO" = notification-panel-close-before-mutation
+
+      - name: Validate passive lifecycle instrumentation
+        if: env.CAREERSCOPE_UI_SCENARIO != ''
+        run: node --import tsx --test scripts/notification-lifecycle.test.mjs
+
+      - name: Create synthetic ephemeral test configuration
+        run: |
+          cat > .env <<'EOF'
+          NODE_ENV=test
+          DEPLOYMENT_ENVIRONMENT=development
+          APP_ORIGIN=http://localhost:5280
+          REGISTRATION_ENABLED=false
+          TEST_ACCESS_MODE=local
+          DATABASE_URL=postgresql://careerscope:careerscope_ci_only_synthetic@127.0.0.1:5432/careerscope
+          REDIS_URL=redis://127.0.0.1:6379
+          QUEUE_REDIS_URL=redis://127.0.0.1:6380
+          SEARCH_QUEUE_TRANSPORT=bullmq
+          SEARCH_QUEUE_REDIS_URL=redis://127.0.0.1:6380
+          EOF
+
+      - name: Start isolated PostgreSQL and Redis services
+        run: |
+          docker run --detach --rm --name careerscope-ci-postgres --publish 127.0.0.1:5432:5432 --memory 2g --cpus 2 --pids-limit 256 --security-opt no-new-privileges:true --tmpfs /var/lib/postgresql/data:rw,size=1g --env POSTGRES_USER=careerscope --env POSTGRES_PASSWORD=careerscope_ci_only_synthetic --env POSTGRES_DB=careerscope postgres:17.6-alpine@sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94
+          docker run --detach --rm --name careerscope-ci-rate-limit --publish 127.0.0.1:6379:6379 redis:7.4.5-alpine@sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08 redis-server --appendonly yes --maxmemory-policy noeviction
+          docker run --detach --rm --name careerscope-ci-queue --publish 127.0.0.1:6380:6379 redis:7.4.5-alpine@sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08 redis-server --appendonly yes --maxmemory-policy noeviction
+          postgres_ready=false
+          for attempt in $(seq 1 60); do
+            if docker exec careerscope-ci-postgres pg_isready -U careerscope -d careerscope >/dev/null 2>&1; then
+              postgres_ready=true
+              break
+            fi
+            sleep 1
+          done
+          if [ "$postgres_ready" != true ]; then
+            echo "PostgreSQL readiness check failed" >&2
+            exit 1
+          fi
+          echo "PostgreSQL readiness verified"
+          for container in careerscope-ci-rate-limit careerscope-ci-queue; do
+            ready=false
+            for attempt in $(seq 1 30); do
+              if [ "$(docker exec "$container" redis-cli ping 2>/dev/null || true)" = "PONG" ]; then
+                ready=true
+                break
+              fi
+              sleep 1
+            done
+            if [ "$ready" != true ]; then
+              echo "Redis readiness check failed: $container" >&2
+              exit 1
+            fi
+            echo "Redis readiness verified: $container"
+            appendonly="$(docker exec "$container" redis-cli --raw CONFIG GET appendonly | tr -d '\r' | tail -n 1)"
+            if [ "$appendonly" != yes ]; then
+              echo "Redis appendonly configuration failed: $container" >&2
+              exit 1
+            fi
+            echo "Redis appendonly configuration verified: $container"
+            eviction_policy="$(docker exec "$container" redis-cli --raw CONFIG GET maxmemory-policy | tr -d '\r' | tail -n 1)"
+            if [ "$eviction_policy" != noeviction ]; then
+              echo "Redis maxmemory-policy verification failed: $container" >&2
+              exit 1
+            fi
+            echo "Redis noeviction policy verified: $container"
+            persistence_info="$(docker exec "$container" redis-cli --raw INFO persistence | tr -d '\r')"
+            if ! printf '%s\n' "$persistence_info" | grep -qx 'aof_enabled:1'; then
+              echo "Redis AOF runtime persistence verification failed: $container" >&2
+              exit 1
+            fi
+            echo "Redis AOF runtime persistence verified: $container"
+          done
+
+      - name: Build application and worker packages
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration","browser","cross-browser","performance","soak","recovery"]'), inputs.suite)
+        run: npm run build
+
+      - name: Start production frontend for browser acceptance
+        if: >-
+          github.event_name == 'schedule' ||
+          github.event_name == 'pull_request' ||
+          (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')) ||
+          (github.event_name == 'workflow_dispatch' &&
+          contains(fromJSON('["all","browser","cross-browser"]'), inputs.suite))
+        run: |
+          cd apps/web
+          if [ "$CAREERSCOPE_UI_SCENARIO" = notification-panel-close-before-mutation ]; then
+            CAREERSCOPE_NOTIFICATION_PROXY_DIAGNOSTICS=1 node --import "$GITHUB_WORKSPACE/scripts/notification-lifecycle.mjs" ../../node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 5280 > "$RUNNER_TEMP/careerscope-web.log" 2>&1 &
+          else
+            node ../../node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 5280 > "$RUNNER_TEMP/careerscope-web.log" 2>&1 &
+          fi
+          echo $! > "$RUNNER_TEMP/careerscope-web.pid"
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:5280/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/careerscope-web.log"
+          exit 1
+
+      - name: Run PostgreSQL and Redis integration tests
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration"]'), inputs.suite)
+        run: npm run test:integration
+
+      - name: Install selected Playwright browser and system dependencies
+        if: >-
+          github.event_name == 'schedule' ||
+          github.event_name == 'pull_request' ||
+          (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')) ||
+          (github.event_name == 'workflow_dispatch' &&
+          contains(fromJSON('["all","browser","cross-browser"]'), inputs.suite))
+        run: |
+          if [ "$CAREERSCOPE_UI_BROWSER" = all ]; then
+            npx playwright install --with-deps
+          else
+            npx playwright install --with-deps "$CAREERSCOPE_UI_BROWSER"
+          fi
+
+      - name: Run browser, axe accessibility, keyboard, and responsive checks
+        if: >-
+          github.event_name == 'schedule' ||
+          github.event_name == 'pull_request' ||
+          (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')) ||
+          (github.event_name == 'workflow_dispatch' &&
+          contains(fromJSON('["all","browser","cross-browser"]'), inputs.suite))
+        run: npm run test:ui
+
+      - name: Report passive Next.js notification lifecycle observations
+        if: always() && env.CAREERSCOPE_UI_SCENARIO == 'notification-panel-close-before-mutation'
+        run: node scripts/notification-lifecycle.mjs --read-log "$RUNNER_TEMP/careerscope-web.log"
+
+      - name: Run isolated performance regression test
+        if: github.event_name == 'workflow_dispatch' && contains(fromJSON('["all","performance"]'), inputs.suite)
+        run: npm run test:performance
+
+      - name: Run disposable-environment soak test
+        if: github.event_name == 'workflow_dispatch' && contains(fromJSON('["all","soak"]'), inputs.suite)
+        run: npm run test:soak
+
+      - name: Run isolated recovery checks
+        if: github.event_name == 'workflow_dispatch' && contains(fromJSON('["all","recovery"]'), inputs.suite)
+        run: |
+          npm run test:queue-runtime
+          npm run test:database-recovery
+          npm run test:crash-recovery
+          npm run test:full-disk
+
+      - name: Remove ephemeral database and Redis containers
+        if: always()
+        run: |
+          for container in careerscope-ci-postgres careerscope-ci-rate-limit careerscope-ci-queue; do
+            if docker container inspect "$container" >/dev/null 2>&1; then
+              docker container rm --force "$container"
+            fi
+          done
+
+      - name: Stop production frontend test server
+        if: always()
+        run: |
+          pid_file="$RUNNER_TEMP/careerscope-web.pid"
+          if [ -f "$pid_file" ]; then
+            pid="$(cat "$pid_file")"
+            if kill -0 "$pid" 2>/dev/null; then
+              kill "$pid"
+            fi
+          fi
+
+      - name: Summarize run provenance and test scope
+        if: always()
+        env:
+          SUITE: ${{ github.event_name == 'workflow_dispatch' && inputs.suite || 'scheduled-push-or-pull-request' }}
+          UI_BROWSER: ${{ env.CAREERSCOPE_UI_BROWSER }}
+          UI_SCENARIO: ${{ env.CAREERSCOPE_UI_SCENARIO }}
+          RESULT: ${{ job.status }}
+        run: |
+          {
+            echo "### CareerScope CI evidence"
+            echo "- Event: \`${GITHUB_EVENT_NAME}\`"
+            echo "- Ref: \`${GITHUB_REF}\`"
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- Suite selection: \`${SUITE}\`"
+            echo "- Browser selection: \`${UI_BROWSER}\`"
+            echo "- Focused scenario (empty means full): \`${UI_SCENARIO}\`"
+            echo "- Job result: \`${RESULT}\`"
+            echo "- Environment: loopback-only disposable PostgreSQL/Redis containers on the ephemeral runner; no staging or production access"
+            echo "- Result details: see individual job steps; skipped suites are not represented as passing"
+            echo "- Sensitive test data/screenshots are not uploaded as workflow artifacts"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,259 @@
+# API Surface (CareerScope)
+
+HTTP endpoints registered by the current API source. Derived by reading
+[apps/api/src/app.ts](../apps/api/src/app.ts), which registers all of them
+in one file. Source changes require deployment before they affect a hosted API.
+
+## Interactive OpenAPI Documentation
+
+The CareerScope source includes authenticated Swagger UI at `/api/docs/`, with the
+OpenAPI 3.0.3 specification at `/api/docs/json` and `/api/docs/yaml`. This is
+available only after running the updated API; adding it to source does not
+deploy it. Sign in through the application first, then open `/api/docs/` on
+that same origin. Expand an operation, select **Try it out**, supply its input,
+and select **Execute**. These are real operations, not a sandbox: use synthetic
+data for verification. Logout and password changes invalidate the current session.
+
+The browser uses the existing HttpOnly cookie and fetches a fresh CSRF token
+from `/api/session` before each authenticated mutation. Do not paste cookies or
+tokens into Swagger's authorization controls. The browser supplies `Origin`;
+the API still enforces its exact match. Idempotent operations require an
+`Idempotency-Key`: reuse one only to retry the same input. Resume uploads use
+raw `application/octet-stream`, not multipart form data. SSE output is buffered
+by Try It Out until the connection closes, rather than displayed as live events.
+
+The UI, redirects, JSON/YAML and local assets all require a valid session and
+return `Cache-Control: no-store`. External validation, query-string UI
+configuration and persistent authorization are disabled. Requests are limited to
+same-origin `/api/` URLs. The docs-only CSP allows local scripts/styles and
+inline style attributes; ordinary API security headers are unchanged.
+
+Schemas are added only by Swagger's documentation transform, not to Fastify's
+runtime validators or serializers. The regression in
+[database.integration.test.ts](../tests/integration/database.integration.test.ts) compares the spec
+to actual route registrations, including disabled resume capabilities. All
+resume routes remain registered when storage is disabled: listing reports
+`enabled: false`, while storage operations return 503. Cancellation depends on
+the injected `cancelUpload` capability, which the current `main.ts` adapter
+does not supply. The spec reports those configured capabilities and registration
+availability rather than hiding their routes.
+
+Dependencies are pinned to `@fastify/swagger` 9.8.1 and `@fastify/swagger-ui`
+6.1.1. The latter's published plugin metadata supports Fastify 5 and resolves
+a patched static server; older UI 5.x releases pull an affected static dependency.
+
+---
+
+## Global request contract
+
+Applied by a single `onRequest` hook, in this order:
+
+1. `Cache-Control: no-store` on every response.
+2. `/api/health` short-circuits here. Nothing below applies to it.
+3. **Origin check.** Any method other than `GET`, `HEAD` or `OPTIONS` must carry
+   `Origin` exactly equal to the configured app origin, or the request is
+   rejected `403 Origin denied`. A missing `Origin` fails this check.
+4. `/api/login`, `/api/register`, `/api/otp/request`, `/api/otp/verify` and
+   refresh short-circuit here — unauthenticated mutations still require Origin,
+   and step 3 has already run.
+5. **Session.** The opaque token in the `careerscope_CareerScope_session` cookie is looked up.
+   `/api/session` returns whatever it found, including "nothing".
+6. Everything else requires a session, or `401 Authentication required`.
+7. **CSRF.** Any non-`GET`/`HEAD`/`OPTIONS` request must carry `x-csrf-token`
+   matching the session's token, or `403 CSRF check failed`.
+
+Authenticated mutations require both a valid `Origin` and a valid CSRF token;
+login, OTP request/verification and the permanently unavailable legacy password
+registration route require Origin but not CSRF. `ownerId` is taken from the
+session, never from the request body or path.
+
+### Server limits
+
+| Setting             | Value                                                          |
+| ------------------- | -------------------------------------------------------------- |
+| `bodyLimit`         | 16 KiB (resume upload routes raise this to the resume maximum) |
+| `requestTimeout`    | 15 s                                                           |
+| `connectionTimeout` | 10 s                                                           |
+| `trustProxy`        | `false` — forwarded headers are never believed                 |
+
+### Error mapping
+
+| Condition                                         | Status | Body message                           |
+| ------------------------------------------------- | ------ | -------------------------------------- |
+| `ZodError`, `InvalidResumeUpload`                 | 400    | `Invalid request`                      |
+| `ProfileRevisionConflict`, `LeadRevisionConflict` | 409    | `Record changed; reload before saving` |
+| other `Conflict`                                  | 409    | `Idempotency conflict`                 |
+| `ResumeStorageLimit`                              | 507    | `Resume storage capacity reached`      |
+| payload too large                                 | 413    | `Request too large`                    |
+| anything unhandled                                | 500    | `Service unavailable`                  |
+
+Every error response carries `requestId`. Internal error detail is never returned;
+500s are logged server-side against that id.
+
+---
+
+## Endpoints
+
+`Auth` = requires a session. `CSRF` = requires `x-csrf-token` and `Origin`.
+
+### Health and session
+
+| Method | Path               | Auth | CSRF        | Notes                                                      |
+| ------ | ------------------ | ---- | ----------- | ---------------------------------------------------------- |
+| GET    | `/api/health`      | no   | no          | Exempt from every hook. Also exempt from maintenance mode. |
+| GET    | `/api/session`     | no   | no          | Returns the current session or absence of one              |
+| POST   | `/api/register`    | no   | Origin only | Always unavailable (404); signup uses guarded email OTP    |
+| POST   | `/api/login`       | no   | Origin only | Test-access account selection only                         |
+| POST   | `/api/otp/request` | no   | Origin only | Sign-in or explicitly configured signup challenge          |
+| POST   | `/api/otp/verify`  | no   | Origin only | Verifies a challenge and establishes an opaque session     |
+| POST   | `/api/logout`      | yes  | yes         |                                                            |
+
+### Account
+
+| Method | Path                                  | Auth | CSRF | Rate limit |
+| ------ | ------------------------------------- | ---- | ---- | ---------- |
+| POST   | `/api/account/sessions/revoke-others` | yes  | yes  | —          |
+
+The executable test-access API returns 404 for registration and password changes,
+regardless of REGISTRATION_ENABLED. The isolated legacy regression harness retains
+password contracts; it is not a public signup integration. Hosted selection also
+requires the staging password and private proxy assertion.
+
+### Profile
+
+| Method | Path               | Auth | CSRF |
+| ------ | ------------------ | ---- | ---- |
+| GET    | `/api/profile`     | yes  | no   |
+| PUT    | `/api/profile`     | yes  | yes  |
+| GET    | `/api/preparation` | yes  | no   |
+
+`PUT /api/profile` carries a revision. A stale revision is a 409, not a
+last-write-wins overwrite.
+
+The candidate profile may include the explicitly selected career segment
+`student`, `fresher`, or `experienced`. It is optional for legacy profiles and
+is not inferred from age or experience; it does not independently establish
+education, identity, eligibility or verification.
+
+Candidates may also save private, self-reported education entries, a graduation
+year (1900–2100), and project summaries. Each list accepts up to 20 non-empty
+entries of at most 200 characters. These claims are owner-scoped profile data;
+they are neither independently verified nor inputs to deterministic matching.
+Historical profile rows may omit these keys: profile reads preserve the stored
+shape, while the profile editor displays absent lists/year as blank. The first
+successful save writes the normalized empty lists if left blank. No data
+backfill is performed.
+
+Preparation is deterministic. External AI elaboration has been removed.
+
+### Resumes
+
+| Method | Path                       | Auth | CSRF | Rate limit  |
+| ------ | -------------------------- | ---- | ---- | ----------- |
+| GET    | `/api/resumes`             | yes  | no   | —           |
+| POST   | `/api/resumes`             | yes  | yes  | 5 / hour    |
+| GET    | `/api/resumes/:id`         | yes  | no   | —           |
+| POST   | `/api/resumes/:id/recover` | yes  | yes  | 10 / hour   |
+| POST   | `/api/resumes/:id/cancel`  | yes  | yes  | 20 / minute |
+| DELETE | `/api/resumes/:id`         | yes  | yes  | 20 / minute |
+
+`POST /api/resumes` takes `application/octet-stream`, requires an
+`Idempotency-Key` header, and returns `202` with the upload id and status. It
+returns `507` when storage capacity is exhausted, and `409` if the upload record
+changed underneath it. Client disconnect aborts the in-flight write.
+
+`cancel` and `delete` return `503` when the storage backend does not provide the
+corresponding capability, rather than silently doing nothing.
+
+### Leads
+
+| Method | Path                       | Auth | CSRF |
+| ------ | -------------------------- | ---- | ---- |
+| GET    | `/api/leads`               | yes  | no   |
+| POST   | `/api/leads`               | yes  | yes  |
+| GET    | `/api/leads/by-job/:jobId` | yes  | no   |
+| GET    | `/api/leads/:id`           | yes  | no   |
+| GET    | `/api/leads/:id/history`   | yes  | no   |
+| PUT    | `/api/leads/:id`           | yes  | yes  |
+
+Leads are revisioned like profiles; `PUT` with a stale revision is a 409.
+`lead_history` records every revision.
+
+Updates may carry nullable candidate-reported `applicationEvidence`: method,
+appliedAt (valid non-future ISO timestamp), confirmation, source and confidence.
+Entering an application lifecycle stage requires a report; existing legacy rows
+remain readable. Archive/restore preserves evidence, and history exposes the
+previous status and whether notes/evidence changed. Evidence is the candidate's
+claim, not an ATS event. Opening the application URL never mutates the status.
+
+### Searches
+
+| Method | Path                       | Auth | CSRF |
+| ------ | -------------------------- | ---- | ---- |
+| POST   | `/api/searches`            | yes  | yes  |
+| GET    | `/api/searches`            | yes  | no   |
+| GET    | `/api/searches/:id`        | yes  | no   |
+| POST   | `/api/searches/:id/cancel` | yes  | yes  |
+| GET    | `/api/searches/:id/export` | yes  | no   |
+| GET    | `/api/searches/:id/events` | yes  | no   |
+
+`POST /api/searches` is idempotent per owner on `idempotencyKey`, enforced by the
+`search_owner_key` unique index rather than by a read-then-write check.
+
+`GET /api/searches/:id/events` is the SSE stream. See
+[SSE](#server-sent-events).
+
+---
+
+## Owner isolation
+
+Every repository query is scoped by `ownerId` taken from the session. The
+database enforces this independently:
+
+- `saved_leads` has a unique `(ownerId, id)` which is the target of
+  `lead_history`'s composite foreign key, so history cannot reference another
+  owner's lead.
+- `resume_results` keys on `(ownerId, uploadId)` against `resume_uploads` for the
+  same reason.
+
+A guessed identifier belonging to another owner therefore returns 404, not the
+record.
+
+---
+
+## Server-sent events
+
+`GET /api/searches/:id/events`.
+
+- Authorized by session and scoped to the owner, like every other route.
+- Events carry a monotonic `sequence` from `run_events`, indexed by
+  `(ownerId, runId, sequence)`.
+- The client sends `Last-Event-ID` on reconnect and the server resumes after
+  that sequence.
+- Open streams are tracked in a `Map` and aborted on `preClose`, so a shutdown
+  does not leak connections.
+
+---
+
+## Market And Pipeline
+
+These are authenticated, owner-scoped, read-only routes derived from the owner's
+search observations and saved leads:
+
+| Method | Path                                | Input                                                             |
+| ------ | ----------------------------------- | ----------------------------------------------------------------- |
+| GET    | `/api/market/postings`              | Optional `limit`, default 50                                      |
+| GET    | `/api/market/postings/:fingerprint` | Posting fingerprint, 1-256 characters                             |
+| GET    | `/api/market/companies`             | Optional `limit`, default 25                                      |
+| GET    | `/api/pipeline`                     | None                                                              |
+| GET    | `/api/pipeline/stalled`             | Optional `days` (default 21, clamped 1-365), `limit` (default 50) |
+
+Market page limits are coerced, floored and capped at 200; non-finite or
+non-positive inputs use the default. These are observed owner data, not a
+public job corpus or inferred market predictions.
+
+## What is not here
+
+No admin endpoints, public/unauthenticated job browsing, skills aggregates or
+alerts. The owner-scoped market routes above do not provide a public company
+directory.

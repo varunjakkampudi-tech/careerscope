@@ -1,0 +1,335 @@
+import { describe, expect, it } from 'vitest';
+import {
+  DEFAULT_MATCH_THRESHOLD,
+  LOW_CONFIDENCE_SCORE_CEILING,
+  matchBreakdownSchema,
+} from '@careerscope/shared';
+import {
+  combine,
+  hardGate,
+  hasReadableDescription,
+  isFlaggedCompany,
+  MATCH_SCORING_VERSION,
+  scoreJob,
+} from './score.js';
+import { extractDemands } from './demands.js';
+import {
+  JAVA_HEAVY_JD,
+  NEAR_EXACT_JD,
+  NOW,
+  SNIPPET_JD,
+  candidate,
+  job,
+} from './matching.fixtures.js';
+
+const opts = { now: NOW, windowDays: 30 };
+
+/* -------------------------------------------------------------------------- */
+/* Score bands — the acceptance test for the whole engine                     */
+/* -------------------------------------------------------------------------- */
+
+describe('scoreJob — score bands', () => {
+  it('clears the 85% threshold on a JD written for this candidate', () => {
+    // The requirement that started the project: a genuinely matching posting has
+    // to reach the default threshold. The old engine topped out near 0.59.
+    const breakdown = scoreJob(
+      job({ title: 'Full Stack Software Engineer', descriptionText: NEAR_EXACT_JD }),
+      candidate(),
+      opts,
+    );
+
+    expect(breakdown.score).toBeGreaterThanOrEqual(DEFAULT_MATCH_THRESHOLD);
+    expect(breakdown.confidence).toBe('high');
+    expect(breakdown.excludedReason).toBeNull();
+    expect(breakdown.matchedSkills).toEqual(
+      expect.arrayContaining(['React', 'TypeScript', 'Node.js', 'REST API', 'Storybook']),
+    );
+  });
+
+  it('keeps a same-level, different-craft JD well under 60%', () => {
+    const breakdown = scoreJob(
+      job({
+        title: 'Senior Backend Engineer',
+        descriptionText: JAVA_HEAVY_JD,
+        location: 'Chennai, India',
+      }),
+      candidate(),
+      opts,
+    );
+
+    expect(breakdown.score).toBeLessThan(0.6);
+    expect(breakdown.missingSkills).toEqual(
+      expect.arrayContaining(['Java', 'Spring Boot', 'Kafka', 'Oracle DB']),
+    );
+  });
+
+  it('caps a snippet-only listing below the threshold however well it reads', () => {
+    // Every word in this snippet is a skill the candidate has. Without the clamp
+    // it would outrank postings whose full JD we actually read.
+    const breakdown = scoreJob(
+      job({
+        title: 'Full Stack Software Engineer',
+        descriptionText: SNIPPET_JD,
+        hasFullDescription: false,
+      }),
+      candidate(),
+      opts,
+    );
+
+    expect(breakdown.confidence).toBe('low');
+    expect(breakdown.score).toBeLessThanOrEqual(LOW_CONFIDENCE_SCORE_CEILING);
+    expect(breakdown.score).toBeLessThan(DEFAULT_MATCH_THRESHOLD);
+    // The clamp hides the heuristic score rather than rewriting it.
+    expect(breakdown.heuristicScore).toBeGreaterThan(breakdown.score);
+  });
+
+  it('caps a provider that claims a full description and returns two lines', () => {
+    const breakdown = scoreJob(
+      job({
+        title: 'Full Stack Software Engineer',
+        descriptionText: SNIPPET_JD,
+        hasFullDescription: true,
+      }),
+      candidate(),
+      opts,
+    );
+    expect(breakdown.confidence).toBe('low');
+  });
+
+  it('ranks the matching JD above the mismatched one', () => {
+    const good = scoreJob(
+      job({ title: 'Full Stack Software Engineer', descriptionText: NEAR_EXACT_JD }),
+      candidate(),
+      opts,
+    ).score;
+    const bad = scoreJob(
+      job({ title: 'Senior Backend Engineer', descriptionText: JAVA_HEAVY_JD }),
+      candidate(),
+      opts,
+    ).score;
+    expect(good - bad).toBeGreaterThan(0.25);
+  });
+});
+
+/* -------------------------------------------------------------------------- */
+/* Breakdown shape                                                            */
+/* -------------------------------------------------------------------------- */
+
+describe('scoreJob — breakdown', () => {
+  it('records the deterministic scoring version and leaves legacy version unknown', () => {
+    const current = scoreJob(job({ descriptionText: NEAR_EXACT_JD }), candidate(), opts);
+    expect(current.scoringVersion).toBe(MATCH_SCORING_VERSION);
+
+    const { scoringVersion: _scoringVersion, ...legacy } = current;
+    expect(matchBreakdownSchema.strict().parse(legacy).scoringVersion).toBeNull();
+  });
+
+  it('returns all seven dimensions with their weights and reasons', () => {
+    const breakdown = scoreJob(job({ descriptionText: NEAR_EXACT_JD }), candidate(), opts);
+    const keys = Object.keys(breakdown.dimensions).sort();
+    expect(keys).toEqual([
+      'compensation',
+      'experience',
+      'location',
+      'recency',
+      'seniority',
+      'skills',
+      'title',
+    ]);
+    for (const dimension of Object.values(breakdown.dimensions)) {
+      expect(dimension.score).toBeGreaterThanOrEqual(0);
+      expect(dimension.score).toBeLessThanOrEqual(1);
+      expect(dimension.reason).not.toBe('');
+    }
+  });
+
+  it('is the weighted mean of its dimensions', () => {
+    const breakdown = scoreJob(job({ descriptionText: NEAR_EXACT_JD }), candidate(), opts);
+    const expected = Object.values(breakdown.dimensions).reduce(
+      (sum, d) => sum + d.score * d.weight,
+      0,
+    );
+    expect(breakdown.heuristicScore).toBeCloseTo(expected, 3);
+  });
+
+  it('uses the neutral seniority baseline when the candidate has no seniority evidence', () => {
+    const breakdown = scoreJob(
+      job({ title: 'Senior Software Engineer', descriptionText: NEAR_EXACT_JD }),
+      candidate({ titles: [], yearsOfExperience: null }),
+      { ...opts, demands: { ...extractDemands(job()), seniority: 'senior' } },
+    );
+
+    expect(breakdown.dimensions.seniority.score).toBe(0.7);
+    expect(breakdown.dimensions.seniority.reason).toMatch(/no mismatch is applied/i);
+
+    const misclassifiedAsMismatch = combine({
+      ...breakdown.dimensions,
+      seniority: { ...breakdown.dimensions.seniority, score: 0.5 },
+    });
+    expect(breakdown.heuristicScore).toBeGreaterThan(misclassifiedAsMismatch);
+    expect(breakdown.heuristicScore - misclassifiedAsMismatch).toBeCloseTo(0.024, 3);
+  });
+
+  it('is deterministic', () => {
+    const args = [job({ descriptionText: NEAR_EXACT_JD }), candidate(), opts] as const;
+    expect(scoreJob(...args)).toEqual(scoreJob(...args));
+  });
+
+  // CS-22: resumeConsidered/resumeSkills must reach the breakdown honestly -
+  // "no resume" is a candidate-level fact, not something scoring can guess at.
+  it('reports resumeConsidered false when the candidate has no resume', () => {
+    const breakdown = scoreJob(
+      job({ descriptionText: NEAR_EXACT_JD }),
+      candidate({ resumeConsidered: false, resumeSkills: [] }),
+      opts,
+    );
+    expect(breakdown.resumeConsidered).toBe(false);
+    expect(breakdown.resumeSkills).toEqual([]);
+  });
+
+  it('reports only the resume skills that actually matched this job, not every resume skill', () => {
+    const breakdown = scoreJob(
+      job({ title: 'Full Stack Software Engineer', descriptionText: NEAR_EXACT_JD }),
+      candidate({ resumeConsidered: true, resumeSkills: ['React', 'Cobol'] }),
+      opts,
+    );
+    // React is in the JD (matched); Cobol is a resume skill this job never asked
+    // for, so it must not appear as if it moved this particular score.
+    expect(breakdown.resumeConsidered).toBe(true);
+    expect(breakdown.resumeSkills).toEqual(expect.arrayContaining(['React']));
+    expect(breakdown.resumeSkills).not.toEqual(expect.arrayContaining(['Cobol']));
+  });
+});
+
+/* -------------------------------------------------------------------------- */
+/* Gates and flags                                                            */
+/* -------------------------------------------------------------------------- */
+
+describe('hardGate', () => {
+  it('excludes an unwanted keyword and names it', () => {
+    const me = candidate({ excludeKeywords: ['Sales', 'unpaid'] });
+    const reason = hardGate(job({ title: 'Sales Engineer' }), me);
+    expect(reason).toMatch(/Sales/);
+  });
+
+  it('excludes a non-remote role for a remote-only candidate', () => {
+    expect(hardGate(job(), candidate({ remoteOnly: true }))).toMatch(/remote/i);
+  });
+
+  it('matches excluded terms as whole words, not internal substrings', () => {
+    const me = candidate({ excludeKeywords: ['intern', 'internship'] });
+    expect(
+      hardGate(job({ descriptionText: 'Build internal tools for international teams.' }), me),
+    ).toBeNull();
+    expect(hardGate(job({ title: 'Frontend Intern (React)' }), me)).toMatch(/intern/);
+    expect(hardGate(job({ title: 'Paid internship' }), me)).toMatch(/internship/);
+  });
+
+  it('treats punctuation in excluded terms literally', () => {
+    const me = candidate({ excludeKeywords: ['C++', 'security clearance'] });
+    expect(hardGate(job({ descriptionText: 'C++ experience required' }), me)).toMatch(/C\+\+/);
+    expect(hardGate(job({ descriptionText: 'C experience required' }), me)).toBeNull();
+    expect(hardGate(job({ descriptionText: 'Requires security clearance.' }), me)).toMatch(
+      /security clearance/,
+    );
+  });
+
+  it('excludes an employment type the candidate did not pick', () => {
+    expect(hardGate(job({ employmentType: 'internship' }), candidate())).toMatch(/internship/);
+  });
+
+  it('does not exclude a posting that never stated its employment type', () => {
+    expect(hardGate(job({ employmentType: null }), candidate())).toBeNull();
+  });
+
+  it('passes an ordinary listing', () => {
+    expect(hardGate(job(), candidate())).toBeNull();
+  });
+});
+
+describe('scoreJob — excluded listings', () => {
+  it('zeroes the score, keeps the reason and skips scoring', () => {
+    const me = candidate({ excludeKeywords: ['Backend'] });
+    const breakdown = scoreJob(
+      job({ title: 'Backend Engineer', descriptionText: NEAR_EXACT_JD }),
+      me,
+      opts,
+    );
+
+    expect(breakdown.score).toBe(0);
+    expect(breakdown.excludedReason).toMatch(/Backend/);
+    expect(breakdown.matchedSkills).toEqual([]);
+    // The drawer still renders — every dimension is present, just not scored.
+    expect(Object.keys(breakdown.dimensions)).toHaveLength(7);
+  });
+
+  // A hard gate must not swallow whether a resume was on file - an excluded
+  // listing's evidence should still say so accurately, not default silently.
+  it('still reports resumeConsidered accurately on a gated listing', () => {
+    const me = candidate({
+      excludeKeywords: ['Backend'],
+      resumeConsidered: true,
+      resumeSkills: ['React'],
+    });
+    const breakdown = scoreJob(
+      job({ title: 'Backend Engineer', descriptionText: NEAR_EXACT_JD }),
+      me,
+      opts,
+    );
+    expect(breakdown.resumeConsidered).toBe(true);
+    // An excluded listing was never scored against, so no resume skill can be
+    // credited with matching it - resumeSkills stays empty, unlike matchedSkills
+    // in a scored breakdown where it would be a real subset.
+    expect(breakdown.resumeSkills).toEqual([]);
+  });
+});
+
+describe('isFlaggedCompany', () => {
+  it('flags a company on the do-not-apply list without excluding it', () => {
+    const me = candidate({ excludeCompanies: ['Acme'] });
+    const breakdown = scoreJob(job({ descriptionText: NEAR_EXACT_JD }), me, opts);
+
+    expect(breakdown.flaggedCompany).toBe(true);
+    // Still scored and still shown — the user wants to know the role exists.
+    expect(breakdown.excludedReason).toBeNull();
+    expect(breakdown.score).toBeGreaterThan(0);
+  });
+
+  it('matches a shortened company name', () => {
+    expect(
+      isFlaggedCompany(
+        job({ company: { ...job().company, name: 'Acme Corp Pvt Ltd' } }),
+        candidate({ excludeCompanies: ['acme corp'] }),
+      ),
+    ).toBe(true);
+  });
+
+  it('compares on word boundaries, so "Meta" does not flag "Metabase"', () => {
+    const me = candidate({ excludeCompanies: ['Meta'] });
+    expect(isFlaggedCompany(job({ company: { ...job().company, name: 'Metabase' } }), me)).toBe(
+      false,
+    );
+    expect(
+      isFlaggedCompany(job({ company: { ...job().company, name: 'Meta Platforms' } }), me),
+    ).toBe(true);
+    expect(isFlaggedCompany(job({ company: { ...job().company, name: 'Meta' } }), me)).toBe(true);
+  });
+
+  it('does not flag an unrelated company', () => {
+    expect(isFlaggedCompany(job(), candidate({ excludeCompanies: ['Globex'] }))).toBe(false);
+  });
+
+  it('ignores blank entries rather than flagging everything', () => {
+    expect(isFlaggedCompany(job(), candidate({ excludeCompanies: ['  '] }))).toBe(false);
+  });
+});
+
+describe('hasReadableDescription', () => {
+  it('requires both the flag and enough text', () => {
+    expect(hasReadableDescription(job({ descriptionText: NEAR_EXACT_JD }))).toBe(true);
+    expect(hasReadableDescription(job({ descriptionText: SNIPPET_JD }))).toBe(false);
+    expect(
+      hasReadableDescription(job({ descriptionText: NEAR_EXACT_JD, hasFullDescription: false })),
+    ).toBe(false);
+  });
+});

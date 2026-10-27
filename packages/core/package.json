@@ -1,0 +1,32 @@
+{
+  "name": "@careerscope/core",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@careerscope/resume": "3.0.0",
+    "@careerscope/shared": "3.0.0",
+    "@node-rs/argon2": "^2.2.1",
+    "@thednp/dommatrix": "^3.1.2",
+    "bullmq": "^5.81.5",
+    "drizzle-orm": "^0.45.2",
+    "pg": "^8.23.0",
+    "pino": "^10.3.1",
+    "redis": "^6.2.1",
+    "yauzl": "^3.4.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/yauzl": "^3.4.0",
+    "jszip": "^3.10.2"
+  }
+}

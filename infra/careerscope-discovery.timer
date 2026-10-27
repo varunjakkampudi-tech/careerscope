@@ -1,0 +1,17 @@
+[Unit]
+Description=Run CareerScope scheduled discovery twice a day
+
+[Timer]
+# Twice a day (not once) gives 4 chances inside AC1's 48-hour "no user
+# interaction, sighting counts still increase" window even if a run is
+# skipped (owner disabled it mid-window) or fails - the same margin
+# reasoning as careerscope-monitor.timer's 5-minute interval against a
+# 15-minute detection window. Public job-aggregation endpoints already see
+# manual traffic at this rate; a handful of GETs against <=5 saved titles
+# twice daily is not scraping load.
+OnCalendar=*-*-* 06,18:00:00
+RandomizedDelaySec=600
+Persistent=true
+
+[Install]
+WantedBy=timers.target

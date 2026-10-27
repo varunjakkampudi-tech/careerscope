@@ -1,0 +1,64 @@
+.sourceOptions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 16px;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin: 0 0 16px;
+}
+
+:global(.history h2).historyHeading {
+  padding: 0;
+}
+
+.sourceOptions legend {
+  grid-column: 1 / -1;
+  margin-bottom: 2px;
+}
+
+.sourceOptions label {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 5px 0;
+  cursor: pointer;
+}
+
+.sourceOptions label > input {
+  flex: 0 0 18px;
+  width: 18px;
+  min-height: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+}
+
+/* No opacity here: the unavailable reason is inside this label and must keep
+   full text contrast. The disabled checkbox already signals the state. */
+.disabledSource {
+  cursor: not-allowed;
+}
+
+.discoverySelect {
+  width: min(100%, 320px);
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--dash-control-border, #7c879f);
+  border-radius: 5px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.discoverySelect:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (min-width: 600px) {
+  .sourceOptions {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+}

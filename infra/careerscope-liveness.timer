@@ -1,0 +1,13 @@
+[Unit]
+Description=Run the CareerScope lead liveness check daily
+
+[Timer]
+# Daily matches the checker's own default re-check window
+# (LIVENESS_RECHECK_HOURS=24) - checking more often than that would only
+# ever find the same leads not yet due again.
+OnCalendar=*-*-* 04:00:00
+RandomizedDelaySec=600
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,24 @@
+{
+    admin off
+    auto_https off
+    persist_config off
+}
+
+:8080 {
+    @invalid_host not host localhost 127.0.0.1
+    respond @invalid_host 421
+    request_body {
+        max_size 5242880
+    }
+    header -Server
+    reverse_proxy 127.0.0.1:5280 {
+        flush_interval -1
+        header_up -X-Forwarded-For
+        header_up -X-Forwarded-Host
+        header_up -X-Forwarded-Proto
+        transport http {
+            dial_timeout 3s
+            response_header_timeout 20s
+        }
+    }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "@careerscope/search-worker",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@careerscope/core": "3.0.0",
+    "@careerscope/matching": "3.0.0",
+    "@careerscope/providers": "3.0.0",
+    "@careerscope/shared": "3.0.0"
+  }
+}

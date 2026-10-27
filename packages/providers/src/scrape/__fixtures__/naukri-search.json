@@ -1,0 +1,209 @@
+{
+  "noOfJobs": 1759,
+  "jobDetails": [
+    {
+      "title": "Full Stack Developer",
+      "logoPath": "https://img.naukimg.com/logo_images/groups/v1/13832.gif",
+      "logoPathV3": "https://img.naukimg.com/logo_images/groups/v1/13832.gif",
+      "jobId": "200826920707",
+      "currency": "INR",
+      "footerPlaceholderLabel": "2 Days Ago",
+      "footerPlaceholderColor": "grey",
+      "companyName": "Infosys",
+      "isSaved": false,
+      "tagsAndSkills": "Full Stack,C#,Java,Angularjs,Css,Hibernate,Html,Node.Js",
+      "placeholders": [
+        {
+          "type": "experience",
+          "label": "3-5 Yrs"
+        },
+        {
+          "type": "salary",
+          "label": "Not disclosed"
+        },
+        {
+          "type": "location",
+          "label": "Bengaluru"
+        }
+      ],
+      "companyId": 410527,
+      "jdURL": "/job-listings-full-stack-developer-infosys-limited-bengaluru-3-to-5-years-200826920707",
+      "staticUrl": "infosys-jobs-careers-11244",
+      "ambitionBoxData": {
+        "Url": "https://www.ambitionbox.com/reviews/infosys-reviews?utm_campaign=srp_ratings&utm_medium=desktop&utm_source=naukri",
+        "ReviewsCount": 51365,
+        "AggregateRating": "3.5",
+        "Title": "Infosys Reviews by Employees"
+      },
+      "jobDescription": "Bachelor of Engineering,Intergrated course BCA+MCA,MCA",
+      "showMultipleApply": false,
+      "groupId": 13832,
+      "isTopGroup": 0,
+      "createdDate": 1788410209703,
+      "mode": "jp",
+      "board": "1",
+      "salaryDetail": {
+        "minimumSalary": 0,
+        "maximumSalary": 0,
+        "currency": "INR",
+        "hideSalary": true,
+        "variablePercentage": 0,
+        "minSalaryPerMonth": 0,
+        "maxSalaryPerMonth": 0,
+        "ctcBreakup": {}
+      },
+      "experienceText": "3-5 Yrs",
+      "minimumExperience": "3",
+      "maximumExperience": "5",
+      "applyByTime": "2:06 PM",
+      "companyApplyJob": false,
+      "walkinJob": false,
+      "segmentedTemplateId": "Template1",
+      "questionnaireIdPresent": false,
+      "brandedJD": {
+        "templateId": 15493
+      },
+      "roleCategoryGid": "1028",
+      "todaysJob": false,
+      "jobAgentEligle": true,
+      "segmentedQuestions": false,
+      "saved": false
+    },
+    {
+      "title": "Full stack Developer (ReactJS+Node JS)",
+      "logoPath": "https://img.naukimg.com/logo_images/groups/v1/223346.gif",
+      "logoPathV3": "https://img.naukimg.com/logo_images/groups/v1/223346.gif",
+      "jobId": "030926023934",
+      "currency": "INR",
+      "footerPlaceholderLabel": "2 Days Ago",
+      "footerPlaceholderColor": "grey",
+      "companyName": "Tata Consultancy Services",
+      "isSaved": false,
+      "tagsAndSkills": "Full stack Developer (ReactJS+Node JS),ReactJS,Redux,HTML5,Node.js,jQuery,Express JS,JavaScript",
+      "placeholders": [
+        {
+          "type": "experience",
+          "label": "6-11 Yrs"
+        },
+        {
+          "type": "salary",
+          "label": "Not disclosed"
+        },
+        {
+          "type": "location",
+          "label": "Bengaluru, Kolkata, Pune"
+        }
+      ],
+      "companyId": 892542,
+      "jdURL": "/job-listings-full-stack-developer-reactjs-node-js-tata-consultancy-services-kolkata-pune-bengaluru-6-to-11-years-030926023934",
+      "staticUrl": "tata-consultancy-services-jobs-careers-13542",
+      "ambitionBoxData": {
+        "Url": "https://www.ambitionbox.com/reviews/tcs-reviews?utm_campaign=srp_ratings&utm_medium=desktop&utm_source=naukri",
+        "ReviewsCount": 119847,
+        "AggregateRating": "3.2",
+        "Title": "TCS Reviews by Employees"
+      },
+      "jobDescription": "Should be able to provide solutions,Agile experience . Good-to-Have . mobile and web development experience,React GEL framework,AngularJS,Angular 2+",
+      "showMultipleApply": false,
+      "groupId": 223346,
+      "isTopGroup": 0,
+      "createdDate": 1788432472727,
+      "mode": "jp",
+      "board": "1",
+      "vacancy": 100,
+      "salaryDetail": {
+        "minimumSalary": 0,
+        "maximumSalary": 0,
+        "currency": "INR",
+        "hideSalary": true,
+        "variablePercentage": 0,
+        "minSalaryPerMonth": 0,
+        "maxSalaryPerMonth": 0,
+        "ctcBreakup": {}
+      },
+      "experienceText": "6-11 Yrs",
+      "minimumExperience": "6",
+      "maximumExperience": "11",
+      "applyByTime": "8:17 PM",
+      "companyApplyJob": false,
+      "walkinJob": false,
+      "segmentedTemplateId": "Template1",
+      "questionnaireIdPresent": true,
+      "brandedJD": {
+        "templateId": 2949
+      },
+      "roleCategoryGid": "1028",
+      "todaysJob": false,
+      "jobAgentEligle": true,
+      "segmentedQuestions": false,
+      "saved": false
+    },
+    {
+      "title": "Mern Full Stack Developer",
+      "logoPath": "https://img.naukimg.com/logo_images/groups/v1/2266110.gif",
+      "logoPathV3": "https://img.naukimg.com/logo_images/groups/v1/2266110.gif",
+      "jobId": "020926010034",
+      "currency": "INR",
+      "footerPlaceholderLabel": "3 Days Ago",
+      "footerPlaceholderColor": "grey",
+      "companyName": "CIEL HR",
+      "isSaved": false,
+      "tagsAndSkills": "Rest API Services,Javascript,Node.js,React.js,Python,Mern Stack,Node,AI",
+      "placeholders": [
+        {
+          "type": "experience",
+          "label": "8-10 Yrs"
+        },
+        {
+          "type": "salary",
+          "label": "Not disclosed"
+        },
+        {
+          "type": "location",
+          "label": "Bengaluru"
+        }
+      ],
+      "companyId": 2089678,
+      "jdURL": "/job-listings-mern-full-stack-developer-ciel-hr-bengaluru-8-to-10-years-020926010034",
+      "staticUrl": "ciel-hr-jobs-careers-2089678",
+      "jobDescription": "Required Qualifications. Bachelors or Masters degree in Computer Science Software Engineering Information Systems or related field. 5 years of experience in full stack software development. Strong experience in frontend development using modern frameworks such as React Angular or Vue. Strong experience in backend development using Nodejs Python. <br><br>Preferred Qualifications.",
+      "showMultipleApply": false,
+      "groupId": 2266110,
+      "isTopGroup": 0,
+      "createdDate": 1788325072902,
+      "consultant": true,
+      "hideClientName": true,
+      "clientHeadline": "CIEL HR",
+      "mode": "jp",
+      "clientLogo": "https://img.naukimg.com/logo_images/groups/v1/2266110.gif",
+      "board": "1",
+      "vacancy": 10,
+      "salaryDetail": {
+        "minimumSalary": 0,
+        "maximumSalary": 0,
+        "currency": "INR",
+        "hideSalary": true,
+        "variablePercentage": 0,
+        "minSalaryPerMonth": 0,
+        "maxSalaryPerMonth": 0,
+        "ctcBreakup": {}
+      },
+      "experienceText": "8-10 Yrs",
+      "minimumExperience": "8",
+      "maximumExperience": "10",
+      "applyByTime": "2:27 PM",
+      "companyApplyJob": false,
+      "walkinJob": false,
+      "segmentedTemplateId": "Template1",
+      "questionnaireIdPresent": true,
+      "brandedJD": {
+        "templateId": 19051
+      },
+      "roleCategoryGid": "1167",
+      "todaysJob": false,
+      "jobAgentEligle": true,
+      "segmentedQuestions": false,
+      "saved": false
+    }
+  ]
+}

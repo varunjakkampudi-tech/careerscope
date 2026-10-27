@@ -1,0 +1,155 @@
+'use client';
+
+import { useEffect, type ReactNode } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ApiError, api, SESSION_EXPIRED_EVENT } from '@/lib/api';
+import { ownerKey, useOwner, useSession } from '@/lib/session';
+import { useTheme } from '@/lib/theme';
+import { localizedText, useInterfaceLocale } from '@/lib/locale';
+import { hasUnsavedChanges } from '@/lib/unsaved-changes';
+import { clearAuthQueryCache } from '@/lib/query-cache';
+import {
+  DashboardMobileNav,
+  DashboardSidebar,
+  DashboardTopbar,
+  navKeyForPath,
+} from './dashboard-shell';
+import { ErrorState, LoadingState } from './ui-states';
+import styles from './dashboard-shell.module.css';
+
+// The one place CS-6 requires: every authenticated route renders through
+// this component, and it is the only place that decides whether private
+// content may render at all. An unauthenticated or still-resolving visit
+// never reaches `children` — it sees a neutral loading state or is bounced
+// to `/`, never so much as a flash of the shell or any page's data.
+export default function AuthenticatedShell({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const cache = useQueryClient();
+  const session = useSession();
+  const owner = useOwner();
+  const { theme, toggle } = useTheme();
+  const locale = useInterfaceLocale();
+  const t = (key: Parameters<typeof localizedText>[1]) => localizedText(locale, key);
+  const authenticated = session.data?.authenticated === true;
+  const profile = useQuery({
+    queryKey: ownerKey(owner, 'profile-accessibility'),
+    enabled: authenticated && !!owner,
+    queryFn: ({ signal }) => api<{ reducedMotion: boolean }>('/profile/accessibility', { signal }),
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: (failureCount, error) =>
+      !(error instanceof ApiError && error.status === 401) && failureCount < 1,
+  });
+  const reduceMotion = profile.data?.reducedMotion === true;
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (authenticated && reduceMotion) root.dataset.reducedMotion = 'true';
+    else delete root.dataset.reducedMotion;
+    return () => {
+      delete root.dataset.reducedMotion;
+    };
+  }, [authenticated, reduceMotion]);
+
+  useEffect(() => {
+    // CS-36 (review P3, 2026-09-25): this is the THIRD teardown path, and it
+    // was the only one that did not clear the cache. The other two — logout
+    // and SESSION_EXPIRED_EVENT — both call `cache.clear()` below. A session
+    // that resolves as unauthenticated WITHOUT a 401 (so `api()` never
+    // dispatches the expiry event) redirected to `/` while leaving every data
+    // key intact, so the next owner to sign in could be served the previous
+    // one's cached profile and leads. Narrow, because a 401 is the usual way
+    // a session ends — but a teardown path that skips the reset is exactly the
+    // kind of gap that stops being narrow after one unrelated refactor.
+    if (session.isSuccess && !authenticated) {
+      clearAuthQueryCache(cache);
+      router.replace('/');
+    }
+  }, [authenticated, cache, router, session.isSuccess]);
+
+  // The single 401 handler for every route (Independent Reviewer finding 2,
+  // 2026-09-23): previously three routes each implemented their own ad hoc
+  // detection and two routes — Resume and Settings — had none, leaving an
+  // expired session there stuck on an inline error with a Retry button that
+  // could only fail again. `api()` announces every 401 here; this is now the
+  // only place that resets the session and redirects, closing finding 3's
+  // two-redirect race at the same time.
+  //
+  // CS-36 (Independent Reviewer finding 2, 2026-09-24): a genuinely expired
+  // session cannot be usefully "waited out" — the confirm dialog below does
+  // not retry or extend anything, it only makes sure the owner is not
+  // silently redirected away from unsaved notes/profile edits without a
+  // chance to notice, matching the discard-confirmation pattern already
+  // used for in-app navigation in saved-leads.tsx and profile-editor.tsx.
+  useEffect(() => {
+    const onExpired = () => {
+      if (hasUnsavedChanges() && !window.confirm(localizedText(locale, 'sessionExpired'))) return;
+      clearAuthQueryCache(cache);
+      router.replace('/?expired=1');
+    };
+    window.addEventListener(SESSION_EXPIRED_EVENT, onExpired);
+    return () => window.removeEventListener(SESSION_EXPIRED_EVENT, onExpired);
+  }, [cache, router, locale]);
+
+  // The single sign-out action every authenticated route can reach through
+  // the shared topbar, replacing the one copy that used to live in the old
+  // monolithic page.tsx header.
+  const logout = useMutation({
+    mutationFn: () =>
+      api('/logout', { method: 'POST', headers: { 'x-csrf-token': session.data?.csrf ?? '' } }),
+    onSuccess: async () => {
+      clearAuthQueryCache(cache);
+      // Logout changes the owner-discovery query just as login does. Refresh
+      // it explicitly after clearing private cached state.
+      await session.refetch();
+      router.replace('/');
+    },
+  });
+
+  if (session.isPending) {
+    return (
+      <div lang={locale}>
+        <LoadingState message={t('loadingWorkspace')} />
+      </div>
+    );
+  }
+  if (session.isError) {
+    return (
+      <div lang={locale}>
+        <ErrorState
+          title={t('workspaceUnavailable')}
+          message={t('localServiceError')}
+          onRetry={() => session.refetch()}
+        />
+      </div>
+    );
+  }
+  if (!authenticated) return null;
+
+  const active = navKeyForPath(pathname);
+  return (
+    <div className={styles.shell} data-theme={theme}>
+      <a className={styles.skipLink} href="#main-content" lang={locale}>
+        {t('skipContent')}
+      </a>
+      <DashboardSidebar active={active} identity={session.data?.email} />
+      <div className={styles.main}>
+        <DashboardTopbar
+          theme={theme}
+          onToggleTheme={toggle}
+          identity={session.data?.email}
+          onSignOut={() => {
+            if (!logout.isPending && window.confirm(t('confirmSignOut'))) logout.mutate();
+          }}
+          signOutPending={logout.isPending}
+        />
+        <DashboardMobileNav active={active} />
+        <main id="main-content" className={styles.content} tabIndex={-1}>
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
