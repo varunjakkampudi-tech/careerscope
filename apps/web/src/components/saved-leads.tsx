@@ -16,18 +16,21 @@ import {
   Sparkles,
   Undo2,
 } from 'lucide-react';
-import type { LeadRecord, LeadHistoryRecord } from '@careerscope/core';
-import { api, offersDiscardAndReload } from '../lib/api';
+import { apiParsed, offersDiscardAndReload } from '../lib/api';
+import {
+  parseLead,
+  parseLeadByJob,
+  parseLeadHistoryPage,
+  parseLeadPage,
+  parseResumeList,
+  type Lead,
+} from '../lib/api-schemas';
 import { shouldSyncSelection } from '../lib/dashboard-state';
 import { useOwner, ownerKey } from '../lib/session';
 import MatchEvidence from './match-evidence';
 import InterviewOrganizer from './interview-organizer';
 import { EmptyState, ErrorState, LoadingState } from './ui-states';
 import styles from './saved-leads.module.css';
-
-type Lead = Omit<LeadRecord, 'createdAt' | 'updatedAt'> & { createdAt: string; updatedAt: string };
-type History = Omit<LeadHistoryRecord, 'createdAt'> & { createdAt: string };
-type ResumeItem = { id: string; createdAt: string; status: string; filename?: string };
 
 // The real, complete backend status pipeline (packages/core/src/leads.ts:
 // leadStatusSchema) — every one of these six must stay reachable in the UI.
@@ -111,13 +114,13 @@ export function SaveJob({
   const owner = useOwner();
   const existing = useQuery({
     queryKey: ownerKey(owner, 'lead-by-job', jobId),
-    queryFn: ({ signal }) => api<{ lead: Lead | null }>(`/leads/by-job/${jobId}`, { signal }),
+    queryFn: ({ signal }) => apiParsed(`/leads/by-job/${jobId}`, parseLeadByJob, { signal }),
     enabled: Boolean(jobId),
     staleTime: 30_000,
   });
   const save = useMutation({
     mutationFn: () =>
-      api<Lead>('/leads', {
+      apiParsed('/leads', parseLead, {
         method: 'POST',
         headers: { 'x-csrf-token': csrf },
         body: JSON.stringify({ jobId }),
@@ -134,7 +137,7 @@ export function SaveJob({
   // owner never opened. CS-19: "immediate confirmation and an undo".
   const undo = useMutation({
     mutationFn: (lead: Lead) =>
-      api<Lead>(`/leads/${lead.id}`, {
+      apiParsed(`/leads/${lead.id}`, parseLead, {
         method: 'PUT',
         headers: { 'x-csrf-token': csrf },
         body: JSON.stringify({ revision: lead.revision, notes: lead.notes, status: 'archived' }),
@@ -262,7 +265,7 @@ function LeadEditor({
       applicationEvidence?: NonNullable<Lead['applicationEvidence']>;
       tags?: string[];
     }) =>
-      api<Lead>(`/leads/${record.id}`, {
+      apiParsed(`/leads/${record.id}`, parseLead, {
         method: 'PUT',
         headers: { 'x-csrf-token': csrf },
         body: JSON.stringify({ revision: record.revision, notes, ...input }),
@@ -277,7 +280,7 @@ function LeadEditor({
     },
   });
   const reload = useMutation({
-    mutationFn: () => api<Lead>(`/leads/${record.id}`),
+    mutationFn: () => apiParsed(`/leads/${record.id}`, parseLead),
     onSuccess: (lead) => {
       onDirty(false);
       setNotes(lead.notes);
@@ -294,8 +297,9 @@ function LeadEditor({
     enabled: !!owner,
     initialPageParam: null as number | null,
     queryFn: ({ pageParam, signal }) =>
-      api<{ items: History[]; nextCursor: number | null }>(
+      apiParsed(
         `/leads/${record.id}/history${pageParam ? `?before=${pageParam}` : ''}`,
+        parseLeadHistoryPage,
         { signal },
       ),
     getNextPageParam: (page) => page.nextCursor,
@@ -309,10 +313,10 @@ function LeadEditor({
     // resolves, building `[name, undefined, ...]` - which merges every owner
     // back into one bucket and looks owner-scoped in the source.
     enabled: !!owner,
-    queryFn: ({ signal }) => api<{ enabled: boolean; items: ResumeItem[] }>('/resumes', { signal }),
+    queryFn: ({ signal }) => apiParsed('/resumes', parseResumeList, { signal }),
     retry: 1,
   });
-  const latestResume = resumes.data?.items.find((item) => item.status === 'completed');
+  const latestResume = resumes.data?.items.find((item) => item.status === 'parsed');
   const historyEntries = history.data?.pages.flatMap((page) => page.items) ?? [];
   const [showAllHistory, setShowAllHistory] = useState(false);
   const visibleHistory = showAllHistory ? historyEntries : historyEntries.slice(0, 6);
@@ -934,8 +938,9 @@ export default function SavedLeads({
     enabled: !!owner,
     initialPageParam: null as string | null,
     queryFn: ({ pageParam, signal }) =>
-      api<{ items: Lead[]; nextCursor: string | null }>(
+      apiParsed(
         `/leads?status=${status}${pageParam ? `&before=${pageParam}` : ''}`,
+        parseLeadPage,
         { signal },
       ),
     getNextPageParam: (page) => page.nextCursor,
@@ -944,7 +949,7 @@ export default function SavedLeads({
   const detail = useQuery({
     queryKey: ownerKey(owner, 'lead', selected),
     enabled: !!owner && !!selected,
-    queryFn: ({ signal }) => api<Lead>(`/leads/${selected}`, { signal }),
+    queryFn: ({ signal }) => apiParsed(`/leads/${selected}`, parseLead, { signal }),
     refetchOnWindowFocus: false,
     retry: 1,
   });

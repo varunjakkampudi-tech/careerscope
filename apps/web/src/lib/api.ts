@@ -145,7 +145,8 @@ async function refreshSession(): Promise<'refreshed' | 'expired' | 'unavailable'
 /**
  * Calls `/api${path}` with a 15 second timeout and resolves the JSON body as `unknown`
  * (`undefined` for a 204). On a 401 it refreshes the session once and retries; other failures
- * throw `ApiError`. Narrow the result with a parse function, or use `apiParsed`.
+ * throw `ApiError`. Use it when the body is not read (a 204 or an ignored result); otherwise use
+ * `apiParsed` with a parser from `api-schemas.ts`.
  */
 export async function apiJson(path: string, options: RequestInit = {}): Promise<unknown> {
   return request(path, options, true);
@@ -158,15 +159,6 @@ export async function apiParsed<T>(
   options: RequestInit = {},
 ): Promise<T> {
   return parse(await request(path, options, true));
-}
-
-/**
- * Legacy typed call: the caller asserts the response shape through `T` and nothing checks it at
- * runtime. This is the one remaining unchecked boundary; new code should use `apiParsed`.
- */
-export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const body = await request(path, options, true);
-  return body as T;
 }
 
 async function request(path: string, options: RequestInit, mayRefresh: boolean): Promise<unknown> {

@@ -3,7 +3,8 @@
 import { useEffect, type ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ApiError, api, SESSION_EXPIRED_EVENT } from '@/lib/api';
+import { ApiError, apiJson, apiParsed, SESSION_EXPIRED_EVENT } from '@/lib/api';
+import { parseAccessibilityPreference } from '@/lib/api-schemas';
 import { ownerKey, useOwner, useSession } from '@/lib/session';
 import { useTheme } from '@/lib/theme';
 import { localizedText, useInterfaceLocale } from '@/lib/locale';
@@ -36,7 +37,8 @@ export default function AuthenticatedShell({ children }: { children: ReactNode }
   const profile = useQuery({
     queryKey: ownerKey(owner, 'profile-accessibility'),
     enabled: authenticated && !!owner,
-    queryFn: ({ signal }) => api<{ reducedMotion: boolean }>('/profile/accessibility', { signal }),
+    queryFn: ({ signal }) =>
+      apiParsed('/profile/accessibility', parseAccessibilityPreference, { signal }),
     staleTime: Infinity,
     refetchOnWindowFocus: false,
     retry: (failureCount, error) =>
@@ -57,7 +59,7 @@ export default function AuthenticatedShell({ children }: { children: ReactNode }
     // CS-36 (review P3, 2026-09-25): this is the THIRD teardown path, and it
     // was the only one that did not clear the cache. The other two — logout
     // and SESSION_EXPIRED_EVENT — both call `cache.clear()` below. A session
-    // that resolves as unauthenticated WITHOUT a 401 (so `api()` never
+    // that resolves as unauthenticated WITHOUT a 401 (so the API client never
     // dispatches the expiry event) redirected to `/` while leaving every data
     // key intact, so the next owner to sign in could be served the previous
     // one's cached profile and leads. Narrow, because a 401 is the usual way
@@ -73,7 +75,7 @@ export default function AuthenticatedShell({ children }: { children: ReactNode }
   // 2026-09-23): previously three routes each implemented their own ad hoc
   // detection and two routes — Resume and Settings — had none, leaving an
   // expired session there stuck on an inline error with a Retry button that
-  // could only fail again. `api()` announces every 401 here; this is now the
+  // could only fail again. the API client announces every 401 here; this is now the
   // only place that resets the session and redirects, closing finding 3's
   // two-redirect race at the same time.
   //
@@ -98,7 +100,7 @@ export default function AuthenticatedShell({ children }: { children: ReactNode }
   // monolithic page.tsx header.
   const logout = useMutation({
     mutationFn: () =>
-      api('/logout', { method: 'POST', headers: { 'x-csrf-token': session.data?.csrf ?? '' } }),
+      apiJson('/logout', { method: 'POST', headers: { 'x-csrf-token': session.data?.csrf ?? '' } }),
     onSuccess: async () => {
       clearAuthQueryCache(cache);
       // Logout changes the owner-discovery query just as login does. Refresh

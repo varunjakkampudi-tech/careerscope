@@ -834,7 +834,6 @@ test('profile matching preserves hard-eligibility advice, confidence ceilings an
   assert.equal(snippet.match?.confidence, 'low');
   assert.ok(snippet.match!.score <= LOW_CONFIDENCE_SCORE_CEILING);
   assert.equal(snippet.match?.flaggedCompany, true);
-  assert.equal(full.match?.llmScore, null);
   assert.ok(full.match!.matchedSkills.includes('React'));
   const contract = results.find((job) => job.sourceJobId === 'contract')!;
   assert.equal(contract.match?.score, 0);

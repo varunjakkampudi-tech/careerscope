@@ -4,46 +4,10 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { api } from './api';
+import { apiParsed } from './api';
+import { parseSession, type Session } from './api-schemas';
 
-/** Response of `GET /api/session`. Fields beyond `authenticated` are present only for the matching branch. */
-export type Session = {
-  authenticated: boolean;
-  csrf?: string;
-  sessionId?: string;
-  email?: string;
-  emailVerifiedAt?: string | null;
-  registrationEnabled?: boolean;
-  legalDocuments?: {
-    termsVersion: string;
-    termsUrl: string;
-    privacyVersion: string;
-    privacyUrl: string;
-  };
-  emailOtpEnabled?: boolean;
-  testUsersEnabled?: boolean;
-  testAccounts?: { email: string; role: 'candidate' | 'admin' }[];
-  testUser?: 'candidate' | 'admin';
-  /** Capability flag kept for the response shape; always false. */
-  aiEnabled?: boolean;
-  /**
-   * A stable, opaque per-user digest used in query-cache keys. Present **only**
-   * when `authenticated` is true; the server's unauthenticated branch omits it.
-   *
-   * It is a SHA-256 digest of the user id, not the id itself, and not
-   * anything derived from the session token. Deliberately:
-   *
-   * - **not the raw user id** — every API route derives it from the session
-   *   and never from input, so publishing it would put the one value that must
-   *   never be client-supplied into client hands;
-   * - **not `email`** — that is optional and mutable, so it is an identity
-   *   *proxy* rather than an identity, and an absent one silently produces a
-   *   user-agnostic key;
-   * - **not per-session** — a value that changed on each sign-in would churn
-   *   the whole cache for no extra isolation.
-   */
-  owner?: string;
-};
+export type { Session };
 
 /**
  * Sentinel used when no user is known. It never collides with a real digest
@@ -86,7 +50,7 @@ export function useOwner(): string | undefined {
 export function useSession() {
   return useQuery({
     queryKey: ['session'],
-    queryFn: ({ signal }) => api<Session>('/session', { signal }),
+    queryFn: ({ signal }) => apiParsed('/session', parseSession, { signal }),
     retry: 1,
   });
 }

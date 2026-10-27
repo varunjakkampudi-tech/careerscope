@@ -20,16 +20,10 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import BrandLogo from './brand-logo';
-import { api } from '@/lib/api';
+import { apiJson, apiParsed } from '@/lib/api';
+import { parseNotificationList, type NotificationItem } from '@/lib/api-schemas';
 import { localizedText, useInterfaceLocale } from '@/lib/locale';
 import styles from './dashboard-shell.module.css';
-
-type NotificationItem = {
-  id: string;
-  leadId: string;
-  createdAt: string;
-  readAt: string | null;
-};
 
 function NotificationCenter() {
   const locale = useInterfaceLocale();
@@ -73,10 +67,9 @@ function NotificationCenter() {
     const active = { controller, promise: Promise.resolve() };
     const promise = Promise.resolve().then(async () => {
       try {
-        const result = await api<{ items: NotificationItem[]; unreadCount: number }>(
-          '/notifications',
-          { signal: controller.signal },
-        );
+        const result = await apiParsed('/notifications', parseNotificationList, {
+          signal: controller.signal,
+        });
         setError(false);
         setItems(result.items);
         setUnreadCount(result.unreadCount);
@@ -116,7 +109,7 @@ function NotificationCenter() {
   async function markRead(id: string) {
     setMarkError(null);
     try {
-      await api(`/notifications/${id}/read`, { method: 'PUT' });
+      await apiJson(`/notifications/${id}/read`, { method: 'PUT' });
       if (mounted.current) await loadNotifications(false, true);
     } catch {
       if (mounted.current) setMarkError(id);

@@ -3,7 +3,13 @@
 import { useState, type FormEvent } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LoaderCircle, LogOut } from 'lucide-react';
-import { ApiError, api } from '../lib/api';
+import { ApiError, apiJson, apiParsed } from '../lib/api';
+import {
+  parseAccountSessions,
+  parseEmailChangeVerification,
+  parseMarketingConsent,
+  type AccountSession,
+} from '../lib/api-schemas';
 import { NO_OWNER, useSession } from '../lib/session';
 import {
   localizedApiErrorMessage,
@@ -13,16 +19,6 @@ import {
 } from '../lib/locale';
 import { ErrorState } from './ui-states';
 import styles from './account-security.module.css';
-
-type AccountSession = {
-  id: string;
-  createdAt: string | null;
-  lastUsedAt: string | null;
-  deviceLabel: string;
-  current: boolean;
-};
-
-type MarketingConsent = { optedIn: boolean; version: string | null };
 
 function dateLabel(value: string | null, locale: 'en' | 'te' | 'hi'): string {
   if (!value) return localizedText(locale, 'notAvailable');
@@ -44,12 +40,12 @@ export default function AccountSecurity({ csrf }: { csrf: string }) {
   const testMode = session.data?.testUser !== undefined;
   const sessionsQuery = useQuery({
     queryKey: ['accountSessions', session.data?.owner ?? NO_OWNER],
-    queryFn: () => api<{ sessions: AccountSession[] }>('/account/sessions'),
+    queryFn: () => apiParsed('/account/sessions', parseAccountSessions),
     enabled: session.data?.authenticated === true && !!session.data.owner,
   });
   const marketingQuery = useQuery({
     queryKey: ['marketingConsent', session.data?.owner ?? NO_OWNER],
-    queryFn: () => api<MarketingConsent>('/account/marketing-consent'),
+    queryFn: () => apiParsed('/account/marketing-consent', parseMarketingConsent),
     enabled: session.data?.authenticated === true && !!session.data.owner,
   });
   const [revoking, setRevoking] = useState(false);
@@ -76,7 +72,7 @@ export default function AccountSecurity({ csrf }: { csrf: string }) {
     setEmailChangeError('');
     setEmailChangeNotice('');
     try {
-      await api('/account/email-change/request', {
+      await apiJson('/account/email-change/request', {
         method: 'POST',
         headers: { 'x-csrf-token': csrf },
         body: JSON.stringify({ newEmail }),
@@ -105,14 +101,11 @@ export default function AccountSecurity({ csrf }: { csrf: string }) {
     setEmailChangeError('');
     setEmailChangeNotice('');
     try {
-      const result = await api<{ verified: 'current' | 'new'; emailChanged: boolean }>(
-        '/account/email-change/verify',
-        {
-          method: 'POST',
-          headers: { 'x-csrf-token': csrf },
-          body: JSON.stringify({ address, code }),
-        },
-      );
+      const result = await apiParsed('/account/email-change/verify', parseEmailChangeVerification, {
+        method: 'POST',
+        headers: { 'x-csrf-token': csrf },
+        body: JSON.stringify({ address, code }),
+      });
       if (result.emailChanged) {
         setEmailChangeRequested(false);
         setNewEmail('');
@@ -142,7 +135,7 @@ export default function AccountSecurity({ csrf }: { csrf: string }) {
     setNotice('');
     setRevoking(true);
     try {
-      await api('/account/sessions/revoke-others', {
+      await apiJson('/account/sessions/revoke-others', {
         method: 'POST',
         headers: { 'x-csrf-token': csrf },
         body: JSON.stringify({}),
@@ -167,7 +160,7 @@ export default function AccountSecurity({ csrf }: { csrf: string }) {
     setNotice('');
     setRevokingSessionId(target.id);
     try {
-      await api(`/account/sessions/${target.id}`, { method: 'DELETE' });
+      await apiJson(`/account/sessions/${target.id}`, { method: 'DELETE' });
       await queryClient.invalidateQueries({ queryKey: ['accountSessions'] });
       setNotice(t('deviceSignedOut', target.deviceLabel));
     } catch (failure) {
@@ -186,7 +179,7 @@ export default function AccountSecurity({ csrf }: { csrf: string }) {
     setMarketingPending(true);
     setMarketingError('');
     try {
-      await api('/account/marketing-consent', {
+      await apiJson('/account/marketing-consent', {
         method: 'POST',
         headers: { 'x-csrf-token': csrf },
         body: JSON.stringify({ optIn: !marketingQuery.data.optedIn }),

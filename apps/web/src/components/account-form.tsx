@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { LoaderCircle, ShieldCheck, User } from 'lucide-react';
-import { api } from '../lib/api';
+import { apiJson, apiParsed } from '../lib/api';
+import { parseOtpRequest } from '../lib/api-schemas';
 import { localizedText, localizedValue, useInterfaceLocale } from '../lib/locale';
 
 type Account = { email: string; role: 'candidate' | 'admin' };
@@ -65,7 +66,7 @@ export default function AccountForm({
     setError('');
     setPending(accountEmail);
     try {
-      await api('/login', {
+      await apiJson('/login', {
         method: 'POST',
         body: JSON.stringify({ email: accountEmail }),
       });
@@ -83,7 +84,7 @@ export default function AccountForm({
     setError('');
     setPending('request');
     try {
-      const result = await api<{ resendAfterSeconds: number }>('/otp/request', {
+      const result = await apiParsed('/otp/request', parseOtpRequest, {
         method: 'POST',
         body: JSON.stringify(
           intent === 'sign-up'
@@ -110,7 +111,7 @@ export default function AccountForm({
     setError('');
     setPending('verify');
     try {
-      await api('/otp/verify', {
+      await apiJson('/otp/verify', {
         method: 'POST',
         body: JSON.stringify({ email, code, ...(intent === 'sign-up' ? { intent } : {}) }),
       });

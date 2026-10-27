@@ -2,13 +2,12 @@
 
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/lib/api';
+import { apiParsed } from '@/lib/api';
+import { parseNotificationPreferences } from '@/lib/api-schemas';
 import { localizedText, useInterfaceLocale } from '@/lib/locale';
 import { NO_OWNER, useSession } from '@/lib/session';
 import { ErrorState, LoadingState } from './ui-states';
 import styles from './notification-preferences.module.css';
-
-type NotificationPreferences = { interviewRemindersInAppEnabled: boolean };
 
 export default function NotificationPreferences() {
   const locale = useInterfaceLocale();
@@ -22,7 +21,7 @@ export default function NotificationPreferences() {
   const owner = session.data?.owner ?? NO_OWNER;
   const preferences = useQuery({
     queryKey: ['notificationPreferences', owner],
-    queryFn: () => api<NotificationPreferences>('/notifications/preferences'),
+    queryFn: () => apiParsed('/notifications/preferences', parseNotificationPreferences),
     enabled: session.data?.authenticated === true && !!session.data.owner,
   });
 
@@ -32,7 +31,7 @@ export default function NotificationPreferences() {
     setSaved(false);
     setRefreshedAfterSave(false);
     try {
-      const updated = await api<NotificationPreferences>('/notifications/preferences', {
+      const updated = await apiParsed('/notifications/preferences', parseNotificationPreferences, {
         method: 'PUT',
         body: JSON.stringify({ interviewRemindersInAppEnabled: enabled }),
       });

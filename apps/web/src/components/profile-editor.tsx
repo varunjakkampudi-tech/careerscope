@@ -2,16 +2,12 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, LoaderCircle, RefreshCw, Save } from 'lucide-react';
 import type { WritableProfile } from '@careerscope/core';
-import { api, offersDiscardAndReload } from '../lib/api';
+import { apiParsed, offersDiscardAndReload } from '../lib/api';
+import { parseProfileResponse, type ProfileResponse } from '../lib/api-schemas';
 import { useOwner, ownerKey } from '../lib/session';
 import ResumePanel, { type ResumeProposal } from './resume-panel';
 import { ErrorState, LoadingState } from './ui-states';
 
-type ProfileResponse = {
-  revision: number;
-  profile: WritableProfile | null;
-  updatedAt: string | null;
-};
 const employmentOptions = [
   ['fulltime', 'Full-time'],
   ['parttime', 'Part-time'],
@@ -42,7 +38,7 @@ function ProfileForm({
 }) {
   const save = useMutation({
     mutationFn: (profile: WritableProfile) =>
-      api<ProfileResponse>('/profile', {
+      apiParsed('/profile', parseProfileResponse, {
         method: 'PUT',
         headers: { 'x-csrf-token': csrf },
         body: JSON.stringify({ revision: record.revision, profile }),
@@ -511,7 +507,7 @@ export default function ProfileEditor({
     // resolves, building `[name, undefined, ...]` - which merges every owner
     // back into one bucket and looks owner-scoped in the source.
     enabled: !!owner,
-    queryFn: ({ signal }) => api<ProfileResponse>('/profile', { signal }),
+    queryFn: ({ signal }) => apiParsed('/profile', parseProfileResponse, { signal }),
     staleTime: Infinity,
     refetchOnWindowFocus: false,
     retry: 1,

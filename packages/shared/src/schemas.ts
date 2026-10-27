@@ -297,8 +297,6 @@ export const matchBreakdownSchema = z.object({
   excludedReason: z.string().nullable().default(null),
   /** True when the company is on the do-not-apply list. Shown, never auto-applied. */
   flaggedCompany: z.boolean().default(false),
-  llmScore: z.number().min(0).max(1).nullable().default(null),
-  llmRationale: z.string().nullable().default(null),
   /** False when no parsed resume was available for this candidate - shown so
    * "no resume" is never indistinguishable from "resume matched nothing". */
   resumeConsidered: z.boolean().default(false),

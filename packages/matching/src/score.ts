@@ -96,8 +96,6 @@ export function scoreJob(
     confidence,
     excludedReason: null,
     flaggedCompany,
-    llmScore: null,
-    llmRationale: null,
     resumeConsidered: candidate.resumeConsidered,
     // Only the matched skills that actually came from the resume - not every
     // resume skill regardless of whether this job needed it - so the evidence
@@ -209,8 +207,6 @@ function excludedBreakdown(
     confidence: 'high',
     excludedReason: reason,
     flaggedCompany,
-    llmScore: null,
-    llmRationale: null,
     resumeConsidered,
     resumeSkills: [],
   };

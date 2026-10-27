@@ -3,14 +3,19 @@
 import { useRef, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { FileText, LoaderCircle, RefreshCw, Trash2, Upload, X } from 'lucide-react';
-import type { ResumeParseOutcome } from '@careerscope/core';
-import { api } from '../lib/api';
+import { apiJson, apiParsed } from '../lib/api';
+import {
+  parseResumeDetail,
+  parseResumeList,
+  parseResumeStatus,
+  parseResumeUpload,
+  type ResumeProposal,
+} from '../lib/api-schemas';
 import { useOwner, ownerKey } from '../lib/session';
 import { EmptyState, ErrorState, LoadingState } from './ui-states';
 import styles from './resume-panel.module.css';
 
-export type ResumeProposal = Extract<ResumeParseOutcome, { status: 'parsed' }>['parsed']['derived'];
-type ResumeRow = { id: string; bytes: number; createdAt: string; status: string };
+export type { ResumeProposal };
 
 export default function ResumePanel({
   csrf,
@@ -33,10 +38,7 @@ export default function ResumePanel({
     // resolves, building `[name, undefined, ...]` - which merges every owner
     // back into one bucket and looks owner-scoped in the source.
     enabled: !!owner,
-    queryFn: ({ signal }) =>
-      api<{ enabled: boolean; cancellationEnabled?: boolean; items: ResumeRow[] }>('/resumes', {
-        signal,
-      }),
+    queryFn: ({ signal }) => apiParsed('/resumes', parseResumeList, { signal }),
     retry: 1,
     refetchInterval: (query) =>
       query.state.data?.items.some((item) => ['queued', 'uploading'].includes(item.status))
@@ -46,18 +48,14 @@ export default function ResumePanel({
   const detail = useQuery({
     queryKey: ownerKey(owner, 'resume', selected),
     enabled: !!owner && !!selected,
-    queryFn: ({ signal }) =>
-      api<{ id: string; status: string; result: ResumeParseOutcome | null }>(
-        `/resumes/${selected}`,
-        { signal },
-      ),
+    queryFn: ({ signal }) => apiParsed(`/resumes/${selected}`, parseResumeDetail, { signal }),
     retry: 1,
     refetchInterval: (query) =>
       query.state.data && ['queued', 'uploading'].includes(query.state.data.status) ? 3000 : false,
   });
   const remove = useMutation({
     mutationFn: (id: string) =>
-      api<void>(`/resumes/${id}`, { method: 'DELETE', headers: { 'x-csrf-token': csrf } }),
+      apiJson(`/resumes/${id}`, { method: 'DELETE', headers: { 'x-csrf-token': csrf } }),
     onSuccess: (_result, id) => {
       setSelected(null);
       cache.removeQueries({ queryKey: ['resume', id] });
@@ -66,7 +64,7 @@ export default function ResumePanel({
   });
   const recover = useMutation({
     mutationFn: (id: string) =>
-      api<{ id: string; status: string }>(`/resumes/${id}/recover`, {
+      apiParsed(`/resumes/${id}/recover`, parseResumeStatus, {
         method: 'POST',
         headers: { 'x-csrf-token': csrf },
       }),
@@ -79,7 +77,7 @@ export default function ResumePanel({
   });
   const cancel = useMutation({
     mutationFn: (id: string) =>
-      api<{ id: string; status: string }>(`/resumes/${id}/cancel`, {
+      apiParsed(`/resumes/${id}/cancel`, parseResumeStatus, {
         method: 'POST',
         headers: { 'x-csrf-token': csrf },
       }),
@@ -103,7 +101,7 @@ export default function ResumePanel({
     setPending(true);
     setError('');
     try {
-      const result = await api<{ id: string }>('/resumes', {
+      const result = await apiParsed('/resumes', parseResumeUpload, {
         method: 'POST',
         body: file.value,
         headers: {

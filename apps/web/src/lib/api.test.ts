@@ -1,14 +1,15 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { ApiError, api, offersDiscardAndReload } from './api';
+import { ApiError, apiJson, apiParsed, offersDiscardAndReload } from './api';
+import { parseAccountSessions, parseMarketingConsent, parseSession } from './api-schemas';
 
 /**
  * CS-35 AC3, client half: every supported conflict code, an unknown code and a
- * set of malformed 409 bodies, asserted against the real `api()` helper the
+ * set of malformed 409 bodies, asserted against the real `apiJson()` helper the
  * components call - not a copy of its logic.
  *
  * The fetch stub returns a real `Response`, so body parsing runs for real; a
- * body that cannot be parsed has to be handled by `api()` itself rather than by
+ * body that cannot be parsed has to be handled by `apiJson()` itself rather than by
  * the test.
  */
 const GENERIC_CONFLICT = 'This record changed in another session. Your edits have not been saved.';
@@ -16,6 +17,23 @@ const GENERIC_CONFLICT = 'This record changed in another session. Your edits hav
 // Deliberately shaped like something an internal error could leak: if any of
 // these tests ever sees this string, the client is echoing server text.
 const SERVER_DETAIL = 'relation "searches" does not exist at character 42';
+
+function parseRevision(body: unknown): { revision: number } {
+  if (
+    typeof body === 'object' &&
+    body !== null &&
+    'revision' in body &&
+    typeof body.revision === 'number'
+  )
+    return { revision: body.revision };
+  throw new Error('unexpected body');
+}
+
+function parseOk(body: unknown): { ok: boolean } {
+  if (typeof body === 'object' && body !== null && 'ok' in body && typeof body.ok === 'boolean')
+    return { ok: body.ok };
+  throw new Error('unexpected body');
+}
 
 function stubFetch(body: string, init: ResponseInit = { status: 409 }) {
   const original = globalThis.fetch;
@@ -29,9 +47,9 @@ function stubFetch(body: string, init: ResponseInit = { status: 409 }) {
 async function conflictFrom(body: string): Promise<ApiError> {
   const restore = stubFetch(body);
   try {
-    // A malformed or unknown conflict must never resolve: `api()` returning a
+    // A malformed or unknown conflict must never resolve: `apiJson()` returning a
     // value here would mean the caller treated a 409 as a saved record.
-    const result = await api('/profile', { method: 'PUT', body: '{}' }).then(
+    const result = await apiJson('/profile', { method: 'PUT', body: '{}' }).then(
       (value) => ({ resolved: true, value }) as const,
       (error: unknown) => ({ resolved: false, error }) as const,
     );
@@ -142,7 +160,7 @@ test('CS-35: non-conflict statuses keep their existing messages and carry no cod
     });
     try {
       await assert.rejects(
-        api('/profile', { method: 'PUT', body: '{}' }),
+        apiJson('/profile', { method: 'PUT', body: '{}' }),
         (error: unknown) =>
           error instanceof ApiError &&
           error.status === status &&
@@ -159,7 +177,7 @@ test('OTP outages use the approved sign-in unavailable message without exposing 
   const restore = stubFetch(JSON.stringify({ error: SERVER_DETAIL }), { status: 503 });
   try {
     await assert.rejects(
-      api('/otp/request', { method: 'POST', body: '{}' }),
+      apiJson('/otp/request', { method: 'POST', body: '{}' }),
       (error: unknown) =>
         error instanceof ApiError &&
         error.status === 503 &&
@@ -195,8 +213,8 @@ test('expired access session rotates once, retries with the new CSRF token, and 
     return Response.json({ error: 'unexpected request' }, { status: 500 });
   };
   try {
-    await api('/session');
-    const result = await api<{ revision: number }>('/profile', {
+    await apiJson('/session');
+    const result = await apiParsed('/profile', parseRevision, {
       method: 'PUT',
       headers: { 'x-csrf-token': oldCsrf },
       body: JSON.stringify({ revision: 1 }),
@@ -209,7 +227,7 @@ test('expired access session rotates once, retries with the new CSRF token, and 
     );
   } finally {
     globalThis.fetch = async () => Response.json({ authenticated: false });
-    await api('/session');
+    await apiJson('/session');
     globalThis.fetch = originalFetch;
     if (originalWindow) Object.defineProperty(globalThis, 'window', originalWindow);
     else Reflect.deleteProperty(globalThis, 'window');
@@ -238,16 +256,16 @@ test('concurrent expired requests share one refresh operation', async () => {
     return Response.json({ error: 'unexpected request' }, { status: 500 });
   };
   try {
-    await api('/session');
+    await apiJson('/session');
     const [first, second] = await Promise.all([
-      api<{ ok: boolean }>('/profile', { method: 'POST', body: '{}' }),
-      api<{ ok: boolean }>('/profile', { method: 'POST', body: '{}' }),
+      apiParsed('/profile', parseOk, { method: 'POST', body: '{}' }),
+      apiParsed('/profile', parseOk, { method: 'POST', body: '{}' }),
     ]);
     assert.deepEqual([first.ok, second.ok], [true, true]);
     assert.equal(refreshCalls, 1);
   } finally {
     globalThis.fetch = async () => Response.json({ authenticated: false });
-    await api('/session');
+    await apiJson('/session');
     globalThis.fetch = originalFetch;
     if (originalWindow) Object.defineProperty(globalThis, 'window', originalWindow);
     else Reflect.deleteProperty(globalThis, 'window');
@@ -269,7 +287,7 @@ test('CS-75: non-OK responses cancel their unread body before rejecting', async 
     globalThis.fetch = async () =>
       new Response(stream, { status, headers: { 'Content-Type': 'text/plain' } });
     try {
-      await assert.rejects(api('/profile'), (error: unknown) => {
+      await assert.rejects(apiJson('/profile'), (error: unknown) => {
         return error instanceof ApiError && error.status === status;
       });
       assert.equal(cancelled, true, `${status} response body must be cancelled`);
@@ -277,4 +295,43 @@ test('CS-75: non-OK responses cancel their unread body before rejecting', async 
       globalThis.fetch = original;
     }
   }
+});
+
+test('apiParsed rejects a response whose shape does not match, without echoing it', async () => {
+  const restore = stubFetch(JSON.stringify({ sessions: 'not-a-list', detail: SERVER_DETAIL }), {
+    status: 200,
+  });
+  try {
+    await assert.rejects(apiParsed('/account/sessions', parseAccountSessions), (error: unknown) => {
+      return error instanceof Error && !error.message.includes(SERVER_DETAIL);
+    });
+  } finally {
+    restore();
+  }
+});
+
+test('apiParsed returns the typed body, dropping fields the screens do not read', async () => {
+  const restore = stubFetch(
+    JSON.stringify({ optedIn: true, version: null, internalNote: 'dropped' }),
+    { status: 200 },
+  );
+  try {
+    const consent = await apiParsed('/account/marketing-consent', parseMarketingConsent);
+    assert.deepEqual(consent, { optedIn: true, version: null });
+  } finally {
+    restore();
+  }
+});
+
+test('session parsers accept both real branches of GET /session', () => {
+  assert.deepEqual(
+    parseSession({ authenticated: false, emailOtpEnabled: true, testAccounts: [] }),
+    { authenticated: false, emailOtpEnabled: true, testAccounts: [] },
+  );
+  const owner = 'a'.repeat(64);
+  assert.equal(
+    parseSession({ authenticated: true, csrf: 'c'.repeat(64), owner, emailVerifiedAt: null }).owner,
+    owner,
+  );
+  assert.throws(() => parseSession({ authenticated: 'yes' }));
 });

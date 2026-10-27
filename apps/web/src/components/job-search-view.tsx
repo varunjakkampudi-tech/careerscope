@@ -13,7 +13,7 @@ import {
   Search,
   Square,
 } from 'lucide-react';
-import type { CollectedJob, CreateSearch, SourceOutcome } from '@careerscope/core';
+import type { CreateSearch } from '@careerscope/core';
 import {
   JOB_SOURCE_PERMISSION_PENDING_MESSAGE,
   LAUNCH_JOB_SOURCE_CANDIDATES,
@@ -21,7 +21,15 @@ import {
   jobFeedbackReasons,
   type JobFeedbackReason,
 } from '@careerscope/shared';
-import { ApiError, api, SESSION_EXPIRED_EVENT } from '@/lib/api';
+import { ApiError, apiJson, apiParsed, SESSION_EXPIRED_EVENT } from '@/lib/api';
+import {
+  parseJobFeedback,
+  parseJobSourceCatalog,
+  parseSearchCreated,
+  parseSearchDetail,
+  parseSearchRuns,
+  type SearchDetail,
+} from '@/lib/api-schemas';
 import { localizedText, useInterfaceLocale } from '@/lib/locale';
 import { ownerKey, useSession } from '@/lib/session';
 import { SaveJob } from '@/components/saved-leads';
@@ -38,16 +46,6 @@ const sourceNames = {
   workable: 'Workable',
 };
 type LaunchSource = (typeof LAUNCH_JOB_SOURCE_CANDIDATES)[number];
-type JobSourceCatalog = {
-  items: {
-    id: LaunchSource;
-    label: string;
-    available: boolean;
-    unavailableReason: string | null;
-  }[];
-};
-type Run = { id: string; status: string; createdAt: string; request: { query: string } };
-type Job = { id: string; data: CollectedJob; feedbackReason: JobFeedbackReason | null };
 const feedbackLabelKeys = {
   irrelevant: 'feedbackIrrelevant',
   duplicate: 'feedbackDuplicate',
@@ -55,14 +53,6 @@ const feedbackLabelKeys = {
   unavailable: 'feedbackUnavailable',
   suspicious: 'feedbackSuspicious',
 } as const satisfies Record<JobFeedbackReason, Parameters<typeof localizedText>[1]>;
-type Detail = {
-  runId: string;
-  status: string;
-  request: CreateSearch;
-  sourceOutcomes: SourceOutcome[] | null;
-  jobs: Job[];
-  events: { cursor: string; type: string; createdAt: string }[];
-};
 
 function relativeTime(iso: string | null, locale: 'en' | 'te' | 'hi'): string | null {
   if (!iso) return null;
@@ -104,7 +94,7 @@ function JobFeedback({
   const [reason, setReason] = useState<JobFeedbackReason | ''>(initialReason ?? '');
   const feedback = useMutation({
     mutationFn: (nextReason: JobFeedbackReason) =>
-      api<{ reason: JobFeedbackReason }>(`/search-jobs/${jobId}/feedback`, {
+      apiParsed(`/search-jobs/${jobId}/feedback`, parseJobFeedback, {
         method: 'PUT',
         headers: { 'x-csrf-token': csrf },
         body: JSON.stringify({ reason: nextReason }),
@@ -173,7 +163,7 @@ function JobSearchWorkspace() {
 
   const sourceCatalog = useQuery({
     queryKey: ownerKey(owner, 'job-sources'),
-    queryFn: ({ signal }) => api<JobSourceCatalog>('/job-sources', { signal }),
+    queryFn: ({ signal }) => apiParsed('/job-sources', parseJobSourceCatalog, { signal }),
     enabled: !!owner && session.data?.authenticated === true,
     retry: 1,
   });
@@ -183,7 +173,7 @@ function JobSearchWorkspace() {
 
   const runs = useQuery({
     queryKey: ownerKey(owner, 'searches'),
-    queryFn: ({ signal }) => api<{ items: Run[] }>('/searches', { signal }),
+    queryFn: ({ signal }) => apiParsed('/searches', parseSearchRuns, { signal }),
     enabled: !!owner && session.data?.authenticated === true,
     refetchInterval: 5000,
     retry: 1,
@@ -213,7 +203,7 @@ function JobSearchWorkspace() {
   const detail = useQuery({
     queryKey: ownerKey(owner, 'searches', selectedId),
     enabled: !!owner && !!selectedId && session.data?.authenticated === true,
-    queryFn: ({ signal }) => api<Detail>(`/searches/${selectedId}`, { signal }),
+    queryFn: ({ signal }) => apiParsed(`/searches/${selectedId}`, parseSearchDetail, { signal }),
     retry: 1,
     refetchInterval: (query) =>
       ['completed', 'partial', 'failed', 'cancelled'].includes(query.state.data?.status ?? '')
@@ -222,7 +212,7 @@ function JobSearchWorkspace() {
   });
   const search = useMutation({
     mutationFn: (request: CreateSearch) =>
-      api<{ runId: string }>('/searches', {
+      apiParsed('/searches', parseSearchCreated, {
         method: 'POST',
         headers: {
           'x-csrf-token': session.data?.csrf ?? '',
@@ -239,7 +229,7 @@ function JobSearchWorkspace() {
   });
   const cancel = useMutation({
     mutationFn: (runId: string) =>
-      api(`/searches/${runId}/cancel`, {
+      apiJson(`/searches/${runId}/cancel`, {
         method: 'POST',
         headers: { 'x-csrf-token': session.data?.csrf ?? '' },
       }),
@@ -249,7 +239,7 @@ function JobSearchWorkspace() {
   });
   const exportSearch = useMutation({
     mutationFn: async (runId: string) => {
-      const result = await api<unknown>(`/searches/${runId}/export`);
+      const result = await apiJson(`/searches/${runId}/export`);
       const url = URL.createObjectURL(
         new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' }),
       );
@@ -761,7 +751,7 @@ function JobSearchWorkspace() {
                         csrf={session.data?.csrf ?? ''}
                         reason={feedbackReason}
                         onSaved={(reason) => {
-                          cache.setQueryData<Detail>(
+                          cache.setQueryData<SearchDetail>(
                             ownerKey(owner, 'searches', selectedId),
                             (current) =>
                               current

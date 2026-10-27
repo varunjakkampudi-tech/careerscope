@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LoaderCircle, RefreshCw, UserRound } from 'lucide-react';
-import type { PreparationReport } from '@careerscope/core';
-import { api, ApiError } from '../lib/api';
+import { apiParsed, ApiError } from '../lib/api';
+import { parsePreparationReport, type PreparationReport } from '../lib/api-schemas';
 import { ownerKey, useSession } from '../lib/session';
 import { EmptyState, ErrorState, LoadingState } from './ui-states';
 
@@ -17,13 +17,13 @@ export default function PreparationPanel({ onProfile }: { onProfile: () => void 
     // resolves, building `[name, undefined, ...]` - which merges every owner
     // back into one bucket and looks owner-scoped in the source.
     enabled: !!owner,
-    queryFn: ({ signal }) => api<PreparationReport>('/preparation', { signal }),
+    queryFn: ({ signal }) => apiParsed('/preparation', parsePreparationReport, { signal }),
     retry: false,
     gcTime: 0,
   });
   const expired = report.error instanceof ApiError && report.error.status === 401;
   useEffect(() => {
-    // api() already dispatches SESSION_EXPIRED_EVENT on every 401, which
+    // The API client already dispatches SESSION_EXPIRED_EVENT on every 401, which
     // AuthenticatedShell is the single listener for (Independent Reviewer
     // finding 2, 2026-09-23) - this effect only needs to exist because a
     // query with retry:false surfaces the 401 as report.error rather than

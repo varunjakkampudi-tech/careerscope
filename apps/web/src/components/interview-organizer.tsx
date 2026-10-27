@@ -3,29 +3,17 @@
 import { useMemo, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Save, X } from 'lucide-react';
-import { api } from '../lib/api';
+import { apiParsed } from '../lib/api';
+import {
+  parseInterviewRound,
+  parseInterviewRounds,
+  parseResumeList,
+  type InterviewRound as Round,
+} from '../lib/api-schemas';
 import { ownerKey, useOwner } from '../lib/session';
 import { ErrorState, LoadingState } from './ui-states';
 import styles from './interview-organizer.module.css';
 
-type InterviewContact = { name: string; role: string | null; email: string | null };
-type ChecklistItem = { id: string; label: string; completed: boolean };
-type Round = {
-  id: string;
-  leadId: string;
-  title: string;
-  startsAt: string;
-  timeZone: string;
-  format: 'video' | 'phone' | 'onsite' | 'other';
-  status: 'scheduled' | 'completed' | 'cancelled';
-  contacts: InterviewContact[];
-  checklist: ChecklistItem[];
-  notes: string;
-  reminderAt: string | null;
-  resumeUploadIds: string[];
-  revision: number;
-};
-type Resume = { id: string; status: string; contentType: string; createdAt: string };
 type Draft = Omit<Round, 'id' | 'leadId' | 'startsAt' | 'reminderAt' | 'revision'> & {
   startsAtLocal: string;
   reminderAtLocal: string;
@@ -152,20 +140,21 @@ export default function InterviewOrganizer({ leadId, csrf }: { leadId: string; c
   const roundsKey = ownerKey(owner, 'interview-rounds', leadId);
   const rounds = useQuery({
     queryKey: roundsKey,
-    queryFn: ({ signal }) => api<{ items: Round[] }>(`/leads/${leadId}/interviews`, { signal }),
+    queryFn: ({ signal }) =>
+      apiParsed(`/leads/${leadId}/interviews`, parseInterviewRounds, { signal }),
     enabled: Boolean(owner),
     retry: 1,
   });
   const resumes = useQuery({
     queryKey: ownerKey(owner, 'resumes'),
-    queryFn: ({ signal }) => api<{ enabled: boolean; items: Resume[] }>('/resumes', { signal }),
+    queryFn: ({ signal }) => apiParsed('/resumes', parseResumeList, { signal }),
     enabled: Boolean(owner),
     retry: 1,
   });
   const mutation = useMutation({
     mutationFn: (payload: WriteInput) =>
       editing && editing !== 'new'
-        ? api<Round>(`/interviews/${editing}`, {
+        ? apiParsed(`/interviews/${editing}`, parseInterviewRound, {
             method: 'PUT',
             headers: { 'x-csrf-token': csrf },
             body: JSON.stringify({
@@ -173,7 +162,7 @@ export default function InterviewOrganizer({ leadId, csrf }: { leadId: string; c
               revision: rounds.data?.items.find((item) => item.id === editing)?.revision,
             }),
           })
-        : api<Round>(`/leads/${leadId}/interviews`, {
+        : apiParsed(`/leads/${leadId}/interviews`, parseInterviewRound, {
             method: 'POST',
             headers: { 'x-csrf-token': csrf },
             body: JSON.stringify(payload),

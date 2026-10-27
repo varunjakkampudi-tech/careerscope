@@ -17,7 +17,16 @@ import {
   TrendingUp,
   UserRound,
 } from 'lucide-react';
-import { api } from '@/lib/api';
+import { apiParsed } from '@/lib/api';
+import {
+  parseDashboardLeadPage,
+  parseDashboardProfile,
+  parseDashboardSearchDetail,
+  parseResumeList,
+  parseSearchRuns,
+  type DashboardLeadPage as LeadPage,
+  type DashboardSearchDetail,
+} from '@/lib/api-schemas';
 import { panelState, statDisplay } from '@/lib/dashboard-state';
 import { ownerKey, useSession } from '@/lib/session';
 import HeroIllustration from '@/components/hero-illustration';
@@ -26,28 +35,7 @@ import { EmptyState, ErrorState, LoadingState } from '@/components/ui-states';
 import styles from '@/components/dashboard-shell.module.css';
 import { localizedText, useInterfaceLocale } from '@/lib/locale';
 
-type Run = { id: string; status: string; createdAt: string; request: { query: string } };
-type LeadPage = {
-  items: { id: string; data: { title: string; company: string }; createdAt: string }[];
-  nextCursor: string | null;
-};
-type ResumeItem = { id: string; createdAt: string; status: string };
-type Profile = {
-  revision: number;
-  profile: { preferences: { techStack: string[]; titles: string[] } } | null;
-};
-type MatchBreakdown = { score: number; matchedSkills: string[] } | null;
-type Job = {
-  id: string;
-  data: {
-    title: string;
-    company: string;
-    location: string;
-    sourceUrl: string;
-    match: MatchBreakdown;
-  };
-};
-type Detail = { status: string; jobs: Job[] };
+type Job = DashboardSearchDetail['jobs'][number];
 
 // Real, exact count when the page fits under the limit; an honest "50+"
 // rather than a silently-capped number when it does not.
@@ -101,31 +89,33 @@ function DashboardContent() {
 
   const profile = useQuery({
     queryKey: ownerKey(owner, 'dashboard-profile'),
-    queryFn: ({ signal }) => api<Profile>('/profile', { signal }),
+    queryFn: ({ signal }) => apiParsed('/profile', parseDashboardProfile, { signal }),
     enabled: !!owner && authenticated,
     retry: 1,
   });
   const resumes = useQuery({
     queryKey: ownerKey(owner, 'dashboard-resumes'),
-    queryFn: ({ signal }) => api<{ enabled: boolean; items: ResumeItem[] }>('/resumes', { signal }),
+    queryFn: ({ signal }) => apiParsed('/resumes', parseResumeList, { signal }),
     enabled: !!owner && authenticated,
     retry: 1,
   });
   const runs = useQuery({
     queryKey: ownerKey(owner, 'dashboard-searches'),
-    queryFn: ({ signal }) => api<{ items: Run[] }>('/searches', { signal }),
+    queryFn: ({ signal }) => apiParsed('/searches', parseSearchRuns, { signal }),
     enabled: !!owner && authenticated,
     retry: 1,
   });
   const savedLeads = useQuery({
     queryKey: ownerKey(owner, 'dashboard-leads', 'saved'),
-    queryFn: ({ signal }) => api<LeadPage>('/leads?status=saved&limit=50', { signal }),
+    queryFn: ({ signal }) =>
+      apiParsed('/leads?status=saved&limit=50', parseDashboardLeadPage, { signal }),
     enabled: !!owner && authenticated,
     retry: 1,
   });
   const appliedLeads = useQuery({
     queryKey: ownerKey(owner, 'dashboard-leads', 'applied'),
-    queryFn: ({ signal }) => api<LeadPage>('/leads?status=applied&limit=50', { signal }),
+    queryFn: ({ signal }) =>
+      apiParsed('/leads?status=applied&limit=50', parseDashboardLeadPage, { signal }),
     enabled: !!owner && authenticated,
     retry: 1,
   });
@@ -139,7 +129,8 @@ function DashboardContent() {
   );
   const latestDetail = useQuery({
     queryKey: ownerKey(owner, 'dashboard-latest-run', latestUsableRun?.id),
-    queryFn: ({ signal }) => api<Detail>(`/searches/${latestUsableRun!.id}`, { signal }),
+    queryFn: ({ signal }) =>
+      apiParsed(`/searches/${latestUsableRun!.id}`, parseDashboardSearchDetail, { signal }),
     enabled: !!owner && authenticated && !!latestUsableRun,
     retry: 1,
   });
@@ -184,7 +175,7 @@ function DashboardContent() {
     // Same success criterion as the "Resume uploaded" checklist item above —
     // an in-progress or failed upload is not "activity" worth reporting as
     // done. Independent Reviewer finding 3, 2026-09-23.
-    const latestResume = resumes.data?.items.find((item) => item.status === 'completed');
+    const latestResume = resumes.data?.items.find((item) => item.status === 'parsed');
     if (latestResume) {
       entries.push({
         key: `resume-${latestResume.id}`,
@@ -204,7 +195,7 @@ function DashboardContent() {
     () => [
       {
         label: 'Resume uploaded',
-        done: (resumes.data?.items ?? []).some((item) => item.status === 'completed'),
+        done: (resumes.data?.items ?? []).some((item) => item.status === 'parsed'),
       },
       {
         label: 'Skills added',
