@@ -12,7 +12,7 @@ Establish what is actually running:
 
 ```bash
 ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST> \
-  "bash /opt/careerscope/infra/check-provenance.sh"
+  "bash /opt/careerscope/infra/checks/check-provenance.sh"
 ```
 
 Record that SHA. It is what you are rolling back _from_, and it is what you roll
@@ -35,10 +35,10 @@ If the previous image is gone, rebuild from the older commit using the normal
 path and should be the default.
 
 ```bash
-bash maintenance.sh enable "Rolling back" "about 10 minutes"
+bash host/maintenance.sh enable "Rolling back" "about 10 minutes"
 # deploy the older SHA exactly as in DEPLOYMENT.md
-bash check-provenance.sh <older-sha>
-bash maintenance.sh disable
+bash checks/check-provenance.sh <older-sha>
+bash host/maintenance.sh disable
 ```
 
 **Do not** run `docker system prune -a`. It deletes the older images that make a
@@ -77,8 +77,8 @@ recovery.
 1. **Check provenance and logs first.**
 
    ```bash
-   docker compose -f compose.production.yml ps
-   docker compose -f compose.production.yml logs --tail 50 api
+   docker compose --env-file /opt/careerscope/infra/.env -f /opt/careerscope/infra/docker/compose.production.yml ps
+   docker compose --env-file /opt/careerscope/infra/.env -f /opt/careerscope/infra/docker/compose.production.yml logs --tail 50 api
    ```
 
 2. **502 on every request, containers healthy.** This is the orphaned network
@@ -86,7 +86,7 @@ recovery.
    a full stack recreation.
 
    ```bash
-   bash /opt/careerscope/infra/restart-stack.sh
+   bash /opt/careerscope/infra/host/restart-stack.sh
    ```
 
 3. **Postgres refuses the password.** `infra/.env` was lost or regenerated
@@ -102,7 +102,7 @@ recovery.
 
 4. **Last resort.**
    ```bash
-   docker compose -f compose.production.yml up -d --force-recreate
+   docker compose --env-file /opt/careerscope/infra/.env -f /opt/careerscope/infra/docker/compose.production.yml up -d --force-recreate
    ```
 
 ---
@@ -112,9 +112,9 @@ recovery.
 Do not declare it done on a 200 from the home page.
 
 ```bash
-bash check-provenance.sh <target-sha>     # 4/4 agreement
-bash check-host-firewall.sh               # 14/14
+bash checks/check-provenance.sh <target-sha>     # 4/4 agreement
+bash checks/check-host-firewall.sh               # 14/14
 curl -sS https://careerscope.tech/api/health
-bash check-live-origin.sh                 # cookie, CSRF, proxy headers
-bash purge-verification-accounts.sh       # clean up the throwaway account
+bash checks/check-live-origin.sh                 # cookie, CSRF, proxy headers
+bash host/purge-verification-accounts.sh       # clean up the throwaway account
 ```

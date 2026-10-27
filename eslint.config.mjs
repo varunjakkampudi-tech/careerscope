@@ -35,7 +35,7 @@ export default tseslint.config(
     rules: { 'no-console': 'off' },
   },
   {
-    files: ['scripts/check-ui.ts', 'scripts/visual-regression.ts'],
+    files: ['scripts/tests/check-ui.ts', 'scripts/tests/visual-regression.ts'],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
   {
@@ -55,9 +55,9 @@ export default tseslint.config(
     // A tool whose entire output is a report has to reach stdout. This has to sit
     // after the general rules above, because flat config lets the last match win.
     files: [
-      'scripts/require-ci-success.mjs',
-      'scripts/check-deploy-gate.mjs',
-      'scripts/check-line-endings.mjs',
+      'scripts/ci/require-ci-success.mjs',
+      'scripts/ci/check-deploy-gate.mjs',
+      'scripts/ci/check-line-endings.mjs',
     ],
     rules: { 'no-console': 'off' },
   },

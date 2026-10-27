@@ -57,8 +57,8 @@ historical or imported records; this does not enable their adapters.
 
 The fail-closed behavior is covered by `packages/shared/src/job-source-policy.test.ts`,
 `tests/integration/database.integration.test.ts`, `apps/workers/search/src/collect.test.ts`,
-`scripts/run-scheduled-discovery.integration.test.ts`, and the browser assertions in
-`scripts/check-ui.ts`. Synthetic policy fixtures prove behavior only. Before a
+`scripts/jobs/run-scheduled-discovery.integration.test.ts`, and the browser assertions in
+`scripts/tests/check-ui.ts`. Synthetic policy fixtures prove behavior only. Before a
 source can be enabled, the owner must supply current, source-specific permitted-
 use evidence and approve measured coverage thresholds. Public availability
 alone does not establish collection, retention, transformation, display,

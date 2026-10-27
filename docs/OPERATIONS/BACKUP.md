@@ -26,8 +26,8 @@ actually restorable, and only then keeps it.
 
 ## How it runs
 
-[backup.sh](../../infra/backup.sh) runs **on the host**, the same way
-[monitor.sh](../../infra/monitor.sh) does, via `careerscope-backup.timer`
+[backup.sh](../../infra/host/backup.sh) runs **on the host**, the same way
+[monitor.sh](../../infra/host/monitor.sh) does, via `careerscope-backup.timer`
 (daily at 03:30, off-peak). Dumps contain private data — resumes, emails,
 everything else in the database — so the backup directory and every file in
 it are root-only (`0700`/`0600`), per this ticket's own `securityImpact`.
@@ -35,7 +35,7 @@ it are root-only (`0700`/`0600`), per this ticket's own `securityImpact`.
 ## Install
 
 ```sh
-bash infra/setup-backup.sh
+bash infra/host/setup-backup.sh
 ```
 
 Idempotent, same pattern as `setup-monitoring.sh`. A failed backup alerts to
@@ -59,7 +59,7 @@ database instead of a disposable scratch one.
 ## Verification
 
 ```sh
-bash infra/check-backup.sh
+bash infra/checks/check-backup.sh
 ```
 
 Unlike `check-monitoring.sh`, this is **not** stub-based: it starts a

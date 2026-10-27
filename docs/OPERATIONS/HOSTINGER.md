@@ -23,7 +23,7 @@ ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST>
 ```
 
 Configuration is owned by `/etc/ssh/sshd_config.d/10-careerscope.conf`, written
-by [harden-ssh.sh](../../infra/harden-ssh.sh):
+by [harden-ssh.sh](../../infra/host/harden-ssh.sh):
 
 | Setting                        | Value               |
 | ------------------------------ | ------------------- |
@@ -40,7 +40,7 @@ give it a dedicated key and no other use. Only one-time provisioning
 (`provision-host.sh`, the `setup-*.sh` timers) needs root, and it runs through
 `sudo` from that account or from the provider console.
 
-Known gap: [harden-ssh.sh](../../infra/harden-ssh.sh) still writes
+Known gap: [harden-ssh.sh](../../infra/host/harden-ssh.sh) still writes
 `PermitRootLogin prohibit-password`, a setting chosen when root was the only
 account. After the deploy user is created and a login as that user is verified,
 change the setting to `no` and re-run the script. Do not do it before, or the
@@ -58,7 +58,7 @@ running `systemctl reload ssh`.
 
 ## Brute-force protection
 
-fail2ban, configured by [setup-fail2ban.sh](../../infra/setup-fail2ban.sh).
+fail2ban, configured by [setup-fail2ban.sh](../../infra/host/setup-fail2ban.sh).
 
 - SSH jail only. 10 failures in 10 minutes, 15 minute ban.
 - `banaction = nftables-multiport`, which maintains its own `inet f2b-table`.
@@ -141,7 +141,7 @@ df -i /
 
 ## Read-only snapshot
 
-[audit-host.sh](../../infra/audit-host.sh) records the real state of the host
+[audit-host.sh](../../infra/host/audit-host.sh) records the real state of the host
 — OS, updates, resources, systemd failures, time sync, listening sockets,
 Docker networks, published ports — and changes nothing. Run it before and after
 any host change.

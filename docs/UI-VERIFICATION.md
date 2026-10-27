@@ -28,7 +28,7 @@ Run from the repository root:
 npm run test:ui
 ```
 
-This builds the app and runs `scripts/check-ui.ts` against disposable PostgreSQL,
+This builds the app and runs `scripts/tests/check-ui.ts` against disposable PostgreSQL,
 Redis services. Each browser receives a synthetic owner account and
 bounded fixture data. The check does not use personal credentials, saved leads or
 provider APIs. Service and browser processes are cleaned up, including on failure.

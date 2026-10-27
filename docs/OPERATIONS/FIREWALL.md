@@ -56,7 +56,7 @@ network.
 
 ## Verification
 
-[check-host-firewall.sh](../../infra/check-host-firewall.sh) — 14 assertions:
+[check-host-firewall.sh](../../infra/checks/check-host-firewall.sh) — 14 assertions:
 
 | Group      | Checks                                                                                     |
 | ---------- | ------------------------------------------------------------------------------------------ |
@@ -70,7 +70,7 @@ Run this script after any firewall change, after restarting Docker, and after a
 reboot.
 
 ```
-bash /opt/careerscope/infra/check-host-firewall.sh
+bash /opt/careerscope/infra/checks/check-host-firewall.sh
 ```
 
 ## Changing the rules

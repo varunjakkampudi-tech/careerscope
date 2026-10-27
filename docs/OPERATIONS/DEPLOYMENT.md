@@ -16,33 +16,33 @@ private, owner-readable curl netrc file and `CAREERSCOPE_TEST_EMAIL` selecting
 an existing test account. Never commit the netrc or echo its contents. This smoke
 does not enable signup, create arbitrary users, or delete database records.
 
-All under [infra](../../infra).
+All under [infra](../../infra), in `host/` (run on or against the host) and `checks/` (verification). See [infra/README.md](../../infra/README.md).
 
-| Script                           | Purpose                                                                                           |
-| -------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `provision-host.sh`              | Prepares a fresh Ubuntu 24.04 host. Idempotent. Installs Docker from Docker's repository.         |
-| `ship.sh`                        | Ships a build context to the host. **Preserves `infra/.env`.**                                    |
-| `build-images.sh`                | Builds both images, recording the source revision in each                                         |
-| `deploy.sh`                      | Brings the stack up. Generates secrets on the host; they never leave it.                          |
-| `apply-migrations.sh`            | Applies pending migrations and reports the publisher's hot query plan                             |
-| `restart-stack.sh`               | **The only supported way to restart the proxy**                                                   |
-| `maintenance.sh`                 | Proxy-level maintenance page: `enable` / `disable` / `status`                                     |
-| `check-provenance.sh`            | Asserts the deployed revision agrees everywhere                                                   |
-| `check-live-origin.sh`           | Explicit staging smoke: existing test identity, secure cookies, Origin refusal and logout         |
-| `check-host-firewall.sh`         | Firewall and Docker networking assertions                                                         |
-| `scan-images.sh`                 | Trivy scan of both images with a clean cache                                                      |
-| `purge-verification-accounts.sh` | Removes `verify-*` throwaway accounts                                                             |
-| `setup-monitoring.sh`            | Installs the host monitor (systemd timer). See [MONITORING.md](MONITORING.md)                     |
-| `monitor.sh`                     | The monitor itself — unreachable/unhealthy/stopped/stale/ok, alerts on change                     |
-| `check-monitoring.sh`            | Proves the monitor's classification and alerting logic against stub `docker`/`curl`               |
-| `setup-backup.sh`                | Installs the host backup job (systemd timer). See [BACKUP.md](BACKUP.md)                          |
-| `backup.sh`                      | Dumps, verifies by restoring into a scratch database, promotes, retains                           |
-| `check-backup.sh`                | Proves the pipeline against a real disposable Postgres container                                  |
-| `setup-discovery.sh`             | Installs the scheduled-discovery timer. See [DISCOVERY-SCHEDULE.md](DISCOVERY-SCHEDULE.md)        |
-| `setup-lead-lifecycle.sh`        | Installs the liveness/retention timers. See [LEAD-LIFECYCLE.md](LEAD-LIFECYCLE.md)                |
-| `setup-proxy-recovery.sh`        | Installs the proxy split-brain detector/auto-recovery. See [PROXY-RECOVERY.md](PROXY-RECOVERY.md) |
-| `recover-proxy.sh`               | The detector/recovery itself - confirms an outage, runs `restart-stack.sh`, circuit-breaks        |
-| `check-proxy-recovery.sh`        | Proves the confirm-then-act-then-cooldown state machine against stub `curl`/`restart-stack.sh`    |
+| Script                                | Purpose                                                                                           |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `host/provision-host.sh`              | Prepares a fresh Ubuntu 24.04 host. Idempotent. Installs Docker from Docker's repository.         |
+| `host/ship.sh`                        | Ships a build context to the host. **Preserves `infra/.env`.**                                    |
+| `host/build-images.sh`                | Builds both images, recording the source revision in each                                         |
+| `host/deploy.sh`                      | Brings the stack up. Generates secrets on the host; they never leave it.                          |
+| `host/apply-migrations.sh`            | Applies pending migrations and reports the publisher's hot query plan                             |
+| `host/restart-stack.sh`               | **The only supported way to restart the proxy**                                                   |
+| `host/maintenance.sh`                 | Proxy-level maintenance page: `enable` / `disable` / `status`                                     |
+| `checks/check-provenance.sh`          | Asserts the deployed revision agrees everywhere                                                   |
+| `checks/check-live-origin.sh`         | Explicit staging smoke: existing test identity, secure cookies, Origin refusal and logout         |
+| `checks/check-host-firewall.sh`       | Firewall and Docker networking assertions                                                         |
+| `host/scan-images.sh`                 | Trivy scan of both images with a clean cache                                                      |
+| `host/purge-verification-accounts.sh` | Removes `verify-*` throwaway accounts                                                             |
+| `host/setup-monitoring.sh`            | Installs the host monitor (systemd timer). See [MONITORING.md](MONITORING.md)                     |
+| `host/monitor.sh`                     | The monitor itself — unreachable/unhealthy/stopped/stale/ok, alerts on change                     |
+| `checks/check-monitoring.sh`          | Proves the monitor's classification and alerting logic against stub `docker`/`curl`               |
+| `host/setup-backup.sh`                | Installs the host backup job (systemd timer). See [BACKUP.md](BACKUP.md)                          |
+| `host/backup.sh`                      | Dumps, verifies by restoring into a scratch database, promotes, retains                           |
+| `checks/check-backup.sh`              | Proves the pipeline against a real disposable Postgres container                                  |
+| `host/setup-discovery.sh`             | Installs the scheduled-discovery timer. See [DISCOVERY-SCHEDULE.md](DISCOVERY-SCHEDULE.md)        |
+| `host/setup-lead-lifecycle.sh`        | Installs the liveness/retention timers. See [LEAD-LIFECYCLE.md](LEAD-LIFECYCLE.md)                |
+| `host/setup-proxy-recovery.sh`        | Installs the proxy split-brain detector/auto-recovery. See [PROXY-RECOVERY.md](PROXY-RECOVERY.md) |
+| `host/recover-proxy.sh`               | The detector/recovery itself - confirms an outage, runs `restart-stack.sh`, circuit-breaks        |
+| `checks/check-proxy-recovery.sh`      | Proves the confirm-then-act-then-cooldown state machine against stub `curl`/`restart-stack.sh`    |
 
 ---
 
@@ -73,27 +73,27 @@ git archive --format=tar.gz -o deploy.tgz "$REV"
 
 # 2. Ship. This preserves the host's .env and records the revision.
 scp -i <DEPLOY_KEY> deploy.tgz <DEPLOY_USER>@<DEPLOY_HOST>:/tmp/
-ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST>   "bash /opt/careerscope/infra/ship.sh /tmp/deploy.tgz $REV"
+ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST>   "bash /opt/careerscope/infra/host/ship.sh /tmp/deploy.tgz $REV"
 
 # 3. Build with provenance, migrate, bring up.
 ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST> "
   cd /opt/careerscope/infra &&
-  bash build-images.sh $REV &&
-  bash apply-migrations.sh &&
-  docker compose -f compose.production.yml up -d --wait
+  bash host/build-images.sh $REV &&
+  bash host/apply-migrations.sh &&
+  docker compose --env-file .env -f docker/compose.production.yml up -d --wait
 "
 
 # 4. Prove it.
-ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST>   "bash /opt/careerscope/infra/check-provenance.sh $REV"
+ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST>   "bash /opt/careerscope/infra/checks/check-provenance.sh $REV"
 ```
 
 For a deployment expected to take more than a few seconds, enable maintenance
 mode first:
 
 ```bash
-bash maintenance.sh enable "Deploying" "about 5 minutes"
+bash host/maintenance.sh enable "Deploying" "about 5 minutes"
 # ... deploy ...
-bash maintenance.sh disable
+bash host/maintenance.sh disable
 ```
 
 The maintenance flag is a **file**, not application state, so the page still
@@ -105,7 +105,7 @@ serves while the stack is down. `/api/health` stays reachable throughout.
 
 CS-28 ("two different openings can be merged into one") changed how a job
 posting's identity is computed and added `npm run db:backfill-job-sightings`
-(`scripts/backfill-job-sightings.ts`) to recompute `job_sightings` from
+(`scripts/jobs/backfill-job-sightings.ts`) to recompute `job_sightings` from
 `search_jobs` under the corrected rule. It is idempotent and safe to re-run,
 but it is **not** wired into `apply-migrations.sh` and must be run once,
 manually, the first time this release reaches production — after migrations,
@@ -114,17 +114,17 @@ before traffic resumes:
 ```bash
 ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST> "
   cd /opt/careerscope/infra &&
-  docker exec careerscope-api-1 node --import tsx /app/scripts/backfill-job-sightings.ts
+  docker exec careerscope-api-1 node --import tsx /app/scripts/jobs/backfill-job-sightings.ts
 "
 ```
 
 Corrected 2026-09-23: the `bootstrap` service's compose definition only
 mounts `bootstrap.mjs` (`volumes: ['private:/private',
-'./bootstrap.mjs:/app/bootstrap.mjs:ro']`), not the rest of `CareerScope/scripts` —
+'../host/bootstrap.mjs:/app/bootstrap.mjs:ro']`), not the rest of `CareerScope/scripts` —
 the original `docker compose run --rm --no-deps bootstrap ...` form here
 would have failed with "file not found" the first time anyone actually ran
 it. `backfill-job-sightings.ts` (and CS-26's `run-scheduled-discovery.ts`)
-are now copied into the runtime image in `infra/Dockerfile`, and the
+are now copied into the runtime image in `infra/docker/Dockerfile`, and the
 corrected command targets the always-running `api` container via
 `docker exec` instead, matching how CS-24/CS-25's own scripts reach the
 database. This gap was caught while implementing CS-26, before this step had
@@ -148,7 +148,7 @@ it is host state (a systemd timer), not application state:
 ```bash
 ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST> "
   cd /opt/careerscope/infra &&
-  bash setup-monitoring.sh
+  bash host/setup-monitoring.sh
 "
 ```
 
@@ -171,7 +171,7 @@ application state, so it is installed once, manually, not via
 ```bash
 ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST> "
   cd /opt/careerscope/infra &&
-  bash setup-backup.sh
+  bash host/setup-backup.sh
 "
 ```
 
@@ -192,7 +192,7 @@ timer, same reasoning as CS-24/CS-25 - host state, installed once manually:
 ```bash
 ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST> "
   cd /opt/careerscope/infra &&
-  bash setup-discovery.sh
+  bash host/setup-discovery.sh
 "
 ```
 
@@ -207,7 +207,7 @@ to invoke `docker compose run --rm --no-deps bootstrap ...`, which would have
 failed - `bootstrap`'s compose definition only mounts `bootstrap.mjs`, not
 the rest of `CareerScope/scripts`. Both `backfill-job-sightings.ts` and this ticket's
 `run-scheduled-discovery.ts` are now copied into the runtime image
-(`infra/Dockerfile`), and the corrected command targets the
+(`infra/docker/Dockerfile`), and the corrected command targets the
 always-running `api` container via `docker exec` instead.
 
 ---
@@ -221,7 +221,7 @@ reasoning as CS-24/25/26:
 ```bash
 ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST> "
   cd /opt/careerscope/infra &&
-  bash setup-lead-lifecycle.sh
+  bash host/setup-lead-lifecycle.sh
 "
 ```
 
@@ -229,7 +229,7 @@ See [LEAD-LIFECYCLE.md](LEAD-LIFECYCLE.md) for the full design and the
 SSRF-hardening rationale. Remove this section once the step has been
 exercised against production.
 
-Also caught and fixed while building this: `infra/Dockerfile.dockerignore`
+Also caught and fixed while building this: `infra/docker/Dockerfile.dockerignore`
 is an **allowlist** (`**` first, then specific paths un-ignored) - CS-26's
 own new scripts had been added to the `Dockerfile`'s `COPY` instructions but
 never to this allowlist, which would have made those `COPY` steps fail
@@ -262,7 +262,7 @@ reasoning as CS-24/25/26/27:
 ```bash
 ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST> "
   cd /opt/careerscope/infra &&
-  bash setup-proxy-recovery.sh
+  bash host/setup-proxy-recovery.sh
 "
 ```
 
@@ -297,7 +297,7 @@ stated, not hidden.
 ## Restarting
 
 ```bash
-bash /opt/careerscope/infra/restart-stack.sh
+bash /opt/careerscope/infra/host/restart-stack.sh
 ```
 
 Restarting the proxy on its own is an outage. Docker gives it a fresh network
@@ -319,6 +319,19 @@ would have generated a fresh password that the existing database volume
 rejects. `ship.sh` now preserves and restores it explicitly.
 
 Never regenerate this value against an existing `careerscope_database` volume.
+
+## Redis credentials
+
+| Name             | Purpose                                                                                                                                                          | Required in production | Handling                                                                       |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------ |
+| `REDIS_PASSWORD` | Password for the rate-limit Redis (6379) and the persistent queue Redis (6380). It is passed as `--requirepass` and embedded in `REDIS_URL` / `QUEUE_REDIS_URL`. | Yes                    | Lives in `/opt/careerscope/infra/.env`. Never commit it or paste it into logs. |
+
+`deploy.sh` generates `REDIS_PASSWORD` on first deploy if `infra/.env` lacks it,
+and `ship.sh` preserves the file. `compose.production.yml` and
+`compose.acceptance.yml` fail with "Redis password required" when it is unset.
+Any script that connects to Redis must use a URL of the form
+`redis://:${REDIS_PASSWORD}@127.0.0.1:6379`; `infra/checks/check-queue-contract.sh`
+exits with an error when `REDIS_PASSWORD` is not exported.
 
 ---
 

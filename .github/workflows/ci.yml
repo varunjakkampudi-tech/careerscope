@@ -173,7 +173,7 @@ jobs:
 
       - name: Validate passive lifecycle instrumentation
         if: env.CAREERSCOPE_UI_SCENARIO != ''
-        run: node --import tsx --test scripts/notification-lifecycle.test.mjs
+        run: node --import tsx --test scripts/jobs/notification-lifecycle.test.mjs
 
       - name: Create synthetic ephemeral test configuration
         run: |
@@ -256,7 +256,7 @@ jobs:
         run: |
           cd apps/web
           if [ "$CAREERSCOPE_UI_SCENARIO" = notification-panel-close-before-mutation ]; then
-            CAREERSCOPE_NOTIFICATION_PROXY_DIAGNOSTICS=1 node --import "$GITHUB_WORKSPACE/scripts/notification-lifecycle.mjs" ../../node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 5280 > "$RUNNER_TEMP/careerscope-web.log" 2>&1 &
+            CAREERSCOPE_NOTIFICATION_PROXY_DIAGNOSTICS=1 node --import "$GITHUB_WORKSPACE/scripts/jobs/notification-lifecycle.mjs" ../../node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 5280 > "$RUNNER_TEMP/careerscope-web.log" 2>&1 &
           else
             node ../../node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 5280 > "$RUNNER_TEMP/careerscope-web.log" 2>&1 &
           fi
@@ -299,7 +299,7 @@ jobs:
 
       - name: Report passive Next.js notification lifecycle observations
         if: always() && env.CAREERSCOPE_UI_SCENARIO == 'notification-panel-close-before-mutation'
-        run: node scripts/notification-lifecycle.mjs --read-log "$RUNNER_TEMP/careerscope-web.log"
+        run: node scripts/jobs/notification-lifecycle.mjs --read-log "$RUNNER_TEMP/careerscope-web.log"
 
       - name: Run isolated performance regression test
         if: github.event_name == 'workflow_dispatch' && contains(fromJSON('["all","performance"]'), inputs.suite)

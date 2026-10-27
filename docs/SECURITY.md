@@ -37,7 +37,7 @@ external-port scan was performed in this change.
 ## Webhook ingress
 
 Source review found no inbound provider webhook/callback handler in the API,
-packages, or operational scripts. `scripts/run-scheduled-discovery.ts` has an
+packages, or operational scripts. `scripts/jobs/run-scheduled-discovery.ts` has an
 optional outbound HTTPS monitoring notification; it is not an inbound event
 acceptance path. Any future inbound integration must validate authenticity and
 freshness before processing, enforce schema/replay/idempotency controls, persist
