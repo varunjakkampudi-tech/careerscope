@@ -160,10 +160,30 @@ Preparation is deterministic. External AI elaboration has been removed.
 `POST /api/resumes` takes `application/octet-stream`, requires an
 `Idempotency-Key` header, and returns `202` with the upload id and status. It
 returns `507` when storage capacity is exhausted, and `409` if the upload record
-changed underneath it. Client disconnect aborts the in-flight write.
+changed underneath it. A reused idempotency key with different content returns
+`409` with code `IDEMPOTENCY_KEY_REUSED`. Client disconnect aborts the in-flight
+write and leaves the upload `uploading`, where `recover` or a retry with the same
+key can finish it.
+
+`GET /api/resumes` returns up to 50 items. Each has `status` (`uploading`,
+`queued`, `cancelling`, `cancelled`, `parsed` or `rejected`) and `cancellable`,
+which is true only when the server has the storage cancel capability and the
+status is `uploading` or `cancelling`. The response also carries
+`cancellationEnabled`. The web panel shows the cancel control only when
+`cancellable` is true.
+
+`POST /api/resumes/:id/cancel` is synchronous and owner-scoped. It moves an
+`uploading` upload to `cancelling`, writes the storage cancellation marker, then
+sets `cancelled` and returns `200` with `{ id, status }`. Repeating it returns
+`cancelled` again, and calling it on a `cancelling` upload finishes the cleanup.
+No worker is involved. An unknown id or another owner's id returns `404`. A
+`queued`, `parsed` or `rejected` upload returns `409` with code
+`UPLOAD_NOT_CANCELLABLE`. If the cancellation marker quota or the storage volume
+is full it returns `507`.
 
 `cancel` and `delete` return `503` when the storage backend does not provide the
-corresponding capability, rather than silently doing nothing.
+corresponding capability, rather than silently doing nothing. The API process
+supplies both when private resume storage is configured.
 
 ### Leads
 

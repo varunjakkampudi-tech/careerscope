@@ -609,6 +609,7 @@ function contracts(options: {
               contentType: text(),
               createdAt: timestamp,
               status: uploadStatus,
+              cancellable: bool,
             }),
           ),
         },
@@ -663,7 +664,7 @@ function contracts(options: {
       {
         body: object({}),
         failures: [400, 404, 409, 429, 503, 507],
-        description: `${resumeDescription} An empty JSON object is optional.`,
+        description: `${resumeDescription} An empty JSON object is optional. Only uploading or cancelling uploads can be cancelled; queued and completed uploads return 409.`,
       },
     ),
     'DELETE /api/resumes/:id': operation(

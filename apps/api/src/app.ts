@@ -1085,10 +1085,15 @@ export async function createApp(
          WHERE upload.owner_id = $1 ORDER BY upload.created_at DESC, upload.id DESC LIMIT 50`,
         [request.ownerId],
       );
+      const cancellationEnabled = !!options.resumeStorage?.cancelUpload;
       return {
         enabled: true,
-        cancellationEnabled: !!options.resumeStorage?.cancelUpload,
-        items: result.rows,
+        cancellationEnabled,
+        // The server decides: only an unfinished upload can be cancelled; once queued the object is stored and a parse is durable.
+        items: result.rows.map((row: { status: string }) => ({
+          ...row,
+          cancellable: cancellationEnabled && ['uploading', 'cancelling'].includes(row.status),
+        })),
       };
     });
     resumes.post(
@@ -1105,8 +1110,13 @@ export async function createApp(
         if (!Buffer.isBuffer(request.body))
           throw new HttpError(400, 'A PDF or DOCX file is required');
         const controller = new AbortController();
-        const abort = () => controller.abort();
+        // `aborted` on the request only fires while the body is still arriving. The body is fully
+        // buffered here, so a later disconnect is only visible as the response closing unfinished.
+        const abort = () => {
+          if (!reply.raw.writableEnded) controller.abort();
+        };
         request.raw.once('aborted', abort);
+        reply.raw.once('close', abort);
         try {
           const upload = await coordinator!.upload(
             request.ownerId!,
@@ -1118,6 +1128,7 @@ export async function createApp(
           return reply.code(202).send({ id: upload.id, status: upload.status });
         } finally {
           request.raw.removeListener('aborted', abort);
+          reply.raw.removeListener('close', abort);
         }
       },
     );

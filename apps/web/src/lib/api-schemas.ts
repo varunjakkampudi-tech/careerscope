@@ -214,6 +214,8 @@ const resumeListSchema = z.object({
       contentType: z.string(),
       createdAt: z.string(),
       status: z.string(),
+      // Server decision: only then does the panel offer cancel.
+      cancellable: z.boolean().optional(),
     }),
   ),
 });

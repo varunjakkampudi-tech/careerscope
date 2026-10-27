@@ -163,6 +163,10 @@ const messages = {
     apiError503: 'The service is temporarily unavailable. Please try again shortly.',
     apiError507: 'Resume storage is full. Remove an unneeded completed resume or try again later.',
     apiErrorDefault: 'Request failed. Please try again.',
+    resumeUploadChanged:
+      'This upload changed while it was being saved. Check your resume list, then upload again if needed.',
+    resumeCancelUnavailable:
+      'This upload can no longer be cancelled. Refresh to see its current status.',
     accountSecurityBack: 'Back to search',
     emailVerificationUnrecorded: 'Email verification is not recorded.',
     emailChangeUnavailable: 'Change sign-in email',
@@ -392,6 +396,12 @@ const messages = {
     apiError507:
       'రెజ్యూమ్ నిల్వ నిండింది. అనవసరమైన పూర్తయిన రెజ్యూమ్‌ను తొలగించండి లేదా తర్వాత మళ్లీ ప్రయత్నించండి.',
     apiErrorDefault: 'అభ్యర్థనను పూర్తి చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.',
+    // Machine-drafted: requires native-speaker review before release.
+    resumeUploadChanged:
+      'సేవ్ అవుతున్నప్పుడు ఈ అప్‌లోడ్ మారింది. మీ రెజ్యూమ్ జాబితాను చూసి, అవసరమైతే మళ్లీ అప్‌లోడ్ చేయండి.',
+    // Machine-drafted: requires native-speaker review before release.
+    resumeCancelUnavailable:
+      'ఈ అప్‌లోడ్‌ను ఇకపై రద్దు చేయలేరు. ప్రస్తుత స్థితిని చూడటానికి రిఫ్రెష్ చేయండి.',
     accountSecurityBack: 'శోధనకు తిరిగి వెళ్ళండి',
     emailVerificationUnrecorded: 'ఇమెయిల్ ధృవీకరణ నమోదు కాలేదు.',
     emailChangeUnavailable: 'సైన్-ఇన్ ఇమెయిల్ మార్చండి',
@@ -622,6 +632,12 @@ const messages = {
     apiError507:
       'रिज़्यूमे स्टोरेज भर गया है। कोई अनावश्यक पूरा रिज़्यूमे हटाएँ या बाद में कोशिश करें।',
     apiErrorDefault: 'अनुरोध पूरा नहीं हो सका। फिर कोशिश करें।',
+    // Machine-drafted: requires native-speaker review before release.
+    resumeUploadChanged:
+      'सहेजते समय यह अपलोड बदल गया। अपनी रिज़्यूमे सूची देखें और ज़रूरत हो तो फिर अपलोड करें।',
+    // Machine-drafted: requires native-speaker review before release.
+    resumeCancelUnavailable:
+      'इस अपलोड को अब रद्द नहीं किया जा सकता। मौजूदा स्थिति देखने के लिए रीफ़्रेश करें।',
     accountSecurityBack: 'खोज पर वापस जाएँ',
     emailVerificationUnrecorded: 'ईमेल सत्यापन दर्ज नहीं है।',
     emailChangeUnavailable: 'साइन-इन ईमेल बदलें',

@@ -3,7 +3,7 @@
 import { useRef, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { FileText, LoaderCircle, RefreshCw, Trash2, Upload, X } from 'lucide-react';
-import { apiJson, apiParsed } from '../lib/api';
+import { ApiError, apiJson, apiParsed } from '../lib/api';
 import {
   parseResumeDetail,
   parseResumeList,
@@ -11,11 +11,30 @@ import {
   parseResumeUpload,
   type ResumeProposal,
 } from '../lib/api-schemas';
+import { localizedApiErrorMessage, localizedText, useInterfaceLocale } from '../lib/locale';
 import { useOwner, ownerKey } from '../lib/session';
 import { EmptyState, ErrorState, LoadingState } from './ui-states';
 import styles from './resume-panel.module.css';
 
 export type { ResumeProposal };
+
+/** User-facing text for a failed resume call: 507 and 409 come from localized copy, anything else keeps the client message. */
+function failureText(
+  locale: ReturnType<typeof useInterfaceLocale>,
+  failure: unknown,
+  action: 'upload' | 'cancel',
+  fallback: string,
+) {
+  if (failure instanceof ApiError) {
+    if (failure.status === 507) return localizedApiErrorMessage(locale, 507);
+    if (failure.status === 409)
+      return localizedText(
+        locale,
+        action === 'cancel' ? 'resumeCancelUnavailable' : 'resumeUploadChanged',
+      );
+  }
+  return failure instanceof Error ? failure.message : fallback;
+}
 
 export default function ResumePanel({
   csrf,
@@ -25,6 +44,7 @@ export default function ResumePanel({
   onReview: (proposal: ResumeProposal) => void;
 }) {
   const cache = useQueryClient();
+  const locale = useInterfaceLocale();
   // CS-61: owner-scoped query keys. Present exactly when authenticated.
   const owner = useOwner();
   const input = useRef<HTMLInputElement>(null);
@@ -115,7 +135,7 @@ export default function ResumePanel({
       if (input.current) input.current.value = '';
       await cache.invalidateQueries({ queryKey: ['resumes'] });
     } catch (failure) {
-      setError(failure instanceof Error ? failure.message : 'Upload failed.');
+      setError(failureText(locale, failure, 'upload', 'Upload failed.'));
       await cache.invalidateQueries({ queryKey: ['resumes'] });
     } finally {
       setPending(false);
@@ -204,29 +224,26 @@ export default function ResumePanel({
                     <RefreshCw className={recover.isPending ? 'spin' : undefined} size={17} />
                   </button>
                 )}
-                {resumes.data.cancellationEnabled &&
-                  ['uploading', 'cancelling'].includes(item.status) && (
-                    <button
-                      type="button"
-                      title={
-                        item.status === 'cancelling' ? 'Retry upload cleanup' : 'Cancel upload'
-                      }
-                      aria-label={
-                        item.status === 'cancelling' ? 'Retry upload cleanup' : 'Cancel upload'
-                      }
-                      disabled={cancel.isPending || recover.isPending || pending}
-                      onClick={() => {
-                        if (
-                          window.confirm(
-                            'Cancel this unfinished upload and remove its file? This upload cannot be recovered afterward.',
-                          )
+                {item.cancellable === true && (
+                  <button
+                    type="button"
+                    title={item.status === 'cancelling' ? 'Retry upload cleanup' : 'Cancel upload'}
+                    aria-label={
+                      item.status === 'cancelling' ? 'Retry upload cleanup' : 'Cancel upload'
+                    }
+                    disabled={cancel.isPending || recover.isPending || pending}
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          'Cancel this unfinished upload and remove its file? This upload cannot be recovered afterward.',
                         )
-                          cancel.mutate(item.id);
-                      }}
-                    >
-                      <X size={17} />
-                    </button>
-                  )}
+                      )
+                        cancel.mutate(item.id);
+                    }}
+                  >
+                    <X size={17} />
+                  </button>
+                )}
                 <button
                   type="button"
                   title="Delete resume"
@@ -258,7 +275,7 @@ export default function ResumePanel({
             <ErrorState
               variant="inline"
               what="Could not recover that upload."
-              detail={recover.error.message}
+              detail={failureText(locale, recover.error, 'upload', recover.error.message)}
             />
           )}
           {cancel.isPending && <p role="status">Cancelling upload...</p>}
@@ -266,7 +283,7 @@ export default function ResumePanel({
             <ErrorState
               variant="inline"
               what="Could not cancel that upload."
-              detail={cancel.error.message}
+              detail={failureText(locale, cancel.error, 'cancel', cancel.error.message)}
             />
           )}
           {recover.data?.status === 'uploading' && (

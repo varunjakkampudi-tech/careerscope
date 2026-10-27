@@ -38,6 +38,37 @@ the canonical OTP/session/consent/email-change schema. Migration
 reusing the conflicting unpublished migration numbers from the earlier branch.
 The schema does not itself constitute legal approval.
 
+### Resume tables
+
+`resume_uploads` has one row per upload attempt: `owner_id`, a client
+`idempotency_key` (unique per owner), the storage `bucket`, the `sha256` of the
+file, `bytes` (1 byte to 5 MiB), `content_type` (PDF or DOCX only), nullable
+`object_version` and `command_id`, `status` and timestamps. The file itself is
+encrypted in private file storage, not in the database. `status` is one of:
+
+| Status       | Meaning                                                                         | `object_version` / `command_id` |
+| ------------ | ------------------------------------------------------------------------------- | ------------------------------- |
+| `uploading`  | Reserved; the object may or may not be stored yet. Cancellable.                 | both null                       |
+| `queued`     | Object stored and read back; a `resume.parse` outbox command exists.            | both set                        |
+| `cancelling` | Cancel started; the storage marker is not yet confirmed. Cancel can be retried. | both null                       |
+| `cancelled`  | Cancel finished; a storage marker blocks any late publish. Terminal.            | both null                       |
+
+A check constraint enforces the pairing. `queued` is reached only from
+`uploading`, together with the outbox insert, in one transaction. A queued upload
+is not cancellable. `resume_results` holds the parse outcome (`parsed` with a
+bounded JSON object, or `rejected` with `invalid_document` or
+`processing_failed`), keyed by `upload_id` with a unique `command_id`; it is
+written only while the upload is `queued`. The status shown to the candidate is
+the result status when a result exists, otherwise the upload status, so the
+visible values are `uploading`, `queued`, `cancelling`, `cancelled`, `parsed` and
+`rejected`. Deleting a settled resume removes the stored object, then the result
+and upload rows.
+
+Storage budgets are checked under a lock when an upload is first reserved: at
+most 50 uploads and 100 MiB per owner, and 1000 uploads and 1 GiB overall,
+counting every row including cancelled ones. Exceeding a budget is reported as
+HTTP 507.
+
 Ownership is derived from the authenticated server session, never from a
 client-supplied owner identifier. Transactional outbox rows publish work to
 isolated Redis queues; workers are idempotent and fenced. Retention and

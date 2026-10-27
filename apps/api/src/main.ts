@@ -54,6 +54,7 @@ const app = await createApp(database, env.APP_ORIGIN, limiter.consume, {
         put: resumeStorage.put.bind(resumeStorage),
         get: resumeStorage.get.bind(resumeStorage),
         recoverVersion: resumeStorage.recoverVersion.bind(resumeStorage),
+        cancelUpload: resumeStorage.cancelUpload.bind(resumeStorage),
         delete: resumeStorage.delete.bind(resumeStorage),
       }
     : undefined,
