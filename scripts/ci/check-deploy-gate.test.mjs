@@ -237,7 +237,7 @@ test('the root CI service topology is disposable, loopback-only and recovery-com
         /^[ ]{8}uses: actions\/checkout@[a-f0-9]{40}\r?\n[ ]{8}with:\r?\n[ ]{10}persist-credentials: false$/gm,
       ),
     ].length,
-    2,
+    3,
     'each CI job must prevent checkout credentials from persisting into test execution',
   );
   assert.match(workflow, /--name careerscope-ci-postgres --publish 127\.0\.0\.1:5432:5432/);
