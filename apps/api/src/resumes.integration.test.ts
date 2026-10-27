@@ -383,3 +383,41 @@ async function listIds(database: Database, ownerId: string) {
   );
   return result.rows.map((row) => row.id);
 }
+
+test(
+  'F-022: a cancelled upload can be deleted and stops counting toward the owner quota',
+  { timeout: 60_000 },
+  async () => {
+    await withFixture(async ({ database, uploads, owner }) => {
+      const app = await createApp(database, origin, async () => true, {
+        testAccess: { mode: 'disabled' },
+        resumeStorage: storageStub({ cancelUpload: async () => undefined }),
+      });
+      try {
+        const upload = await uploads.reserve(owner.id, 'cancel-then-delete', bucket, metadata);
+        const cancel = await app.inject({
+          method: 'POST',
+          url: `/api/resumes/${upload.id}/cancel`,
+          headers: owner.headers,
+        });
+        assert.equal(cancel.statusCode, 200);
+
+        const removed = await app.inject({
+          method: 'DELETE',
+          url: `/api/resumes/${upload.id}`,
+          headers: owner.headers,
+        });
+        assert.equal(removed.statusCode, 204);
+        assert.equal(await uploads.get(owner.id, upload.id), null);
+
+        const remaining = await database.pool.query<{ count: string }>(
+          'SELECT count(*) AS count FROM resume_uploads WHERE owner_id = $1',
+          [owner.id],
+        );
+        assert.equal(remaining.rows[0]?.count, '0');
+      } finally {
+        await app.close();
+      }
+    });
+  },
+);
