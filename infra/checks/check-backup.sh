@@ -15,7 +15,11 @@ set -euo pipefail
 dir="$(cd "$(dirname "$0")" && pwd)"
 work=$(mktemp -d)
 pg_name="careerscope-backup-check-$$"
-trap 'docker rm -f "$pg_name" >/dev/null 2>&1 || true; rm -rf "$work"' EXIT
+files_name="careerscope-backup-files-$$"
+trap 'docker rm -f "$pg_name" "$files_name" >/dev/null 2>&1 || true; rm -rf "$work"' EXIT
+# MSYS (Git Bash on Windows) rewrites absolute POSIX paths in arguments, which would corrupt
+# the in-container paths passed to docker exec. This is a no-op on Linux.
+export MSYS_NO_PATHCONV=1
 
 failures=0
 check() {
@@ -52,6 +56,15 @@ fi
 docker exec "$pg_name" psql -U careerscope -d careerscope -c \
   "CREATE TABLE widgets (id serial primary key, name text); INSERT INTO widgets (name) VALUES ('a'), ('b'), ('c');" >/dev/null
 
+echo "== starting a disposable stand-in for the files container (private volume)"
+key_hex=$(od -An -N32 -tx1 /dev/urandom | tr -d ' \n')
+docker run -d --name "$files_name" --entrypoint sleep \
+  postgres:17.6-alpine@sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94 600 >/dev/null
+docker exec "$files_name" sh -c "mkdir -p /private/objects && umask 077 \
+  && printf 'ciphertext-one' >/private/objects/o1_r1_h1.bin \
+  && head -c 4096 /dev/urandom >/private/objects/o2_r2_h2.bin \
+  && printf '%s' '$key_hex' >/private/encryption.key"
+
 cat >"$work/curl" <<'EOF'
 #!/usr/bin/env bash
 is_post=0
@@ -69,6 +82,7 @@ chmod +x "$work/curl"
 run_backup() {
   BACKUP_DB_CONTAINER="$pg_name" \
   BACKUP_DIR="$work/backups" \
+  BACKUP_FILES_CONTAINER="${CHECK_FILES_CONTAINER-$files_name}" \
   BACKUP_CURL_BIN="$work/curl" \
   BACKUP_WEBHOOK_URL="https://hooks.example.test/alert" \
   FAKE_CALLS_FILE="$work/webhook-calls" \
@@ -96,6 +110,58 @@ docker exec -i "$pg_name" pg_restore -U careerscope -d careerscope_recheck --no-
 row_count=$(docker exec "$pg_name" psql -U careerscope -d careerscope_recheck -tAc "SELECT count(*) FROM widgets" 2>/dev/null | tr -d ' ')
 check "the dump this test produced restores the real seeded rows elsewhere" "$row_count" "3"
 docker exec "$pg_name" psql -U careerscope -d postgres -tAc "DROP DATABASE careerscope_recheck" >/dev/null 2>&1 || true
+
+echo "== resume objects and the key are backed up as separate artefacts"
+resumes_tar=$(find "$work/backups" -maxdepth 1 -name 'careerscope-resumes-*.tar')
+key_copy=$(find "$work/backups/keys" -maxdepth 1 -name 'careerscope-resume-key-*.key')
+check "one resume archive promoted" "$(printf '%s\n' "$resumes_tar" | grep -c .)" "1"
+check "one key copy promoted, in its own directory" "$(printf '%s\n' "$key_copy" | grep -c .)" "1"
+check "the archive does not contain the key" "$(tar -tf "$resumes_tar" | grep -c 'encryption.key')" "0"
+check "the archive holds both objects" "$(tar -tf "$resumes_tar" | grep -c '\.bin$')" "2"
+check "status records resumes ok and the object count" "$(grep -c '^RESUMES=ok' "$work/backups/last-status")-$(grep -c '^RESUME_OBJECTS=2' "$work/backups/last-status")" "1-1"
+check "key copy is root-restrictable (0600)" "$(stat -c '%a' "$key_copy" 2>/dev/null || stat -f '%Lp' "$key_copy")" "600"
+check "key copy equals the live key" "$(tr -d '\n' <"$key_copy")" "$key_hex"
+check "no staging files left behind (archive or key)" "$(find "$work/backups" -name '.staging-*' | wc -l | tr -d ' ')" "0"
+
+echo "== restoring the archive and key reproduces the original bytes"
+mkdir -p "$work/restore"
+restore_start=$(date +%s)
+tar -xf "$resumes_tar" -C "$work/restore"
+restore_secs=$(( $(date +%s) - restore_start ))
+for object in o1_r1_h1.bin o2_r2_h2.bin; do
+  original=$(docker exec "$files_name" sha256sum "/private/objects/$object" | cut -d' ' -f1)
+  restored=$(sha256sum "$work/restore/objects/$object" | cut -d' ' -f1)
+  check "restored $object is byte-identical" "$restored" "$original"
+done
+echo "(fixture resume extraction took ${restore_secs}s)"
+
+echo "== an unreadable key fails the whole backup and promotes nothing new"
+sleep 1.1
+docker exec "$files_name" sh -c "printf 'not-a-hex-key' >/private/encryption.key"
+: >"$work/webhook-calls"
+key_exit=0
+out=$(run_backup 2>&1) || key_exit=$?
+check "bad key returns nonzero" "$key_exit" "1"
+check "bad key reports failure" "$(printf '%s' "$out" | grep -c 'backup FAILED')" "1"
+check "no new dump, archive or key was promoted" "$(find "$work/backups" -type f \( -name 'careerscope-*.dump' -o -name 'careerscope-resumes-*.tar' -o -name 'careerscope-resume-key-*.key' \) | wc -l | tr -d ' ')" "3"
+check "no staging files after a key failure" "$(find "$work/backups" -name '.staging-*' | wc -l | tr -d ' ')" "0"
+check "key failure sends one alert" "$(wc -l <"$work/webhook-calls" | tr -d ' ')" "1"
+docker exec "$files_name" sh -c "printf '%s' '$key_hex' >/private/encryption.key"
+
+echo "== a missing files container fails the backup instead of silently skipping resumes"
+sleep 1.1
+miss_exit=0
+out=$(CHECK_FILES_CONTAINER="no-such-container-$$" run_backup 2>&1) || miss_exit=$?
+check "missing files container returns nonzero" "$miss_exit" "1"
+
+echo "== skipping resumes must be explicit and loud"
+sleep 1.1
+out=$(CHECK_FILES_CONTAINER="" run_backup 2>&1)
+check "warns that resumes are not backed up" "$(printf '%s' "$out" | grep -c 'NOT backed up')" "1"
+check "status records resumes skipped" "$(grep -c '^RESUMES=skipped' "$work/backups/last-status")" "1"
+# remove the skip run's dump so later counts only see full backups
+latest_dump=$(find "$work/backups" -maxdepth 1 -name 'careerscope-*.dump' | sort | tail -1)
+rm -f "$latest_dump"
 
 echo "== invalid retention configuration fails before changing backup state"
 touch -d '30 days ago' "$work/backups/careerscope-invalid-retention.dump" 2>/dev/null \

@@ -29,3 +29,41 @@ test('describeError reports the name and scrubbed message, and only the type for
   });
   assert.deepEqual(describeError('plain secret string'), { errorName: 'string', errorMessage: '' });
 });
+
+test('scrubMessage removes every shape of address, bearer token, cookie, JWT and one-time code', () => {
+  const session = 'q'.repeat(43);
+  const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.c2lnbmF0dXJl';
+  const cases: [string, string[]][] = [
+    ['rejected First.Last+tag@Example.CO.uk', ['First.Last', 'example', 'Example']],
+    ['Authorization: Bearer abc.def.ghi failed', ['abc.def.ghi']],
+    [`Bearer ${session}`, [session]],
+    ['cookie: careerscope_v2_session=abcdef123456', ['abcdef123456']],
+    ['Set-Cookie: sid=abc123; Path=/', ['abc123']],
+    [`jwt ${jwt}`, [jwt, 'eyJzdWIi']],
+    ['invalid code 123456 for the challenge', ['123456']],
+    ['otp is 654321', ['654321']],
+    ['redis://:queue-password@127.0.0.1:6379 refused', ['queue-password']],
+    ['postgres://careerscope:db-password@127.0.0.1/db', ['db-password']],
+    ['password=hunter2 refused', ['hunter2']],
+    [`session ${session} not found`, [session]],
+  ];
+  for (const [input, forbidden] of cases) {
+    const output = scrubMessage(input);
+    for (const secret of forbidden) {
+      assert.equal(output.includes(secret), false, `${input} -> ${output}`);
+    }
+  }
+});
+
+test('describeError exposes only the error name and scrubbed message, never stack, cause or fields', () => {
+  const error = Object.assign(new Error('failed for owner@example.test'), {
+    detail: 'Key (email)=(owner@example.test) already exists',
+    cause: new Error('Bearer secret-token-value'),
+  });
+  const described = describeError(error);
+  assert.deepEqual(Object.keys(described).sort(), ['errorMessage', 'errorName']);
+  const serialised = JSON.stringify(described);
+  assert.equal(serialised.includes('owner@example.test'), false);
+  assert.equal(serialised.includes('secret-token-value'), false);
+  assert.equal(serialised.includes('at '), false, 'no stack frames');
+});

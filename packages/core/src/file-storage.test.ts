@@ -15,7 +15,11 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { PrivateFileResumeStorage, ResumeUploadCancelled } from './file-storage.js';
+import {
+  PrivateFileResumeStorage,
+  ResumeUploadCancelled,
+  configuredFileResumeStorage,
+} from './file-storage.js';
 import { ResumeStorageLimit } from './resumes.js';
 import type { ResumeObject } from './storage.js';
 
@@ -542,5 +546,116 @@ test('private file storage rejects nonprivate directories and linked storage roo
   } finally {
     storage.close();
     await rm(parent, { recursive: true, force: true });
+  }
+});
+
+test('a stored resume is AES-256-GCM ciphertext that is unreadable without the separate key', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-at-rest-'));
+  const keyDirectory = await mkdtemp(join(tmpdir(), 'careerscope-key-'));
+  const encryptionKey = randomBytes(32).toString('hex');
+  const keyFile = join(keyDirectory, 'encryption.key');
+  await writeFile(keyFile, encryptionKey, { mode: 0o600 });
+  const marker = 'Jane Doe jane.doe@example.test +1 555 0100 TypeScript engineer';
+  const body = Buffer.from(`%PDF-1.7 ${marker}`);
+  const object: ResumeObject = {
+    ownerId: randomUUID(),
+    resumeId: randomUUID(),
+    sha256: createHash('sha256').update(body).digest('hex'),
+    bytes: body.length,
+    contentType: 'application/pdf',
+  };
+  const storage = new PrivateFileResumeStorage({ directory, encryptionKey });
+  const configured = await configuredFileResumeStorage({
+    RESUME_STORAGE_DIRECTORY: directory,
+    RESUME_STORAGE_KEY_FILE: keyFile,
+  });
+  try {
+    await storage.initialize();
+    const version = await storage.put(object, body);
+
+    // On disk: an authenticated envelope, with no plaintext fragment and no key material.
+    const files = await readdir(directory);
+    assert.equal(files.length, 1);
+    assert.match(files[0]!, /\.bin$/);
+    const envelope = await readFile(join(directory, files[0]!));
+    assert.equal(envelope.subarray(0, 4).toString(), 'CSR1');
+    assert.equal(envelope.length, body.length + 68, 'magic + version + nonce + tag + ciphertext');
+    for (const fragment of ['jane.doe', 'Jane Doe', '555 0100', 'TypeScript', '%PDF']) {
+      assert.equal(envelope.includes(Buffer.from(fragment)), false, fragment);
+    }
+    assert.equal(envelope.includes(Buffer.from(encryptionKey)), false);
+    assert.equal(envelope.includes(Buffer.from(encryptionKey, 'hex')), false);
+
+    // The key lives in its own file, outside the object directory.
+    assert.equal(
+      files.some((name) => name.includes('key')),
+      false,
+    );
+    assert.ok(configured, 'the key file must configure the same storage');
+    assert.deepEqual(await configured.get(object, version), body);
+
+    // Without the key, or with another key, the object cannot be opened.
+    const stranger = new PrivateFileResumeStorage({
+      directory,
+      encryptionKey: randomBytes(32).toString('hex'),
+    });
+    await stranger.initialize();
+    await assert.rejects(stranger.get(object, version));
+    stranger.close();
+
+    // A flipped ciphertext bit is detected, not decrypted to garbage.
+    const tampered = Buffer.from(envelope);
+    tampered[tampered.length - 1] = tampered[tampered.length - 1]! ^ 1;
+    await writeFile(join(directory, files[0]!), tampered);
+    await assert.rejects(storage.get(object, version));
+
+    // The ciphertext is bound to its identity: copied under another resume id it does not open.
+    await writeFile(join(directory, files[0]!), envelope);
+    const other = { ...object, resumeId: randomUUID() };
+    await writeFile(
+      join(directory, `${other.ownerId}_${other.resumeId}_${other.sha256}.bin`),
+      envelope,
+    );
+    await assert.rejects(storage.get(other, version));
+    assert.deepEqual(await storage.get(object, version), body);
+  } finally {
+    storage.close();
+    configured?.close();
+    await rm(directory, { recursive: true, force: true });
+    await rm(keyDirectory, { recursive: true, force: true });
+  }
+});
+
+test('a malformed, relative or group-readable key file is refused', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-keycheck-'));
+  try {
+    const bad = join(directory, 'short.key');
+    await writeFile(bad, 'not-a-key', { mode: 0o600 });
+    await assert.rejects(
+      configuredFileResumeStorage({
+        RESUME_STORAGE_DIRECTORY: join(directory, 'objects'),
+        RESUME_STORAGE_KEY_FILE: bad,
+      }),
+    );
+    await assert.rejects(
+      configuredFileResumeStorage({
+        RESUME_STORAGE_DIRECTORY: 'relative',
+        RESUME_STORAGE_KEY_FILE: bad,
+      }),
+    );
+    if (process.platform !== 'win32') {
+      const open = join(directory, 'open.key');
+      await writeFile(open, randomBytes(32).toString('hex'), { mode: 0o644 });
+      await chmod(open, 0o644);
+      await assert.rejects(
+        configuredFileResumeStorage({
+          RESUME_STORAGE_DIRECTORY: join(directory, 'objects'),
+          RESUME_STORAGE_KEY_FILE: open,
+        }),
+        /private/,
+      );
+    }
+  } finally {
+    await rm(directory, { recursive: true, force: true });
   }
 });

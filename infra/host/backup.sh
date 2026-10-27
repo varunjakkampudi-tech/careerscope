@@ -27,6 +27,14 @@ BACKUP_DIR=${BACKUP_DIR:-/var/backups/careerscope}
 BACKUP_RETENTION_DAYS=${BACKUP_RETENTION_DAYS:-14}
 BACKUP_WEBHOOK_URL=${BACKUP_WEBHOOK_URL:-${MONITOR_WEBHOOK_URL:-}}
 BACKUP_VERIFY_DB=${BACKUP_VERIFY_DB:-careerscope_backup_verify}
+# Resume objects (AES-256-GCM ciphertext) and the key that decrypts them live in the
+# private volume, mounted in the files container. They are backed up as two separate
+# artefacts: the ciphertext archive in BACKUP_DIR and the key in BACKUP_KEY_DIR, so a
+# stolen archive alone is unreadable. Set BACKUP_KEY_DIR to a different mount if possible.
+# BACKUP_FILES_CONTAINER set to the empty string skips resumes (loudly); it is never skipped by default.
+BACKUP_FILES_CONTAINER=${BACKUP_FILES_CONTAINER-careerscope-files-1}
+BACKUP_PRIVATE_DIR=${BACKUP_PRIVATE_DIR:-/private}
+BACKUP_KEY_DIR=${BACKUP_KEY_DIR:-$BACKUP_DIR/keys}
 DOCKER_BIN=${BACKUP_DOCKER_BIN:-docker}
 CURL_BIN=${BACKUP_CURL_BIN:-curl}
 CURL_TIMEOUT=${BACKUP_CURL_TIMEOUT:-10}
@@ -45,8 +53,8 @@ if [[ ! "$BACKUP_VERIFY_DB" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
   exit 1
 fi
 
-mkdir -p "$BACKUP_DIR"
-chmod 0700 "$BACKUP_DIR"
+mkdir -p "$BACKUP_DIR" "$BACKUP_KEY_DIR"
+chmod 0700 "$BACKUP_DIR" "$BACKUP_KEY_DIR"
 
 # Fail fast and clearly if a manual run overlaps the timer's own run, rather
 # than letting both race for the same scratch database (Security review,
@@ -69,6 +77,10 @@ fi
 stamp=$(date -u +%Y%m%dT%H%M%SZ)
 staging="$BACKUP_DIR/.staging-$stamp.dump"
 final="$BACKUP_DIR/careerscope-$stamp.dump"
+staging_resumes="$BACKUP_DIR/.staging-resumes-$stamp.tar"
+final_resumes="$BACKUP_DIR/careerscope-resumes-$stamp.tar"
+staging_key="$BACKUP_KEY_DIR/.staging-key-$stamp.key"
+final_key="$BACKUP_KEY_DIR/careerscope-resume-key-$stamp.key"
 status_file="$BACKUP_DIR/last-status"
 
 cleanup_scratch() {
@@ -78,7 +90,7 @@ cleanup_scratch() {
 trap cleanup_scratch EXIT
 
 fail() {
-  rm -f "$staging"
+  rm -f "$staging" "$staging_resumes" "$staging_key"
   echo "backup FAILED: $1" >&2
   cat >"$status_file" <<EOF
 STATUS=failed
@@ -144,19 +156,60 @@ if [ "${table_count:-0}" -lt 1 ] 2>/dev/null; then
 fi
 cleanup_scratch
 
+# -- 2b. resume objects and the key ---------------------------------------
+# Taken AFTER the dump on purpose: an upload that lands between the two leaves an orphan
+# object (harmless), whereas the opposite order could leave a database row whose object is
+# missing from the archive.
+resumes_state=skipped
+resume_objects=0
+if [ -n "$BACKUP_FILES_CONTAINER" ]; then
+  if ! "$DOCKER_BIN" exec "$BACKUP_FILES_CONTAINER" tar -C "$BACKUP_PRIVATE_DIR" -cf - objects \
+    >"$staging_resumes" 2>"$BACKUP_DIR/.last-resumes-stderr"; then
+    fail "resume object archive failed, see $BACKUP_DIR/.last-resumes-stderr"
+  fi
+  if [ ! -s "$staging_resumes" ] || ! tar -tf "$staging_resumes" >"$BACKUP_DIR/.last-resumes-list" 2>/dev/null; then
+    fail "resume object archive is empty or unreadable"
+  fi
+  resume_objects=$(grep -c '\.bin$' "$BACKUP_DIR/.last-resumes-list" || true)
+  if ! "$DOCKER_BIN" exec "$BACKUP_FILES_CONTAINER" cat "$BACKUP_PRIVATE_DIR/encryption.key" \
+    >"$staging_key" 2>/dev/null; then
+    fail "could not read the resume encryption key"
+  fi
+  # The key must be exactly 64 hex characters; anything else could not decrypt the archive.
+  if ! [[ "$(tr -d '\n\r' <"$staging_key")" =~ ^[a-f0-9]{64}$ ]]; then
+    fail "resume encryption key file is not a 64-character hex key"
+  fi
+  resumes_state=ok
+else
+  echo "WARNING: BACKUP_FILES_CONTAINER is empty; resume objects and the key are NOT backed up" >&2
+fi
+
 # -- 3. promote and retain --------------------------------------------------
 mv -f "$staging" "$final"
 chmod 0600 "$final"
-cat >"$status_file" <<EOF
-STATUS=ok
-AT=$stamp
-FILE=$final
-TABLES=$table_count
-EOF
-echo "backup ok: $final ($table_count tables verified by restore)"
+if [ "$resumes_state" = ok ]; then
+  mv -f "$staging_resumes" "$final_resumes"
+  mv -f "$staging_key" "$final_key"
+  chmod 0600 "$final_resumes" "$final_key"
+fi
+{
+  echo "STATUS=ok"
+  echo "AT=$stamp"
+  echo "FILE=$final"
+  echo "TABLES=$table_count"
+  echo "RESUMES=$resumes_state"
+  if [ "$resumes_state" = ok ]; then
+    echo "RESUMES_FILE=$final_resumes"
+    echo "RESUME_KEY_FILE=$final_key"
+    echo "RESUME_OBJECTS=$resume_objects"
+  fi
+} >"$status_file"
+echo "backup ok: $final ($table_count tables verified by restore; resumes: $resumes_state, $resume_objects objects)"
 
 # Retention: delete anything older than the window, but only real, promoted
 # dumps - never a .staging file mid-write, and never touch last-status.
-find "$BACKUP_DIR" -maxdepth 1 -name 'careerscope-*.dump' -mtime "+$BACKUP_RETENTION_DAYS" -delete
+find "$BACKUP_DIR" -maxdepth 1 \( -name 'careerscope-*.dump' -o -name 'careerscope-resumes-*.tar' \) \
+  -mtime "+$BACKUP_RETENTION_DAYS" -delete
+find "$BACKUP_KEY_DIR" -maxdepth 1 -name 'careerscope-resume-key-*.key' -mtime "+$BACKUP_RETENTION_DAYS" -delete
 
 exit 0

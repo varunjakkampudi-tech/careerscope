@@ -62,6 +62,8 @@ export class LocalQueue {
     const connection = {
       host: url.hostname,
       port: Number(url.port || 6379),
+      // The local Redis requires authentication; without this every queue call fails with NOAUTH.
+      ...(url.password ? { password: decodeURIComponent(url.password) } : {}),
       connectTimeout: 3000,
       commandTimeout: 10_000,
       maxRetriesPerRequest: 1,

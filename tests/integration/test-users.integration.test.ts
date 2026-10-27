@@ -5,7 +5,7 @@ import test from 'node:test';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { createApp } from '../../apps/api/src/app.js';
 import { Database } from '../../packages/core/src/database.js';
-import { testUsers } from '../../packages/core/src/test-users.js';
+import { testAccessConfiguration, testUsers } from '../../packages/core/src/test-users.js';
 
 test('private test selection enforces the edge boundary, allowlist, rotation and owner isolation', async () => {
   assert.ok(process.env.DATABASE_URL);
@@ -234,6 +234,93 @@ test('private test selection enforces the edge boundary, allowlist, rotation and
       ).statusCode,
       404,
     );
+  } finally {
+    await app.close();
+    await database.close();
+    await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+    await admin.close();
+  }
+});
+
+test('local test access is refused unless both the configured origin and the peer are loopback', async () => {
+  // Configuration: a non-loopback origin, a hosted environment or production cannot select local mode.
+  const development = { DEPLOYMENT_ENVIRONMENT: 'development', TEST_ACCESS_MODE: 'local' };
+  assert.throws(
+    () => testAccessConfiguration(development, 'https://staging.example.invalid'),
+    /loopback/,
+  );
+  assert.throws(() => testAccessConfiguration(development, 'http://192.0.2.10:5280'), /loopback/);
+  assert.throws(
+    () =>
+      testAccessConfiguration(
+        { ...development, DEPLOYMENT_ENVIRONMENT: 'staging' },
+        'http://localhost:5280',
+      ),
+    /development loopback/,
+  );
+  assert.throws(
+    () =>
+      testAccessConfiguration(
+        { ...development, DEPLOYMENT_ENVIRONMENT: 'production' },
+        'http://localhost:5280',
+      ),
+    /production/,
+  );
+  assert.throws(
+    () =>
+      testAccessConfiguration({ ...development, NODE_ENV: 'production' }, 'http://localhost:5280'),
+    /loopback/,
+  );
+  assert.equal(testAccessConfiguration({}, 'https://staging.example.invalid').mode, 'disabled');
+  assert.equal(testAccessConfiguration(development, 'http://localhost:5280').mode, 'local');
+
+  // Runtime: even with local mode on a loopback origin, a peer that is not loopback is refused.
+  assert.ok(process.env.DATABASE_URL);
+  const url = new URL(process.env.DATABASE_URL);
+  assert.ok(['localhost', '127.0.0.1'].includes(url.hostname));
+  const admin = new Database(url.href);
+  const name = `test_${randomUUID().replaceAll('-', '')}`;
+  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  url.pathname = `/${name}`;
+  const database = new Database(url.href);
+  const app = await createApp(database, 'http://localhost:5280', async () => true, {
+    testAccess: { mode: 'local' },
+  });
+  try {
+    await migrate(database.db, {
+      migrationsFolder: fileURLToPath(new URL('../../migrations', import.meta.url)),
+    });
+    for (const remoteAddress of ['203.0.113.5', '192.0.2.10', '2001:db8::1', '10.0.0.7']) {
+      const refused = await app.inject({ url: '/api/session', remoteAddress });
+      assert.equal(refused.statusCode, 403, remoteAddress);
+      // A forwarded header from a non-loopback peer must not make it look local.
+      const spoofed = await app.inject({
+        url: '/api/session',
+        remoteAddress,
+        headers: { 'x-forwarded-for': '127.0.0.1', 'x-real-ip': '127.0.0.1' },
+      });
+      assert.equal(spoofed.statusCode, 403, `${remoteAddress} with forwarded headers`);
+      const login = await app.inject({
+        method: 'POST',
+        url: '/api/login',
+        remoteAddress,
+        headers: { origin: 'http://localhost:5280' },
+        payload: { email: testUsers[0].email },
+      });
+      assert.equal(login.statusCode, 403, `${remoteAddress} login`);
+    }
+    assert.equal(
+      Number((await database.pool.query('SELECT count(*) FROM users')).rows[0].count),
+      0,
+      'a refused peer must not provision a test account',
+    );
+    for (const remoteAddress of ['127.0.0.1', '::1']) {
+      assert.equal(
+        (await app.inject({ url: '/api/session', remoteAddress })).statusCode,
+        200,
+        remoteAddress,
+      );
+    }
   } finally {
     await app.close();
     await database.close();

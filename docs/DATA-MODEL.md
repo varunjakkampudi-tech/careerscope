@@ -73,3 +73,16 @@ Ownership is derived from the authenticated server session, never from a
 client-supplied owner identifier. Transactional outbox rows publish work to
 isolated Redis queues; workers are idempotent and fenced. Retention and
 deletion behavior is documented in [PRIVACY.md](PRIVACY.md).
+
+## Migration integrity, outbox and sensitive fields
+
+`migrations/0000_initial_schema.sql` is the single baseline. The integration
+test `tests/integration/migrations.integration.test.ts` applies it to a fresh
+database and checks every table, column type, nullability, index, foreign key
+and check constraint against `packages/core/src/schema.ts`, that Drizzle
+generates no diff against the snapshot, that `drizzle-kit check` passes, and
+that the journal, SQL files and snapshots agree. Commands are written to
+`outbox_events` in the same transaction as the run they start; delivery and
+recovery guarantees are in [OUTBOX](architecture/OUTBOX.md). Every sensitive
+column, its protection and its retention is listed in
+[DATA-CLASSIFICATION](security/DATA-CLASSIFICATION.md).

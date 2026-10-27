@@ -18,16 +18,22 @@ const maxMessageLength = 300;
 
 /** Removes emails, credentials, tokens and long opaque strings from an error message and bounds its length. */
 export function scrubMessage(message: string) {
-  return message
-    .replace(/[a-z][a-z0-9+.-]*:\/\/[^\s/@]+@[^\s]+/gi, '[url]')
-    .replace(/[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+/g, '[email]')
-    .replace(/\bbearer\s+[^\s]+/gi, 'Bearer [token]')
-    .replace(
-      /\b([a-z0-9_-]*(?:token|secret|password|passwd|key|authorization|cookie|otp|code)[a-z0-9_-]*)\s*[=:]\s*[^\s,;&]+/gi,
-      '$1=[redacted]',
-    )
-    .replace(/\b[A-Za-z0-9_+/=-]{32,}\b/g, '[redacted]')
-    .slice(0, maxMessageLength);
+  return (
+    message
+      .replace(/[a-z][a-z0-9+.-]*:\/\/[^\s/@]+@[^\s]+/gi, '[url]')
+      .replace(/[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+/g, '[email]')
+      .replace(/\bbearer\s+[^\s]+/gi, 'Bearer [token]')
+      .replace(
+        /\b([a-z0-9_-]*(?:token|secret|password|passwd|key|authorization|cookie|otp|code)[a-z0-9_-]*)\s*[=:]\s*[^\s,;&]+/gi,
+        '$1=[redacted]',
+      )
+      // JWT-shaped values: the dots split them into segments shorter than the opaque-string rule below.
+      .replace(/\beyJ[\w-]*\.[\w-]+\.[\w-]*/g, '[jwt]')
+      // A one-time code written after its name ("otp 123456", "code is 123456").
+      .replace(/\b(otp|passcode|code|pin)\b(\s+(?:is|was))?\s+\d{4,10}\b/gi, '$1 [redacted]')
+      .replace(/\b[A-Za-z0-9_+/=-]{32,}\b/g, '[redacted]')
+      .slice(0, maxMessageLength)
+  );
 }
 
 /** Returns the error name and a scrubbed message. Non-Error values are reported by type only. */
