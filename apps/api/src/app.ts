@@ -22,6 +22,7 @@ import {
   type SourceId,
 } from '@careerscope/shared';
 import { registerOpenApi } from './openapi.js';
+import { defaultErrorMessage, errorEnvelope } from './errors.js';
 import { applicationsCsv } from './application-export.js';
 import { isIsoCalendarDate, passesAgeScreen } from './age-screen.js';
 import {
@@ -220,6 +221,8 @@ class HttpError extends Error {
   constructor(
     readonly statusCode: number,
     message: string,
+    /** Overrides the default machine code for the status. */
+    readonly code?: string,
   ) {
     super(message);
   }
@@ -334,6 +337,9 @@ export async function createApp(
     : undefined;
   // Open event streams mapped to their user, used to cap concurrent streams and to abort them on shutdown.
   const streams = new Map<AbortController, string>();
+  // At most 32 streams overall and 2 per user, so event streams cannot exhaust connections.
+  const streamCapReached = (ownerId: string) =>
+    streams.size >= 32 || [...streams.values()].filter((owner) => owner === ownerId).length >= 2;
   const app = Fastify({
     bodyLimit: 16_384,
     requestTimeout: 15_000,
@@ -388,7 +394,6 @@ export async function createApp(
     }
     if (
       path === '/api/login' ||
-      path === '/api/register' ||
       path === '/api/otp/request' ||
       path === '/api/otp/verify' ||
       (request.method === 'POST' && path === '/api/session/refresh')
@@ -465,27 +470,35 @@ export async function createApp(
                 : 500;
     if (status === 500)
       request.log.error({ requestId: request.id, ...describeError(error) }, 'Request failed');
-    const messages: Record<number, string> = {
-      400: 'Invalid request',
-      409:
-        error instanceof Conflict
-          ? (conflictMessages[error.code] ?? 'Idempotency conflict')
-          : 'Idempotency conflict',
-      401: 'Authentication required',
-      403: 'Forbidden',
-      404: 'Not found',
-      405: 'Method not allowed',
-      408: 'Request timeout',
-      413: 'Request too large',
-      415: 'Unsupported media type',
-      429: 'Too many requests',
-      500: 'Service unavailable',
-      507: 'Resume storage capacity reached',
-    };
-    const fallbackMessage = messages[status] ?? 'Request failed';
-    const message = error instanceof HttpError ? error.message : fallbackMessage;
-    const code = status === 409 && error instanceof Conflict ? error.code : undefined;
-    reply.code(status).send({ error: message, ...(code ? { code } : {}), requestId: request.id });
+    reply.code(status).send(
+      errorEnvelope(status, request.id, {
+        // The storage-limit error is a Conflict subclass but answers 507 with the default code.
+        ...(error instanceof Conflict && status === 409
+          ? {
+              code: error.code,
+              message: conflictMessages[error.code] ?? defaultErrorMessage(409),
+            }
+          : {}),
+        ...(error instanceof HttpError
+          ? { message: error.message, ...(error.code ? { code: error.code } : {}) }
+          : {}),
+        // Field paths and issue codes only: a zod message can echo the submitted value.
+        ...(error instanceof z.ZodError
+          ? {
+              details: {
+                issues: error.issues.map((issue) => ({
+                  path: issue.path.join('.'),
+                  code: issue.code,
+                })),
+              },
+            }
+          : {}),
+      }),
+    );
+  });
+  // Unmatched routes answer in the same envelope instead of Fastify's default body.
+  app.setNotFoundHandler((request, reply) => {
+    reply.code(404).send(errorEnvelope(404, request.id));
   });
   await registerOpenApi(app, version, {
     testUsers: options.testAccess !== undefined && options.testAccess.mode !== 'disabled',
@@ -561,11 +574,6 @@ export async function createApp(
       owner: createHash('sha256').update(`owner:${session.ownerId}`).digest('hex'),
       aiEnabled: false,
     };
-  });
-  app.post('/api/register', async () => {
-    // Password registration is not supported. Accounts are created only through
-    // the verified-email one-time-code flow below.
-    throw new HttpError(404, 'Registration unavailable');
   });
   app.post('/api/otp/request', async (request, reply) => {
     if (!emailOtpChallenges || !options.emailOtp) throw new HttpError(404, 'Sign-in unavailable');
@@ -1008,7 +1016,10 @@ export async function createApp(
       throw new HttpError(429, 'Too many attempts');
     const { id } = z.object({ id: z.string().uuid() }).parse(request.params);
     const current = request.session;
-    await auth.revokeSession(request.ownerId!, id);
+    // The UPDATE is scoped to the caller's own sessions, so an unknown id and another user's id are
+    // indistinguishable: both are 404 and neither reveals whether the id exists for someone else.
+    if (!(await auth.revokeSession(request.ownerId!, id)))
+      throw new HttpError(404, 'Session not found');
     if (current?.sessionId === id) clearSessionCookies(reply);
     return reply.code(204).send();
   });
@@ -1520,6 +1531,8 @@ export async function createApp(
     // 400 rather than a 429 that depends on how often the client retried.
     if (!(await consumeRateLimit(request, `events:${ownerId}`, 30, 60)))
       throw new HttpError(429, 'Too many event streams');
+    // Checked before the search lookup and the cursor queries, so a caller at the cap costs no queries.
+    if (streamCapReached(ownerId)) throw new HttpError(429, 'Too many event streams');
     if (!(await database.getSearch(ownerId, id))) throw new HttpError(404, 'Search not found');
     // A cursor that predates the retained window means the client missed events,
     // which is recoverable by resynchronising rather than a client error.
@@ -1547,12 +1560,8 @@ export async function createApp(
         }
       }
     }
-    if (
-      // At most 32 streams overall and 2 per user, so event streams cannot exhaust connections.
-      streams.size >= 32 ||
-      [...streams.values()].filter((owner) => owner === ownerId).length >= 2
-    )
-      throw new HttpError(429, 'Too many event streams');
+    // Checked again because the awaits above can let concurrent requests fill the cap.
+    if (streamCapReached(ownerId)) throw new HttpError(429, 'Too many event streams');
     const controller = new AbortController();
     streams.set(controller, ownerId);
     // Bounds how long one stream lives; the client reconnects with Last-Event-ID after the `retry` delay.

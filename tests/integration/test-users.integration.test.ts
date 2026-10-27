@@ -189,8 +189,19 @@ test('private test selection enforces the edge boundary, allowlist, rotation and
           headers: { ...headers, cookie: adminCookie, 'x-csrf-token': adminIdentity.csrf },
         })
       ).statusCode,
-      204,
+      404,
       'a cross-owner session revoke is indistinguishable from a missing session',
+    );
+    assert.equal(
+      (
+        await app.inject({
+          method: 'DELETE',
+          url: `/api/account/sessions/${randomUUID()}`,
+          headers: { ...headers, cookie: adminCookie, 'x-csrf-token': adminIdentity.csrf },
+        })
+      ).statusCode,
+      404,
+      'a missing session answers exactly like another owner session',
     );
     assert.equal(
       (
@@ -221,7 +232,7 @@ test('private test selection enforces the edge boundary, allowlist, rotation and
           payload: { email: 'new@example.invalid', password: randomUUID() },
         })
       ).statusCode,
-      404,
+      401,
     );
     assert.equal(
       (

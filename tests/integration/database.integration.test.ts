@@ -248,21 +248,12 @@ test('Swagger documents every runtime route without changing validation and prot
           assert.equal(schema?.params, undefined, route);
           assert.equal(schema?.querystring, undefined, route);
         }
-        for (const [path, methods] of Object.entries(spec.paths)) {
-          for (const [method, operation] of Object.entries(
+        for (const methods of Object.values(spec.paths)) {
+          for (const operation of Object.values(
             methods as Record<string, { summary: string; responses: Record<string, unknown> }>,
           )) {
             assert.ok(operation.summary.length > 5);
             assert.ok(operation.responses['500']);
-            if (method === 'post' && path === '/api/register') {
-              assert.ok(operation.responses['404']);
-              assert.equal(
-                Object.keys(operation.responses).some((code) => code.startsWith('2')),
-                false,
-                'permanently unavailable password registration must not document success',
-              );
-              continue;
-            }
             // Redirect-only authentication routes
             // truthfully document 302 rather than inventing a JSON 200. A
             // 2xx response is required for ordinary operations; a documented
@@ -306,10 +297,7 @@ test('Swagger documents every runtime route without changing validation and prot
           spec.paths['/api/resumes/{id}/cancel'].post.description,
           capability === 'cancellation' ? /Cancellation enabled/ : /Cancellation disabled/,
         );
-        assert.match(
-          spec.paths['/api/register'].post.description,
-          /Password-based account creation is unavailable/,
-        );
+        assert.equal(spec.paths['/api/register'], undefined);
         for (const secret of [token, session.csrf, password, 'swagger@example.test'])
           assert.equal(result.body.includes(secret), false);
 
@@ -570,7 +558,7 @@ test('market and pipeline HTTP routes preserve evidence, query bounds and owner 
         for (const sessionCookies of variants) {
           const response = await app.inject({ url, cookies: sessionCookies });
           assert.equal(response.statusCode, 401, url);
-          assert.equal(response.json().error, 'Authentication required');
+          assert.equal(response.json().message, 'Authentication required');
           assert.equal(typeof response.json().requestId, 'string');
           assert.equal(response.headers['cache-control'], 'no-store');
         }
@@ -751,7 +739,7 @@ test('market and pipeline HTTP routes preserve evidence, query bounds and owner 
           const hidden = await app.inject({ url: '/api/market/postings/foreign-only', cookies });
           for (const response of [missing, hidden]) {
             assert.equal(response.statusCode, 404);
-            assert.equal(response.json().error, 'No sightings recorded for this posting');
+            assert.equal(response.json().message, 'No sightings recorded for this posting');
           }
           const invalid = await app.inject({ url: '/api/market/postings/%E0%A4%A', cookies });
           assert.equal(invalid.statusCode, 400);
@@ -946,7 +934,7 @@ test('global resume reservation budgets serialize across owners and preserve ret
         payload: Buffer.from('%PDF-1.7 synthetic capacity document'),
       });
       assert.equal(response.statusCode, 507);
-      assert.equal(response.json().error, 'Resume storage capacity reached');
+      assert.equal(response.json().message, 'Resume storage capacity reached');
       assert.equal(storageCalls, 0);
       assert.equal(
         (await database.pool.query('SELECT count(*) FROM resume_uploads')).rows[0].count,
@@ -1235,7 +1223,8 @@ test('password account compatibility is atomic while executable API registration
         headers: { origin },
         payload: { email: 'third@example.test', password },
       });
-      assert.equal(response.statusCode, 404);
+      // The retired password-registration route is gone, so an anonymous caller is simply unauthenticated.
+      assert.equal(response.statusCode, 401);
       assert.equal((await disabled.inject('/api/session')).json().registrationEnabled, false);
     } finally {
       await disabled.close();
@@ -1259,7 +1248,7 @@ test('password account compatibility is atomic while executable API registration
             payload,
           })
         ).statusCode,
-        404,
+        401,
       );
       assert.equal(
         (
@@ -2015,7 +2004,12 @@ test('partial search outcomes are atomic, owner-scoped, terminal and usable thro
       for (const url of [`/api/searches/${search.id}`, `/api/searches/${search.id}/export`]) {
         const malformed = await app.inject({ url, cookies });
         assert.equal(malformed.statusCode, 400);
-        assert.deepEqual(Object.keys(malformed.json()), ['error', 'requestId']);
+        assert.deepEqual(Object.keys(malformed.json()), [
+          'code',
+          'message',
+          'requestId',
+          'details',
+        ]);
       }
       await database.pool.query(
         `UPDATE saved_leads SET data = data || '{"unexpectedField": "should never reach a client"}'::jsonb WHERE id = $1`,
@@ -2029,7 +2023,12 @@ test('partial search outcomes are atomic, owner-scoped, terminal and usable thro
       ]);
       const malformedLead = await app.inject({ url: `/api/leads/${savedLead!.id}`, cookies });
       assert.equal(malformedLead.statusCode, 400);
-      assert.deepEqual(Object.keys(malformedLead.json()), ['error', 'requestId']);
+      assert.deepEqual(Object.keys(malformedLead.json()), [
+        'code',
+        'message',
+        'requestId',
+        'details',
+      ]);
       // Restore both rows to their real, valid shape so nothing downstream
       // of this point (list/history assertions elsewhere, if any were to be
       // added later) inherits a deliberately-corrupted fixture.
@@ -3880,10 +3879,10 @@ test('CS-35: conflicts carry a stable code and the HTTP layer surfaces distinct,
         payload: { ...request, useProfileTitles: true },
       });
       assert.equal(missingTitles.statusCode, 409);
-      assert.deepEqual(Object.keys(missingTitles.json()), ['error', 'code', 'requestId']);
+      assert.deepEqual(Object.keys(missingTitles.json()), ['code', 'message', 'requestId']);
       assert.equal(missingTitles.json().code, 'MISSING_TARGET_ROLES');
       assert.equal(
-        missingTitles.json().error,
+        missingTitles.json().message,
         'Add target roles to your profile before starting this search',
       );
 
@@ -3906,10 +3905,10 @@ test('CS-35: conflicts carry a stable code and the HTTP layer surfaces distinct,
       assert.equal(second.statusCode, 409);
       assert.equal(second.json().code, 'IDEMPOTENCY_KEY_REUSED');
       assert.equal(
-        second.json().error,
+        second.json().message,
         'This request already completed with different details; try again',
       );
-      assert.notEqual(missingTitles.json().error, second.json().error);
+      assert.notEqual(missingTitles.json().message, second.json().message);
 
       // An internal conflict that was never given a specific code must still
       // fail safely through the REAL error handler: the generic 409 message,
@@ -3935,8 +3934,8 @@ test('CS-35: conflicts carry a stable code and the HTTP layer surfaces distinct,
             payload: request,
           });
           assert.equal(unmapped.statusCode, 409);
-          assert.deepEqual(Object.keys(unmapped.json()), ['error', 'code', 'requestId']);
-          assert.equal(unmapped.json().error, 'Idempotency conflict');
+          assert.deepEqual(Object.keys(unmapped.json()), ['code', 'message', 'requestId']);
+          assert.equal(unmapped.json().message, 'Idempotency conflict');
           assert.ok(
             !unmapped.payload.includes('search_commands'),
             'the raw internal message must not reach the client',

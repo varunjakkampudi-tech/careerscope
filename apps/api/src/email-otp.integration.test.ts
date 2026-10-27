@@ -215,7 +215,7 @@ test(
       const incorrect = challenge.code === '000000' ? '000001' : '000000';
       const wrong = await verifyCode(appOne!, challenge.email, incorrect);
       assert.equal(wrong.statusCode, 401);
-      assert.equal(wrong.json().error, 'Invalid or expired verification code');
+      assert.equal(wrong.json().message, 'Invalid or expired verification code');
 
       const verified = await verifyCode(appOne!, challenge.email, challenge.code);
       assert.equal(verified.statusCode, 200);
@@ -377,7 +377,7 @@ test(
         failedSessionChallenge.code,
       );
       assert.equal(failedSessionVerification.statusCode, 503);
-      assert.equal(failedSessionVerification.json().error, 'Sign-in is temporarily unavailable');
+      assert.equal(failedSessionVerification.json().message, 'Sign-in is temporarily unavailable');
       assert.equal(
         (
           await database.pool.query('SELECT 1 FROM sessions WHERE owner_id = $1', [
@@ -425,7 +425,7 @@ test(
       failedRecipients.add('failed-delivery@example.test');
       const failedSend = await requestCode(appOne!, 'failed-delivery@example.test');
       assert.equal(failedSend.statusCode, 503);
-      assert.equal(failedSend.json().error, 'Sign-in is temporarily unavailable');
+      assert.equal(failedSend.json().message, 'Sign-in is temporarily unavailable');
       const failedCode = delivered.at(-1)!;
       assert.equal(
         (await verifyCode(appOne!, failedCode.email, failedCode.code)).statusCode,
@@ -962,7 +962,7 @@ test(
           payload: { email: 'candidate@example.test' },
         });
         assert.equal(failedRateLimit.statusCode, 503);
-        assert.equal(failedRateLimit.json().error, 'Sign-in is temporarily unavailable');
+        assert.equal(failedRateLimit.json().message, 'Sign-in is temporarily unavailable');
         assert.equal(failedRateLimit.body.includes('synthetic redis transport detail'), false);
       } finally {
         await unavailable.close();

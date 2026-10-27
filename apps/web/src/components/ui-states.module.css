@@ -11,7 +11,7 @@
 
 .loadingIcon {
   animation: spin 0.9s linear infinite;
-  color: var(--dash-primary, #2563eb);
+  color: var(--dash-accent, #4055d6);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -31,16 +31,11 @@
 
 .errorWrap {
   composes: wrap;
-  color: #b3261e;
+  color: var(--danger-text);
 }
 
 .errorIcon {
-  color: #b3261e;
-}
-
-:global([data-theme='dark']) .errorWrap,
-:global([data-theme='dark']) .errorIcon {
-  color: #f6b3bf;
+  color: var(--danger-text);
 }
 
 .title {
@@ -83,8 +78,8 @@
   padding: 5px 12px;
   font-size: 13px;
   font-weight: 600;
-  background: var(--dash-primary, #2563eb);
-  color: #fff;
+  background: var(--dash-accent, #4055d6);
+  color: var(--on-solid);
   text-decoration: none;
 }
 

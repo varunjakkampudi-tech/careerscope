@@ -26,6 +26,33 @@ export function staleSearchRead(
   );
 }
 
+/**
+ * A read left behind by an earlier route is stale.
+ *
+ * A full navigation replaces the document, and Chromium cancels that document's in-flight fetches
+ * and script loads without reporting a failure or a finish (the server sees the abort; Playwright
+ * and the DevTools protocol only ever report "request started"). Playwright then keeps the request
+ * "in flight" for the rest of the run and the settlement barrier would wait on it until its
+ * deadline. Measured for the shell and settings reads (session, notifications, account sessions,
+ * consent, preferences) and for router prefetches of other routes.
+ *
+ * Only a GET fetch or script from an earlier route is dropped. A request from the current route, a
+ * write, an HTML document or an image still counts, so a real hang on the current route is still
+ * caught. This generalises `staleSavedRead` and `staleSearchRead`.
+ */
+export function staleEarlierRouteRead(
+  method: string,
+  resourceType: string,
+  startedEpoch: number,
+  currentEpoch: number,
+): boolean {
+  return (
+    method === 'GET' &&
+    (resourceType === 'fetch' || resourceType === 'script') &&
+    startedEpoch !== currentEpoch
+  );
+}
+
 /** Return a same-origin pathname only; never retain query strings or foreign URLs. */
 export function sameOriginBrowserPath(value: string, origin: string): string | null {
   try {

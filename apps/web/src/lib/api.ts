@@ -180,14 +180,7 @@ async function request(path: string, options: RequestInit, mayRefresh: boolean):
     response.status === 401 &&
     mayRefresh &&
     typeof window !== 'undefined' &&
-    ![
-      '/session',
-      '/session/refresh',
-      '/login',
-      '/register',
-      '/otp/request',
-      '/otp/verify',
-    ].includes(path) &&
+    !['/session', '/session/refresh', '/login', '/otp/request', '/otp/verify'].includes(path) &&
     !(typeof ReadableStream !== 'undefined' && options.body instanceof ReadableStream)
   ) {
     await response.body?.cancel();

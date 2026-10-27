@@ -97,8 +97,10 @@ None of this substitutes for a screen-reader test. See
 
 ## The CSP constraint
 
-The deployed CSP allows `'unsafe-inline'` for scripts and styles, and nothing
-else off-origin: no `unsafe-eval`, `object-src 'none'`, `frame-ancestors 'none'`,
+A production build allows scripts only by SHA-256 hash (`script-src 'self' 'sha256-...'`),
+styles with `'unsafe-inline'`, and nothing else off-origin. `npm run build` discovers the hashes in
+a first pass and fails if `CSP_SCRIPT_HASHES` is missing when `next build` runs on its own. The
+policy also has no `unsafe-eval`, `object-src 'none'`, `frame-ancestors 'none'`,
 `connect-src 'self'`.
 
 Practically: no CDN fonts, no third-party analytics, no external images, no

@@ -60,7 +60,28 @@ const uploadStatus = text({
   enum: ['uploading', 'queued', 'cancelling', 'cancelled', 'parsed', 'rejected'],
 });
 const revision = integer({ minimum: 1, maximum: 2147483646 });
-const error = object({ error: text(), requestId: uuid });
+/** The single error envelope (see `errors.ts`) used by every non-success response. */
+export const errorEnvelopeSchema: Schema = {
+  ...object(
+    {
+      code: text({
+        description:
+          'Stable machine-readable code. Defaults per status are INVALID_REQUEST, AUTHENTICATION_REQUIRED, FORBIDDEN, NOT_FOUND, METHOD_NOT_ALLOWED, REQUEST_TIMEOUT, CONFLICT, PAYLOAD_TOO_LARGE, UNSUPPORTED_MEDIA_TYPE, RATE_LIMITED, INTERNAL_ERROR, SERVICE_UNAVAILABLE and STORAGE_LIMIT_REACHED. A 409 may carry a specific conflict code such as PROFILE_REVISION_CONFLICT.',
+      }),
+      message: text({ description: 'Client-safe summary; never contains private data.' }),
+      requestId: { ...uuid, description: 'Correlates this response with the server log.' },
+      details: {
+        type: 'object',
+        additionalProperties: true,
+        description:
+          'Optional structured context. A validation failure lists issues as { path, code } without the submitted values.',
+      },
+    },
+    ['code', 'message', 'requestId'],
+  ),
+  title: 'ErrorEnvelope',
+};
+const error = errorEnvelopeSchema;
 const stringList = (maxItems: number, minItems = 0) =>
   array(text({ minLength: 1 }), { minItems, maxItems });
 const link = text({ description: 'Empty or an HTTPS URL without credentials.', default: '' });
@@ -389,16 +410,6 @@ function contracts(options: {
         ),
       ],
     }),
-    'POST /api/register': operation(
-      'Password registration unavailable',
-      object({ error: text(), requestId: uuid }),
-      {
-        code: 404,
-        failures: [404],
-        description:
-          'Password-based account creation is unavailable. When signup is explicitly configured, new accounts can only be created through the email-OTP flow with versioned Terms and privacy notice acceptance finalized after successful email verification.',
-      },
-    ),
     'POST /api/login': operation(
       options.testUsers
         ? 'Select a development or protected staging test identity and set the HttpOnly session cookie'
@@ -525,7 +536,7 @@ function contracts(options: {
     'DELETE /api/account/sessions/:id': operation(
       'Revoke one session owned by the authenticated account',
       { type: 'null' },
-      { code: 204, failures: [400, 429] },
+      { code: 204, failures: [400, 404, 429] },
     ),
     'GET /api/account/marketing-consent': operation(
       'Read the authenticated account’s current optional marketing preference',
@@ -1019,7 +1030,6 @@ export async function registerOpenApi(
         '/api/health',
         '/api/session',
         '/api/login',
-        '/api/register',
         '/api/otp/request',
         '/api/otp/verify',
         '/api/logout',
@@ -1085,13 +1095,9 @@ export async function registerOpenApi(
           request.credentials = 'same-origin';
           if (
             !['GET', 'HEAD', 'OPTIONS'].includes(String(request.method ?? 'GET').toUpperCase()) &&
-            ![
-              '/api/login',
-              '/api/register',
-              '/api/otp/request',
-              '/api/otp/verify',
-              '/api/session/refresh',
-            ].includes(target.pathname)
+            !['/api/login', '/api/otp/request', '/api/otp/verify', '/api/session/refresh'].includes(
+              target.pathname,
+            )
           ) {
             const response = await fetch('/api/session', {
               credentials: 'same-origin',

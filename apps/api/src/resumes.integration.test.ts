@@ -237,7 +237,7 @@ test(
           });
         const full = await upload('over-the-limit');
         assert.equal(full.statusCode, 507);
-        assert.equal(full.json().error, 'Resume storage capacity reached');
+        assert.equal(full.json().message, 'Resume storage capacity reached');
         assert.equal(storageCalls, 0);
         assert.equal(
           (await database.pool.query('SELECT count(*) FROM resume_uploads')).rows[0].count,
@@ -293,7 +293,7 @@ test(
         removeRowDuringPut = true;
         const changed = await upload('changed-upload', pdf);
         assert.equal(changed.statusCode, 409);
-        assert.equal(changed.json().error, 'Upload changed; retry');
+        assert.equal(changed.json().message, 'Upload changed; retry');
         removeRowDuringPut = false;
 
         // The retry with the same key succeeds.

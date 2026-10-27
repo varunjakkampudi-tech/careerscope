@@ -53,7 +53,7 @@ Applied by a single `onRequest` hook, in this order:
 3. **Origin check.** Any method other than `GET`, `HEAD` or `OPTIONS` must carry
    `Origin` exactly equal to the configured app origin, or the request is
    rejected `403 Origin denied`. A missing `Origin` fails this check.
-4. `/api/login`, `/api/register`, `/api/otp/request`, `/api/otp/verify` and
+4. `/api/login`, `/api/otp/request`, `/api/otp/verify` and
    refresh short-circuit here — unauthenticated mutations still require Origin,
    and step 3 has already run.
 5. **Session.** The opaque token in the `careerscope_CareerScope_session` cookie is looked up.
@@ -63,8 +63,7 @@ Applied by a single `onRequest` hook, in this order:
    matching the session's token, or `403 CSRF check failed`.
 
 Authenticated mutations require both a valid `Origin` and a valid CSRF token;
-login, OTP request/verification and the permanently unavailable legacy password
-registration route require Origin but not CSRF. `ownerId` is taken from the
+login and OTP request/verification require Origin but not CSRF. `ownerId` is taken from the
 session, never from the request body or path.
 
 ### Server limits
@@ -76,19 +75,51 @@ session, never from the request body or path.
 | `connectionTimeout` | 10 s                                                           |
 | `trustProxy`        | `false` — forwarded headers are never believed                 |
 
-### Error mapping
+### Error envelope
 
-| Condition                                         | Status | Body message                           |
-| ------------------------------------------------- | ------ | -------------------------------------- |
-| `ZodError`, `InvalidResumeUpload`                 | 400    | `Invalid request`                      |
-| `ProfileRevisionConflict`, `LeadRevisionConflict` | 409    | `Record changed; reload before saving` |
-| other `Conflict`                                  | 409    | `Idempotency conflict`                 |
-| `ResumeStorageLimit`                              | 507    | `Resume storage capacity reached`      |
-| payload too large                                 | 413    | `Request too large`                    |
-| anything unhandled                                | 500    | `Service unavailable`                  |
+Every failure, from every route and from the framework itself, has one body shape
+(`apps/api/src/errors.ts`, declared as `ErrorEnvelope` in the OpenAPI document):
 
-Every error response carries `requestId`. Internal error detail is never returned;
-500s are logged server-side against that id.
+```json
+{ "code": "RATE_LIMITED", "message": "Too many requests", "requestId": "<uuid>", "details": {} }
+```
+
+| Field       | Meaning                                                                                                                                                 |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `code`      | Stable machine code. Clients branch on this, never on `message`.                                                                                        |
+| `message`   | Client-safe text. Never contains internal detail, submitted values or personal data.                                                                    |
+| `requestId` | Correlates the response with the server log. Always present.                                                                                            |
+| `details`   | Optional. Only a validation failure sets it: `{ "issues": [{ "path": "field.name", "code": "<zod issue code>" }] }`. Submitted values are never echoed. |
+
+Default code per status:
+
+| Condition                                                           | Status | `code`                                                                                               | `message`                                |
+| ------------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| `ZodError`, `InvalidResumeUpload`, malformed JSON                   | 400    | `INVALID_REQUEST`                                                                                    | `Invalid request` (route text for some)  |
+| missing or expired session, bad one-time code                       | 401    | `AUTHENTICATION_REQUIRED`                                                                            | route text                               |
+| origin or CSRF check, private test access                           | 403    | `FORBIDDEN`                                                                                          | route text                               |
+| unknown route, unavailable feature, record not owned                | 404    | `NOT_FOUND`                                                                                          | route text                               |
+| method not allowed                                                  | 405    | `METHOD_NOT_ALLOWED`                                                                                 | `Method not allowed`                     |
+| request timeout                                                     | 408    | `REQUEST_TIMEOUT`                                                                                    | `Request timeout`                        |
+| `ProfileRevisionConflict`, `LeadRevisionConflict`, other `Conflict` | 409    | the `Conflict.code` (for example `PROFILE_REVISION_CONFLICT`); `CONFLICT` for a plain state conflict | mapped text, else `Idempotency conflict` |
+| payload too large                                                   | 413    | `PAYLOAD_TOO_LARGE`                                                                                  | `Request too large`                      |
+| unsupported content type                                            | 415    | `UNSUPPORTED_MEDIA_TYPE`                                                                             | `Unsupported media type`                 |
+| rate limit exceeded                                                 | 429    | `RATE_LIMITED`                                                                                       | route text                               |
+| dependency (Redis, database, provider) unavailable                  | 503    | `SERVICE_UNAVAILABLE`                                                                                | route text                               |
+| `ResumeStorageLimit`                                                | 507    | `STORAGE_LIMIT_REACHED`                                                                              | `Resume storage capacity reached`        |
+| anything unhandled                                                  | 500    | `INTERNAL_ERROR`                                                                                     | `Service unavailable`                    |
+
+The 409 codes the web client maps (`apps/web/src/lib/api.ts`) are unchanged. The wire change
+from the earlier `{ error, code?, requestId }` shape is that the text moved from `error` to `message` and
+`code` is now present on every error. The web client reads only `code`, so it needed no change.
+
+`DELETE /api/account/sessions/:id` answers 404 for an id that is not one of the caller's sessions. The
+revocation is scoped to the caller's own sessions, so an unknown id and another user's id are
+indistinguishable and no existence is revealed.
+
+`apps/api/src/error-handler.test.ts` checks the envelope for every status above, probes every documented
+route unauthenticated and cross-origin, and checks the OpenAPI document declares the envelope for every
+4xx and 5xx response. Internal error detail is never returned; 500s are logged against `requestId`.
 
 ---
 
@@ -102,7 +133,6 @@ Every error response carries `requestId`. Internal error detail is never returne
 | ------ | ------------------ | ---- | ----------- | ---------------------------------------------------------- |
 | GET    | `/api/health`      | no   | no          | Exempt from every hook. Also exempt from maintenance mode. |
 | GET    | `/api/session`     | no   | no          | Returns the current session or absence of one              |
-| POST   | `/api/register`    | no   | Origin only | Always unavailable (404); signup uses guarded email OTP    |
 | POST   | `/api/login`       | no   | Origin only | Test-access account selection only                         |
 | POST   | `/api/otp/request` | no   | Origin only | Sign-in or explicitly configured signup challenge          |
 | POST   | `/api/otp/verify`  | no   | Origin only | Verifies a challenge and establishes an opaque session     |

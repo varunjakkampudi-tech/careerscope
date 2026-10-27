@@ -5,6 +5,7 @@ import {
   browserWarningPaths,
   browserWarningCategory,
   sameOriginBrowserPath,
+  staleEarlierRouteRead,
   staleSavedRead,
   staleSearchRead,
 } from './ui-requests.js';
@@ -30,6 +31,22 @@ test('settlement drops only search list/detail reads belonging to an earlier rou
   assert.equal(staleSearchRead('POST', '/api/searches', 1, 2), false);
   assert.equal(staleSearchRead('GET', '/api/searches/synthetic-run-id/events', 1, 2), false);
   assert.equal(staleSearchRead('GET', '/api/profile', 1, 2), false);
+});
+
+test('settlement drops only fetch and script reads belonging to an earlier route', () => {
+  // The shell and settings reads, a router prefetch and a chunk load that a navigation cancelled.
+  assert.equal(staleEarlierRouteRead('GET', 'fetch', 1, 2), true);
+  assert.equal(staleEarlierRouteRead('GET', 'script', 1, 2), true);
+  // The current route's read still counts, so a real hang on this route is still caught.
+  assert.equal(staleEarlierRouteRead('GET', 'fetch', 2, 2), false);
+  assert.equal(staleEarlierRouteRead('GET', 'script', 2, 2), false);
+  // Writes never disappear from the barrier.
+  assert.equal(staleEarlierRouteRead('PUT', 'fetch', 1, 2), false);
+  assert.equal(staleEarlierRouteRead('POST', 'fetch', 1, 2), false);
+  assert.equal(staleEarlierRouteRead('DELETE', 'fetch', 1, 2), false);
+  // Neither do documents, images or other resource types.
+  assert.equal(staleEarlierRouteRead('GET', 'document', 1, 2), false);
+  assert.equal(staleEarlierRouteRead('GET', 'image', 1, 2), false);
 });
 
 test('browser diagnostics retain only same-origin normalized paths', () => {

@@ -390,8 +390,9 @@ function JobSearchWorkspace() {
                   aria-label={sourceNames[source] ?? SOURCE_LABELS[source]}
                   checked={sources.includes(source as CreateSearch['sources'][number])}
                   disabled={!entry?.available || search.isPending || sourceCatalog.isPending}
+                  // No reference until the catalog has answered: there is no reason element to point at yet.
                   aria-describedby={
-                    !entry?.available
+                    entry && !entry.available
                       ? hasPermissionBlock
                         ? 'source-availability'
                         : reasonId

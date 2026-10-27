@@ -8,6 +8,17 @@
   --border: #e2e5ec;
   --accent: #4055d6;
   --good: #157539;
+  /* Semantic tokens shared by the CSS modules. The dark values apply under [data-theme='dark']. */
+  --danger-text: #b3261e;
+  --danger-solid: #b42318;
+  --on-solid: #fff;
+  --shadow-card: 0 2px 8px rgba(13, 18, 36, 0.04);
+  --shadow-popover: 0 12px 32px rgb(16 19 35 / 18%);
+}
+
+[data-theme='dark'] {
+  --danger-text: #f6b3bf;
+  --shadow-card: none;
 }
 
 .header-actions {

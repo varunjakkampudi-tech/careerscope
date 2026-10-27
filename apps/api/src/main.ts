@@ -13,6 +13,7 @@ import {
   shutdownSignal,
   testAccessConfiguration,
 } from '@careerscope/core';
+import { API_PORT } from '@careerscope/shared';
 import { createApp } from './app.js';
 
 const env = configuration();
@@ -68,11 +69,11 @@ try {
     if (reclaimed.removed)
       logger.warn(reclaimed, 'Reclaimed resume temporaries from a dead writer');
   }
-  await app.listen({ host: '127.0.0.1', port: 5390 });
+  await app.listen({ host: '127.0.0.1', port: API_PORT });
   // Ties a running process to the source it was built from. Deliberately not on
   // /api/health, which is unauthenticated.
   logger.info(
-    { port: 5390, revision: process.env.CAREERSCOPE_REVISION ?? 'unknown' },
+    { port: API_PORT, revision: process.env.CAREERSCOPE_REVISION ?? 'unknown' },
     'API listening',
   );
   if (!shutdown.signal.aborted)

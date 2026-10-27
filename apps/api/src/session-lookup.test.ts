@@ -11,7 +11,7 @@ const sessionId = '22222222-2222-4222-8222-222222222222';
 
 /** Fake database whose session row can be revoked; counts how often the session is looked up by token. */
 function fake() {
-  const state = { live: true, lookups: 0 };
+  const state = { live: true, lookups: 0, revokeMatches: true };
   const database = {
     pool: {
       query: async (sql: string) => {
@@ -19,6 +19,8 @@ function fake() {
           state.lookups += 1;
           return { rows: state.live ? [{ id: sessionId, owner_id: ownerId }] : [] };
         }
+        if (sql.includes('UPDATE sessions SET revoked_at'))
+          return { rows: [], rowCount: state.revokeMatches ? 1 : 0 };
         if (sql.includes('FROM users')) return { rows: [{ email: null, email_verified_at: null }] };
         return { rows: [] };
       },
@@ -53,6 +55,17 @@ test('the session is resolved once per request and a revoked session is rejected
     });
     assert.equal(removed.statusCode, 204);
     assert.equal(state.lookups, 1);
+
+    // An id that is not one of the caller's sessions (unknown or another user's) is a 404.
+    state.revokeMatches = false;
+    const foreign = await app.inject({
+      method: 'DELETE',
+      url: `/api/account/sessions/${'33333333-3333-4333-8333-333333333333'}`,
+      headers: { cookie, origin, 'x-csrf-token': csrf },
+    });
+    assert.equal(foreign.statusCode, 404);
+    assert.equal(foreign.json().code, 'NOT_FOUND');
+    state.revokeMatches = true;
 
     state.live = false;
     const revokedList = await app.inject({

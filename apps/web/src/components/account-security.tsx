@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LoaderCircle, LogOut } from 'lucide-react';
 import { ApiError, apiJson, apiParsed } from '../lib/api';
@@ -31,7 +31,14 @@ function dateLabel(value: string | null, locale: 'en' | 'te' | 'hi'): string {
       );
 }
 
-export default function AccountSecurity({ csrf }: { csrf: string }) {
+export default function AccountSecurity({
+  csrf,
+  onBusyChange,
+}: {
+  csrf: string;
+  /** Reports whether a sign-out is in flight, so the page can hold navigation until it settles. */
+  onBusyChange?: (busy: boolean) => void;
+}) {
   const session = useSession();
   const locale = useInterfaceLocale();
   const t = (key: Parameters<typeof localizedText>[1], value?: string | number) =>
@@ -64,6 +71,7 @@ export default function AccountSecurity({ csrf }: { csrf: string }) {
   const [emailChangeError, setEmailChangeError] = useState('');
   const [emailChangeNotice, setEmailChangeNotice] = useState('');
   const busy = revoking;
+  useEffect(() => onBusyChange?.(busy), [busy, onBusyChange]);
 
   async function requestEmailChange(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

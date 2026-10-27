@@ -1,11 +1,8 @@
 .panel {
-  background: var(--dash-surface);
-  border: 1px solid var(--dash-border);
-  border-radius: var(--dash-card-radius);
-  box-shadow: 0 2px 8px rgba(13, 18, 36, 0.04);
+  composes: panel from '../styles/surface.module.css';
+  box-shadow: var(--shadow-card);
   padding: var(--dash-space-6);
   margin-bottom: var(--dash-space-6);
-  color: var(--dash-ink);
 }
 
 :global([data-theme='dark']) .panel {
@@ -191,7 +188,7 @@
 .checkItem input[type='checkbox'] {
   width: 20px;
   height: 20px;
-  accent-color: var(--dash-primary);
+  accent-color: var(--dash-accent);
 }
 
 .inlineAdd {
@@ -222,9 +219,9 @@
 }
 
 .primaryButton {
-  background: var(--dash-primary);
-  border-color: var(--dash-primary);
-  color: white;
+  background: var(--dash-accent);
+  border-color: var(--dash-accent);
+  color: var(--on-solid);
 }
 
 .iconButton {

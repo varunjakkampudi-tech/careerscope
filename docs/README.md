@@ -14,6 +14,8 @@ This is the single index of CareerScope documentation. Every document under
 - [API-SURFACE](API-SURFACE.md) - HTTP contracts
 - [DATA-MODEL](DATA-MODEL.md) - persistence and ownership rules
 - [KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md) - explicit current limitations
+- [DOMAIN-EVENTS](architecture/DOMAIN-EVENTS.md) - event and message contracts, producers, consumers and delivery guarantees
+- [DESIGN-SYSTEM](architecture/DESIGN-SYSTEM.md) - design tokens and shared web components
 
 ## Security and privacy
 
