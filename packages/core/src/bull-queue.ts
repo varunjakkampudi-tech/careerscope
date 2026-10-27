@@ -18,7 +18,6 @@ export function queueConnection(value: string) {
     url.protocol !== 'redis:' ||
     !['127.0.0.1', 'localhost'].includes(url.hostname) ||
     url.username ||
-    url.password ||
     url.search ||
     url.hash ||
     !['', '/', '/0'].includes(url.pathname)
@@ -28,6 +27,7 @@ export function queueConnection(value: string) {
   return {
     host: url.hostname,
     port: Number(url.port || 6379),
+    ...(url.password ? { password: decodeURIComponent(url.password) } : {}),
     connectTimeout: 3000,
     commandTimeout: 10_000,
     maxRetriesPerRequest: 1,

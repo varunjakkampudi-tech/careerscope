@@ -18,14 +18,13 @@ export type QueueMessage = {
   Attributes?: { ApproximateReceiveCount?: string };
 };
 
-/** Accepts only a plain loopback `redis://` URL (no credentials, query, fragment or non-zero database), so queue traffic cannot leave the host. */
+/** Accepts only a loopback `redis://` URL with an optional password and no username, query, fragment or non-zero database, so queue traffic cannot leave the host. */
 export function localEndpoint(value: string) {
   const url = new URL(value);
   if (
     url.protocol !== 'redis:' ||
     !['localhost', '127.0.0.1'].includes(url.hostname) ||
     url.username ||
-    url.password ||
     url.search ||
     url.hash ||
     !['', '/', '/0'].includes(url.pathname)

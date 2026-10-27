@@ -14,6 +14,7 @@ test('queue endpoints cannot select cloud or arbitrary hosts', () => {
     assert.throws(() => localEndpoint(value));
   }
   assert.equal(localEndpoint('redis://127.0.0.1:56480'), 'redis://127.0.0.1:56480');
+  assert.equal(localEndpoint('redis://:secret@127.0.0.1:56480'), 'redis://:secret@127.0.0.1:56480');
 });
 
 test('local queue redelivery, acknowledgement and persistence', async () => {

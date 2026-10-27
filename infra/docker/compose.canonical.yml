@@ -17,7 +17,18 @@ services:
     cpus: 1
   redis:
     image: redis:7.4.5-alpine
-    command: ['redis-server', '--maxmemory', '128mb', '--maxmemory-policy', 'allkeys-lru']
+    command:
+      [
+        'redis-server',
+        '--requirepass',
+        '${REDIS_PASSWORD:?Run the local setup script first}',
+        '--maxmemory',
+        '128mb',
+        '--maxmemory-policy',
+        'allkeys-lru',
+      ]
+    environment:
+      REDISCLI_AUTH: ${REDIS_PASSWORD:?Run the local setup script first}
     ports: ['127.0.0.1:56479:6379']
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
@@ -31,6 +42,8 @@ services:
     command:
       [
         'redis-server',
+        '--requirepass',
+        '${REDIS_PASSWORD:?Run the local setup script first}',
         '--appendonly',
         'yes',
         '--appendfsync',
@@ -40,6 +53,8 @@ services:
         '--maxmemory-policy',
         'noeviction',
       ]
+    environment:
+      REDISCLI_AUTH: ${REDIS_PASSWORD:?Run the local setup script first}
     ports: ['127.0.0.1:56480:6379']
     volumes: ['queue-data:/data']
     healthcheck:
