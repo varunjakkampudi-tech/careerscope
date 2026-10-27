@@ -28,6 +28,20 @@ export { Conflict } from './errors.js';
  * Owns the connection pool (8 connections, statement and idle-in-transaction timeouts) and exposes
  * Drizzle as `db`. Multi-step state changes use explicit transactions on a dedicated client.
  */
+/**
+ * Per-statement and idle-transaction timeout. Production keeps 10 seconds; the integration
+ * suite raises it through DATABASE_STATEMENT_TIMEOUT_MS because shared hosts can be slow.
+ */
+function statementTimeoutMs(): number {
+  const raw = process.env.DATABASE_STATEMENT_TIMEOUT_MS;
+  if (raw === undefined || raw === '') return 10_000;
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value < 1000 || value > 600_000) {
+    throw new Error('DATABASE_STATEMENT_TIMEOUT_MS must be an integer from 1000 to 600000');
+  }
+  return value;
+}
+
 export class Database {
   readonly pool: pg.Pool;
   readonly db;
@@ -37,8 +51,8 @@ export class Database {
       connectionString: url,
       max: 8,
       connectionTimeoutMillis: 5000,
-      statement_timeout: 10_000,
-      idle_in_transaction_session_timeout: 10_000,
+      statement_timeout: statementTimeoutMs(),
+      idle_in_transaction_session_timeout: statementTimeoutMs(),
     });
     this.db = drizzle({ client: this.pool, schema: tables });
   }

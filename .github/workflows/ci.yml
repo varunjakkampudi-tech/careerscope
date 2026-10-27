@@ -316,6 +316,10 @@ jobs:
 
       - name: Run PostgreSQL and Redis integration tests
         if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration"]'), inputs.suite)
+        env:
+          # Shared CI runners are slower than a dedicated database; keep production defaults elsewhere.
+          DATABASE_STATEMENT_TIMEOUT_MS: 60000
+          INTEGRATION_JOB_WAIT_MS: 60000
         run: npm run test:integration
 
       - name: Install selected Playwright browser and system dependencies

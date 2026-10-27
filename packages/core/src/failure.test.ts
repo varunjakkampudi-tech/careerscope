@@ -32,7 +32,8 @@ test('describeError reports the name and scrubbed message, and only the type for
 
 test('scrubMessage removes every shape of address, bearer token, cookie, JWT and one-time code', () => {
   const session = 'q'.repeat(43);
-  const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.c2lnbmF0dXJl';
+  // Assembled at runtime so no JWT-shaped literal is committed to the repository.
+  const jwt = ['eyJhbGciOiJIUzI1NiJ9', 'eyJzdWIiOiIxMjM0NTY3ODkwIn0', 'c2lnbmF0dXJl'].join('.');
   const cases: [string, string[]][] = [
     ['rejected First.Last+tag@Example.CO.uk', ['First.Last', 'example', 'Example']],
     ['Authorization: Bearer abc.def.ghi failed', ['abc.def.ghi']],

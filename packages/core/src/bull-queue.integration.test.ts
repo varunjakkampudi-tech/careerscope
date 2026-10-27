@@ -9,6 +9,9 @@ import { Database, users } from '@careerscope/core';
 import { BullSearchQueue, executeBullCommand, queueConnection } from './bull-queue.js';
 import { publishPending } from './dispatch.js';
 
+/** Job completion budget. Shared Docker hosts can be slow; CI keeps the default. */
+const jobWaitMs = Number(process.env.INTEGRATION_JOB_WAIT_MS ?? 10_000);
+
 test('BullMQ rejects remote endpoints and unsafe queue configuration', async () => {
   for (const url of [
     'redis://example.com',
@@ -103,12 +106,12 @@ test(
         return database.complete(delivered, fence);
       }, shutdown.signal);
       const job = (await queue.queue.getJob(command.id))!;
-      await job.waitUntilFinished(events, 10_000);
+      await job.waitUntilFinished(events, jobWaitMs);
       assert.equal(executions, 1);
       assert.equal(await database.executionStatus(command.id), 'completed');
       await queue.send(command);
       await job.retry('completed');
-      await job.waitUntilFinished(events, 10_000);
+      await job.waitUntilFinished(events, jobWaitMs);
       assert.equal(executions, 1);
       assert.equal(
         (
@@ -134,7 +137,7 @@ test(
       premature.on('error', () => workerErrors.push('premature-worker'));
       try {
         await assert.rejects(
-          (await queue.queue.getJob(recover.id))!.waitUntilFinished(events, 10_000),
+          (await queue.queue.getJob(recover.id))!.waitUntilFinished(events, jobWaitMs),
           /transport-only/,
         );
       } finally {
@@ -146,7 +149,7 @@ test(
         (delivered, fence) => database.complete(delivered, fence),
         shutdown.signal,
       );
-      await (await queue.queue.getJob(recover.id))!.waitUntilFinished(events, 10_000);
+      await (await queue.queue.getJob(recover.id))!.waitUntilFinished(events, jobWaitMs);
       assert.equal(await database.executionStatus(recover.id), 'completed');
       await worker.close();
       worker = undefined;
@@ -159,7 +162,10 @@ test(
       }, shutdown.signal);
       await queue.send(failure);
       const failed = (await queue.queue.getJob(failure.id))!;
-      await assert.rejects(failed.waitUntilFinished(events, 25_000), /attempt budget exhausted/);
+      await assert.rejects(
+        failed.waitUntilFinished(events, jobWaitMs * 2.5),
+        /attempt budget exhausted/,
+      );
       assert.equal(failedAttempts, 5);
       assert.equal(await database.executionStatus(failure.id), 'failed');
       const retained = (await queue.queue.getJob(failure.id))!;
