@@ -32,9 +32,11 @@ deployment is permitted. This workflow never deploys.
 ## Checks and suite mapping
 
 Pushes and scheduled runs run `npm run gates:test` (Node policy, approved source
-integrity, local workflow policy, then `npm run check`: EOL, privacy, Prettier,
-ESLint, type checks and unit tests), the domain suite, the production build, and a full
-`npm audit --audit-level=high`. The manual `checks` suite runs gates,
+integrity, local workflow policy, then `npm run check`: EOL, privacy, architecture boundaries, traceability, Prettier,
+ESLint, type checks and unit tests), the domain suite, the production build, the
+toolchain check, `drizzle-kit check`, and two dependency audits:
+`npm audit --omit=dev --audit-level=high` (shipped dependencies) and
+`npm audit --audit-level=high` (full tree). `npm run security:check` runs the same two audits. The manual `checks` suite runs gates,
 build and the full audit; `domain` is a separate manual suite. An unaccepted
 high/critical advisory is a real failure; do not skip or waive the audit. Main's
 last recorded full audit failed; the isolated dependency candidate is not yet
@@ -66,6 +68,32 @@ creates screenshots under `test-results`; these are not uploaded because their
 content has not been scrubbed for personal/sensitive data. The job summary
 records event, ref, SHA, suite and browser; command output remains in individual
 workflow logs. Skipped suites are not described as passed.
+
+## Required status checks
+
+Branch protection is owner-controlled; this repository and its agents cannot
+change it, and no protection setting has been changed. To make the gates
+blocking, the owner must require these exact check names on `main` and `dev`
+(GitHub shows them as the job `name`, under the workflow `CareerScope CI`):
+
+| Required check name                         | Runs on            | What it proves                                                                                                                                                                    |
+| ------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Quality gates`                             | push, PR, nightly  | `npm run gates:test` (`npm run check` with unit tests, EOL, privacy, boundaries, traceability), toolchain check, `drizzle-kit check`, domain tests, build, both dependency audits |
+| `Services, integration, and browser suites` | push, PR, nightly  | Fresh-database migration apply (`npm run db:migrate`), integration tests on PostgreSQL and two Redis service containers, browser/axe/responsive checks                            |
+| `Production image build`                    | pull requests only | `runtime` and `proxy` targets of `infra/docker/Dockerfile` build; nothing is pushed                                                                                               |
+
+`Production image build` is skipped on pushes and nightly runs. GitHub counts a
+skipped required check as passing, so require it only on pull requests (the
+default for a required check) and do not read a skipped result as a build.
+Require pull requests to be up to date with the base branch so the checks run
+against the merge result.
+
+Workflow properties: every action is pinned to a full commit SHA; the workflow and
+each job declare `permissions: contents: read`; there are no repository secrets;
+`concurrency` cancels a superseded pull-request run and never cancels branch or
+scheduled runs. The services job uses Docker containers started with `docker run`
+rather than GitHub `services:` blocks, so Redis AOF and `noeviction` can be set
+and verified; they are digest-pinned and loopback-only.
 
 ## Local validation
 
