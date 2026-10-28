@@ -1,6 +1,6 @@
 ARG NODE_IMAGE=node:26.8.1-bookworm-slim@sha256:367679cf9792759492a486e4aa4b421764d71a9546a6dae8aab81a99eb797b3e
-ARG GO_IMAGE=golang:1.26-alpine
-ARG ALPINE_IMAGE=alpine:3.23
+ARG GO_IMAGE=golang:1.26-alpine@sha256:a2012b4a1d1f9f7e9f44e0d39b805a901e856b1dd80b4e6ee4338db547050308
+ARG ALPINE_IMAGE=alpine:3.23@sha256:ff7f0c727dd796aa36787bfcd9a64bf35a6ce72a73451b3359fde849b6703d63
 
 # Upstream caddy:2-alpine ships a binary built with a vulnerable Go toolchain and
 # dependencies, so the proxy binary is rebuilt here instead of being consumed as-is.

@@ -47,7 +47,7 @@ export const defaultErrorMessages: Readonly<Record<number, string>> = {
   413: 'Request too large',
   415: 'Unsupported media type',
   429: 'Too many requests',
-  500: 'Service unavailable',
+  500: 'Internal error',
   503: 'Service temporarily unavailable',
   507: 'Resume storage capacity reached',
 };

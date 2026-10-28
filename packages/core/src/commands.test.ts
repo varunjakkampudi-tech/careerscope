@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import test from 'node:test';
+import { queueConnection } from './bull-queue.ts';
 import { commandSchema, createSearchSchema, retryDelay } from './commands.ts';
+import { localConnection } from './queue.ts';
 
 test('commands contain identifiers, not private source text or arbitrary payloads', () => {
   const command = {
@@ -97,4 +99,21 @@ test('retry jitter remains bounded even after many attempts', () => {
     300_000,
   );
   assert.throws(() => retryDelay(0));
+});
+
+test('queue connections forward both the ACL username and the password', () => {
+  for (const connection of [
+    localConnection('redis://worker:p%40ss@127.0.0.1:6380'),
+    queueConnection('redis://worker:p%40ss@127.0.0.1:6380'),
+  ]) {
+    assert.equal(connection.host, '127.0.0.1');
+    assert.equal(connection.port, 6380);
+    assert.equal((connection as { username?: string }).username, 'worker');
+    assert.equal((connection as { password?: string }).password, 'p@ss');
+  }
+  const passwordOnly = localConnection('redis://:secret@localhost');
+  assert.equal('username' in passwordOnly, false);
+  assert.equal((passwordOnly as { password?: string }).password, 'secret');
+  assert.throws(() => localConnection('redis://worker:pw@example.com'));
+  assert.throws(() => queueConnection('redis://worker:pw@example.com'));
 });

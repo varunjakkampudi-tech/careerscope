@@ -46,22 +46,30 @@ describes a person), **Private content** (user-authored or user-uploaded),
 
 Known gap: parsed text lives unencrypted in PostgreSQL, so database dumps hold
 resume content. Dumps are therefore treated as Personal data: 0600 files in a
-0700 directory, root only.
+0700 directory, root only, and encrypted (age, else gpg symmetric) before they
+are promoted, so a copy of `BACKUP_DIR` that leaves the host is ciphertext.
 
 ## Work data and logs
 
-| Field                                  | Class       | Stored in                                                                   | Protection                                                                                                                                 | Retention                                                        |
-| -------------------------------------- | ----------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
-| Search query, request, source outcomes | Personal    | `search_runs`                                                               | Owner-scoped; an idempotency hash is used only for comparison                                                                              | 30 days after creation for settled runs                          |
-| Collected jobs (public postings)       | Operational | `search_jobs.data`, `job_sightings`                                         | Owner-scoped                                                                                                                               | 30 days for `search_jobs`; sightings are kept                    |
-| Queue commands                         | Operational | `outbox_events.command`, Redis queue                                        | Identifiers only (owner, aggregate, correlation), no content. Redis is loopback-only, password-protected, AOF with noeviction              | Outbox rows kept; Redis completed jobs 24 h, failed jobs 14 days |
-| Notification events and deliveries     | Personal    | `notification_events.payload`, `notification_deliveries.last_error`         | Owner-scoped                                                                                                                               | Until delivered or dead-lettered (policy pending)                |
-| Application and worker logs            | Operational | Container stdout (JSON), rotated 10 MB x 5                                  | See log rules below                                                                                                                        | Bounded by rotation, about 50 MB per service                     |
-| Backups                                | Personal    | `/var/backups/careerscope` (dump, resume archive) and its `keys/` directory | Root-only 0700/0600; the resume archive is ciphertext; the key copy is kept in a separate directory; see [BACKUP](../operations/BACKUP.md) | 14 days (`BACKUP_RETENTION_DAYS`)                                |
+| Field                                  | Class       | Stored in                                                                       | Protection                                                                                                                                                                                          | Retention                                                        |
+| -------------------------------------- | ----------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Search query, request, source outcomes | Personal    | `search_runs`                                                                   | Owner-scoped; an idempotency hash is used only for comparison                                                                                                                                       | 30 days after creation for settled runs                          |
+| Collected jobs (public postings)       | Operational | `search_jobs.data`, `job_sightings`                                             | Owner-scoped                                                                                                                                                                                        | 30 days for `search_jobs`; sightings are kept                    |
+| Queue commands                         | Operational | `outbox_events.command`, Redis queue                                            | Identifiers only (owner, aggregate, correlation), no content. Redis is loopback-only, password-protected, AOF with noeviction                                                                       | Outbox rows kept; Redis completed jobs 24 h, failed jobs 14 days |
+| Notification events and deliveries     | Personal    | `notification_events.payload`, `notification_deliveries.last_error`             | Owner-scoped                                                                                                                                                                                        | Until delivered or dead-lettered (policy pending)                |
+| Application and worker logs            | Operational | Container stdout (JSON), rotated 10 MB x 5                                      | See log rules below                                                                                                                                                                                 | Bounded by rotation, about 50 MB per service                     |
+| Backups                                | Personal    | `BACKUP_DIR` (encrypted dump, resume archive) and the separate `BACKUP_KEY_DIR` | Root-only 0700/0600; the dump is encrypted before promotion; the resume archive is ciphertext; the key copy and the dump passphrase stay out of `BACKUP_DIR`; see [BACKUP](../operations/BACKUP.md) | 14 days (`BACKUP_RETENTION_DAYS`)                                |
 
-Log rules: `scrubMessage` removes emails, URL credentials, bearer tokens,
-cookies, JWTs, key=value secrets, one-time codes written after their name and
-opaque strings of 32 or more characters. Only the error name and the scrubbed
+Log rules: `scrubMessage` caps its input at 2000 characters before any pattern
+runs, then removes emails, credentials in any URL scheme (including passwords
+containing a slash), the whole query string of http(s) URLs, Authorization and
+Proxy-Authorization lines, Cookie and Set-Cookie lines (including the JSON
+form), bearer and basic tokens, quoted or bare key=value secrets (token,
+secret, password, pwd, pass, passphrase, apikey, csrf, xsrf, jwt, ticket,
+private and similar names), JWTs, one-time codes written after their name,
+known token prefixes (AWS `AKIA`, GitHub `ghp_`, Slack `xox`, Stripe `sk_`),
+mixed letter-and-digit strings of 20 or more characters and any opaque string of
+32 or more characters. The result is cut to 300 characters. Only the error name and the scrubbed
 message are logged, never the stack, cause, request body or headers. Fastify
 redacts the cookie, authorization and staging-key headers and per-request
 logging is disabled.
@@ -89,8 +97,13 @@ logging is disabled.
   digest, and no token, password or code appears in the text of any row of any
   table. The account address appears only in `users`.
 - `packages/core/src/failure.test.ts`: the scrubber removes addresses, bearer
-  tokens, cookies, JWTs, credentials in URLs and one-time codes, and
-  `describeError` never exposes stack, cause or error fields.
+  tokens, cookies, JWTs, credentials in URLs and one-time codes, quoted values,
+  Authorization lines, JSON cookie bodies, known token prefixes and URL query
+  strings; a 1 MB input is scrubbed in under 100 ms; and `describeError` never
+  exposes stack, cause or error fields.
+- `infra/checks/check-backup.sh`: the promoted dump is not a plaintext archive
+  and decrypts to a restorable copy, and the run fails when no encryption is
+  available.
 
 Not verified: disk-level encryption of the host volume, the live retention
 timers and the legal retention periods.

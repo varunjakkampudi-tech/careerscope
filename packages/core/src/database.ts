@@ -26,6 +26,9 @@ import { Conflict } from './errors.js';
 export { Conflict } from './errors.js';
 
 const defaultStatementTimeoutMs = 10_000;
+const defaultConnectionTimeoutMs = 5000;
+/** Idle-in-transaction timeout is fixed; the statement override never changes it. */
+const idleInTransactionTimeoutMs = 10_000;
 
 /**
  * Per-statement and idle-transaction timeout from DATABASE_STATEMENT_TIMEOUT_MS. The default is 10
@@ -37,14 +40,24 @@ const defaultStatementTimeoutMs = 10_000;
  * Pool connect timeout. Production keeps 5 seconds; the integration run and CI raise it through
  * DATABASE_CONNECT_TIMEOUT_MS because a freshly created database on a loaded host can be slow.
  */
-export function resolveConnectionTimeoutMs(raw: string | undefined): number {
-  if (raw === undefined || raw === '') return 5000;
+export function resolveConnectionTimeoutMs(
+  raw: string | undefined,
+  deploymentEnvironment = 'development',
+): number {
+  if (!raw) return defaultConnectionTimeoutMs;
   if (!/^\d+$/.test(raw.trim())) {
     throw new Error('DATABASE_CONNECT_TIMEOUT_MS must be an integer from 1000 to 120000');
   }
   const value = Number(raw);
   if (value < 1000 || value > 120_000) {
     throw new Error('DATABASE_CONNECT_TIMEOUT_MS must be an integer from 1000 to 120000');
+  }
+  if (deploymentEnvironment === 'production' && value > defaultConnectionTimeoutMs) {
+    logger.warn(
+      { requested: value, applied: defaultConnectionTimeoutMs },
+      'DATABASE_CONNECT_TIMEOUT_MS above the default is ignored in production',
+    );
+    return defaultConnectionTimeoutMs;
   }
   return value;
 }
@@ -53,7 +66,7 @@ export function resolveStatementTimeoutMs(
   raw: string | undefined,
   deploymentEnvironment: string,
 ): number {
-  if (raw === undefined || raw === '') return defaultStatementTimeoutMs;
+  if (!raw) return defaultStatementTimeoutMs;
   const value = Number(raw);
   if (!/^\d+$/.test(raw.trim()) || !Number.isInteger(value) || value < 1000 || value > 600_000) {
     throw new Error('DATABASE_STATEMENT_TIMEOUT_MS must be an integer from 1000 to 600000');
@@ -77,17 +90,23 @@ export class Database {
   readonly db;
 
   constructor(url: string) {
+    // `||` so an empty DEPLOYMENT_ENVIRONMENT cannot bypass the production caps.
+    const deploymentEnvironment =
+      process.env.DEPLOYMENT_ENVIRONMENT ||
+      (process.env.NODE_ENV === 'production' ? 'production' : 'development');
     const timeoutMs = resolveStatementTimeoutMs(
       process.env.DATABASE_STATEMENT_TIMEOUT_MS,
-      process.env.DEPLOYMENT_ENVIRONMENT ??
-        (process.env.NODE_ENV === 'production' ? 'production' : 'development'),
+      deploymentEnvironment,
     );
     this.pool = new pg.Pool({
       connectionString: url,
       max: 8,
-      connectionTimeoutMillis: resolveConnectionTimeoutMs(process.env.DATABASE_CONNECT_TIMEOUT_MS),
+      connectionTimeoutMillis: resolveConnectionTimeoutMs(
+        process.env.DATABASE_CONNECT_TIMEOUT_MS,
+        deploymentEnvironment,
+      ),
       statement_timeout: timeoutMs,
-      idle_in_transaction_session_timeout: timeoutMs,
+      idle_in_transaction_session_timeout: idleInTransactionTimeoutMs,
     });
     this.db = drizzle({ client: this.pool, schema: tables });
   }

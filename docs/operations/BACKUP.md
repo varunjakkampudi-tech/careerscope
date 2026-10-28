@@ -10,18 +10,18 @@ actually restorable, and only then keeps it.
 
 ## What is backed up
 
-| Data                                                             | Artefact                                           | Location                                                                 | Notes                                                                                                                      |
-| ---------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| PostgreSQL (everything relational, including parsed resume text) | `careerscope-<stamp>.dump` (pg_dump custom format) | `BACKUP_DIR` (default `/var/backups/careerscope`)                        | Verified by a real restore on every run                                                                                    |
-| Resume objects (AES-256-GCM ciphertext)                          | `careerscope-resumes-<stamp>.tar`                  | `BACKUP_DIR`                                                             | Archive of `/private/objects` taken from the files container; unreadable without the key                                   |
-| Resume encryption key                                            | `careerscope-resume-key-<stamp>.key`               | `BACKUP_KEY_DIR` (default `/var/lib/careerscope/backup-keys`, mode 0700) | Must resolve outside `BACKUP_DIR`: the run fails otherwise. Prefer a different mount                                       |
-| Redis queue                                                      | Not backed up                                      |                                                                          | Disposable by design: commands live in the PostgreSQL outbox and are republished (see [OUTBOX](../architecture/OUTBOX.md)) |
-| Secrets in `/etc/careerscope-*.env` and the host env files       | Not backed up here                                 |                                                                          | Held by the owner in the password manager; see [SECRETS](SECRETS.md)                                                       |
+| Data                                                             | Artefact                                                                         | Location                                                                             | Notes                                                                                                                                                                                                        |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| PostgreSQL (everything relational, including parsed resume text) | `careerscope-<stamp>.dump.age` or `.dump.gpg` (pg_dump custom format, encrypted) | `BACKUP_DIR` (default `/var/backups/careerscope`)                                    | Verified by a real restore on every run, then encrypted before it is promoted                                                                                                                                |
+| Resume objects (AES-256-GCM ciphertext)                          | `careerscope-resumes-<stamp>.tar`                                                | `BACKUP_DIR`                                                                         | Archive of `/private/objects` taken from the files container; unreadable without the key                                                                                                                     |
+| Resume encryption key                                            | `careerscope-resume-key-<stamp>.key`                                             | `BACKUP_KEY_DIR` (default `/var/lib/careerscope/backup-keys`, owner root, mode 0700) | Neither directory may be inside the other (compared with `realpath`): the run fails otherwise. Owner and mode are read back with `stat`. Prefer a different mount; the run warns when both are on one device |
+| Redis queue                                                      | Not backed up                                                                    |                                                                                      | Disposable by design: commands live in the PostgreSQL outbox and are republished (see [OUTBOX](../architecture/OUTBOX.md))                                                                                   |
+| Secrets in `/etc/careerscope-*.env` and the host env files       | Not backed up here                                                               |                                                                                      | Held by the owner in the password manager; see [SECRETS](SECRETS.md)                                                                                                                                         |
 
 The resume key and the objects share the `private` Docker volume, so a volume
 snapshot would put both in one place and defeat encryption at rest. The backup
-therefore splits them. Keep copies of the key and of the archive in different
-custody when you copy them off the host.
+therefore splits them. Never put the key directory in the same off-host copy as
+`BACKUP_DIR`; keep the key in different custody from the archive.
 
 ## What every scheduled run does
 
@@ -33,6 +33,14 @@ custody when you copy them off the host.
    database. This is what makes the restore **exercised, not documented**
    (the ticket's own AC2 wording): every run proves its own dump works, not
    just that `pg_dump` did not error.
+   **Encrypt** - the verified dump is encrypted before it is promoted: with
+   `age` when it is installed and `BACKUP_AGE_RECIPIENT` (or
+   `BACKUP_AGE_RECIPIENTS_FILE`) is set, otherwise with `gpg --symmetric`
+   (AES-256) using `BACKUP_GPG_PASSPHRASE_FILE`. If neither is available the run
+   fails closed (`STATUS=failed`) before it dumps anything. The plaintext copy
+   only exists as a `.staging-*` file and is removed on every exit, including
+   INT and TERM. Staging files older than 24 hours (left by a SIGKILL or power
+   loss) are pruned from both directories at the start of each run.
 3. **Resumes and key** - after the dump (so an upload that lands in between
    leaves a harmless orphan object rather than a database row with no object),
    archive `/private/objects` from the files container, confirm the archive
@@ -40,7 +48,8 @@ custody when you copy them off the host.
    hex characters. A missing container, unreadable archive or malformed key
    fails the whole run. An empty `BACKUP_FILES_CONTAINER` also fails the run
    (`STATUS=failed`) unless `BACKUP_ALLOW_SKIP_RESUMES=1` is set, which skips this
-   step, prints a warning and records `RESUMES=skipped`; it is never
+   step, prints a warning and records `RESUMES=skipped` with
+   `STATUS=degraded` (not `ok`, because the backup is partial); it is never
    skipped by default.
 4. **Promote** - only if every step above succeeded, move the dump, archive and
    key into place together and apply retention (default 14 days). Anything
@@ -66,7 +75,46 @@ Idempotent, same pattern as `setup-monitoring.sh`. A failed backup alerts to
 `BACKUP_WEBHOOK_URL` in `/etc/careerscope-backup.env`, or reuses
 `MONITOR_WEBHOOK_URL` (CS-24's webhook) if that's the only one configured —
 one payload works for both Slack and Discord, and a non-`https://` URL is
-refused rather than sent over in cleartext, same as `monitor.sh`.
+refused rather than sent over in cleartext, same as `monitor.sh`. The URL is a
+credential, so it is never on a command line: `curl` reads it from a config
+passed through process substitution (`-K`) and the payload arrives on stdin, so
+`ps` shows neither. A URL containing a double quote, a backslash or a line break
+is refused because it could break out of the config value.
+
+### Dump encryption settings
+
+Set these in `/etc/careerscope-backup.env` (the unit loads it). Use one of:
+
+- `age`: install `age` and set `BACKUP_AGE_RECIPIENT=age1...` (the public key;
+  keep the identity file off the host) or `BACKUP_AGE_RECIPIENTS_FILE`.
+- `gpg`: set `BACKUP_GPG_PASSPHRASE_FILE` to a file with mode 0600 or 0400 that
+  is **outside** `BACKUP_DIR` (the run refuses a passphrase file inside it).
+  `gpg` runs with a throwaway home inside the staging area, so it does not need
+  a writable home directory under `ProtectHome=yes`.
+
+Keep the age identity or the gpg passphrase with the owner, apart from both the
+backup directory and the key directory: whoever holds the dump and its
+decryption secret can read every resume and address in the database.
+
+### Off-host copy
+
+Copy **`BACKUP_DIR` only** off the host (the encrypted dumps and the resume
+archive, which is already ciphertext). Never copy `BACKUP_KEY_DIR`, the
+passphrase or the age identity in the same job: the key must stay in separate
+custody from the archive it decrypts, and the dump is useless without its own
+secret. An off-host copy of `BACKUP_DIR` is therefore ciphertext only. There is
+still no automated off-host copy (see Recovery objectives).
+
+### Status values
+
+`last-status` holds `STATUS=` one of `ok`, `degraded` (resumes skipped by
+opt-in), `failed`, or `locked`. A run that finds the lock held by another run
+exits 0 on purpose (it is not a failure) and writes `STATUS=locked` with the
+time. A lock that stays held leaves that status getting older, so
+`bash infra/checks/check-backup.sh --status-only [DIR]` exits 1 for `failed`
+and for a `locked` status older than **26 hours** (a hung run). It exits 0 for
+`ok`, `degraded` and a recent `locked`. Wire it into the scheduler-health check
+if you want that alert; nothing calls it automatically today.
 
 ## Recovery objectives
 
@@ -86,8 +134,9 @@ What is measured and what is assumed:
   cover loss of the host itself: backups are written to the same host, and
   there is no automated off-host copy (a deliberate, recorded decision). If the
   host disk is lost, the RPO is unbounded unless someone copied
-  `/var/backups/careerscope` elsewhere. Copy the dump, the archive and the key
-  off-host regularly and in separate custody.
+  `/var/backups/careerscope` elsewhere. Copy `BACKUP_DIR` (encrypted dumps and the
+  resume archive) off-host regularly; keep the key and the dump passphrase in
+  separate custody and out of that copy (see "Off-host copy").
 
 ## Restoring for real
 
@@ -96,7 +145,7 @@ before the key is restored, `bootstrap.mjs` creates a new random key, and the
 restored resumes will not decrypt.
 
 1. Pick the matching set from `last-status` or the directory listing: one
-   `careerscope-<stamp>.dump`, the `careerscope-resumes-<stamp>.tar` with the
+   `careerscope-<stamp>.dump.age` (or `.dump.gpg`), the `careerscope-resumes-<stamp>.tar` with the
    closest stamp, and the key file `careerscope-resume-key-*.key`.
 2. On the target host, bring up only PostgreSQL and make sure the application
    services (`api`, `publisher`, `search`, `files`, `web`) are stopped:
@@ -121,11 +170,17 @@ restored resumes will not decrypt.
      chown -R 1000:1000 /private'
    ```
 
-4. Restore the database:
+4. Decrypt and restore the database. Decrypt to a root-only temporary file and
+   delete it afterwards:
 
    ```sh
+   umask 077
+   # age:  age -d -i /path/to/identity.txt -o /root/restore.dump "$B/careerscope-<stamp>.dump.age"
+   gpg --batch --pinentry-mode loopback --passphrase-file /path/to/passphrase \
+     -o /root/restore.dump --decrypt "$B/careerscope-<stamp>.dump.gpg"
    docker exec -i careerscope-postgres-1 pg_restore -U careerscope -d careerscope \
-     --clean --if-exists --no-owner < "$B/careerscope-<stamp>.dump"
+     --clean --if-exists --no-owner < /root/restore.dump
+   shred -u /root/restore.dump
    ```
 
    Every scheduled run already proves a restore of that exact file succeeds
@@ -162,7 +217,18 @@ bash control flow branches correctly. It also proves: failed dumps and invalid
 retention configuration return nonzero; a failing dump leaves the last good
 file byte-identical and untouched; invalid retention settings do not change
 backup state; retention removes only genuinely old dumps; and alerting fires
-exactly once per failure, never on success. It also starts a second disposable
+exactly once per failure, never on success. It also proves the promoted dump is
+not a plaintext archive and decrypts to a restorable copy with the seeded rows;
+that a missing `age` and passphrase fails closed, a group-readable passphrase
+file and one inside `BACKUP_DIR` are refused, and a stub `age` is used when
+present; that nesting in either direction, a missing `realpath` and a wrong key
+directory owner are refused; that an allowed resume skip is `STATUS=degraded`;
+that a held lock exits 0 with `STATUS=locked`; that `--status-only` flags
+`failed` and a `locked` status older than 26 hours; that the webhook URL is
+absent from curl's argv and from every `/proc/*/cmdline` while curl runs (with a
+positive control that the process is visible), and that a URL with a quote,
+backslash or newline is refused; that TERM removes every staging file; and that
+stale staging files are pruned while fresh ones are kept. It also starts a second disposable
 container standing in for the files container, with two objects and a key, and
 proves: the resume archive and key copy are promoted as separate artefacts and
 the archive does not contain the key; extracting the archive reproduces every
@@ -179,8 +245,8 @@ not been verified in this checkout because GitHub Actions is disabled.
 
 ### A note on the two permission checks, if you run this on Windows
 
-`check-backup.sh` asserts the backup directory is `0700` and each dump and key
-copy is `0600`. Running the suite locally via Git Bash on Windows, these three
+`check-backup.sh` asserts the backup directory is `0700`, each dump and key
+copy is `0600`, and the key directory is `0700` with the expected owner. Running the suite locally via Git Bash on Windows, these three
 checks fail (`755`/`644`/`644`) — verified independently to be an MSYS/NTFS
 permission-reporting limitation of Git Bash itself (a bare `mkdir` + `chmod
 0700` + `stat` round-trip shows the identical mismatch with no `backup.sh`

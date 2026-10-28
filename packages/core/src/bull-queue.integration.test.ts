@@ -9,15 +9,27 @@ import { Database, users } from '@careerscope/core';
 import { BullSearchQueue, executeBullCommand, queueConnection } from './bull-queue.js';
 import { publishPending } from './dispatch.js';
 
-/** Job completion budget. Shared Docker hosts can be slow; CI keeps the default. */
-const jobWaitMs = Number(process.env.INTEGRATION_JOB_WAIT_MS ?? 10_000);
+/**
+ * Job completion budget in milliseconds. Shared Docker hosts can be slow, so `npm run
+ * test:integration:bull-queue` raises it. Throws unless the value is an integer from 1000 to 600000.
+ */
+function resolveJobWaitMs(raw: string | undefined) {
+  if (raw === undefined) return 10_000;
+  const value = Number(raw);
+  if (!/^\d+$/.test(raw.trim()) || value < 1000 || value > 600_000) {
+    throw new Error('INTEGRATION_JOB_WAIT_MS must be an integer from 1000 to 600000');
+  }
+  return value;
+}
+const jobWaitMs = resolveJobWaitMs(process.env.INTEGRATION_JOB_WAIT_MS);
 
 test('BullMQ rejects remote endpoints and unsafe queue configuration', async () => {
   for (const url of [
     'redis://example.com',
     'http://localhost',
     'redis://localhost/1',
-    'redis://user:secret@localhost',
+    // ACL usernames are accepted on loopback now (see queueConnection); a remote host with credentials stays rejected.
+    'redis://user:secret@example.com',
     'redis://localhost?host=remote',
   ]) {
     assert.throws(() => queueConnection(url));

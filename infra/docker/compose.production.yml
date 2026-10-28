@@ -28,6 +28,7 @@ x-environment: &environment
   REDIS_URL: redis://:${REDIS_PASSWORD:?Redis password required}@127.0.0.1:6379
   QUEUE_REDIS_URL: redis://:${REDIS_PASSWORD:?Redis password required}@127.0.0.1:6380
   APP_ORIGIN: ${APP_ORIGIN:?Public origin required}
+  DEPLOYMENT_ENVIRONMENT: production
   REGISTRATION_ENABLED: ${REGISTRATION_ENABLED:-false}
   RESUME_STORAGE_DIRECTORY: /private/objects
   RESUME_STORAGE_KEY_FILE: /private/encryption.key
@@ -40,9 +41,11 @@ x-environment: &environment
 # full *environment anchor purely because it shares the *app anchor with
 # api/publisher/search/files, which do need all of those. This is its own,
 # deliberately minimal environment: only NODE_OPTIONS, which is generic Node
-# process tuning, not application configuration or a credential.
+# process tuning, not application configuration or a credential, plus the
+# deployment marker every service carries.
 x-web-environment: &web-environment
   NODE_OPTIONS: --max-old-space-size=512
+  DEPLOYMENT_ENVIRONMENT: production
 
 x-app: &app
   <<: *hardening
@@ -63,6 +66,8 @@ services:
     image: careerscope:v3-proxy
     user: '1000:1000'
     command: ['sh', '-c', 'exec tail -f /dev/null']
+    environment:
+      DEPLOYMENT_ENVIRONMENT: production
     ports:
       - '80:80'
       - '443:443'
@@ -77,6 +82,7 @@ services:
     depends_on:
       network-anchor: { condition: service_started }
     environment:
+      DEPLOYMENT_ENVIRONMENT: production
       CAREERSCOPE_DOMAIN: ${CAREERSCOPE_DOMAIN:?Domain required}
       CAREERSCOPE_TLS_MODE: ${CAREERSCOPE_TLS_MODE:?TLS mode required}
       CAREERSCOPE_UPSTREAM: 127.0.0.1:5280
@@ -103,6 +109,7 @@ services:
     network_mode: service:network-anchor
     command: ['postgres', '-c', 'listen_addresses=127.0.0.1']
     environment:
+      DEPLOYMENT_ENVIRONMENT: production
       POSTGRES_DB: careerscope
       POSTGRES_USER: careerscope
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Database password required}
@@ -123,6 +130,7 @@ services:
     user: redis
     network_mode: service:network-anchor
     environment:
+      DEPLOYMENT_ENVIRONMENT: production
       REDISCLI_AUTH: ${REDIS_PASSWORD:?Redis password required}
     command:
       [
@@ -155,6 +163,7 @@ services:
     user: redis
     network_mode: service:network-anchor
     environment:
+      DEPLOYMENT_ENVIRONMENT: production
       REDISCLI_AUTH: ${REDIS_PASSWORD:?Redis password required}
     command:
       [

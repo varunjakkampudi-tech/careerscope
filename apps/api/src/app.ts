@@ -386,6 +386,7 @@ export async function createApp(
         options.testAccess,
         request.raw.socket.remoteAddress ?? '',
         request.headers['x-careerscope-staging-key'],
+        request.headers,
       )
     )
       throw new HttpError(403, 'Private test access required');
@@ -509,7 +510,12 @@ export async function createApp(
     resumes: !!coordinator,
     cancellation: !!options.resumeStorage?.cancelUpload,
   });
+  // Unauthenticated, so it is rate-limited per client address before it touches the database, and it
+  // reports no version or other build detail.
   app.get('/api/health', async (request) => {
+    const addressHash = createHash('sha256').update(request.ip).digest('hex');
+    if (!(await consumeRateLimit(request, `health:ip:${addressHash}`, 60, 60)))
+      throw new HttpError(429, 'Too many requests');
     try {
       await database.pool.query('SELECT 1');
       await options.readiness?.();
@@ -517,7 +523,7 @@ export async function createApp(
       request.log.error({ requestId: request.id }, 'Critical readiness dependency unavailable');
       throw new HttpError(503, 'Service temporarily unavailable');
     }
-    return { status: 'ok', version };
+    return { status: 'ok' };
   });
   app.get('/api/session', async (request) => {
     const session = request.session;

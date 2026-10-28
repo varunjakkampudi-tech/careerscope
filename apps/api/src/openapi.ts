@@ -364,8 +364,8 @@ function contracts(options: {
   const resumeDescription = `Uploads ${options.resumes ? 'enabled' : 'disabled (503 for storage operations)'}. Cancellation ${options.cancellation ? 'enabled' : 'disabled (503)'}. PDF/DOCX only, maximum ${maximumResumeBytes} bytes. Parsed proposals never automatically update the profile.`;
   return {
     'GET /api/health': operation(
-      'Database health and package version',
-      object({ status: text({ enum: ['ok'] }), version: text() }),
+      'Database and dependency health; rate-limited per client address (429)',
+      object({ status: text({ enum: ['ok'] }) }),
     ),
     'GET /api/session': operation('Current browser session', {
       oneOf: [

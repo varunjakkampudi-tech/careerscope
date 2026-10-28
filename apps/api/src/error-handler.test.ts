@@ -202,7 +202,7 @@ test('every status the API emits uses the envelope with a stable code', async ()
     assert.equal(response.statusCode, 500);
     const body = assertEnvelope(response);
     assert.equal(body.code, 'INTERNAL_ERROR');
-    assert.equal(body.message, 'Service unavailable');
+    assert.equal(body.message, 'Internal error');
   } finally {
     await broken.close();
   }
@@ -281,6 +281,132 @@ test('the OpenAPI document declares the envelope for every error response', asyn
     assert.ok(checked > 100, `only ${checked} error responses were declared`);
     // The retired password registration stub is no longer routed or documented.
     assert.equal(document.paths['/api/register'], undefined);
+  } finally {
+    await app.close();
+  }
+});
+
+/** Returns the source text of the message argument (the second) of every `new HttpError(` call. */
+function httpErrorMessageArguments(source: string) {
+  const messages: string[] = [];
+  for (const match of source.matchAll(/new HttpError\(/g)) {
+    let depth = 1;
+    let quote = '';
+    let argument = 0;
+    let current = '';
+    for (let index = match.index + match[0].length; index < source.length; index += 1) {
+      const character = source[index]!;
+      if (quote) {
+        current += character;
+        if (character === '\\') current += source[++index] ?? '';
+        else if (character === quote) quote = '';
+        continue;
+      }
+      if (character === "'" || character === '"' || character === '`') quote = character;
+      else if ('([{'.includes(character)) depth += 1;
+      else if (')]}'.includes(character)) depth -= 1;
+      if (depth === 0) break;
+      if (character === ',' && depth === 1) {
+        if (argument === 1) break;
+        argument += 1;
+        current = '';
+        continue;
+      }
+      if (argument === 1) current += character;
+    }
+    messages.push(current.trim());
+  }
+  return messages;
+}
+
+test('HttpError messages in app.ts are literals, never template literals', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const messages = httpErrorMessageArguments(
+    await readFile(new URL('./app.ts', import.meta.url), 'utf8'),
+  );
+  assert.ok(messages.length > 20, 'the scan must find the HttpError calls');
+  assert.deepEqual(
+    messages.filter((message) => message.startsWith('`')),
+    [],
+  );
+  // The scanner itself: it must flag a template literal, including one split over lines.
+  assert.deepEqual(
+    httpErrorMessageArguments("new HttpError(400,\n  `bad ${value}`);new HttpError(404, 'a, (b)')"),
+    ['`bad ${value}`', "'a, (b)'"],
+  );
+});
+
+test('405 and 408 answer in the envelope with their stable codes and hide the thrown text', async () => {
+  const app = await createApp(sessionDatabase(), origin, async () => true);
+  // Framework-shaped errors (Fastify attaches `statusCode`), thrown by throwaway routes. The
+  // handler passes 4xx framework statuses through, so these exercise the 405 and 408 mapping.
+  const frameworkError = (statusCode: number, code: string) =>
+    Object.assign(new Error('synthetic private framework detail'), { statusCode, code });
+  app.get('/api/__probe/method', async () => {
+    throw frameworkError(405, 'FST_ERR_METHOD_NOT_ALLOWED');
+  });
+  app.get('/api/__probe/timeout', async () => {
+    throw frameworkError(408, 'FST_ERR_CTP_REQUEST_TIMEOUT');
+  });
+  try {
+    const notAllowed = await app.inject({ url: '/api/__probe/method', headers: { cookie } });
+    assert.equal(notAllowed.statusCode, 405);
+    const method = assertEnvelope(notAllowed);
+    assert.equal(method.code, 'METHOD_NOT_ALLOWED');
+    assert.equal(method.message, 'Method not allowed');
+
+    const timedOut = await app.inject({ url: '/api/__probe/timeout', headers: { cookie } });
+    assert.equal(timedOut.statusCode, 408);
+    const timeout = assertEnvelope(timedOut);
+    assert.equal(timeout.code, 'REQUEST_TIMEOUT');
+    assert.equal(timeout.message, 'Request timeout');
+  } finally {
+    await app.close();
+  }
+});
+
+test('an unknown route answers 401 to an anonymous caller (auth runs first) and 404 once signed in', async () => {
+  const app = await createApp(sessionDatabase(), origin, async () => true);
+  try {
+    const anonymous = await app.inject({ url: '/api/does-not-exist' });
+    assert.equal(anonymous.statusCode, 401);
+    assert.equal(assertEnvelope(anonymous).code, 'AUTHENTICATION_REQUIRED');
+    const signedIn = await app.inject({ url: '/api/does-not-exist', headers: { cookie } });
+    assert.equal(signedIn.statusCode, 404);
+    assert.equal(assertEnvelope(signedIn).code, 'NOT_FOUND');
+  } finally {
+    await app.close();
+  }
+});
+
+test('the health endpoint reports no version and is rate-limited per client address', async () => {
+  const healthy = {
+    pool: { query: async () => ({ rows: [{ '?column?': 1 }] }) },
+  } as unknown as Database;
+  const counts = new Map<string, number>();
+  const limiter = async (key: string, limit: number) => {
+    const count = (counts.get(key) ?? 0) + 1;
+    counts.set(key, count);
+    return count <= limit;
+  };
+  const app = await createApp(healthy, origin, limiter);
+  try {
+    const first = await app.inject({ url: '/api/health' });
+    assert.equal(first.statusCode, 200);
+    assert.deepEqual(first.json(), { status: 'ok' });
+    assert.equal('version' in first.json(), false);
+    let limited = 0;
+    for (let request = 0; request < 80; request += 1) {
+      const response = await app.inject({ url: '/api/health' });
+      if (response.statusCode === 429) {
+        limited += 1;
+        assert.equal(assertEnvelope(response).code, 'RATE_LIMITED');
+      }
+    }
+    assert.equal(limited, 80 + 1 - 60, 'every request past the 60th is refused');
+    // A different client address has its own budget.
+    const other = await app.inject({ url: '/api/health', remoteAddress: '198.51.100.7' });
+    assert.equal(other.statusCode, 200);
   } finally {
     await app.close();
   }

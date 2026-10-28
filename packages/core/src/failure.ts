@@ -15,30 +15,54 @@ export type FailureContext = {
 };
 
 const maxMessageLength = 300;
+/** Input is capped before any pattern runs so a huge message cannot make scrubbing expensive. */
+const maxScrubInputLength = 2000;
+
+/** A secret value: a quoted string (escapes honoured, spaces kept) or a bare run up to a delimiter. */
+const secretValue = String.raw`(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|[^\s,;&]+)`;
+
+const namedSecret = new RegExp(
+  String.raw`\b([a-z0-9_-]*(?:token|secret|password|passwd|pwd|pass|passphrase|key|apikey|authorization|cookie|otp|code|sid|session|sessionid|sig|signature|auth|credential|csrf|xsrf|jwt|ticket|private)[a-z0-9_-]*)["']?\s*[=:]\s*${secretValue}`,
+  'gi',
+);
+const proseSecret = new RegExp(
+  String.raw`\b(password|passwd|passphrase|secret|token|credential)s?\b\s+(?:is|was)\s+${secretValue}`,
+  'gi',
+);
 
 /** Removes emails, credentials, tokens and long opaque strings from an error message and bounds its length. */
 export function scrubMessage(message: string) {
   return (
     message
-      .replace(/[a-z][a-z0-9+.-]*:\/\/[^\s/@]+@[^\s]+/gi, '[url]')
+      .slice(0, maxScrubInputLength)
+      // Any scheme with credentials in the authority; the password may itself contain a slash.
+      .replace(/[a-z][a-z0-9+.-]*:\/\/[^\s@]*@[^\s]+/gi, '[url]')
+      // The whole query string of an http(s) URL: signatures and tokens travel there.
+      .replace(/(https?:\/\/[^\s?#]+)\?[^\s]*/gi, '$1?[redacted]')
       .replace(/[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+/g, '[email]')
-      // A Cookie or Set-Cookie header is redacted through the end of its line, attributes included.
-      .replace(/\b(set-cookie|cookie)\s*:[^\r\n]*/gi, '$1: [redacted]')
+      // Authorization and Proxy-Authorization lines, any scheme word ("Token abc"), through end of line.
+      .replace(/\b(proxy-)?authorization["']?\s*[:=][^\r\n]*/gi, '$1authorization: [redacted]')
+      // A Cookie or Set-Cookie header (or its JSON form) is redacted through the end of its line.
+      .replace(/\b(set-cookie|cookie)["']?\s*[:=][^\r\n]*/gi, '$1: [redacted]')
+      // Well-known token prefixes: AWS access key ids, GitHub, Slack and Stripe-style keys.
+      .replace(/\bAKIA[0-9A-Z]{16}\b/g, '[redacted]')
+      .replace(/\bgh[pousr]_[A-Za-z0-9]+/g, '[redacted]')
+      .replace(/\bxox[a-z]-[A-Za-z0-9-]+/g, '[redacted]')
+      .replace(/\bsk_(?:live|test)_[A-Za-z0-9]+/g, '[redacted]')
       .replace(/\bbearer\s+[^\s]+/gi, 'Bearer [token]')
       .replace(/\bbasic\s+[^\s]+/gi, 'Basic [token]')
-      .replace(
-        /\b([a-z0-9_-]*(?:token|secret|password|passwd|key|authorization|cookie|otp|code|sid|session|sessionid|sig|signature|auth|credential)[a-z0-9_-]*)["']?\s*[=:]\s*[^\s,;&]+/gi,
-        '$1=[redacted]',
-      )
+      .replace(namedSecret, '$1=[redacted]')
       // A secret written after its name in prose ("password is hunter2").
-      .replace(
-        /\b(password|passwd|passphrase|secret|token|credential)s?\b\s+(?:is|was)\s+[^\s,;&]+/gi,
-        '$1 [redacted]',
-      )
+      .replace(proseSecret, '$1 [redacted]')
       // JWT-shaped values: the dots split them into segments shorter than the opaque-string rule below.
       .replace(/\beyJ[\w-]*\.[\w-]+\.[\w-]*/g, '[jwt]')
       // A one-time code written after its name ("otp 123456", "code is 123456").
       .replace(/\b(otp|passcode|code|pin)\b(\s+(?:is|was))?\s+\d{4,10}\b/gi, '$1 [redacted]')
+      // Mixed letter-and-digit strings of 20+ characters look like tokens.
+      .replace(
+        /\b(?=[A-Za-z0-9_+/=-]*[A-Za-z])(?=[A-Za-z0-9_+/=-]*\d)[A-Za-z0-9_+/=-]{20,}\b/g,
+        '[redacted]',
+      )
       .replace(/\b[A-Za-z0-9_+/=-]{32,}\b/g, '[redacted]')
       .slice(0, maxMessageLength)
   );

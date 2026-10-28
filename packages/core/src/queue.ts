@@ -18,13 +18,12 @@ export type QueueMessage = {
   Attributes?: { ApproximateReceiveCount?: string };
 };
 
-/** Accepts only a loopback `redis://` URL with an optional password and no username, query, fragment or non-zero database, so queue traffic cannot leave the host. */
+/** Accepts only a loopback `redis://` URL with optional ACL username and password and no query, fragment or non-zero database, so queue traffic cannot leave the host. */
 export function localEndpoint(value: string) {
   const url = new URL(value);
   if (
     url.protocol !== 'redis:' ||
     !['localhost', '127.0.0.1'].includes(url.hostname) ||
-    url.username ||
     url.search ||
     url.hash ||
     !['', '/', '/0'].includes(url.pathname)
@@ -32,6 +31,21 @@ export function localEndpoint(value: string) {
     throw new Error('Queue Redis must use an isolated loopback endpoint');
   }
   return value;
+}
+
+/** Redis client options for a validated endpoint: host, port, ACL username and password, and short timeouts with one retry per request so an outage fails calls quickly instead of hanging them. */
+export function localConnection(endpoint: string) {
+  const url = new URL(localEndpoint(endpoint));
+  return {
+    host: url.hostname,
+    port: Number(url.port || 6379),
+    // The local Redis requires authentication; without this every queue call fails with NOAUTH.
+    ...(url.username ? { username: decodeURIComponent(url.username) } : {}),
+    ...(url.password ? { password: decodeURIComponent(url.password) } : {}),
+    connectTimeout: 3000,
+    commandTimeout: 10_000,
+    maxRetriesPerRequest: 1,
+  };
 }
 
 /**
@@ -57,17 +71,7 @@ export class LocalQueue {
   async initialize(name: string) {
     if (this.queue) throw new Error('Queue is already initialized');
     if (!/^[a-z][a-z0-9-]{0,99}$/.test(name)) throw new Error('Invalid queue name');
-    const url = new URL(this.endpoint);
-    // Short timeouts and one retry per request so a Redis outage fails calls quickly instead of hanging them.
-    const connection = {
-      host: url.hostname,
-      port: Number(url.port || 6379),
-      // The local Redis requires authentication; without this every queue call fails with NOAUTH.
-      ...(url.password ? { password: decodeURIComponent(url.password) } : {}),
-      connectTimeout: 3000,
-      commandTimeout: 10_000,
-      maxRetriesPerRequest: 1,
-    };
+    const connection = localConnection(this.endpoint);
     this.queue = new Queue<Command>(name, {
       connection,
       defaultJobOptions: {

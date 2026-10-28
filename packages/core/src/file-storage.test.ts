@@ -400,7 +400,9 @@ test('private file storage encrypts immutable owned versions and restores them w
     assert.equal(envelope.includes(body), false);
     await assert.rejects(storage.get(object, randomUUID()), /version mismatch/);
     await assert.rejects(storage.delete(object, randomUUID()), /version mismatch/);
-    await assert.rejects(storage.get({ ...object, ownerId: randomUUID() }, version));
+    await assert.rejects(storage.get({ ...object, ownerId: randomUUID() }, version), {
+      code: 'ENOENT',
+    });
     await assert.rejects(storage.get({ ...object, ownerId: '../escape' }, version));
     await assert.rejects(
       storage.get(
@@ -428,15 +430,15 @@ test('private file storage encrypts immutable owned versions and restores them w
     });
     try {
       await wrongKey.initialize();
-      await assert.rejects(wrongKey.get(object, version));
+      await assert.rejects(wrongKey.get(object, version), /unable to authenticate data/);
     } finally {
       wrongKey.close();
     }
     const tampered = Buffer.from(envelope);
     tampered[tampered.length - 1] = tampered[tampered.length - 1]! ^ 1;
     await writeFile(filename, tampered);
-    await assert.rejects(storage.get(object, version));
-    await assert.rejects(storage.recoverVersion(object));
+    await assert.rejects(storage.get(object, version), /unable to authenticate data/);
+    await assert.rejects(storage.recoverVersion(object), /unable to authenticate data/);
     await writeFile(filename, envelope);
     await storage.delete(object, version);
     await storage.delete(object, version);
@@ -600,14 +602,14 @@ test('a stored resume is AES-256-GCM ciphertext that is unreadable without the s
       encryptionKey: randomBytes(32).toString('hex'),
     });
     await stranger.initialize();
-    await assert.rejects(stranger.get(object, version));
+    await assert.rejects(stranger.get(object, version), /unable to authenticate data/);
     stranger.close();
 
     // A flipped ciphertext bit is detected, not decrypted to garbage.
     const tampered = Buffer.from(envelope);
     tampered[tampered.length - 1] = tampered[tampered.length - 1]! ^ 1;
     await writeFile(join(directory, files[0]!), tampered);
-    await assert.rejects(storage.get(object, version));
+    await assert.rejects(storage.get(object, version), /unable to authenticate data/);
 
     // The ciphertext is bound to its identity: copied under another resume id it does not open.
     await writeFile(join(directory, files[0]!), envelope);
@@ -616,7 +618,7 @@ test('a stored resume is AES-256-GCM ciphertext that is unreadable without the s
       join(directory, `${other.ownerId}_${other.resumeId}_${other.sha256}.bin`),
       envelope,
     );
-    await assert.rejects(storage.get(other, version));
+    await assert.rejects(storage.get(other, version), /unable to authenticate data/);
     assert.deepEqual(await storage.get(object, version), body);
   } finally {
     storage.close();
