@@ -250,7 +250,7 @@ test('the root CI service topology is disposable, loopback-only and recovery-com
   assert.ok(redisImage, 'the CI workflow must declare its immutable Redis image');
   assert.match(
     fullDiskCheck,
-    /node:26\.8\.1-bookworm-slim@sha256:[a-f0-9]{64}/,
+    /node:24.22.1-bookworm-slim@sha256:[a-f0-9]{64}/,
     'recovery containers must use immutable image digests',
   );
   assert.match(queueRuntimeCheck, /redis:7\.4\.5-alpine@sha256:[a-f0-9]{64}/);
