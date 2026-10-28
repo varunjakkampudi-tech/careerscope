@@ -2778,10 +2778,25 @@ try {
           exact: true,
         });
         await pendingRevocation.waitFor();
-        assert.equal(await pendingRevocation.isDisabled(), true);
-        assert.equal(
-          await page.getByRole('button', { name: 'Back to search', exact: true }).isDisabled(),
-          true,
+        // Wait for the disabled state instead of sampling it once: React commits the label and
+        // the disabled attribute together, but a one-shot read can race the commit on a slow runner.
+        await page.waitForFunction(
+          () =>
+            Array.from(document.querySelectorAll('button')).some(
+              (button) =>
+                button.textContent?.includes('Signing out other sessions') === true &&
+                button.disabled,
+            ),
+          undefined,
+          { timeout: 10_000 },
+        );
+        await page.waitForFunction(
+          () =>
+            Array.from(document.querySelectorAll('button')).some(
+              (button) => button.textContent?.trim() === 'Back to search' && button.disabled,
+            ),
+          undefined,
+          { timeout: 10_000 },
         );
       } finally {
         releaseRevocation();
