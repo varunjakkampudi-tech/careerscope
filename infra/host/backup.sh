@@ -144,11 +144,13 @@ trap 'exit 143' TERM
 fail() {
   remove_staging
   echo "backup FAILED: $1" >&2
-  cat >"$status_file" <<EOF
+  {
+    cat >"$status_file" <<EOF
 STATUS=failed
 AT=$stamp
 REASON=$1
 EOF
+  } 2>/dev/null || echo "could not write status file" >&2
   send_alert "CareerScope backup FAILED: $1"
   # Preserve the failed status/alert while letting the oneshot systemd unit
   # report failure to the independent scheduler-health monitor.

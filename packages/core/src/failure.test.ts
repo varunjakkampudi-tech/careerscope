@@ -135,6 +135,22 @@ test('scrubMessage redacts quoted values, header lines, JSON bodies and more sec
   assert.equal(scrubMessage('password=ab;cd').includes('ab;'), false);
 });
 
+test('scrubMessage redacts escaped inner quotes, truncated escaped JSON and backslashes in bare values', () => {
+  const cases: [string, string[]][] = [
+    [String.raw`{\"password\":\"a\\\"b secret\"}`, ['secret']],
+    [String.raw`{\"password\":\"abc`, ['abc']],
+    [String.raw`password=ab\cd`, ['ab', 'cd']],
+    [String.raw`password=C:\Users\x`, ['Users']],
+    [String.raw`{\"password\":\"p\\\"w rest\"}`, ['rest']],
+  ];
+  for (const [input, forbidden] of cases) {
+    const output = scrubMessage(input);
+    for (const secret of forbidden) {
+      assert.equal(output.includes(secret), false, `${input} -> ${output}`);
+    }
+  }
+});
+
 test('scrubMessage redacts a URL password that contains a slash, for any scheme', () => {
   // The first URL is assembled at runtime so the privacy scanner does not read it as a real credential.
   for (const input of [

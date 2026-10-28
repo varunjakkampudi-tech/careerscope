@@ -191,7 +191,7 @@ export type MatchableProfile = {
  * These describe the validated shapes that `@careerscope/core` parses with Zod. They live here so the
  * web client can name them without importing the server-side package. Core asserts at compile time
  * that its schema-derived types stay identical to these (see the `AssertSame` checks in
- * `packages/core/src/commands.ts`, `jobs.ts` and `profile.ts`).
+ * `packages/core/src/shared-types.check.ts`).
  */
 
 /** Job boards the launch search worker can run. */

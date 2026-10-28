@@ -22,7 +22,7 @@ const maxScrubInputLength = 2000;
 const secretValue = String.raw`(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|[^\s,;&]+)`;
 
 /** The same, also accepting JSON that was serialised into a string (backslash-escaped quotes). */
-const namedSecretValue = String.raw`(?:\\+"(?:[^"\\]|\\(?!"))*\\+"|\\+'(?:[^'\\]|\\(?!'))*\\+'|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|[^\s,;&\\]+)`;
+const namedSecretValue = String.raw`(?:\\+"[\s\S]*?\\+"(?=[\s,;}\])&]|$)|\\+'[\s\S]*?\\+'(?=[\s,;}\])&]|$)|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|(?:[^\s,;&\\]|\\(?!["']))+|\\+["'][^\s,;&"'\\]*)`;
 
 const namedSecret = new RegExp(
   String.raw`\b([a-z0-9_-]*(?:token|secret|password|passwd|pwd|pass|passphrase|key|apikey|authorization|cookie|otp|code|sid|session|sessionid|sig|signature|auth|credential|csrf|xsrf|jwt|ticket|private)[a-z0-9_-]*)(?:\\*["'])?\s*[=:]\s*${namedSecretValue}`,

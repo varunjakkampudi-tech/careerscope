@@ -565,6 +565,17 @@ check "a post-promotion failure reports FAILED" "$(printf '%s' "$out" | grep -c 
 check "a post-promotion failure overwrites the ok status with failed" "$(grep -c '^STATUS=failed' "$work/backups/last-status")-$(grep -c '^STATUS=ok' "$work/backups/last-status")" "1-0"
 check "a post-promotion failure sends exactly one alert" "$(wc -l <"$work/webhook-calls" | tr -d ' ')" "1"
 
+echo "== a failure whose status file cannot be written still sends exactly one alert"
+# A directory in place of last-status makes every write to it fail, even when run as root.
+rm -f "$work/backups/last-status"; mkdir "$work/backups/last-status"
+: >"$work/webhook-calls"
+unwritable_exit=0
+out=$(CHECK_PASSFILE="" run_backup 2>&1) || unwritable_exit=$?
+check "an unwritable status file still returns 1" "$unwritable_exit" "1"
+check "an unwritable status file is reported" "$(printf '%s' "$out" | grep -c 'could not write status file')" "1"
+check "an unwritable status file still sends exactly one alert" "$(wc -l <"$work/webhook-calls" | tr -d ' ')" "1"
+rmdir "$work/backups/last-status"
+
 if [ "$failures" -gt 0 ]; then
   echo "$failures check(s) failed" >&2
   exit 1
