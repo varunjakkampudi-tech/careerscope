@@ -79,7 +79,7 @@ test('CS-35: every supported conflict code reaches the client and picks its own 
   const seen = new Set<string>();
   for (const [code, message] of SUPPORTED) {
     const error = await conflictFrom(
-      JSON.stringify({ error: SERVER_DETAIL, code, requestId: 'r-1' }),
+      JSON.stringify({ message: SERVER_DETAIL, code, requestId: 'r-1' }),
     );
     assert.equal(error.status, 409);
     assert.equal(error.code, code, `${code} must survive the network boundary`);
@@ -95,7 +95,7 @@ test('CS-35: every supported conflict code reaches the client and picks its own 
 
 test('CS-35: an unknown code falls back to the generic conflict without carrying the code', async () => {
   const error = await conflictFrom(
-    JSON.stringify({ error: SERVER_DETAIL, code: 'SOME_FUTURE_CODE', requestId: 'r-2' }),
+    JSON.stringify({ message: SERVER_DETAIL, code: 'SOME_FUTURE_CODE', requestId: 'r-2' }),
   );
   assert.equal(error.status, 409);
   assert.equal(error.code, undefined);
@@ -113,8 +113,8 @@ test('CS-35: malformed conflict bodies fall back safely and never read as succes
     '{"code":42}',
     '{"code":null}',
     '{"code":{"toString":"PROFILE_REVISION_CONFLICT"}}',
-    `{"code":["PROFILE_REVISION_CONFLICT"],"error":${JSON.stringify(SERVER_DETAIL)}}`,
-    '{"error":"no code field"}',
+    `{"code":["PROFILE_REVISION_CONFLICT"],"message":${JSON.stringify(SERVER_DETAIL)},"requestId":"r-3"}`,
+    '{"message":"no code field","requestId":"r-4"}',
     '{"code":"__proto__"}',
     '{"code":"toString"}',
   ];
@@ -155,9 +155,12 @@ test('CS-35: non-conflict statuses keep their existing messages and carry no cod
     [503, 'Service temporarily unavailable. Please try again shortly.'],
     [500, 'Request failed. Please try again.'],
   ] as [number, string][]) {
-    const restore = stubFetch(JSON.stringify({ error: SERVER_DETAIL, code: 'UPLOAD_CANCELLED' }), {
-      status,
-    });
+    const restore = stubFetch(
+      JSON.stringify({ message: SERVER_DETAIL, code: 'UPLOAD_CANCELLED', requestId: 'r-5' }),
+      {
+        status,
+      },
+    );
     try {
       await assert.rejects(
         apiJson('/profile', { method: 'PUT', body: '{}' }),
@@ -174,7 +177,10 @@ test('CS-35: non-conflict statuses keep their existing messages and carry no cod
 });
 
 test('OTP outages use the approved sign-in unavailable message without exposing server details', async () => {
-  const restore = stubFetch(JSON.stringify({ error: SERVER_DETAIL }), { status: 503 });
+  const restore = stubFetch(
+    JSON.stringify({ code: 'UNAVAILABLE', message: SERVER_DETAIL, requestId: 'r-6' }),
+    { status: 503 },
+  );
   try {
     await assert.rejects(
       apiJson('/otp/request', { method: 'POST', body: '{}' }),
@@ -207,10 +213,16 @@ test('expired access session rotates once, retries with the new CSRF token, and 
       return Response.json({ authenticated: true, csrf: newCsrf });
     }
     if (url === '/api/profile' && headers.get('x-csrf-token') === oldCsrf)
-      return Response.json({ error: 'expired' }, { status: 401 });
+      return Response.json(
+        { code: 'SESSION_EXPIRED', message: 'expired', requestId: 'r-7' },
+        { status: 401 },
+      );
     if (url === '/api/profile' && headers.get('x-csrf-token') === newCsrf)
       return Response.json({ revision: 2 });
-    return Response.json({ error: 'unexpected request' }, { status: 500 });
+    return Response.json(
+      { code: 'UNEXPECTED', message: 'unexpected request', requestId: 'r-8' },
+      { status: 500 },
+    );
   };
   try {
     await apiJson('/session');
@@ -251,9 +263,15 @@ test('concurrent expired requests share one refresh operation', async () => {
       return Response.json({ authenticated: true, csrf: newCsrf });
     }
     if (url === '/api/profile' && csrf === oldCsrf)
-      return Response.json({ error: 'expired' }, { status: 401 });
+      return Response.json(
+        { code: 'SESSION_EXPIRED', message: 'expired', requestId: 'r-7' },
+        { status: 401 },
+      );
     if (url === '/api/profile' && csrf === newCsrf) return Response.json({ ok: true });
-    return Response.json({ error: 'unexpected request' }, { status: 500 });
+    return Response.json(
+      { code: 'UNEXPECTED', message: 'unexpected request', requestId: 'r-8' },
+      { status: 500 },
+    );
   };
   try {
     await apiJson('/session');

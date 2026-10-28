@@ -83,6 +83,7 @@ run_backup() {
   BACKUP_DB_CONTAINER="$pg_name" \
   BACKUP_DIR="$work/backups" \
   BACKUP_FILES_CONTAINER="${CHECK_FILES_CONTAINER-$files_name}" \
+  BACKUP_KEY_DIR="${CHECK_KEY_DIR-$work/keys}" \
   BACKUP_CURL_BIN="$work/curl" \
   BACKUP_WEBHOOK_URL="https://hooks.example.test/alert" \
   FAKE_CALLS_FILE="$work/webhook-calls" \
@@ -90,7 +91,7 @@ run_backup() {
 }
 
 echo "== a real backup: dump, restore-verify, promote"
-rm -rf "$work/backups"; : >"$work/webhook-calls"
+rm -rf "$work/backups" "$work/keys"; : >"$work/webhook-calls"
 out=$(run_backup)
 check "reports ok" "$(printf '%s' "$out" | grep -c '^backup ok:')" "1"
 check "reports the real table count from the restored copy" "$(printf '%s' "$out" | grep -o 'tables verified' | head -1)" "tables verified"
@@ -113,7 +114,7 @@ docker exec "$pg_name" psql -U careerscope -d postgres -tAc "DROP DATABASE caree
 
 echo "== resume objects and the key are backed up as separate artefacts"
 resumes_tar=$(find "$work/backups" -maxdepth 1 -name 'careerscope-resumes-*.tar')
-key_copy=$(find "$work/backups/keys" -maxdepth 1 -name 'careerscope-resume-key-*.key')
+key_copy=$(find "$work/keys" -maxdepth 1 -name 'careerscope-resume-key-*.key')
 check "one resume archive promoted" "$(printf '%s\n' "$resumes_tar" | grep -c .)" "1"
 check "one key copy promoted, in its own directory" "$(printf '%s\n' "$key_copy" | grep -c .)" "1"
 check "the archive does not contain the key" "$(tar -tf "$resumes_tar" | grep -c 'encryption.key')" "0"
@@ -143,7 +144,7 @@ key_exit=0
 out=$(run_backup 2>&1) || key_exit=$?
 check "bad key returns nonzero" "$key_exit" "1"
 check "bad key reports failure" "$(printf '%s' "$out" | grep -c 'backup FAILED')" "1"
-check "no new dump, archive or key was promoted" "$(find "$work/backups" -type f \( -name 'careerscope-*.dump' -o -name 'careerscope-resumes-*.tar' -o -name 'careerscope-resume-key-*.key' \) | wc -l | tr -d ' ')" "3"
+check "no new dump, archive or key was promoted" "$(find "$work/backups" "$work/keys" -type f \( -name 'careerscope-*.dump' -o -name 'careerscope-resumes-*.tar' -o -name 'careerscope-resume-key-*.key' \) | wc -l | tr -d ' ')" "3"
 check "no staging files after a key failure" "$(find "$work/backups" -name '.staging-*' | wc -l | tr -d ' ')" "0"
 check "key failure sends one alert" "$(wc -l <"$work/webhook-calls" | tr -d ' ')" "1"
 docker exec "$files_name" sh -c "printf '%s' '$key_hex' >/private/encryption.key"
@@ -154,9 +155,32 @@ miss_exit=0
 out=$(CHECK_FILES_CONTAINER="no-such-container-$$" run_backup 2>&1) || miss_exit=$?
 check "missing files container returns nonzero" "$miss_exit" "1"
 
-echo "== skipping resumes must be explicit and loud"
+echo "== a key directory inside the backup directory is refused"
 sleep 1.1
-out=$(CHECK_FILES_CONTAINER="" run_backup 2>&1)
+dumps_before=$(find "$work/backups" -maxdepth 1 -name 'careerscope-*.dump' | wc -l | tr -d ' ')
+inside_exit=0
+out=$(CHECK_KEY_DIR="$work/backups/keys" run_backup 2>&1) || inside_exit=$?
+check "key dir inside backup dir returns nonzero" "$inside_exit" "1"
+check "key dir inside backup dir explains the refusal" "$(printf '%s' "$out" | grep -c 'is inside BACKUP_DIR')" "1"
+check "key dir inside backup dir records failed status" "$(grep -c '^STATUS=failed' "$work/backups/last-status")" "1"
+check "key dir inside backup dir promotes nothing" "$(find "$work/backups" -maxdepth 1 -name 'careerscope-*.dump' | wc -l | tr -d ' ')" "$dumps_before"
+check "key dir inside backup dir is not created" "$([ -e "$work/backups/keys" ] && echo yes || echo no)" "no"
+sleep 1.1
+dotdot_exit=0
+out=$(CHECK_KEY_DIR="$work/backups/../backups/keys" run_backup 2>&1) || dotdot_exit=$?
+check "a .. path into the backup dir is also refused" "$dotdot_exit" "1"
+
+echo "== skipping resumes fails closed unless explicitly allowed"
+sleep 1.1
+skip_exit=0
+out=$(CHECK_FILES_CONTAINER="" run_backup 2>&1) || skip_exit=$?
+check "empty files container without opt-in returns nonzero" "$skip_exit" "1"
+check "empty files container without opt-in records failed status" "$(grep -c '^STATUS=failed' "$work/backups/last-status")" "1"
+check "empty files container without opt-in promotes nothing" "$(find "$work/backups" -maxdepth 1 -name 'careerscope-*.dump' | wc -l | tr -d ' ')" "$dumps_before"
+
+echo "== skipping resumes with BACKUP_ALLOW_SKIP_RESUMES=1 is explicit and loud"
+sleep 1.1
+out=$(CHECK_FILES_CONTAINER="" BACKUP_ALLOW_SKIP_RESUMES=1 run_backup 2>&1)
 check "warns that resumes are not backed up" "$(printf '%s' "$out" | grep -c 'NOT backed up')" "1"
 check "status records resumes skipped" "$(grep -c '^RESUMES=skipped' "$work/backups/last-status")" "1"
 # remove the skip run's dump so later counts only see full backups

@@ -62,10 +62,15 @@ test(
     const endpoint = process.env.SEARCH_QUEUE_REDIS_URL ?? 'redis://127.0.0.1:56480';
     const queue = new BullSearchQueue(database, endpoint, `test-${randomUUID()}`);
     const events = new QueueEvents(queue.name, {
-      connection: { ...queueConnection(endpoint), maxRetriesPerRequest: null },
+      // QueueEvents blocks for about ten seconds by design; the production command timeout would cut that read short.
+      connection: {
+        ...queueConnection(endpoint),
+        commandTimeout: undefined,
+        maxRetriesPerRequest: null,
+      },
     });
     const workerErrors: string[] = [];
-    events.on('error', () => workerErrors.push('queue-events'));
+    events.on('error', (error) => workerErrors.push(`queue-events: ${error.message}`));
     const shutdown = new AbortController();
     let worker: Worker | undefined;
     try {

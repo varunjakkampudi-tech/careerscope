@@ -20,39 +20,74 @@ import {
   type CollectedJobInput,
 } from './jobs.js';
 import { matchingProfile } from './profile.js';
+import { logger } from './runtime.js';
 
 import { Conflict } from './errors.js';
 export { Conflict } from './errors.js';
+
+const defaultStatementTimeoutMs = 10_000;
+
+/**
+ * Per-statement and idle-transaction timeout from DATABASE_STATEMENT_TIMEOUT_MS. The default is 10
+ * seconds; the integration suite raises it because shared hosts can be slow. In production an
+ * override above the default is not honoured: it is capped at 10 seconds with a logged warning.
+ * Throws unless the value is an integer from 1000 to 600000.
+ */
+/**
+ * Pool connect timeout. Production keeps 5 seconds; the integration run and CI raise it through
+ * DATABASE_CONNECT_TIMEOUT_MS because a freshly created database on a loaded host can be slow.
+ */
+export function resolveConnectionTimeoutMs(raw: string | undefined): number {
+  if (raw === undefined || raw === '') return 5000;
+  if (!/^\d+$/.test(raw.trim())) {
+    throw new Error('DATABASE_CONNECT_TIMEOUT_MS must be an integer from 1000 to 120000');
+  }
+  const value = Number(raw);
+  if (value < 1000 || value > 120_000) {
+    throw new Error('DATABASE_CONNECT_TIMEOUT_MS must be an integer from 1000 to 120000');
+  }
+  return value;
+}
+
+export function resolveStatementTimeoutMs(
+  raw: string | undefined,
+  deploymentEnvironment: string,
+): number {
+  if (raw === undefined || raw === '') return defaultStatementTimeoutMs;
+  const value = Number(raw);
+  if (!/^\d+$/.test(raw.trim()) || !Number.isInteger(value) || value < 1000 || value > 600_000) {
+    throw new Error('DATABASE_STATEMENT_TIMEOUT_MS must be an integer from 1000 to 600000');
+  }
+  if (deploymentEnvironment === 'production' && value > defaultStatementTimeoutMs) {
+    logger.warn(
+      { requested: value, applied: defaultStatementTimeoutMs },
+      'DATABASE_STATEMENT_TIMEOUT_MS above the default is ignored in production',
+    );
+    return defaultStatementTimeoutMs;
+  }
+  return value;
+}
 
 /**
  * Owns the connection pool (8 connections, statement and idle-in-transaction timeouts) and exposes
  * Drizzle as `db`. Multi-step state changes use explicit transactions on a dedicated client.
  */
-/**
- * Per-statement and idle-transaction timeout. Production keeps 10 seconds; the integration
- * suite raises it through DATABASE_STATEMENT_TIMEOUT_MS because shared hosts can be slow.
- */
-function statementTimeoutMs(): number {
-  const raw = process.env.DATABASE_STATEMENT_TIMEOUT_MS;
-  if (raw === undefined || raw === '') return 10_000;
-  const value = Number(raw);
-  if (!Number.isInteger(value) || value < 1000 || value > 600_000) {
-    throw new Error('DATABASE_STATEMENT_TIMEOUT_MS must be an integer from 1000 to 600000');
-  }
-  return value;
-}
-
 export class Database {
   readonly pool: pg.Pool;
   readonly db;
 
   constructor(url: string) {
+    const timeoutMs = resolveStatementTimeoutMs(
+      process.env.DATABASE_STATEMENT_TIMEOUT_MS,
+      process.env.DEPLOYMENT_ENVIRONMENT ??
+        (process.env.NODE_ENV === 'production' ? 'production' : 'development'),
+    );
     this.pool = new pg.Pool({
       connectionString: url,
       max: 8,
-      connectionTimeoutMillis: 5000,
-      statement_timeout: statementTimeoutMs(),
-      idle_in_transaction_session_timeout: statementTimeoutMs(),
+      connectionTimeoutMillis: resolveConnectionTimeoutMs(process.env.DATABASE_CONNECT_TIMEOUT_MS),
+      statement_timeout: timeoutMs,
+      idle_in_transaction_session_timeout: timeoutMs,
     });
     this.db = drizzle({ client: this.pool, schema: tables });
   }

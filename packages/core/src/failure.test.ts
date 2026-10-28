@@ -56,6 +56,23 @@ test('scrubMessage removes every shape of address, bearer token, cookie, JWT and
   }
 });
 
+test('scrubMessage removes Basic credentials, cookie lines, JSON bodies, prose secrets and signed URLs', () => {
+  const cases: [string, string[]][] = [
+    ['Authorization: Basic dGVzdDp0ZXN0', ['dGVzdDp0ZXN0']],
+    ['Cookie: sid=abc123; csrf=zzz999', ['abc123', 'zzz999']],
+    ['Set-Cookie: sid=abc123; csrf=zzz999; Path=/', ['abc123', 'zzz999']],
+    ['request body {"password":"hunter2"} rejected', ['hunter2']],
+    ['password is hunter2', ['hunter2']],
+    ['GET https://files.example.test/a.pdf?sig=abcdef&x=1 failed', ['abcdef']],
+  ];
+  for (const [input, forbidden] of cases) {
+    const output = scrubMessage(input);
+    for (const secret of forbidden) {
+      assert.equal(output.includes(secret), false, `${input} -> ${output}`);
+    }
+  }
+});
+
 test('describeError exposes only the error name and scrubbed message, never stack, cause or fields', () => {
   const error = Object.assign(new Error('failed for owner@example.test'), {
     detail: 'Key (email)=(owner@example.test) already exists',

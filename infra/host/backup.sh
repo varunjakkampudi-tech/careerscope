@@ -30,11 +30,14 @@ BACKUP_VERIFY_DB=${BACKUP_VERIFY_DB:-careerscope_backup_verify}
 # Resume objects (AES-256-GCM ciphertext) and the key that decrypts them live in the
 # private volume, mounted in the files container. They are backed up as two separate
 # artefacts: the ciphertext archive in BACKUP_DIR and the key in BACKUP_KEY_DIR, so a
-# stolen archive alone is unreadable. Set BACKUP_KEY_DIR to a different mount if possible.
-# BACKUP_FILES_CONTAINER set to the empty string skips resumes (loudly); it is never skipped by default.
+# stolen archive alone is unreadable. BACKUP_KEY_DIR must resolve OUTSIDE BACKUP_DIR; the run
+# fails otherwise, because a key beside its ciphertext defeats the split.
+# BACKUP_FILES_CONTAINER set to the empty string skips resumes only when BACKUP_ALLOW_SKIP_RESUMES=1;
+# without that opt-in the run fails closed (STATUS=failed).
 BACKUP_FILES_CONTAINER=${BACKUP_FILES_CONTAINER-careerscope-files-1}
 BACKUP_PRIVATE_DIR=${BACKUP_PRIVATE_DIR:-/private}
-BACKUP_KEY_DIR=${BACKUP_KEY_DIR:-$BACKUP_DIR/keys}
+BACKUP_KEY_DIR=${BACKUP_KEY_DIR:-/var/lib/careerscope/backup-keys}
+BACKUP_ALLOW_SKIP_RESUMES=${BACKUP_ALLOW_SKIP_RESUMES:-0}
 DOCKER_BIN=${BACKUP_DOCKER_BIN:-docker}
 CURL_BIN=${BACKUP_CURL_BIN:-curl}
 CURL_TIMEOUT=${BACKUP_CURL_TIMEOUT:-10}
@@ -53,8 +56,8 @@ if [[ ! "$BACKUP_VERIFY_DB" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
   exit 1
 fi
 
-mkdir -p "$BACKUP_DIR" "$BACKUP_KEY_DIR"
-chmod 0700 "$BACKUP_DIR" "$BACKUP_KEY_DIR"
+mkdir -p "$BACKUP_DIR"
+chmod 0700 "$BACKUP_DIR"
 
 # Fail fast and clearly if a manual run overlaps the timer's own run, rather
 # than letting both race for the same scratch database (Security review,
@@ -128,6 +131,19 @@ send_alert() {
     || echo "alert webhook POST failed (${BACKUP_WEBHOOK_URL:0:20}...)" >&2
 }
 
+# The key must never sit beside the ciphertext it decrypts. Compare resolved paths so ".." and
+# symlinks cannot hide a key directory inside BACKUP_DIR.
+resolve_path() { realpath -m -- "$1" 2>/dev/null || printf '%s' "$1"; }
+resolved_backup_dir=$(resolve_path "$BACKUP_DIR")
+resolved_key_dir=$(resolve_path "$BACKUP_KEY_DIR")
+case "$resolved_key_dir/" in
+  "$resolved_backup_dir"/*)
+    fail "BACKUP_KEY_DIR ($BACKUP_KEY_DIR) is inside BACKUP_DIR ($BACKUP_DIR); the key must be stored apart from the ciphertext"
+    ;;
+esac
+mkdir -p "$BACKUP_KEY_DIR"
+chmod 0700 "$BACKUP_KEY_DIR"
+
 # -- 1. dump --------------------------------------------------------------
 if ! "$DOCKER_BIN" exec "$BACKUP_DB_CONTAINER" pg_dump -U "$BACKUP_DB_USER" -Fc "$BACKUP_DB_NAME" \
   >"$staging" 2>"$BACKUP_DIR/.last-dump-stderr"; then
@@ -180,8 +196,10 @@ if [ -n "$BACKUP_FILES_CONTAINER" ]; then
     fail "resume encryption key file is not a 64-character hex key"
   fi
   resumes_state=ok
-else
+elif [ "$BACKUP_ALLOW_SKIP_RESUMES" = 1 ]; then
   echo "WARNING: BACKUP_FILES_CONTAINER is empty; resume objects and the key are NOT backed up" >&2
+else
+  fail "BACKUP_FILES_CONTAINER is empty; resume objects and the key would not be backed up (set BACKUP_ALLOW_SKIP_RESUMES=1 to allow)"
 fi
 
 # -- 3. promote and retain --------------------------------------------------

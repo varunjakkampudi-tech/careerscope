@@ -371,7 +371,15 @@ test('a Redis outage never loses committed outbox rows and the next run reconcil
       // The API keeps accepting work: the command is committed with the run, Redis or not.
       const first = await queued(database, ownerId, 'outage-1');
       const second = await queued(database, ownerId, 'outage-2');
-      await assert.rejects(publishPending(database, { 'search.collect': queue }));
+      // Redis client wording varies by failure stage, so match the connection or timeout family.
+      await assert.rejects(
+        publishPending(database, { 'search.collect': queue }),
+        (error: unknown) =>
+          error instanceof Error &&
+          /ECONNREFUSED|ECONNRESET|ETIMEDOUT|EAI_AGAIN|ENOTFOUND|connect|connection|timed out|timeout|max retries/i.test(
+            `${error.name} ${error.message}`,
+          ),
+      );
       const pending = await database.pool.query<{ id: string; published_at: Date | null }>(
         'SELECT id, published_at FROM outbox_events ORDER BY created_at',
       );

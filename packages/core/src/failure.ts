@@ -22,10 +22,18 @@ export function scrubMessage(message: string) {
     message
       .replace(/[a-z][a-z0-9+.-]*:\/\/[^\s/@]+@[^\s]+/gi, '[url]')
       .replace(/[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+/g, '[email]')
+      // A Cookie or Set-Cookie header is redacted through the end of its line, attributes included.
+      .replace(/\b(set-cookie|cookie)\s*:[^\r\n]*/gi, '$1: [redacted]')
       .replace(/\bbearer\s+[^\s]+/gi, 'Bearer [token]')
+      .replace(/\bbasic\s+[^\s]+/gi, 'Basic [token]')
       .replace(
-        /\b([a-z0-9_-]*(?:token|secret|password|passwd|key|authorization|cookie|otp|code)[a-z0-9_-]*)\s*[=:]\s*[^\s,;&]+/gi,
+        /\b([a-z0-9_-]*(?:token|secret|password|passwd|key|authorization|cookie|otp|code|sid|session|sessionid|sig|signature|auth|credential)[a-z0-9_-]*)["']?\s*[=:]\s*[^\s,;&]+/gi,
         '$1=[redacted]',
+      )
+      // A secret written after its name in prose ("password is hunter2").
+      .replace(
+        /\b(password|passwd|passphrase|secret|token|credential)s?\b\s+(?:is|was)\s+[^\s,;&]+/gi,
+        '$1 [redacted]',
       )
       // JWT-shaped values: the dots split them into segments shorter than the opaque-string rule below.
       .replace(/\beyJ[\w-]*\.[\w-]+\.[\w-]*/g, '[jwt]')

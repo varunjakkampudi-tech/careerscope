@@ -10,13 +10,13 @@ actually restorable, and only then keeps it.
 
 ## What is backed up
 
-| Data                                                             | Artefact                                           | Location                                                | Notes                                                                                                                      |
-| ---------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| PostgreSQL (everything relational, including parsed resume text) | `careerscope-<stamp>.dump` (pg_dump custom format) | `BACKUP_DIR` (default `/var/backups/careerscope`)       | Verified by a real restore on every run                                                                                    |
-| Resume objects (AES-256-GCM ciphertext)                          | `careerscope-resumes-<stamp>.tar`                  | `BACKUP_DIR`                                            | Archive of `/private/objects` taken from the files container; unreadable without the key                                   |
-| Resume encryption key                                            | `careerscope-resume-key-<stamp>.key`               | `BACKUP_KEY_DIR` (default `BACKUP_DIR/keys`, mode 0700) | A different directory from the ciphertext on purpose. Point `BACKUP_KEY_DIR` at a different mount if one exists            |
-| Redis queue                                                      | Not backed up                                      |                                                         | Disposable by design: commands live in the PostgreSQL outbox and are republished (see [OUTBOX](../architecture/OUTBOX.md)) |
-| Secrets in `/etc/careerscope-*.env` and the host env files       | Not backed up here                                 |                                                         | Held by the owner in the password manager; see [SECRETS](SECRETS.md)                                                       |
+| Data                                                             | Artefact                                           | Location                                                                 | Notes                                                                                                                      |
+| ---------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| PostgreSQL (everything relational, including parsed resume text) | `careerscope-<stamp>.dump` (pg_dump custom format) | `BACKUP_DIR` (default `/var/backups/careerscope`)                        | Verified by a real restore on every run                                                                                    |
+| Resume objects (AES-256-GCM ciphertext)                          | `careerscope-resumes-<stamp>.tar`                  | `BACKUP_DIR`                                                             | Archive of `/private/objects` taken from the files container; unreadable without the key                                   |
+| Resume encryption key                                            | `careerscope-resume-key-<stamp>.key`               | `BACKUP_KEY_DIR` (default `/var/lib/careerscope/backup-keys`, mode 0700) | Must resolve outside `BACKUP_DIR`: the run fails otherwise. Prefer a different mount                                       |
+| Redis queue                                                      | Not backed up                                      |                                                                          | Disposable by design: commands live in the PostgreSQL outbox and are republished (see [OUTBOX](../architecture/OUTBOX.md)) |
+| Secrets in `/etc/careerscope-*.env` and the host env files       | Not backed up here                                 |                                                                          | Held by the owner in the password manager; see [SECRETS](SECRETS.md)                                                       |
 
 The resume key and the objects share the `private` Docker volume, so a volume
 snapshot would put both in one place and defeat encryption at rest. The backup
@@ -38,8 +38,9 @@ custody when you copy them off the host.
    archive `/private/objects` from the files container, confirm the archive
    lists end to end, read `/private/encryption.key` and confirm it is exactly 64
    hex characters. A missing container, unreadable archive or malformed key
-   fails the whole run. Setting `BACKUP_FILES_CONTAINER` to the empty string
-   skips this step, prints a warning and records `RESUMES=skipped`; it is never
+   fails the whole run. An empty `BACKUP_FILES_CONTAINER` also fails the run
+   (`STATUS=failed`) unless `BACKUP_ALLOW_SKIP_RESUMES=1` is set, which skips this
+   step, prints a warning and records `RESUMES=skipped`; it is never
    skipped by default.
 4. **Promote** - only if every step above succeeded, move the dump, archive and
    key into place together and apply retention (default 14 days). Anything
@@ -111,10 +112,11 @@ restored resumes will not decrypt.
 
    ```sh
    B=/var/backups/careerscope
-   docker run --rm -v careerscope_private:/private -v "$B":/backup:ro alpine:3.23 sh -ec '
+   K=/var/lib/careerscope/backup-keys
+   docker run --rm -v careerscope_private:/private -v "$B":/backup:ro -v "$K":/keys:ro alpine:3.23 sh -ec '
      mkdir -p /private && umask 077
      tar -xf /backup/careerscope-resumes-<stamp>.tar -C /private
-     cp /backup/keys/careerscope-resume-key-<stamp>.key /private/encryption.key
+     cp /keys/careerscope-resume-key-<stamp>.key /private/encryption.key
      chmod 600 /private/encryption.key && chmod 700 /private/objects
      chown -R 1000:1000 /private'
    ```
@@ -166,7 +168,9 @@ proves: the resume archive and key copy are promoted as separate artefacts and
 the archive does not contain the key; extracting the archive reproduces every
 object byte for byte; a malformed key fails the whole run and promotes nothing
 new; a missing files container fails the run instead of silently skipping
-resumes; and skipping resumes on purpose warns and is recorded as
+resumes; an empty files container fails closed unless `BACKUP_ALLOW_SKIP_RESUMES=1`;
+a key directory inside the backup directory is refused with `STATUS=failed`; and an
+allowed skip warns and is recorded as
 `RESUMES=skipped`. Under Git Bash set `MSYS_NO_PATHCONV=1` (the script does)
 so in-container paths are not rewritten. A failed backup is therefore
 visible both in `last-status` and the oneshot systemd service result consumed
