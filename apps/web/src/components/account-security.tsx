@@ -3,7 +3,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LoaderCircle, LogOut } from 'lucide-react';
-import { ApiError, apiJson, apiParsed } from '../lib/api';
+import { ApiError, apiJson, apiParsed, isNotFound } from '../lib/api';
 import {
   parseAccountSessions,
   parseEmailChangeVerification,
@@ -172,6 +172,12 @@ export default function AccountSecurity({
       await queryClient.invalidateQueries({ queryKey: ['accountSessions'] });
       setNotice(t('deviceSignedOut', target.deviceLabel));
     } catch (failure) {
+      if (isNotFound(failure)) {
+        // Already gone (signed out elsewhere or expired): the goal is met, so refresh the list.
+        await queryClient.invalidateQueries({ queryKey: ['accountSessions'] });
+        setNotice(t('deviceSignedOut', target.deviceLabel));
+        return;
+      }
       setSessionError(
         failure instanceof ApiError
           ? localizedApiErrorMessage(locale, failure.status)

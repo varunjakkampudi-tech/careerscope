@@ -5,9 +5,9 @@
 //   - Next.js and Fastify: the major declared by every workspace, the major
 //     resolved in package-lock.json, and eslint-config-next against next.
 // The engines value is a floor (">=24"). .nvmrc and workflow pins must equal it.
-// The production image may run a newer major than the floor (it still satisfies
-// engines) and that difference is reported as a warning; pass --strict to make
-// it a failure.
+// The production image must run the same Node major as .nvmrc and CI: a different
+// major is a failure, never a warning, because tests do not run on the other major.
+// --strict is accepted for compatibility and changes nothing (the check is always strict).
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import process from 'node:process';
@@ -43,10 +43,11 @@ function workspaceManifests(root) {
   return manifests;
 }
 
-export function analyze(root, { strict = false } = {}) {
+export function analyze(root) {
   const errors = [];
   const warnings = [];
   const facts = [];
+  let nvmMajor = null;
   const manifest = readJson(join(root, 'package.json'));
 
   // Node
@@ -57,6 +58,7 @@ export function analyze(root, { strict = false } = {}) {
   else {
     const nvm = majorOf(readFileSync(join(root, '.nvmrc'), 'utf8'), '.nvmrc');
     facts.push(`.nvmrc ${nvm}`);
+    nvmMajor = nvm;
     if (floor !== null && nvm !== floor)
       errors.push(`.nvmrc major ${nvm} does not equal the engines.node floor ${floor}`);
   }
@@ -86,10 +88,12 @@ export function analyze(root, { strict = false } = {}) {
       facts.push(`Dockerfile node image ${image}`);
       if (floor !== null && image < floor)
         errors.push(`Dockerfile Node major ${image} is below the engines.node floor ${floor}`);
-      else if (floor !== null && image !== floor) {
-        const message = `Dockerfile Node major ${image} differs from the engines.node floor ${floor} (.nvmrc and CI run ${floor})`;
-        (strict ? errors : warnings).push(message);
-      }
+      else if (nvmMajor !== null && image !== nvmMajor)
+        errors.push(
+          `Dockerfile Node major ${image} differs from .nvmrc major ${nvmMajor}; the production image must run the Node major that CI tests`,
+        );
+      else if (floor !== null && image !== floor)
+        errors.push(`Dockerfile Node major ${image} differs from the engines.node floor ${floor}`);
     }
   }
 
@@ -147,9 +151,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     ? resolve(argument.slice('--root='.length))
     : fileURLToPath(new URL('../..', import.meta.url));
   try {
-    const { errors, warnings, facts } = analyze(root, {
-      strict: process.argv.includes('--strict'),
-    });
+    const { errors, warnings, facts } = analyze(root);
     for (const warning of warnings) console.warn(`::warning::${warning}`);
     if (errors.length) {
       for (const error of errors) console.error(`::error::${error}`);

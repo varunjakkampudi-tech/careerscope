@@ -28,3 +28,18 @@ repository cleanup.
 
 See [Private test access](../AUTHENTICATION.md),
 [Privacy](../PRIVACY.md), [Backup](BACKUP.md) and [Deployment](DEPLOYMENT.md).
+
+## Non-secret database and test tuning variables
+
+These carry no secret. They are listed here because they sit beside connection settings in
+`.env` and a wrong value changes failure behavior. Full detail is in
+[`CI-CD.md`](CI-CD.md#integration-timeouts).
+
+| Variable                        | Default (production) | Accepted               | Notes                                                                                               |
+| ------------------------------- | -------------------- | ---------------------- | --------------------------------------------------------------------------------------------------- |
+| `DATABASE_STATEMENT_TIMEOUT_MS` | 10000                | integer 1000 to 600000 | Pool statement timeout. With `DEPLOYMENT_ENVIRONMENT=production` a larger value is capped at 10000. |
+| `DATABASE_CONNECT_TIMEOUT_MS`   | 5000                 | integer 1000 to 120000 | Pool connect timeout. With `DEPLOYMENT_ENVIRONMENT=production` a larger value is capped at 5000.    |
+| `INTEGRATION_JOB_WAIT_MS`       | 10000                | integer 1000 to 600000 | Test-only: how long the BullMQ integration test waits for a job. Never set it on a host.            |
+
+Leave all three unset in production. CI sets them only for the BullMQ suite, from
+`scripts/tests/bull-queue.integration.env`.

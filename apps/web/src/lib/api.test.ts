@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { ApiError, apiJson, apiParsed, offersDiscardAndReload } from './api';
+import { ApiError, apiJson, apiParsed, isNotFound, offersDiscardAndReload } from './api';
 import { parseAccountSessions, parseMarketingConsent, parseSession } from './api-schemas';
 
 /**
@@ -145,6 +145,25 @@ test('CS-35: only a revision or unrecognised conflict offers to discard unsaved 
   assert.equal(offersDiscardAndReload(new ApiError(400, 'Check the fields and try again.')), false);
   assert.equal(offersDiscardAndReload(new Error('not an ApiError')), false);
   assert.equal(offersDiscardAndReload(undefined), false);
+});
+
+test('a 404 from DELETE /account/sessions/:id is recognised as "already gone" and nothing else is', async () => {
+  const restore = stubFetch(JSON.stringify({ code: 'NOT_FOUND', message: 'Session not found' }), {
+    status: 404,
+  });
+  try {
+    await assert.rejects(
+      apiJson('/account/sessions/33333333-3333-4333-8333-333333333333', { method: 'DELETE' }),
+      (error: unknown) => error instanceof ApiError && error.status === 404 && isNotFound(error),
+    );
+  } finally {
+    restore();
+  }
+  assert.equal(isNotFound(new ApiError(404, 'x')), true);
+  for (const status of [400, 403, 409, 429, 500, 503])
+    assert.equal(isNotFound(new ApiError(status, 'x')), false, String(status));
+  assert.equal(isNotFound(new Error('network')), false);
+  assert.equal(isNotFound(undefined), false);
 });
 
 test('CS-35: non-conflict statuses keep their existing messages and carry no code', async () => {

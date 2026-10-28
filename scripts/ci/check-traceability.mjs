@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 // Validates docs/TRACEABILITY.md: every row must name implementing files that
 // exist, and either covering test files that exist or the literal NOT COVERED.
+// A covering test file must also be listed in a package.json script that CI executes
+// (test:unit, test:integration, test:domain, test:ui, test:query-budget and gates:test, with the
+// npm scripts they call), or be followed by an explicit `(manual)` marker.
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import process from 'node:process';
@@ -20,12 +23,42 @@ function cells(line) {
 }
 
 const paths = (cell) => [...cell.matchAll(/`([^`]+)`/g)].map((match) => match[1]);
+const MANUAL = /`([^`]+)`\s*\(manual\)/g;
+
+/** Scripts that the CI workflow runs, directly or through `npm run` references. */
+const CI_ROOTS = [
+  'test:unit',
+  'test:integration',
+  'test:domain',
+  'test:ui',
+  'test:query-budget',
+  'gates:test',
+];
+
+export function ciExecutedText(root) {
+  const manifest = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+  const scripts = manifest.scripts ?? {};
+  const seen = new Set();
+  const pending = [...CI_ROOTS];
+  let text = '';
+  while (pending.length) {
+    const name = pending.pop();
+    if (seen.has(name) || typeof scripts[name] !== 'string') continue;
+    seen.add(name);
+    text += `\n${scripts[name]}`;
+    for (const match of scripts[name].matchAll(/npm run ([\w:-]+)/g)) pending.push(match[1]);
+  }
+  return text;
+}
 
 export function analyze(root) {
   const errors = [];
   const file = join(root, MATRIX);
   if (!existsSync(file)) return { errors: [`${MATRIX} is missing`], rows: 0, notCovered: 0 };
   const seen = new Set();
+  const executed = new Set(
+    existsSync(join(root, 'package.json')) ? ciExecutedText(root).split(/\s+/) : [],
+  );
   let rows = 0;
   let notCovered = 0;
 
@@ -56,9 +89,16 @@ export function analyze(root) {
     const testFiles = paths(tests);
     if (tests === NOT_COVERED) notCovered += 1;
     else if (!testFiles.length) fail(`tests must list test files or say ${NOT_COVERED}`);
+    const manual = new Set([...tests.matchAll(MANUAL)].map((match) => match[1]));
     for (const path of testFiles) {
       if (!TEST_PATH.test(path)) fail(`not a test file: ${path}`);
       else if (!existsSync(join(root, path))) fail(`test file not found: ${path}`);
+      else if (!executed.has(path) && !manual.has(path))
+        fail(
+          `test file is not run by any CI script (test:unit, test:integration, test:domain, test:ui, gates:test); add it to one or mark it "(manual)": ${path}`,
+        );
+      else if (manual.has(path) && executed.has(path))
+        fail(`test file is marked (manual) but a CI script runs it: ${path}`);
     }
   }
   if (!rows) errors.push(`${MATRIX} contains no requirement rows`);

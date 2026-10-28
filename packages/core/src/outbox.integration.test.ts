@@ -327,7 +327,11 @@ test('a duplicate that arrives while the first delivery is still running is refu
         },
         shutdown,
       );
-      while ((await database.executionStatus(command.id)) !== 'running') await delay(20);
+      const runningDeadline = Date.now() + 15_000;
+      while ((await database.executionStatus(command.id)) !== 'running') {
+        assert.ok(Date.now() < runningDeadline, 'the first delivery did not reach running in 15 s');
+        await delay(20);
+      }
       assert.equal(
         await consumeMessage(
           database,
@@ -371,14 +375,15 @@ test('a Redis outage never loses committed outbox rows and the next run reconcil
       // The API keeps accepting work: the command is committed with the run, Redis or not.
       const first = await queued(database, ownerId, 'outage-1');
       const second = await queued(database, ownerId, 'outage-2');
-      // Redis client wording varies by failure stage, so match the connection or timeout family.
+      // LocalQueue sets maxRetriesPerRequest: 1, so with Redis unreachable the send fails with
+      // BullMQ's ioredis MaxRetriesPerRequestError (observed on three consecutive runs). Matching the
+      // class and message, not a broad connection regex, means an unrelated failure cannot pass here.
       await assert.rejects(
         publishPending(database, { 'search.collect': queue }),
         (error: unknown) =>
           error instanceof Error &&
-          /ECONNREFUSED|ECONNRESET|ETIMEDOUT|EAI_AGAIN|ENOTFOUND|connect|connection|timed out|timeout|max retries/i.test(
-            `${error.name} ${error.message}`,
-          ),
+          error.name === 'MaxRetriesPerRequestError' &&
+          /Reached the max retries per request limit \(which is 1\)/.test(error.message),
       );
       const pending = await database.pool.query<{ id: string; published_at: Date | null }>(
         'SELECT id, published_at FROM outbox_events ORDER BY created_at',

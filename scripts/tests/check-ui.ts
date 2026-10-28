@@ -1325,7 +1325,13 @@ try {
               epoch,
               routeEpoch,
             ) &&
-            !staleEarlierRouteRead(request.method(), request.resourceType(), epoch, routeEpoch),
+            !staleEarlierRouteRead(
+              request.method(),
+              request.resourceType(),
+              epoch,
+              routeEpoch,
+              engine,
+            ),
         );
       const recentRequestEvents: string[] = [];
       const sharedRoutePrefetches: string[] = [];

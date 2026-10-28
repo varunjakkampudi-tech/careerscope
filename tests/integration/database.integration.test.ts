@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { channel } from 'node:diagnostics_channel';
 import { runInNewContext } from 'node:vm';
 import type { FastifyInstance, FastifySchema } from 'fastify';
+import { readFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -222,7 +223,12 @@ test('Swagger documents every runtime route without changing validation and prot
         ].schema.properties.profile.properties.application.required = [];
         assert.throws(() => assertOpenApiRequiredDeclarations(malformedSpec), /required/);
         assert.equal(spec.openapi, '3.0.3');
-        assert.equal(spec.info.version, (await app.inject('/api/health')).json().version);
+        // /api/health deliberately reports no version, so compare with the API package version it is read from.
+        const apiPackage = JSON.parse(
+          readFileSync(new URL('../../apps/api/package.json', import.meta.url), 'utf8'),
+        ) as { version: string };
+        assert.equal(spec.info.version, apiPackage.version);
+        assert.equal('version' in (await app.inject('/api/health')).json(), false);
         assert.deepEqual(spec.servers, [{ url: '/' }]);
         assert.equal(spec.components.securitySchemes.session.name, 'careerscope_v2_session');
         const scoringVersion =

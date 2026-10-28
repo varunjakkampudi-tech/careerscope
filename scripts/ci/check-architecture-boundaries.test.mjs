@@ -5,7 +5,12 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { analyze, extractSpecifiers, isTestFile } from './check-architecture-boundaries.mjs';
+import {
+  analyze,
+  extractSpecifiers,
+  isTestFile,
+  stripComments,
+} from './check-architecture-boundaries.mjs';
 
 const checker = fileURLToPath(new URL('./check-architecture-boundaries.mjs', import.meta.url));
 
@@ -19,6 +24,7 @@ function fixture(files) {
   for (const name of ['shared', 'core', 'matching', 'providers', 'resume'])
     write(`packages/${name}/package.json`, JSON.stringify({ name: `@careerscope/${name}` }));
   write('apps/api/package.json', JSON.stringify({ name: '@careerscope/api' }));
+  write('apps/web/package.json', JSON.stringify({ name: '@careerscope/web' }));
   for (const [path, content] of Object.entries(files)) write(path, content);
   return root;
 }
@@ -94,6 +100,45 @@ test('commented-out imports are ignored and specifiers are extracted', () => {
   );
   assert.equal(isTestFile('a/b.integration.test.ts'), true);
   assert.equal(isTestFile('a/b.ts'), false);
+});
+
+test('comment markers inside strings cannot swallow a following import', () => {
+  // A naive /* ... */ stripper would start at the glob in the string and delete the import below.
+  const source = [
+    "const glob = './a/*';",
+    "import x from '@careerscope/api';",
+    "const end = '*/';",
+  ];
+  assert.deepEqual(extractSpecifiers(source.join('\n')), ['@careerscope/api']);
+  assert.equal(stripComments("const u = 'http://x'; // note"), "const u = 'http://x'; ");
+  assert.equal(stripComments('a /* b\nc */ d'), 'a     \n     d');
+  // A trailing comment is removed, and an import written after a block comment is kept.
+  assert.deepEqual(extractSpecifiers("/* c */ import a from 'm'; // import b from 'n'"), ['m']);
+  // An apostrophe in a comment or JSX text does not leak into the next line.
+  assert.deepEqual(extractSpecifiers("// don't\nimport a from 'm';"), ['m']);
+  assert.deepEqual(extractSpecifiers("const t = <p>Don't</p>;\nimport a from 'm';"), ['m']);
+  assert.equal(
+    rules({
+      'packages/shared/src/a.ts': ["const g = './x/*';", "import '@careerscope/core';"].join('\n'),
+    })[0],
+    'shared imports internal package core',
+  );
+});
+
+test('web may not import core, except the named baseline files, which only warn', () => {
+  assert.deepEqual(rules({ 'apps/web/src/a.ts': "import type { X } from '@careerscope/core';" }), [
+    'web may not import core',
+  ]);
+  assert.deepEqual(rules({ 'apps/web/src/a.ts': "import { X } from '@careerscope/shared';" }), []);
+  const root = fixture({ 'apps/web/src/known.tsx': "import type { X } from '@careerscope/core';" });
+  try {
+    const result = analyze(root, { webCoreBaseline: new Set(['apps/web/src/known.tsx']) });
+    assert.deepEqual(result.violations, []);
+    assert.equal(result.warnings.length, 1);
+    assert.equal(result.warnings[0].file, 'apps/web/src/known.tsx');
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
 
 test('the CLI exits non-zero on a violation and zero on the real repository', () => {

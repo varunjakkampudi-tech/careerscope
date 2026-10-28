@@ -5,7 +5,7 @@ consumers and delivery guarantee. It describes current behaviour only. A kind th
 no producer is listed as such so nobody assumes it works.
 
 `scripts/tests/domain-events-doc.test.ts` reads the source and fails if a kind below is missing from
-this file. When you add a command type, run event type, notification kind or template, SSE event name
+the table of its section (a mention in prose does not count). When you add a command type, run event type, notification kind or template, SSE event name
 or sign-in email purpose, add it here in the same change.
 
 For the transactional outbox model and queue guarantees behind section 1, see
@@ -99,15 +99,31 @@ Payload (`NotificationEvent`):
 | `locale`   | `en`, `te` or `hi`                | Constrained in the database                                            |
 | `payload`  | object of strings, max 4096 bytes | Never rendered into the message; copy is fixed per template and locale |
 
-Notification kinds: `security`, `application`, `interview`, `marketing`. Sign-in codes are not a
-kind and are refused by `enqueue` and `notificationChannels`.
+Notification kinds. Sign-in codes are not a kind and are refused by `enqueue` and `notificationChannels`.
 
-Templates (fixed copy in en, te and hi): `interview_reminder`, `account_security`,
-`application_update`, `digest`.
+| Kind          | Channel rule (`notificationChannels`)                 |
+| ------------- | ----------------------------------------------------- |
+| `security`    | Always sent; always includes email and never web push |
+| `application` | Dropped when the owner disables it                    |
+| `interview`   | Dropped when the owner disables it                    |
+| `marketing`   | Needs an explicit opt-in; dropped when disabled       |
 
-Channels: `in_app`, `email`, `web_push`. `notificationChannels` picks them from preferences:
-marketing needs opt-in, disabled kinds are dropped except `security`, `security` always includes
-email and never web push.
+Templates (fixed copy in en, te and hi):
+
+| Template             | Notes                                            |
+| -------------------- | ------------------------------------------------ |
+| `interview_reminder` | Fixed copy per locale; payload is never rendered |
+| `account_security`   | Fixed copy per locale; payload is never rendered |
+| `application_update` | Fixed copy per locale; payload is never rendered |
+| `digest`             | Fixed copy per locale; payload is never rendered |
+
+Channels:
+
+| Channel    | Notes                                                   |
+| ---------- | ------------------------------------------------------- |
+| `in_app`   | Chosen from the owner's preferences                     |
+| `email`    | Chosen from preferences; always included for `security` |
+| `web_push` | Chosen from preferences; never used for `security`      |
 
 Delivery guarantee: at least once per channel. A failed send retries with exponential backoff (one
 minute doubling, capped at six hours), at most five attempts, then the delivery is dead-lettered into

@@ -22,14 +22,16 @@ Install the browser engines once:
 npx playwright install chromium firefox webkit
 ```
 
-Run from the repository root:
+Build the web app and start it first. `npm run test:ui` does not build or start it:
 
 ```sh
-npm run test:ui
+npm run build
+npm run start:web          # production server on http://localhost:5280, keep it running
+npm run test:ui            # in a second terminal, from the repository root
 ```
 
-This builds the app and runs `scripts/tests/check-ui.ts` against disposable PostgreSQL,
-Redis services. Each browser receives a synthetic owner account and
+`test:ui` runs `scripts/tests/check-ui.ts` against disposable PostgreSQL and
+Redis services (it creates and drops its own `test_<uuid>` database and starts its own API). Each browser receives a synthetic owner account and
 bounded fixture data. The check does not use personal credentials, saved leads or
 provider APIs. Service and browser processes are cleaned up, including on failure.
 
@@ -52,7 +54,7 @@ retains the CSP upgrade directive and still requires HTTPS for login.
 
 Run on 2026-10-27 against a production build of the web app, Node 24.22.1, the project's local
 PostgreSQL and Redis containers (the suite creates and drops its own `test_<uuid>` database) and
-Playwright Chromium. The result is a pass for Chromium. Firefox and WebKit were not run in this pass.
+Playwright Chromium. The result is a pass for Chromium. Firefox and WebKit were not run in that pass; see the 2026-10-28 section below.
 
 Commands, from the repository root:
 
@@ -94,9 +96,25 @@ Each run stopped at the first failure, so these were found one after another.
 Transient: one run stopped at start-up with a PostgreSQL `statement timeout` while creating the
 test database; the rerun was unaffected.
 
+### Firefox and WebKit run (2026-10-28)
+
+The settlement allowance `staleEarlierRouteRead` is now gated to `engine === 'chromium'`, because the
+cancelled-fetch behaviour behind it was measured only in Chromium. Firefox and WebKit keep every
+request in the barrier. Same setup as above (production build, `next start` on 5280, Node 24.22.1,
+throwaway PostgreSQL and Redis containers), run with `CAREERSCOPE_UI_BROWSER` set to each engine:
+
+| Engine   | Result                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chromium | Pass after the gating change (both result lines printed, exit 0).                                                                                                                                                                                                                                                                                                                                                                                          |
+| WebKit   | Pass with the allowance disabled (both result lines printed, exit 0).                                                                                                                                                                                                                                                                                                                                                                                      |
+| Firefox  | **Fails** at "firefox email OTP UI produced unexpected console errors": four console errors from one application chunk. Firefox reports `Content-Security-Policy: The page's settings blocked a JavaScript eval (script-src)`. This is a Firefox-only product or dependency finding (something in the chunk evaluates a string, and the production CSP forbids it); it is not a settlement problem. Not fixed here, so the Firefox acceptance run is open. |
+
+The check's console classifier matches "content security policy" but Firefox writes
+"Content-Security-Policy", so the failure shows as `unclassified console error`.
+
 ### Environment limits
 
-- Firefox and WebKit were not run here. The instructions covered Chromium only.
+- Chromium and WebKit pass; Firefox fails as above. All three were run only on the one Windows host.
 - A visual regression baseline set does not exist, so pixel comparison against references was not run.
 - The suite takes about seven minutes after a build and needs the Docker services in `.env`.
 

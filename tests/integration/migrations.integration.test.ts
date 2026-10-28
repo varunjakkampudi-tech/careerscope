@@ -55,16 +55,30 @@ async function readJson<T>(path: string) {
   return JSON.parse(await readFile(path, 'utf8')) as T;
 }
 
-/** Applies the committed SQL exactly as written, statement by statement, without the Drizzle migrator. */
-async function applyBaseline(pool: pg.Pool) {
-  const sql = await readFile(join(migrationsFolder, `${baseline}.sql`), 'utf8');
-  const statements = sql
-    .split('--> statement-breakpoint')
-    .map((statement) => statement.trim())
-    .filter(Boolean);
-  assert.ok(statements.length > 0);
-  for (const statement of statements) await pool.query(statement);
-  return statements.length;
+async function readJournal() {
+  return readJson<Journal>(join(migrationsFolder, 'meta', '_journal.json'));
+}
+
+/** Applies the given journal entries in order, exactly as written, statement by statement, without the Drizzle migrator. */
+async function applyEntries(pool: pg.Pool, entries: Journal['entries']) {
+  let applied = 0;
+  for (const entry of entries) {
+    const sql = await readFile(join(migrationsFolder, `${entry.tag}.sql`), 'utf8');
+    const statements = sql
+      .split('--> statement-breakpoint')
+      .map((statement) => statement.trim())
+      .filter(Boolean);
+    assert.ok(statements.length > 0, `${entry.tag}: no statements`);
+    for (const statement of statements) await pool.query(statement);
+    applied += statements.length;
+  }
+  return applied;
+}
+
+/** Applies every journal entry in journal order. */
+async function applyJournal(pool: pg.Pool) {
+  const journal = await readJournal();
+  return applyEntries(pool, journal.entries);
 }
 
 /** PostgreSQL truncates identifiers to 63 bytes, so generated names longer than that are stored cut. */
@@ -84,9 +98,9 @@ test('the Drizzle schema declares a full set of uniquely named tables', () => {
   assert.equal(new Set(names).size, names.length, 'table names must be unique');
 });
 
-test('migrations/0000_initial_schema.sql applies to a fresh database and matches schema.ts', async () => {
+test('every journal entry applies in order to a fresh database and the end state matches schema.ts', async () => {
   await freshDatabase(async (pool) => {
-    await applyBaseline(pool);
+    await applyJournal(pool);
 
     const present = await pool.query<{ table_name: string }>(
       `SELECT table_name FROM information_schema.tables
@@ -225,6 +239,37 @@ test('drizzle-orm migrate() on a fresh database records exactly the journal entr
     assert.equal(Number(present.rows[0]!.count), tables.length);
   });
 });
+
+// With a single migration there is nothing to survive. This is declared as todo, not skipped, so the
+// run output keeps naming it, and it becomes a real test the moment a second journal entry lands.
+// If a later migration renames or drops users, update the seed below deliberately.
+test(
+  'rows written under earlier migrations survive every later migration',
+  { todo: (await readJournal()).entries.length < 2 && 'only one migration exists yet' },
+  async () => {
+    const journal = await readJournal();
+    if (journal.entries.length < 2) return;
+    await freshDatabase(async (pool) => {
+      const id = randomUUID();
+      const email = `${id}@example.test`;
+      // State at the first migration, plus a row only that migration's schema knew about.
+      await applyEntries(pool, journal.entries.slice(0, 1));
+      await pool.query(
+        `INSERT INTO users (id, email, password_hash) VALUES ($1, $2, 'synthetic')`,
+        [id, email],
+      );
+      // Each later migration is applied on its own, and the row must still be there after each one.
+      for (const entry of journal.entries.slice(1)) {
+        await applyEntries(pool, [entry]);
+        const survivor = await pool.query<{ email: string }>(
+          'SELECT email FROM users WHERE id = $1',
+          [id],
+        );
+        assert.equal(survivor.rows[0]?.email, email, `${entry.tag} must not lose earlier data`);
+      }
+    });
+  },
+);
 
 test('schema.ts produces no diff against the committed snapshot', async () => {
   const snapshots = (await readdir(join(migrationsFolder, 'meta')))

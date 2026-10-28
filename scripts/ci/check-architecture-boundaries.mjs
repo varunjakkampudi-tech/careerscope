@@ -15,9 +15,18 @@ export const ALLOWED = {
   providers: ['shared', 'matching'],
   core: ['shared', 'resume'],
   api: ['shared', 'core', 'matching', 'providers', 'resume'],
-  web: ['shared', 'core', 'matching', 'providers', 'resume'],
+  web: ['shared', 'matching', 'providers', 'resume'],
   'search-worker': ['shared', 'core', 'matching', 'providers', 'resume'],
 };
+
+// The web app must not depend on core (database, queue and server-side code). Three components
+// still import types from it; those exact files are reported as warnings instead of failing the
+// build, and any other web import of core fails. Remove an entry when its import is removed.
+export const WEB_CORE_BASELINE = new Set([
+  'apps/web/src/components/job-search-view.tsx',
+  'apps/web/src/components/match-evidence.tsx',
+  'apps/web/src/components/profile-editor.tsx',
+]);
 
 const SCOPE = '@careerscope/';
 const SOURCE_FILE = /\.(?:[cm]?[jt]sx?)$/;
@@ -74,8 +83,46 @@ function* walk(directory) {
   }
 }
 
-function stripComments(source) {
-  return source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+/**
+ * Removes comments without touching string literals, so a comment marker inside a string (for
+ * example the glob in `import x from './a/*'`) can neither hide a later import nor be mistaken
+ * for a comment start. Comments become spaces, keeping line breaks, so `^` anchors still work.
+ * Limits: a regex literal that contains a quote or a backtick can confuse the scanner; quote
+ * state is reset at each line break for ' and " strings so such a mistake cannot run on.
+ */
+export function stripComments(source) {
+  let output = '';
+  let index = 0;
+  let quote = null;
+  while (index < source.length) {
+    const char = source[index];
+    const next = source[index + 1];
+    if (quote) {
+      output += char;
+      if (char === '\\' && next !== undefined) {
+        output += next;
+        index += 2;
+        continue;
+      }
+      if (char === quote || (char === '\n' && quote !== '`')) quote = null;
+      index += 1;
+    } else if (char === '"' || char === "'" || char === '`') {
+      quote = char;
+      output += char;
+      index += 1;
+    } else if (char === '/' && next === '/') {
+      while (index < source.length && source[index] !== '\n') index += 1;
+    } else if (char === '/' && next === '*') {
+      const end = source.indexOf('*/', index + 2);
+      const stop = end === -1 ? source.length : end + 2;
+      output += source.slice(index, stop).replace(/[^\n]/g, ' ');
+      index = stop;
+    } else {
+      output += char;
+      index += 1;
+    }
+  }
+  return output;
 }
 
 export function extractSpecifiers(source) {
@@ -99,10 +146,11 @@ function owner(workspaces, path) {
   });
 }
 
-export function analyze(root) {
+export function analyze(root, { webCoreBaseline = WEB_CORE_BASELINE } = {}) {
   const workspaces = loadWorkspaces(root);
   const byName = new Map(workspaces.map((workspace) => [workspace.name, workspace]));
   const violations = [];
+  const warnings = [];
   let files = 0;
 
   for (const workspace of workspaces) {
@@ -137,12 +185,20 @@ export function analyze(root) {
           ['providers', 'matching', 'resume'].includes(workspace.name)
         )
           report(`${workspace.name} imports core`);
-        else if (!(ALLOWED[workspace.name] ?? []).includes(target.name))
+        else if (workspace.name === 'web' && target.name === 'core') {
+          if (webCoreBaseline.has(display))
+            warnings.push({
+              file: display,
+              specifier,
+              rule: 'web imports core (known, to remove)',
+            });
+          else report('web may not import core');
+        } else if (!(ALLOWED[workspace.name] ?? []).includes(target.name))
           report(`${workspace.name} may not import ${target.name}`);
       }
     }
   }
-  return { violations, files, workspaces: workspaces.length };
+  return { violations, warnings, files, workspaces: workspaces.length };
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
@@ -150,7 +206,9 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const root = argument
     ? resolve(argument.slice('--root='.length))
     : fileURLToPath(new URL('../..', import.meta.url));
-  const { violations, files, workspaces } = analyze(root);
+  const { violations, warnings, files, workspaces } = analyze(root);
+  for (const w of warnings)
+    console.warn(`::warning file=${w.file}::${w.rule}: imports '${w.specifier}'`);
   if (violations.length) {
     for (const v of violations)
       console.error(`::error file=${v.file}::${v.rule}: imports '${v.specifier}'`);

@@ -52,10 +52,47 @@ test('the extractors find the kinds they are meant to guard', () => {
   assert.equal(emitted['email code purpose']!.length, 3);
 });
 
-test('every emitted event or message kind appears in docs/architecture/DOMAIN-EVENTS.md', () => {
-  const missing = Object.entries(emitted).flatMap(([group, kinds]) =>
-    kinds.filter((kind) => !document.includes(`\`${kind}\``)).map((kind) => `${group}: ${kind}`),
-  );
+/** The text of the numbered section whose heading starts with `## <number>.`. */
+function sectionOf(source: string, number: number) {
+  const start = source.search(new RegExp(`^## ${number}\\. `, 'm'));
+  assert.ok(start >= 0, `section ${number} is missing`);
+  const next = source.slice(start + 3).search(/^## \d+\. /m);
+  return next < 0 ? source.slice(start) : source.slice(start, start + 3 + next);
+}
+
+/** Kinds named in the first cell of a table row, the only place a kind counts as documented. */
+function tableKinds(section: string) {
+  return new Set([...section.matchAll(/^\|\s*`([^`]+)`\s*\|/gm)].map((match) => match[1]!));
+}
+
+/** Section of the document that must carry each group's kinds in a table. */
+const sectionOfGroup: Record<string, number> = {
+  'command type': 1,
+  'run event type': 2,
+  'notification kind': 3,
+  'notification template': 3,
+  'notification channel': 3,
+  'server-sent event': 5,
+  'email code purpose': 6,
+};
+
+test('table extraction counts only first-cell kinds, not prose mentions', () => {
+  const sample = [
+    'Prose mentions `ghost` and `only-prose`.',
+    '| Kind | Notes |',
+    '| -- | -- |',
+    '| `real` | mentions `ghost` |',
+  ].join('\n');
+  assert.deepEqual([...tableKinds(sample)], ['real']);
+  assert.match(sectionOf(document, 3), /Notification kinds/);
+  assert.doesNotMatch(sectionOf(document, 3), /^## 4\. /m);
+});
+
+test('every emitted event or message kind is in a table of its section of docs/architecture/DOMAIN-EVENTS.md', () => {
+  const missing = Object.entries(emitted).flatMap(([group, kinds]) => {
+    const documented = tableKinds(sectionOf(document, sectionOfGroup[group]!));
+    return kinds.filter((kind) => !documented.has(kind)).map((kind) => `${group}: ${kind}`);
+  });
   assert.deepEqual(missing, []);
 });
 

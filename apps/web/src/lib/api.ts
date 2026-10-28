@@ -65,6 +65,15 @@ export function offersDiscardAndReload(error: unknown): boolean {
 }
 
 /**
+ * True for a 404 from the API. `DELETE /account/sessions/:id` answers 404 when the session is not
+ * one of the caller's, for example because it was already signed out elsewhere, so the caller can
+ * treat the goal (that device is signed out) as met and refresh its list.
+ */
+export function isNotFound(error: unknown): boolean {
+  return error instanceof ApiError && error.status === 404;
+}
+
+/**
  * Reads the machine code off a 409 body without ever letting a malformed body
  * become a success or a thrown parse error: anything that is not an object
  * carrying a known string `code` yields `undefined`.

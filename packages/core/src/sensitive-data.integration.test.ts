@@ -13,6 +13,9 @@ import { EmailOtpChallenges } from './email-otp-challenges.js';
 
 const sha256 = (value: string) => createHash('sha256').update(value).digest('hex');
 
+/** The code as a standalone number, not as part of a longer digit run. */
+const standalone = (code: string) => new RegExp(`(^|[^0-9])${code}([^0-9]|$)`);
+
 async function everything(database: Database) {
   const tables = await database.pool.query<{ table_name: string }>(
     `SELECT table_name FROM information_schema.tables
@@ -85,7 +88,24 @@ test('session tokens, passwords and OTP codes never reach the database in plaint
     );
     assert.match(stored.rows[0]!.email_hash, /^[a-f0-9]{64}$/);
     assert.notEqual(stored.rows[0]!.digest, otp.code);
-    assert.equal(stored.rows[0]!.digest.includes(otp.code), false);
+    assert.equal(standalone(otp.code).test(stored.rows[0]!.digest), false);
+
+    // Negative control: the regex and the table dump must detect a code that really is stored,
+    // otherwise the absence assertions below would pass vacuously.
+    await database.pool.query('CREATE TABLE leak_control (note text)');
+    await database.pool.query('INSERT INTO leak_control (note) VALUES ($1)', [
+      `code ${otp.code} stored`,
+    ]);
+    const control = await everything(database);
+    assert.ok(
+      standalone(otp.code).test(control.get('leak_control')!),
+      'negative control: a stored code must be detected',
+    );
+    assert.ok(
+      standalone(otp.code).test([...control.values()].join('\n')),
+      'negative control: a stored code must be detected in the whole dump',
+    );
+    await database.pool.query('DROP TABLE leak_control');
 
     // The whole database, as text: no secret appears anywhere, and addresses only where documented.
     const dump = await everything(database);
@@ -98,7 +118,7 @@ test('session tokens, passwords and OTP codes never reach the database in plaint
     ]) {
       assert.equal(all.includes(secretValue), false);
     }
-    assert.equal(all.includes(` ${otp.code} `), false);
+    assert.equal(standalone(otp.code).test(all), false);
     assert.equal(dump.get('email_otp_challenges')!.includes(challengeEmail), false);
     const holders = [...dump].filter(([, text]) => text.includes(email)).map(([table]) => table);
     assert.deepEqual(holders, ['users'], 'the account address lives only in users');

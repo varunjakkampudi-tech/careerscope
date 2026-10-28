@@ -9,7 +9,13 @@ import { analyze } from './check-traceability.mjs';
 
 const checker = fileURLToPath(new URL('./check-traceability.mjs', import.meta.url));
 
-function verify(rows, extraFiles = ['src/a.ts', 'src/a.test.ts', 'docs/SPEC.md']) {
+const defaultScripts = { 'test:unit': 'node --test src/a.test.ts' };
+
+function verify(
+  rows,
+  extraFiles = ['src/a.ts', 'src/a.test.ts', 'docs/SPEC.md'],
+  scripts = defaultScripts,
+) {
   const root = mkdtempSync(join(tmpdir(), 'careerscope-trace-'));
   try {
     const matrix = [
@@ -19,6 +25,7 @@ function verify(rows, extraFiles = ['src/a.ts', 'src/a.test.ts', 'docs/SPEC.md']
     ].join('\n');
     for (const [path, content] of [
       ['docs/TRACEABILITY.md', matrix],
+      ['package.json', JSON.stringify({ scripts })],
       ...extraFiles.map((p) => [p, '']),
     ]) {
       mkdirSync(dirname(join(root, path)), { recursive: true });
@@ -65,6 +72,34 @@ test('duplicate IDs and an empty matrix fail', () => {
     verify([row('NOT COVERED'), row('NOT COVERED')]).errors.some((e) => /duplicate ID/.test(e)),
   );
   assert.match(verify([]).errors[0], /no requirement rows/);
+});
+
+test('a test file that no CI script runs fails unless it is marked (manual)', () => {
+  const files = ['src/a.ts', 'src/a.test.ts', 'src/b.test.ts', 'docs/SPEC.md'];
+  const unlisted = verify([row('`src/b.test.ts`')], files);
+  assert.equal(unlisted.errors.length, 1);
+  assert.match(unlisted.errors[0], /not run by any CI script.*src\/b\.test\.ts/);
+  assert.deepEqual(verify([row('`src/b.test.ts` (manual)')], files).errors, []);
+  // The marker applies to the path it follows, not to the whole row.
+  const mixed = verify([row('`src/a.test.ts`, `src/b.test.ts`')], files);
+  assert.equal(mixed.errors.length, 1);
+  assert.match(mixed.errors[0], /src\/b\.test\.ts/);
+});
+
+test('scripts reached through npm run from a CI root count as run by CI', () => {
+  const files = ['src/a.ts', 'src/b.test.ts', 'docs/SPEC.md'];
+  const scripts = { 'gates:test': 'npm run inner', inner: 'node --test src/b.test.ts' };
+  assert.deepEqual(verify([row('`src/b.test.ts`')], files, scripts).errors, []);
+  // A script that CI does not reach does not count.
+  const orphan = { 'test:unit': 'true', 'test:backfill': 'node --test src/b.test.ts' };
+  assert.match(verify([row('`src/b.test.ts`')], files, orphan).errors[0], /not run by any CI/);
+});
+
+test('a (manual) marker on a file that CI runs is rejected', () => {
+  assert.match(
+    verify([row('`src/a.test.ts` (manual)')]).errors[0],
+    /marked \(manual\) but a CI script runs it/,
+  );
 });
 
 test('the CLI passes on the real matrix', () => {

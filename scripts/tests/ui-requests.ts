@@ -39,14 +39,20 @@ export function staleSearchRead(
  * Only a GET fetch or script from an earlier route is dropped. A request from the current route, a
  * write, an HTML document or an image still counts, so a real hang on the current route is still
  * caught. This generalises `staleSavedRead` and `staleSearchRead`.
+ *
+ * The cancelled-fetch behaviour was measured only in Chromium, so the allowance applies to the
+ * `chromium` engine alone. Firefox and WebKit report aborted requests as failed, so there nothing
+ * is dropped and a request that never settles still fails the barrier.
  */
 export function staleEarlierRouteRead(
   method: string,
   resourceType: string,
   startedEpoch: number,
   currentEpoch: number,
+  engine: string,
 ): boolean {
   return (
+    engine === 'chromium' &&
     method === 'GET' &&
     (resourceType === 'fetch' || resourceType === 'script') &&
     startedEpoch !== currentEpoch

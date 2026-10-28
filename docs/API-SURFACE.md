@@ -98,7 +98,7 @@ Default code per status:
 | `ZodError`, `InvalidResumeUpload`, malformed JSON                   | 400    | `INVALID_REQUEST`                                                                                    | `Invalid request` (route text for some)  |
 | missing or expired session, bad one-time code                       | 401    | `AUTHENTICATION_REQUIRED`                                                                            | route text                               |
 | origin or CSRF check, private test access                           | 403    | `FORBIDDEN`                                                                                          | route text                               |
-| unknown route, unavailable feature, record not owned                | 404    | `NOT_FOUND`                                                                                          | route text                               |
+| unknown route (signed in), unavailable feature, record not owned    | 404    | `NOT_FOUND`                                                                                          | route text                               |
 | method not allowed                                                  | 405    | `METHOD_NOT_ALLOWED`                                                                                 | `Method not allowed`                     |
 | request timeout                                                     | 408    | `REQUEST_TIMEOUT`                                                                                    | `Request timeout`                        |
 | `ProfileRevisionConflict`, `LeadRevisionConflict`, other `Conflict` | 409    | the `Conflict.code` (for example `PROFILE_REVISION_CONFLICT`); `CONFLICT` for a plain state conflict | mapped text, else `Idempotency conflict` |
@@ -107,7 +107,7 @@ Default code per status:
 | rate limit exceeded                                                 | 429    | `RATE_LIMITED`                                                                                       | route text                               |
 | dependency (Redis, database, provider) unavailable                  | 503    | `SERVICE_UNAVAILABLE`                                                                                | route text                               |
 | `ResumeStorageLimit`                                                | 507    | `STORAGE_LIMIT_REACHED`                                                                              | `Resume storage capacity reached`        |
-| anything unhandled                                                  | 500    | `INTERNAL_ERROR`                                                                                     | `Service unavailable`                    |
+| anything unhandled                                                  | 500    | `INTERNAL_ERROR`                                                                                     | `Internal error`                         |
 
 The 409 codes the web client maps (`apps/web/src/lib/api.ts`) are unchanged. The wire change
 from the earlier `{ error, code?, requestId }` shape is that the text moved from `error` to `message` and
@@ -116,6 +116,31 @@ from the earlier `{ error, code?, requestId }` shape is that the text moved from
 `DELETE /api/account/sessions/:id` answers 404 for an id that is not one of the caller's sessions. The
 revocation is scoped to the caller's own sessions, so an unknown id and another user's id are
 indistinguishable and no existence is revealed.
+
+An unknown route answers `401 AUTHENTICATION_REQUIRED` to an anonymous caller, because the authentication
+hook (step 6 above) runs before routing falls through to the not-found handler, and `404 NOT_FOUND` to a
+signed-in caller. Anonymous callers therefore cannot probe which paths exist.
+
+Coverage for each status: `apps/api/src/error-handler.test.ts` covers 400, 401, 403, 404, 405, 408, 413, 415,
+429, 500 and 503. The 405 and 408 cases throw framework-shaped errors from throwaway routes (Fastify
+sets `statusCode` on them) because a real 408 needs a stalled socket. 409 and 507 need real database
+state and are covered by integration tests: 409 in `apps/api/src/resumes.integration.test.ts`,
+`apps/api/src/interviews.integration.test.ts` and `tests/integration/database.integration.test.ts`;
+507 in `apps/api/src/resumes.integration.test.ts` and `tests/integration/database.integration.test.ts`.
+
+### Breaking changes
+
+Recorded from commit `e4dad89` and the working tree after it. Clients written against the earlier API must change:
+
+| Change                                                           | Before                                      | Now                                                                                                                      |
+| ---------------------------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Error body shape                                                 | `{ error, code?, requestId }`               | `{ code, message, requestId, details? }`; the text moved from `error` to `message` and `code` is always present          |
+| Unknown routes                                                   | Fastify's default not-found body            | The envelope with `NOT_FOUND` (`401` for anonymous callers, see above)                                                   |
+| `POST /api/register`                                             | Answered `404 Registration unavailable`     | Removed: anonymous callers get `401`, signed-in callers `404`. Accounts are created only by the email one-time-code flow |
+| `DELETE /api/account/sessions/:id` with an unknown or foreign id | `204` for any id, whether or not it existed | `404 Session not found`; the web client treats it as "already gone" and refreshes the list                               |
+| Unhandled-error text                                             | 500 said `Service unavailable`              | 500 says `Internal error` (changed after `e4dad89`; `apps/api/src/errors.ts`)                                            |
+
+The 409 conflict codes and the `Conflict.code` to message mapping are unchanged.
 
 `apps/api/src/error-handler.test.ts` checks the envelope for every status above, probes every documented
 route unauthenticated and cross-origin, and checks the OpenAPI document declares the envelope for every

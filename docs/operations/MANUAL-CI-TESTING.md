@@ -1,9 +1,10 @@
 # Manual GitHub Actions testing
 
-This procedure becomes usable only after the owner enables GitHub Actions and
-the first workflow run verifies the YAML and hosted-runner behavior. As of
-2026-10-20 Actions is disabled, so these steps are instructions, not evidence of
-a run.
+GitHub Actions is enabled for this repository and the workflow runs on pushes. This
+procedure starts a manual run of selected suites. It is instructions, not evidence:
+which commit has been verified on a hosted runner, and which has not, is stated only in
+[`CI-CD.md`](CI-CD.md#current-state) (currently pending until the run on this commit).
+Do not copy run IDs or SHAs into this file.
 
 1. Open the CareerScope repository on GitHub and choose **Actions**.
 2. Select **CareerScope CI**, then **Run workflow**.

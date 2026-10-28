@@ -1,19 +1,18 @@
 # Toolchain validation
 
-`npm run toolchain:check` (`scripts/ci/check-toolchain.mjs`) runs in the CI
-`Quality gates` job. It fails when:
+`npm run toolchain:check` (`scripts/ci/check-toolchain.mjs --strict`) runs in the CI
+`Quality gates` job. Node 24 is the single version for CI, local work and the production
+image. It fails when:
 
 - `.nvmrc` or a workflow `NODE_VERSION` pin has a different major from the
   `engines.node` floor in `package.json` (currently `>=24`).
-- The Dockerfile Node base image major is below that floor.
+- The Dockerfile Node base image major is below that floor, or differs from `.nvmrc`.
+  This is a failure, not a warning; `--strict` is accepted but no longer changes anything.
 - The `next` or `fastify` major differs between workspaces, or differs from the
   major resolved in `package-lock.json`; `eslint-config-next` differs from `next`;
   or a locked `next`/`fastify` declares a Node engine above the floor.
 
-`engines.node` is a floor, so the production image may run a newer major than
-`.nvmrc` and CI. That difference is a warning. `--strict` turns it into a failure.
-
-## Result recorded 2026-10-27 (Node v24.22.1)
+## Result recorded 2026-10-28 (Node v24.22.1)
 
 | Item              | Value                                  |
 | ----------------- | -------------------------------------- |
@@ -24,12 +23,11 @@
 | Next.js           | declared `16.4.3`, locked `16.4.3`     |
 | Fastify           | declared `^5.12.7`, locked `5.12.7`    |
 
-Open finding: the production image runs Node 26 while tests, CI and `.nvmrc` run
-Node 24. The check passes with a warning because 26 satisfies `>=24`. Tests have
-not been run on Node 26. The Dockerfile and `infra/checks/check-full-disk.mjs`
-pin the image, and `scripts/ci/check-deploy-gate.test.mjs` asserts it, so aligning
-them is an infrastructure decision for the owner (move the image to Node 24, or
-move `.nvmrc`, CI and `engines` to 26 after running the suites there).
+Open finding, failing by design: the production image runs Node 26 while tests, CI and
+`.nvmrc` run Node 24, so `toolchain:check` fails until `infra/docker/Dockerfile` (and
+the pin asserted by `infra/checks/check-full-disk.mjs` and
+`scripts/ci/check-deploy-gate.test.mjs`) move to `node:24-...`, pinned by digest. That
+change belongs to the infrastructure owner. The digest has not been resolved here.
 
 ## Dependency audit
 

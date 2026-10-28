@@ -35,18 +35,23 @@ test('settlement drops only search list/detail reads belonging to an earlier rou
 
 test('settlement drops only fetch and script reads belonging to an earlier route', () => {
   // The shell and settings reads, a router prefetch and a chunk load that a navigation cancelled.
-  assert.equal(staleEarlierRouteRead('GET', 'fetch', 1, 2), true);
-  assert.equal(staleEarlierRouteRead('GET', 'script', 1, 2), true);
+  assert.equal(staleEarlierRouteRead('GET', 'fetch', 1, 2, 'chromium'), true);
+  assert.equal(staleEarlierRouteRead('GET', 'script', 1, 2, 'chromium'), true);
   // The current route's read still counts, so a real hang on this route is still caught.
-  assert.equal(staleEarlierRouteRead('GET', 'fetch', 2, 2), false);
-  assert.equal(staleEarlierRouteRead('GET', 'script', 2, 2), false);
+  assert.equal(staleEarlierRouteRead('GET', 'fetch', 2, 2, 'chromium'), false);
+  assert.equal(staleEarlierRouteRead('GET', 'script', 2, 2, 'chromium'), false);
   // Writes never disappear from the barrier.
-  assert.equal(staleEarlierRouteRead('PUT', 'fetch', 1, 2), false);
-  assert.equal(staleEarlierRouteRead('POST', 'fetch', 1, 2), false);
-  assert.equal(staleEarlierRouteRead('DELETE', 'fetch', 1, 2), false);
+  assert.equal(staleEarlierRouteRead('PUT', 'fetch', 1, 2, 'chromium'), false);
+  assert.equal(staleEarlierRouteRead('POST', 'fetch', 1, 2, 'chromium'), false);
+  assert.equal(staleEarlierRouteRead('DELETE', 'fetch', 1, 2, 'chromium'), false);
   // Neither do documents, images or other resource types.
-  assert.equal(staleEarlierRouteRead('GET', 'document', 1, 2), false);
-  assert.equal(staleEarlierRouteRead('GET', 'image', 1, 2), false);
+  assert.equal(staleEarlierRouteRead('GET', 'document', 1, 2, 'chromium'), false);
+  assert.equal(staleEarlierRouteRead('GET', 'image', 1, 2, 'chromium'), false);
+  // The allowance was measured only in Chromium; other engines keep every request in the barrier.
+  for (const engine of ['firefox', 'webkit', '']) {
+    assert.equal(staleEarlierRouteRead('GET', 'fetch', 1, 2, engine), false, engine);
+    assert.equal(staleEarlierRouteRead('GET', 'script', 1, 2, engine), false, engine);
+  }
 });
 
 test('browser diagnostics retain only same-origin normalized paths', () => {

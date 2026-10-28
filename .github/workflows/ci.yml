@@ -93,7 +93,7 @@ jobs:
         if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","checks"]'), inputs.suite)
         run: npm run gates:test
 
-      - name: Check toolchain consistency (Node, Next.js, Fastify)
+      - name: Check toolchain consistency (Node, Next.js, Fastify; the image must match .nvmrc)
         if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","checks"]'), inputs.suite)
         run: npm run toolchain:check
 
@@ -314,14 +314,18 @@ jobs:
           cat "$RUNNER_TEMP/careerscope-web.log"
           exit 1
 
-      - name: Run PostgreSQL and Redis integration tests
+      - name: Run PostgreSQL and Redis integration tests (serial, production database timeouts)
         if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration"]'), inputs.suite)
-        env:
-          # Shared CI runners are slower than a dedicated database; keep production defaults elsewhere.
-          DATABASE_STATEMENT_TIMEOUT_MS: 60000
-          INTEGRATION_JOB_WAIT_MS: 60000
-          DATABASE_CONNECT_TIMEOUT_MS: 30000
+        # Only the BullMQ suite gets raised timeouts, from scripts/tests/bull-queue.integration.env.
         run: npm run test:integration
+
+      - name: Prove a representative query finishes within the 10 s production statement budget
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration"]'), inputs.suite)
+        run: npm run test:query-budget
+
+      - name: Verify backup, restore and retention against a throwaway PostgreSQL container
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration","recovery"]'), inputs.suite)
+        run: bash infra/checks/check-backup.sh
 
       - name: Install selected Playwright browser and system dependencies
         if: >-
