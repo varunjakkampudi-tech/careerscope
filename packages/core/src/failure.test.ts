@@ -290,3 +290,8 @@ test('scrubMessage email pattern stays linear on 2000-character unspaced runs', 
   assert.equal(scrubMessage('mail jane.doe@example.com now'), 'mail [email] now');
   assert.equal(scrubMessage(`${'x'.repeat(70)}@example.com`).includes('example'), false);
 });
+
+test('scrubMessage redacts a quoted-local-part email address', () => {
+  const out = scrubMessage('contact "john doe"@example.com now');
+  assert.doesNotMatch(out, /example|john doe/);
+});

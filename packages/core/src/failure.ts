@@ -35,8 +35,9 @@ const namedSecretValue = String.raw`(?:(\\+)"(?:(?!(?<!\\)\2")[^\r\n])*(?:(?<!\\
  * and the match may only start at the start of a token (the lookbehind), so start positions never overlap
  * and the pattern stays linear on adversarial input. An overlong local part is still redacted whole.
  */
+// A quoted local part (RFC 5321) may contain spaces; it is bounded so matching stays linear.
 export const emailAddressPattern =
-  /(?<![^\s@<>"'])[^\s@<>"']{1,2000}@[^\s@<>"']{1,253}\.[^\s@<>"']{2,63}/g;
+  /"[^"\r\n]{1,64}"@[^\s@<>"']{1,253}\.[^\s@<>"']{2,63}|(?<![^\s@<>"'])[^\s@<>"']{1,2000}@[^\s@<>"']{1,253}\.[^\s@<>"']{2,63}/g;
 
 const namedSecret = new RegExp(
   String.raw`\b([a-z0-9_-]*(?:token|secret|password|passwd|pwd|pass|passphrase|key|apikey|authorization|cookie|otp|code|sid|session|sessionid|sig|signature|auth|credential|csrf|xsrf|jwt|ticket|private)[a-z0-9_-]*)(?:\\*["'])?\s*[=:]\s*${namedSecretValue}`,
