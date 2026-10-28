@@ -63,6 +63,9 @@ test('scrubMessage removes Basic credentials, cookie lines, JSON bodies, prose s
     ['Set-Cookie: sid=abc123; csrf=zzz999; Path=/', ['abc123', 'zzz999']],
     ['request body {"password":"hunter2"} rejected', ['hunter2']],
     ['password is hunter2', ['hunter2']],
+    [String.raw`body {\"password\":\"x-secret-pw\"} rejected`, ['x-secret-pw']],
+    [String.raw`body {\"token\":\"x-secret-tok\"} rejected`, ['x-secret-tok']],
+    [String.raw`body {\"password\":\"two words\"}`, ['two words', 'words']],
     ['GET https://files.example.test/a.pdf?sig=abcdef&x=1 failed', ['abcdef']],
   ];
   for (const [input, forbidden] of cases) {

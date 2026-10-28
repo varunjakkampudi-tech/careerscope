@@ -30,7 +30,7 @@ session listing/revocation and dual-address email-change verification; these do
 not constitute production or live provider acceptance.
 
 `GET /api/health` checks PostgreSQL
-and the mandatory shared Redis limiter and returns only a generic status/version
+and the mandatory shared Redis limiter and returns only a generic status
 or generic 503, not dependency details. No live proxy topology, firewall or
 external-port scan was performed in this change.
 

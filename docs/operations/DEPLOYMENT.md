@@ -175,7 +175,12 @@ ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST> "
 "
 ```
 
-`setup-backup.sh` runs one real backup immediately (dump, restore-verify,
+Before running, set dump encryption in `/etc/careerscope-backup.env`:
+`BACKUP_AGE_RECIPIENT` (with `age` installed) or `BACKUP_GPG_PASSPHRASE_FILE`
+(mode 0600, not under `/root` or `/home`, because the unit has `ProtectHome=yes`),
+and optionally `BACKUP_KEY_DIR`. `setup-backup.sh` preflights these, prints guidance
+and skips the immediate backup (exit 1) if they are not usable; otherwise it runs one
+real backup immediately (dump, restore-verify, encrypt,
 promote) so the first proof doesn't wait for 03:30. See
 [docs/operations/BACKUP.md](BACKUP.md) for the full design, how to actually
 restore from a produced dump, and the known limitation (nothing currently

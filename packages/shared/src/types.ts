@@ -9,6 +9,7 @@ import type {
   ApplicationDetails,
   Candidate,
   DerivedResume,
+  MatchBreakdown,
   Preferences,
   Salary,
 } from './schemas.js';
@@ -181,3 +182,53 @@ export type MatchableProfile = {
   application: Pick<ApplicationDetails, 'expectedCtc' | 'yearsOfExperience' | 'willingToRelocate'>;
   derived: DerivedResume | null;
 };
+
+/* -------------------------------------------------------------------------- */
+/* Search, collected-job and profile-write shapes used by the web client      */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * These describe the validated shapes that `@careerscope/core` parses with Zod. They live here so the
+ * web client can name them without importing the server-side package. Core asserts at compile time
+ * that its schema-derived types stay identical to these (see the `AssertSame` checks in
+ * `packages/core/src/commands.ts`, `jobs.ts` and `profile.ts`).
+ */
+
+/** Job boards the launch search worker can run. */
+export type SearchSourceName =
+  'remoteok' | 'himalayas' | 'greenhouse' | 'lever' | 'ashby' | 'workable';
+
+/** Body of a search request after validation. */
+export type CreateSearch = {
+  query: string;
+  useProfileTitles?: boolean | undefined;
+  origin: 'manual' | 'scheduled';
+  sources: SearchSourceName[];
+};
+
+/** One job as stored for a run or lead. */
+export type CollectedJob = {
+  fingerprint: string;
+  sourceJobId?: string | undefined;
+  title: string;
+  company: string;
+  location: string;
+  description: string;
+  source: SearchSourceName;
+  sourceUrl: string;
+  sourceLinks?: { source: SearchSourceName; url: string }[] | undefined;
+  applyUrl: string;
+  postedAt: string | null;
+  match: MatchBreakdown | null;
+};
+
+/** Validated profile content a client may write. */
+export type WritableProfile = {
+  candidate: Candidate;
+  preferences: Preferences;
+  application: ApplicationDetails;
+  accessibility: { reducedMotion: boolean };
+};
+
+/** Compile-time equality check used by core to keep its Zod-derived types in step with the ones above. */
+export type AssertSame<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;

@@ -7,7 +7,6 @@
 // The engines value is a floor (">=24"). .nvmrc and workflow pins must equal it.
 // The production image must run the same Node major as .nvmrc and CI: a different
 // major is a failure, never a warning, because tests do not run on the other major.
-// --strict is accepted for compatibility and changes nothing (the check is always strict).
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import process from 'node:process';

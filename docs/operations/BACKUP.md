@@ -92,6 +92,13 @@ Set these in `/etc/careerscope-backup.env` (the unit loads it). Use one of:
   `gpg` runs with a throwaway home inside the staging area, so it does not need
   a writable home directory under `ProtectHome=yes`.
 
+`BACKUP_KEY_DIR` is optional (default `/var/lib/careerscope/backup-keys`). The unit has
+`ProtectHome=yes`, so a passphrase file (or key directory) under `/root` or `/home`
+is unreadable to the backup run: put the passphrase file somewhere such as
+`/etc/careerscope-backup.pass` (mode 0600). `setup-backup.sh` checks these settings
+before its immediate backup, prints what to fix, skips the immediate run when they are
+wrong and exits non-zero instead of aborting silently.
+
 Keep the age identity or the gpg passphrase with the owner, apart from both the
 backup directory and the key directory: whoever holds the dump and its
 decryption secret can read every resume and address in the database.

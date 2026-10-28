@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import process from 'node:process';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
@@ -68,8 +70,12 @@ test('CI keeps production database timeouts for every other suite', () => {
   assert.match(workflow, /run: npm run test:query-budget/);
 });
 
-test('CI runs the strict toolchain check and the backup check', () => {
-  assert.match(scripts['toolchain:check'], /check-toolchain\.mjs --strict/);
+test('CI runs the toolchain check, which passes, and the backup check', () => {
+  assert.equal(typeof scripts['toolchain:check'], 'string', 'toolchain:check must exist');
+  const [command, ...args] = scripts['toolchain:check'].split(' ');
+  assert.equal(command, 'node');
+  const run = spawnSync(process.execPath, args, { cwd: root, encoding: 'utf8' });
+  assert.equal(run.status, 0, `${run.stdout}${run.stderr}`);
   assert.match(workflow, /run: npm run toolchain:check/);
   const services = workflow.slice(workflow.indexOf('\n  services:'));
   assert.match(services, /run: bash infra\/checks\/check-backup\.sh/);

@@ -57,7 +57,7 @@ test('.nvmrc, workflow pin and Dockerfile below the floor are rejected', () => {
   );
 });
 
-test('a Dockerfile major that differs from .nvmrc fails, in either direction and without --strict', () => {
+test('a Dockerfile major that differs from .nvmrc fails, in either direction', () => {
   // H3: the production image must run the Node major CI tests, so this is an error, not a warning.
   const image = (reference) => ({ 'infra/docker/Dockerfile': `ARG NODE_IMAGE=${reference}\n` });
   const newer = verify(image('node:26.8.1-slim'));

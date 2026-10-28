@@ -223,7 +223,7 @@ echo "== a real backup: dump, restore-verify, encrypt, promote"
 rm -rf "$work/backups" "$work/keys"; : >"$work/webhook-calls"
 out=$(run_backup 2>&1)
 check "reports ok" "$(printf '%s' "$out" | grep -c '^backup ok:')" "1"
-check "reports the real table count from the restored copy" "$(printf '%s' "$out" | grep -o 'tables verified' | head -1)" "tables verified"
+check "last-status records the table count of the restored copy (the seed creates one table)" "$(grep -c '^TABLES=1$' "$work/backups/last-status")" "1"
 check "one encrypted dump file promoted" "$(count_dumps)" "1"
 check "no plaintext dump is promoted" "$(find "$work/backups" -maxdepth 1 -name 'careerscope-*.dump' | wc -l | tr -d ' ')" "0"
 check "no staging file left behind" "$(find "$work/backups" -maxdepth 1 -name '.staging-*' | wc -l | tr -d ' ')" "0"
@@ -544,6 +544,26 @@ check "a fresh staging file is left alone in the backup dir" "$([ -e "$work/back
 check "a fresh staging file is left alone in the key dir" "$([ -e "$work/keys/.staging-fresh.key" ] && echo kept || echo pruned)" "kept"
 rm -f "$work/backups/.staging-fresh.dump" "$work/keys/.staging-fresh.key"
 check "the final status after a good run is ok" "$(grep -c '^STATUS=ok' "$work/backups/last-status")" "1"
+
+echo "== a failure after promotion records STATUS=failed and sends the alert"
+# A find that fails only for the retention step (-mtime), which runs after the dump is promoted.
+mkdir -p "$work/stubbin"
+cat >"$work/stubbin/find" <<'EOF'
+#!/usr/bin/env bash
+case " $* " in
+  *" -mtime "*) exit 1 ;;
+esac
+exec "$REAL_FIND" "$@"
+EOF
+chmod +x "$work/stubbin/find"
+sleep 1.1
+: >"$work/webhook-calls"
+post_exit=0
+out=$(run_backup env REAL_FIND="$(command -v find)" PATH="$work/stubbin:$PATH" 2>&1) || post_exit=$?
+check "a post-promotion failure returns nonzero" "$post_exit" "1"
+check "a post-promotion failure reports FAILED" "$(printf '%s' "$out" | grep -c 'backup FAILED: a step after promotion failed')" "1"
+check "a post-promotion failure overwrites the ok status with failed" "$(grep -c '^STATUS=failed' "$work/backups/last-status")-$(grep -c '^STATUS=ok' "$work/backups/last-status")" "1-0"
+check "a post-promotion failure sends exactly one alert" "$(wc -l <"$work/webhook-calls" | tr -d ' ')" "1"
 
 if [ "$failures" -gt 0 ]; then
   echo "$failures check(s) failed" >&2

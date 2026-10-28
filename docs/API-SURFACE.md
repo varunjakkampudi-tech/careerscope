@@ -49,7 +49,9 @@ a patched static server; older UI 5.x releases pull an affected static dependenc
 Applied by a single `onRequest` hook, in this order:
 
 1. `Cache-Control: no-store` on every response.
-2. `/api/health` short-circuits here. Nothing below applies to it.
+2. `/api/health` short-circuits here. The auth hook (private-test-access gate, Origin,
+   session, CSRF) does not apply to it, but the route is rate-limited per client
+   address (60 per 60 seconds) and answers `429` beyond that.
 3. **Origin check.** Any method other than `GET`, `HEAD` or `OPTIONS` must carry
    `Origin` exactly equal to the configured app origin, or the request is
    rejected `403 Origin denied`. A missing `Origin` fails this check.
@@ -154,14 +156,14 @@ route unauthenticated and cross-origin, and checks the OpenAPI document declares
 
 ### Health and session
 
-| Method | Path               | Auth | CSRF        | Notes                                                      |
-| ------ | ------------------ | ---- | ----------- | ---------------------------------------------------------- |
-| GET    | `/api/health`      | no   | no          | Exempt from every hook. Also exempt from maintenance mode. |
-| GET    | `/api/session`     | no   | no          | Returns the current session or absence of one              |
-| POST   | `/api/login`       | no   | Origin only | Test-access account selection only                         |
-| POST   | `/api/otp/request` | no   | Origin only | Sign-in or explicitly configured signup challenge          |
-| POST   | `/api/otp/verify`  | no   | Origin only | Verifies a challenge and establishes an opaque session     |
-| POST   | `/api/logout`      | yes  | yes         |                                                            |
+| Method | Path               | Auth | CSRF        | Notes                                                                                                 |
+| ------ | ------------------ | ---- | ----------- | ----------------------------------------------------------------------------------------------------- |
+| GET    | `/api/health`      | no   | no          | Exempt from the auth hook, but rate-limited (429). Returns status only. Exempt from maintenance mode. |
+| GET    | `/api/session`     | no   | no          | Returns the current session or absence of one                                                         |
+| POST   | `/api/login`       | no   | Origin only | Test-access account selection only                                                                    |
+| POST   | `/api/otp/request` | no   | Origin only | Sign-in or explicitly configured signup challenge                                                     |
+| POST   | `/api/otp/verify`  | no   | Origin only | Verifies a challenge and establishes an opaque session                                                |
+| POST   | `/api/logout`      | yes  | yes         |                                                                                                       |
 
 ### Account
 

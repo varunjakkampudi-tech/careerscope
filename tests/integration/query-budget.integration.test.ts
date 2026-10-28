@@ -8,11 +8,13 @@ import { Database } from '@careerscope/core';
 // CI raises the database timeouts for the BullMQ suite only. This run proves the rest of the
 // system still works inside the production defaults: the pool must come up with a 10 s statement
 // timeout and a 5 s connect timeout, and a representative query (the outbox backlog read the
-// publisher issues every cycle, against a freshly migrated schema) must finish well inside 10 s.
+// publisher issues every cycle) must finish inside 10 s. The schema is freshly migrated and empty,
+// so this does not measure behaviour at production data volume; it checks the timeout settings
+// and that the query runs at all.
 
 const budgetMs = 10_000;
 
-test('a representative query completes within the production 10 s statement budget', async () => {
+test('the pool uses the production timeout settings and a representative query completes under the budget on an empty schema', async () => {
   // Remove any override so the defaults, not the environment, are what is measured.
   for (const name of ['DATABASE_STATEMENT_TIMEOUT_MS', 'DATABASE_CONNECT_TIMEOUT_MS']) {
     delete process.env[name];

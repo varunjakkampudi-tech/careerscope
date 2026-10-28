@@ -338,6 +338,10 @@ else
 fi
 
 # -- 3. promote and retain --------------------------------------------------
+# From here on every command is a post-promotion step (rename, chmod, status write, retention). Any of
+# them failing must still record STATUS=failed and send the alert, rather than exiting under set -e with
+# a stale "ok" status, so the ERR trap routes the failure through fail().
+trap 'fail "a step after promotion failed (line $LINENO); check the backup directory and permissions"' ERR
 mv -f "$staging_encrypted" "$final"
 chmod 0600 "$final"
 if [ "$resumes_state" = ok ]; then

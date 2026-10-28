@@ -19,14 +19,9 @@ export const ALLOWED = {
   'search-worker': ['shared', 'core', 'matching', 'providers', 'resume'],
 };
 
-// The web app must not depend on core (database, queue and server-side code). Three components
-// still import types from it; those exact files are reported as warnings instead of failing the
-// build, and any other web import of core fails. Remove an entry when its import is removed.
-export const WEB_CORE_BASELINE = new Set([
-  'apps/web/src/components/job-search-view.tsx',
-  'apps/web/src/components/match-evidence.tsx',
-  'apps/web/src/components/profile-editor.tsx',
-]);
+// The web app must not depend on core (database, queue and server-side code). The baseline of
+// tolerated type-only imports is empty, so any web import of core fails the build.
+export const WEB_CORE_BASELINE = new Set();
 
 const SCOPE = '@careerscope/';
 const SOURCE_FILE = /\.(?:[cm]?[jt]sx?)$/;

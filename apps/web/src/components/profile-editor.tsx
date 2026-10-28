@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, LoaderCircle, RefreshCw, Save } from 'lucide-react';
-import type { WritableProfile } from '@careerscope/core';
+import type { WritableProfile } from '@careerscope/shared';
 import { apiParsed, offersDiscardAndReload } from '../lib/api';
 import { parseProfileResponse, type ProfileResponse } from '../lib/api-schemas';
 import { useOwner, ownerKey } from '../lib/session';

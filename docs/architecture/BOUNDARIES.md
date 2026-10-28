@@ -46,11 +46,11 @@ in the table below.
 6. A non-test module never imports a test file (`*.test.*`, `*.spec.*`, or a file
    in a `__tests__` directory), including through a dynamic `import()`.
 7. `web` never imports `core`: it must not depend on the database, queue and
-   server-side layer. Three components still import types from it
-   (`job-search-view.tsx`, `match-evidence.tsx`, `profile-editor.tsx`, all
-   `import type`, erased at build time). They are listed in `WEB_CORE_BASELINE` and reported
-   as warnings; any other web import of `core` fails. Move those types to `shared` and
-   delete the baseline entries.
+   server-side layer. The rule is strict: `WEB_CORE_BASELINE` is empty and any web
+   import of `core`, including `import type`, fails. The shapes the web client needs
+   (`CreateSearch`, `CollectedJob`, `WritableProfile`) are declared in `shared`, and
+   `packages/core/src/shared-types.check.ts` fails the type check if core's Zod-derived types
+   drift from them.
 
 Test files themselves are held to rules 1 to 5 and 7 but may import other test files.
 Directories named `node_modules`, `dist`, `dist-types`, `.next` and `__fixtures__`,

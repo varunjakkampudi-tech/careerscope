@@ -14,12 +14,12 @@ import {
   Search,
   Square,
 } from 'lucide-react';
-import type { CreateSearch } from '@careerscope/core';
 import {
   JOB_SOURCE_PERMISSION_PENDING_MESSAGE,
   LAUNCH_JOB_SOURCE_CANDIDATES,
   SOURCE_LABELS,
   jobFeedbackReasons,
+  type CreateSearch,
   type JobFeedbackReason,
 } from '@careerscope/shared';
 import { ApiError, apiJson, apiParsed, SESSION_EXPIRED_EVENT } from '@/lib/api';

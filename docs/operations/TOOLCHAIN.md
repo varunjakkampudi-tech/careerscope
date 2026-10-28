@@ -1,33 +1,30 @@
 # Toolchain validation
 
-`npm run toolchain:check` (`scripts/ci/check-toolchain.mjs --strict`) runs in the CI
+`npm run toolchain:check` (`scripts/ci/check-toolchain.mjs`) runs in the CI
 `Quality gates` job. Node 24 is the single version for CI, local work and the production
 image. It fails when:
 
 - `.nvmrc` or a workflow `NODE_VERSION` pin has a different major from the
   `engines.node` floor in `package.json` (currently `>=24`).
 - The Dockerfile Node base image major is below that floor, or differs from `.nvmrc`.
-  This is a failure, not a warning; `--strict` is accepted but no longer changes anything.
+  This is a failure, not a warning.
 - The `next` or `fastify` major differs between workspaces, or differs from the
   major resolved in `package-lock.json`; `eslint-config-next` differs from `next`;
   or a locked `next`/`fastify` declares a Node engine above the floor.
 
 ## Result recorded 2026-10-28 (Node v24.22.1)
 
-| Item              | Value                                  |
-| ----------------- | -------------------------------------- |
-| `engines.node`    | `>=24`                                 |
-| `.nvmrc`          | `24`                                   |
-| CI `NODE_VERSION` | `24`                                   |
-| Dockerfile image  | `node:26.8.1-bookworm-slim` (major 26) |
-| Next.js           | declared `16.4.3`, locked `16.4.3`     |
-| Fastify           | declared `^5.12.7`, locked `5.12.7`    |
+| Item              | Value                                                  |
+| ----------------- | ------------------------------------------------------ |
+| `engines.node`    | `>=24`                                                 |
+| `.nvmrc`          | `24`                                                   |
+| CI `NODE_VERSION` | `24`                                                   |
+| Dockerfile image  | `node:24.22.1-bookworm-slim` (major 24, digest-pinned) |
+| Next.js           | declared `16.4.3`, locked `16.4.3`                     |
+| Fastify           | declared `^5.12.7`, locked `5.12.7`                    |
 
-Open finding, failing by design: the production image runs Node 26 while tests, CI and
-`.nvmrc` run Node 24, so `toolchain:check` fails until `infra/docker/Dockerfile` (and
-the pin asserted by `infra/checks/check-full-disk.mjs` and
-`scripts/ci/check-deploy-gate.test.mjs`) move to `node:24-...`, pinned by digest. That
-change belongs to the infrastructure owner. The digest has not been resolved here.
+`npm run toolchain:check` result: PASS (exit 0), with the production image, `.nvmrc`, CI and
+`engines.node` all on Node 24.
 
 ## Dependency audit
 

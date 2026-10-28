@@ -8,9 +8,11 @@ registration is unavailable in every runtime. Production sign-in uses the
 application-managed email identity and opaque server-side session described
 below; no OAuth or hosted identity provider is used.
 
-Local development defaults to loopback access. `TEST_ACCESS_MODE=local` is
-refused with a public origin or production runtime. Public origins default to
-disabled test access. Hosted testing requires all of:
+Test access is disabled unless `TEST_ACCESS_MODE=local` is set explicitly; it is
+never a default. Local mode admits only a loopback peer, refuses any request that
+carries a forwarded or relay header (for example `X-Forwarded-For`) and refuses a
+`Host` header that is not loopback. It is also refused with a public origin or
+production runtime. Public origins default to disabled test access. Hosted testing requires all of:
 
 - explicit `DEPLOYMENT_ENVIRONMENT=staging`, HTTPS and `TEST_ACCESS_MODE=proxy`;
 - a shared staging password enforced by Caddy's `basic_auth`;
@@ -24,7 +26,7 @@ password and removes the Authorization header before proxying. The API checks
 the assertion using constant-time digest comparison and accepts it only from
 a loopback proxy peer. Database, queue and API ports remain private. The health
 endpoint checks PostgreSQL and the shared Redis limiter before reporting ready;
-it exposes only coarse health and version information and does not require the
+it returns only `{ "status": "ok" }` (no version) and does not require the
 staging password. A failed critical dependency returns a safe 503.
 
 Generate the password hash interactively using Caddy's password-hashing tool;

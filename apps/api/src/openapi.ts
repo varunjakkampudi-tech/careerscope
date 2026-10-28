@@ -311,7 +311,7 @@ const errors: Record<number, string> = {
   409: 'Revision, idempotency or state conflict',
   413: 'Request too large',
   429: 'Rate limit exceeded',
-  500: 'Service unavailable',
+  500: 'Internal error',
   502: 'Upstream provider error',
   503: 'Capability unavailable',
   504: 'Upstream provider timed out',

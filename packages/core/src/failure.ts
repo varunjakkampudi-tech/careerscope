@@ -21,8 +21,11 @@ const maxScrubInputLength = 2000;
 /** A secret value: a quoted string (escapes honoured, spaces kept) or a bare run up to a delimiter. */
 const secretValue = String.raw`(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|[^\s,;&]+)`;
 
+/** The same, also accepting JSON that was serialised into a string (backslash-escaped quotes). */
+const namedSecretValue = String.raw`(?:\\+"(?:[^"\\]|\\(?!"))*\\+"|\\+'(?:[^'\\]|\\(?!'))*\\+'|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|[^\s,;&\\]+)`;
+
 const namedSecret = new RegExp(
-  String.raw`\b([a-z0-9_-]*(?:token|secret|password|passwd|pwd|pass|passphrase|key|apikey|authorization|cookie|otp|code|sid|session|sessionid|sig|signature|auth|credential|csrf|xsrf|jwt|ticket|private)[a-z0-9_-]*)["']?\s*[=:]\s*${secretValue}`,
+  String.raw`\b([a-z0-9_-]*(?:token|secret|password|passwd|pwd|pass|passphrase|key|apikey|authorization|cookie|otp|code|sid|session|sessionid|sig|signature|auth|credential|csrf|xsrf|jwt|ticket|private)[a-z0-9_-]*)(?:\\*["'])?\s*[=:]\s*${namedSecretValue}`,
   'gi',
 );
 const proseSecret = new RegExp(
