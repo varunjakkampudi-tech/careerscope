@@ -103,18 +103,64 @@ cancelled-fetch behaviour behind it was measured only in Chromium. Firefox and W
 request in the barrier. Same setup as above (production build, `next start` on 5280, Node 24.22.1,
 throwaway PostgreSQL and Redis containers), run with `CAREERSCOPE_UI_BROWSER` set to each engine:
 
-| Engine   | Result                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chromium | Pass after the gating change (both result lines printed, exit 0).                                                                                                                                                                                                                                                                                                                                                                                          |
-| WebKit   | Pass with the allowance disabled (both result lines printed, exit 0).                                                                                                                                                                                                                                                                                                                                                                                      |
-| Firefox  | **Fails** at "firefox email OTP UI produced unexpected console errors": four console errors from one application chunk. Firefox reports `Content-Security-Policy: The page's settings blocked a JavaScript eval (script-src)`. This is a Firefox-only product or dependency finding (something in the chunk evaluates a string, and the production CSP forbids it); it is not a settlement problem. Not fixed here, so the Firefox acceptance run is open. |
+| Engine   | Result                                                                |
+| -------- | --------------------------------------------------------------------- |
+| Chromium | Pass after the gating change (both result lines printed, exit 0).     |
+| WebKit   | Pass with the allowance disabled (both result lines printed, exit 0). |
+| Firefox  | Failed at that point; fixed, see the next section.                    |
 
-The check's console classifier matches "content security policy" but Firefox writes
-"Content-Security-Policy", so the failure shows as `unclassified console error`.
+### Firefox CSP eval finding and fix (2026-10-28)
+
+Reproduced against the production build (`npm run build`, which runs `scripts/build-with-csp.mjs`
+and is the same `RUN npm run build` step the Dockerfile uses), served with `npm run start:web`. A
+Playwright Firefox page listening to `console` and to `securitypolicyviolation` reported on every
+page load, including `/`, `/dashboard`, `/settings` and `/jobs`:
+
+```text
+Content-Security-Policy: The page's settings blocked a JavaScript eval (script-src) ...
+  (Missing 'unsafe-eval')   file: /_next/static/chunks/30bhl6h79whkg.js  line 1, column 25223
+securitypolicyviolation: violatedDirective=script-src, blockedURI=eval, sourceFile=same chunk, column 25223
+```
+
+Column 25223 of that chunk is zod 4.6.7's `allowsEval` probe, `try { Function(""); return true } catch {
+return false }`. zod runs it while building its first object schema, to decide whether it may
+compile a faster parser with `new Function`. The throw is caught, so nothing breaks, but Firefox
+logs each blocked eval as a console error. Chromium and WebKit did not fail on it in earlier runs, which is why only
+Firefox failed. The other `Function(...)` strings in the bundles (core-js's `Function("return this")`
+fallback and zod's `doc.compile()`) are never reached when the probe is skipped or returns false.
+
+Fix at the source: `apps/web/src/lib/zod-config.ts` calls `z.config({ jitless: true })`, which makes
+zod skip the probe and use its interpreted parser (same validation, no code generation). It is
+imported first by the two browser modules that build zod schemas, `lib/api-schemas.ts` and
+`components/job-search-view.tsx` (through `@careerscope/shared`). The CSP is unchanged: no
+`'unsafe-eval'` was added. After the change the same probe reports no console message and no
+violation on those four routes.
+
+The check's console classifier now also matches the hyphenated "Content-Security-Policy" that
+Firefox writes, so a future CSP violation is reported as `CSP violation` instead of an unclassified error.
+
+One test change was needed for a timing race that the fix exposed. With zod's probe removed, page
+timing shifted by milliseconds and WebKit (twice) and, under load, Chromium began to fail the
+authenticated journey with `resource HTTP 401 at /api/searches`. That is the Jobs page's 5-second
+poll landing just after the export-expiry step deletes the owner's session rows on purpose; it gets
+the same real 401 as the export request. Proof it is a race and not a product regression: with the
+zod change disabled, WebKit passed; with it enabled, WebKit failed twice with that single error. The
+error is now in `expectedAuthenticatedJourneyConsoleErrors` with the same rationale as the existing
+`/api/leads` and `/api/profile/accessibility` entries; the assertions after it (the shell reaches
+account selection) are unchanged.
+
+Final acceptance, production build, `next start` on 5280, Node 24.22.1, throwaway PostgreSQL and Redis
+containers, one engine at a time with nothing else running (`CAREERSCOPE_UI_BROWSER` set per engine):
+
+| Engine   | Result                                   |
+| -------- | ---------------------------------------- |
+| Firefox  | Pass: both result lines printed, exit 0. |
+| Chromium | Pass: both result lines printed, exit 0. |
+| WebKit   | Pass: both result lines printed, exit 0. |
 
 ### Environment limits
 
-- Chromium and WebKit pass; Firefox fails as above. All three were run only on the one Windows host.
+- All three engines pass. They were run only on the one Windows host.
 - A visual regression baseline set does not exist, so pixel comparison against references was not run.
 - The suite takes about seven minutes after a build and needs the Docker services in `.env`.
 

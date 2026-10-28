@@ -241,19 +241,22 @@ allowed skip warns and is recorded as
 so in-container paths are not rewritten. A failed backup is therefore
 visible both in `last-status` and the oneshot systemd service result consumed
 by scheduler health. Run it with a Linux shell and Docker. Hosted execution has
-not been verified in this checkout because GitHub Actions is disabled.
+not been verified for the current commit: Actions is enabled, and the verification status
+is recorded in [CI-CD](CI-CD.md) (pending until the run on this commit).
 
-### A note on the two permission checks, if you run this on Windows
+### Running the suite on Windows
 
-`check-backup.sh` asserts the backup directory is `0700`, each dump and key
-copy is `0600`, and the key directory is `0700` with the expected owner. Running the suite locally via Git Bash on Windows, these three
-checks fail (`755`/`644`/`644`) — verified independently to be an MSYS/NTFS
-permission-reporting limitation of Git Bash itself (a bare `mkdir` + `chmod
-0700` + `stat` round-trip shows the identical mismatch with no `backup.sh`
-code involved at all), not a defect in `backup.sh`. On the real Ubuntu 24.04
-production host, and on the GitHub-hosted Linux CI runner this suite actually
-runs on, POSIX permissions are genuine and these checks are meaningful. They
-were kept rather than weakened for a platform they were never meant to run on.
+`check-backup.sh` asserts the backup directory is `0700`, each dump and key copy is `0600`, and
+the key directory is `0700` with the expected owner. Git Bash on NTFS does not keep POSIX permissions
+(a bare `mkdir`, `chmod 0700` and `stat` round trip shows the same mismatch with no `backup.sh` code
+involved), so on Windows the permission checks fail and, worse, the group-readable passphrase run
+succeeds and promotes an extra dump. Every later absolute dump count is then one too high: on
+2026-10-28 a Git Bash run gave 96 passes and 11 failures, including "TERM promotes nothing" (expected
+1, got 2) and "both real dumps survive retention" (expected 2, got 3). Those are consequences, not
+retention or promotion defects: the same suite in an `ubuntu:24.04` container with the Docker socket
+passes 112 of 112 on three consecutive runs, one of them with the browser suite running at the same
+time. The script now probes `chmod` first and exits with a clear message instead of reporting those
+cascades. Run it on Linux or in such a container; the GitHub-hosted Linux runner does the same.
 
 ## Known limitation
 

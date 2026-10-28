@@ -1,5 +1,6 @@
 'use client';
 
+import '../lib/zod-config';
 import { Suspense, useEffect, useState, type FormEvent } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';

@@ -78,7 +78,7 @@ const browserConsoleErrorKind = (message: { text(): string; location(): { url: s
       ? `resource HTTP ${failedResourceStatus} at ${path}`
       : `failed resource at ${path}`;
   }
-  if (/content security policy|contentsecuritypolicy/i.test(text)) return 'CSP violation';
+  if (/content[- ]security[- ]policy|contentsecuritypolicy/i.test(text)) return 'CSP violation';
   if (/hydration/i.test(text)) return 'hydration error';
   if (/TypeError|ReferenceError|SyntaxError/.test(text)) {
     return text.match(/TypeError|ReferenceError|SyntaxError/)?.[0] ?? 'JavaScript error';
@@ -145,6 +145,12 @@ const expectedAuthenticatedJourneyConsoleErrors = new Set([
   'resource HTTP 401 at /api/login',
   'resource HTTP 503 at /api/searches/:id/export',
   'resource HTTP 401 at /api/searches/:id/export',
+  // The export-expiry step deletes the owner's session rows on purpose. The Jobs page also polls
+  // /api/searches every 5 seconds, and a poll that lands in that window receives the same real 401
+  // as the export request (observed in WebKit and Chromium once zod stopped probing for eval
+  // shifted page timing by a few milliseconds). The shell must still route it through the shared
+  // expiry handler, which the next assertions check by waiting for account selection.
+  'resource HTTP 401 at /api/searches',
   'resource HTTP 401 at /api/session/refresh',
   'resource HTTP 503 at /api/searches/:id/cancel',
   'resource HTTP 503 at /api/leads',

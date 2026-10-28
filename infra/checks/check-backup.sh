@@ -65,6 +65,17 @@ trap 'docker rm -f "$pg_name" "$files_name" >/dev/null 2>&1 || true; rm -rf "$wo
 # the in-container paths passed to docker exec. This is a no-op on Linux.
 export MSYS_NO_PATHCONV=1
 
+# POSIX permissions must be real here. On a filesystem where chmod is a no-op (Git Bash on NTFS) the
+# group-readable-passphrase run would succeed and promote an extra dump, which then skews every later
+# dump count (the TERM and retention checks), so refuse to run instead of reporting those as defects.
+probe="$work/mode-probe"
+touch "$probe" && chmod 600 "$probe"
+if [ "$(stat -c '%a' "$probe" 2>/dev/null || stat -f '%Lp' "$probe")" != 600 ]; then
+  echo 'this filesystem does not keep POSIX permissions (Git Bash on NTFS?); run the suite on Linux, for example in an ubuntu:24.04 container' >&2
+  exit 2
+fi
+rm -f "$probe"
+
 failures=0
 check() {
   if [ "$2" = "$3" ]; then

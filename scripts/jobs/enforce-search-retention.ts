@@ -15,6 +15,10 @@
  * the existing expiry index supports locating expired requests without adding
  * a new service; actual planner use depends on the data distribution.
  *
+ * Expired sessions are removed here too, so an installation nobody signs in to still
+ * drops them. Their refresh-token digests go with them (ON DELETE CASCADE). Login and
+ * refresh also delete expired rows opportunistically (packages/core/src/auth.ts).
+ *
  * Invoked by careerscope-retention.timer (host-native systemd, matching
  * CS-24/25/26) via `docker exec` into the api container.
  */
@@ -25,7 +29,12 @@ const RETENTION_DAYS = Number(process.env.SEARCH_RETENTION_DAYS ?? 30);
 export async function enforceRetention(
   database: Database,
   retentionDays: number,
-): Promise<{ deletedJobs: number; deletedRuns: number; deletedEmailChangeRequests: number }> {
+): Promise<{
+  deletedJobs: number;
+  deletedRuns: number;
+  deletedEmailChangeRequests: number;
+  deletedSessions: number;
+}> {
   if (!Number.isFinite(retentionDays) || retentionDays < 1) {
     throw new Error(`Invalid retention window: ${retentionDays}`);
   }
@@ -72,11 +81,13 @@ export async function enforceRetention(
     const emailChanges = await client.query(
       'DELETE FROM email_change_requests WHERE expires_at <= now()',
     );
+    const sessions = await client.query('DELETE FROM sessions WHERE expires_at <= now()');
     await client.query('COMMIT');
     return {
       deletedJobs: jobs.rowCount ?? 0,
       deletedRuns: runs.rowCount ?? 0,
       deletedEmailChangeRequests: emailChanges.rowCount ?? 0,
+      deletedSessions: sessions.rowCount ?? 0,
     };
   } catch (error) {
     await client.query('ROLLBACK');
@@ -90,12 +101,16 @@ async function main() {
   const env = configuration();
   const database = new Database(env.DATABASE_URL);
   try {
-    const { deletedJobs, deletedRuns, deletedEmailChangeRequests } = await enforceRetention(
-      database,
-      RETENTION_DAYS,
-    );
+    const { deletedJobs, deletedRuns, deletedEmailChangeRequests, deletedSessions } =
+      await enforceRetention(database, RETENTION_DAYS);
     logger.info(
-      { deletedJobs, deletedRuns, deletedEmailChangeRequests, retentionDays: RETENTION_DAYS },
+      {
+        deletedJobs,
+        deletedRuns,
+        deletedEmailChangeRequests,
+        deletedSessions,
+        retentionDays: RETENTION_DAYS,
+      },
       'Retention enforced',
     );
   } finally {

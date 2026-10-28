@@ -71,3 +71,6 @@ Caddyfile.* text eol=lf
 .editorconfig text eol=lf
 .nvmrc text eol=lf
 *.timer text eol=lf
+
+# Environment fragment read by the Bull queue integration run; governed explicitly so the line-ending check sees it.
+*.env text eol=lf

@@ -199,3 +199,58 @@ test('enforceRetention deletes expired email-change addresses but retains live r
     await admin.close();
   }
 });
+
+test('enforceRetention deletes expired sessions and their refresh tokens but keeps live ones', async () => {
+  const configured = process.env.DATABASE_URL;
+  assert.ok(configured, 'Integration tests require the isolated CareerScope DATABASE_URL');
+  const base = new URL(configured);
+  assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
+  const admin = new Database(configured);
+  const name = `test_${randomUUID().replaceAll('-', '')}`;
+  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  base.pathname = `/${name}`;
+  const database = new Database(base.href);
+  try {
+    await migrate(database.db, {
+      migrationsFolder: fileURLToPath(new URL('../../migrations', import.meta.url)),
+    });
+    const ownerId = randomUUID();
+    await database.db.insert(users).values({
+      id: ownerId,
+      email: `${ownerId}@example.test`,
+      passwordHash: 'synthetic-not-a-login',
+    });
+    const hex64 = () => randomUUID().replaceAll('-', '').repeat(2);
+    const insertSession = async (expiresIn: string) => {
+      const id = randomUUID();
+      await database.pool.query(
+        `INSERT INTO sessions (token_hash, owner_id, expires_at, id, access_expires_at, created_at)
+         VALUES ($1, $2, now() + $3::interval, $4, now() + $3::interval, now())`,
+        [hex64(), ownerId, expiresIn, id],
+      );
+      await database.pool.query(
+        `INSERT INTO session_refresh_tokens (token_hash, session_id, expires_at)
+         VALUES ($1, $2, now() + $3::interval)`,
+        [hex64(), id, expiresIn],
+      );
+      return id;
+    };
+    await insertSession('-1 second');
+    const liveId = await insertSession('1 hour');
+
+    const result = await enforceRetention(database, 30);
+    assert.equal(result.deletedSessions, 1);
+    const sessions = await database.pool.query<{ id: string }>('SELECT id FROM sessions');
+    assert.deepEqual(sessions.rows, [{ id: liveId }]);
+    const refresh = await database.pool.query<{ session_id: string }>(
+      'SELECT session_id FROM session_refresh_tokens',
+    );
+    assert.deepEqual(refresh.rows, [{ session_id: liveId }]);
+    const owner = await database.pool.query('SELECT 1 FROM users WHERE id = $1', [ownerId]);
+    assert.equal(owner.rowCount, 1);
+  } finally {
+    await database.close();
+    await admin.pool.query(`DROP DATABASE "${name}"`);
+    await admin.close();
+  }
+});

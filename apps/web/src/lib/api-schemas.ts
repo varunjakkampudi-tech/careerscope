@@ -10,6 +10,7 @@
  * data because a limit was tightened later.
  */
 
+import './zod-config';
 import { z } from 'zod';
 import {
   EMPLOYMENT_TYPES,
