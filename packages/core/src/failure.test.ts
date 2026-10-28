@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { describeError, scrubMessage } from './failure.ts';
+import { describeError, emailAddressPattern, scrubMessage } from './failure.ts';
 
 test('scrubMessage removes emails, tokens, credentials and long opaque strings', () => {
   const secret = 'a'.repeat(40);
@@ -246,4 +246,47 @@ test('scrubMessage redacts known token prefixes, URL query strings and shorter m
   // 20+ letters with no digit are ordinary words, not tokens.
   assert.equal(scrubMessage('internationalization'), 'internationalization');
   assert.equal(scrubMessage('short a1b2c3 stays'), 'short a1b2c3 stays');
+});
+
+test('scrubMessage fails closed: an ambiguous or missing escaped close redacts to the end of the line', () => {
+  const cases: [string, string[]][] = [
+    [String.raw`{\"password\":\"a\"b\" c\"}`, ['b\\"', ' c', 'a\\"']],
+    [String.raw`{\"password\":\"p\\\" hunter2 rest\"}`, ['hunter2', 'rest']],
+    [String.raw`{\"password\":\"say \\\", then more\"}`, ['then', 'more']],
+    [String.raw`{\"password\":\"a\\\"}tail\"}`, ['tail']],
+    [String.raw`{\"password\":\"abc def  (truncated)`, ['def', 'truncated']],
+    [String.raw`password="abc\"def ghi`, ['def', 'ghi']],
+    ["password: 'it's ok here'", ['ok here', 'here']],
+  ];
+  for (const [input, forbidden] of cases) {
+    const output = scrubMessage(input);
+    for (const secret of forbidden) {
+      assert.equal(output.includes(secret), false, `${input} -> ${output}`);
+    }
+  }
+  // The redaction stops at the end of the line.
+  assert.match(scrubMessage(String.raw`{\"password\":\"abc` + '\nnext line'), /next line$/);
+});
+
+test('scrubMessage email pattern stays linear on 2000-character unspaced runs', () => {
+  const run = 'a'.repeat(1000);
+  const inputs = [
+    `x@${'a'.repeat(1998)}`,
+    `${'a'.repeat(1998)}@x`,
+    `${'a.'.repeat(999)}@`,
+    `a@${'b.'.repeat(999)}`,
+    `${run}@${run}`,
+    `${'a@'.repeat(1000)}`,
+  ];
+  for (const input of inputs) {
+    let elapsed = Infinity;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const started = performance.now();
+      for (let run = 0; run < 20; run++) input.replace(emailAddressPattern, '[email]');
+      elapsed = Math.min(elapsed, (performance.now() - started) / 20);
+    }
+    assert.ok(elapsed < 1, `averaged ${elapsed.toFixed(3)} ms for ${input.slice(0, 12)}`);
+  }
+  assert.equal(scrubMessage('mail jane.doe@example.com now'), 'mail [email] now');
+  assert.equal(scrubMessage(`${'x'.repeat(70)}@example.com`).includes('example'), false);
 });

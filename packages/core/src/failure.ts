@@ -24,10 +24,19 @@ const secretValue = String.raw`(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|[^\s,;&]+)
 /**
  * The same, also accepting JSON that was serialised into a string (backslash-escaped quotes). An escaped
  * quote opened with N backslashes closes only on a quote preceded by exactly N backslashes (groups 2 and 3
- * hold the opener), so inner escaped quotes cannot end the match early. Every opening quote without a
- * close, and a backslash-escaped quote inside a bare value, redacts through the end of the input.
+ * hold the opener) and followed by a delimiter or the end. Fail closed: when that close is missing or
+ * ambiguous, and for a backslash-escaped quote inside a bare value, redaction runs from the value start to
+ * the end of the line (a newline or the end of the input).
  */
-const namedSecretValue = String.raw`(?:(\\+)"(?:(?!(?<!\\)\2")[\s\S])*(?:(?<!\\)\2"|$)|(\\+)'(?:(?!(?<!\\)\3')[\s\S])*(?:(?<!\\)\3'|$)|"(?:[^"\\]|\\.)*"(?=[\s,;}\])&]|$)|'(?:[^'\\]|\\.)*'(?=[\s,;}\])&]|$)|"[\s\S]*$|'[\s\S]*$|\\+["'][\s\S]*$|(?:[^\s,;&\\]|\\(?!["']))+(?:\\+["'][\s\S]*$)?)`;
+const namedSecretValue = String.raw`(?:(\\+)"(?:(?!(?<!\\)\2")[^\r\n])*(?:(?<!\\)\2"(?=[\s,;}\])&]|$)|[^\r\n]*)|(\\+)'(?:(?!(?<!\\)\3')[^\r\n])*(?:(?<!\\)\3'(?=[\s,;}\])&]|$)|[^\r\n]*)|"(?:[^"\\]|\\.)*"(?=[\s,;}\])&]|$)|'(?:[^'\\]|\\.)*'(?=[\s,;}\])&]|$)|"[\s\S]*$|'[\s\S]*$|\\+["'][^\r\n]*|(?:[^\s,;&\\]|\\(?!["']))+(?:\\+["'][^\r\n]*)?)`;
+
+/**
+ * An email address. Every repetition is bounded (domain 253, final label 63, local part by the input cap),
+ * and the match may only start at the start of a token (the lookbehind), so start positions never overlap
+ * and the pattern stays linear on adversarial input. An overlong local part is still redacted whole.
+ */
+export const emailAddressPattern =
+  /(?<![^\s@<>"'])[^\s@<>"']{1,2000}@[^\s@<>"']{1,253}\.[^\s@<>"']{2,63}/g;
 
 const namedSecret = new RegExp(
   String.raw`\b([a-z0-9_-]*(?:token|secret|password|passwd|pwd|pass|passphrase|key|apikey|authorization|cookie|otp|code|sid|session|sessionid|sig|signature|auth|credential|csrf|xsrf|jwt|ticket|private)[a-z0-9_-]*)(?:\\*["'])?\s*[=:]\s*${namedSecretValue}`,
@@ -47,7 +56,7 @@ export function scrubMessage(message: string) {
       .replace(/[a-z][a-z0-9+.-]*:\/\/[^\s@]*@[^\s]+/gi, '[url]')
       // The whole query string of an http(s) URL: signatures and tokens travel there.
       .replace(/(https?:\/\/[^\s?#]+)\?[^\s]*/gi, '$1?[redacted]')
-      .replace(/[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+/g, '[email]')
+      .replace(emailAddressPattern, '[email]')
       // Authorization and Proxy-Authorization lines, any scheme word ("Token abc"), through end of line.
       .replace(/\b(proxy-)?authorization["']?\s*[:=][^\r\n]*/gi, '$1authorization: [redacted]')
       // A Cookie or Set-Cookie header (or its JSON form) is redacted through the end of its line.

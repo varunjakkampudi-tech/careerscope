@@ -261,8 +261,7 @@ succeeds and promotes an extra dump. Every later absolute dump count is then one
 2026-10-28 a Git Bash run gave 96 passes and 11 failures, including "TERM promotes nothing" (expected
 1, got 2) and "both real dumps survive retention" (expected 2, got 3). Those are consequences, not
 retention or promotion defects: the same suite in an `ubuntu:24.04` container with the Docker socket
-passes 112 of 112 on three consecutive runs, one of them with the browser suite running at the same
-time. The script now probes `chmod` first and exits with a clear message instead of reporting those
+passed 124 of 124 checks (124 PASS, 0 FAIL, exit 0) in a run on 2026-10-28. The script now probes `chmod` first and exits with a clear message instead of reporting those
 cascades. Run it on Linux or in such a container; the GitHub-hosted Linux runner does the same.
 
 ## Known limitation
