@@ -281,13 +281,13 @@ jobs:
             echo "Redis AOF runtime persistence verified: $container"
           done
 
-      - name: Apply all migrations to the fresh database
-        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration"]'), inputs.suite)
-        run: npm run db:migrate
-
       - name: Build application and worker packages
         if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration","browser","cross-browser","performance","soak","recovery"]'), inputs.suite)
         run: npm run build
+
+      - name: Apply all migrations to the fresh database
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration"]'), inputs.suite)
+        run: npm run db:migrate
 
       - name: Start production frontend for browser acceptance
         if: >-
