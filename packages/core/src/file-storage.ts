@@ -340,7 +340,8 @@ export class PrivateFileResumeStorage {
         !stat.isFile() ||
         stat.isSymbolicLink() ||
         (stat.nlink !== 1 && !options.linked) ||
-        now - stat.mtimeMs < olderThanMs
+        // A temporary timestamped slightly ahead of this process clock has zero age, not negative age.
+        Math.max(0, now - stat.mtimeMs) < olderThanMs
       )
         continue;
       try {

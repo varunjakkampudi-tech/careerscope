@@ -661,3 +661,27 @@ test('a malformed, relative or group-readable key file is refused', async () => 
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+test('a temporary stamped ahead of the process clock is still reclaimed at startup', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-future-temp-'));
+  await chmod(directory, 0o700);
+  const storage = new PrivateFileResumeStorage({
+    directory,
+    encryptionKey: randomBytes(32).toString('hex'),
+  });
+  try {
+    await storage.initialize();
+    const stranded = join(directory, `${randomUUID()}.pending`);
+    await writeFile(stranded, Buffer.alloc(512));
+    const future = new Date(Date.now() + 60_000);
+    await utimes(stranded, future, future);
+
+    assert.deepEqual(await storage.reclaimTemporariesAtStartup(), { removed: 1, bytes: 512 });
+    assert.deepEqual(
+      (await readdir(directory)).filter((name) => name.endsWith('.pending')),
+      [],
+    );
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
