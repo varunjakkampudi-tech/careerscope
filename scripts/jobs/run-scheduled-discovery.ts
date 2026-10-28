@@ -16,7 +16,15 @@
  * source, no new command type and no new queue - only a new *trigger*.
  */
 import { setTimeout as delay } from 'node:timers/promises';
-import { Conflict, Database, ProfileRepository, configuration, logger } from '@careerscope/core';
+import {
+  Conflict,
+  Database,
+  ProfileRepository,
+  configuration,
+  describeError,
+  logFailure,
+  logger,
+} from '@careerscope/core';
 import type { CreateSearch } from '@careerscope/core';
 import { permittedCandidateDiscoverySources } from '@careerscope/shared';
 
@@ -117,12 +125,12 @@ export async function runForOwner(
       logger.info({ ownerId }, 'Scheduled discovery skipped: no saved target roles yet');
       return 'skipped-no-titles';
     }
-    logger.error({ ownerId, error: String(error) }, 'Scheduled discovery failed to enqueue');
+    logger.error({ ownerId, ...describeError(error) }, 'Scheduled discovery failed to enqueue');
     // Only the classification crosses the trust boundary to an external
     // webhook, capped and stripped of control characters - matching
     // monitor.sh/backup.sh's own discipline about what a network response
     // (here, an error's own message) is allowed to carry externally. The
-    // full, unbounded error stays in the structured log only (Security
+    // error class name and code stay in the structured log; its message is never logged (Security
     // review, P2: the previous version forwarded the full String(error)
     // with no cap or filter).
     const safeReason = (error instanceof Error ? error.constructor.name : 'error')
@@ -204,7 +212,7 @@ async function main() {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch((error) => {
-    logger.error({ error: String(error) }, 'Scheduled discovery run crashed');
+    logFailure(error, {}, 'Scheduled discovery run crashed');
     process.exitCode = 1;
   });
 }

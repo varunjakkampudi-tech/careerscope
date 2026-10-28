@@ -379,6 +379,64 @@ test('an unknown route answers 401 to an anonymous caller (auth runs first) and 
   }
 });
 
+test('the API and shared loggers write no error message text to a log line', async () => {
+  const { spawnSync } = await import('node:child_process');
+  const { fileURLToPath } = await import('node:url');
+  const appUrl = new URL('./app.ts', import.meta.url).href;
+  const secretMessage =
+    'failed for jane.doe@example.com with Bearer abcdef0123456789secret and password=hunter2-correct-horse';
+  // Runs the real API logger and the shared logger in a child process so the actual stdout line is read.
+  const script = [
+    `import { createApp } from ${JSON.stringify(appUrl)};`,
+    `import { logFailure, logger } from '@careerscope/core';`,
+    `const secret = ${JSON.stringify(secretMessage)};`,
+    `const database = { pool: { query: async (sql) => {`,
+    `  if (sql.includes('token_hash = $1 AND access_expires_at'))`,
+    `    return { rows: [{ id: '22222222-2222-4222-8222-222222222222', owner_id: '11111111-1111-4111-8111-111111111111' }] };`,
+    `  throw Object.assign(new TypeError(secret), { code: '57P01' });`,
+    `} } };`,
+    `const app = await createApp(database, 'http://localhost:5280', async () => true);`,
+    `app.get('/api/__probe/log', async (request) => {`,
+    `  request.log.error({ err: new RangeError(secret), requestId: request.id }, 'Probe');`,
+    `  return {};`,
+    `});`,
+    `const cookie = 'careerscope_v2_session=' + 'a'.repeat(64);`,
+    `await app.inject({ url: '/api/account/marketing-consent', headers: { cookie } });`,
+    `await app.inject({ url: '/api/__probe/log', headers: { cookie } });`,
+    `await app.close();`,
+    `logFailure(Object.assign(new Error(secret), { code: 'ECONNRESET' }), { commandId: 'cmd-1' }, 'Shared');`,
+    `logger.error({ err: new Error(secret) }, 'Shared err');`,
+  ].join('\n');
+  const result = spawnSync(
+    process.execPath,
+    ['--import', 'tsx', '--input-type=module', '-e', script],
+    { cwd: fileURLToPath(new URL('../../..', import.meta.url)), encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr);
+  const output = result.stdout;
+  for (const secret of [
+    'jane.doe',
+    'example.com',
+    'abcdef0123456789secret',
+    'hunter2',
+    'failed for',
+  ])
+    assert.equal(output.includes(secret), false, `leaked into the log: ${secret}`);
+  const lines = output
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => JSON.parse(line) as Record<string, unknown>);
+  const failed = lines.find((line) => line.msg === 'Request failed' && line.errorName);
+  assert.equal(failed?.errorName, 'TypeError');
+  assert.equal(failed?.errorCode, '57P01');
+  assert.deepEqual(lines.find((line) => line.msg === 'Probe')?.err, { name: 'RangeError' });
+  const shared = lines.find((line) => line.msg === 'Shared');
+  assert.equal(shared?.errorName, 'Error');
+  assert.equal(shared?.errorCode, 'ECONNRESET');
+  assert.equal(shared?.commandId, 'cmd-1');
+  assert.deepEqual(lines.find((line) => line.msg === 'Shared err')?.err, { name: 'Error' });
+});
+
 test('the health endpoint reports no version and is rate-limited per client address', async () => {
   const healthy = {
     pool: { query: async () => ({ rows: [{ '?column?': 1 }] }) },

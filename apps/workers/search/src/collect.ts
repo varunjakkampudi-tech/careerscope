@@ -7,6 +7,7 @@
 import {
   collectedJobSchema,
   collectionStatus,
+  logFailure,
   logger,
   sourceOutcomeSchema,
   sourceOutcomesSchema,
@@ -372,7 +373,7 @@ export function searchHandler(
           );
       }
     } catch (error) {
-      logger.error({ error }, 'Empty-streak check failed; the search itself still completed');
+      logFailure(error, {}, 'Empty-streak check failed; the search itself still completed');
     }
     return settled;
   };

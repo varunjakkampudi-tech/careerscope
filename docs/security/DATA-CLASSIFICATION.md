@@ -60,19 +60,13 @@ are promoted, so a copy of `BACKUP_DIR` that leaves the host is ciphertext.
 | Application and worker logs            | Operational | Container stdout (JSON), rotated 10 MB x 5                                      | See log rules below                                                                                                                                                                                 | Bounded by rotation, about 50 MB per service                     |
 | Backups                                | Personal    | `BACKUP_DIR` (encrypted dump, resume archive) and the separate `BACKUP_KEY_DIR` | Root-only 0700/0600; the dump is encrypted before promotion; the resume archive is ciphertext; the key copy and the dump passphrase stay out of `BACKUP_DIR`; see [BACKUP](../operations/BACKUP.md) | 14 days (`BACKUP_RETENTION_DAYS`)                                |
 
-Log rules: `scrubMessage` caps its input at 2000 characters before any pattern
-runs, then removes emails, credentials in any URL scheme (including passwords
-containing a slash), the whole query string of http(s) URLs, Authorization and
-Proxy-Authorization lines, Cookie and Set-Cookie lines (including the JSON
-form), bearer and basic tokens, quoted or bare key=value secrets (token,
-secret, password, pwd, pass, passphrase, apikey, csrf, xsrf, jwt, ticket,
-private and similar names), JWTs, one-time codes written after their name,
-known token prefixes (AWS `AKIA`, GitHub `ghp_`, Slack `xox`, Stripe `sk_`),
-mixed letter-and-digit strings of 20 or more characters and any opaque string of
-32 or more characters. The result is cut to 300 characters. Only the error name and the scrubbed
-message are logged, never the stack, cause, request body or headers. Fastify
-redacts the cookie, authorization and staging-key headers and per-request
-logging is disabled.
+Log rules: error message text is never logged, because free-text scrubbing cannot
+be made reliable. A logged failure carries only the error class name, a stable
+code when the error has one (at most 64 characters of `A-Za-z0-9_.-`, otherwise
+omitted) and the request, command or execution identifiers. The shared logger and
+the API logger serialise `err` and `error` the same way, so a logged error object
+never exposes its message, stack, cause or fields. Fastify redacts the cookie,
+authorization and staging-key headers and per-request logging is disabled.
 
 ## Separation rules
 
@@ -96,11 +90,9 @@ logging is disabled.
   tokens, the password is Argon2id, the OTP row holds only an address hash and a
   digest, and no token, password or code appears in the text of any row of any
   table. The account address appears only in `users`.
-- `packages/core/src/failure.test.ts`: the scrubber removes addresses, bearer
-  tokens, cookies, JWTs, credentials in URLs and one-time codes, quoted values,
-  Authorization lines, JSON cookie bodies, known token prefixes and URL query
-  strings; a 1 MB input is scrubbed in under 100 ms; and `describeError` never
-  exposes stack, cause or error fields.
+- `packages/core/src/failure.test.ts`: a logged failure carries the error name and code
+  and never the message, stack, cause or error fields, including through the pino
+  logger's `err` and `error` serialisers.
 - `infra/checks/check-backup.sh`: the promoted dump is not a plaintext archive
   and decrypts to a restorable copy, and the run fails when no encryption is
   available.

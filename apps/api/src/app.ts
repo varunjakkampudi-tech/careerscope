@@ -29,6 +29,7 @@ import {
   Auth,
   createEmailOtp,
   describeError,
+  errorSerializers,
   rollback,
   EmailChangeRequests,
   EmailOtpChallenges,
@@ -362,6 +363,9 @@ export async function createApp(
         'sessionId',
         'session_id',
       ],
+      // Error objects are logged as name and code only; the message text is never written.
+      // Fastify types `err` as an object with a message and stack; this one deliberately omits both.
+      serializers: errorSerializers as never,
     },
   });
   await app.register(cookie);

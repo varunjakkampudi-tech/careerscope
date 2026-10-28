@@ -6,11 +6,17 @@
 import { createClient } from 'redis';
 import pino from 'pino';
 import { z } from 'zod';
-import { logFailure } from './failure.js';
+import { logFailure, serializeError } from './failure.js';
 import { localEndpoint } from './queue.js';
 
 /** Shared pino logger. `base: undefined` omits pid and hostname from every line. */
-export const logger = pino({ level: 'info', base: undefined });
+export const logger = pino({
+  level: 'info',
+  base: undefined,
+  // Error objects are logged as name and code only; the message text is never written.
+  // Wrapped so the cyclic import of failure.ts is only dereferenced when a line is written.
+  serializers: { err: (error) => serializeError(error), error: (error) => serializeError(error) },
+});
 
 /** Returns `value` unchanged if it uses an allowed protocol and a loopback host; otherwise throws. */
 function localUrl(value: string, protocols: string[]) {

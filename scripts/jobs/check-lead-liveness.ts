@@ -15,7 +15,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { lookup } from 'node:dns/promises';
 import { isIP } from 'node:net';
 import { Agent, fetch as undiciFetch } from 'undici';
-import { Database, LeadRepository, configuration, logger } from '@careerscope/core';
+import { Database, LeadRepository, configuration, logFailure, logger } from '@careerscope/core';
 
 const BATCH_LIMIT = Number(process.env.LIVENESS_BATCH_LIMIT ?? 200);
 const REQUEST_TIMEOUT_MS = Number(process.env.LIVENESS_TIMEOUT_MS ?? 10_000);
@@ -206,7 +206,7 @@ async function main() {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch((error) => {
-    logger.error({ error: String(error) }, 'Liveness check run crashed');
+    logFailure(error, {}, 'Liveness check run crashed');
     process.exitCode = 1;
   });
 }
