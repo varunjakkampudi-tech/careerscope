@@ -60,3 +60,24 @@ export function logFailure(
 ) {
   logger.error({ ...describeError(error), ...context }, note);
 }
+
+let processHandlersInstalled = false;
+
+/**
+ * Routes uncaught exceptions and unhandled rejections through `logFailure` so Node never prints the
+ * raw error text (which can carry a connection URL with its password) to stderr. Registers once.
+ */
+export function installProcessFailureHandlers() {
+  if (processHandlersInstalled) return;
+  processHandlersInstalled = true;
+  const crash = (error: unknown) => {
+    try {
+      logFailure(error, {}, 'Process crashed');
+    } finally {
+      process.exitCode = 1;
+      process.exit(1);
+    }
+  };
+  process.on('uncaughtException', crash);
+  process.on('unhandledRejection', crash);
+}

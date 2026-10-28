@@ -58,6 +58,7 @@
  */
 
 import { Database } from '../../packages/core/src/database.js';
+import { logFailure } from '../../packages/core/src/failure.js';
 
 interface HistoryRow {
   ownerId: string;
@@ -209,5 +210,8 @@ async function main() {
 }
 
 if (process.argv[1] && import.meta.url === new URL(process.argv[1], 'file:').href) {
-  await main();
+  main().catch((error) => {
+    logFailure(error, {}, 'Backfill failed');
+    process.exitCode = 1;
+  });
 }
