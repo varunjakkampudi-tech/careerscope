@@ -20,6 +20,10 @@ import {
 
 installProcessFailureHandlers();
 
+let database: Database | undefined;
+let queue: LocalQueue | undefined;
+let cleaned = false;
+
 try {
   const storage = await configuredFileResumeStorage();
   const shutdown = shutdownSignal();
@@ -32,11 +36,13 @@ try {
     shutdown.close();
   } else {
     const env = configuration();
-    const database = new Database(env.DATABASE_URL);
+    database = new Database(env.DATABASE_URL);
     // Resume parsing queue backed by Redis BullMQ.
-    const queue = new LocalQueue(env.QUEUE_REDIS_URL);
+    const filesQueue = new LocalQueue(env.QUEUE_REDIS_URL);
+    queue = filesQueue;
     logger.info({ transport: 'bullmq', queue: 'files' }, 'files worker transport');
     const uploads = new ResumeUploadRepository(database);
+    const db = database;
     // Storage capacity is reported every five minutes, and a warning is logged when headroom or the marker quota is exhausted.
     const capacityIntervalMs = 300000;
     let lastCapacityReport = 0;
@@ -57,20 +63,20 @@ try {
       }
     };
     try {
-      await queue.initialize(process.env.FILES_QUEUE_NAME ?? 'careerscope-files');
+      await filesQueue.initialize(process.env.FILES_QUEUE_NAME ?? 'careerscope-files');
       await reportCapacity();
       logger.info('isolated files worker ready');
       while (!shutdown.signal.aborted) {
         if (Date.now() - lastCapacityReport >= capacityIntervalMs) await reportCapacity();
         try {
-          const message = await queue.receive(shutdown.signal);
+          const message = await filesQueue.receive(shutdown.signal);
           if (message)
             await consumeMessage(
-              database,
-              queue,
+              db,
+              filesQueue,
               message,
               'resume.parse',
-              resumeParseHandler(database, storage),
+              resumeParseHandler(db, storage),
               shutdown.signal,
               (command, fence) =>
                 uploads.settleParse(command, fence, {
@@ -85,13 +91,19 @@ try {
         }
       }
     } finally {
-      await queue.close();
+      cleaned = true;
+      await filesQueue.close();
       storage.close();
-      await database.close();
+      await db.close();
       shutdown.close();
     }
   }
 } catch (error) {
   logFailure(error, {}, 'Startup failed');
-  process.exitCode = 1;
+  // An open Redis client or pool would keep the event loop alive, so release them and exit explicitly.
+  if (!cleaned) {
+    await queue?.close().catch(() => {});
+    await database?.close().catch(() => {});
+  }
+  process.exit(1);
 }

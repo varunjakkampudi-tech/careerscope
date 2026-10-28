@@ -19,17 +19,21 @@ import { searchHandler } from './collect.js';
 
 installProcessFailureHandlers();
 
+let database: Database | undefined;
+let cleaned = false;
+
 try {
   const env = configuration();
-  const database = new Database(env.DATABASE_URL);
+  const db = new Database(env.DATABASE_URL);
+  database = db;
   const shutdown = shutdownSignal();
   try {
     if (env.SEARCH_QUEUE_TRANSPORT === 'bullmq') {
-      const queue = new BullSearchQueue(database, env.SEARCH_QUEUE_REDIS_URL!);
+      const queue = new BullSearchQueue(db, env.SEARCH_QUEUE_REDIS_URL!);
       let worker: ReturnType<BullSearchQueue['worker']> | undefined;
       try {
         await queue.initialize();
-        worker = queue.worker(searchHandler(database), shutdown.signal);
+        worker = queue.worker(searchHandler(db), shutdown.signal);
         await worker.waitUntilReady();
         logger.info('BullMQ search worker ready');
         while (!shutdown.signal.aborted) {
@@ -50,11 +54,11 @@ try {
             const message = await queue.receive(shutdown.signal);
             if (message)
               await consumeMessage(
-                database,
+                db,
                 queue,
                 message,
                 'search.collect',
-                searchHandler(database),
+                searchHandler(db),
                 shutdown.signal,
               );
           } catch (error) {
@@ -72,10 +76,13 @@ try {
       }
     }
   } finally {
-    await database.close();
+    cleaned = true;
+    await db.close();
     shutdown.close();
   }
 } catch (error) {
   logFailure(error, {}, 'Startup failed');
-  process.exitCode = 1;
+  // An open pool would keep the event loop alive, so release it and exit explicitly.
+  if (!cleaned) await database?.close().catch(() => {});
+  process.exit(1);
 }

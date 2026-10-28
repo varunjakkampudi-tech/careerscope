@@ -20,6 +20,11 @@ import { createApp } from './app.js';
 
 installProcessFailureHandlers();
 
+let database: Database | undefined;
+let limiter: Awaited<ReturnType<typeof rateLimiter>> | undefined;
+let resumeStorage: Awaited<ReturnType<typeof configuredFileResumeStorage>>;
+let cleaned = false;
+
 try {
   const env = configuration();
   const emailOtp =
@@ -29,10 +34,11 @@ try {
           provider: new ResendEmailOtpProvider(env.RESEND_API_KEY!, env.RESEND_FROM_EMAIL),
         }
       : undefined;
-  const database = new Database(env.DATABASE_URL);
-  const limiter = await rateLimiter(env.REDIS_URL);
-  const resumeStorage = await configuredFileResumeStorage();
-  const app = await createApp(database, env.APP_ORIGIN, limiter.consume, {
+  database = new Database(env.DATABASE_URL);
+  const openLimiter = await rateLimiter(env.REDIS_URL);
+  limiter = openLimiter;
+  resumeStorage = await configuredFileResumeStorage();
+  const app = await createApp(database, env.APP_ORIGIN, openLimiter.consume, {
     registrationEnabled: env.REGISTRATION_ENABLED === 'true',
     registrationPolicy:
       env.LEGAL_TERMS_VERSION &&
@@ -51,7 +57,7 @@ try {
     testAccess: testAccessConfiguration(process.env, env.APP_ORIGIN),
     emailOtp,
     readiness: async () => {
-      await limiter.client.ping();
+      await openLimiter.client.ping();
     },
     resumeStorage: resumeStorage
       ? {
@@ -86,13 +92,24 @@ try {
         shutdown.signal.addEventListener('abort', () => resolve(), { once: true }),
       );
   } finally {
+    cleaned = true;
     await app.close();
-    await limiter.close();
+    await openLimiter.close();
     await database.close();
     resumeStorage?.close();
     shutdown.close();
   }
 } catch (error) {
   logFailure(error, {}, 'Startup failed');
-  process.exitCode = 1;
+  // An open Redis client or pool would keep the event loop alive, so release them and exit explicitly.
+  if (!cleaned) {
+    await limiter?.close().catch(() => {});
+    await database?.close().catch(() => {});
+    try {
+      resumeStorage?.close();
+    } catch {
+      // Exiting regardless.
+    }
+  }
+  process.exit(1);
 }

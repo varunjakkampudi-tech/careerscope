@@ -22,27 +22,35 @@ import {
 
 installProcessFailureHandlers();
 
+let database: Database | undefined;
+let searchQueue: BullSearchQueue | LocalQueue | undefined;
+let filesQueueOpen: LocalQueue | undefined;
+let cleaned = false;
+
 try {
   const env = configuration();
-  const database = new Database(env.DATABASE_URL);
+  const db = new Database(env.DATABASE_URL);
+  database = db;
   const queue =
     env.SEARCH_QUEUE_TRANSPORT === 'bullmq'
-      ? new BullSearchQueue(database, env.SEARCH_QUEUE_REDIS_URL!)
+      ? new BullSearchQueue(db, env.SEARCH_QUEUE_REDIS_URL!)
       : new LocalQueue(env.QUEUE_REDIS_URL);
+  searchQueue = queue;
   const shutdown = shutdownSignal();
   // The files queue has no alternative transport regardless of the search setting.
   const filesQueue =
     process.env.RESUME_STORAGE_DIRECTORY && process.env.RESUME_STORAGE_KEY_FILE
       ? new LocalQueue(env.QUEUE_REDIS_URL)
       : undefined;
-  const uploads = new ResumeUploadRepository(database);
+  filesQueueOpen = filesQueue;
+  const uploads = new ResumeUploadRepository(db);
   // Backlog is reported once a minute; it warns when a lease expired, work is older than five minutes, or a dead letter exists.
   const backlogIntervalMs = 60000;
   const backlogWarnSeconds = 300;
   let lastBacklogReport = 0;
   const reportBacklog = async () => {
     if (Date.now() - lastBacklogReport < backlogIntervalMs) return;
-    const backlog = await database.backlog();
+    const backlog = await db.backlog();
     lastBacklogReport = Date.now();
     // Durable counters cannot see published work stuck in or dropped by the queue.
     const depth = queue instanceof LocalQueue ? await queue.depth() : undefined;
@@ -67,9 +75,9 @@ try {
     logger.info('outbox publisher ready');
     while (!shutdown.signal.aborted) {
       try {
-        await publishPending(database, { 'search.collect': queue, 'resume.parse': filesQueue });
+        await publishPending(db, { 'search.collect': queue, 'resume.parse': filesQueue });
         try {
-          const created = await publishDueInterviewReminders(database);
+          const created = await publishDueInterviewReminders(db);
           if (created > 0)
             logger.info({ created }, 'due interview reminders made available in-app');
         } catch (error) {
@@ -86,7 +94,7 @@ try {
           try {
             const failedResume = await filesQueue.receiveDeadLetter();
             if (failedResume)
-              await reconcileDeadLetter(database, failedResume, 'resume.parse', (command, fence) =>
+              await reconcileDeadLetter(db, failedResume, 'resume.parse', (command, fence) =>
                 uploads.settleParse(command, fence, {
                   status: 'rejected',
                   errorCode: 'processing_failed',
@@ -99,7 +107,7 @@ try {
         if (queue instanceof LocalQueue) {
           try {
             const deadLetter = await queue.receiveDeadLetter();
-            if (deadLetter) await reconcileDeadLetter(database, deadLetter);
+            if (deadLetter) await reconcileDeadLetter(db, deadLetter);
           } catch (error) {
             logFailure(error, {}, 'Search dead letter could not be reconciled');
           }
@@ -116,12 +124,19 @@ try {
       await delay(1000, undefined, { signal: shutdown.signal }).catch(() => {});
     }
   } finally {
+    cleaned = true;
     await queue.close();
     await filesQueue?.close();
-    await database.close();
+    await db.close();
     shutdown.close();
   }
 } catch (error) {
   logFailure(error, {}, 'Startup failed');
-  process.exitCode = 1;
+  // Open Redis clients or a pool would keep the event loop alive, so release them and exit explicitly.
+  if (!cleaned) {
+    await searchQueue?.close().catch(() => {});
+    await filesQueueOpen?.close().catch(() => {});
+    await database?.close().catch(() => {});
+  }
+  process.exit(1);
 }

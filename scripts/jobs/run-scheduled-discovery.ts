@@ -22,6 +22,7 @@ import {
   ProfileRepository,
   configuration,
   describeError,
+  installProcessFailureHandlers,
   logFailure,
   logger,
 } from '@careerscope/core';
@@ -211,6 +212,7 @@ async function main() {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  installProcessFailureHandlers();
   main().catch((error) => {
     logFailure(error, {}, 'Scheduled discovery run crashed');
     process.exitCode = 1;

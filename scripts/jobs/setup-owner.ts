@@ -1,6 +1,8 @@
 import { createInterface } from 'node:readline/promises';
 import { Writable } from 'node:stream';
-import { Auth, Database, configuration } from '@careerscope/core';
+import { Auth, Database, configuration, installProcessFailureHandlers } from '@careerscope/core';
+
+installProcessFailureHandlers();
 
 async function main() {
   if (!process.stdin.isTTY) throw new Error('Interactive terminal required');

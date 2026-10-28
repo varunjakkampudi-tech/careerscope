@@ -26,7 +26,7 @@ describes a person), **Private content** (user-authored or user-uploaded),
 
 | Field                                                 | Class                     | Stored in                                                                               | Protection                                                                                       | Retention                                                                              |
 | ----------------------------------------------------- | ------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| Account email address                                 | Personal                  | `users.email` (plaintext; needed to log in and deliver codes)                           | Owner-scoped queries; unique index; never copied into challenge rows; scrubbed from error logs   | Life of the account (deletion policy pending)                                          |
+| Account email address                                 | Personal                  | `users.email` (plaintext; needed to log in and deliver codes)                           | Owner-scoped queries; unique index; never copied into challenge rows; never written to logs      | Life of the account (deletion policy pending)                                          |
 | Address while signing in                              | Personal                  | `email_otp_challenges.email_hash`                                                       | HMAC-SHA-256 of the lower-cased address, domain-separated; the raw address is not stored         | 5 min, then deleted                                                                    |
 | Proposed new address during an email change           | Personal                  | `email_change_requests.new_email` (plaintext, applied after both codes verify)          | Owner-scoped; the current address is stored as an HMAC only                                      | Deleted by the retention job after `expires_at`                                        |
 | Age-screen result, consent versions, marketing opt-in | Personal                  | `users.age_screen_passed`, `account_acceptances`, `email_otp_challenges` until consumed | Append-only consent log; owner reference only                                                    | Life of the account (policy pending)                                                   |
@@ -76,8 +76,10 @@ authorization and staging-key headers and per-request logging is disabled.
    log, and the ciphertext archive never contains it.
 3. Every personal-data table carries an owner id and every read is filtered by
    it in the repository, not in the route.
-4. Logs carry identifiers (command, execution, fence, attempt) and scrubbed
-   error text, not user data.
+4. Logs carry identifiers (command, execution, fence, attempt) and the error
+   class name and code, never error text or user data. Uncaught exceptions,
+   unhandled rejections and startup failures go through `logFailure` and exit
+   with status 1.
 
 ## What the tests assert
 

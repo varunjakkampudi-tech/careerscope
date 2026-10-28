@@ -22,7 +22,13 @@
  * Invoked by careerscope-retention.timer (host-native systemd, matching
  * CS-24/25/26) via `docker exec` into the api container.
  */
-import { Database, configuration, logFailure, logger } from '@careerscope/core';
+import {
+  Database,
+  configuration,
+  installProcessFailureHandlers,
+  logFailure,
+  logger,
+} from '@careerscope/core';
 
 const RETENTION_DAYS = Number(process.env.SEARCH_RETENTION_DAYS ?? 30);
 
@@ -119,6 +125,7 @@ async function main() {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  installProcessFailureHandlers();
   main().catch((error) => {
     logFailure(error, {}, 'Search retention run crashed');
     process.exitCode = 1;
