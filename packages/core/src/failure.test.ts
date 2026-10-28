@@ -295,3 +295,43 @@ test('scrubMessage redacts a quoted-local-part email address', () => {
   const out = scrubMessage('contact "john doe"@example.com now');
   assert.doesNotMatch(out, /example|john doe/);
 });
+
+test('scrubMessage redacts quoted local parts with @, escapes and any length', () => {
+  const cases: Array<[string, string]> = [
+    ['x "a@b secret"@example.com y', 'secret'],
+    ['x "a\\"secret part"@example.com y', 'secret'],
+    [`x "${'a'.repeat(64)}"@example.com y`, 'aaaa'],
+    [`x "${'a'.repeat(65)}"@example.com y`, 'aaaa'],
+    [`x "${'a'.repeat(200)}"@example.com y`, 'aaaa'],
+    ["x o'brien@example.com y", 'brien'],
+  ];
+  for (const [input, leaked] of cases) {
+    const out = scrubMessage(input);
+    assert.equal(out.includes(leaked), false, out);
+    assert.equal(out.includes('example'), false, out);
+    assert.ok(out.includes('[email]'), out);
+  }
+  assert.equal(scrubMessage(`x "${'a'.repeat(65)}"@example.com y`), 'x [email] y');
+  assert.equal(scrubMessage('x "a\\"secret part"@example.com y'), 'x [email] y');
+  assert.equal(scrubMessage("x o'brien@example.com y"), 'x [email] y');
+});
+
+test('scrubMessage email pattern stays fast on quote-heavy 2000-character inputs', () => {
+  const inputs = [
+    '"'.repeat(2000),
+    '\\"'.repeat(1000),
+    '"\\'.repeat(1000),
+    '"a@'.repeat(667).slice(0, 2000),
+    `"${'\\'.repeat(1998)}"`,
+    `${'"a\\"'.repeat(500)}@x`,
+  ];
+  for (const input of inputs) {
+    let elapsed = Infinity;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const started = performance.now();
+      scrubMessage(input);
+      elapsed = Math.min(elapsed, performance.now() - started);
+    }
+    assert.ok(elapsed < 5, `took ${elapsed.toFixed(3)} ms for ${input.slice(0, 12)}`);
+  }
+});

@@ -35,9 +35,13 @@ const namedSecretValue = String.raw`(?:(\\+)"(?:(?!(?<!\\)\2")[^\r\n])*(?:(?<!\\
  * and the match may only start at the start of a token (the lookbehind), so start positions never overlap
  * and the pattern stays linear on adversarial input. An overlong local part is still redacted whole.
  */
-// A quoted local part (RFC 5321) may contain spaces; it is bounded so matching stays linear.
+// A quoted local part (RFC 5321) may contain spaces, @ and backslash-escaped characters; its body is
+// escape-aware and bounded by the input cap, and every quoted alternative starts at an unescaped double
+// quote (an escaped quote can only sit inside a body, so start positions never rescan a shared body).
+// The unquoted local part may contain an apostrophe, so the apostrophe is not a token boundary (a start
+// after each one would rescan the same run); the domain may not contain one.
 export const emailAddressPattern =
-  /"[^"\r\n]{1,64}"@[^\s@<>"']{1,253}\.[^\s@<>"']{2,63}|(?<![^\s@<>"'])[^\s@<>"']{1,2000}@[^\s@<>"']{1,253}\.[^\s@<>"']{2,63}/g;
+  /(?<!\\)"(?:[^"\\]|\\[\s\S]){1,2000}"@[^\s@<>"']{1,253}\.[^\s@<>"']{2,63}|(?<![^\s@<>"])[^\s@<>"]{1,2000}@[^\s@<>"']{1,253}\.[^\s@<>"']{2,63}/g;
 
 const namedSecret = new RegExp(
   String.raw`\b([a-z0-9_-]*(?:token|secret|password|passwd|pwd|pass|passphrase|key|apikey|authorization|cookie|otp|code|sid|session|sessionid|sig|signature|auth|credential|csrf|xsrf|jwt|ticket|private)[a-z0-9_-]*)(?:\\*["'])?\s*[=:]\s*${namedSecretValue}`,
