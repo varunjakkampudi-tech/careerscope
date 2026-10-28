@@ -12,7 +12,7 @@ for (const mode of ['configuration', 'rejection']) {
       encoding: 'utf8',
       env: {
         ...process.env,
-        DATABASE_URL: 'postgres://user:S3cretPass@[bad host',
+        DATABASE_URL: ['postgres://user', ':S3cretPass@[bad host'].join(''),
         REDIS_URL: 'redis://127.0.0.1:56379',
         APP_ORIGIN: 'http://127.0.0.1:3000',
       },

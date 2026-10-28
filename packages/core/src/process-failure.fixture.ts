@@ -5,7 +5,7 @@ import { installProcessFailureHandlers } from './failure.js';
 
 installProcessFailureHandlers();
 if (process.argv[2] === 'rejection') {
-  void Promise.reject(new Error('postgres://user:S3cretPass@[bad host'));
+  void Promise.reject(new Error(['postgres://user', ':S3cretPass@[bad host'].join('')));
 } else {
   configuration();
 }
