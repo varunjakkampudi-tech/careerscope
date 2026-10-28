@@ -134,7 +134,8 @@ remove_staging() {
   rm -f "$staging" "$staging_encrypted" "$staging_resumes" "$staging_key"
 }
 cleanup() {
-  remove_staging
+  # A failing removal must not stop the scratch cleanup or change the exit status.
+  remove_staging || true
   cleanup_scratch
 }
 trap cleanup EXIT
@@ -142,7 +143,8 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 
 fail() {
-  remove_staging
+  # If removal fails (set -e), the status and alert below must still happen.
+  remove_staging || true
   echo "backup FAILED: $1" >&2
   {
     cat >"$status_file" <<EOF

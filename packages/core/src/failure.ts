@@ -21,8 +21,13 @@ const maxScrubInputLength = 2000;
 /** A secret value: a quoted string (escapes honoured, spaces kept) or a bare run up to a delimiter. */
 const secretValue = String.raw`(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|[^\s,;&]+)`;
 
-/** The same, also accepting JSON that was serialised into a string (backslash-escaped quotes). */
-const namedSecretValue = String.raw`(?:\\+"[\s\S]*?\\+"(?=[\s,;}\])&]|$)|\\+'[\s\S]*?\\+'(?=[\s,;}\])&]|$)|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|(?:[^\s,;&\\]|\\(?!["']))+|\\+["'][^\s,;&"'\\]*)`;
+/**
+ * The same, also accepting JSON that was serialised into a string (backslash-escaped quotes). An escaped
+ * quote opened with N backslashes closes only on a quote preceded by exactly N backslashes (groups 2 and 3
+ * hold the opener), so inner escaped quotes cannot end the match early. Every opening quote without a
+ * close, and a backslash-escaped quote inside a bare value, redacts through the end of the input.
+ */
+const namedSecretValue = String.raw`(?:(\\+)"(?:(?!(?<!\\)\2")[\s\S])*(?:(?<!\\)\2"|$)|(\\+)'(?:(?!(?<!\\)\3')[\s\S])*(?:(?<!\\)\3'|$)|"(?:[^"\\]|\\.)*"(?=[\s,;}\])&]|$)|'(?:[^'\\]|\\.)*'(?=[\s,;}\])&]|$)|"[\s\S]*$|'[\s\S]*$|\\+["'][\s\S]*$|(?:[^\s,;&\\]|\\(?!["']))+(?:\\+["'][\s\S]*$)?)`;
 
 const namedSecret = new RegExp(
   String.raw`\b([a-z0-9_-]*(?:token|secret|password|passwd|pwd|pass|passphrase|key|apikey|authorization|cookie|otp|code|sid|session|sessionid|sig|signature|auth|credential|csrf|xsrf|jwt|ticket|private)[a-z0-9_-]*)(?:\\*["'])?\s*[=:]\s*${namedSecretValue}`,

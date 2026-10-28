@@ -576,6 +576,28 @@ check "an unwritable status file is reported" "$(printf '%s' "$out" | grep -c 'c
 check "an unwritable status file still sends exactly one alert" "$(wc -l <"$work/webhook-calls" | tr -d ' ')" "1"
 rmdir "$work/backups/last-status"
 
+echo "== a failure whose staging files cannot be removed still records STATUS=failed and sends one alert"
+# A stub rm that refuses every staging path stands in for an undeletable staging file (root ignores modes).
+cat >"$work/stubbin/rm" <<'EOF'
+#!/usr/bin/env bash
+for arg in "$@"; do
+  case "$arg" in *.staging-*) echo "rm: cannot remove '$arg': Operation not permitted" >&2; exit 1 ;; esac
+done
+exec "$REAL_RM" "$@"
+EOF
+chmod +x "$work/stubbin/rm"
+sleep 1.1
+: >"$work/webhook-calls"
+printf 'STATUS=ok\nAT=%s\n' "$(stamp_hours_ago 1)" >"$work/backups/last-status"
+undeletable_exit=0
+out=$(BACKUP_DB_NAME=does_not_exist run_backup env REAL_RM="$(command -v rm)" REAL_FIND="$(command -v find)" PATH="$work/stubbin:$PATH" 2>&1) || undeletable_exit=$?
+check "an undeletable staging file still returns 1" "$undeletable_exit" "1"
+check "an undeletable staging file was left in place (the stub refused)" "$([ "$(count_staging)" -ge 1 ] && echo yes || echo no)" "yes"
+check "an undeletable staging file still reports FAILED" "$(printf '%s' "$out" | grep -c 'backup FAILED')" "1"
+check "an undeletable staging file still records STATUS=failed" "$(grep -c '^STATUS=failed' "$work/backups/last-status")" "1"
+check "an undeletable staging file still sends exactly one alert" "$(wc -l <"$work/webhook-calls" | tr -d ' ')" "1"
+find "$work/backups" "$work/keys" -name '.staging-*' -exec rm -rf {} + 2>/dev/null || true
+
 if [ "$failures" -gt 0 ]; then
   echo "$failures check(s) failed" >&2
   exit 1

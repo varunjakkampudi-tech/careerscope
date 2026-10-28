@@ -156,6 +156,58 @@ test('scrubMessage redacts escaped inner quotes, truncated escaped JSON and back
   }
 });
 
+test('scrubMessage closes an escaped-quote value only on a quote with the same backslash count', () => {
+  const cases: [string, string[]][] = [
+    [String.raw`{\"password\":\"p\\\" hunter2 rest\"}`, ['hunter2', 'rest']],
+    [String.raw`{\"password\":\"say \\\", then more\"}`, ['then', 'more', 'say']],
+    [String.raw`{\"password\":\"a\\\"}tail\"}`, ['tail']],
+    [String.raw`{\"password\":\"a"b" c\"}`, [' c', 'b"']],
+  ];
+  for (const [input, forbidden] of cases) {
+    const output = scrubMessage(input);
+    for (const secret of forbidden) {
+      assert.equal(output.includes(secret), false, `${input} -> ${output}`);
+    }
+  }
+});
+
+test('scrubMessage redacts unterminated or truncated quoted values through the end of the input', () => {
+  const cases: [string, string[]][] = [
+    ['password: "abc def', ['abc', 'def']],
+    [String.raw`{\"password\":\"abc def`, ['abc', 'def']],
+    [String.raw`password="abc\"def ghi`, ['def', 'ghi', '\\"']],
+    [String.raw`password=a\"b c`, ['b c', '\\"']],
+    ["password: 'it's ok here'", ['it', 's ok', 'here']],
+  ];
+  for (const [input, forbidden] of cases) {
+    const output = scrubMessage(input);
+    for (const secret of forbidden) {
+      assert.equal(output.includes(secret), false, `${input} -> ${output}`);
+    }
+  }
+});
+
+test('scrubMessage stays linear on 2000-character adversarial quote and backslash inputs', () => {
+  const slash = '\\';
+  const inputs = [
+    'password="'.repeat(200),
+    `password=${slash}"`.repeat(180),
+    `password=${slash.repeat(4)} `.repeat(250),
+    `${slash}"`.repeat(1000),
+    `password=${slash}"a${`${slash}"a${slash}`.repeat(660)}`,
+    `password=${slash.repeat(190)} `.repeat(10),
+    `password=${slash}'${`x${slash}'`.repeat(660)}`,
+    `key=${slash.repeat(5)}"x `.repeat(250),
+  ];
+  for (const input of inputs) {
+    const capped = input.slice(0, 2000);
+    const started = performance.now();
+    for (let run = 0; run < 20; run++) scrubMessage(capped);
+    const average = (performance.now() - started) / 20;
+    assert.ok(average < 5, `averaged ${average.toFixed(2)} ms for ${capped.slice(0, 16)}`);
+  }
+});
+
 test('scrubMessage redacts a URL password that contains a slash, for any scheme', () => {
   // The first URL is assembled at runtime so the privacy scanner does not read it as a real credential.
   for (const input of [
