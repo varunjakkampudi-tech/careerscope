@@ -74,7 +74,7 @@ try {
   // Registered after the app is built but before listening, so a signal during startup still triggers cleanup.
   const shutdown = shutdownSignal();
   try {
-    // Reclaim removes only temporaries older than 10 minutes, so a live writer sharing this directory is never affected.
+    // Reclaim removes only temporaries older than 10 minutes; a live writer stalled past that bound retries its write once.
     if (resumeStorage) {
       const reclaimed = await resumeStorage.reclaimTemporariesAtStartup(shutdown.signal);
       if (reclaimed.removed) logger.warn(reclaimed, 'Reclaimed stale resume temporaries');

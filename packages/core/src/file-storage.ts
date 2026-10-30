@@ -279,7 +279,8 @@ export class PrivateFileResumeStorage {
 
   /**
    * Reclaims temporaries stranded by a crashed writer. Only temporaries at least
-   * 10 minutes old are removed: a live writer's temporaries are always younger,
+   * 10 minutes old are removed: a live writer's temporaries are normally younger,
+   * and a writer stalled past the bound retries once (see put and cancelUpload),
    * so several writers may safely share one directory. A future-stamped
    * temporary has age 0 and is kept until it ages.
    *
