@@ -22,11 +22,12 @@ import {
 } from './file-storage.js';
 import { ResumeStorageLimit } from './resumes.js';
 
-/** Directory entries other than the single-writer lock file. */
-async function stored(directory: string) {
-  return (await readdir(directory)).filter((name) => name !== '.writer.lock');
-}
 import type { ResumeObject } from './storage.js';
+
+/** Directory entries currently in the storage directory. */
+async function stored(directory: string) {
+  return readdir(directory);
+}
 
 test('cancellation fences publication and never accepts a foreign marker as success', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'careerscope-fence-'));
@@ -90,7 +91,6 @@ test('physical storage capacity is enforced and abandoned temporaries are swept 
   const full = new PrivateFileResumeStorage({
     directory,
     encryptionKey,
-    allowSharedWriters: true,
     reserveBytes: Number.MAX_SAFE_INTEGER,
   });
   try {
@@ -146,7 +146,7 @@ test('physical storage capacity is enforced and abandoned temporaries are swept 
     const capacityBarrier = Promise.withResolvers<number>();
     let capacityReads = 0;
     const contended = new PrivateFileResumeStorage(
-      { directory, encryptionKey, reserveBytes: 1000, allowSharedWriters: true },
+      { directory, encryptionKey, reserveBytes: 1000 },
       async () => {
         capacityReads += 1;
         if (capacityReads === 2) capacityBarrier.resolve(envelope + 1000);
@@ -185,7 +185,7 @@ test('physical storage capacity is enforced and abandoned temporaries are swept 
     const single = randomBytes(64 * 1024);
     const singleEnvelope = single.length + 68;
     const strict = new PrivateFileResumeStorage(
-      { directory, encryptionKey, reserveBytes: 0, allowSharedWriters: true },
+      { directory, encryptionKey, reserveBytes: 0 },
       async () => singleEnvelope,
     );
     await strict.initialize();
@@ -249,6 +249,12 @@ test('writer startup reclaims crash-stranded temporaries without touching anythi
       removed: 0,
       bytes: 0,
     });
+
+    // Fresh temporaries may belong to a live writer, so startup reclaim keeps them.
+    assert.deepEqual(await storage.reclaimTemporariesAtStartup(), { removed: 0, bytes: 0 });
+    const aged = new Date(Date.now() - 11 * 60_000);
+    await utimes(stranded, aged, aged);
+    await utimes(published, aged, aged);
 
     assert.deepEqual(await storage.reclaimTemporariesAtStartup(), {
       removed: 2,
@@ -344,7 +350,7 @@ test('genuine out-of-space failures stay typed, unpublished and release capacity
   }
   // Admission always passes so only the real write failure can reject the upload.
   const storage = new ExhaustedStorage(
-    { directory, encryptionKey, reserveBytes: 0, allowSharedWriters: true },
+    { directory, encryptionKey, reserveBytes: 0 },
     async () => body.length + 68,
   );
   try {
@@ -432,7 +438,6 @@ test('private file storage encrypts immutable owned versions and restores them w
     }
     const wrongKey = new PrivateFileResumeStorage({
       directory,
-      allowSharedWriters: true,
       encryptionKey: randomBytes(32).toString('hex'),
     });
     try {
@@ -484,7 +489,6 @@ test('file cancellation permanently fences late publication and verifies existin
     const restored = new PrivateFileResumeStorage({
       directory,
       encryptionKey,
-      allowSharedWriters: true,
     });
     try {
       await restored.initialize();
@@ -580,7 +584,6 @@ test('a stored resume is AES-256-GCM ciphertext that is unreadable without the s
   const storage = new PrivateFileResumeStorage({
     directory,
     encryptionKey,
-    allowSharedWriters: true,
   });
   const configured = await configuredFileResumeStorage({
     RESUME_STORAGE_DIRECTORY: directory,
@@ -614,7 +617,6 @@ test('a stored resume is AES-256-GCM ciphertext that is unreadable without the s
     // Without the key, or with another key, the object cannot be opened.
     const stranger = new PrivateFileResumeStorage({
       directory,
-      allowSharedWriters: true,
       encryptionKey: randomBytes(32).toString('hex'),
     });
     await stranger.initialize();
@@ -678,7 +680,7 @@ test('a malformed, relative or group-readable key file is refused', async () => 
   }
 });
 
-test('a temporary stamped ahead of the process clock is still reclaimed at startup', async () => {
+test('a temporary stamped ahead of the process clock is reclaimed only after it ages', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'careerscope-future-temp-'));
   await chmod(directory, 0o700);
   const storage = new PrivateFileResumeStorage({
@@ -692,51 +694,43 @@ test('a temporary stamped ahead of the process clock is still reclaimed at start
     const future = new Date(Date.now() + 60_000);
     await utimes(stranded, future, future);
 
+    // A future stamp is age 0, so a live writer's file is never reclaimed.
+    assert.deepEqual(await storage.reclaimTemporariesAtStartup(), { removed: 0, bytes: 0 });
+    assert.equal((await readFile(stranded)).length, 512);
+
+    // Younger than ten minutes is still kept.
+    const recent = new Date(Date.now() - 9 * 60_000);
+    await utimes(stranded, recent, recent);
+    assert.deepEqual(await storage.reclaimTemporariesAtStartup(), { removed: 0, bytes: 0 });
+
+    const aged = new Date(Date.now() - 11 * 60_000);
+    await utimes(stranded, aged, aged);
     assert.deepEqual(await storage.reclaimTemporariesAtStartup(), { removed: 1, bytes: 512 });
     assert.deepEqual(
       (await readdir(directory)).filter((name) => name.endsWith('.pending')),
       [],
     );
   } finally {
+    storage.close();
     await rm(directory, { recursive: true, force: true });
   }
 });
 
-test('a second writer on the same directory is refused and a dead writer lock is taken over', async () => {
-  const directory = await mkdtemp(join(tmpdir(), 'careerscope-lock-'));
+test('two writers can share a directory and startup reclaim spares the live writer temporary', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-shared-'));
   const encryptionKey = randomBytes(32).toString('hex');
   const first = new PrivateFileResumeStorage({ directory, encryptionKey });
   const second = new PrivateFileResumeStorage({ directory, encryptionKey });
-  const third = new PrivateFileResumeStorage({ directory, encryptionKey });
-  const lock = join(directory, '.writer.lock');
   try {
-    await assert.rejects(first.reclaimTemporariesAtStartup(), /not initialized|lock is not held/);
     await first.initialize();
-    const stranded = join(directory, `${randomUUID()}.pending`);
-    await writeFile(stranded, Buffer.alloc(16));
-
-    await assert.rejects(second.initialize(), /already in use by writer process/);
-    await assert.rejects(second.reclaimTemporariesAtStartup(), /not initialized|lock is not held/);
-    assert.equal((await readFile(stranded)).length, 16);
-
-    // Releasing the lock lets the next writer start, and it then reclaims the temporary.
-    first.close();
-    await assert.rejects(readFile(lock), { code: 'ENOENT' });
     await second.initialize();
-    assert.equal((await second.reclaimTemporariesAtStartup()).removed, 1);
-    second.close();
-
-    // A lock left by a process that no longer exists is replaced.
-    await writeFile(
-      lock,
-      JSON.stringify({ pid: 2 ** 22 + 12345, startedAt: new Date(0).toISOString(), directory }),
-    );
-    await third.initialize();
-    assert.equal(JSON.parse(await readFile(lock, 'utf8')).pid, process.pid);
+    const live = join(directory, `${randomUUID()}.pending`);
+    await writeFile(live, Buffer.alloc(16));
+    assert.deepEqual(await second.reclaimTemporariesAtStartup(), { removed: 0, bytes: 0 });
+    assert.equal((await readFile(live)).length, 16);
   } finally {
     first.close();
     second.close();
-    third.close();
     await rm(directory, { recursive: true, force: true });
   }
 });

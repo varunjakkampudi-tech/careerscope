@@ -25,8 +25,7 @@ let queue: LocalQueue | undefined;
 let cleaned = false;
 
 try {
-  // The API is the single object writer and holds the directory lock; this worker only reads and deletes.
-  const storage = await configuredFileResumeStorage(process.env, { allowSharedWriters: true });
+  const storage = await configuredFileResumeStorage();
   const shutdown = shutdownSignal();
   if (!storage) {
     logger.info('files worker disabled; private storage is not configured');

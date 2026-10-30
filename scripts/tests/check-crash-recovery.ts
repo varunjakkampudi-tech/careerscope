@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { spawn } from 'node:child_process';
-import { mkdtemp, readdir, rm } from 'node:fs/promises';
+import { mkdtemp, readdir, rm, utimes } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -112,6 +112,13 @@ const ownerId = randomUUID();
 const uploads = new ResumeUploadRepository(database);
 const pending = async () =>
   (await readdir(objects)).filter((entry) => entry.endsWith('.pending')).length;
+/** Startup reclaim only removes temporaries at least ten minutes old, so age the crashed writer's files. */
+const ageTemporaries = async () => {
+  const aged = new Date(Date.now() - 11 * 60_000);
+  for (const entry of await readdir(objects)) {
+    if (entry.endsWith('.pending')) await utimes(join(objects, entry), aged, aged);
+  }
+};
 const published = async () =>
   (await readdir(objects)).filter((entry) => entry.endsWith('.bin')).length;
 
@@ -150,7 +157,8 @@ try {
   assert.equal(stranded.commandId, null);
   assert.equal((await database.unpublished()).length, 0);
 
-  // Restarting the single writer reclaims the stranded temporary.
+  // Restarting the writer reclaims the stranded temporary once it is old enough.
+  await ageTemporaries();
   const storage = new PrivateFileResumeStorage({ directory: objects, encryptionKey });
   await storage.initialize();
   const coordinator = new ResumeUploadCoordinator(uploads, storage);
@@ -347,6 +355,7 @@ try {
   assert.equal(await published(), 2);
   assert.equal(await pending(), 1);
 
+  await ageTemporaries();
   const recovery = new PrivateFileResumeStorage({ directory: objects, encryptionKey });
   await recovery.initialize();
   try {
