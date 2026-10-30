@@ -131,6 +131,8 @@ try {
     shutdown.close();
   }
 } catch (error) {
+  // Bounds cleanup: a hung close must not keep the process alive.
+  setTimeout(() => process.exit(1), 5000).unref();
   logFailure(error, {}, 'Startup failed');
   // Open Redis clients or a pool would keep the event loop alive, so release them and exit explicitly.
   if (!cleaned) {

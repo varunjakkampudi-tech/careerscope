@@ -25,7 +25,8 @@ let queue: LocalQueue | undefined;
 let cleaned = false;
 
 try {
-  const storage = await configuredFileResumeStorage();
+  // The API is the single object writer and holds the directory lock; this worker only reads and deletes.
+  const storage = await configuredFileResumeStorage(process.env, { allowSharedWriters: true });
   const shutdown = shutdownSignal();
   if (!storage) {
     logger.info('files worker disabled; private storage is not configured');
@@ -99,6 +100,8 @@ try {
     }
   }
 } catch (error) {
+  // Bounds cleanup: a hung close must not keep the process alive.
+  setTimeout(() => process.exit(1), 5000).unref();
   logFailure(error, {}, 'Startup failed');
   // An open Redis client or pool would keep the event loop alive, so release them and exit explicitly.
   if (!cleaned) {

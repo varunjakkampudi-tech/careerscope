@@ -13,7 +13,7 @@ import {
   randomUUID,
   timingSafeEqual,
 } from 'node:crypto';
-import { constants } from 'node:fs';
+import { constants, unlinkSync } from 'node:fs';
 import {
   link,
   lstat,
@@ -63,6 +63,19 @@ export class ResumeUploadCancelled extends Conflict {
 /** A concurrent writer replaced the object between inspection and reading. */
 class ResumeObjectChanged extends Error {}
 
+/** Name of the exclusive single-writer lock file in the storage root. */
+const writerLockName = '.writer.lock';
+
+function processAlive(pid: number) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    // EPERM means the process exists but belongs to another user.
+    return error instanceof Error && 'code' in error && error.code === 'EPERM';
+  }
+}
+
 function missing(error: unknown) {
   return error instanceof Error && 'code' in error && error.code === 'ENOENT';
 }
@@ -104,6 +117,9 @@ export class PrivateFileResumeStorage {
   private markers = 0;
   private reclaimedTemporaries = 0;
   private ready = false;
+  private lockHeld = false;
+  private readonly sharedWriters: boolean;
+  private exitRelease: (() => void) | undefined;
 
   constructor(
     config: {
@@ -111,6 +127,8 @@ export class PrivateFileResumeStorage {
       encryptionKey: string;
       reserveBytes?: number;
       markerLimit?: number;
+      /** Skips the single-writer lock. Only for tests that model several replicas in one process; never set it in a service. */
+      allowSharedWriters?: boolean;
     },
     private readonly availableBytes: (directory: string) => Promise<number> = async (directory) => {
       const volume = await statfs(directory);
@@ -119,6 +137,7 @@ export class PrivateFileResumeStorage {
   ) {
     if (!isAbsolute(config.directory)) throw new Error('Resume directory must be absolute');
     this.root = resolve(config.directory);
+    this.sharedWriters = config.allowSharedWriters === true;
     this.reserveBytes = z
       .number()
       .int()
@@ -146,8 +165,94 @@ export class PrivateFileResumeStorage {
     this.ready = false;
     await mkdir(this.root, { recursive: true, mode: 0o700 });
     await this.checkDirectory();
+    if (!this.sharedWriters) await this.acquireWriterLock();
     this.ready = true;
-    this.markers = (await this.inventory(signal)).markers;
+    try {
+      this.markers = (await this.inventory(signal)).markers;
+    } catch (error) {
+      this.ready = false;
+      this.releaseWriterLock();
+      throw error;
+    }
+  }
+
+  /**
+   * Enforces one writer per storage directory with an exclusive `.writer.lock` (pid, start time and
+   * directory). A live holder refuses startup; a lock from a dead pid, or one copied here from another
+   * directory (for example inside a backup), is stale and replaced.
+   */
+  private async acquireWriterLock() {
+    if (this.lockHeld) return;
+    const lockPath = join(this.root, writerLockName);
+    const content = JSON.stringify({
+      pid: process.pid,
+      startedAt: new Date().toISOString(),
+      directory: this.root,
+    });
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const handle = await open(lockPath, 'wx', 0o600);
+        try {
+          await handle.writeFile(content);
+          await handle.sync();
+        } finally {
+          await handle.close();
+        }
+        this.lockHeld = true;
+        this.exitRelease = () => this.releaseWriterLock();
+        process.once('exit', this.exitRelease);
+        return;
+      } catch (error) {
+        if (!(error instanceof Error) || !('code' in error) || error.code !== 'EEXIST') throw error;
+      }
+      const holder = await this.readWriterLock(lockPath);
+      if (holder && holder.directory === this.root && processAlive(holder.pid)) {
+        throw new Error(
+          `Resume storage directory is already in use by writer process ${holder.pid} (started ${holder.startedAt}); only one writer per directory is supported`,
+        );
+      }
+      await unlink(lockPath).catch((error: unknown) => {
+        if (!missing(error)) throw error;
+      });
+    }
+    throw new Error('Resume storage writer lock could not be acquired');
+  }
+
+  private async readWriterLock(lockPath: string) {
+    try {
+      const handle = await open(lockPath, constants.O_RDONLY);
+      try {
+        const buffer = Buffer.alloc(1024);
+        const { bytesRead } = await handle.read(buffer, 0, buffer.length, 0);
+        const parsed = z
+          .object({
+            pid: z.number().int().positive(),
+            startedAt: z.string(),
+            directory: z.string(),
+          })
+          .safeParse(JSON.parse(buffer.subarray(0, bytesRead).toString()));
+        return parsed.success ? parsed.data : null;
+      } finally {
+        await handle.close();
+      }
+    } catch {
+      // Missing or unreadable content cannot identify a live holder.
+      return null;
+    }
+  }
+
+  private releaseWriterLock() {
+    if (this.exitRelease) {
+      process.removeListener('exit', this.exitRelease);
+      this.exitRelease = undefined;
+    }
+    if (!this.lockHeld) return;
+    this.lockHeld = false;
+    try {
+      unlinkSync(join(this.root, writerLockName));
+    } catch {
+      // Already gone; nothing else to release.
+    }
   }
 
   // Checked on every operation, not only at startup, so replacing the directory with a symlink later is detected.
@@ -283,6 +388,7 @@ export class PrivateFileResumeStorage {
    * removing that extra name leaves the published object itself intact.
    */
   async reclaimTemporariesAtStartup(signal?: AbortSignal) {
+    if (!this.lockHeld) throw new Error('Resume storage writer lock is not held');
     const result = await this.removeTemporaries(
       { olderThanMs: 0, limit: 1000, now: Date.now(), linked: true },
       signal,
@@ -612,6 +718,7 @@ export class PrivateFileResumeStorage {
   /** Marks the store unusable and zeroes the in-memory key. */
   close() {
     this.ready = false;
+    this.releaseWriterLock();
     this.key.fill(0);
   }
 }
@@ -620,7 +727,10 @@ export class PrivateFileResumeStorage {
  * Builds storage from `RESUME_STORAGE_DIRECTORY` and `RESUME_STORAGE_KEY_FILE`, or returns undefined
  * if neither is set. The key file must be a private regular file (not a symlink) holding a 64-character hex key.
  */
-export async function configuredFileResumeStorage(source: NodeJS.ProcessEnv = process.env) {
+export async function configuredFileResumeStorage(
+  source: NodeJS.ProcessEnv = process.env,
+  options: { allowSharedWriters?: boolean } = {},
+) {
   const directory = source.RESUME_STORAGE_DIRECTORY;
   const keyFile = source.RESUME_STORAGE_KEY_FILE;
   if (directory === undefined && keyFile === undefined) return undefined;
@@ -649,6 +759,7 @@ export async function configuredFileResumeStorage(source: NodeJS.ProcessEnv = pr
       const storage = new PrivateFileResumeStorage({
         directory,
         encryptionKey: key.toString().trim(),
+        ...(options.allowSharedWriters ? { allowSharedWriters: true } : {}),
         ...(source.RESUME_STORAGE_RESERVE_BYTES === undefined
           ? {}
           : {

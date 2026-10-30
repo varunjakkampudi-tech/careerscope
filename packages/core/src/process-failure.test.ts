@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { installProcessFailureHandlers } from './failure.js';
@@ -51,3 +54,52 @@ test('a startup failure in migrate.ts exits 1 within 10 seconds without leaking 
   assert.doesNotMatch(child.stdout, /S3cretPass/);
   assert.match(child.stdout + child.stderr, /Migration failed/);
 });
+
+const entryPoints = [
+  ['apps/api/src/main.ts', {}],
+  ['apps/workers/search/src/main.ts', {}],
+  ['apps/workers/search/src/publisher.ts', {}],
+  // files.ts idles when private storage is unconfigured, so it needs a storage directory and key file.
+  ['apps/workers/search/src/files.ts', { storage: true }],
+] as const;
+
+for (const [entry, options] of entryPoints) {
+  test(`a startup failure in ${entry} exits 1 within 15 seconds without leaking the URL secret`, async () => {
+    const root = fileURLToPath(new URL('../../../', import.meta.url));
+    const scratch = await mkdtemp(join(tmpdir(), 'careerscope-startup-'));
+    try {
+      const keyFile = join(scratch, 'resume.key');
+      await writeFile(keyFile, 'a'.repeat(64), { mode: 0o600 });
+      const started = Date.now();
+      const child = spawnSync(process.execPath, ['--import', 'tsx', join(root, entry)], {
+        encoding: 'utf8',
+        timeout: 15000,
+        cwd: root,
+        env: {
+          ...process.env,
+          DATABASE_URL: ['postgres://user', ':S3cretPass@[bad host'].join(''),
+          REDIS_URL: 'redis://127.0.0.1:1',
+          QUEUE_REDIS_URL: 'redis://127.0.0.1:1',
+          APP_ORIGIN: 'http://127.0.0.1:3000',
+          ...('storage' in options
+            ? {
+                RESUME_STORAGE_DIRECTORY: join(scratch, 'objects'),
+                RESUME_STORAGE_KEY_FILE: keyFile,
+              }
+            : {}),
+        },
+      });
+      const elapsed = Date.now() - started;
+      const output = child.stdout + child.stderr;
+      console.log(`${entry}: status=${child.status} elapsedMs=${elapsed}`);
+      assert.equal(child.error, undefined);
+      assert.equal(child.status, 1);
+      assert.equal(elapsed < 15000, true);
+      assert.doesNotMatch(output, /S3cretPass/);
+      assert.match(output, /Startup failed/);
+      assert.doesNotMatch(output, /Process crashed|Unhandled|Uncaught|at async|node:internal/);
+    } finally {
+      await rm(scratch, { recursive: true, force: true });
+    }
+  });
+}

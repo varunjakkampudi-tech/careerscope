@@ -299,6 +299,19 @@ stated, not hidden.
 
 ---
 
+## Single replica per storage directory
+
+Encrypted resume storage supports exactly one writer per storage directory: run one API
+replica and one files worker per `RESUME_STORAGE_DIRECTORY`. The API reclaims temporaries
+stranded by a crashed writer at startup, which is only safe when no other writer exists.
+To enforce this, the API creates an exclusive `.writer.lock` (process id, start time and
+directory) in the storage root and refuses to start if the recorded process is alive. A lock
+left by a dead process is replaced, and the lock is released on shutdown and on process exit.
+The files worker shares the directory as a reader and does not take the lock. Do not scale the
+API horizontally or point two stacks at one directory.
+
+---
+
 ## Restarting
 
 ```bash
