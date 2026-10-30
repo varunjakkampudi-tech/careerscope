@@ -310,7 +310,7 @@ export class PrivateFileResumeStorage {
   ) {
     return this.removeTemporaries(
       {
-        olderThanMs: Math.max(options?.olderThanMs ?? 3600000, 60000),
+        olderThanMs: Math.max(options?.olderThanMs ?? 3600000, 600000),
         limit: options?.limit ?? 100,
         now: options?.now ?? Date.now(),
       },
@@ -417,19 +417,26 @@ export class PrivateFileResumeStorage {
       cipher.getAuthTag(),
       encrypted,
     ]);
-    const temporary = join(this.root, `${randomUUID()}.pending`);
     const release = await this.ensureCapacity(envelope.length, signal);
     try {
-      try {
-        await this.writeTemporary(temporary, envelope, signal);
-        signal?.throwIfAborted();
-        await this.publishObject(temporary, filename);
-        await this.syncDirectory();
-        return version;
-      } finally {
-        await unlink(temporary).catch((error: unknown) => {
-          if (!missing(error)) throw error;
-        });
+      // A temporary stalled past the reclaim bound can be removed before it is linked.
+      // That surfaces as ENOENT from the publish, so the whole write is retried once.
+      for (let attempt = 0; ; attempt++) {
+        const temporary = join(this.root, `${randomUUID()}.pending`);
+        try {
+          await this.writeTemporary(temporary, envelope, signal);
+          signal?.throwIfAborted();
+          await this.publishObject(temporary, filename);
+          await this.syncDirectory();
+          return version;
+        } catch (error) {
+          if (attempt === 0 && missing(error)) continue;
+          throw error;
+        } finally {
+          await unlink(temporary).catch((error: unknown) => {
+            if (!missing(error)) throw error;
+          });
+        }
       }
     } catch (error) {
       // Admission control is a guard, not a guarantee: another writer can consume
@@ -548,22 +555,31 @@ export class PrivateFileResumeStorage {
       throw new ResumeStorageLimit('Resume cancellation marker quota reached');
     }
     const { filename } = await this.path(object, signal);
-    const temporary = join(this.root, `${randomUUID()}.pending`);
-    let handle;
     try {
-      handle = await open(temporary, 'wx', 0o600);
-      try {
-        await handle.writeFile(this.cancellationMarker(object), { signal });
-        await handle.sync();
-        await handle.close();
-        signal?.throwIfAborted();
-        if (await this.publishCancellation(object, temporary, filename, signal)) this.markers += 1;
-        await this.syncDirectory();
-      } finally {
-        await handle.close();
-        await unlink(temporary).catch((error: unknown) => {
-          if (!missing(error)) throw error;
-        });
+      // A temporary reclaimed while this writer stalled makes the publish fail with
+      // ENOENT, so the whole write is retried once with a fresh temporary.
+      for (let attempt = 0; ; attempt++) {
+        const temporary = join(this.root, `${randomUUID()}.pending`);
+        let handle;
+        try {
+          handle = await open(temporary, 'wx', 0o600);
+          await handle.writeFile(this.cancellationMarker(object), { signal });
+          await handle.sync();
+          await handle.close();
+          signal?.throwIfAborted();
+          if (await this.publishCancellation(object, temporary, filename, signal))
+            this.markers += 1;
+          await this.syncDirectory();
+          return;
+        } catch (error) {
+          if (attempt === 0 && missing(error)) continue;
+          throw error;
+        } finally {
+          await handle?.close();
+          await unlink(temporary).catch((error: unknown) => {
+            if (!missing(error)) throw error;
+          });
+        }
       }
     } catch (error) {
       // Cancellation is authoritative only once its marker is durable, so an

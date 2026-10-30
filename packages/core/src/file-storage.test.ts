@@ -716,6 +716,122 @@ test('a temporary stamped ahead of the process clock is reclaimed only after it 
   }
 });
 
+test('a sweep never reaches an age below the ten minute reclaim bound', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-floor-'));
+  const storage = new PrivateFileResumeStorage({
+    directory,
+    encryptionKey: randomBytes(32).toString('hex'),
+  });
+  try {
+    await storage.initialize();
+    const stranded = join(directory, `${randomUUID()}.pending`);
+    await writeFile(stranded, Buffer.alloc(64));
+    const recent = new Date(Date.now() - 9 * 60_000);
+    await utimes(stranded, recent, recent);
+    assert.deepEqual(await storage.sweepAbandonedTemporaries({ olderThanMs: 0 }), {
+      removed: 0,
+      bytes: 0,
+    });
+    const aged = new Date(Date.now() - 11 * 60_000);
+    await utimes(stranded, aged, aged);
+    assert.deepEqual(await storage.sweepAbandonedTemporaries({ olderThanMs: 0 }), {
+      removed: 1,
+      bytes: 64,
+    });
+  } finally {
+    storage.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+class ReclaimedOnce extends PrivateFileResumeStorage {
+  publishes = 0;
+  failEvery = false;
+  protected override async publishObject(temporary: string, filename: string) {
+    this.publishes += 1;
+    if (this.failEvery || this.publishes === 1) await rm(temporary);
+    await super.publishObject(temporary, filename);
+  }
+}
+
+test('put retries once with a fresh temporary when its temporary was reclaimed before linking', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-retry-'));
+  const body = Buffer.from('%PDF-1.7 synthetic reclaimed temporary fixture');
+  const object: ResumeObject = {
+    ownerId: randomUUID(),
+    resumeId: randomUUID(),
+    sha256: createHash('sha256').update(body).digest('hex'),
+    bytes: body.length,
+    contentType: 'application/pdf',
+  };
+  const storage = new ReclaimedOnce({ directory, encryptionKey: randomBytes(32).toString('hex') });
+  try {
+    await storage.initialize();
+    const version = await storage.put(object, body);
+    assert.equal(storage.publishes, 2);
+    assert.deepEqual(await storage.get(object, version), body);
+    assert.deepEqual(
+      (await readdir(directory)).filter((name) => name.endsWith('.pending')),
+      [],
+    );
+
+    // A second consecutive reclaim is not retried again.
+    storage.failEvery = true;
+    storage.publishes = 0;
+    const other = { ...object, resumeId: randomUUID() };
+    await assert.rejects(storage.put(other, body), { code: 'ENOENT' });
+    assert.equal(storage.publishes, 2);
+  } finally {
+    storage.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('cancelUpload retries once when its temporary was reclaimed before linking', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-cancel-retry-'));
+  const body = Buffer.from('%PDF-1.7 synthetic reclaimed marker fixture');
+  const object: ResumeObject = {
+    ownerId: randomUUID(),
+    resumeId: randomUUID(),
+    sha256: createHash('sha256').update(body).digest('hex'),
+    bytes: body.length,
+    contentType: 'application/pdf',
+  };
+  const storage = new PrivateFileResumeStorage({
+    directory,
+    encryptionKey: randomBytes(32).toString('hex'),
+  });
+  try {
+    await storage.initialize();
+    // Simulate the reclaim by removing the temporary just before the first publish.
+    type Publish = (o: ResumeObject, t: string, f: string, s?: AbortSignal) => Promise<boolean>;
+    const internals = storage as unknown as { publishCancellation: Publish };
+    const publish = internals.publishCancellation.bind(storage);
+    let calls = 0;
+    internals.publishCancellation = async (o, temporary, filename, signal) => {
+      calls += 1;
+      if (calls === 1) await rm(temporary);
+      return publish(o, temporary, filename, signal);
+    };
+    await storage.cancelUpload(object);
+    assert.equal(calls, 2);
+    await assert.rejects(storage.recoverVersion(object), ResumeUploadCancelled);
+    assert.equal((await storage.inventory()).markers, 1);
+
+    // A second consecutive reclaim is rethrown.
+    internals.publishCancellation = async (o, temporary, filename, signal) => {
+      await rm(temporary);
+      return publish(o, temporary, filename, signal);
+    };
+    await assert.rejects(storage.cancelUpload({ ...object, resumeId: randomUUID() }), {
+      code: 'ENOENT',
+    });
+  } finally {
+    storage.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test('two writers can share a directory and startup reclaim spares the live writer temporary', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'careerscope-shared-'));
   const encryptionKey = randomBytes(32).toString('hex');

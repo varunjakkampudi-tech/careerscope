@@ -74,11 +74,10 @@ try {
   // Registered after the app is built but before listening, so a signal during startup still triggers cleanup.
   const shutdown = shutdownSignal();
   try {
-    // This process is the only object writer, so nothing it owns is in flight yet.
+    // Reclaim removes only temporaries older than 10 minutes, so a live writer sharing this directory is never affected.
     if (resumeStorage) {
       const reclaimed = await resumeStorage.reclaimTemporariesAtStartup(shutdown.signal);
-      if (reclaimed.removed)
-        logger.warn(reclaimed, 'Reclaimed resume temporaries from a dead writer');
+      if (reclaimed.removed) logger.warn(reclaimed, 'Reclaimed stale resume temporaries');
     }
     await app.listen({ host: '127.0.0.1', port: API_PORT });
     // Ties a running process to the source it was built from. Deliberately not on
