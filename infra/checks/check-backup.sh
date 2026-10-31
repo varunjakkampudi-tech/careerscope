@@ -16,10 +16,11 @@
 # Usage:
 #   check-backup.sh                      run the whole suite (needs Docker, gpg, flock, realpath)
 #   check-backup.sh --status-only [DIR]  read DIR/last-status (default /var/backups/careerscope)
-#                                        and exit 1 when it is failed, locked for more than
-#                                        26 hours (a run that never released its lock), or an
-#                                        ok/degraded status older than 30 hours (24h interval
-#                                        plus 6h grace: a scheduled run was missed)
+#                                        and exit 1 when it is failed, or an ok, degraded or
+#                                        locked status whose AT (the last successful run; a held
+#                                        lock keeps it and records the attempt separately) is
+#                                        older than 30 hours (24h interval plus 6h grace: a
+#                                        scheduled run was missed or a run is hung)
 set -euo pipefail
 
 # -- status-only mode: no Docker, safe to run against a real backup directory ----------------
@@ -36,6 +37,24 @@ if [ "${1:-}" = "--status-only" ]; then
     exit 1
   fi
   max_age_seconds=$(((interval_hours + grace_hours) * 3600))
+  # careerscope-backup-check.timer runs this daily. A non-zero exit fails the unit; when a webhook is
+  # configured (BACKUP_WEBHOOK_URL, else MONITOR_WEBHOOK_URL) the failure is also posted. The URL goes
+  # to curl through a config on a pipe, never on a command line.
+  alert_on_failure() {
+    local rc=$?
+    [ "$rc" -ne 0 ] || return 0
+    local url=${BACKUP_WEBHOOK_URL:-${MONITOR_WEBHOOK_URL:-}}
+    case "$url" in
+      https://*) ;;
+      *) return "$rc" ;;
+    esac
+    case "$url" in *'"'* | *$'\n'* | *$'\r'* | *'\'*) return "$rc" ;; esac
+    "${BACKUP_CURL_BIN:-curl}" -fsS --max-time 10 -X POST -H 'Content-Type: application/json' \
+      --data-binary '{"text":"CareerScope backup status check FAILED; see the careerscope-backup-check journal","content":"CareerScope backup status check FAILED; see the careerscope-backup-check journal"}' \
+      -K <(printf 'url = "%s"\n' "$url") >/dev/null 2>&1 || true
+    return "$rc"
+  }
+  trap alert_on_failure EXIT
   if [ ! -f "$status_path" ]; then
     echo "FLAGGED: no last-status in $status_dir" >&2
     exit 1
@@ -63,11 +82,13 @@ if [ "${1:-}" = "--status-only" ]; then
       exit 0
       ;;
     locked)
-      if [ "$age_seconds" -gt $((26 * 3600)) ]; then
-        echo "FLAGGED: backup has been locked since $status_at (more than 26 hours); a run is hung or the lock is stale" >&2
+      # AT is the last successful run, not the time of the lock attempt, so a run that hangs while
+      # holding the lock cannot keep the status fresh.
+      if [ "$age_seconds" -gt "$max_age_seconds" ]; then
+        echo "FLAGGED: the last successful backup was at $status_at (older than $((max_age_seconds / 3600)) hours) and the lock is held; a run is hung or the lock is stale" >&2
         exit 1
       fi
-      echo "backup status locked at $status_at (within 26 hours)"
+      echo "backup status locked; last successful backup at $status_at (within $((max_age_seconds / 3600)) hours)"
       exit 0
       ;;
     *)
@@ -256,6 +277,8 @@ check "backup dir is root-only (0700)" "$(file_mode "$work/backups")" "700"
 check "no scratch verification database left behind" "$(docker exec "$pg_name" psql -U careerscope -d postgres -tAc "select count(*) from pg_database where datname='careerscope_backup_verify'" | tr -d ' ')" "0"
 check "success does not send a webhook alert" "$(wc -l <"$work/webhook-calls" | tr -d ' ')" "0"
 check "same-device key directory produces a warning" "$(printf '%s' "$out" | grep -c 'on the same device')" "1"
+check "no unencrypted pg_dump or pg_restore diagnostics are left in the backup dir" "$(find "$work/backups" -maxdepth 1 \( -name '.last-*stderr*' -o -name '.staging-*stderr*' \) | wc -l | tr -d ' ')" "0"
+check "status records only a count of diagnostic lines" "$(grep -c '^DIAGNOSTIC_LINES=[0-9][0-9]*$' "$work/backups/last-status")" "1"
 first_dump=$(find "$work/backups" -maxdepth 1 -name "$dump_pattern")
 first_dump_sum=$(sha256sum "$first_dump" | cut -d' ' -f1)
 
@@ -450,7 +473,7 @@ check "the run output calls it degraded" "$(printf '%s' "$out" | grep -c '^backu
 latest_dump=$(find "$work/backups" -maxdepth 1 -name "$dump_pattern" | sort | tail -1)
 rm -f "$latest_dump"
 
-echo "== check-backup.sh --status-only flags failed, and locked for more than 26 hours"
+echo "== check-backup.sh --status-only flags failed, and locked with a last success older than 30 hours"
 mkdir -p "$work/status-ok" "$work/status-locked-new" "$work/status-locked-old" "$work/status-failed" \
   "$work/status-ok-edge" "$work/status-ok-stale" "$work/status-degraded-stale" "$work/status-ok-noat" "$work/status-ok-future"
 printf 'STATUS=ok\nAT=%s\n' "$(stamp_hours_ago 1)" >"$work/status-ok/last-status"
@@ -459,8 +482,8 @@ printf 'STATUS=ok\nAT=%s\n' "$(stamp_hours_ago 31)" >"$work/status-ok-stale/last
 printf 'STATUS=degraded\nAT=%s\n' "$(stamp_hours_ago 72)" >"$work/status-degraded-stale/last-status"
 printf 'STATUS=ok\n' >"$work/status-ok-noat/last-status"
 printf 'STATUS=ok\nAT=%s\n' "$(stamp_hours_ago -5)" >"$work/status-ok-future/last-status"
-printf 'STATUS=locked\nAT=%s\n' "$(stamp_hours_ago 2)" >"$work/status-locked-new/last-status"
-printf 'STATUS=locked\nAT=%s\n' "$(stamp_hours_ago 27)" >"$work/status-locked-old/last-status"
+printf 'STATUS=locked\nAT=%s\nLOCK_ATTEMPT_AT=%s\n' "$(stamp_hours_ago 2)" "$(stamp_hours_ago 0)" >"$work/status-locked-new/last-status"
+printf 'STATUS=locked\nAT=%s\nLOCK_ATTEMPT_AT=%s\n' "$(stamp_hours_ago 31)" "$(stamp_hours_ago 0)" >"$work/status-locked-old/last-status"
 printf 'STATUS=failed\nAT=%s\nREASON=x\n' "$(stamp_hours_ago 1)" >"$work/status-failed/last-status"
 for case_name in ok ok-edge ok-stale degraded-stale ok-noat ok-future locked-new locked-old failed; do
   status_exit=0
@@ -477,6 +500,16 @@ BACKUP_STATUS_GRACE_HOURS=8 bash "$dir/check-backup.sh" --status-only "$work/sta
 check "a longer grace period (24h + 8h) accepts a 31 hour old ok status" "$stale_exit" "0"
 stale_message=$(bash "$dir/check-backup.sh" --status-only "$work/status-ok-stale" 2>&1 || true)
 check "the stale message names the bound" "$(printf '%s' "$stale_message" | grep -c 'older than 30 hours')" "1"
+
+: >"$work/webhook-calls"
+BACKUP_CURL_BIN="$work/curl" BACKUP_WEBHOOK_URL="https://hooks.example.test/alert" FAKE_CALLS_FILE="$work/webhook-calls" \
+  FAKE_ARGV_FILE="$work/curl-argv" FAKE_CONFIG_FILE="$work/curl-config" FAKE_BODY_FILE="$work/curl-body" \
+  bash "$dir/check-backup.sh" --status-only "$work/status-locked-old" >/dev/null 2>&1 </dev/null || true
+check "a failing status check posts one webhook alert" "$(wc -l <"$work/webhook-calls" | tr -d ' ')" "1"
+BACKUP_CURL_BIN="$work/curl" BACKUP_WEBHOOK_URL="https://hooks.example.test/alert" FAKE_CALLS_FILE="$work/webhook-calls" \
+  FAKE_ARGV_FILE="$work/curl-argv" FAKE_CONFIG_FILE="$work/curl-config" FAKE_BODY_FILE="$work/curl-body" \
+  bash "$dir/check-backup.sh" --status-only "$work/status-ok" >/dev/null 2>&1 </dev/null || true
+check "a healthy status check posts nothing" "$(wc -l <"$work/webhook-calls" | tr -d ' ')" "1"
 
 echo "== a held lock is a deliberate STATUS=locked with the time, exit 0, and no new dump"
 if command -v flock >/dev/null 2>&1; then
@@ -500,6 +533,36 @@ else
   echo "SKIP the held-lock checks (flock is not installed)"
 fi
 
+echo "== a hung run that holds the lock for more than 30 hours is flagged, not hidden by fresh lock attempts"
+if command -v flock >/dev/null 2>&1; then
+  sleep 1.1
+  hung_at=$(stamp_hours_ago 31)
+  printf 'STATUS=ok\nAT=%s\n' "$hung_at" >"$work/backups/last-status"
+  exec 8>"$work/backups/.lock"
+  flock -n 8
+  hung_exit=0
+  run_backup >/dev/null 2>&1 || hung_exit=$?
+  flock -u 8
+  exec 8>&-
+  check "a held lock still exits 0" "$hung_exit" "0"
+  check "a held lock keeps the last successful AT" "$(grep -c "^AT=$hung_at$" "$work/backups/last-status")" "1"
+  check "a held lock records STATUS=locked with the attempt time" "$(grep -c '^STATUS=locked$' "$work/backups/last-status")-$(grep -c '^LOCK_ATTEMPT_AT=[0-9]\{8\}T[0-9]\{6\}Z$' "$work/backups/last-status")" "1-1"
+  check "the attempt time is also written to last-lock-attempt" "$(grep -c '^LOCK_ATTEMPT_AT=' "$work/backups/last-lock-attempt")" "1"
+  hung_status_exit=0
+  hung_message=$(bash "$dir/check-backup.sh" --status-only "$work/backups" 2>&1) || hung_status_exit=$?
+  check "a locked status whose last success is 31 hours old is flagged" "$hung_status_exit" "1"
+  check "the hung-lock message names the bound" "$(printf '%s' "$hung_message" | grep -c 'older than 30 hours')" "1"
+  # A second attempt must not refresh AT either.
+  exec 8>"$work/backups/.lock"
+  flock -n 8
+  run_backup >/dev/null 2>&1 || true
+  flock -u 8
+  exec 8>&-
+  check "a repeated held lock still keeps the last successful AT" "$(grep -c "^AT=$hung_at$" "$work/backups/last-status")" "1"
+else
+  echo "SKIP the hung-lock check (flock is not installed)"
+fi
+
 echo "== invalid retention configuration fails before changing backup state"
 make_old "$work/backups/careerscope-invalid-retention.dump.gpg" 30
 printf 'STATUS=ok\nAT=%s\n' "$(stamp_hours_ago 1)" >"$work/backups/last-status"
@@ -516,6 +579,7 @@ rm -f "$work/backups/careerscope-invalid-retention.dump.gpg"
 
 echo "== a failing dump does not touch the last good file or promote a new one"
 sleep 1.1 # ensure the next timestamp-stamped filename actually differs
+printf 'row data from an older version' >"$work/backups/.last-dump-stderr" # left by earlier versions
 : >"$work/webhook-calls"
 : >"$work/curl-argv"; : >"$work/curl-config"; : >"$work/curl-body"
 backup_exit=0
@@ -526,6 +590,8 @@ check "still exactly one promoted dump (the first one, untouched)" "$(count_dump
 check "the untouched dump is byte-identical to the earlier good one" "$(sha256sum "$(find "$work/backups" -maxdepth 1 -name "$dump_pattern")" | cut -d' ' -f1)" "$first_dump_sum"
 check "status file now says failed, not ok" "$(grep -c '^STATUS=failed' "$work/backups/last-status")" "1"
 check "no leftover staging file from the failed attempt" "$(find "$work/backups" -maxdepth 1 -name '.staging-*' | wc -l | tr -d ' ')" "0"
+check "a failed dump leaves no diagnostics file (pg_dump stderr can echo data)" "$(find "$work/backups" -maxdepth 1 -name '.last-*stderr*' | wc -l | tr -d ' ')" "0"
+check "the failure reason keeps only a count of diagnostic lines" "$(grep -c '^REASON=pg_dump exited non-zero ([0-9][0-9]* diagnostic lines, not retained)$' "$work/backups/last-status")" "1"
 check "failure sends exactly one webhook alert" "$(wc -l <"$work/webhook-calls" | tr -d ' ')" "1"
 
 echo "== the webhook URL is passed to curl through a config, never on the command line"

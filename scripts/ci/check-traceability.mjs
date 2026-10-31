@@ -4,7 +4,7 @@
 // A covering test file must also be listed in a package.json script that CI executes
 // (test:unit, test:integration, test:domain, test:ui, test:query-budget and gates:test, with the
 // npm scripts they call), or be followed by an explicit `(manual)` marker.
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
@@ -49,6 +49,33 @@ export function ciExecutedText(root) {
     for (const match of scripts[name].matchAll(/npm run ([\w:-]+)/g)) pending.push(match[1]);
   }
   return text;
+}
+
+/** Every file under docs/ except the index itself, as a path relative to docs/. */
+function documentFiles(directory, prefix = '') {
+  const files = [];
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const relative = `${prefix}${entry.name}`;
+    if (entry.isDirectory())
+      files.push(...documentFiles(join(directory, entry.name), `${relative}/`));
+    else if (relative !== 'README.md') files.push(relative);
+  }
+  return files.sort();
+}
+
+/** docs/README.md claims to link every document under docs/; returns the documents it does not link. */
+export function checkDocsIndex(root) {
+  const docs = join(root, 'docs');
+  const index = join(docs, 'README.md');
+  if (!existsSync(index)) return ['docs/README.md is missing'];
+  const linked = new Set(
+    [...readFileSync(index, 'utf8').matchAll(/\]\(([^)#\s]+)(?:#[^)]*)?\)/g)].map((match) =>
+      match[1].replace(/^\.\//, ''),
+    ),
+  );
+  return documentFiles(docs)
+    .filter((file) => !linked.has(file))
+    .map((file) => `docs/README.md does not link docs/${file}`);
 }
 
 export function analyze(root) {
@@ -111,6 +138,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     ? resolve(argument.slice('--root='.length))
     : resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
   const { errors, rows, notCovered } = analyze(root);
+  errors.push(...checkDocsIndex(root));
   if (errors.length) {
     for (const error of errors) console.error(`::error file=${MATRIX}::${error}`);
     console.error(`FAIL ${errors.length} traceability problem(s)`);

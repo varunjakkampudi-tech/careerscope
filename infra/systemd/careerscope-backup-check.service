@@ -1,0 +1,23 @@
+[Unit]
+Description=CareerScope backup freshness check (is last-status ok and recent?)
+# No dependency on docker.service on purpose: this only reads the status file, and must still be
+# able to report when Docker is down.
+
+[Service]
+Type=oneshot
+# Same webhook env files as the backup itself, so a failed check can alert to the same channel.
+EnvironmentFile=-/etc/careerscope-monitor.env
+EnvironmentFile=-/etc/careerscope-backup.env
+ExecStart=/usr/local/bin/careerscope-check-backup.sh --status-only /var/backups/careerscope
+
+# A non-zero exit is the intended way to report a failed, stale or hung backup, so systemd marking
+# this unit failed is correct (it shows in `systemctl list-units --failed`). No SuccessExitStatus
+# override: only exit 0 counts as success.
+
+# Reads one file and may POST to the webhook; it needs no docker socket and writes nothing, so it is
+# sandboxed more tightly than careerscope-backup.service.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadOnlyPaths=/var/backups/careerscope

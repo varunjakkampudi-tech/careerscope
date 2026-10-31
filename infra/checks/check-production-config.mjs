@@ -78,8 +78,52 @@ await check('app services get the Redis password from a file, not from the URL',
   const body = withoutComments(compose);
   assert.equal(/redis:\/\/:/.test(body), false, 'no password inside a Redis URL');
   assert.match(body, /REDIS_PASSWORD_FILE: \/run\/secrets\/redis-password/);
-  assert.equal((body.match(/secrets: \[redis-password\]/g) ?? []).length, 4);
+  assert.equal((body.match(/secrets: \[redis-password\]/g) ?? []).length, 3);
 });
+
+await check(
+  'OTP secrets are files mounted into the api service only, never environment values',
+  () => {
+    const body = withoutComments(compose);
+    assert.equal(/^\s+(EMAIL_OTP_HMAC_SECRET|RESEND_API_KEY):/m.test(body), false);
+    assert.match(body, /EMAIL_OTP_ENABLED: 'true'/);
+    assert.match(body, /RESEND_FROM_EMAIL: 'CareerScope <noreply@careerscope.tech>'/);
+    assert.match(body, /EMAIL_OTP_HMAC_SECRET_FILE: \/run\/secrets\/email-otp-hmac-secret/);
+    assert.match(body, /RESEND_API_KEY_FILE: \/run\/secrets\/resend-api-key/);
+    assert.equal(
+      (body.match(/secrets: \[redis-password, email-otp-hmac-secret, resend-api-key\]/g) ?? [])
+        .length,
+      1,
+    );
+    const others = body.slice(body.indexOf('\n  publisher:'), body.indexOf('\nsecrets:'));
+    assert.equal(/EMAIL_OTP_HMAC_SECRET_FILE|resend-api-key/.test(others), false);
+  },
+);
+
+await check(
+  'the backup freshness check has a timer and a sandboxed unit, installed by setup-backup.sh',
+  () => {
+    const service = withoutComments(read('systemd/careerscope-backup-check.service'));
+    const timer = read('systemd/careerscope-backup-check.timer');
+    assert.match(
+      service,
+      /ExecStart=\/usr\/local\/bin\/careerscope-check-backup\.sh --status-only \/var\/backups\/careerscope/,
+    );
+    for (const line of [
+      'NoNewPrivileges=yes',
+      'ProtectSystem=strict',
+      'ProtectHome=yes',
+      'PrivateTmp=yes',
+    ]) {
+      assert.ok(service.includes(line), line);
+    }
+    assert.equal(/SuccessExitStatus/.test(service), false);
+    assert.match(timer, /OnCalendar=/);
+    const setup = read('host/setup-backup.sh');
+    assert.match(setup, /careerscope-backup-check\.timer/);
+    assert.match(setup, /systemctl enable --quiet careerscope-backup-check\.timer/);
+  },
+);
 
 await check('compose images are explicit required variables, not mutable local tags', () => {
   const images = compose.split('\n').filter((line) => /^\s*image:/.test(line));
@@ -192,6 +236,51 @@ await check('render-redis-config.sh writes password files and rejects a weak pas
   const weak = spawnSync('bash', [script, envFile], { env, encoding: 'utf8' });
   assert.notEqual(weak.status, 0);
 });
+
+await check(
+  'render-otp-secrets.sh writes the files, generates the HMAC secret and rejects bad values',
+  () => {
+    const script = join(infra, 'host/render-otp-secrets.sh');
+    if (spawnSync('bash', ['-c', 'exit 0']).error) return console.log('SKIP no bash available');
+    if (spawnSync('openssl', ['version']).error) return console.log('SKIP no openssl available');
+    const secrets = join(scratch, 'otp-secrets');
+    const envFile = join(scratch, 'otp-env');
+    const resend = 're_placeholder0123456789abcdef';
+    const env = { ...process.env, CAREERSCOPE_SECRETS_DIR: secrets };
+    const run = (text) => {
+      writeFileSync(envFile, text);
+      return spawnSync('bash', [script, envFile], { env, encoding: 'utf8' });
+    };
+    const ok = run(`RESEND_API_KEY=${resend}\n`);
+    assert.equal(ok.status, 0, ok.stderr);
+    const generated = readFileSync(envFile, 'utf8').match(
+      /^EMAIL_OTP_HMAC_SECRET=([0-9a-f]{64})$/m,
+    );
+    assert.ok(generated, 'a 64-hex HMAC secret is generated into the env file');
+    assert.equal(readFileSync(join(secrets, 'email-otp-hmac-secret'), 'utf8'), `${generated[1]}\n`);
+    assert.equal(readFileSync(join(secrets, 'resend-api-key'), 'utf8'), `${resend}\n`);
+    assert.equal(
+      [ok.stdout, ok.stderr].some((text) => text.includes(generated[1]) || text.includes(resend)),
+      false,
+    );
+    if (posix) assert.equal(statSync(secrets).mode & 0o777, 0o700);
+    const counter = Array.from({ length: 32 }, (_, i) => i.toString(16).padStart(2, '0')).join('');
+    const bad = [
+      `EMAIL_OTP_HMAC_SECRET=${'ab'.repeat(32)}\nRESEND_API_KEY=${resend}\n`,
+      `EMAIL_OTP_HMAC_SECRET=${counter}\nRESEND_API_KEY=${resend}\n`,
+      `EMAIL_OTP_HMAC_SECRET=${generated[1]}\n`,
+      `EMAIL_OTP_HMAC_SECRET=${generated[1]}\nRESEND_API_KEY=short\n`,
+    ];
+    for (const text of bad) {
+      const refused = run(text);
+      assert.notEqual(refused.status, 0);
+      assert.equal(
+        refused.stderr.includes(generated[1]) || refused.stderr.includes('ababab'),
+        false,
+      );
+    }
+  },
+);
 
 rmSync(scratch, { recursive: true, force: true });
 if (failures > 0) {

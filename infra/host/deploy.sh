@@ -55,6 +55,8 @@ mv "$env_file.next" "$env_file"
 
 # Redis password reaches the containers as mounted files, never as an environment variable.
 bash "$(dirname "$0")/render-redis-config.sh" "$env_file"
+# The OTP HMAC secret (generated on first run) and the Resend key reach only the api, as files.
+bash "$(dirname "$0")/render-otp-secrets.sh" "$env_file"
 
 docker compose -f "$infra/docker/compose.production.yml" --env-file "$env_file" up -d --remove-orphans
 docker compose -f "$infra/docker/compose.production.yml" --env-file "$env_file" ps

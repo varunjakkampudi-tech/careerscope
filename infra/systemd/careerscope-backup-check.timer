@@ -1,0 +1,12 @@
+[Unit]
+Description=Run the CareerScope backup freshness check daily
+
+[Timer]
+# Mid-morning, well after the 03:30 backup has finished, so a run that is still going is the
+# exception that gets flagged. Persistent catches up after a host outage.
+OnCalendar=*-*-* 09:15:00
+RandomizedDelaySec=300
+Persistent=true
+
+[Install]
+WantedBy=timers.target

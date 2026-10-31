@@ -149,6 +149,8 @@ export class PrivateFileResumeStorage {
   private markers = 0;
   private reclaimedTemporaries = 0;
   private ready = false;
+  /** The in-flight `initialize`, shared by concurrent callers. Cleared when it settles. */
+  private initializing: Promise<void> | undefined;
 
   constructor(
     config: {
@@ -197,17 +199,31 @@ export class PrivateFileResumeStorage {
     this.keyId = Buffer.from(hkdfSync('sha256', this.key, Buffer.alloc(0), keyIdInfo, 4));
   }
 
-  /** Creates the directory (mode 0700), validates it, and counts existing cancellation markers. Must run before any other call. */
-  async initialize(signal?: AbortSignal) {
+  /**
+   * Creates the directory (mode 0700), validates it, and counts existing cancellation markers. Must
+   * run before any other call. Idempotent: a call made while another is running awaits that one
+   * (and shares its signal), and a call on an initialised store re-validates and recounts without
+   * ever clearing `ready`, so a concurrent sweep or request never sees an uninitialised store.
+   */
+  initialize(signal?: AbortSignal): Promise<void> {
     signal?.throwIfAborted();
-    this.ready = false;
+    if (this.initializing) return this.initializing;
+    const run = this.runInitialize(signal).finally(() => {
+      if (this.initializing === run) this.initializing = undefined;
+    });
+    this.initializing = run;
+    return run;
+  }
+
+  private async runInitialize(signal?: AbortSignal) {
+    const wasReady = this.ready;
     await mkdir(this.root, { recursive: true, mode: 0o700 });
     await this.checkDirectory();
     this.ready = true;
     try {
       this.markers = (await this.inventory(signal)).markers;
     } catch (error) {
-      this.ready = false;
+      this.ready = wasReady;
       throw error;
     }
   }
@@ -313,7 +329,12 @@ export class PrivateFileResumeStorage {
         objects += 1;
         objectBytes += stat.size;
         // Markers are reclaimed only after the retention window, so their growth needs a signal.
-        if (stat.size === markerSize) {
+        // Only a file with a marker magic counts; any other 36-byte file is not a marker.
+        if (
+          stat.size === markerSize &&
+          stat.isFile() &&
+          (await this.hasMarkerMagic(join(this.root, entry.name)))
+        ) {
           markers += 1;
           markerBytes += stat.size;
         }
@@ -388,6 +409,8 @@ export class PrivateFileResumeStorage {
     let running = false;
     const tick = async () => {
       try {
+        // Not yet initialised (or closed): nothing to sweep, and not worth a log line.
+        if (!this.ready) return;
         const temporaries = await this.reclaimTemporariesAtStartup(controller.signal);
         const markersRemoved = await this.reclaimExpiredMarkers(controller.signal);
         options.onResult({ ...temporaries, markersRemoved });

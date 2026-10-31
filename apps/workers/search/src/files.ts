@@ -35,7 +35,7 @@ try {
       );
     shutdown.close();
   } else {
-    const env = configuration();
+    const env = configuration(process.env, { emailOtpSecrets: false });
     database = new Database(env.DATABASE_URL);
     // Resume parsing queue backed by Redis BullMQ.
     const filesQueue = new LocalQueue(env.QUEUE_REDIS_URL);

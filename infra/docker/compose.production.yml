@@ -35,6 +35,11 @@ x-environment: &environment
   REDIS_URL: redis://127.0.0.1:6379
   QUEUE_REDIS_URL: redis://127.0.0.1:6380
   REDIS_PASSWORD_FILE: /run/secrets/redis-password
+  # Email OTP sign-in is mandatory in production. The flag and sender are not secret and are shared so
+  # every service passes the same configuration check; the HMAC secret and the Resend key reach only
+  # the api service, as files (see api below), never as environment values.
+  EMAIL_OTP_ENABLED: 'true'
+  RESEND_FROM_EMAIL: 'CareerScope <noreply@careerscope.tech>'
   APP_ORIGIN: ${APP_ORIGIN:?Public origin required}
   DEPLOYMENT_ENVIRONMENT: production
   REGISTRATION_ENABLED: ${REGISTRATION_ENABLED:-false}
@@ -232,8 +237,10 @@ services:
       <<: *environment
       DEPLOYMENT_ENVIRONMENT: production
       TEST_ACCESS_MODE: disabled
+      EMAIL_OTP_HMAC_SECRET_FILE: /run/secrets/email-otp-hmac-secret
+      RESEND_API_KEY_FILE: /run/secrets/resend-api-key
     command: ['node', 'apps/api/dist/main.js']
-    secrets: [redis-password]
+    secrets: [redis-password, email-otp-hmac-secret, resend-api-key]
     volumes: ['private:/private']
     healthcheck:
       test:
@@ -294,6 +301,8 @@ services:
 # The Redis password reaches the Redis containers as a file, never as a command-line argument
 # or an environment variable, so it is absent from `docker inspect` and the process list.
 # `bash infra/host/render-redis-config.sh` writes these files from REDIS_PASSWORD in infra/.env.
+# `bash infra/host/render-otp-secrets.sh` writes the two OTP files from EMAIL_OTP_HMAC_SECRET and
+# RESEND_API_KEY in infra/.env; only the api service mounts them.
 secrets:
   redis-config:
     file: ../.env.secrets/redis.conf
@@ -301,6 +310,10 @@ secrets:
     file: ../.env.secrets/redis-queue.conf
   redis-password:
     file: ../.env.secrets/redis-password
+  email-otp-hmac-secret:
+    file: ../.env.secrets/email-otp-hmac-secret
+  resend-api-key:
+    file: ../.env.secrets/resend-api-key
 
 volumes:
   queue-data:

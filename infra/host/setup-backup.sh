@@ -30,6 +30,11 @@ install -o root -g root -m 0755 "$dir/backup.sh" /usr/local/bin/careerscope-back
 echo "== installing systemd units"
 install -o root -g root -m 0644 "$units/careerscope-backup.service" /etc/systemd/system/careerscope-backup.service
 install -o root -g root -m 0644 "$units/careerscope-backup.timer" /etc/systemd/system/careerscope-backup.timer
+# The daily freshness check: runs check-backup.sh --status-only, so a missed, failed or hung backup
+# fails a unit (and posts to the webhook) instead of waiting for someone to read last-status.
+install -o root -g root -m 0755 "$dir/../checks/check-backup.sh" /usr/local/bin/careerscope-check-backup.sh
+install -o root -g root -m 0644 "$units/careerscope-backup-check.service" /etc/systemd/system/careerscope-backup-check.service
+install -o root -g root -m 0644 "$units/careerscope-backup-check.timer" /etc/systemd/system/careerscope-backup-check.timer
 
 echo "== creating backup directory (root-only: dumps contain private data)"
 install -d -o root -g root -m 0700 /var/backups/careerscope
@@ -65,6 +70,8 @@ echo "== enabling timer"
 systemctl daemon-reload
 systemctl enable --quiet careerscope-backup.timer
 systemctl restart careerscope-backup.timer
+systemctl enable --quiet careerscope-backup-check.timer
+systemctl restart careerscope-backup-check.timer
 
 # Preflight the encryption and key settings the way the unit will see them. The unit reads the
 # same env file, and runs with ProtectHome=yes, so a path under /root or /home cannot be read.
@@ -121,7 +128,7 @@ echo "== last backup status"
 cat /var/backups/careerscope/last-status 2>/dev/null || echo "(no status file yet - check the journal above)"
 
 echo "== timer status"
-systemctl list-timers careerscope-backup.timer --no-pager
+systemctl list-timers careerscope-backup.timer careerscope-backup-check.timer --no-pager
 
 if [ "$install_status" -ne 0 ]; then
   echo "backup job installed, but backups are NOT working yet (see the messages above)" >&2

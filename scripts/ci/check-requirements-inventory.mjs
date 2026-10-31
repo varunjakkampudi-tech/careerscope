@@ -1,11 +1,18 @@
 #!/usr/bin/env node
 // Validates the v12 requirement reconciliation (Stage 1 item 1.02).
 //
-// docs/requirements/V12-REQUIREMENT-INVENTORY.json holds every clause of the owner's v12
-// specification with an assessment. This check fails when:
-//   - the pinned source document no longer matches sourceSha256;
+// docs/requirements/V12-REQUIREMENT-INVENTORY.json records an assessment per clause of the owner's
+// v12 specification. Exactly what is enforced: this check fails when
+//   - the source's sha256 differs from SOURCE_SHA256 (pinned in this file) or from the inventory's
+//     sourceSha256;
+//   - the inventory does not have EXPECTED_CLAUSES (319) items, totalSourceItems differs, or the
+//     items do not carry that many distinct integer sourceLine values. Changing the source or the
+//     clause count therefore needs an edit to the constants here, visible in review. This does not
+//     prove the 319 clauses are all of the source's clauses, only that none was dropped since the pin;
+//   - an item's text does not match its source line (a blank or punctuation-only line never matches);
 //   - an item is still NOT_ASSESSED, has an unknown status, or lacks the fields its status needs;
-//   - an IMPLEMENTED item cites no implementing file or no test, or cites a test that no CI script runs;
+//   - an IMPLEMENTED item cites no implementing file or no test, or cites a test that no CI script
+//     or non-comment workflow `run:` step names;
 //   - a cited file does not exist or a cited line is past the end of the file;
 //   - an OUT_OF_SCOPE_POST_LAUNCH quote is not verbatim in the source's post-launch section (11);
 //   - docs/requirements/V12-RECONCILIATION.md is not the output of this script for the inventory.
@@ -34,6 +41,11 @@ const VERIFICATIONS = [
   'OWNER_EVIDENCE_PENDING',
   'NOT_APPLICABLE',
 ];
+/** Pinned: the sha256 of docs/requirements/CareerScope-v12.md and the number of clauses taken from it. */
+export const SOURCE_SHA256 = '35e9a728a65b0620cb9075345216c69c973fee57efad21752554dc338a532167';
+export const EXPECTED_CLAUSES = 319;
+/** A source line needs at least this many letters or digits to take part in a substring match. */
+const MIN_MATCH_LENGTH = 4;
 const squash = (value) => String(value).replace(/\s+/g, ' ').trim();
 const nonEmpty = (value) => typeof value === 'string' && value.trim().length > 0;
 const refPath = (ref) => ref.replace(/:\d+$/, '');
@@ -49,10 +61,34 @@ export function sectionRange(sourceLines, number) {
   return [start + 1, next < 0 ? sourceLines.length : next];
 }
 
+/** Text of the `run:` steps of a workflow: no comment lines, `paths:` filters or other keys. */
+export function workflowRunText(workflow) {
+  const lines = workflow.split(/\r?\n/);
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    const match = /^(\s*)(-\s+)?run:\s*(.*)$/.exec(lines[i]);
+    if (!match) continue;
+    const keyIndent = match[1].length + (match[2] ? match[2].length : 0);
+    const rest = match[3].trim();
+    if (/^[|>][+-]?\d*\s*(#.*)?$/.test(rest)) {
+      while (i + 1 < lines.length) {
+        const next = lines[i + 1];
+        const indent = next.length - next.trimStart().length;
+        if (next.trim() !== '' && indent <= keyIndent) break;
+        i += 1;
+        if (!next.trim().startsWith('#')) out.push(next);
+      }
+    } else if (rest && !rest.startsWith('#')) {
+      out.push(rest.replace(/\s+#.*$/, ''));
+    }
+  }
+  return out.join('\n');
+}
+
 function executedTokens(root, scriptText) {
   const workflow = join(root, '.github/workflows/ci.yml');
-  const text = `${scriptText}\n${existsSync(workflow) ? readFileSync(workflow, 'utf8') : ''}`;
-  return new Set(text.split(/\s+/));
+  const run = existsSync(workflow) ? workflowRunText(readFileSync(workflow, 'utf8')) : '';
+  return new Set(`${scriptText}\n${run}`.split(/\s+/));
 }
 
 /** Checks one `path` or `path:line` reference. Returns an error message or null. */
@@ -124,10 +160,22 @@ function checkItemShape(item, seen, sourceLines, fail) {
     fail(item.id, `unknown assessment ${JSON.stringify(item.assessment)}`);
   if (!VERIFICATIONS.includes(item.verification))
     fail(item.id, `unknown verification ${JSON.stringify(item.verification)}`);
-  const line = sourceLines[(item.sourceLine ?? 0) - 1];
-  const wanted = squash(item.text);
-  if (line === undefined || (!squash(line).includes(wanted) && !wanted.includes(squash(line))))
+  if (!matchesSourceLine(sourceLines[(item.sourceLine ?? 0) - 1], item.text))
     fail(item.id, `text does not match source line ${item.sourceLine}`);
+}
+
+const meaningful = (value) => value.replace(/[^\p{L}\p{N}]/gu, '');
+
+/** True when clause text and source line agree. A blank or punctuation-only line never matches. */
+export function matchesSourceLine(line, text) {
+  if (line === undefined || typeof text !== 'string') return false;
+  const [have, wanted] = [squash(line), squash(text)];
+  const [haveCore, wantedCore] = [meaningful(have), meaningful(wanted)];
+  if (!haveCore || !wantedCore) return false;
+  if (have === wanted) return true;
+  if (have.includes(wanted)) return wantedCore.length >= MIN_MATCH_LENGTH;
+  if (wanted.includes(have)) return haveCore.length >= MIN_MATCH_LENGTH;
+  return false;
 }
 
 export function analyzeInventory(root, scriptText = '') {
@@ -152,11 +200,24 @@ export function analyzeInventory(root, scriptText = '') {
   const digest = createHash('sha256').update(sourceBytes).digest('hex');
   if (inventory.sourceSha256 !== digest)
     errors.push(`${SOURCE} sha256 ${digest} does not match inventory sourceSha256`);
+  if (digest !== SOURCE_SHA256)
+    errors.push(`${SOURCE} sha256 ${digest} does not match the pinned SOURCE_SHA256`);
   const items = Array.isArray(inventory.items) ? inventory.items : [];
-  if (inventory.totalSourceItems !== items.length)
+  if (items.length !== EXPECTED_CLAUSES)
+    errors.push(`inventory has ${items.length} items, expected ${EXPECTED_CLAUSES} clauses`);
+  if (inventory.totalSourceItems !== EXPECTED_CLAUSES)
     errors.push(
-      `totalSourceItems ${inventory.totalSourceItems} does not equal ${items.length} items`,
+      `totalSourceItems ${inventory.totalSourceItems} does not equal the expected ${EXPECTED_CLAUSES}`,
     );
+  const lineNumbers = items.map((item) => item.sourceLine);
+  const distinct = new Set(lineNumbers.filter((line) => Number.isInteger(line)));
+  if (distinct.size !== EXPECTED_CLAUSES || lineNumbers.length !== EXPECTED_CLAUSES)
+    errors.push(
+      `${distinct.size} distinct integer sourceLine values across ${lineNumbers.length} items, expected ${EXPECTED_CLAUSES}`,
+    );
+  for (const line of distinct)
+    if (lineNumbers.indexOf(line) !== lineNumbers.lastIndexOf(line))
+      errors.push(`sourceLine ${line} is used by more than one item`);
 
   const sourceLines = sourceBytes.toString('utf8').split(/\r?\n/);
   const context = {

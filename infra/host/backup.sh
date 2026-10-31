@@ -94,6 +94,12 @@ staging_resumes="$BACKUP_DIR/.staging-resumes-$stamp.tar"
 staging_resumes_encrypted="$BACKUP_DIR/.staging-resumes-$stamp.tar.encrypted"
 staging_resumes_list="$BACKUP_DIR/.staging-resumes-list-$stamp"
 staging_resumes_stderr="$BACKUP_DIR/.staging-resumes-stderr-$stamp"
+# Diagnostics from pg_dump, pg_restore and the encryption tools can echo row data or object names, so
+# they live only in root-only staging files, are removed on every exit path, and only a line count
+# is ever recorded.
+staging_dump_stderr="$BACKUP_DIR/.staging-dump-stderr-$stamp"
+staging_restore_stderr="$BACKUP_DIR/.staging-restore-stderr-$stamp"
+staging_encrypt_stderr="$BACKUP_DIR/.staging-encrypt-stderr-$stamp"
 final_resumes="$BACKUP_DIR/careerscope-resumes-$stamp.tar"
 staging_key="$BACKUP_KEY_DIR/.staging-key-$stamp.key"
 staging_key_encrypted="$BACKUP_KEY_DIR/.staging-key-$stamp.key.encrypted"
@@ -115,7 +121,12 @@ remove_staging() {
   fi
   rm -rf "$staging_gnupg"
   rm -f "$staging" "$staging_encrypted" "$staging_resumes" "$staging_resumes_encrypted" \
-    "$staging_resumes_list" "$staging_resumes_stderr" "$staging_key" "$staging_key_encrypted"
+    "$staging_resumes_list" "$staging_resumes_stderr" "$staging_key" "$staging_key_encrypted" \
+    "$staging_dump_stderr" "$staging_restore_stderr" "$staging_encrypt_stderr"
+}
+# Number of lines in a diagnostics file (0 when it does not exist). Never prints the content.
+line_count() {
+  if [ -f "$1" ]; then grep -c '' "$1" || true; else echo 0; fi
 }
 cleanup() {
   # A failing removal must not stop the scratch cleanup or change the exit status.
@@ -179,6 +190,8 @@ send_alert() {
 
 mkdir -p "$BACKUP_DIR"
 chmod 0700 "$BACKUP_DIR"
+# Earlier versions left unencrypted diagnostics here; they can hold row data, so they are removed.
+rm -f "$BACKUP_DIR/.last-dump-stderr" "$BACKUP_DIR/.last-restore-stderr" "$BACKUP_DIR/.last-encrypt-stderr"
 
 # From here on any unexpected failure (a command failing under set -e, including mkdir and chmod
 # before the first dump step) records STATUS=failed and sends the alert instead of exiting with a
@@ -192,15 +205,29 @@ trap 'fail "unexpected failure at line $LINENO; check the backup directory, key 
 # Best-effort: flock is standard on Ubuntu (util-linux) but is not something
 # a missing-tool situation should turn into a backup outage over, so a host
 # without it just skips locking rather than refusing to run at all.
-# A held lock is not a failure, so the exit is 0, but it is recorded as STATUS=locked with the
-# time. A lock that stays held makes that status old, and check-backup.sh --status-only flags a
-# locked status older than 26 hours (a hung run), so it cannot hide behind exit 0 forever.
+# A held lock is not a failure, so the exit is 0. It must not make the backup look fresh, though: a
+# hung run that holds the lock forever would otherwise keep refreshing the status. So AT keeps the
+# time of the last successful run (carried over from an ok, degraded or locked status), the attempt
+# time goes into LOCK_ATTEMPT_AT and the separate last-lock-attempt file, and check-backup.sh
+# --status-only flags a locked status whose AT is older than the staleness bound. A previous failed
+# or missing status is left as it is, because those are already flagged.
 lock_fd=200
 if command -v flock >/dev/null 2>&1; then
   exec 200>"$BACKUP_DIR/.lock"
   if ! flock -n "$lock_fd"; then
     echo "another backup run is already in progress; not starting a second one" >&2
-    printf 'STATUS=locked\nAT=%s\n' "$(date -u +%Y%m%dT%H%M%SZ)" >"$status_file"
+    attempt=$(date -u +%Y%m%dT%H%M%SZ)
+    printf 'LOCK_ATTEMPT_AT=%s\n' "$attempt" >"$BACKUP_DIR/last-lock-attempt"
+    prior_status=$(sed -n 's/^STATUS=//p' "$status_file" 2>/dev/null | head -1 || true)
+    prior_at=$(sed -n 's/^AT=//p' "$status_file" 2>/dev/null | head -1 || true)
+    case "$prior_status" in
+      ok | degraded | locked)
+        if [[ "$prior_at" =~ ^[0-9]{8}T[0-9]{6}Z$ ]]; then
+          printf 'STATUS=locked\nAT=%s\nLOCK_ATTEMPT_AT=%s\n' "$prior_at" "$attempt" >"$status_file.tmp" \
+            && mv -f "$status_file.tmp" "$status_file" || true
+        fi
+        ;;
+    esac
     exit 0
   fi
 else
@@ -296,8 +323,8 @@ encrypt_dump() {
 
 # -- 1. dump --------------------------------------------------------------
 if ! "$DOCKER_BIN" exec "$BACKUP_DB_CONTAINER" pg_dump -U "$BACKUP_DB_USER" -Fc "$BACKUP_DB_NAME" \
-  >"$staging" 2>"$BACKUP_DIR/.last-dump-stderr"; then
-  fail "pg_dump exited non-zero, see $BACKUP_DIR/.last-dump-stderr"
+  >"$staging" 2>"$staging_dump_stderr"; then
+  fail "pg_dump exited non-zero ($(line_count "$staging_dump_stderr") diagnostic lines, not retained)"
 fi
 if [ ! -s "$staging" ]; then
   fail "pg_dump produced an empty file"
@@ -310,8 +337,8 @@ if ! "$DOCKER_BIN" exec "$BACKUP_DB_CONTAINER" psql -U "$BACKUP_DB_USER" -d post
   fail "could not create scratch verification database"
 fi
 if ! "$DOCKER_BIN" exec -i "$BACKUP_DB_CONTAINER" pg_restore -U "$BACKUP_DB_USER" \
-  -d "$BACKUP_VERIFY_DB" --no-owner <"$staging" >/dev/null 2>"$BACKUP_DIR/.last-restore-stderr"; then
-  fail "restore into the scratch database failed, see $BACKUP_DIR/.last-restore-stderr"
+  -d "$BACKUP_VERIFY_DB" --no-owner <"$staging" >/dev/null 2>"$staging_restore_stderr"; then
+  fail "restore into the scratch database failed ($(line_count "$staging_restore_stderr") diagnostic lines, not retained)"
 fi
 # A real sanity query, not just "pg_restore exited zero" - proves the
 # restored database actually answers a query the application depends on.
@@ -323,8 +350,8 @@ fi
 cleanup_scratch
 
 # -- 2a. encrypt the verified dump; the plaintext never leaves staging ----
-if ! encrypt_dump "$staging" "$staging_encrypted" 2>"$BACKUP_DIR/.last-encrypt-stderr"; then
-  fail "dump encryption ($encryption_method) failed, see $BACKUP_DIR/.last-encrypt-stderr"
+if ! encrypt_dump "$staging" "$staging_encrypted" 2>"$staging_encrypt_stderr"; then
+  fail "dump encryption ($encryption_method) failed ($(line_count "$staging_encrypt_stderr") diagnostic lines, not retained)"
 fi
 if [ ! -s "$staging_encrypted" ]; then
   fail "dump encryption ($encryption_method) produced an empty file"
@@ -351,8 +378,8 @@ if [ -n "$BACKUP_FILES_CONTAINER" ]; then
     fail "resume object archive is empty or unreadable"
   fi
   resume_objects=$(grep -c '\.bin$' "$staging_resumes_list" || true)
-  if ! encrypt_dump "$staging_resumes" "$staging_resumes_encrypted" 2>"$BACKUP_DIR/.last-encrypt-stderr"; then
-    fail "resume archive encryption ($encryption_method) failed, see $BACKUP_DIR/.last-encrypt-stderr"
+  if ! encrypt_dump "$staging_resumes" "$staging_resumes_encrypted" 2>"$staging_encrypt_stderr"; then
+    fail "resume archive encryption ($encryption_method) failed ($(line_count "$staging_encrypt_stderr") diagnostic lines, not retained)"
   fi
   if [ ! -s "$staging_resumes_encrypted" ]; then
     fail "resume archive encryption ($encryption_method) produced an empty file"
@@ -372,8 +399,8 @@ if [ -n "$BACKUP_FILES_CONTAINER" ]; then
   key_fingerprint=$(tr -d '\n\r' <"$staging_key" | sha256sum | cut -c1-12)
   final_key="$BACKUP_KEY_DIR/careerscope-resume-key-$key_fingerprint.key.$encrypted_suffix"
   if [ ! -s "$final_key" ]; then
-    if ! encrypt_dump "$staging_key" "$staging_key_encrypted" 2>"$BACKUP_DIR/.last-encrypt-stderr"; then
-      fail "resume key encryption ($encryption_method) failed, see $BACKUP_DIR/.last-encrypt-stderr"
+    if ! encrypt_dump "$staging_key" "$staging_key_encrypted" 2>"$staging_encrypt_stderr"; then
+      fail "resume key encryption ($encryption_method) failed ($(line_count "$staging_encrypt_stderr") diagnostic lines, not retained)"
     fi
     if [ ! -s "$staging_key_encrypted" ]; then
       fail "resume key encryption ($encryption_method) produced an empty file"
@@ -414,6 +441,7 @@ fi
   echo "FILE=$final"
   echo "ENCRYPTION=$encryption_method"
   echo "TABLES=$table_count"
+  echo "DIAGNOSTIC_LINES=$(( $(line_count "$staging_dump_stderr") + $(line_count "$staging_restore_stderr") ))"
   echo "RESUMES=$resumes_state"
   if [ "$resumes_state" = ok ]; then
     echo "RESUMES_FILE=$final_resumes"

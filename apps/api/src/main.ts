@@ -26,6 +26,14 @@ let resumeStorage: Awaited<ReturnType<typeof configuredFileResumeStorage>>;
 let cleaned = false;
 let stopReclaim: (() => void) | undefined;
 
+/** True when `error` is the abort caused by the shutdown signal rather than a real failure. */
+function isShutdownAbort(error: unknown, signal: AbortSignal): boolean {
+  return (
+    signal.aborted &&
+    (error === signal.reason || (error instanceof Error && error.name === 'AbortError'))
+  );
+}
+
 try {
   const env = configuration();
   const emailOtp =
@@ -102,6 +110,11 @@ try {
       await new Promise<void>((resolve) =>
         shutdown.signal.addEventListener('abort', () => resolve(), { once: true }),
       );
+  } catch (error) {
+    // A shutdown signal that interrupts startup aborts the reclaim: a clean stop, not a failure.
+    // Cleanup still runs once in the finally block and the process exits 0.
+    if (!isShutdownAbort(error, shutdown.signal)) throw error;
+    logger.info('Shutdown requested during startup');
   } finally {
     cleaned = true;
     stopReclaim?.();

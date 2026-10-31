@@ -134,11 +134,15 @@ still no automated off-host copy (see Recovery objectives).
 
 `last-status` holds `STATUS=` one of `ok`, `degraded` (resumes skipped by
 opt-in), `failed`, or `locked`. A run that finds the lock held by another run
-exits 0 on purpose (it is not a failure) and writes `STATUS=locked` with the
-time. A lock that stays held leaves that status getting older, so
-`bash infra/checks/check-backup.sh --status-only [DIR]` exits 1 for `failed`
-and for a `locked` status older than **26 hours** (a hung run). It exits 0 for
-`ok`, `degraded` and a recent `locked`.
+exits 0 on purpose (it is not a failure) and writes `STATUS=locked`. Its `AT=`
+keeps the time of the **last successful run** (carried over from the previous
+`ok`, `degraded` or `locked` status); the time of the lock attempt goes into
+`LOCK_ATTEMPT_AT=` and the separate `last-lock-attempt` file. A hung run that
+holds the lock therefore cannot make the status look fresh: `bash
+infra/checks/check-backup.sh --status-only [DIR]` exits 1 for `failed` and for
+a `locked` status whose last success is older than the same **30 hours** bound
+as `ok`. A previous `failed` or missing status is left as it is. It exits 0 for
+`ok`, `degraded` and a `locked` status with a recent last success.
 
 A good status does not stay good forever. `--status-only` also exits 1 when an
 `ok` or `degraded` status is older than the backup interval plus a grace
@@ -146,8 +150,21 @@ period: **24 hours + 6 hours = 30 hours** by default (the timer runs daily at
 03:30, so a missed run is flagged the same day). Override with
 `BACKUP_STATUS_INTERVAL_HOURS` and `BACKUP_STATUS_GRACE_HOURS` (whole numbers).
 It also exits 1 for a missing or malformed `AT=` and for a stamp more than five
-minutes in the future. Wire it into the scheduler-health check if you want that
-alert; nothing calls it automatically today.
+minutes in the future. `careerscope-backup-check.timer` (daily, 09:15) runs it
+through `careerscope-backup-check.service`, installed by `setup-backup.sh`: a
+non-zero exit fails the unit (visible in `systemctl list-units --failed`) and,
+when `BACKUP_WEBHOOK_URL` or `MONITOR_WEBHOOK_URL` is set, posts a webhook
+alert. The unit is sandboxed (`ProtectSystem=strict`, `ProtectHome`,
+`PrivateTmp`, `NoNewPrivileges`, the backup directory read-only) and needs no
+Docker. The scheduler-health checker still watches the original six timers; this
+timer is not part of that list.
+
+`pg_dump`, `pg_restore` and encryption diagnostics can echo row data or object
+names, so they are written only to `.staging-*-stderr-*` files in the root-only
+backup directory and removed on every exit path. The status and journal keep
+only a count of diagnostic lines (`DIAGNOSTIC_LINES=`, or "N diagnostic lines,
+not retained" in a failure reason). The old `.last-*-stderr` files are deleted
+at the start of each run.
 
 Any unexpected failure after the run starts (for example `mkdir` or `chmod` on
 the key directory, before the first dump step) is caught by an `ERR` trap that
@@ -275,7 +292,7 @@ file and one inside `BACKUP_DIR` are refused, and a stub `age` is used when
 present; that nesting in either direction, a missing `realpath` and a wrong key
 directory owner are refused; that an allowed resume skip is `STATUS=degraded`;
 that a held lock exits 0 with `STATUS=locked`; that `--status-only` flags
-`failed` and a `locked` status older than 26 hours; that the webhook URL is
+`failed` and a `locked` status whose last success is older than 30 hours (including a real held lock over a 31 hour old status), and posts one webhook alert on failure; that no unencrypted diagnostics file is left in the backup directory; that the webhook URL is
 absent from curl's argv and from every `/proc/*/cmdline` while curl runs (with a
 positive control that the process is visible), and that a URL with a quote,
 backslash or newline is refused; that TERM removes every staging file; and that

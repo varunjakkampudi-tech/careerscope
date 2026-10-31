@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { configuration, rateLimiter } from './runtime.js';
+import { configuration, isRandomSecret, rateLimiter } from './runtime.js';
 
 const strongSecret = randomBytes(32).toString('hex');
 
@@ -268,3 +268,104 @@ test('REDIS_PASSWORD_FILE supplies the Redis password without it appearing in th
     rmSync(directory, { recursive: true, force: true });
   }
 });
+
+test('isRandomSecret rejects patterned and single-class values and accepts generated ones', () => {
+  const sequence = (length: number, next: (index: number) => number) =>
+    Buffer.from(Array.from({ length }, (_, index) => next(index) & 0xff));
+  // A generated secret is retried here only to keep the test deterministic about its own inputs.
+  const fewValues = randomBytes(64).map((byte) => byte % 20);
+  const rejected = [
+    sequence(32, (index) => index).toString('hex'), // counter 00 01 02 .. 1f
+    sequence(32, (index) => index).toString('base64'),
+    sequence(48, (index) => index * 7).toString('hex'), // constant step of 7
+    sequence(40, (index) => 200 - index * 3).toString('hex'), // constant negative step, wraps
+    sequence(64, (index) => index * 5).toString('base64url'),
+    Buffer.from(fewValues).toString('hex'), // at most 20 distinct byte values
+    'qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklz', // lowercase letters only, valid base64 form
+    'QWERTYUIOPASDFGHJKLZXCVBNMQWERTYUIOPASDFGHJKLZ',
+    'thequickbrownfoxjumpsoverthelazydogagainandagain', // dictionary-like, 48 characters
+    '1234567890'.repeat(7), // digits only
+    'ab'.repeat(32),
+    's'.repeat(64),
+  ];
+  for (const secret of rejected) assert.equal(isRandomSecret(secret), false);
+  for (let round = 0; round < 50; round++) {
+    assert.equal(isRandomSecret(randomBytes(32).toString('hex')), true);
+    assert.equal(isRandomSecret(randomBytes(32).toString('base64')), true);
+    assert.equal(isRandomSecret(randomBytes(33).toString('base64url')), true);
+  }
+});
+
+test('OTP secrets are read from files, fail closed when missing or weak, and are never echoed', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'otp-secrets-'));
+  try {
+    const hmacFile = join(directory, 'hmac');
+    const resendFile = join(directory, 'resend');
+    const hmac = randomBytes(32).toString('hex');
+    const resend = 're_' + randomBytes(16).toString('hex');
+    writeFileSync(hmacFile, `${hmac}\n`);
+    writeFileSync(resendFile, `${resend}\n`);
+    const source = {
+      DATABASE_URL: 'postgres://127.0.0.1/test',
+      REDIS_URL: 'redis://127.0.0.1:6379',
+      QUEUE_REDIS_URL: 'redis://127.0.0.1:6380',
+      APP_ORIGIN: 'https://careerscope.tech',
+      DEPLOYMENT_ENVIRONMENT: 'production',
+      EMAIL_OTP_ENABLED: 'true',
+      EMAIL_OTP_HMAC_SECRET_FILE: hmacFile,
+      RESEND_API_KEY_FILE: resendFile,
+    };
+    const env = configuration(source);
+    assert.equal(env.EMAIL_OTP_HMAC_SECRET, hmac);
+    assert.equal(env.RESEND_API_KEY, resend);
+    const refused = (override: Record<string, string | undefined>, pattern: RegExp) =>
+      assert.throws(
+        () => configuration({ ...source, ...override }),
+        (error: unknown) =>
+          error instanceof Error &&
+          pattern.test(error.message) &&
+          !error.message.includes(hmac) &&
+          !error.message.includes(resend) &&
+          !error.message.includes(directory),
+      );
+    // Missing file, empty file, multi-token file.
+    refused({ EMAIL_OTP_HMAC_SECRET_FILE: join(directory, 'absent') }, /HMAC_SECRET_FILE/);
+    refused({ RESEND_API_KEY_FILE: join(directory, 'absent') }, /RESEND_API_KEY_FILE/);
+    writeFileSync(resendFile, '\n');
+    refused({}, /RESEND_API_KEY_FILE/);
+    writeFileSync(resendFile, `${resend}\n`);
+    // A weak secret in the file is refused by the same screen as an environment value.
+    const weak = sequenceHex();
+    writeFileSync(hmacFile, `${weak}\n`);
+    refused({}, /HMAC secret/);
+    writeFileSync(hmacFile, `${hmac}\n`);
+    // An environment value next to a file is ambiguous and refused.
+    refused({ EMAIL_OTP_HMAC_SECRET: hmac }, /either EMAIL_OTP_HMAC_SECRET or/);
+    // Without the files production OTP still fails closed.
+    refused(
+      { EMAIL_OTP_HMAC_SECRET_FILE: undefined, RESEND_API_KEY_FILE: undefined },
+      /HMAC secret/,
+    );
+    // Workers do not receive the secrets and do not need them; the OTP flags still apply.
+    const worker = configuration(
+      { ...source, EMAIL_OTP_HMAC_SECRET_FILE: undefined, RESEND_API_KEY_FILE: undefined },
+      { emailOtpSecrets: false },
+    );
+    assert.equal(worker.EMAIL_OTP_HMAC_SECRET, undefined);
+    assert.throws(
+      () =>
+        configuration(
+          { ...source, EMAIL_OTP_ENABLED: undefined, EMAIL_OTP_HMAC_SECRET_FILE: undefined },
+          { emailOtpSecrets: false },
+        ),
+      /requires email OTP/,
+    );
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+/** The counter 00 01 02 .. 1f as hex, a classic placeholder secret. */
+function sequenceHex() {
+  return Buffer.from(Array.from({ length: 32 }, (_, index) => index)).toString('hex');
+}

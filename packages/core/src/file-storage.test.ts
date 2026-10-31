@@ -984,7 +984,7 @@ test('the periodic sweep reclaims aged temporaries, spares live ones, and never 
     assert.equal((await storage.inventory()).reclaimedTemporaries, 1);
 
     // A failing sweep is reported and does not throw; a throwing reporter is contained too.
-    storage.close();
+    await rm(directory, { recursive: true, force: true });
     mock.timers.tick(60_000);
     await until(() => errors.length === 1);
     const reporter = storage.startReclaimSweep({
@@ -1228,6 +1228,125 @@ test('CSR2 envelopes use a derived key, read legacy CSR1, and fail closed on tam
       storage.get(object, otherVersion.subarray(8, 44).toString()),
       /unable to authenticate data/,
     );
+  } finally {
+    storage.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('initialize is idempotent: concurrent calls share one run and ready is never cleared', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-init-'));
+  const storage = new PrivateFileResumeStorage({
+    directory,
+    encryptionKey: randomBytes(32).toString('hex'),
+  });
+  try {
+    const first = storage.initialize();
+    const second = storage.initialize();
+    assert.equal(first, second);
+    await Promise.all([first, second]);
+    assert.equal((await storage.inventory()).markers, 0);
+
+    // Lazy re-initialisation of a ready store must not make it look uninitialised meanwhile.
+    const again = storage.initialize();
+    assert.notEqual(again, first);
+    assert.equal((await storage.inventory()).markers, 0);
+    assert.equal(storage.initialize(), again);
+    await again;
+
+    // A failed run is not cached: the next call starts afresh.
+    const broken = new PrivateFileResumeStorage({
+      directory: join(directory, 'file'),
+      encryptionKey: randomBytes(32).toString('hex'),
+    });
+    await writeFile(join(directory, 'file'), 'not a directory');
+    await assert.rejects(broken.initialize());
+    await assert.rejects(broken.inventory(), /not initialized/);
+    await rm(join(directory, 'file'));
+    await broken.initialize();
+    assert.equal((await broken.inventory()).objects, 0);
+    broken.close();
+  } finally {
+    storage.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('a sweep tick before the store is initialised is skipped silently', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-sweep-init-'));
+  const storage = new PrivateFileResumeStorage({
+    directory,
+    encryptionKey: randomBytes(32).toString('hex'),
+  });
+  mock.timers.enable({ apis: ['setInterval'] });
+  const results: unknown[] = [];
+  const errors: unknown[] = [];
+  const flush = () => new Promise((resolve) => setTimeout(resolve, 20));
+  const stop = storage.startReclaimSweep({
+    intervalMs: 60_000,
+    onResult: (result) => results.push(result),
+    onError: (error) => errors.push(error),
+  });
+  try {
+    const pending = storage.initialize();
+    mock.timers.tick(60_000);
+    await flush();
+    assert.equal(errors.length, 0);
+    await pending;
+    mock.timers.tick(60_000);
+    for (let waited = 0; results.length < 1 && waited < 100; waited++) await flush();
+    assert.equal(results.length, 1);
+    assert.equal(errors.length, 0);
+
+    // The same holds for a store that was never initialised at all.
+    const idle = new PrivateFileResumeStorage({
+      directory,
+      encryptionKey: randomBytes(32).toString('hex'),
+    });
+    const idleStop = idle.startReclaimSweep({
+      intervalMs: 60_000,
+      onResult: (result) => results.push(result),
+      onError: (error) => errors.push(error),
+    });
+    mock.timers.tick(60_000);
+    await flush();
+    idleStop();
+    idle.close();
+    assert.equal(errors.length, 0);
+  } finally {
+    stop();
+    mock.timers.reset();
+    storage.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('inventory counts only 36-byte files with a marker magic as markers', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-inventory-markers-'));
+  const storage = new PrivateFileResumeStorage({
+    directory,
+    encryptionKey: randomBytes(32).toString('hex'),
+  });
+  try {
+    await storage.initialize();
+    const { object } = fixture();
+    await storage.cancelUpload(object);
+    const foreign = join(directory, `${object.ownerId}_${randomUUID()}_${object.sha256}.bin`);
+    await writeFile(foreign, Buffer.alloc(36, 7));
+    const inventory = await storage.inventory();
+    assert.equal(inventory.markers, 1);
+    assert.equal(inventory.markerBytes, 36);
+    assert.equal(inventory.objects, 2);
+
+    // A fresh process counts the same at start-up, so the quota is not overcounted.
+    const other = new PrivateFileResumeStorage({
+      directory,
+      encryptionKey: randomBytes(32).toString('hex'),
+      markerLimit: 2,
+    });
+    await other.initialize();
+    await other.cancelUpload({ ...object, resumeId: randomUUID() });
+    other.close();
   } finally {
     storage.close();
     await rm(directory, { recursive: true, force: true });

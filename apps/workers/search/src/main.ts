@@ -23,7 +23,7 @@ let database: Database | undefined;
 let cleaned = false;
 
 try {
-  const env = configuration();
+  const env = configuration(process.env, { emailOtpSecrets: false });
   const db = new Database(env.DATABASE_URL);
   database = db;
   const shutdown = shutdownSignal();

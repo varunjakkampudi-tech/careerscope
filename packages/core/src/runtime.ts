@@ -29,27 +29,59 @@ function localUrl(value: string, protocols: string[]) {
 }
 
 /**
- * True when the value is hex (at least 64 characters) or base64/base64url (at least 43 characters)
- * that decodes to at least 32 bytes which look random: not a short repeating pattern and with a
- * wide spread of byte values. Random 32 bytes have about 28 distinct values; fewer than 16 is
- * astronomically unlikely, so this rejects repeated, dictionary-like and counter-like secrets without
- * ever echoing the value.
+ * Heuristic screen for a generated secret. It cannot prove randomness: it only rejects values that
+ * are easy to recognise as not random, and never echoes the value. A value is accepted only when
+ * every rule holds:
+ * - Form: hex (a string of only hex digits, at least 64 characters, even length) or base64/base64url
+ *   (at least 43 characters). A hex-looking string is never reinterpreted as base64.
+ * - Size: it decodes to at least 32 bytes.
+ * - Character classes: the text uses at least two of lowercase letters, uppercase letters, digits and
+ *   symbols (rejects, for example, a long all-lowercase passphrase that happens to be valid base64).
+ * - Spread: at least 24 distinct byte values (32 random bytes average about 30; fewer than 24 is
+ *   far in the tail, so a genuine secret is very unlikely to be refused).
+ * - Not periodic: the bytes are not a repetition of a block of 1 to 16 bytes.
+ * - Not arithmetic: consecutive bytes do not all differ by one constant step modulo 256 (rejects the
+ *   counter 00 01 02 ... 1f and constant fill).
+ * A value that passes can still be weak (for example a hand-picked string that avoids these
+ * patterns); secrets must come from a CSPRNG, for example openssl rand -hex 32.
  */
 export function isRandomSecret(value: string) {
   const text = value.trim();
   let bytes: Buffer;
-  // A string made only of hex digits is hex, never reinterpreted as base64 (which would overstate its entropy).
   if (/^[0-9a-fA-F]+$/.test(text)) {
     if (text.length < 64 || text.length % 2 !== 0) return false;
     bytes = Buffer.from(text, 'hex');
   } else if (/^[A-Za-z0-9+/_-]{43,}={0,2}$/.test(text)) bytes = Buffer.from(text, 'base64');
   else return false;
   if (bytes.length < 32) return false;
-  if (new Set(bytes).size < 16) return false;
+  const classes = [/[a-z]/, /[A-Z]/, /[0-9]/, /[+/_=-]/].filter((pattern) =>
+    pattern.test(text),
+  ).length;
+  if (classes < 2) return false;
+  if (new Set(bytes).size < 24) return false;
   for (let period = 1; period <= 16; period++) {
     if (bytes.every((byte, index) => byte === bytes[index % period])) return false;
   }
+  const step = (bytes[1]! - bytes[0]! + 256) % 256;
+  if (bytes.every((byte, index) => index === 0 || (byte - bytes[index - 1]! + 256) % 256 === step))
+    return false;
   return true;
+}
+
+/**
+ * Reads a secret from a mounted file (for example a Docker file secret) so it never sits in the
+ * container environment or "docker inspect". The error names the variable, never the value or the
+ * file content.
+ */
+function secretFromFile(name: string, path: string) {
+  let content: string;
+  try {
+    content = readFileSync(path, 'utf8').trim();
+  } catch {
+    throw new Error(name + ' could not be read');
+  }
+  if (!content || /\s/.test(content)) throw new Error(name + ' must contain a single token');
+  return content;
 }
 
 // The browser-facing origin is the one value that must be public in a deployed
@@ -82,9 +114,22 @@ function withRedisPassword(value: string, password: string) {
  * hosts, queue and rate-limit Redis sharing one URL, registration without OTP and versioned legal
  * documents, and OTP without a long HMAC secret.
  */
-export function configuration(source: NodeJS.ProcessEnv = process.env) {
+export function configuration(
+  source: NodeJS.ProcessEnv = process.env,
+  options: { emailOtpSecrets?: boolean } = {},
+) {
   if (source.QUEUE_TRANSPORT !== undefined)
     throw new Error('Use SEARCH_QUEUE_TRANSPORT to choose a supported Redis transport');
+  // Only the API sends sign-in codes. Workers pass `emailOtpSecrets: false`: they still see the
+  // non-secret OTP flags, but neither need nor receive the HMAC secret or the Resend key.
+  const loadSecrets = options.emailOtpSecrets !== false;
+  const input: NodeJS.ProcessEnv = { ...source };
+  for (const name of ['EMAIL_OTP_HMAC_SECRET', 'RESEND_API_KEY'] as const) {
+    const path = source[name + '_FILE'];
+    if (!path || !loadSecrets) continue;
+    if (source[name]) throw new Error('Set either ' + name + ' or ' + name + '_FILE, not both');
+    input[name] = secretFromFile(name + '_FILE', path);
+  }
   const env = z
     .object({
       DATABASE_URL: z.string().min(1),
@@ -109,7 +154,7 @@ export function configuration(source: NodeJS.ProcessEnv = process.env) {
       SEARCH_QUEUE_REDIS_URL: z.string().min(1).optional(),
     })
     .parse({
-      ...source,
+      ...input,
       DEPLOYMENT_ENVIRONMENT:
         source.DEPLOYMENT_ENVIRONMENT ??
         (source.NODE_ENV === 'production' ? 'production' : 'development'),
@@ -146,11 +191,11 @@ export function configuration(source: NodeJS.ProcessEnv = process.env) {
   if (env.DEPLOYMENT_ENVIRONMENT === 'production' && env.EMAIL_OTP_ENABLED !== 'true')
     throw new Error('Production requires email OTP sign-in to be enabled');
   if (env.EMAIL_OTP_ENABLED === 'true') {
-    if (!env.EMAIL_OTP_HMAC_SECRET || !isRandomSecret(env.EMAIL_OTP_HMAC_SECRET))
+    if (loadSecrets && (!env.EMAIL_OTP_HMAC_SECRET || !isRandomSecret(env.EMAIL_OTP_HMAC_SECRET)))
       throw new Error(
         'Email OTP requires a separate HMAC secret of at least 32 random bytes (64 hex or 43 base64 characters)',
       );
-    if (!env.RESEND_API_KEY || env.RESEND_API_KEY.trim().length === 0)
+    if (loadSecrets && (!env.RESEND_API_KEY || env.RESEND_API_KEY.trim().length === 0))
       throw new Error('Email OTP requires RESEND_API_KEY');
     if (env.RESEND_FROM_EMAIL !== 'CareerScope <noreply@careerscope.tech>')
       throw new Error('Email OTP requires the approved CareerScope sender address');
