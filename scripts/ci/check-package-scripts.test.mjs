@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import process from 'node:process';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { parse as parseYaml } from 'yaml';
 
 // Guards the shape of the integration commands and the CI workflow that runs them, so a refactor
 // cannot quietly make the PostgreSQL/Redis suites parallel or give them non-production timeouts.
@@ -79,4 +80,15 @@ test('CI runs the toolchain check, which passes, and the production config check
   assert.match(workflow, /run: npm run toolchain:check/);
   const services = workflow.slice(workflow.indexOf('\n  services:'));
   assert.match(services, /run: node infra\/checks\/check-production-config.mjs/);
+});
+
+test('the CI job display names match the required status checks of the branch ruleset', () => {
+  // Ruleset 26263919 requires these exact check names. Renaming a job would leave the ruleset
+  // waiting for a check that never reports, so the names are pinned here.
+  const { jobs } = parseYaml(workflow);
+  const names = Object.values(jobs).map((job) => job.name);
+  for (const required of ['Quality gates', 'Services, integration, and browser suites'])
+    assert.ok(names.includes(required), `ci.yml must keep a job named "${required}"`);
+  assert.equal(jobs.checks.name, 'Quality gates');
+  assert.equal(jobs.services.name, 'Services, integration, and browser suites');
 });

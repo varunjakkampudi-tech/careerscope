@@ -14,7 +14,7 @@
 //     it is then checked as a substring of the line of at least MIN_MATCH_LENGTH letters or digits;
 //   - an item is still NOT_ASSESSED, has an unknown status, or lacks the fields its status needs;
 //   - an IMPLEMENTED item cites no implementing file or no test, or cites a test that no CI script
-//     or non-comment workflow `run:` step names;
+//     or non-comment, non-dispatch-only workflow `run:` step names;
 //   - a cited file does not exist or a cited line is past the end of the file;
 //   - an OUT_OF_SCOPE_POST_LAUNCH quote is not verbatim in the source's post-launch section (11);
 //   - docs/requirements/V12-RECONCILIATION.md is not the output of this script for the inventory.
@@ -25,6 +25,8 @@ import { dirname, join, resolve } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import prettier from 'prettier';
+import { parse as parseYaml } from 'yaml';
+import { runCommandsOf } from './workflow-steps.mjs';
 
 export const DIR = 'docs/requirements';
 export const SOURCE = `${DIR}/CareerScope-v12.md`;
@@ -63,28 +65,23 @@ export function sectionRange(sourceLines, number) {
   return [start + 1, next < 0 ? sourceLines.length : next];
 }
 
-/** Text of the `run:` steps of a workflow: no comment lines, `paths:` filters or other keys. */
+/**
+ * Text of the `run:` commands of a workflow that execute on push or pull_request. The dispatch-only
+ * exclusion is the one check-traceability.mjs applies (shared `runCommandsOf` in workflow-steps.mjs), so a test run only by
+ * a workflow_dispatch step is not CI-run here either. Shell comment lines are dropped. A workflow that
+ * does not parse contributes nothing.
+ */
 export function workflowRunText(workflow) {
-  const lines = workflow.split(/\r?\n/);
-  const out = [];
-  for (let i = 0; i < lines.length; i++) {
-    const match = /^(\s*)(-\s+)?run:\s*(.*)$/.exec(lines[i]);
-    if (!match) continue;
-    const keyIndent = match[1].length + (match[2] ? match[2].length : 0);
-    const rest = match[3].trim();
-    if (/^[|>][+-]?\d*\s*(#.*)?$/.test(rest)) {
-      while (i + 1 < lines.length) {
-        const next = lines[i + 1];
-        const indent = next.length - next.trimStart().length;
-        if (next.trim() !== '' && indent <= keyIndent) break;
-        i += 1;
-        if (!next.trim().startsWith('#')) out.push(next);
-      }
-    } else if (rest && !rest.startsWith('#')) {
-      out.push(rest.replace(/\s+#.*$/, ''));
-    }
+  let document;
+  try {
+    document = parseYaml(workflow);
+  } catch {
+    return '';
   }
-  return out.join('\n');
+  return runCommandsOf(document)
+    .flatMap((command) => command.split(/\r?\n/))
+    .filter((line) => !line.trim().startsWith('#'))
+    .join('\n');
 }
 
 function executedTokens(root, scriptText) {

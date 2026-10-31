@@ -61,6 +61,23 @@ test('settlement drops only fetch and script reads belonging to an earlier route
   }
 });
 
+test('the image allowance needs the optimiser pathname, so a caller that drops it fails', () => {
+  // An omitted, empty or undefined pathname must not turn an image into a droppable request.
+  assert.equal(staleEarlierRouteRead('GET', 'image', 1, 2, 'chromium'), false);
+  assert.equal(staleEarlierRouteRead('GET', 'image', 1, 2, 'chromium', ''), false);
+  assert.equal(staleEarlierRouteRead('GET', 'image', 1, 2, 'chromium', undefined), false);
+  // Only the exact path counts: not a prefix, a suffix or another case.
+  for (const pathname of ['/_next/image/', '/_next/images', '/_next/static/image', '/_NEXT/image'])
+    assert.equal(
+      staleEarlierRouteRead('GET', 'image', 1, 2, 'chromium', pathname),
+      false,
+      pathname,
+    );
+  // The optimiser path is an allowance only for GET images of an earlier route in Chromium.
+  assert.equal(staleEarlierRouteRead('POST', 'image', 1, 2, 'chromium', '/_next/image'), false);
+  assert.equal(staleEarlierRouteRead('GET', 'image', 1, 2, 'webkit', '/_next/image'), false);
+});
+
 test('browser diagnostics retain only same-origin normalized paths', () => {
   const origin = 'http://localhost:5280';
   assert.equal(

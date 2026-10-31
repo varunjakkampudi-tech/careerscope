@@ -66,6 +66,10 @@ docker exec careerscope-postgres-1 pg_dump -U careerscope careerscope \
   > /opt/careerscope/rollback-$(date +%s).sql
 ```
 
+That file contains personal data in plaintext, including resume text (see
+[DATA-CLASSIFICATION](../security/DATA-CLASSIFICATION.md)). Encrypt it, or delete it
+once you no longer need it, and do not copy it off the host unencrypted.
+
 That file lives on the same host as the database it protects. It survives a bad
 migration. It does **not** survive losing the machine. It is not disaster
 recovery.

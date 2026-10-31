@@ -111,18 +111,29 @@ throwaway PostgreSQL and Redis containers), run with `CAREERSCOPE_UI_BROWSER` se
 
 ### Settlement allowances and hosted status
 
-Two Chromium-only allowances in `scripts/tests/ui-requests.ts` keep the request-settlement barrier from
-waiting on requests the browser never reports as finished: `staleEarlierRouteRead` drops a GET fetch or
-script read from an earlier route, and a second allowance drops a GET to the Next image optimiser path
-`/_next/image` (the brand logo) that is cancelled when navigation starts. Every other image, write,
-document and current-route read still counts, and Firefox and WebKit keep every request. The hosted run for
-eec8ec4 is green. Commit 91bdb45 adds the `/_next/image` allowance; its hosted result is pending until
-its run completes, and the flake rate across repeated hosted runs is not measured.
+One Chromium-only allowance, `staleEarlierRouteRead` in `scripts/tests/ui-requests.ts`, keeps the
+request-settlement barrier from waiting on requests the browser never reports as finished. It drops a GET
+from an earlier route that is a fetch or a script, or an image whose pathname is exactly `/_next/image`
+(the Next image optimiser request behind the brand logo, cancelled when navigation starts). The caller
+passes the request pathname; an omitted or empty pathname disables the image case, which a unit test pins.
+Every other image, write, document and current-route read still counts, and Firefox and WebKit keep every
+request.
+
+Commit 91bdb45 added the `/_next/image` case. Its hosted result is no longer pending: the Services,
+integration, and browser suites job passed three times on a300856 with the browser suite only (dispatched
+runs 41185733604, 41186037765 and 41186340898), and the push run for a300856 also passed; see
+[STAGE-1](STAGE-1.md) item 1.05. The flake rate across repeated hosted runs is not measured, so three
+passes are a small sample.
+
+Commit da62f86 also made the two `waitForResponse` predicates that read a JSON body
+(`waitForSearchStatusResponse` and the search-list wait for the cancelled run) tolerate a body that
+Chromium evicts before it is read on a loaded runner. A response whose body cannot be read does not match,
+and the wait continues for the next poll response instead of failing.
 
 ### Firefox CSP eval finding and fix (2026-10-28)
 
-Reproduced against the production build (`npm run build`, which runs `scripts/build-with-csp.mjs`
-and is the same `RUN npm run build` step the Dockerfile uses), served with `npm run start:web`. A
+Reproduced against the production build (`npm run build`, which reaches
+`apps/web/scripts/build-with-csp.mjs` through the web workspace build and the same `RUN npm run build` step the Dockerfile uses), served with `npm run start:web`. A
 Playwright Firefox page listening to `console` and to `securitypolicyviolation` reported on every
 page load, including `/`, `/dashboard`, `/settings` and `/jobs`:
 

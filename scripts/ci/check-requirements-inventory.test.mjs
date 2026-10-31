@@ -299,13 +299,8 @@ const errorsForWorkflow = (workflow) =>
   errorsFor(({ inventory, root }) => {
     mkdirSync(join(root, 'scripts/ci'), { recursive: true });
     writeFileSync(join(root, 'scripts/ci/orphan.test.mjs'), '');
-    const ci = join(root, '.github/workflows/ci.yml');
-    writeFileSync(
-      ci,
-      `${readFileSync(ci, 'utf8')}
-${workflow}
-`,
-    );
+    // The fixture workflow replaces ci.yml: the checker parses YAML, so it must be one document.
+    writeFileSync(join(root, '.github/workflows/ci.yml'), workflow);
     find(inventory, 'IMPLEMENTED').evidence.tests = ['scripts/ci/orphan.test.mjs'];
   });
 
@@ -323,6 +318,37 @@ test('a test named in a non-comment run step counts as run by CI', async () => {
   assert.doesNotMatch(await errorsForWorkflow(inline), /orphan/);
   const block = `${ciWorkflow}\n      - run: |\n          echo a\n          node --test scripts/ci/orphan.test.mjs\n`;
   assert.doesNotMatch(await errorsForWorkflow(block), /orphan/);
+});
+
+test('a test run only by a dispatch-only step or job is not run by CI', async () => {
+  const base = ['on:', '  push:', 'jobs:', '  a:', '    steps:'];
+  const stepDispatch = [
+    ...base,
+    "      - if: github.event_name == 'workflow_dispatch'",
+    '        run: node --test scripts/ci/orphan.test.mjs',
+  ].join('\n');
+  const jobDispatch = [
+    'on:',
+    '  push:',
+    'jobs:',
+    '  a:',
+    "    if: github.event_name == 'workflow_dispatch'",
+    '    steps:',
+    '      - run: node --test scripts/ci/orphan.test.mjs',
+  ].join('\n');
+  const eitherEvent = [
+    ...base,
+    "      - if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'",
+    '        run: node --test scripts/ci/orphan.test.mjs',
+  ].join('\n');
+  const notRun = /test is not run by any CI script or workflow: scripts\/ci\/orphan.test.mjs/;
+  assert.match(await errorsForWorkflow(stepDispatch), notRun);
+  assert.match(await errorsForWorkflow(jobDispatch), notRun);
+  assert.equal(workflowRunText(stepDispatch).includes('orphan'), false);
+  assert.equal(workflowRunText(jobDispatch).includes('orphan'), false);
+  // A step that push or pull_request also reaches still counts.
+  assert.doesNotMatch(await errorsForWorkflow(eitherEvent), /orphan/);
+  assert.equal(workflowRunText(eitherEvent).includes('orphan'), true);
 });
 
 test('docs/README.md must link every document under docs/', () => {

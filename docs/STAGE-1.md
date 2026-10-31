@@ -81,7 +81,7 @@ not performed; the Gap lines say what is unverified.
 - **Evidence:** `packages/core/src/outbox.integration.test.ts`, `packages/core/src/queue.integration.test.ts`, `packages/core/src/bull-queue.integration.test.ts`, `packages/core/src/runtime.integration.test.ts`, `docs/architecture/OUTBOX.md`
 - **Gate:** CI job `Services, integration, and browser suites`: Redis readiness, append-only and `noeviction` checks, then `npm run test:integration`
 - **Verify:** `npm run test:integration` (needs PostgreSQL and both Redis services from `npm run services` and `npm run services:queue`)
-- **Note:** The queue-runtime crash checks (`npm run test:queue-runtime`) run only in the manual `recovery` suite.
+- **Note:** The queue-runtime crash checks (`npm run test:queue-runtime`) run only in the manual `recovery` suite. Known limitation: no test sends SIGTERM or SIGINT to the worker `main.ts` entry points, so their shutdown on a signal is not covered by a test.
 
 ## 1.09 Standardise typed API responses and errors
 
@@ -108,7 +108,7 @@ not performed; the Gap lines say what is unverified.
 ## 1.12 Verify sensitive data separation and encryption
 
 - **Status:** Open
-- **Gap:** Code-level evidence exists: credentials are stored only as digests (database dump test) and resume objects are encrypted with a key held outside the object store. Verification on the running host is not done: key file mode and ownership in the live `private` volume, and TLS and secret files as deployed. Those need the target environment and owner evidence.
+- **Gap:** Deferred by owner decision (2026-10-31) to the deployment stage, where the host is checked. Code-level evidence exists: credentials are stored only as digests (database dump test) and resume objects are encrypted with a key held outside the object store. Verification on the running host is not done: key file mode and ownership in the live `private` volume, and TLS and secret files as deployed. Those need the target environment and owner evidence.
 - **Evidence:** `docs/security/DATA-CLASSIFICATION.md`, `packages/core/src/sensitive-data.integration.test.ts`, `packages/core/src/file-storage.test.ts`, `docs/operations/SECRETS.md`
 - **Gate:** CI job `Services, integration, and browser suites`, step `npm run test:integration` (digests); job `Quality gates`, `test:unit` (file storage) and `npm run privacy:check`
 - **Verify:** `npm run test:integration`; host checks are not available from the repository
@@ -132,7 +132,7 @@ not performed; the Gap lines say what is unverified.
 ## 1.15 Preserve backups and recoverability
 
 - **Status:** Open
-- **Gap:** The Hostinger host backup was removed by owner decision on 2026-10-31, so the host has no application backup and no recoverability. Backup and recovery for the new server must be designed and verified before launch. RTO and RPO are unproven.
+- **Gap:** Deferred by owner decision (2026-10-31) to the deployment stage with the new server. The Hostinger host backup was removed on the same date, so the host has no application backup and no recoverability. Backup and recovery for the new server must be designed and verified before launch. RTO and RPO are unproven.
 - **Evidence:** `docs/operations/HOSTINGER.md`, `scripts/tests/check-database-recovery.ts` (manual)
 - **Gate:** None for host backup. The `recovery` suite runs `npm run test:database-recovery` (a synthetic dump and restore, not a host backup) on manual dispatch only
 - **Verify:** `npm run test:database-recovery` (needs Docker)

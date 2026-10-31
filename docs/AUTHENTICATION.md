@@ -51,8 +51,11 @@ revoke one of their own device sessions or all other sessions. A revoked or
 expired family cannot refresh. Password change revokes all sessions. Account
 switching revokes the previous cookie's family and clears private client caches.
 Owner IDs always come from the authenticated server session. Expired session
-families are removed on a later successful session establishment; periodic
-cleanup is not currently configured.
+families are removed on a later successful session establishment, and by the
+retention job (`scripts/jobs/enforce-search-retention.ts`), which deletes sessions past
+`expires_at` (their refresh-token digests go with them) when the host timer runs it. The
+timer is installed on the host, not by the repository's tests, so whether it is running is
+not verified here.
 
 The forward session migration preserves existing opaque sessions only until
 their original `expires_at`; it does not extend legacy lifetime, infer a device

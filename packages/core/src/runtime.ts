@@ -83,12 +83,14 @@ function secretFromFile(name: string, path: string) {
 const SECRET_FILE_MAX_BYTES = 4096;
 
 /**
- * Reads a small secret file with the checks the resume key reader applies: `lstat` must show a
+ * Reads a small secret file. It shares the resume key reader's file checks: `lstat` must show a
  * regular file (a symlink is refused), it is opened with O_NOFOLLOW where available and compared with
- * the earlier `lstat` to detect a swap, it is at most 4096 bytes, and on POSIX it must not be
- * writable by group or others. Docker file secrets are mounted from the host file as 0440 or 0444
- * inside a 0700 directory (render-otp-secrets.sh, render-redis-config.sh), so group or other read
- * is allowed; write is not. Errors name only the variable, never the path or the content.
+ * the earlier `lstat` to detect a swap, and it is at most 4096 bytes. The permission check is looser
+ * than the resume key reader's: this reader refuses only group and other write (mask 0o022) on POSIX,
+ * while the resume key reader refuses any group or other access (mask 0o077). It is looser because
+ * Docker file secrets are mounted from host files that render-otp-secrets.sh and
+ * render-redis-config.sh write as 0440 or 0444 inside a 0700 directory, so group or other read must
+ * be allowed. Errors name only the variable, never the path or the content.
  */
 function readSecretFile(name: string, path: string) {
   let descriptor: number | undefined;
