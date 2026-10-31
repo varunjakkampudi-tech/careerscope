@@ -252,8 +252,10 @@ sets `cancelled` and returns `200` with `{ id, status }`. Repeating it returns
 `cancelled` again, and calling it on a `cancelling` upload finishes the cleanup.
 No worker is involved. An unknown id or another owner's id returns `404`. A
 `queued`, `parsed` or `rejected` upload returns `409` with code
-`UPLOAD_NOT_CANCELLABLE`. If the cancellation marker quota or the storage volume
-is full it returns `507`.
+`UPLOAD_NOT_CANCELLABLE`. If the owner's cancellation marker quota or the storage
+volume is full it returns `507`. Once the store-wide marker limit is reached, an
+owner with no marker yet can still cancel from a reserve of one tenth of that
+limit, so other owners cannot starve a first cancellation.
 
 `cancel` and `delete` return `503` when the storage backend does not provide the
 corresponding capability, rather than silently doing nothing. The API process

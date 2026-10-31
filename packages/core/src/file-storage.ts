@@ -811,11 +811,23 @@ export class PrivateFileResumeStorage {
     }
   }
 
-  /** True while the owner and the whole store are both below their cancellation marker limits. */
+  /**
+   * Admission for one more cancellation marker. An owner is always capped by `ownerMarkerLimit`. While the
+   * store is under `markerLimit`, anyone else is admitted. Once it is full, only an owner with no marker
+   * yet may still take one, from a reserve of `markerReserve` slots above the limit. So many owners
+   * filling the store cannot stop a fresh owner from cancelling its first upload, and the reserve is
+   * shared by all such owners, so the store stays bounded.
+   */
   private markerQuotaAvailable(owner: string) {
-    return (
-      (this.ownerMarkers.get(owner) ?? 0) < this.ownerMarkerLimit && this.markers < this.markerLimit
-    );
+    const owned = this.ownerMarkers.get(owner) ?? 0;
+    if (owned >= this.ownerMarkerLimit) return false;
+    if (this.markers < this.markerLimit) return true;
+    return owned === 0 && this.markers < this.markerLimit + this.markerReserve;
+  }
+
+  /** Slots above `markerLimit` that only owners without a marker may use. */
+  private get markerReserve() {
+    return Math.max(1, Math.floor(this.markerLimit / 10));
   }
 
   /**

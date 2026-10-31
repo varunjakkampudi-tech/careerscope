@@ -1543,3 +1543,34 @@ test('a refused cancellation re-counts markers from disk and succeeds once they 
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+test('a full store still admits a fresh owner from the reserve, and no one else', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-reserve-'));
+  const encryptionKey = randomBytes(32).toString('hex');
+  // markerLimit 3 gives a reserve of one slot (max(1, floor(3 / 10))).
+  const storage = new PrivateFileResumeStorage({
+    directory,
+    encryptionKey,
+    markerLimit: 3,
+    ownerMarkerLimit: 2,
+  });
+  try {
+    await storage.initialize();
+    const { object } = fixture();
+    const owner = (ownerId: string) => ({ ...object, ownerId, resumeId: randomUUID() });
+    const heavy = randomUUID();
+    const light = randomUUID();
+    await storage.cancelUpload(owner(heavy));
+    await storage.cancelUpload(owner(heavy));
+    await storage.cancelUpload(owner(light));
+
+    // The store is at its limit. The heavy owner is at its own cap, so it is refused.
+    await assert.rejects(storage.cancelUpload(owner(heavy)), ResumeStorageLimit);
+    // A fresh owner takes the one reserve slot.
+    await storage.cancelUpload(owner(randomUUID()));
+    // The reserve is shared, so the next fresh owner is refused.
+    await assert.rejects(storage.cancelUpload(owner(randomUUID())), ResumeStorageLimit);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
