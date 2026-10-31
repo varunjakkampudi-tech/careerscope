@@ -39,19 +39,19 @@ not performed; the Gap lines say what is unverified.
 
 ## 1.03 Preserve dev and main branches
 
-- **Status:** Open
-- **Gap:** Branch protection on `main` and `dev` is an owner-controlled GitHub setting that this repository cannot change or read, and no protection setting has been verified. The repository only runs CI on both branches and gates production deploys.
-- **Evidence:** `.github/workflows/ci.yml`, `docs/operations/CI-CD.md`, `scripts/ci/check-deploy-gate.mjs`, `scripts/ci/check-deploy-gate.test.mjs`
-- **Gate:** CI triggers on pushes and pull requests to `main` and `dev` (the `on:` block of the workflow); `npm run deploy:gate:test` inside `npm run gates:test`
-- **Verify:** `npm run deploy:gate:test`; the owner reads the protection rules in the GitHub repository settings
+- **Status:** Complete
+- **Evidence:** GitHub rulesets 26263919 (Protect Production Main, on main: pull request, required status checks, linear history, deletion and force-push blocked, repository-admin bypass) and 26263965 (Protect dev, on dev: deletion and force-push blocked), read back with the GitHub rulesets API on 2026-10-31. `.github/workflows/ci.yml`, `scripts/ci/check-deploy-gate.test.mjs`
+- **Gate:** CI triggers on pushes and pull requests to main and dev; the deploy gate test runs inside gates:test
+- **Verify:** npm run deploy:gate:test; read the rulesets with the GitHub rulesets API
+- **Note:** dev has no required status check. A required check would block direct pushes, because the owner pushes to dev without a pull request and has no bypass on that ruleset.
 
 ## 1.04 Enforce GitHub Actions quality gates
 
-- **Status:** Open
-- **Gap:** The workflow defines the gates, but making them blocking needs the owner to require the exact check names `Quality gates`, `Services, integration, and browser suites` and (pull requests only) `Production image build` on `main` and `dev`. That is not applied or verified from the repository.
-- **Evidence:** `.github/workflows/ci.yml`, `docs/operations/CI-CD.md`, `scripts/ci/require-ci-success.mjs`, `scripts/ci/check-package-scripts.test.mjs`
-- **Gate:** CI job `Quality gates` (including the shell syntax step over `infra/`) and `Services, integration, and browser suites`
-- **Verify:** `npm run gates:test`
+- **Status:** Complete
+- **Evidence:** Ruleset 26263919 requires the checks Quality gates and Services, integration, and browser suites on main. Production image build runs on pull requests only, so it is not a push check. `.github/workflows/ci.yml`, `scripts/ci/check-package-scripts.test.mjs`
+- **Gate:** CI job Quality gates (including the shell syntax step over infra/) and Services, integration, and browser suites
+- **Verify:** npm run gates:test; read ruleset 26263919 with the GitHub rulesets API
+- **Note:** see 1.03 for why dev has no required check.
 
 ## 1.05 Resolve Chromium acceptance failures
 
