@@ -109,6 +109,16 @@ throwaway PostgreSQL and Redis containers), run with `CAREERSCOPE_UI_BROWSER` se
 | WebKit   | Pass with the allowance disabled (both result lines printed, exit 0). |
 | Firefox  | Failed at that point; fixed, see the next section.                    |
 
+### Settlement allowances and hosted status
+
+Two Chromium-only allowances in `scripts/tests/ui-requests.ts` keep the request-settlement barrier from
+waiting on requests the browser never reports as finished: `staleEarlierRouteRead` drops a GET fetch or
+script read from an earlier route, and a second allowance drops a GET to the Next image optimiser path
+`/_next/image` (the brand logo) that is cancelled when navigation starts. Every other image, write,
+document and current-route read still counts, and Firefox and WebKit keep every request. The hosted run for
+eec8ec4 is green. Commit 91bdb45 adds the `/_next/image` allowance; its hosted result is pending until
+its run completes, and the flake rate across repeated hosted runs is not measured.
+
 ### Firefox CSP eval finding and fix (2026-10-28)
 
 Reproduced against the production build (`npm run build`, which runs `scripts/build-with-csp.mjs`

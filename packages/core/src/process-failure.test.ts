@@ -126,3 +126,32 @@ test('apps/api/src/main.ts registers the shutdown signal before it opens any res
     assert.ok(registered < opened, `shutdownSignal() must come before ${opener}`);
   }
 });
+
+// The finally block releases resources in dependency order. Reordering it (for example closing the
+// database before the app has drained its requests) must fail this test.
+test('apps/api/src/main.ts closes the reclaim sweep, app, limiter, database and resume storage in that order', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const source = await readFile(
+    fileURLToPath(new URL('../../../apps/api/src/main.ts', import.meta.url)),
+    'utf8',
+  );
+  const start = source.indexOf('} finally {');
+  assert.notEqual(start, -1, 'finally block');
+  const end = source.indexOf('\n  }\n', start);
+  assert.notEqual(end, -1, 'end of finally block');
+  const block = source.slice(start, end);
+  const steps = [
+    'stopReclaim?.()',
+    'await app?.close()',
+    'await limiter?.close()',
+    'await database?.close()',
+    'resumeStorage?.close()',
+  ];
+  let previous = -1;
+  for (const step of steps) {
+    const at = block.indexOf(step);
+    assert.notEqual(at, -1, `${step} must be in the finally block`);
+    assert.ok(at > previous, `${step} must come after the previous close step`);
+    previous = at;
+  }
+});

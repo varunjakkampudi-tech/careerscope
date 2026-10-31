@@ -6,7 +6,8 @@
 // npm scripts they call), or be followed by an explicit `(manual)` marker.
 //
 // Every tracked test file (*.test.ts, *.test.mjs, *.test.js) must also be named by a CI-run script or
-// workflow step, or be marked `path` (manual) in docs/STAGE-1.md or docs/TRACEABILITY.md.
+// by a workflow step that runs on push or pull_request (not a dispatch-only step or job), or be marked
+// `path` (manual) in docs/STAGE-1.md or docs/TRACEABILITY.md.
 //
 // It also validates docs/STAGE-1.md (exactly the 15 owner items 1.01 to 1.15, each with a status,
 // evidence and a gate; an item marked Complete may cite only files that exist and tests that a CI
@@ -17,6 +18,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
+import { parse as parseYaml } from 'yaml';
 
 const MATRIX = 'docs/TRACEABILITY.md';
 const STAGE_FILE = 'docs/STAGE-1.md';
@@ -67,14 +69,54 @@ export function ciExecutedText(root, extraText = '') {
   return text;
 }
 
-/** The text of every workflow file: its steps run scripts and test files directly. */
-function workflowText(root) {
+/**
+ * True when an `if` expression can only be satisfied by a manual dispatch: it requires
+ * `github.event_name == 'workflow_dispatch'` and names no other event and no negated dispatch test.
+ * An expression that is absent, or that also admits push, pull_request or schedule, is not dispatch-only.
+ */
+export function isDispatchOnly(condition) {
+  if (typeof condition !== 'string') return false;
+  return (
+    /==\s*'workflow_dispatch'/.test(condition) &&
+    !/!=\s*'workflow_dispatch'/.test(condition) &&
+    !/==\s*'(?:push|pull_request|pull_request_target|schedule)'/.test(condition)
+  );
+}
+
+/** Every object that has a `steps` array (a job), wherever it sits in the parsed workflow. */
+function jobsOf(node, found = []) {
+  if (Array.isArray(node)) for (const item of node) jobsOf(item, found);
+  else if (node && typeof node === 'object') {
+    if (Array.isArray(node.steps)) found.push(node);
+    for (const value of Object.values(node)) jobsOf(value, found);
+  }
+  return found;
+}
+
+/**
+ * The `run` text of every workflow step that executes on push or pull_request: a step whose own `if`
+ * is dispatch-only, or that sits in a job whose `if` is dispatch-only, is left out. A workflow that
+ * does not parse contributes nothing, so its tests surface as orphans instead of being trusted.
+ */
+export function workflowRunText(root) {
   const directory = join(root, '.github', 'workflows');
   if (!existsSync(directory)) return '';
-  return readdirSync(directory)
-    .filter((name) => /\.ya?ml$/.test(name))
-    .map((name) => readFileSync(join(directory, name), 'utf8'))
-    .join('\n');
+  const commands = [];
+  for (const name of readdirSync(directory).filter((entry) => /\.ya?ml$/.test(entry))) {
+    let document;
+    try {
+      document = parseYaml(readFileSync(join(directory, name), 'utf8'));
+    } catch {
+      continue;
+    }
+    for (const job of jobsOf(document)) {
+      if (isDispatchOnly(job.if)) continue;
+      for (const step of job.steps)
+        if (step && typeof step.run === 'string' && !isDispatchOnly(step.if))
+          commands.push(step.run);
+    }
+  }
+  return commands.join('\n');
 }
 
 const ORPHAN_CANDIDATE = /\.test\.(?:ts|mjs|js)$/;
@@ -116,11 +158,11 @@ function mentionsPath(text, path) {
 
 /**
  * Tracked test files (*.test.ts, *.test.mjs, *.test.js, so also *.integration.test.ts) that no CI-run
- * script or workflow step names and that are not marked `path` (manual) in the Stage 1 register or
+ * script or push/pull_request workflow step names and that are not marked `path` (manual) in the Stage 1 register or
  * the traceability matrix. Returns the orphan paths.
  */
 export function findOrphanTests(root, files = trackedFiles(root)) {
-  const workflows = workflowText(root);
+  const workflows = workflowRunText(root);
   const text = `${existsSync(join(root, 'package.json')) ? ciExecutedText(root, workflows) : ''}\n${workflows}`;
   const manual = new Set();
   for (const doc of [STAGE_FILE, MATRIX])

@@ -1,6 +1,7 @@
 /**
  * API process entry point: loads configuration, connects Postgres and Redis, builds the app from
- * `app.ts`, listens on loopback and shuts down cleanly on SIGINT or SIGTERM.
+ * `app.ts`, listens on loopback and shuts down cleanly on SIGINT or SIGTERM. A clean shutdown that
+ * has not finished after 10 seconds, or a second signal during cleanup, exits 1 immediately.
  */
 
 import {
@@ -23,6 +24,23 @@ installProcessFailureHandlers();
 // Registered before any resource is opened: a SIGINT or SIGTERM during any startup step must reach the
 // cleanup below instead of taking the default handler, which would exit without closing anything.
 const shutdown = shutdownSignal();
+// Once a signal is received, cleanup is bounded: if closing hangs the process exits 1 after this long,
+// the same bound idea as the failure path below. The timer is cleared when cleanup finishes.
+const CLEAN_SHUTDOWN_LIMIT_MS = 10_000;
+let forcedExit: NodeJS.Timeout | undefined;
+// shutdownSignal() listens with process.once, so a second SIGINT or SIGTERM during cleanup would reach
+// the default handler. This one exits immediately with status 1 instead.
+const exitImmediately = () => process.exit(1);
+shutdown.signal.addEventListener(
+  'abort',
+  () => {
+    forcedExit = setTimeout(exitImmediately, CLEAN_SHUTDOWN_LIMIT_MS);
+    forcedExit.unref();
+    process.on('SIGINT', exitImmediately);
+    process.on('SIGTERM', exitImmediately);
+  },
+  { once: true },
+);
 let database: Database | undefined;
 let limiter: Awaited<ReturnType<typeof rateLimiter>> | undefined;
 let resumeStorage: Awaited<ReturnType<typeof configuredFileResumeStorage>>;
@@ -118,18 +136,23 @@ try {
   } catch (error) {
     // A shutdown signal that interrupts startup is a clean stop, not a failure, even when the step it
     // interrupted then fails (for example a connection that gives up). Cleanup runs once in the finally
-    // block and the process exits 0.
+    // block and the process exits 0, within the forced-exit bound above.
     if (!shutdown.signal.aborted) throw error;
     if (!isShutdownAbort(error, shutdown.signal))
       logFailure(error, {}, 'Startup step failed after shutdown was requested');
     logger.info('Shutdown requested during startup');
   } finally {
+    // Close in this order (a source-order test guards it): stop the sweep, drain the app, then the
+    // rate limiter, the database and resume storage that the app was using.
     stopReclaim?.();
     await app?.close();
     await limiter?.close();
     await database?.close();
     resumeStorage?.close();
     shutdown.close();
+    clearTimeout(forcedExit);
+    process.removeListener('SIGINT', exitImmediately);
+    process.removeListener('SIGTERM', exitImmediately);
     cleaned = true;
   }
 } catch (error) {

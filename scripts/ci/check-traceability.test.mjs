@@ -10,6 +10,7 @@ import {
   analyzeStage,
   checkReconciliationProse,
   findOrphanTests,
+  isDispatchOnly,
   parseStage,
 } from './check-traceability.mjs';
 
@@ -351,6 +352,38 @@ test('a workflow step, a script reached through a workflow npm run, or a (manual
   const register =
     '## 1.01 T' + String.fromCharCode(10) + '- **Evidence:** `src/m.test.js` (manual)';
   assert.deepEqual(orphans({ files, scripts, workflow, register }), []);
+});
+
+test('a test wired only into a dispatch-only step or job is an orphan unless marked (manual)', () => {
+  const files = ['src/a.test.ts', 'src/d.test.mjs', 'src/j.test.mjs', 'src/p.test.mjs'];
+  const workflow = [
+    'jobs:',
+    '  checks:',
+    '    steps:',
+    '      - run: node --test src/p.test.mjs',
+    "      - if: github.event_name == 'workflow_dispatch' && inputs.suite == 'all'",
+    '        run: node --test src/d.test.mjs',
+    '  manual:',
+    "    if: github.event_name == 'workflow_dispatch'",
+    '    steps:',
+    '      - run: node --test src/j.test.mjs',
+  ].join('\n');
+  assert.deepEqual(orphans({ files, workflow }), ['src/d.test.mjs', 'src/j.test.mjs']);
+  const register =
+    '## 1.01 T' +
+    String.fromCharCode(10) +
+    '- **Evidence:** `src/d.test.mjs` (manual), `src/j.test.mjs` (manual)';
+  assert.deepEqual(orphans({ files, workflow, register }), []);
+});
+
+test('a step that also admits push, pull_request or a non-dispatch event is not dispatch-only', () => {
+  assert.equal(isDispatchOnly("github.event_name == 'workflow_dispatch'"), true);
+  assert.equal(isDispatchOnly(undefined), false);
+  assert.equal(isDispatchOnly("github.event_name != 'workflow_dispatch' || inputs.x"), false);
+  assert.equal(
+    isDispatchOnly("github.event_name == 'push' || github.event_name == 'workflow_dispatch'"),
+    false,
+  );
 });
 
 test('the real repository has no orphan test files', () => {

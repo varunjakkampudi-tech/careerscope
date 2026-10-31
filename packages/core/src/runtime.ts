@@ -236,8 +236,9 @@ export function configuration(
     if (env.RESEND_FROM_EMAIL !== 'CareerScope <noreply@careerscope.tech>')
       throw new Error('Email OTP requires the approved CareerScope sender address');
   }
-  // REDIS_PASSWORD_FILE keeps the password out of the environment (and `docker inspect`). A password
-  // already present in a URL is left alone; an unreadable or empty file fails startup.
+  // REDIS_PASSWORD_FILE keeps the password out of the environment (and `docker inspect`). The file is
+  // always read and validated when set, even if the URLs already carry a password, so an unreadable,
+  // empty or malformed file fails startup. Its value is used only for a URL that carries no password.
   if (source.REDIS_PASSWORD_FILE) {
     const password = readSecretFile('REDIS_PASSWORD_FILE', source.REDIS_PASSWORD_FILE).trim();
     if (!/^[A-Za-z0-9._~-]{16,}$/.test(password))

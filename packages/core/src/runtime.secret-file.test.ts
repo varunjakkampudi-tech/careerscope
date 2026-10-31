@@ -77,6 +77,39 @@ test('a symlinked secret file is refused for REDIS_PASSWORD_FILE and the OTP fil
   });
 });
 
+test('REDIS_PASSWORD_FILE is validated even when the URLs carry a password, and its value is used only for URLs without one', () => {
+  withDirectory((directory) => {
+    const filePassword = randomBytes(24).toString('hex');
+    const urlPassword = randomBytes(24).toString('hex');
+    const file = join(directory, 'redis-password');
+    const carrying = {
+      ...base,
+      REDIS_URL: `redis://:${urlPassword}@127.0.0.1:6379`,
+      QUEUE_REDIS_URL: `redis://:${urlPassword}@127.0.0.1:6380`,
+    };
+    writeFileSync(file, `${filePassword}\n`, { mode: 0o600 });
+    const env = configuration({ ...carrying, REDIS_PASSWORD_FILE: file });
+    assert.equal(new URL(env.REDIS_URL).password, urlPassword);
+    assert.equal(new URL(env.QUEUE_REDIS_URL).password, urlPassword);
+    // Only the URL without a password takes the file's value.
+    const mixed = configuration({
+      ...carrying,
+      QUEUE_REDIS_URL: base.QUEUE_REDIS_URL,
+      REDIS_PASSWORD_FILE: file,
+    });
+    assert.equal(new URL(mixed.REDIS_URL).password, urlPassword);
+    assert.equal(new URL(mixed.QUEUE_REDIS_URL).password, filePassword);
+    // A malformed file still fails startup although every URL already has a password.
+    writeFileSync(file, 'short\n', { mode: 0o600 });
+    refused({ ...carrying, REDIS_PASSWORD_FILE: file }, 'REDIS_PASSWORD_FILE', [urlPassword]);
+    refused(
+      { ...carrying, REDIS_PASSWORD_FILE: join(directory, 'absent') },
+      'REDIS_PASSWORD_FILE',
+      [urlPassword],
+    );
+  });
+});
+
 test('an oversized secret file is refused without echoing its content', () => {
   withDirectory((directory) => {
     const file = join(directory, 'big');
