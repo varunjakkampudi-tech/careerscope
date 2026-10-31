@@ -97,6 +97,15 @@ export class Auth {
     }
   }
 
+  /**
+   * Starts the sweep without awaiting it. Called from inside a sign-in's try block, where the
+   * request still holds its pool client; awaiting here would hold that client while the sweep
+   * waits for a second one, and a login burst can exhaust the pool that way.
+   */
+  private sweepAfterCommit(): void {
+    void this.sweepExpiredSessions();
+  }
+
   /** Inserts a password account. A duplicate email is silently ignored, so the response does not reveal whether it exists. */
   async register(email: string, password: string): Promise<void> {
     const normalized = z.string().email().max(254).parse(email.trim().toLowerCase());
@@ -167,7 +176,7 @@ export class Auth {
       }
       const credentials = await this.createSession(client, user.id, previous, deviceLabel);
       await client.query('COMMIT');
-      await this.sweepExpiredSessions();
+      this.sweepAfterCommit();
       return credentials;
     } catch (error) {
       await rollback(client);
@@ -208,7 +217,7 @@ export class Auth {
         return null;
       }
       await client.query('COMMIT');
-      await this.sweepExpiredSessions();
+      this.sweepAfterCommit();
       return credentials;
     } catch (error) {
       await rollback(client);
@@ -355,7 +364,7 @@ export class Auth {
       await client.query('BEGIN');
       const credentials = await this.createSession(client, userId, previous, deviceLabel);
       await client.query('COMMIT');
-      await this.sweepExpiredSessions();
+      this.sweepAfterCommit();
       return credentials;
     } catch (error) {
       await rollback(client);
