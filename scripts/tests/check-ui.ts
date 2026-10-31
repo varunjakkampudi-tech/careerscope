@@ -642,6 +642,9 @@ try {
       await otpPage.route('**/api/profile/accessibility', (route) =>
         route.fulfill({ contentType: 'application/json', json: { reducedMotion: false } }),
       );
+      await otpPage.route('**/api/session/logout', (route) =>
+        route.fulfill({ contentType: 'application/json', json: { authenticated: false } }),
+      );
       await otpPage.route('**/api/session', (route) =>
         route.fulfill({
           contentType: 'application/json',
@@ -894,6 +897,9 @@ try {
           contentType: 'application/json',
           body: '{"code":"NOT_FOUND","message":"Not found","requestId":"00000000-0000-4000-8000-000000000000"}',
         }),
+      );
+      await signupPage.route('**/api/session/logout', (route) =>
+        route.fulfill({ contentType: 'application/json', json: { authenticated: false } }),
       );
       await signupPage.route('**/api/session', (route) =>
         route.fulfill({

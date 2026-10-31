@@ -178,7 +178,7 @@ export function configuration(
       throw new ConfigurationError('Set either ' + name + ' or ' + name + '_FILE, not both');
     input[name] = secretFromFile(name + '_FILE', path);
   }
-  const env = z
+  const parsed = z
     .object({
       DATABASE_URL: z.string().min(1),
       REDIS_URL: z.string().min(1),
@@ -201,12 +201,21 @@ export function configuration(
       SEARCH_QUEUE_TRANSPORT: z.enum(['redis', 'bullmq']).default('redis'),
       SEARCH_QUEUE_REDIS_URL: z.string().min(1).optional(),
     })
-    .parse({
+    .safeParse({
       ...input,
       DEPLOYMENT_ENVIRONMENT:
         source.DEPLOYMENT_ENVIRONMENT ??
         (source.NODE_ENV === 'production' ? 'production' : 'development'),
     });
+  // Zod messages can echo the received value, which may be a secret, so only the variable name and
+  // the issue code are reported.
+  if (!parsed.success)
+    throw new ConfigurationError(
+      parsed.error.issues
+        .map((issue) => `${issue.path.join('.') || 'environment'}: ${issue.code}`)
+        .join('; '),
+    );
+  const env = parsed.data;
   localUrl(env.DATABASE_URL, ['postgres:', 'postgresql:']);
   localUrl(env.REDIS_URL, ['redis:']);
   localEndpoint(env.QUEUE_REDIS_URL);

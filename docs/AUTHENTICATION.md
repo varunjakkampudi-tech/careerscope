@@ -50,11 +50,12 @@ browser/platform labels rather than storing raw User-Agent strings. Owners can
 revoke one of their own device sessions or all other sessions. A revoked or
 expired family cannot refresh. Password change revokes all sessions. Account
 switching revokes the previous session family while its access cookie is still valid, and
-clears private client caches. After the 15-minute access cookie has expired, a new sign-in
-does not reach the old refresh-token family: the refresh cookie is path-scoped to
-`/api/session` and is not sent to `/api/login`. That family stays live until it expires or
-is revoked, so sign out (`POST /api/session/logout`) before switching accounts after a long
-idle period.
+clears private client caches. The refresh cookie is path-scoped to `/api/session`, so the
+sign-in routes never receive it. Once the access cookie has expired, the server cannot see the
+old refresh-token family from a sign-in request. The web client therefore calls
+`POST /api/session/logout` (which does receive the refresh cookie) before each sign-in, and that
+revokes the family. A client that signs in without making that call keeps the old family until
+it expires or is revoked.
 Owner IDs always come from the authenticated server session. Expired session
 families are removed on a later successful session establishment, and by the
 retention job (`scripts/jobs/enforce-search-retention.ts`), which deletes sessions past

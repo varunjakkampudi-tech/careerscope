@@ -134,3 +134,28 @@ test('authenticated reads, refresh and logout are rate limited by user or token 
     await app.close();
   }
 });
+
+test('an anonymous session read is budgeted per address, keyed by a hash of the address', async () => {
+  const { database } = fake();
+  const keys: string[] = [];
+  let allow = true;
+  const limiter: RateLimit = async (key) => {
+    keys.push(key);
+    return allow;
+  };
+  const app = await createApp(database, origin, limiter);
+  try {
+    assert.equal(
+      (await app.inject({ method: 'GET', url: '/api/session', headers: { origin } })).statusCode,
+      200,
+    );
+    allow = false;
+    const denied = await app.inject({ method: 'GET', url: '/api/session', headers: { origin } });
+    assert.equal(denied.statusCode, 429);
+    // The address is hashed, never logged or stored raw.
+    assert.ok(keys.some((key) => /^session-read:ip:[a-f0-9]{64}$/.test(key)));
+    assert.ok(keys.every((key) => !key.includes('127.0.0.1')));
+  } finally {
+    await app.close();
+  }
+});
