@@ -118,4 +118,17 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   } else {
     process.stdout.write(`PASS traceability: ${rows} rows, ${notCovered} NOT COVERED\n`);
   }
+
+  // Stage 1.02: the same gate validates the v12 requirement inventory, so CI cannot pass with a
+  // NOT_ASSESSED clause, a stale source digest or an IMPLEMENTED clause that has no CI-run test.
+  const { checkRequirements, summaryLine } = await import('./check-requirements-inventory.mjs');
+  const requirements = await checkRequirements(root, ciExecutedText(root));
+  if (requirements.errors.length) {
+    for (const error of requirements.errors)
+      console.error(`::error file=docs/requirements/V12-REQUIREMENT-INVENTORY.json::${error}`);
+    console.error(`FAIL ${requirements.errors.length} requirement inventory problem(s)`);
+    process.exitCode = 1;
+  } else {
+    process.stdout.write(`PASS v12 requirement inventory: ${summaryLine(requirements)}\n`);
+  }
 }

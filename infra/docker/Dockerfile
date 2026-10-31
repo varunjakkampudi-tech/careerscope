@@ -34,8 +34,9 @@ FROM ${ALPINE_IMAGE} AS proxy
 ARG CAREERSCOPE_REVISION=unknown
 LABEL org.opencontainers.image.revision="${CAREERSCOPE_REVISION}"
 LABEL org.opencontainers.image.source="https://github.com/varunjakkampudi-tech/careerscope"
-RUN apk upgrade --no-cache \
-    && apk add --no-cache ca-certificates mailcap \
+# Exact package versions from the pinned alpine:3.23 repository. If a pinned version leaves the
+# repository the build fails loudly; bump the pins together with ALPINE_IMAGE. No apk upgrade runs.
+RUN apk add --no-cache ca-certificates=20261020-r0 mailcap=2.1.54-r0 \
     && mkdir -p /config/caddy /data/caddy \
     && chown -R 1000:1000 /config /data
 COPY --from=caddy-build /out/caddy /usr/bin/caddy
@@ -47,8 +48,8 @@ CMD ["run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
 FROM ${NODE_IMAGE} AS build
 WORKDIR /app
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 NEXT_TELEMETRY_DISABLED=1
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential cmake python3 \
-    && rm -rf /var/lib/apt/lists/*
+# No OS packages are installed in the build stage: every native dependency ships a prebuilt binary
+# for linux-x64 (argon2, next/swc), so no compiler toolchain is needed and there is nothing to pin.
 COPY package.json package-lock.json tsconfig.base.json tsconfig.json ./
 COPY packages ./packages
 COPY apps ./apps

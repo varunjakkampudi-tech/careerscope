@@ -38,4 +38,15 @@ for name in redis redis-queue; do
   fi
   mv -f "$target.tmp" "$target"
 done
+# App services read the password from this file (REDIS_PASSWORD_FILE); it holds only the password.
+# Group 1000 is the app user's group, so it is group-readable when written as root.
+target="$out_dir/redis-password"
+printf '%s\n' "$password" >"$target.tmp"
+if [ "$(id -u)" = 0 ]; then
+  chown 999:1000 "$target.tmp"
+  chmod 0440 "$target.tmp"
+else
+  chmod 0444 "$target.tmp"
+fi
+mv -f "$target.tmp" "$target"
 echo "wrote Redis secret configs in $out_dir"

@@ -27,7 +27,7 @@ on the host:
 
 ```bash
 docker image ls --format '{{.Repository}}:{{.Tag}} {{.ID}}'
-docker image inspect careerscope:v3 --format '{{index .Config.Labels "org.opencontainers.image.revision"}}'
+docker image inspect careerscope:<sha12> --format '{{index .Config.Labels "org.opencontainers.image.revision"}}'
 ```
 
 If the previous image is gone, rebuild from the older commit using the normal

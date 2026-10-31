@@ -110,3 +110,120 @@ test('every kind in the document that claims a producer is still emitted by the 
   for (const kind of declaredOnly)
     assert.doesNotMatch(source, new RegExp(`type: '${kind}'|'${kind}':`), `${kind} has a producer`);
 });
+
+/** Field names declared one per line in a block such as a type body or a column list. */
+const fieldNames = (block: string) => [...block.matchAll(/^\s*(\w+)\??:/gm)].map((m) => m[1]!);
+
+/** `snake_case` column to the `camelCase` name the document uses. */
+const camel = (column: string) =>
+  column.replace(/_([a-z])/g, (_, letter: string) => letter.toUpperCase());
+
+/** Column names of `CREATE TABLE "<table>"` in the initial migration. */
+function columnsOf(table: string) {
+  const body = read('migrations/0000_initial_schema.sql').match(
+    new RegExp(`CREATE TABLE "${table}" \\(([\\s\\S]*?)\\r?\\n\\);`),
+  )?.[1];
+  assert.ok(body, `table ${table} not found in the initial migration`);
+  return [...body.matchAll(/^\s*"([a-z_]+)"\s+\w/gm)].map((m) => camel(m[1]!));
+}
+
+/** Fields the code emits per message, read from the source that defines them. */
+function emittedFields(): Record<string, string[]> {
+  const typeBody = (source: string, name: string) => {
+    const body = source.match(new RegExp(`export type ${name} = \\{([\\s\\S]*?)\\r?\\n\\};`))?.[1];
+    assert.ok(body, `type ${name} not found`);
+    return fieldNames(body);
+  };
+  const app = read('apps/api/src/app.ts');
+  const progress = app.match(
+    /query<\{([^}]*)\}>\(\s*`SELECT sequence::text AS cursor, type, created_at AS "createdAt" FROM run_events/,
+  )?.[1];
+  assert.ok(progress, 'the progress event query was not found');
+  const reset = app.match(/event: reset\\ndata: (\{[^']*\})/)?.[1];
+  assert.ok(reset, 'the reset event was not found');
+  return {
+    'command envelope': Object.keys(commandSchema.shape),
+    'run event row': columnsOf('run_events'),
+    'notification event': typeBody(
+      read('packages/core/src/notification-delivery.ts'),
+      'NotificationEvent',
+    ),
+    // `leadId` is joined at read time (packages/core/src/notifications.ts), not a stored column.
+    'in-app reminder row': [...columnsOf('in_app_notifications'), 'leadId'],
+    progress: fieldNames(progress),
+    reset: Object.keys(JSON.parse(reset) as object),
+    'email delivery message': typeBody(
+      read('packages/core/src/email-otp-delivery.ts'),
+      'EmailOtpDeliveryMessage',
+    ),
+  };
+}
+
+/** `message -> field -> personal-data class` from the section 7 table; `(none)` rows map to no field. */
+function documentedFields() {
+  const rows = new Map<string, Map<string, string>>();
+  for (const line of sectionOf(document, 7).split('\n')) {
+    const cells = line.split('|').map((cell) => cell.trim());
+    const message = cells[1]?.match(/^`([^`]+)`$/)?.[1];
+    if (!message || cells.length < 6) continue;
+    const field = cells[2]!.match(/^`([^`]+)`$/)?.[1];
+    const fields = rows.get(message) ?? new Map<string, string>();
+    if (field) fields.set(field, cells[4]!);
+    rows.set(message, fields);
+  }
+  return rows;
+}
+
+test('every payload field the code emits has a row with a personal-data class in section 7', () => {
+  const documented = documentedFields();
+  const classes = new Set(['Direct', 'Linked', 'Secret', 'None']);
+  const problems: string[] = [];
+  for (const [message, fields] of Object.entries(emittedFields())) {
+    const rows = documented.get(message);
+    if (!rows) {
+      problems.push(`${message}: no rows`);
+      continue;
+    }
+    for (const field of fields)
+      if (!rows.has(field)) problems.push(`${message}: ${field} undocumented`);
+    for (const field of rows.keys())
+      if (!fields.includes(field)) problems.push(`${message}: ${field} is stale`);
+  }
+  for (const [message, fields] of documented)
+    for (const [field, classification] of fields)
+      if (!classes.has(classification))
+        problems.push(`${message}.${field}: class "${classification}"`);
+  assert.deepEqual(problems, []);
+});
+
+test('every server-sent event, including payload-free ones, has a section 7 row', () => {
+  const documented = documentedFields();
+  for (const event of emitted['server-sent event']!)
+    assert.ok(documented.has(event), `server-sent event ${event} has no payload contract`);
+  // A payload-free event has no fields and its code writes `data: {}`.
+  for (const event of ['settled', 'session-expired', 'unavailable'])
+    assert.equal(documented.get(event)?.size, 0, `${event} must be documented as payload-free`);
+  assert.match(read('apps/api/src/app.ts'), /event: settled\\ndata: \{\}/);
+});
+
+test('the payload extractors find the fields they are meant to guard', () => {
+  const fields = emittedFields();
+  assert.deepEqual(fields['run event row']!.sort(), [
+    'createdAt',
+    'id',
+    'ownerId',
+    'runId',
+    'sequence',
+    'type',
+  ]);
+  assert.deepEqual(fields.progress!.sort(), ['createdAt', 'cursor', 'type']);
+  assert.deepEqual(fields.reset, ['reason']);
+  assert.ok(fields['notification event']!.includes('payload'));
+  assert.deepEqual(fields['email delivery message']!.sort(), [
+    'code',
+    'email',
+    'idempotencyKey',
+    'purpose',
+  ]);
+  assert.ok(fields['in-app reminder row']!.includes('retiredAt'));
+});

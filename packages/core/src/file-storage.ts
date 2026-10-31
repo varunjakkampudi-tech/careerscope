@@ -41,8 +41,27 @@ const objectSchema = resumeUploadMetadataSchema
   })
   .strict();
 const versionSchema = z.string().uuid();
-/** Envelope header size in bytes: "CSR1" magic (4), version UUID (36), GCM nonce (12) and auth tag (16). */
-const overhead = 68;
+/**
+ * Envelope layouts (all fields fixed width, ciphertext length equals plaintext length):
+ * - "CSR1" (legacy, read only): magic (4) | version UUID (36) | GCM nonce (12) | auth tag (16) | ciphertext.
+ *   Encrypted directly with the raw storage key. Header 68 bytes.
+ * - "CSR2" (written): magic (4) | key id (4) | version UUID (36) | GCM nonce (12) | auth tag (16) | ciphertext.
+ *   Encrypted with a key derived by HKDF-SHA-256 from the storage key (info `encryptionKeyInfo`), so the
+ *   cipher never uses the raw master key. Header 72 bytes. The key id is a public fingerprint derived
+ *   from the storage key (info `keyIdInfo`); a reader whose key has a different id fails closed.
+ * The GCM AAD is identical for both: the object identity and version (see `aad`).
+ *
+ * Migration rule: CSR1 objects stay readable indefinitely. Nothing rewrites them automatically. A
+ * re-encrypt job (NOT built here) would, for each CSR1 object, read and verify it, write a CSR2
+ * object under a new version and swap it in, and only then delete the CSR1 file. Until such a job
+ * has run, the raw storage key must be retained and protected exactly as before.
+ */
+const legacyEnvelopeMagic = 'CSR1';
+const envelopeMagic = 'CSR2';
+const legacyOverhead = 68;
+const overhead = 72;
+const encryptionKeyInfo = 'careerscope:resume-storage:aes-gcm:v1';
+const keyIdInfo = 'careerscope:resume-storage:key-id:v1';
 /** Name pattern of in-progress writes; only these files are ever candidates for cleanup. */
 const temporaryName = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pending$/;
 /** Free space that must remain on the volume after a write is admitted (256 MiB). */
@@ -111,13 +130,15 @@ export class PrivateFileResumeStorage {
   readonly bucket = 'local-private-resumes';
   private readonly root: string;
   /**
-   * Master key. It is still used directly as the AES-256-GCM key, because the envelope carries no key
-   * id or KDF salt: deriving a different encryption key would make every stored object unreadable.
-   * Migration, if key rotation or a separate encryption key is wanted: add a "CSR2" envelope carrying
-   * a key id, read both "CSR1" and "CSR2", write only "CSR2", and re-encrypt "CSR1" objects (lazily
-   * or in a one-off job) before the old key is retired.
+   * Master key. New objects ("CSR2") are encrypted with `encryptionKey` derived from it; the raw
+   * key is used directly only to decrypt legacy "CSR1" objects and for legacy "CSC1" markers.
+   * See the envelope comment above for the migration rule.
    */
   private readonly key: Buffer;
+  /** HKDF-derived AES-256-GCM key for "CSR2" envelopes. */
+  private readonly encryptionKey: Buffer;
+  /** 4-byte fingerprint of the storage key carried in "CSR2" envelopes. */
+  private readonly keyId: Buffer;
   /** HKDF-derived key used only for cancellation markers, so the marker HMAC and the cipher never share key material. */
   private readonly markerKey: Buffer;
   private readonly reserveBytes: number;
@@ -170,6 +191,10 @@ export class PrivateFileResumeStorage {
       .default(defaultMarkerRetentionMs)
       .parse(config.markerRetentionMs);
     this.markerKey = Buffer.from(hkdfSync('sha256', this.key, Buffer.alloc(0), markerKeyInfo, 32));
+    this.encryptionKey = Buffer.from(
+      hkdfSync('sha256', this.key, Buffer.alloc(0), encryptionKeyInfo, 32),
+    );
+    this.keyId = Buffer.from(hkdfSync('sha256', this.key, Buffer.alloc(0), keyIdInfo, 4));
   }
 
   /** Creates the directory (mode 0700), validates it, and counts existing cancellation markers. Must run before any other call. */
@@ -559,11 +584,12 @@ export class PrivateFileResumeStorage {
     this.validateBody(object, data);
     const version = randomUUID();
     const nonce = randomBytes(12);
-    const cipher = createCipheriv('aes-256-gcm', this.key, nonce);
+    const cipher = createCipheriv('aes-256-gcm', this.encryptionKey, nonce);
     cipher.setAAD(this.aad(object, version));
     const encrypted = Buffer.concat([cipher.update(data), cipher.final()]);
     const envelope = Buffer.concat([
-      Buffer.from('CSR1'),
+      Buffer.from(envelopeMagic),
+      this.keyId,
       Buffer.from(version),
       nonce,
       cipher.getAuthTag(),
@@ -622,9 +648,16 @@ export class PrivateFileResumeStorage {
       }
       throw new Error('Resume object metadata mismatch');
     }
-    if (!stat.isFile() || stat.isSymbolicLink() || stat.size !== object.bytes + overhead) {
+    // The size selects the layout; the magic must then agree with it.
+    const legacy = stat.size === object.bytes + legacyOverhead;
+    if (
+      !stat.isFile() ||
+      stat.isSymbolicLink() ||
+      (!legacy && stat.size !== object.bytes + overhead)
+    ) {
       throw new Error('Resume object metadata mismatch');
     }
+    const header = legacy ? legacyOverhead : overhead;
     const handle = await open(filename, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
     try {
       const opened = await handle.stat();
@@ -636,7 +669,7 @@ export class PrivateFileResumeStorage {
       ) {
         throw new ResumeObjectChanged('Resume object changed during read');
       }
-      const envelope = Buffer.alloc(object.bytes + overhead);
+      const envelope = Buffer.alloc(object.bytes + header);
       let offset = 0;
       while (offset < envelope.length) {
         signal?.throwIfAborted();
@@ -646,17 +679,26 @@ export class PrivateFileResumeStorage {
       }
       if (
         (await handle.stat()).size !== envelope.length ||
-        envelope.subarray(0, 4).toString() !== 'CSR1'
+        envelope.subarray(0, 4).toString() !== (legacy ? legacyEnvelopeMagic : envelopeMagic)
       ) {
         throw new Error('Resume object metadata mismatch');
       }
-      const version = versionSchema.parse(envelope.subarray(4, 40).toString());
+      // CSR1: version at 4, nonce at 40, tag at 52. CSR2 shifts each by the 4-byte key id.
+      const start = legacy ? 4 : 8;
+      if (!legacy && !timingSafeEqual(envelope.subarray(4, 8), this.keyId)) {
+        throw new Error('Resume object key mismatch');
+      }
+      const version = versionSchema.parse(envelope.subarray(start, start + 36).toString());
       if (expectedVersion !== undefined && expectedVersion !== version)
         throw new Error('Resume object version mismatch');
-      const decipher = createDecipheriv('aes-256-gcm', this.key, envelope.subarray(40, 52));
+      const decipher = createDecipheriv(
+        'aes-256-gcm',
+        legacy ? this.key : this.encryptionKey,
+        envelope.subarray(start + 36, start + 48),
+      );
       decipher.setAAD(this.aad(object, version));
-      decipher.setAuthTag(envelope.subarray(52, 68));
-      const data = Buffer.concat([decipher.update(envelope.subarray(overhead)), decipher.final()]);
+      decipher.setAuthTag(envelope.subarray(start + 48, start + 64));
+      const data = Buffer.concat([decipher.update(envelope.subarray(header)), decipher.final()]);
       this.validateBody(object, data);
       signal?.throwIfAborted();
       return { version, data };
@@ -783,6 +825,8 @@ export class PrivateFileResumeStorage {
     this.ready = false;
     this.key.fill(0);
     this.markerKey.fill(0);
+    this.encryptionKey.fill(0);
+    this.keyId.fill(0);
   }
 }
 

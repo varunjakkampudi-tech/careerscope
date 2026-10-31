@@ -33,20 +33,21 @@ values apply under `.shell[data-theme='dark']`. These are the primary tokens for
 
 ### Base and semantic tokens (`:root` in `globals.css`)
 
-| Token              | Light value                       | Dark value                                 | Use                                              |
-| ------------------ | --------------------------------- | ------------------------------------------ | ------------------------------------------------ |
-| `--canvas`         | `#f6f7f9`                         | follows `--dash-canvas` in the dark shell  | Page background (older screens)                  |
-| `--surface`        | `#fff`                            | follows `--dash-surface` in the dark shell | Card background (older screens)                  |
-| `--ink`            | `#111725`                         | follows `--dash-ink` in the dark shell     | Body text (older screens)                        |
-| `--muted`          | `#4a5364`                         | follows `--dash-muted` in the dark shell   | Secondary text (older screens)                   |
-| `--border`         | `#e2e5ec`                         | follows `--dash-border` in the dark shell  | Hairlines (older screens)                        |
-| `--accent`         | `#4055d6`                         | same                                       | Accent (older screens)                           |
-| `--good`           | `#157539`                         | same                                       | Success text and borders                         |
-| `--danger-text`    | `#b3261e`                         | `#f6b3bf`                                  | Error text and icons                             |
-| `--danger-solid`   | `#b42318`                         | same                                       | Solid destructive fills such as the unread badge |
-| `--on-solid`       | `#fff`                            | same                                       | Text on a solid accent, danger or dark fill      |
-| `--shadow-card`    | `0 2px 8px rgba(13, 18, 36, .04)` | `none`                                     | Resting card elevation                           |
-| `--shadow-popover` | `0 12px 32px rgb(16 19 35 / 18%)` | same                                       | Floating panels                                  |
+| Token              | Light value                       | Dark value                                 | Use                                                                |
+| ------------------ | --------------------------------- | ------------------------------------------ | ------------------------------------------------------------------ |
+| `--canvas`         | `#f6f7f9`                         | follows `--dash-canvas` in the dark shell  | Page background (older screens)                                    |
+| `--surface`        | `#fff`                            | follows `--dash-surface` in the dark shell | Card background (older screens)                                    |
+| `--ink`            | `#111725`                         | follows `--dash-ink` in the dark shell     | Body text (older screens)                                          |
+| `--muted`          | `#4a5364`                         | follows `--dash-muted` in the dark shell   | Secondary text (older screens)                                     |
+| `--border`         | `#e2e5ec`                         | follows `--dash-border` in the dark shell  | Hairlines (older screens)                                          |
+| `--accent`         | `#4055d6`                         | same                                       | Accent (older screens)                                             |
+| `--good`           | `#157539`                         | same                                       | Success text and borders                                           |
+| `--danger-text`    | `#b3261e`                         | `#f6b3bf`                                  | Error text and icons                                               |
+| `--danger-solid`   | `#b42318`                         | same                                       | Solid destructive fills such as the unread badge                   |
+| `--on-solid`       | `#fff`                            | same                                       | Text on a solid accent, danger or dark fill                        |
+| `--shadow-card`    | `0 2px 8px rgba(13, 18, 36, .04)` | `none`                                     | Resting card elevation                                             |
+| `--shadow-popover` | `0 12px 32px rgb(16 19 35 / 18%)` | same                                       | Floating panels                                                    |
+| `--font-sans`      | Inter, set by `next/font`         | same                                       | Body font; defined by `app/layout.tsx`, read in `styles/reset.css` |
 
 The older screens (`globals.css`) use `--canvas`, `--surface`, `--ink`, `--muted` and `--border`.
 Inside the dark shell these are mapped to the `--dash-*` values, because they have no dark values of
@@ -60,9 +61,17 @@ their own. Prefer the `--dash-*` tokens in new CSS modules.
 | `ErrorState`          | `components/ui-states.tsx`       | Block or inline error with `role="alert"`. `title` (block) or `what` (inline) is required, so an error always names what failed. `onRetry` or `action` offers the next step.                                                                            |
 | `EmptyState`          | `components/ui-states.tsx`       | Block or inline empty state. `reason` (`nothing-yet`, `filtered`, `awaiting-input`) is required and rendered as `data-empty-reason`.                                                                                                                    |
 | `.panel` surface      | `styles/surface.module.css`      | Background, border, radius and text colour for a card. Modules add layout with `composes: panel from '../styles/surface.module.css'`. Used by account security, language preference, notification preferences, matching and interview organizer panels. |
-| `BrandLogo`           | `components/brand-logo.tsx`      | Logo and wordmark.                                                                                                                                                                                                                                      |
+| `BrandLogo`           | `components/brand-logo.tsx`      | Logo and wordmark (default export).                                                                                                                                                                                                                     |
 | `MatchEvidence`       | `components/match-evidence.tsx`  | Match score explanation shared by search results and saved leads.                                                                                                                                                                                       |
-| Dashboard shell parts | `components/dashboard-shell.tsx` | `DashboardSidebar`, `DashboardMobileNav`, `DashboardTopbar`.                                                                                                                                                                                            |
+| Dashboard shell parts | `components/dashboard-shell.tsx` | `DashboardSidebar`, `DashboardMobileNav`, `DashboardTopbar` and the `navKeyForPath` helper.                                                                                                                                                             |
+
+`AuthenticatedShell` (`components/authenticated-shell.tsx`, default export) wraps every signed-in route from
+`app/(app)/layout.tsx`. `HeroIllustration` (`components/hero-illustration.tsx`, default export) is the dashboard
+and search hero artwork. Every other file in `components/` is a screen-specific view, not a shared component.
+
+A guard, `scripts/tests/design-system-doc.test.ts`, fails when a token or component named in this document no
+longer exists, when CSS reads a token that nothing defines (apart from the exceptions listed under
+"Found and left as is"), or when a shared component file is missing from the table.
 
 Rules for new screens:
 
@@ -96,6 +105,9 @@ Changed, behaviour preserving unless noted:
   the fallback `#2563eb` always applied, a blue that is not the brand accent; it now uses
   `--dash-accent`, so the spinner and the empty-state action link change from `#2563eb` to the brand
   accent. These are the only intentional visible changes.
+- Replaced `color: var(--text)` on `.discovery-mode select` in `globals.css`. `--text` is defined nowhere, so
+  the declaration was invalid at computed-value time and already resolved to `unset`, which for `color`
+  means `inherit`. `color: inherit` states that outcome directly; the rendered colour is unchanged.
 
 Found and left as is, with the reason:
 
@@ -115,5 +127,7 @@ Found and left as is, with the reason:
   fallback always applies. Left because changing it changes the AI note background.
 - A `color="#157539"` prop on a Lucide icon in the dashboard page. It is an SVG presentation
   attribute; replacing it with a token needs a class and was left.
+- `--dash-space-8`, `-10` and `-12` are defined but no CSS reads them yet. They stay as the top of the
+  documented scale.
 - Spacing is mostly literal pixels (about 900 occurrences) alongside `--dash-space-*`. Converting them
   is a large diff with no visible effect and was not attempted.

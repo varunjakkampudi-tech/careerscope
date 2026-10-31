@@ -12,6 +12,15 @@ set -euo pipefail
 root=${CAREERSCOPE_ROOT:-/opt/careerscope}
 recorded=$(cat "$root/DEPLOYED_COMMIT" 2>/dev/null || echo missing)
 expected=${1:-$recorded}
+
+# The images checked are the ones the release record names, never a mutable tag.
+record_value() { sed -n "s/^$1=//p" "$root/RELEASE_RECORD" 2>/dev/null | tail -1; }
+runtime_image=$(record_value CAREERSCOPE_IMAGE)
+proxy_image=$(record_value CAREERSCOPE_PROXY_IMAGE)
+if [ -z "$runtime_image" ] || [ -z "$proxy_image" ]; then
+  echo "FAIL release record: $root/RELEASE_RECORD is missing or lacks image names" >&2
+  exit 1
+fi
 failures=0
 
 label() {
@@ -31,8 +40,8 @@ check() {
 
 echo "== expected revision: $expected"
 check "DEPLOYED_COMMIT" "$recorded" "$expected"
-check "runtime image label" "$(label careerscope:v3)" "$expected"
-check "proxy image label" "$(label careerscope:v3-proxy)" "$expected"
+check "runtime image label" "$(label "$runtime_image")" "$expected"
+check "proxy image label" "$(label "$proxy_image")" "$expected"
 
 # The running API reports the revision baked into its image at startup.
 running=$(docker inspect careerscope-api-1 \

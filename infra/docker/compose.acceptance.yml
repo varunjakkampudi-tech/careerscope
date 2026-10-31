@@ -35,7 +35,7 @@ x-web-environment: &web-environment
 
 x-app: &app
   <<: *hardening
-  image: careerscope:v3-local-acceptance
+  image: ${CAREERSCOPE_IMAGE:?Runtime image required (set to the revision tag or digest under test)}
   user: '1000:1000'
   network_mode: service:network-anchor
   environment: *environment
@@ -47,14 +47,14 @@ x-app: &app
 services:
   network-anchor:
     <<: *hardening
-    image: careerscope:v3-local-proxy
+    image: ${CAREERSCOPE_PROXY_IMAGE:?Proxy image required (set to the revision tag or digest under test)}
     user: '1000:1000'
     command: ['sh', '-c', 'exec tail -f /dev/null']
     ports: ['127.0.0.1:${V3_TEST_PORT:-5380}:8080']
 
   proxy:
     <<: *hardening
-    image: careerscope:v3-local-proxy
+    image: ${CAREERSCOPE_PROXY_IMAGE:?Proxy image required (set to the revision tag or digest under test)}
     user: '1000:1000'
     network_mode: service:network-anchor
     depends_on:
@@ -142,7 +142,7 @@ services:
       retries: 20
   bootstrap:
     <<: *hardening
-    image: careerscope:v3-local-acceptance
+    image: ${CAREERSCOPE_IMAGE:?Runtime image required (set to the revision tag or digest under test)}
     user: '1000:1000'
     network_mode: service:network-anchor
     environment: *environment

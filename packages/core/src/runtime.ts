@@ -3,6 +3,7 @@
  * the shutdown signal. Fails fast at startup on unsafe settings.
  */
 
+import { readFileSync } from 'node:fs';
 import { createClient } from 'redis';
 import pino from 'pino';
 import { z } from 'zod';
@@ -64,6 +65,16 @@ function appOrigin(value: string) {
     throw new Error('A public APP_ORIGIN must use https');
   }
   return value;
+}
+
+/**
+ * Adds the password to a Redis URL that has none. Used with REDIS_PASSWORD_FILE so the secret is read
+ * from a mounted file at startup and exists only in process memory, never in the container environment.
+ */
+function withRedisPassword(value: string, password: string) {
+  const url = new URL(value);
+  if (!url.password) url.password = password;
+  return url.toString();
 }
 
 /**
@@ -143,6 +154,19 @@ export function configuration(source: NodeJS.ProcessEnv = process.env) {
       throw new Error('Email OTP requires RESEND_API_KEY');
     if (env.RESEND_FROM_EMAIL !== 'CareerScope <noreply@careerscope.tech>')
       throw new Error('Email OTP requires the approved CareerScope sender address');
+  }
+  // REDIS_PASSWORD_FILE keeps the password out of the environment (and `docker inspect`). A password
+  // already present in a URL is left alone; an unreadable or empty file fails startup.
+  if (source.REDIS_PASSWORD_FILE) {
+    const password = readFileSync(source.REDIS_PASSWORD_FILE, 'utf8').trim();
+    if (!/^[A-Za-z0-9._~-]{16,}$/.test(password))
+      throw new Error(
+        'REDIS_PASSWORD_FILE must contain a plain password of at least 16 characters',
+      );
+    env.REDIS_URL = withRedisPassword(env.REDIS_URL, password);
+    env.QUEUE_REDIS_URL = withRedisPassword(env.QUEUE_REDIS_URL, password);
+    if (env.SEARCH_QUEUE_REDIS_URL)
+      env.SEARCH_QUEUE_REDIS_URL = withRedisPassword(env.SEARCH_QUEUE_REDIS_URL, password);
   }
   return env;
 }

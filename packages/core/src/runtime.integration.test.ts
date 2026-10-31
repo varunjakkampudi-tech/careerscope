@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
 import { randomBytes, randomUUID } from 'node:crypto';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import test from 'node:test';
 import { configuration, rateLimiter } from './runtime.js';
 
@@ -225,5 +228,43 @@ test('Redis rate limit is atomic and expires rather than persisting authorizatio
   } finally {
     await firstInstance.client.del(`${prefix}login`);
     await Promise.all([firstInstance.close(), secondInstance.close()]);
+  }
+});
+
+test('REDIS_PASSWORD_FILE supplies the Redis password without it appearing in the environment', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'redis-password-'));
+  try {
+    const file = join(directory, 'redis-password');
+    const password = randomBytes(24).toString('hex');
+    writeFileSync(file, `${password}\n`);
+    const source = {
+      DATABASE_URL: 'postgres://localhost/test',
+      REDIS_URL: 'redis://127.0.0.1:6379',
+      QUEUE_REDIS_URL: 'redis://127.0.0.1:6380',
+      APP_ORIGIN: 'http://localhost:5280',
+      REDIS_PASSWORD_FILE: file,
+    };
+    const env = configuration(source);
+    assert.equal(new URL(env.REDIS_URL).password, password);
+    assert.equal(new URL(env.QUEUE_REDIS_URL).password, password);
+    assert.equal(new URL(env.QUEUE_REDIS_URL).port, '6380');
+    // Without the file the URLs are untouched, and an explicit URL password wins.
+    assert.equal(
+      configuration({ ...source, REDIS_PASSWORD_FILE: undefined }).REDIS_URL,
+      source.REDIS_URL,
+    );
+    const explicit = 'redis://:explicitpassword1234@127.0.0.1:6379';
+    assert.equal(
+      new URL(configuration({ ...source, REDIS_URL: explicit }).REDIS_URL).password,
+      'explicitpassword1234',
+    );
+    // A missing, empty or malformed file fails closed.
+    assert.throws(() =>
+      configuration({ ...source, REDIS_PASSWORD_FILE: join(directory, 'absent') }),
+    );
+    writeFileSync(file, '\n');
+    assert.throws(() => configuration(source), /REDIS_PASSWORD_FILE/);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
   }
 });

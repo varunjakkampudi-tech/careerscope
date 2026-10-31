@@ -5,7 +5,8 @@ consumers and delivery guarantee. It describes current behaviour only. A kind th
 no producer is listed as such so nobody assumes it works.
 
 `scripts/tests/domain-events-doc.test.ts` reads the source and fails if a kind below is missing from
-the table of its section (a mention in prose does not count). When you add a command type, run event type, notification kind or template, SSE event name
+the table of its section (a mention in prose does not count), and if a payload field the code emits is
+missing from, or stale in, the field table of section 7. When you add a command type, run event type, notification kind or template, SSE event name
 or sign-in email purpose, add it here in the same change.
 
 For the transactional outbox model and queue guarantees behind section 1, see
@@ -137,8 +138,9 @@ producers must meet, not as running behaviour.
 
 ## 4. In-app interview reminders
 
-Rows in `in_app_notifications` hold `id`, `roundId`, `leadId`, `createdAt`, `readAt` and the
-reminder time. They contain identifiers only: no interview title, contact or note text is copied.
+Rows in `in_app_notifications` store `id`, `ownerId`, `roundId`, `reminderAt`, `createdAt`, `readAt` and
+`retiredAt`. `leadId` is not stored: `GET /api/notifications` joins it from the interview round. They
+contain identifiers and times only: no interview title, contact or note text is copied.
 
 | Kind                                            | Payload                           | Producer                                                                                           | Consumers                                                       | Delivery guarantee                                                                                                                                                                                                                                                                                          |
 | ----------------------------------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -172,3 +174,63 @@ selects the template.
 | `sign-in`              | `email`, `code`, `idempotencyKey`            | `POST /api/otp/request`                  | At most once from the API. If the provider fails the challenge is invalidated and the caller gets 503; the user requests a new code. The idempotency key is the challenge id so a provider retry cannot double-send. |
 | `email-change-current` | `email`, `code`, `idempotencyKey`, `purpose` | `POST /api/account/email-change/request` | Same. Both codes are sent together; if either fails the whole request is cancelled.                                                                                                                                  |
 | `email-change-new`     | `email`, `code`, `idempotencyKey`, `purpose` | `POST /api/account/email-change/request` | Same.                                                                                                                                                                                                                |
+
+## 7. Payload field contracts
+
+One row per field of every payload the code emits. `scripts/tests/domain-events-doc.test.ts` reads the
+field names from the source (the command schema, the migrations, the `NotificationEvent` and
+`EmailOtpDeliveryMessage` types, and the SSE writer in `apps/api/src/app.ts`) and fails if a field is
+missing here, or listed here but no longer emitted.
+
+The **Personal data** column uses four classes:
+
+| Class    | Meaning                                                                               |
+| -------- | ------------------------------------------------------------------------------------- |
+| `Direct` | Identifies a person on its own (an email address)                                     |
+| `Linked` | An identifier or timestamp tied to one owner account; personal data by linkage        |
+| `Secret` | A credential. It is never logged, stored in clear or put in a queue, and is sent once |
+| `None`   | A fixed vocabulary value or protocol value that says nothing about a person           |
+
+No payload carries free text from the user (see the common rules).
+
+| Message                  | Field            | Type                                                    | Personal data | Notes                                                        |
+| ------------------------ | ---------------- | ------------------------------------------------------- | ------------- | ------------------------------------------------------------ |
+| `command envelope`       | `id`             | uuid                                                    | Linked        | Command id                                                   |
+| `command envelope`       | `type`           | enum                                                    | None          | Section 1 kinds                                              |
+| `command envelope`       | `version`        | literal 1                                               | None          |                                                              |
+| `command envelope`       | `aggregateId`    | uuid                                                    | Linked        | Search run or resume upload id                               |
+| `command envelope`       | `ownerId`        | uuid                                                    | Linked        | Owning user                                                  |
+| `command envelope`       | `occurredAt`     | ISO datetime                                            | Linked        | Creation time                                                |
+| `command envelope`       | `correlationId`  | uuid                                                    | Linked        | Equals `aggregateId`                                         |
+| `command envelope`       | `causationId`    | uuid, optional                                          | Linked        | Not set by any producer                                      |
+| `run event row`          | `id`             | uuid                                                    | None          | Random event id                                              |
+| `run event row`          | `runId`          | uuid                                                    | Linked        | The search run                                               |
+| `run event row`          | `ownerId`        | uuid                                                    | Linked        |                                                              |
+| `run event row`          | `type`           | text                                                    | None          | Section 2 event types                                        |
+| `run event row`          | `createdAt`      | timestamptz                                             | Linked        |                                                              |
+| `run event row`          | `sequence`       | bigserial                                               | None          | Orders the events of a run; the SSE cursor                   |
+| `notification event`     | `id`             | uuid                                                    | Linked        |                                                              |
+| `notification event`     | `ownerId`        | uuid                                                    | Linked        |                                                              |
+| `notification event`     | `kind`           | `NotificationKind`                                      | None          | Section 3 kinds                                              |
+| `notification event`     | `template`       | string                                                  | None          | Section 3 templates                                          |
+| `notification event`     | `locale`         | `en`, `te` or `hi`                                      | Linked        | The owner language choice                                    |
+| `notification event`     | `payload`        | object of strings, max 4096 bytes                       | Linked        | Identifiers only, never rendered; a free-text value is a bug |
+| `in-app reminder row`    | `id`             | uuid                                                    | Linked        |                                                              |
+| `in-app reminder row`    | `ownerId`        | uuid                                                    | Linked        |                                                              |
+| `in-app reminder row`    | `roundId`        | uuid                                                    | Linked        | The interview round                                          |
+| `in-app reminder row`    | `reminderAt`     | timestamptz                                             | Linked        | Part of the idempotency key                                  |
+| `in-app reminder row`    | `createdAt`      | timestamptz                                             | Linked        |                                                              |
+| `in-app reminder row`    | `readAt`         | timestamptz, nullable                                   | Linked        |                                                              |
+| `in-app reminder row`    | `retiredAt`      | timestamptz, nullable                                   | Linked        | Set when the round is rescheduled, cancelled or started      |
+| `in-app reminder row`    | `leadId`         | uuid                                                    | Linked        | Not stored; joined from the round when read                  |
+| `progress`               | `cursor`         | string (bigint)                                         | None          | Equals the SSE `id`                                          |
+| `progress`               | `type`           | text                                                    | None          | Section 2 event types                                        |
+| `progress`               | `createdAt`      | ISO datetime                                            | Linked        |                                                              |
+| `reset`                  | `reason`         | `"cursor-expired"`                                      | None          |                                                              |
+| `settled`                | (none)           | `{}`                                                    | None          |                                                              |
+| `session-expired`        | (none)           | `{}`                                                    | None          |                                                              |
+| `unavailable`            | (none)           | `{}`                                                    | None          |                                                              |
+| `email delivery message` | `email`          | string                                                  | Direct        | Session-derived or proposed address; never logged            |
+| `email delivery message` | `code`           | six digits                                              | Secret        | Sent once; only an HMAC digest is stored                     |
+| `email delivery message` | `idempotencyKey` | uuid                                                    | Linked        | The challenge id                                             |
+| `email delivery message` | `purpose`        | `sign-in`, `email-change-current` or `email-change-new` | None          | Selects the template; absent means `sign-in`                 |

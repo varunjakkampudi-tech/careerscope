@@ -30,8 +30,11 @@ x-hardening: &hardening
 
 x-environment: &environment
   DATABASE_URL: postgres://careerscope:${POSTGRES_PASSWORD:?Database password required}@127.0.0.1:5432/careerscope
-  REDIS_URL: redis://:${REDIS_PASSWORD:?Redis password required}@127.0.0.1:6379
-  QUEUE_REDIS_URL: redis://:${REDIS_PASSWORD:?Redis password required}@127.0.0.1:6380
+  # No password in the URLs: the app reads it from REDIS_PASSWORD_FILE (a mounted secret), so it is
+  # absent from `docker inspect`.
+  REDIS_URL: redis://127.0.0.1:6379
+  QUEUE_REDIS_URL: redis://127.0.0.1:6380
+  REDIS_PASSWORD_FILE: /run/secrets/redis-password
   APP_ORIGIN: ${APP_ORIGIN:?Public origin required}
   DEPLOYMENT_ENVIRONMENT: production
   REGISTRATION_ENABLED: ${REGISTRATION_ENABLED:-false}
@@ -230,6 +233,7 @@ services:
       DEPLOYMENT_ENVIRONMENT: production
       TEST_ACCESS_MODE: disabled
     command: ['node', 'apps/api/dist/main.js']
+    secrets: [redis-password]
     volumes: ['private:/private']
     healthcheck:
       test:
@@ -246,14 +250,17 @@ services:
   publisher:
     <<: *app
     command: ['node', 'apps/workers/search/dist/publisher.js']
+    secrets: [redis-password]
 
   search:
     <<: *app
     command: ['node', 'apps/workers/search/dist/main.js']
+    secrets: [redis-password]
 
   files:
     <<: *app
     command: ['node', 'apps/workers/search/dist/files.js']
+    secrets: [redis-password]
     volumes: ['private:/private:ro']
 
   web:
@@ -292,6 +299,8 @@ secrets:
     file: ../.env.secrets/redis.conf
   redis-queue-config:
     file: ../.env.secrets/redis-queue.conf
+  redis-password:
+    file: ../.env.secrets/redis-password
 
 volumes:
   queue-data:

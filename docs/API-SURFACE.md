@@ -130,6 +130,10 @@ state and are covered by integration tests: 409 in `apps/api/src/resumes.integra
 `apps/api/src/interviews.integration.test.ts` and `tests/integration/database.integration.test.ts`;
 507 in `apps/api/src/resumes.integration.test.ts` and `tests/integration/database.integration.test.ts`.
 
+Route-family coverage: the same file sends an authenticated call with an invalid body to every route in the
+OpenAPI document and checks that each failure is an envelope that echoes none of the submitted values. It
+also fails when a registered route has no row in the tables below.
+
 ### Breaking changes
 
 Recorded from commit `e4dad89` and the working tree after it. Clients written against the earlier API must change:
@@ -156,20 +160,27 @@ route unauthenticated and cross-origin, and checks the OpenAPI document declares
 
 ### Health and session
 
-| Method | Path               | Auth | CSRF        | Notes                                                                                                 |
-| ------ | ------------------ | ---- | ----------- | ----------------------------------------------------------------------------------------------------- |
-| GET    | `/api/health`      | no   | no          | Exempt from the auth hook, but rate-limited (429). Returns status only. Exempt from maintenance mode. |
-| GET    | `/api/session`     | no   | no          | Returns the current session or absence of one                                                         |
-| POST   | `/api/login`       | no   | Origin only | Test-access account selection only                                                                    |
-| POST   | `/api/otp/request` | no   | Origin only | Sign-in or explicitly configured signup challenge                                                     |
-| POST   | `/api/otp/verify`  | no   | Origin only | Verifies a challenge and establishes an opaque session                                                |
-| POST   | `/api/logout`      | yes  | yes         |                                                                                                       |
+| Method | Path                   | Auth | CSRF        | Notes                                                                                                                                 |
+| ------ | ---------------------- | ---- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/health`          | no   | no          | Exempt from the auth hook, but rate-limited (429). Returns status only. Exempt from maintenance mode.                                 |
+| GET    | `/api/session`         | no   | no          | Returns the current session or absence of one                                                                                         |
+| POST   | `/api/login`           | no   | Origin only | Test-access account selection only                                                                                                    |
+| POST   | `/api/otp/request`     | no   | Origin only | Sign-in or explicitly configured signup challenge                                                                                     |
+| POST   | `/api/otp/verify`      | no   | Origin only | Verifies a challenge and establishes an opaque session                                                                                |
+| POST   | `/api/logout`          | yes  | yes         |                                                                                                                                       |
+| POST   | `/api/session/refresh` | no   | Origin only | Rotates the HttpOnly refresh cookie and returns `{ authenticated: true, csrf }`; reuse of a consumed token revokes the session family |
 
 ### Account
 
-| Method | Path                                  | Auth | CSRF | Rate limit |
-| ------ | ------------------------------------- | ---- | ---- | ---------- |
-| POST   | `/api/account/sessions/revoke-others` | yes  | yes  | —          |
+| Method | Path                                  | Auth | CSRF | Success                                                                      |
+| ------ | ------------------------------------- | ---- | ---- | ---------------------------------------------------------------------------- |
+| GET    | `/api/account/sessions`               | yes  | no   | `200 { sessions: [{ id, createdAt, lastUsedAt, deviceLabel, current }] }`    |
+| DELETE | `/api/account/sessions/:id`           | yes  | yes  | `204`; `404` for an unknown or foreign id                                    |
+| POST   | `/api/account/sessions/revoke-others` | yes  | yes  | `204`                                                                        |
+| POST   | `/api/account/email-change/request`   | yes  | yes  | `202 { message, expiresInSeconds }`; `404` when email sign-in is not enabled |
+| POST   | `/api/account/email-change/verify`    | yes  | yes  | `200 { verified: "current" or "new", emailChanged }`                         |
+| GET    | `/api/account/marketing-consent`      | yes  | no   | `200 { optedIn, version }`                                                   |
+| POST   | `/api/account/marketing-consent`      | yes  | yes  | `200 { optedIn }`                                                            |
 
 The executable test-access API returns 404 for registration and password changes,
 regardless of REGISTRATION_ENABLED. The isolated legacy regression harness retains
@@ -178,11 +189,16 @@ requires the staging password and private proxy assertion.
 
 ### Profile
 
-| Method | Path               | Auth | CSRF |
-| ------ | ------------------ | ---- | ---- |
-| GET    | `/api/profile`     | yes  | no   |
-| PUT    | `/api/profile`     | yes  | yes  |
-| GET    | `/api/preparation` | yes  | no   |
+| Method | Path                               | Auth | CSRF |
+| ------ | ---------------------------------- | ---- | ---- |
+| GET    | `/api/profile`                     | yes  | no   |
+| PUT    | `/api/profile`                     | yes  | yes  |
+| GET    | `/api/preparation`                 | yes  | no   |
+| GET    | `/api/profile/accessibility`       | yes  | no   |
+| PUT    | `/api/profile/scheduled-discovery` | yes  | yes  |
+
+`GET /api/profile/accessibility` returns `{ reducedMotion }`. `PUT /api/profile/scheduled-discovery`
+takes `{ enabled }` and returns `{ scheduledDiscoveryEnabled }`.
 
 `PUT /api/profile` carries a revision. A stale revision is a 409, not a
 last-write-wins overwrite.
@@ -262,6 +278,25 @@ Entering an application lifecycle stage requires a report; existing legacy rows
 remain readable. Archive/restore preserves evidence, and history exposes the
 previous status and whether notes/evidence changed. Evidence is the candidate's
 claim, not an ATS event. Opening the application URL never mutates the status.
+
+### Interviews, notifications, feedback and sources
+
+| Method | Path                             | Auth | CSRF | Success                                                                    |
+| ------ | -------------------------------- | ---- | ---- | -------------------------------------------------------------------------- |
+| GET    | `/api/leads/:id/interviews`      | yes  | no   | `200 { items: InterviewRound[] }`                                          |
+| POST   | `/api/leads/:id/interviews`      | yes  | yes  | `200 InterviewRound`                                                       |
+| PUT    | `/api/interviews/:id`            | yes  | yes  | `200 InterviewRound`; a stale `revision` is a 409                          |
+| GET    | `/api/notifications`             | yes  | no   | `200 { items: [{ id, roundId, leadId, createdAt, readAt }], unreadCount }` |
+| GET    | `/api/notifications/preferences` | yes  | no   | `200 { interviewRemindersInAppEnabled }`                                   |
+| PUT    | `/api/notifications/preferences` | yes  | yes  | `200 { interviewRemindersInAppEnabled }`                                   |
+| PUT    | `/api/notifications/:id/read`    | yes  | yes  | `204`; `404` for an unknown or foreign id                                  |
+| PUT    | `/api/search-jobs/:id/feedback`  | yes  | yes  | `200 { reason }`                                                           |
+| GET    | `/api/job-sources`               | yes  | no   | `200 { items: [{ id, label, available, unavailableReason }] }`             |
+| GET    | `/api/applications/export`       | yes  | no   | `200 text/csv`, privacy-scoped application records                         |
+
+The full field list of every body is in the OpenAPI document (`/api/docs/json`, built from
+`apps/api/src/openapi.ts`). `apps/api/src/error-handler.test.ts` fails when a registered route is
+missing from the tables in this file.
 
 ### Searches
 

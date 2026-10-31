@@ -4,6 +4,9 @@
 set -euo pipefail
 
 cd /opt/careerscope/infra
+# The migration runs from the release's image. Fails closed if the release record is missing or stale.
+. host/release-env.sh
+load_release /opt/careerscope || exit 1
 docker compose -f docker/compose.production.yml --env-file .env run --rm --no-deps \
   bootstrap node /app/bootstrap.mjs
 

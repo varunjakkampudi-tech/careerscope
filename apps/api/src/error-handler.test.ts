@@ -469,3 +469,94 @@ test('the health endpoint reports no version and is rate-limited per client addr
     await app.close();
   }
 });
+
+test('every route registered by the API is documented in docs/API-SURFACE.md', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const surface = await readFile(new URL('../../../docs/API-SURFACE.md', import.meta.url), 'utf8');
+  const documented = new Set(
+    [...surface.matchAll(/^\|\s*(GET|POST|PUT|PATCH|DELETE)\s*\|\s*`([^`]+)`/gm)].map(
+      (match) => `${match[1]} ${match[2]}`,
+    ),
+  );
+  const app = await createApp(sessionDatabase(), origin, async () => true, {
+    emailOtp: { secret: Buffer.alloc(32, 7), provider: { send: async () => undefined } },
+  });
+  try {
+    await app.ready();
+    const { paths } = app.swagger() as unknown as {
+      paths: Record<string, Record<string, unknown>>;
+    };
+    const missing = Object.entries(paths)
+      .flatMap(([path, operations]) =>
+        Object.keys(operations).map(
+          (method) => `${method.toUpperCase()} ${path.replace(/\{([^}]+)\}/g, ':$1')}`,
+        ),
+      )
+      .filter((route) => !documented.has(route));
+    assert.deepEqual(missing, []);
+    assert.ok(documented.size > 50);
+  } finally {
+    await app.close();
+  }
+});
+
+test('an authenticated call with an invalid body to every documented route answers in the envelope', async () => {
+  const app = await createApp(sessionDatabase(), origin, async () => true, {
+    emailOtp: { secret: Buffer.alloc(32, 7), provider: { send: async () => undefined } },
+  });
+  try {
+    await app.ready();
+    const csrf = (await app.inject({ url: '/api/session', headers: { cookie } })).json()
+      .csrf as string;
+    const { paths } = app.swagger() as unknown as {
+      paths: Record<string, Record<string, unknown>>;
+    };
+    const families = new Set<string>();
+    let failures = 0;
+    for (const [path, operations] of Object.entries(paths)) {
+      if (path.startsWith('/api/docs')) continue;
+      for (const method of Object.keys(operations)) {
+        const unsafe = !['get', 'head', 'options'].includes(method);
+        const response = await app.inject({
+          method: method.toUpperCase() as 'GET',
+          url: path.replace(/\{[^}]+\}/g, '33333333-3333-4333-8333-333333333333'),
+          headers: {
+            cookie,
+            ...(unsafe ? { origin, 'x-csrf-token': csrf, 'content-type': 'application/json' } : {}),
+          },
+          ...(unsafe ? { payload: JSON.stringify({ unexpected: 'synthetic invalid field' }) } : {}),
+        });
+        if (response.statusCode < 400) continue;
+        assertEnvelope(response);
+        assert.doesNotMatch(response.body, /synthetic invalid field/);
+        families.add(path.split('/')[2]!);
+        failures += 1;
+      }
+    }
+    assert.ok(failures > 25, `only ${failures} routes failed to check`);
+    // Each route family reached the envelope after authentication, not only at the auth hook.
+    for (const family of [
+      'account',
+      'profile',
+      'leads',
+      'interviews',
+      'notifications',
+      'searches',
+    ]) {
+      assert.ok(families.has(family), `no ${family} route produced a checked error`);
+    }
+  } finally {
+    await app.close();
+  }
+});
+
+test('the session response reports AI as disabled (v12 gate)', async () => {
+  const app = await createApp(sessionDatabase(), origin, async () => true);
+  try {
+    const response = await app.inject({ url: '/api/session', headers: { cookie } });
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.json().aiEnabled, false);
+  } finally {
+    await app.close();
+  }
+});

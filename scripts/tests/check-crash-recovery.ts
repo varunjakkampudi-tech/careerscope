@@ -165,7 +165,8 @@ try {
   try {
     assert.deepEqual(await storage.reclaimTemporariesAtStartup(), {
       removed: 1,
-      bytes: body.length + 68,
+      // CSR2 envelope: magic(4) + key id(4) + version(36) + nonce(12) + tag(16).
+      bytes: body.length + 72,
     });
     assert.equal(await pending(), 0);
 

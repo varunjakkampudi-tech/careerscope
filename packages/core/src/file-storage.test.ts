@@ -1,5 +1,13 @@
 import assert from 'node:assert/strict';
-import { createHash, createHmac, randomBytes, randomUUID } from 'node:crypto';
+import {
+  createCipheriv,
+  createDecipheriv,
+  createHash,
+  createHmac,
+  hkdfSync,
+  randomBytes,
+  randomUUID,
+} from 'node:crypto';
 import {
   chmod,
   cp,
@@ -142,7 +150,7 @@ test('physical storage capacity is enforced and abandoned temporaries are swept 
 
     // Concurrent admissions must not both spend the same observed free space.
     const large = randomBytes(2 * 1024 * 1024);
-    const envelope = large.length + 68;
+    const envelope = large.length + 72;
     const capacityBarrier = Promise.withResolvers<number>();
     let capacityReads = 0;
     const contended = new PrivateFileResumeStorage(
@@ -183,7 +191,7 @@ test('physical storage capacity is enforced and abandoned temporaries are swept 
 
     // A failure after admission must return its reservation, not leak capacity.
     const single = randomBytes(64 * 1024);
-    const singleEnvelope = single.length + 68;
+    const singleEnvelope = single.length + 72;
     const strict = new PrivateFileResumeStorage(
       { directory, encryptionKey, reserveBytes: 0 },
       async () => singleEnvelope,
@@ -258,7 +266,7 @@ test('writer startup reclaims crash-stranded temporaries without touching anythi
 
     assert.deepEqual(await storage.reclaimTemporariesAtStartup(), {
       removed: 2,
-      bytes: 3072 + body.length + 68,
+      bytes: 3072 + body.length + 72,
     });
     await assert.rejects(readFile(stranded), { code: 'ENOENT' });
     // Removing a linked alias must not remove the published object behind it.
@@ -351,7 +359,7 @@ test('genuine out-of-space failures stay typed, unpublished and release capacity
   // Admission always passes so only the real write failure can reject the upload.
   const storage = new ExhaustedStorage(
     { directory, encryptionKey, reserveBytes: 0 },
-    async () => body.length + 68,
+    async () => body.length + 72,
   );
   try {
     await storage.initialize();
@@ -442,7 +450,7 @@ test('private file storage encrypts immutable owned versions and restores them w
     });
     try {
       await wrongKey.initialize();
-      await assert.rejects(wrongKey.get(object, version), /unable to authenticate data/);
+      await assert.rejects(wrongKey.get(object, version), /key mismatch/);
     } finally {
       wrongKey.close();
     }
@@ -518,9 +526,9 @@ test('file cancellation permanently fences late publication and verifies existin
       directory,
       `${corrupt.ownerId}_${corrupt.resumeId}_${corrupt.sha256}.bin`,
     );
-    await writeFile(corruptPath, Buffer.alloc(body.length + 68));
+    await writeFile(corruptPath, Buffer.alloc(body.length + 72));
     await assert.rejects(storage.cancelUpload(corrupt));
-    assert.deepEqual(await readFile(corruptPath), Buffer.alloc(body.length + 68));
+    assert.deepEqual(await readFile(corruptPath), Buffer.alloc(body.length + 72));
     const raced = { ...object, resumeId: randomUUID() };
     await Promise.allSettled(
       Array.from({ length: 8 }, () => storage.put(raced, body)).concat(
@@ -598,8 +606,12 @@ test('a stored resume is AES-256-GCM ciphertext that is unreadable without the s
     assert.equal(files.length, 1);
     assert.match(files[0]!, /\.bin$/);
     const envelope = await readFile(join(directory, files[0]!));
-    assert.equal(envelope.subarray(0, 4).toString(), 'CSR1');
-    assert.equal(envelope.length, body.length + 68, 'magic + version + nonce + tag + ciphertext');
+    assert.equal(envelope.subarray(0, 4).toString(), 'CSR2');
+    assert.equal(
+      envelope.length,
+      body.length + 72,
+      'magic + key id + version + nonce + tag + ciphertext',
+    );
     for (const fragment of ['jane.doe', 'Jane Doe', '555 0100', 'TypeScript', '%PDF']) {
       assert.equal(envelope.includes(Buffer.from(fragment)), false, fragment);
     }
@@ -620,7 +632,7 @@ test('a stored resume is AES-256-GCM ciphertext that is unreadable without the s
       encryptionKey: randomBytes(32).toString('hex'),
     });
     await stranger.initialize();
-    await assert.rejects(stranger.get(object, version), /unable to authenticate data/);
+    await assert.rejects(stranger.get(object, version), /key mismatch/);
     stranger.close();
 
     // A flipped ciphertext bit is detected, not decrypted to garbage.
@@ -1099,6 +1111,123 @@ test('cancellation markers use a derived key and legacy raw-key markers still ve
     const old = new Date(Date.now() - 25 * 3_600_000);
     await utimes(pathOf(legacy), old, old);
     assert.equal(await storage.reclaimExpiredMarkers(), 1);
+  } finally {
+    storage.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('CSR2 envelopes use a derived key, read legacy CSR1, and fail closed on tampering or moves', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-csr2-'));
+  const encryptionKey = randomBytes(32).toString('hex');
+  const rawKey = Buffer.from(encryptionKey, 'hex');
+  const storage = new PrivateFileResumeStorage({ directory, encryptionKey });
+  const body = Buffer.from('%PDF-1.7 synthetic envelope fixture');
+  const make = (): ResumeObject => ({
+    ownerId: randomUUID(),
+    resumeId: randomUUID(),
+    sha256: createHash('sha256').update(body).digest('hex'),
+    bytes: body.length,
+    contentType: 'application/pdf',
+  });
+  const file = (o: ResumeObject) => join(directory, `${o.ownerId}_${o.resumeId}_${o.sha256}.bin`);
+  const aad = (o: ResumeObject, version: string) =>
+    Buffer.from(
+      JSON.stringify({
+        object: {
+          sha256: o.sha256,
+          bytes: o.bytes,
+          contentType: o.contentType,
+          ownerId: o.ownerId,
+          resumeId: o.resumeId,
+        },
+        version,
+      }),
+    );
+  try {
+    await storage.initialize();
+
+    // Round trip: CSR2 with a 4-byte key id and a 72-byte header.
+    const object = make();
+    const version = await storage.put(object, body);
+    const envelope = await readFile(file(object));
+    assert.equal(envelope.subarray(0, 4).toString(), 'CSR2');
+    assert.equal(envelope.length, body.length + 72);
+    assert.equal(envelope.subarray(8, 44).toString(), version);
+    assert.deepEqual(await storage.get(object, version), body);
+    assert.equal(await storage.recoverVersion(object), version);
+
+    // The raw key alone cannot open a CSR2 object.
+    const raw = createDecipheriv('aes-256-gcm', rawKey, envelope.subarray(44, 56));
+    raw.setAAD(aad(object, version));
+    raw.setAuthTag(envelope.subarray(56, 72));
+    assert.throws(() => Buffer.concat([raw.update(envelope.subarray(72)), raw.final()]));
+    // The derived key does (guards against the test passing for the wrong reason).
+    const derived = Buffer.from(
+      hkdfSync('sha256', rawKey, Buffer.alloc(0), 'careerscope:resume-storage:aes-gcm:v1', 32),
+    );
+    const good = createDecipheriv('aes-256-gcm', derived, envelope.subarray(44, 56));
+    good.setAAD(aad(object, version));
+    good.setAuthTag(envelope.subarray(56, 72));
+    assert.deepEqual(Buffer.concat([good.update(envelope.subarray(72)), good.final()]), body);
+
+    // A legacy CSR1 object written with the old formula (raw key) still decrypts.
+    const legacy = make();
+    const legacyVersion = randomUUID();
+    const legacyNonce = randomBytes(12);
+    const cipher = createCipheriv('aes-256-gcm', rawKey, legacyNonce);
+    cipher.setAAD(aad(legacy, legacyVersion));
+    const ciphertext = Buffer.concat([cipher.update(body), cipher.final()]);
+    const legacyEnvelope = Buffer.concat([
+      Buffer.from('CSR1'),
+      Buffer.from(legacyVersion),
+      legacyNonce,
+      cipher.getAuthTag(),
+      ciphertext,
+    ]);
+    await writeFile(file(legacy), legacyEnvelope);
+    assert.equal(legacyEnvelope.length, body.length + 68);
+    assert.deepEqual(await storage.get(legacy, legacyVersion), body);
+    assert.equal(await storage.recoverVersion(legacy), legacyVersion);
+
+    // Tampering with the key id or the magic fails closed.
+    const tamperedId = Buffer.from(envelope);
+    tamperedId[5] = tamperedId[5]! ^ 1;
+    await writeFile(file(object), tamperedId);
+    await assert.rejects(storage.get(object, version), /key mismatch/);
+    for (const magic of ['CSR1', 'CSR3', 'XXXX']) {
+      const forged = Buffer.from(envelope);
+      forged.write(magic, 0);
+      await writeFile(file(object), forged);
+      await assert.rejects(storage.get(object, version), /metadata mismatch/);
+      await assert.rejects(storage.recoverVersion(object), /metadata mismatch/);
+    }
+    const relabelled = Buffer.from(legacyEnvelope);
+    relabelled.write('CSR2', 0);
+    await writeFile(file(legacy), relabelled);
+    await assert.rejects(storage.get(legacy, legacyVersion), /metadata mismatch/);
+
+    // A store holding a different key refuses the object at the key id.
+    await writeFile(file(object), envelope);
+    const stranger = new PrivateFileResumeStorage({
+      directory,
+      encryptionKey: randomBytes(32).toString('hex'),
+    });
+    await stranger.initialize();
+    await assert.rejects(stranger.get(object, version), /key mismatch/);
+    stranger.close();
+
+    // AAD binding: moved to another identity, or presented under another version, it does not open.
+    const moved = make();
+    await writeFile(file(moved), envelope);
+    await assert.rejects(storage.get(moved, version), /unable to authenticate data/);
+    const otherVersion = Buffer.from(envelope);
+    otherVersion.write(randomUUID(), 8);
+    await writeFile(file(object), otherVersion);
+    await assert.rejects(
+      storage.get(object, otherVersion.subarray(8, 44).toString()),
+      /unable to authenticate data/,
+    );
   } finally {
     storage.close();
     await rm(directory, { recursive: true, force: true });

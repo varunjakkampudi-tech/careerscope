@@ -57,6 +57,30 @@ await check('Dockerfile runs no unpinned apt upgrade', () => {
   assert.equal(/apt-get\s+(dist-)?upgrade/.test(dockerfile), false);
 });
 
+await check('Dockerfile installs only exact-version apk packages and no apk upgrade', () => {
+  assert.equal(/apk\s+upgrade/.test(dockerfile), false);
+  assert.equal(/apt-get\s+install/.test(dockerfile), false, 'build stage installs no OS packages');
+  const adds = dockerfile.split('\n').filter((line) => /\bapk add\b/.test(line));
+  assert.ok(adds.length > 0);
+  for (const line of adds) {
+    const packages = line
+      .replace(/.*\bapk add\b/, '')
+      .replace(/--\S+/g, '')
+      .replace(/[\s\x5c]+$/, '')
+      .trim();
+    for (const name of packages.split(/\s+/)) {
+      assert.match(name, /^[a-z0-9._+-]+=[^=\s]+$/, `${name} must be pinned`);
+    }
+  }
+});
+
+await check('app services get the Redis password from a file, not from the URL', () => {
+  const body = withoutComments(compose);
+  assert.equal(/redis:\/\/:/.test(body), false, 'no password inside a Redis URL');
+  assert.match(body, /REDIS_PASSWORD_FILE: \/run\/secrets\/redis-password/);
+  assert.equal((body.match(/secrets: \[redis-password\]/g) ?? []).length, 4);
+});
+
 await check('compose images are explicit required variables, not mutable local tags', () => {
   const images = compose.split('\n').filter((line) => /^\s*image:/.test(line));
   assert.equal(/careerscope:v\d/.test(withoutComments(compose)), false);
