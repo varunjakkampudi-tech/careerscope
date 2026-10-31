@@ -9,7 +9,7 @@
 // by a workflow step that runs on push or pull_request (not a dispatch-only step or job), or be marked
 // `path` (manual) in docs/FOUNDATIONS.md or docs/TRACEABILITY.md.
 //
-// It also validates docs/FOUNDATIONS.md (exactly the 15 owner items 1.01 to 1.15, each with a status,
+// It also validates docs/FOUNDATIONS.md (exactly the 13 owner items 1.01 to 1.13, each with a status,
 // evidence and a gate; an item marked Complete may cite only files that exist and tests that a CI
 // script runs) and that the Item 1.02 prose in docs/TRACEABILITY.md quotes the counts of the
 // v12 inventory.
@@ -26,10 +26,10 @@ export { isDispatchOnly };
 const MATRIX = 'docs/TRACEABILITY.md';
 const FOUNDATION_FILE = 'docs/FOUNDATIONS.md';
 const FOUNDATION_ITEMS = Array.from(
-  { length: 15 },
+  { length: 13 },
   (_, index) => `1.${String(index + 1).padStart(2, '0')}`,
 );
-const FOUNDATION_STATUSES = ['Complete', 'Open', 'Excluded'];
+const FOUNDATION_STATUSES = ['Complete', 'Open'];
 const NOT_COVERED = 'NOT COVERED';
 const TEST_PATH = /(?:\.(?:test|spec)\.[cm]?[jt]sx?$)|^(?:scripts\/tests|tests)\//;
 
@@ -275,11 +275,10 @@ export function analyzeFoundations(root) {
   const ids = sections.map((section) => section.id);
   if (ids.join(',') !== FOUNDATION_ITEMS.join(','))
     errors.push(
-      `${FOUNDATION_FILE} must have exactly the 15 items ${FOUNDATION_ITEMS[0]} to ${FOUNDATION_ITEMS[14]} once each, in order; found ${ids.length}: ${ids.join(', ') || 'none'}`,
+      `${FOUNDATION_FILE} must have exactly the 13 items ${FOUNDATION_ITEMS[0]} to ${FOUNDATION_ITEMS[12]} once each, in order; found ${ids.length}: ${ids.join(', ') || 'none'}`,
     );
   let complete = 0;
   let open = 0;
-  let excluded = 0;
   for (const section of sections) {
     const fail = (message) => errors.push(`${section.id}: ${message}`);
     const one = (name) => {
@@ -292,12 +291,10 @@ export function analyzeFoundations(root) {
       fail(`Status must be one of ${FOUNDATION_STATUSES.join(', ')}, found "${status}"`);
     if (!section.title) fail('heading has no title');
     for (const name of ['Evidence', 'Gate', 'Verify']) if (!one(name)) fail(`${name} is empty`);
-    if ((status === 'Open' || status === 'Excluded') && !one('Gap'))
-      fail(`an ${status} item must state its Gap`);
+    if (status === 'Open' && !one('Gap')) fail(`an ${status} item must state its Gap`);
     if (status === 'Complete' && one('Gap')) fail('a Complete item must not carry a Gap');
     if (status === 'Complete') complete += 1;
     if (status === 'Open') open += 1;
-    if (status === 'Excluded') excluded += 1;
 
     const evidence = paths(one('Evidence'));
     if (one('Evidence') && !evidence.length) fail('Evidence must cite files in backticks');
@@ -318,7 +315,7 @@ export function analyzeFoundations(root) {
     if (status === 'Complete' && !citesCiTest)
       fail('a Complete item must cite at least one test that a CI script runs');
   }
-  return { errors, items: sections.length, complete, open, excluded };
+  return { errors, items: sections.length, complete, open };
 }
 
 /** The Item 1.02 prose and the Foundations register must quote the counts of the v12 inventory. */
@@ -365,7 +362,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     process.exitCode = 1;
   } else {
     process.stdout.write(
-      `PASS Foundations register: ${foundations.items} items, ${foundations.complete} Complete, ${foundations.open} Open, ${foundations.excluded} Excluded\n`,
+      `PASS Foundations register: ${foundations.items} items, ${foundations.complete} Complete, ${foundations.open} Open\n`,
     );
   }
 

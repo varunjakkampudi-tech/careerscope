@@ -1,11 +1,11 @@
 # Foundations register
 
-The foundation items are fifteen, 1.01 to 1.15. This register gives each one a
+The foundation items are thirteen, 1.01 to 1.13. This register gives each one a
 status, the files and tests that prove it, the gate that runs it and the command that
 verifies it. `npm run traceability:check` (`scripts/ci/check-traceability.mjs`, part of
 `npm run check`) fails when:
 
-- the register does not have exactly the items 1.01 to 1.15, once each and in order;
+- the register does not have exactly the items 1.01 to 1.13, once each and in order;
 - an item has no Status (`Complete` or `Open`), no Evidence, no Gate or no Verify line;
 - an item is `Open` without a Gap, or `Complete` with one;
 - an item cites a file that does not exist;
@@ -18,9 +18,7 @@ verifies it. `npm run traceability:check` (`scripts/ci/check-traceability.mjs`, 
 
 `Complete` means the stated scope of the item is proven by the cited tests and gates in the
 repository. Evidence that lives outside the repository (GitHub rulesets, hosted CI run IDs) is
-named in the Evidence line and is not counted by the gate. `Open` names the exact gap.
-`Excluded` marks an item the owner has taken out of scope; its Gap line gives the owner decision
-and the date. The
+named in the Evidence line and is not counted by the gate. `Open` names the exact gap. The
 launch-blocking requirement gaps in 1.02 are a separate list (see
 [V12-RECONCILIATION](requirements/V12-RECONCILIATION.md)). Nothing here records a host check
 that was not performed; the Gap lines say what is unverified.
@@ -109,15 +107,7 @@ that was not performed; the Gap lines say what is unverified.
 - **Verify:** `npm run architecture:check`
 - **Note:** The checker reads source imports only; it does not compare `package.json` dependency declarations.
 
-## 1.12 Verify sensitive data separation and encryption
-
-- **Status:** Excluded
-- **Gap:** Excluded by owner decision (2026-10-31). The host check belongs to the deployment work and is not counted here. Code-level evidence exists: credentials are stored only as digests (database dump test) and resume objects are encrypted with a key held outside the object store. Verification on the running host is not done: key file mode and ownership in the live `private` volume, and TLS and secret files as deployed. Those need the target environment and owner evidence.
-- **Evidence:** `docs/security/DATA-CLASSIFICATION.md`, `packages/core/src/sensitive-data.integration.test.ts`, `packages/core/src/file-storage.test.ts`, `docs/operations/SECRETS.md`
-- **Gate:** CI job `Services, integration, and browser suites`, step `npm run test:integration` (digests); job `Quality gates`, `test:unit` (file storage) and `npm run privacy:check`
-- **Verify:** `npm run test:integration`; host checks are not available from the repository
-
-## 1.13 Align design system and shared components
+## 1.12 Align design system and shared components
 
 - **Status:** Complete
 - **Evidence:** `docs/architecture/DESIGN-SYSTEM.md`, `scripts/tests/design-system-doc.test.ts`, `apps/web/src/components/ui-states.tsx`, `apps/web/src/app/globals.css`
@@ -125,18 +115,10 @@ that was not performed; the Gap lines say what is unverified.
 - **Verify:** `node --import tsx --test scripts/tests/design-system-doc.test.ts`
 - **Note:** The test proves the documented tokens and shared components match the code. Visual regression has no committed baseline set.
 
-## 1.14 Build requirement-to-code-to-test traceability
+## 1.13 Build requirement-to-code-to-test traceability
 
 - **Status:** Complete
 - **Evidence:** `docs/TRACEABILITY.md`, `scripts/ci/check-traceability.mjs`, `scripts/ci/check-traceability.test.mjs`, `docs/requirements/V12-REQUIREMENT-INVENTORY.json`
 - **Gate:** CI job `Quality gates`, step `npm run gates:test` (`npm run traceability:check`)
 - **Verify:** `npm run traceability:check`
 - **Note:** The mechanism and register exist and fail closed. The requirement gaps they expose are the 1.02 gaps, open for later stages.
-
-## 1.15 Preserve backups and recoverability
-
-- **Status:** Excluded
-- **Gap:** Excluded by owner decision (2026-10-31). Backup and recovery for the new server belong to the deployment work and are not counted here. The Hostinger host backup was removed on the same date, so the host has no application backup and no recoverability. Backup and recovery for the new server must be designed and verified before launch. RTO and RPO are unproven.
-- **Evidence:** `docs/operations/HOSTINGER.md`, `scripts/tests/check-database-recovery.ts` (manual)
-- **Gate:** None for host backup. The `recovery` suite runs `npm run test:database-recovery` (a synthetic dump and restore, not a host backup) on manual dispatch only
-- **Verify:** `npm run test:database-recovery` (needs Docker)

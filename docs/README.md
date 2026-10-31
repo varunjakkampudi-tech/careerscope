@@ -15,7 +15,7 @@ This is the single index of CareerScope documentation. Every document under
 - [DATA-MODEL](DATA-MODEL.md) - persistence and ownership rules
 - [KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md) - explicit current limitations
 - [TRACEABILITY](TRACEABILITY.md) - requirement to code and test matrix
-- [FOUNDATIONS](FOUNDATIONS.md) - status, evidence, gate and verification command for Foundation items 1.01 to 1.15
+- [FOUNDATIONS](FOUNDATIONS.md) - status, evidence, gate and verification command for Foundation items 1.01 to 1.13
 - [PROGRESS](PROGRESS.md) - stage-by-stage status for the full roadmap
 - [GAP-MATRIX](GAP-MATRIX.md) - per-item gaps and evidence for the current stage
 - [TEST-MATRIX](TEST-MATRIX.md) - which test proves each item

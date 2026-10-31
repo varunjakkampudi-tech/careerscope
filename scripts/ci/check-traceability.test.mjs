@@ -109,7 +109,7 @@ test('a (manual) marker on a file that CI runs is rejected', () => {
   );
 });
 
-const FOUNDATION_IDS = Array.from({ length: 15 }, (_, i) => '1.' + String(i + 1).padStart(2, '0'));
+const FOUNDATION_IDS = Array.from({ length: 13 }, (_, i) => '1.' + String(i + 1).padStart(2, '0'));
 
 /** One register section; `over` replaces or (with null) removes a field. */
 function section(id, over = {}) {
@@ -153,26 +153,26 @@ function verifyFoundations({
   }
 }
 
-test('a register with exactly items 1.01 to 1.15, each complete, passes', () => {
+test('a register with exactly items 1.01 to 1.13, each complete, passes', () => {
   const result = verifyFoundations();
   assert.deepEqual(result.errors, []);
-  assert.equal(result.items, 15);
-  assert.equal(result.complete, 15);
+  assert.equal(result.items, 13);
+  assert.equal(result.complete, 13);
 });
 
-test('the register fails unless it has exactly 15 items in order', () => {
+test('the register fails unless it has exactly 13 items in order', () => {
   assert.match(
-    verifyFoundations({ ids: FOUNDATION_IDS.slice(0, 14) }).errors[0],
-    /exactly the 15 items.*found 14/,
+    verifyFoundations({ ids: FOUNDATION_IDS.slice(0, 12) }).errors[0],
+    /exactly the 13 items.*found 12/,
   );
-  assert.match(verifyFoundations({ ids: [...FOUNDATION_IDS, '1.16'] }).errors[0], /found 16/);
+  assert.match(verifyFoundations({ ids: [...FOUNDATION_IDS, '1.14'] }).errors[0], /found 14/);
   assert.match(
-    verifyFoundations({ ids: [...FOUNDATION_IDS.slice(0, 14), '1.14'] }).errors[0],
-    /exactly the 15 items/,
+    verifyFoundations({ ids: [...FOUNDATION_IDS.slice(0, 12), '1.12'] }).errors[0],
+    /exactly the 13 items/,
   );
   assert.match(
     verifyFoundations({ ids: [...FOUNDATION_IDS].reverse() }).errors[0],
-    /exactly the 15 items/,
+    /exactly the 13 items/,
   );
   assert.match(verifyFoundations({ raw: '# empty' }).errors[0], /found 0: none/);
 });
@@ -187,7 +187,7 @@ test('an item without a status, evidence, gate or verify line fails', () => {
   }
   assert.match(
     verifyFoundations({ overrides: { 1.05: { Status: 'Done' } } }).errors[0],
-    /1\.05: Status must be one of Complete, Open, Excluded/,
+    /1\.05: Status must be one of Complete, Open/,
   );
   assert.match(
     verifyFoundations({ overrides: { 1.05: { Evidence: 'none' } } }).errors[0],
@@ -204,7 +204,7 @@ test('an Open item needs a gap and a Complete item must not carry one', () => {
     overrides: { 1.03: { Status: 'Open', Gap: 'Owner has not enabled protection.' } },
   });
   assert.deepEqual(open.errors, []);
-  assert.equal(open.complete, 14);
+  assert.equal(open.complete, 12);
   assert.match(
     verifyFoundations({ overrides: { 1.03: { Gap: 'left over' } } }).errors[0],
     /1\.03: a Complete item must not carry a Gap/,
@@ -307,7 +307,7 @@ test('the Foundations register passes in the real repository', () => {
   const real = fileURLToPath(new URL('../..', import.meta.url));
   const result = analyzeFoundations(real);
   assert.deepEqual(result.errors, []);
-  assert.equal(result.items, 15);
+  assert.equal(result.items, 13);
 });
 
 test('the CLI passes on the real matrix', () => {
@@ -395,17 +395,4 @@ test('a step that also admits push, pull_request or a non-dispatch event is not 
 
 test('the real repository has no orphan test files', () => {
   assert.deepEqual(findOrphanTests(fileURLToPath(new URL('../..', import.meta.url))), []);
-});
-
-test('an Excluded item needs a gap that names the owner decision', () => {
-  assert.match(
-    verifyFoundations({ overrides: { 1.12: { Status: 'Excluded' } } }).errors[0],
-    /1\.12: an Excluded item must state its Gap/,
-  );
-  assert.deepEqual(
-    verifyFoundations({
-      overrides: { 1.12: { Status: 'Excluded', Gap: 'Owner excluded the host check.' } },
-    }).errors,
-    [],
-  );
 });

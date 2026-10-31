@@ -13,8 +13,8 @@ gate enforces this for the foundations register in [FOUNDATIONS](FOUNDATIONS.md)
 | 1.08 | `packages/core/src/outbox.integration.test.ts`, queue tests  | Services suite |
 | 1.09 | `apps/api/src/error-handler.test.ts`                         | Quality gates  |
 | 1.10 | `scripts/tests/domain-events-doc.test.ts`                    | Quality gates  |
-| 1.13 | `scripts/tests/design-system-doc.test.ts`                    | Quality gates  |
-| 1.14 | `scripts/ci/check-traceability.test.mjs`                     | Quality gates  |
+| 1.12 | `scripts/tests/design-system-doc.test.ts`                    | Quality gates  |
+| 1.13 | `scripts/ci/check-traceability.test.mjs`                     | Quality gates  |
 
 ## Stage 02 (in progress)
 
