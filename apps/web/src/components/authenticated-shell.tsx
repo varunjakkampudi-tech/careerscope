@@ -17,6 +17,7 @@ import {
   navKeyForPath,
 } from './dashboard-shell';
 import { ErrorState, LoadingState } from './ui-states';
+import LegalAcceptance from './legal-acceptance';
 import styles from './dashboard-shell.module.css';
 
 // The one place CS-6 requires: every authenticated route renders through
@@ -151,6 +152,7 @@ export default function AuthenticatedShell({ children }: { children: ReactNode }
           signOutPending={logout.isPending}
         />
         <DashboardMobileNav active={active} />
+        <LegalAcceptance />
         <main id="main-content" className={styles.content} tabIndex={-1}>
           {children}
         </main>

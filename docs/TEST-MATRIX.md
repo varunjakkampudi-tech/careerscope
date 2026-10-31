@@ -16,12 +16,19 @@ gate enforces this for the foundations register in [FOUNDATIONS](FOUNDATIONS.md)
 | 1.12 | `scripts/tests/design-system-doc.test.ts`                    | Quality gates  |
 | 1.13 | `scripts/ci/check-traceability.test.mjs`                     | Quality gates  |
 
-## Stage 02 (in progress)
+## Stage 02
 
-Session and logout behaviour is covered by:
+| Item             | Proof                                                                                                                         | Runs in                       |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| 2.02             | `packages/core/src/email-otp-delivery.test.ts` (notice path, escaping, no code in notices); live check recorded in GAP-MATRIX | Quality gates, Services suite |
+| 2.08             | `apps/api/src/email-otp.integration.test.ts`                                                                                  | Services suite                |
+| 2.10             | `apps/api/src/email-otp.integration.test.ts` (concurrent verification)                                                        | Services suite                |
+| 2.11             | `apps/api/src/legal-acceptance.integration.test.ts`                                                                           | Services suite                |
+| 2.17             | `apps/api/src/recovery.integration.test.ts`                                                                                   | Services suite                |
+| 2.18             | `apps/api/src/new-device-alert.integration.test.ts`, `packages/core/src/email-otp-delivery.test.ts`                           | Quality gates, Services suite |
+| 2.19             | `apps/api/src/session-logout.integration.test.ts`, `apps/api/src/session-lookup.test.ts`                                      | Services suite, Quality gates |
+| 2.13, 2.14, 2.15 | `apps/api/src/session-lookup.test.ts`, `apps/web/src/lib/next-proxy-headers.test.ts`                                          | Quality gates                 |
+| 2.16             | `scripts/tests/check-ui.ts` (email-change journey)                                                                            | Browser suite                 |
 
-- `apps/api/src/session-logout.integration.test.ts` (refresh-only revocation)
-- `apps/api/src/session-lookup.test.ts` (session budget and rate limits)
-- `apps/web/src/lib/next-proxy-headers.test.ts` (local test-access canary)
-
-The remaining stage 02 items have no new tests yet. See [GAP-MATRIX](GAP-MATRIX.md).
+The Chromium browser suite (`scripts/tests/check-ui.ts`) covers the sign-in, settings and shell
+changes of this stage. Its result is recorded with the commit that ships them.

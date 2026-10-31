@@ -35,6 +35,10 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   emailVerifiedAt: timestamp('email_verified_at', { withTimezone: true }),
   ageScreenPassed: boolean('age_screen_passed'),
+  // A second address that can receive a sign-in code when the primary mailbox is lost (2.17).
+  // Set only after the address is verified, and the recovery sign-in is refused during the cooldown.
+  recoveryEmail: text('recovery_email'),
+  recoveryEmailVerifiedAt: timestamp('recovery_email_verified_at', { withTimezone: true }),
 });
 
 /** Append-only record of accepted terms, privacy notice and marketing consent, ordered by `sequence`. */
@@ -137,10 +141,13 @@ export const emailOtpChallenges = pgTable(
     check('email_otp_email_hash_hex', sql`${table.emailHash} ~ '^[a-f0-9]{64}$'`),
     check('email_otp_digest_hex', sql`${table.digest} ~ '^[a-f0-9]{64}$'`),
     check('email_otp_attempts_bounded', sql`${table.attempts} BETWEEN 0 AND 5`),
-    check('email_otp_intent_valid', sql`${table.intent} IN ('sign-in', 'sign-up')`),
+    check(
+      'email_otp_intent_valid',
+      sql`${table.intent} IN ('sign-in', 'sign-up', 'recovery-setup', 'recovery-sign-in')`,
+    ),
     check(
       'email_otp_signup_acceptance_complete',
-      sql`(${table.intent} = 'sign-in' AND ${table.termsVersion} IS NULL AND ${table.privacyVersion} IS NULL AND NOT ${table.marketingOptIn}) OR (${table.intent} = 'sign-up' AND ${table.termsVersion} IS NOT NULL AND ${table.privacyVersion} IS NOT NULL)`,
+      sql`(${table.intent} = 'sign-up' AND ${table.termsVersion} IS NOT NULL AND ${table.privacyVersion} IS NOT NULL) OR (${table.intent} <> 'sign-up' AND ${table.termsVersion} IS NULL AND ${table.privacyVersion} IS NULL AND NOT ${table.marketingOptIn})`,
     ),
     check(
       'email_otp_marketing_version_required',

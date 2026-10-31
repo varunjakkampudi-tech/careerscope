@@ -31,7 +31,7 @@ const emitted: Record<string, string[]> = {
   'server-sent event': matches(read('apps/api/src/app.ts'), /event: ([a-z-]+)\\n/g),
   'email code purpose': matches(
     read('packages/core/src/email-otp-delivery.ts'),
-    /purpose\?: ([^;]+);/g,
+    /purpose\?:\s*([^;]+);/g,
   ).flatMap((union) => [...union.matchAll(/'([a-z-]+)'/g)].map((match) => match[1]!)),
 };
 
@@ -49,7 +49,7 @@ test('the extractors find the kinds they are meant to guard', () => {
   assert.equal(emitted['notification template']!.length, 4);
   assert.deepEqual(emitted['notification channel']!.sort(), ['email', 'in_app', 'web_push']);
   assert.ok(emitted['server-sent event']!.includes('progress'));
-  assert.equal(emitted['email code purpose']!.length, 3);
+  assert.equal(emitted['email code purpose']!.length, 5);
 });
 
 /** The text of the numbered section whose heading starts with `## <number>.`. */

@@ -377,6 +377,7 @@ function contracts(options: {
             email: nullable(text({ format: 'email' })),
             emailVerifiedAt: nullable(timestamp),
             emailOtpEnabled: bool,
+            legalAcceptanceEnabled: bool,
             phone: nullable(text({ pattern: '^\\+[1-9][0-9]{7,14}$' })),
             testUser: text({ enum: ['candidate', 'admin'] }),
             // A stable, opaque per-user value for client cache keys. Not the user
@@ -513,6 +514,123 @@ function contracts(options: {
         ),
       }),
       { failures: [429] },
+    ),
+    'GET /api/account/legal': operation(
+      'Read the terms and privacy acceptance status',
+      object({
+        acceptanceRequired: bool,
+        acceptedTermsVersion: nullable(text()),
+        acceptedPrivacyVersion: nullable(text()),
+        current: object({
+          termsVersion: text(),
+          termsUrl: text({ format: 'uri' }),
+          privacyVersion: text(),
+          privacyUrl: text({ format: 'uri' }),
+        }),
+      }),
+      {
+        failures: [404, 429],
+        description:
+          'Requires the authenticated owner session. Reports whether a changed terms or privacy version must be accepted before changes are allowed. Reads are never blocked.',
+      },
+    ),
+    'POST /api/account/legal/accept': operation(
+      'Accept the current terms and privacy versions',
+      object({ acceptanceRequired: { ...bool, enum: [false] } }),
+      {
+        body: object({ termsVersion: text(), privacyVersion: text() }, [
+          'termsVersion',
+          'privacyVersion',
+        ]),
+        failures: [400, 401, 403, 404, 409],
+        description:
+          'Requires the authenticated owner session and CSRF token. Records acceptance of the current versions only; an out-of-date version is refused with 409.',
+      },
+    ),
+    'GET /api/account/recovery-email': operation(
+      'Read the recovery-address status',
+      object({
+        configured: bool,
+        verifiedAt: nullable(text({ format: 'date-time' })),
+        cooldownEndsAt: nullable(text({ format: 'date-time' })),
+        available: bool,
+      }),
+      {
+        failures: [429],
+        description:
+          'Requires the authenticated owner session. Returns whether a recovery address is confirmed and when recovery sign-in becomes available. The address itself is never returned.',
+      },
+    ),
+    'POST /api/account/recovery-email/request': operation(
+      'Send a confirmation code to a candidate recovery address',
+      object({
+        message: text(),
+        expiresInSeconds: integer({ minimum: 1 }),
+        resendAfterSeconds: integer({ minimum: 1 }),
+      }),
+      {
+        code: 202,
+        body: object({ email: text({ format: 'email', maxLength: 254 }) }, ['email']),
+        failures: [400, 401, 403, 429, 503],
+        description:
+          'Requires the authenticated owner session and CSRF token. The same response is returned whether or not a code was sent, so the reply reveals nothing about other accounts.',
+      },
+    ),
+    'POST /api/account/recovery-email/verify': operation(
+      'Confirm the recovery address with its code',
+      object({ configured: { ...bool, enum: [true] } }),
+      {
+        body: object(
+          {
+            email: text({ format: 'email', maxLength: 254 }),
+            code: text({ pattern: '^\\d{6}$' }),
+          },
+          ['email', 'code'],
+        ),
+        failures: [400, 401, 403, 409, 429, 503],
+        description:
+          'Requires the authenticated owner session and CSRF token. Recovery sign-in becomes available 72 hours after confirmation.',
+      },
+    ),
+    'DELETE /api/account/recovery-email': operation(
+      'Remove the recovery address',
+      object({ configured: { ...bool, enum: [false] } }),
+      {
+        failures: [401, 403, 404],
+        description:
+          'Requires the authenticated owner session and CSRF token. Recovery sign-in is unavailable until a new address is confirmed.',
+      },
+    ),
+    'POST /api/recovery/request': operation(
+      'Send a recovery sign-in code to the recovery address',
+      object({
+        message: text(),
+        expiresInSeconds: integer({ minimum: 1 }),
+        resendAfterSeconds: integer({ minimum: 1 }),
+      }),
+      {
+        code: 202,
+        body: object({ email: text({ format: 'email', maxLength: 254 }) }, ['email']),
+        failures: [400, 503],
+        description:
+          'Anonymous. Returns the same response whether or not the account exists or has a recovery address. A code is sent only to a confirmed recovery address that has passed its cooldown.',
+      },
+    ),
+    'POST /api/recovery/verify': operation(
+      'Verify a recovery sign-in code and establish a session',
+      object({ authenticated: { ...bool, enum: [true] } }),
+      {
+        body: object(
+          {
+            email: text({ format: 'email', maxLength: 254 }),
+            code: text({ pattern: '^\\d{6}$' }),
+          },
+          ['email', 'code'],
+        ),
+        failures: [400, 401, 429, 503],
+        description:
+          'Anonymous. Accepts a code only from the confirmed recovery address, after its cooldown. Every rejected attempt returns the same 401.',
+      },
     ),
     'POST /api/account/email-change/request': operation(
       options.emailOtpEnabled ? 'Request a two-address email change' : 'Email change is disabled',
@@ -1040,6 +1158,8 @@ export async function registerOpenApi(
         '/api/logout',
         '/api/session/logout',
         '/api/session/refresh',
+        '/api/recovery/request',
+        '/api/recovery/verify',
       ].includes(url);
       const refreshEndpoint = url === '/api/session/refresh';
       const mutation = !['GET', 'HEAD', 'OPTIONS'].includes(method);

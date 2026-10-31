@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { LoaderCircle, ShieldCheck, User } from 'lucide-react';
 import { apiJson, apiParsed } from '../lib/api';
 import { parseOtpRequest } from '../lib/api-schemas';
+import RecoverySignIn from './recovery-sign-in';
 import { localizedText, localizedValue, useInterfaceLocale } from '../lib/locale';
 
 type Account = { email: string; role: 'candidate' | 'admin' };
@@ -41,6 +42,7 @@ export default function AccountForm({
   const [code, setCode] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [codeSent, setCodeSent] = useState(false);
+  const [recovering, setRecovering] = useState(false);
   const [intent, setIntent] = useState<'sign-in' | 'sign-up'>('sign-in');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
@@ -332,6 +334,14 @@ export default function AccountForm({
                 )}
               </button>
             </form>
+          )}
+          {!codeSent && !recovering && (
+            <button type="button" className="link" onClick={() => setRecovering(true)}>
+              {t('recoveryFindStart')}
+            </button>
+          )}
+          {recovering && (
+            <RecoverySignIn onAuthenticated={onAuthenticated} onBack={() => setRecovering(false)} />
           )}
           {registrationEnabled && !codeSent && legalDocuments && (
             <button

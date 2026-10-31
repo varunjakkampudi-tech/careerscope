@@ -494,6 +494,24 @@ export class Auth {
   }
 
   /**
+   * True when the account already has sessions and none of them came from this device label. A
+   * first sign-in on an account, or a label seen before, is not a new device. An unknown address
+   * returns false, so the caller can send nothing for it.
+   */
+  async isNewDevice(email: string, deviceLabel: string | undefined): Promise<boolean> {
+    const result = await this.database.pool.query<{ known: boolean; has_sessions: boolean }>(
+      `SELECT
+         EXISTS (SELECT 1 FROM sessions s WHERE s.owner_id = u.id
+                 AND s.device_label IS NOT DISTINCT FROM $2) AS known,
+         EXISTS (SELECT 1 FROM sessions s WHERE s.owner_id = u.id) AS has_sessions
+       FROM users u WHERE u.email = $1`,
+      [email, deviceLabel ?? null],
+    );
+    const row = result.rows[0];
+    return Boolean(row && row.has_sessions && !row.known);
+  }
+
+  /**
    * Revokes the session identified by either token. The access token is matched by digest with no
    * expiry check, so logout still works after the 15-minute access window (the refresh cookie is
    * path-scoped and is not sent here by browsers). Revoked sessions fail refresh. The row is kept

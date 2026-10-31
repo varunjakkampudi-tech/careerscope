@@ -50,6 +50,7 @@ const sessionSchema = z.object({
     })
     .optional(),
   emailOtpEnabled: z.boolean().optional(),
+  legalAcceptanceEnabled: z.boolean().optional(),
   testUsersEnabled: z.boolean().optional(),
   testAccounts: z
     .array(z.object({ email: z.string(), role: z.enum(['candidate', 'admin']) }))
@@ -99,6 +100,28 @@ export const parseEmailChangeVerification = parser(
   z.object({ verified: z.enum(['current', 'new']), emailChanged: z.boolean() }),
 );
 export const parseOtpRequest = parser(z.object({ resendAfterSeconds: z.number() }));
+
+export const parseRecoveryStatus = parser(
+  z.object({
+    configured: z.boolean(),
+    verifiedAt: z.string().nullable(),
+    cooldownEndsAt: z.string().nullable(),
+    available: z.boolean(),
+  }),
+);
+export const parseLegalStatus = parser(
+  z.object({
+    acceptanceRequired: z.boolean(),
+    acceptedTermsVersion: z.string().nullable(),
+    acceptedPrivacyVersion: z.string().nullable(),
+    current: z.object({
+      termsVersion: z.string(),
+      termsUrl: z.string(),
+      privacyVersion: z.string(),
+      privacyUrl: z.string(),
+    }),
+  }),
+);
 
 /* ------------------------------ Notifications ------------------------------- */
 

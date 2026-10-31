@@ -206,3 +206,49 @@ test('both provider failures map to one sanitized unavailable error', async () =
     return true;
   });
 });
+
+test('a sign-in notice carries no code, escapes its text and is sent to the fixed endpoint', async () => {
+  let body: { to: string[]; subject: string; text: string; html: string } | undefined;
+  const provider = new ResendEmailOtpProvider(
+    'synthetic-key',
+    'CareerScope <auth@example.test>',
+    async (_input, init) => {
+      body = JSON.parse(String(init?.body));
+      return new Response(null, { status: 200 });
+    },
+  );
+
+  await provider.sendNotice({
+    email: 'Candidate@Example.Test',
+    subject: 'New sign-in to your CareerScope account',
+    text: 'Signed in from <script>alert(1)</script> & more.',
+    idempotencyKey: 'f3040401-c357-4d17-8000-000000000002',
+  });
+
+  assert.deepEqual(body?.to, ['candidate@example.test']);
+  assert.equal(body?.subject, 'New sign-in to your CareerScope account');
+  assert.equal(body?.html.includes('<script>'), false);
+  assert.equal(body?.html.includes('&#60;script&#62;'), true);
+  assert.equal(/\b\d{6}\b/.test(body?.text ?? ''), false);
+});
+
+test('a notice subject with a line break is refused before any request is made', async () => {
+  let requests = 0;
+  const provider = new ResendEmailOtpProvider(
+    'synthetic-key',
+    'CareerScope <auth@example.test>',
+    async () => {
+      requests += 1;
+      return new Response(null, { status: 200 });
+    },
+  );
+  await assert.rejects(
+    provider.sendNotice({
+      email: 'candidate@example.test',
+      subject: 'Hello\r\nBcc: attacker@example.test',
+      text: 'x',
+      idempotencyKey: 'f3040401-c357-4d17-8000-000000000003',
+    }),
+  );
+  assert.equal(requests, 0);
+});

@@ -18,6 +18,7 @@ import {
   useInterfaceLocale,
 } from '../lib/locale';
 import { ErrorState } from './ui-states';
+import RecoveryEmailSection from './recovery-email-section';
 import styles from './account-security.module.css';
 
 function dateLabel(value: string | null, locale: 'en' | 'te' | 'hi'): string {
@@ -415,6 +416,7 @@ export default function AccountSecurity({
         <ErrorState variant="inline" what={t('couldNotSignOutSessions')} detail={sessionError} />
       )}
       {notice && <p role="status">{notice}</p>}
+      <RecoveryEmailSection csrf={csrf} />
     </section>
   );
 }

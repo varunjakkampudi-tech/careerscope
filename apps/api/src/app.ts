@@ -34,6 +34,12 @@ import {
   EmailChangeRequests,
   EmailOtpChallenges,
   emailOtpLifetimeMs,
+  legalStatus,
+  recordLegalAcceptance,
+  recoveryStatus,
+  recoveryTarget,
+  removeRecoveryEmail,
+  setRecoveryEmail,
   hashOtpEmail,
   testUsers,
   testAccessAllowed,
@@ -304,6 +310,38 @@ export async function createApp(
     throw new Error('Test-harness password login cannot be combined with runtime auth modes');
   const emailOtpChallenges = options.emailOtp ? new EmailOtpChallenges(database.pool) : undefined;
   const emailChangeRequests = options.emailOtp ? new EmailChangeRequests(database.pool) : undefined;
+  // A code-free alert that an account was signed in from a device it has not used before. It is not
+  // awaited, and a failure is logged without the address or the device label.
+  const sendAccountNotice = (
+    log: { warn: (obj: object, msg: string) => void },
+    email: string,
+    subject: string,
+    text: string,
+  ) => {
+    const provider = options.emailOtp?.provider;
+    if (!provider?.sendNotice) return;
+    void provider
+      .sendNotice({ email, subject, text, idempotencyKey: randomUUID() })
+      .catch(() => log.warn({}, 'Account notice was not delivered'));
+  };
+  const sendNewDeviceAlert = (
+    log: { warn: (obj: object, msg: string) => void },
+    email: string,
+    label: string | undefined,
+  ) =>
+    sendAccountNotice(
+      log,
+      email,
+      'New sign-in to your CareerScope account',
+      `Your CareerScope account was signed in from ${label ?? 'a new device'} at ${new Date().toISOString()}. If this was not you, sign out of your other sessions in account settings and secure your email account.`,
+    );
+  // Routes that stay open to a signed-in account that owes a terms acceptance: the acceptance itself and sign-out.
+  const legalExemptPaths = new Set([
+    '/api/account/legal/accept',
+    '/api/logout',
+    '/api/session/logout',
+    '/api/session/refresh',
+  ]);
   const registrationPolicy = options.registrationPolicy
     ? z
         .object({
@@ -401,6 +439,8 @@ export async function createApp(
       path === '/api/login' ||
       path === '/api/otp/request' ||
       path === '/api/otp/verify' ||
+      path === '/api/recovery/request' ||
+      path === '/api/recovery/verify' ||
       (request.method === 'POST' && path === '/api/session/refresh')
     )
       return;
@@ -428,6 +468,17 @@ export async function createApp(
       !auth.validCsrf(session.csrf, request.headers['x-csrf-token'])
     ) {
       throw new HttpError(403, 'CSRF check failed');
+    }
+    // An account must accept changed terms or privacy versions before it can change anything (2.11).
+    // Reads stay available so the client can show the acceptance step. Sign-out and the acceptance
+    // route itself are never blocked.
+    if (
+      registrationPolicy &&
+      !['GET', 'HEAD', 'OPTIONS'].includes(request.method) &&
+      !legalExemptPaths.has(path ?? '') &&
+      (await legalStatus(database, request.ownerId!, registrationPolicy)).required
+    ) {
+      throw new HttpError(403, 'Accept the updated terms to continue');
     }
   });
   // Correlation without private data: route templates only, never URLs or bodies.
@@ -576,6 +627,7 @@ export async function createApp(
       email: owner.rows[0]?.email,
       emailVerifiedAt: owner.rows[0]?.email_verified_at?.toISOString() ?? null,
       emailOtpEnabled: options.emailOtp !== undefined,
+      legalAcceptanceEnabled: registrationPolicy !== undefined,
       testUser: options.testAccess
         ? testUsers.find((user) => user.id === session.ownerId)?.role
         : undefined,
@@ -804,6 +856,11 @@ export async function createApp(
       throw new HttpError(401, 'Invalid or expired verification code');
     }
 
+    const label = deviceName(
+      typeof request.headers['user-agent'] === 'string' ? request.headers['user-agent'] : undefined,
+    );
+    // Checked before the session exists, so this sign-in does not count as a known device.
+    const newDevice = await auth.isNewDevice(email, label).catch(() => false);
     let credentials;
     try {
       credentials = await auth.loginWithVerifiedEmail(
@@ -812,17 +869,288 @@ export async function createApp(
           accessToken: request.cookies[sessionCookie],
           refreshToken: request.cookies[refreshCookie],
         },
-        deviceName(
-          typeof request.headers['user-agent'] === 'string'
-            ? request.headers['user-agent']
-            : undefined,
-        ),
+        label,
       );
     } catch {
       request.log.error({ requestId: request.id }, 'OTP session establishment failed');
       throw new HttpError(503, 'Sign-in is temporarily unavailable');
     }
     if (!credentials) throw new HttpError(401, 'Invalid or expired verification code');
+    if (newDevice) sendNewDeviceAlert(request.log, email, label);
+    setSessionCookies(reply, credentials, new URL(origin).protocol === 'https:');
+    return { authenticated: true };
+  });
+  // Lost-email recovery (item 2.17). A recovery address is confirmed with a code sent to it. Recovery
+  // sign-in to the account is refused during the cooldown after confirmation. The anonymous recovery
+  // routes return the same response whether or not an account or recovery address exists.
+  const recoveryAddressSchema = z.object({ email: z.string().trim().email().max(254) }).strict();
+  const recoveryCodeSchema = z
+    .object({ email: z.string().trim().email().max(254), code: z.string().regex(/^\d{6}$/) })
+    .strict();
+  const recoveryAccepted = (reply: import('fastify').FastifyReply) =>
+    reply.code(202).send({
+      message: 'If recovery is available for this account, check its recovery address for a code.',
+      expiresInSeconds: emailOtpLifetimeMs / 1000,
+      resendAfterSeconds: 60,
+    });
+  const primaryEmailOf = async (ownerId: string) =>
+    (
+      await database.pool.query<{ email: string | null }>('SELECT email FROM users WHERE id = $1', [
+        ownerId,
+      ])
+    ).rows[0]?.email ?? null;
+  app.get('/api/account/recovery-email', async (request) => {
+    if (!options.emailOtp) throw new HttpError(404, 'Recovery is unavailable');
+    const status = await recoveryStatus(database, request.ownerId!);
+    return {
+      configured: status.configured,
+      verifiedAt: status.verifiedAt?.toISOString() ?? null,
+      cooldownEndsAt: status.cooldownEndsAt?.toISOString() ?? null,
+      available: status.configured && (status.cooldownEndsAt?.getTime() ?? 0) <= Date.now(),
+    };
+  });
+  app.post('/api/account/recovery-email/request', async (request, reply) => {
+    if (!emailOtpChallenges || !options.emailOtp)
+      throw new HttpError(404, 'Recovery is unavailable');
+    const { email: suppliedEmail } = recoveryAddressSchema.parse(request.body);
+    const email = suppliedEmail.toLowerCase();
+    await consumeRateLimit(request, `recovery:setup:owner:${request.ownerId!}`, 3, 3600).then(
+      (allowed) => {
+        if (!allowed) throw new HttpError(429, 'Too many requests. Try again later.');
+      },
+    );
+    const primary = await primaryEmailOf(request.ownerId!);
+    // An address that is already a sign-in address is never sent a code, so a code cannot reach
+    // another account's mailbox through this route.
+    const taken = (await database.pool.query('SELECT 1 FROM users WHERE email = $1', [email]))
+      .rowCount;
+    if (!primary || primary === email || taken) return recoveryAccepted(reply);
+    const id = randomUUID();
+    const otp = createEmailOtp(id, options.emailOtp.secret);
+    let stored: boolean;
+    try {
+      stored = await emailOtpChallenges.replaceActive(
+        { id, email, digest: otp.digest, expiresAt: otp.expiresAt, intent: 'recovery-setup' },
+        options.emailOtp.secret,
+        { cooldownMs: 60_000 },
+      );
+    } catch {
+      request.log.error({ requestId: request.id }, 'Recovery challenge persistence failed');
+      throw new HttpError(503, 'Recovery is temporarily unavailable');
+    }
+    if (stored) {
+      try {
+        await options.emailOtp.provider.send({
+          email,
+          code: otp.code,
+          idempotencyKey: id,
+          purpose: 'recovery-setup',
+        });
+      } catch {
+        try {
+          await emailOtpChallenges.invalidate(id, email, options.emailOtp.secret);
+        } catch {
+          request.log.error({ requestId: request.id }, 'Failed to invalidate undelivered code');
+        }
+        request.log.warn({ requestId: request.id }, 'Recovery code delivery unavailable');
+        throw new HttpError(503, 'Recovery is temporarily unavailable');
+      }
+    }
+    return recoveryAccepted(reply);
+  });
+  app.post('/api/account/recovery-email/verify', async (request) => {
+    if (!emailOtpChallenges || !options.emailOtp)
+      throw new HttpError(404, 'Recovery is unavailable');
+    const input = recoveryCodeSchema.parse(request.body);
+    const email = input.email.toLowerCase();
+    await consumeRateLimit(
+      request,
+      `recovery:setup-verify:owner:${request.ownerId!}`,
+      10,
+      600,
+    ).then((allowed) => {
+      if (!allowed) throw new HttpError(429, 'Too many attempts. Request a new code later.');
+    });
+    let verification: string = 'invalid';
+    try {
+      const challengeId = await emailOtpChallenges.activeId(email, options.emailOtp.secret);
+      if (challengeId)
+        verification = await emailOtpChallenges.consume({
+          id: challengeId,
+          email,
+          code: input.code,
+          secret: options.emailOtp.secret,
+          expectedIntent: 'recovery-setup',
+        });
+    } catch {
+      request.log.error({ requestId: request.id }, 'Recovery challenge verification unavailable');
+      throw new HttpError(503, 'Recovery is temporarily unavailable');
+    }
+    if (verification !== 'accepted')
+      throw new HttpError(401, 'Invalid or expired verification code');
+    let stored: boolean;
+    try {
+      stored = await setRecoveryEmail(database, request.ownerId!, email);
+    } catch {
+      request.log.error({ requestId: request.id }, 'Recovery address could not be stored');
+      throw new HttpError(503, 'Recovery is temporarily unavailable');
+    }
+    if (!stored) throw new HttpError(409, 'This address cannot be used for recovery');
+    const primary = await primaryEmailOf(request.ownerId!);
+    if (primary)
+      sendAccountNotice(
+        request.log,
+        primary,
+        'Recovery address added to your CareerScope account',
+        'A recovery address was confirmed for your CareerScope account. Recovery sign-in can be used 72 hours from now. If this was not you, sign out of your other sessions in account settings and secure your email account.',
+      );
+    return { configured: true };
+  });
+  app.delete('/api/account/recovery-email', async (request) => {
+    if (!options.emailOtp) throw new HttpError(404, 'Recovery is unavailable');
+    const primary = await primaryEmailOf(request.ownerId!);
+    await removeRecoveryEmail(database, request.ownerId!);
+    if (primary)
+      sendAccountNotice(
+        request.log,
+        primary,
+        'Recovery address removed from your CareerScope account',
+        'The recovery address was removed from your CareerScope account. If this was not you, sign out of your other sessions and secure your email account.',
+      );
+    return { configured: false };
+  });
+  app.post('/api/recovery/request', async (request, reply) => {
+    if (!emailOtpChallenges || !options.emailOtp)
+      throw new HttpError(404, 'Recovery is unavailable');
+    const primary = recoveryAddressSchema.parse(request.body).email.toLowerCase();
+    const ipHash = createHash('sha256').update(request.ip).digest('hex');
+    const primaryHash = hashOtpEmail(primary, options.emailOtp.secret);
+    let allowed: boolean;
+    try {
+      allowed = (
+        await Promise.all([
+          rateLimit(`recovery:request:ip:${ipHash}`, 10, 3600),
+          rateLimit(`recovery:request:email:${primaryHash}`, 5, 3600),
+        ])
+      ).every(Boolean);
+    } catch {
+      request.log.error({ requestId: request.id }, 'Recovery abuse protection unavailable');
+      throw new HttpError(503, 'Recovery is temporarily unavailable');
+    }
+    if (!allowed) return recoveryAccepted(reply);
+    const target = await recoveryTarget(database, primary);
+    if (!target) return recoveryAccepted(reply);
+    const id = randomUUID();
+    const otp = createEmailOtp(id, options.emailOtp.secret);
+    let stored: boolean;
+    try {
+      stored = await emailOtpChallenges.replaceActive(
+        {
+          id,
+          email: target.recoveryEmail,
+          digest: otp.digest,
+          expiresAt: otp.expiresAt,
+          intent: 'recovery-sign-in',
+        },
+        options.emailOtp.secret,
+        { cooldownMs: 60_000 },
+      );
+    } catch {
+      request.log.error({ requestId: request.id }, 'Recovery challenge persistence failed');
+      return recoveryAccepted(reply);
+    }
+    if (stored) {
+      try {
+        await options.emailOtp.provider.send({
+          email: target.recoveryEmail,
+          code: otp.code,
+          idempotencyKey: id,
+          purpose: 'recovery-sign-in',
+        });
+        sendAccountNotice(
+          request.log,
+          primary,
+          'Recovery sign-in requested for your CareerScope account',
+          'A recovery sign-in code was sent to your recovery address. If you did not request it, change your sign-in email and secure your account.',
+        );
+      } catch {
+        try {
+          await emailOtpChallenges.invalidate(id, target.recoveryEmail, options.emailOtp.secret);
+        } catch {
+          request.log.error({ requestId: request.id }, 'Failed to invalidate undelivered code');
+        }
+        request.log.warn({ requestId: request.id }, 'Recovery code delivery unavailable');
+      }
+    }
+    return recoveryAccepted(reply);
+  });
+  app.post('/api/recovery/verify', async (request, reply) => {
+    if (!emailOtpChallenges || !options.emailOtp)
+      throw new HttpError(404, 'Recovery is unavailable');
+    const input = recoveryCodeSchema.parse(request.body);
+    const primary = input.email.toLowerCase();
+    const ipHash = createHash('sha256').update(request.ip).digest('hex');
+    const primaryHash = hashOtpEmail(primary, options.emailOtp.secret);
+    let allowed: boolean;
+    try {
+      allowed = (
+        await Promise.all([
+          rateLimit(`recovery:verify:ip:${ipHash}`, 30, 600),
+          rateLimit(`recovery:verify:email:${primaryHash}`, 10, 600),
+        ])
+      ).every(Boolean);
+    } catch {
+      request.log.error({ requestId: request.id }, 'Recovery abuse protection unavailable');
+      throw new HttpError(503, 'Recovery is temporarily unavailable');
+    }
+    if (!allowed) throw new HttpError(429, 'Too many attempts. Request a new code later.');
+    const target = await recoveryTarget(database, primary);
+    let verification: string = 'invalid';
+    if (target) {
+      try {
+        const challengeId = await emailOtpChallenges.activeId(
+          target.recoveryEmail,
+          options.emailOtp.secret,
+        );
+        if (challengeId)
+          verification = await emailOtpChallenges.consume({
+            id: challengeId,
+            email: target.recoveryEmail,
+            code: input.code,
+            secret: options.emailOtp.secret,
+            expectedIntent: 'recovery-sign-in',
+          });
+      } catch {
+        request.log.error({ requestId: request.id }, 'Recovery challenge verification unavailable');
+        throw new HttpError(503, 'Recovery is temporarily unavailable');
+      }
+    }
+    if (!target || verification !== 'accepted')
+      throw new HttpError(401, 'Invalid or expired verification code');
+    const label = deviceName(
+      typeof request.headers['user-agent'] === 'string' ? request.headers['user-agent'] : undefined,
+    );
+    let credentials;
+    try {
+      credentials = await auth.loginWithVerifiedEmail(
+        primary,
+        {
+          accessToken: request.cookies[sessionCookie],
+          refreshToken: request.cookies[refreshCookie],
+        },
+        label,
+      );
+    } catch {
+      request.log.error({ requestId: request.id }, 'Recovery session establishment failed');
+      throw new HttpError(503, 'Recovery is temporarily unavailable');
+    }
+    if (!credentials) throw new HttpError(401, 'Invalid or expired verification code');
+    sendAccountNotice(
+      request.log,
+      primary,
+      'Your CareerScope account was recovered',
+      `Your CareerScope account was signed in with your recovery address from ${label ?? 'a device'} at ${new Date().toISOString()}. If this was not you, sign out of your other sessions and secure your email account.`,
+    );
     setSessionCookies(reply, credentials, new URL(origin).protocol === 'https:');
     return { authenticated: true };
   });
@@ -1062,6 +1390,38 @@ export async function createApp(
     if (!(await auth.revokeOtherSessions(request.ownerId!, request.cookies[sessionCookie]!)))
       throw new HttpError(401, 'Authentication required');
     return reply.code(204).send();
+  });
+  app.get('/api/account/legal', async (request) => {
+    if (!registrationPolicy) throw new HttpError(404, 'Legal acceptance is unavailable');
+    const status = await legalStatus(database, request.ownerId!, registrationPolicy);
+    return {
+      acceptanceRequired: status.required,
+      acceptedTermsVersion: status.acceptedTermsVersion,
+      acceptedPrivacyVersion: status.acceptedPrivacyVersion,
+      current: {
+        termsVersion: registrationPolicy.termsVersion,
+        termsUrl: registrationPolicy.termsUrl,
+        privacyVersion: registrationPolicy.privacyVersion,
+        privacyUrl: registrationPolicy.privacyUrl,
+      },
+    };
+  });
+  app.post('/api/account/legal/accept', async (request) => {
+    if (!registrationPolicy) throw new HttpError(404, 'Legal acceptance is unavailable');
+    const input = z
+      .object({
+        termsVersion: z.string().min(1).max(128),
+        privacyVersion: z.string().min(1).max(128),
+      })
+      .strict()
+      .parse(request.body);
+    if (
+      input.termsVersion !== registrationPolicy.termsVersion ||
+      input.privacyVersion !== registrationPolicy.privacyVersion
+    )
+      throw new HttpError(409, 'The terms have changed. Reload and review the current version.');
+    await recordLegalAcceptance(database, request.ownerId!, registrationPolicy);
+    return { acceptanceRequired: false };
   });
   app.get('/api/account/marketing-consent', async (request) => {
     if (!(await consumeRateLimit(request, `marketing-consent-read:${request.ownerId!}`, 60, 60)))

@@ -11,6 +11,8 @@ export * from './email-otp.js';
 export * from './email-otp-challenges.js';
 export * from './email-change-requests.js';
 export * from './email-otp-delivery.js';
+export * from './recovery-email.js';
+export * from './legal-acceptance.js';
 export * from './test-users.js';
 export * from './runtime.js';
 export * from './failure.js';

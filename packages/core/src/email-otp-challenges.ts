@@ -14,6 +14,9 @@ const uuidSchema = z.string().uuid();
 const digestSchema = z.string().regex(/^[a-f0-9]{64}$/);
 
 /** Domain-separated HMAC of the lower-cased address, used as the challenge key so raw addresses are not stored. */
+/** Every kind of one-time code. Sign-in and sign-up are the only intents that create or reach an account by themselves. */
+export type OtpIntent = 'sign-in' | 'sign-up' | 'recovery-setup' | 'recovery-sign-in';
+
 export function hashOtpEmail(emailInput: string, secret: Uint8Array): string {
   const email = emailSchema.parse(emailInput).toLowerCase();
   if (!(secret instanceof Uint8Array) || secret.byteLength < 32)
@@ -30,7 +33,7 @@ export type NewEmailOtpChallenge = {
   email: string;
   digest: string;
   expiresAt: number;
-  intent?: 'sign-in' | 'sign-up';
+  intent?: OtpIntent;
   termsVersion?: string;
   privacyVersion?: string;
   marketingOptIn?: boolean;
@@ -181,7 +184,7 @@ export class EmailOtpChallenges {
     code: unknown;
     secret: Uint8Array;
     now?: number;
-    expectedIntent?: 'sign-in' | 'sign-up';
+    expectedIntent?: OtpIntent;
     onAccepted?: (client: PoolClient, challenge: EmailOtpChallengeContext) => Promise<void>;
   }): Promise<EmailOtpVerification> {
     const id = uuidSchema.safeParse(input.id);
@@ -203,7 +206,7 @@ export class EmailOtpChallenges {
         digest: string;
         attempts: number;
         expires_at: Date;
-        intent: 'sign-in' | 'sign-up';
+        intent: OtpIntent;
         terms_version: string | null;
         privacy_version: string | null;
         marketing_opt_in: boolean;
