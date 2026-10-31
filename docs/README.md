@@ -16,6 +16,10 @@ This is the single index of CareerScope documentation. Every document under
 - [KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md) - explicit current limitations
 - [TRACEABILITY](TRACEABILITY.md) - requirement to code and test matrix
 - [FOUNDATIONS](FOUNDATIONS.md) - status, evidence, gate and verification command for Foundation items 1.01 to 1.15
+- [PROGRESS](PROGRESS.md) - stage-by-stage status for the full roadmap
+- [GAP-MATRIX](GAP-MATRIX.md) - per-item gaps and evidence for the current stage
+- [TEST-MATRIX](TEST-MATRIX.md) - which test proves each item
+- [BLOCKERS](BLOCKERS.md) - what needs owner action before a stage can close
 - [BOUNDARIES](architecture/BOUNDARIES.md) and [OUTBOX](architecture/OUTBOX.md) - allowed workspace dependencies, and transactional outbox and queue guarantees
 - [DOMAIN-EVENTS](architecture/DOMAIN-EVENTS.md) - event and message contracts, producers, consumers and delivery guarantees
 - [DESIGN-SYSTEM](architecture/DESIGN-SYSTEM.md) - design tokens and shared web components
