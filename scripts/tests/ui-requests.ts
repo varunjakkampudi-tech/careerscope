@@ -36,9 +36,15 @@ export function staleSearchRead(
  * deadline. Measured for the shell and settings reads (session, notifications, account sessions,
  * consent, preferences) and for router prefetches of other routes.
  *
- * Only a GET fetch or script from an earlier route is dropped. A request from the current route, a
- * write, an HTML document or an image still counts, so a real hang on the current route is still
- * caught. This generalises `staleSavedRead` and `staleSearchRead`.
+ * The same happens to the Next image optimiser request (`/_next/image`) behind the brand logo in the
+ * shell: when a navigation replaces the document before the optimiser answers, Chromium cancels it
+ * and Playwright never reports a finish. Reproduced with a bare page that loads `/` and navigates
+ * away as soon as the image request starts (about 3 of 4 tries; it is not specific to a cold server).
+ * Only that one path is dropped among images.
+ *
+ * Only a GET fetch or script (or the image optimiser path) from an earlier route is dropped. A
+ * request from the current route, a write, an HTML document or any other image still counts, so a
+ * real hang on the current route is still caught. This generalises `staleSavedRead` and `staleSearchRead`.
  *
  * The cancelled-fetch behaviour was measured only in Chromium, so the allowance applies to the
  * `chromium` engine alone. Firefox and WebKit report aborted requests as failed, so there nothing
@@ -50,11 +56,14 @@ export function staleEarlierRouteRead(
   startedEpoch: number,
   currentEpoch: number,
   engine: string,
+  pathname = '',
 ): boolean {
   return (
     engine === 'chromium' &&
     method === 'GET' &&
-    (resourceType === 'fetch' || resourceType === 'script') &&
+    (resourceType === 'fetch' ||
+      resourceType === 'script' ||
+      (resourceType === 'image' && pathname === '/_next/image')) &&
     startedEpoch !== currentEpoch
   );
 }

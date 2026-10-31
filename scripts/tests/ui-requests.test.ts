@@ -47,6 +47,13 @@ test('settlement drops only fetch and script reads belonging to an earlier route
   // Neither do documents, images or other resource types.
   assert.equal(staleEarlierRouteRead('GET', 'document', 1, 2, 'chromium'), false);
   assert.equal(staleEarlierRouteRead('GET', 'image', 1, 2, 'chromium'), false);
+  assert.equal(staleEarlierRouteRead('GET', 'image', 1, 2, 'chromium', '/brand/logo.png'), false);
+  // The Next image optimiser request a navigation cancelled is the one image that is dropped, and
+  // only from an earlier route, in Chromium, as a GET.
+  assert.equal(staleEarlierRouteRead('GET', 'image', 1, 2, 'chromium', '/_next/image'), true);
+  assert.equal(staleEarlierRouteRead('GET', 'image', 2, 2, 'chromium', '/_next/image'), false);
+  assert.equal(staleEarlierRouteRead('GET', 'image', 1, 2, 'firefox', '/_next/image'), false);
+  assert.equal(staleEarlierRouteRead('GET', 'fetch', 1, 2, 'chromium', '/_next/image'), true);
   // The allowance was measured only in Chromium; other engines keep every request in the barrier.
   for (const engine of ['firefox', 'webkit', '']) {
     assert.equal(staleEarlierRouteRead('GET', 'fetch', 1, 2, engine), false, engine);

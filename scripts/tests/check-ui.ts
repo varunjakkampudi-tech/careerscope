@@ -1337,6 +1337,7 @@ try {
               epoch,
               routeEpoch,
               engine,
+              new URL(request.url()).pathname,
             ),
         );
       const recentRequestEvents: string[] = [];
