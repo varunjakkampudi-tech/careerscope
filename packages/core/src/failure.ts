@@ -23,8 +23,18 @@ function safeCode(error: unknown) {
 }
 
 /**
+ * A startup rejection of an unsafe or missing setting. Its message names the variable and the rule
+ * that failed, never a value, so it is the one error class whose message is logged. Every throw in
+ * configuration code must use this class and must not interpolate a secret or a setting's value.
+ */
+export class ConfigurationError extends Error {
+  override name = 'ConfigurationError';
+}
+
+/**
  * Returns the error class name and, when it has a stable string code, the code. The message, stack,
- * cause and any other field are never included. Non-Error values are reported by type only.
+ * cause and any other field are never included, except the message of a `ConfigurationError`.
+ * Non-Error values are reported by type only.
  */
 export function describeError(error: unknown) {
   if (error instanceof Error) {
@@ -32,18 +42,27 @@ export function describeError(error: unknown) {
     return {
       errorName: safeToken.test(error.name) ? error.name : 'Error',
       ...(code ? { errorCode: code } : {}),
+      ...(error instanceof ConfigurationError ? { errorMessage: error.message } : {}),
     };
   }
   return { errorName: typeof error };
 }
 
-/** The pino `err` and `error` serialiser: name and code only, so a logged error never carries its message. */
+/**
+ * The pino `err` and `error` serialiser: name and code only, so a logged error never carries its
+ * message. A `ConfigurationError` also carries its message, which is the operator's only clue.
+ */
 export function serializeError(error: unknown) {
-  const { errorName, errorCode } = describeError(error) as {
+  const { errorName, errorCode, errorMessage } = describeError(error) as {
     errorName: string;
     errorCode?: string;
+    errorMessage?: string;
   };
-  return { name: errorName, ...(errorCode ? { code: errorCode } : {}) };
+  return {
+    name: errorName,
+    ...(errorCode ? { code: errorCode } : {}),
+    ...(errorMessage ? { message: errorMessage } : {}),
+  };
 }
 
 /** Serialisers for pino loggers: apply to both the `err` and `error` keys. */

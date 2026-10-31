@@ -7,7 +7,7 @@ import { closeSync, constants, fstatSync, lstatSync, openSync, readSync } from '
 import { createClient } from 'redis';
 import pino from 'pino';
 import { z } from 'zod';
-import { logFailure, serializeError } from './failure.js';
+import { ConfigurationError, logFailure, serializeError } from './failure.js';
 import { localEndpoint } from './queue.js';
 
 /** Shared pino logger. `base: undefined` omits pid and hostname from every line. */
@@ -23,7 +23,7 @@ export const logger = pino({
 function localUrl(value: string, protocols: string[]) {
   const url = new URL(value);
   if (!protocols.includes(url.protocol) || !['127.0.0.1', 'localhost'].includes(url.hostname)) {
-    throw new Error('v2 runtime endpoints must use local services');
+    throw new ConfigurationError('v2 runtime endpoints must use local services');
   }
   return value;
 }
@@ -75,7 +75,8 @@ export function isRandomSecret(value: string) {
  */
 function secretFromFile(name: string, path: string) {
   const content = readSecretFile(name, path).trim();
-  if (!content || /\s/.test(content)) throw new Error(name + ' must contain a single token');
+  if (!content || /\s/.test(content))
+    throw new ConfigurationError(name + ' must contain a single token');
   return content;
 }
 
@@ -97,18 +98,18 @@ function readSecretFile(name: string, path: string) {
   try {
     const before = lstatSync(path);
     if (!before.isFile() || before.isSymbolicLink())
-      throw new Error(name + ' must be a regular file');
-    if (before.size > SECRET_FILE_MAX_BYTES) throw new Error(name + ' is too large');
+      throw new ConfigurationError(name + ' must be a regular file');
+    if (before.size > SECRET_FILE_MAX_BYTES) throw new ConfigurationError(name + ' is too large');
     if (process.platform !== 'win32' && (before.mode & 0o022) !== 0)
-      throw new Error(name + ' must not be writable by group or others');
+      throw new ConfigurationError(name + ' must not be writable by group or others');
     descriptor = openSync(path, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
     const opened = fstatSync(descriptor);
     if (opened.ino !== before.ino || opened.dev !== before.dev || opened.size !== before.size)
-      throw new Error(name + ' changed while being read');
+      throw new ConfigurationError(name + ' changed while being read');
     const buffer = Buffer.alloc(before.size);
     try {
       const read = readSync(descriptor, buffer, 0, buffer.length, 0);
-      if (read !== buffer.length) throw new Error(name + ' could not be read');
+      if (read !== buffer.length) throw new ConfigurationError(name + ' could not be read');
       return buffer.toString('utf8');
     } finally {
       buffer.fill(0);
@@ -116,7 +117,7 @@ function readSecretFile(name: string, path: string) {
   } catch (error) {
     // Only this function's own messages (which carry just the variable name) pass through.
     if (error instanceof Error && error.message.startsWith(name + ' ')) throw error;
-    throw new Error(name + ' could not be read');
+    throw new ConfigurationError(name + ' could not be read');
   } finally {
     if (descriptor !== undefined) closeSync(descriptor);
   }
@@ -128,11 +129,12 @@ function readSecretFile(name: string, path: string) {
 // the cookie can never silently lose Secure behind a real hostname.
 function appOrigin(value: string) {
   const url = new URL(value);
-  if (!['http:', 'https:'].includes(url.protocol)) throw new Error('APP_ORIGIN must be http(s)');
-  if (url.origin !== value) throw new Error('APP_ORIGIN must be an origin');
+  if (!['http:', 'https:'].includes(url.protocol))
+    throw new ConfigurationError('APP_ORIGIN must be http(s)');
+  if (url.origin !== value) throw new ConfigurationError('APP_ORIGIN must be an origin');
   const loopback = ['127.0.0.1', 'localhost'].includes(url.hostname);
   if (!loopback && url.protocol !== 'https:') {
-    throw new Error('A public APP_ORIGIN must use https');
+    throw new ConfigurationError('A public APP_ORIGIN must use https');
   }
   return value;
 }
@@ -157,7 +159,9 @@ export function configuration(
   options: { emailOtpSecrets?: boolean } = {},
 ) {
   if (source.QUEUE_TRANSPORT !== undefined)
-    throw new Error('Use SEARCH_QUEUE_TRANSPORT to choose a supported Redis transport');
+    throw new ConfigurationError(
+      'Use SEARCH_QUEUE_TRANSPORT to choose a supported Redis transport',
+    );
   // Only the API sends sign-in codes. Workers pass `emailOtpSecrets: false`: they still see the
   // non-secret OTP flags, but neither need nor receive the HMAC secret or the Resend key.
   const loadSecrets = options.emailOtpSecrets !== false;
@@ -165,7 +169,8 @@ export function configuration(
   for (const name of ['EMAIL_OTP_HMAC_SECRET', 'RESEND_API_KEY'] as const) {
     const path = source[name + '_FILE'];
     if (!path || !loadSecrets) continue;
-    if (source[name]) throw new Error('Set either ' + name + ' or ' + name + '_FILE, not both');
+    if (source[name])
+      throw new ConfigurationError('Set either ' + name + ' or ' + name + '_FILE, not both');
     input[name] = secretFromFile(name + '_FILE', path);
   }
   const env = z
@@ -201,16 +206,17 @@ export function configuration(
   localUrl(env.REDIS_URL, ['redis:']);
   localEndpoint(env.QUEUE_REDIS_URL);
   if (env.QUEUE_REDIS_URL === env.REDIS_URL)
-    throw new Error('Queue Redis must be isolated from rate limiting');
+    throw new ConfigurationError('Queue Redis must be isolated from rate limiting');
   if (env.SEARCH_QUEUE_TRANSPORT === 'bullmq') {
     if (!env.SEARCH_QUEUE_REDIS_URL || env.SEARCH_QUEUE_REDIS_URL === env.REDIS_URL) {
-      throw new Error('BullMQ requires a separate SEARCH_QUEUE_REDIS_URL');
+      throw new ConfigurationError('BullMQ requires a separate SEARCH_QUEUE_REDIS_URL');
     }
     localUrl(env.SEARCH_QUEUE_REDIS_URL, ['redis:']);
   }
   appOrigin(env.APP_ORIGIN);
   if (env.REGISTRATION_ENABLED === 'true') {
-    if (env.EMAIL_OTP_ENABLED !== 'true') throw new Error('Registration requires email OTP');
+    if (env.EMAIL_OTP_ENABLED !== 'true')
+      throw new ConfigurationError('Registration requires email OTP');
     if (
       !env.LEGAL_TERMS_VERSION ||
       !env.LEGAL_TERMS_URL ||
@@ -218,25 +224,26 @@ export function configuration(
       !env.LEGAL_PRIVACY_URL ||
       !env.LEGAL_MARKETING_VERSION
     )
-      throw new Error('Registration requires versioned legal documents');
+      throw new ConfigurationError('Registration requires versioned legal documents');
     for (const [name, value] of [
       ['LEGAL_TERMS_URL', env.LEGAL_TERMS_URL],
       ['LEGAL_PRIVACY_URL', env.LEGAL_PRIVACY_URL],
     ] as const) {
-      if (new URL(value).protocol !== 'https:') throw new Error(`${name} must use HTTPS`);
+      if (new URL(value).protocol !== 'https:')
+        throw new ConfigurationError(`${name} must use HTTPS`);
     }
   }
   if (env.DEPLOYMENT_ENVIRONMENT === 'production' && env.EMAIL_OTP_ENABLED !== 'true')
-    throw new Error('Production requires email OTP sign-in to be enabled');
+    throw new ConfigurationError('Production requires email OTP sign-in to be enabled');
   if (env.EMAIL_OTP_ENABLED === 'true') {
     if (loadSecrets && (!env.EMAIL_OTP_HMAC_SECRET || !isRandomSecret(env.EMAIL_OTP_HMAC_SECRET)))
-      throw new Error(
+      throw new ConfigurationError(
         'Email OTP requires a separate HMAC secret of at least 32 random bytes (64 hex or 43 base64 characters)',
       );
     if (loadSecrets && (!env.RESEND_API_KEY || env.RESEND_API_KEY.trim().length === 0))
-      throw new Error('Email OTP requires RESEND_API_KEY');
+      throw new ConfigurationError('Email OTP requires RESEND_API_KEY');
     if (env.RESEND_FROM_EMAIL !== 'CareerScope <noreply@careerscope.tech>')
-      throw new Error('Email OTP requires the approved CareerScope sender address');
+      throw new ConfigurationError('Email OTP requires the approved CareerScope sender address');
   }
   // REDIS_PASSWORD_FILE keeps the password out of the environment (and `docker inspect`). The file is
   // always read and validated when set, even if the URLs already carry a password, so an unreadable,
@@ -244,7 +251,7 @@ export function configuration(
   if (source.REDIS_PASSWORD_FILE) {
     const password = readSecretFile('REDIS_PASSWORD_FILE', source.REDIS_PASSWORD_FILE).trim();
     if (!/^[A-Za-z0-9._~-]{16,}$/.test(password))
-      throw new Error(
+      throw new ConfigurationError(
         'REDIS_PASSWORD_FILE must contain a plain password of at least 16 characters',
       );
     env.REDIS_URL = withRedisPassword(env.REDIS_URL, password);

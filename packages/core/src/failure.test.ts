@@ -89,3 +89,18 @@ test('a pino line built from describeError carries the name and code, not the me
   assert.equal(parsed.commandId, 'cmd-1');
   assert.equal('errorMessage' in parsed, false);
 });
+
+test('a ConfigurationError logs its message, which names a rule and never a value', async () => {
+  const { ConfigurationError } = await import('./failure.ts');
+  const error = new ConfigurationError('EMAIL_OTP_HMAC_SECRET_FILE must be a regular file');
+  assert.deepEqual(describeError(error), {
+    errorName: 'ConfigurationError',
+    errorMessage: 'EMAIL_OTP_HMAC_SECRET_FILE must be a regular file',
+  });
+  assert.deepEqual(serializeError(error), {
+    name: 'ConfigurationError',
+    message: 'EMAIL_OTP_HMAC_SECRET_FILE must be a regular file',
+  });
+  // Any other error still carries no message, even when it holds a secret.
+  assertNoSecrets(JSON.stringify(describeError(new Error(message))));
+});

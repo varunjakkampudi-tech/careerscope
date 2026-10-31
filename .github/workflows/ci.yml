@@ -336,7 +336,7 @@ jobs:
         # Only the BullMQ suite gets raised timeouts, from scripts/tests/bull-queue.integration.env.
         run: npm run test:integration
 
-      - name: Prove a representative query finishes within the 10 s production statement budget
+      - name: Check the production pool budget and one query on an empty schema
         if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration"]'), inputs.suite)
         run: npm run test:query-budget
 
