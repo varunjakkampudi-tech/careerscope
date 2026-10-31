@@ -62,9 +62,12 @@ the code.
 Take a snapshot **before** attempting any schema surgery:
 
 ```bash
+umask 077
 docker exec careerscope-postgres-1 pg_dump -U careerscope careerscope \
   > /opt/careerscope/rollback-$(date +%s).sql
 ```
+
+The `umask 077` makes the dump readable only by its owner (mode 0600).
 
 That file contains personal data in plaintext, including resume text (see
 [DATA-CLASSIFICATION](../security/DATA-CLASSIFICATION.md)). Encrypt it, or delete it

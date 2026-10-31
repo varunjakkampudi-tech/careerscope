@@ -530,6 +530,10 @@ export async function createApp(
     return { status: 'ok' };
   });
   app.get('/api/session', async (request) => {
+    // Unauthenticated callers reach this too, so it has a generous per-address budget.
+    const addressHash = createHash('sha256').update(request.ip).digest('hex');
+    if (!(await consumeRateLimit(request, `session-read:ip:${addressHash}`, 120, 60)))
+      throw new HttpError(429, 'Too many requests');
     const session = request.session;
     if (!session) {
       return {
@@ -768,6 +772,7 @@ export async function createApp(
         });
         if (verification === 'accepted') {
           if (!finalized) throw new HttpError(503, 'Sign-in is temporarily unavailable');
+          await auth.sweepExpiredSessions();
           setSessionCookies(reply, finalized, new URL(origin).protocol === 'https:');
           return { authenticated: true };
         }

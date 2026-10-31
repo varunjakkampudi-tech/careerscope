@@ -16,8 +16,8 @@
  * a new service; actual planner use depends on the data distribution.
  *
  * Expired sessions are removed here too, so an installation nobody signs in to still
- * drops them. Their refresh-token digests go with them (ON DELETE CASCADE). Login and
- * refresh also delete expired rows opportunistically (packages/core/src/auth.ts).
+ * drops them. Their refresh-token digests go with them (ON DELETE CASCADE). Sign-in also
+ * deletes a bounded batch of expired rows (packages/core/src/auth.ts).
  *
  * Invoked by careerscope-retention.timer (host-native systemd, matching
  * CS-24/25/26) via `docker exec` into the api container.

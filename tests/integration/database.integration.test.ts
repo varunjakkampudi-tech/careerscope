@@ -32,7 +32,7 @@ import {
   publishPending,
   reconcileDeadLetter,
 } from '../../packages/core/src/dispatch.js';
-import { Auth, passwordHash } from '../../packages/core/src/auth.js';
+import { Auth, expiredSessionSweepBatch, passwordHash } from '../../packages/core/src/auth.js';
 import { Conflict as ResumeConflict } from '../../packages/core/src/errors.js';
 import { PrivateFileResumeStorage } from '../../packages/core/src/file-storage.js';
 import {
@@ -4083,6 +4083,148 @@ test('CS-57: logging out answers identically with no cookie, a stale cookie and 
     await admin.close();
   }
 });
+
+async function withFreshDatabase(run: (database: Database) => Promise<void>) {
+  const configured = process.env.DATABASE_URL;
+  assert.ok(configured, 'Integration tests require the isolated v2 DATABASE_URL');
+  const base = new URL(configured);
+  assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
+  const admin = new Database(configured);
+  const name = `test_${randomUUID().replaceAll('-', '')}`;
+  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  base.pathname = `/${name}`;
+  const database = new Database(base.href);
+  try {
+    await migrate(database.db, {
+      migrationsFolder: fileURLToPath(new URL('../../migrations', import.meta.url)),
+    });
+    await run(database);
+  } finally {
+    await database.close();
+    await admin.pool.query(`DROP DATABASE "${name}"`);
+    await admin.close();
+  }
+}
+
+test('F1: logout and sign-in revoke the session named by an expired access cookie', () =>
+  withFreshDatabase(async (database) => {
+    const auth = new Auth(database);
+    const password = 'synthetic-password-1234';
+    await auth.register('f1@example.test', password);
+    const origin = 'http://localhost:5280';
+    const app = await createApp(database, origin, async () => true);
+    const expireAccess = (sessionId: string) =>
+      database.pool.query(
+        "UPDATE sessions SET access_expires_at = now() - interval '1 minute' WHERE id = $1",
+        [sessionId],
+      );
+    try {
+      // (a) The access window has passed and the browser sends only the access cookie.
+      const first = await auth.loginSession('f1@example.test', password);
+      assert.ok(first);
+      await expireAccess(first.sessionId);
+      assert.equal(await auth.session(first.accessToken), null);
+      const loggedOut = await app.inject({
+        method: 'POST',
+        url: '/api/logout',
+        headers: { origin },
+        cookies: { [sessionCookie]: first.accessToken },
+      });
+      assert.equal(loggedOut.statusCode, 200);
+      assert.deepEqual(loggedOut.json(), { authenticated: false });
+      assert.equal((await auth.refresh(first.refreshToken)).status, 'invalid');
+
+      // (b) No cookies at all: the existing response, nothing to revoke.
+      const bare = await app.inject({ method: 'POST', url: '/api/logout', headers: { origin } });
+      assert.equal(bare.statusCode, 200);
+      assert.deepEqual(bare.json(), { authenticated: false });
+
+      // (c) Signing in while holding an older session's access cookie revokes that session,
+      // even though the refresh cookie is not sent.
+      const older = await auth.loginSession('f1@example.test', password);
+      assert.ok(older);
+      await expireAccess(older.sessionId);
+      const signIn = await app.inject({
+        method: 'POST',
+        url: '/api/login',
+        headers: { origin },
+        cookies: { [sessionCookie]: older.accessToken },
+        payload: { email: 'f1@example.test', password },
+      });
+      assert.equal(signIn.statusCode, 200);
+      assert.equal((await auth.refresh(older.refreshToken)).status, 'invalid');
+      const revoked = await database.pool.query('SELECT revoked_at FROM sessions WHERE id = $1', [
+        older.sessionId,
+      ]);
+      assert.ok(revoked.rows[0]?.revoked_at);
+    } finally {
+      await app.close();
+    }
+  }));
+
+test('F4: GET /api/session has a per-address budget with the standard 429 envelope', () =>
+  withFreshDatabase(async (database) => {
+    const counts = new Map<string, number>();
+    const app = await createApp(database, 'http://localhost:5280', async (key, limit) => {
+      const next = (counts.get(key) ?? 0) + 1;
+      counts.set(key, next);
+      return next <= limit;
+    });
+    try {
+      for (let index = 0; index < 120; index += 1)
+        assert.equal((await app.inject('/api/session')).statusCode, 200);
+      const limited = await app.inject('/api/session');
+      assert.equal(limited.statusCode, 429);
+      let reference;
+      for (let index = 0; index < 61; index += 1) reference = await app.inject('/api/health');
+      assert.equal(reference!.statusCode, 429);
+      const envelope = (response: { json: () => unknown }) =>
+        response.json() as { code: string; message: string; requestId: string };
+      assert.ok(envelope(limited).requestId);
+      assert.deepEqual(
+        { ...envelope(limited), requestId: undefined },
+        { ...envelope(reference!), requestId: undefined },
+      );
+      assert.equal(limited.headers['content-type'], reference!.headers['content-type']);
+    } finally {
+      await app.close();
+    }
+  }));
+
+test('F5: the expired-session sweep is bounded and runs outside the sign-in transaction', () =>
+  withFreshDatabase(async (database) => {
+    const auth = new Auth(database);
+    const password = 'synthetic-password-1234';
+    await auth.register('f5@example.test', password);
+    const owner = await database.pool.query<{ id: string }>(
+      'SELECT id FROM users WHERE email = $1',
+      ['f5@example.test'],
+    );
+    const extra = 20;
+    await database.pool.query(
+      `INSERT INTO sessions
+         (id, token_hash, owner_id, expires_at, access_expires_at, created_at, last_used_at)
+       SELECT gen_random_uuid(), md5(g::text) || md5(g::text || 'x'), $1,
+              now() - interval '1 day', now() - interval '2 days', now() - interval '31 days', now()
+       FROM generate_series(1, $2::int) g`,
+      [owner.rows[0]!.id, expiredSessionSweepBatch + extra],
+    );
+    const credentials = await auth.loginSession('f5@example.test', password);
+    assert.ok(credentials);
+    assert.ok(await auth.session(credentials.accessToken));
+    const expiredCount = async () =>
+      Number(
+        (
+          await database.pool.query<{ count: string }>(
+            'SELECT count(*) FROM sessions WHERE expires_at <= now()',
+          )
+        ).rows[0]!.count,
+      );
+    assert.equal(await expiredCount(), extra);
+    // A later sign-in clears the remainder.
+    assert.ok(await auth.loginSession('f5@example.test', password));
+    assert.equal(await expiredCount(), 0);
+  }));
 
 test('CS-61: the session carries a stable, opaque per-owner cache key that differs between owners', async () => {
   const configured = process.env.DATABASE_URL;
