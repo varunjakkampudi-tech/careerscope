@@ -115,7 +115,7 @@ Idempotent. Installs both timers: liveness daily at 04:00, retention weekly
 
 ```sh
 node --env-file=.env --import tsx --test scripts/jobs/check-lead-liveness.integration.test.ts
-node --env-file=.env --import tsx --test scripts/jobs/enforce-search-retention.integration.test.ts
+node --env-file=.env --import tsx --test scripts/jobs/search-retention.integration.test.ts
 ```
 
 Both need a real Postgres (same disposable-per-test-database pattern as

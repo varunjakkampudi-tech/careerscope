@@ -1515,3 +1515,31 @@ test('a failing temporary cleanup after a successful publish or cancel is logged
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+test('a refused cancellation re-counts markers from disk and succeeds once they are gone', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-recount-'));
+  const encryptionKey = randomBytes(32).toString('hex');
+  const storage = new PrivateFileResumeStorage({ directory, encryptionKey, markerLimit: 2 });
+  try {
+    await storage.initialize();
+    const { object } = fixture();
+    const first = { ...object, resumeId: randomUUID() };
+    const second = { ...object, resumeId: randomUUID() };
+    await storage.cancelUpload(first);
+    await storage.cancelUpload(second);
+    await assert.rejects(
+      storage.cancelUpload({ ...object, resumeId: randomUUID() }),
+      ResumeStorageLimit,
+    );
+
+    // Another process's sweep removes the markers without this process seeing it. The re-count is
+    // rate limited, so the test resets its timestamp rather than waiting for the window to pass.
+    storage['lastMarkerRecountMs'] = 0;
+    for (const o of [first, second]) {
+      await rm(join(directory, `${o.ownerId}_${o.resumeId}_${o.sha256}.bin`));
+    }
+    await storage.cancelUpload({ ...object, resumeId: randomUUID() });
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});

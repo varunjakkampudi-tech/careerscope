@@ -1925,7 +1925,7 @@
           "infra/systemd/careerscope-discovery.timer:12",
           "docs/operations/DISCOVERY-SCHEDULE.md:50"
         ],
-        "tests": ["scripts/jobs/run-scheduled-discovery.integration.test.ts:1"]
+        "tests": ["scripts/jobs/scheduled-discovery.integration.test.ts:1"]
       }
     },
     {
@@ -4654,7 +4654,7 @@
           "infra/docker/compose.production.yml:28",
           "scripts/jobs/enforce-search-retention.ts:1"
         ],
-        "tests": ["scripts/jobs/enforce-search-retention.integration.test.ts:1"]
+        "tests": ["scripts/jobs/search-retention.integration.test.ts:1"]
       }
     },
     {

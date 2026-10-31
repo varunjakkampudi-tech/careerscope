@@ -74,7 +74,7 @@ install scripts.
 ## Verification
 
 ```sh
-node --env-file=.env --import tsx --test scripts/jobs/run-scheduled-discovery.integration.test.ts
+node --env-file=.env --import tsx --test scripts/jobs/scheduled-discovery.integration.test.ts
 ```
 
 Runs against a real disposable Postgres database (same per-test-database

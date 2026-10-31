@@ -84,6 +84,9 @@ const minimumMarkerRetentionMs = 60 * 60 * 1000;
 /** Temporaries younger than this are never reclaimed, so a live writer is not disturbed. */
 const temporaryFloorMs = 10 * 60 * 1000;
 const defaultSweepIntervalMs = 5 * 60 * 1000;
+// Lower bound between disk re-counts of the cancellation markers, so refused requests cannot force a
+// full directory scan each.
+const markerRecountIntervalMs = 5_000;
 const minimumSweepIntervalMs = 60 * 1000;
 /** Legacy markers were an HMAC under the raw storage key; current markers use a key derived for that purpose only. */
 const legacyMarkerMagic = 'CSC1';
@@ -161,6 +164,7 @@ export class PrivateFileResumeStorage {
   private markers = 0;
   /** Marker counts by lower-case owner id, rebuilt from disk by `inventory` and `reclaimExpiredMarkers`. */
   private ownerMarkers = new Map<string, number>();
+  private lastMarkerRecountMs = 0;
   private reclaimedTemporaries = 0;
   private ready = false;
   /** The in-flight `initialize`, shared by concurrent callers. Cleared when it settles. */
@@ -807,6 +811,13 @@ export class PrivateFileResumeStorage {
     }
   }
 
+  /** True while the owner and the whole store are both below their cancellation marker limits. */
+  private markerQuotaAvailable(owner: string) {
+    return (
+      (this.ownerMarkers.get(owner) ?? 0) < this.ownerMarkerLimit && this.markers < this.markerLimit
+    );
+  }
+
   /**
    * Writes a cancellation marker at the object path so a late `put` for it cannot publish. Refused
    * once the owner's marker quota is reached, or the global backstop (neither names any owner).
@@ -823,11 +834,17 @@ export class PrivateFileResumeStorage {
       if (error instanceof ResumeUploadCancelled) return;
     }
     // Markers are reclaimed after the retention window; between sweeps accumulation is bounded here.
-    if ((this.ownerMarkers.get(owner) ?? 0) >= this.ownerMarkerLimit) {
-      throw new ResumeStorageLimit('Resume cancellation marker quota reached');
-    }
-    if (this.markers >= this.markerLimit) {
-      throw new ResumeStorageLimit('Resume cancellation marker quota reached');
+    if (!this.markerQuotaAvailable(owner)) {
+      // Another process may have written markers this process has not counted, so a refusal
+      // re-derives the counts from disk first. The scan is rate limited so refused requests cannot
+      // force one scan each.
+      if (Date.now() - this.lastMarkerRecountMs >= markerRecountIntervalMs) {
+        this.lastMarkerRecountMs = Date.now();
+        this.markers = (await this.inventory(signal)).markers;
+      }
+      if (!this.markerQuotaAvailable(owner)) {
+        throw new ResumeStorageLimit('Resume cancellation marker quota reached');
+      }
     }
     try {
       // A reclaim removes this temporary only if the write stalled past the 10 minute floor. Any

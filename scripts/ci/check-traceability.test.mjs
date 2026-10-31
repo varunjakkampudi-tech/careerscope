@@ -187,7 +187,7 @@ test('an item without a status, evidence, gate or verify line fails', () => {
   }
   assert.match(
     verifyFoundations({ overrides: { 1.05: { Status: 'Done' } } }).errors[0],
-    /1\.05: Status must be one of Complete, Open/,
+    /1\.05: Status must be one of Complete, Open, Excluded/,
   );
   assert.match(
     verifyFoundations({ overrides: { 1.05: { Evidence: 'none' } } }).errors[0],
@@ -395,4 +395,17 @@ test('a step that also admits push, pull_request or a non-dispatch event is not 
 
 test('the real repository has no orphan test files', () => {
   assert.deepEqual(findOrphanTests(fileURLToPath(new URL('../..', import.meta.url))), []);
+});
+
+test('an Excluded item needs a gap that names the owner decision', () => {
+  assert.match(
+    verifyFoundations({ overrides: { 1.12: { Status: 'Excluded' } } }).errors[0],
+    /1\.12: an Excluded item must state its Gap/,
+  );
+  assert.deepEqual(
+    verifyFoundations({
+      overrides: { 1.12: { Status: 'Excluded', Gap: 'Owner excluded the host check.' } },
+    }).errors,
+    [],
+  );
 });

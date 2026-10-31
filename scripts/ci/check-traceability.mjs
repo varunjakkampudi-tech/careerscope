@@ -29,7 +29,7 @@ const FOUNDATION_ITEMS = Array.from(
   { length: 15 },
   (_, index) => `1.${String(index + 1).padStart(2, '0')}`,
 );
-const FOUNDATION_STATUSES = ['Complete', 'Open'];
+const FOUNDATION_STATUSES = ['Complete', 'Open', 'Excluded'];
 const NOT_COVERED = 'NOT COVERED';
 const TEST_PATH = /(?:\.(?:test|spec)\.[cm]?[jt]sx?$)|^(?:scripts\/tests|tests)\//;
 
@@ -278,6 +278,8 @@ export function analyzeFoundations(root) {
       `${FOUNDATION_FILE} must have exactly the 15 items ${FOUNDATION_ITEMS[0]} to ${FOUNDATION_ITEMS[14]} once each, in order; found ${ids.length}: ${ids.join(', ') || 'none'}`,
     );
   let complete = 0;
+  let open = 0;
+  let excluded = 0;
   for (const section of sections) {
     const fail = (message) => errors.push(`${section.id}: ${message}`);
     const one = (name) => {
@@ -290,9 +292,12 @@ export function analyzeFoundations(root) {
       fail(`Status must be one of ${FOUNDATION_STATUSES.join(', ')}, found "${status}"`);
     if (!section.title) fail('heading has no title');
     for (const name of ['Evidence', 'Gate', 'Verify']) if (!one(name)) fail(`${name} is empty`);
-    if (status === 'Open' && !one('Gap')) fail('an Open item must state its Gap');
+    if ((status === 'Open' || status === 'Excluded') && !one('Gap'))
+      fail(`an ${status} item must state its Gap`);
     if (status === 'Complete' && one('Gap')) fail('a Complete item must not carry a Gap');
     if (status === 'Complete') complete += 1;
+    if (status === 'Open') open += 1;
+    if (status === 'Excluded') excluded += 1;
 
     const evidence = paths(one('Evidence'));
     if (one('Evidence') && !evidence.length) fail('Evidence must cite files in backticks');
@@ -313,7 +318,7 @@ export function analyzeFoundations(root) {
     if (status === 'Complete' && !citesCiTest)
       fail('a Complete item must cite at least one test that a CI script runs');
   }
-  return { errors, items: sections.length, complete };
+  return { errors, items: sections.length, complete, open, excluded };
 }
 
 /** The Item 1.02 prose and the Foundations register must quote the counts of the v12 inventory. */
@@ -360,7 +365,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     process.exitCode = 1;
   } else {
     process.stdout.write(
-      `PASS Foundations register: ${foundations.items} items, ${foundations.complete} Complete, ${foundations.items - foundations.complete} Open\n`,
+      `PASS Foundations register: ${foundations.items} items, ${foundations.complete} Complete, ${foundations.open} Open, ${foundations.excluded} Excluded\n`,
     );
   }
 
