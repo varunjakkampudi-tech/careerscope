@@ -287,7 +287,8 @@ test('writer startup reclaims crash-stranded temporaries without touching anythi
   }
 });
 
-test('cancellation markers are retained and bounded by an explicit quota', async () => {
+// Global backstop only: the per-owner limit is left at its default (100) so the shared 10,000 cap is what trips.
+test('cancellation markers are retained and bounded by the global backstop', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'careerscope-markers-'));
   const encryptionKey = randomBytes(32).toString('hex');
   const body = Buffer.from('%PDF-1.7 synthetic marker quota fixture');
@@ -324,6 +325,108 @@ test('cancellation markers are retained and bounded by an explicit quota', async
     assert.deepEqual(await storage.reclaimTemporariesAtStartup(), { removed: 0, bytes: 0 });
     assert.equal((await storage.inventory()).markers, 2);
     await assert.rejects(storage.recoverVersion(first), ResumeUploadCancelled);
+  } finally {
+    storage.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('one owner at the per-owner marker limit cannot cancel more while another owner can', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-owner-markers-'));
+  const encryptionKey = randomBytes(32).toString('hex');
+  const { object } = fixture();
+  const other = { ...object, ownerId: randomUUID() };
+  const storage = new PrivateFileResumeStorage({ directory, encryptionKey, ownerMarkerLimit: 2 });
+  try {
+    await storage.initialize();
+    const first = { ...object, resumeId: randomUUID() };
+    await storage.cancelUpload(first);
+    await storage.cancelUpload(first); // idempotent, consumes no quota
+    await storage.cancelUpload({ ...object, resumeId: randomUUID() });
+    await assert.rejects(
+      storage.cancelUpload({ ...object, resumeId: randomUUID() }),
+      (error: unknown) =>
+        error instanceof ResumeStorageLimit &&
+        !error.message.includes(object.ownerId) &&
+        !error.message.includes(other.ownerId),
+    );
+    await storage.cancelUpload({ ...other, resumeId: randomUUID() });
+    await storage.cancelUpload({ ...other, resumeId: randomUUID() });
+    await assert.rejects(
+      storage.cancelUpload({ ...other, resumeId: randomUUID() }),
+      ResumeStorageLimit,
+    );
+    assert.equal((await storage.inventory()).markers, 4);
+  } finally {
+    storage.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('per-owner marker counts are rebuilt on initialize and restored after the 24-hour reclaim', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-owner-reclaim-'));
+  const encryptionKey = randomBytes(32).toString('hex');
+  const { object } = fixture();
+  const config = { directory, encryptionKey, ownerMarkerLimit: 2 };
+  const storage = new PrivateFileResumeStorage(config);
+  const restarted = new PrivateFileResumeStorage(config);
+  try {
+    await storage.initialize();
+    const first = { ...object, resumeId: randomUUID() };
+    await storage.cancelUpload(first);
+    await storage.cancelUpload({ ...object, resumeId: randomUUID() });
+    await assert.rejects(
+      storage.cancelUpload({ ...object, resumeId: randomUUID() }),
+      ResumeStorageLimit,
+    );
+
+    // A fresh process recounts the owner from disk.
+    await restarted.initialize();
+    await assert.rejects(
+      restarted.cancelUpload({ ...object, resumeId: randomUUID() }),
+      ResumeStorageLimit,
+    );
+
+    const old = new Date(Date.now() - 25 * 3_600_000);
+    await utimes(
+      join(directory, `${first.ownerId}_${first.resumeId}_${first.sha256}.bin`),
+      old,
+      old,
+    );
+    assert.equal(await storage.reclaimExpiredMarkers(), 1);
+    await storage.cancelUpload({ ...object, resumeId: randomUUID() });
+    await assert.rejects(
+      storage.cancelUpload({ ...object, resumeId: randomUUID() }),
+      ResumeStorageLimit,
+    );
+  } finally {
+    storage.close();
+    restarted.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('a foreign 36-byte file does not count toward an owner marker quota', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-owner-foreign-'));
+  const encryptionKey = randomBytes(32).toString('hex');
+  const { object } = fixture();
+  const foreign = join(directory, `${object.ownerId}_${randomUUID()}_${object.sha256}.bin`);
+  const storage = new PrivateFileResumeStorage({ directory, encryptionKey, ownerMarkerLimit: 1 });
+  try {
+    await storage.initialize(); // creates the directory
+    await writeFile(foreign, Buffer.alloc(36, 7));
+    await storage.initialize(); // recounts: the foreign file has no marker magic
+    await storage.cancelUpload({ ...object, resumeId: randomUUID() });
+    await assert.rejects(
+      storage.cancelUpload({ ...object, resumeId: randomUUID() }),
+      ResumeStorageLimit,
+    );
+    await storage.reclaimExpiredMarkers();
+    await assert.rejects(
+      storage.cancelUpload({ ...object, resumeId: randomUUID() }),
+      ResumeStorageLimit,
+    );
+    assert.equal((await readFile(foreign)).length, 36);
   } finally {
     storage.close();
     await rm(directory, { recursive: true, force: true });

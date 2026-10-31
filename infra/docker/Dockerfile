@@ -4,31 +4,18 @@ ARG ALPINE_IMAGE=alpine:3.23@sha256:ff7f0c727dd796aa36787bfcd9a64bf35a6ce72a7345
 
 # Upstream caddy:2-alpine ships a binary built with a vulnerable Go toolchain and
 # dependencies, so the proxy binary is rebuilt here instead of being consumed as-is.
-# Every module is pinned to an exact released version (no @latest) so a rebuild of the
-# same revision resolves the same dependency graph; bump the pins deliberately.
+# The whole module graph is pinned in the committed infra/docker/caddy-proxy/go.mod and go.sum
+# (Caddy v2.11.7, x/net v0.62.0, x/crypto v0.58.0, grpc v1.83.2 and every transitive module).
+# -mod=readonly makes the build fail instead of updating either file, and go.sum hashes are
+# verified on download. To bump a pin, change it in a container with `go get` and `go mod tidy`,
+# then commit the regenerated go.mod and go.sum.
 FROM ${GO_IMAGE} AS caddy-build
-ENV CGO_ENABLED=0 GOTOOLCHAIN=local
+ENV CGO_ENABLED=0 GOTOOLCHAIN=local GOFLAGS=-mod=readonly
 WORKDIR /build
-RUN printf '%s\n' \
-    'package main' \
-    'import (' \
-    '  caddycmd "github.com/caddyserver/caddy/v2/cmd"' \
-    '  _ "github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"' \
-    '  _ "github.com/caddyserver/caddy/v2/modules/caddyhttp"' \
-    '  _ "github.com/caddyserver/caddy/v2/modules/caddyhttp/caddyauth"' \
-    '  _ "github.com/caddyserver/caddy/v2/modules/caddyhttp/fileserver"' \
-    '  _ "github.com/caddyserver/caddy/v2/modules/caddyhttp/headers"' \
-    '  _ "github.com/caddyserver/caddy/v2/modules/caddyhttp/requestbody"' \
-    '  _ "github.com/caddyserver/caddy/v2/modules/caddyhttp/reverseproxy"' \
-    '  _ "github.com/caddyserver/caddy/v2/modules/caddyhttp/rewrite"' \
-    ')' \
-    'func main() { caddycmd.Main() }' > main.go \
-    && go mod init careerscope/proxy \
-    && go get github.com/caddyserver/caddy/v2@v2.11.7 \
-    && go get golang.org/x/net@v0.62.0 golang.org/x/crypto@v0.58.0 \
-    && go get google.golang.org/grpc@v1.83.2 \
-    && go mod tidy \
-    && go build -trimpath -ldflags '-s -w' -o /out/caddy .
+COPY infra/docker/caddy-proxy/go.mod infra/docker/caddy-proxy/go.sum ./
+RUN go mod download
+COPY infra/docker/caddy-proxy/main.go ./
+RUN go build -trimpath -ldflags '-s -w' -o /out/caddy .
 
 FROM ${ALPINE_IMAGE} AS proxy
 ARG CAREERSCOPE_REVISION=unknown

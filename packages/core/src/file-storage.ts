@@ -68,6 +68,10 @@ const temporaryName = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]
 const defaultReserveBytes = 256 * 1024 * 1024;
 /** Bounds how many cancellation markers may exist before operators are warned and new cancellations are refused. */
 const defaultMarkerLimit = 10_000;
+/** Per-owner cap, so one account cannot exhaust the global marker budget and block everyone else's cancellations. */
+const defaultOwnerMarkerLimit = 100;
+/** Marker file names begin with the owner UUID (36 characters), see `path`. */
+const ownerIdLength = 36;
 /**
  * A cancellation marker only has to outlive a write that was already in flight when the upload was
  * cancelled: the API request timeout is 15 s, and a stalled writer is bounded by the 10 minute
@@ -95,6 +99,12 @@ export class ResumeUploadCancelled extends Conflict {
 
 /** A concurrent writer replaced the object between inspection and reading. */
 class ResumeObjectChanged extends Error {}
+
+/** Adds one marker to the owner named by the first 36 characters of a marker file name. */
+function countOwner(counts: Map<string, number>, name: string) {
+  const owner = name.slice(0, ownerIdLength).toLowerCase();
+  counts.set(owner, (counts.get(owner) ?? 0) + 1);
+}
 
 function missing(error: unknown) {
   return error instanceof Error && 'code' in error && error.code === 'ENOENT';
@@ -143,10 +153,13 @@ export class PrivateFileResumeStorage {
   private readonly markerKey: Buffer;
   private readonly reserveBytes: number;
   private readonly markerLimit: number;
+  private readonly ownerMarkerLimit: number;
   private readonly markerRetentionMs: number;
   private reserved = 0;
   private capacityRefusals = 0;
   private markers = 0;
+  /** Marker counts by lower-case owner id, rebuilt from disk by `inventory` and `reclaimExpiredMarkers`. */
+  private ownerMarkers = new Map<string, number>();
   private reclaimedTemporaries = 0;
   private ready = false;
   /** The in-flight `initialize`, shared by concurrent callers. Cleared when it settles. */
@@ -158,6 +171,7 @@ export class PrivateFileResumeStorage {
       encryptionKey: string;
       reserveBytes?: number;
       markerLimit?: number;
+      ownerMarkerLimit?: number;
       markerRetentionMs?: number;
     },
     private readonly availableBytes: (directory: string) => Promise<number> = async (directory) => {
@@ -179,6 +193,12 @@ export class PrivateFileResumeStorage {
       .min(1)
       .default(defaultMarkerLimit)
       .parse(config.markerLimit);
+    this.ownerMarkerLimit = z
+      .number()
+      .int()
+      .min(1)
+      .default(defaultOwnerMarkerLimit)
+      .parse(config.ownerMarkerLimit);
     this.key = Buffer.from(
       z
         .string()
@@ -317,6 +337,7 @@ export class PrivateFileResumeStorage {
     let oldestTemporaryMs: number | null = null;
     let markers = 0;
     let markerBytes = 0;
+    const ownerCounts = new Map<string, number>();
     for (const entry of entries) {
       signal?.throwIfAborted();
       if (!entry.isFile()) continue;
@@ -337,6 +358,7 @@ export class PrivateFileResumeStorage {
         ) {
           markers += 1;
           markerBytes += stat.size;
+          countOwner(ownerCounts, entry.name);
         }
       } else if (temporaryName.test(entry.name)) {
         temporaries += 1;
@@ -345,6 +367,7 @@ export class PrivateFileResumeStorage {
           oldestTemporaryMs === null ? stat.mtimeMs : Math.min(oldestTemporaryMs, stat.mtimeMs);
       }
     }
+    this.ownerMarkers = ownerCounts;
     const volume = await statfs(this.root);
     const freeBytes = Number(volume.bavail) * Number(volume.bsize);
     return {
@@ -449,6 +472,7 @@ export class PrivateFileResumeStorage {
     const entries = await readdir(this.root, { withFileTypes: true });
     let removed = 0;
     let remaining = 0;
+    const ownerCounts = new Map<string, number>();
     for (const entry of entries) {
       signal?.throwIfAborted();
       if (!entry.isFile() || !entry.name.endsWith('.bin')) continue;
@@ -464,6 +488,7 @@ export class PrivateFileResumeStorage {
         !(await this.hasMarkerMagic(filename))
       ) {
         remaining += 1;
+        countOwner(ownerCounts, entry.name);
         continue;
       }
       try {
@@ -472,6 +497,7 @@ export class PrivateFileResumeStorage {
         if (!missing(error)) {
           if (!contended(error)) throw error;
           remaining += 1;
+          countOwner(ownerCounts, entry.name);
         }
         continue;
       }
@@ -479,6 +505,7 @@ export class PrivateFileResumeStorage {
     }
     if (removed) await this.syncDirectory();
     this.markers = remaining;
+    this.ownerMarkers = ownerCounts;
     return removed;
   }
 
@@ -762,13 +789,20 @@ export class PrivateFileResumeStorage {
     await this.syncDirectory();
   }
 
-  /** Writes a cancellation marker at the object path so a late `put` for it cannot publish. Refused once the marker quota is reached. */
+  /**
+   * Writes a cancellation marker at the object path so a late `put` for it cannot publish. Refused
+   * once the owner's marker quota is reached, or the global backstop (neither names any owner).
+   */
   async cancelUpload(object: ResumeObject, signal?: AbortSignal) {
+    const { object: parsed, filename } = await this.path(object, signal);
+    const owner = parsed.ownerId.toLowerCase();
     // Markers are reclaimed after the retention window; between sweeps accumulation is bounded here.
+    if ((this.ownerMarkers.get(owner) ?? 0) >= this.ownerMarkerLimit) {
+      throw new ResumeStorageLimit('Resume cancellation marker quota reached');
+    }
     if (this.markers >= this.markerLimit) {
       throw new ResumeStorageLimit('Resume cancellation marker quota reached');
     }
-    const { filename } = await this.path(object, signal);
     try {
       // A reclaim removes this temporary only if the write stalled past the 10 minute floor. Any
       // ENOENT is retried once with a fresh temporary; a second ENOENT is surfaced.
@@ -781,8 +815,10 @@ export class PrivateFileResumeStorage {
           await handle.sync();
           await handle.close();
           signal?.throwIfAborted();
-          if (await this.publishCancellation(object, temporary, filename, signal))
+          if (await this.publishCancellation(object, temporary, filename, signal)) {
             this.markers += 1;
+            this.ownerMarkers.set(owner, (this.ownerMarkers.get(owner) ?? 0) + 1);
+          }
           await this.syncDirectory();
           return;
         } catch (error) {
