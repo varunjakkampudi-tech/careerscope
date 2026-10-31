@@ -83,7 +83,7 @@ The owner's v12 specification is in the repository as [CareerScope-v12](requirem
 per-status and per-section counts. A clause is called IMPLEMENTED only when its record cites
 implementing code and a test that a CI script runs.
 
-Current status of the inventory: 319 clauses (67 IMPLEMENTED, 75 PARTIAL, 119 NOT_IMPLEMENTED, 50 OWNER_EVIDENCE, 8 OUT_OF_SCOPE_POST_LAUNCH); 165 launch-blocking gaps.
+Current status of the inventory: 319 clauses (67 IMPLEMENTED, 72 PARTIAL, 125 NOT_IMPLEMENTED, 47 OWNER_EVIDENCE, 8 OUT_OF_SCOPE_POST_LAUNCH); 165 launch-blocking gaps.
 
 `npm run traceability:check` fails when this sentence no longer equals the counts computed from the
 inventory, when a clause is NOT_ASSESSED, when the source digest or clause count changes, when a clause

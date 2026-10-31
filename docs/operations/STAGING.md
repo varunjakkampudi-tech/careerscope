@@ -46,6 +46,6 @@ procedure. Production remains outside the workflow and owner-controlled.
 
 Until those conditions and exact hosted runs are proven, do not claim staging
 deployment readiness. Current container recovery material is in
-[`ROLLBACK.md`](./ROLLBACK.md) and
-[`./BACKUP.md`](./BACKUP.md); neither substitutes
-for staging validation.
+[`ROLLBACK.md`](./ROLLBACK.md); it does not substitute
+for staging validation. There is no application backup (see
+[`HOSTINGER.md`](./HOSTINGER.md)).

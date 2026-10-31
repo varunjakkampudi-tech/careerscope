@@ -2,7 +2,7 @@
 
 Rolling back means returning the running system to a previously known-good
 revision. It is a redeploy of an older commit, not a restore from backup —
-**there is no off-host backup.**
+**there is no application backup on this host.**
 
 ---
 

@@ -52,8 +52,8 @@ origin checks, bounded/encrypted resume storage, structured redacted logging,
 safe error envelopes and a restrictive production CSP. Caches and exports must
 remain owner-scoped and must not contain session or provider tokens. Upload
 text is untrusted input and is bounded before parsing. See [Security](SECURITY.md),
-[Secrets](operations/SECRETS.md) and [Backup](operations/BACKUP.md) for the
+[Secrets](operations/SECRETS.md) for the
 authoritative operational contracts and their explicit external limitations.
 
-Local backups are not off-host disaster recovery. Host firewall, hosted service
+The Hostinger host has no application backup, and the design for the new server is pending. Host firewall, hosted service
 isolation, private staging access and restore acceptance remain external validation.

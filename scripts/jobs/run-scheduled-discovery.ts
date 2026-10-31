@@ -129,7 +129,7 @@ export async function runForOwner(
     logger.error({ ownerId, ...describeError(error) }, 'Scheduled discovery failed to enqueue');
     // Only the classification crosses the trust boundary to an external
     // webhook, capped and stripped of control characters - matching
-    // monitor.sh/backup.sh's own discipline about what a network response
+    // monitor.sh's own discipline about what a network response
     // (here, an error's own message) is allowed to carry externally. The
     // error class name and code stay in the structured log; its message is never logged (Security
     // review, P2: the previous version forwarded the full String(error)

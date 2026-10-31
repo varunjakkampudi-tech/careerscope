@@ -1519,7 +1519,14 @@ try {
               response.status() !== 200
             )
               return false;
-            return (await response.json()).status === expectedStatus;
+            // Chromium can evict a response body before it is read on a loaded
+            // runner ("No data found for resource"). That response then does not
+            // match; the next poll answers, so keep waiting instead of failing.
+            try {
+              return (await response.json()).status === expectedStatus;
+            } catch {
+              return false;
+            }
           },
           { timeout: 15000 },
         );
@@ -3218,7 +3225,13 @@ try {
           response.status() !== 200
         )
           return false;
-        const body = await response.json();
+        // Same evicted-body race as waitForSearchStatusResponse: keep waiting.
+        let body: { items: { id: string; status: string }[] };
+        try {
+          body = await response.json();
+        } catch {
+          return false;
+        }
         return body.items.some(
           (run: { id: string; status: string }) =>
             run.id === submittedId && run.status === 'cancelled',

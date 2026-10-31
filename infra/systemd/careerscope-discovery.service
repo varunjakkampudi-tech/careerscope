@@ -6,7 +6,7 @@ Requires=docker.service
 [Service]
 Type=oneshot
 # Reuses CS-24's webhook env file - same alerting channel, no separate
-# webhook to configure unless BACKUP_WEBHOOK_URL-style separation is wanted
+# webhook to configure unless a separate channel is wanted
 # later.
 EnvironmentFile=-/etc/careerscope-monitor.env
 ExecStart=/usr/bin/docker exec careerscope-api-1 node --import tsx /app/scripts/jobs/run-scheduled-discovery.ts
@@ -15,8 +15,8 @@ ExecStart=/usr/bin/docker exec careerscope-api-1 node --import tsx /app/scripts/
 # unit's own process, so the sandboxing that matters is the api container's
 # own (unprivileged user, read_only, cap_drop ALL - see
 # compose.production.yml). No docker-socket access is needed here at all,
-# unlike CS-24/CS-25's monitor/backup, so this unit itself can be sandboxed
-# more tightly than theirs.
+# unlike CS-24's monitor, so this unit itself can be sandboxed
+# more tightly than the monitor.
 NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=yes

@@ -257,17 +257,13 @@
       "kind": "TABLE_REQUIREMENT",
       "context": "|---|---|---|",
       "text": "| D12 | Recovery point for application records: 1 hour | Continuous WAL archiving to an off-host store, confirmed by restore drill. If archiving is not ready by launch, the 24-hour fallback applies and candidates are told to re-check records after a restore |",
-      "assessment": "PARTIAL",
-      "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "Daily local encrypted dump with restore verification only (RPO up to 24 hours). No continuous WAL archiving, no off-host store, and no candidate-facing re-check notice for the 24-hour fallback.",
+      "assessment": "NOT_IMPLEMENTED",
+      "verification": "NOT_APPLICABLE",
+      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No WAL archiving, no off-host store and no candidate-facing re-check notice exist.",
       "launchBlocking": true,
       "evidence": {
-        "implementation": [
-          "infra/host/backup.sh:1",
-          "docs/operations/BACKUP.md:161",
-          "infra/systemd/careerscope-backup.timer:8"
-        ],
-        "tests": ["infra/checks/check-backup.sh:1"]
+        "implementation": ["docs/operations/HOSTINGER.md:151"],
+        "tests": []
       }
     },
     {
@@ -3732,7 +3728,7 @@
       "text": "- Resource limits per service (web, API, workers, Redis, database) set and load-tested",
       "assessment": "PARTIAL",
       "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "CPU and memory limits are set per service in the production compose file (checked statically by infra/checks/check-production-config.mjs, which check-backup.sh runs). They have not been load-tested against the v12 scenarios (see 7-001).",
+      "gap": "CPU and memory limits are set per service in the production compose file (checked statically by infra/checks/check-production-config.mjs, which CI runs). They have not been load-tested against the v12 scenarios (see 7-001).",
       "launchBlocking": true,
       "evidence": {
         "implementation": [
@@ -3742,7 +3738,7 @@
           "infra/docker/compose.production.yml:158",
           "infra/docker/compose.production.yml:201"
         ],
-        "tests": ["infra/checks/check-backup.sh:1"]
+        "tests": ["infra/checks/check-production-config.mjs:1"]
       }
     },
     {
@@ -3845,13 +3841,13 @@
       "kind": "CLAUSE",
       "context": "Recovery targets:",
       "text": "- Recovery point objective: 1 hour for user-created application records, using continuous WAL archiving to an off-host store (D12). Fallback if archiving is not ready by launch: 24 hours, with candidates told to re-check records after a restore",
-      "assessment": "PARTIAL",
-      "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "Backups are one dump per day (RPO up to 24 hours, about 48 if a run fails). No continuous WAL archiving and no off-host store, so the 1-hour objective is not met and the 24-hour fallback applies; the candidate-facing re-check notice is not implemented.",
+      "assessment": "NOT_IMPLEMENTED",
+      "verification": "NOT_APPLICABLE",
+      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. The 1-hour recovery point is not met and no 24-hour fallback is in place.",
       "launchBlocking": true,
       "evidence": {
-        "implementation": ["infra/host/backup.sh:1", "docs/operations/BACKUP.md:161"],
-        "tests": ["infra/checks/check-backup.sh:1"]
+        "implementation": ["docs/operations/HOSTINGER.md:151"],
+        "tests": []
       }
     },
     {
@@ -3862,14 +3858,14 @@
       "kind": "CLAUSE",
       "context": "Recovery targets:",
       "text": "- Recovery time objective: service restored within 4 hours",
-      "assessment": "OWNER_EVIDENCE",
-      "verification": "OWNER_EVIDENCE_PENDING",
-      "ownerEvidenceNeeded": "A timed restore on a scratch host at realistic data size. BACKUP.md states the 4-hour target and marks restore time at production size as assumed, not measured.",
+      "assessment": "NOT_IMPLEMENTED",
+      "verification": "NOT_APPLICABLE",
       "launchBlocking": true,
       "evidence": {
-        "implementation": ["docs/operations/BACKUP.md:162", "docs/operations/BACKUP.md:179"],
+        "implementation": ["docs/operations/HOSTINGER.md:151"],
         "tests": []
-      }
+      },
+      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No recovery time has been measured."
     },
     {
       "id": "V12-6-009",
@@ -3879,14 +3875,14 @@
       "kind": "CLAUSE",
       "context": "Recovery targets:",
       "text": "- Restore drill: performed before launch and monthly after. Drill result recorded in the go/no-go checklist",
-      "assessment": "OWNER_EVIDENCE",
-      "verification": "OWNER_EVIDENCE_PENDING",
-      "ownerEvidenceNeeded": "A restore drill before launch and monthly, with the result recorded in the go/no-go checklist. check-backup.sh restores a fixture dump on every CI run but that is not a drill.",
+      "assessment": "NOT_IMPLEMENTED",
+      "verification": "NOT_APPLICABLE",
       "launchBlocking": true,
       "evidence": {
-        "implementation": ["docs/operations/BACKUP.md:179"],
-        "tests": ["infra/checks/check-backup.sh:1"]
-      }
+        "implementation": ["docs/operations/HOSTINGER.md:151"],
+        "tests": []
+      },
+      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No restore drill has been performed or can run until a backup exists."
     },
     {
       "id": "V12-6-010",
@@ -3915,10 +3911,10 @@
       "text": "- Off-host copy required before launch",
       "assessment": "NOT_IMPLEMENTED",
       "verification": "NOT_APPLICABLE",
-      "gap": "No off-host copy mechanism. BACKUP.md and HOSTINGER.md state there is no automated off-host copy; a skipped-for-cost owner decision is recorded.",
+      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No off-host copy mechanism exists.",
       "launchBlocking": true,
       "evidence": {
-        "implementation": ["docs/operations/BACKUP.md:124", "docs/operations/HOSTINGER.md:151"],
+        "implementation": ["docs/operations/HOSTINGER.md:151"],
         "tests": []
       }
     },
@@ -3930,13 +3926,13 @@
       "kind": "CLAUSE",
       "context": "Backups:",
       "text": "- Restore tested to a separate environment",
-      "assessment": "PARTIAL",
-      "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "Each backup run restores into a disposable database in the same container and CI restores a fixture into a throwaway container. No restore to a separate environment has been performed.",
+      "assessment": "NOT_IMPLEMENTED",
+      "verification": "NOT_APPLICABLE",
+      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No restore to a separate environment exists.",
       "launchBlocking": true,
       "evidence": {
-        "implementation": ["infra/host/backup.sh:1", "docs/operations/BACKUP.md:179"],
-        "tests": ["infra/checks/check-backup.sh:1"]
+        "implementation": ["docs/operations/HOSTINGER.md:151"],
+        "tests": []
       }
     },
     {
@@ -4474,14 +4470,14 @@
       "kind": "CLAUSE",
       "context": "Acceptance tests that must pass before launch:",
       "text": "- Restore drill meets the 1-hour recovery point and 4-hour recovery time targets, or the 24-hour fallback is in effect and disclosed internally",
-      "assessment": "OWNER_EVIDENCE",
-      "verification": "OWNER_EVIDENCE_PENDING",
-      "ownerEvidenceNeeded": "A timed restore drill with the measured recovery point and time. The current design meets neither the 1-hour recovery point (daily backups) nor is the 4-hour time measured; the 24-hour fallback would have to be disclosed internally.",
+      "assessment": "NOT_IMPLEMENTED",
+      "verification": "NOT_APPLICABLE",
       "launchBlocking": true,
       "evidence": {
-        "implementation": ["docs/operations/BACKUP.md:161", "docs/operations/BACKUP.md:162"],
+        "implementation": ["docs/operations/HOSTINGER.md:151"],
         "tests": []
-      }
+      },
+      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No restore drill measures a recovery point or time."
     },
     {
       "id": "V12-7-020",
@@ -4596,14 +4592,10 @@
       "text": "- Alerts: downtime, error spikes, sync failures, AI spend, bounce rate, failed jobs, sign-in outage",
       "assessment": "PARTIAL",
       "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "Alerts exist for unreachable or unhealthy API, stopped workers, stale queues, backup failure and stopped timers. No alert for error spikes, sync failures, bounce rate or sign-in outage, and AI spend does not exist.",
+      "gap": "Alerts exist for unreachable or unhealthy API, stopped workers, stale queues and stopped timers. The backup-failure alert was removed with the Hostinger backup on 2026-10-31. No alert for error spikes, sync failures, bounce rate or sign-in outage, and AI spend does not exist.",
       "launchBlocking": true,
       "evidence": {
-        "implementation": [
-          "infra/host/monitor.sh:1",
-          "infra/host/scheduler-health.sh:1",
-          "infra/host/backup.sh:1"
-        ],
+        "implementation": ["infra/host/monitor.sh:1", "infra/host/scheduler-health.sh:1"],
         "tests": [],
         "checks": ["infra/checks/check-monitoring.sh:1"]
       }
@@ -5225,10 +5217,10 @@
       "text": "| Off-host WAL archive store | 1-hour recovery point | Owner | To do |",
       "assessment": "OWNER_EVIDENCE",
       "verification": "OWNER_EVIDENCE_PENDING",
-      "ownerEvidenceNeeded": "An off-host WAL archive store, and the WAL archiving that would use it (not implemented).",
+      "ownerEvidenceNeeded": "An off-host WAL archive store, and the WAL archiving that would use it (not implemented). The Hostinger backup was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch.",
       "launchBlocking": true,
       "evidence": {
-        "implementation": ["docs/operations/BACKUP.md:124"],
+        "implementation": ["docs/operations/HOSTINGER.md:151"],
         "tests": []
       }
     },
@@ -5453,14 +5445,14 @@
       "text": "- Operations: failure domain plan, recovery targets, degraded modes, and platform failure tests pass",
       "assessment": "PARTIAL",
       "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "Resource limits, recovery targets and some degraded-mode tests exist. The failure-domain plan, the 1-hour recovery point and default-CI platform failure tests are missing (see 6-003, 6-007, 7-018).",
+      "gap": "Resource limits and some degraded-mode tests exist. The failure-domain plan, default-CI platform failure tests and any backup or recovery point are missing: the Hostinger backup was removed on 2026-10-31 by owner decision and backup for the new server must be designed and verified before launch (see 6-003, 6-007, 7-018).",
       "launchBlocking": true,
       "evidence": {
         "implementation": [
           "infra/docker/compose.production.yml:64",
-          "docs/operations/BACKUP.md:161"
+          "docs/operations/HOSTINGER.md:151"
         ],
-        "tests": ["infra/checks/check-backup.sh:1"]
+        "tests": ["infra/checks/check-production-config.mjs:1"]
       }
     },
     {
@@ -5725,10 +5717,10 @@
       "text": "| 9 | 1-hour recovery point with WAL archiving; restore drill meets target | D12 | | | | Critical |",
       "assessment": "NOT_IMPLEMENTED",
       "verification": "NOT_APPLICABLE",
-      "gap": "No WAL archiving and no recovery-point drill meeting 1 hour (see 6-007).",
+      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No WAL archiving and no recovery-point drill (see 6-007).",
       "launchBlocking": true,
       "evidence": {
-        "implementation": ["docs/operations/BACKUP.md:161"],
+        "implementation": ["docs/operations/HOSTINGER.md:151"],
         "tests": []
       }
     },
@@ -5742,10 +5734,10 @@
       "text": "| 10 | Off-host backup copy in place | section 6 | | | | Critical |",
       "assessment": "NOT_IMPLEMENTED",
       "verification": "NOT_APPLICABLE",
-      "gap": "No off-host backup copy mechanism (see 6-011).",
+      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No off-host backup copy (see 6-011).",
       "launchBlocking": true,
       "evidence": {
-        "implementation": ["docs/operations/BACKUP.md:124"],
+        "implementation": ["docs/operations/HOSTINGER.md:151"],
         "tests": []
       }
     },
@@ -5914,7 +5906,7 @@
       "launchBlocking": true,
       "evidence": {
         "implementation": ["infra/docker/compose.production.yml:64"],
-        "tests": ["infra/checks/check-backup.sh:1"]
+        "tests": ["infra/checks/check-production-config.mjs:1"]
       }
     },
     {

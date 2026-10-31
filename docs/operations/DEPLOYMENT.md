@@ -35,9 +35,6 @@ All under [infra](../../infra), in `host/` (run on or against the host) and `che
 | `host/setup-monitoring.sh`            | Installs the host monitor (systemd timer). See [MONITORING.md](MONITORING.md)                     |
 | `host/monitor.sh`                     | The monitor itself — unreachable/unhealthy/stopped/stale/ok, alerts on change                     |
 | `checks/check-monitoring.sh`          | Proves the monitor's classification and alerting logic against stub `docker`/`curl`               |
-| `host/setup-backup.sh`                | Installs the host backup job (systemd timer). See [BACKUP.md](BACKUP.md)                          |
-| `host/backup.sh`                      | Dumps, verifies by restoring into a scratch database, promotes, retains                           |
-| `checks/check-backup.sh`              | Proves the pipeline against a real disposable Postgres container                                  |
 | `host/setup-discovery.sh`             | Installs the scheduled-discovery timer. See [DISCOVERY-SCHEDULE.md](DISCOVERY-SCHEDULE.md)        |
 | `host/setup-lead-lifecycle.sh`        | Installs the liveness/retention timers. See [LEAD-LIFECYCLE.md](LEAD-LIFECYCLE.md)                |
 | `host/setup-proxy-recovery.sh`        | Installs the proxy split-brain detector/auto-recovery. See [PROXY-RECOVERY.md](PROXY-RECOVERY.md) |
@@ -206,34 +203,6 @@ and re-run `setup-monitoring.sh` (idempotent) so the timer picks it up. See
 manual "stop a container and observe" proof this ticket's acceptance criteria
 require, and the known limitation (nothing currently watches the watcher).
 Remove this section once the step has been exercised against production.
-
----
-
-## One-time follow-up required for the CS-25 release
-
-CS-25 ("no scheduled database dump exists, even on the host") adds a
-host-native daily backup, same reasoning as CS-24: it is host state, not
-application state, so it is installed once, manually, not via
-`apply-migrations.sh`:
-
-```bash
-ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST> "
-  cd /opt/careerscope/infra &&
-  bash host/setup-backup.sh
-"
-```
-
-Before running, set dump encryption in `/etc/careerscope-backup.env`:
-`BACKUP_AGE_RECIPIENT` (with `age` installed) or `BACKUP_GPG_PASSPHRASE_FILE`
-(mode 0600, not under `/root` or `/home`, because the unit has `ProtectHome=yes`),
-and optionally `BACKUP_KEY_DIR`. `setup-backup.sh` preflights these, prints guidance
-and skips the immediate backup (exit 1) if they are not usable; otherwise it runs one
-real backup immediately (dump, restore-verify, encrypt,
-promote) so the first proof doesn't wait for 03:30. See
-[docs/operations/BACKUP.md](BACKUP.md) for the full design, how to actually
-restore from a produced dump, and the known limitation (nothing currently
-watches the watcher — shared with CS-24). Remove this section once the step
-has been exercised against production.
 
 ---
 

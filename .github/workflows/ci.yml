@@ -340,9 +340,9 @@ jobs:
         if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration"]'), inputs.suite)
         run: npm run test:query-budget
 
-      - name: Verify backup, restore and retention against a throwaway PostgreSQL container
-        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration","recovery"]'), inputs.suite)
-        run: bash infra/checks/check-backup.sh
+      - name: Verify the production image, compose file, Redis secret rendering and resume-key bootstrap
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration"]'), inputs.suite)
+        run: node infra/checks/check-production-config.mjs
 
       - name: Install selected Playwright browser and system dependencies
         if: >-

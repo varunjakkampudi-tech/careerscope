@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# CS-47: "nothing watches the six unattended host timers themselves."
+# CS-47: "nothing watches the five unattended host timers themselves."
 #
-# One host-native scheduler-health checker for all six existing timers
-# (monitor, backup, discovery, liveness, retention, proxy-recovery), rather
-# than six separate ad-hoc watchdogs. It reads real systemd state only -
+# One host-native scheduler-health checker for all five existing timers
+# (monitor, discovery, liveness, retention, proxy-recovery), rather
+# than five separate ad-hoc watchdogs. It reads real systemd state only -
 # `systemctl show` / `systemctl list-timers` / `systemd-analyze calendar` -
 # derives each timer's expected interval from the unit itself where systemd
 # can tell it (TimersMonotonic for OnUnitActiveSec timers, the OnCalendar
@@ -25,34 +25,30 @@
 #   - an active timer has no next elapse scheduled at all
 #   - the triggered service ever failed (Result != success, or a non-zero
 #     ExecMainStatus, or ActiveState=failed)
-#   - FEWER than SCHEDULER_EXPECTED_COUNT (6) timers could be evaluated, or
-#     `systemctl list-timers` does not list all six
+#   - FEWER than SCHEDULER_EXPECTED_COUNT (5) timers could be evaluated, or
+#     `systemctl list-timers` does not list all five
 #
 # Severity/strictness follows the ticket's second-opinion ranking (AC3):
-#   HIGH   - backup, monitor, proxy-recovery
+#   HIGH   - monitor, proxy-recovery
 #   MEDIUM - discovery, liveness
 #   LOWER  - retention
-# Backup is the strictest of all: the ticket's own words are that a silently
-# dead backup timer is the worst case, because the owner would believe
-# recoverability exists when it does not. It therefore gets the smallest
-# grace fraction (10% of its own derived interval) of any timer here.
 #
 # NOT a dead-man's-switch: this runs ON the host it watches, so it dies with
 # the host. See docs/KNOWN-LIMITATIONS.md, "Nothing watches the watcher."
 #
 # Exit codes (deliberately NOT monitor.sh's always-0: this is a verifier as
-# well as an alerter, and a green exit must mean "I looked at all six and
+# well as an alerter, and a green exit must mean "I looked at all five and
 # they are fine"):
-#   0 - all six timers evaluated and healthy
+#   0 - all five timers evaluated and healthy
 #   1 - evaluated, and at least one timer is overdue/failed/disabled
 #   2 - structurally unable to verify (no systemctl, missing units, fewer
-#       than six timers evaluated, unreadable systemd output)
+#       than five timers evaluated, unreadable systemd output)
 set -euo pipefail
 
 SCHEDULER_WEBHOOK_URL=${SCHEDULER_WEBHOOK_URL:-${MONITOR_WEBHOOK_URL:-}}
 SCHEDULER_STATE_DIR=${SCHEDULER_STATE_DIR:-/var/lib/careerscope-monitor}
 SCHEDULER_RENOTIFY_SECONDS=${SCHEDULER_RENOTIFY_SECONDS:-21600}
-SCHEDULER_EXPECTED_COUNT=${SCHEDULER_EXPECTED_COUNT:-6}
+SCHEDULER_EXPECTED_COUNT=${SCHEDULER_EXPECTED_COUNT:-5}
 SCHEDULER_MAX_MESSAGE_CHARS=${SCHEDULER_MAX_MESSAGE_CHARS:-1500}
 CURL_TIMEOUT=${MONITOR_CURL_TIMEOUT:-10}
 # Overridable only for check-scheduler-health.sh's stub-based tests.
@@ -67,8 +63,7 @@ CURL_BIN=${MONITOR_CURL_BIN:-curl}
 # percentages matter for long-interval ones. Every floor here is larger than
 # the corresponding unit's own RandomizedDelaySec (300-600s), so a randomized
 # start is never mistaken for an overdue run.
-TIMER_POLICY="careerscope-backup.timer:HIGH:10:600
-careerscope-monitor.timer:HIGH:50:600
+TIMER_POLICY="careerscope-monitor.timer:HIGH:50:600
 careerscope-proxy-recovery.timer:HIGH:50:600
 careerscope-discovery.timer:MEDIUM:100:1800
 careerscope-liveness.timer:MEDIUM:100:1800
@@ -251,7 +246,7 @@ if ! command -v "$SYSTEMCTL_BIN" >/dev/null 2>&1; then
   record_structural "systemctl-missing" \
     "systemctl is not available - scheduler health could NOT be verified for any timer"
 else
-  # -- 1. independent cross-check: does systemd itself list all six? ------
+  # -- 1. independent cross-check: does systemd itself list all five? ------
   # An empty or short result set here is a failure, not a pass.
   timers_listed=""
   if ! timers_listed=$("$SYSTEMCTL_BIN" list-timers --all --no-pager 2>/dev/null); then
@@ -439,7 +434,7 @@ fi
 
 # -- 5. notify on change, or after the re-notify window -------------------
 # The notify decision is made BEFORE the message is logged, so that the
-# recovery line ("recovered - all six healthy again") reaches the journal and
+# recovery line ("recovered - all five healthy again") reaches the journal and
 # not only the webhook. Getting this the other way round meant the journal
 # showed a plain "ok" for a recovery, which is exactly the kind of quiet
 # reporting this ticket exists to remove.

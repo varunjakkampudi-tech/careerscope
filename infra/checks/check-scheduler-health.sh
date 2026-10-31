@@ -139,11 +139,10 @@ reset_fixtures() {
   rm -rf "$fixtures"; mkdir -p "$fixtures"
   write_monotonic_timer careerscope-monitor.timer 120 5min
   write_monotonic_timer careerscope-proxy-recovery.timer 60 2min
-  write_calendar_timer careerscope-backup.timer 3600 '*-*-* 03:30:00'
   write_calendar_timer careerscope-discovery.timer 3600 '*-*-* 06,18:00:00'
   write_calendar_timer careerscope-liveness.timer 3600 '*-*-* 04:00:00'
   write_calendar_timer careerscope-retention.timer 3600 'Sun *-*-* 05:00:00'
-  for svc in monitor proxy-recovery backup discovery liveness retention; do
+  for svc in monitor proxy-recovery discovery liveness retention; do
     write_service "careerscope-$svc.service"
   done
   rm -rf "$work/state"
@@ -182,22 +181,22 @@ alerts() { wc -l <"$calls_file" | tr -d ' '; }
 names() { grep -o "$1" "$work/stdout" | wc -l | tr -d ' '; }
 occurrences() { grep -o "$1" "$work/stdout" | wc -l | tr -d ' '; }
 
-echo "== VALID INPUT: all six timers present, recent, successful"
+echo "== VALID INPUT: all five timers present, recent, successful"
 reset_fixtures
 run_check >/dev/null
 check "exit 0 when every watched timer is healthy" "$exit_code" "0"
 check "reports ok" "$(grep -c 'scheduler health: ok' "$work/stdout")" "1"
 check "no alert sent when healthy" "$(alerts)" "0"
-check "the healthy line states all six were checked" "$(grep -c 'all 6 timers' "$work/stdout")" "1"
+check "the healthy line states all five were checked" "$(grep -c 'all 5 timers' "$work/stdout")" "1"
 
-echo "== INVALID INPUT: one timer overdue (backup, the strictest)"
+echo "== INVALID INPUT: one timer overdue (monitor, a HIGH timer)"
 reset_fixtures
-write_calendar_timer careerscope-backup.timer $((36 * 3600)) '*-*-* 03:30:00'
+write_monotonic_timer careerscope-monitor.timer 7200 5min
 run_check >/dev/null
 check "overdue timer exits non-zero" "$exit_code" "1"
-check "the alert names the overdue timer" "$(names 'careerscope-backup.timer: OVERDUE')" "1"
-check "it is marked HIGH per the ticket ranking" "$(occurrences '\[HIGH\] careerscope-backup.timer')" "1"
-check "no other timer is named" "$(names 'careerscope-monitor.timer')" "0"
+check "the alert names the overdue timer" "$(names 'careerscope-monitor.timer: OVERDUE')" "1"
+check "it is marked HIGH per the ticket ranking" "$(occurrences '\[HIGH\] careerscope-monitor.timer')" "1"
+check "no other timer is named" "$(names 'careerscope-proxy-recovery.timer')" "0"
 check "exactly one aggregated alert is sent" "$(alerts)" "1"
 
 echo "== INVALID INPUT: a service that ran but did NOT succeed"
@@ -223,18 +222,18 @@ check "the alert says nothing is scheduling it" "$(names 'careerscope-liveness.t
 
 echo "== MALFORMED INPUT: LastTriggerUSec is n/a (never fired)"
 reset_fixtures
-sed -i 's/^LastTriggerUSec=.*/LastTriggerUSec=n\/a/' "$fixtures/careerscope-backup.timer"
+sed -i 's/^LastTriggerUSec=.*/LastTriggerUSec=n\/a/' "$fixtures/careerscope-discovery.timer"
 run_check >/dev/null
 check "n/a last-trigger exits non-zero" "$exit_code" "1"
 check "it is reported as never having run, not as healthy" "$(names 'has never recorded a run')" "1"
 
 echo "== MALFORMED INPUT: LastTriggerUSec is 0 / epoch-like"
 reset_fixtures
-sed -i 's/^LastTriggerUSec=.*/LastTriggerUSec=0/' "$fixtures/careerscope-backup.timer"
+sed -i 's/^LastTriggerUSec=.*/LastTriggerUSec=0/' "$fixtures/careerscope-discovery.timer"
 run_check >/dev/null
 check "zero last-trigger exits non-zero" "$exit_code" "1"
 reset_fixtures
-sed -i 's/^LastTriggerUSec=.*/LastTriggerUSec=Thu 1970-01-01 00:00:00 UTC/' "$fixtures/careerscope-backup.timer"
+sed -i 's/^LastTriggerUSec=.*/LastTriggerUSec=Thu 1970-01-01 00:00:00 UTC/' "$fixtures/careerscope-discovery.timer"
 run_check >/dev/null
 check "epoch last-trigger exits non-zero" "$exit_code" "1"
 
@@ -256,16 +255,16 @@ echo "== MALFORMED INPUT: systemd-analyze missing (calendar intervals underivabl
 reset_fixtures
 ANALYZE_OVERRIDE="$work/no-such-systemd-analyze" run_check >/dev/null
 check "missing systemd-analyze exits non-zero" "$exit_code" "1"
-check "all four calendar timers are named, not skipped" "$(occurrences 'could not derive the expected interval')" "4"
-check "backup is among them" "$(names 'careerscope-backup.timer: could not derive')" "1"
+check "all three calendar timers are named, not skipped" "$(occurrences 'could not derive the expected interval')" "3"
+check "discovery is among them" "$(names 'careerscope-discovery.timer: could not derive')" "1"
 
 echo "== MISSING UNIT: one timer is not installed at all"
 reset_fixtures
-rm -f "$fixtures/careerscope-backup.timer"
+rm -f "$fixtures/careerscope-discovery.timer"
 run_check >/dev/null
 check "a missing timer unit exits 2 (structurally unverifiable)" "$exit_code" "2"
-check "it names the missing unit" "$(names 'careerscope-backup.timer: not installed')" "1"
-check "it refuses to call 5 of 6 a pass" "$(occurrences 'only 5 of 6 expected timers could be evaluated')" "1"
+check "it names the missing unit" "$(names 'careerscope-discovery.timer: not installed')" "1"
+check "it refuses to call 4 of 5 a pass" "$(occurrences 'only 4 of 5 expected timers could be evaluated')" "1"
 check "systemctl list-timers shortfall is reported too" "$(occurrences 'appear in systemctl list-timers')" "1"
 check "the run is never described as ok" "$(grep -c 'scheduler health: ok' "$work/stdout")" "0"
 
@@ -273,20 +272,20 @@ echo "== MALFORMED INPUT: systemctl returns garbage"
 reset_fixtures
 FAKE_SYSTEMCTL_MODE=show-garbage run_check >/dev/null
 check "garbage systemctl output exits 2" "$exit_code" "2"
-check "it says the output could not be parsed, once per timer" "$(occurrences 'could not be parsed')" "6"
+check "it says the output could not be parsed, once per timer" "$(occurrences 'could not be parsed')" "5"
 check "it never reports healthy" "$(grep -c 'scheduler health: ok' "$work/stdout")" "0"
 
 echo "== MALFORMED INPUT: systemctl returns nothing"
 reset_fixtures
 FAKE_SYSTEMCTL_MODE=show-empty run_check >/dev/null
 check "empty systemctl output exits 2" "$exit_code" "2"
-check "an empty read is reported, not swallowed" "$(occurrences 'returned no output')" "6"
+check "an empty read is reported, not swallowed" "$(occurrences 'returned no output')" "5"
 
 echo "== MALFORMED INPUT: systemctl itself errors"
 reset_fixtures
 FAKE_SYSTEMCTL_MODE=show-error run_check >/dev/null
 check "a failing systemctl exits 2" "$exit_code" "2"
-check "the failure is named per timer" "$(occurrences 'systemctl show failed')" "6"
+check "the failure is named per timer" "$(occurrences 'systemctl show failed')" "5"
 
 echo "== MALFORMED INPUT: systemctl list-timers is empty"
 reset_fixtures
@@ -301,33 +300,34 @@ check "no systemctl exits 2" "$exit_code" "2"
 check "it says it could not verify anything" "$(grep -c 'could NOT be verified for any timer' "$work/stdout")" "1"
 check "it still alerts rather than dying quietly" "$(alerts)" "1"
 
-echo "== AC3 ranking: the same relative overrun alerts on HIGH but not on LOWER"
+echo "== AC3 ranking: a HIGH timer alerts on a short overrun that a LOWER timer tolerates"
 reset_fixtures
-# backup runs daily, 36h since its last run = 1.5x its interval -> overdue
-# retention runs weekly, 10.5d since its last run = 1.5x its interval -> inside
-# the lower-priority grace. Same relative lateness, different severity.
-write_calendar_timer careerscope-backup.timer $((36 * 3600)) '*-*-* 03:30:00'
-write_calendar_timer careerscope-retention.timer $((252 * 3600)) 'Sun *-*-* 05:00:00'
+# monitor runs every 5 minutes and is allowed 10 minutes of grace: 25 minutes
+# since its last run -> overdue.
+# retention runs weekly and is allowed 200% grace: 14 days since its last run
+# (2x its interval) -> still inside the lower-priority grace.
+write_monotonic_timer careerscope-monitor.timer 1500 5min
+write_calendar_timer careerscope-retention.timer $((336 * 3600)) 'Sun *-*-* 05:00:00'
 run_check >/dev/null
-check "HIGH backup is overdue at 1.5x its interval" "$(names 'careerscope-backup.timer: OVERDUE')" "1"
-check "LOWER retention is not, at the same 1.5x" "$(names 'careerscope-retention.timer: OVERDUE')" "0"
+check "HIGH monitor is overdue at 25 minutes" "$(names 'careerscope-monitor.timer: OVERDUE')" "1"
+check "LOWER retention is not, at 2x its interval" "$(names 'careerscope-retention.timer: OVERDUE')" "0"
 
 echo "== aggregation: several broken timers produce ONE alert naming each"
 reset_fixtures
-write_calendar_timer careerscope-backup.timer $((96 * 3600)) '*-*-* 03:30:00'
+write_calendar_timer careerscope-discovery.timer $((96 * 3600)) '*-*-* 06,18:00:00'
 write_service careerscope-monitor.service failed failed 1
 sed -i 's/UnitFileState=enabled/UnitFileState=disabled/' "$fixtures/careerscope-retention.timer"
 run_check >/dev/null
 check "exit is non-zero" "$exit_code" "1"
 check "exactly one webhook POST for all three findings" "$(alerts)" "1"
-check "backup named" "$(names 'careerscope-backup.timer')" "1"
+check "discovery named" "$(names 'careerscope-discovery.timer')" "1"
 check "monitor named" "$(names 'careerscope-monitor.service')" "1"
 check "retention named" "$(names 'careerscope-retention.timer')" "1"
-check "the count is stated" "$(grep -c '3 problem(s) across 6 timers' "$work/stdout")" "1"
+check "the count is stated" "$(grep -c '3 problem(s) across 5 timers' "$work/stdout")" "1"
 
 echo "== alerting: edge-triggered, then recovery announced once"
 reset_fixtures
-write_calendar_timer careerscope-backup.timer $((96 * 3600)) '*-*-* 03:30:00'
+write_calendar_timer careerscope-discovery.timer $((96 * 3600)) '*-*-* 06,18:00:00'
 run_check >/dev/null
 check "first failing run alerts" "$(alerts)" "1"
 run_check >/dev/null
@@ -335,7 +335,7 @@ check "the identical unchanged failure does not re-alert" "$(alerts)" "1"
 check "but it still exits non-zero every time" "$exit_code" "1"
 # Deliberately not reset_fixtures here: the state file must survive so the
 # recovery transition is the thing being tested.
-write_calendar_timer careerscope-backup.timer 3600 '*-*-* 03:30:00'
+write_calendar_timer careerscope-discovery.timer 3600 '*-*-* 06,18:00:00'
 run_check >/dev/null
 check "recovery exits 0" "$exit_code" "0"
 check "recovery is announced once" "$(alerts)" "2"
@@ -345,14 +345,14 @@ check "staying healthy does not re-alert" "$(alerts)" "2"
 
 echo "== security: the webhook URL is never printed in full"
 reset_fixtures
-write_calendar_timer careerscope-backup.timer $((96 * 3600)) '*-*-* 03:30:00'
+write_calendar_timer careerscope-discovery.timer $((96 * 3600)) '*-*-* 06,18:00:00'
 run_check >/dev/null
 check "full webhook URL absent from stdout" "$(grep -c '/alert' "$work/stdout")" "0"
 check "full webhook URL absent from stderr" "$(grep -c '/alert' "$work/stderr")" "0"
 
 echo "== security: a plain-http webhook URL is refused, not silently sent over"
 reset_fixtures
-write_calendar_timer careerscope-backup.timer $((96 * 3600)) '*-*-* 03:30:00'
+write_calendar_timer careerscope-discovery.timer $((96 * 3600)) '*-*-* 06,18:00:00'
 WEBHOOK_OVERRIDE="http://hooks.example.test/alert" run_check >/dev/null
 check "insecure webhook is not posted to" "$(alerts)" "0"
 check "insecure webhook is refused, logged" "$(grep -c 'refusing to send' "$work/stderr")" "1"
@@ -361,10 +361,10 @@ check "the finding is still reported and still fails" "$exit_code" "1"
 echo "== sanitization: an unexpected systemd value is stripped and capped"
 reset_fixtures
 long_value="exit-code\"?&\$(id)<script>$(printf 'A%.0s' $(seq 1 200))"
-write_service careerscope-backup.service "$long_value" failed 1
+write_service careerscope-discovery.service "$long_value" failed 1
 run_check >/dev/null
 check "the run fails" "$exit_code" "1"
-check "the finding is still reported" "$(names 'careerscope-backup.service: last run did NOT succeed')" "1"
+check "the finding is still reported" "$(names 'careerscope-discovery.service: last run did NOT succeed')" "1"
 check "no double quote from the value reaches the message" "$(occurrences '\"')" "0"
 check "no shell/HTML metacharacters reach the message" "$(occurrences '[<>&$]')" "0"
 check "the value is capped at 64 characters" "$(occurrences 'A\{65,\}')" "0"

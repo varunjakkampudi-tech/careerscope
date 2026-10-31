@@ -9,8 +9,8 @@ export class ResumeKeyError extends Error {
   constructor(path, detail) {
     super(
       `Resume encryption key ${path} is ${detail}. Refusing to start and not overwriting it. ` +
-        'Restore the matching key copy from the backup key directory (docs/operations/BACKUP.md, ' +
-        '"Restoring for real", step 3). Only if no resume was ever stored may the file be deleted ' +
+        'Restore the matching key copy from wherever the owner keeps it. ' +
+        'Only if no resume was ever stored may the file be deleted ' +
         'so that this step creates a new key.',
     );
     this.name = 'ResumeKeyError';

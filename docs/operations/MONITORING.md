@@ -107,18 +107,17 @@ now watches whether this timer (and the other five) is still firing. It does
 
 ---
 
-# Scheduler health — watching the six timers themselves (CS-47)
+# Scheduler health — watching the five timers themselves (CS-47)
 
 ## Why this exists
 
-Six systemd timers now run unattended: `careerscope-monitor.timer`,
-`careerscope-backup.timer`, `careerscope-discovery.timer`,
+Five systemd timers now run unattended: `careerscope-monitor.timer`,
+`careerscope-discovery.timer`,
 `careerscope-liveness.timer`, `careerscope-retention.timer` and
 `careerscope-proxy-recovery.timer`. If any one of them silently stops firing,
-nothing alerted on that absence. The worst case is the backup timer: the
-owner would believe recoverability exists when it does not.
+nothing alerted on that absence.
 
-`infra/host/scheduler-health.sh` is **one** checker for all six, not six
+`infra/host/scheduler-health.sh` is **one** checker for all five, not five
 watchdogs.
 
 ## What it checks, per timer
@@ -149,20 +148,17 @@ start is never mistaken for a missed run.
 
 | Timer                              | Rank   | Grace                     |
 | ---------------------------------- | ------ | ------------------------- |
-| `careerscope-backup.timer`         | HIGH   | 10% of interval, min 10m  |
 | `careerscope-monitor.timer`        | HIGH   | 50% of interval, min 10m  |
 | `careerscope-proxy-recovery.timer` | HIGH   | 50% of interval, min 10m  |
 | `careerscope-discovery.timer`      | MEDIUM | 100% of interval, min 30m |
 | `careerscope-liveness.timer`       | MEDIUM | 100% of interval, min 30m |
 | `careerscope-retention.timer`      | LOWER  | 200% of interval, min 1h  |
 
-Backup is deliberately the strictest of the six.
-
 ## "I could not look" is never "everything is fine"
 
 This is the design rule of the script. A missing `systemctl`, an erroring or
 empty `systemctl show`, output that does not parse, a unit that is absent, or
-any run in which **fewer than six** timers could be evaluated, are all
+any run in which **fewer than five** timers could be evaluated, are all
 reported loudly and exit non-zero. There is no code path in which an
 unreadable state produces a healthy report.
 
@@ -210,7 +206,7 @@ bash infra/checks/check-scheduler-health.sh
 ```
 
 Runs entirely against stub `systemctl`, `systemd-analyze` and `curl` binaries:
-a healthy six-timer host passes, and every failure mode above is asserted to
+a healthy five-timer host passes, and every failure mode above is asserted to
 fail loudly — an overdue timer, a failed service, a disabled timer, an
 inactive timer, an `n/a`/`0`/epoch/garbage last-trigger, an underivable
 interval, a missing unit, garbage/empty/erroring/absent `systemctl`, an empty

@@ -50,7 +50,7 @@ This is the single index of CareerScope documentation. Every document under
 ## Operations
 
 - [DEPLOYMENT](operations/DEPLOYMENT.md) - guarded manual deployment
-- [ROLLBACK](operations/ROLLBACK.md), [BACKUP](operations/BACKUP.md) and [SECRETS](operations/SECRETS.md)
+- [ROLLBACK](operations/ROLLBACK.md) and [SECRETS](operations/SECRETS.md)
 - [MONITORING](operations/MONITORING.md), [FIREWALL](operations/FIREWALL.md) and [PROXY-RECOVERY](operations/PROXY-RECOVERY.md)
 - [HOSTINGER](operations/HOSTINGER.md) - host description and access
 - [DISCOVERY-SCHEDULE](operations/DISCOVERY-SCHEDULE.md) and [LEAD-LIFECYCLE](operations/LEAD-LIFECYCLE.md)

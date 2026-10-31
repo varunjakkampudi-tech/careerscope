@@ -7,7 +7,7 @@ volumes. Never paste values into commands, reports, screenshots or logs.
 | --------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Database password                 | Database and API/workers              | Protected host environment; coordinate rotation                                                                                                                                                                                                                      |
 | Redis password (`REDIS_PASSWORD`) | Both Redis instances, API and workers | Required in production; compose refuses to start without it; generated on the host by `deploy.sh` into `infra/.env`; never commit it                                                                                                                                 |
-| Resume encryption key             | API/files worker                      | Private key file and secure backup; do not regenerate over existing data                                                                                                                                                                                             |
+| Resume encryption key             | API/files worker                      | Private key file kept outside the object store; do not regenerate over existing data                                                                                                                                                                                 |
 | Session tokens                    | Browser/API                           | HttpOnly cookie; only hashes in the database; revoke server-side                                                                                                                                                                                                     |
 | TLS and ACME keys                 | Caddy                                 | Persistent private certificate volume                                                                                                                                                                                                                                |
 | Staging password hash             | Caddy only                            | Generate interactively; plaintext password never enters source                                                                                                                                                                                                       |
@@ -27,7 +27,7 @@ require the operator's separate procedure. No real credentials are rotated by
 repository cleanup.
 
 See [Private test access](../AUTHENTICATION.md),
-[Privacy](../PRIVACY.md), [Backup](BACKUP.md) and [Deployment](DEPLOYMENT.md).
+[Privacy](../PRIVACY.md) and [Deployment](DEPLOYMENT.md).
 
 ## Non-secret database and test tuning variables
 
@@ -54,6 +54,6 @@ other read is allowed on purpose: the renderers write the files as `0440` (`999:
 `0700` directory, so only the container user can reach them. Errors name only the variable, never the
 path or the content.
 
-The webhook URLs (`MONITOR_WEBHOOK_URL`, `BACKUP_WEBHOOK_URL`, `SCHEDULER_WEBHOOK_URL`) are credentials. Every
+The webhook URLs (`MONITOR_WEBHOOK_URL`, `SCHEDULER_WEBHOOK_URL`) are credentials. Every
 host script hands the URL to curl through a `-K` config on a pipe, so it never appears in a process
 list, and refuses a non-https URL or one containing a quote, backslash or line break.

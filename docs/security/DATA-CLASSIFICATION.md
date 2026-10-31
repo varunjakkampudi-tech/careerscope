@@ -44,21 +44,20 @@ describes a person), **Private content** (user-authored or user-uploaded),
 | Upload metadata (size, type, object version) | Operational               | `resume_uploads`                                                         | Owner-scoped; contains no content                                                                                                                                                                                                                                                                                                                                                                                                        | With the upload                                                                     |
 | Parsed resume text and derived skills        | Personal, private content | `resume_results.parsed` (JSONB, plaintext in the database)               | Owner-scoped; only the derived sub-document is read into search snapshots. Protected by database access control and host disk controls, not by field encryption                                                                                                                                                                                                                                                                          | With the upload                                                                     |
 
-Known gap: parsed text lives unencrypted in PostgreSQL, so database dumps hold
-resume content. Dumps are therefore treated as Personal data: 0600 files in a
-0700 directory, root only, and encrypted (age, else gpg symmetric) before they
-are promoted, so a copy of `BACKUP_DIR` that leaves the host is ciphertext.
+Known gap: parsed text lives unencrypted in PostgreSQL, so any database dump
+holds resume content. Dumps must be treated as Personal data and encrypted
+before they leave the database host. No host dump job exists today; the backup
+design for the new server is pending.
 
 ## Work data and logs
 
-| Field                                  | Class       | Stored in                                                                       | Protection                                                                                                                                                                                          | Retention                                                        |
-| -------------------------------------- | ----------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Search query, request, source outcomes | Personal    | `search_runs`                                                                   | Owner-scoped; an idempotency hash is used only for comparison                                                                                                                                       | 30 days after creation for settled runs                          |
-| Collected jobs (public postings)       | Operational | `search_jobs.data`, `job_sightings`                                             | Owner-scoped                                                                                                                                                                                        | 30 days for `search_jobs`; sightings are kept                    |
-| Queue commands                         | Operational | `outbox_events.command`, Redis queue                                            | Identifiers only (owner, aggregate, correlation), no content. Redis is loopback-only, password-protected, AOF with noeviction                                                                       | Outbox rows kept; Redis completed jobs 24 h, failed jobs 14 days |
-| Notification events and deliveries     | Personal    | `notification_events.payload`, `notification_deliveries.last_error`             | Owner-scoped                                                                                                                                                                                        | Until delivered or dead-lettered (policy pending)                |
-| Application and worker logs            | Operational | Container stdout (JSON), rotated 10 MB x 5                                      | See log rules below                                                                                                                                                                                 | Bounded by rotation, about 50 MB per service                     |
-| Backups                                | Personal    | `BACKUP_DIR` (encrypted dump, resume archive) and the separate `BACKUP_KEY_DIR` | Root-only 0700/0600; the dump is encrypted before promotion; the resume archive is ciphertext; the key copy and the dump passphrase stay out of `BACKUP_DIR`; see [BACKUP](../operations/BACKUP.md) | 14 days (`BACKUP_RETENTION_DAYS`)                                |
+| Field                                  | Class       | Stored in                                                           | Protection                                                                                                                    | Retention                                                        |
+| -------------------------------------- | ----------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Search query, request, source outcomes | Personal    | `search_runs`                                                       | Owner-scoped; an idempotency hash is used only for comparison                                                                 | 30 days after creation for settled runs                          |
+| Collected jobs (public postings)       | Operational | `search_jobs.data`, `job_sightings`                                 | Owner-scoped                                                                                                                  | 30 days for `search_jobs`; sightings are kept                    |
+| Queue commands                         | Operational | `outbox_events.command`, Redis queue                                | Identifiers only (owner, aggregate, correlation), no content. Redis is loopback-only, password-protected, AOF with noeviction | Outbox rows kept; Redis completed jobs 24 h, failed jobs 14 days |
+| Notification events and deliveries     | Personal    | `notification_events.payload`, `notification_deliveries.last_error` | Owner-scoped                                                                                                                  | Until delivered or dead-lettered (policy pending)                |
+| Application and worker logs            | Operational | Container stdout (JSON), rotated 10 MB x 5                          | See log rules below                                                                                                           | Bounded by rotation, about 50 MB per service                     |
 
 Log rules: error message text is never logged, because free-text scrubbing cannot
 be made reliable. A logged failure carries only the error class name, a stable
@@ -95,9 +94,6 @@ authorization and staging-key headers and per-request logging is disabled.
 - `packages/core/src/failure.test.ts`: a logged failure carries the error name and code
   and never the message, stack, cause or error fields, including through the pino
   logger's `err` and `error` serialisers.
-- `infra/checks/check-backup.sh`: the promoted dump is not a plaintext archive
-  and decrypts to a restorable copy, and the run fails when no encryption is
-  available.
 
 Not verified: disk-level encryption of the host volume, the live retention
 timers and the legal retention periods.

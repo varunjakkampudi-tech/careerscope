@@ -148,7 +148,10 @@ any host change.
 
 ## What is not here
 
-There is **no off-host backup**. The Docker volumes on this machine are the only
-copy of the database and of stored resumes. This was skipped as an owner
-decision on cost. Local volumes are not disaster recovery and must not be
+There is **no application backup** on this host. The scheduled database dump,
+its restore verification and its freshness check were removed by owner decision
+on 2026-10-31, and no replacement exists. The Docker volumes on this machine are
+the only copy of the database and of stored resumes. The owner will buy a new
+server later, and backup and recovery for it are to be designed then. That
+design is pending. Local volumes are not disaster recovery and must not be
 described as such.

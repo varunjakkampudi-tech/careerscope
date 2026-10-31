@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 // Static and unit checks for the production image, compose file, Redis secret rendering and the
-// resume-key bootstrap. Needs only Node (no Docker). check-backup.sh runs it when node is on PATH,
-// which is how CI executes it.
+// resume-key bootstrap. Needs only Node (no Docker). CI runs it directly.
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import {
@@ -101,31 +100,6 @@ await check(
     );
     const others = body.slice(body.indexOf('\n  publisher:'), body.indexOf('\nsecrets:'));
     assert.equal(/EMAIL_OTP_HMAC_SECRET_FILE|resend-api-key/.test(others), false);
-  },
-);
-
-await check(
-  'the backup freshness check has a timer and a sandboxed unit, installed by setup-backup.sh',
-  () => {
-    const service = withoutComments(read('systemd/careerscope-backup-check.service'));
-    const timer = read('systemd/careerscope-backup-check.timer');
-    assert.match(
-      service,
-      /ExecStart=\/usr\/local\/bin\/careerscope-check-backup\.sh --status-only \/var\/backups\/careerscope/,
-    );
-    for (const line of [
-      'NoNewPrivileges=yes',
-      'ProtectSystem=strict',
-      'ProtectHome=yes',
-      'PrivateTmp=yes',
-    ]) {
-      assert.ok(service.includes(line), line);
-    }
-    assert.equal(/SuccessExitStatus/.test(service), false);
-    assert.match(timer, /OnCalendar=/);
-    const setup = read('host/setup-backup.sh');
-    assert.match(setup, /careerscope-backup-check\.timer/);
-    assert.match(setup, /systemctl enable --quiet careerscope-backup-check\.timer/);
   },
 );
 

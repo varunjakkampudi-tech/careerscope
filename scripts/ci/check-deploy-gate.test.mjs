@@ -219,7 +219,6 @@ test('CI cannot grant write permissions at workflow or job scope', () => {
 test('the root CI service topology is disposable, loopback-only and recovery-compatible', () => {
   const workflow = readFileSync(resolve('.github/workflows/ci.yml'), 'utf8');
   const fullDiskCheck = readFileSync(resolve('infra/checks/check-full-disk.mjs'), 'utf8');
-  const backupCheck = readFileSync(resolve('infra/checks/check-backup.sh'), 'utf8');
   const queueRuntimeCheck = readFileSync(resolve('scripts/tests/check-queue-runtime.ts'), 'utf8');
   const databaseRecoveryCheck = readFileSync(
     resolve('scripts/tests/check-database-recovery.ts'),
@@ -255,10 +254,6 @@ test('the root CI service topology is disposable, loopback-only and recovery-com
   );
   assert.match(queueRuntimeCheck, /redis:7\.4\.5-alpine@sha256:[a-f0-9]{64}/);
   assert.match(databaseRecoveryCheck, /postgres:17\.6-alpine@sha256:[a-f0-9]{64}/);
-  assert.ok(
-    backupCheck.includes(postgresImage),
-    'backup verification must use the CI PostgreSQL image',
-  );
   assert.ok(
     databaseRecoveryCheck.includes(postgresImage),
     'database recovery must use the CI PostgreSQL image',

@@ -35,7 +35,7 @@ not performed; the Gap lines say what is unverified.
 - **Evidence:** `docs/requirements/CareerScope-v12.md`, `docs/requirements/V12-REQUIREMENT-INVENTORY.json`, `docs/requirements/V12-RECONCILIATION.md`, `scripts/ci/check-requirements-inventory.mjs`, `scripts/ci/check-requirements-inventory.test.mjs`, `scripts/ci/check-traceability.test.mjs`
 - **Gate:** CI job `Quality gates`, step `npm run gates:test` (`npm run traceability:check` runs the inventory check; the tests run in `test:unit`)
 - **Verify:** `npm run requirements:check`
-- **Note:** Reconciliation is complete: every clause of the pinned source has a status, and CI fails on NOT_ASSESSED, a stale digest, a clause text that is not equal to its source line, or IMPLEMENTED without a CI-run test. Current counts: 319 clauses (67 IMPLEMENTED, 75 PARTIAL, 119 NOT_IMPLEMENTED, 50 OWNER_EVIDENCE, 8 OUT_OF_SCOPE_POST_LAUNCH); 165 launch-blocking gaps. Those gaps are open for later stages; see [V12-RECONCILIATION](requirements/V12-RECONCILIATION.md).
+- **Note:** Reconciliation is complete: every clause of the pinned source has a status, and CI fails on NOT_ASSESSED, a stale digest, a clause text that is not equal to its source line, or IMPLEMENTED without a CI-run test. Current counts: 319 clauses (67 IMPLEMENTED, 72 PARTIAL, 125 NOT_IMPLEMENTED, 47 OWNER_EVIDENCE, 8 OUT_OF_SCOPE_POST_LAUNCH); 165 launch-blocking gaps. Those gaps are open for later stages; see [V12-RECONCILIATION](requirements/V12-RECONCILIATION.md).
 
 ## 1.03 Preserve dev and main branches
 
@@ -108,7 +108,7 @@ not performed; the Gap lines say what is unverified.
 ## 1.12 Verify sensitive data separation and encryption
 
 - **Status:** Open
-- **Gap:** Code-level evidence exists: credentials are stored only as digests (database dump test) and resume objects are encrypted with a key held outside the object store. Verification on the running host is not done: key file mode and ownership in the live `private` volume, backup key custody separated from the ciphertext archive, and TLS and secret files as deployed. Those need the target environment and owner evidence.
+- **Gap:** Code-level evidence exists: credentials are stored only as digests (database dump test) and resume objects are encrypted with a key held outside the object store. Verification on the running host is not done: key file mode and ownership in the live `private` volume, and TLS and secret files as deployed. Those need the target environment and owner evidence.
 - **Evidence:** `docs/security/DATA-CLASSIFICATION.md`, `packages/core/src/sensitive-data.integration.test.ts`, `packages/core/src/file-storage.test.ts`, `docs/operations/SECRETS.md`
 - **Gate:** CI job `Services, integration, and browser suites`, step `npm run test:integration` (digests); job `Quality gates`, `test:unit` (file storage) and `npm run privacy:check`
 - **Verify:** `npm run test:integration`; host checks are not available from the repository
@@ -132,7 +132,7 @@ not performed; the Gap lines say what is unverified.
 ## 1.15 Preserve backups and recoverability
 
 - **Status:** Open
-- **Gap:** CI proves backup, encryption and restore of a fixture dump against a throwaway PostgreSQL container. There is no automated off-host copy, and no restore of a real host backup has been recorded. RTO and RPO at production size are assumed, not measured.
-- **Evidence:** `infra/checks/check-backup.sh`, `infra/host/backup.sh`, `docs/operations/BACKUP.md`, `scripts/tests/check-database-recovery.ts` (manual)
-- **Gate:** CI job `Services, integration, and browser suites`, step `bash infra/checks/check-backup.sh`; the `recovery` suite runs `npm run test:database-recovery` on manual dispatch only
-- **Verify:** `bash infra/checks/check-backup.sh` (needs Docker)
+- **Gap:** The Hostinger host backup was removed by owner decision on 2026-10-31, so the host has no application backup and no recoverability. Backup and recovery for the new server must be designed and verified before launch. RTO and RPO are unproven.
+- **Evidence:** `docs/operations/HOSTINGER.md`, `scripts/tests/check-database-recovery.ts` (manual)
+- **Gate:** None for host backup. The `recovery` suite runs `npm run test:database-recovery` (a synthetic dump and restore, not a host backup) on manual dispatch only
+- **Verify:** `npm run test:database-recovery` (needs Docker)

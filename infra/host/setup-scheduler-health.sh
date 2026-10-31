@@ -8,8 +8,8 @@
 # Set SCHEDULER_WEBHOOK_URL there only if you want this alert routed
 # somewhere other than MONITOR_WEBHOOK_URL.
 #
-# This watches the six timers installed by setup-monitoring.sh (CS-24),
-# setup-backup.sh (CS-25), setup-discovery.sh (CS-26), setup-lead-lifecycle.sh
+# This watches the five timers installed by setup-monitoring.sh (CS-24),
+# setup-discovery.sh (CS-26), setup-lead-lifecycle.sh
 # (CS-27) and setup-proxy-recovery.sh (CS-3). Install those first: until a
 # watched timer has actually fired once, this checker reports it as
 # "has never recorded a run" - deliberately, because it genuinely cannot
@@ -27,9 +27,9 @@ if ! command -v systemctl >/dev/null 2>&1; then
 fi
 
 # systemd-analyze ships with systemd, but this checker derives the expected
-# interval of the four calendar timers by asking it to expand their own
-# OnCalendar expressions. Without it those four cannot be checked, and this
-# script must not install something that would then report four permanent
+# interval of the three calendar timers by asking it to expand their own
+# OnCalendar expressions. Without it those three cannot be checked, and this
+# script must not install something that would then report three permanent
 # "could not derive" failures.
 if ! command -v systemd-analyze >/dev/null 2>&1; then
   echo "systemd-analyze is not present; refusing to install (the calendar timers' expected intervals cannot be derived without it)" >&2

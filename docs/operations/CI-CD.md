@@ -46,19 +46,18 @@ toolchain check, `drizzle-kit check`, and two dependency audits:
 build and the full audit; `domain` is a separate manual suite. An unaccepted
 high/critical advisory is a real failure; do not skip or waive the audit.
 
-| Check                       | Command                                          | Job              | Fails when                                                                                                                                                              |
-| --------------------------- | ------------------------------------------------ | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Policy gates and local gate | `npm run gates:test`                             | Quality gates    | Node policy, privacy, deploy gate, EOL, boundaries, traceability, format, lint, types or unit tests fail                                                                |
-| Toolchain                   | `npm run toolchain:check`                        | Quality gates    | `.nvmrc`, `engines.node`, the workflow `NODE_VERSION` or the Dockerfile Node major disagree, or Next.js or Fastify majors drift from the lockfile                       |
-| Migrations                  | `npm run migrations:check` (`drizzle-kit check`) | Quality gates    | The journal, SQL and snapshots are inconsistent                                                                                                                         |
-| Domain tests                | `npm run test:domain`                            | Quality gates    | A matching, providers, resume or shared test fails                                                                                                                      |
-| Production build            | `npm run build`                                  | Quality gates    | Compilation or the web build fails                                                                                                                                      |
-| Production audit            | `npm audit --omit=dev --audit-level=high`        | Quality gates    | A shipped dependency has a high or critical advisory                                                                                                                    |
-| Full-tree audit             | `npm audit --audit-level=high`                   | Quality gates    | Any dependency has a high or critical advisory                                                                                                                          |
-| Integration                 | `npm run test:integration` (serial)              | Services         | A PostgreSQL or Redis suite fails, under production database timeouts                                                                                                   |
-| Query budget                | `npm run test:query-budget`                      | Services         | The pool is not on the 10 s statement and 5 s connect defaults, or a representative query (run on an empty, freshly migrated schema, so not a volume test) exceeds 10 s |
-| Backup and restore          | `bash infra/checks/check-backup.sh`              | Services (Linux) | The dump, verify, promote, restore and retention pipeline fails against a throwaway PostgreSQL container                                                                |
-| Browser                     | `npm run test:ui`                                | Services         | A Chromium, Firefox or WebKit acceptance, axe or responsive check fails                                                                                                 |
+| Check                       | Command                                          | Job           | Fails when                                                                                                                                                              |
+| --------------------------- | ------------------------------------------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Policy gates and local gate | `npm run gates:test`                             | Quality gates | Node policy, privacy, deploy gate, EOL, boundaries, traceability, format, lint, types or unit tests fail                                                                |
+| Toolchain                   | `npm run toolchain:check`                        | Quality gates | `.nvmrc`, `engines.node`, the workflow `NODE_VERSION` or the Dockerfile Node major disagree, or Next.js or Fastify majors drift from the lockfile                       |
+| Migrations                  | `npm run migrations:check` (`drizzle-kit check`) | Quality gates | The journal, SQL and snapshots are inconsistent                                                                                                                         |
+| Domain tests                | `npm run test:domain`                            | Quality gates | A matching, providers, resume or shared test fails                                                                                                                      |
+| Production build            | `npm run build`                                  | Quality gates | Compilation or the web build fails                                                                                                                                      |
+| Production audit            | `npm audit --omit=dev --audit-level=high`        | Quality gates | A shipped dependency has a high or critical advisory                                                                                                                    |
+| Full-tree audit             | `npm audit --audit-level=high`                   | Quality gates | Any dependency has a high or critical advisory                                                                                                                          |
+| Integration                 | `npm run test:integration` (serial)              | Services      | A PostgreSQL or Redis suite fails, under production database timeouts                                                                                                   |
+| Query budget                | `npm run test:query-budget`                      | Services      | The pool is not on the 10 s statement and 5 s connect defaults, or a representative query (run on an empty, freshly migrated schema, so not a volume test) exceeds 10 s |
+| Browser                     | `npm run test:ui`                                | Services      | A Chromium, Firefox or WebKit acceptance, axe or responsive check fails                                                                                                 |
 
 `npm run test:ui` does not build or start the web app; the services job runs
 `npm run build` and starts `next start` on port 5280 first.
@@ -87,18 +86,18 @@ PostgreSQL is named explicitly for the recovery harness, uses a temporary
 filesystem, and receives only synthetic credentials. The job writes only a
 synthetic ephemeral `.env` in the runner. Suite mapping:
 
-| Manual suite    | Commands                                                                                                |
-| --------------- | ------------------------------------------------------------------------------------------------------- |
-| `all`           | Static checks, integration, browser/axe/responsive, domain, security audit, performance, soak, recovery |
-| `checks`        | Formatting, gates, build, full dependency audit                                                         |
-| `integration`   | `npm run test:integration`, `npm run test:query-budget`, `bash infra/checks/check-backup.sh`            |
-| `browser`       | `npm run test:ui` in the selected browser                                                               |
-| `cross-browser` | Browser suite on Chromium, Firefox, and WebKit                                                          |
-| `domain`        | `npm run test:domain`                                                                                   |
-| `security`      | Full dependency audit and privacy scan                                                                  |
-| `performance`   | `npm run test:performance` against ephemeral services                                                   |
-| `soak`          | `npm run test:soak` against ephemeral services                                                          |
-| `recovery`      | Backup check, queue runtime, database recovery, crash-recovery and full-disk commands                   |
+| Manual suite    | Commands                                                                                                 |
+| --------------- | -------------------------------------------------------------------------------------------------------- |
+| `all`           | Static checks, integration, browser/axe/responsive, domain, security audit, performance, soak, recovery  |
+| `checks`        | Formatting, gates, build, full dependency audit                                                          |
+| `integration`   | `npm run test:integration`, `npm run test:query-budget`, `node infra/checks/check-production-config.mjs` |
+| `browser`       | `npm run test:ui` in the selected browser                                                                |
+| `cross-browser` | Browser suite on Chromium, Firefox, and WebKit                                                           |
+| `domain`        | `npm run test:domain`                                                                                    |
+| `security`      | Full dependency audit and privacy scan                                                                   |
+| `performance`   | `npm run test:performance` against ephemeral services                                                    |
+| `soak`          | `npm run test:soak` against ephemeral services                                                           |
+| `recovery`      | Queue runtime, database recovery, crash-recovery and full-disk commands                                  |
 
 The browser command also runs axe, keyboard and responsive checks. It currently
 creates screenshots under `test-results`; these are not uploaded because their
