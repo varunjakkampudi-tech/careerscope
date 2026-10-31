@@ -9,6 +9,7 @@ import {
   analyze,
   analyzeStage,
   checkReconciliationProse,
+  findOrphanTests,
   parseStage,
 } from './check-traceability.mjs';
 
@@ -304,4 +305,54 @@ test('the Stage 1 register passes in the real repository', () => {
 test('the CLI passes on the real matrix', () => {
   const result = spawnSync(process.execPath, [checker], { encoding: 'utf8' });
   assert.equal(result.status, 0, result.stderr);
+});
+
+/** findOrphanTests on a throwaway (non-git) root with the given files, scripts, workflow and register. */
+function orphans({ files, scripts = defaultScripts, workflow, register }) {
+  const root = mkdtempSync(join(tmpdir(), 'careerscope-orphan-'));
+  try {
+    const entries = [['package.json', JSON.stringify({ scripts })], ...files.map((p) => [p, ''])];
+    if (workflow !== undefined) entries.push(['.github/workflows/ci.yml', workflow]);
+    if (register !== undefined) entries.push(['docs/STAGE-1.md', register]);
+    for (const [path, content] of entries) {
+      mkdirSync(dirname(join(root, path)), { recursive: true });
+      writeFileSync(join(root, path), content);
+    }
+    return findOrphanTests(root);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+}
+
+test('a test file that no CI script, workflow step or manual marker names is an orphan', () => {
+  const files = [
+    'src/a.test.ts',
+    'src/orphan.test.mjs',
+    'src/deep/x.integration.test.ts',
+    'src/a.ts',
+  ];
+  assert.deepEqual(orphans({ files }), ['src/deep/x.integration.test.ts', 'src/orphan.test.mjs']);
+  // A longer path that merely ends with the same name does not count as a reference.
+  assert.deepEqual(
+    orphans({ files: ['a.test.ts'], scripts: { 'test:unit': 'node --test src/a.test.ts' } }),
+    ['a.test.ts'],
+  );
+});
+
+test('a workflow step, a script reached through a workflow npm run, or a (manual) marker clears an orphan', () => {
+  const files = ['src/a.test.ts', 'src/w.test.mjs', 'src/n.test.ts', 'src/m.test.js'];
+  const scripts = { ...defaultScripts, 'test:extra': 'node --test src/n.test.ts' };
+  const workflow = [
+    'steps:',
+    '  - run: node --test src/w.test.mjs',
+    '  - run: npm run test:extra',
+  ].join('\n');
+  assert.deepEqual(orphans({ files, scripts, workflow }), ['src/m.test.js']);
+  const register =
+    '## 1.01 T' + String.fromCharCode(10) + '- **Evidence:** `src/m.test.js` (manual)';
+  assert.deepEqual(orphans({ files, scripts, workflow, register }), []);
+});
+
+test('the real repository has no orphan test files', () => {
+  assert.deepEqual(findOrphanTests(fileURLToPath(new URL('../..', import.meta.url))), []);
 });

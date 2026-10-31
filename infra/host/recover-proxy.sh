@@ -33,7 +33,8 @@ CURL_BIN=${MONITOR_CURL_BIN:-curl}
 RESTART_SCRIPT=${PROXY_RESTART_SCRIPT:-"$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/restart-stack.sh"}
 
 state_file="$PROXY_STATE_DIR/proxy-recovery-state"
-mkdir -p "$PROXY_STATE_DIR"
+# Private state directory, created 0700 under umask 077 (a subshell keeps the umask off child processes).
+(umask 077 && mkdir -p -m 0700 "$PROXY_STATE_DIR")
 
 json_escape() {
   local s=$1
@@ -64,8 +65,8 @@ send_alert() {
   # The URL is a credential: curl reads it from a config on a pipe, never from the command line.
   "$CURL_BIN" -fsS --max-time "$CURL_TIMEOUT" -X POST -H 'Content-Type: application/json' \
     -d "{\"text\":\"$escaped\",\"content\":\"$escaped\"}" -K <(printf 'url = "%s"\n' "$MONITOR_WEBHOOK_URL") >/dev/null \
-    && echo "alert sent to webhook (${MONITOR_WEBHOOK_URL:0:20}...)" \
-    || echo "alert webhook POST failed (${MONITOR_WEBHOOK_URL:0:20}...)" >&2
+    && echo "alert sent to configured webhook" \
+    || echo "alert webhook POST failed" >&2
 }
 
 # -- symptom check: does the public origin actually answer? -----------------

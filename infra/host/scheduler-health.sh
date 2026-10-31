@@ -75,7 +75,8 @@ careerscope-liveness.timer:MEDIUM:100:1800
 careerscope-retention.timer:LOWER:200:3600"
 
 state_file="$SCHEDULER_STATE_DIR/scheduler-health-state"
-mkdir -p "$SCHEDULER_STATE_DIR"
+# Private state directory, created 0700 under umask 077 (a subshell keeps the umask off child processes).
+(umask 077 && mkdir -p -m 0700 "$SCHEDULER_STATE_DIR")
 
 problems=()
 problem_keys=()
@@ -121,8 +122,8 @@ send_alert() {
   # The URL is a credential: curl reads it from a config on a pipe, never from the command line.
   "$CURL_BIN" -fsS --max-time "$CURL_TIMEOUT" -X POST -H 'Content-Type: application/json' \
     -d "{\"text\":\"$escaped\",\"content\":\"$escaped\"}" -K <(printf 'url = "%s"\n' "$SCHEDULER_WEBHOOK_URL") >/dev/null \
-    && echo "alert sent to webhook (${SCHEDULER_WEBHOOK_URL:0:20}...)" \
-    || echo "alert webhook POST failed (${SCHEDULER_WEBHOOK_URL:0:20}...)" >&2
+    && echo "alert sent to configured webhook" \
+    || echo "alert webhook POST failed" >&2
 }
 
 record_problem() {

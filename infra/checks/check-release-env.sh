@@ -81,6 +81,25 @@ else
   echo "SKIP env file mode checks (this filesystem does not keep POSIX modes)"
 fi
 
+echo "== appending to an env file that has no trailing newline"
+# deploy.sh appends REDIS_PASSWORD and render-otp-secrets.sh appends EMAIL_OTP_HMAC_SECRET; without a
+# trailing newline the new line would be glued onto the last one and corrupt both.
+# The OTP secrets are present (deploy.sh renders them); only REDIS_PASSWORD is missing, so it is appended.
+printf 'POSTGRES_PASSWORD=x\nEMAIL_OTP_HMAC_SECRET=%s\nRESEND_API_KEY=re_%s' \
+  "$(od -An -N32 -tx1 /dev/urandom | tr -d ' \n')" "$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')" >"$work/root/infra/.env"
+check "deploy.sh: the fixture ends without a newline" "$([ -n "$(tail -c1 "$work/root/infra/.env")" ] && echo yes || echo no)" "yes"
+check "deploy.sh --first-deploy succeeds on it" "$(deploy --first-deploy example.test internal)" "0"
+check "deploy.sh: the last line was not glued to the new one" "$(grep -c '^RESEND_API_KEY=re_[0-9a-f]\{32\}$' "$work/root/infra/.env")" "1"
+check "deploy.sh: REDIS_PASSWORD is on its own line" "$(grep -c '^REDIS_PASSWORD=[0-9a-f]\{64\}$' "$work/root/infra/.env")" "1"
+
+otp_env="$work/otp.env"
+printf 'RESEND_API_KEY=re_%s' "$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')" >"$otp_env"
+check "render-otp-secrets.sh: the fixture ends without a newline" "$([ -n "$(tail -c1 "$otp_env")" ] && echo yes || echo no)" "yes"
+check "render-otp-secrets.sh succeeds on it" \
+  "$(CAREERSCOPE_SECRETS_DIR="$work/otp-secrets" bash "$dir/../host/render-otp-secrets.sh" "$otp_env" >/dev/null 2>&1 && echo 0 || echo 1)" "0"
+check "render-otp-secrets.sh: the last line was not glued to the new one" "$(grep -c '^RESEND_API_KEY=re_[0-9a-f]\{32\}$' "$otp_env")" "1"
+check "render-otp-secrets.sh: EMAIL_OTP_HMAC_SECRET is on its own line" "$(grep -c '^EMAIL_OTP_HMAC_SECRET=[0-9a-f]\{64\}$' "$otp_env")" "1"
+
 if [ "$failures" -gt 0 ]; then
   echo "$failures check(s) failed" >&2
   exit 1

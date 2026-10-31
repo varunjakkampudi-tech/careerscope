@@ -20,9 +20,13 @@ import { createApp } from './app.js';
 
 installProcessFailureHandlers();
 
+// Registered before any resource is opened: a SIGINT or SIGTERM during any startup step must reach the
+// cleanup below instead of taking the default handler, which would exit without closing anything.
+const shutdown = shutdownSignal();
 let database: Database | undefined;
 let limiter: Awaited<ReturnType<typeof rateLimiter>> | undefined;
 let resumeStorage: Awaited<ReturnType<typeof configuredFileResumeStorage>>;
+let app: Awaited<ReturnType<typeof createApp>> | undefined;
 let cleaned = false;
 let stopReclaim: (() => void) | undefined;
 
@@ -44,45 +48,46 @@ try {
         }
       : undefined;
   database = new Database(env.DATABASE_URL);
-  const openLimiter = await rateLimiter(env.REDIS_URL);
-  limiter = openLimiter;
-  resumeStorage = await configuredFileResumeStorage();
-  const app = await createApp(database, env.APP_ORIGIN, openLimiter.consume, {
-    registrationEnabled: env.REGISTRATION_ENABLED === 'true',
-    registrationPolicy:
-      env.LEGAL_TERMS_VERSION &&
-      env.LEGAL_TERMS_URL &&
-      env.LEGAL_PRIVACY_VERSION &&
-      env.LEGAL_PRIVACY_URL &&
-      env.LEGAL_MARKETING_VERSION
+  try {
+    limiter = await rateLimiter(env.REDIS_URL);
+    shutdown.signal.throwIfAborted();
+    const openLimiter = limiter;
+    resumeStorage = await configuredFileResumeStorage();
+    shutdown.signal.throwIfAborted();
+    app = await createApp(database, env.APP_ORIGIN, openLimiter.consume, {
+      registrationEnabled: env.REGISTRATION_ENABLED === 'true',
+      registrationPolicy:
+        env.LEGAL_TERMS_VERSION &&
+        env.LEGAL_TERMS_URL &&
+        env.LEGAL_PRIVACY_VERSION &&
+        env.LEGAL_PRIVACY_URL &&
+        env.LEGAL_MARKETING_VERSION
+          ? {
+              termsVersion: env.LEGAL_TERMS_VERSION,
+              termsUrl: env.LEGAL_TERMS_URL,
+              privacyVersion: env.LEGAL_PRIVACY_VERSION,
+              privacyUrl: env.LEGAL_PRIVACY_URL,
+              marketingVersion: env.LEGAL_MARKETING_VERSION,
+            }
+          : undefined,
+      testAccess: testAccessConfiguration(process.env, env.APP_ORIGIN),
+      emailOtp,
+      readiness: async () => {
+        await openLimiter.client.ping();
+      },
+      resumeStorage: resumeStorage
         ? {
-            termsVersion: env.LEGAL_TERMS_VERSION,
-            termsUrl: env.LEGAL_TERMS_URL,
-            privacyVersion: env.LEGAL_PRIVACY_VERSION,
-            privacyUrl: env.LEGAL_PRIVACY_URL,
-            marketingVersion: env.LEGAL_MARKETING_VERSION,
+            bucket: resumeStorage.bucket,
+            initialize: resumeStorage.initialize.bind(resumeStorage),
+            put: resumeStorage.put.bind(resumeStorage),
+            get: resumeStorage.get.bind(resumeStorage),
+            recoverVersion: resumeStorage.recoverVersion.bind(resumeStorage),
+            cancelUpload: resumeStorage.cancelUpload.bind(resumeStorage),
+            delete: resumeStorage.delete.bind(resumeStorage),
           }
         : undefined,
-    testAccess: testAccessConfiguration(process.env, env.APP_ORIGIN),
-    emailOtp,
-    readiness: async () => {
-      await openLimiter.client.ping();
-    },
-    resumeStorage: resumeStorage
-      ? {
-          bucket: resumeStorage.bucket,
-          initialize: resumeStorage.initialize.bind(resumeStorage),
-          put: resumeStorage.put.bind(resumeStorage),
-          get: resumeStorage.get.bind(resumeStorage),
-          recoverVersion: resumeStorage.recoverVersion.bind(resumeStorage),
-          cancelUpload: resumeStorage.cancelUpload.bind(resumeStorage),
-          delete: resumeStorage.delete.bind(resumeStorage),
-        }
-      : undefined,
-  });
-  // Registered after the app is built but before listening, so a signal during startup still triggers cleanup.
-  const shutdown = shutdownSignal();
-  try {
+    });
+    shutdown.signal.throwIfAborted();
     // Reclaim removes only temporaries older than 10 minutes; a writer stalled past that bound retries once.
     // The API owns resume writes, so it also sweeps periodically; the timer is unreferenced and logs counts only.
     if (resumeStorage) {
@@ -111,18 +116,21 @@ try {
         shutdown.signal.addEventListener('abort', () => resolve(), { once: true }),
       );
   } catch (error) {
-    // A shutdown signal that interrupts startup aborts the reclaim: a clean stop, not a failure.
-    // Cleanup still runs once in the finally block and the process exits 0.
-    if (!isShutdownAbort(error, shutdown.signal)) throw error;
+    // A shutdown signal that interrupts startup is a clean stop, not a failure, even when the step it
+    // interrupted then fails (for example a connection that gives up). Cleanup runs once in the finally
+    // block and the process exits 0.
+    if (!shutdown.signal.aborted) throw error;
+    if (!isShutdownAbort(error, shutdown.signal))
+      logFailure(error, {}, 'Startup step failed after shutdown was requested');
     logger.info('Shutdown requested during startup');
   } finally {
-    cleaned = true;
     stopReclaim?.();
-    await app.close();
-    await openLimiter.close();
-    await database.close();
+    await app?.close();
+    await limiter?.close();
+    await database?.close();
     resumeStorage?.close();
     shutdown.close();
+    cleaned = true;
   }
 } catch (error) {
   // Bounds cleanup: a hung close must not keep the process alive.

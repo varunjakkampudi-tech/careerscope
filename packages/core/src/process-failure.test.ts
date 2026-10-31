@@ -103,3 +103,26 @@ for (const [entry, options] of entryPoints) {
     }
   });
 }
+
+// A signal-delivery test is not practical here: Windows cannot deliver SIGTERM to a child, and the
+// API listens on a fixed port, so a signal cannot be timed to land inside a given startup await.
+// This guards the ordering that fixes the defect instead: the handler is registered before any
+// resource is opened, so a signal during any startup step reaches the cleanup path.
+test('apps/api/src/main.ts registers the shutdown signal before it opens any resource', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const source = await readFile(
+    fileURLToPath(new URL('../../../apps/api/src/main.ts', import.meta.url)),
+    'utf8',
+  );
+  const registered = source.indexOf('shutdownSignal()');
+  assert.notEqual(registered, -1);
+  for (const opener of [
+    'new Database(',
+    'await rateLimiter(',
+    'await configuredFileResumeStorage(',
+  ]) {
+    const opened = source.indexOf(opener);
+    assert.notEqual(opened, -1, opener);
+    assert.ok(registered < opened, `shutdownSignal() must come before ${opener}`);
+  }
+});

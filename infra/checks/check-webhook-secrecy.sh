@@ -53,7 +53,7 @@ run_script() { # <script> <url>
     SCHEDULER_SYSTEMCTL_BIN="$work/no-such-systemctl" \
     MONITOR_WEBHOOK_URL="$url" SCHEDULER_WEBHOOK_URL="$url" \
     FAKE_CALLS_FILE="$work/calls" FAKE_ARGV_FILE="$work/argv" FAKE_CONFIG_FILE="$work/config" \
-    bash "$dir/../host/$script" >/dev/null 2>&1 || true
+    bash "$dir/../host/$script" >"$work/log" 2>&1 || true
 }
 
 good='https://hooks.example.test/secret-token-123'
@@ -64,6 +64,9 @@ for script in monitor.sh recover-proxy.sh scheduler-health.sh; do
   check "$script posted an alert" "$([ "$(wc -l <"$work/calls" | tr -d ' ')" -ge 1 ] && echo yes || echo no)" "yes"
   check "$script: curl was given -K" "$([ "$(grep -c '^-K$' "$work/argv")" -ge 1 ] && echo yes || echo no)" "yes"
   check "$script: the URL is not in curl's argv" "$(grep -c 'secret-token-123' "$work/argv" || true)" "0"
+  # Neither a prefix of the URL nor its host may be logged: the log goes to the journal.
+  check "$script: no part of the URL is logged" "$(grep -c -e 'https://' -e 'hooks.example' -e 'secret-token' "$work/log" || true)" "0"
+  check "$script: the alert outcome is logged without it" "$([ "$(grep -c 'alert sent to configured webhook' "$work/log" || true)" -ge 1 ] && echo yes || echo no)" "yes"
   check "$script: the URL reached curl through the config" "$([ "$(grep -c "^url = \"$good\"\$" "$work/config")" -ge 1 ] && echo yes || echo no)" "yes"
 
   reset

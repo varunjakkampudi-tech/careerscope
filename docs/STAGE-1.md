@@ -56,7 +56,7 @@ not performed; the Gap lines say what is unverified.
 ## 1.05 Resolve Chromium acceptance failures
 
 - **Status:** Open
-- **Gap:** Chromium passes the browser acceptance run on one Windows host, recorded in the 2026-10-28 sections of UI-VERIFICATION. The long-standing notification-panel settlement failure was resolved by a test-side allowance (`staleEarlierRouteRead`) for requests the app aborts, and Chromium has since shown timing-dependent failures under load. There is no recorded green run of the `Services, integration, and browser suites` job on the hosted runner, and no repeated-run flake measurement.
+- **Gap:** Chromium passes the browser acceptance run on one Windows host, recorded in the 2026-10-28 sections of UI-VERIFICATION. The long-standing notification-panel settlement failure was resolved by a test-side allowance (`staleEarlierRouteRead`) for requests the app aborts, and Chromium has since shown timing-dependent failures under load. The `Services, integration, and browser suites` job is green on the hosted runner for commit eec8ec4. The remaining gap is flake measurement: the browser timing failure was observed once in four local runs, and it has not been measured on the hosted runner across repeated runs.
 - **Evidence:** `docs/UI-VERIFICATION.md`, `scripts/tests/check-ui.ts`, `scripts/tests/ui-requests.test.ts`, `scripts/tests/ui-browsers.test.ts`
 - **Gate:** CI job `Services, integration, and browser suites`, step `npm run test:ui`; the unit tests run in `Quality gates`
 - **Verify:** `CAREERSCOPE_UI_BROWSER=chromium npm run test:ui` (needs the Docker services and a production build)

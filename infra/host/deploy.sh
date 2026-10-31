@@ -41,6 +41,8 @@ fi
 # every Redis URL. Generate it once on the host and keep it across deploys.
 if ! grep -q '^REDIS_PASSWORD=.' "$env_file"; then
   umask 077
+  # A file without a trailing newline would glue the new line onto its last line.
+  if [ -s "$env_file" ] && [ -n "$(tail -c1 "$env_file")" ]; then printf '\n' >>"$env_file"; fi
   printf 'REDIS_PASSWORD=%s\n' "$(openssl rand -hex 32)" >>"$env_file"
   echo "==> Generated REDIS_PASSWORD in $env_file"
 fi

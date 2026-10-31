@@ -5,10 +5,14 @@
 // (test:unit, test:integration, test:domain, test:ui, test:query-budget and gates:test, with the
 // npm scripts they call), or be followed by an explicit `(manual)` marker.
 //
+// Every tracked test file (*.test.ts, *.test.mjs, *.test.js) must also be named by a CI-run script or
+// workflow step, or be marked `path` (manual) in docs/STAGE-1.md or docs/TRACEABILITY.md.
+//
 // It also validates docs/STAGE-1.md (exactly the 15 owner items 1.01 to 1.15, each with a status,
 // evidence and a gate; an item marked Complete may cite only files that exist and tests that a CI
 // script runs) and that the Stage 1.02 prose in docs/TRACEABILITY.md quotes the counts of the
 // v12 inventory.
+import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import process from 'node:process';
@@ -46,11 +50,12 @@ const CI_ROOTS = [
   'gates:test',
 ];
 
-export function ciExecutedText(root) {
+export function ciExecutedText(root, extraText = '') {
   const manifest = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
   const scripts = manifest.scripts ?? {};
   const seen = new Set();
   const pending = [...CI_ROOTS];
+  for (const match of extraText.matchAll(/npm run ([\w:-]+)/g)) pending.push(match[1]);
   let text = '';
   while (pending.length) {
     const name = pending.pop();
@@ -60,6 +65,73 @@ export function ciExecutedText(root) {
     for (const match of scripts[name].matchAll(/npm run ([\w:-]+)/g)) pending.push(match[1]);
   }
   return text;
+}
+
+/** The text of every workflow file: its steps run scripts and test files directly. */
+function workflowText(root) {
+  const directory = join(root, '.github', 'workflows');
+  if (!existsSync(directory)) return '';
+  return readdirSync(directory)
+    .filter((name) => /\.ya?ml$/.test(name))
+    .map((name) => readFileSync(join(directory, name), 'utf8'))
+    .join('\n');
+}
+
+const ORPHAN_CANDIDATE = /\.test\.(?:ts|mjs|js)$/;
+const SKIPPED_DIRECTORIES = new Set(['node_modules', '.git', 'dist', '.next', 'coverage']);
+
+function walk(root, directory = '') {
+  const files = [];
+  for (const entry of readdirSync(join(root, directory), { withFileTypes: true })) {
+    const relative = directory ? `${directory}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) {
+      if (!SKIPPED_DIRECTORIES.has(entry.name)) files.push(...walk(root, relative));
+    } else files.push(relative);
+  }
+  return files;
+}
+
+/** Tracked files from git; a directory that is not a git checkout is walked instead. */
+function trackedFiles(root) {
+  const result = spawnSync('git', ['-C', root, 'ls-files', '-z'], {
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  if (result.status === 0 && result.stdout) return result.stdout.split('\0').filter(Boolean);
+  return walk(root);
+}
+
+const BEFORE_PATH = /[\s"'`=]/;
+const AFTER_PATH = /[\s"'`;)]/;
+
+/** True when `text` names `path` as a whole path token (not as the tail of a longer path). */
+function mentionsPath(text, path) {
+  for (let at = text.indexOf(path); at !== -1; at = text.indexOf(path, at + 1)) {
+    const before = at === 0 ? ' ' : text[at - 1];
+    const after = text[at + path.length] ?? ' ';
+    if (BEFORE_PATH.test(before) && AFTER_PATH.test(after)) return true;
+  }
+  return false;
+}
+
+/**
+ * Tracked test files (*.test.ts, *.test.mjs, *.test.js, so also *.integration.test.ts) that no CI-run
+ * script or workflow step names and that are not marked `path` (manual) in the Stage 1 register or
+ * the traceability matrix. Returns the orphan paths.
+ */
+export function findOrphanTests(root, files = trackedFiles(root)) {
+  const workflows = workflowText(root);
+  const text = `${existsSync(join(root, 'package.json')) ? ciExecutedText(root, workflows) : ''}\n${workflows}`;
+  const manual = new Set();
+  for (const doc of [STAGE_FILE, MATRIX])
+    if (existsSync(join(root, doc)))
+      for (const match of readFileSync(join(root, doc), 'utf8').matchAll(MANUAL))
+        manual.add(match[1]);
+  return files
+    .filter((file) => ORPHAN_CANDIDATE.test(file) && existsSync(join(root, file)))
+    .filter((file) => !manual.has(file))
+    .filter((file) => !mentionsPath(text, file))
+    .sort();
 }
 
 /** Every file under docs/ except the index itself, as a path relative to docs/. */
@@ -250,6 +322,10 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     : resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
   const { errors, rows, notCovered } = analyze(root);
   errors.push(...checkDocsIndex(root));
+  for (const orphan of findOrphanTests(root))
+    errors.push(
+      `orphan test file: no CI script or workflow step runs it; wire it into an existing script or mark it (manual) in ${STAGE_FILE}: ${orphan}`,
+    );
   if (errors.length) {
     for (const error of errors) console.error(`::error file=${MATRIX}::${error}`);
     console.error(`FAIL ${errors.length} traceability problem(s)`);

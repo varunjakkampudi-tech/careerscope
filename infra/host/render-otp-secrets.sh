@@ -22,6 +22,8 @@ fi
 
 hmac=$(sed -n 's/^EMAIL_OTP_HMAC_SECRET=//p' "$env_file" | tail -1)
 if [ -z "$hmac" ]; then
+  # A file without a trailing newline would glue the new line onto its last line.
+  if [ -s "$env_file" ] && [ -n "$(tail -c1 "$env_file")" ]; then printf '\n' >>"$env_file"; fi
   printf 'EMAIL_OTP_HMAC_SECRET=%s\n' "$(openssl rand -hex 32)" >>"$env_file"
   hmac=$(sed -n 's/^EMAIL_OTP_HMAC_SECRET=//p' "$env_file" | tail -1)
   echo "generated EMAIL_OTP_HMAC_SECRET in $env_file"

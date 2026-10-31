@@ -184,8 +184,8 @@ send_alert() {
   "$CURL_BIN" -fsS --max-time "$CURL_TIMEOUT" -X POST -H 'Content-Type: application/json' \
     --data-binary @- -K <(printf 'url = "%s"\n' "$BACKUP_WEBHOOK_URL") \
     <<<"{\"text\":\"$escaped\",\"content\":\"$escaped\"}" >/dev/null \
-    && echo "alert sent to webhook (${BACKUP_WEBHOOK_URL:0:20}...)" \
-    || echo "alert webhook POST failed (${BACKUP_WEBHOOK_URL:0:20}...)" >&2
+    && echo "alert sent to configured webhook" \
+    || echo "alert webhook POST failed" >&2
 }
 
 mkdir -p "$BACKUP_DIR"

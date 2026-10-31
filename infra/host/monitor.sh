@@ -36,7 +36,8 @@ DOCKER_BIN=${MONITOR_DOCKER_BIN:-docker}
 CURL_BIN=${MONITOR_CURL_BIN:-curl}
 
 state_file="$MONITOR_STATE_DIR/state"
-mkdir -p "$MONITOR_STATE_DIR"
+# Private state directory, created 0700 under umask 077 (a subshell keeps the umask off child processes).
+(umask 077 && mkdir -p -m 0700 "$MONITOR_STATE_DIR")
 
 status=ok
 detail=""
