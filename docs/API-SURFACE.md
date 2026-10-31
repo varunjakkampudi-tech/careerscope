@@ -160,15 +160,15 @@ route unauthenticated and cross-origin, and checks the OpenAPI document declares
 
 ### Health and session
 
-| Method | Path                   | Auth | CSRF        | Notes                                                                                                                                 |
-| ------ | ---------------------- | ---- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/health`          | no   | no          | Exempt from the auth hook, but rate-limited (429). Returns status only. Exempt from maintenance mode.                                 |
-| GET    | `/api/session`         | no   | no          | Returns the current session or absence of one                                                                                         |
-| POST   | `/api/login`           | no   | Origin only | Test-access account selection only                                                                                                    |
-| POST   | `/api/otp/request`     | no   | Origin only | Sign-in or explicitly configured signup challenge                                                                                     |
-| POST   | `/api/otp/verify`      | no   | Origin only | Verifies a challenge and establishes an opaque session                                                                                |
-| POST   | `/api/logout`          | yes  | yes         |                                                                                                                                       |
-| POST   | `/api/session/refresh` | no   | Origin only | Rotates the HttpOnly refresh cookie and returns `{ authenticated: true, csrf }`; reuse of a consumed token revokes the session family |
+| Method | Path                   | Auth | CSRF        | Notes                                                                                                                                                                                |
+| ------ | ---------------------- | ---- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GET    | `/api/health`          | no   | no          | Exempt from the auth hook, but rate-limited (429). Returns status only. Exempt from maintenance mode.                                                                                |
+| GET    | `/api/session`         | no   | no          | Returns the current session or absence of one. Limited to 120 reads per minute per client address; users behind one shared address share that budget and get 429 `Too many requests` |
+| POST   | `/api/login`           | no   | Origin only | Test-access account selection only                                                                                                                                                   |
+| POST   | `/api/otp/request`     | no   | Origin only | Sign-in or explicitly configured signup challenge                                                                                                                                    |
+| POST   | `/api/otp/verify`      | no   | Origin only | Verifies a challenge and establishes an opaque session                                                                                                                               |
+| POST   | `/api/logout`          | yes  | yes         |                                                                                                                                                                                      |
+| POST   | `/api/session/refresh` | no   | Origin only | Rotates the HttpOnly refresh cookie and returns `{ authenticated: true, csrf }`; reuse of a consumed token revokes the session family                                                |
 
 ### Account
 

@@ -772,6 +772,8 @@ export async function createApp(
         });
         if (verification === 'accepted') {
           if (!finalized) throw new HttpError(503, 'Sign-in is temporarily unavailable');
+          // Sign-in paths that call createSession sweep inside Auth; this OTP sign-up
+          // path commits in its own transaction first, so it sweeps here.
           await auth.sweepExpiredSessions();
           setSessionCookies(reply, finalized, new URL(origin).protocol === 'https:');
           return { authenticated: true };
