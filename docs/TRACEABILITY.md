@@ -11,9 +11,11 @@ Scope and limits:
 
 - The feature list is derived from [Product surface](PRODUCT-SURFACE.md) (routes,
   `PS-*`) and [API surface](API-SURFACE.md) (endpoint groups and platform
-  behaviour, `API-*`). Neither document carries a numbered "Stage 1 to 11" list,
-  so rows are keyed by surface rather than stage. Add the stage reference to a
-  row's requirement text when the owner supplies the stage register.
+  behaviour, `API-*`). Rows are keyed by surface; the `STG-*` rows tie a Stage 1
+  item to its code and tests. The status of each Stage 1 item (1.01 to 1.15) is in
+  [STAGE-1](STAGE-1.md), which the same check validates.
+- Requirement-level status comes from the v12 inventory, not from this matrix: see
+  "Stage 1.02" below.
 - A test file is listed when it exercises the feature. It is not a claim of
   complete branch coverage. Browser checks (`scripts/tests/check-ui.ts`) run in
   the browser CI suite, not in `npm run test:unit`.
@@ -74,11 +76,31 @@ Scope and limits:
 
 ## Stage 1.02: v12 requirement reconciliation
 
-The v12 requirement inventory is not in this repository: no file under `docs/` or elsewhere carries
-a numbered v12 requirement list, and `npm run traceability:check` cannot test one. Only the v12
-references below exist in the documents. Each is reconciled to the code. A requirement is called
-**Implemented** only with a file and a test; anything else stays **Partial** or **Open** with the
-reason. Reconciling the full inventory needs the owner to add it (see "Not closed").
+The owner's v12 specification is in the repository as [CareerScope-v12](requirements/CareerScope-v12.md)
+(sha256 pinned in `scripts/ci/check-requirements-inventory.mjs`). Every clause of it has a record in
+[V12-REQUIREMENT-INVENTORY](requirements/V12-REQUIREMENT-INVENTORY.json), and
+[V12-RECONCILIATION](requirements/V12-RECONCILIATION.md) is generated from that inventory with
+per-status and per-section counts. A clause is called IMPLEMENTED only when its record cites
+implementing code and a test that a CI script runs.
+
+Current status of the inventory: 319 clauses (67 IMPLEMENTED, 75 PARTIAL, 119 NOT_IMPLEMENTED, 50 OWNER_EVIDENCE, 8 OUT_OF_SCOPE_POST_LAUNCH); 165 launch-blocking gaps.
+
+`npm run traceability:check` fails when this sentence no longer equals the counts computed from the
+inventory, when a clause is NOT_ASSESSED, when the source digest or clause count changes, when a clause
+text is not equal to its source line, or when the generated summary is stale.
+
+### Open for later stages
+
+Reconciliation (assessing every clause) is complete. Implementation is not. The 165 launch-blocking gaps
+are real and stay open: they are the PARTIAL, NOT_IMPLEMENTED and OWNER_EVIDENCE clauses that the inventory
+marks `launchBlocking`, listed one by one in the "Launch-blocking gaps" table of
+[V12-RECONCILIATION](requirements/V12-RECONCILIATION.md). None of them is waived here. OWNER_EVIDENCE
+clauses depend on owner decisions or live evidence (rights profiles, a fallback email vendor, off-host
+backup, host verification) and cannot be closed from code.
+
+### Cross-references from the product documents
+
+These v12 references are stated in other documents and were reconciled to code by hand. The inventory is the authority where the two differ.
 
 | v12 reference                                                      | Where it is stated                                                              | Status                           | Evidence                                                                                                                                                                                                                                                                                                  |
 | ------------------------------------------------------------------ | ------------------------------------------------------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -87,8 +109,3 @@ reason. Reconciling the full inventory needs the owner to add it (see "Not close
 | Required fallback email provider                                   | [SECURITY](SECURITY.md) line 27, [THREAT-MODEL](security/THREAT-MODEL.md) TM-03 | Partial                          | Failover logic exists and is tested: `FailoverEmailOtpDelivery` in `packages/core/src/email-otp-delivery.ts`, `packages/core/src/email-otp-delivery.test.ts`. It is not wired: `apps/api/src/main.ts` builds only `ResendEmailOtpProvider`, and no second vendor is chosen                                |
 | AI stays gated and reported disabled                               | [PRIVACY-POLICY-DRAFT](legal/PRIVACY-POLICY-DRAFT.md) section 3                 | Implemented for the session flag | `/api/session` always returns `aiEnabled: false` (`apps/api/src/app.ts`), asserted by `apps/api/src/error-handler.test.ts`; the web schema reads it (`apps/web/src/lib/api-schemas.ts`). The draft still says not to claim that no AI processes data in every deployment, which needs a deployment review |
 | Threat-model abuse cases TM-01 to TM-12 need proof                 | [THREAT-MODEL](security/THREAT-MODEL.md)                                        | Open                             | Tracked in that document with its own "Required proof" column. Several need infrastructure, owner settings or independent review (TM-04, TM-09, TM-10, TM-11, TM-12) and are not reconcilable from code                                                                                                   |
-
-### Not closed
-
-- The v12 inventory itself, so any requirement that is not named in a document above is unreconciled.
-- The discovery, fallback-provider and backup (D12) rows depend on owner decisions or live evidence.

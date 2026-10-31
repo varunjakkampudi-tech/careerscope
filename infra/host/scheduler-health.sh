@@ -111,9 +111,16 @@ send_alert() {
     echo "SCHEDULER_WEBHOOK_URL is not https; refusing to send an alert in cleartext" >&2
     return 0
   fi
+  case "$SCHEDULER_WEBHOOK_URL" in
+    *'"'* | *$'\n'* | *$'\r'* | *'\'*)
+      echo "SCHEDULER_WEBHOOK_URL contains a quote, backslash or line break; refusing to send an alert" >&2
+      return 0
+      ;;
+  esac
   local escaped; escaped=$(json_escape "$message")
+  # The URL is a credential: curl reads it from a config on a pipe, never from the command line.
   "$CURL_BIN" -fsS --max-time "$CURL_TIMEOUT" -X POST -H 'Content-Type: application/json' \
-    -d "{\"text\":\"$escaped\",\"content\":\"$escaped\"}" "$SCHEDULER_WEBHOOK_URL" >/dev/null \
+    -d "{\"text\":\"$escaped\",\"content\":\"$escaped\"}" -K <(printf 'url = "%s"\n' "$SCHEDULER_WEBHOOK_URL") >/dev/null \
     && echo "alert sent to webhook (${SCHEDULER_WEBHOOK_URL:0:20}...)" \
     || echo "alert webhook POST failed (${SCHEDULER_WEBHOOK_URL:0:20}...)" >&2
 }

@@ -4,12 +4,23 @@
 // A covering test file must also be listed in a package.json script that CI executes
 // (test:unit, test:integration, test:domain, test:ui, test:query-budget and gates:test, with the
 // npm scripts they call), or be followed by an explicit `(manual)` marker.
+//
+// It also validates docs/STAGE-1.md (exactly the 15 owner items 1.01 to 1.15, each with a status,
+// evidence and a gate; an item marked Complete may cite only files that exist and tests that a CI
+// script runs) and that the Stage 1.02 prose in docs/TRACEABILITY.md quotes the counts of the
+// v12 inventory.
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 
 const MATRIX = 'docs/TRACEABILITY.md';
+const STAGE_FILE = 'docs/STAGE-1.md';
+const STAGE_ITEMS = Array.from(
+  { length: 15 },
+  (_, index) => `1.${String(index + 1).padStart(2, '0')}`,
+);
+const STAGE_STATUSES = ['Complete', 'Open'];
 const NOT_COVERED = 'NOT COVERED';
 const TEST_PATH = /(?:\.(?:test|spec)\.[cm]?[jt]sx?$)|^(?:scripts\/tests|tests)\//;
 
@@ -132,6 +143,106 @@ export function analyze(root) {
   return { errors, rows, notCovered };
 }
 
+/** Splits docs/STAGE-1.md into its `## 1.NN` sections and their `- **Field:** text` bullets. */
+export function parseStage(text) {
+  const sections = [];
+  let current = null;
+  let field = null;
+  for (const line of text.split(/\r?\n/)) {
+    const heading = /^## (\d+\.\d+)\b\s*(.*)$/.exec(line);
+    if (heading) {
+      current = { id: heading[1], title: heading[2].trim(), fields: {} };
+      sections.push(current);
+      field = null;
+      continue;
+    }
+    if (/^#{1,2} /.test(line)) {
+      current = null;
+      field = null;
+      continue;
+    }
+    if (!current) continue;
+    const bullet = /^- \*\*([A-Za-z ]+):\*\*\s*(.*)$/.exec(line);
+    if (bullet) {
+      field = bullet[1];
+      current.fields[field] = [...(current.fields[field] ?? []), bullet[2]];
+    } else if (field && line.trim() && /^\s/.test(line)) {
+      const values = current.fields[field];
+      values[values.length - 1] += ` ${line.trim()}`;
+    } else if (!line.trim()) field = null;
+  }
+  return sections;
+}
+
+/** Problems with docs/STAGE-1.md. Complete items are held to the CI-run rule; Open items need a gap. */
+export function analyzeStage(root) {
+  const errors = [];
+  const file = join(root, STAGE_FILE);
+  if (!existsSync(file)) return { errors: [`${STAGE_FILE} is missing`], items: 0, complete: 0 };
+  const executed = new Set(
+    existsSync(join(root, 'package.json')) ? ciExecutedText(root).split(/\s+/) : [],
+  );
+  const sections = parseStage(readFileSync(file, 'utf8'));
+  const ids = sections.map((section) => section.id);
+  if (ids.join(',') !== STAGE_ITEMS.join(','))
+    errors.push(
+      `${STAGE_FILE} must have exactly the 15 items ${STAGE_ITEMS[0]} to ${STAGE_ITEMS[14]} once each, in order; found ${ids.length}: ${ids.join(', ') || 'none'}`,
+    );
+  let complete = 0;
+  for (const section of sections) {
+    const fail = (message) => errors.push(`${section.id}: ${message}`);
+    const one = (name) => {
+      const values = section.fields[name] ?? [];
+      if (values.length > 1) fail(`has ${values.length} "${name}" lines, expected one`);
+      return (values[0] ?? '').trim();
+    };
+    const status = one('Status');
+    if (!STAGE_STATUSES.includes(status))
+      fail(`Status must be one of ${STAGE_STATUSES.join(', ')}, found "${status}"`);
+    if (!section.title) fail('heading has no title');
+    for (const name of ['Evidence', 'Gate', 'Verify']) if (!one(name)) fail(`${name} is empty`);
+    if (status === 'Open' && !one('Gap')) fail('an Open item must state its Gap');
+    if (status === 'Complete' && one('Gap')) fail('a Complete item must not carry a Gap');
+    if (status === 'Complete') complete += 1;
+
+    const evidence = paths(one('Evidence'));
+    if (one('Evidence') && !evidence.length) fail('Evidence must cite files in backticks');
+    const manual = new Set([...one('Evidence').matchAll(MANUAL)].map((match) => match[1]));
+    let citesCiTest = false;
+    for (const path of evidence) {
+      if (!existsSync(join(root, path))) {
+        fail(`evidence file not found: ${path}`);
+        continue;
+      }
+      if (!TEST_PATH.test(path)) continue;
+      if (executed.has(path)) citesCiTest = true;
+      else if (status === 'Complete')
+        fail(`Complete item cites a test that no CI script runs: ${path}`);
+      else if (!manual.has(path))
+        fail(`test is not run by any CI script; mark it "(manual)" or run it in CI: ${path}`);
+    }
+    if (status === 'Complete' && !citesCiTest)
+      fail('a Complete item must cite at least one test that a CI script runs');
+  }
+  return { errors, items: sections.length, complete };
+}
+
+/** The Stage 1.02 prose and the Stage 1 register must quote the counts of the v12 inventory. */
+export async function checkReconciliationProse(root) {
+  const { analyzeInventory, summaryLine } = await import('./check-requirements-inventory.mjs');
+  const inventory = analyzeInventory(root, '');
+  if (!inventory.total) return [`cannot read the v12 inventory counts for ${MATRIX}`];
+  const expected = summaryLine(inventory);
+  const errors = [];
+  for (const path of [MATRIX, STAGE_FILE]) {
+    const file = join(root, path);
+    if (!existsSync(file)) errors.push(`${path} is missing`);
+    else if (!readFileSync(file, 'utf8').replace(/\s+/g, ' ').includes(expected))
+      errors.push(`${path} must quote the inventory counts exactly: "${expected}"`);
+  }
+  return errors;
+}
+
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const argument = process.argv.find((value) => value.startsWith('--root='));
   const root = argument
@@ -145,6 +256,18 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     process.exitCode = 1;
   } else {
     process.stdout.write(`PASS traceability: ${rows} rows, ${notCovered} NOT COVERED\n`);
+  }
+
+  const stage = analyzeStage(root);
+  stage.errors.push(...(await checkReconciliationProse(root)));
+  if (stage.errors.length) {
+    for (const error of stage.errors) console.error(`::error file=${STAGE_FILE}::${error}`);
+    console.error(`FAIL ${stage.errors.length} Stage 1 register problem(s)`);
+    process.exitCode = 1;
+  } else {
+    process.stdout.write(
+      `PASS Stage 1 register: ${stage.items} items, ${stage.complete} Complete, ${stage.items - stage.complete} Open\n`,
+    );
   }
 
   // Stage 1.02: the same gate validates the v12 requirement inventory, so CI cannot pass with a

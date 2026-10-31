@@ -98,7 +98,9 @@ and `careerscope:<sha12>-proxy`) and writes `/opt/careerscope/RELEASE_RECORD`
 with the revision, both names and the build-time image digests (`sha256:` image
 IDs). `deploy.sh` loads that record through `host/release-env.sh` and stops
 before starting anything if the record is missing, a value is empty, the
-revision differs from `DEPLOYED_COMMIT`, or a tag no longer resolves to its
+revision differs from `DEPLOYED_COMMIT`, `DEPLOYED_COMMIT` is missing (fail
+closed; the operator passes `--first-deploy` to `deploy.sh` and
+`apply-migrations.sh` only on the very first deploy of a new host), or a tag no longer resolves to its
 recorded digest. It then writes the two variables into `infra/.env` (`ship.sh`
 removes the previous release's values, so old images are never reused by
 accident). If the images are pushed to a registry, set the variables to

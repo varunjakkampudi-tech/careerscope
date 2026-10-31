@@ -43,3 +43,17 @@ These carry no secret. They are listed here because they sit beside connection s
 
 Leave all three unset in production. CI sets them only for the BullMQ suite, from
 `scripts/tests/bull-queue.integration.env`.
+
+## File-based secrets
+
+The API and workers read `REDIS_PASSWORD_FILE`, `EMAIL_OTP_HMAC_SECRET_FILE` and
+`RESEND_API_KEY_FILE` through one reader (`readSecretFile` in `packages/core/src/runtime.ts`). It
+refuses a symlink or non-regular file, opens with `O_NOFOLLOW`, refuses a file over 4096 bytes or
+with more than one token, and (POSIX only) refuses a file writable by group or others. Group or
+other read is allowed on purpose: the renderers write the files as `0440` (`999:1000`) or `0444` into a
+`0700` directory, so only the container user can reach them. Errors name only the variable, never the
+path or the content.
+
+The webhook URLs (`MONITOR_WEBHOOK_URL`, `BACKUP_WEBHOOK_URL`, `SCHEDULER_WEBHOOK_URL`) are credentials. Every
+host script hands the URL to curl through a `-K` config on a pipe, so it never appears in a process
+list, and refuses a non-https URL or one containing a quote, backslash or line break.

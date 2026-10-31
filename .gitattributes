@@ -74,3 +74,8 @@ Caddyfile.* text eol=lf
 
 # Environment fragment read by the Bull queue integration run; governed explicitly so the line-ending check sees it.
 *.env text eol=lf
+
+# Caddy proxy build inputs: the module graph must match byte for byte on every checkout.
+*.mod text eol=lf
+*.sum text eol=lf
+*.go text eol=lf

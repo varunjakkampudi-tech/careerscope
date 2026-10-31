@@ -4,10 +4,12 @@
 # (returns non-zero with a message) if the record is missing, a value is missing or mutable, the
 # revision does not match DEPLOYED_COMMIT, or a tag no longer resolves to the recorded image ID.
 #
-# Usage: . release-env.sh; load_release <deployment-root>
+# A missing DEPLOYED_COMMIT also fails closed, unless the operator passes --first-deploy.
+#
+# Usage: . release-env.sh; load_release <deployment-root> [--first-deploy]
 
 load_release() {
-  local root=$1 record="$1/RELEASE_RECORD" key value
+  local root=$1 first_deploy=${2:-} record="$1/RELEASE_RECORD" key value
   local revision="" image="" image_id="" proxy="" proxy_id=""
   if [ ! -f "$record" ]; then
     echo "No release record at $record: run host/build-images.sh first" >&2
@@ -28,9 +30,16 @@ load_release() {
     echo "Release record has no valid REVISION" >&2
     return 1
   fi
-  if [ -f "$root/DEPLOYED_COMMIT" ] && [ "$(cat "$root/DEPLOYED_COMMIT")" != "$revision" ]; then
-    echo "Release record revision does not match DEPLOYED_COMMIT; rebuild with build-images.sh" >&2
+  if [ -f "$root/DEPLOYED_COMMIT" ]; then
+    if [ "$(cat "$root/DEPLOYED_COMMIT")" != "$revision" ]; then
+      echo "Release record revision does not match DEPLOYED_COMMIT; rebuild with build-images.sh" >&2
+      return 1
+    fi
+  elif [ "$first_deploy" != "--first-deploy" ]; then
+    echo "No DEPLOYED_COMMIT at $root, so the release record cannot be tied to a shipped revision. Ship with host/ship.sh, or pass --first-deploy if this is the first deploy on this host" >&2
     return 1
+  else
+    echo "WARNING: no DEPLOYED_COMMIT at $root; continuing because --first-deploy was passed" >&2
   fi
   if [ "$image" != "careerscope:$short" ] || [ "$proxy" != "careerscope:$short-proxy" ]; then
     echo "Release record image names are not the immutable revision tags" >&2

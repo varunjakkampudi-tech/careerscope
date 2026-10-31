@@ -9,7 +9,9 @@
 //     items do not carry that many distinct integer sourceLine values. Changing the source or the
 //     clause count therefore needs an edit to the constants here, visible in review. This does not
 //     prove the 319 clauses are all of the source's clauses, only that none was dropped since the pin;
-//   - an item's text does not match its source line (a blank or punctuation-only line never matches);
+//   - an item's text is not equal to its source line after whitespace squashing (a blank or
+//     punctuation-only line never matches). A deliberate excerpt must carry `"excerpt": true`;
+//     it is then checked as a substring of the line of at least MIN_MATCH_LENGTH letters or digits;
 //   - an item is still NOT_ASSESSED, has an unknown status, or lacks the fields its status needs;
 //   - an IMPLEMENTED item cites no implementing file or no test, or cites a test that no CI script
 //     or non-comment workflow `run:` step names;
@@ -44,7 +46,7 @@ const VERIFICATIONS = [
 /** Pinned: the sha256 of docs/requirements/CareerScope-v12.md and the number of clauses taken from it. */
 export const SOURCE_SHA256 = '35e9a728a65b0620cb9075345216c69c973fee57efad21752554dc338a532167';
 export const EXPECTED_CLAUSES = 319;
-/** A source line needs at least this many letters or digits to take part in a substring match. */
+/** A clause marked `excerpt: true` needs at least this many letters or digits to match as a substring. */
 const MIN_MATCH_LENGTH = 4;
 const squash = (value) => String(value).replace(/\s+/g, ' ').trim();
 const nonEmpty = (value) => typeof value === 'string' && value.trim().length > 0;
@@ -160,22 +162,29 @@ function checkItemShape(item, seen, sourceLines, fail) {
     fail(item.id, `unknown assessment ${JSON.stringify(item.assessment)}`);
   if (!VERIFICATIONS.includes(item.verification))
     fail(item.id, `unknown verification ${JSON.stringify(item.verification)}`);
-  if (!matchesSourceLine(sourceLines[(item.sourceLine ?? 0) - 1], item.text))
+  if (item.excerpt !== undefined && typeof item.excerpt !== 'boolean')
+    fail(item.id, 'excerpt must be a boolean');
+  else if (
+    !matchesSourceLine(sourceLines[(item.sourceLine ?? 0) - 1], item.text, item.excerpt === true)
+  )
     fail(item.id, `text does not match source line ${item.sourceLine}`);
 }
 
 const meaningful = (value) => value.replace(/[^\p{L}\p{N}]/gu, '');
 
-/** True when clause text and source line agree. A blank or punctuation-only line never matches. */
-export function matchesSourceLine(line, text) {
+/**
+ * True when clause text and source line agree. The default is exact equality after whitespace
+ * squashing. An item that is a deliberate excerpt (`excerpt: true`) must instead be contained in
+ * the line and carry enough letters or digits to be specific. A blank or punctuation-only line
+ * never matches.
+ */
+export function matchesSourceLine(line, text, excerpt = false) {
   if (line === undefined || typeof text !== 'string') return false;
   const [have, wanted] = [squash(line), squash(text)];
   const [haveCore, wantedCore] = [meaningful(have), meaningful(wanted)];
   if (!haveCore || !wantedCore) return false;
   if (have === wanted) return true;
-  if (have.includes(wanted)) return wantedCore.length >= MIN_MATCH_LENGTH;
-  if (wanted.includes(have)) return haveCore.length >= MIN_MATCH_LENGTH;
-  return false;
+  return excerpt && have.includes(wanted) && wantedCore.length >= MIN_MATCH_LENGTH;
 }
 
 export function analyzeInventory(root, scriptText = '') {

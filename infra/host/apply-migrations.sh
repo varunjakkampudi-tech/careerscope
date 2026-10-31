@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Usage: apply-migrations.sh [--first-deploy]   (the flag allows a missing DEPLOYED_COMMIT)
 # Applies pending migrations on the deployed host and reports the plan for the
 # publisher's hot query, which polls a table that only grows.
 set -euo pipefail
@@ -6,7 +7,7 @@ set -euo pipefail
 cd /opt/careerscope/infra
 # The migration runs from the release's image. Fails closed if the release record is missing or stale.
 . host/release-env.sh
-load_release /opt/careerscope || exit 1
+load_release /opt/careerscope "$@" || exit 1
 docker compose -f docker/compose.production.yml --env-file .env run --rm --no-deps \
   bootstrap node /app/bootstrap.mjs
 

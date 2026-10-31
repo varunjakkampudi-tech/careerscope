@@ -31,6 +31,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { z } from 'zod';
 import { resumeUploadMetadataSchema, type ResumeObject } from './storage.js';
 import { Conflict } from './errors.js';
+import { logFailure } from './failure.js';
 import { ResumeStorageLimit } from './resumes.js';
 
 /** Storage-side view of an object: the upload metadata plus owner and resume ids, with unknown keys rejected. */
@@ -662,9 +663,7 @@ export class PrivateFileResumeStorage {
           if (attempt === 0 && missing(error)) continue;
           throw error;
         } finally {
-          await unlink(temporary).catch((error: unknown) => {
-            if (!missing(error)) throw error;
-          });
+          await this.removeTemporary(temporary);
         }
       }
     } catch (error) {
@@ -789,6 +788,25 @@ export class PrivateFileResumeStorage {
     await this.syncDirectory();
   }
 
+  /** The filesystem call behind `removeTemporary`; separate so tests can make it fail. */
+  protected async unlinkTemporary(temporary: string) {
+    await unlink(temporary);
+  }
+
+  /**
+   * Removes a temporary file after a write or cancellation. Best effort: by now the publish result is
+   * decided, so a failure here (on Windows an EPERM or EBUSY while another process holds the file) is
+   * logged at warn level and never rethrown. An orphaned `.pending` file is reclaimed by the sweep.
+   */
+  private async removeTemporary(temporary: string) {
+    try {
+      await this.unlinkTemporary(temporary);
+    } catch (error) {
+      if (missing(error)) return;
+      logFailure(error, {}, 'Resume temporary file could not be removed', 'warn');
+    }
+  }
+
   /**
    * Writes a cancellation marker at the object path so a late `put` for it cannot publish. Refused
    * once the owner's marker quota is reached, or the global backstop (neither names any owner).
@@ -796,6 +814,14 @@ export class PrivateFileResumeStorage {
   async cancelUpload(object: ResumeObject, signal?: AbortSignal) {
     const { object: parsed, filename } = await this.path(object, signal);
     const owner = parsed.ownerId.toLowerCase();
+    // A marker for this exact upload already in place means it is cancelled: succeed before any quota
+    // check, so a repeated cancellation never fails for an owner at the limit. A foreign marker or any
+    // other state falls through to the normal path, which decides it.
+    try {
+      await this.read(parsed, undefined, signal);
+    } catch (error) {
+      if (error instanceof ResumeUploadCancelled) return;
+    }
     // Markers are reclaimed after the retention window; between sweeps accumulation is bounded here.
     if ((this.ownerMarkers.get(owner) ?? 0) >= this.ownerMarkerLimit) {
       throw new ResumeStorageLimit('Resume cancellation marker quota reached');
@@ -826,9 +852,7 @@ export class PrivateFileResumeStorage {
           throw error;
         } finally {
           await handle?.close();
-          await unlink(temporary).catch((error: unknown) => {
-            if (!missing(error)) throw error;
-          });
+          await this.removeTemporary(temporary);
         }
       }
     } catch (error) {

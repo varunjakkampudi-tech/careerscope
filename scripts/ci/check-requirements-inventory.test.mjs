@@ -240,17 +240,41 @@ test('a bare "##" or "|" source line never matches a clause', async () => {
   );
 });
 
-test('matchesSourceLine needs meaningful text and a minimum length for substring matches', () => {
+test('matchesSourceLine is exact by default and needs a marked excerpt for a substring', () => {
   assert.equal(matchesSourceLine(undefined, 'x'), false);
   assert.equal(matchesSourceLine('', 'anything'), false);
   assert.equal(matchesSourceLine('   ', ''), false);
   assert.equal(matchesSourceLine('##', 'a clause'), false);
   assert.equal(matchesSourceLine('|', 'a | b'), false);
-  assert.equal(matchesSourceLine('- Email OTP via Resend', 'Email OTP via Resend'), true);
-  assert.equal(matchesSourceLine('| a | b |', 'a | b'), false, 'two letters are too short');
   assert.equal(matchesSourceLine('| ab | cd |', '| ab | cd |'), true, 'equal lines always match');
-  assert.equal(matchesSourceLine('Resend', 'Email OTP via Resend'), true);
-  assert.equal(matchesSourceLine('Re', 'Email OTP via Resend'), false);
+  assert.equal(matchesSourceLine('- Email  OTP\tvia Resend', '- Email OTP via Resend'), true);
+  // Without the excerpt marker a contained fragment is not the clause.
+  assert.equal(matchesSourceLine('- Email OTP via Resend', 'Email OTP via Resend'), false);
+  assert.equal(matchesSourceLine('Resend', 'Email OTP via Resend'), false);
+  // With the marker the fragment must be in the line and specific enough.
+  assert.equal(matchesSourceLine('- Email OTP via Resend', 'Email OTP via Resend', true), true);
+  assert.equal(matchesSourceLine('| a | b |', 'a | b', true), false, 'two letters are too short');
+  assert.equal(matchesSourceLine('Resend', 'Email OTP via Resend', true), false);
+  assert.equal(matchesSourceLine('Email OTP via Resend', 'Re', true), false);
+});
+
+test('a truncated clause fails; the same fragment passes only when marked as an excerpt', async () => {
+  const whole = realInventory.items[1].text;
+  const cut = whole.slice(0, Math.floor(whole.length / 2)).trimEnd();
+  assert.ok(cut.length >= 8 && cut !== whole);
+  const truncated = await errorsFor(({ inventory }) => {
+    inventory.items[1].text = cut;
+  });
+  assert.match(truncated, /V12-1-002: text does not match source line 17/);
+  const marked = await errorsFor(({ inventory }) => {
+    inventory.items[1].text = cut;
+    inventory.items[1].excerpt = true;
+  });
+  assert.equal(marked, '');
+  const malformed = await errorsFor(({ inventory }) => {
+    inventory.items[1].excerpt = 'yes';
+  });
+  assert.match(malformed, /V12-1-002: excerpt must be a boolean/);
 });
 
 const ciWorkflow = [

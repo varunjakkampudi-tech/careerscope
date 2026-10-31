@@ -277,6 +277,12 @@ the PostgreSQL outbox after the two-minute republish window.
 bash infra/checks/check-backup.sh
 ```
 
+`check-backup.sh` also runs `check-webhook-secrecy.sh` (the webhook URL of `monitor.sh`,
+`recover-proxy.sh` and `scheduler-health.sh` is passed to curl through a `-K` config on a pipe,
+never in argv, and a non-https URL or one with a quote, backslash or line break is refused) and
+`check-release-env.sh` (a missing `DEPLOYED_COMMIT` is refused unless `--first-deploy`, and
+`deploy.sh` leaves `infra/.env` at mode 0600).
+
 Unlike `check-monitoring.sh`, this is **not** stub-based: it starts a
 disposable `postgres:17.6-alpine` container, seeds it with real tables and
 rows, and runs the actual `pg_dump`/`pg_restore`/sanity-query pipeline

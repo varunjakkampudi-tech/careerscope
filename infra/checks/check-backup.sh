@@ -738,6 +738,12 @@ check "an undeletable staging file still records STATUS=failed" "$(grep -c '^STA
 check "an undeletable staging file still sends exactly one alert" "$(wc -l <"$work/webhook-calls" | tr -d ' ')" "1"
 find "$work/backups" "$work/keys" -name '.staging-*' -exec rm -rf {} + 2>/dev/null || true
 
+echo "== webhook URL stays out of curl's argv in the other host scripts"
+bash "$dir/check-webhook-secrecy.sh" || failures=$((failures + 1))
+
+echo "== release record fails closed without DEPLOYED_COMMIT; deploy.sh keeps the env file private"
+bash "$dir/check-release-env.sh" || failures=$((failures + 1))
+
 echo "== production image, compose, Redis secret and resume-key checks (Node)"
 if command -v node >/dev/null 2>&1; then
   node "$dir/check-production-config.mjs" || failures=$((failures + 1))

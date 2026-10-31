@@ -57,8 +57,9 @@ export function logFailure(
   error: unknown,
   context: FailureContext = {},
   note = 'Operation failed',
+  level: 'error' | 'warn' = 'error',
 ) {
-  logger.error({ ...describeError(error), ...context }, note);
+  logger[level]({ ...describeError(error), ...context }, note);
 }
 
 let processHandlersInstalled = false;

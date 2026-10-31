@@ -120,6 +120,24 @@ jobs:
       - name: Scan for accidentally tracked secrets and private data
         run: npm run privacy:check
 
+      # Syntax only (bash -n); nothing is executed. shellcheck is not run: it was not available
+      # to confirm its findings against these scripts, so it is not a gate.
+      - name: Check shell script syntax under infra/ (bash -n)
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","checks"]'), inputs.suite)
+        run: |
+          count=0
+          failed=0
+          while IFS= read -r -d '' script; do
+            count=$((count + 1))
+            if ! bash -n "$script"; then
+              echo "::error file=$script::bash -n reported a syntax error"
+              failed=$((failed + 1))
+            fi
+          done < <(find infra -type f -name '*.sh' -print0 | sort -z)
+          echo "Checked $count shell scripts under infra/, $failed with syntax errors"
+          test "$count" -gt 0
+          test "$failed" -eq 0
+
       - name: Summarize static-check provenance
         if: always()
         env:

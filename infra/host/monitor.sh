@@ -140,14 +140,18 @@ if [ "$should_notify" = true ]; then
   if [ -n "$MONITOR_WEBHOOK_URL" ]; then
     if [[ "$MONITOR_WEBHOOK_URL" != https://* ]]; then
       echo "MONITOR_WEBHOOK_URL is not https; refusing to send an alert in cleartext" >&2
+    elif [[ "$MONITOR_WEBHOOK_URL" == *'"'* || "$MONITOR_WEBHOOK_URL" == *$'\n'* \
+      || "$MONITOR_WEBHOOK_URL" == *$'\r'* || "$MONITOR_WEBHOOK_URL" == *'\'* ]]; then
+      echo "MONITOR_WEBHOOK_URL contains a quote, backslash or line break; refusing to send an alert" >&2
     else
       # Both keys are sent so one payload works for a Slack incoming webhook
       # ("text") and a Discord incoming webhook ("content") without asking
       # which one is configured; each ignores the field it does not use.
       escaped_message=$(json_escape "$message")
       payload="{\"text\":\"$escaped_message\",\"content\":\"$escaped_message\"}"
+      # The URL is a credential: curl reads it from a config on a pipe, never from the command line.
       "$CURL_BIN" -fsS --max-time "$MONITOR_CURL_TIMEOUT" -X POST -H 'Content-Type: application/json' \
-        -d "$payload" "$MONITOR_WEBHOOK_URL" >/dev/null \
+        -d "$payload" -K <(printf 'url = "%s"\n' "$MONITOR_WEBHOOK_URL") >/dev/null \
         && echo "alert sent to configured webhook" \
         || echo "alert webhook POST failed" >&2
     fi

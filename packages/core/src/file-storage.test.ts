@@ -29,6 +29,7 @@ import {
   configuredFileResumeStorage,
 } from './file-storage.js';
 import { ResumeStorageLimit } from './resumes.js';
+import { logger } from './runtime.js';
 
 import type { ResumeObject } from './storage.js';
 
@@ -1451,6 +1452,65 @@ test('inventory counts only 36-byte files with a marker magic as markers', async
     await other.cancelUpload({ ...object, resumeId: randomUUID() });
     other.close();
   } finally {
+    storage.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('an owner at the marker limit can re-cancel an upload that is already cancelled', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-recancel-'));
+  const encryptionKey = randomBytes(32).toString('hex');
+  const { object } = fixture();
+  const storage = new PrivateFileResumeStorage({ directory, encryptionKey, ownerMarkerLimit: 2 });
+  try {
+    await storage.initialize();
+    const first = { ...object, resumeId: randomUUID() };
+    const second = { ...object, resumeId: randomUUID() };
+    await storage.cancelUpload(first);
+    await storage.cancelUpload(second);
+    // The owner is now at the limit: a new upload is refused, but repeating either cancel succeeds.
+    await assert.rejects(
+      storage.cancelUpload({ ...object, resumeId: randomUUID() }),
+      ResumeStorageLimit,
+    );
+    await storage.cancelUpload(first);
+    await storage.cancelUpload(second);
+    assert.equal((await storage.inventory()).markers, 2);
+  } finally {
+    storage.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+class UnremovableTemporaries extends PrivateFileResumeStorage {
+  attempts = 0;
+  protected override async unlinkTemporary(temporary: string) {
+    this.attempts += 1;
+    await super.unlinkTemporary(temporary).catch(() => undefined);
+    throw Object.assign(new Error('operation not permitted'), { code: 'EPERM' });
+  }
+}
+
+test('a failing temporary cleanup after a successful publish or cancel is logged, not thrown', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-cleanup-'));
+  const encryptionKey = randomBytes(32).toString('hex');
+  const { body, object } = fixture();
+  const storage = new UnremovableTemporaries({ directory, encryptionKey });
+  const warn = mock.method(logger, 'warn', () => undefined);
+  try {
+    await storage.initialize();
+    const version = await storage.put(object, body);
+    assert.match(version, /\S/);
+    assert.deepEqual(await storage.get(object, version), body);
+    await storage.cancelUpload({ ...object, resumeId: randomUUID() });
+    assert.equal(storage.attempts, 2);
+    assert.equal(warn.mock.callCount(), 2);
+    // The log carries the error name and code only, never the message or the path.
+    const logged = JSON.stringify(warn.mock.calls.map((call) => call.arguments));
+    assert.ok(logged.includes('EPERM'));
+    assert.ok(!logged.includes(directory) && !logged.includes('operation not permitted'));
+  } finally {
+    warn.mock.restore();
     storage.close();
     await rm(directory, { recursive: true, force: true });
   }

@@ -3,7 +3,7 @@
  * the shutdown signal. Fails fast at startup on unsafe settings.
  */
 
-import { readFileSync } from 'node:fs';
+import { closeSync, constants, fstatSync, lstatSync, openSync, readSync } from 'node:fs';
 import { createClient } from 'redis';
 import pino from 'pino';
 import { z } from 'zod';
@@ -74,14 +74,50 @@ export function isRandomSecret(value: string) {
  * file content.
  */
 function secretFromFile(name: string, path: string) {
-  let content: string;
-  try {
-    content = readFileSync(path, 'utf8').trim();
-  } catch {
-    throw new Error(name + ' could not be read');
-  }
+  const content = readSecretFile(name, path).trim();
   if (!content || /\s/.test(content)) throw new Error(name + ' must contain a single token');
   return content;
+}
+
+/** The largest secret file accepted; a real secret here is a short token. */
+const SECRET_FILE_MAX_BYTES = 4096;
+
+/**
+ * Reads a small secret file with the checks the resume key reader applies: `lstat` must show a
+ * regular file (a symlink is refused), it is opened with O_NOFOLLOW where available and compared with
+ * the earlier `lstat` to detect a swap, it is at most 4096 bytes, and on POSIX it must not be
+ * writable by group or others. Docker file secrets are mounted from the host file as 0440 or 0444
+ * inside a 0700 directory (render-otp-secrets.sh, render-redis-config.sh), so group or other read
+ * is allowed; write is not. Errors name only the variable, never the path or the content.
+ */
+function readSecretFile(name: string, path: string) {
+  let descriptor: number | undefined;
+  try {
+    const before = lstatSync(path);
+    if (!before.isFile() || before.isSymbolicLink())
+      throw new Error(name + ' must be a regular file');
+    if (before.size > SECRET_FILE_MAX_BYTES) throw new Error(name + ' is too large');
+    if (process.platform !== 'win32' && (before.mode & 0o022) !== 0)
+      throw new Error(name + ' must not be writable by group or others');
+    descriptor = openSync(path, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
+    const opened = fstatSync(descriptor);
+    if (opened.ino !== before.ino || opened.dev !== before.dev || opened.size !== before.size)
+      throw new Error(name + ' changed while being read');
+    const buffer = Buffer.alloc(before.size);
+    try {
+      const read = readSync(descriptor, buffer, 0, buffer.length, 0);
+      if (read !== buffer.length) throw new Error(name + ' could not be read');
+      return buffer.toString('utf8');
+    } finally {
+      buffer.fill(0);
+    }
+  } catch (error) {
+    // Only this function's own messages (which carry just the variable name) pass through.
+    if (error instanceof Error && error.message.startsWith(name + ' ')) throw error;
+    throw new Error(name + ' could not be read');
+  } finally {
+    if (descriptor !== undefined) closeSync(descriptor);
+  }
 }
 
 // The browser-facing origin is the one value that must be public in a deployed
@@ -203,7 +239,7 @@ export function configuration(
   // REDIS_PASSWORD_FILE keeps the password out of the environment (and `docker inspect`). A password
   // already present in a URL is left alone; an unreadable or empty file fails startup.
   if (source.REDIS_PASSWORD_FILE) {
-    const password = readFileSync(source.REDIS_PASSWORD_FILE, 'utf8').trim();
+    const password = readSecretFile('REDIS_PASSWORD_FILE', source.REDIS_PASSWORD_FILE).trim();
     if (!/^[A-Za-z0-9._~-]{16,}$/.test(password))
       throw new Error(
         'REDIS_PASSWORD_FILE must contain a plain password of at least 16 characters',

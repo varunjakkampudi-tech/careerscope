@@ -11,13 +11,14 @@ import {
   readdirSync,
   rmSync,
   statSync,
+  symlinkSync,
   utimesSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import process from 'node:process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { ResumeKeyError, ensureResumeKey } from '../host/resume-key.mjs';
 
 const infra = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -38,18 +39,21 @@ const dockerfile = withoutComments(read('docker/Dockerfile'));
 const compose = read('docker/compose.production.yml');
 const bootstrap = read('host/bootstrap.mjs');
 
-await check('Dockerfile pins every Go module to an exact version', () => {
-  const lines = dockerfile.split('\n').filter((line) => /\bgo get\b/.test(line));
-  assert.ok(lines.length >= 3, 'expected go get lines');
+await check('Dockerfile builds the proxy from committed, exactly pinned Go modules', () => {
   assert.equal(/@latest|@master|@main/.test(dockerfile), false, 'no floating module versions');
-  for (const line of lines) {
-    const modules = line
-      .replace(/.*\bgo get\b/, '')
-      .replace(/[\s\x5c]+$/, '')
-      .trim();
-    for (const module of modules.split(/\s+/)) {
-      assert.match(module, /@v\d+\.\d+\.\d+$/, `${module} must be an exact release`);
-    }
+  assert.match(dockerfile, /GOFLAGS=-mod=readonly/, 'the build must not update go.mod or go.sum');
+  assert.match(
+    dockerfile,
+    /COPY infra\/docker\/caddy-proxy\/go\.mod infra\/docker\/caddy-proxy\/go\.sum/,
+  );
+  const goMod = read('docker/caddy-proxy/go.mod');
+  assert.ok(read('docker/caddy-proxy/go.sum').length > 0, 'go.sum must be committed');
+  const requires = [...goMod.matchAll(/^\s*(?:require\s+)?([\w./-]+)\s+(v\S+)/gm)]
+    .filter((match) => !['module', 'go', 'toolchain'].includes(match[1]))
+    .map((match) => match[2]);
+  assert.ok(requires.length >= 3, 'expected pinned requirements in go.mod');
+  for (const version of requires) {
+    assert.match(version, /^v\d+\.\d+\.\d+/, `${version} must be an exact release`);
   }
 });
 
@@ -281,6 +285,183 @@ await check(
     }
   },
 );
+
+await check(
+  'file-secret renderers set restrictive modes, ownership and a private directory',
+  () => {
+    const redis = read('host/render-redis-config.sh');
+    const otp = read('host/render-otp-secrets.sh');
+    for (const [name, text] of [
+      ['render-redis-config.sh', redis],
+      ['render-otp-secrets.sh', otp],
+    ]) {
+      const code = withoutComments(text);
+      assert.match(code, /^umask 077$/m, `${name} must set umask 077`);
+      assert.match(code, /chmod 0700 "\$out_dir"/, `${name} must make the secrets directory 0700`);
+      assert.match(
+        code,
+        /chown 999:1000 "\$target\.tmp"/,
+        `${name} must hand root files to 999:1000`,
+      );
+      assert.match(code, /chmod 0444 "\$target\.tmp"/, `${name} non-root fallback must be 0444`);
+      const modes = [...code.matchAll(/chmod\s+([0-7]{3,4})\b/g)].map((match) => match[1]);
+      for (const mode of modes) {
+        assert.equal(
+          parseInt(mode, 8) & 0o022,
+          0,
+          `${name} chmod ${mode} is writable by group or others`,
+        );
+      }
+      assert.ok(
+        code.indexOf('chmod 0') < code.indexOf('mv -f "$target.tmp" "$target"'),
+        `${name} must set the mode before the file is renamed into place`,
+      );
+    }
+    const redisCode = withoutComments(redis);
+    assert.match(
+      redisCode,
+      /chmod 0400 "\$target\.tmp"/,
+      'redis.conf files are 0400 when root-written',
+    );
+    assert.match(
+      redisCode,
+      /chmod 0440 "\$target\.tmp"/,
+      'redis-password is 0440 when root-written',
+    );
+    assert.match(
+      withoutComments(otp),
+      /chmod 0440 "\$target\.tmp"/,
+      'OTP files are 0440 when root-written',
+    );
+  },
+);
+
+await check(
+  'rendered secret files are never writable by group or others and leave no temporary',
+  () => {
+    if (!posix) return console.log('SKIP POSIX modes are not kept on this filesystem');
+    if (spawnSync('bash', ['-c', 'exit 0']).error) return console.log('SKIP no bash available');
+    const secrets = join(scratch, 'mode-secrets');
+    const envFile = join(scratch, 'mode-env');
+    writeFileSync(
+      envFile,
+      'REDIS_PASSWORD=placeholder0123456789abcdef\nRESEND_API_KEY=re_placeholder0123456789abcdef\n',
+    );
+    const env = { ...process.env, CAREERSCOPE_SECRETS_DIR: secrets };
+    for (const script of ['render-redis-config.sh', 'render-otp-secrets.sh']) {
+      const args = [join(infra, 'host', script), envFile];
+      const run = spawnSync('bash', args, { env, encoding: 'utf8' });
+      assert.equal(run.status, 0, run.stderr);
+    }
+    assert.equal(statSync(secrets).mode & 0o777, 0o700);
+    const names = readdirSync(secrets).sort();
+    assert.deepEqual(names, [
+      'email-otp-hmac-secret',
+      'redis-password',
+      'redis-queue.conf',
+      'redis.conf',
+      'resend-api-key',
+    ]);
+    for (const name of names) {
+      const mode = statSync(join(secrets, name)).mode & 0o777;
+      assert.equal(mode & 0o022, 0, `${name} must not be writable by group or others`);
+      assert.ok(
+        [0o400, 0o440, 0o444].includes(mode),
+        `${name} has unexpected mode ${mode.toString(8)}`,
+      );
+    }
+  },
+);
+
+await check('.env.secrets is excluded from git and from the Docker build context', () => {
+  const root = resolve(infra, '..');
+  const gitignore = readFileSync(join(root, '.gitignore'), 'utf8').split(/\r?\n/);
+  const dockerignore = readFileSync(join(root, '.dockerignore'), 'utf8').split(/\r?\n/);
+  const patterns = ['.env.*', '**/.env.*', '.env.secrets', '.env.secrets/', 'infra/.env.secrets'];
+  const covers = (lines) => lines.some((line) => patterns.includes(line.trim()));
+  assert.ok(covers(gitignore), '.gitignore must cover .env.secrets');
+  assert.ok(covers(dockerignore), '.dockerignore must cover .env.secrets');
+  const args = ['check-ignore', '-q', 'infra/.env.secrets/redis-password'];
+  const git = spawnSync('git', args, { cwd: root });
+  if (git.error || git.status === null || git.status > 1)
+    return console.log('SKIP git unavailable');
+  assert.equal(git.status, 0, 'git must report infra/.env.secrets/ as ignored');
+});
+
+await check('workers load configuration without the OTP secrets; the api does not', () => {
+  const root = resolve(infra, '..');
+  const call = /configuration\(\s*process\.env,\s*\{\s*emailOtpSecrets:\s*false\s*\}\s*\)/;
+  for (const file of ['main', 'files', 'publisher']) {
+    const path = join(root, `apps/workers/search/src/${file}.ts`);
+    const text = withoutComments(readFileSync(path, 'utf8'));
+    assert.match(text, call, `${file}.ts must pass { emailOtpSecrets: false }`);
+  }
+  const apiDir = join(root, 'apps/api/src');
+  const apiCode = readdirSync(apiDir)
+    .filter((name) => name.endsWith('.ts') && !name.endsWith('.test.ts'))
+    .map((name) => withoutComments(readFileSync(join(apiDir, name), 'utf8')))
+    .join('\n');
+  assert.equal(
+    /emailOtpSecrets:\s*false/.test(apiCode),
+    false,
+    'the api must load the OTP secrets',
+  );
+  const files = compose.match(/EMAIL_OTP_HMAC_SECRET_FILE|RESEND_API_KEY_FILE/g) ?? [];
+  assert.equal(files.length, 2, 'only the api service receives the OTP secret files');
+});
+
+await check('secretFromFile and REDIS_PASSWORD_FILE use the hardened reader', async () => {
+  const root = resolve(infra, '..');
+  const source = withoutComments(readFileSync(join(root, 'packages/core/src/runtime.ts'), 'utf8'));
+  assert.equal(/readFileSync/.test(source), false, 'runtime.ts must not use a bare readFileSync');
+  assert.match(source, /lstatSync\(path\)/);
+  assert.match(source, /isFile\(\)/);
+  assert.match(source, /isSymbolicLink\(\)/);
+  assert.match(source, /O_NOFOLLOW/);
+  assert.match(source, /SECRET_FILE_MAX_BYTES = 4096/);
+  assert.match(source, /readSecretFile\('REDIS_PASSWORD_FILE'/);
+  assert.match(source, /process\.platform !== 'win32'/);
+  // Behaviour, against the built output when it exists (npm run build:core).
+  const built = join(root, 'packages/core/dist/runtime.js');
+  if (!existsSync(built)) return console.log('SKIP packages/core is not built');
+  const loaded = await import(pathToFileURL(built).href).catch((error) => error);
+  if (loaded instanceof Error)
+    return console.log('SKIP packages/core dependencies are not installed');
+  const { configuration } = loaded;
+  const base = {
+    DATABASE_URL: 'postgres://127.0.0.1/test',
+    REDIS_URL: 'redis://127.0.0.1:6379',
+    QUEUE_REDIS_URL: 'redis://127.0.0.1:6380',
+    APP_ORIGIN: 'http://localhost:5280',
+  };
+  const secret = 'placeholder0123456789abcdef';
+  const file = join(scratch, 'redis-file-secret');
+  const refuse = (content, why) => {
+    writeFileSync(file, content, { mode: 0o600 });
+    const fragment = content.trim().slice(0, 24);
+    assert.throws(
+      () => configuration({ ...base, REDIS_PASSWORD_FILE: file }),
+      (error) =>
+        error.message.includes('REDIS_PASSWORD_FILE') &&
+        !error.message.includes(fragment) &&
+        !error.message.includes(scratch),
+      why,
+    );
+  };
+  writeFileSync(file, `${secret}\n`, { mode: 0o600 });
+  const accepted = configuration({ ...base, REDIS_PASSWORD_FILE: file });
+  assert.equal(new URL(accepted.REDIS_URL).password, secret);
+  refuse('a'.repeat(5000), 'oversized');
+  refuse(`${secret} ${secret}2\n`, 'multi-token');
+  const link = join(scratch, 'redis-file-link');
+  try {
+    symlinkSync(file, link);
+  } catch (error) {
+    if (error.code === 'EPERM') return console.log('SKIP symlinks are not permitted here');
+    throw error;
+  }
+  assert.throws(() => configuration({ ...base, REDIS_PASSWORD_FILE: link }), /REDIS_PASSWORD_FILE/);
+});
 
 rmSync(scratch, { recursive: true, force: true });
 if (failures > 0) {
