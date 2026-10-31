@@ -121,6 +121,10 @@ test('authenticated reads, refresh and logout are rate limited by user or token 
       (await request('POST', '/api/logout', { origin, cookie, 'x-csrf-token': csrf })).statusCode,
       429,
     );
+    assert.equal(
+      (await request('POST', '/api/session/logout', { origin, cookie: refreshCookie })).statusCode,
+      429,
+    );
     // Keys carry the user id or a token hash, never the raw token.
     assert.ok(keys.some((key) => key === `sessions-read:${ownerId}`));
     assert.ok(keys.some((key) => /^logout:[a-f0-9]{64}$/.test(key)));

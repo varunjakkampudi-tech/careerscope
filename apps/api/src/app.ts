@@ -415,7 +415,12 @@ export async function createApp(
     // Qualified by method on purpose: a future `app.get('/api/logout')` (an
     // obvious way to add a plain sign-out link) must not inherit anonymous
     // access and skip the Origin check above, which does not apply to GET.
-    if (!session && request.method === 'POST' && path === '/api/logout') return;
+    if (
+      !session &&
+      request.method === 'POST' &&
+      (path === '/api/logout' || path === '/api/session/logout')
+    )
+      return;
     if (!session) throw new HttpError(401, 'Authentication required');
     request.ownerId = session.ownerId;
     if (
@@ -963,7 +968,15 @@ export async function createApp(
     setSessionCookies(reply, credentials, new URL(origin).protocol === 'https:');
     return { authenticated: true };
   });
-  app.post('/api/logout', async (request, reply) => {
+  // Sign-out is served on two paths. The access cookie expires after 15 minutes
+  // and is scoped to /api, while the refresh cookie is scoped to /api/session.
+  // Only /api/session/logout receives the refresh cookie after the access cookie
+  // has expired, so the web client uses it and revokes the whole session family.
+  // /api/logout remains for callers that still send only the access cookie.
+  const signOut = async (
+    request: import('fastify').FastifyRequest,
+    reply: import('fastify').FastifyReply,
+  ) => {
     // The onRequest hook does not guarantee a cookie on this path, so the token
     // is checked, not asserted. With no token there is no session to destroy;
     // the cookies are still cleared and the same body is returned, so the
@@ -987,7 +1000,9 @@ export async function createApp(
     await auth.logout(request.cookies[sessionCookie], request.cookies[refreshCookie]);
     clearSessionCookies(reply);
     return { authenticated: false };
-  });
+  };
+  app.post('/api/logout', signOut);
+  app.post('/api/session/logout', signOut);
   app.post('/api/session/refresh', async (request, reply) => {
     // Keyed by the presented refresh token. A legitimate chain rotates the token on every call, so
     // only replay of one token accumulates against this budget.

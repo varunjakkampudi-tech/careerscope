@@ -214,7 +214,8 @@ async function request(path: string, options: RequestInit, mayRefresh: boolean):
         ? body.csrf
         : undefined;
   }
-  if (response.ok && ['/login', '/otp/verify', '/logout'].includes(path)) csrfToken = undefined;
+  if (response.ok && ['/login', '/otp/verify', '/logout', '/session/logout'].includes(path))
+    csrfToken = undefined;
   if (!response.ok) {
     const messages: Record<number, string> = {
       400: 'Check the fields and try again.',

@@ -167,6 +167,7 @@ route unauthenticated and cross-origin, and checks the OpenAPI document declares
 | POST   | `/api/login`           | no   | Origin only | Test-access account selection only                                                                                                                                                   |
 | POST   | `/api/otp/request`     | no   | Origin only | Sign-in or explicitly configured signup challenge                                                                                                                                    |
 | POST   | `/api/otp/verify`      | no   | Origin only | Verifies a challenge and establishes an opaque session                                                                                                                               |
+| POST   | `/api/session/logout`  | no   | Origin only | Signs out with the refresh cookie after the access cookie has expired; revokes the session family. The web client uses this route                                                    |
 | POST   | `/api/logout`          | yes  | yes         |                                                                                                                                                                                      |
 | POST   | `/api/session/refresh` | no   | Origin only | Rotates the HttpOnly refresh cookie and returns `{ authenticated: true, csrf }`; reuse of a consumed token revokes the session family                                                |
 

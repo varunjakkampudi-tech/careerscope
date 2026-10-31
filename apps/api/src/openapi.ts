@@ -483,6 +483,11 @@ function contracts(options: {
       object({ authenticated: { ...bool, enum: [false] } }),
       { failures: [429] },
     ),
+    'POST /api/session/logout': operation(
+      'Sign out with the refresh cookie when the access cookie has expired; revokes the session family',
+      object({ authenticated: { ...bool, enum: [false] } }),
+      { failures: [429] },
+    ),
     'POST /api/session/refresh': operation(
       'Rotate the browser refresh token and issue a short-lived access session',
       object({ authenticated: { ...bool, enum: [true] }, csrf: text() }),
@@ -1033,6 +1038,7 @@ export async function registerOpenApi(
         '/api/otp/request',
         '/api/otp/verify',
         '/api/logout',
+        '/api/session/logout',
         '/api/session/refresh',
       ].includes(url);
       const refreshEndpoint = url === '/api/session/refresh';

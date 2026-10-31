@@ -100,7 +100,10 @@ export default function AuthenticatedShell({ children }: { children: ReactNode }
   // monolithic page.tsx header.
   const logout = useMutation({
     mutationFn: () =>
-      apiJson('/logout', { method: 'POST', headers: { 'x-csrf-token': session.data?.csrf ?? '' } }),
+      apiJson('/session/logout', {
+        method: 'POST',
+        headers: { 'x-csrf-token': session.data?.csrf ?? '' },
+      }),
     onSuccess: async () => {
       clearAuthQueryCache(cache);
       // Logout changes the owner-discovery query just as login does. Refresh
