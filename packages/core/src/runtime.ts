@@ -27,6 +27,30 @@ function localUrl(value: string, protocols: string[]) {
   return value;
 }
 
+/**
+ * True when the value is hex (at least 64 characters) or base64/base64url (at least 43 characters)
+ * that decodes to at least 32 bytes which look random: not a short repeating pattern and with a
+ * wide spread of byte values. Random 32 bytes have about 28 distinct values; fewer than 16 is
+ * astronomically unlikely, so this rejects repeated, dictionary-like and counter-like secrets without
+ * ever echoing the value.
+ */
+export function isRandomSecret(value: string) {
+  const text = value.trim();
+  let bytes: Buffer;
+  // A string made only of hex digits is hex, never reinterpreted as base64 (which would overstate its entropy).
+  if (/^[0-9a-fA-F]+$/.test(text)) {
+    if (text.length < 64 || text.length % 2 !== 0) return false;
+    bytes = Buffer.from(text, 'hex');
+  } else if (/^[A-Za-z0-9+/_-]{43,}={0,2}$/.test(text)) bytes = Buffer.from(text, 'base64');
+  else return false;
+  if (bytes.length < 32) return false;
+  if (new Set(bytes).size < 16) return false;
+  for (let period = 1; period <= 16; period++) {
+    if (bytes.every((byte, index) => byte === bytes[index % period])) return false;
+  }
+  return true;
+}
+
 // The browser-facing origin is the one value that must be public in a deployed
 // installation: it is compared against the Origin header and decides whether the
 // session cookie carries Secure. Anything that is not loopback must be https, so
@@ -111,8 +135,10 @@ export function configuration(source: NodeJS.ProcessEnv = process.env) {
   if (env.DEPLOYMENT_ENVIRONMENT === 'production' && env.EMAIL_OTP_ENABLED !== 'true')
     throw new Error('Production requires email OTP sign-in to be enabled');
   if (env.EMAIL_OTP_ENABLED === 'true') {
-    if (!env.EMAIL_OTP_HMAC_SECRET || env.EMAIL_OTP_HMAC_SECRET.trim().length < 32)
-      throw new Error('Email OTP requires a separate HMAC secret of at least 32 bytes');
+    if (!env.EMAIL_OTP_HMAC_SECRET || !isRandomSecret(env.EMAIL_OTP_HMAC_SECRET))
+      throw new Error(
+        'Email OTP requires a separate HMAC secret of at least 32 random bytes (64 hex or 43 base64 characters)',
+      );
     if (!env.RESEND_API_KEY || env.RESEND_API_KEY.trim().length === 0)
       throw new Error('Email OTP requires RESEND_API_KEY');
     if (env.RESEND_FROM_EMAIL !== 'CareerScope <noreply@careerscope.tech>')

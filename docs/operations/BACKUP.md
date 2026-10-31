@@ -10,18 +10,35 @@ actually restorable, and only then keeps it.
 
 ## What is backed up
 
-| Data                                                             | Artefact                                                                         | Location                                                                             | Notes                                                                                                                                                                                                        |
-| ---------------------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| PostgreSQL (everything relational, including parsed resume text) | `careerscope-<stamp>.dump.age` or `.dump.gpg` (pg_dump custom format, encrypted) | `BACKUP_DIR` (default `/var/backups/careerscope`)                                    | Verified by a real restore on every run, then encrypted before it is promoted                                                                                                                                |
-| Resume objects (AES-256-GCM ciphertext)                          | `careerscope-resumes-<stamp>.tar`                                                | `BACKUP_DIR`                                                                         | Archive of `/private/objects` taken from the files container; unreadable without the key                                                                                                                     |
-| Resume encryption key                                            | `careerscope-resume-key-<stamp>.key`                                             | `BACKUP_KEY_DIR` (default `/var/lib/careerscope/backup-keys`, owner root, mode 0700) | Neither directory may be inside the other (compared with `realpath`): the run fails otherwise. Owner and mode are read back with `stat`. Prefer a different mount; the run warns when both are on one device |
-| Redis queue                                                      | Not backed up                                                                    |                                                                                      | Disposable by design: commands live in the PostgreSQL outbox and are republished (see [OUTBOX](../architecture/OUTBOX.md))                                                                                   |
-| Secrets in `/etc/careerscope-*.env` and the host env files       | Not backed up here                                                               |                                                                                      | Held by the owner in the password manager; see [SECRETS](SECRETS.md)                                                                                                                                         |
+| Data                                                             | Artefact                                                                         | Location                                                                             | Notes                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PostgreSQL (everything relational, including parsed resume text) | `careerscope-<stamp>.dump.age` or `.dump.gpg` (pg_dump custom format, encrypted) | `BACKUP_DIR` (default `/var/backups/careerscope`)                                    | Verified by a real restore on every run, then encrypted before it is promoted                                                                                                                                                                                                                                                                                                                                           |
+| Resume objects (AES-256-GCM ciphertext)                          | `careerscope-resumes-<stamp>.tar.age` or `.tar.gpg` (encrypted tar)              | `BACKUP_DIR`                                                                         | Archive of `/private/objects` taken from the files container, then encrypted with the dump's backup encryption. Object names carry owner ids and plaintext hashes, so the tar and its listing are only readable with the backup secret                                                                                                                                                                                  |
+| Resume encryption key                                            | `careerscope-resume-key-<fingerprint>.key.age` or `.key.gpg` (encrypted)         | `BACKUP_KEY_DIR` (default `/var/lib/careerscope/backup-keys`, owner root, mode 0700) | Encrypted with the backup encryption; no plaintext copy is retained. Named by the first 12 hex characters of the key's SHA-256 and written once per distinct key, not per run. Neither directory may be inside the other (compared with `realpath`). Owner and mode are read back with `stat`. A key directory on the same device as `BACKUP_DIR` fails the run unless `BACKUP_ALLOW_SAME_DEVICE_KEY_DIR=1` (see below) |
+| Redis queue                                                      | Not backed up                                                                    |                                                                                      | Disposable by design: commands live in the PostgreSQL outbox and are republished (see [OUTBOX](../architecture/OUTBOX.md))                                                                                                                                                                                                                                                                                              |
+| Secrets in `/etc/careerscope-*.env` and the host env files       | Not backed up here                                                               |                                                                                      | Held by the owner in the password manager; see [SECRETS](SECRETS.md)                                                                                                                                                                                                                                                                                                                                                    |
 
 The resume key and the objects share the `private` Docker volume, so a volume
 snapshot would put both in one place and defeat encryption at rest. The backup
 therefore splits them. Never put the key directory in the same off-host copy as
 `BACKUP_DIR`; keep the key in different custody from the archive.
+
+Both artefacts are also encrypted with the same backup encryption as the dump
+(`age` or `gpg`), so no owner id, resume hash or key byte is readable in either
+directory without the backup secret, and no plaintext key copy sits in the
+retained set. The object listing and `tar` stderr, which would expose names,
+are written only to root-only staging files and the journal, never to the
+backup set. Plaintext `.tar` and `.key` files from older versions are no longer
+written; any that remain age out under normal retention (14 days by default),
+and can be deleted by hand sooner once an encrypted set exists.
+
+**Same-device placement fails closed.** If `BACKUP_DIR` and `BACKUP_KEY_DIR` are
+on the same device (same `stat` device id), the run fails with `STATUS=failed`
+and an alert, because one disk copy would then hold the archive beside its key
+material. Put the key directory on a different mount. To accept the risk
+knowingly (for example a single-disk host, with the backup secret held off the
+host), set `BACKUP_ALLOW_SAME_DEVICE_KEY_DIR=1` in `/etc/careerscope-backup.env`;
+the run then prints a warning on every run.
 
 ## What every scheduled run does
 
@@ -44,8 +61,9 @@ therefore splits them. Never put the key directory in the same off-host copy as
 3. **Resumes and key** - after the dump (so an upload that lands in between
    leaves a harmless orphan object rather than a database row with no object),
    archive `/private/objects` from the files container, confirm the archive
-   lists end to end, read `/private/encryption.key` and confirm it is exactly 64
-   hex characters. A missing container, unreadable archive or malformed key
+   lists end to end, encrypt it, read `/private/encryption.key`, confirm it is
+   exactly 64 hex characters and encrypt a copy named by its fingerprint (skipped
+   when that copy already exists). A missing container, unreadable archive or malformed key
    fails the whole run. An empty `BACKUP_FILES_CONTAINER` also fails the run
    (`STATUS=failed`) unless `BACKUP_ALLOW_SKIP_RESUMES=1` is set, which skips this
    step, prints a warning and records `RESUMES=skipped` with
@@ -120,8 +138,21 @@ exits 0 on purpose (it is not a failure) and writes `STATUS=locked` with the
 time. A lock that stays held leaves that status getting older, so
 `bash infra/checks/check-backup.sh --status-only [DIR]` exits 1 for `failed`
 and for a `locked` status older than **26 hours** (a hung run). It exits 0 for
-`ok`, `degraded` and a recent `locked`. Wire it into the scheduler-health check
-if you want that alert; nothing calls it automatically today.
+`ok`, `degraded` and a recent `locked`.
+
+A good status does not stay good forever. `--status-only` also exits 1 when an
+`ok` or `degraded` status is older than the backup interval plus a grace
+period: **24 hours + 6 hours = 30 hours** by default (the timer runs daily at
+03:30, so a missed run is flagged the same day). Override with
+`BACKUP_STATUS_INTERVAL_HOURS` and `BACKUP_STATUS_GRACE_HOURS` (whole numbers).
+It also exits 1 for a missing or malformed `AT=` and for a stamp more than five
+minutes in the future. Wire it into the scheduler-health check if you want that
+alert; nothing calls it automatically today.
+
+Any unexpected failure after the run starts (for example `mkdir` or `chmod` on
+the key directory, before the first dump step) is caught by an `ERR` trap that
+writes `STATUS=failed` and sends the alert, so it cannot leave yesterday's `ok`
+in place. Still fail-closed: the run exits 1 and promotes nothing.
 
 ## Recovery objectives
 
@@ -151,9 +182,13 @@ Do these in order. Step 3 matters most: if the stack starts on an empty volume
 before the key is restored, `bootstrap.mjs` creates a new random key, and the
 restored resumes will not decrypt.
 
-1. Pick the matching set from `last-status` or the directory listing: one
-   `careerscope-<stamp>.dump.age` (or `.dump.gpg`), the `careerscope-resumes-<stamp>.tar` with the
-   closest stamp, and the key file `careerscope-resume-key-*.key`.
+1. Pick the matching set from `last-status` (it names `FILE`, `RESUMES_FILE` and
+   `RESUME_KEY_FILE`) or the directory listing: one
+   `careerscope-<stamp>.dump.age` (or `.dump.gpg`), the
+   `careerscope-resumes-<stamp>.tar.age` (or `.tar.gpg`) with the closest stamp,
+   and the encrypted key `careerscope-resume-key-<fingerprint>.key.age` (or `.key.gpg`).
+   Decrypt all three with the backup secret (commands below), to root-only
+   temporary files.
 2. On the target host, bring up only PostgreSQL and make sure the application
    services (`api`, `publisher`, `search`, `files`, `web`) are stopped:
 
@@ -167,14 +202,23 @@ restored resumes will not decrypt.
    project name):
 
    ```sh
+   umask 077
    B=/var/backups/careerscope
    K=/var/lib/careerscope/backup-keys
-   docker run --rm -v careerscope_private:/private -v "$B":/backup:ro -v "$K":/keys:ro alpine:3.23 sh -ec '
+   R=$(mktemp -d)   # root-only scratch directory; delete it when done
+   # gpg:  gpg --batch --pinentry-mode loopback --passphrase-file /path/to/passphrase -o OUT --decrypt IN
+   # age:  age -d -i /path/to/identity.txt -o OUT IN
+   gpg --batch --pinentry-mode loopback --passphrase-file /path/to/passphrase \
+     -o "$R/resumes.tar" --decrypt "$B/careerscope-resumes-<stamp>.tar.gpg"
+   gpg --batch --pinentry-mode loopback --passphrase-file /path/to/passphrase \
+     -o "$R/encryption.key" --decrypt "$K/careerscope-resume-key-<fingerprint>.key.gpg"
+   docker run --rm -v careerscope_private:/private -v "$R":/restore:ro alpine:3.23 sh -ec '
      mkdir -p /private && umask 077
-     tar -xf /backup/careerscope-resumes-<stamp>.tar -C /private
-     cp /keys/careerscope-resume-key-<stamp>.key /private/encryption.key
+     tar -xf /restore/resumes.tar -C /private
+     cp /restore/encryption.key /private/encryption.key
      chmod 600 /private/encryption.key && chmod 700 /private/objects
      chown -R 1000:1000 /private'
+   shred -u "$R/encryption.key" "$R/resumes.tar"; rmdir "$R"
    ```
 
 4. Decrypt and restore the database. Decrypt to a root-only temporary file and
@@ -242,8 +286,13 @@ the archive does not contain the key; extracting the archive reproduces every
 object byte for byte; a malformed key fails the whole run and promotes nothing
 new; a missing files container fails the run instead of silently skipping
 resumes; an empty files container fails closed unless `BACKUP_ALLOW_SKIP_RESUMES=1`;
-a key directory inside the backup directory is refused with `STATUS=failed`; and an
-allowed skip warns and is recorded as
+a key directory inside the backup directory is refused with `STATUS=failed`; the
+resume archive and key copy are encrypted, carry no readable object name or key
+bytes, and an unchanged key keeps a single copy; a key directory on the same device
+fails closed unless `BACKUP_ALLOW_SAME_DEVICE_KEY_DIR=1`; a failure before the first
+dump step (an unusable key directory path) still records `STATUS=failed` and alerts;
+`--status-only` flags a stale `ok`/`degraded` status (older than 30 hours by default)
+and the configured grace period is honoured; and an allowed skip warns and is recorded as
 `RESUMES=skipped`. Under Git Bash set `MSYS_NO_PATHCONV=1` (the script does)
 so in-container paths are not rewritten. A failed backup is therefore
 visible both in `last-status` and the oneshot systemd service result consumed
@@ -263,6 +312,15 @@ succeeds and promotes an extra dump. Every later absolute dump count is then one
 retention or promotion defects: the same suite in an `ubuntu:24.04` container with the Docker socket
 passed 124 of 124 checks (124 PASS, 0 FAIL, exit 0) in a run on 2026-10-28. The script now probes `chmod` first and exits with a clear message instead of reporting those
 cascades. Run it on Linux or in such a container; the GitHub-hosted Linux runner does the same.
+
+The same script also runs `infra/checks/check-production-config.mjs` when `node`
+is installed (CI has it): Go modules pinned to exact versions, no apt upgrade,
+required image variables, no Redis password on a command line or in the
+environment, `render-redis-config.sh`, and the resume-key bootstrap (atomic
+create, no overwrite, clear error for an empty or truncated key). The key file is
+written to a temporary file, fsynced and linked into place, so a crash leaves no
+key or a whole key; if a truncated key from an earlier version exists, the
+bootstrap container stops with a message naming the file and the restore step.
 
 ## Known limitation
 

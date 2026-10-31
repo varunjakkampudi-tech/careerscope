@@ -218,3 +218,25 @@ test('profile rejects unknown ownership fields, unsafe links and malformed revis
     false,
   );
 });
+
+test('preparation is deterministic and makes no network call (API-10)', () => {
+  const profile = writableProfileSchema.parse(syntheticProfile);
+  const record = { revision: 3, profile, updatedAt: new Date(), scheduledDiscoveryEnabled: false };
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = (() => {
+    throw new Error('preparation must not call the network');
+  }) as typeof fetch;
+  try {
+    const first = prepareProfile(record);
+    const second = prepareProfile(structuredClone(record));
+    assert.deepEqual(first, second);
+    assert.equal(JSON.stringify(first), JSON.stringify(second));
+    assert.equal(first.method, 'rules-v1');
+    assert.ok(first.limitations.some((line) => line.includes('not an AI assessment')));
+    assert.deepEqual(prepareProfile(null), prepareProfile(null));
+    assert.equal(prepareProfile(null).checks.length, 0);
+    assert.equal(prepareProfile(null).questions.length, 0);
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});

@@ -10,6 +10,11 @@ name: careerscope
 # orphan healthy dependents in a dead namespace. Replacing the anchor remains a
 # deliberate full-stack operation because it necessarily replaces the namespace.
 
+# Images are explicit and required: CAREERSCOPE_IMAGE (runtime) and CAREERSCOPE_PROXY_IMAGE (proxy)
+# have no default, so a mutable local tag can never be deployed by accident. Set them in infra/.env to
+# an immutable reference (name@sha256:<digest> or a revision tag such as careerscope:<commit>);
+# see docs/operations/DEPLOYMENT.md.
+
 x-hardening: &hardening
   init: true
   read_only: true
@@ -49,7 +54,7 @@ x-web-environment: &web-environment
 
 x-app: &app
   <<: *hardening
-  image: careerscope:v3
+  image: ${CAREERSCOPE_IMAGE:?Runtime image required (immutable digest or revision tag)}
   user: '1000:1000'
   network_mode: service:network-anchor
   environment: *environment
@@ -63,7 +68,7 @@ x-app: &app
 services:
   network-anchor:
     <<: *hardening
-    image: careerscope:v3-proxy
+    image: ${CAREERSCOPE_PROXY_IMAGE:?Proxy image required (immutable digest or revision tag)}
     user: '1000:1000'
     command: ['sh', '-c', 'exec tail -f /dev/null']
     environment:
@@ -74,7 +79,7 @@ services:
 
   proxy:
     <<: *hardening
-    image: careerscope:v3-proxy
+    image: ${CAREERSCOPE_PROXY_IMAGE:?Proxy image required (immutable digest or revision tag)}
     user: '1000:1000'
     # Restored only so the proxy can bind 80 and 443 as an unprivileged user.
     cap_add: [NET_BIND_SERVICE]
@@ -131,14 +136,15 @@ services:
     network_mode: service:network-anchor
     environment:
       DEPLOYMENT_ENVIRONMENT: production
-      REDISCLI_AUTH: ${REDIS_PASSWORD:?Redis password required}
+    secrets:
+      - source: redis-config
+        target: redis.conf
     command:
       [
         'redis-server',
+        '/run/secrets/redis.conf',
         '--bind',
         '127.0.0.1',
-        '--requirepass',
-        '${REDIS_PASSWORD:?Redis password required}',
         '--save',
         '',
         '--maxmemory',
@@ -149,7 +155,11 @@ services:
     cpus: 0.5
     mem_limit: 256m
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test:
+        [
+          'CMD-SHELL',
+          'REDISCLI_AUTH="$$(cut -d " " -f2 /run/secrets/redis.conf)" redis-cli ping | grep -q PONG',
+        ]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -164,14 +174,15 @@ services:
     network_mode: service:network-anchor
     environment:
       DEPLOYMENT_ENVIRONMENT: production
-      REDISCLI_AUTH: ${REDIS_PASSWORD:?Redis password required}
+    secrets:
+      - source: redis-queue-config
+        target: redis.conf
     command:
       [
         'redis-server',
+        '/run/secrets/redis.conf',
         '--bind',
         '127.0.0.1',
-        '--requirepass',
-        '${REDIS_PASSWORD:?Redis password required}',
         '--port',
         '6380',
         '--appendonly',
@@ -186,20 +197,27 @@ services:
     volumes: [queue-data:/data]
     mem_limit: 384m
     healthcheck:
-      test: ['CMD', 'redis-cli', '-p', '6380', 'ping']
+      test:
+        [
+          'CMD-SHELL',
+          'REDISCLI_AUTH="$$(cut -d " " -f2 /run/secrets/redis.conf)" redis-cli -p 6380 ping | grep -q PONG',
+        ]
       interval: 3s
       timeout: 3s
       retries: 20
 
   bootstrap:
     <<: *hardening
-    image: careerscope:v3
+    image: ${CAREERSCOPE_IMAGE:?Runtime image required (immutable digest or revision tag)}
     user: '1000:1000'
     network_mode: service:network-anchor
     environment: *environment
     restart: 'no'
     command: ['node', '/app/bootstrap.mjs']
-    volumes: ['private:/private', '../host/bootstrap.mjs:/app/bootstrap.mjs:ro']
+    volumes:
+      - 'private:/private'
+      - '../host/bootstrap.mjs:/app/bootstrap.mjs:ro'
+      - '../host/resume-key.mjs:/app/resume-key.mjs:ro'
     cpus: 1
     mem_limit: 512m
     depends_on:
@@ -265,6 +283,15 @@ services:
       interval: 10s
       timeout: 5s
       retries: 20
+
+# The Redis password reaches the Redis containers as a file, never as a command-line argument
+# or an environment variable, so it is absent from `docker inspect` and the process list.
+# `bash infra/host/render-redis-config.sh` writes these files from REDIS_PASSWORD in infra/.env.
+secrets:
+  redis-config:
+    file: ../.env.secrets/redis.conf
+  redis-queue-config:
+    file: ../.env.secrets/redis-queue.conf
 
 volumes:
   queue-data:

@@ -4,6 +4,8 @@ ARG ALPINE_IMAGE=alpine:3.23@sha256:ff7f0c727dd796aa36787bfcd9a64bf35a6ce72a7345
 
 # Upstream caddy:2-alpine ships a binary built with a vulnerable Go toolchain and
 # dependencies, so the proxy binary is rebuilt here instead of being consumed as-is.
+# Every module is pinned to an exact released version (no @latest) so a rebuild of the
+# same revision resolves the same dependency graph; bump the pins deliberately.
 FROM ${GO_IMAGE} AS caddy-build
 ENV CGO_ENABLED=0 GOTOOLCHAIN=local
 WORKDIR /build
@@ -23,7 +25,7 @@ RUN printf '%s\n' \
     'func main() { caddycmd.Main() }' > main.go \
     && go mod init careerscope/proxy \
     && go get github.com/caddyserver/caddy/v2@v2.11.7 \
-    && go get golang.org/x/net@latest golang.org/x/crypto@latest \
+    && go get golang.org/x/net@v0.62.0 golang.org/x/crypto@v0.58.0 \
     && go get google.golang.org/grpc@v1.83.2 \
     && go mod tidy \
     && go build -trimpath -ldflags '-s -w' -o /out/caddy .
@@ -68,11 +70,9 @@ ARG CAREERSCOPE_REVISION=unknown
 LABEL org.opencontainers.image.revision="${CAREERSCOPE_REVISION}"
 LABEL org.opencontainers.image.source="https://github.com/varunjakkampudi-tech/careerscope"
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 CAREERSCOPE_REVISION=${CAREERSCOPE_REVISION}
-# The base image is digest-pinned for reproducibility, so it never picks up
-# Debian security updates on its own; apply them explicitly.
-RUN apt-get update \
-    && apt-get upgrade -y --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
+# The base image is digest-pinned and no unpinned package upgrade runs here, so a
+# rebuild is reproducible. Debian security updates arrive by bumping NODE_IMAGE to
+# a newer digest, not by an apt-get upgrade at build time.
 WORKDIR /app
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/node_modules ./node_modules

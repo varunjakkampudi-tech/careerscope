@@ -24,6 +24,7 @@ let database: Database | undefined;
 let limiter: Awaited<ReturnType<typeof rateLimiter>> | undefined;
 let resumeStorage: Awaited<ReturnType<typeof configuredFileResumeStorage>>;
 let cleaned = false;
+let stopReclaim: (() => void) | undefined;
 
 try {
   const env = configuration();
@@ -74,10 +75,21 @@ try {
   // Registered after the app is built but before listening, so a signal during startup still triggers cleanup.
   const shutdown = shutdownSignal();
   try {
-    // Reclaim removes only temporaries older than 10 minutes; a live writer stalled past that bound retries its write once.
+    // Reclaim removes only temporaries older than 10 minutes; a writer stalled past that bound retries once.
+    // The API owns resume writes, so it also sweeps periodically; the timer is unreferenced and logs counts only.
     if (resumeStorage) {
       const reclaimed = await resumeStorage.reclaimTemporariesAtStartup(shutdown.signal);
       if (reclaimed.removed) logger.warn(reclaimed, 'Reclaimed stale resume temporaries');
+      stopReclaim = resumeStorage.startReclaimSweep({
+        onResult: (result) => {
+          if (result.removed || result.markersRemoved)
+            logger.info(
+              { temporaries: result.removed, markers: result.markersRemoved },
+              'Resume storage sweep reclaimed entries',
+            );
+        },
+        onError: (error) => logFailure(error, {}, 'Resume storage sweep failed'),
+      });
     }
     await app.listen({ host: '127.0.0.1', port: API_PORT });
     // Ties a running process to the source it was built from. Deliberately not on
@@ -92,6 +104,7 @@ try {
       );
   } finally {
     cleaned = true;
+    stopReclaim?.();
     await app.close();
     await openLimiter.close();
     await database.close();

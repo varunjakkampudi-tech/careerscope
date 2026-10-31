@@ -56,12 +56,37 @@ Do not replace applied migrations with a new baseline on a deployed database.
 
 Run `npm run gates:test`, `npm run test:integration`, `npm run test:domain`,
 browser checks and `npm run security:check` against the current source.
-The latest full dependency audit exits 1 with five high and seven moderate
-findings; the production-only audit has three moderate findings in the DOCX
-parser chain (`mammoth`/`argparse`/`sprintf-js`). The configured production
-security command exits 0 only because its threshold is high; that is not a clean
-all-severity audit or security waiver. These findings remain unresolved. No
-force-fix, suppression, threshold change or waiver was applied.
+
+## Dependency advisories
+
+Verified with `npm audit` on Node 24 after the glob/minimatch remediation:
+the production-only audit (`--omit=dev`) reports zero advisories, and the full
+audit reports zero high or critical findings and 15 moderate findings, all in
+the development tree. `npm run security:check` runs both audits with a high
+threshold and must keep doing so; no suppression or threshold change was made.
+
+Fixed by scoped overrides in `package.json` (verified by
+`scripts/ci/dependency-remediation.test.mjs`, which fails CI if the lockfile
+regresses to glob below 14.0.2 or an unpatched minimatch outside the lint path):
+
+- `@fastify/static` uses `glob ^14.0.3` (GHSA-3g3m-2fjr-6pw4, AbortSignal
+  bypass) with a nested `minimatch 11.x` (GHSA-g3hv-75wg-m249).
+- `@typescript-eslint/typescript-estree` uses `minimatch ^11.0.3`.
+
+Accepted advisory, development only: GHSA-g3hv-75wg-m249 (minimatch below
+11.0.1) through `minimatch 3.1.5` required by `eslint`, `@eslint/eslintrc`,
+`@eslint/config-array`, `eslint-plugin-import`, `eslint-plugin-react` and
+`eslint-plugin-jsx-a11y`. These packages call `require("minimatch")` as a
+function (the 3.x API), which minimatch 11 no longer exports, so forcing 11
+would break linting; 3.1.5 is the final 3.x release and has no fix. The path
+is a lint tool with no runtime, request-handling or production-image exposure.
+Owner decision needed: wait for upstream eslint and plugin releases that use
+minimatch 11 (preferred), or accept this advisory indefinitely.
+
+Review: Dependabot (`.github/dependabot.yml`) opens weekly npm, GitHub Actions
+and Docker update pull requests into `dev`. The nightly CI audit and
+`npm run security:check` are re-read at each release, and this list is
+re-checked when eslint or the listed plugins publish a release.
 
 Local tests are separate from live TLS/firewall validation, hosted staging
 password acceptance, restore drills and manual screen-reader review. No current

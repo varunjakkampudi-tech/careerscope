@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { createHash, createHmac, randomBytes, randomUUID } from 'node:crypto';
 import {
   chmod,
   cp,
@@ -14,7 +14,7 @@ import {
 } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import test from 'node:test';
+import test, { mock } from 'node:test';
 import {
   PrivateFileResumeStorage,
   ResumeUploadCancelled,
@@ -847,6 +847,260 @@ test('two writers can share a directory and startup reclaim spares the live writ
   } finally {
     first.close();
     second.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+function fixture() {
+  const body = Buffer.from('%PDF-1.7 synthetic maintenance fixture');
+  const object: ResumeObject = {
+    ownerId: randomUUID(),
+    resumeId: randomUUID(),
+    sha256: createHash('sha256').update(body).digest('hex'),
+    bytes: body.length,
+    contentType: 'application/pdf',
+  };
+  return { body, object };
+}
+
+const elevenMinutesAgo = () => new Date(Date.now() - 11 * 60_000);
+
+class StalledThenReclaimed extends PrivateFileResumeStorage {
+  publishes = 0;
+  stalls = 1;
+  protected override async publishObject(temporary: string, filename: string) {
+    this.publishes += 1;
+    if (this.publishes <= this.stalls) {
+      // The writer stalls past the floor, and a real reclaim removes its temporary.
+      const aged = elevenMinutesAgo();
+      await utimes(temporary, aged, aged);
+      assert.equal((await this.reclaimTemporariesAtStartup()).removed, 1);
+    }
+    await super.publishObject(temporary, filename);
+  }
+}
+
+test('put and cancelUpload survive one real stall-then-reclaim and surface a second one', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-stall-'));
+  const storage = new StalledThenReclaimed({
+    directory,
+    encryptionKey: randomBytes(32).toString('hex'),
+  });
+  try {
+    await storage.initialize();
+    const { body, object } = fixture();
+    const version = await storage.put(object, body);
+    assert.equal(storage.publishes, 2);
+    assert.deepEqual(await storage.get(object, version), body);
+
+    storage.publishes = 0;
+    storage.stalls = 2;
+    await assert.rejects(storage.put({ ...object, resumeId: randomUUID() }, body), {
+      code: 'ENOENT',
+    });
+    assert.equal(storage.publishes, 2);
+
+    // Same for cancellation, through the real reclaim.
+    type Publish = (o: ResumeObject, t: string, f: string, s?: AbortSignal) => Promise<boolean>;
+    const internals = storage as unknown as { publishCancellation: Publish };
+    const publish = internals.publishCancellation.bind(storage);
+    let publishes = 0;
+    let stalls = 1;
+    internals.publishCancellation = async (o, temporary, filename, signal) => {
+      publishes += 1;
+      if (publishes <= stalls) {
+        const aged = elevenMinutesAgo();
+        await utimes(temporary, aged, aged);
+        assert.equal((await storage.reclaimTemporariesAtStartup()).removed, 1);
+      }
+      return publish(o, temporary, filename, signal);
+    };
+    const cancelled = { ...object, resumeId: randomUUID() };
+    await storage.cancelUpload(cancelled);
+    assert.equal(publishes, 2);
+    await assert.rejects(storage.recoverVersion(cancelled), ResumeUploadCancelled);
+
+    publishes = 0;
+    stalls = 2;
+    await assert.rejects(storage.cancelUpload({ ...object, resumeId: randomUUID() }), {
+      code: 'ENOENT',
+    });
+    assert.equal(publishes, 2);
+    assert.deepEqual(
+      (await readdir(directory)).filter((name) => name.endsWith('.pending')),
+      [],
+    );
+  } finally {
+    storage.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('the periodic sweep reclaims aged temporaries, spares live ones, and never throws', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-periodic-'));
+  const storage = new PrivateFileResumeStorage({
+    directory,
+    encryptionKey: randomBytes(32).toString('hex'),
+  });
+  mock.timers.enable({ apis: ['setInterval'] });
+  const stops: Array<() => void> = [];
+  const until = (done: () => boolean) =>
+    new Promise<void>((resolve) => {
+      const poll = () => (done() ? resolve() : setImmediate(poll));
+      poll();
+    });
+  try {
+    await storage.initialize();
+    const aged = join(directory, `${randomUUID()}.pending`);
+    const live = join(directory, `${randomUUID()}.pending`);
+    await writeFile(aged, Buffer.alloc(100));
+    await writeFile(live, Buffer.alloc(8));
+    await utimes(aged, elevenMinutesAgo(), elevenMinutesAgo());
+
+    const results: Array<{ removed: number; bytes: number; markersRemoved: number }> = [];
+    const errors: unknown[] = [];
+    const stop = storage.startReclaimSweep({
+      intervalMs: 60_000,
+      onResult: (result) => results.push(result),
+      onError: (error) => errors.push(error),
+    });
+    stops.push(stop);
+    mock.timers.tick(60_000);
+    await until(() => results.length === 1);
+    assert.deepEqual(results[0], { removed: 1, bytes: 100, markersRemoved: 0 });
+    assert.equal((await readFile(live)).length, 8);
+    assert.equal((await storage.inventory()).reclaimedTemporaries, 1);
+
+    // A failing sweep is reported and does not throw; a throwing reporter is contained too.
+    storage.close();
+    mock.timers.tick(60_000);
+    await until(() => errors.length === 1);
+    const reporter = storage.startReclaimSweep({
+      intervalMs: 60_000,
+      onResult: () => {
+        throw new Error('reporter failure');
+      },
+      onError: () => {
+        throw new Error('reporter failure');
+      },
+    });
+    stops.push(reporter);
+    mock.timers.tick(60_000);
+    await new Promise((resolve) => setImmediate(resolve));
+
+    // Once stopped no further sweep runs.
+    stop();
+    reporter();
+    const before = errors.length;
+    mock.timers.tick(600_000);
+    await new Promise((resolve) => setImmediate(resolve));
+    assert.equal(errors.length, before);
+  } finally {
+    for (const stop of stops) stop();
+    mock.timers.reset();
+    storage.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('expired cancellation markers are reclaimed and the quota is recounted from storage', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-markers-'));
+  const encryptionKey = randomBytes(32).toString('hex');
+  const storage = new PrivateFileResumeStorage({ directory, encryptionKey, markerLimit: 2 });
+  const other = new PrivateFileResumeStorage({ directory, encryptionKey, markerLimit: 2 });
+  try {
+    await storage.initialize();
+    await other.initialize();
+    const { object } = fixture();
+    const first = { ...object, resumeId: randomUUID() };
+    const second = { ...object, resumeId: randomUUID() };
+    const markerPath = (o: ResumeObject) =>
+      join(directory, `${o.ownerId}_${o.resumeId}_${o.sha256}.bin`);
+    await storage.cancelUpload(first);
+    await other.cancelUpload(second);
+
+    // The marker made by the other process is invisible to this quota until it is recounted.
+    assert.equal(await storage.reclaimExpiredMarkers(), 0);
+    await assert.rejects(
+      storage.cancelUpload({ ...object, resumeId: randomUUID() }),
+      ResumeStorageLimit,
+    );
+
+    // A foreign 36-byte file without a marker magic is never removed, and young markers stay.
+    const foreign = join(directory, `${object.ownerId}_${randomUUID()}_${object.sha256}.bin`);
+    await writeFile(foreign, Buffer.alloc(36, 7));
+    const old = new Date(Date.now() - 25 * 3_600_000);
+    await utimes(foreign, old, old);
+    await utimes(markerPath(first), old, old);
+
+    assert.equal(await storage.reclaimExpiredMarkers(), 1);
+    await assert.rejects(readFile(markerPath(first)), { code: 'ENOENT' });
+    assert.equal((await readFile(foreign)).length, 36);
+    await assert.rejects(other.recoverVersion(second), ResumeUploadCancelled);
+
+    // The young marker and the foreign file still fill the quota until the foreign file goes.
+    await assert.rejects(
+      storage.cancelUpload({ ...object, resumeId: randomUUID() }),
+      ResumeStorageLimit,
+    );
+    await rm(foreign);
+    assert.equal(await storage.reclaimExpiredMarkers(), 0);
+    await storage.cancelUpload({ ...object, resumeId: randomUUID() });
+  } finally {
+    storage.close();
+    other.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('cancellation markers use a derived key and legacy raw-key markers still verify', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-marker-key-'));
+  const encryptionKey = randomBytes(32).toString('hex');
+  const storage = new PrivateFileResumeStorage({ directory, encryptionKey });
+  try {
+    await storage.initialize();
+    const { body, object } = fixture();
+    const pathOf = (o: ResumeObject) =>
+      join(directory, `${o.ownerId}_${o.resumeId}_${o.sha256}.bin`);
+
+    // New markers are CSC2 and are not the legacy HMAC under the raw encryption key.
+    await storage.cancelUpload(object);
+    const current = await readFile(pathOf(object));
+    assert.equal(current.length, 36);
+    assert.equal(current.subarray(0, 4).toString(), 'CSC2');
+    const internals = storage as unknown as { aad: (o: ResumeObject, v: string) => Buffer };
+    const legacyFor = (o: ResumeObject, key = encryptionKey) =>
+      Buffer.concat([
+        Buffer.from('CSC1'),
+        createHmac('sha256', Buffer.from(key, 'hex'))
+          .update(internals.aad(o, 'cancelled'))
+          .digest(),
+      ]);
+    assert.notDeepEqual(current.subarray(4), legacyFor(object).subarray(4));
+
+    // A marker issued before the change keeps fencing, and cancelling again converges.
+    const legacy = { ...object, resumeId: randomUUID() };
+    await writeFile(pathOf(legacy), legacyFor(legacy));
+    await assert.rejects(storage.recoverVersion(legacy), ResumeUploadCancelled);
+    await assert.rejects(storage.get(legacy, randomUUID()), ResumeUploadCancelled);
+    await assert.rejects(storage.put(legacy, body), { code: 'EEXIST' });
+    await storage.cancelUpload(legacy);
+    assert.deepEqual(await readFile(pathOf(legacy)), legacyFor(legacy));
+
+    // A legacy-shaped marker made with another key, or a marker for another identity, is not ours.
+    const foreign = { ...object, resumeId: randomUUID() };
+    await writeFile(pathOf(foreign), legacyFor(foreign, randomBytes(32).toString('hex')));
+    await assert.rejects(storage.recoverVersion(foreign), /metadata mismatch/);
+    const swapped = { ...object, resumeId: randomUUID() };
+    await writeFile(pathOf(swapped), current);
+    await assert.rejects(storage.recoverVersion(swapped), /metadata mismatch/);
+
+    // Legacy markers expire like current ones.
+    const old = new Date(Date.now() - 25 * 3_600_000);
+    await utimes(pathOf(legacy), old, old);
+    assert.equal(await storage.reclaimExpiredMarkers(), 1);
+  } finally {
+    storage.close();
     await rm(directory, { recursive: true, force: true });
   }
 });

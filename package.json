@@ -29,7 +29,7 @@
     "build:domain": "npm run build --workspace @careerscope/providers --workspace @careerscope/matching --workspace @careerscope/resume",
     "build": "node scripts/ci/clean-dist.mjs && tsc -b && npm run build --workspace @careerscope/web",
     "clean": "node scripts/ci/clean-dist.mjs",
-    "lint": "eslint packages apps/api apps/workers scripts tests drizzle.config.ts eslint.config.mjs && npm run lint --workspace @careerscope/web",
+    "lint": "eslint packages apps/api apps/workers scripts infra tests drizzle.config.ts eslint.config.mjs && npm run lint --workspace @careerscope/web",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
     "setup:local": "node scripts/dev/setup-local.mjs",
@@ -102,6 +102,12 @@
     },
     "@esbuild-kit/core-utils": {
       "esbuild": "0.25.12"
+    },
+    "@fastify/static": {
+      "glob": "^14.0.3"
+    },
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.3"
     }
   }
 }

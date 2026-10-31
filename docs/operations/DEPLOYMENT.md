@@ -79,6 +79,11 @@ ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST>   "bash /opt/careerscope/infra/h
 ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST> "
   cd /opt/careerscope/infra &&
   bash host/build-images.sh $REV &&
+  docker tag careerscope:v3 careerscope:$REV &&
+  docker tag careerscope:v3-proxy careerscope:$REV-proxy &&
+  sed -i '/^CAREERSCOPE_\(PROXY_\)\?IMAGE=/d' .env &&
+  printf 'CAREERSCOPE_IMAGE=careerscope:%s\nCAREERSCOPE_PROXY_IMAGE=careerscope:%s-proxy\n' $REV $REV >> .env &&
+  bash host/render-redis-config.sh &&
   bash host/apply-migrations.sh &&
   docker compose --env-file .env -f docker/compose.production.yml up -d --wait
 "
@@ -86,6 +91,28 @@ ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST> "
 # 4. Prove it.
 ssh -i <DEPLOY_KEY> <DEPLOY_USER>@<DEPLOY_HOST>   "bash /opt/careerscope/infra/checks/check-provenance.sh $REV"
 ```
+
+### Image references
+
+`compose.production.yml` has no default image: `CAREERSCOPE_IMAGE` (runtime) and
+`CAREERSCOPE_PROXY_IMAGE` (proxy) are required, and `docker compose` refuses to
+start without them. `build-images.sh` still produces the mutable local tags
+`careerscope:v3` and `careerscope:v3-proxy`, so step 3 above also tags the build
+with its own revision (`careerscope:<REV>`, `careerscope:<REV>-proxy`) and writes
+those names into `infra/.env`. A revision tag is created once per commit and is
+never moved, so what runs is pinned to that revision and `ship.sh` preserves the
+setting. If the images are pushed to a registry, use the immutable digest form
+instead: `CAREERSCOPE_IMAGE=registry.example/careerscope@sha256:<digest>`. Never
+point either variable at `careerscope:v3`. `checks/check-provenance.sh` still reads
+the `careerscope:v3` labels built in the same run; it should be pointed at the
+variables as a follow-up.
+
+The Redis password is not passed on a command line or as a container
+environment variable: `host/render-redis-config.sh` writes it into
+`infra/.env.secrets/redis.conf` and `redis-queue.conf` (directory `0700`), which
+compose mounts as secrets at `/run/secrets/redis.conf`. Run it after
+`REDIS_PASSWORD` exists in `infra/.env` (`deploy.sh` generates it) and before every
+`docker compose up`; it is idempotent.
 
 For a deployment expected to take more than a few seconds, enable maintenance
 mode first:
@@ -297,8 +324,15 @@ A commit that touches only documentation, shell scripts or tests is not
 runtime-affecting and does not require a redeploy — but the divergence must be
 stated, not hidden.
 
-Startup reclaim of encrypted resume storage removes only temporaries older than 10
-minutes, so more than one writer may share a storage directory safely.
+Encrypted resume storage reclaims abandoned write temporaries at API startup and
+then every 5 minutes while the API runs. Only temporaries older than 10 minutes are
+removed, so live writers and more than one process sharing the directory are safe;
+a writer stalled past that bound retries its write once. The same sweep removes
+cancellation markers older than 24 hours (the database row is authoritative after
+that) and recounts the marker quota from the directory. New markers are keyed with
+a key derived from the storage key; markers written before that change are still
+accepted until they age out. The sweep logs counts only, and a failure is logged
+without stopping the API.
 
 ---
 
@@ -330,9 +364,9 @@ Never regenerate this value against an existing `careerscope_database` volume.
 
 ## Redis credentials
 
-| Name             | Purpose                                                                                                                                                          | Required in production | Handling                                                                       |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------ |
-| `REDIS_PASSWORD` | Password for the rate-limit Redis (6379) and the persistent queue Redis (6380). It is passed as `--requirepass` and embedded in `REDIS_URL` / `QUEUE_REDIS_URL`. | Yes                    | Lives in `/opt/careerscope/infra/.env`. Never commit it or paste it into logs. |
+| Name             | Purpose                                                                                                                                                                                                                                      | Required in production | Handling                                                                       |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------ |
+| `REDIS_PASSWORD` | Password for the rate-limit Redis (6379) and the persistent queue Redis (6380). It is mounted into the Redis containers as a file secret (never `--requirepass` or an environment variable) and embedded in `REDIS_URL` / `QUEUE_REDIS_URL`. | Yes                    | Lives in `/opt/careerscope/infra/.env`. Never commit it or paste it into logs. |
 
 `deploy.sh` generates `REDIS_PASSWORD` on first deploy if `infra/.env` lacks it,
 and `ship.sh` preserves the file. `compose.production.yml` and

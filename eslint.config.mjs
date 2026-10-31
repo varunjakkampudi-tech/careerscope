@@ -30,7 +30,7 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['scripts/**/*.{mjs,ts}'],
+    files: ['scripts/**/*.{mjs,ts}', 'infra/**/*.mjs'],
     languageOptions: { globals: globals.node },
     rules: { 'no-console': 'off' },
   },
@@ -58,6 +58,7 @@ export default tseslint.config(
       'scripts/ci/require-ci-success.mjs',
       'scripts/ci/check-deploy-gate.mjs',
       'scripts/ci/check-line-endings.mjs',
+      'infra/checks/check-production-config.mjs',
     ],
     rules: { 'no-console': 'off' },
   },

@@ -11,8 +11,8 @@
 #                rather than merely documented (AC2): every single scheduled
 #                run proves its own dump is actually restorable, not just
 #                that pg_dump exited zero.
-#   3. encrypt - the verified dump is encrypted (age, else gpg symmetric)
-#                before it is promoted. The plaintext copy only ever exists as
+#   3. encrypt - the verified dump, the resume object archive and the resume key
+#                are encrypted (age, else gpg symmetric) before they are promoted. The plaintext copy only ever exists as
 #                a .staging file and is removed on every exit path. With no
 #                usable encryption the run fails closed.
 #   4. promote - atomically rename the encrypted dump into place and apply
@@ -22,7 +22,8 @@
 #
 # Runs on the host, independent of the container it backs up, the same way
 # infra/host/monitor.sh does - via careerscope-backup.timer.
-set -euo pipefail
+# -E makes the ERR trap below apply inside functions and command substitutions too.
+set -Eeuo pipefail
 umask 077
 
 BACKUP_DB_CONTAINER=${BACKUP_DB_CONTAINER:-careerscope-postgres-1}
@@ -34,11 +35,14 @@ BACKUP_WEBHOOK_URL=${BACKUP_WEBHOOK_URL:-${MONITOR_WEBHOOK_URL:-}}
 BACKUP_VERIFY_DB=${BACKUP_VERIFY_DB:-careerscope_backup_verify}
 # Resume objects (AES-256-GCM ciphertext) and the key that decrypts them live in the
 # private volume, mounted in the files container. They are backed up as two separate
-# artefacts: the ciphertext archive in BACKUP_DIR and the key in BACKUP_KEY_DIR, so a
-# stolen archive alone is unreadable. The two directories must not nest in either
-# direction (resolved with realpath); the run fails otherwise, because a key beside
-# its ciphertext defeats the split. BACKUP_KEY_DIR must be owned by BACKUP_KEY_DIR_OWNER_UID
-# (root, 0, unless a test overrides it) with mode 700, checked with stat after chmod.
+# artefacts: the object archive in BACKUP_DIR and the key in BACKUP_KEY_DIR. Both are
+# encrypted with the same backup encryption as the dump, so neither the object names (which
+# carry owner ids and plaintext hashes) nor the key are readable without the backup secret,
+# and no plaintext key copy is retained. The key copy is named by a short fingerprint of the
+# key and written once, not on every run. The two directories must not nest in either
+# direction (resolved with realpath); the run fails otherwise. BACKUP_KEY_DIR must be owned by
+# BACKUP_KEY_DIR_OWNER_UID (root, 0, unless a test overrides it) with mode 700, checked with stat
+# after chmod. Placing both on one device fails closed unless BACKUP_ALLOW_SAME_DEVICE_KEY_DIR=1.
 # BACKUP_FILES_CONTAINER set to the empty string skips resumes only when BACKUP_ALLOW_SKIP_RESUMES=1;
 # without that opt-in the run fails closed (STATUS=failed). An allowed skip is STATUS=degraded.
 BACKUP_FILES_CONTAINER=${BACKUP_FILES_CONTAINER-careerscope-files-1}
@@ -46,6 +50,7 @@ BACKUP_PRIVATE_DIR=${BACKUP_PRIVATE_DIR:-/private}
 BACKUP_KEY_DIR=${BACKUP_KEY_DIR:-/var/lib/careerscope/backup-keys}
 BACKUP_KEY_DIR_OWNER_UID=${BACKUP_KEY_DIR_OWNER_UID:-0}
 BACKUP_ALLOW_SKIP_RESUMES=${BACKUP_ALLOW_SKIP_RESUMES:-0}
+BACKUP_ALLOW_SAME_DEVICE_KEY_DIR=${BACKUP_ALLOW_SAME_DEVICE_KEY_DIR:-0}
 # Dump encryption: age with BACKUP_AGE_RECIPIENT (a public key) or BACKUP_AGE_RECIPIENTS_FILE
 # when age is installed, else gpg symmetric with BACKUP_GPG_PASSPHRASE_FILE (mode 0600 or 0400,
 # outside BACKUP_DIR). Neither available means the run fails.
@@ -80,43 +85,21 @@ if ! command -v "$REALPATH_BIN" >/dev/null 2>&1; then
   exit 1
 fi
 
-mkdir -p "$BACKUP_DIR"
-chmod 0700 "$BACKUP_DIR"
-
-status_file="$BACKUP_DIR/last-status"
-
-# Fail fast and clearly if a manual run overlaps the timer's own run, rather
-# than letting both race for the same scratch database (Security review,
-# P3: a losing racer would otherwise discard its own good dump and report a
-# spurious failure - never anything unsafe, but confusing and wasteful).
-# Best-effort: flock is standard on Ubuntu (util-linux) but is not something
-# a missing-tool situation should turn into a backup outage over, so a host
-# without it just skips locking rather than refusing to run at all.
-# A held lock is not a failure, so the exit is 0, but it is recorded as STATUS=locked with the
-# time. A lock that stays held makes that status old, and check-backup.sh --status-only flags a
-# locked status older than 26 hours (a hung run), so it cannot hide behind exit 0 forever.
-lock_fd=200
-if command -v flock >/dev/null 2>&1; then
-  exec 200>"$BACKUP_DIR/.lock"
-  if ! flock -n "$lock_fd"; then
-    echo "another backup run is already in progress; not starting a second one" >&2
-    printf 'STATUS=locked\nAT=%s\n' "$(date -u +%Y%m%dT%H%M%SZ)" >"$status_file"
-    exit 0
-  fi
-else
-  echo "flock not available; proceeding without overlap protection" >&2
-fi
-
 stamp=$(date -u +%Y%m%dT%H%M%SZ)
 staging="$BACKUP_DIR/.staging-$stamp.dump"
 staging_encrypted="$BACKUP_DIR/.staging-$stamp.dump.encrypted"
 staging_gnupg="$BACKUP_DIR/.staging-gnupg-$stamp"
 final="$BACKUP_DIR/careerscope-$stamp.dump"
 staging_resumes="$BACKUP_DIR/.staging-resumes-$stamp.tar"
+staging_resumes_encrypted="$BACKUP_DIR/.staging-resumes-$stamp.tar.encrypted"
+staging_resumes_list="$BACKUP_DIR/.staging-resumes-list-$stamp"
+staging_resumes_stderr="$BACKUP_DIR/.staging-resumes-stderr-$stamp"
 final_resumes="$BACKUP_DIR/careerscope-resumes-$stamp.tar"
 staging_key="$BACKUP_KEY_DIR/.staging-key-$stamp.key"
-final_key="$BACKUP_KEY_DIR/careerscope-resume-key-$stamp.key"
+staging_key_encrypted="$BACKUP_KEY_DIR/.staging-key-$stamp.key.encrypted"
 encryption_method=none
+
+status_file="$BACKUP_DIR/last-status"
 
 cleanup_scratch() {
   "$DOCKER_BIN" exec "$BACKUP_DB_CONTAINER" psql -U "$BACKUP_DB_USER" -d postgres \
@@ -131,18 +114,18 @@ remove_staging() {
     gpgconf --homedir "$staging_gnupg" --kill gpg-agent >/dev/null 2>&1 || true
   fi
   rm -rf "$staging_gnupg"
-  rm -f "$staging" "$staging_encrypted" "$staging_resumes" "$staging_key"
+  rm -f "$staging" "$staging_encrypted" "$staging_resumes" "$staging_resumes_encrypted" \
+    "$staging_resumes_list" "$staging_resumes_stderr" "$staging_key" "$staging_key_encrypted"
 }
 cleanup() {
   # A failing removal must not stop the scratch cleanup or change the exit status.
   remove_staging || true
   cleanup_scratch
 }
-trap cleanup EXIT
-trap 'exit 130' INT
-trap 'exit 143' TERM
 
 fail() {
+  # A failure inside this handler must not re-enter it through the ERR trap.
+  trap - ERR
   # If removal fails (set -e), the status and alert below must still happen.
   remove_staging || true
   echo "backup FAILED: $1" >&2
@@ -194,6 +177,40 @@ send_alert() {
     || echo "alert webhook POST failed (${BACKUP_WEBHOOK_URL:0:20}...)" >&2
 }
 
+mkdir -p "$BACKUP_DIR"
+chmod 0700 "$BACKUP_DIR"
+
+# From here on any unexpected failure (a command failing under set -e, including mkdir and chmod
+# before the first dump step) records STATUS=failed and sends the alert instead of exiting with a
+# stale "ok" status. It is replaced by a more specific message after promotion.
+trap 'fail "unexpected failure at line $LINENO; check the backup directory, key directory and permissions"' ERR
+
+# Fail fast and clearly if a manual run overlaps the timer's own run, rather
+# than letting both race for the same scratch database (Security review,
+# P3: a losing racer would otherwise discard its own good dump and report a
+# spurious failure - never anything unsafe, but confusing and wasteful).
+# Best-effort: flock is standard on Ubuntu (util-linux) but is not something
+# a missing-tool situation should turn into a backup outage over, so a host
+# without it just skips locking rather than refusing to run at all.
+# A held lock is not a failure, so the exit is 0, but it is recorded as STATUS=locked with the
+# time. A lock that stays held makes that status old, and check-backup.sh --status-only flags a
+# locked status older than 26 hours (a hung run), so it cannot hide behind exit 0 forever.
+lock_fd=200
+if command -v flock >/dev/null 2>&1; then
+  exec 200>"$BACKUP_DIR/.lock"
+  if ! flock -n "$lock_fd"; then
+    echo "another backup run is already in progress; not starting a second one" >&2
+    printf 'STATUS=locked\nAT=%s\n' "$(date -u +%Y%m%dT%H%M%SZ)" >"$status_file"
+    exit 0
+  fi
+else
+  echo "flock not available; proceeding without overlap protection" >&2
+fi
+
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
 # The key must never sit beside the ciphertext it decrypts, in either direction. Compare resolved
 # paths so ".." and symlinks cannot hide one directory inside the other.
 resolved_backup_dir=$("$REALPATH_BIN" -m -- "$BACKUP_DIR") || fail "could not resolve BACKUP_DIR"
@@ -217,7 +234,11 @@ if [ "$key_dir_stat" != "$BACKUP_KEY_DIR_OWNER_UID 700" ]; then
   fail "BACKUP_KEY_DIR must be owned by uid $BACKUP_KEY_DIR_OWNER_UID with mode 700 (found owner and mode: $key_dir_stat)"
 fi
 if [ "$(stat -c '%d' "$BACKUP_DIR")" = "$(stat -c '%d' "$BACKUP_KEY_DIR")" ]; then
-  echo "WARNING: BACKUP_DIR and BACKUP_KEY_DIR are on the same device (same device id); one disk failure loses both, and a copy of that disk holds the key beside the ciphertext. Put the key directory on a different mount" >&2
+  # One disk failure loses both, and a copy of that disk holds the key beside the ciphertext.
+  if [ "$BACKUP_ALLOW_SAME_DEVICE_KEY_DIR" != 1 ]; then
+    fail "BACKUP_DIR and BACKUP_KEY_DIR are on the same device; put the key directory on a different mount (or set BACKUP_ALLOW_SAME_DEVICE_KEY_DIR=1 to accept the risk)"
+  fi
+  echo "WARNING: BACKUP_DIR and BACKUP_KEY_DIR are on the same device (same device id) and BACKUP_ALLOW_SAME_DEVICE_KEY_DIR=1 accepts that; one disk failure loses both. Put the key directory on a different mount" >&2
 fi
 
 # Abandoned staging files from a run that was killed before its trap could run (power loss, SIGKILL).
@@ -318,14 +339,26 @@ final="$final.$encrypted_suffix"
 resumes_state=skipped
 resume_objects=0
 if [ -n "$BACKUP_FILES_CONTAINER" ]; then
+  # Object names carry owner ids and plaintext hashes, so the listing, the tar's stderr and the
+  # archive itself stay in root-only staging files that are removed on exit; only the encrypted
+  # archive is promoted. A diagnostic goes to the journal, never into the backup set.
   if ! "$DOCKER_BIN" exec "$BACKUP_FILES_CONTAINER" tar -C "$BACKUP_PRIVATE_DIR" -cf - objects \
-    >"$staging_resumes" 2>"$BACKUP_DIR/.last-resumes-stderr"; then
-    fail "resume object archive failed, see $BACKUP_DIR/.last-resumes-stderr"
+    >"$staging_resumes" 2>"$staging_resumes_stderr"; then
+    cat "$staging_resumes_stderr" >&2 || true
+    fail "resume object archive failed (tar output is in the journal, not in the backup set)"
   fi
-  if [ ! -s "$staging_resumes" ] || ! tar -tf "$staging_resumes" >"$BACKUP_DIR/.last-resumes-list" 2>/dev/null; then
+  if [ ! -s "$staging_resumes" ] || ! tar -tf "$staging_resumes" >"$staging_resumes_list" 2>/dev/null; then
     fail "resume object archive is empty or unreadable"
   fi
-  resume_objects=$(grep -c '\.bin$' "$BACKUP_DIR/.last-resumes-list" || true)
+  resume_objects=$(grep -c '\.bin$' "$staging_resumes_list" || true)
+  if ! encrypt_dump "$staging_resumes" "$staging_resumes_encrypted" 2>"$BACKUP_DIR/.last-encrypt-stderr"; then
+    fail "resume archive encryption ($encryption_method) failed, see $BACKUP_DIR/.last-encrypt-stderr"
+  fi
+  if [ ! -s "$staging_resumes_encrypted" ]; then
+    fail "resume archive encryption ($encryption_method) produced an empty file"
+  fi
+  rm -f "$staging_resumes" "$staging_resumes_list" "$staging_resumes_stderr"
+  final_resumes="$final_resumes.$encrypted_suffix"
   if ! "$DOCKER_BIN" exec "$BACKUP_FILES_CONTAINER" cat "$BACKUP_PRIVATE_DIR/encryption.key" \
     >"$staging_key" 2>/dev/null; then
     fail "could not read the resume encryption key"
@@ -334,6 +367,19 @@ if [ -n "$BACKUP_FILES_CONTAINER" ]; then
   if ! [[ "$(tr -d '\n\r' <"$staging_key")" =~ ^[a-f0-9]{64}$ ]]; then
     fail "resume encryption key file is not a 64-character hex key"
   fi
+  # The key copy is named by a short fingerprint of the key and written once: an unchanged key
+  # does not add another copy on every run. Only the encrypted form is ever retained.
+  key_fingerprint=$(tr -d '\n\r' <"$staging_key" | sha256sum | cut -c1-12)
+  final_key="$BACKUP_KEY_DIR/careerscope-resume-key-$key_fingerprint.key.$encrypted_suffix"
+  if [ ! -s "$final_key" ]; then
+    if ! encrypt_dump "$staging_key" "$staging_key_encrypted" 2>"$BACKUP_DIR/.last-encrypt-stderr"; then
+      fail "resume key encryption ($encryption_method) failed, see $BACKUP_DIR/.last-encrypt-stderr"
+    fi
+    if [ ! -s "$staging_key_encrypted" ]; then
+      fail "resume key encryption ($encryption_method) produced an empty file"
+    fi
+  fi
+  rm -f "$staging_key"
   resumes_state=ok
 elif [ "$BACKUP_ALLOW_SKIP_RESUMES" = 1 ]; then
   echo "WARNING: BACKUP_FILES_CONTAINER is empty; resume objects and the key are NOT backed up" >&2
@@ -349,9 +395,13 @@ trap 'fail "a step after promotion failed (line $LINENO); check the backup direc
 mv -f "$staging_encrypted" "$final"
 chmod 0600 "$final"
 if [ "$resumes_state" = ok ]; then
-  mv -f "$staging_resumes" "$final_resumes"
-  mv -f "$staging_key" "$final_key"
+  mv -f "$staging_resumes_encrypted" "$final_resumes"
+  if [ -f "$staging_key_encrypted" ]; then
+    mv -f "$staging_key_encrypted" "$final_key"
+  fi
   chmod 0600 "$final_resumes" "$final_key"
+  # Retention keys on age, so the copy for the key in use is refreshed on every run.
+  touch "$final_key"
 fi
 # An opted-in skip of the resume objects is a partial backup: degraded, not ok.
 overall=ok
@@ -378,9 +428,13 @@ echo "backup $overall: $final ($table_count tables verified by restore; encrypti
 # Retention: delete anything older than the window, but only real, promoted
 # dumps - never a .staging file mid-write, and never touch last-status.
 # (careerscope-*.dump covers dumps promoted before encryption existed.)
+# Older plaintext archives and key copies (*.tar, *.key) from earlier versions age out here too.
 find "$BACKUP_DIR" -maxdepth 1 \( -name 'careerscope-*.dump' -o -name 'careerscope-*.dump.age' \
-  -o -name 'careerscope-*.dump.gpg' -o -name 'careerscope-resumes-*.tar' \) \
+  -o -name 'careerscope-*.dump.gpg' -o -name 'careerscope-resumes-*.tar' \
+  -o -name 'careerscope-resumes-*.tar.age' -o -name 'careerscope-resumes-*.tar.gpg' \) \
   -mtime "+$BACKUP_RETENTION_DAYS" -delete
-find "$BACKUP_KEY_DIR" -maxdepth 1 -name 'careerscope-resume-key-*.key' -mtime "+$BACKUP_RETENTION_DAYS" -delete
+find "$BACKUP_KEY_DIR" -maxdepth 1 \( -name 'careerscope-resume-key-*.key' \
+  -o -name 'careerscope-resume-key-*.key.age' -o -name 'careerscope-resume-key-*.key.gpg' \) \
+  -mtime "+$BACKUP_RETENTION_DAYS" -delete
 
 exit 0

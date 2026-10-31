@@ -25,6 +25,22 @@ const pluginRequire = createRequire(pluginPath);
 const plugin = pluginRequire(pluginPath);
 const { getRootDirs } = pluginRequire(join(dirname(pluginPath), 'utils/get-root-dirs.js'));
 
+function belowVersion(version, minimum) {
+  const parts = version.split('.').map(Number);
+  for (let index = 0; index < 3; index += 1) {
+    if (parts[index] !== minimum[index]) return parts[index] < minimum[index];
+  }
+  return false;
+}
+
+// minimatch 3.x is pinned by the eslint 9 plugins (development-only, documented in
+// docs/SECURITY.md); every other minimatch, including the glob chain, must be patched.
+function isLintOnlyMinimatch(path) {
+  return /node_modules[/](?:eslint|eslint-plugin-[^/]+|@eslint[/][^/]+)[/]node_modules[/]minimatch$/.test(
+    path,
+  );
+}
+
 function vulnerableLockEntries(lock) {
   return Object.entries(lock.packages).filter(([path, entry]) => {
     if (/(?:^|\/)node_modules\/(?:braces|micromatch|sprintf-js)$/.test(path)) return true;
@@ -34,6 +50,9 @@ function vulnerableLockEntries(lock) {
       return major === 0 && minor < 25;
     }
     if (path.endsWith('/vite')) return /^8\.3\.[012]$/.test(entry.version);
+    if (/(?:^|[/])node_modules[/]glob$/.test(path)) return belowVersion(entry.version, [14, 0, 2]);
+    if (/(?:^|[/])node_modules[/]minimatch$/.test(path) && !isLintOnlyMinimatch(path))
+      return belowVersion(entry.version, [11, 0, 1]);
     return false;
   });
 }
@@ -57,6 +76,9 @@ test('lockfile guard rejects vulnerable versions, including inherited audit chai
     'node_modules/mammoth/node_modules/argparse': { version: '1.0.10' },
     'node_modules/core-utils/node_modules/esbuild': { version: '0.18.20' },
     'node_modules/vite': { version: '8.3.2' },
+    'node_modules/glob': { version: '13.0.6' },
+    'node_modules/glob/node_modules/minimatch': { version: '10.2.6' },
+    'node_modules/minimatch': { version: '10.2.6' },
   };
   assert.equal(vulnerableLockEntries({ packages }).length, Object.keys(packages).length);
   assert.deepEqual(
@@ -65,6 +87,9 @@ test('lockfile guard rejects vulnerable versions, including inherited audit chai
         'node_modules/argparse': { version: '2.0.1' },
         'node_modules/esbuild': { version: '0.25.12' },
         'node_modules/vite': { version: '8.3.4' },
+        'node_modules/glob': { version: '14.0.3' },
+        'node_modules/glob/node_modules/minimatch': { version: '11.0.3' },
+        'node_modules/eslint/node_modules/minimatch': { version: '3.1.5' },
       },
     }),
     [],

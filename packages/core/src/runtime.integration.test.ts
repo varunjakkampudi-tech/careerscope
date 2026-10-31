@@ -1,7 +1,55 @@
 import assert from 'node:assert/strict';
-import { randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import test from 'node:test';
 import { configuration, rateLimiter } from './runtime.js';
+
+const strongSecret = randomBytes(32).toString('hex');
+
+test('the OTP HMAC secret must decode to at least 32 random bytes and is never echoed', () => {
+  const source = {
+    DATABASE_URL: 'postgres://localhost/test',
+    REDIS_URL: 'redis://localhost:56479',
+    QUEUE_REDIS_URL: 'redis://localhost:56480',
+    APP_ORIGIN: 'http://localhost:5280',
+    EMAIL_OTP_ENABLED: 'true',
+    RESEND_API_KEY: 'synthetic-key',
+  };
+  const accepted = [
+    randomBytes(32).toString('hex'),
+    randomBytes(48).toString('hex'),
+    randomBytes(32).toString('base64'),
+    randomBytes(32).toString('base64url'),
+    randomBytes(64).toString('base64'),
+  ];
+  for (const secret of accepted) {
+    assert.equal(
+      configuration({ ...source, EMAIL_OTP_HMAC_SECRET: secret }).EMAIL_OTP_ENABLED,
+      'true',
+    );
+  }
+  const rejected = [
+    's'.repeat(32),
+    's'.repeat(64),
+    's'.repeat(43),
+    'ab'.repeat(32),
+    '0123456789abcdef'.repeat(4),
+    '00'.repeat(32),
+    'correct horse battery staple correct horse battery staple',
+    randomBytes(31).toString('hex'),
+    randomBytes(31).toString('base64'),
+    randomBytes(32).toString('hex').slice(0, 63) + '!',
+    Buffer.from(Array.from({ length: 32 }, (_, index) => index % 4)).toString('hex'),
+  ];
+  for (const secret of rejected) {
+    assert.throws(
+      () => configuration({ ...source, EMAIL_OTP_HMAC_SECRET: secret }),
+      (error: unknown) =>
+        error instanceof Error &&
+        /HMAC secret/.test(error.message) &&
+        !error.message.includes(secret),
+    );
+  }
+});
 
 test('the search queue transport is scoped, and the legacy names are refused', () => {
   const source = {
@@ -77,7 +125,7 @@ test('email OTP configuration is fail-closed for production and validates its in
       configuration({
         ...source,
         EMAIL_OTP_ENABLED: 'true',
-        EMAIL_OTP_HMAC_SECRET: 's'.repeat(32),
+        EMAIL_OTP_HMAC_SECRET: strongSecret,
       }),
     /RESEND_API_KEY/,
   );
@@ -85,7 +133,7 @@ test('email OTP configuration is fail-closed for production and validates its in
     ...source,
     NODE_ENV: 'production',
     EMAIL_OTP_ENABLED: 'true',
-    EMAIL_OTP_HMAC_SECRET: 's'.repeat(32),
+    EMAIL_OTP_HMAC_SECRET: strongSecret,
     RESEND_API_KEY: 'synthetic-key',
   });
   assert.equal(enabled.DEPLOYMENT_ENVIRONMENT, 'production');
@@ -109,7 +157,7 @@ test('registration requires OTP and approved-versioned legal configuration', () 
   const otp = {
     ...source,
     EMAIL_OTP_ENABLED: 'true',
-    EMAIL_OTP_HMAC_SECRET: 's'.repeat(32),
+    EMAIL_OTP_HMAC_SECRET: strongSecret,
     RESEND_API_KEY: 'synthetic-key',
   };
   assert.throws(() => configuration(otp), /Registration requires versioned legal documents/);
