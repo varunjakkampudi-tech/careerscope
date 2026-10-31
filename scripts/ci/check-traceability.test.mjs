@@ -7,11 +7,11 @@ import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import {
   analyze,
-  analyzeStage,
+  analyzeFoundations,
   checkReconciliationProse,
   findOrphanTests,
   isDispatchOnly,
-  parseStage,
+  parseFoundations,
 } from './check-traceability.mjs';
 
 const checker = fileURLToPath(new URL('./check-traceability.mjs', import.meta.url));
@@ -109,7 +109,7 @@ test('a (manual) marker on a file that CI runs is rejected', () => {
   );
 });
 
-const STAGE_IDS = Array.from({ length: 15 }, (_, i) => '1.' + String(i + 1).padStart(2, '0'));
+const FOUNDATION_IDS = Array.from({ length: 15 }, (_, i) => '1.' + String(i + 1).padStart(2, '0'));
 
 /** One register section; `over` replaces or (with null) removes a field. */
 function section(id, over = {}) {
@@ -126,34 +126,35 @@ function section(id, over = {}) {
   return ['## ' + id + ' Item ' + id, '', ...lines, ''].join('\n');
 }
 
-/** analyzeStage on a throwaway root whose register is built from per-item overrides. */
-function verifyStage({
+/** analyzeFoundations on a throwaway root whose register is built from per-item overrides. */
+function verifyFoundations({
   overrides = {},
-  ids = STAGE_IDS,
+  ids = FOUNDATION_IDS,
   raw,
   files = ['src/a.ts', 'src/a.test.ts'],
   scripts = defaultScripts,
 } = {}) {
-  const root = mkdtempSync(join(tmpdir(), 'careerscope-stage-'));
+  const root = mkdtempSync(join(tmpdir(), 'careerscope-foundations-'));
   try {
     const register =
-      raw ?? ['# Stage 1 register', '', ...ids.map((id) => section(id, overrides[id]))].join('\n');
+      raw ??
+      ['# Foundations register', '', ...ids.map((id) => section(id, overrides[id]))].join('\n');
     for (const [path, content] of [
-      ['docs/STAGE-1.md', register],
+      ['docs/FOUNDATIONS.md', register],
       ['package.json', JSON.stringify({ scripts })],
       ...files.map((p) => [p, '']),
     ]) {
       mkdirSync(dirname(join(root, path)), { recursive: true });
       writeFileSync(join(root, path), content);
     }
-    return analyzeStage(root);
+    return analyzeFoundations(root);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
 }
 
 test('a register with exactly items 1.01 to 1.15, each complete, passes', () => {
-  const result = verifyStage();
+  const result = verifyFoundations();
   assert.deepEqual(result.errors, []);
   assert.equal(result.items, 15);
   assert.equal(result.complete, 15);
@@ -161,54 +162,57 @@ test('a register with exactly items 1.01 to 1.15, each complete, passes', () => 
 
 test('the register fails unless it has exactly 15 items in order', () => {
   assert.match(
-    verifyStage({ ids: STAGE_IDS.slice(0, 14) }).errors[0],
+    verifyFoundations({ ids: FOUNDATION_IDS.slice(0, 14) }).errors[0],
     /exactly the 15 items.*found 14/,
   );
-  assert.match(verifyStage({ ids: [...STAGE_IDS, '1.16'] }).errors[0], /found 16/);
+  assert.match(verifyFoundations({ ids: [...FOUNDATION_IDS, '1.16'] }).errors[0], /found 16/);
   assert.match(
-    verifyStage({ ids: [...STAGE_IDS.slice(0, 14), '1.14'] }).errors[0],
+    verifyFoundations({ ids: [...FOUNDATION_IDS.slice(0, 14), '1.14'] }).errors[0],
     /exactly the 15 items/,
   );
-  assert.match(verifyStage({ ids: [...STAGE_IDS].reverse() }).errors[0], /exactly the 15 items/);
-  assert.match(verifyStage({ raw: '# empty' }).errors[0], /found 0: none/);
+  assert.match(
+    verifyFoundations({ ids: [...FOUNDATION_IDS].reverse() }).errors[0],
+    /exactly the 15 items/,
+  );
+  assert.match(verifyFoundations({ raw: '# empty' }).errors[0], /found 0: none/);
 });
 
 test('an item without a status, evidence, gate or verify line fails', () => {
   for (const name of ['Status', 'Evidence', 'Gate', 'Verify']) {
-    const { errors } = verifyStage({ overrides: { 1.05: { [name]: null } } });
+    const { errors } = verifyFoundations({ overrides: { 1.05: { [name]: null } } });
     assert.ok(
       errors.some((e) => e.startsWith('1.05:') && e.includes(name)),
       name + ': ' + errors.join(' | '),
     );
   }
   assert.match(
-    verifyStage({ overrides: { 1.05: { Status: 'Done' } } }).errors[0],
+    verifyFoundations({ overrides: { 1.05: { Status: 'Done' } } }).errors[0],
     /1\.05: Status must be one of Complete, Open/,
   );
   assert.match(
-    verifyStage({ overrides: { 1.05: { Evidence: 'none' } } }).errors[0],
+    verifyFoundations({ overrides: { 1.05: { Evidence: 'none' } } }).errors[0],
     /1\.05: Evidence must cite files/,
   );
 });
 
 test('an Open item needs a gap and a Complete item must not carry one', () => {
   assert.match(
-    verifyStage({ overrides: { 1.03: { Status: 'Open' } } }).errors[0],
+    verifyFoundations({ overrides: { 1.03: { Status: 'Open' } } }).errors[0],
     /1\.03: an Open item must state its Gap/,
   );
-  const open = verifyStage({
+  const open = verifyFoundations({
     overrides: { 1.03: { Status: 'Open', Gap: 'Owner has not enabled protection.' } },
   });
   assert.deepEqual(open.errors, []);
   assert.equal(open.complete, 14);
   assert.match(
-    verifyStage({ overrides: { 1.03: { Gap: 'left over' } } }).errors[0],
+    verifyFoundations({ overrides: { 1.03: { Gap: 'left over' } } }).errors[0],
     /1\.03: a Complete item must not carry a Gap/,
   );
 });
 
 test('a Complete item citing a file that does not exist fails', () => {
-  const { errors } = verifyStage({
+  const { errors } = verifyFoundations({
     overrides: { 1.07: { Evidence: '`src/a.test.ts`, `src/gone.ts`' } },
   });
   assert.deepEqual(errors, ['1.07: evidence file not found: src/gone.ts']);
@@ -217,11 +221,14 @@ test('a Complete item citing a file that does not exist fails', () => {
 test('a Complete item citing a test that no CI script runs fails; Open may mark it (manual)', () => {
   const files = ['src/a.ts', 'src/a.test.ts', 'src/b.test.ts'];
   const unrun = { Evidence: '`src/a.test.ts`, `src/b.test.ts`' };
-  const complete = verifyStage({ files, overrides: { 1.09: unrun } });
+  const complete = verifyFoundations({ files, overrides: { 1.09: unrun } });
   assert.deepEqual(complete.errors, [
     '1.09: Complete item cites a test that no CI script runs: src/b.test.ts',
   ]);
-  const onlyUnrun = verifyStage({ files, overrides: { 1.09: { Evidence: '`src/b.test.ts`' } } });
+  const onlyUnrun = verifyFoundations({
+    files,
+    overrides: { 1.09: { Evidence: '`src/b.test.ts`' } },
+  });
   assert.ok(
     onlyUnrun.errors.some((e) =>
       /1\.09: a Complete item must cite at least one test that a CI script runs/.test(e),
@@ -232,9 +239,9 @@ test('a Complete item citing a test that no CI script runs fails; Open may mark 
     Gap: 'Needs the host.',
     Evidence: '`src/a.test.ts`, `src/b.test.ts` (manual)',
   };
-  assert.deepEqual(verifyStage({ files, overrides: { 1.09: open } }).errors, []);
+  assert.deepEqual(verifyFoundations({ files, overrides: { 1.09: open } }).errors, []);
   assert.match(
-    verifyStage({
+    verifyFoundations({
       files,
       overrides: { 1.09: { ...open, Evidence: '`src/a.test.ts`, `src/b.test.ts`' } },
     }).errors[0],
@@ -243,18 +250,18 @@ test('a Complete item citing a test that no CI script runs fails; Open may mark 
 });
 
 test('a Complete item with no test at all fails', () => {
-  const { errors } = verifyStage({ overrides: { 1.02: { Evidence: '`src/a.ts`' } } });
+  const { errors } = verifyFoundations({ overrides: { 1.02: { Evidence: '`src/a.ts`' } } });
   assert.deepEqual(errors, [
     '1.02: a Complete item must cite at least one test that a CI script runs',
   ]);
 });
 
-test('parseStage reads wrapped field values', () => {
-  const [one] = parseStage('## 1.01 T\n\n- **Status:** Open\n- **Gap:** first\n  second\n');
+test('parseFoundations reads wrapped field values', () => {
+  const [one] = parseFoundations('## 1.01 T\n\n- **Status:** Open\n- **Gap:** first\n  second\n');
   assert.deepEqual(one.fields.Gap, ['first second']);
 });
 
-test('the Stage 1.02 prose and the register must quote the inventory counts', async () => {
+test('the Item 1.02 prose and the register must quote the inventory counts', async () => {
   const real = fileURLToPath(new URL('../..', import.meta.url));
   assert.deepEqual(await checkReconciliationProse(real), []);
   const stale = async (path, from, to) => {
@@ -262,7 +269,7 @@ test('the Stage 1.02 prose and the register must quote the inventory counts', as
     try {
       for (const file of [
         'docs/TRACEABILITY.md',
-        'docs/STAGE-1.md',
+        'docs/FOUNDATIONS.md',
         'docs/requirements/CareerScope-v12.md',
         'docs/requirements/V12-REQUIREMENT-INVENTORY.json',
         'docs/requirements/V12-RECONCILIATION.md',
@@ -292,13 +299,13 @@ test('the Stage 1.02 prose and the register must quote the inventory counts', as
     '0 launch-blocking gaps',
   );
   assert.match(claim[0], /TRACEABILITY/);
-  const stage = await stale('docs/STAGE-1.md', '319 clauses', '300 clauses');
-  assert.match(stage[0], /docs\/STAGE-1\.md must quote/);
+  const foundations = await stale('docs/FOUNDATIONS.md', '319 clauses', '300 clauses');
+  assert.match(foundations[0], /docs\/FOUNDATIONS\.md must quote/);
 });
 
-test('the Stage 1 register passes in the real repository', () => {
+test('the Foundations register passes in the real repository', () => {
   const real = fileURLToPath(new URL('../..', import.meta.url));
-  const result = analyzeStage(real);
+  const result = analyzeFoundations(real);
   assert.deepEqual(result.errors, []);
   assert.equal(result.items, 15);
 });
@@ -314,7 +321,7 @@ function orphans({ files, scripts = defaultScripts, workflow, register }) {
   try {
     const entries = [['package.json', JSON.stringify({ scripts })], ...files.map((p) => [p, ''])];
     if (workflow !== undefined) entries.push(['.github/workflows/ci.yml', workflow]);
-    if (register !== undefined) entries.push(['docs/STAGE-1.md', register]);
+    if (register !== undefined) entries.push(['docs/FOUNDATIONS.md', register]);
     for (const [path, content] of entries) {
       mkdirSync(dirname(join(root, path)), { recursive: true });
       writeFileSync(join(root, path), content);

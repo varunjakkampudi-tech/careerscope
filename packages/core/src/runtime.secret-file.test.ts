@@ -150,6 +150,25 @@ test('a secret file writable by group or others is refused on POSIX', (context) 
   });
 });
 
+test('a secret file in a group- or world-writable directory is refused on POSIX', (context) => {
+  if (process.platform === 'win32') {
+    context.skip('POSIX permission bits do not exist on Windows');
+    return;
+  }
+  withDirectory((directory) => {
+    const password = randomBytes(24).toString('hex');
+    const file = join(directory, 'redis-password');
+    writeFileSync(file, `${password}\n`);
+    chmodSync(file, 0o640);
+    chmodSync(directory, 0o777);
+    try {
+      refused({ ...base, REDIS_PASSWORD_FILE: file }, 'REDIS_PASSWORD_FILE', [password, directory]);
+    } finally {
+      chmodSync(directory, 0o700);
+    }
+  });
+});
+
 test('a missing secret file error names only the variable', () => {
   withDirectory((directory) => {
     refused({ ...base, REDIS_PASSWORD_FILE: join(directory, 'absent') }, 'REDIS_PASSWORD_FILE', [

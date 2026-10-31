@@ -1,6 +1,6 @@
-# Stage 1 register
+# Foundations register
 
-The owner list for Stage 1 has fifteen items, 1.01 to 1.15. This register gives each one a
+The foundation items are fifteen, 1.01 to 1.15. This register gives each one a
 status, the files and tests that prove it, the gate that runs it and the command that
 verifies it. `npm run traceability:check` (`scripts/ci/check-traceability.mjs`, part of
 `npm run check`) fails when:
@@ -13,13 +13,15 @@ verifies it. `npm run traceability:check` (`scripts/ci/check-traceability.mjs`, 
   rule in [TRACEABILITY](TRACEABILITY.md): the path must be in `test:unit`,
   `test:integration`, `test:domain`, `test:ui`, `test:query-budget` or `gates:test`, or in the
   npm scripts they call);
-- this file or the Stage 1.02 prose in [TRACEABILITY](TRACEABILITY.md) does not quote the
+- this file or the Item 1.02 prose in [TRACEABILITY](TRACEABILITY.md) does not quote the
   current inventory counts.
 
-`Complete` means the stated scope of the item is proven by the cited tests and gates. It does not
-mean the product is launch-ready: the launch-blocking requirement gaps in 1.02 are open for
-later stages. `Open` names the exact gap. Nothing here records a CI run or a host check that was
-not performed; the Gap lines say what is unverified.
+`Complete` means the stated scope of the item is proven by the cited tests and gates in the
+repository. Evidence that lives outside the repository (GitHub rulesets, hosted CI run IDs) is
+named in the Evidence line and is not counted by the gate. `Open` names the exact gap. The
+launch-blocking requirement gaps in 1.02 are a separate list (see
+[V12-RECONCILIATION](requirements/V12-RECONCILIATION.md)). Nothing here records a host check
+that was not performed; the Gap lines say what is unverified.
 
 ## 1.01 Audit dev modules
 

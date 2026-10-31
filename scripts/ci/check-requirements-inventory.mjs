@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Validates the v12 requirement reconciliation (Stage 1 item 1.02).
+// Validates the v12 requirement reconciliation (Foundation item 1.02).
 //
 // docs/requirements/V12-REQUIREMENT-INVENTORY.json records an assessment per clause of the owner's
 // v12 specification. Exactly what is enforced: this check fails when

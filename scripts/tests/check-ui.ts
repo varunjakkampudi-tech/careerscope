@@ -145,12 +145,6 @@ const expectedAuthenticatedJourneyConsoleErrors = new Set([
   'resource HTTP 401 at /api/login',
   'resource HTTP 503 at /api/searches/:id/export',
   'resource HTTP 401 at /api/searches/:id/export',
-  // The export-expiry step deletes the owner's session rows on purpose. The Jobs page also polls
-  // /api/searches every 5 seconds, and a poll that lands in that window receives the same real 401
-  // as the export request (observed in WebKit and Chromium once zod stopped probing for eval
-  // shifted page timing by a few milliseconds). The shell must still route it through the shared
-  // expiry handler, which the next assertions check by waiting for account selection.
-  'resource HTTP 401 at /api/searches',
   'resource HTTP 401 at /api/session/refresh',
   'resource HTTP 503 at /api/searches/:id/cancel',
   'resource HTTP 503 at /api/leads',
@@ -3127,10 +3121,24 @@ try {
       // /dashboard and prove nothing. Removing the session row makes the
       // export request 401 for real, which is the case this check exists for.
       await database.pool.query('DELETE FROM sessions WHERE owner_id = $1', [ownerId]);
+      const errorsBeforeExpiry = errors.length;
       await exportButton.click();
       await page.getByRole('heading', { name: 'Select test account', exact: true }).waitFor();
       await selectFixtureAccount('ui@example.test', password);
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+      // The Jobs page polls /api/searches every 5 seconds, so a poll that lands in the expiry window
+      // gets the same real 401 as the export request. The shell must route it through the shared
+      // expiry handler, which the waits above prove. Allow exactly one such poll here and no other
+      // /api/searches 401 anywhere in the journey.
+      const expiryWindow = errors.splice(errorsBeforeExpiry);
+      let pollExpiries = 0;
+      for (const error of expiryWindow) {
+        if (error === 'resource HTTP 401 at /api/searches' && pollExpiries === 0) {
+          pollExpiries += 1;
+          continue;
+        }
+        errors.push(error);
+      }
       await page.setViewportSize({ width: 1440, height: 900 });
       await sidebarNav.getByRole('link', { name: 'Jobs', exact: true }).click();
       await page.waitForURL(`${origin}/jobs`);

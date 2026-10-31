@@ -4,6 +4,7 @@
  */
 
 import { closeSync, constants, fstatSync, lstatSync, openSync, readSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { createClient } from 'redis';
 import pino from 'pino';
 import { z } from 'zod';
@@ -102,6 +103,10 @@ function readSecretFile(name: string, path: string) {
     if (before.size > SECRET_FILE_MAX_BYTES) throw new ConfigurationError(name + ' is too large');
     if (process.platform !== 'win32' && (before.mode & 0o022) !== 0)
       throw new ConfigurationError(name + ' must not be writable by group or others');
+    // A group- or world-writable directory lets another user replace the file, so check it too.
+    const directory = lstatSync(dirname(path));
+    if (process.platform !== 'win32' && (directory.mode & 0o022) !== 0)
+      throw new ConfigurationError(name + ' directory must not be writable by group or others');
     descriptor = openSync(path, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
     const opened = fstatSync(descriptor);
     if (opened.ino !== before.ino || opened.dev !== before.dev || opened.size !== before.size)

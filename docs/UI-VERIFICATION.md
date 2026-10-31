@@ -122,7 +122,7 @@ request.
 Commit 91bdb45 added the `/_next/image` case. Its hosted result is no longer pending: the Services,
 integration, and browser suites job passed three times on a300856 with the browser suite only (dispatched
 runs 41185733604, 41186037765 and 41186340898), and the push run for a300856 also passed; see
-[STAGE-1](STAGE-1.md) item 1.05. The flake rate across repeated hosted runs is not measured, so three
+[FOUNDATIONS](FOUNDATIONS.md) item 1.05. The flake rate across repeated hosted runs is not measured, so three
 passes are a small sample.
 
 Commit da62f86 also made the two `waitForResponse` predicates that read a JSON body

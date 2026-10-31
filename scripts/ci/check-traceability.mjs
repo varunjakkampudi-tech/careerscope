@@ -7,11 +7,11 @@
 //
 // Every tracked test file (*.test.ts, *.test.mjs, *.test.js) must also be named by a CI-run script or
 // by a workflow step that runs on push or pull_request (not a dispatch-only step or job), or be marked
-// `path` (manual) in docs/STAGE-1.md or docs/TRACEABILITY.md.
+// `path` (manual) in docs/FOUNDATIONS.md or docs/TRACEABILITY.md.
 //
-// It also validates docs/STAGE-1.md (exactly the 15 owner items 1.01 to 1.15, each with a status,
+// It also validates docs/FOUNDATIONS.md (exactly the 15 owner items 1.01 to 1.15, each with a status,
 // evidence and a gate; an item marked Complete may cite only files that exist and tests that a CI
-// script runs) and that the Stage 1.02 prose in docs/TRACEABILITY.md quotes the counts of the
+// script runs) and that the Item 1.02 prose in docs/TRACEABILITY.md quotes the counts of the
 // v12 inventory.
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
@@ -24,12 +24,12 @@ import { isDispatchOnly, runCommandsOf } from './workflow-steps.mjs';
 export { isDispatchOnly };
 
 const MATRIX = 'docs/TRACEABILITY.md';
-const STAGE_FILE = 'docs/STAGE-1.md';
-const STAGE_ITEMS = Array.from(
+const FOUNDATION_FILE = 'docs/FOUNDATIONS.md';
+const FOUNDATION_ITEMS = Array.from(
   { length: 15 },
   (_, index) => `1.${String(index + 1).padStart(2, '0')}`,
 );
-const STAGE_STATUSES = ['Complete', 'Open'];
+const FOUNDATION_STATUSES = ['Complete', 'Open'];
 const NOT_COVERED = 'NOT COVERED';
 const TEST_PATH = /(?:\.(?:test|spec)\.[cm]?[jt]sx?$)|^(?:scripts\/tests|tests)\//;
 
@@ -132,14 +132,14 @@ function mentionsPath(text, path) {
 
 /**
  * Tracked test files (*.test.ts, *.test.mjs, *.test.js, so also *.integration.test.ts) that no CI-run
- * script or push/pull_request workflow step names and that are not marked `path` (manual) in the Stage 1 register or
+ * script or push/pull_request workflow step names and that are not marked `path` (manual) in the Foundations register or
  * the traceability matrix. Returns the orphan paths.
  */
 export function findOrphanTests(root, files = trackedFiles(root)) {
   const workflows = workflowRunText(root);
   const text = `${existsSync(join(root, 'package.json')) ? ciExecutedText(root, workflows) : ''}\n${workflows}`;
   const manual = new Set();
-  for (const doc of [STAGE_FILE, MATRIX])
+  for (const doc of [FOUNDATION_FILE, MATRIX])
     if (existsSync(join(root, doc)))
       for (const match of readFileSync(join(root, doc), 'utf8').matchAll(MANUAL))
         manual.add(match[1]);
@@ -231,8 +231,8 @@ export function analyze(root) {
   return { errors, rows, notCovered };
 }
 
-/** Splits docs/STAGE-1.md into its `## 1.NN` sections and their `- **Field:** text` bullets. */
-export function parseStage(text) {
+/** Splits docs/FOUNDATIONS.md into its `## 1.NN` sections and their `- **Field:** text` bullets. */
+export function parseFoundations(text) {
   const sections = [];
   let current = null;
   let field = null;
@@ -262,19 +262,20 @@ export function parseStage(text) {
   return sections;
 }
 
-/** Problems with docs/STAGE-1.md. Complete items are held to the CI-run rule; Open items need a gap. */
-export function analyzeStage(root) {
+/** Problems with docs/FOUNDATIONS.md. Complete items are held to the CI-run rule; Open items need a gap. */
+export function analyzeFoundations(root) {
   const errors = [];
-  const file = join(root, STAGE_FILE);
-  if (!existsSync(file)) return { errors: [`${STAGE_FILE} is missing`], items: 0, complete: 0 };
+  const file = join(root, FOUNDATION_FILE);
+  if (!existsSync(file))
+    return { errors: [`${FOUNDATION_FILE} is missing`], items: 0, complete: 0 };
   const executed = new Set(
     existsSync(join(root, 'package.json')) ? ciExecutedText(root).split(/\s+/) : [],
   );
-  const sections = parseStage(readFileSync(file, 'utf8'));
+  const sections = parseFoundations(readFileSync(file, 'utf8'));
   const ids = sections.map((section) => section.id);
-  if (ids.join(',') !== STAGE_ITEMS.join(','))
+  if (ids.join(',') !== FOUNDATION_ITEMS.join(','))
     errors.push(
-      `${STAGE_FILE} must have exactly the 15 items ${STAGE_ITEMS[0]} to ${STAGE_ITEMS[14]} once each, in order; found ${ids.length}: ${ids.join(', ') || 'none'}`,
+      `${FOUNDATION_FILE} must have exactly the 15 items ${FOUNDATION_ITEMS[0]} to ${FOUNDATION_ITEMS[14]} once each, in order; found ${ids.length}: ${ids.join(', ') || 'none'}`,
     );
   let complete = 0;
   for (const section of sections) {
@@ -285,8 +286,8 @@ export function analyzeStage(root) {
       return (values[0] ?? '').trim();
     };
     const status = one('Status');
-    if (!STAGE_STATUSES.includes(status))
-      fail(`Status must be one of ${STAGE_STATUSES.join(', ')}, found "${status}"`);
+    if (!FOUNDATION_STATUSES.includes(status))
+      fail(`Status must be one of ${FOUNDATION_STATUSES.join(', ')}, found "${status}"`);
     if (!section.title) fail('heading has no title');
     for (const name of ['Evidence', 'Gate', 'Verify']) if (!one(name)) fail(`${name} is empty`);
     if (status === 'Open' && !one('Gap')) fail('an Open item must state its Gap');
@@ -315,14 +316,14 @@ export function analyzeStage(root) {
   return { errors, items: sections.length, complete };
 }
 
-/** The Stage 1.02 prose and the Stage 1 register must quote the counts of the v12 inventory. */
+/** The Item 1.02 prose and the Foundations register must quote the counts of the v12 inventory. */
 export async function checkReconciliationProse(root) {
   const { analyzeInventory, summaryLine } = await import('./check-requirements-inventory.mjs');
   const inventory = analyzeInventory(root, '');
   if (!inventory.total) return [`cannot read the v12 inventory counts for ${MATRIX}`];
   const expected = summaryLine(inventory);
   const errors = [];
-  for (const path of [MATRIX, STAGE_FILE]) {
+  for (const path of [MATRIX, FOUNDATION_FILE]) {
     const file = join(root, path);
     if (!existsSync(file)) errors.push(`${path} is missing`);
     else if (!readFileSync(file, 'utf8').replace(/\s+/g, ' ').includes(expected))
@@ -340,7 +341,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   errors.push(...checkDocsIndex(root));
   for (const orphan of findOrphanTests(root))
     errors.push(
-      `orphan test file: no CI script or workflow step runs it; wire it into an existing script or mark it (manual) in ${STAGE_FILE}: ${orphan}`,
+      `orphan test file: no CI script or workflow step runs it; wire it into an existing script or mark it (manual) in ${FOUNDATION_FILE}: ${orphan}`,
     );
   if (errors.length) {
     for (const error of errors) console.error(`::error file=${MATRIX}::${error}`);
@@ -350,19 +351,20 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     process.stdout.write(`PASS traceability: ${rows} rows, ${notCovered} NOT COVERED\n`);
   }
 
-  const stage = analyzeStage(root);
-  stage.errors.push(...(await checkReconciliationProse(root)));
-  if (stage.errors.length) {
-    for (const error of stage.errors) console.error(`::error file=${STAGE_FILE}::${error}`);
-    console.error(`FAIL ${stage.errors.length} Stage 1 register problem(s)`);
+  const foundations = analyzeFoundations(root);
+  foundations.errors.push(...(await checkReconciliationProse(root)));
+  if (foundations.errors.length) {
+    for (const error of foundations.errors)
+      console.error(`::error file=${FOUNDATION_FILE}::${error}`);
+    console.error(`FAIL ${foundations.errors.length} Foundations register problem(s)`);
     process.exitCode = 1;
   } else {
     process.stdout.write(
-      `PASS Stage 1 register: ${stage.items} items, ${stage.complete} Complete, ${stage.items - stage.complete} Open\n`,
+      `PASS Foundations register: ${foundations.items} items, ${foundations.complete} Complete, ${foundations.items - foundations.complete} Open\n`,
     );
   }
 
-  // Stage 1.02: the same gate validates the v12 requirement inventory, so CI cannot pass with a
+  // Item 1.02: the same gate validates the v12 requirement inventory, so CI cannot pass with a
   // NOT_ASSESSED clause, a stale source digest or an IMPLEMENTED clause that has no CI-run test.
   const { checkRequirements, summaryLine } = await import('./check-requirements-inventory.mjs');
   const requirements = await checkRequirements(root, ciExecutedText(root));

@@ -15,7 +15,7 @@ This is the single index of CareerScope documentation. Every document under
 - [DATA-MODEL](DATA-MODEL.md) - persistence and ownership rules
 - [KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md) - explicit current limitations
 - [TRACEABILITY](TRACEABILITY.md) - requirement to code and test matrix
-- [STAGE-1](STAGE-1.md) - status, evidence, gate and verification command for Stage 1 items 1.01 to 1.15
+- [FOUNDATIONS](FOUNDATIONS.md) - status, evidence, gate and verification command for Foundation items 1.01 to 1.15
 - [BOUNDARIES](architecture/BOUNDARIES.md) and [OUTBOX](architecture/OUTBOX.md) - allowed workspace dependencies, and transactional outbox and queue guarantees
 - [DOMAIN-EVENTS](architecture/DOMAIN-EVENTS.md) - event and message contracts, producers, consumers and delivery guarantees
 - [DESIGN-SYSTEM](architecture/DESIGN-SYSTEM.md) - design tokens and shared web components
