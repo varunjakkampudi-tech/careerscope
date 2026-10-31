@@ -49,7 +49,12 @@ The account security surface lists active sessions using bounded categorical
 browser/platform labels rather than storing raw User-Agent strings. Owners can
 revoke one of their own device sessions or all other sessions. A revoked or
 expired family cannot refresh. Password change revokes all sessions. Account
-switching revokes the previous cookie's family and clears private client caches.
+switching revokes the previous session family while its access cookie is still valid, and
+clears private client caches. After the 15-minute access cookie has expired, a new sign-in
+does not reach the old refresh-token family: the refresh cookie is path-scoped to
+`/api/session` and is not sent to `/api/login`. That family stays live until it expires or
+is revoked, so sign out (`POST /api/session/logout`) before switching accounts after a long
+idle period.
 Owner IDs always come from the authenticated server session. Expired session
 families are removed on a later successful session establishment, and by the
 retention job (`scripts/jobs/enforce-search-retention.ts`), which deletes sessions past
@@ -136,7 +141,7 @@ This is local implementation and synthetic-provider test evidence only; it is
 not live delivery, domain verification, or independent security approval.
 
 Set these server-only values in an approved environment: `EMAIL_OTP_ENABLED`,
-`EMAIL_OTP_HMAC_SECRET` (an independent random secret: 64 hex characters, or 43 or more base64 characters decoding to at least 32 bytes with at least 16 distinct byte values; weaker values are refused at startup),
+`EMAIL_OTP_HMAC_SECRET` (an independent random secret: 64 hex characters, or 43 or more base64 characters decoding to at least 32 bytes with at least 24 distinct byte values; weaker values are refused at startup),
 `RESEND_API_KEY`, and `RESEND_FROM_EMAIL` (the approved sender). The legal
 policy values are `LEGAL_TERMS_VERSION`, `LEGAL_TERMS_URL`, `LEGAL_PRIVACY_VERSION`,
 `LEGAL_PRIVACY_URL` and `LEGAL_MARKETING_VERSION`; registration and test access are
