@@ -1,12 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {
-  EmailOtpDeliveryUnavailable,
-  EmailOtpProviderError,
-  FailoverEmailOtpDelivery,
-  ResendEmailOtpProvider,
-  type EmailOtpProvider,
-} from './email-otp-delivery.js';
+import { EmailOtpProviderError, ResendEmailOtpProvider } from './email-otp-delivery.js';
 
 const message = {
   email: 'Candidate@Example.Test',
@@ -144,68 +138,6 @@ test('Resend failures expose no provider response body and classify only retryab
 });
 
 const zodError = (error: unknown) => error instanceof Error && error.name === 'ZodError';
-
-test('failover uses the fallback only after a retryable primary failure', async () => {
-  const calls: string[] = [];
-  const primary: EmailOtpProvider = {
-    async send() {
-      calls.push('primary');
-      throw new EmailOtpProviderError(true);
-    },
-  };
-  const fallback: EmailOtpProvider = {
-    async send(received) {
-      calls.push('fallback');
-      assert.deepEqual(received, message);
-    },
-  };
-
-  assert.equal(await new FailoverEmailOtpDelivery(primary, fallback).send(message), 'fallback');
-  assert.deepEqual(calls, ['primary', 'fallback']);
-});
-
-test('failover does not hide permanent primary configuration errors', async () => {
-  let fallbackCalls = 0;
-  const primary: EmailOtpProvider = {
-    async send() {
-      throw new EmailOtpProviderError(false);
-    },
-  };
-  const fallback: EmailOtpProvider = {
-    async send() {
-      fallbackCalls += 1;
-    },
-  };
-
-  await assert.rejects(
-    new FailoverEmailOtpDelivery(primary, fallback).send(message),
-    EmailOtpDeliveryUnavailable,
-  );
-  assert.equal(fallbackCalls, 0);
-});
-
-test('both provider failures map to one sanitized unavailable error', async () => {
-  const failing: EmailOtpProvider = {
-    async send() {
-      throw new Error('synthetic transport detail with message address and OTP');
-    },
-  };
-  const delivery = new FailoverEmailOtpDelivery(
-    {
-      async send() {
-        throw new EmailOtpProviderError(true);
-      },
-    },
-    failing,
-  );
-
-  await assert.rejects(delivery.send(message), (error: unknown) => {
-    assert.ok(error instanceof EmailOtpDeliveryUnavailable);
-    assert.equal(error.message, 'Email OTP delivery is temporarily unavailable');
-    assert.equal(error.message.includes('synthetic transport detail'), false);
-    return true;
-  });
-});
 
 test('a sign-in notice carries no code, escapes its text and is sent to the fixed endpoint', async () => {
   let body: { to: string[]; subject: string; text: string; html: string } | undefined;

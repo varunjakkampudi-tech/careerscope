@@ -235,7 +235,7 @@
       "text": "| D11 | Second email provider for sign-in fallback | Configured before launch behind a provider switch flag. Own SPF, DKIM, and DMARC setup |",
       "assessment": "PARTIAL",
       "verification": "UNIT_TESTS_PASSED",
-      "gap": "FailoverEmailOtpDelivery is implemented and unit-tested, but main.ts builds only ResendEmailOtpProvider. No second vendor is chosen, no provider switch flag exists, and second-provider SPF/DKIM/DMARC is not done.",
+      "gap": "The second-provider failover class and its tests were removed by owner decision in stage 02. main.ts builds only ResendEmailOtpProvider. No second vendor, provider switch flag or second-provider SPF/DKIM/DMARC exists.",
       "launchBlocking": true,
       "evidence": {
         "implementation": [
@@ -320,7 +320,7 @@
       "text": "| Production sign-in (email OTP) | Required | Real OTP flow works with fallback provider; test login blocked in production by configuration |",
       "assessment": "PARTIAL",
       "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "Real OTP flow works with Resend only; the fallback provider is not wired (see 1-011).",
+      "gap": "Real OTP flow works with Resend only; the second provider was removed from scope by owner decision (see 1-011).",
       "launchBlocking": true,
       "evidence": {
         "implementation": [
@@ -750,7 +750,7 @@
       "text": "- Email OTP via Resend, with a second provider as fallback (D11). Provider switch behind a flag",
       "assessment": "PARTIAL",
       "verification": "UNIT_TESTS_PASSED",
-      "gap": "Resend is wired; the second provider and the provider switch flag are not (see 1-011).",
+      "gap": "Resend is wired; the second provider was removed from scope by owner decision, so no switch flag exists (see 1-011).",
       "launchBlocking": true,
       "evidence": {
         "implementation": [
@@ -918,7 +918,7 @@
       "text": "- Outage state: when both providers fail, existing sessions continue. New sign-ins show \"Sign-in is temporarily unavailable\" with a status link. No claim that access will be restored. Requests are logged with request ID and rejected, never silently dropped. No other sign-in path exists at launch",
       "assessment": "PARTIAL",
       "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "New sign-ins get a 503 \"Sign-in is temporarily unavailable\" with a request id, tested. Missing: the status link, and a both-providers-down state cannot occur in production because the second provider is not wired.",
+      "gap": "New sign-ins get a 503 \"Sign-in is temporarily unavailable\" with a request id, tested. Missing: the status link. A both-providers-down state cannot occur in production because only one provider is configured, by owner decision.",
       "launchBlocking": true,
       "evidence": {
         "implementation": ["apps/api/src/app.ts:604", "apps/web/src/lib/api.ts:250"],
@@ -3945,7 +3945,7 @@
       "text": "- Email provider down (one provider): failover to the second provider. Existing sessions continue",
       "assessment": "PARTIAL",
       "verification": "UNIT_TESTS_PASSED",
-      "gap": "Failover logic is tested but not wired to a second provider (see 1-011).",
+      "gap": "Failover was removed from scope by owner decision (see 1-011).",
       "launchBlocking": true,
       "evidence": {
         "implementation": [
@@ -5367,7 +5367,7 @@
       "text": "- Sign-in: both email providers tested; outage state tested",
       "assessment": "PARTIAL",
       "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "Failover and outage state are unit and integration tested; two real providers are not configured (see 1-011).",
+      "gap": "Outage state is unit and integration tested; only Resend is configured, by owner decision (see 1-011).",
       "launchBlocking": true,
       "evidence": {
         "implementation": [
@@ -5589,7 +5589,7 @@
       "text": "| 2 | Second email provider failover tested | D11 | | | | Critical |",
       "assessment": "PARTIAL",
       "verification": "UNIT_TESTS_PASSED",
-      "gap": "Failover logic is tested in isolation only and the second provider is not wired.",
+      "gap": "Failover was removed from scope by owner decision (see 1-011).",
       "launchBlocking": true,
       "evidence": {
         "implementation": [

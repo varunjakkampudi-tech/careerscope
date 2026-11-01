@@ -67,7 +67,7 @@ Their terms and privacy practices may differ. CareerScope does not collect
 employer credentials or submit applications on a candidate's behalf. The
 repository's authentication-email adapter sends through Resend only; sender
 domain verification, provider tracking settings, inbox delivery, production
-configuration, and any fallback provider remain unverified or unconfigured.
+and configuration remain unverified or unconfigured.
 
 ## 6. Acceptable use, disclaimers, liability, and disputes
 
