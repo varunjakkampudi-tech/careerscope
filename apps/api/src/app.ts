@@ -34,6 +34,10 @@ import {
   EmailChangeRequests,
   EmailOtpChallenges,
   emailOtpLifetimeMs,
+  accountSecondFactor,
+  beginTotpEnrolment,
+  claimAdminCode,
+  confirmTotpEnrolment,
   legalStatus,
   recordLegalAcceptance,
   recoveryStatus,
@@ -146,6 +150,11 @@ const otpVerifySchema = z
     email: z.string().trim().email().max(254),
     code: z.string().regex(/^\d{6}$/),
     intent: z.enum(['sign-in', 'sign-up']).optional(),
+    // Required only for an admin account, and sent with the email code. Other accounts ignore it.
+    totpCode: z
+      .string()
+      .regex(/^\d{6}$/)
+      .optional(),
   })
   .strict();
 const emailChangeRequestSchema = z
@@ -750,6 +759,7 @@ export async function createApp(
       email: suppliedEmail,
       code,
       intent: suppliedIntent,
+      totpCode,
     } = otpVerifySchema.parse(request.body);
     const intent = suppliedIntent ?? 'sign-in';
     if (intent === 'sign-up' && !registrationAvailable)
@@ -774,6 +784,36 @@ export async function createApp(
       throw new HttpError(503, 'Sign-in is temporarily unavailable');
     }
     if (!allowed) throw new HttpError(429, 'Too many attempts. Request a new code later.');
+
+    if (intent === 'sign-in') {
+      // An admin also needs a current authenticator code (V12-4.1-012). A missing or wrong code gets the
+      // same response as a wrong email code, so a caller cannot tell which accounts are admins.
+      const factor = await accountSecondFactor(database, email).catch(() => {
+        throw new HttpError(503, 'Sign-in is temporarily unavailable');
+      });
+      if (factor?.role === 'admin') {
+        const accepted =
+          totpCode !== undefined &&
+          (await claimAdminCode(database, email, totpCode, options.emailOtp.secret).catch(
+            () => false,
+          ));
+        if (!accepted) {
+          await consumeRateLimit(
+            request,
+            otpFailureKey(emailHash, ipHash),
+            otpFailureBudget,
+            86400,
+          );
+          await consumeRateLimit(
+            request,
+            otpSendThrottleKey(emailHash),
+            otpSendThrottleBudget,
+            86400,
+          );
+          throw new HttpError(401, 'Invalid or expired verification code');
+        }
+      }
+    }
 
     let challengeId: string | null;
     try {
@@ -879,6 +919,42 @@ export async function createApp(
     if (newDevice) sendNewDeviceAlert(request.log, email, label);
     setSessionCookies(reply, credentials, new URL(origin).protocol === 'https:');
     return { authenticated: true };
+  });
+  // Authenticator setup for admin sign-in (V12-4.1-012). Setup starts with a secret shown once; the account
+  // is not protected until a code from that secret is confirmed.
+  const totpCodeSchema = z.object({ code: z.string().regex(/^\d{6}$/) }).strict();
+  app.post('/api/account/totp/setup', async (request) => {
+    if (!options.emailOtp) throw new HttpError(404, 'Authenticator setup is unavailable');
+    const email = await primaryEmailOf(request.ownerId!);
+    if (!email) throw new HttpError(409, 'Authenticator setup is unavailable for this account');
+    const result = await beginTotpEnrolment(
+      database,
+      request.ownerId!,
+      email,
+      options.emailOtp.secret,
+    );
+    if (result === 'already-enrolled')
+      throw new HttpError(409, 'An authenticator is already set up');
+    return { secret: result.secret, otpauthUri: result.uri };
+  });
+  app.post('/api/account/totp/confirm', async (request) => {
+    if (!options.emailOtp) throw new HttpError(404, 'Authenticator setup is unavailable');
+    const { code } = totpCodeSchema.parse(request.body);
+    const allowed = await consumeRateLimit(
+      request,
+      `totp:confirm:owner:${request.ownerId!}`,
+      10,
+      600,
+    );
+    if (!allowed) throw new HttpError(429, 'Too many attempts. Try again later.');
+    const confirmed = await confirmTotpEnrolment(
+      database,
+      request.ownerId!,
+      code,
+      options.emailOtp.secret,
+    );
+    if (!confirmed) throw new HttpError(400, 'The code is not valid. Check the app and try again.');
+    return { enrolled: true };
   });
   // Lost-email recovery (item 2.17). A recovery address is confirmed with a code sent to it. Recovery
   // sign-in to the account is refused during the cooldown after confirmation. The anonymous recovery

@@ -473,6 +473,7 @@ function contracts(options: {
           email: text({ format: 'email', maxLength: 254 }),
           code: text({ pattern: '^\\d{6}$' }),
           intent: { type: 'string', enum: ['sign-in', 'sign-up'] },
+          totpCode: text({ pattern: '^\\d{6}$' }),
         }),
         failures: options.emailOtpEnabled ? [400, 401, 403, 429, 503] : [404],
         description:
@@ -545,6 +546,25 @@ function contracts(options: {
         failures: [400, 401, 403, 404, 409],
         description:
           'Requires the authenticated owner session and CSRF token. Records acceptance of the current versions only; an out-of-date version is refused with 409.',
+      },
+    ),
+    'POST /api/account/totp/setup': operation(
+      'Start authenticator setup for admin sign-in',
+      object({ secret: text(), otpauthUri: text() }),
+      {
+        failures: [404, 409],
+        description:
+          'Requires the authenticated owner session and CSRF token. Returns the secret once, in base32, with an otpauth URI for authenticator apps. Refused once an authenticator is confirmed.',
+      },
+    ),
+    'POST /api/account/totp/confirm': operation(
+      'Confirm the authenticator with a code from the app',
+      object({ enrolled: { ...bool, enum: [true] } }),
+      {
+        body: object({ code: text({ pattern: '^\\d{6}$' }) }, ['code']),
+        failures: [400, 403, 404, 429],
+        description:
+          'Requires the authenticated owner session and CSRF token. A confirmed authenticator is required before an account can be made an admin, and is required at every admin sign-in.',
       },
     ),
     'GET /api/account/recovery-email': operation(

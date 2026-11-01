@@ -978,9 +978,9 @@
       "kind": "CLAUSE",
       "context": "",
       "text": "- Admin and super admin: two-factor required",
-      "assessment": "NOT_IMPLEMENTED",
-      "verification": "NOT_APPLICABLE",
-      "gap": "No admin or super-admin role and no two-factor for them; the admin test identity is a labelled test persona only.",
+      "assessment": "PARTIAL",
+      "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
+      "gap": "The API requires an admin to send a confirmed authenticator code with the email code, and an admin role needs a confirmed authenticator (database check). The web app has no authenticator setup screen and no authenticator field on sign-in, so an admin cannot use the product yet. Super-admin does not exist, by owner decision.",
       "launchBlocking": true,
       "evidence": {
         "implementation": ["packages/core/src/test-users.ts:15"],

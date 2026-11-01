@@ -15,6 +15,13 @@
       "when": 1793462727130,
       "tag": "0001_recovery_email_and_intents",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793509849850,
+      "tag": "0002_admin_role_and_totp",
+      "breakpoints": true
     }
   ]
 }
