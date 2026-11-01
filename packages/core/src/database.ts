@@ -5,6 +5,7 @@
  */
 
 import { rollback } from './rollback.js';
+import { logFailure } from './failure.js';
 import { createHash, randomUUID } from 'node:crypto';
 import { and, desc, eq, inArray, isNull, or, lt, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
@@ -108,6 +109,10 @@ export class Database {
       statement_timeout: timeoutMs,
       idle_in_transaction_session_timeout: idleInTransactionTimeoutMs,
     });
+    // An idle connection can be ended by the server at any time (restart, failover, or DROP DATABASE
+    // ... WITH (FORCE)). Without a listener the pool's 'error' event is an uncaught exception. The pool
+    // discards the ended client and opens a new one on the next query, so the event only needs logging.
+    this.pool.on('error', (error) => logFailure(error, {}, 'Idle database connection ended'));
     this.db = drizzle({ client: this.pool, schema: tables });
   }
 
