@@ -1016,9 +1016,9 @@
       "kind": "CLAUSE",
       "context": "Authentication recovery:",
       "text": "- Inaccessible mailbox: support procedure with logged reason and time-limited verification",
-      "assessment": "NOT_IMPLEMENTED",
-      "verification": "NOT_APPLICABLE",
-      "gap": "No inaccessible-mailbox support procedure, support view or logged-reason mechanism.",
+      "assessment": "PARTIAL",
+      "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
+      "gap": "Operators can open and close a logged support case with a reason, and it expires after 24 hours (packages/core/src/support-cases.ts, scripts/jobs/support-case.ts, docs/operations/SUPPORT-CASES.md). The email-change route does not yet require an active case, and there is no candidate-facing flow for an inaccessible mailbox.",
       "launchBlocking": true,
       "evidence": {
         "implementation": [],

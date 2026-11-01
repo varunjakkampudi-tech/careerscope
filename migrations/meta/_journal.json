@@ -22,6 +22,13 @@
       "when": 1793509849850,
       "tag": "0002_admin_role_and_totp",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793512778212,
+      "tag": "0003_support_cases",
+      "breakpoints": true
     }
   ]
 }
