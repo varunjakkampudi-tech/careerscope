@@ -879,9 +879,9 @@
       "kind": "CLAUSE",
       "context": "",
       "text": "- Login alerts for new devices; step-up OTP for unusual patterns",
-      "assessment": "NOT_IMPLEMENTED",
-      "verification": "NOT_APPLICABLE",
-      "gap": "No new-device login alert and no step-up OTP for unusual patterns.",
+      "assessment": "PARTIAL",
+      "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
+      "gap": "New-device login alerts are built and tested (apps/api/src/new-device-alert.integration.test.ts). Step-up OTP for unusual patterns is not built: every sign-in already requires an email code, so a further step adds no check (decided in stage 02).",
       "launchBlocking": true,
       "evidence": {
         "implementation": [],
@@ -995,13 +995,17 @@
       "kind": "CLAUSE",
       "context": "Authentication recovery:",
       "text": "- Lost email access: recovery through verified identity signals already on the account, with cooldown and login alert. Email alone is never the only recovery factor",
-      "assessment": "NOT_IMPLEMENTED",
-      "verification": "NOT_APPLICABLE",
-      "gap": "No lost-email-access recovery flow and no recovery signals beyond the email itself.",
+      "assessment": "IMPLEMENTED",
+      "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
       "launchBlocking": true,
       "evidence": {
-        "implementation": [],
-        "tests": []
+        "implementation": [
+          "packages/core/src/recovery-email.ts:10",
+          "packages/core/src/recovery-email.ts:64",
+          "apps/api/src/app.ts:1022"
+        ],
+        "tests": ["apps/api/src/recovery.integration.test.ts:17"],
+        "note": "Recovery needs a second address that was confirmed by a code and is not any account's sign-in address. Email alone never recovers the account. Recovery sign-in is refused for 72 hours after confirmation. Each recovery event sends a notice to the sign-in address. Recovery is the verified recovery address on the account, not a new signal."
       }
     },
     {

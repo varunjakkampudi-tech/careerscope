@@ -83,7 +83,7 @@ The owner's v12 specification is in the repository as [CareerScope-v12](requirem
 per-status and per-section counts. A clause is called IMPLEMENTED only when its record cites
 implementing code and a test that a CI script runs.
 
-Current status of the inventory: 319 clauses (67 IMPLEMENTED, 72 PARTIAL, 125 NOT_IMPLEMENTED, 47 OWNER_EVIDENCE, 8 OUT_OF_SCOPE_POST_LAUNCH); 165 launch-blocking gaps.
+Current status of the inventory: 319 clauses (68 IMPLEMENTED, 73 PARTIAL, 123 NOT_IMPLEMENTED, 47 OWNER_EVIDENCE, 8 OUT_OF_SCOPE_POST_LAUNCH); 164 launch-blocking gaps.
 
 `npm run traceability:check` fails when this sentence no longer equals the counts computed from the
 inventory, when a clause is NOT_ASSESSED, when the source digest or clause count changes, when a clause
@@ -91,7 +91,7 @@ text is not equal to its source line, or when the generated summary is stale.
 
 ### Open for later stages
 
-Reconciliation (assessing every clause) is complete. Implementation is not. The 165 launch-blocking gaps
+Reconciliation (assessing every clause) is complete. Implementation is not. The 164 launch-blocking gaps
 are real and stay open: they are the PARTIAL, NOT_IMPLEMENTED and OWNER_EVIDENCE clauses that the inventory
 marks `launchBlocking`, listed one by one in the "Launch-blocking gaps" table of
 [V12-RECONCILIATION](requirements/V12-RECONCILIATION.md). None of them is waived here. OWNER_EVIDENCE

@@ -287,15 +287,15 @@ test('the Item 1.02 prose and the register must quote the inventory counts', asy
       rmSync(root, { recursive: true, force: true });
     }
   };
-  const trace = await stale('docs/TRACEABILITY.md', '67 IMPLEMENTED', '68 IMPLEMENTED');
+  const trace = await stale('docs/TRACEABILITY.md', '68 IMPLEMENTED', '69 IMPLEMENTED');
   assert.equal(trace.length, 1);
   assert.match(
     trace[0],
-    /docs\/TRACEABILITY\.md must quote the inventory counts exactly: "319 clauses \(67 IMPLEMENTED/,
+    /docs\/TRACEABILITY\.md must quote the inventory counts exactly: "319 clauses \(68 IMPLEMENTED/,
   );
   const claim = await stale(
     'docs/TRACEABILITY.md',
-    '165 launch-blocking gaps',
+    '164 launch-blocking gaps',
     '0 launch-blocking gaps',
   );
   assert.match(claim[0], /TRACEABILITY/);
