@@ -52,3 +52,56 @@ export async function hasActiveSupportCase(database: Database, ownerId: string):
   );
   return (active.rowCount ?? 0) > 0;
 }
+
+export type SupportEmailChange = 'changed' | 'no-active-case' | 'conflict';
+
+/**
+ * Changes the sign-in address of a locked-out account, once, under an active case. The operator's identity
+ * check is the verification, so no code is sent. In one transaction the case is closed, the address is
+ * changed, and every session and pending email change of the account is removed, so the old address can no
+ * longer be used.
+ */
+export async function changeEmailWithSupportCase(
+  database: Database,
+  caseId: string,
+  newEmail: string,
+): Promise<SupportEmailChange> {
+  const client = await database.pool.connect();
+  try {
+    await client.query('BEGIN');
+    const found = await client.query<{ owner_id: string }>(
+      `SELECT owner_id FROM support_cases
+       WHERE id = $1 AND closed_at IS NULL AND expires_at > now()
+       FOR UPDATE`,
+      [caseId],
+    );
+    const ownerId = found.rows[0]?.owner_id;
+    if (!ownerId) {
+      await client.query('ROLLBACK');
+      return 'no-active-case';
+    }
+    const taken = await client.query('SELECT 1 FROM users WHERE email = $1 AND id <> $2', [
+      newEmail,
+      ownerId,
+    ]);
+    if ((taken.rowCount ?? 0) > 0) {
+      await client.query('ROLLBACK');
+      return 'conflict';
+    }
+    await client.query('UPDATE users SET email = $2, email_verified_at = now() WHERE id = $1', [
+      ownerId,
+      newEmail,
+    ]);
+    await client.query('DELETE FROM sessions WHERE owner_id = $1', [ownerId]);
+    await client.query('DELETE FROM email_change_requests WHERE owner_id = $1', [ownerId]);
+    await client.query('UPDATE support_cases SET closed_at = now() WHERE id = $1', [caseId]);
+    await client.query('COMMIT');
+    return 'changed';
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => undefined);
+    if ((error as { code?: string }).code === '23505') return 'conflict';
+    throw error;
+  } finally {
+    client.release();
+  }
+}

@@ -3,8 +3,10 @@ import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import { Auth } from './auth.js';
 import { Database } from './database.js';
 import {
+  changeEmailWithSupportCase,
   closeSupportCase,
   hasActiveSupportCase,
   openSupportCase,
@@ -77,3 +79,84 @@ test('a support case is logged, time-limited and closable', { timeout: 60_000 },
     await admin.close();
   }
 });
+
+test(
+  'an open case changes a locked-out address once, ends every session and refuses a taken address',
+  {
+    timeout: 60_000,
+  },
+  async () => {
+    const configured = process.env.DATABASE_URL;
+    assert.ok(configured, 'integration test requires an isolated DATABASE_URL');
+    const url = new URL(configured);
+    assert.ok(['127.0.0.1', 'localhost'].includes(url.hostname));
+    const admin = new Database(configured);
+    const name = `test_${randomUUID().replaceAll('-', '')}`;
+    await admin.pool.query(`CREATE DATABASE "${name}"`);
+    url.pathname = `/${name}`;
+    const database = new Database(url.href);
+    try {
+      await migrate(database.db, {
+        migrationsFolder: fileURLToPath(new URL('../../../migrations', import.meta.url)),
+      });
+      const ownerId = randomUUID();
+      const otherId = randomUUID();
+      await database.pool.query('INSERT INTO users (id, email) VALUES ($1, $2), ($3, $4)', [
+        ownerId,
+        'locked-out@example.test',
+        otherId,
+        'taken@example.test',
+      ]);
+      const auth = new Auth(database);
+      assert.ok(await auth.loginWithVerifiedEmail('locked-out@example.test'));
+
+      const opened = await openSupportCase(
+        database,
+        'locked-out@example.test',
+        'Mailbox lost, identity checked',
+        'ops',
+      );
+      assert.ok(opened);
+
+      assert.equal(
+        await changeEmailWithSupportCase(database, opened.caseId, 'taken@example.test'),
+        'conflict',
+        'an address another account uses is refused',
+      );
+      assert.equal(
+        await hasActiveSupportCase(database, ownerId),
+        true,
+        'a refused change keeps the case open',
+      );
+
+      assert.equal(
+        await changeEmailWithSupportCase(database, opened.caseId, 'new-address@example.test'),
+        'changed',
+      );
+      const owner = await database.pool.query<{ email: string }>(
+        'SELECT email FROM users WHERE id = $1',
+        [ownerId],
+      );
+      assert.equal(owner.rows[0]!.email, 'new-address@example.test');
+      const sessions = await database.pool.query('SELECT 1 FROM sessions WHERE owner_id = $1', [
+        ownerId,
+      ]);
+      assert.equal(sessions.rowCount, 0, 'every session of the account is ended');
+      assert.equal(
+        await hasActiveSupportCase(database, ownerId),
+        false,
+        'the case is closed by the change',
+      );
+
+      assert.equal(
+        await changeEmailWithSupportCase(database, opened.caseId, 'again@example.test'),
+        'no-active-case',
+        'a closed case cannot change the address again',
+      );
+    } finally {
+      await database.close();
+      await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+      await admin.close();
+    }
+  },
+);

@@ -30,5 +30,11 @@ support (see [AUTHENTICATION](../AUTHENTICATION.md)).
 - A case records the operator, the reason, and the time window. It is stored in `support_cases`.
 - A case does not sign anyone in and does not change the sign-in address. It is the time-limited record
   that an identity check was made.
-- The case is not yet required by the email-change route. Until that is built, an operator must check
-  the case table before any manual change to a sign-in address.
+- A locked-out account's sign-in address can be changed only under an open case, with this command:
+
+  ```bash
+  npm run db:support-case -- change-email <case-id> new.address@example.test
+  ```
+
+  The change closes the case, ends every session of the account and removes any pending email change.
+  A new address that another account uses is refused, and the case stays open.

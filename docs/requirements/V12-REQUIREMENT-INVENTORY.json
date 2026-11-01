@@ -1018,7 +1018,7 @@
       "text": "- Inaccessible mailbox: support procedure with logged reason and time-limited verification",
       "assessment": "PARTIAL",
       "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "Operators can open and close a logged support case with a reason, and it expires after 24 hours (packages/core/src/support-cases.ts, scripts/jobs/support-case.ts, docs/operations/SUPPORT-CASES.md). The email-change route does not yet require an active case, and there is no candidate-facing flow for an inaccessible mailbox.",
+      "gap": "Operators can open a logged support case that expires after 24 hours, and an open case is the only way to change the address of a locked-out account (scripts/jobs/support-case.ts change-email, packages/core/src/support-cases.ts). That change ends every session and closes the case. There is no candidate-facing flow for an inaccessible mailbox, so the clause stays partial.",
       "launchBlocking": true,
       "evidence": {
         "implementation": [],

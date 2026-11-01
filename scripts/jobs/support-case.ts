@@ -10,7 +10,11 @@
 
 import { userInfo } from 'node:os';
 import { Database } from '../../packages/core/src/database.js';
-import { closeSupportCase, openSupportCase } from '../../packages/core/src/support-cases.js';
+import {
+  changeEmailWithSupportCase,
+  closeSupportCase,
+  openSupportCase,
+} from '../../packages/core/src/support-cases.js';
 import { installProcessFailureHandlers, logFailure } from '../../packages/core/src/failure.js';
 
 installProcessFailureHandlers();
@@ -45,6 +49,24 @@ try {
     const closed = await closeSupportCase(database, caseId);
     process.stdout.write(closed ? 'Support case closed.\n' : 'No open case has that id.\n');
     if (!closed) process.exitCode = 1;
+  } else if (command === 'change-email') {
+    const caseId = first;
+    const newEmail = second?.trim().toLowerCase();
+    if (!caseId || !newEmail || newEmail.length > 254 || !newEmail.includes('@')) usage();
+    database = new Database(process.env.DATABASE_URL!);
+    const result = await changeEmailWithSupportCase(database, caseId, newEmail);
+    if (result === 'changed') {
+      process.stdout.write(
+        'Sign-in address changed. Every session of the account has been ended.\n',
+      );
+    } else {
+      process.stderr.write(
+        result === 'conflict'
+          ? 'That address already belongs to another account.\n'
+          : 'No open case has that id, or it has expired.\n',
+      );
+      process.exitCode = 1;
+    }
   } else {
     usage();
   }
