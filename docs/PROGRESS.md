@@ -16,4 +16,6 @@ Stage 01 evidence: [FOUNDATIONS](FOUNDATIONS.md), 13 items Complete. The registe
 Stage 02 evidence: [GAP-MATRIX](GAP-MATRIX.md) rows 2.01 to 2.20 and [TEST-MATRIX](TEST-MATRIX.md).
 Commit `c12838e` passed the local gates, the integration suite, the Chromium browser suite, and
 hosted CI on rerun `41221224982`. The first hosted run of `c12838e` failed in the flaky private
-test-selection integration test, so that flake remains open. Open owner decisions: B-02 and B-03.
+test-selection integration test, so that flake remains open. Owner decisions: B-02 closed (no second provider in stage 02); B-03
+approved for deployment, pending counsel-approved legal text. Stage 02 is complete with these carried
+to deployment.
