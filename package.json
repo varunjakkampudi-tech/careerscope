@@ -74,7 +74,7 @@
     "@types/node": "^24.0.0",
     "@types/pg": "^8.15.0",
     "@types/pngjs": "^6.0.5",
-    "axe-core": "^4.12.1",
+    "axe-core": "^4.14.0",
     "concurrently": "^10.0.5",
     "drizzle-kit": "^0.31.10",
     "eslint": "^9.39.5",
