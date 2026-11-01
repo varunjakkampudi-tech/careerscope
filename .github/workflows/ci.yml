@@ -76,7 +76,7 @@ jobs:
       contains(fromJSON('["all","checks","domain","security"]'), inputs.suite)
     steps:
       - name: Check out the triggering revision
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
 
@@ -163,7 +163,7 @@ jobs:
       contents: read
     steps:
       - name: Check out the triggering revision
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
 
@@ -206,7 +206,7 @@ jobs:
       CAREERSCOPE_UI_SCENARIO: ${{ github.event_name == 'workflow_dispatch' && inputs.scenario != 'full' && inputs.scenario || '' }}
     steps:
       - name: Check out the triggering revision
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
 
