@@ -24,7 +24,7 @@ shared Redis limits and generic responses; if the limiter is unavailable,
 authentication is unavailable rather than unthrottled. The Resend adapter uses
 a fixed HTTPS endpoint, disables redirects, bounds requests and uses a stable
 idempotency key for its bounded retry. No live delivery/provider behavior was
-tested. The required v12 fallback provider and provider acceptance remain pending.
+tested. The second email provider was removed from scope by owner decision; Resend provider acceptance remains pending.
 The consolidated local implementation includes refresh-token family/reuse checks,
 session listing/revocation and dual-address email-change verification; these do
 not constitute production or live provider acceptance.

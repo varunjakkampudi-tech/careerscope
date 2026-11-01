@@ -153,10 +153,8 @@ optional provider values belong in an approved environment. Do not copy or print
 real `.env` values, send a live test email, or apply migrations to a shared
 database as part of local development.
 
-The provider-neutral fallback interface exists, but no second delivery provider
-or credentials have been selected/configured. The application currently uses
-Resend as the primary only; launch resilience requiring a real fallback remains
-an owner/provider gate. A Resend API success is acceptance by the API, not proof
+The application uses Resend as its only email provider. A second provider was removed
+from scope by owner decision, so no fallback code, credentials or configuration exist. A Resend API success is acceptance by the API, not proof
 of inbox delivery. Domain verification, tracking settings, real-delivery smoke,
 production secret configuration, and hosted migration/health validation remain
 unverified until performed by an authorized operator.

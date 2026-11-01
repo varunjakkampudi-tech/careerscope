@@ -1,6 +1,5 @@
 /**
- * Delivers one-time codes by email through Resend, with an optional failover provider. Used by the
- * API sign-in and email-change routes; the codes themselves come from `email-otp.ts`.
+ * Delivers one-time codes by email through Resend. Used by the API sign-in and email-change routes; the codes themselves come from `email-otp.ts`.
  */
 
 import { z } from 'zod';
@@ -92,19 +91,11 @@ export interface EmailOtpProvider {
   sendNotice?(notice: EmailNoticeMessage): Promise<void>;
 }
 
-/** Safe provider failure: carries only whether a retry or the fallback might succeed, never the response, address or code. */
+/** Safe provider failure: carries only whether a retry might succeed, never the response, address or code. */
 export class EmailOtpProviderError extends Error {
   constructor(readonly retryable: boolean) {
     super('Email OTP provider request failed');
     this.name = 'EmailOtpProviderError';
-  }
-}
-
-/** Thrown when no provider could send; the message is deliberately generic. */
-export class EmailOtpDeliveryUnavailable extends Error {
-  constructor() {
-    super('Email OTP delivery is temporarily unavailable');
-    this.name = 'EmailOtpDeliveryUnavailable';
   }
 }
 
@@ -197,36 +188,6 @@ export class ResendEmailOtpProvider implements EmailOtpProvider {
         response.status >= 500;
       if (!retryable || attempt === 1) throw new EmailOtpProviderError(retryable);
       await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-  }
-}
-
-/**
- * Sends through one configured primary and then an injected fallback provider.
- * The fallback vendor remains a composition choice; this class does not assume
- * credentials or create an account for it.
- */
-export class FailoverEmailOtpDelivery {
-  constructor(
-    private readonly primary: EmailOtpProvider,
-    private readonly fallback: EmailOtpProvider,
-  ) {}
-
-  /** Tries the primary, then the fallback only when the primary failure was retryable. Returns which one sent. */
-  async send(message: EmailOtpDeliveryMessage): Promise<'primary' | 'fallback'> {
-    try {
-      await this.primary.send(message);
-      return 'primary';
-    } catch (error) {
-      if (!(error instanceof EmailOtpProviderError) || !error.retryable)
-        throw new EmailOtpDeliveryUnavailable();
-    }
-
-    try {
-      await this.fallback.send(message);
-      return 'fallback';
-    } catch {
-      throw new EmailOtpDeliveryUnavailable();
     }
   }
 }

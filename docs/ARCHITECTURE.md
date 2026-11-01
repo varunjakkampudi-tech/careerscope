@@ -88,8 +88,8 @@ sequenceDiagram
 Non-production test account selection remains a separate, fail-closed mode.
 Registration is disabled. OTP values and raw email addresses are not stored in
 challenge records; the Resend API key and separate OTP HMAC secret are server-only.
-Real delivery, sender-domain verification/tracking settings and a configured
-secondary provider remain external/owner validation gates.
+Real delivery and sender-domain verification/tracking settings remain external/owner
+validation gates. Resend is the only email provider.
 
 ## Trust boundaries
 
