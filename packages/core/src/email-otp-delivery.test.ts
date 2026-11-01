@@ -184,3 +184,41 @@ test('a notice subject with a line break is refused before any request is made',
   );
   assert.equal(requests, 0);
 });
+
+test('every email uses the shared layout: preheader, one code block, fixed footer and no remote assets', async () => {
+  const bodies: Record<string, unknown>[] = [];
+  const provider = new ResendEmailOtpProvider(
+    'synthetic-key',
+    'CareerScope <auth@example.test>',
+    async (_input, init) => {
+      bodies.push(JSON.parse(String(init?.body)));
+      return new Response(null, { status: 200 });
+    },
+  );
+
+  await provider.send(message);
+  await provider.sendNotice({
+    email: 'candidate@example.test',
+    subject: 'New sign-in & device',
+    text: 'Signed in on <b>a new device</b>.',
+    idempotencyKey: 'f3040401-c357-4d17-8000-000000000004',
+  });
+
+  const [code = '', notice = ''] = bodies.map((body) => String(body.html));
+  for (const html of [code, notice]) {
+    assert.match(html, /^<!doctype html>/);
+    assert.match(html, /<html lang="en">/);
+    assert.match(html, /<span style="display:none[^>]*>/, 'hidden preheader for inbox previews');
+    assert.match(html, /<meta name="viewport"/);
+    assert.doesNotMatch(html, /<script|<img\b|<link\b|https?:\/\/|url\(/i);
+  }
+  assert.equal(
+    code.split('042731').length - 1,
+    2,
+    'the code appears in the preheader and the code block',
+  );
+  assert.match(code, /CareerScope/);
+  assert.match(notice, /New sign-in &amp; device|New sign-in &#38; device/);
+  assert.doesNotMatch(notice, /<b>a new device<\/b>/);
+  assert.match(notice, /&#60;b&#62;a new device&#60;\/b&#62;/);
+});

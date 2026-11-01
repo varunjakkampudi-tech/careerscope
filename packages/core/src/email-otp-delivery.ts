@@ -85,6 +85,31 @@ function escapeHtml(value: string) {
   return value.replace(/[&<>"']/g, (ch) => `&#${ch.charCodeAt(0)};`);
 }
 
+type EmailLayout = {
+  preheader: string;
+  heading: string;
+  paragraphs: string[];
+  code?: string;
+  footnote: string;
+};
+
+/**
+ * The one HTML shell for every CareerScope email. Table layout with inline styles, no images, no
+ * links and no web fonts, so it renders the same in mail clients. Every value is escaped here.
+ */
+function renderEmailHtml({ preheader, heading, paragraphs, code, footnote }: EmailLayout): string {
+  const paragraphHtml = paragraphs
+    .map(
+      (text) =>
+        `<p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#334155">${escapeHtml(text)}</p>`,
+    )
+    .join('');
+  const codeHtml = code
+    ? `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:8px 0 24px"><tr><td align="center" style="background:#f1f5fb;border:1px solid #d6e0f0;border-radius:10px;padding:20px 12px"><span style="font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:32px;font-weight:700;letter-spacing:8px;color:#0b1f44">${escapeHtml(code)}</span></td></tr></table>`
+    : '';
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escapeHtml(heading)}</title></head><body style="margin:0;padding:0;background:#f4f6fb;font-family:Arial,Helvetica,sans-serif"><span style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent">${escapeHtml(preheader)}</span><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f4f6fb"><tr><td align="center" style="padding:32px 16px"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#ffffff;border:1px solid #e3e8f2;border-radius:14px"><tr><td style="padding:28px 32px 8px"><p style="margin:0;font-size:18px;font-weight:700;letter-spacing:0.2px;color:#0b1f44">CareerScope</p></td></tr><tr><td style="padding:12px 32px 32px"><h1 style="margin:0 0 16px;font-size:22px;line-height:1.3;color:#0b1f44">${escapeHtml(heading)}</h1>${paragraphHtml}${codeHtml}</td></tr><tr><td style="padding:18px 32px 26px;border-top:1px solid #e3e8f2"><p style="margin:0;font-size:12px;line-height:1.6;color:#64748b">${escapeHtml(footnote)}</p></td></tr></table><p style="margin:16px 0 0;font-size:12px;color:#94a3b8">CareerScope account security</p></td></tr></table></body></html>`;
+}
+
 /** A mail backend that either sends or throws `EmailOtpProviderError`. Notices are optional. */
 export interface EmailOtpProvider {
   send(message: EmailOtpDeliveryMessage): Promise<void>;
@@ -127,7 +152,14 @@ export class ResendEmailOtpProvider implements EmailOtpProvider {
       to: [email],
       subject: subjectByPurpose[purpose],
       text: `${copy.text} ${code}. It expires in 5 minutes. Never share this code. If you did not request it, ignore this email.`,
-      html: `<main style="margin:0 auto;max-width:560px;padding:32px 20px;font-family:Arial,Helvetica,sans-serif;color:#0b1f44;line-height:1.5"><h1 style="font-size:24px;margin:0 0 20px">CareerScope</h1><p>${copy.intro}</p><p style="font-size:32px;font-weight:700;letter-spacing:8px;margin:24px 0">${code}</p><p>This code expires in 5 minutes. Never share it with anyone.</p><p>If you did not request it, you can ignore this email.</p></main>`,
+      html: renderEmailHtml({
+        preheader: copy.text.replace(/ is$/, '.') + ' ' + code,
+        heading: subjectByPurpose[purpose],
+        paragraphs: [copy.intro],
+        code,
+        footnote:
+          'This code expires in 5 minutes. Never share it with anyone. If you did not request it, you can ignore this email.',
+      }),
     });
 
     await this.post(body, idempotencyKey);
@@ -147,7 +179,13 @@ export class ResendEmailOtpProvider implements EmailOtpProvider {
       to: [email],
       subject,
       text,
-      html: `<main style="margin:0 auto;max-width:560px;padding:32px 20px;font-family:Arial,Helvetica,sans-serif;color:#0b1f44;line-height:1.5"><h1 style="font-size:24px;margin:0 0 20px">CareerScope</h1><p>${escapeHtml(text)}</p></main>`,
+      html: renderEmailHtml({
+        preheader: notice.subject,
+        heading: notice.subject,
+        paragraphs: [notice.text],
+        footnote:
+          'You are receiving this security notice because of activity on your CareerScope account. No action is needed unless the activity was not yours. If it was not yours, change your account security settings.',
+      }),
     });
     await this.post(body, idempotencyKey);
   }
