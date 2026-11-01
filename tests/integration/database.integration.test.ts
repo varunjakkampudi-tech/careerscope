@@ -4220,19 +4220,15 @@ test('F5: the expired-session sweep is bounded and runs outside the sign-in tran
           )
         ).rows[0]!.count,
       );
-    // The sweep runs after sign-in returns, so wait for it to reach the expected count. A single
-    // statement deletes one batch, so the count moves in one step from batch + extra to extra.
-    const settle = async (expected: number) => {
-      for (let attempt = 0; attempt < 200; attempt += 1) {
-        if ((await expiredCount()) === expected) return;
-        await new Promise((resolve) => setTimeout(resolve, 25));
-      }
-      assert.equal(await expiredCount(), expected);
-    };
-    await settle(extra);
+    // The sweep runs after sign-in returns. Waiting for it directly, rather than polling the count,
+    // makes a missing sweep fail here instead of timing out. A single statement deletes one batch,
+    // so the count moves from batch + extra to extra.
+    await auth.settleSweeps();
+    assert.equal(await expiredCount(), extra);
     // A later sign-in clears the remainder.
     assert.ok(await auth.loginSession('f5@example.test', password));
-    await settle(0);
+    await auth.settleSweeps();
+    assert.equal(await expiredCount(), 0);
   }));
 
 test('CS-61: the session carries a stable, opaque per-owner cache key that differs between owners', async () => {

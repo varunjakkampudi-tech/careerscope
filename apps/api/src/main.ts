@@ -62,7 +62,15 @@ try {
     env.EMAIL_OTP_ENABLED === 'true'
       ? {
           secret: Buffer.from(env.EMAIL_OTP_HMAC_SECRET!, 'utf8'),
-          provider: new ResendEmailOtpProvider(env.RESEND_API_KEY!, env.RESEND_FROM_EMAIL),
+          provider: new ResendEmailOtpProvider(
+            env.RESEND_API_KEY!,
+            env.RESEND_FROM_EMAIL,
+            fetch,
+            // The logo is served by the web app. Mail clients fetch it, so it needs a public HTTPS origin.
+            env.APP_ORIGIN.startsWith('https://')
+              ? `${env.APP_ORIGIN}/brand/logo-full-transparent.png`
+              : undefined,
+          ),
         }
       : undefined;
   database = new Database(env.DATABASE_URL);

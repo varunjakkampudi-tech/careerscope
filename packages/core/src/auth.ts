@@ -40,6 +40,9 @@ export class Auth {
   // Verified against when the email is unknown, so unknown and wrong-password logins take similar time.
   private readonly dummyHash = passwordHash(randomBytes(32).toString('hex'));
 
+  /** The most recent background sweep, kept so callers and tests can wait for it. */
+  private pendingSweep: Promise<number> | undefined;
+
   constructor(private readonly database: Database) {}
 
   // Must run inside the caller's transaction so the revoke of the previous session and the insert of
@@ -103,7 +106,12 @@ export class Auth {
    * waits for a second one, and a login burst can exhaust the pool that way.
    */
   private sweepAfterCommit(): void {
-    void this.sweepExpiredSessions();
+    this.pendingSweep = this.sweepExpiredSessions();
+  }
+
+  /** Resolves when the most recent background sweep has finished. Sweeps never reject. */
+  async settleSweeps(): Promise<void> {
+    await this.pendingSweep;
   }
 
   /** Inserts a password account. A duplicate email is silently ignored, so the response does not reveal whether it exists. */
