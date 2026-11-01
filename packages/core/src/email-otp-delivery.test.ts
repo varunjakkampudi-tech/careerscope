@@ -222,3 +222,36 @@ test('every email uses the shared layout: preheader, one code block, fixed foote
   assert.doesNotMatch(notice, /<b>a new device<\/b>/);
   assert.match(notice, /&#60;b&#62;a new device&#60;\/b&#62;/);
 });
+
+test('the logo is the only remote image, and only when a public HTTPS logo URL is configured', async () => {
+  const logo = 'https://careerscope.example.test/brand/logo-full-transparent.png';
+  let html = '';
+  const provider = new ResendEmailOtpProvider(
+    'synthetic-key',
+    'CareerScope <auth@example.test>',
+    async (_input, init) => {
+      html = JSON.parse(String(init?.body)).html;
+      return new Response(null, { status: 200 });
+    },
+    logo,
+  );
+  await provider.send(message);
+
+  assert.equal(html.match(/<img\b/g)?.length, 1);
+  assert.ok(html.includes(`<img src="${logo}"`));
+  assert.match(html, /alt="CareerScope"/);
+  assert.equal(html.match(/https?:\/\//g)?.length, 1, 'no other remote reference');
+  assert.match(html, /user-select:all/);
+  assert.doesNotThrow(
+    () => new ResendEmailOtpProvider('synthetic-key', 'auth@example.test', fetch, undefined),
+  );
+  assert.throws(
+    () =>
+      new ResendEmailOtpProvider(
+        'synthetic-key',
+        'auth@example.test',
+        fetch,
+        'http://insecure.example.test/logo.png',
+      ),
+  );
+});

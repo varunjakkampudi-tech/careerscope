@@ -91,23 +91,39 @@ type EmailLayout = {
   paragraphs: string[];
   code?: string;
   footnote: string;
+  logoUrl?: string;
 };
 
+const brandAccent = '#4055d6';
+const brandInk = '#111725';
+const brandMuted = '#4a5364';
+
 /**
- * The one HTML shell for every CareerScope email. Table layout with inline styles, no images, no
- * links and no web fonts, so it renders the same in mail clients. Every value is escaped here.
+ * The one HTML shell for every CareerScope email. Table layout with inline styles and no web fonts,
+ * so it renders the same in mail clients. The logo is an image only when a public HTTPS URL is
+ * configured; otherwise the wordmark is text. Every value is escaped here.
  */
-function renderEmailHtml({ preheader, heading, paragraphs, code, footnote }: EmailLayout): string {
+function renderEmailHtml({
+  preheader,
+  heading,
+  paragraphs,
+  code,
+  footnote,
+  logoUrl,
+}: EmailLayout): string {
+  const logoHtml = logoUrl
+    ? `<img src="${escapeHtml(logoUrl)}" width="168" alt="CareerScope" style="display:block;width:168px;height:auto;margin:0 auto;border:0;outline:none;text-decoration:none">`
+    : `<p style="margin:0;font-size:24px;font-weight:700;letter-spacing:-0.2px;color:${brandInk};text-align:center">CareerScope</p>`;
   const paragraphHtml = paragraphs
     .map(
       (text) =>
-        `<p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#334155">${escapeHtml(text)}</p>`,
+        `<p style="margin:0 0 16px;font-size:15px;line-height:1.65;color:${brandMuted};text-align:center">${escapeHtml(text)}</p>`,
     )
     .join('');
   const codeHtml = code
-    ? `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:8px 0 24px"><tr><td align="center" style="background:#f1f5fb;border:1px solid #d6e0f0;border-radius:10px;padding:20px 12px"><span style="font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:32px;font-weight:700;letter-spacing:8px;color:#0b1f44">${escapeHtml(code)}</span></td></tr></table>`
+    ? `<p style="margin:24px 0 8px;font-size:12px;line-height:1.4;color:${brandMuted};text-align:center">Your verification code</p><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 auto"><tr><td align="center" style="background:#f3f6ff;border:1px dashed ${brandAccent};border-radius:12px;padding:18px 12px"><span style="font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:34px;font-weight:700;letter-spacing:10px;color:${brandInk};user-select:all;-webkit-user-select:all">${escapeHtml(code)}</span></td></tr></table><p style="margin:10px 0 0;font-size:12px;line-height:1.5;color:${brandMuted};text-align:center">Select the code to copy it.</p>`
     : '';
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escapeHtml(heading)}</title></head><body style="margin:0;padding:0;background:#f4f6fb;font-family:Arial,Helvetica,sans-serif"><span style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent">${escapeHtml(preheader)}</span><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f4f6fb"><tr><td align="center" style="padding:32px 16px"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#ffffff;border:1px solid #e3e8f2;border-radius:14px"><tr><td style="padding:28px 32px 8px"><p style="margin:0;font-size:18px;font-weight:700;letter-spacing:0.2px;color:#0b1f44">CareerScope</p></td></tr><tr><td style="padding:12px 32px 32px"><h1 style="margin:0 0 16px;font-size:22px;line-height:1.3;color:#0b1f44">${escapeHtml(heading)}</h1>${paragraphHtml}${codeHtml}</td></tr><tr><td style="padding:18px 32px 26px;border-top:1px solid #e3e8f2"><p style="margin:0;font-size:12px;line-height:1.6;color:#64748b">${escapeHtml(footnote)}</p></td></tr></table><p style="margin:16px 0 0;font-size:12px;color:#94a3b8">CareerScope account security</p></td></tr></table></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escapeHtml(heading)}</title></head><body style="margin:0;padding:0;background:#f4f6fb;font-family:Arial,Helvetica,sans-serif"><span style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent">${escapeHtml(preheader)}</span><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f4f6fb"><tr><td align="center" style="padding:32px 16px"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#ffffff;border:1px solid #e3e8f2;border-radius:16px;overflow:hidden"><tr><td style="height:4px;background:${brandAccent};font-size:0;line-height:0">&nbsp;</td></tr><tr><td style="padding:32px 32px 8px">${logoHtml}</td></tr><tr><td style="padding:20px 32px 32px"><h1 style="margin:0 0 16px;font-size:22px;line-height:1.3;color:${brandInk};text-align:center">${escapeHtml(heading)}</h1>${paragraphHtml}${codeHtml}</td></tr><tr><td style="padding:18px 32px 26px;border-top:1px solid #e3e8f2"><p style="margin:0;font-size:12px;line-height:1.6;color:#64748b;text-align:center">${escapeHtml(footnote)}</p></td></tr></table><p style="margin:16px 0 0;font-size:12px;line-height:1.5;color:#94a3b8;text-align:center">CareerScope account security</p></td></tr></table></body></html>`;
 }
 
 /** A mail backend that either sends or throws `EmailOtpProviderError`. Notices are optional. */
@@ -130,7 +146,10 @@ export class ResendEmailOtpProvider implements EmailOtpProvider {
     private readonly apiKey: string,
     private readonly from: string,
     private readonly fetcher: typeof fetch = fetch,
+    private readonly logoUrl?: string,
   ) {
+    if (logoUrl !== undefined && !/^https:\/\/[^\s"<>]+$/.test(logoUrl))
+      throw new Error('Invalid email provider configuration');
     if (apiKey.trim().length === 0 || apiKey.length > 512)
       throw new Error('Invalid email provider configuration');
     if (!senderSchema.safeParse(from).success)
@@ -157,6 +176,7 @@ export class ResendEmailOtpProvider implements EmailOtpProvider {
         heading: subjectByPurpose[purpose],
         paragraphs: [copy.intro],
         code,
+        logoUrl: this.logoUrl,
         footnote:
           'This code expires in 5 minutes. Never share it with anyone. If you did not request it, you can ignore this email.',
       }),
@@ -183,6 +203,7 @@ export class ResendEmailOtpProvider implements EmailOtpProvider {
         preheader: notice.subject,
         heading: notice.subject,
         paragraphs: [notice.text],
+        logoUrl: this.logoUrl,
         footnote:
           'You are receiving this security notice because of activity on your CareerScope account. No action is needed unless the activity was not yours. If it was not yours, change your account security settings.',
       }),
