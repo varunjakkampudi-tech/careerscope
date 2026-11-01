@@ -49,11 +49,13 @@ a patched static server; older UI 5.x releases pull an affected static dependenc
 Applied by a single `onRequest` hook, in this order:
 
 1. `Cache-Control: no-store` on every response.
-2. `/api/health` short-circuits here. Nothing below applies to it.
+2. `/api/health` short-circuits here. The auth hook (private-test-access gate, Origin,
+   session, CSRF) does not apply to it, but the route is rate-limited per client
+   address (60 per 60 seconds) and answers `429` beyond that.
 3. **Origin check.** Any method other than `GET`, `HEAD` or `OPTIONS` must carry
    `Origin` exactly equal to the configured app origin, or the request is
    rejected `403 Origin denied`. A missing `Origin` fails this check.
-4. `/api/login`, `/api/register`, `/api/otp/request`, `/api/otp/verify` and
+4. `/api/login`, `/api/otp/request`, `/api/otp/verify` and
    refresh short-circuit here — unauthenticated mutations still require Origin,
    and step 3 has already run.
 5. **Session.** The opaque token in the `careerscope_CareerScope_session` cookie is looked up.
@@ -63,8 +65,7 @@ Applied by a single `onRequest` hook, in this order:
    matching the session's token, or `403 CSRF check failed`.
 
 Authenticated mutations require both a valid `Origin` and a valid CSRF token;
-login, OTP request/verification and the permanently unavailable legacy password
-registration route require Origin but not CSRF. `ownerId` is taken from the
+login and OTP request/verification require Origin but not CSRF. `ownerId` is taken from the
 session, never from the request body or path.
 
 ### Server limits
@@ -76,19 +77,80 @@ session, never from the request body or path.
 | `connectionTimeout` | 10 s                                                           |
 | `trustProxy`        | `false` — forwarded headers are never believed                 |
 
-### Error mapping
+### Error envelope
 
-| Condition                                         | Status | Body message                           |
-| ------------------------------------------------- | ------ | -------------------------------------- |
-| `ZodError`, `InvalidResumeUpload`                 | 400    | `Invalid request`                      |
-| `ProfileRevisionConflict`, `LeadRevisionConflict` | 409    | `Record changed; reload before saving` |
-| other `Conflict`                                  | 409    | `Idempotency conflict`                 |
-| `ResumeStorageLimit`                              | 507    | `Resume storage capacity reached`      |
-| payload too large                                 | 413    | `Request too large`                    |
-| anything unhandled                                | 500    | `Service unavailable`                  |
+Every failure, from every route and from the framework itself, has one body shape
+(`apps/api/src/errors.ts`, declared as `ErrorEnvelope` in the OpenAPI document):
 
-Every error response carries `requestId`. Internal error detail is never returned;
-500s are logged server-side against that id.
+```json
+{ "code": "RATE_LIMITED", "message": "Too many requests", "requestId": "<uuid>", "details": {} }
+```
+
+| Field       | Meaning                                                                                                                                                 |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `code`      | Stable machine code. Clients branch on this, never on `message`.                                                                                        |
+| `message`   | Client-safe text. Never contains internal detail, submitted values or personal data.                                                                    |
+| `requestId` | Correlates the response with the server log. Always present.                                                                                            |
+| `details`   | Optional. Only a validation failure sets it: `{ "issues": [{ "path": "field.name", "code": "<zod issue code>" }] }`. Submitted values are never echoed. |
+
+Default code per status:
+
+| Condition                                                           | Status | `code`                                                                                               | `message`                                |
+| ------------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| `ZodError`, `InvalidResumeUpload`, malformed JSON                   | 400    | `INVALID_REQUEST`                                                                                    | `Invalid request` (route text for some)  |
+| missing or expired session, bad one-time code                       | 401    | `AUTHENTICATION_REQUIRED`                                                                            | route text                               |
+| origin or CSRF check, private test access                           | 403    | `FORBIDDEN`                                                                                          | route text                               |
+| unknown route (signed in), unavailable feature, record not owned    | 404    | `NOT_FOUND`                                                                                          | route text                               |
+| method not allowed                                                  | 405    | `METHOD_NOT_ALLOWED`                                                                                 | `Method not allowed`                     |
+| request timeout                                                     | 408    | `REQUEST_TIMEOUT`                                                                                    | `Request timeout`                        |
+| `ProfileRevisionConflict`, `LeadRevisionConflict`, other `Conflict` | 409    | the `Conflict.code` (for example `PROFILE_REVISION_CONFLICT`); `CONFLICT` for a plain state conflict | mapped text, else `Idempotency conflict` |
+| payload too large                                                   | 413    | `PAYLOAD_TOO_LARGE`                                                                                  | `Request too large`                      |
+| unsupported content type                                            | 415    | `UNSUPPORTED_MEDIA_TYPE`                                                                             | `Unsupported media type`                 |
+| rate limit exceeded                                                 | 429    | `RATE_LIMITED`                                                                                       | route text                               |
+| dependency (Redis, database, provider) unavailable                  | 503    | `SERVICE_UNAVAILABLE`                                                                                | route text                               |
+| `ResumeStorageLimit`                                                | 507    | `STORAGE_LIMIT_REACHED`                                                                              | `Resume storage capacity reached`        |
+| anything unhandled                                                  | 500    | `INTERNAL_ERROR`                                                                                     | `Internal error`                         |
+
+The 409 codes the web client maps (`apps/web/src/lib/api.ts`) are unchanged. The wire change
+from the earlier `{ error, code?, requestId }` shape is that the text moved from `error` to `message` and
+`code` is now present on every error. The web client reads only `code`, so it needed no change.
+
+`DELETE /api/account/sessions/:id` answers 404 for an id that is not one of the caller's sessions. The
+revocation is scoped to the caller's own sessions, so an unknown id and another user's id are
+indistinguishable and no existence is revealed.
+
+An unknown route answers `401 AUTHENTICATION_REQUIRED` to an anonymous caller, because the authentication
+hook (step 6 above) runs before routing falls through to the not-found handler, and `404 NOT_FOUND` to a
+signed-in caller. Anonymous callers therefore cannot probe which paths exist.
+
+Coverage for each status: `apps/api/src/error-handler.test.ts` covers 400, 401, 403, 404, 405, 408, 413, 415,
+429, 500 and 503. The 405 and 408 cases throw framework-shaped errors from throwaway routes (Fastify
+sets `statusCode` on them) because a real 408 needs a stalled socket. 409 and 507 need real database
+state and are covered by integration tests: 409 in `apps/api/src/resumes.integration.test.ts`,
+`apps/api/src/interviews.integration.test.ts` and `tests/integration/database.integration.test.ts`;
+507 in `apps/api/src/resumes.integration.test.ts` and `tests/integration/database.integration.test.ts`.
+
+Route-family coverage: the same file sends an authenticated call with an invalid body to every route in the
+OpenAPI document and checks that each failure is an envelope that echoes none of the submitted values. It
+also fails when a registered route has no row in the tables below.
+
+### Breaking changes
+
+Recorded from commit `e4dad89` and the working tree after it. Clients written against the earlier API must change:
+
+| Change                                                           | Before                                      | Now                                                                                                                      |
+| ---------------------------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Error body shape                                                 | `{ error, code?, requestId }`               | `{ code, message, requestId, details? }`; the text moved from `error` to `message` and `code` is always present          |
+| Unknown routes                                                   | Fastify's default not-found body            | The envelope with `NOT_FOUND` (`401` for anonymous callers, see above)                                                   |
+| `POST /api/register`                                             | Answered `404 Registration unavailable`     | Removed: anonymous callers get `401`, signed-in callers `404`. Accounts are created only by the email one-time-code flow |
+| `DELETE /api/account/sessions/:id` with an unknown or foreign id | `204` for any id, whether or not it existed | `404 Session not found`; the web client treats it as "already gone" and refreshes the list                               |
+| Unhandled-error text                                             | 500 said `Service unavailable`              | 500 says `Internal error` (changed after `e4dad89`; `apps/api/src/errors.ts`)                                            |
+
+The 409 conflict codes and the `Conflict.code` to message mapping are unchanged.
+
+`apps/api/src/error-handler.test.ts` checks the envelope for every status above, probes every documented
+route unauthenticated and cross-origin, and checks the OpenAPI document declares the envelope for every
+4xx and 5xx response. Internal error detail is never returned; 500s are logged against `requestId`.
 
 ---
 
@@ -98,21 +160,36 @@ Every error response carries `requestId`. Internal error detail is never returne
 
 ### Health and session
 
-| Method | Path               | Auth | CSRF        | Notes                                                      |
-| ------ | ------------------ | ---- | ----------- | ---------------------------------------------------------- |
-| GET    | `/api/health`      | no   | no          | Exempt from every hook. Also exempt from maintenance mode. |
-| GET    | `/api/session`     | no   | no          | Returns the current session or absence of one              |
-| POST   | `/api/register`    | no   | Origin only | Always unavailable (404); signup uses guarded email OTP    |
-| POST   | `/api/login`       | no   | Origin only | Test-access account selection only                         |
-| POST   | `/api/otp/request` | no   | Origin only | Sign-in or explicitly configured signup challenge          |
-| POST   | `/api/otp/verify`  | no   | Origin only | Verifies a challenge and establishes an opaque session     |
-| POST   | `/api/logout`      | yes  | yes         |                                                            |
+| Method | Path                                  | Auth | CSRF        | Notes                                                                                                                                                                                |
+| ------ | ------------------------------------- | ---- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GET    | `/api/health`                         | no   | no          | Exempt from the auth hook, but rate-limited (429). Returns status only. Exempt from maintenance mode.                                                                                |
+| GET    | `/api/session`                        | no   | no          | Returns the current session or absence of one. Limited to 120 reads per minute per client address; users behind one shared address share that budget and get 429 `Too many requests` |
+| POST   | `/api/login`                          | no   | Origin only | Test-access account selection only                                                                                                                                                   |
+| POST   | `/api/otp/request`                    | no   | Origin only | Sign-in or explicitly configured signup challenge                                                                                                                                    |
+| POST   | `/api/otp/verify`                     | no   | Origin only | Verifies a challenge and establishes an opaque session                                                                                                                               |
+| POST   | `/api/session/logout`                 | no   | Origin only | Signs out with the refresh cookie after the access cookie has expired; revokes the session family. The web client uses this route                                                    |
+| GET    | `/api/account/legal`                  | yes  | no          | Terms and privacy acceptance status. Reads are never blocked by a pending acceptance                                                                                                 |
+| POST   | `/api/account/legal/accept`           | yes  | yes         | Accepts the current terms and privacy versions. An out-of-date version is refused with 409. While an acceptance is pending, every other change returns 403                           |
+| GET    | `/api/account/recovery-email`         | yes  | no          | Recovery status: configured flag and dates only. The address is never returned                                                                                                       |
+| POST   | `/api/account/recovery-email/request` | yes  | yes         | Sends a confirmation code to a candidate recovery address. Same reply whether or not a code was sent                                                                                 |
+| POST   | `/api/account/recovery-email/verify`  | yes  | yes         | Confirms the recovery address with its code. Recovery sign-in is available 72 hours later                                                                                            |
+| DELETE | `/api/account/recovery-email`         | yes  | yes         | Removes the recovery address and sends a notice to the sign-in address                                                                                                               |
+| POST   | `/api/recovery/request`               | no   | Origin only | Anonymous. Sends a recovery sign-in code to the confirmed recovery address after its cooldown. Same reply whether or not the account exists                                          |
+| POST   | `/api/recovery/verify`                | no   | Origin only | Anonymous. Verifies a recovery sign-in code and establishes a session. Every rejected attempt returns the same 401                                                                   |
+| POST   | `/api/logout`                         | yes  | yes         |                                                                                                                                                                                      |
+| POST   | `/api/session/refresh`                | no   | Origin only | Rotates the HttpOnly refresh cookie and returns `{ authenticated: true, csrf }`; reuse of a consumed token revokes the session family                                                |
 
 ### Account
 
-| Method | Path                                  | Auth | CSRF | Rate limit |
-| ------ | ------------------------------------- | ---- | ---- | ---------- |
-| POST   | `/api/account/sessions/revoke-others` | yes  | yes  | —          |
+| Method | Path                                  | Auth | CSRF | Success                                                                      |
+| ------ | ------------------------------------- | ---- | ---- | ---------------------------------------------------------------------------- |
+| GET    | `/api/account/sessions`               | yes  | no   | `200 { sessions: [{ id, createdAt, lastUsedAt, deviceLabel, current }] }`    |
+| DELETE | `/api/account/sessions/:id`           | yes  | yes  | `204`; `404` for an unknown or foreign id                                    |
+| POST   | `/api/account/sessions/revoke-others` | yes  | yes  | `204`                                                                        |
+| POST   | `/api/account/email-change/request`   | yes  | yes  | `202 { message, expiresInSeconds }`; `404` when email sign-in is not enabled |
+| POST   | `/api/account/email-change/verify`    | yes  | yes  | `200 { verified: "current" or "new", emailChanged }`                         |
+| GET    | `/api/account/marketing-consent`      | yes  | no   | `200 { optedIn, version }`                                                   |
+| POST   | `/api/account/marketing-consent`      | yes  | yes  | `200 { optedIn }`                                                            |
 
 The executable test-access API returns 404 for registration and password changes,
 regardless of REGISTRATION_ENABLED. The isolated legacy regression harness retains
@@ -121,11 +198,16 @@ requires the staging password and private proxy assertion.
 
 ### Profile
 
-| Method | Path               | Auth | CSRF |
-| ------ | ------------------ | ---- | ---- |
-| GET    | `/api/profile`     | yes  | no   |
-| PUT    | `/api/profile`     | yes  | yes  |
-| GET    | `/api/preparation` | yes  | no   |
+| Method | Path                               | Auth | CSRF |
+| ------ | ---------------------------------- | ---- | ---- |
+| GET    | `/api/profile`                     | yes  | no   |
+| PUT    | `/api/profile`                     | yes  | yes  |
+| GET    | `/api/preparation`                 | yes  | no   |
+| GET    | `/api/profile/accessibility`       | yes  | no   |
+| PUT    | `/api/profile/scheduled-discovery` | yes  | yes  |
+
+`GET /api/profile/accessibility` returns `{ reducedMotion }`. `PUT /api/profile/scheduled-discovery`
+takes `{ enabled }` and returns `{ scheduledDiscoveryEnabled }`.
 
 `PUT /api/profile` carries a revision. A stale revision is a 409, not a
 last-write-wins overwrite.
@@ -160,10 +242,32 @@ Preparation is deterministic. External AI elaboration has been removed.
 `POST /api/resumes` takes `application/octet-stream`, requires an
 `Idempotency-Key` header, and returns `202` with the upload id and status. It
 returns `507` when storage capacity is exhausted, and `409` if the upload record
-changed underneath it. Client disconnect aborts the in-flight write.
+changed underneath it. A reused idempotency key with different content returns
+`409` with code `IDEMPOTENCY_KEY_REUSED`. Client disconnect aborts the in-flight
+write and leaves the upload `uploading`, where `recover` or a retry with the same
+key can finish it.
+
+`GET /api/resumes` returns up to 50 items. Each has `status` (`uploading`,
+`queued`, `cancelling`, `cancelled`, `parsed` or `rejected`) and `cancellable`,
+which is true only when the server has the storage cancel capability and the
+status is `uploading` or `cancelling`. The response also carries
+`cancellationEnabled`. The web panel shows the cancel control only when
+`cancellable` is true.
+
+`POST /api/resumes/:id/cancel` is synchronous and owner-scoped. It moves an
+`uploading` upload to `cancelling`, writes the storage cancellation marker, then
+sets `cancelled` and returns `200` with `{ id, status }`. Repeating it returns
+`cancelled` again, and calling it on a `cancelling` upload finishes the cleanup.
+No worker is involved. An unknown id or another owner's id returns `404`. A
+`queued`, `parsed` or `rejected` upload returns `409` with code
+`UPLOAD_NOT_CANCELLABLE`. If the owner's cancellation marker quota or the storage
+volume is full it returns `507`. Once the store-wide marker limit is reached, an
+owner with no marker yet can still cancel from a reserve of one tenth of that
+limit, so other owners cannot starve a first cancellation.
 
 `cancel` and `delete` return `503` when the storage backend does not provide the
-corresponding capability, rather than silently doing nothing.
+corresponding capability, rather than silently doing nothing. The API process
+supplies both when private resume storage is configured.
 
 ### Leads
 
@@ -185,6 +289,25 @@ Entering an application lifecycle stage requires a report; existing legacy rows
 remain readable. Archive/restore preserves evidence, and history exposes the
 previous status and whether notes/evidence changed. Evidence is the candidate's
 claim, not an ATS event. Opening the application URL never mutates the status.
+
+### Interviews, notifications, feedback and sources
+
+| Method | Path                             | Auth | CSRF | Success                                                                    |
+| ------ | -------------------------------- | ---- | ---- | -------------------------------------------------------------------------- |
+| GET    | `/api/leads/:id/interviews`      | yes  | no   | `200 { items: InterviewRound[] }`                                          |
+| POST   | `/api/leads/:id/interviews`      | yes  | yes  | `200 InterviewRound`                                                       |
+| PUT    | `/api/interviews/:id`            | yes  | yes  | `200 InterviewRound`; a stale `revision` is a 409                          |
+| GET    | `/api/notifications`             | yes  | no   | `200 { items: [{ id, roundId, leadId, createdAt, readAt }], unreadCount }` |
+| GET    | `/api/notifications/preferences` | yes  | no   | `200 { interviewRemindersInAppEnabled }`                                   |
+| PUT    | `/api/notifications/preferences` | yes  | yes  | `200 { interviewRemindersInAppEnabled }`                                   |
+| PUT    | `/api/notifications/:id/read`    | yes  | yes  | `204`; `404` for an unknown or foreign id                                  |
+| PUT    | `/api/search-jobs/:id/feedback`  | yes  | yes  | `200 { reason }`                                                           |
+| GET    | `/api/job-sources`               | yes  | no   | `200 { items: [{ id, label, available, unavailableReason }] }`             |
+| GET    | `/api/applications/export`       | yes  | no   | `200 text/csv`, privacy-scoped application records                         |
+
+The full field list of every body is in the OpenAPI document (`/api/docs/json`, built from
+`apps/api/src/openapi.ts`). `apps/api/src/error-handler.test.ts` fails when a registered route is
+missing from the tables in this file.
 
 ### Searches
 

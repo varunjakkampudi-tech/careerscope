@@ -8,9 +8,11 @@ registration is unavailable in every runtime. Production sign-in uses the
 application-managed email identity and opaque server-side session described
 below; no OAuth or hosted identity provider is used.
 
-Local development defaults to loopback access. `TEST_ACCESS_MODE=local` is
-refused with a public origin or production runtime. Public origins default to
-disabled test access. Hosted testing requires all of:
+Test access is disabled unless `TEST_ACCESS_MODE=local` is set explicitly; it is
+never a default. Local mode admits only a loopback peer, refuses any request that
+carries a forwarded or relay header (for example `X-Forwarded-For`) and refuses a
+`Host` header that is not loopback. It is also refused with a public origin or
+production runtime. Public origins default to disabled test access. Hosted testing requires all of:
 
 - explicit `DEPLOYMENT_ENVIRONMENT=staging`, HTTPS and `TEST_ACCESS_MODE=proxy`;
 - a shared staging password enforced by Caddy's `basic_auth`;
@@ -24,7 +26,7 @@ password and removes the Authorization header before proxying. The API checks
 the assertion using constant-time digest comparison and accepts it only from
 a loopback proxy peer. Database, queue and API ports remain private. The health
 endpoint checks PostgreSQL and the shared Redis limiter before reporting ready;
-it exposes only coarse health and version information and does not require the
+it returns only `{ "status": "ok" }` (no version) and does not require the
 staging password. A failed critical dependency returns a safe 503.
 
 Generate the password hash interactively using Caddy's password-hashing tool;
@@ -47,10 +49,19 @@ The account security surface lists active sessions using bounded categorical
 browser/platform labels rather than storing raw User-Agent strings. Owners can
 revoke one of their own device sessions or all other sessions. A revoked or
 expired family cannot refresh. Password change revokes all sessions. Account
-switching revokes the previous cookie's family and clears private client caches.
+switching revokes the previous session family while its access cookie is still valid, and
+clears private client caches. The refresh cookie is path-scoped to `/api/session`, so the
+sign-in routes never receive it. Once the access cookie has expired, the server cannot see the
+old refresh-token family from a sign-in request. The web client therefore calls
+`POST /api/session/logout` (which does receive the refresh cookie) before each sign-in, and that
+revokes the family. A client that signs in without making that call keeps the old family until
+it expires or is revoked.
 Owner IDs always come from the authenticated server session. Expired session
-families are removed on a later successful session establishment; periodic
-cleanup is not currently configured.
+families are removed on a later successful session establishment, and by the
+retention job (`scripts/jobs/enforce-search-retention.ts`), which deletes sessions past
+`expires_at` (their refresh-token digests go with them) when the host timer runs it. The
+timer is installed on the host, not by the repository's tests, so whether it is running is
+not verified here.
 
 The forward session migration preserves existing opaque sessions only until
 their original `expires_at`; it does not extend legacy lifetime, infer a device
@@ -131,7 +142,7 @@ This is local implementation and synthetic-provider test evidence only; it is
 not live delivery, domain verification, or independent security approval.
 
 Set these server-only values in an approved environment: `EMAIL_OTP_ENABLED`,
-`EMAIL_OTP_HMAC_SECRET` (an independent random secret of at least 32 bytes),
+`EMAIL_OTP_HMAC_SECRET` (an independent random secret: 64 hex characters, or 43 or more base64 characters decoding to at least 32 bytes with at least 24 distinct byte values; weaker values are refused at startup),
 `RESEND_API_KEY`, and `RESEND_FROM_EMAIL` (the approved sender). The legal
 policy values are `LEGAL_TERMS_VERSION`, `LEGAL_TERMS_URL`, `LEGAL_PRIVACY_VERSION`,
 `LEGAL_PRIVACY_URL` and `LEGAL_MARKETING_VERSION`; registration and test access are

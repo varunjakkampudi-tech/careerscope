@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LoaderCircle, LogOut } from 'lucide-react';
-import { ApiError, apiJson, apiParsed } from '../lib/api';
+import { ApiError, apiJson, apiParsed, isNotFound } from '../lib/api';
 import {
   parseAccountSessions,
   parseEmailChangeVerification,
@@ -18,6 +18,7 @@ import {
   useInterfaceLocale,
 } from '../lib/locale';
 import { ErrorState } from './ui-states';
+import RecoveryEmailSection from './recovery-email-section';
 import styles from './account-security.module.css';
 
 function dateLabel(value: string | null, locale: 'en' | 'te' | 'hi'): string {
@@ -31,7 +32,14 @@ function dateLabel(value: string | null, locale: 'en' | 'te' | 'hi'): string {
       );
 }
 
-export default function AccountSecurity({ csrf }: { csrf: string }) {
+export default function AccountSecurity({
+  csrf,
+  onBusyChange,
+}: {
+  csrf: string;
+  /** Reports whether a sign-out is in flight, so the page can hold navigation until it settles. */
+  onBusyChange?: (busy: boolean) => void;
+}) {
   const session = useSession();
   const locale = useInterfaceLocale();
   const t = (key: Parameters<typeof localizedText>[1], value?: string | number) =>
@@ -64,6 +72,7 @@ export default function AccountSecurity({ csrf }: { csrf: string }) {
   const [emailChangeError, setEmailChangeError] = useState('');
   const [emailChangeNotice, setEmailChangeNotice] = useState('');
   const busy = revoking;
+  useEffect(() => onBusyChange?.(busy), [busy, onBusyChange]);
 
   async function requestEmailChange(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -164,6 +173,12 @@ export default function AccountSecurity({ csrf }: { csrf: string }) {
       await queryClient.invalidateQueries({ queryKey: ['accountSessions'] });
       setNotice(t('deviceSignedOut', target.deviceLabel));
     } catch (failure) {
+      if (isNotFound(failure)) {
+        // Already gone (signed out elsewhere or expired): the goal is met, so refresh the list.
+        await queryClient.invalidateQueries({ queryKey: ['accountSessions'] });
+        setNotice(t('deviceSignedOut', target.deviceLabel));
+        return;
+      }
       setSessionError(
         failure instanceof ApiError
           ? localizedApiErrorMessage(locale, failure.status)
@@ -401,6 +416,7 @@ export default function AccountSecurity({ csrf }: { csrf: string }) {
         <ErrorState variant="inline" what={t('couldNotSignOutSessions')} detail={sessionError} />
       )}
       {notice && <p role="status">{notice}</p>}
+      <RecoveryEmailSection csrf={csrf} />
     </section>
   );
 }

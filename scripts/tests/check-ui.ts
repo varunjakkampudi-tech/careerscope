@@ -33,10 +33,11 @@ import {
   browserWarningCategory,
   browserWarningPaths,
   sameOriginBrowserPath,
+  staleEarlierRouteRead,
   staleSavedRead,
   staleSearchRead,
 } from './ui-requests.js';
-import { JOB_SOURCE_PERMISSION_PENDING_MESSAGE } from '@careerscope/shared';
+import { API_PORT, JOB_SOURCE_PERMISSION_PENDING_MESSAGE } from '@careerscope/shared';
 import {
   observeNotificationPage,
   observeNotificationServer,
@@ -77,7 +78,7 @@ const browserConsoleErrorKind = (message: { text(): string; location(): { url: s
       ? `resource HTTP ${failedResourceStatus} at ${path}`
       : `failed resource at ${path}`;
   }
-  if (/content security policy|contentsecuritypolicy/i.test(text)) return 'CSP violation';
+  if (/content[- ]security[- ]policy|contentsecuritypolicy/i.test(text)) return 'CSP violation';
   if (/hydration/i.test(text)) return 'hydration error';
   if (/TypeError|ReferenceError|SyntaxError/.test(text)) {
     return text.match(/TypeError|ReferenceError|SyntaxError/)?.[0] ?? 'JavaScript error';
@@ -488,7 +489,7 @@ try {
   });
   assert.ok(foreignLead);
   await mkdir(new URL('../../test-results/', import.meta.url), { recursive: true });
-  await app.listen({ host: '127.0.0.1', port: 5390 });
+  await app.listen({ host: '127.0.0.1', port: API_PORT });
   const axeSource = await readFile(
     fileURLToPath(new URL('../../node_modules/axe-core/axe.min.js', import.meta.url)),
     'utf8',
@@ -635,11 +636,20 @@ try {
         route.fulfill({
           status: 404,
           contentType: 'application/json',
-          body: '{"error":"Not found"}',
+          body: '{"code":"NOT_FOUND","message":"Not found","requestId":"00000000-0000-4000-8000-000000000000"}',
         }),
       );
       await otpPage.route('**/api/profile/accessibility', (route) =>
         route.fulfill({ contentType: 'application/json', json: { reducedMotion: false } }),
+      );
+      await otpPage.route('**/api/account/recovery-email', (route) =>
+        route.fulfill({
+          contentType: 'application/json',
+          json: { configured: false, verifiedAt: null, cooldownEndsAt: null, available: false },
+        }),
+      );
+      await otpPage.route('**/api/session/logout', (route) =>
+        route.fulfill({ contentType: 'application/json', json: { authenticated: false } }),
       );
       await otpPage.route('**/api/session', (route) =>
         route.fulfill({
@@ -865,7 +875,7 @@ try {
           `${engine} email-change form overflows horizontally at ${width}px`,
         );
       }
-      await accessible(otpPage, engine, 'dual-address email-change workflow', 'Account security');
+      await accessible(otpPage, engine, 'dual-address email-change workflow', 'Settings');
       await settleOtpRequests('email-change workflow');
       assert.deepEqual(otpPageErrors, [], `${engine} email OTP UI produced browser errors`);
       assert.deepEqual(
@@ -891,8 +901,17 @@ try {
         route.fulfill({
           status: 404,
           contentType: 'application/json',
-          body: '{"error":"Not found"}',
+          body: '{"code":"NOT_FOUND","message":"Not found","requestId":"00000000-0000-4000-8000-000000000000"}',
         }),
+      );
+      await signupPage.route('**/api/account/recovery-email', (route) =>
+        route.fulfill({
+          contentType: 'application/json',
+          json: { configured: false, verifiedAt: null, cooldownEndsAt: null, available: false },
+        }),
+      );
+      await signupPage.route('**/api/session/logout', (route) =>
+        route.fulfill({ contentType: 'application/json', json: { authenticated: false } }),
       );
       await signupPage.route('**/api/session', (route) =>
         route.fulfill({
@@ -1318,7 +1337,20 @@ try {
         [...inflight].filter(
           ([request, epoch]) =>
             !staleSavedRead(request.method(), new URL(request.url()).pathname, epoch, routeEpoch) &&
-            !staleSearchRead(request.method(), new URL(request.url()).pathname, epoch, routeEpoch),
+            !staleSearchRead(
+              request.method(),
+              new URL(request.url()).pathname,
+              epoch,
+              routeEpoch,
+            ) &&
+            !staleEarlierRouteRead(
+              request.method(),
+              request.resourceType(),
+              epoch,
+              routeEpoch,
+              engine,
+              new URL(request.url()).pathname,
+            ),
         );
       const recentRequestEvents: string[] = [];
       const sharedRoutePrefetches: string[] = [];
@@ -1499,7 +1531,14 @@ try {
               response.status() !== 200
             )
               return false;
-            return (await response.json()).status === expectedStatus;
+            // Chromium can evict a response body before it is read on a loaded
+            // runner ("No data found for resource"). That response then does not
+            // match; the next poll answers, so keep waiting instead of failing.
+            try {
+              return (await response.json()).status === expectedStatus;
+            } catch {
+              return false;
+            }
           },
           { timeout: 15000 },
         );
@@ -1737,6 +1776,10 @@ try {
       const unavailableLever = page.getByRole('checkbox', { name: 'Lever', exact: true });
       await unavailableLever.waitFor();
       assert.equal(await unavailableLever.isDisabled(), true);
+      // The reference only exists once the source catalog has answered; the checkbox renders before that.
+      await page
+        .locator('input[type="checkbox"][aria-label="Lever"][aria-describedby]')
+        .waitFor({ state: 'attached' });
       const leverReasonId = await unavailableLever.getAttribute('aria-describedby');
       assert.ok(leverReasonId, `${engine} unavailable Lever source lacks an accessible reason`);
       assert.equal(
@@ -2066,13 +2109,30 @@ try {
         ['/saved', 'Saved Leads'],
         ['/applications', 'Applications'],
         ['/resume', 'Candidate Profile'],
-        ['/settings', 'Account security'],
+        ['/settings', 'Settings'],
       ] as const) {
         await page.setViewportSize({ width: 1440, height: 900 });
         await settled(`route ${route}`);
         await page.goto(`${origin}${route}`);
         await page.waitForLoadState('networkidle');
         await accessible(page, engine, route.slice(1), routeHeading);
+        if (route === '/settings') {
+          // Settings panels use the base tokens (--surface, --ink), which only have light values of
+          // their own; the dark shell must map them, or the panels are light cards with light text.
+          await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+          await page.locator('[data-theme="dark"]').waitFor();
+          await accessible(page, engine, 'settings dark theme', routeHeading);
+          const panelBackground = await page
+            .locator('section[aria-labelledby="interface-language-heading"]')
+            .evaluate((element) => getComputedStyle(element).backgroundColor);
+          assert.notEqual(
+            panelBackground,
+            'rgb(255, 255, 255)',
+            `${engine} settings panel stays white in the dark theme`,
+          );
+          await page.getByRole('button', { name: 'Switch to light theme' }).click();
+          await page.locator('[data-theme="light"]').waitFor();
+        }
         if (route === '/applications') {
           const exportLink = page.getByRole('link', { name: 'Export applications CSV' });
           await exportLink.waitFor({ state: 'visible' });
@@ -2168,7 +2228,11 @@ try {
           route.fulfill({
             status: 503,
             contentType: 'application/json',
-            body: JSON.stringify({ error: 'Synthetic private service detail' }),
+            body: JSON.stringify({
+              code: 'SERVICE_UNAVAILABLE',
+              message: 'Synthetic private service detail',
+              requestId: '00000000-0000-4000-8000-000000000000',
+            }),
           }),
         { times: 1 },
       );
@@ -2229,7 +2293,10 @@ try {
         .getByRole('heading', { name: 'మీ తదుపరి పాత్రను కనుగొనండి', exact: true })
         .waitFor();
       assert.equal(await page.locator('aside.history').getAttribute('lang'), 'te');
-      assert.equal(await page.locator('.source-options').getAttribute('lang'), 'te');
+      assert.equal(
+        await page.locator('fieldset[aria-describedby="source-availability"]').getAttribute('lang'),
+        'te',
+      );
       await page.getByPlaceholder('ఉద్యోగ పాత్ర లేదా సాంకేతికత').waitFor();
       await accessible(page, engine, 'Telugu job-search controls', 'మీ తదుపరి పాత్రను కనుగొనండి');
       await page.goto(`${origin}/settings`);
@@ -2280,7 +2347,11 @@ try {
           route.fulfill({
             status: 503,
             contentType: 'application/json',
-            body: JSON.stringify({ error: 'Synthetic private service detail' }),
+            body: JSON.stringify({
+              code: 'SERVICE_UNAVAILABLE',
+              message: 'Synthetic private service detail',
+              requestId: '00000000-0000-4000-8000-000000000000',
+            }),
           }),
         { times: 1 },
       );
@@ -2325,7 +2396,10 @@ try {
       await page.waitForURL('**/jobs');
       await page.getByRole('heading', { name: 'अपनी अगली भूमिका खोजें', exact: true }).waitFor();
       assert.equal(await page.locator('aside.history').getAttribute('lang'), 'hi');
-      assert.equal(await page.locator('.source-options').getAttribute('lang'), 'hi');
+      assert.equal(
+        await page.locator('fieldset[aria-describedby="source-availability"]').getAttribute('lang'),
+        'hi',
+      );
       await page.getByPlaceholder('भूमिका या तकनीक').waitFor();
       await accessible(page, engine, 'Hindi job-search controls', 'अपनी अगली भूमिका खोजें');
       await sidebarNav.getByRole('link', { name: 'सेटिंग्स', exact: true }).click();
@@ -2468,15 +2542,16 @@ try {
           // synthetic response states the page's own origin rather than the
           // page-error assertion being loosened to ignore it.
           headers: { 'access-control-allow-origin': origin },
-          body: JSON.stringify({ error: 'Synthetic internal storage details' }),
+          body: JSON.stringify({
+            code: 'SERVICE_UNAVAILABLE',
+            message: 'Synthetic internal storage details',
+            requestId: '00000000-0000-4000-8000-000000000000',
+          }),
         });
       };
       await page.route('**/api/resumes', capacityRoute);
       await page.getByRole('button', { name: 'Upload resume', exact: true }).click();
-      await page
-        .getByRole('alert')
-        .filter({ hasText: 'Resume storage capacity reached.' })
-        .waitFor();
+      await page.getByRole('alert').filter({ hasText: 'Resume storage is full.' }).waitFor();
       assert.equal(
         await page.getByText('Synthetic internal storage details', { exact: true }).count(),
         0,
@@ -2706,7 +2781,11 @@ try {
           await route.fulfill({
             status: 500,
             contentType: 'application/json',
-            body: JSON.stringify({ error: 'Synthetic private session detail' }),
+            body: JSON.stringify({
+              code: 'SERVICE_UNAVAILABLE',
+              message: 'Synthetic private session detail',
+              requestId: '00000000-0000-4000-8000-000000000000',
+            }),
           });
         },
         { times: 1 },
@@ -2719,10 +2798,25 @@ try {
           exact: true,
         });
         await pendingRevocation.waitFor();
-        assert.equal(await pendingRevocation.isDisabled(), true);
-        assert.equal(
-          await page.getByRole('button', { name: 'Back to search', exact: true }).isDisabled(),
-          true,
+        // Wait for the disabled state instead of sampling it once: React commits the label and
+        // the disabled attribute together, but a one-shot read can race the commit on a slow runner.
+        await page.waitForFunction(
+          () =>
+            Array.from(document.querySelectorAll('button')).some(
+              (button) =>
+                button.textContent?.includes('Signing out other sessions') === true &&
+                button.disabled,
+            ),
+          undefined,
+          { timeout: 10_000 },
+        );
+        await page.waitForFunction(
+          () =>
+            Array.from(document.querySelectorAll('button')).some(
+              (button) => button.textContent?.trim() === 'Back to search' && button.disabled,
+            ),
+          undefined,
+          { timeout: 10_000 },
         );
       } finally {
         releaseRevocation();
@@ -2979,7 +3073,11 @@ try {
           await route.fulfill({
             status: 503,
             contentType: 'application/json',
-            body: JSON.stringify({ error: 'Synthetic export outage' }),
+            body: JSON.stringify({
+              code: 'SERVICE_UNAVAILABLE',
+              message: 'Synthetic export outage',
+              requestId: '00000000-0000-4000-8000-000000000000',
+            }),
           });
         },
         { times: 1 },
@@ -3041,10 +3139,24 @@ try {
       // /dashboard and prove nothing. Removing the session row makes the
       // export request 401 for real, which is the case this check exists for.
       await database.pool.query('DELETE FROM sessions WHERE owner_id = $1', [ownerId]);
+      const errorsBeforeExpiry = errors.length;
       await exportButton.click();
       await page.getByRole('heading', { name: 'Select test account', exact: true }).waitFor();
       await selectFixtureAccount('ui@example.test', password);
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+      // The Jobs page polls /api/searches every 5 seconds, so a poll that lands in the expiry window
+      // gets the same real 401 as the export request. The shell must route it through the shared
+      // expiry handler, which the waits above prove. Allow exactly one such poll here and no other
+      // /api/searches 401 anywhere in the journey.
+      const expiryWindow = errors.splice(errorsBeforeExpiry);
+      let pollExpiries = 0;
+      for (const error of expiryWindow) {
+        if (error === 'resource HTTP 401 at /api/searches' && pollExpiries === 0) {
+          pollExpiries += 1;
+          continue;
+        }
+        errors.push(error);
+      }
       await page.setViewportSize({ width: 1440, height: 900 });
       await sidebarNav.getByRole('link', { name: 'Jobs', exact: true }).click();
       await page.waitForURL(`${origin}/jobs`);
@@ -3115,7 +3227,11 @@ try {
           route.fulfill({
             status: 503,
             contentType: 'application/json',
-            body: JSON.stringify({ error: 'Synthetic cancellation outage' }),
+            body: JSON.stringify({
+              code: 'SERVICE_UNAVAILABLE',
+              message: 'Synthetic cancellation outage',
+              requestId: '00000000-0000-4000-8000-000000000000',
+            }),
           }),
         { times: 1 },
       );
@@ -3135,7 +3251,13 @@ try {
           response.status() !== 200
         )
           return false;
-        const body = await response.json();
+        // Same evicted-body race as waitForSearchStatusResponse: keep waiting.
+        let body: { items: { id: string; status: string }[] };
+        try {
+          body = await response.json();
+        } catch {
+          return false;
+        }
         return body.items.some(
           (run: { id: string; status: string }) =>
             run.id === submittedId && run.status === 'cancelled',
@@ -3189,7 +3311,11 @@ try {
             ? route.fulfill({
                 status: 503,
                 contentType: 'application/json',
-                body: JSON.stringify({ error: 'Synthetic lead outage' }),
+                body: JSON.stringify({
+                  code: 'SERVICE_UNAVAILABLE',
+                  message: 'Synthetic lead outage',
+                  requestId: '00000000-0000-4000-8000-000000000000',
+                }),
               })
             : route.continue(),
         { times: 1 },
@@ -4344,10 +4470,10 @@ try {
         });
       const failedSearchList = (route: import('playwright').Route) =>
         route.fulfill({ status: 500, contentType: 'application/json', body: '{}' });
-      const cs13NothingYet =
-        'No leads with status “Saved” yet. Save a job from Search to add one here.';
+      // /saved is the shortlist scope, whose copy says "jobs" (the applications scope says "leads").
+      const cs13NothingYet = 'No jobs with status “Saved” yet.';
       const cs13FilteredEmpty =
-        'No leads with status “Archived”. That is this status filter only — “Saved” has leads; choose it above to see them.';
+        'No jobs with status “Archived”. That is this status filter only — “Saved” has jobs; choose it above to see them.';
       for (const width of responsiveWidthsEndingAt(1440)) {
         await page.setViewportSize({ width, height: 900 });
 
@@ -4511,10 +4637,20 @@ try {
       // owner. Hold the successful PUT response across sign-out and count any
       // notification reads issued after the shell has disappeared.
       await settled('notifications before read fixture reset');
+      // Earlier steps edit and complete the round, and the notification list only shows a reminder
+      // for a still-scheduled round whose reminder time matches (a completed round retires its
+      // reminder by design). This fixture needs one active unread reminder to exercise the panel, so
+      // it returns the round to scheduled and realigns and re-arms the reminder.
       await database.pool.query(
-        `UPDATE in_app_notifications
-         SET read_at = NULL
-         WHERE owner_id = $1 AND round_id = $2`,
+        `UPDATE interview_rounds SET status = 'scheduled' WHERE owner_id = $1 AND id = $2`,
+        [ownerId, createdRound.id],
+      );
+      await database.pool.query(
+        `UPDATE in_app_notifications notification
+         SET read_at = NULL, retired_at = NULL, reminder_at = round.reminder_at
+         FROM interview_rounds round
+         WHERE notification.owner_id = $1 AND notification.round_id = $2
+           AND round.owner_id = notification.owner_id AND round.id = notification.round_id`,
         [ownerId, createdRound.id],
       );
       const signoutNotificationToggle = page.locator('summary[aria-label^="Notifications"]');
@@ -4636,9 +4772,16 @@ try {
           .map((request) => `${request.url()} (responseEnd=${request.timing().responseEnd})`)
           .join(', ')}`,
       );
+      // Owner A signed out above, so a direct visit to /settings is a signed-out visit: the private
+      // route renders nothing and the app returns to account selection (it must not show account
+      // security to an anonymous browser).
       await page.goto(`${origin}/settings`);
-      await page.getByRole('heading', { name: 'Account security', exact: true }).waitFor();
-      // The shared topbar's sign-out confirms first (authenticated-shell.tsx).
+      await page.getByRole('heading', { name: 'Select test account', exact: true }).waitFor();
+      assert.equal(
+        await page.getByRole('heading', { name: 'Account security', exact: true }).count(),
+        0,
+        `${engine}: a signed-out visit to /settings exposed account security`,
+      );
       await selectFixtureAccount('foreign-owner@example.test', password);
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
 
@@ -4764,7 +4907,7 @@ try {
     testAccess: { mode: 'local' },
   });
   try {
-    await testApp.listen({ host: '127.0.0.1', port: 5390 });
+    await testApp.listen({ host: '127.0.0.1', port: API_PORT });
     for (const [engine, browserType] of notificationLifecycleOnly ? [] : uiBrowsers) {
       const browser = await browserType.launch();
       try {
@@ -4826,7 +4969,7 @@ try {
           await page.waitForURL('**/settings');
           await page.getByRole('heading', { name: 'Account security', exact: true }).waitFor();
           assert.equal(await page.locator('input[type="password"]').count(), 0);
-          await accessible(page, engine, `${user.role} test settings`, 'Account security');
+          await accessible(page, engine, `${user.role} test settings`, 'Settings');
           page.once('dialog', (dialog) => dialog.accept());
           await page.getByRole('button', { name: 'Sign out', exact: true }).click();
           await page.getByRole('heading', { name: 'Select test account', exact: true }).waitFor();

@@ -1,25 +1,12 @@
-import { randomBytes } from 'node:crypto';
-import { mkdir, open } from 'node:fs/promises';
+import { mkdir } from 'node:fs/promises';
 import process from 'node:process';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { Database, configuredFileResumeStorage } from '@careerscope/core';
+import { ensureResumeKey } from './resume-key.mjs';
 
 await mkdir('/private/objects', { recursive: true, mode: 0o700 });
-let handle;
-try {
-  handle = await open('/private/encryption.key', 'wx', 0o600);
-  const key = randomBytes(32);
-  try {
-    await handle.writeFile(key.toString('hex'));
-    await handle.sync();
-  } finally {
-    key.fill(0);
-  }
-} catch (error) {
-  if (error.code !== 'EEXIST') throw error;
-} finally {
-  await handle?.close();
-}
+// Writes the key atomically and rejects an empty or truncated one with an operator message.
+await ensureResumeKey('/private/encryption.key');
 const storage = await configuredFileResumeStorage();
 storage.close();
 const database = new Database(process.env.DATABASE_URL);

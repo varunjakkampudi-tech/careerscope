@@ -17,6 +17,7 @@ import {
   navKeyForPath,
 } from './dashboard-shell';
 import { ErrorState, LoadingState } from './ui-states';
+import LegalAcceptance from './legal-acceptance';
 import styles from './dashboard-shell.module.css';
 
 // The one place CS-6 requires: every authenticated route renders through
@@ -100,7 +101,10 @@ export default function AuthenticatedShell({ children }: { children: ReactNode }
   // monolithic page.tsx header.
   const logout = useMutation({
     mutationFn: () =>
-      apiJson('/logout', { method: 'POST', headers: { 'x-csrf-token': session.data?.csrf ?? '' } }),
+      apiJson('/session/logout', {
+        method: 'POST',
+        headers: { 'x-csrf-token': session.data?.csrf ?? '' },
+      }),
     onSuccess: async () => {
       clearAuthQueryCache(cache);
       // Logout changes the owner-discovery query just as login does. Refresh
@@ -148,6 +152,7 @@ export default function AuthenticatedShell({ children }: { children: ReactNode }
           signOutPending={logout.isPending}
         />
         <DashboardMobileNav active={active} />
+        <LegalAcceptance />
         <main id="main-content" className={styles.content} tabIndex={-1}>
           {children}
         </main>

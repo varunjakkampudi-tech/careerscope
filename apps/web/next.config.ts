@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import { API_PORT } from '../../packages/shared/src/constants';
 
 // The dev server needs its hot-reload websocket; a deployed build must not
 // advertise loopback websocket origins in its policy.
@@ -7,46 +8,23 @@ const connectSources =
     ? "'self'"
     : "'self' ws://127.0.0.1:5280 ws://localhost:5280";
 
-// CS-54: production now uses build-time SHA-256 hashes for every inline
-// script. The discovery/build wrapper below keeps static prerendering intact
-// while removing `script-src 'unsafe-inline'` from the shipped policy.
-//
-// A nonce-based policy was implemented in `src/middleware.ts` on 2026-09-25,
-// worked perfectly against the dev server, and BROKE THE APPLICATION ENTIRELY
-// against a production build. Measured, not inferred: `next build` prerenders
-// these routes as static HTML (`○ (Static)`), that HTML is generated at build
-// time and therefore cannot carry a per-request nonce, and Next did not stamp
-// one onto the scripts it had already emitted. `curl` against `next start`
-// returned 10 `<script>` tags and 0 `nonce=` attributes, while the response
-// header advertised a nonce. Because `'strict-dynamic'` makes the nonce
-// authoritative and causes `'self'` to be ignored on any browser implementing
-// it, none of those ten scripts could execute — `npm run test:ui` went red
-// against the production server, the first element never appearing. The
-// middleware was removed.
-//
-// So removing `'unsafe-inline'` is not a header edit.
-//
-// MEASURED 2026-09-25 against the production build in `.next`, which REVISES
-// the sentence that used to sit here ("requires giving up static prerendering
-// or moving to build-time hashes"). All 13 app routes are prerendered and ZERO
-// render per request, so every inline script IS known at build time: 26 inline
-// scripts across 13 pages, only 12 distinct SHA-256 hashes. A build-time hash
-// policy can cover the whole surface and STATIC PRERENDERING DOES NOT HAVE TO
-// BE GIVEN UP.
-//
-// The build wrapper below resolves that ordering problem with two passes. The
-// first pass discovers hashes from the generated static HTML; the second pass
-// injects them through CSP_SCRIPT_HASHES before Next writes its route headers.
-//
-// The failure mode is a BLANK PAGE, not a weaker policy: a missing hash means
-// React's hydration payload does not execute, exactly as the nonce attempt
-// failed. Full measurement and the two traps in docs/decisions/CSP-STRICT-SCRIPT-SRC.md.
-//
-// Compensating controls meanwhile: session cookies are `httpOnly`, so a script
-// cannot read them; `sameSite: 'strict'`; the API sets its own strict policy
-// (`default-src 'none'`); there is no `dangerouslySetInnerHTML` anywhere in the
-// app; and every rendered value goes through React's automatic escaping. The
-// residual risk is recorded in `docs/KNOWN-LIMITATIONS.md`; CS-54 stays OPEN.
+// CS-54: production uses build-time SHA-256 hashes for every inline script, so the shipped policy
+// has no script `'unsafe-inline'` and static prerendering is kept. `scripts/build-with-csp.mjs` builds
+// once with CSP_HASH_DISCOVERY=1 to read the hashes from the generated HTML, then rebuilds with
+// CSP_SCRIPT_HASHES until the policy covers every hash. A missing hash blanks the page (React's
+// hydration script does not run), and a nonce policy cannot work with static HTML; both are measured
+// in docs/decisions/CSP-STRICT-SCRIPT-SRC.md. Compensating controls: HttpOnly SameSite=Strict
+// cookies, the API's own `default-src 'none'`, no `dangerouslySetInnerHTML`, React escaping.
+// A production build with neither variable set fails instead of shipping `'unsafe-inline'`.
+const scriptSource = () => {
+  if (process.env.CSP_SCRIPT_HASHES && process.env.NODE_ENV === 'production')
+    return `script-src 'self' ${process.env.CSP_SCRIPT_HASHES}; `;
+  if (process.env.NEXT_PHASE === 'phase-production-build' && !process.env.CSP_HASH_DISCOVERY)
+    throw new Error(
+      'CSP_SCRIPT_HASHES is required for a production build; build with "npm run build" (scripts/build-with-csp.mjs).',
+    );
+  return "script-src 'self' 'unsafe-inline'; ";
+};
 const nextConfig: NextConfig = {
   // Stable build IDs make the static Flight bootstrap deterministic across
   // the CSP discovery and enforcement passes. Deployments may override this
@@ -54,7 +32,7 @@ const nextConfig: NextConfig = {
   generateBuildId: async () => process.env.NEXT_BUILD_ID ?? 'careerscope-static',
   poweredByHeader: false,
   async rewrites() {
-    return [{ source: '/api/:path*', destination: 'http://127.0.0.1:5390/api/:path*' }];
+    return [{ source: '/api/:path*', destination: `http://127.0.0.1:${API_PORT}/api/:path*` }];
   },
   async headers() {
     return [
@@ -64,19 +42,21 @@ const nextConfig: NextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'no-referrer' },
           { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'Cache-Control', value: 'no-store' },
           {
             key: 'Content-Security-Policy',
             value:
               "default-src 'self'; " +
-              (process.env.NODE_ENV === 'production' && process.env.CSP_SCRIPT_HASHES
-                ? `script-src 'self' ${process.env.CSP_SCRIPT_HASHES}; `
-                : "script-src 'self' 'unsafe-inline'; ") +
+              scriptSource() +
               "style-src 'self' 'unsafe-inline'; " +
               `img-src 'self' data:; connect-src ${connectSources}; font-src 'self'; object-src 'none'; ` +
               "base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
           },
         ],
+      },
+      // HTML and API responses are never cached; fingerprinted static assets keep Next's own immutable caching.
+      {
+        source: '/((?!_next/static|_next/image).*)',
+        headers: [{ key: 'Cache-Control', value: 'no-store' }],
       },
     ];
   },

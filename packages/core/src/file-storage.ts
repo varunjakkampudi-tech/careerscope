@@ -9,6 +9,7 @@ import {
   createDecipheriv,
   createHash,
   createHmac,
+  hkdfSync,
   randomBytes,
   randomUUID,
   timingSafeEqual,
@@ -30,6 +31,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { z } from 'zod';
 import { resumeUploadMetadataSchema, type ResumeObject } from './storage.js';
 import { Conflict } from './errors.js';
+import { logFailure } from './failure.js';
 import { ResumeStorageLimit } from './resumes.js';
 
 /** Storage-side view of an object: the upload metadata plus owner and resume ids, with unknown keys rejected. */
@@ -40,18 +42,57 @@ const objectSchema = resumeUploadMetadataSchema
   })
   .strict();
 const versionSchema = z.string().uuid();
-/** Envelope header size in bytes: "CSR1" magic (4), version UUID (36), GCM nonce (12) and auth tag (16). */
-const overhead = 68;
+/**
+ * Envelope layouts (all fields fixed width, ciphertext length equals plaintext length):
+ * - "CSR1" (legacy, read only): magic (4) | version UUID (36) | GCM nonce (12) | auth tag (16) | ciphertext.
+ *   Encrypted directly with the raw storage key. Header 68 bytes.
+ * - "CSR2" (written): magic (4) | key id (4) | version UUID (36) | GCM nonce (12) | auth tag (16) | ciphertext.
+ *   Encrypted with a key derived by HKDF-SHA-256 from the storage key (info `encryptionKeyInfo`), so the
+ *   cipher never uses the raw master key. Header 72 bytes. The key id is a public fingerprint derived
+ *   from the storage key (info `keyIdInfo`); a reader whose key has a different id fails closed.
+ * The GCM AAD is identical for both: the object identity and version (see `aad`).
+ *
+ * Migration rule: CSR1 objects stay readable indefinitely. Nothing rewrites them automatically. A
+ * re-encrypt job (NOT built here) would, for each CSR1 object, read and verify it, write a CSR2
+ * object under a new version and swap it in, and only then delete the CSR1 file. Until such a job
+ * has run, the raw storage key must be retained and protected exactly as before.
+ */
+const legacyEnvelopeMagic = 'CSR1';
+const envelopeMagic = 'CSR2';
+const legacyOverhead = 68;
+const overhead = 72;
+const encryptionKeyInfo = 'careerscope:resume-storage:aes-gcm:v1';
+const keyIdInfo = 'careerscope:resume-storage:key-id:v1';
 /** Name pattern of in-progress writes; only these files are ever candidates for cleanup. */
 const temporaryName = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pending$/;
 /** Free space that must remain on the volume after a write is admitted (256 MiB). */
 const defaultReserveBytes = 256 * 1024 * 1024;
-/**
- * Cancellation markers fence late publication permanently, so they are never
- * deleted automatically. This bounds how many may accumulate before operators
- * are warned and new cancellations are refused.
- */
+/** Bounds how many cancellation markers may exist before operators are warned and new cancellations are refused. */
 const defaultMarkerLimit = 10_000;
+/** Per-owner cap, so one account cannot exhaust the global marker budget and block everyone else's cancellations. */
+const defaultOwnerMarkerLimit = 100;
+/** Marker file names begin with the owner UUID (36 characters), see `path`. */
+const ownerIdLength = 36;
+/**
+ * A cancellation marker only has to outlive a write that was already in flight when the upload was
+ * cancelled: the API request timeout is 15 s, and a stalled writer is bounded by the 10 minute
+ * temporary floor plus one retry. 24 hours is far beyond both. After that the database row is the
+ * authority (a cancelled upload cannot be queued), so the marker is reclaimed.
+ */
+const defaultMarkerRetentionMs = 24 * 60 * 60 * 1000;
+const minimumMarkerRetentionMs = 60 * 60 * 1000;
+/** Temporaries younger than this are never reclaimed, so a live writer is not disturbed. */
+const temporaryFloorMs = 10 * 60 * 1000;
+const defaultSweepIntervalMs = 5 * 60 * 1000;
+// Lower bound between disk re-counts of the cancellation markers, so refused requests cannot force a
+// full directory scan each.
+const markerRecountIntervalMs = 5_000;
+const minimumSweepIntervalMs = 60 * 1000;
+/** Legacy markers were an HMAC under the raw storage key; current markers use a key derived for that purpose only. */
+const legacyMarkerMagic = 'CSC1';
+const markerMagic = 'CSC2';
+const markerSize = 36;
+const markerKeyInfo = 'careerscope/resume-storage/cancellation-marker/v1';
 
 /** Raised when an upload was cancelled before it was published; the cancellation marker blocks a late publish. */
 export class ResumeUploadCancelled extends Conflict {
@@ -62,6 +103,12 @@ export class ResumeUploadCancelled extends Conflict {
 
 /** A concurrent writer replaced the object between inspection and reading. */
 class ResumeObjectChanged extends Error {}
+
+/** Adds one marker to the owner named by the first 36 characters of a marker file name. */
+function countOwner(counts: Map<string, number>, name: string) {
+  const owner = name.slice(0, ownerIdLength).toLowerCase();
+  counts.set(owner, (counts.get(owner) ?? 0) + 1);
+}
 
 function missing(error: unknown) {
   return error instanceof Error && 'code' in error && error.code === 'ENOENT';
@@ -96,14 +143,32 @@ function exhausted(error: unknown) {
 export class PrivateFileResumeStorage {
   readonly bucket = 'local-private-resumes';
   private readonly root: string;
+  /**
+   * Master key. New objects ("CSR2") are encrypted with `encryptionKey` derived from it; the raw
+   * key is used directly only to decrypt legacy "CSR1" objects and for legacy "CSC1" markers.
+   * See the envelope comment above for the migration rule.
+   */
   private readonly key: Buffer;
+  /** HKDF-derived AES-256-GCM key for "CSR2" envelopes. */
+  private readonly encryptionKey: Buffer;
+  /** 4-byte fingerprint of the storage key carried in "CSR2" envelopes. */
+  private readonly keyId: Buffer;
+  /** HKDF-derived key used only for cancellation markers, so the marker HMAC and the cipher never share key material. */
+  private readonly markerKey: Buffer;
   private readonly reserveBytes: number;
   private readonly markerLimit: number;
+  private readonly ownerMarkerLimit: number;
+  private readonly markerRetentionMs: number;
   private reserved = 0;
   private capacityRefusals = 0;
   private markers = 0;
+  /** Marker counts by lower-case owner id, rebuilt from disk by `inventory` and `reclaimExpiredMarkers`. */
+  private ownerMarkers = new Map<string, number>();
+  private lastMarkerRecountMs = 0;
   private reclaimedTemporaries = 0;
   private ready = false;
+  /** The in-flight `initialize`, shared by concurrent callers. Cleared when it settles. */
+  private initializing: Promise<void> | undefined;
 
   constructor(
     config: {
@@ -111,6 +176,8 @@ export class PrivateFileResumeStorage {
       encryptionKey: string;
       reserveBytes?: number;
       markerLimit?: number;
+      ownerMarkerLimit?: number;
+      markerRetentionMs?: number;
     },
     private readonly availableBytes: (directory: string) => Promise<number> = async (directory) => {
       const volume = await statfs(directory);
@@ -131,6 +198,12 @@ export class PrivateFileResumeStorage {
       .min(1)
       .default(defaultMarkerLimit)
       .parse(config.markerLimit);
+    this.ownerMarkerLimit = z
+      .number()
+      .int()
+      .min(1)
+      .default(defaultOwnerMarkerLimit)
+      .parse(config.ownerMarkerLimit);
     this.key = Buffer.from(
       z
         .string()
@@ -138,16 +211,46 @@ export class PrivateFileResumeStorage {
         .parse(config.encryptionKey),
       'hex',
     );
+    this.markerRetentionMs = z
+      .number()
+      .int()
+      .min(minimumMarkerRetentionMs)
+      .default(defaultMarkerRetentionMs)
+      .parse(config.markerRetentionMs);
+    this.markerKey = Buffer.from(hkdfSync('sha256', this.key, Buffer.alloc(0), markerKeyInfo, 32));
+    this.encryptionKey = Buffer.from(
+      hkdfSync('sha256', this.key, Buffer.alloc(0), encryptionKeyInfo, 32),
+    );
+    this.keyId = Buffer.from(hkdfSync('sha256', this.key, Buffer.alloc(0), keyIdInfo, 4));
   }
 
-  /** Creates the directory (mode 0700), validates it, and counts existing cancellation markers. Must run before any other call. */
-  async initialize(signal?: AbortSignal) {
+  /**
+   * Creates the directory (mode 0700), validates it, and counts existing cancellation markers. Must
+   * run before any other call. Idempotent: a call made while another is running awaits that one
+   * (and shares its signal), and a call on an initialised store re-validates and recounts without
+   * ever clearing `ready`, so a concurrent sweep or request never sees an uninitialised store.
+   */
+  initialize(signal?: AbortSignal): Promise<void> {
     signal?.throwIfAborted();
-    this.ready = false;
+    if (this.initializing) return this.initializing;
+    const run = this.runInitialize(signal).finally(() => {
+      if (this.initializing === run) this.initializing = undefined;
+    });
+    this.initializing = run;
+    return run;
+  }
+
+  private async runInitialize(signal?: AbortSignal) {
+    const wasReady = this.ready;
     await mkdir(this.root, { recursive: true, mode: 0o700 });
     await this.checkDirectory();
     this.ready = true;
-    this.markers = (await this.inventory(signal)).markers;
+    try {
+      this.markers = (await this.inventory(signal)).markers;
+    } catch (error) {
+      this.ready = wasReady;
+      throw error;
+    }
   }
 
   // Checked on every operation, not only at startup, so replacing the directory with a symlink later is detected.
@@ -191,12 +294,25 @@ export class PrivateFileResumeStorage {
     return Buffer.from(JSON.stringify({ object: objectSchema.parse(object), version }));
   }
 
-  /** 36-byte marker: "CSC1" plus an HMAC of the object identity. Placed at the object path so a later publish of that object fails. */
-  private cancellationMarker(object: ResumeObject) {
+  /**
+   * 36-byte marker: magic plus an HMAC of the object identity. Placed at the object path so a later
+   * publish of that object fails. New markers ("CSC2") are keyed with the HKDF-derived marker key;
+   * legacy markers ("CSC1") used the raw storage key and are still accepted when read.
+   */
+  private cancellationMarker(object: ResumeObject, legacy = false) {
     return Buffer.concat([
-      Buffer.from('CSC1'),
-      createHmac('sha256', this.key).update(this.aad(object, 'cancelled')).digest(),
+      Buffer.from(legacy ? legacyMarkerMagic : markerMagic),
+      createHmac('sha256', legacy ? this.key : this.markerKey)
+        .update(this.aad(object, 'cancelled'))
+        .digest(),
     ]);
+  }
+
+  private isOwnMarker(object: ResumeObject, candidate: Buffer) {
+    // Evaluate both so timing does not reveal which generation matched.
+    const current = timingSafeEqual(candidate, this.cancellationMarker(object));
+    const legacy = timingSafeEqual(candidate, this.cancellationMarker(object, true));
+    return current || legacy;
   }
 
   /** Flushes directory entries after link, rename or unlink so the change survives a crash. Not available on Windows. */
@@ -226,6 +342,7 @@ export class PrivateFileResumeStorage {
     let oldestTemporaryMs: number | null = null;
     let markers = 0;
     let markerBytes = 0;
+    const ownerCounts = new Map<string, number>();
     for (const entry of entries) {
       signal?.throwIfAborted();
       if (!entry.isFile()) continue;
@@ -237,10 +354,16 @@ export class PrivateFileResumeStorage {
       if (entry.name.endsWith('.bin')) {
         objects += 1;
         objectBytes += stat.size;
-        // Cancellation markers are retained forever, so their growth needs a signal.
-        if (stat.size === 36) {
+        // Markers are reclaimed only after the retention window, so their growth needs a signal.
+        // Only a file with a marker magic counts; any other 36-byte file is not a marker.
+        if (
+          stat.size === markerSize &&
+          stat.isFile() &&
+          (await this.hasMarkerMagic(join(this.root, entry.name)))
+        ) {
           markers += 1;
           markerBytes += stat.size;
+          countOwner(ownerCounts, entry.name);
         }
       } else if (temporaryName.test(entry.name)) {
         temporaries += 1;
@@ -249,6 +372,7 @@ export class PrivateFileResumeStorage {
           oldestTemporaryMs === null ? stat.mtimeMs : Math.min(oldestTemporaryMs, stat.mtimeMs);
       }
     }
+    this.ownerMarkers = ownerCounts;
     const volume = await statfs(this.root);
     const freeBytes = Number(volume.bavail) * Number(volume.bsize);
     return {
@@ -273,18 +397,20 @@ export class PrivateFileResumeStorage {
   }
 
   /**
-   * Reclaims temporaries stranded by a crashed writer. Ownership is provable
-   * rather than inferred from age: only the single object-writing process
-   * creates temporaries, and it has none in flight before it starts writing, so
-   * every temporary present at that moment belongs to a dead process. Call this
-   * once at writer startup, before accepting work, and never from another process.
+   * Reclaims temporaries stranded by a failed or crashed write. Safe to call while writers are live,
+   * in this or another process, because the invariant is age based: only `.pending` temporaries at
+   * least 10 minutes old are removed, and a live write has a far younger temporary. If a writer
+   * stalls past that bound and its temporary is removed, its publish fails with ENOENT and `put` /
+   * `cancelUpload` retry once with a fresh temporary; a second ENOENT is surfaced. A future-stamped
+   * temporary has age 0 and is kept until it ages.
    *
-   * A temporary already linked into its published object is also reclaimed here:
-   * removing that extra name leaves the published object itself intact.
+   * An old temporary already linked into its published object is also reclaimed here: removing that
+   * extra name leaves the published object itself intact. Published objects and cancellation markers
+   * are never candidates. Despite its name this is safe to run periodically (see `startReclaimSweep`).
    */
   async reclaimTemporariesAtStartup(signal?: AbortSignal) {
     const result = await this.removeTemporaries(
-      { olderThanMs: 0, limit: 1000, now: Date.now(), linked: true },
+      { olderThanMs: temporaryFloorMs, limit: 1000, now: Date.now(), linked: true },
       signal,
     );
     this.reclaimedTemporaries += result.removed;
@@ -292,13 +418,123 @@ export class PrivateFileResumeStorage {
   }
 
   /**
-   * Removes abandoned temporary files left by an interrupted write or
-   * cancellation. Published objects and cancellation markers are never
-   * candidates: they are only ever created by link or rename onto a `.bin` path.
-   *
-   * Maintenance only: all writers must be stopped before calling this method.
-   * Age does not prove abandonment; a suspended process may still own the file.
-   * A temporary already linked into a published object is preserved.
+   * Runs `reclaimTemporariesAtStartup` and `reclaimExpiredMarkers` every `intervalMs` (default 5
+   * minutes, minimum 1 minute) until the returned function is called. The timer is unreferenced so it
+   * never keeps the process alive, ticks never overlap, and a failing tick is passed to `onError`
+   * without throwing, so a sweep error cannot crash the process. Call the returned stop function
+   * before `close()`.
+   */
+  startReclaimSweep(options: {
+    intervalMs?: number;
+    onResult: (result: { removed: number; bytes: number; markersRemoved: number }) => void;
+    onError: (error: unknown) => void;
+  }): () => void {
+    const intervalMs = Math.max(
+      options.intervalMs ?? defaultSweepIntervalMs,
+      minimumSweepIntervalMs,
+    );
+    const controller = new AbortController();
+    let running = false;
+    const tick = async () => {
+      try {
+        // Not yet initialised (or closed): nothing to sweep, and not worth a log line.
+        if (!this.ready) return;
+        const temporaries = await this.reclaimTemporariesAtStartup(controller.signal);
+        const markersRemoved = await this.reclaimExpiredMarkers(controller.signal);
+        options.onResult({ ...temporaries, markersRemoved });
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        try {
+          options.onError(error);
+        } catch {
+          // A failing reporter must not crash the process.
+        }
+      } finally {
+        running = false;
+      }
+    };
+    const timer = setInterval(() => {
+      if (running) return;
+      running = true;
+      void tick();
+    }, intervalMs);
+    timer.unref();
+    return () => {
+      clearInterval(timer);
+      controller.abort();
+    };
+  }
+
+  /**
+   * Removes cancellation markers older than the retention window (default 24 hours) and refreshes the
+   * marker count used for the quota from what is actually on disk, so the quota reflects markers
+   * created by other processes and drops reclaimed ones. Only 36-byte files with a marker magic are removed.
+   */
+  async reclaimExpiredMarkers(signal?: AbortSignal, now = Date.now()) {
+    signal?.throwIfAborted();
+    if (!this.ready) throw new Error('Resume storage is not initialized');
+    await this.checkDirectory();
+    const entries = await readdir(this.root, { withFileTypes: true });
+    let removed = 0;
+    let remaining = 0;
+    const ownerCounts = new Map<string, number>();
+    for (const entry of entries) {
+      signal?.throwIfAborted();
+      if (!entry.isFile() || !entry.name.endsWith('.bin')) continue;
+      const filename = join(this.root, entry.name);
+      const stat = await lstat(filename).catch((error: unknown) => {
+        if (missing(error)) return null;
+        throw error;
+      });
+      if (!stat || !stat.isFile() || stat.isSymbolicLink() || stat.size !== markerSize) continue;
+      if (
+        removed >= 1000 ||
+        Math.max(0, now - stat.mtimeMs) < this.markerRetentionMs ||
+        !(await this.hasMarkerMagic(filename))
+      ) {
+        remaining += 1;
+        countOwner(ownerCounts, entry.name);
+        continue;
+      }
+      try {
+        await unlink(filename);
+      } catch (error) {
+        if (!missing(error)) {
+          if (!contended(error)) throw error;
+          remaining += 1;
+          countOwner(ownerCounts, entry.name);
+        }
+        continue;
+      }
+      removed += 1;
+    }
+    if (removed) await this.syncDirectory();
+    this.markers = remaining;
+    this.ownerMarkers = ownerCounts;
+    return removed;
+  }
+
+  private async hasMarkerMagic(filename: string) {
+    let handle;
+    try {
+      handle = await open(filename, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
+      const head = Buffer.alloc(4);
+      const result = await handle.read(head, 0, 4, 0);
+      const magic = head.toString();
+      return result.bytesRead === 4 && (magic === markerMagic || magic === legacyMarkerMagic);
+    } catch (error) {
+      if (missing(error)) return false;
+      throw error;
+    } finally {
+      await handle?.close();
+    }
+  }
+
+  /**
+   * Removes abandoned temporary files left by an interrupted write or cancellation. Published objects
+   * and cancellation markers are never candidates: they are only ever created by link or rename onto
+   * a `.bin` path. The age is never below the 10 minute floor (see `reclaimTemporariesAtStartup`), so
+   * a live writer is not disturbed. A temporary already linked into a published object is preserved.
    */
   async sweepAbandonedTemporaries(
     options?: { olderThanMs?: number; limit?: number; now?: number },
@@ -306,7 +542,7 @@ export class PrivateFileResumeStorage {
   ) {
     return this.removeTemporaries(
       {
-        olderThanMs: Math.max(options?.olderThanMs ?? 3600000, 60000),
+        olderThanMs: Math.max(options?.olderThanMs ?? 3600000, temporaryFloorMs),
         limit: options?.limit ?? 100,
         now: options?.now ?? Date.now(),
       },
@@ -340,7 +576,8 @@ export class PrivateFileResumeStorage {
         !stat.isFile() ||
         stat.isSymbolicLink() ||
         (stat.nlink !== 1 && !options.linked) ||
-        now - stat.mtimeMs < olderThanMs
+        // A temporary timestamped slightly ahead of this process clock has zero age, not negative age.
+        Math.max(0, now - stat.mtimeMs) < olderThanMs
       )
         continue;
       try {
@@ -402,29 +639,36 @@ export class PrivateFileResumeStorage {
     this.validateBody(object, data);
     const version = randomUUID();
     const nonce = randomBytes(12);
-    const cipher = createCipheriv('aes-256-gcm', this.key, nonce);
+    const cipher = createCipheriv('aes-256-gcm', this.encryptionKey, nonce);
     cipher.setAAD(this.aad(object, version));
     const encrypted = Buffer.concat([cipher.update(data), cipher.final()]);
     const envelope = Buffer.concat([
-      Buffer.from('CSR1'),
+      Buffer.from(envelopeMagic),
+      this.keyId,
       Buffer.from(version),
       nonce,
       cipher.getAuthTag(),
       encrypted,
     ]);
-    const temporary = join(this.root, `${randomUUID()}.pending`);
     const release = await this.ensureCapacity(envelope.length, signal);
     try {
-      try {
-        await this.writeTemporary(temporary, envelope, signal);
-        signal?.throwIfAborted();
-        await this.publishObject(temporary, filename);
-        await this.syncDirectory();
-        return version;
-      } finally {
-        await unlink(temporary).catch((error: unknown) => {
-          if (!missing(error)) throw error;
-        });
+      // A reclaim can remove this temporary only if the write stalled past the 10 minute floor.
+      // The code cannot tell that apart from any other ENOENT, so it retries the whole write
+      // once with a fresh temporary and surfaces a second ENOENT.
+      for (let attempt = 0; ; attempt++) {
+        const temporary = join(this.root, `${randomUUID()}.pending`);
+        try {
+          await this.writeTemporary(temporary, envelope, signal);
+          signal?.throwIfAborted();
+          await this.publishObject(temporary, filename);
+          await this.syncDirectory();
+          return version;
+        } catch (error) {
+          if (attempt === 0 && missing(error)) continue;
+          throw error;
+        } finally {
+          await this.removeTemporary(temporary);
+        }
       }
     } catch (error) {
       // Admission control is a guard, not a guarantee: another writer can consume
@@ -445,24 +689,28 @@ export class PrivateFileResumeStorage {
     const { object, filename } = await this.path(input, signal);
     if (expectedVersion !== undefined) versionSchema.parse(expectedVersion);
     const stat = await lstat(filename);
-    if (stat.isFile() && !stat.isSymbolicLink() && stat.size === 36) {
+    if (stat.isFile() && !stat.isSymbolicLink() && stat.size === markerSize) {
       const markerHandle = await open(filename, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
       try {
         const marker = Buffer.alloc(36);
         const result = await markerHandle.read(marker, 0, marker.length, 0);
-        if (
-          result.bytesRead === marker.length &&
-          timingSafeEqual(marker, this.cancellationMarker(object))
-        )
+        if (result.bytesRead === marker.length && this.isOwnMarker(object, marker))
           throw new ResumeUploadCancelled('Resume upload cancelled');
       } finally {
         await markerHandle.close();
       }
       throw new Error('Resume object metadata mismatch');
     }
-    if (!stat.isFile() || stat.isSymbolicLink() || stat.size !== object.bytes + overhead) {
+    // The size selects the layout; the magic must then agree with it.
+    const legacy = stat.size === object.bytes + legacyOverhead;
+    if (
+      !stat.isFile() ||
+      stat.isSymbolicLink() ||
+      (!legacy && stat.size !== object.bytes + overhead)
+    ) {
       throw new Error('Resume object metadata mismatch');
     }
+    const header = legacy ? legacyOverhead : overhead;
     const handle = await open(filename, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
     try {
       const opened = await handle.stat();
@@ -474,7 +722,7 @@ export class PrivateFileResumeStorage {
       ) {
         throw new ResumeObjectChanged('Resume object changed during read');
       }
-      const envelope = Buffer.alloc(object.bytes + overhead);
+      const envelope = Buffer.alloc(object.bytes + header);
       let offset = 0;
       while (offset < envelope.length) {
         signal?.throwIfAborted();
@@ -484,17 +732,26 @@ export class PrivateFileResumeStorage {
       }
       if (
         (await handle.stat()).size !== envelope.length ||
-        envelope.subarray(0, 4).toString() !== 'CSR1'
+        envelope.subarray(0, 4).toString() !== (legacy ? legacyEnvelopeMagic : envelopeMagic)
       ) {
         throw new Error('Resume object metadata mismatch');
       }
-      const version = versionSchema.parse(envelope.subarray(4, 40).toString());
+      // CSR1: version at 4, nonce at 40, tag at 52. CSR2 shifts each by the 4-byte key id.
+      const start = legacy ? 4 : 8;
+      if (!legacy && !timingSafeEqual(envelope.subarray(4, 8), this.keyId)) {
+        throw new Error('Resume object key mismatch');
+      }
+      const version = versionSchema.parse(envelope.subarray(start, start + 36).toString());
       if (expectedVersion !== undefined && expectedVersion !== version)
         throw new Error('Resume object version mismatch');
-      const decipher = createDecipheriv('aes-256-gcm', this.key, envelope.subarray(40, 52));
+      const decipher = createDecipheriv(
+        'aes-256-gcm',
+        legacy ? this.key : this.encryptionKey,
+        envelope.subarray(start + 36, start + 48),
+      );
       decipher.setAAD(this.aad(object, version));
-      decipher.setAuthTag(envelope.subarray(52, 68));
-      const data = Buffer.concat([decipher.update(envelope.subarray(overhead)), decipher.final()]);
+      decipher.setAuthTag(envelope.subarray(start + 48, start + 64));
+      const data = Buffer.concat([decipher.update(envelope.subarray(header)), decipher.final()]);
       this.validateBody(object, data);
       signal?.throwIfAborted();
       return { version, data };
@@ -535,30 +792,97 @@ export class PrivateFileResumeStorage {
     await this.syncDirectory();
   }
 
-  /** Writes a cancellation marker at the object path so a late `put` for it cannot publish. Refused once the marker quota is reached. */
-  async cancelUpload(object: ResumeObject, signal?: AbortSignal) {
-    // Markers are never deleted automatically, so accumulation is bounded here
-    // instead of being reclaimed later.
-    if (this.markers >= this.markerLimit) {
-      throw new ResumeStorageLimit('Resume cancellation marker quota reached');
-    }
-    const { filename } = await this.path(object, signal);
-    const temporary = join(this.root, `${randomUUID()}.pending`);
-    let handle;
+  /** The filesystem call behind `removeTemporary`; separate so tests can make it fail. */
+  protected async unlinkTemporary(temporary: string) {
+    await unlink(temporary);
+  }
+
+  /**
+   * Removes a temporary file after a write or cancellation. Best effort: by now the publish result is
+   * decided, so a failure here (on Windows an EPERM or EBUSY while another process holds the file) is
+   * logged at warn level and never rethrown. An orphaned `.pending` file is reclaimed by the sweep.
+   */
+  private async removeTemporary(temporary: string) {
     try {
-      handle = await open(temporary, 'wx', 0o600);
-      try {
-        await handle.writeFile(this.cancellationMarker(object), { signal });
-        await handle.sync();
-        await handle.close();
-        signal?.throwIfAborted();
-        if (await this.publishCancellation(object, temporary, filename, signal)) this.markers += 1;
-        await this.syncDirectory();
-      } finally {
-        await handle.close();
-        await unlink(temporary).catch((error: unknown) => {
-          if (!missing(error)) throw error;
-        });
+      await this.unlinkTemporary(temporary);
+    } catch (error) {
+      if (missing(error)) return;
+      logFailure(error, {}, 'Resume temporary file could not be removed', 'warn');
+    }
+  }
+
+  /**
+   * Admission for one more cancellation marker. An owner is always capped by `ownerMarkerLimit`. While the
+   * store is under `markerLimit`, anyone else is admitted. Once it is full, only an owner with no marker
+   * yet may still take one, from a reserve of `markerReserve` slots above the limit. So many owners
+   * filling the store cannot stop a fresh owner from cancelling its first upload, and the reserve is
+   * shared by all such owners, so the store stays bounded.
+   */
+  private markerQuotaAvailable(owner: string) {
+    const owned = this.ownerMarkers.get(owner) ?? 0;
+    if (owned >= this.ownerMarkerLimit) return false;
+    if (this.markers < this.markerLimit) return true;
+    return owned === 0 && this.markers < this.markerLimit + this.markerReserve;
+  }
+
+  /** Slots above `markerLimit` that only owners without a marker may use. */
+  private get markerReserve() {
+    return Math.max(1, Math.floor(this.markerLimit / 10));
+  }
+
+  /**
+   * Writes a cancellation marker at the object path so a late `put` for it cannot publish. Refused
+   * once the owner's marker quota is reached, or the global backstop (neither names any owner).
+   */
+  async cancelUpload(object: ResumeObject, signal?: AbortSignal) {
+    const { object: parsed, filename } = await this.path(object, signal);
+    const owner = parsed.ownerId.toLowerCase();
+    // A marker for this exact upload already in place means it is cancelled: succeed before any quota
+    // check, so a repeated cancellation never fails for an owner at the limit. A foreign marker or any
+    // other state falls through to the normal path, which decides it.
+    try {
+      await this.read(parsed, undefined, signal);
+    } catch (error) {
+      if (error instanceof ResumeUploadCancelled) return;
+    }
+    // Markers are reclaimed after the retention window; between sweeps accumulation is bounded here.
+    if (!this.markerQuotaAvailable(owner)) {
+      // Another process may have written markers this process has not counted, so a refusal
+      // re-derives the counts from disk first. The scan is rate limited so refused requests cannot
+      // force one scan each.
+      if (Date.now() - this.lastMarkerRecountMs >= markerRecountIntervalMs) {
+        this.lastMarkerRecountMs = Date.now();
+        this.markers = (await this.inventory(signal)).markers;
+      }
+      if (!this.markerQuotaAvailable(owner)) {
+        throw new ResumeStorageLimit('Resume cancellation marker quota reached');
+      }
+    }
+    try {
+      // A reclaim removes this temporary only if the write stalled past the 10 minute floor. Any
+      // ENOENT is retried once with a fresh temporary; a second ENOENT is surfaced.
+      for (let attempt = 0; ; attempt++) {
+        const temporary = join(this.root, `${randomUUID()}.pending`);
+        let handle;
+        try {
+          handle = await open(temporary, 'wx', 0o600);
+          await handle.writeFile(this.cancellationMarker(object), { signal });
+          await handle.sync();
+          await handle.close();
+          signal?.throwIfAborted();
+          if (await this.publishCancellation(object, temporary, filename, signal)) {
+            this.markers += 1;
+            this.ownerMarkers.set(owner, (this.ownerMarkers.get(owner) ?? 0) + 1);
+          }
+          await this.syncDirectory();
+          return;
+        } catch (error) {
+          if (attempt === 0 && missing(error)) continue;
+          throw error;
+        } finally {
+          await handle?.close();
+          await this.removeTemporary(temporary);
+        }
       }
     } catch (error) {
       // Cancellation is authoritative only once its marker is durable, so an
@@ -608,10 +932,13 @@ export class PrivateFileResumeStorage {
     throw new Error('Resume object changed during cancellation', { cause: contention });
   }
 
-  /** Marks the store unusable and zeroes the in-memory key. */
+  /** Marks the store unusable and zeroes the in-memory keys. */
   close() {
     this.ready = false;
     this.key.fill(0);
+    this.markerKey.fill(0);
+    this.encryptionKey.fill(0);
+    this.keyId.fill(0);
   }
 }
 

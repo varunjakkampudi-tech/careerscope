@@ -9,6 +9,7 @@ import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'node:crypt
 import { hash, verify } from '@node-rs/argon2';
 import { z } from 'zod';
 import type { Database } from './database.js';
+import { logFailure } from './failure.js';
 import { testUsers } from './test-users.js';
 
 /** Cookie names and token lifetimes. The access token is short-lived (15 minutes); the refresh token lasts 30 days and is single use. */
@@ -16,6 +17,8 @@ export const sessionCookie = 'careerscope_v2_session';
 export const refreshCookie = 'careerscope_v2_refresh';
 export const accessSessionLifetimeSeconds = 15 * 60;
 export const refreshSessionLifetimeSeconds = 30 * 24 * 60 * 60;
+/** Most expired sessions one sign-in deletes; the retention job clears any backlog. */
+export const expiredSessionSweepBatch = 500;
 /** SHA-256 hex digest. Tokens are 256-bit random values, so an unsalted hash is enough to avoid storing them in the clear. */
 const digest = (value: string) => createHash('sha256').update(value).digest('hex');
 /** Argon2 hash with explicit cost settings (about 19 MiB memory, 2 passes, 1 lane). */
@@ -47,9 +50,6 @@ export class Auth {
     previous?: PreviousSession,
     deviceLabel?: string,
   ): Promise<SessionCredentials> {
-    // Expired sessions and their refresh-token digests (kept for replay detection)
-    // are no longer usable; delete them here to bound retained auth data.
-    await client.query('DELETE FROM sessions WHERE expires_at <= now()');
     const sessionId = randomUUID();
     const accessToken = randomBytes(32).toString('hex');
     const refreshToken = randomBytes(32).toString('hex');
@@ -75,6 +75,35 @@ export class Auth {
       [digest(refreshToken), sessionId],
     );
     return { accessToken, refreshToken, sessionId };
+  }
+
+  /**
+   * Deletes one bounded batch of expired sessions (their refresh-token digests cascade). Runs outside
+   * any sign-in transaction so it never holds locks the login needs; rows another sweep has locked
+   * are skipped. Failures are logged and swallowed. The retention job removes whatever is left.
+   */
+  async sweepExpiredSessions(batchSize = expiredSessionSweepBatch): Promise<number> {
+    try {
+      const result = await this.database.pool.query(
+        `DELETE FROM sessions WHERE id IN (
+           SELECT id FROM sessions WHERE expires_at <= now()
+           ORDER BY expires_at LIMIT $1 FOR UPDATE SKIP LOCKED)`,
+        [batchSize],
+      );
+      return result.rowCount ?? 0;
+    } catch (error) {
+      logFailure(error, {}, 'Expired session sweep failed');
+      return 0;
+    }
+  }
+
+  /**
+   * Starts the sweep without awaiting it. Called from inside a sign-in's try block, where the
+   * request still holds its pool client; awaiting here would hold that client while the sweep
+   * waits for a second one, and a login burst can exhaust the pool that way.
+   */
+  private sweepAfterCommit(): void {
+    void this.sweepExpiredSessions();
   }
 
   /** Inserts a password account. A duplicate email is silently ignored, so the response does not reveal whether it exists. */
@@ -147,6 +176,7 @@ export class Auth {
       }
       const credentials = await this.createSession(client, user.id, previous, deviceLabel);
       await client.query('COMMIT');
+      this.sweepAfterCommit();
       return credentials;
     } catch (error) {
       await rollback(client);
@@ -187,6 +217,7 @@ export class Auth {
         return null;
       }
       await client.query('COMMIT');
+      this.sweepAfterCommit();
       return credentials;
     } catch (error) {
       await rollback(client);
@@ -333,6 +364,7 @@ export class Auth {
       await client.query('BEGIN');
       const credentials = await this.createSession(client, userId, previous, deviceLabel);
       await client.query('COMMIT');
+      this.sweepAfterCommit();
       return credentials;
     } catch (error) {
       await rollback(client);
@@ -461,7 +493,30 @@ export class Auth {
     );
   }
 
-  /** Revokes the session identified by either token. Revocation keeps the row so replay detection still works. */
+  /**
+   * True when the account already has sessions and none of them came from this device label. A
+   * first sign-in on an account, or a label seen before, is not a new device. An unknown address
+   * returns false, so the caller can send nothing for it.
+   */
+  async isNewDevice(email: string, deviceLabel: string | undefined): Promise<boolean> {
+    const result = await this.database.pool.query<{ known: boolean; has_sessions: boolean }>(
+      `SELECT
+         EXISTS (SELECT 1 FROM sessions s WHERE s.owner_id = u.id
+                 AND s.device_label IS NOT DISTINCT FROM $2) AS known,
+         EXISTS (SELECT 1 FROM sessions s WHERE s.owner_id = u.id) AS has_sessions
+       FROM users u WHERE u.email = $1`,
+      [email, deviceLabel ?? null],
+    );
+    const row = result.rows[0];
+    return Boolean(row && row.has_sessions && !row.known);
+  }
+
+  /**
+   * Revokes the session identified by either token. The access token is matched by digest with no
+   * expiry check, so logout still works after the 15-minute access window (the refresh cookie is
+   * path-scoped and is not sent here by browsers). Revoked sessions fail refresh. The row is kept
+   * so replay detection still works.
+   */
   async logout(accessToken?: string, refreshToken?: string) {
     if (!accessToken && !refreshToken) return;
     await this.database.pool.query(

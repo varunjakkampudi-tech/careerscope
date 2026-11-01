@@ -56,6 +56,11 @@ flowchart LR
   Stream --> UI[Web UI]
 ```
 
+Delivery is at-least-once and effects are applied once per command. The
+failure cases (unacknowledged delivery, duplicate delivery, worker crash, Redis
+outage) and the tests that inject them are in
+[architecture/OUTBOX.md](architecture/OUTBOX.md).
+
 ## Authentication
 
 ```mermaid

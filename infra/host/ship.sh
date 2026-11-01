@@ -13,6 +13,9 @@
 # It lives at the deployment root, not in infra, because that is where both
 # readers look.
 #
+# The release record (RELEASE_RECORD) is deliberately not carried over: it is created by
+# build-images.sh for the shipped revision, and deploy.sh fails closed without it.
+#
 # Usage: ship.sh <archive> [revision] [target-dir]
 set -euo pipefail
 
@@ -56,6 +59,9 @@ fi
 
 if [ -n "$preserved" ]; then
   install -m 600 "$preserved" "$secret"
+  # The image variables belong to the previous release. Dropping them means a deploy cannot silently
+  # reuse old images: build-images.sh writes a new release record and deploy.sh sets them from it.
+  sed -i '/^CAREERSCOPE_\(PROXY_\)\?IMAGE=/d' "$secret"
   rm -f "$preserved"
   echo "==> Restored $secret"
 else

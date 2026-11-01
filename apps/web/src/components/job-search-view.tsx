@@ -1,5 +1,6 @@
 'use client';
 
+import '../lib/zod-config';
 import { Suspense, useEffect, useState, type FormEvent } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -13,12 +14,12 @@ import {
   Search,
   Square,
 } from 'lucide-react';
-import type { CreateSearch } from '@careerscope/core';
 import {
   JOB_SOURCE_PERMISSION_PENDING_MESSAGE,
   LAUNCH_JOB_SOURCE_CANDIDATES,
   SOURCE_LABELS,
   jobFeedbackReasons,
+  type CreateSearch,
   type JobFeedbackReason,
 } from '@careerscope/shared';
 import { ApiError, apiJson, apiParsed, SESSION_EXPIRED_EVENT } from '@/lib/api';
@@ -390,8 +391,9 @@ function JobSearchWorkspace() {
                   aria-label={sourceNames[source] ?? SOURCE_LABELS[source]}
                   checked={sources.includes(source as CreateSearch['sources'][number])}
                   disabled={!entry?.available || search.isPending || sourceCatalog.isPending}
+                  // No reference until the catalog has answered: there is no reason element to point at yet.
                   aria-describedby={
-                    !entry?.available
+                    entry && !entry.available
                       ? hasPermissionBlock
                         ? 'source-availability'
                         : reasonId

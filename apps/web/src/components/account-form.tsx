@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { LoaderCircle, ShieldCheck, User } from 'lucide-react';
 import { apiJson, apiParsed } from '../lib/api';
 import { parseOtpRequest } from '../lib/api-schemas';
+import RecoverySignIn from './recovery-sign-in';
 import { localizedText, localizedValue, useInterfaceLocale } from '../lib/locale';
 
 type Account = { email: string; role: 'candidate' | 'admin' };
@@ -41,6 +42,7 @@ export default function AccountForm({
   const [code, setCode] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [codeSent, setCodeSent] = useState(false);
+  const [recovering, setRecovering] = useState(false);
   const [intent, setIntent] = useState<'sign-in' | 'sign-up'>('sign-in');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
@@ -61,11 +63,26 @@ export default function AccountForm({
     return () => window.clearInterval(timer);
   }, [codeSent, resendSeconds]);
 
+  /**
+   * Ends any session this browser still holds before a new sign-in. The server cannot see the
+   * refresh cookie on the sign-in routes, so once the access cookie has expired the previous
+   * refresh-token family would survive a re-login. Signing out through `/session/logout` first
+   * revokes it. A failure here means there is no session to end, so it is ignored.
+   */
+  async function endPreviousSession() {
+    try {
+      await apiJson('/session/logout', { method: 'POST' });
+    } catch {
+      // Nothing to end, or the request could not be made. Sign-in still proceeds.
+    }
+  }
+
   async function selectUser(accountEmail: string) {
     if (pending) return;
     setError('');
     setPending(accountEmail);
     try {
+      await endPreviousSession();
       await apiJson('/login', {
         method: 'POST',
         body: JSON.stringify({ email: accountEmail }),
@@ -111,6 +128,7 @@ export default function AccountForm({
     setError('');
     setPending('verify');
     try {
+      await endPreviousSession();
       await apiJson('/otp/verify', {
         method: 'POST',
         body: JSON.stringify({ email, code, ...(intent === 'sign-up' ? { intent } : {}) }),
@@ -316,6 +334,14 @@ export default function AccountForm({
                 )}
               </button>
             </form>
+          )}
+          {!codeSent && !recovering && (
+            <button type="button" className="link" onClick={() => setRecovering(true)}>
+              {t('recoveryFindStart')}
+            </button>
+          )}
+          {recovering && (
+            <RecoverySignIn onAuthenticated={onAuthenticated} onBack={() => setRecovering(false)} />
           )}
           {registrationEnabled && !codeSent && legalDocuments && (
             <button

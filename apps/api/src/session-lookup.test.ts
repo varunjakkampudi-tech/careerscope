@@ -11,7 +11,7 @@ const sessionId = '22222222-2222-4222-8222-222222222222';
 
 /** Fake database whose session row can be revoked; counts how often the session is looked up by token. */
 function fake() {
-  const state = { live: true, lookups: 0 };
+  const state = { live: true, lookups: 0, revokeMatches: true };
   const database = {
     pool: {
       query: async (sql: string) => {
@@ -19,6 +19,8 @@ function fake() {
           state.lookups += 1;
           return { rows: state.live ? [{ id: sessionId, owner_id: ownerId }] : [] };
         }
+        if (sql.includes('UPDATE sessions SET revoked_at'))
+          return { rows: [], rowCount: state.revokeMatches ? 1 : 0 };
         if (sql.includes('FROM users')) return { rows: [{ email: null, email_verified_at: null }] };
         return { rows: [] };
       },
@@ -53,6 +55,17 @@ test('the session is resolved once per request and a revoked session is rejected
     });
     assert.equal(removed.statusCode, 204);
     assert.equal(state.lookups, 1);
+
+    // An id that is not one of the caller's sessions (unknown or another user's) is a 404.
+    state.revokeMatches = false;
+    const foreign = await app.inject({
+      method: 'DELETE',
+      url: `/api/account/sessions/${'33333333-3333-4333-8333-333333333333'}`,
+      headers: { cookie, origin, 'x-csrf-token': csrf },
+    });
+    assert.equal(foreign.statusCode, 404);
+    assert.equal(foreign.json().code, 'NOT_FOUND');
+    state.revokeMatches = true;
 
     state.live = false;
     const revokedList = await app.inject({
@@ -108,11 +121,40 @@ test('authenticated reads, refresh and logout are rate limited by user or token 
       (await request('POST', '/api/logout', { origin, cookie, 'x-csrf-token': csrf })).statusCode,
       429,
     );
+    assert.equal(
+      (await request('POST', '/api/session/logout', { origin, cookie: refreshCookie })).statusCode,
+      429,
+    );
     // Keys carry the user id or a token hash, never the raw token.
     assert.ok(keys.some((key) => key === `sessions-read:${ownerId}`));
     assert.ok(keys.some((key) => /^logout:[a-f0-9]{64}$/.test(key)));
     assert.ok(keys.some((key) => /^session-refresh:[a-f0-9]{64}$/.test(key)));
     assert.ok(keys.every((key) => !key.includes(token)));
+  } finally {
+    await app.close();
+  }
+});
+
+test('an anonymous session read is budgeted per address, keyed by a hash of the address', async () => {
+  const { database } = fake();
+  const keys: string[] = [];
+  let allow = true;
+  const limiter: RateLimit = async (key) => {
+    keys.push(key);
+    return allow;
+  };
+  const app = await createApp(database, origin, limiter);
+  try {
+    assert.equal(
+      (await app.inject({ method: 'GET', url: '/api/session', headers: { origin } })).statusCode,
+      200,
+    );
+    allow = false;
+    const denied = await app.inject({ method: 'GET', url: '/api/session', headers: { origin } });
+    assert.equal(denied.statusCode, 429);
+    // The address is hashed, never logged or stored raw.
+    assert.ok(keys.some((key) => /^session-read:ip:[a-f0-9]{64}$/.test(key)));
+    assert.ok(keys.every((key) => !key.includes('127.0.0.1')));
   } finally {
     await app.close();
   }

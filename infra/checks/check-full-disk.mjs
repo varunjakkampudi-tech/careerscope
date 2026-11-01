@@ -27,7 +27,7 @@ if (!process.env.FULL_DISK_ROOT) {
       '/repo',
       '-e',
       'FULL_DISK_ROOT=/tiny',
-      'node:26.8.1-bookworm-slim@sha256:367679cf9792759492a486e4aa4b421764d71a9546a6dae8aab81a99eb797b3e',
+      'node:24.22.1-bookworm-slim@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205',
       'sh',
       '-lc',
       'mkdir -p /repo/node_modules/@careerscope && for package in core matching providers resume shared; do ln -s "/repo/packages/$package" "/repo/node_modules/@careerscope/$package"; done && exec node infra/checks/check-full-disk.mjs',

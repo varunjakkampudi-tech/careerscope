@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { channel } from 'node:diagnostics_channel';
 import { runInNewContext } from 'node:vm';
 import type { FastifyInstance, FastifySchema } from 'fastify';
+import { readFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -31,7 +32,7 @@ import {
   publishPending,
   reconcileDeadLetter,
 } from '../../packages/core/src/dispatch.js';
-import { Auth, passwordHash } from '../../packages/core/src/auth.js';
+import { Auth, expiredSessionSweepBatch, passwordHash } from '../../packages/core/src/auth.js';
 import { Conflict as ResumeConflict } from '../../packages/core/src/errors.js';
 import { PrivateFileResumeStorage } from '../../packages/core/src/file-storage.js';
 import {
@@ -222,7 +223,12 @@ test('Swagger documents every runtime route without changing validation and prot
         ].schema.properties.profile.properties.application.required = [];
         assert.throws(() => assertOpenApiRequiredDeclarations(malformedSpec), /required/);
         assert.equal(spec.openapi, '3.0.3');
-        assert.equal(spec.info.version, (await app.inject('/api/health')).json().version);
+        // /api/health deliberately reports no version, so compare with the API package version it is read from.
+        const apiPackage = JSON.parse(
+          readFileSync(new URL('../../apps/api/package.json', import.meta.url), 'utf8'),
+        ) as { version: string };
+        assert.equal(spec.info.version, apiPackage.version);
+        assert.equal('version' in (await app.inject('/api/health')).json(), false);
         assert.deepEqual(spec.servers, [{ url: '/' }]);
         assert.equal(spec.components.securitySchemes.session.name, 'careerscope_v2_session');
         const scoringVersion =
@@ -248,21 +254,12 @@ test('Swagger documents every runtime route without changing validation and prot
           assert.equal(schema?.params, undefined, route);
           assert.equal(schema?.querystring, undefined, route);
         }
-        for (const [path, methods] of Object.entries(spec.paths)) {
-          for (const [method, operation] of Object.entries(
+        for (const methods of Object.values(spec.paths)) {
+          for (const operation of Object.values(
             methods as Record<string, { summary: string; responses: Record<string, unknown> }>,
           )) {
             assert.ok(operation.summary.length > 5);
             assert.ok(operation.responses['500']);
-            if (method === 'post' && path === '/api/register') {
-              assert.ok(operation.responses['404']);
-              assert.equal(
-                Object.keys(operation.responses).some((code) => code.startsWith('2')),
-                false,
-                'permanently unavailable password registration must not document success',
-              );
-              continue;
-            }
             // Redirect-only authentication routes
             // truthfully document 302 rather than inventing a JSON 200. A
             // 2xx response is required for ordinary operations; a documented
@@ -306,10 +303,7 @@ test('Swagger documents every runtime route without changing validation and prot
           spec.paths['/api/resumes/{id}/cancel'].post.description,
           capability === 'cancellation' ? /Cancellation enabled/ : /Cancellation disabled/,
         );
-        assert.match(
-          spec.paths['/api/register'].post.description,
-          /Password-based account creation is unavailable/,
-        );
+        assert.equal(spec.paths['/api/register'], undefined);
         for (const secret of [token, session.csrf, password, 'swagger@example.test'])
           assert.equal(result.body.includes(secret), false);
 
@@ -570,7 +564,7 @@ test('market and pipeline HTTP routes preserve evidence, query bounds and owner 
         for (const sessionCookies of variants) {
           const response = await app.inject({ url, cookies: sessionCookies });
           assert.equal(response.statusCode, 401, url);
-          assert.equal(response.json().error, 'Authentication required');
+          assert.equal(response.json().message, 'Authentication required');
           assert.equal(typeof response.json().requestId, 'string');
           assert.equal(response.headers['cache-control'], 'no-store');
         }
@@ -751,7 +745,7 @@ test('market and pipeline HTTP routes preserve evidence, query bounds and owner 
           const hidden = await app.inject({ url: '/api/market/postings/foreign-only', cookies });
           for (const response of [missing, hidden]) {
             assert.equal(response.statusCode, 404);
-            assert.equal(response.json().error, 'No sightings recorded for this posting');
+            assert.equal(response.json().message, 'No sightings recorded for this posting');
           }
           const invalid = await app.inject({ url: '/api/market/postings/%E0%A4%A', cookies });
           assert.equal(invalid.statusCode, 400);
@@ -946,7 +940,7 @@ test('global resume reservation budgets serialize across owners and preserve ret
         payload: Buffer.from('%PDF-1.7 synthetic capacity document'),
       });
       assert.equal(response.statusCode, 507);
-      assert.equal(response.json().error, 'Resume storage capacity reached');
+      assert.equal(response.json().message, 'Resume storage capacity reached');
       assert.equal(storageCalls, 0);
       assert.equal(
         (await database.pool.query('SELECT count(*) FROM resume_uploads')).rows[0].count,
@@ -1235,7 +1229,8 @@ test('password account compatibility is atomic while executable API registration
         headers: { origin },
         payload: { email: 'third@example.test', password },
       });
-      assert.equal(response.statusCode, 404);
+      // The retired password-registration route is gone, so an anonymous caller is simply unauthenticated.
+      assert.equal(response.statusCode, 401);
       assert.equal((await disabled.inject('/api/session')).json().registrationEnabled, false);
     } finally {
       await disabled.close();
@@ -1259,7 +1254,7 @@ test('password account compatibility is atomic while executable API registration
             payload,
           })
         ).statusCode,
-        404,
+        401,
       );
       assert.equal(
         (
@@ -2015,7 +2010,12 @@ test('partial search outcomes are atomic, owner-scoped, terminal and usable thro
       for (const url of [`/api/searches/${search.id}`, `/api/searches/${search.id}/export`]) {
         const malformed = await app.inject({ url, cookies });
         assert.equal(malformed.statusCode, 400);
-        assert.deepEqual(Object.keys(malformed.json()), ['error', 'requestId']);
+        assert.deepEqual(Object.keys(malformed.json()), [
+          'code',
+          'message',
+          'requestId',
+          'details',
+        ]);
       }
       await database.pool.query(
         `UPDATE saved_leads SET data = data || '{"unexpectedField": "should never reach a client"}'::jsonb WHERE id = $1`,
@@ -2029,7 +2029,12 @@ test('partial search outcomes are atomic, owner-scoped, terminal and usable thro
       ]);
       const malformedLead = await app.inject({ url: `/api/leads/${savedLead!.id}`, cookies });
       assert.equal(malformedLead.statusCode, 400);
-      assert.deepEqual(Object.keys(malformedLead.json()), ['error', 'requestId']);
+      assert.deepEqual(Object.keys(malformedLead.json()), [
+        'code',
+        'message',
+        'requestId',
+        'details',
+      ]);
       // Restore both rows to their real, valid shape so nothing downstream
       // of this point (list/history assertions elsewhere, if any were to be
       // added later) inherits a deliberately-corrupted fixture.
@@ -3880,10 +3885,10 @@ test('CS-35: conflicts carry a stable code and the HTTP layer surfaces distinct,
         payload: { ...request, useProfileTitles: true },
       });
       assert.equal(missingTitles.statusCode, 409);
-      assert.deepEqual(Object.keys(missingTitles.json()), ['error', 'code', 'requestId']);
+      assert.deepEqual(Object.keys(missingTitles.json()), ['code', 'message', 'requestId']);
       assert.equal(missingTitles.json().code, 'MISSING_TARGET_ROLES');
       assert.equal(
-        missingTitles.json().error,
+        missingTitles.json().message,
         'Add target roles to your profile before starting this search',
       );
 
@@ -3906,10 +3911,10 @@ test('CS-35: conflicts carry a stable code and the HTTP layer surfaces distinct,
       assert.equal(second.statusCode, 409);
       assert.equal(second.json().code, 'IDEMPOTENCY_KEY_REUSED');
       assert.equal(
-        second.json().error,
+        second.json().message,
         'This request already completed with different details; try again',
       );
-      assert.notEqual(missingTitles.json().error, second.json().error);
+      assert.notEqual(missingTitles.json().message, second.json().message);
 
       // An internal conflict that was never given a specific code must still
       // fail safely through the REAL error handler: the generic 409 message,
@@ -3935,8 +3940,8 @@ test('CS-35: conflicts carry a stable code and the HTTP layer surfaces distinct,
             payload: request,
           });
           assert.equal(unmapped.statusCode, 409);
-          assert.deepEqual(Object.keys(unmapped.json()), ['error', 'code', 'requestId']);
-          assert.equal(unmapped.json().error, 'Idempotency conflict');
+          assert.deepEqual(Object.keys(unmapped.json()), ['code', 'message', 'requestId']);
+          assert.equal(unmapped.json().message, 'Idempotency conflict');
           assert.ok(
             !unmapped.payload.includes('search_commands'),
             'the raw internal message must not reach the client',
@@ -4078,6 +4083,157 @@ test('CS-57: logging out answers identically with no cookie, a stale cookie and 
     await admin.close();
   }
 });
+
+async function withFreshDatabase(run: (database: Database) => Promise<void>) {
+  const configured = process.env.DATABASE_URL;
+  assert.ok(configured, 'Integration tests require the isolated v2 DATABASE_URL');
+  const base = new URL(configured);
+  assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
+  const admin = new Database(configured);
+  const name = `test_${randomUUID().replaceAll('-', '')}`;
+  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  base.pathname = `/${name}`;
+  const database = new Database(base.href);
+  try {
+    await migrate(database.db, {
+      migrationsFolder: fileURLToPath(new URL('../../migrations', import.meta.url)),
+    });
+    await run(database);
+  } finally {
+    await database.close();
+    await admin.pool.query(`DROP DATABASE "${name}"`);
+    await admin.close();
+  }
+}
+
+test('F1: logout and sign-in revoke the session named by an expired access cookie', () =>
+  withFreshDatabase(async (database) => {
+    const auth = new Auth(database);
+    const password = 'synthetic-password-1234';
+    await auth.register('f1@example.test', password);
+    const origin = 'http://localhost:5280';
+    const app = await createApp(database, origin, async () => true);
+    const expireAccess = (sessionId: string) =>
+      database.pool.query(
+        "UPDATE sessions SET access_expires_at = now() - interval '1 minute' WHERE id = $1",
+        [sessionId],
+      );
+    try {
+      // (a) The access window has passed and the browser sends only the access cookie.
+      const first = await auth.loginSession('f1@example.test', password);
+      assert.ok(first);
+      await expireAccess(first.sessionId);
+      assert.equal(await auth.session(first.accessToken), null);
+      const loggedOut = await app.inject({
+        method: 'POST',
+        url: '/api/logout',
+        headers: { origin },
+        cookies: { [sessionCookie]: first.accessToken },
+      });
+      assert.equal(loggedOut.statusCode, 200);
+      assert.deepEqual(loggedOut.json(), { authenticated: false });
+      assert.equal((await auth.refresh(first.refreshToken)).status, 'invalid');
+
+      // (b) No cookies at all: the existing response, nothing to revoke.
+      const bare = await app.inject({ method: 'POST', url: '/api/logout', headers: { origin } });
+      assert.equal(bare.statusCode, 200);
+      assert.deepEqual(bare.json(), { authenticated: false });
+
+      // (c) Signing in while holding an older session's access cookie revokes that session,
+      // even though the refresh cookie is not sent.
+      const older = await auth.loginSession('f1@example.test', password);
+      assert.ok(older);
+      await expireAccess(older.sessionId);
+      const signIn = await app.inject({
+        method: 'POST',
+        url: '/api/login',
+        headers: { origin },
+        cookies: { [sessionCookie]: older.accessToken },
+        payload: { email: 'f1@example.test', password },
+      });
+      assert.equal(signIn.statusCode, 200);
+      assert.equal((await auth.refresh(older.refreshToken)).status, 'invalid');
+      const revoked = await database.pool.query('SELECT revoked_at FROM sessions WHERE id = $1', [
+        older.sessionId,
+      ]);
+      assert.ok(revoked.rows[0]?.revoked_at);
+    } finally {
+      await app.close();
+    }
+  }));
+
+test('F4: GET /api/session has a per-address budget with the standard 429 envelope', () =>
+  withFreshDatabase(async (database) => {
+    const counts = new Map<string, number>();
+    const app = await createApp(database, 'http://localhost:5280', async (key, limit) => {
+      const next = (counts.get(key) ?? 0) + 1;
+      counts.set(key, next);
+      return next <= limit;
+    });
+    try {
+      for (let index = 0; index < 120; index += 1)
+        assert.equal((await app.inject('/api/session')).statusCode, 200);
+      const limited = await app.inject('/api/session');
+      assert.equal(limited.statusCode, 429);
+      let reference;
+      for (let index = 0; index < 61; index += 1) reference = await app.inject('/api/health');
+      assert.equal(reference!.statusCode, 429);
+      const envelope = (response: { json: () => unknown }) =>
+        response.json() as { code: string; message: string; requestId: string };
+      assert.ok(envelope(limited).requestId);
+      assert.deepEqual(
+        { ...envelope(limited), requestId: undefined },
+        { ...envelope(reference!), requestId: undefined },
+      );
+      assert.equal(limited.headers['content-type'], reference!.headers['content-type']);
+    } finally {
+      await app.close();
+    }
+  }));
+
+test('F5: the expired-session sweep is bounded and runs outside the sign-in transaction', () =>
+  withFreshDatabase(async (database) => {
+    const auth = new Auth(database);
+    const password = 'synthetic-password-1234';
+    await auth.register('f5@example.test', password);
+    const owner = await database.pool.query<{ id: string }>(
+      'SELECT id FROM users WHERE email = $1',
+      ['f5@example.test'],
+    );
+    const extra = 20;
+    await database.pool.query(
+      `INSERT INTO sessions
+         (id, token_hash, owner_id, expires_at, access_expires_at, created_at, last_used_at)
+       SELECT gen_random_uuid(), md5(g::text) || md5(g::text || 'x'), $1,
+              now() - interval '1 day', now() - interval '2 days', now() - interval '31 days', now()
+       FROM generate_series(1, $2::int) g`,
+      [owner.rows[0]!.id, expiredSessionSweepBatch + extra],
+    );
+    const credentials = await auth.loginSession('f5@example.test', password);
+    assert.ok(credentials);
+    assert.ok(await auth.session(credentials.accessToken));
+    const expiredCount = async () =>
+      Number(
+        (
+          await database.pool.query<{ count: string }>(
+            'SELECT count(*) FROM sessions WHERE expires_at <= now()',
+          )
+        ).rows[0]!.count,
+      );
+    // The sweep runs after sign-in returns, so wait for it to reach the expected count. A single
+    // statement deletes one batch, so the count moves in one step from batch + extra to extra.
+    const settle = async (expected: number) => {
+      for (let attempt = 0; attempt < 200; attempt += 1) {
+        if ((await expiredCount()) === expected) return;
+        await new Promise((resolve) => setTimeout(resolve, 25));
+      }
+      assert.equal(await expiredCount(), expected);
+    };
+    await settle(extra);
+    // A later sign-in clears the remainder.
+    assert.ok(await auth.loginSession('f5@example.test', password));
+    await settle(0);
+  }));
 
 test('CS-61: the session carries a stable, opaque per-owner cache key that differs between owners', async () => {
   const configured = process.env.DATABASE_URL;

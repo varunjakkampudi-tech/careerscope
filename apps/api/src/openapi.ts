@@ -60,7 +60,28 @@ const uploadStatus = text({
   enum: ['uploading', 'queued', 'cancelling', 'cancelled', 'parsed', 'rejected'],
 });
 const revision = integer({ minimum: 1, maximum: 2147483646 });
-const error = object({ error: text(), requestId: uuid });
+/** The single error envelope (see `errors.ts`) used by every non-success response. */
+export const errorEnvelopeSchema: Schema = {
+  ...object(
+    {
+      code: text({
+        description:
+          'Stable machine-readable code. Defaults per status are INVALID_REQUEST, AUTHENTICATION_REQUIRED, FORBIDDEN, NOT_FOUND, METHOD_NOT_ALLOWED, REQUEST_TIMEOUT, CONFLICT, PAYLOAD_TOO_LARGE, UNSUPPORTED_MEDIA_TYPE, RATE_LIMITED, INTERNAL_ERROR, SERVICE_UNAVAILABLE and STORAGE_LIMIT_REACHED. A 409 may carry a specific conflict code such as PROFILE_REVISION_CONFLICT.',
+      }),
+      message: text({ description: 'Client-safe summary; never contains private data.' }),
+      requestId: { ...uuid, description: 'Correlates this response with the server log.' },
+      details: {
+        type: 'object',
+        additionalProperties: true,
+        description:
+          'Optional structured context. A validation failure lists issues as { path, code } without the submitted values.',
+      },
+    },
+    ['code', 'message', 'requestId'],
+  ),
+  title: 'ErrorEnvelope',
+};
+const error = errorEnvelopeSchema;
 const stringList = (maxItems: number, minItems = 0) =>
   array(text({ minLength: 1 }), { minItems, maxItems });
 const link = text({ description: 'Empty or an HTTPS URL without credentials.', default: '' });
@@ -290,7 +311,7 @@ const errors: Record<number, string> = {
   409: 'Revision, idempotency or state conflict',
   413: 'Request too large',
   429: 'Rate limit exceeded',
-  500: 'Service unavailable',
+  500: 'Internal error',
   502: 'Upstream provider error',
   503: 'Capability unavailable',
   504: 'Upstream provider timed out',
@@ -343,8 +364,8 @@ function contracts(options: {
   const resumeDescription = `Uploads ${options.resumes ? 'enabled' : 'disabled (503 for storage operations)'}. Cancellation ${options.cancellation ? 'enabled' : 'disabled (503)'}. PDF/DOCX only, maximum ${maximumResumeBytes} bytes. Parsed proposals never automatically update the profile.`;
   return {
     'GET /api/health': operation(
-      'Database health and package version',
-      object({ status: text({ enum: ['ok'] }), version: text() }),
+      'Database and dependency health; rate-limited per client address (429)',
+      object({ status: text({ enum: ['ok'] }) }),
     ),
     'GET /api/session': operation('Current browser session', {
       oneOf: [
@@ -356,6 +377,7 @@ function contracts(options: {
             email: nullable(text({ format: 'email' })),
             emailVerifiedAt: nullable(timestamp),
             emailOtpEnabled: bool,
+            legalAcceptanceEnabled: bool,
             phone: nullable(text({ pattern: '^\\+[1-9][0-9]{7,14}$' })),
             testUser: text({ enum: ['candidate', 'admin'] }),
             // A stable, opaque per-user value for client cache keys. Not the user
@@ -389,16 +411,6 @@ function contracts(options: {
         ),
       ],
     }),
-    'POST /api/register': operation(
-      'Password registration unavailable',
-      object({ error: text(), requestId: uuid }),
-      {
-        code: 404,
-        failures: [404],
-        description:
-          'Password-based account creation is unavailable. When signup is explicitly configured, new accounts can only be created through the email-OTP flow with versioned Terms and privacy notice acceptance finalized after successful email verification.',
-      },
-    ),
     'POST /api/login': operation(
       options.testUsers
         ? 'Select a development or protected staging test identity and set the HttpOnly session cookie'
@@ -472,6 +484,11 @@ function contracts(options: {
       object({ authenticated: { ...bool, enum: [false] } }),
       { failures: [429] },
     ),
+    'POST /api/session/logout': operation(
+      'Sign out with the refresh cookie when the access cookie has expired; revokes the session family',
+      object({ authenticated: { ...bool, enum: [false] } }),
+      { failures: [429] },
+    ),
     'POST /api/session/refresh': operation(
       'Rotate the browser refresh token and issue a short-lived access session',
       object({ authenticated: { ...bool, enum: [true] }, csrf: text() }),
@@ -497,6 +514,123 @@ function contracts(options: {
         ),
       }),
       { failures: [429] },
+    ),
+    'GET /api/account/legal': operation(
+      'Read the terms and privacy acceptance status',
+      object({
+        acceptanceRequired: bool,
+        acceptedTermsVersion: nullable(text()),
+        acceptedPrivacyVersion: nullable(text()),
+        current: object({
+          termsVersion: text(),
+          termsUrl: text({ format: 'uri' }),
+          privacyVersion: text(),
+          privacyUrl: text({ format: 'uri' }),
+        }),
+      }),
+      {
+        failures: [404, 429],
+        description:
+          'Requires the authenticated owner session. Reports whether a changed terms or privacy version must be accepted before changes are allowed. Reads are never blocked.',
+      },
+    ),
+    'POST /api/account/legal/accept': operation(
+      'Accept the current terms and privacy versions',
+      object({ acceptanceRequired: { ...bool, enum: [false] } }),
+      {
+        body: object({ termsVersion: text(), privacyVersion: text() }, [
+          'termsVersion',
+          'privacyVersion',
+        ]),
+        failures: [400, 401, 403, 404, 409],
+        description:
+          'Requires the authenticated owner session and CSRF token. Records acceptance of the current versions only; an out-of-date version is refused with 409.',
+      },
+    ),
+    'GET /api/account/recovery-email': operation(
+      'Read the recovery-address status',
+      object({
+        configured: bool,
+        verifiedAt: nullable(text({ format: 'date-time' })),
+        cooldownEndsAt: nullable(text({ format: 'date-time' })),
+        available: bool,
+      }),
+      {
+        failures: [429],
+        description:
+          'Requires the authenticated owner session. Returns whether a recovery address is confirmed and when recovery sign-in becomes available. The address itself is never returned.',
+      },
+    ),
+    'POST /api/account/recovery-email/request': operation(
+      'Send a confirmation code to a candidate recovery address',
+      object({
+        message: text(),
+        expiresInSeconds: integer({ minimum: 1 }),
+        resendAfterSeconds: integer({ minimum: 1 }),
+      }),
+      {
+        code: 202,
+        body: object({ email: text({ format: 'email', maxLength: 254 }) }, ['email']),
+        failures: [400, 401, 403, 429, 503],
+        description:
+          'Requires the authenticated owner session and CSRF token. The same response is returned whether or not a code was sent, so the reply reveals nothing about other accounts.',
+      },
+    ),
+    'POST /api/account/recovery-email/verify': operation(
+      'Confirm the recovery address with its code',
+      object({ configured: { ...bool, enum: [true] } }),
+      {
+        body: object(
+          {
+            email: text({ format: 'email', maxLength: 254 }),
+            code: text({ pattern: '^\\d{6}$' }),
+          },
+          ['email', 'code'],
+        ),
+        failures: [400, 401, 403, 409, 429, 503],
+        description:
+          'Requires the authenticated owner session and CSRF token. Recovery sign-in becomes available 72 hours after confirmation.',
+      },
+    ),
+    'DELETE /api/account/recovery-email': operation(
+      'Remove the recovery address',
+      object({ configured: { ...bool, enum: [false] } }),
+      {
+        failures: [401, 403, 404],
+        description:
+          'Requires the authenticated owner session and CSRF token. Recovery sign-in is unavailable until a new address is confirmed.',
+      },
+    ),
+    'POST /api/recovery/request': operation(
+      'Send a recovery sign-in code to the recovery address',
+      object({
+        message: text(),
+        expiresInSeconds: integer({ minimum: 1 }),
+        resendAfterSeconds: integer({ minimum: 1 }),
+      }),
+      {
+        code: 202,
+        body: object({ email: text({ format: 'email', maxLength: 254 }) }, ['email']),
+        failures: [400, 503],
+        description:
+          'Anonymous. Returns the same response whether or not the account exists or has a recovery address. A code is sent only to a confirmed recovery address that has passed its cooldown.',
+      },
+    ),
+    'POST /api/recovery/verify': operation(
+      'Verify a recovery sign-in code and establish a session',
+      object({ authenticated: { ...bool, enum: [true] } }),
+      {
+        body: object(
+          {
+            email: text({ format: 'email', maxLength: 254 }),
+            code: text({ pattern: '^\\d{6}$' }),
+          },
+          ['email', 'code'],
+        ),
+        failures: [400, 401, 429, 503],
+        description:
+          'Anonymous. Accepts a code only from the confirmed recovery address, after its cooldown. Every rejected attempt returns the same 401.',
+      },
     ),
     'POST /api/account/email-change/request': operation(
       options.emailOtpEnabled ? 'Request a two-address email change' : 'Email change is disabled',
@@ -525,7 +659,7 @@ function contracts(options: {
     'DELETE /api/account/sessions/:id': operation(
       'Revoke one session owned by the authenticated account',
       { type: 'null' },
-      { code: 204, failures: [400, 429] },
+      { code: 204, failures: [400, 404, 429] },
     ),
     'GET /api/account/marketing-consent': operation(
       'Read the authenticated account’s current optional marketing preference',
@@ -609,6 +743,7 @@ function contracts(options: {
               contentType: text(),
               createdAt: timestamp,
               status: uploadStatus,
+              cancellable: bool,
             }),
           ),
         },
@@ -663,7 +798,7 @@ function contracts(options: {
       {
         body: object({}),
         failures: [400, 404, 409, 429, 503, 507],
-        description: `${resumeDescription} An empty JSON object is optional.`,
+        description: `${resumeDescription} An empty JSON object is optional. Only uploading or cancelling uploads can be cancelled; queued and completed uploads return 409.`,
       },
     ),
     'DELETE /api/resumes/:id': operation(
@@ -1018,11 +1153,13 @@ export async function registerOpenApi(
         '/api/health',
         '/api/session',
         '/api/login',
-        '/api/register',
         '/api/otp/request',
         '/api/otp/verify',
         '/api/logout',
+        '/api/session/logout',
         '/api/session/refresh',
+        '/api/recovery/request',
+        '/api/recovery/verify',
       ].includes(url);
       const refreshEndpoint = url === '/api/session/refresh';
       const mutation = !['GET', 'HEAD', 'OPTIONS'].includes(method);
@@ -1084,13 +1221,9 @@ export async function registerOpenApi(
           request.credentials = 'same-origin';
           if (
             !['GET', 'HEAD', 'OPTIONS'].includes(String(request.method ?? 'GET').toUpperCase()) &&
-            ![
-              '/api/login',
-              '/api/register',
-              '/api/otp/request',
-              '/api/otp/verify',
-              '/api/session/refresh',
-            ].includes(target.pathname)
+            !['/api/login', '/api/otp/request', '/api/otp/verify', '/api/session/refresh'].includes(
+              target.pathname,
+            )
           ) {
             const response = await fetch('/api/session', {
               credentials: 'same-origin',

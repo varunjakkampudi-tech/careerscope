@@ -1,4 +1,4 @@
-import type { CollectedJob } from '@careerscope/core';
+import type { CollectedJob } from '@careerscope/shared';
 import Link from 'next/link';
 
 export default function MatchEvidence({ match }: { match: NonNullable<CollectedJob['match']> }) {

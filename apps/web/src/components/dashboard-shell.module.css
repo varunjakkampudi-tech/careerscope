@@ -57,6 +57,14 @@
 }
 
 .shell[data-theme='dark'] {
+  /* The base tokens in globals.css (--surface, --ink, ...) have no dark values of their own.
+     Inside the dark shell they follow the --dash-* values, so a panel that uses a base token
+     is not a white card with light text. Light theme is unchanged. */
+  --canvas: var(--dash-canvas);
+  --surface: var(--dash-surface);
+  --ink: var(--dash-ink);
+  --muted: var(--dash-muted);
+  --border: var(--dash-border);
   --dash-canvas: #0b0e19;
   --dash-surface: #141a2e;
   --dash-ink: #e7eaf5;
@@ -255,7 +263,7 @@
   font-size: 12px;
   font-weight: 700;
   background: var(--dash-accent);
-  color: #fff;
+  color: var(--on-solid);
 }
 
 .main {
@@ -375,8 +383,8 @@
   height: 17px;
   padding: 0 4px;
   border-radius: 999px;
-  background: #b42318;
-  color: #fff;
+  background: var(--danger-solid);
+  color: var(--on-solid);
   font-size: 10px;
   font-weight: 700;
   line-height: 17px;
@@ -396,7 +404,7 @@
   border-radius: 12px;
   background: var(--dash-surface);
   color: var(--dash-ink);
-  box-shadow: 0 12px 32px rgb(16 19 35 / 18%);
+  box-shadow: var(--shadow-popover);
 }
 
 .notificationPanel h2 {
@@ -605,7 +613,7 @@
 }
 
 .checklist [data-done='true'] {
-  color: #157539;
+  color: var(--good);
 }
 
 .checklist [data-done='false'] {
@@ -667,7 +675,7 @@
   justify-content: center;
   font-size: 13px;
   font-weight: 700;
-  color: #fff;
+  color: var(--on-solid);
   background: var(--dash-accent);
 }
 
@@ -714,8 +722,8 @@
   flex: none;
   font-size: 11px;
   font-weight: 600;
-  color: #157539;
-  border: 1px solid #157539;
+  color: var(--good);
+  border: 1px solid var(--good);
   border-radius: 999px;
   padding: 1px 8px;
   white-space: nowrap;
@@ -852,7 +860,7 @@
 }
 .statIcon[data-tone='green'] {
   background: #e3f7e9;
-  color: #157539;
+  color: var(--good);
 }
 .statIcon[data-tone='orange'] {
   background: #fdedd9;
@@ -983,11 +991,7 @@
 }
 
 .stateNotice[role='alert'] {
-  color: #b3261e;
-}
-
-.shell[data-theme='dark'] .stateNotice[role='alert'] {
-  color: #f6b3bf;
+  color: var(--danger-text);
 }
 
 .retryButton {
@@ -1077,7 +1081,7 @@
 .mobileNavItem[aria-current='page'] {
   background: var(--dash-accent);
   border-color: var(--dash-accent);
-  color: #fff;
+  color: var(--on-solid);
 }
 
 .mobileNavItemDisabled {

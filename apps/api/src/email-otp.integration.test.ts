@@ -215,7 +215,7 @@ test(
       const incorrect = challenge.code === '000000' ? '000001' : '000000';
       const wrong = await verifyCode(appOne!, challenge.email, incorrect);
       assert.equal(wrong.statusCode, 401);
-      assert.equal(wrong.json().error, 'Invalid or expired verification code');
+      assert.equal(wrong.json().message, 'Invalid or expired verification code');
 
       const verified = await verifyCode(appOne!, challenge.email, challenge.code);
       assert.equal(verified.statusCode, 200);
@@ -377,7 +377,7 @@ test(
         failedSessionChallenge.code,
       );
       assert.equal(failedSessionVerification.statusCode, 503);
-      assert.equal(failedSessionVerification.json().error, 'Sign-in is temporarily unavailable');
+      assert.equal(failedSessionVerification.json().message, 'Sign-in is temporarily unavailable');
       assert.equal(
         (
           await database.pool.query('SELECT 1 FROM sessions WHERE owner_id = $1', [
@@ -425,7 +425,7 @@ test(
       failedRecipients.add('failed-delivery@example.test');
       const failedSend = await requestCode(appOne!, 'failed-delivery@example.test');
       assert.equal(failedSend.statusCode, 503);
-      assert.equal(failedSend.json().error, 'Sign-in is temporarily unavailable');
+      assert.equal(failedSend.json().message, 'Sign-in is temporarily unavailable');
       const failedCode = delivered.at(-1)!;
       assert.equal(
         (await verifyCode(appOne!, failedCode.email, failedCode.code)).statusCode,
@@ -663,6 +663,78 @@ test(
       assert.ok(
         BigInt(marketingHistory.rows[1]!.sequence) > BigInt(marketingHistory.rows[0]!.sequence),
       );
+      // API-07 boundaries: consent is account-bound, strictly validated, and idempotent.
+      const marketingHeaders = {
+        origin,
+        cookie: signupCookieHeader,
+        'x-csrf-token': signupSession.json().csrf,
+      };
+      const marketingRows = async () =>
+        (
+          await database.pool.query<{ accepted: boolean }>(
+            `SELECT accepted FROM account_acceptances
+             WHERE owner_id = (SELECT id FROM users WHERE email = $1) AND document = 'marketing'
+             ORDER BY sequence`,
+            [signupEmail],
+          )
+        ).rows.map(({ accepted }) => accepted);
+      assert.equal(
+        (await appOne!.inject({ method: 'GET', url: '/api/account/marketing-consent' })).statusCode,
+        401,
+        'marketing consent cannot be read without a session',
+      );
+      assert.equal(
+        (
+          await appOne!.inject({
+            method: 'POST',
+            url: '/api/account/marketing-consent',
+            payload: { optIn: true },
+            headers: { origin },
+          })
+        ).statusCode,
+        401,
+        'marketing consent cannot be changed without a session',
+      );
+      const afterWithdrawal = await appOne!.inject({
+        method: 'GET',
+        url: '/api/account/marketing-consent',
+        headers: { cookie: signupCookieHeader },
+      });
+      assert.deepEqual(afterWithdrawal.json(), { optedIn: false, version: 'marketing-test-1' });
+      const unknownField = await appOne!.inject({
+        method: 'POST',
+        url: '/api/account/marketing-consent',
+        headers: marketingHeaders,
+        payload: { optIn: true, extra: 1 },
+      });
+      assert.equal(unknownField.statusCode, 400, 'unknown body fields are rejected');
+      const nonBoolean = await appOne!.inject({
+        method: 'POST',
+        url: '/api/account/marketing-consent',
+        headers: marketingHeaders,
+        payload: { optIn: 'true' },
+      });
+      assert.equal(nonBoolean.statusCode, 400, 'optIn must be a boolean');
+      const repeatedWithdrawal = await appOne!.inject({
+        method: 'POST',
+        url: '/api/account/marketing-consent',
+        headers: marketingHeaders,
+        payload: { optIn: false },
+      });
+      assert.equal(repeatedWithdrawal.statusCode, 200);
+      assert.deepEqual(
+        await marketingRows(),
+        [true, false],
+        'rejected and repeated writes append nothing',
+      );
+      const reOptIn = await appOne!.inject({
+        method: 'POST',
+        url: '/api/account/marketing-consent',
+        headers: marketingHeaders,
+        payload: { optIn: true },
+      });
+      assert.deepEqual(reOptIn.json(), { optedIn: true });
+      assert.deepEqual(await marketingRows(), [true, false, true], 're-consent appends an event');
 
       await limiterOne.client.del(
         `${redisPrefix}otp:request:email-cooldown:${hashOtpEmail(signupEmail, secret)}`,
@@ -962,7 +1034,7 @@ test(
           payload: { email: 'candidate@example.test' },
         });
         assert.equal(failedRateLimit.statusCode, 503);
-        assert.equal(failedRateLimit.json().error, 'Sign-in is temporarily unavailable');
+        assert.equal(failedRateLimit.json().message, 'Sign-in is temporarily unavailable');
         assert.equal(failedRateLimit.body.includes('synthetic redis transport detail'), false);
       } finally {
         await unavailable.close();

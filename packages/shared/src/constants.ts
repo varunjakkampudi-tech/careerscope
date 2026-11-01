@@ -4,6 +4,9 @@
  * added in exactly one place.
  */
 
+/** Loopback port the API listens on; the web rewrite, the API entry point and the browser checks all use it. */
+export const API_PORT = 5390;
+
 /** Job sources, grouped by how they are reached. */
 export const ATS_SOURCES = [
   'greenhouse',

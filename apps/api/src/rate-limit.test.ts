@@ -3,7 +3,7 @@ import test from 'node:test';
 import { createApp } from './app.js';
 import type { Database } from '@careerscope/core';
 
-test('legacy password registration is unavailable regardless of its old flag', async () => {
+test('the retired password registration route no longer exists and reveals nothing', async () => {
   let databaseTouched = false;
   const database = {
     pool: {
@@ -25,11 +25,12 @@ test('legacy password registration is unavailable regardless of its old flag', a
       payload: { email: 'candidate@example.test', password: 'synthetic-password-123' },
     });
 
-    assert.equal(response.statusCode, 404);
+    assert.equal(response.statusCode, 401);
     const body = response.json();
-    assert.equal(body.error, 'Registration unavailable');
+    assert.equal(body.code, 'AUTHENTICATION_REQUIRED');
+    assert.equal(body.message, 'Authentication required');
     assert.match(body.requestId, /^[a-f0-9-]{36}$/);
-    assert.deepEqual(Object.keys(body).sort(), ['error', 'requestId']);
+    assert.deepEqual(Object.keys(body).sort(), ['code', 'message', 'requestId']);
     assert.equal(databaseTouched, false);
     assert.doesNotMatch(response.body, /candidate@example\.test/);
   } finally {
@@ -67,7 +68,7 @@ test('email OTP signup remains unavailable without complete legal policy configu
       headers: { origin: 'http://localhost:5280' },
       payload: { email: 'candidate@example.test', password: 'synthetic-password-123' },
     });
-    assert.equal(legacyPassword.statusCode, 404);
+    assert.equal(legacyPassword.statusCode, 401);
     const signupRequest = await app.inject({
       method: 'POST',
       url: '/api/otp/request',
@@ -111,7 +112,7 @@ test('readiness fails closed when the required shared Redis dependency is unavai
 
     assert.equal(databaseChecked, true);
     assert.equal(response.statusCode, 503);
-    assert.deepEqual(Object.keys(response.json()).sort(), ['error', 'requestId']);
+    assert.deepEqual(Object.keys(response.json()).sort(), ['code', 'message', 'requestId']);
     assert.doesNotMatch(response.body, /synthetic private Redis failure/);
   } finally {
     await app.close();
@@ -183,7 +184,7 @@ test('OTP request fails closed with a sanitized 503 when the shared limiter is u
     });
 
     assert.equal(response.statusCode, 503);
-    assert.deepEqual(Object.keys(response.json()).sort(), ['error', 'requestId']);
+    assert.deepEqual(Object.keys(response.json()).sort(), ['code', 'message', 'requestId']);
     assert.doesNotMatch(response.body, /candidate@example\.test|private Redis failure/);
     assert.equal(emailSent, false);
   } finally {
@@ -222,7 +223,7 @@ test('OTP verification fails closed with a sanitized 503 when the shared limiter
     });
 
     assert.equal(response.statusCode, 503);
-    assert.deepEqual(Object.keys(response.json()).sort(), ['error', 'requestId']);
+    assert.deepEqual(Object.keys(response.json()).sort(), ['code', 'message', 'requestId']);
     assert.doesNotMatch(response.body, /candidate@example\.test|private Redis failure/);
   } finally {
     await app.close();

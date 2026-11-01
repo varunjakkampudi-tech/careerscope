@@ -61,13 +61,16 @@ env:
 
 concurrency:
   group: careerscope-ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+  # A newer push to a pull request supersedes its older run; branch and scheduled runs always finish.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   checks:
-    name: Format, gates, domain, build, and security
+    name: Quality gates
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
     if: >-
       github.event_name != 'workflow_dispatch' ||
       contains(fromJSON('["all","checks","domain","security"]'), inputs.suite)
@@ -90,6 +93,14 @@ jobs:
         if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","checks"]'), inputs.suite)
         run: npm run gates:test
 
+      - name: Check toolchain consistency (Node, Next.js, Fastify; the image must match .nvmrc)
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","checks"]'), inputs.suite)
+        run: npm run toolchain:check
+
+      - name: Check migration integrity (drizzle-kit check)
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","checks"]'), inputs.suite)
+        run: npm run migrations:check
+
       - name: Run domain tests
         if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","domain"]'), inputs.suite)
         run: npm run test:domain
@@ -98,13 +109,34 @@ jobs:
         if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","checks"]'), inputs.suite)
         run: npm run build
 
-      - name: Reject unaccepted dependency vulnerabilities
+      - name: Reject high or critical advisories in production dependencies
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","checks","security"]'), inputs.suite)
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Reject high or critical advisories in the full dependency tree
         if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","checks","security"]'), inputs.suite)
         run: npm audit --audit-level=high
 
       - name: Scan for accidentally tracked secrets and private data
-        if: github.event_name == 'workflow_dispatch' && inputs.suite == 'security'
         run: npm run privacy:check
+
+      # Syntax only (bash -n); nothing is executed. shellcheck is not run: it was not available
+      # to confirm its findings against these scripts, so it is not a gate.
+      - name: Check shell script syntax under infra/ (bash -n)
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","checks"]'), inputs.suite)
+        run: |
+          count=0
+          failed=0
+          while IFS= read -r -d '' script; do
+            count=$((count + 1))
+            if ! bash -n "$script"; then
+              echo "::error file=$script::bash -n reported a syntax error"
+              failed=$((failed + 1))
+            fi
+          done < <(find infra -type f -name '*.sh' -print0 | sort -z)
+          echo "Checked $count shell scripts under infra/, $failed with syntax errors"
+          test "$count" -gt 0
+          test "$failed" -eq 0
 
       - name: Summarize static-check provenance
         if: always()
@@ -122,10 +154,35 @@ jobs:
             echo "- Individual command output is retained in this workflow run's logs."
           } >> "$GITHUB_STEP_SUMMARY"
 
+  image:
+    name: Production image build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the triggering revision
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+
+      - name: Build the runtime image (not pushed)
+        env:
+          DOCKER_BUILDKIT: '1'
+        run: docker build -f infra/docker/Dockerfile --target runtime --build-arg CAREERSCOPE_REVISION="$GITHUB_SHA" -t careerscope:ci .
+
+      - name: Build the proxy image (not pushed)
+        env:
+          DOCKER_BUILDKIT: '1'
+        run: docker build -f infra/docker/Dockerfile --target proxy --build-arg CAREERSCOPE_REVISION="$GITHUB_SHA" -t careerscope:ci-proxy .
+
   services:
-    name: PostgreSQL, Redis, browser, recovery, and performance suites
+    name: Services, integration, and browser suites
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    permissions:
+      contents: read
     if: >-
       github.event_name == 'schedule' ||
       github.event_name == 'pull_request' ||
@@ -246,6 +303,10 @@ jobs:
         if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration","browser","cross-browser","performance","soak","recovery"]'), inputs.suite)
         run: npm run build
 
+      - name: Apply all migrations to the fresh database
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration"]'), inputs.suite)
+        run: npm run db:migrate
+
       - name: Start production frontend for browser acceptance
         if: >-
           github.event_name == 'schedule' ||
@@ -270,9 +331,18 @@ jobs:
           cat "$RUNNER_TEMP/careerscope-web.log"
           exit 1
 
-      - name: Run PostgreSQL and Redis integration tests
+      - name: Run PostgreSQL and Redis integration tests (serial, production database timeouts)
         if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration"]'), inputs.suite)
+        # Only the BullMQ suite gets raised timeouts, from scripts/tests/bull-queue.integration.env.
         run: npm run test:integration
+
+      - name: Check the production pool budget and one query on an empty schema
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration"]'), inputs.suite)
+        run: npm run test:query-budget
+
+      - name: Verify the production image, compose file, Redis secret rendering and resume-key bootstrap
+        if: github.event_name != 'workflow_dispatch' || contains(fromJSON('["all","integration"]'), inputs.suite)
+        run: node infra/checks/check-production-config.mjs
 
       - name: Install selected Playwright browser and system dependencies
         if: >-

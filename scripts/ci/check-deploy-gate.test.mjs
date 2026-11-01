@@ -219,7 +219,6 @@ test('CI cannot grant write permissions at workflow or job scope', () => {
 test('the root CI service topology is disposable, loopback-only and recovery-compatible', () => {
   const workflow = readFileSync(resolve('.github/workflows/ci.yml'), 'utf8');
   const fullDiskCheck = readFileSync(resolve('infra/checks/check-full-disk.mjs'), 'utf8');
-  const backupCheck = readFileSync(resolve('infra/checks/check-backup.sh'), 'utf8');
   const queueRuntimeCheck = readFileSync(resolve('scripts/tests/check-queue-runtime.ts'), 'utf8');
   const databaseRecoveryCheck = readFileSync(
     resolve('scripts/tests/check-database-recovery.ts'),
@@ -237,7 +236,7 @@ test('the root CI service topology is disposable, loopback-only and recovery-com
         /^[ ]{8}uses: actions\/checkout@[a-f0-9]{40}\r?\n[ ]{8}with:\r?\n[ ]{10}persist-credentials: false$/gm,
       ),
     ].length,
-    2,
+    3,
     'each CI job must prevent checkout credentials from persisting into test execution',
   );
   assert.match(workflow, /--name careerscope-ci-postgres --publish 127\.0\.0\.1:5432:5432/);
@@ -250,15 +249,11 @@ test('the root CI service topology is disposable, loopback-only and recovery-com
   assert.ok(redisImage, 'the CI workflow must declare its immutable Redis image');
   assert.match(
     fullDiskCheck,
-    /node:26\.8\.1-bookworm-slim@sha256:[a-f0-9]{64}/,
+    /node:24\.22\.1-bookworm-slim@sha256:[a-f0-9]{64}/,
     'recovery containers must use immutable image digests',
   );
   assert.match(queueRuntimeCheck, /redis:7\.4\.5-alpine@sha256:[a-f0-9]{64}/);
   assert.match(databaseRecoveryCheck, /postgres:17\.6-alpine@sha256:[a-f0-9]{64}/);
-  assert.ok(
-    backupCheck.includes(postgresImage),
-    'backup verification must use the CI PostgreSQL image',
-  );
   assert.ok(
     databaseRecoveryCheck.includes(postgresImage),
     'database recovery must use the CI PostgreSQL image',

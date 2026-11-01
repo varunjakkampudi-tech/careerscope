@@ -18,7 +18,14 @@ test(
 
     const admin = new Database(configuredDatabase);
     const name = `test_${randomUUID().replaceAll('-', '')}`;
-    await admin.pool.query(`CREATE DATABASE "${name}"`);
+    // A cold container copies the template slowly; lift the pool statement timeout for this one statement only.
+    const creator = await admin.pool.connect();
+    try {
+      await creator.query('SET statement_timeout = 0');
+      await creator.query(`CREATE DATABASE "${name}"`);
+    } finally {
+      creator.release();
+    }
     databaseUrl.pathname = `/${name}`;
     const database = new Database(databaseUrl.href);
     const origin = 'https://careerscope.test';

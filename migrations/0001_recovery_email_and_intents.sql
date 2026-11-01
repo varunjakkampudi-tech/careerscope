@@ -1,0 +1,6 @@
+ALTER TABLE "email_otp_challenges" DROP CONSTRAINT "email_otp_intent_valid";--> statement-breakpoint
+ALTER TABLE "email_otp_challenges" DROP CONSTRAINT "email_otp_signup_acceptance_complete";--> statement-breakpoint
+ALTER TABLE "users" ADD COLUMN "recovery_email" text;--> statement-breakpoint
+ALTER TABLE "users" ADD COLUMN "recovery_email_verified_at" timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "email_otp_challenges" ADD CONSTRAINT "email_otp_intent_valid" CHECK ("email_otp_challenges"."intent" IN ('sign-in', 'sign-up', 'recovery-setup', 'recovery-sign-in'));--> statement-breakpoint
+ALTER TABLE "email_otp_challenges" ADD CONSTRAINT "email_otp_signup_acceptance_complete" CHECK (("email_otp_challenges"."intent" = 'sign-up' AND "email_otp_challenges"."terms_version" IS NOT NULL AND "email_otp_challenges"."privacy_version" IS NOT NULL) OR ("email_otp_challenges"."intent" <> 'sign-up' AND "email_otp_challenges"."terms_version" IS NULL AND "email_otp_challenges"."privacy_version" IS NULL AND NOT "email_otp_challenges"."marketing_opt_in"));

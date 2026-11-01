@@ -1,39 +1,29 @@
-ARG NODE_IMAGE=node:26.8.1-bookworm-slim@sha256:367679cf9792759492a486e4aa4b421764d71a9546a6dae8aab81a99eb797b3e
-ARG GO_IMAGE=golang:1.26-alpine
-ARG ALPINE_IMAGE=alpine:3.23
+ARG NODE_IMAGE=node:24.22.1-bookworm-slim@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205
+ARG GO_IMAGE=golang:1.26-alpine@sha256:a2012b4a1d1f9f7e9f44e0d39b805a901e856b1dd80b4e6ee4338db547050308
+ARG ALPINE_IMAGE=alpine:3.23@sha256:ff7f0c727dd796aa36787bfcd9a64bf35a6ce72a73451b3359fde849b6703d63
 
 # Upstream caddy:2-alpine ships a binary built with a vulnerable Go toolchain and
 # dependencies, so the proxy binary is rebuilt here instead of being consumed as-is.
+# The whole module graph is pinned in the committed infra/docker/caddy-proxy/go.mod and go.sum
+# (Caddy v2.11.7, x/net v0.62.0, x/crypto v0.58.0, grpc v1.83.2 and every transitive module).
+# -mod=readonly makes the build fail instead of updating either file, and go.sum hashes are
+# verified on download. To bump a pin, change it in a container with `go get` and `go mod tidy`,
+# then commit the regenerated go.mod and go.sum.
 FROM ${GO_IMAGE} AS caddy-build
-ENV CGO_ENABLED=0 GOTOOLCHAIN=local
+ENV CGO_ENABLED=0 GOTOOLCHAIN=local GOFLAGS=-mod=readonly
 WORKDIR /build
-RUN printf '%s\n' \
-    'package main' \
-    'import (' \
-    '  caddycmd "github.com/caddyserver/caddy/v2/cmd"' \
-    '  _ "github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"' \
-    '  _ "github.com/caddyserver/caddy/v2/modules/caddyhttp"' \
-    '  _ "github.com/caddyserver/caddy/v2/modules/caddyhttp/caddyauth"' \
-    '  _ "github.com/caddyserver/caddy/v2/modules/caddyhttp/fileserver"' \
-    '  _ "github.com/caddyserver/caddy/v2/modules/caddyhttp/headers"' \
-    '  _ "github.com/caddyserver/caddy/v2/modules/caddyhttp/requestbody"' \
-    '  _ "github.com/caddyserver/caddy/v2/modules/caddyhttp/reverseproxy"' \
-    '  _ "github.com/caddyserver/caddy/v2/modules/caddyhttp/rewrite"' \
-    ')' \
-    'func main() { caddycmd.Main() }' > main.go \
-    && go mod init careerscope/proxy \
-    && go get github.com/caddyserver/caddy/v2@v2.11.7 \
-    && go get golang.org/x/net@latest golang.org/x/crypto@latest \
-    && go get google.golang.org/grpc@v1.83.2 \
-    && go mod tidy \
-    && go build -trimpath -ldflags '-s -w' -o /out/caddy .
+COPY infra/docker/caddy-proxy/go.mod infra/docker/caddy-proxy/go.sum ./
+RUN go mod download
+COPY infra/docker/caddy-proxy/main.go ./
+RUN go build -trimpath -ldflags '-s -w' -o /out/caddy .
 
 FROM ${ALPINE_IMAGE} AS proxy
 ARG CAREERSCOPE_REVISION=unknown
 LABEL org.opencontainers.image.revision="${CAREERSCOPE_REVISION}"
 LABEL org.opencontainers.image.source="https://github.com/varunjakkampudi-tech/careerscope"
-RUN apk upgrade --no-cache \
-    && apk add --no-cache ca-certificates mailcap \
+# Exact package versions from the pinned alpine:3.23 repository. If a pinned version leaves the
+# repository the build fails loudly; bump the pins together with ALPINE_IMAGE. No apk upgrade runs.
+RUN apk add --no-cache ca-certificates=20261020-r0 mailcap=2.1.54-r0 \
     && mkdir -p /config/caddy /data/caddy \
     && chown -R 1000:1000 /config /data
 COPY --from=caddy-build /out/caddy /usr/bin/caddy
@@ -45,8 +35,8 @@ CMD ["run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
 FROM ${NODE_IMAGE} AS build
 WORKDIR /app
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 NEXT_TELEMETRY_DISABLED=1
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential cmake python3 \
-    && rm -rf /var/lib/apt/lists/*
+# No OS packages are installed in the build stage: every native dependency ships a prebuilt binary
+# for linux-x64 (argon2, next/swc), so no compiler toolchain is needed and there is nothing to pin.
 COPY package.json package-lock.json tsconfig.base.json tsconfig.json ./
 COPY packages ./packages
 COPY apps ./apps
@@ -68,11 +58,9 @@ ARG CAREERSCOPE_REVISION=unknown
 LABEL org.opencontainers.image.revision="${CAREERSCOPE_REVISION}"
 LABEL org.opencontainers.image.source="https://github.com/varunjakkampudi-tech/careerscope"
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 CAREERSCOPE_REVISION=${CAREERSCOPE_REVISION}
-# The base image is digest-pinned for reproducibility, so it never picks up
-# Debian security updates on its own; apply them explicitly.
-RUN apt-get update \
-    && apt-get upgrade -y --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
+# The base image is digest-pinned and no unpinned package upgrade runs here, so a
+# rebuild is reproducible. Debian security updates arrive by bumping NODE_IMAGE to
+# a newer digest, not by an apt-get upgrade at build time.
 WORKDIR /app
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/node_modules ./node_modules

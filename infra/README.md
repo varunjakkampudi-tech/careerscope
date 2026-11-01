@@ -4,14 +4,14 @@ Deployment assets for the single-host stack. On the host the repository is
 shipped to `/opt/careerscope`; the secret `infra/.env` stays at the top of this
 folder, is never committed, and is preserved by `host/ship.sh`.
 
-| Folder         | Contents                                                                                       | Used by                                                      |
-| -------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `docker/`      | `Dockerfile`, `Dockerfile.dockerignore`, `compose.*.yml`                                       | `host/build-images.sh`, `host/deploy.sh`, `npm run services` |
-| `caddy/`       | `Caddyfile` (acceptance) and `Caddyfile.production`                                            | Mounted into the proxy by the compose files                  |
-| `systemd/`     | `careerscope-*.service` and `.timer` units                                                     | Installed by the `host/setup-*.sh` scripts                   |
-| `host/`        | Provisioning, deploy, backup, monitoring, recovery and hardening scripts, plus `bootstrap.mjs` | The operator, over SSH, and the systemd timers               |
-| `checks/`      | `check-*.sh` and `check-full-disk.mjs` verification scripts                                    | Operators, CI and `npm run test:full-disk`                   |
-| `maintenance/` | The static maintenance page                                                                    | `host/maintenance.sh`, served by the proxy                   |
+| Folder         | Contents                                                                               | Used by                                                      |
+| -------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `docker/`      | `Dockerfile`, `Dockerfile.dockerignore`, `compose.*.yml`                               | `host/build-images.sh`, `host/deploy.sh`, `npm run services` |
+| `caddy/`       | `Caddyfile` (acceptance) and `Caddyfile.production`                                    | Mounted into the proxy by the compose files                  |
+| `systemd/`     | `careerscope-*.service` and `.timer` units                                             | Installed by the `host/setup-*.sh` scripts                   |
+| `host/`        | Provisioning, deploy, monitoring, recovery and hardening scripts, plus `bootstrap.mjs` | The operator, over SSH, and the systemd timers               |
+| `checks/`      | `check-*.sh` and `check-full-disk.mjs` verification scripts                            | Operators, CI and `npm run test:full-disk`                   |
+| `maintenance/` | The static maintenance page                                                            | `host/maintenance.sh`, served by the proxy                   |
 
 Notes:
 

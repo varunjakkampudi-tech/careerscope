@@ -11,6 +11,34 @@ const localeStorageKey = 'careerscope:interface-language';
 // Message catalogue per locale. Entries are strings or functions of a count (plurals); `{value}` marks a substitution slot.
 const messages = {
   en: {
+    recoveryVerify: 'Sign in with recovery code',
+    recoveryBack: 'Back to sign in',
+    legalUpdatedTitle: 'Our terms have been updated',
+    legalUpdatedBody: 'Review the current terms and privacy notice, then accept them to continue.',
+    legalTermsLink: 'Terms of service',
+    legalPrivacyLink: 'Privacy notice',
+    legalAcceptCheckbox: 'I have read and accept the current terms and privacy notice.',
+    legalAcceptButton: 'Accept and continue',
+    recoverySetupTitle: 'Recovery address',
+    recoverySetupIntro:
+      'Add a second address to recover your account if you lose access to your sign-in email. Recovery sign-in is available 72 hours after you confirm it.',
+    recoveryAddressLabel: 'Recovery email address',
+    recoveryCodeLabel: 'Six-digit code',
+    recoverySendCode: 'Send confirmation code',
+    recoveryConfirm: 'Confirm recovery address',
+    recoveryRemove: 'Remove recovery address',
+    recoveryConfigured: 'A recovery address is confirmed.',
+    recoveryNotConfigured: 'No recovery address is set.',
+    recoveryCooldown:
+      'Recovery sign-in is not yet available. It opens 72 hours after confirmation.',
+    recoverySent: 'If the address can be used, check its inbox for a code.',
+    recoveryFindTitle: 'Recover access',
+    recoveryFindIntro:
+      'If you no longer have access to your sign-in email, sign in with the recovery address you confirmed.',
+    recoveryFindStart: 'Can’t access your email?',
+    recoverySignInButton: 'Send recovery code',
+    recoveryRequestNote:
+      'If recovery is available for this account, check its recovery address for a code.',
     dashboard: 'Dashboard',
     jobs: 'Jobs',
     applications: 'Applications',
@@ -163,6 +191,10 @@ const messages = {
     apiError503: 'The service is temporarily unavailable. Please try again shortly.',
     apiError507: 'Resume storage is full. Remove an unneeded completed resume or try again later.',
     apiErrorDefault: 'Request failed. Please try again.',
+    resumeUploadChanged:
+      'This upload changed while it was being saved. Check your resume list, then upload again if needed.',
+    resumeCancelUnavailable:
+      'This upload can no longer be cancelled. Refresh to see its current status.',
     accountSecurityBack: 'Back to search',
     emailVerificationUnrecorded: 'Email verification is not recorded.',
     emailChangeUnavailable: 'Change sign-in email',
@@ -240,6 +272,34 @@ const messages = {
     noSignInMethod: 'No sign-in method is enabled for this environment.',
   },
   te: {
+    recoveryVerify: 'రికవరీ కోడ్‌తో సైన్ ఇన్ చేయండి',
+    recoveryBack: 'సైన్ ఇన్‌కు తిరిగి వెళ్ళండి',
+    legalUpdatedTitle: 'మా నిబంధనలు నవీకరించబడ్డాయి',
+    legalUpdatedBody: 'ప్రస్తుత నిబంధనలు మరియు గోప్యతా నోటీసును చదివి, కొనసాగడానికి అంగీకరించండి.',
+    legalTermsLink: 'సేవా నిబంధనలు',
+    legalPrivacyLink: 'గోప్యతా నోటీసు',
+    legalAcceptCheckbox: 'నేను ప్రస్తుత నిబంధనలు మరియు గోప్యతా నోటీసును చదివి అంగీకరిస్తున్నాను.',
+    legalAcceptButton: 'అంగీకరించి కొనసాగండి',
+    recoverySetupTitle: 'రికవరీ చిరునామా',
+    recoverySetupIntro:
+      'మీ సైన్-ఇన్ ఇమెయిల్ యాక్సెస్ కోల్పోతే ఖాతాను తిరిగి పొందడానికి రెండవ చిరునామాను జోడించండి. మీరు నిర్ధారించిన 72 గంటల తర్వాత రికవరీ సైన్-ఇన్ అందుబాటులో ఉంటుంది.',
+    recoveryAddressLabel: 'రికవరీ ఇమెయిల్ చిరునామా',
+    recoveryCodeLabel: 'ఆరు అంకెల కోడ్',
+    recoverySendCode: 'నిర్ధారణ కోడ్ పంపండి',
+    recoveryConfirm: 'రికవరీ చిరునామాను నిర్ధారించండి',
+    recoveryRemove: 'రికవరీ చిరునామాను తీసివేయండి',
+    recoveryConfigured: 'రికవరీ చిరునామా నిర్ధారించబడింది.',
+    recoveryNotConfigured: 'రికవరీ చిరునామా సెట్ చేయబడలేదు.',
+    recoveryCooldown:
+      'రికవరీ సైన్-ఇన్ ఇంకా అందుబాటులో లేదు. నిర్ధారణ తర్వాత 72 గంటలకు తెరుచుకుంటుంది.',
+    recoverySent: 'చిరునామా ఉపయోగించదగినదైతే, కోడ్ కోసం దాని ఇన్‌బాక్స్‌ను తనిఖీ చేయండి.',
+    recoveryFindTitle: 'ఖాతాను తిరిగి పొందండి',
+    recoveryFindIntro:
+      'మీకు మీ సైన్-ఇన్ ఇమెయిల్ యాక్సెస్ లేకపోతే, మీరు నిర్ధారించిన రికవరీ చిరునామాతో సైన్ ఇన్ చేయండి.',
+    recoveryFindStart: 'మీ ఇమెయిల్ యాక్సెస్ చేయలేరా?',
+    recoverySignInButton: 'రికవరీ కోడ్ పంపండి',
+    recoveryRequestNote:
+      'ఈ ఖాతాకు రికవరీ అందుబాటులో ఉంటే, దాని రికవరీ చిరునామాలో కోడ్ కోసం తనిఖీ చేయండి.',
     dashboard: 'డాష్‌బోర్డ్',
     jobs: 'ఉద్యోగాలు',
     applications: 'దరఖాస్తులు',
@@ -392,6 +452,12 @@ const messages = {
     apiError507:
       'రెజ్యూమ్ నిల్వ నిండింది. అనవసరమైన పూర్తయిన రెజ్యూమ్‌ను తొలగించండి లేదా తర్వాత మళ్లీ ప్రయత్నించండి.',
     apiErrorDefault: 'అభ్యర్థనను పూర్తి చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.',
+    // Machine-drafted: requires native-speaker review before release.
+    resumeUploadChanged:
+      'సేవ్ అవుతున్నప్పుడు ఈ అప్‌లోడ్ మారింది. మీ రెజ్యూమ్ జాబితాను చూసి, అవసరమైతే మళ్లీ అప్‌లోడ్ చేయండి.',
+    // Machine-drafted: requires native-speaker review before release.
+    resumeCancelUnavailable:
+      'ఈ అప్‌లోడ్‌ను ఇకపై రద్దు చేయలేరు. ప్రస్తుత స్థితిని చూడటానికి రిఫ్రెష్ చేయండి.',
     accountSecurityBack: 'శోధనకు తిరిగి వెళ్ళండి',
     emailVerificationUnrecorded: 'ఇమెయిల్ ధృవీకరణ నమోదు కాలేదు.',
     emailChangeUnavailable: 'సైన్-ఇన్ ఇమెయిల్ మార్చండి',
@@ -473,6 +539,33 @@ const messages = {
     noSignInMethod: 'ఈ వాతావరణం కోసం సైన్-ఇన్ విధానం ఏదీ ప్రారంభించబడలేదు.',
   },
   hi: {
+    recoveryVerify: 'रिकवरी कोड से साइन इन करें',
+    recoveryBack: 'साइन इन पर वापस जाएँ',
+    legalUpdatedTitle: 'हमारी शर्तें अपडेट की गई हैं',
+    legalUpdatedBody: 'वर्तमान शर्तें और गोपनीयता सूचना देखें, फिर जारी रखने के लिए स्वीकार करें।',
+    legalTermsLink: 'सेवा की शर्तें',
+    legalPrivacyLink: 'गोपनीयता सूचना',
+    legalAcceptCheckbox:
+      'मैंने वर्तमान शर्तें और गोपनीयता सूचना पढ़ ली हैं और उन्हें स्वीकार करता/करती हूँ।',
+    legalAcceptButton: 'स्वीकार करें और जारी रखें',
+    recoverySetupTitle: 'रिकवरी पता',
+    recoverySetupIntro:
+      'अगर आप अपना साइन-इन ईमेल खो दें तो खाता वापस पाने के लिए दूसरा पता जोड़ें। पुष्टि के 72 घंटे बाद रिकवरी साइन-इन उपलब्ध होता है।',
+    recoveryAddressLabel: 'रिकवरी ईमेल पता',
+    recoveryCodeLabel: 'छह अंकों का कोड',
+    recoverySendCode: 'पुष्टि कोड भेजें',
+    recoveryConfirm: 'रिकवरी पता पुष्ट करें',
+    recoveryRemove: 'रिकवरी पता हटाएँ',
+    recoveryConfigured: 'रिकवरी पता पुष्ट है।',
+    recoveryNotConfigured: 'कोई रिकवरी पता सेट नहीं है।',
+    recoveryCooldown: 'रिकवरी साइन-इन अभी उपलब्ध नहीं है। पुष्टि के 72 घंटे बाद यह खुलता है।',
+    recoverySent: 'अगर यह पता उपयोग किया जा सकता है, तो कोड के लिए इसका इनबॉक्स देखें।',
+    recoveryFindTitle: 'खाता वापस पाएँ',
+    recoveryFindIntro:
+      'अगर आपकी साइन-इन ईमेल तक पहुँच नहीं है, तो अपने पुष्ट किए गए रिकवरी पते से साइन इन करें।',
+    recoveryFindStart: 'अपनी ईमेल तक पहुँच नहीं है?',
+    recoverySignInButton: 'रिकवरी कोड भेजें',
+    recoveryRequestNote: 'अगर इस खाते के लिए रिकवरी उपलब्ध है, तो उसके रिकवरी पते पर कोड देखें।',
     dashboard: 'डैशबोर्ड',
     jobs: 'नौकरियाँ',
     applications: 'आवेदन',
@@ -622,6 +715,12 @@ const messages = {
     apiError507:
       'रिज़्यूमे स्टोरेज भर गया है। कोई अनावश्यक पूरा रिज़्यूमे हटाएँ या बाद में कोशिश करें।',
     apiErrorDefault: 'अनुरोध पूरा नहीं हो सका। फिर कोशिश करें।',
+    // Machine-drafted: requires native-speaker review before release.
+    resumeUploadChanged:
+      'सहेजते समय यह अपलोड बदल गया। अपनी रिज़्यूमे सूची देखें और ज़रूरत हो तो फिर अपलोड करें।',
+    // Machine-drafted: requires native-speaker review before release.
+    resumeCancelUnavailable:
+      'इस अपलोड को अब रद्द नहीं किया जा सकता। मौजूदा स्थिति देखने के लिए रीफ़्रेश करें।',
     accountSecurityBack: 'खोज पर वापस जाएँ',
     emailVerificationUnrecorded: 'ईमेल सत्यापन दर्ज नहीं है।',
     emailChangeUnavailable: 'साइन-इन ईमेल बदलें',

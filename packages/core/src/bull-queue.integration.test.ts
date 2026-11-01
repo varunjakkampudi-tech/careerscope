@@ -9,12 +9,27 @@ import { Database, users } from '@careerscope/core';
 import { BullSearchQueue, executeBullCommand, queueConnection } from './bull-queue.js';
 import { publishPending } from './dispatch.js';
 
+/**
+ * Job completion budget in milliseconds. Shared Docker hosts can be slow, so `npm run
+ * test:integration:bull-queue` raises it. Throws unless the value is an integer from 1000 to 600000.
+ */
+function resolveJobWaitMs(raw: string | undefined) {
+  if (raw === undefined) return 10_000;
+  const value = Number(raw);
+  if (!/^\d+$/.test(raw.trim()) || value < 1000 || value > 600_000) {
+    throw new Error('INTEGRATION_JOB_WAIT_MS must be an integer from 1000 to 600000');
+  }
+  return value;
+}
+const jobWaitMs = resolveJobWaitMs(process.env.INTEGRATION_JOB_WAIT_MS);
+
 test('BullMQ rejects remote endpoints and unsafe queue configuration', async () => {
   for (const url of [
     'redis://example.com',
     'http://localhost',
     'redis://localhost/1',
-    'redis://user:secret@localhost',
+    // ACL usernames are accepted on loopback now (see queueConnection); a remote host with credentials stays rejected.
+    'redis://user:secret@example.com',
     'redis://localhost?host=remote',
   ]) {
     assert.throws(() => queueConnection(url));
@@ -59,10 +74,15 @@ test(
     const endpoint = process.env.SEARCH_QUEUE_REDIS_URL ?? 'redis://127.0.0.1:56480';
     const queue = new BullSearchQueue(database, endpoint, `test-${randomUUID()}`);
     const events = new QueueEvents(queue.name, {
-      connection: { ...queueConnection(endpoint), maxRetriesPerRequest: null },
+      // QueueEvents blocks for about ten seconds by design; the production command timeout would cut that read short.
+      connection: {
+        ...queueConnection(endpoint),
+        commandTimeout: undefined,
+        maxRetriesPerRequest: null,
+      },
     });
     const workerErrors: string[] = [];
-    events.on('error', () => workerErrors.push('queue-events'));
+    events.on('error', (error) => workerErrors.push(`queue-events: ${error.message}`));
     const shutdown = new AbortController();
     let worker: Worker | undefined;
     try {
@@ -103,12 +123,12 @@ test(
         return database.complete(delivered, fence);
       }, shutdown.signal);
       const job = (await queue.queue.getJob(command.id))!;
-      await job.waitUntilFinished(events, 10_000);
+      await job.waitUntilFinished(events, jobWaitMs);
       assert.equal(executions, 1);
       assert.equal(await database.executionStatus(command.id), 'completed');
       await queue.send(command);
       await job.retry('completed');
-      await job.waitUntilFinished(events, 10_000);
+      await job.waitUntilFinished(events, jobWaitMs);
       assert.equal(executions, 1);
       assert.equal(
         (
@@ -134,7 +154,7 @@ test(
       premature.on('error', () => workerErrors.push('premature-worker'));
       try {
         await assert.rejects(
-          (await queue.queue.getJob(recover.id))!.waitUntilFinished(events, 10_000),
+          (await queue.queue.getJob(recover.id))!.waitUntilFinished(events, jobWaitMs),
           /transport-only/,
         );
       } finally {
@@ -146,7 +166,7 @@ test(
         (delivered, fence) => database.complete(delivered, fence),
         shutdown.signal,
       );
-      await (await queue.queue.getJob(recover.id))!.waitUntilFinished(events, 10_000);
+      await (await queue.queue.getJob(recover.id))!.waitUntilFinished(events, jobWaitMs);
       assert.equal(await database.executionStatus(recover.id), 'completed');
       await worker.close();
       worker = undefined;
@@ -159,7 +179,10 @@ test(
       }, shutdown.signal);
       await queue.send(failure);
       const failed = (await queue.queue.getJob(failure.id))!;
-      await assert.rejects(failed.waitUntilFinished(events, 25_000), /attempt budget exhausted/);
+      await assert.rejects(
+        failed.waitUntilFinished(events, jobWaitMs * 2.5),
+        /attempt budget exhausted/,
+      );
       assert.equal(failedAttempts, 5);
       assert.equal(await database.executionStatus(failure.id), 'failed');
       const retained = (await queue.queue.getJob(failure.id))!;

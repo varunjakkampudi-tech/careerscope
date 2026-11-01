@@ -5,6 +5,10 @@
 # not the ones actually present in the image.
 set -euo pipefail
 
+# Scans the images of the current release, never a mutable tag.
+runtime=${CAREERSCOPE_IMAGE:?CAREERSCOPE_IMAGE is not set (see the release record or infra/.env)}
+proxy=${CAREERSCOPE_PROXY_IMAGE:?CAREERSCOPE_PROXY_IMAGE is not set (see the release record or infra/.env)}
+
 rm -rf /root/.cache/trivy
 
 scan() {
@@ -12,7 +16,7 @@ scan() {
   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
     aquasec/trivy:latest image --scanners vuln --severity CRITICAL,HIGH \
     --ignore-unfixed --quiet --format json "$1" 2>/dev/null >/tmp/scan.json
-  docker run --rm -v /tmp/scan.json:/tmp/scan.json:ro --entrypoint node careerscope:v3 -e '
+  docker run --rm -v /tmp/scan.json:/tmp/scan.json:ro --entrypoint node "$runtime" -e '
     const report = require("/tmp/scan.json");
     let count = 0;
     for (const result of report.Results || []) {
@@ -25,5 +29,5 @@ scan() {
   '
 }
 
-scan careerscope:v3
-scan careerscope:v3-proxy
+scan "$runtime"
+scan "$proxy"

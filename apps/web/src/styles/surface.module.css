@@ -1,0 +1,12 @@
+/*
+ * Shared surface for cards and panels inside the authenticated shell. CSS modules pull it in with
+ * `composes: panel from '../styles/surface.module.css'` and add only their own layout (padding,
+ * gap, margin). The colours, border and radius come from the --dash-* tokens, so light and dark
+ * themes stay consistent.
+ */
+.panel {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: var(--dash-card-radius);
+  color: var(--dash-ink);
+}

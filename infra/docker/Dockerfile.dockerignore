@@ -11,6 +11,10 @@
 !migrations/**
 !scripts/
 !scripts/**
+!infra/
+!infra/docker/
+!infra/docker/caddy-proxy/
+!infra/docker/caddy-proxy/*
 **/node_modules/**
 **/dist/**
 **/dist-types/**

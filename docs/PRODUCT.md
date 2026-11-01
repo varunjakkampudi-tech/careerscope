@@ -25,5 +25,5 @@ of scope.
 | Public SEO         | The private workspace is `noindex`; public job pages require rights-cleared content                                                        |
 | Data classes       | Identity and session secrets; private profile, preference, resume and application records; source and job data; operational and audit data |
 | Providers          | See [PROVIDERS](PROVIDERS.md); optional integrations stay disabled until their gates pass                                                  |
-| Recovery           | One-hour RPO and four-hour RTO targets; see [BACKUP](operations/BACKUP.md)                                                                 |
+| Recovery           | One-hour RPO and four-hour RTO targets (no backup exists yet; see [HOSTINGER](operations/HOSTINGER.md))                                    |
 | Native mobile apps | Not part of the current product; mobile-browser behaviour is validated instead                                                             |

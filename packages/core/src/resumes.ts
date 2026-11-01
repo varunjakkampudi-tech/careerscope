@@ -250,16 +250,20 @@ export class ResumeUploadRepository {
         await rollback(client);
         return false;
       }
-      const result = await client.query(
-        'SELECT upload_id FROM resume_results WHERE owner_id = $1 AND upload_id = $2',
-        [ownerId, id],
-      );
-      if (!result.rowCount) throw new Conflict('Resume processing has not settled');
-      await removeObject(record);
-      await client.query('DELETE FROM resume_results WHERE owner_id = $1 AND upload_id = $2', [
-        ownerId,
-        id,
-      ]);
+      // A cancelled upload never produced a result. Its cancellation marker stays in
+      // storage so a late upload cannot publish over it, so only the row is removed.
+      if (record.status !== 'cancelled') {
+        const result = await client.query(
+          'SELECT upload_id FROM resume_results WHERE owner_id = $1 AND upload_id = $2',
+          [ownerId, id],
+        );
+        if (!result.rowCount) throw new Conflict('Resume processing has not settled');
+        await removeObject(record);
+        await client.query('DELETE FROM resume_results WHERE owner_id = $1 AND upload_id = $2', [
+          ownerId,
+          id,
+        ]);
+      }
       await client.query('DELETE FROM resume_uploads WHERE owner_id = $1 AND id = $2', [
         ownerId,
         id,

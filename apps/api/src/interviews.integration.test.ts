@@ -270,7 +270,7 @@ test(
       });
       assert.equal(staleUpdate.statusCode, 409);
       assert.equal(staleUpdate.json().code, 'INTERVIEW_REVISION_CONFLICT');
-      assert.equal(staleUpdate.json().error, 'Interview round changed; reload before saving');
+      assert.equal(staleUpdate.json().message, 'Interview round changed; reload before saving');
 
       const lead = await database.pool.query<{ status: string }>(
         'SELECT status FROM saved_leads WHERE owner_id = $1 AND id = $2',

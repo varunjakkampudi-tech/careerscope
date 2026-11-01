@@ -1,5 +1,5 @@
 [Unit]
-Description=CareerScope scheduler health (are the six host timers still firing?)
+Description=CareerScope scheduler health (are the five host timers still firing?)
 # Deliberately no After=/Requires=docker.service: this reads systemd only,
 # and must still be able to report when Docker itself is broken.
 

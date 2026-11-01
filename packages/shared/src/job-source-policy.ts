@@ -1,6 +1,7 @@
 /**
  * Permission gate for job discovery sources. A source is usable only with a current, reviewed
- * permission profile; collaborators are the API search routes and `core` search creation.
+ * permission profile. `core` does not enforce this gate; it is enforced by the callers that start
+ * discovery: the API search routes, the search worker and the scheduler.
  */
 
 import { z } from 'zod';

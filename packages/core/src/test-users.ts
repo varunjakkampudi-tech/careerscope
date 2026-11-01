@@ -20,7 +20,7 @@ export type TestAccess = { mode: 'disabled' | 'local' | 'proxy'; proxySecret?: s
 
 /**
  * Resolves and validates test-access mode from the environment. Fails closed: production never
- * allows it, `local` needs a development loopback origin, and `proxy` needs staging, HTTPS and a
+ * allows it, `local` must be explicit and needs a development loopback origin, and `proxy` needs staging, HTTPS and a
  * 32-byte hex secret.
  */
 export function testAccessConfiguration(source: NodeJS.ProcessEnv, origin: string): TestAccess {
@@ -30,11 +30,8 @@ export function testAccessConfiguration(source: NodeJS.ProcessEnv, origin: strin
   if (!['development', 'staging', 'production'].includes(environment))
     throw new Error('Invalid DEPLOYMENT_ENVIRONMENT');
   const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(new URL(origin).hostname);
-  const mode =
-    source.TEST_ACCESS_MODE ??
-    (environment === 'development' && loopback && source.NODE_ENV !== 'production'
-      ? 'local'
-      : 'disabled');
+  // No implicit default: local test access must be requested with TEST_ACCESS_MODE=local.
+  const mode = source.TEST_ACCESS_MODE ?? 'disabled';
   if (!['disabled', 'local', 'proxy'].includes(mode)) throw new Error('Invalid TEST_ACCESS_MODE');
   if (environment === 'production' && mode !== 'disabled')
     throw new Error('Test access is prohibited in production');
@@ -56,14 +53,33 @@ export function testAccessConfiguration(source: NodeJS.ProcessEnv, origin: strin
   };
 }
 
+/** Request headers that show a request was relayed by a proxy; local mode refuses any of them. */
+const relayHeaders = ['x-forwarded-for', 'forwarded', 'x-real-ip'];
+
+/** True when a Host header names the loopback interface (any port). */
+function loopbackHost(host: unknown) {
+  if (typeof host !== 'string') return false;
+  const name = host.startsWith('[') ? host.slice(0, host.indexOf(']') + 1) : host.split(':')[0];
+  return ['localhost', '127.0.0.1', '[::1]'].includes((name ?? '').toLowerCase());
+}
+
 /**
- * True only when the peer address is loopback and the mode allows it. In `proxy` mode the header
- * must match the secret; both sides are hashed first so the constant-time comparison sees equal lengths.
+ * True only when the peer address is loopback and the mode allows it. In local mode the request
+ * must also look direct: any X-Forwarded-For, Forwarded or X-Real-IP header, or a Host header that is
+ * not loopback (or is missing), is refused, so a reverse proxy on the same machine cannot expose it.
+ * In proxy mode the header must match the secret; both sides are hashed first so the
+ * constant-time comparison sees equal lengths.
  */
-export function testAccessAllowed(access: TestAccess, address: string, header: unknown): boolean {
+export function testAccessAllowed(
+  access: TestAccess,
+  address: string,
+  header: unknown,
+  headers: Record<string, unknown> = {},
+): boolean {
   if (!['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(address) || access.mode === 'disabled')
     return false;
-  if (access.mode === 'local') return true;
+  if (access.mode === 'local')
+    return !relayHeaders.some((name) => headers[name] !== undefined) && loopbackHost(headers.host);
   if (typeof header !== 'string' || !access.proxySecret || header.length !== 64) return false;
   const digest = (value: string) => createHash('sha256').update(value).digest();
   return timingSafeEqual(digest(header), digest(access.proxySecret));

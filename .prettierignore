@@ -39,3 +39,7 @@ test-results/
 
 infra/nginx/*.inc
 migrations/meta/*.json
+
+# Owner-approved v12 requirements source, pinned by sourceSha256 in
+# docs/requirements/V12-REQUIREMENT-INVENTORY.json. Reformatting it would change the digest.
+docs/requirements/CareerScope-v12.md

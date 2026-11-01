@@ -34,11 +34,58 @@ test('public test selection is disabled unless an explicit private proxy is conf
 });
 
 test('local selection only accepts loopback requests', () => {
-  const access = testAccessConfiguration({}, 'http://localhost:5280');
-  assert.equal(testAccessAllowed(access, '127.0.0.1', undefined), true);
-  assert.equal(testAccessAllowed(access, '::1', undefined), true);
-  assert.equal(testAccessAllowed(access, '203.0.113.2', undefined), false);
-  assert.equal(testAccessAllowed({ mode: 'disabled' }, '127.0.0.1', undefined), false);
+  const access = testAccessConfiguration({ TEST_ACCESS_MODE: 'local' }, 'http://localhost:5280');
+  const direct = { host: 'localhost:5280' };
+  assert.equal(testAccessAllowed(access, '127.0.0.1', undefined, direct), true);
+  assert.equal(testAccessAllowed(access, '::1', undefined, direct), true);
+  assert.equal(testAccessAllowed(access, '203.0.113.2', undefined, direct), false);
+  assert.equal(testAccessAllowed({ mode: 'disabled' }, '127.0.0.1', undefined, direct), false);
+});
+
+test('local mode is never the implicit default', () => {
+  for (const origin of ['http://localhost:5280', 'http://127.0.0.1:5280']) {
+    assert.deepEqual(testAccessConfiguration({}, origin), { mode: 'disabled' });
+    assert.deepEqual(testAccessConfiguration({ DEPLOYMENT_ENVIRONMENT: 'development' }, origin), {
+      mode: 'disabled',
+    });
+    assert.deepEqual(testAccessConfiguration({ NODE_ENV: 'development' }, origin), {
+      mode: 'disabled',
+    });
+  }
+  assert.deepEqual(
+    testAccessConfiguration({ TEST_ACCESS_MODE: 'local' }, 'http://localhost:5280'),
+    { mode: 'local' },
+  );
+});
+
+test('local mode rejects relayed requests and any non-loopback Host header', () => {
+  const access = testAccessConfiguration({ TEST_ACCESS_MODE: 'local' }, 'http://localhost:5280');
+  for (const host of ['localhost', 'localhost:5280', '127.0.0.1:80', '[::1]:5280', 'LOCALHOST']) {
+    assert.equal(testAccessAllowed(access, '127.0.0.1', undefined, { host }), true, host);
+  }
+  for (const relay of [
+    { 'x-forwarded-for': '203.0.113.9' },
+    { forwarded: 'for=203.0.113.9' },
+    { 'x-real-ip': '203.0.113.9' },
+    { 'x-forwarded-for': '' },
+  ]) {
+    assert.equal(
+      testAccessAllowed(access, '127.0.0.1', undefined, { host: 'localhost:5280', ...relay }),
+      false,
+      JSON.stringify(relay),
+    );
+  }
+  for (const host of [
+    'careerscope.tech',
+    'evil.example:5280',
+    'localhost.evil.test',
+    '',
+    undefined,
+  ]) {
+    assert.equal(testAccessAllowed(access, '127.0.0.1', undefined, { host }), false, String(host));
+  }
+  assert.equal(testAccessAllowed(access, '127.0.0.1', undefined), false, 'no headers at all');
+  assert.equal(testAccessAllowed(access, '127.0.0.1', undefined, { host: ['localhost'] }), false);
 });
 
 test('hosted test access requires the private assertion from a loopback proxy', () => {
