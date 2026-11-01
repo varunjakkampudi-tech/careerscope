@@ -28,18 +28,36 @@ import type { parsedResumeSchema } from './resume-parser.js';
 import type { ApplicationEvidence } from './leads.js';
 
 /** Accounts. `passwordHash` is null for accounts created through email one-time codes. */
-export const users = pgTable('users', {
-  id: uuid('id').primaryKey(),
-  email: text('email').unique(),
-  passwordHash: text('password_hash'),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  emailVerifiedAt: timestamp('email_verified_at', { withTimezone: true }),
-  ageScreenPassed: boolean('age_screen_passed'),
-  // A second address that can receive a sign-in code when the primary mailbox is lost (2.17).
-  // Set only after the address is verified, and the recovery sign-in is refused during the cooldown.
-  recoveryEmail: text('recovery_email'),
-  recoveryEmailVerifiedAt: timestamp('recovery_email_verified_at', { withTimezone: true }),
-});
+export const users = pgTable(
+  'users',
+  {
+    id: uuid('id').primaryKey(),
+    email: text('email').unique(),
+    passwordHash: text('password_hash'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    emailVerifiedAt: timestamp('email_verified_at', { withTimezone: true }),
+    ageScreenPassed: boolean('age_screen_passed'),
+    // A second address that can receive a sign-in code when the primary mailbox is lost (2.17).
+    // Set only after the address is verified, and the recovery sign-in is refused during the cooldown.
+    recoveryEmail: text('recovery_email'),
+    recoveryEmailVerifiedAt: timestamp('recovery_email_verified_at', { withTimezone: true }),
+    // 'candidate' or 'admin'. An admin role needs a confirmed authenticator (V12-4.1-012), enforced below.
+    role: text('role').notNull().default('candidate'),
+    // The authenticator secret, encrypted at rest. It is set when enrolment starts and is active only once
+    // totp_enabled_at is set by a verified code.
+    totpSecretEnc: text('totp_secret_enc'),
+    totpEnabledAt: timestamp('totp_enabled_at', { withTimezone: true }),
+    // The last accepted time step, so a code cannot be used twice.
+    totpLastCounter: integer('totp_last_counter'),
+  },
+  (table) => [
+    check('users_role_valid', sql`${table.role} IN ('candidate', 'admin')`),
+    check(
+      'users_admin_requires_totp',
+      sql`${table.role} = 'candidate' OR ${table.totpEnabledAt} IS NOT NULL`,
+    ),
+  ],
+);
 
 /** Append-only record of accepted terms, privacy notice and marketing consent, ordered by `sequence`. */
 export const accountAcceptances = pgTable(
