@@ -880,3 +880,28 @@ export const notificationDeadLetters = pgTable(
     check('notification_dead_letters_attempts_check', sql`${table.attempts} BETWEEN 1 AND 5`),
   ],
 );
+
+/**
+ * Support cases for an account whose mailbox is inaccessible (V12-4.1-014). Each case records who opened
+ * it and why, and expires after a fixed window. Nothing here signs anyone in: the case only records and
+ * time-limits an operator's identity check, and it is closed when the check ends.
+ */
+export const supportCases = pgTable(
+  'support_cases',
+  {
+    id: uuid('id').primaryKey(),
+    ownerId: uuid('owner_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    reason: text('reason').notNull(),
+    openedBy: text('opened_by').notNull(),
+    openedAt: timestamp('opened_at', { withTimezone: true }).defaultNow().notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    closedAt: timestamp('closed_at', { withTimezone: true }),
+  },
+  (table) => [
+    check('support_cases_reason_present', sql`length(btrim(${table.reason})) BETWEEN 10 AND 500`),
+    check('support_cases_window', sql`${table.expiresAt} > ${table.openedAt}`),
+    index('support_cases_owner_open_idx').on(table.ownerId, table.expiresAt),
+  ],
+);

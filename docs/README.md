@@ -57,6 +57,7 @@ This is the single index of CareerScope documentation. Every document under
 - [ROLLBACK](operations/ROLLBACK.md) and [SECRETS](operations/SECRETS.md)
 - [MONITORING](operations/MONITORING.md), [FIREWALL](operations/FIREWALL.md) and [PROXY-RECOVERY](operations/PROXY-RECOVERY.md)
 - [HOSTINGER](operations/HOSTINGER.md) - host description and access
+- [SUPPORT-CASES](operations/SUPPORT-CASES.md) - inaccessible mailbox procedure
 - [DISCOVERY-SCHEDULE](operations/DISCOVERY-SCHEDULE.md) and [LEAD-LIFECYCLE](operations/LEAD-LIFECYCLE.md)
 - [CI-CD](operations/CI-CD.md) - CI workflow and its boundaries
 - [MANUAL-CI-TESTING](operations/MANUAL-CI-TESTING.md) - running CI suites by hand
