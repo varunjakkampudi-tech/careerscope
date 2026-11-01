@@ -110,10 +110,10 @@ that was not performed; the Gap lines say what is unverified.
 ## 1.12 Align design system and shared components
 
 - **Status:** Complete
-- **Evidence:** `docs/architecture/DESIGN-SYSTEM.md`, `scripts/tests/design-system-doc.test.ts`, `apps/web/src/components/ui-states.tsx`, `apps/web/src/app/globals.css`
-- **Gate:** CI job `Quality gates`, step `npm run gates:test` (`test:unit`)
-- **Verify:** `node --import tsx --test scripts/tests/design-system-doc.test.ts`
-- **Note:** The test proves the documented tokens and shared components match the code. Visual regression has no committed baseline set.
+- **Evidence:** `docs/architecture/DESIGN-SYSTEM.md`, `scripts/tests/design-system-doc.test.ts`, `apps/web/src/components/ui-states.tsx`, `apps/web/src/app/globals.css`, `scripts/tests/visual-regression.ts`
+- **Gate:** CI job `Quality gates`, step `npm run gates:test` (`test:unit`); CI job `Services, integration, and browser suites`, step `npm run test:ui`, which runs the visual comparison after the browser checks
+- **Verify:** `node --import tsx --test scripts/tests/design-system-doc.test.ts`; `npm run test:visual` against a running web app on 127.0.0.1:5280, on the Linux image `mcr.microsoft.com/playwright:v1.63.0-noble` that CI uses
+- **Note:** The visual baselines cover the public sign-in screen at a 390px phone width and a 1280px desktop width. A change of more than 0.05% of pixels fails. The baselines were captured on Linux, since fonts render differently on Windows. Signed-in screens have no visual baselines yet.
 
 ## 1.13 Build requirement-to-code-to-test traceability
 

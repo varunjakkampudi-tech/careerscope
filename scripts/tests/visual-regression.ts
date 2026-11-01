@@ -1,132 +1,164 @@
-import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
-import { PNG } from 'pngjs';
-import pixelmatch from 'pixelmatch';
+/**
+ * Visual regression for the public sign-in screen. The baselines are PNG files in
+ * scripts/tests/visual-baselines, and they must be generated on the same Linux image CI uses,
+ * because font rasterisation differs between operating systems.
+ *
+ * Usage:
+ *   CAREERSCOPE_VISUAL_BASE=http://127.0.0.1:5280 node --import tsx scripts/tests/visual-regression.ts
+ *   Add VISUAL_UPDATE=1 to write the baselines instead of comparing.
+ */
+
+import assert from 'node:assert/strict';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 
-// Real, numeric visual-regression / design-parity check: screenshots a live
-// route and compares it pixel-by-pixel against a reference PNG (either a
-// stored baseline for regression, or a crop of an owner-supplied design
-// image for parity scoring). Reports an actual percentage match rather than
-// a subjective "looks close" judgement, and always writes a diff image so a
-// reported score can be inspected, not just trusted.
-//
-// Usage:
-//   node --import tsx scripts/tests/visual-regression.ts <name> <url> <referencePng> [--update]
-//
-// `--update` writes the current screenshot as the new baseline/reference
-// instead of comparing (first run, or an intentional accepted redesign).
+const baseUrl = process.env.CAREERSCOPE_VISUAL_BASE ?? 'http://127.0.0.1:5280';
+const updating = process.env.VISUAL_UPDATE === '1';
+const baselineDir = fileURLToPath(new URL('./visual-baselines/', import.meta.url));
+// A pixel counts as changed when any channel differs by more than this, which ignores anti-aliasing noise.
+const channelTolerance = 8;
+// The share of changed pixels allowed before the screenshot counts as a regression.
+const maxChangedRatio = 0.0005;
 
-type Options = {
-  width: number;
-  height: number;
-  fullPage: boolean;
-  signIn?: { email: string; password: string };
-};
+const screens = [
+  { name: 'sign-in-mobile', width: 390, height: 844 },
+  { name: 'sign-in-desktop', width: 1280, height: 800 },
+] as const;
 
-async function screenshot(url: string, options: Options): Promise<Buffer> {
-  const browser = await chromium.launch();
-  try {
-    const page = await browser.newPage({
-      viewport: { width: options.width, height: options.height },
-    });
-    if (options.signIn) {
-      await page.goto(url, { waitUntil: 'networkidle' });
-      const emailField = page.getByLabel('Email', { exact: true });
-      await emailField.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-      if (await emailField.isVisible().catch(() => false)) {
-        await emailField.fill(options.signIn.email);
-        await page.getByLabel('Password', { exact: true }).fill(options.signIn.password);
-        await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-        await page.waitForURL(/\/dashboard/, { timeout: 10000 }).catch(() => {});
-        await page.waitForLoadState('networkidle');
-      }
-    }
-    await page.goto(url, { waitUntil: 'networkidle' });
-    return await page.screenshot({ fullPage: options.fullPage });
-  } finally {
-    await browser.close();
+const stableCss = `
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    caret-color: transparent !important;
   }
-}
+`;
 
-function toPng(buffer: Buffer): PNG {
-  return PNG.sync.read(buffer);
-}
-
-export async function compare(
-  name: string,
-  url: string,
-  referencePath: string,
-  options: Options = { width: 1440, height: 900, fullPage: false },
-): Promise<{ matchPercent: number; diffPath: string; actualPath: string }> {
-  const outDir = new URL('../../test-results/visual/', import.meta.url);
-  mkdirSync(outDir, { recursive: true });
-  const actualBuffer = await screenshot(url, options);
-  const actualPath = new URL(`${name}-actual.png`, outDir).pathname.replace(/^\/([A-Za-z]:)/, '$1');
-  writeFileSync(actualPath, actualBuffer);
-
-  const reference = toPng(readFileSync(referencePath));
-  const actual = toPng(actualBuffer);
-  // Reference (a design export) and the live screenshot are very unlikely to
-  // share exact pixel dimensions — resize the actual capture's comparison
-  // canvas to the reference's dimensions so pixelmatch has same-sized
-  // buffers to work with. This is a real limitation (not sub-pixel exact),
-  // recorded rather than hidden: this score is a structural/color similarity
-  // measure at the reference's resolution, not a claim of literal identical
-  // pixel dimensions.
-  const width = reference.width;
-  const height = reference.height;
-  const resized = new PNG({ width, height });
-  for (let y = 0; y < height; y += 1) {
-    const sourceY = Math.min(actual.height - 1, Math.round((y / height) * actual.height));
-    for (let x = 0; x < width; x += 1) {
-      const sourceX = Math.min(actual.width - 1, Math.round((x / width) * actual.width));
-      const sourceIndex = (actual.width * sourceY + sourceX) << 2;
-      const targetIndex = (width * y + x) << 2;
-      resized.data[targetIndex] = actual.data[sourceIndex]!;
-      resized.data[targetIndex + 1] = actual.data[sourceIndex + 1]!;
-      resized.data[targetIndex + 2] = actual.data[sourceIndex + 2]!;
-      resized.data[targetIndex + 3] = actual.data[sourceIndex + 3]!;
-    }
-  }
-
-  const diff = new PNG({ width, height });
-  const mismatched = pixelmatch(reference.data, resized.data, diff.data, width, height, {
-    threshold: 0.15,
+async function captureScreen(
+  browser: Awaited<ReturnType<typeof chromium.launch>>,
+  screen: (typeof screens)[number],
+): Promise<Buffer> {
+  const context = await browser.newContext({
+    viewport: { width: screen.width, height: screen.height },
+    deviceScaleFactor: 1,
+    colorScheme: 'light',
+    reducedMotion: 'reduce',
+    locale: 'en-US',
+    timezoneId: 'UTC',
   });
-  const matchPercent = Math.round((1 - mismatched / (width * height)) * 10000) / 100;
-  const diffPath = new URL(`${name}-diff.png`, outDir).pathname.replace(/^\/([A-Za-z]:)/, '$1');
-  writeFileSync(diffPath, PNG.sync.write(diff));
-  return { matchPercent, diffPath, actualPath };
+  try {
+    const page = await context.newPage();
+    // The screen must not depend on live data: every API call is answered as signed out.
+    await page.route('**/api/**', (route) =>
+      route.fulfill({
+        status: route.request().url().endsWith('/api/session') ? 200 : 401,
+        contentType: 'application/json',
+        body: route.request().url().endsWith('/api/session')
+          ? JSON.stringify({ authenticated: false })
+          : JSON.stringify({ error: 'unauthenticated' }),
+      }),
+    );
+    await page.goto(baseUrl, { waitUntil: 'networkidle' });
+    await page.addStyleTag({ content: stableCss });
+    await page.evaluate(() => document.fonts.ready);
+    return await page.screenshot({ fullPage: true, animations: 'disabled' });
+  } finally {
+    await context.close();
+  }
+}
+
+/**
+ * The comparison script runs as plain text in the browser. Bundling it through tsx would add helper
+ * calls that do not exist in the page, so it is kept as a string.
+ */
+const comparePixelsScript = `async ({ expectedUrl, actualUrl, tolerance }) => {
+  const load = (src) =>
+    new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = reject;
+      image.src = src;
+    });
+  const [left, right] = await Promise.all([load(expectedUrl), load(actualUrl)]);
+  if (left.width !== right.width || left.height !== right.height) {
+    return { changed: Number.POSITIVE_INFINITY, total: 1, sizeMatches: false };
+  }
+  const read = (image) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = image.width;
+    canvas.height = image.height;
+    const context2d = canvas.getContext('2d');
+    context2d.drawImage(image, 0, 0);
+    return context2d.getImageData(0, 0, image.width, image.height).data;
+  };
+  const a = read(left);
+  const b = read(right);
+  let changed = 0;
+  for (let i = 0; i < a.length; i += 4) {
+    if (
+      Math.abs(a[i] - b[i]) > tolerance ||
+      Math.abs(a[i + 1] - b[i + 1]) > tolerance ||
+      Math.abs(a[i + 2] - b[i + 2]) > tolerance ||
+      Math.abs(a[i + 3] - b[i + 3]) > tolerance
+    )
+      changed += 1;
+  }
+  return { changed, total: a.length / 4, sizeMatches: true };
+}`;
+
+/** Counts pixels that differ between two PNGs. The comparison runs in a browser canvas, so no image library is needed. */
+async function changedRatio(
+  browser: Awaited<ReturnType<typeof chromium.launch>>,
+  expected: Buffer,
+  actual: Buffer,
+): Promise<{ changed: number; total: number; sizeMatches: boolean }> {
+  const context = await browser.newContext();
+  try {
+    const page = await context.newPage();
+    const argument = {
+      expectedUrl: `data:image/png;base64,${expected.toString('base64')}`,
+      actualUrl: `data:image/png;base64,${actual.toString('base64')}`,
+      tolerance: channelTolerance,
+    };
+    return await page.evaluate(`(${comparePixelsScript})(${JSON.stringify(argument)})`);
+  } finally {
+    await context.close();
+  }
 }
 
 async function main() {
-  const [name, url, referencePath, flag] = process.argv.slice(2);
-  if (!name || !url || !referencePath) {
-    console.error(
-      'Usage: node --import tsx scripts/tests/visual-regression.ts <name> <url> <referencePng> [--update]',
-    );
-    process.exitCode = 1;
-    return;
-  }
-  const signIn =
-    process.env.VISUAL_EMAIL && process.env.VISUAL_PASSWORD
-      ? { email: process.env.VISUAL_EMAIL, password: process.env.VISUAL_PASSWORD }
-      : undefined;
-  if (flag === '--update') {
-    const buffer = await screenshot(url, { width: 1440, height: 900, fullPage: false, signIn });
-    writeFileSync(referencePath, buffer);
-    process.stdout.write(`Baseline updated: ${referencePath}\n`);
-    return;
-  }
-  const result = await compare(name, url, referencePath, {
-    width: 1440,
-    height: 900,
-    fullPage: false,
-    signIn,
+  await mkdir(baselineDir, { recursive: true });
+  const browser = await chromium.launch({
+    args: ['--font-render-hinting=none', '--disable-lcd-text', '--force-color-profile=srgb'],
   });
-  process.stdout.write(`${name}: ${result.matchPercent}% match\n`);
-  process.stdout.write(`  actual: ${result.actualPath}\n`);
-  process.stdout.write(`  diff:   ${result.diffPath}\n`);
+  try {
+    for (const screen of screens) {
+      const actual = await captureScreen(browser, screen);
+      const path = `${baselineDir}${screen.name}.png`;
+      if (updating) {
+        await writeFile(path, actual);
+        process.stdout.write(`PASS wrote baseline ${screen.name}
+`);
+        continue;
+      }
+      const expected = await readFile(path).catch(() => {
+        throw new Error(
+          `missing baseline ${screen.name}; run with VISUAL_UPDATE=1 on the CI image`,
+        );
+      });
+      const result = await changedRatio(browser, expected, actual);
+      assert.equal(result.sizeMatches, true, `${screen.name} changed size`);
+      const ratio = result.changed / result.total;
+      assert.ok(
+        ratio <= maxChangedRatio,
+        `${screen.name}: ${result.changed} pixels changed (${(ratio * 100).toFixed(3)}%)`,
+      );
+      process.stdout.write(`PASS ${screen.name} (${result.changed} changed pixels)
+`);
+    }
+  } finally {
+    await browser.close();
+  }
 }
 
 await main();
