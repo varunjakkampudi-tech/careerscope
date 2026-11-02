@@ -25,11 +25,13 @@ export async function setRecoveryEmail(
   ownerId: string,
   email: string,
 ): Promise<boolean> {
+  // Addresses are stored lower-case, so the guard must compare lower-case values too.
+  const address = email.trim().toLowerCase();
   const result = await database.pool.query(
     `UPDATE users SET recovery_email = $2, recovery_email_verified_at = now()
      WHERE id = $1
        AND NOT EXISTS (SELECT 1 FROM users WHERE email = $2)`,
-    [ownerId, email],
+    [ownerId, address],
   );
   return (result.rowCount ?? 0) === 1;
 }
@@ -70,7 +72,7 @@ export async function recoveryTarget(
      WHERE email = $1
        AND recovery_email IS NOT NULL
        AND recovery_email_verified_at <= now() - ($2::bigint * interval '1 millisecond')`,
-    [email, recoveryCooldownMs],
+    [email.trim().toLowerCase(), recoveryCooldownMs],
   );
   const row = result.rows[0];
   return row ? { ownerId: row.id, recoveryEmail: row.recovery_email } : null;

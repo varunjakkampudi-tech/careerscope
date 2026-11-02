@@ -5,6 +5,7 @@
  */
 
 import { randomUUID } from 'node:crypto';
+import type { Pool } from 'pg';
 import type { Database } from './database.js';
 
 export type LegalPolicy = { termsVersion: string; privacyVersion: string };
@@ -16,8 +17,8 @@ export type LegalStatus = {
 };
 
 /** The latest recorded acceptance of each document, from the append-only ledger. */
-async function latestAcceptances(database: Database, ownerId: string) {
-  const result = await database.pool.query<{
+async function latestAcceptances(queryable: Pick<Pool, 'query'>, ownerId: string) {
+  const result = await queryable.query<{
     document: string;
     version: string;
     accepted: boolean;
@@ -41,7 +42,7 @@ export async function legalStatus(
   ownerId: string,
   policy: LegalPolicy,
 ): Promise<LegalStatus> {
-  const latest = await latestAcceptances(database, ownerId);
+  const latest = await latestAcceptances(database.pool, ownerId);
   const current = (row: { version: string; accepted: boolean } | null, version: string) =>
     row !== null && row.accepted && row.version === version;
   // Only a recorded earlier version triggers the requirement. A missing record does not.
@@ -68,7 +69,8 @@ export async function recordLegalAcceptance(
   try {
     await client.query('BEGIN');
     await client.query('SELECT id FROM users WHERE id = $1 FOR UPDATE', [ownerId]);
-    const latest = await latestAcceptances(database, ownerId);
+    // Read on the locked transaction, so the decision and the insert see the same ledger.
+    const latest = await latestAcceptances(client, ownerId);
     const documents = [
       { document: 'terms', version: policy.termsVersion, row: latest.terms },
       { document: 'privacy_notice', version: policy.privacyVersion, row: latest.privacy },

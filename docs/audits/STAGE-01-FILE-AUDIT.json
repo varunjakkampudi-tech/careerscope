@@ -3076,10 +3076,10 @@
           "remediation": "Track ESLint and eslint-config-next upgrades. Re-run npm audit when they release."
         }
       ],
-      "observations": "Read the script table, devDependencies, dependencies and overrides. Output was truncated mid-scripts in the middle of the file, so lines in the truncated part are not yet read. Production dependency audit: 0 advisories. Development-only audit: 15 moderate advisories in the lint toolchain (see S1-F004).",
+      "observations": "Read the script table, devDependencies, dependencies and overrides. The check-file-audit test and the recovery-email integration test are wired into test:unit and test:integration. Production dependency audit: 0 advisories. Development-only audit: 15 moderate advisories in the lint toolchain (S1-F004). The output of the first read was truncated mid-scripts, so the truncated range is not yet read.",
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "dde78e3ccdc80be772330c4544c5cd714fbf7b19ede02c03e522cfa1c8624f22"
+      "sha256": "9eadf1739faff8d891bb884981e6c0537f19458c2a9b0ce205ffd7868461c4a6"
     },
     {
       "path": "packages/core/package.json",
@@ -3228,14 +3228,14 @@
     {
       "path": "packages/core/src/email-change-requests.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (290 lines). Checked: one pending request per owner through ON CONFLICT on owner_id; lock order is user then request in both begin and verify; the current address must still match the stored keyed hash or the request is deleted; five wrong codes delete the request; expiry deletes it; a unique-email race after the preflight maps to conflict and removes the request; the email update is conditional on the email read under lock. Observation, not a defect: a completed change does not end the account's other sessions, unlike the support-case change. Both sides were proven by code, so this is a product decision to confirm with the owner.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "5d0e13ace0f29b0df7b25afd57c4f00e7726d780d61127ea93bfae9f5b9dba9e"
     },
     {
       "path": "packages/core/src/email-otp-challenges.clock.test.ts",
@@ -3460,14 +3460,22 @@
     {
       "path": "packages/core/src/legal-acceptance.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "findings": [
+        {
+          "id": "S1-F010",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "recordLegalAcceptance read the ledger on a separate pool connection instead of the transaction that held the lock.",
+          "remediation": "latestAcceptances takes the queryable; recordLegalAcceptance passes the locked client. Covered by legal-acceptance.integration.test.ts (run in the integration suite)."
+        }
+      ],
+      "observations": "Read in full (91 lines). Checked: only a recorded earlier version forces re-acceptance (a missing record does not); the ledger is append-only and only changed documents are written; the user row lock serialises acceptance writes. The latest-acceptance read ran on the pool, outside the locked transaction, so the decision and the insert did not share a snapshot (S1-F010). The read now runs on the locked client.",
+      "evidence": "apps/api/src/legal-acceptance.integration.test.ts and apps/api/src/recovery.integration.test.ts: 2 pass, 0 fail (the recovery test covers recovery routes).",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "940372bd4b26ceb4ed6da792171f00c62ae0c497ba619d7a4e4268350bc659e1"
     },
     {
       "path": "packages/core/src/market.integration.test.ts",
@@ -3638,16 +3646,36 @@
       "sha256": ""
     },
     {
-      "path": "packages/core/src/recovery-email.ts",
+      "path": "packages/core/src/recovery-email.integration.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Written in this change and read in full before commit. One database per run, dropped with force in finally. Covers the case-variant refusal, the own-address refusal, a successful set and the cooldown-gated target lookup in mixed case.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "51ad1653fbbedceeaca77cb0705a74527e272a9556ff7de30bb3d39c0be992f8"
+    },
+    {
+      "path": "packages/core/src/recovery-email.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [
+        {
+          "id": "S1-F009",
+          "severity": "medium",
+          "status": "fixed",
+          "summary": "setRecoveryEmail compared the address without lower-casing, so a mixed-case copy of another account's sign-in address could become a recovery address. The API routes lower-case, so this was defence in depth only, but the stated guarantee was not enforced by the core function.",
+          "remediation": "Core normalises the address in setRecoveryEmail and recoveryTarget; recovery-email.integration.test.ts asserts the refusal and the target lookup."
+        }
+      ],
+      "observations": "Read in full (77 lines). Checked: refusal when the address is any account's sign-in address (NOT EXISTS guard); removal; status returns the flag and dates, never the address; recovery target only after the 72-hour cooldown; the caller cannot tell an unknown account from one without recovery. The core functions trusted the caller to lower-case the address, so a case variant of another account's address would pass the guard (S1-F009). Both functions now normalise. Regression test: packages/core/src/recovery-email.integration.test.ts.",
+      "evidence": "node --env-file=.env --import tsx --test --test-concurrency=1 packages/core/src/recovery-email.integration.test.ts: 1 pass, 0 fail.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "2c7ad236e361def9e4f0427e400c89dae4fbef55f13cf576ddfd603802d59601"
     },
     {
       "path": "packages/core/src/resume-parser-child.ts",
@@ -3852,14 +3880,14 @@
     {
       "path": "packages/core/src/test-users.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (86 lines). Checked: fixed test identities, the fail-closed test-access policy (production refuses, local needs an explicit mode and a development loopback origin, hosted needs staging, HTTPS and a 64-hex secret), relay-header refusal in local mode, and the constant-time comparison of hashed proxy secrets. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "10f3e9e18810574ac3649199a3c3442844b732c5a0a2689b310d3cdb63d85734"
     },
     {
       "path": "packages/core/src/totp.test.ts",
