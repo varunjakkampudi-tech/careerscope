@@ -59,6 +59,7 @@
 
 import { Database } from '../../packages/core/src/database.js';
 import { installProcessFailureHandlers, logFailure } from '../../packages/core/src/failure.js';
+import { resolveDatabaseUrl } from '../../packages/core/src/runtime.js';
 
 interface HistoryRow {
   ownerId: string;
@@ -197,7 +198,7 @@ export async function rebuildJobSightings(database: Database): Promise<RebuildSu
 }
 
 async function main() {
-  const database = new Database(process.env.DATABASE_URL!);
+  const database = new Database(resolveDatabaseUrl());
   try {
     const summary = await rebuildJobSightings(database);
     process.stdout.write(

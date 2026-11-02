@@ -8,6 +8,7 @@
 import { Database } from '../../packages/core/src/database.js';
 import { setAccountRole, type AccountRole } from '../../packages/core/src/admin-second-factor.js';
 import { installProcessFailureHandlers, logFailure } from '../../packages/core/src/failure.js';
+import { resolveDatabaseUrl } from '../../packages/core/src/runtime.js';
 
 installProcessFailureHandlers();
 
@@ -21,7 +22,7 @@ if (!suppliedEmail || !suppliedRole || !roles.includes(suppliedRole as AccountRo
 
 let database: Database | undefined;
 try {
-  database = new Database(process.env.DATABASE_URL!);
+  database = new Database(resolveDatabaseUrl());
   const updated = await setAccountRole(
     database,
     suppliedEmail.trim().toLowerCase(),

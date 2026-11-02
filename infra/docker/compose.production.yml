@@ -29,7 +29,10 @@ x-hardening: &hardening
     options: { max-size: 10m, max-file: '5' }
 
 x-environment: &environment
-  DATABASE_URL: postgres://careerscope:${POSTGRES_PASSWORD:?Database password required}@127.0.0.1:5432/careerscope
+  # No password in the URL: DATABASE_PASSWORD_FILE supplies it from a mounted secret (see the api service),
+  # so the password is absent from `docker inspect` like the Redis password.
+  DATABASE_URL: postgres://careerscope@127.0.0.1:5432/careerscope
+  DATABASE_PASSWORD_FILE: /run/secrets/database-password
   # No password in the URLs: the app reads it from REDIS_PASSWORD_FILE (a mounted secret), so it is
   # absent from `docker inspect`.
   REDIS_URL: redis://127.0.0.1:6379
@@ -125,9 +128,10 @@ services:
       DEPLOYMENT_ENVIRONMENT: production
       POSTGRES_DB: careerscope
       POSTGRES_USER: careerscope
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Database password required}
+      POSTGRES_PASSWORD_FILE: /run/secrets/database-password
       POSTGRES_HOST_AUTH_METHOD: scram-sha-256
     volumes: ['database:/var/lib/postgresql/data']
+    secrets: [database-password]
     tmpfs: ['/tmp:size=64m,mode=1777', '/var/run/postgresql:size=8m,uid=70,gid=70,mode=0775']
     cpus: 1
     mem_limit: 1g
@@ -230,6 +234,7 @@ services:
     mem_limit: 512m
     depends_on:
       postgres: { condition: service_healthy }
+    secrets: [database-password]
 
   api:
     <<: *app
@@ -240,7 +245,7 @@ services:
       EMAIL_OTP_HMAC_SECRET_FILE: /run/secrets/email-otp-hmac-secret
       RESEND_API_KEY_FILE: /run/secrets/resend-api-key
     command: ['node', 'apps/api/dist/main.js']
-    secrets: [redis-password, email-otp-hmac-secret, resend-api-key]
+    secrets: [database-password, redis-password, email-otp-hmac-secret, resend-api-key]
     volumes: ['private:/private']
     healthcheck:
       test:
@@ -257,17 +262,17 @@ services:
   publisher:
     <<: *app
     command: ['node', 'apps/workers/search/dist/publisher.js']
-    secrets: [redis-password]
+    secrets: [database-password, redis-password]
 
   search:
     <<: *app
     command: ['node', 'apps/workers/search/dist/main.js']
-    secrets: [redis-password]
+    secrets: [database-password, redis-password]
 
   files:
     <<: *app
     command: ['node', 'apps/workers/search/dist/files.js']
-    secrets: [redis-password]
+    secrets: [database-password, redis-password]
     volumes: ['private:/private:ro']
 
   web:
@@ -298,6 +303,8 @@ services:
       timeout: 5s
       retries: 20
 
+# The database password reaches Postgres and the app services as a file (POSTGRES_PASSWORD_FILE and
+# DATABASE_PASSWORD_FILE); `bash infra/host/render-database-password.sh` writes it from POSTGRES_PASSWORD.
 # The Redis password reaches the Redis containers as a file, never as a command-line argument
 # or an environment variable, so it is absent from `docker inspect` and the process list.
 # `bash infra/host/render-redis-config.sh` writes these files from REDIS_PASSWORD in infra/.env.
@@ -314,6 +321,8 @@ secrets:
     file: ../.env.secrets/email-otp-hmac-secret
   resend-api-key:
     file: ../.env.secrets/resend-api-key
+  database-password:
+    file: ../.env.secrets/database-password
 
 volumes:
   queue-data:

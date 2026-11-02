@@ -75,7 +75,8 @@ EOF
 chmod 600 "$env_file.next"
 mv "$env_file.next" "$env_file"
 
-# Redis password reaches the containers as mounted files, never as an environment variable.
+# Database and Redis passwords reach the containers as mounted files, never as environment variables.
+bash "$(dirname "$0")/render-database-password.sh" "$env_file"
 bash "$(dirname "$0")/render-redis-config.sh" "$env_file"
 # The OTP HMAC secret (generated on first run) and the Resend key reach only the api, as files.
 bash "$(dirname "$0")/render-otp-secrets.sh" "$env_file"

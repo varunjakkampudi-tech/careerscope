@@ -81,7 +81,26 @@ await check('app services get the Redis password from a file, not from the URL',
   const body = withoutComments(compose);
   assert.equal(/redis:\/\/:/.test(body), false, 'no password inside a Redis URL');
   assert.match(body, /REDIS_PASSWORD_FILE: \/run\/secrets\/redis-password/);
-  assert.equal((body.match(/secrets: \[redis-password\]/g) ?? []).length, 3);
+  assert.equal((body.match(/secrets: \[database-password, redis-password\]/g) ?? []).length, 3);
+});
+
+await check('the database password is a file secret, never part of an environment value', () => {
+  const body = withoutComments(compose);
+  assert.equal(
+    /postgres:\/\/careerscope:\$\{/.test(body),
+    false,
+    'no password inside DATABASE_URL',
+  );
+  assert.equal(
+    /^\s+POSTGRES_PASSWORD:/m.test(body),
+    false,
+    'no POSTGRES_PASSWORD environment value',
+  );
+  assert.match(body, /DATABASE_PASSWORD_FILE: \/run\/secrets\/database-password/);
+  assert.match(body, /POSTGRES_PASSWORD_FILE: \/run\/secrets\/database-password/);
+  assert.match(body, /database-password:\n\s+file: \.\.\/\.env\.secrets\/database-password/);
+  // postgres, bootstrap, api, publisher, search and files. The web service never receives it.
+  assert.equal((body.match(/secrets: \[database-password/g) ?? []).length, 6);
 });
 
 await check(
@@ -94,8 +113,11 @@ await check(
     assert.match(body, /EMAIL_OTP_HMAC_SECRET_FILE: \/run\/secrets\/email-otp-hmac-secret/);
     assert.match(body, /RESEND_API_KEY_FILE: \/run\/secrets\/resend-api-key/);
     assert.equal(
-      (body.match(/secrets: \[redis-password, email-otp-hmac-secret, resend-api-key\]/g) ?? [])
-        .length,
+      (
+        body.match(
+          /secrets: \[database-password, redis-password, email-otp-hmac-secret, resend-api-key\]/g,
+        ) ?? []
+      ).length,
       1,
     );
     const others = body.slice(body.indexOf('\n  publisher:'), body.indexOf('\nsecrets:'));

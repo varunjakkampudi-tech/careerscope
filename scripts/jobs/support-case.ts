@@ -18,6 +18,7 @@ import {
   openSupportCase,
 } from '../../packages/core/src/support-cases.js';
 import { installProcessFailureHandlers, logFailure } from '../../packages/core/src/failure.js';
+import { resolveDatabaseUrl } from '../../packages/core/src/runtime.js';
 
 installProcessFailureHandlers();
 
@@ -55,7 +56,7 @@ try {
     if (!first || !second || second.trim().length < 10 || second.length > 500) usage();
     const email = first;
     const reason = second;
-    database = new Database(process.env.DATABASE_URL!);
+    database = new Database(resolveDatabaseUrl());
     const operator = process.env.CAREERSCOPE_OPERATOR ?? userInfo().username;
     const opened = await openSupportCase(database, email.trim().toLowerCase(), reason, operator);
     if (!opened) {
@@ -69,7 +70,7 @@ try {
   } else if (command === 'close') {
     const caseId = first;
     if (!caseId) usage();
-    database = new Database(process.env.DATABASE_URL!);
+    database = new Database(resolveDatabaseUrl());
     const closed = await closeSupportCase(database, caseId);
     process.stdout.write(closed ? 'Support case closed.\n' : 'No open case has that id.\n');
     if (!closed) process.exitCode = 1;
@@ -77,7 +78,7 @@ try {
     const caseId = first;
     const newEmail = second?.trim().toLowerCase();
     if (!caseId || !newEmail || newEmail.length > 254 || !newEmail.includes('@')) usage();
-    database = new Database(process.env.DATABASE_URL!);
+    database = new Database(resolveDatabaseUrl());
     const result = await changeEmailWithSupportCase(database, caseId, newEmail);
     if (result.outcome !== 'changed') {
       process.stderr.write(

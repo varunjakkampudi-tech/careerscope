@@ -151,6 +151,28 @@ function withRedisPassword(value: string, password: string) {
   return url.toString();
 }
 
+/** Plain-token rule shared by the database and Redis password files. */
+const plainPasswordPattern = /^[A-Za-z0-9._~-]{16,}$/;
+
+/**
+ * The database URL for a process, with the password taken from DATABASE_PASSWORD_FILE when the URL has
+ * none. Production keeps the password out of the environment this way, so `docker inspect` does not show
+ * it. The file is always read and validated when set, and a value already in the URL is not replaced.
+ */
+export function resolveDatabaseUrl(source: NodeJS.ProcessEnv = process.env): string {
+  const url = source.DATABASE_URL;
+  if (!url) throw new ConfigurationError('DATABASE_URL is required');
+  if (!source.DATABASE_PASSWORD_FILE) return url;
+  const password = readSecretFile('DATABASE_PASSWORD_FILE', source.DATABASE_PASSWORD_FILE).trim();
+  if (!plainPasswordPattern.test(password))
+    throw new ConfigurationError(
+      'DATABASE_PASSWORD_FILE must contain a plain password of at least 16 characters',
+    );
+  const parsed = new URL(url);
+  if (!parsed.password) parsed.password = password;
+  return parsed.toString();
+}
+
 /**
  * Parses and validates the environment. Rejects unsafe combinations: non-loopback database or Redis
  * hosts, queue and rate-limit Redis sharing one URL, registration without OTP and versioned legal
@@ -213,6 +235,7 @@ export function configuration(
         .join('; '),
     );
   const env = parsed.data;
+  env.DATABASE_URL = resolveDatabaseUrl(source);
   localUrl(env.DATABASE_URL, ['postgres:', 'postgresql:']);
   localUrl(env.REDIS_URL, ['redis:']);
   localEndpoint(env.QUEUE_REDIS_URL);
@@ -261,7 +284,7 @@ export function configuration(
   // empty or malformed file fails startup. Its value is used only for a URL that carries no password.
   if (source.REDIS_PASSWORD_FILE) {
     const password = readSecretFile('REDIS_PASSWORD_FILE', source.REDIS_PASSWORD_FILE).trim();
-    if (!/^[A-Za-z0-9._~-]{16,}$/.test(password))
+    if (!plainPasswordPattern.test(password))
       throw new ConfigurationError(
         'REDIS_PASSWORD_FILE must contain a plain password of at least 16 characters',
       );

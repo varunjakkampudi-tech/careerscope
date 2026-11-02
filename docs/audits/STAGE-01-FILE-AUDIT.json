@@ -2052,14 +2052,14 @@
     {
       "path": "docs/operations/SECRETS.md",
       "category": "documentation",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read the secrets table and the file-based secrets section, and updated both for the database password file. The remaining sections were not re-read in this pass.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "44f6e2ca22c0e9f0886bded5c64562b9897f2befcac57cc54efa7dba20e068d0"
     },
     {
       "path": "docs/operations/STAGING.md",
@@ -2304,14 +2304,14 @@
     {
       "path": "infra/checks/check-production-config.mjs",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read the compose secret assertions and the file-secret reader checks, and added the database-password assertions. The other check groups were run (all pass) but not read line by line in this pass.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "57a23af133acf128fe68161981d6df434bad7fd217e88ef29372b623a5bd8ebe"
     },
     {
       "path": "infra/checks/check-provenance.sh",
@@ -2400,14 +2400,14 @@
     {
       "path": "infra/docker/Dockerfile",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (about 130 lines). Base images are digest pinned; the Caddy proxy is rebuilt from committed, pinned Go modules with -mod=readonly; the proxy and runtime stages run as uid 1000 and node; no apt or apk upgrade runs at build time; production dependencies are pruned before the runtime copy; no secret is copied into an image. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "7f94fa6980d143700b6c502728458d744b39a6e4af48870ab1c24fdad3f43e0c"
     },
     {
       "path": "infra/docker/Dockerfile.dockerignore",
@@ -2484,14 +2484,22 @@
     {
       "path": "infra/docker/compose.production.yml",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F016",
+          "severity": "medium",
+          "status": "fixed",
+          "summary": "The database password was a container environment value in compose.production.yml.",
+          "remediation": "File secret database-password, written by infra/host/render-database-password.sh; infra/checks/check-production-config.mjs asserts the new topology."
+        }
+      ],
+      "observations": "Read in full (323 lines). Checked: every application service runs read-only with dropped capabilities, no-new-privileges, pids and memory limits, and a non-root user; all services share a network namespace that only the anchor publishes, with loopback binding; images must be explicit required values; the web service receives no database, key or Redis secret; Redis passwords are file secrets. Defect S1-F016 (medium): DATABASE_URL and POSTGRES_PASSWORD carried the database password as container environment values. Fixed: DATABASE_PASSWORD_FILE and POSTGRES_PASSWORD_FILE from the database-password file secret, mounted only by the six services that need it.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "aacf2cdeab7d0972374a83c244e0bdfe146d819593551f10686285650d662775"
     },
     {
       "path": "infra/host/apply-migrations.sh",
@@ -2520,14 +2528,14 @@
     {
       "path": "infra/host/bootstrap.mjs",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (18 lines). Creates the private storage directory, ensures the resume key, and runs migrations. It now opens the database through resolveDatabaseUrl, so the password file is honoured. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "e594206f33f63a113803885084671cd233bf3e43846bbd5ea6fbb7665f386a80"
     },
     {
       "path": "infra/host/build-images.sh",
@@ -2544,14 +2552,14 @@
     {
       "path": "infra/host/deploy.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read lines 20 to 84. Generates POSTGRES_PASSWORD and REDIS_PASSWORD on first run, writes the env file under umask 077 and mode 600, loads the release record, and renders the database, Redis and OTP secret files before compose up. Lines 1 to 19 (argument parsing) are not yet read.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "e327637cfd06a14e89b8b2f5b7d4542b0178735d9605e041be71562552fdd054"
     },
     {
       "path": "infra/host/harden-ssh.sh",
@@ -2638,16 +2646,28 @@
       "sha256": ""
     },
     {
-      "path": "infra/host/render-otp-secrets.sh",
+      "path": "infra/host/render-database-password.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Written in this change and read in full. Reads POSTGRES_PASSWORD from the env file as one plain token, writes it to a temporary file and moves it into place with mode 0444 inside the 0700 secrets directory, which Postgres and the app both need. Never prints the value. Passes bash -n.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "0bd950b5aae0c6e439ab916a8c8ba5beb0a67885d72c916b6d89ea51c4a52a9d"
+    },
+    {
+      "path": "infra/host/render-otp-secrets.sh",
+      "category": "deployment-infrastructure",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read in full (70 lines). Generates the HMAC secret on first run and validates both secrets (length, distinct bytes, no sequence) without printing values. Writes the files under umask 077 into a 0700 directory with owner and mode as root or 0444 otherwise. No finding.",
+      "evidence": "",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "472149efce3b223d8ca301afe0bb746413c9feec6bf70f9b9fb582ec6401eee0"
     },
     {
       "path": "infra/host/render-redis-config.sh",
@@ -2676,14 +2696,14 @@
     {
       "path": "infra/host/resume-key.mjs",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (96 lines). The key is written with an exclusive create at mode 0600, fsynced and linked into place, so a crash leaves no partial key. An existing key is validated, never replaced. Concurrent starts converge on one key. Stale temporaries older than a minute are removed. The key bytes are zeroed. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "cc0ad256f125335e4b1f3a3494d676fdfd36befff5174dcf10881c0aa5c443b8"
     },
     {
       "path": "infra/host/scan-images.sh",
@@ -3093,13 +3113,13 @@
           "severity": "medium",
           "status": "accepted-risk",
           "summary": "Development-only minimatch 3.1.5 (GHSA-g3hv-75wg-m249) in the ESLint plugin chain. Time-limited exception EX-2026-01 applies.",
-          "remediation": "Exception documented with verification, trigger and review criteria in docs/security/DEPENDENCY-EXCEPTIONS.md."
+          "remediation": "Exception documented in docs/security/DEPENDENCY-EXCEPTIONS.md."
         }
       ],
-      "observations": "Read in full: script table, devDependencies, dependencies and overrides. The check-file-audit test and the recovery-email and email-change integration tests are wired into their suites. Production audit: 0 advisories. Development-only minimatch advisory covered by exception EX-2026-01 in docs/security/DEPENDENCY-EXCEPTIONS.md (scanning still enabled). No other finding.",
+      "observations": "Read in full. Adds runtime.database-url.test.ts to test:unit. The production audit has 0 advisories; the development-only minimatch exception is EX-2026-01.",
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "74437c2ff4acfb727e2569d10e2f9f98e5433308b6457449118607d51134f113"
+      "sha256": "3911b935b91ddecc950ebc2971698cd146852ee5915714ef5086475cd373b12b"
     },
     {
       "path": "packages/core/package.json",
@@ -3802,6 +3822,18 @@
       "sha256": "2648ac3488dbbc7610b61f63e4f8b36816b1a00334a3a9e945fd187f491001e7"
     },
     {
+      "path": "packages/core/src/runtime.database-url.test.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Written in this change and read in full before commit. Six tests: no file leaves the URL unchanged; the file password is applied; an existing password is kept while the file is still validated; a weak file is refused without echoing its value; a missing file names only the variable; a missing URL is refused.",
+      "evidence": "",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "ad3e860f7e448cd201d35be3bf52eec02c36fe9e33f25cfedbd764d4021a3b4c"
+    },
+    {
       "path": "packages/core/src/runtime.integration.test.ts",
       "category": "shared-domain-package",
       "reviewMethod": "none",
@@ -3831,11 +3863,19 @@
       "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "Read in full (327 lines). Checked: isRandomSecret keeps the accepted contract (no byte-diversity rejection; periodic and arithmetic checks only); secret files are read as regular files with O_NOFOLLOW, a size cap and an lstat/fstat identity check; group and world write refused on POSIX; errors name the variable, never the value; zod issues reported by code and path only; loopback-only database and Redis URLs; registration and production gates; rate-limit Lua script is atomic. No finding.",
-      "evidence": "",
+      "findings": [
+        {
+          "id": "S1-F016",
+          "severity": "medium",
+          "status": "fixed",
+          "summary": "The database password was a container environment value (DATABASE_URL and POSTGRES_PASSWORD) in compose.production.yml, so docker inspect exposed it.",
+          "remediation": "DATABASE_PASSWORD_FILE and POSTGRES_PASSWORD_FILE from a mounted secret written by infra/host/render-database-password.sh; resolveDatabaseUrl applies it; runtime.database-url.test.ts (6 pass); infra/checks/check-production-config.mjs (all pass). Not exercised by a live production deploy; that remains a deploy-time check."
+        }
+      ],
+      "observations": "Read in full (327 lines earlier; this change adds resolveDatabaseUrl, about 20 lines). Checked: the database password comes from DATABASE_PASSWORD_FILE through the hardened file reader and the plain-token rule, applied only when the URL has no password. The resolver is used by configuration() and by every entry point that opens the database. Defect S1-F016 (medium): the production compose file put the database password into DATABASE_URL and POSTGRES_PASSWORD, which are container environment values visible in docker inspect, contrary to the stack's own comments. Fixed by the file secret, with tests in runtime.database-url.test.ts and assertions in infra/checks/check-production-config.mjs.",
+      "evidence": "node --import tsx --test packages/core/src/runtime.database-url.test.ts: 6 pass, 0 fail. node infra/checks/check-production-config.mjs: all checks passed. npx tsc -b exit 0.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "d1c9fa99ad1151337715c18856a2facbfbdd731e27e9402f32503a47b3bc07ae"
+      "sha256": "b7ec7da89528004f671e328fbfcafe689d67ebd3e2241c9ddcd4a191c7fd4fd1"
     },
     {
       "path": "packages/core/src/schema.ts",
