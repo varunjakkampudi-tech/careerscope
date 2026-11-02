@@ -27,7 +27,9 @@ export interface Contact {
 /** Extracts email, phone and profile links from the flattened text. Never invents a value. */
 export function deriveContact(text: string): Contact {
   const flat = text.replace(/\s+/g, ' ');
-  const email = first(flat, /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);
+  // Bounded quantifiers keep this linear. The unbounded form backtracks quadratically on a long run of
+  // address characters with no '@' or top-level domain, which a hostile resume can supply (S1-F022).
+  const email = first(flat, /[A-Za-z0-9._%+-]{1,64}@(?:[A-Za-z0-9-]{1,63}\.){1,8}[A-Za-z]{2,24}/);
   return {
     email,
     phone: derivePhone(flat),
@@ -75,7 +77,7 @@ function derivePortfolio(flat: string, email?: string): string | undefined {
   // "M.Tech" on an education line otherwise read as websites, and a degree is a
   // much more common string in a resume than a personal site.
   const matches = flat.matchAll(
-    /\b((?:https?:\/\/)?(?:www\.)?[a-z0-9][a-z0-9-]+\.(?:in|io|dev|me|app|tech|xyz|co|com|net|site|page)(?:\/[^\s,;]*)?)\b/gi,
+    /\b((?:https?:\/\/)?(?:www\.)?[a-z0-9][a-z0-9-]{1,61}\.(?:in|io|dev|me|app|tech|xyz|co|com|net|site|page)(?:\/[^\s,;]*)?)\b/gi,
   );
   for (const m of matches) {
     const url = (m[1] ?? '').replace(/^https?:\/\//i, '').replace(/^www\./i, '');

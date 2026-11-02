@@ -387,3 +387,30 @@ describe('deriveFields', () => {
     expect(fields.yearsOfExperience).toBeGreaterThan(4);
   });
 });
+
+describe('deriveContact on hostile input', () => {
+  it('finishes in linear time on a long run of address characters with no @ or domain', () => {
+    const started = performance.now();
+    expect(deriveContact('a'.repeat(100_000)).email).toBeUndefined();
+    expect(deriveContact(`x@${'a'.repeat(100_000)}`).email).toBeUndefined();
+    expect(performance.now() - started).toBeLessThan(2_000);
+  });
+
+  it('still reads ordinary and unusual addresses', () => {
+    expect(deriveContact('Reach me at first.last+tag@mail.example.co.in today').email).toBe(
+      'first.last+tag@mail.example.co.in',
+    );
+  });
+});
+
+describe('deriveFields on hostile input', () => {
+  it('finishes in bounded time on dash-heavy text, which backtracks the portfolio pattern quadratically', () => {
+    const started = performance.now();
+    expect(deriveContact('1-'.repeat(60_000)).portfolio).toBeUndefined();
+    expect(performance.now() - started).toBeLessThan(2_000);
+  });
+
+  it('still finds a portfolio link in ordinary text', () => {
+    expect(deriveContact('Work: jane-doe.dev and more').portfolio).toBe('https://jane-doe.dev');
+  });
+});

@@ -4944,14 +4944,22 @@
     {
       "path": "packages/resume/src/derive.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F022",
+          "severity": "medium",
+          "status": "fixed",
+          "summary": "Unbounded regular expressions for the email and portfolio fields were quadratic on hostile resume text, letting one upload hold the isolated parser for seconds to tens of seconds.",
+          "remediation": "Bounded quantifiers in derive.ts; hostile-input tests in derive.test.ts (linear time and ordinary address and portfolio reading both asserted)."
+        }
+      ],
+      "observations": "Read lines 1 to 230 (contact, name, location, the contact and portfolio regular expressions) and 270 to 420 (date ranges and title patterns) in this pass. Defect S1-F022 (medium): the email and portfolio patterns used unbounded quantifiers and backtracked quadratically on runs of address characters (for example 1-1-1 repeated). A 160,000-character hostile resume took about 12 seconds in deriveContact, and the isolated parser allows 30 seconds per upload with one parse at a time, so a single upload could hold the parser. Both patterns now use bounded quantifiers (1 to 64 local characters, up to 8 domain labels of 1 to 63 characters, 2 to 24 TLD characters; 1 to 61 characters per portfolio label). Timing probes on six adversarial 80k to 140k character inputs now run in under 200 ms each. Regression tests in derive.test.ts (62 pass). Lines 230 to 270 and 420 to 687 are not yet read.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "aa70b2c5571fd3fd490ac6f8af3da9eb2fcc9a48c0416bc5bfd6e84706dba190"
     },
     {
       "path": "packages/resume/src/extract.test.ts",
@@ -4968,14 +4976,14 @@
     {
       "path": "packages/resume/src/extract.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (233 lines). Format detection reads magic bytes and never trusts the file name or the client content type. Extraction runs inside the isolated child process. Whitespace and letter-spaced headings are normalised, and an unclean segmentation returns the line unchanged. Text under 40 characters is refused as a scanned document. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "61a9f0410a5a6a1349934b2467d8eae0628c60fb0cbb61674f67ee84a563e27b"
     },
     {
       "path": "packages/resume/src/index.ts",
