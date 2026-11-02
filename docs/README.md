@@ -63,3 +63,7 @@ This is the single index of CareerScope documentation. Every document under
 - [MANUAL-CI-TESTING](operations/MANUAL-CI-TESTING.md) - running CI suites by hand
 - [STAGING](operations/STAGING.md) - staging status and owner prerequisites
 - [TOOLCHAIN](operations/TOOLCHAIN.md) - toolchain validation (Node, framework majors)
+
+## Audits
+
+- [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md) and [STAGE-01-FILE-AUDIT.json](audits/STAGE-01-FILE-AUDIT.json) - file-level audit record for every tracked file (checked by `npm run audit:stage01`)
