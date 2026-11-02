@@ -113,3 +113,165 @@ test(
     }
   },
 );
+
+// Two completions race for the same request. The user row lock serialises them, so exactly one changes
+// the address, exactly one replacement session is created, and every older session is revoked.
+test(
+  'concurrent completions of one email change run the replacement once and revoke every older session',
+  { timeout: 60_000 },
+  async () => {
+    const configured = process.env.DATABASE_URL;
+    assert.ok(configured, 'integration test requires an isolated DATABASE_URL');
+    const url = new URL(configured);
+    assert.ok(['127.0.0.1', 'localhost'].includes(url.hostname));
+    const admin = new Database(configured);
+    const name = `test_${randomUUID().replaceAll('-', '')}`;
+    await admin.pool.query(`CREATE DATABASE "${name}"`);
+    url.pathname = `/${name}`;
+    const database = new Database(url.href);
+    const secret = randomBytes(32);
+    try {
+      await migrate(database.db, {
+        migrationsFolder: fileURLToPath(new URL('../../../migrations', import.meta.url)),
+      });
+      const ownerId = randomUUID();
+      await database.pool.query(
+        'INSERT INTO users (id, email, email_verified_at) VALUES ($1, $2, now())',
+        [ownerId, 'race-old@example.test'],
+      );
+      for (let index = 0; index < 3; index += 1) {
+        await database.pool.query(
+          "INSERT INTO sessions (id, token_hash, owner_id, expires_at, access_expires_at) VALUES ($1, $2, $3, now() + interval '1 day', now() + interval '1 hour')",
+          [randomUUID(), randomBytes(32).toString('hex'), ownerId],
+        );
+      }
+      const requests = new EmailChangeRequests(database.pool);
+      const pending = await requests.begin(ownerId, 'race-new@example.test', secret);
+      assert.ok(pending);
+      assert.equal(
+        await requests.verify({ ownerId, address: 'current', code: pending.currentCode, secret }),
+        'accepted',
+      );
+
+      let replacements = 0;
+      const complete = () =>
+        requests.verify({
+          ownerId,
+          address: 'new',
+          code: pending.newCode,
+          secret,
+          onCompleted: async (client) => {
+            replacements += 1;
+            await client.query(
+              "INSERT INTO sessions (id, token_hash, owner_id, expires_at, access_expires_at) VALUES ($1, $2, $3, now() + interval '1 day', now() + interval '1 hour')",
+              [randomUUID(), randomBytes(32).toString('hex'), ownerId],
+            );
+          },
+        });
+      const outcomes = await Promise.all([complete(), complete(), complete()]);
+      assert.deepEqual(
+        outcomes.filter((outcome) => outcome === 'completed').length,
+        1,
+        'exactly one completion succeeds',
+      );
+      assert.equal(replacements, 1, 'the replacement session is created exactly once');
+      assert.equal(
+        (
+          await database.pool.query<{ email: string }>('SELECT email FROM users WHERE id = $1', [
+            ownerId,
+          ])
+        ).rows[0]!.email,
+        'race-new@example.test',
+      );
+      const live = await database.pool.query(
+        'SELECT 1 FROM sessions WHERE owner_id = $1 AND revoked_at IS NULL',
+        [ownerId],
+      );
+      assert.equal(live.rowCount, 1, 'only the replacement session is live');
+    } finally {
+      await database.close();
+      await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+      await admin.close();
+    }
+  },
+);
+
+// A completion races a new request for the same account. Whatever order wins, the invariant holds: either
+// the change completed with one replacement session and the new address, or it did not and nothing moved.
+test(
+  'a completion racing a replacement request leaves either a full change or no change at all',
+  { timeout: 60_000 },
+  async () => {
+    const configured = process.env.DATABASE_URL;
+    assert.ok(configured, 'integration test requires an isolated DATABASE_URL');
+    const url = new URL(configured);
+    assert.ok(['127.0.0.1', 'localhost'].includes(url.hostname));
+    const admin = new Database(configured);
+    const name = `test_${randomUUID().replaceAll('-', '')}`;
+    await admin.pool.query(`CREATE DATABASE "${name}"`);
+    url.pathname = `/${name}`;
+    const database = new Database(url.href);
+    const secret = randomBytes(32);
+    try {
+      await migrate(database.db, {
+        migrationsFolder: fileURLToPath(new URL('../../../migrations', import.meta.url)),
+      });
+      const ownerId = randomUUID();
+      await database.pool.query(
+        'INSERT INTO users (id, email, email_verified_at) VALUES ($1, $2, now())',
+        [ownerId, 'race2-old@example.test'],
+      );
+      await database.pool.query(
+        "INSERT INTO sessions (id, token_hash, owner_id, expires_at, access_expires_at) VALUES ($1, $2, $3, now() + interval '1 day', now() + interval '1 hour')",
+        [randomUUID(), randomBytes(32).toString('hex'), ownerId],
+      );
+      const requests = new EmailChangeRequests(database.pool);
+      const first = await requests.begin(ownerId, 'race2-first@example.test', secret);
+      assert.ok(first);
+      await requests.verify({ ownerId, address: 'current', code: first.currentCode, secret });
+
+      const [completion, replacement] = await Promise.all([
+        requests.verify({
+          ownerId,
+          address: 'new',
+          code: first.newCode,
+          secret,
+          onCompleted: async (client) => {
+            await client.query(
+              "INSERT INTO sessions (id, token_hash, owner_id, expires_at, access_expires_at) VALUES ($1, $2, $3, now() + interval '1 day', now() + interval '1 hour')",
+              [randomUUID(), randomBytes(32).toString('hex'), ownerId],
+            );
+          },
+        }),
+        requests.begin(ownerId, 'race2-second@example.test', secret),
+      ]);
+      const email = (
+        await database.pool.query<{ email: string }>('SELECT email FROM users WHERE id = $1', [
+          ownerId,
+        ])
+      ).rows[0]!.email;
+      const live = (
+        await database.pool.query(
+          'SELECT 1 FROM sessions WHERE owner_id = $1 AND revoked_at IS NULL',
+          [ownerId],
+        )
+      ).rowCount;
+      if (completion === 'completed') {
+        assert.equal(email, 'race2-first@example.test');
+        assert.equal(live, 1, 'a completed change leaves only the replacement session');
+      } else {
+        assert.equal(
+          email,
+          'race2-old@example.test',
+          'a change that did not complete keeps the address',
+        );
+        assert.equal(live, 1, 'a change that did not complete keeps the existing session');
+      }
+      assert.ok(replacement !== undefined);
+    } finally {
+      await database.close();
+      await admin.pool.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+      await admin.close();
+    }
+  },
+);
