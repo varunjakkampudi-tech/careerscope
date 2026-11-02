@@ -1712,14 +1712,14 @@
     {
       "path": "docs/README.md",
       "category": "documentation",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "observations": "Read the Operations and Audits sections. The sections above Operations were not read in this pass.",
+      "evidence": "Stage 01 file audit session.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "60a4936fda91feca58fb2b571d10d248c4c1ccac5317f263d11698f49f4c07b5"
     },
     {
       "path": "docs/SECURITY.md",
@@ -1825,6 +1825,18 @@
       "concerns": [],
       "findings": [],
       "observations": "",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
+    },
+    {
+      "path": "docs/audits/STAGE-01-FILE-AUDIT.json",
+      "category": "self-referential-audit-record",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
       "evidence": "",
       "reviewer": "",
       "sha256": ""
@@ -5088,6 +5100,30 @@
       "evidence": "",
       "reviewer": "",
       "sha256": ""
+    },
+    {
+      "path": "scripts/ci/check-file-audit.mjs",
+      "category": "tooling-and-tests",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Written in this change and read in full before commit. Covers tracked-file coverage, duplicate, state, record, hash, stale-record and open critical or high finding checks. It does not prove that a file was reviewed; the README says so.",
+      "evidence": "Self-review before commit efdd55a.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "1f2e614d79beac3e28fa7c4518b524cd8b201390f9d43e62145334168ce806c1"
+    },
+    {
+      "path": "scripts/ci/check-file-audit.test.mjs",
+      "category": "tooling-and-tests",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Written in this change and read in full before commit. 12 tests cover each validator rule and the classification and sync behaviour.",
+      "evidence": "Self-review before commit efdd55a.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "228a2a487fcfc3c92e05c6bfec3c540d1a0bc97599a7b1a161e6dff93ad294c3"
     },
     {
       "path": "scripts/ci/check-line-endings.mjs",
