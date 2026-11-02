@@ -43,7 +43,7 @@ const defaultErrorMessages: Readonly<Record<number, string>> = {
   404: 'Not found',
   405: 'Method not allowed',
   408: 'Request timeout',
-  409: 'Idempotency conflict',
+  409: 'The request conflicts with the current state; reload and try again',
   413: 'Request too large',
   415: 'Unsupported media type',
   429: 'Too many requests',

@@ -308,14 +308,22 @@
     {
       "path": "apps/api/src/errors.ts",
       "category": "backend-api",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "findings": [
+        {
+          "id": "S1-F006",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The default 409 message 'Idempotency conflict' was shown for every unmapped conflict, including ones that are not idempotency conflicts.",
+          "remediation": "Default 409 message changed; database.integration.test.ts assertion updated; 24 of 24 database integration tests pass."
+        }
+      ],
+      "observations": "Read in full. Error envelope shape, per-status default codes and messages were checked. A generic 409 (for example an internal invariant Conflict with the default CONFLICT code) showed the message 'Idempotency conflict', which is misleading to the user (S1-F006). The default now describes a state conflict and the reload action. The pinned assertion in tests/integration/database.integration.test.ts was updated and passes.",
+      "evidence": "node --env-file=.env --import tsx --test --test-concurrency=1 tests/integration/database.integration.test.ts: 24 pass, 0 fail.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "f7a53e3c01a45786d52a02330b86b9ac0994f2fd8f836378fb1fd03ebcd54dff"
     },
     {
       "path": "apps/api/src/interviews.integration.test.ts",
@@ -3096,14 +3104,22 @@
     {
       "path": "packages/core/src/auth.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "findings": [
+        {
+          "id": "S1-F007",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The new-device check in the sign-in route swallowed its failure with no log, so a database fault silently suppressed the alert.",
+          "remediation": "apps/api/src/app.ts logs the failure as a warning (describeError, requestId). Logging-only change; no test covers this failure branch yet."
+        }
+      ],
+      "observations": "Read in full (607 lines). Checked: opaque 256-bit tokens with SHA-256 digests only stored; access token 15 minutes and refresh 30 days; single-use refresh with replay detection (consumed token revokes the session); FOR UPDATE locks on refresh, password login and session revocation; password re-read after verification; constant-time-length CSRF comparison; create-owner under an exclusive table lock; OTP account creation tolerates a concurrent creator without writing a second consent record; logout matches by digest. Known design trade-off, not a defect: two browser tabs refreshing at the same moment look like a replay and revoke the session. Documented in refresh().",
+      "evidence": "npx tsc -b exit 0 after the change. No behaviour change on the success path.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "cc5dfcb3a879a237fe621bf4fc522bbef30395dd50bec7bfe1d5a4377f8ea0a3"
     },
     {
       "path": "packages/core/src/bull-queue.integration.test.ts",
@@ -3292,14 +3308,14 @@
     {
       "path": "packages/core/src/email-otp.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full. Six-digit generation with randomInt, HMAC-SHA256 digest bound to a domain prefix and the challenge id, timing-safe comparison of equal-length digests, ordering of exhausted before expired, and rejection of malformed input before comparison were checked. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "cfa9d272688aac9e49e3c8e2fa869fbc5a9a2693c7df16989bfc2feb403d67d4"
     },
     {
       "path": "packages/core/src/errors.ts",
@@ -3712,14 +3728,14 @@
     {
       "path": "packages/core/src/runtime.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (327 lines). Checked: isRandomSecret keeps the accepted contract (no byte-diversity rejection; periodic and arithmetic checks only); secret files are read as regular files with O_NOFOLLOW, a size cap and an lstat/fstat identity check; group and world write refused on POSIX; errors name the variable, never the value; zod issues reported by code and path only; loopback-only database and Redis URLs; registration and production gates; rate-limit Lua script is atomic. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "d1c9fa99ad1151337715c18856a2facbfbdd731e27e9402f32503a47b3bc07ae"
     },
     {
       "path": "packages/core/src/schema.ts",
@@ -3772,26 +3788,34 @@
     {
       "path": "packages/core/src/support-cases.integration.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read lines 83 to 163 (the case-change test) and the test list. Lines 1 to 82 (the open and close test) were not read in this pass.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "748be03a52f4a6610c7808e20dcc67cb9971541681aa9b6e8e33b5adcf2c9c7b"
     },
     {
       "path": "packages/core/src/support-cases.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "findings": [
+        {
+          "id": "S1-F005",
+          "severity": "medium",
+          "status": "fixed",
+          "summary": "changeEmailWithSupportCase compared and stored the new address without lower-casing, so an operator-supplied mixed-case address could duplicate another account's address except for case. The job lower-cased it, but the core function did not.",
+          "remediation": "Core functions normalise addresses; regression assertion in support-cases.integration.test.ts (passes against PostgreSQL)."
+        }
+      ],
+      "observations": "Read in full. Case window, open and close, the active-case check and the change-email transaction were checked. Lock order is case then user. The address was not normalised inside the core function, so a case variant of an address another account uses was not caught (S1-F005). Now lower-cased in openSupportCase and changeEmailWithSupportCase. Regression assertion added to support-cases.integration.test.ts.",
+      "evidence": "node --env-file=.env --import tsx --test packages/core/src/support-cases.integration.test.ts: 2 pass, 0 fail.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "8f016dc7a8f8c626a4d6b834ab539f5e2a3dabcd64ab4bf6d7a8d1f4478cbf04"
     },
     {
       "path": "packages/core/src/test-users.test.ts",
@@ -5728,14 +5752,14 @@
     {
       "path": "tests/integration/database.integration.test.ts",
       "category": "tests",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read the conflict-message test around lines 3800 to 3950 and ran the whole file (24 pass). The rest of this file, several thousand lines, is not yet read in this pass.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "bc1dd6bd2bd5ba4d839103b62406dec000f02e28691f44cdd878ef7d9cba69b0"
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",

@@ -900,7 +900,14 @@ export async function createApp(
       typeof request.headers['user-agent'] === 'string' ? request.headers['user-agent'] : undefined,
     );
     // Checked before the session exists, so this sign-in does not count as a known device.
-    const newDevice = await auth.isNewDevice(email, label).catch(() => false);
+    // Best effort: a failed check sends no alert, but the failure is logged rather than silently dropped.
+    const newDevice = await auth.isNewDevice(email, label).catch((error: unknown) => {
+      request.log.warn(
+        { requestId: request.id, ...describeError(error) },
+        'New-device check unavailable',
+      );
+      return false;
+    });
     let credentials;
     try {
       credentials = await auth.loginWithVerifiedEmail(

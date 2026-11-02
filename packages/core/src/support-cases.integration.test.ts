@@ -130,6 +130,11 @@ test(
       );
 
       assert.equal(
+        (await changeEmailWithSupportCase(database, opened.caseId, 'TAKEN@example.test')).outcome,
+        'conflict',
+        'a case variant of an address another account uses is refused as taken',
+      );
+      assert.equal(
         (await changeEmailWithSupportCase(database, opened.caseId, 'new-address@example.test'))
           .outcome,
         'changed',

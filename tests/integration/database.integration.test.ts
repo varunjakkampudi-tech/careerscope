@@ -3801,7 +3801,7 @@ test('CS-35: conflicts carry a stable code and the HTTP layer surfaces distinct,
     );
 
     // The real HTTP layer must expose the code, and a distinct, safe message
-    // per code - not the same "Idempotency conflict" string for both.
+    // per code - not the same generic message for both.
     const origin = 'http://localhost:5280';
     const guardedApp = await createApp(database, origin, async () => true);
     try {
@@ -3941,7 +3941,10 @@ test('CS-35: conflicts carry a stable code and the HTTP layer surfaces distinct,
           });
           assert.equal(unmapped.statusCode, 409);
           assert.deepEqual(Object.keys(unmapped.json()), ['code', 'message', 'requestId']);
-          assert.equal(unmapped.json().message, 'Idempotency conflict');
+          assert.equal(
+            unmapped.json().message,
+            'The request conflicts with the current state; reload and try again',
+          );
           assert.ok(
             !unmapped.payload.includes('search_commands'),
             'the raw internal message must not reach the client',

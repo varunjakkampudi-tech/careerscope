@@ -21,7 +21,7 @@ export async function openSupportCase(
 ): Promise<OpenedSupportCase | null> {
   const account = await database.pool.query<{ id: string }>(
     'SELECT id FROM users WHERE email = $1',
-    [email],
+    [email.trim().toLowerCase()],
   );
   const ownerId = account.rows[0]?.id;
   if (!ownerId) return null;
@@ -67,6 +67,8 @@ export async function changeEmailWithSupportCase(
   caseId: string,
   newEmail: string,
 ): Promise<SupportEmailChange> {
+  // Addresses are stored lower-case, so a case variant of another account's address must count as taken.
+  const address = newEmail.trim().toLowerCase();
   const client = await database.pool.connect();
   try {
     await client.query('BEGIN');
@@ -82,7 +84,7 @@ export async function changeEmailWithSupportCase(
       return { outcome: 'no-active-case' };
     }
     const taken = await client.query('SELECT 1 FROM users WHERE email = $1 AND id <> $2', [
-      newEmail,
+      address,
       ownerId,
     ]);
     if ((taken.rowCount ?? 0) > 0) {
@@ -96,7 +98,7 @@ export async function changeEmailWithSupportCase(
     const previousEmail = current.rows[0]!.email;
     await client.query('UPDATE users SET email = $2, email_verified_at = now() WHERE id = $1', [
       ownerId,
-      newEmail,
+      address,
     ]);
     await client.query('DELETE FROM sessions WHERE owner_id = $1', [ownerId]);
     await client.query('DELETE FROM email_change_requests WHERE owner_id = $1', [ownerId]);
