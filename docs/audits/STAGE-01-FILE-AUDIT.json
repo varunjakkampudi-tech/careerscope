@@ -3124,10 +3124,10 @@
           "remediation": "Exception documented in docs/security/DEPENDENCY-EXCEPTIONS.md."
         }
       ],
-      "observations": "Read in full. Adds check-browser-coverage.test.mjs to test:unit, and check-file-audit and runtime.database-url tests. Production audit: 0 advisories; development-only minimatch exception EX-2026-01 applies.",
+      "observations": "Read in full. Adds the private-address and browser-coverage tests to test:unit and the runtime database URL test. Production audit: 0 advisories. Development-only minimatch exception EX-2026-01 applies.",
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "1a22a8748875a667377114911e353c7d920e76fa7615c008684970bff7fcc340"
+      "sha256": "4706813a7965bdd59e2da53357f37f093717c0bf7060a219e27ba159fe9b57ea"
     },
     {
       "path": "packages/core/package.json",
@@ -5572,14 +5572,22 @@
     {
       "path": "scripts/jobs/check-lead-liveness.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F018",
+          "severity": "medium",
+          "status": "fixed",
+          "summary": "The liveness checker's private-address rule missed carrier-grade NAT, benchmarking, multicast, reserved and unspecified addresses, so a provider-supplied apply URL could reach internal addresses in those ranges.",
+          "remediation": "isPrivateOrReservedIp extended for those ranges; scripts/jobs/private-address.test.ts asserts refusal and the public edges (2 pass)."
+        }
+      ],
+      "observations": "Read lines 50 to 140 in this pass. Checked: applyUrl is provider data, so it is refused when it resolves to a private address, the address is pinned into the connection so DNS rebinding cannot race the check, and every redirect hop is validated again. Finding S1-F018 (medium): the private-address rule did not refuse carrier-grade NAT (100.64.0.0/10), the benchmarking range (198.18.0.0/15), IPv4 multicast and reserved addresses (224.0.0.0 and above), or the IPv6 unspecified address and multicast. Fixed and covered by private-address.test.ts. The rest of the file, including the redirect and classification logic, is not yet read.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "b0599f82fb20eb3938bdb492bcbcbd52698cf82b4dc6b5962710f455bc21558c"
     },
     {
       "path": "scripts/jobs/enforce-search-retention.ts",
@@ -5640,6 +5648,18 @@
       "evidence": "",
       "reviewer": "",
       "sha256": ""
+    },
+    {
+      "path": "scripts/jobs/private-address.test.ts",
+      "category": "tooling-and-tests",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Written in this change and read in full. Asserts that private, loopback, link-local, carrier-grade NAT, benchmarking, multicast, reserved and unspecified addresses (IPv4, IPv6 and IPv4-mapped) are refused, and that public edges of those ranges are allowed. Wired into test:unit.",
+      "evidence": "",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "e508f44aea635c6dc8d5e1fa19ca582ff295cdc4e2312949d2ad2df442448b9d"
     },
     {
       "path": "scripts/jobs/run-scheduled-discovery.ts",

@@ -72,13 +72,22 @@ export function isPrivateOrReservedIp(ip: string): boolean {
       (a === 172 && b! >= 16 && b! <= 31) ||
       (a === 192 && b === 168) ||
       (a === 169 && b === 254) ||
+      // Carrier-grade NAT (100.64.0.0/10) and the benchmarking range (198.18.0.0/15) are used
+      // inside cloud networks, so they are refused too.
+      (a === 100 && b! >= 64 && b! <= 127) ||
+      (a === 198 && (b === 18 || b === 19)) ||
+      // Multicast and reserved (224.0.0.0/3), including the broadcast address.
+      a! >= 224 ||
       a === 0
     );
   }
   if (version === 6) {
     const lower = ip.toLowerCase();
     return (
+      lower === '::' ||
       lower === '::1' ||
+      // Multicast (ff00::/8) is never a web server.
+      lower.startsWith('ff') ||
       lower.startsWith('fe80:') ||
       lower.startsWith('fc') ||
       lower.startsWith('fd')
