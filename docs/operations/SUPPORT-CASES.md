@@ -37,4 +37,6 @@ support (see [AUTHENTICATION](../AUTHENTICATION.md)).
   ```
 
   The change closes the case, ends every session of the account and removes any pending email change.
+  The previous address then receives a notice with no code and no new address. The notice needs
+  `RESEND_API_KEY` and `RESEND_FROM_EMAIL` to be set; without them the command says the notice was not sent.
   A new address that another account uses is refused, and the case stays open.
