@@ -22,6 +22,12 @@ set -euo pipefail
 archive=${1:?Usage: ship.sh <archive> [revision] [target-dir]}
 revision=${2:-}
 target=${3:-/opt/careerscope}
+# The target is deleted below, so only a deployment directory at least two levels deep is accepted. A
+# mistyped "/" or "/opt" must not reach rm -rf.
+if [[ ! "$target" =~ ^/[^/]+/[^/]+ ]]; then
+  echo "refusing to replace $target: the target must be an absolute path at least two levels deep" >&2
+  exit 1
+fi
 secret="$target/infra/.env"
 preserved=""
 

@@ -2804,14 +2804,22 @@
     {
       "path": "infra/host/ship.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F017",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "ship.sh ran rm -rf on its target with no check that the target is a deployment directory.",
+          "remediation": "Guard refuses targets with fewer than two path levels. Syntax checked by the CI bash -n step."
+        }
+      ],
+      "observations": "Read in full (71 lines). Preserves the generated environment file across the replacement of the deployment directory, carries the deployed revision forward, strips stale image variables, and converts CRLF in shell and compose files. Finding S1-F017 (low): the directory is removed with rm -rf before the copy, with no check on the target, so a mistyped root or top-level path would be deleted. Fixed with a guard that accepts only an absolute path at least two levels deep. bash -n passes; the guard was checked for / (refused) and the default (accepted).",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "26ed5a046d313614fe7fe9f1e128f61aecaedbdc4d1f7d62fc52ecbd9d22a57c"
     },
     {
       "path": "infra/maintenance/index.html",
