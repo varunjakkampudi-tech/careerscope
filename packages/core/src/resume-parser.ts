@@ -49,7 +49,6 @@ export async function parseResumeIsolated(body: Uint8Array, now: number, signal?
       const readable = [
         new URL('../dist/', import.meta.url),
         new URL('../../../node_modules/', import.meta.url),
-        new URL('../../../node_modules/', import.meta.url),
         // The whole directory of each workspace package, not just its dist/ or
         // package.json. These are npm workspace symlinks: the permission model
         // checks the resolved real path, and ESM reads package.json at the package
@@ -85,7 +84,13 @@ export async function parseResumeIsolated(body: Uint8Array, now: number, signal?
       const timeout = setTimeout(() => fail(new Error('Resume parsing timed out')), 30_000);
       signal?.addEventListener('abort', abort, { once: true });
       if (signal?.aborted) abort();
-      child.on('error', () => fail(new Error('Resume parser unavailable')));
+      // A spawn failure settles here, so the parser slot is always released even if 'close' never follows.
+      child.on('error', () => {
+        clearTimeout(timeout);
+        signal?.removeEventListener('abort', abort);
+        fail(new Error('Resume parser unavailable'));
+        reject(new Error('Resume parser unavailable'));
+      });
       child.stdin.on('error', () => fail(new Error('Resume parser input failed')));
       child.stdout.on('data', (chunk: Buffer) => {
         bytes += chunk.length;

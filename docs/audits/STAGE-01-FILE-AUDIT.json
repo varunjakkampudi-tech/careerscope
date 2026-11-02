@@ -3444,14 +3444,14 @@
     {
       "path": "packages/core/src/index.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (34 lines). Re-exports every core module. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "ec98bf4d3e10f825c57fa5582bb77fb3cbd336e9f96e773b2592097a8f89999c"
     },
     {
       "path": "packages/core/src/interviews.ts",
@@ -3468,14 +3468,14 @@
     {
       "path": "packages/core/src/jobs.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (102 lines). Checked: strict collected-job schema; HTTPS-only public links without embedded credentials; match breakdown validated and strict; per-source outcome refinements tie failed to an error code and empty to zero accepted jobs; at most six sources with no repeats; collection status rule. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "26044b3168e00eff840fd500e61081bf0951107b987373542526e09316e8bcce"
     },
     {
       "path": "packages/core/src/leads.test.ts",
@@ -3572,14 +3572,14 @@
     {
       "path": "packages/core/src/notifications.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (217 lines). Checked: reminders are materialised idempotently with a unique key on owner, round and reminder time; rounds rescheduled, cancelled or started retire their notifications; owner advisory locks are taken in sorted order to avoid deadlock; the preference is re-checked inside the insert statement; the list and mark-read queries are owner-scoped and exclude retired or stale rows; no interview text is copied into a notification. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "0e358734f432670f535eb3b0df4eb26be40d264d89cf775dafa13279ca4da1fb"
     },
     {
       "path": "packages/core/src/otp-challenges.integration.test.ts",
@@ -3608,26 +3608,26 @@
     {
       "path": "packages/core/src/preparation.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (166 lines). Rules-only report with no model or network call; output is validated by its own strict schema with length limits; checks are only review or not-assessed, so the report never scores the candidate; evidence values are truncated to 160 characters. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "86989d9b0248859ef9fac229f5f2e63122eac46a76ea44bc8f4287954d3ad828"
     },
     {
       "path": "packages/core/src/process-failure.fixture.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (11 lines). Child-process fixture for the process-failure test. It must not print the connection URL. It routes errors through the failure handlers and triggers a rejection or a configuration error. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "2952f49f525b0a2dbd4588b345513eb4c434a44528af1bc1929117a80486b1d1"
     },
     {
       "path": "packages/core/src/process-failure.test.ts",
@@ -3656,14 +3656,14 @@
     {
       "path": "packages/core/src/profile.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (183 lines). Checked: strict per-section schemas with one generic issue and no field details; link fields are HTTPS only without credentials, and the URL parse runs only after the base URL check passes; revision-guarded save (revision 0 creates, anything else requires a match, a mismatch raises a 409 conflict); scheduled-discovery toggle is outside the revision and refuses before the profile is saved; matching snapshot copies only the fields scoring reads. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "f4e3ada8adf1247b85222361743d5e55e42973e2f37de370b2fbe0b04d9f0279"
     },
     {
       "path": "packages/core/src/queue.integration.test.ts",
@@ -3736,14 +3736,22 @@
     {
       "path": "packages/core/src/resume-parser.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "findings": [
+        {
+          "id": "S1-F013",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "A spawn failure of the isolated resume parser depended on a 'close' event to settle, which could leave the single parser slot busy.",
+          "remediation": "'error' handler settles the promise and clears the timer; resumes.integration.test.ts (2 pass) covers the parser path. No direct test of a spawn failure, which is not easy to induce."
+        }
+      ],
+      "observations": "Read in full (119 lines). The child runs under the Node permission model with read access to the built packages only, an empty environment, a 192 MB heap, no stderr, a 30-second timeout, a 1 MiB output cap, and cancellation. Output is validated by a strict schema. Defect S1-F013: the 'error' handler (spawn failure) did not settle the promise, so the parser slot stayed busy if 'close' did not follow. Now the handler clears the timer and rejects. Removed a duplicated allow-list entry.",
+      "evidence": "node --env-file=.env --import tsx --test --test-concurrency=1 packages/core/src/resumes.integration.test.ts: 2 pass, 0 fail. npx tsc -b exit 0.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "865418630047d4dc428a23267762634f23c4390c1480674fa8939d11278cf2f3"
     },
     {
       "path": "packages/core/src/resumes.integration.test.ts",
@@ -3856,14 +3864,14 @@
     {
       "path": "packages/core/src/shared-types.check.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (22 lines). Compile-time assertions that the core Zod-derived types equal the shared declarations, so drift fails tsc. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "1b7ea4bc905dce4d624a064c962b4702c6486b095398748f544595b88b715f49"
     },
     {
       "path": "packages/core/src/storage.ts",
