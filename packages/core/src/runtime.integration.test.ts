@@ -273,14 +273,12 @@ test('isRandomSecret rejects patterned and single-class values and accepts gener
   const sequence = (length: number, next: (index: number) => number) =>
     Buffer.from(Array.from({ length }, (_, index) => next(index) & 0xff));
   // A generated secret is retried here only to keep the test deterministic about its own inputs.
-  const fewValues = randomBytes(64).map((byte) => byte % 20);
   const rejected = [
     sequence(32, (index) => index).toString('hex'), // counter 00 01 02 .. 1f
     sequence(32, (index) => index).toString('base64'),
     sequence(48, (index) => index * 7).toString('hex'), // constant step of 7
     sequence(40, (index) => 200 - index * 3).toString('hex'), // constant negative step, wraps
     sequence(64, (index) => index * 5).toString('base64url'),
-    Buffer.from(fewValues).toString('hex'), // at most 20 distinct byte values
     'qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklz', // lowercase letters only, valid base64 form
     'QWERTYUIOPASDFGHJKLZXCVBNMQWERTYUIOPASDFGHJKLZ',
     'thequickbrownfoxjumpsoverthelazydogagainandagain', // dictionary-like, 48 characters
@@ -289,6 +287,15 @@ test('isRandomSecret rejects patterned and single-class values and accepts gener
     's'.repeat(64),
   ];
   for (const secret of rejected) assert.equal(isRandomSecret(secret), false);
+  // Byte diversity is not an entropy proof. A valid 32-byte CSPRNG output can contain fewer than
+  // 24 distinct values; reject structured patterns, not a statistically unlucky random sample.
+  const lowDiversity = Buffer.from([
+    ...Array.from({ length: 12 }, (_, index) => index + 0xa1),
+    ...Array.from({ length: 12 }, (_, index) => index + 0xa1),
+    ...Array.from({ length: 8 }, (_, index) => index + 0xb0),
+  ]);
+  assert.ok(new Set(lowDiversity).size < 24);
+  assert.equal(isRandomSecret(lowDiversity.toString('hex')), true);
   for (let round = 0; round < 50; round++) {
     assert.equal(isRandomSecret(randomBytes(32).toString('hex')), true);
     assert.equal(isRandomSecret(randomBytes(32).toString('base64')), true);

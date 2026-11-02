@@ -38,8 +38,6 @@ function localUrl(value: string, protocols: string[]) {
  * - Size: it decodes to at least 32 bytes.
  * - Character classes: the text uses at least two of lowercase letters, uppercase letters, digits and
  *   symbols (rejects, for example, a long all-lowercase passphrase that happens to be valid base64).
- * - Spread: at least 24 distinct byte values (32 random bytes average about 30; fewer than 24 is
- *   far in the tail, so a genuine secret is very unlikely to be refused).
  * - Not periodic: the bytes are not a repetition of a block of 1 to 16 bytes.
  * - Not arithmetic: consecutive bytes do not all differ by one constant step modulo 256 (rejects the
  *   counter 00 01 02 ... 1f and constant fill).
@@ -59,7 +57,6 @@ export function isRandomSecret(value: string) {
     pattern.test(text),
   ).length;
   if (classes < 2) return false;
-  if (new Set(bytes).size < 24) return false;
   for (let period = 1; period <= 16; period++) {
     if (bytes.every((byte, index) => byte === bytes[index % period])) return false;
   }
