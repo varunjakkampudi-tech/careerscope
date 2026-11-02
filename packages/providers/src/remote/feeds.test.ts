@@ -622,3 +622,15 @@ describe('himalayas adapter', () => {
     expect(capped?.message).toContain('were not read');
   });
 });
+
+describe('Himalayas company link (S1-F027)', () => {
+  it('encodes the company slug so a feed value cannot add a path, query or fragment', () => {
+    const job = himalayasAdapter.toRawJob({ ...HIMALAYAS_JOB, companySlug: 'acme/../x?y#z' }, NOW);
+    expect(job?.companyCareersUrl).toBe('https://himalayas.app/companies/acme%2F..%2Fx%3Fy%23z');
+  });
+
+  it('keeps an ordinary slug unchanged', () => {
+    const job = himalayasAdapter.toRawJob({ ...HIMALAYAS_JOB, companySlug: 'acme-labs' }, NOW);
+    expect(job?.companyCareersUrl).toBe('https://himalayas.app/companies/acme-labs');
+  });
+});

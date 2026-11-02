@@ -4648,14 +4648,14 @@
     {
       "path": "packages/providers/src/remote/base.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (194 lines). The feed walk stops at the result cap before pulling another page, isolates a failed page, and reads the clock once per walk so postings do not change status mid-run. Epoch seconds are rejected outside a plausible range rather than converted to 1970. Attribution-driven source links are kept. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "d031173a74516ff9a72a4bc6e2e9673fd211dba14bd1f480cac87578618551be"
     },
     {
       "path": "packages/providers/src/remote/feeds.test.ts",
@@ -4672,38 +4672,46 @@
     {
       "path": "packages/providers/src/remote/himalayas.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F027",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The Himalayas company link was built from an unencoded feed value.",
+          "remediation": "encodeURIComponent on the slug; feeds.test.ts asserts an encoded hostile slug and an unchanged ordinary one."
+        }
+      ],
+      "observations": "Read in full (200 lines). Paging uses an encoded cursor with a page ceiling and a logged, user-visible reason when the feed is not exhausted; the walk stops once the last posting of a page predates the window; expired postings are dropped; the description is treated as HTML and converted to text. Finding S1-F027 (low): the company link was built from the feed's company slug without encoding, so a value could add a path, query or fragment to the link. Now encoded; two tests in feeds.test.ts (43 pass).",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "0506ffed37a87ff40e23b10b28f69b9a292f39660daf925697217408ef4569c2"
     },
     {
       "path": "packages/providers/src/remote/remoteok.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (141 lines). The single feed is read once; the legal notice without an id or title is skipped; the RemoteOK page is kept as the source link, as the attribution terms require; zero salaries are treated as unknown; USD is set because the feed is USD. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "748927d76a18b037bf668e52dd1a4654ac067220f271c267637044a0b4cf7801"
     },
     {
       "path": "packages/providers/src/remote/remotive.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (132 lines). Dates without a timezone are read as UTC, which avoids a host-dependent shift; the Remotive page is kept as the source and apply link; the salary is kept as raw text rather than guessed. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "440613189dcd786bfcc6f85ea7ab0b02a32d5a5ee07e32cb2ab3969e72e81729"
     },
     {
       "path": "packages/providers/src/scrape/__fixtures__/indeed-search.html",

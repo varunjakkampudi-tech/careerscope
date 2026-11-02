@@ -169,7 +169,8 @@ const adapter: FeedAdapter<HimalayasJob> = {
       job.descriptionIsHtml = true;
     }
     if (item.companySlug?.trim()) {
-      job.companyCareersUrl = `https://himalayas.app/companies/${item.companySlug.trim()}`;
+      // Encoded, so a feed value cannot add a path segment, query or fragment to the company link.
+      job.companyCareersUrl = `https://himalayas.app/companies/${encodeURIComponent(item.companySlug.trim())}`;
     }
 
     const min = positive(item.minSalary);
