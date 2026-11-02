@@ -90,7 +90,7 @@ export interface FakeSessionOptions {
   xhr?: Record<string, { status?: number; json: unknown }>;
 }
 
-export interface FakeSession extends ScrapeSession {
+interface FakeSession extends ScrapeSession {
   /** Every URL passed to `page.goto()`, in order. */
   navigations: string[];
   /** Every `context.request.get()`, with the headers it carried. */

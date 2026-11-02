@@ -51,7 +51,7 @@ export function isMissingTitlesConflict(error: unknown): boolean {
   return error instanceof Conflict && error.code === 'MISSING_TARGET_ROLES';
 }
 
-export type PollResult = { status: string; timedOut: boolean };
+type PollResult = { status: string; timedOut: boolean };
 
 /**
  * Bounded poll to a terminal status. Injected `fetchStatus` rather than a
@@ -72,7 +72,7 @@ export async function pollUntilTerminal(
   }
 }
 
-export type Alerter = (message: string) => Promise<void>;
+type Alerter = (message: string) => Promise<void>;
 
 /** One owner's scheduled run: enabled check, enqueue, poll, classify. Pure
  * of I/O beyond the injected `database`/`alert`, so the decision logic

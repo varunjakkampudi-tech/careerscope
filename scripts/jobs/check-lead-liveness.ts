@@ -87,7 +87,7 @@ export function isPrivateOrReservedIp(ip: string): boolean {
   return true; // Not a recognizable IP at all - refuse rather than guess safe.
 }
 
-export type CheckResult = 'live' | 'stale' | 'unknown';
+type CheckResult = 'live' | 'stale' | 'unknown';
 export type LookupFn = (hostname: string) => Promise<{ address: string; family: number }>;
 
 /**

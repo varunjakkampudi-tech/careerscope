@@ -203,7 +203,7 @@ const navItems = [
   { key: 'settings', message: 'settings', icon: Settings, href: '/settings' },
   { key: 'preparation', message: 'preparation', icon: ClipboardCheck, href: '/preparation' },
 ] as const;
-export type NavKey = (typeof navItems)[number]['key'];
+type NavKey = (typeof navItems)[number]['key'];
 
 // Derives the active sidebar item straight from the URL — the single place
 // that mapping lives, rather than each page passing its own `active` literal

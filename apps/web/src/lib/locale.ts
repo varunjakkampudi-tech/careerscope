@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from 'react';
 
 export const interfaceLocales = ['en', 'te', 'hi'] as const;
-export type InterfaceLocale = (typeof interfaceLocales)[number];
+type InterfaceLocale = (typeof interfaceLocales)[number];
 
 // Key under which the chosen language is stored in localStorage.
 const localeStorageKey = 'careerscope:interface-language';

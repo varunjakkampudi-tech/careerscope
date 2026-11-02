@@ -61,7 +61,7 @@ const uploadStatus = text({
 });
 const revision = integer({ minimum: 1, maximum: 2147483646 });
 /** The single error envelope (see `errors.ts`) used by every non-success response. */
-export const errorEnvelopeSchema: Schema = {
+const errorEnvelopeSchema: Schema = {
   ...object(
     {
       code: text({

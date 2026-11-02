@@ -9,9 +9,9 @@
  * codes, never the submitted values).
  */
 
-export type ErrorDetails = Record<string, unknown>;
+type ErrorDetails = Record<string, unknown>;
 
-export type ErrorEnvelope = {
+type ErrorEnvelope = {
   code: string;
   message: string;
   requestId: string;
@@ -19,7 +19,7 @@ export type ErrorEnvelope = {
 };
 
 /** Default machine code per HTTP status. Statuses not listed use `REQUEST_FAILED`. */
-export const defaultErrorCodes: Readonly<Record<number, string>> = {
+const defaultErrorCodes: Readonly<Record<number, string>> = {
   400: 'INVALID_REQUEST',
   401: 'AUTHENTICATION_REQUIRED',
   403: 'FORBIDDEN',
@@ -36,7 +36,7 @@ export const defaultErrorCodes: Readonly<Record<number, string>> = {
 };
 
 /** Default client-safe message per HTTP status. */
-export const defaultErrorMessages: Readonly<Record<number, string>> = {
+const defaultErrorMessages: Readonly<Record<number, string>> = {
   400: 'Invalid request',
   401: 'Authentication required',
   403: 'Forbidden',
@@ -52,7 +52,7 @@ export const defaultErrorMessages: Readonly<Record<number, string>> = {
   507: 'Resume storage capacity reached',
 };
 
-export const defaultErrorCode = (status: number) => defaultErrorCodes[status] ?? 'REQUEST_FAILED';
+const defaultErrorCode = (status: number) => defaultErrorCodes[status] ?? 'REQUEST_FAILED';
 export const defaultErrorMessage = (status: number) =>
   defaultErrorMessages[status] ?? 'Request failed';
 

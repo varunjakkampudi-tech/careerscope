@@ -193,7 +193,7 @@ export interface ScrapeSession {
  * share one Chromium without any of them owning it, and without a coordinator
  * above them that would have to know which sources are enabled.
  */
-export interface BrowserLease {
+interface BrowserLease {
   pool: BrowserPool;
   release(): Promise<void>;
 }
