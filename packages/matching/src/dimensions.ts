@@ -403,7 +403,10 @@ export function scoreLocation(job: Job, candidate: CandidateContext): MatchDimen
     return dim('location', 0, 'You asked for remote only and this role is not remote');
   }
 
-  const wanted = [candidate.homeLocation, ...candidate.locations].filter(Boolean);
+  // A whitespace-only place is no place: an empty needle would match every posting.
+  const wanted = [candidate.homeLocation, ...candidate.locations].filter(
+    (place) => lower(place) !== '',
+  );
   if (wanted.length === 0) {
     return dim('location', 0.6, 'No preferred locations set');
   }

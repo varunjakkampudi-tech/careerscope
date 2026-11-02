@@ -217,6 +217,14 @@ describe('scoreExperience', () => {
 });
 
 describe('scoreLocation', () => {
+  it('a blank preferred place never counts as a match', () => {
+    const result = scoreLocation(
+      job({ location: 'Pune' }),
+      candidate({ homeLocation: '   ', locations: [] }),
+    );
+    expect(result.score).not.toBe(1);
+    expect(result.reason).toBe('No preferred locations set');
+  });
   it('gives full marks to a remote role regardless of preference', () => {
     expect(scoreLocation(job({ isRemote: true, location: 'Anywhere' }), candidate()).score).toBe(1);
   });

@@ -4060,14 +4060,14 @@
     {
       "path": "packages/matching/src/context.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (88 lines). Typed experience, including zero, wins over the resume estimate; skills and titles are unioned with the resume contribution and made visible through resumeSkills and resumeConsidered; the salary expectation uses the floor of a range; dedupe trims and drops blanks. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "ae5a514ad476709f2711fb3dad25fc6320ff33177479d6b7ffc21687310446b2"
     },
     {
       "path": "packages/matching/src/demands.test.ts",
@@ -4084,14 +4084,14 @@
     {
       "path": "packages/matching/src/demands.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (264 lines). Required, preferred and neutral headings weight skills; a skill named both ways keeps the higher weight; years patterns require nearby experience wording and are bounded to 0..40; remote wording needs an explicit phrase unless it is in the title or location; employment type is read in priority order. The regular expressions are anchored and linear in practice. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "e335c92e2cd083124a6ba8c2903627aee91abc135fc140804c4d87201b238f12"
     },
     {
       "path": "packages/matching/src/dimensions.test.ts",
@@ -4108,26 +4108,34 @@
     {
       "path": "packages/matching/src/dimensions.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F021",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "A whitespace-only preferred location matched every posting's location at full score.",
+          "remediation": "Blank places are filtered before comparison in scoreLocation; regression test in dimensions.test.ts."
+        }
+      ],
+      "observations": "Read in full (523 lines). Checked: every dimension passes through dim(), which clamps the score and neutralises the reason text through the shared refusal set; skill credit is graded by rarity and recency; experience over the band costs less than under it; undisclosed pay is neutral. Finding S1-F021 (low): a whitespace-only preferred location was not filtered and so matched every posting with a full location score. Fixed by filtering blank places before comparison; dimensions.test.ts asserts that a blank place is not a match (passes; the new test was run with vitest, 1 of 1, and the file passes 59 of 59).",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "b34b35fb0f96468745d546cc3c44b1164caf5435b61f4edeeefe9c0ae1c20249"
     },
     {
       "path": "packages/matching/src/index.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (50 lines). Re-exports the public scoring surface. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "38915514e148c443c51b0bc935c7e50d449c28f3fe94cc8157080c76d465745c"
     },
     {
       "path": "packages/matching/src/matching.fixtures.ts",
@@ -4156,14 +4164,14 @@
     {
       "path": "packages/matching/src/score.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (229 lines). Checked: the hard gate runs before any skill extraction and zeroes ineligible listings with an explanation; the do-not-apply list is a flag and not a gate; a listing without a readable description is capped at 0.8; the combined score is a weighted mean clamped to 0..1 and rounded; the resume-skill evidence lists only matched skills. Pure and deterministic given now. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "51b92fb509c2576fabb19134dbd69ae4fb91f7f338832eebaf6c8779bd744819"
     },
     {
       "path": "packages/matching/src/seniority.test.ts",
@@ -4180,14 +4188,14 @@
     {
       "path": "packages/matching/src/seniority.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (80 lines). Title patterns are ordered from the highest rung down, so a senior staff title reads as staff; years of experience act as a floor, never a ceiling; no evidence returns null rather than intern. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "0862069f9c7885209f72fadeef6cc1d69974e348811cd53f9d78e2da5d8fccfc"
     },
     {
       "path": "packages/matching/tsconfig.json",
