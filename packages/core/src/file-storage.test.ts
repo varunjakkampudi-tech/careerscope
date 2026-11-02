@@ -364,6 +364,39 @@ test('one owner at the per-owner marker limit cannot cancel more while another o
   }
 });
 
+test('the default owner quota accepts marker 100 and preserves a published object on refusal 101', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'careerscope-owner-boundary-'));
+  const body = Buffer.from('%PDF-1.7 synthetic owner quota boundary');
+  const object: ResumeObject = {
+    ownerId: randomUUID(),
+    resumeId: randomUUID(),
+    sha256: createHash('sha256').update(body).digest('hex'),
+    bytes: body.length,
+    contentType: 'application/pdf',
+  };
+  const storage = new PrivateFileResumeStorage({
+    directory,
+    encryptionKey: randomBytes(32).toString('hex'),
+  });
+  try {
+    await storage.initialize();
+    for (let index = 0; index < 100; index++) {
+      const candidate = { ...object, resumeId: randomUUID() };
+      await storage.cancelUpload(candidate);
+      await assert.rejects(storage.recoverVersion(candidate), ResumeUploadCancelled);
+    }
+    const refused = { ...object, resumeId: randomUUID() };
+    const version = await storage.put(refused, body);
+    await assert.rejects(storage.cancelUpload(refused), ResumeStorageLimit);
+    assert.equal(await storage.recoverVersion(refused), version);
+    assert.deepEqual(Buffer.from(await storage.get(refused, version)), body);
+    assert.equal((await storage.inventory()).markers, 100);
+  } finally {
+    storage.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test('per-owner marker counts are rebuilt on initialize and restored after the 24-hour reclaim', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'careerscope-owner-reclaim-'));
   const encryptionKey = randomBytes(32).toString('hex');

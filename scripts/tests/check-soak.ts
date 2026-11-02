@@ -173,8 +173,10 @@ try {
   const uploadThenCancel = (concurrent: number) =>
     track(async () => {
       const { data, object } = body(512 * 1024);
+      let published = false;
       try {
         await storage.put(object, data);
+        published = true;
         counts.uploads += 1;
       } catch (error) {
         if (!(error instanceof ResumeStorageLimit)) throw error;
@@ -183,21 +185,29 @@ try {
       const results = await Promise.allSettled(
         Array.from({ length: concurrent }, () => storage.cancelUpload(object)),
       );
+      const accepted = results.filter((result) => result.status === 'fulfilled').length;
       for (const result of results) {
-        if (result.status === 'rejected')
+        if (result.status === 'rejected' && !(result.reason instanceof ResumeStorageLimit))
           failures.push(
-            `cancellation rejected: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
+            `cancellation rejected unexpectedly: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
           );
       }
-      counts.cancellations += concurrent;
+      counts.capacityRefusals += concurrent - accepted;
+      counts.cancellations += accepted;
       if (concurrent > 1) counts.cancellationRaces += 1;
-      await storage
-        .recoverVersion(object)
-        .then(() => failures.push('cancelled object became readable'))
-        .catch((error: unknown) => {
-          if (!(error instanceof ResumeUploadCancelled))
-            failures.push('cancelled object did not report cancellation');
+      if (accepted > 0) {
+        await storage.recoverVersion(object).then(
+          () => failures.push('cancelled object became readable'),
+          (error: unknown) => {
+            if (!(error instanceof ResumeUploadCancelled))
+              failures.push('cancelled object did not report cancellation');
+          },
+        );
+      } else if (published) {
+        await storage.recoverVersion(object).catch(() => {
+          failures.push('quota-refused cancellation changed published object state');
         });
+      }
     });
 
   const discovery = () =>
