@@ -37,6 +37,25 @@ const idleInTransactionTimeoutMs = 10_000;
  * override above the default is not honoured: it is capped at 10 seconds with a logged warning.
  * Throws unless the value is an integer from 1000 to 600000.
  */
+export function resolveStatementTimeoutMs(
+  raw: string | undefined,
+  deploymentEnvironment: string,
+): number {
+  if (!raw) return defaultStatementTimeoutMs;
+  const value = Number(raw);
+  if (!/^\d+$/.test(raw.trim()) || !Number.isInteger(value) || value < 1000 || value > 600_000) {
+    throw new Error('DATABASE_STATEMENT_TIMEOUT_MS must be an integer from 1000 to 600000');
+  }
+  if (deploymentEnvironment === 'production' && value > defaultStatementTimeoutMs) {
+    logger.warn(
+      { requested: value, applied: defaultStatementTimeoutMs },
+      'DATABASE_STATEMENT_TIMEOUT_MS above the default is ignored in production',
+    );
+    return defaultStatementTimeoutMs;
+  }
+  return value;
+}
+
 /**
  * Pool connect timeout. Production keeps 5 seconds; the integration run and CI raise it through
  * DATABASE_CONNECT_TIMEOUT_MS because a freshly created database on a loaded host can be slow.
@@ -59,25 +78,6 @@ export function resolveConnectionTimeoutMs(
       'DATABASE_CONNECT_TIMEOUT_MS above the default is ignored in production',
     );
     return defaultConnectionTimeoutMs;
-  }
-  return value;
-}
-
-export function resolveStatementTimeoutMs(
-  raw: string | undefined,
-  deploymentEnvironment: string,
-): number {
-  if (!raw) return defaultStatementTimeoutMs;
-  const value = Number(raw);
-  if (!/^\d+$/.test(raw.trim()) || !Number.isInteger(value) || value < 1000 || value > 600_000) {
-    throw new Error('DATABASE_STATEMENT_TIMEOUT_MS must be an integer from 1000 to 600000');
-  }
-  if (deploymentEnvironment === 'production' && value > defaultStatementTimeoutMs) {
-    logger.warn(
-      { requested: value, applied: defaultStatementTimeoutMs },
-      'DATABASE_STATEMENT_TIMEOUT_MS above the default is ignored in production',
-    );
-    return defaultStatementTimeoutMs;
   }
   return value;
 }

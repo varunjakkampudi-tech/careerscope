@@ -65,7 +65,6 @@ export type EmailOtpDeliveryMessage = {
     'sign-in' | 'email-change-current' | 'email-change-new' | 'recovery-setup' | 'recovery-sign-in';
 };
 
-/** A mail backend that either sends or throws `EmailOtpProviderError`. */
 /** A code-free notice, such as a new-device sign-in alert. */
 export type EmailNoticeMessage = {
   email: string;

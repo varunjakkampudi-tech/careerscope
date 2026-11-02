@@ -23,16 +23,15 @@ export async function beginTotpEnrolment(
   email: string,
   masterSecret: Uint8Array,
 ): Promise<{ secret: string; uri: string } | 'already-enrolled'> {
-  const existing = await database.pool.query<{ totp_enabled_at: Date | null }>(
-    'SELECT totp_enabled_at FROM users WHERE id = $1',
-    [ownerId],
-  );
-  if (existing.rows[0]?.totp_enabled_at) return 'already-enrolled';
+  // One conditional write: a confirmed authenticator is never replaced, and the secret returned is always the
+  // one stored. A separate read first would let a concurrent confirmation slip in between and leave a
+  // returned secret that does not match the database.
   const secret = generateTotpSecret();
-  await database.pool.query(
+  const started = await database.pool.query(
     'UPDATE users SET totp_secret_enc = $2, totp_last_counter = NULL WHERE id = $1 AND totp_enabled_at IS NULL',
     [ownerId, encryptTotpSecret(secret, masterSecret)],
   );
+  if ((started.rowCount ?? 0) !== 1) return 'already-enrolled';
   return { secret: encodeBase32(secret), uri: authenticatorUri(secret, email) };
 }
 
