@@ -11,8 +11,9 @@ services.
 The workflow listens to pushes on `dev` and `main`, pull requests targeting
 either branch, a nightly schedule, and an allowlisted `workflow_dispatch`.
 Pushes to either branch, pull requests to either branch, and the nightly event also
-run the PostgreSQL/Redis integration and browser suite; pull-request and nightly
-browser runs select Chromium, Firefox, and WebKit. Manual runs use only CI-ephemeral
+run the PostgreSQL/Redis integration and browser suite; every push to
+`dev` or `main`, every pull request and every nightly run selects Chromium, Firefox, and WebKit.
+Manual runs select the engine given by `browser`, or all three with `suite=all` or `cross-browser`. Manual runs use only CI-ephemeral
 services; there is no staging or production target. Pull-request runs have
 read-only permissions, use no repository secrets, and validate the proposed
 merge revision.

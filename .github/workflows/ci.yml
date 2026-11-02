@@ -202,7 +202,7 @@ jobs:
       SEARCH_QUEUE_REDIS_URL: redis://127.0.0.1:6380
       CAREERSCOPE_POSTGRES_CONTAINER: careerscope-ci-postgres
       CAREERSCOPE_UI_BROWSER: >-
-        ${{ (github.event_name == 'schedule' || github.event_name == 'pull_request') && 'all' || (github.event_name == 'workflow_dispatch' && contains(fromJSON('["all","cross-browser"]'), inputs.suite) && 'all') || (github.event_name == 'workflow_dispatch' && inputs.browser || 'chromium') }}
+        ${{ github.event_name != 'workflow_dispatch' && 'all' || (contains(fromJSON('["all","cross-browser"]'), inputs.suite) && 'all') || inputs.browser }}
       CAREERSCOPE_UI_SCENARIO: ${{ github.event_name == 'workflow_dispatch' && inputs.scenario != 'full' && inputs.scenario || '' }}
     steps:
       - name: Check out the triggering revision

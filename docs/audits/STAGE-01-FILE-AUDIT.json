@@ -75,15 +75,15 @@
         {
           "id": "S1-F015",
           "severity": "medium",
-          "status": "open",
-          "summary": "Push runs on dev run the browser suite on Chromium only. Firefox and WebKit are not part of the push gate, so the final SHA needs an explicit cross-browser run.",
-          "remediation": "Run workflow_dispatch with suite=all and browser=all on the final SHA and record the run ID in STAGE-01 evidence. Changing the push default is a separate decision for the owner."
+          "status": "fixed",
+          "summary": "Push runs on dev and main selected only Chromium, so Firefox and WebKit acceptance was not part of every push.",
+          "remediation": "Browser expression changed to all for every non-manual event; regression test check-browser-coverage.test.mjs (3 pass); docs/operations/CI-CD.md updated."
         }
       ],
-      "observations": "Read lines 1 to 260 in full and the step list of lines 260 to 430. Checked: top-level permissions read-only; every job sets its own read-only permissions; actions pinned to commit SHAs; checkout without persisted credentials; no repository secrets; the image job only on pull requests; the services job runs synthetic, ephemeral PostgreSQL and two Redis containers with a generated test .env that is never committed; a noeviction and AOF check. Finding S1-F015 (medium, open until the gate is run): push runs to dev select only Chromium (CAREERSCOPE_UI_BROWSER defaults to chromium), so Firefox and WebKit run only on pull requests, nightly and manual cross-browser dispatch. Stage 01 requires all three engines to pass for the final SHA. Remediation: a manual workflow_dispatch of suite all with browser all on the final SHA, recorded with its run ID. Remaining lines 300 to 430 were not read in full.",
+      "observations": "Read lines 1 to 260 in full and the step list of lines 260 to 430 earlier. Checked: top-level read-only permissions, per-job read-only permissions, SHA-pinned actions, checkout without persisted credentials, no repository secrets, image job on pull requests only, synthetic ephemeral services. S1-F015 fixed: CAREERSCOPE_UI_BROWSER is now all for every non-manual event, so every push to dev or main runs Chromium, Firefox and WebKit. scripts/ci/check-browser-coverage.test.mjs asserts the expression, the step conditions and the install branch. Lines 300 to 430 are not yet read in full.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "907d7737813832794ffc17514ab2ef47b9eba87a49b3b6e2cb2288a0ef44eee0"
+      "sha256": "4a07363dbeb3136f795dd91163a1b56bf0615f90a3bed49707769afcd55064aa"
     },
     {
       "path": ".gitignore",
@@ -1932,14 +1932,14 @@
     {
       "path": "docs/operations/CI-CD.md",
       "category": "documentation",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read lines 11 to 18 and 36 to 50. Updated to state that every push to dev or main, pull request and nightly run selects all three engines, and that manual runs choose by browser or suite. The rest of this document was not re-read in this pass.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "3d778df2adfeeb1c2b59c893d01e5a5810212f5ae93e94741f13d2174c36d112"
     },
     {
       "path": "docs/operations/DEPLOYMENT.md",
@@ -3124,10 +3124,10 @@
           "remediation": "Exception documented in docs/security/DEPENDENCY-EXCEPTIONS.md."
         }
       ],
-      "observations": "Read in full. Adds runtime.database-url.test.ts to test:unit. The production audit has 0 advisories; the development-only minimatch exception is EX-2026-01.",
+      "observations": "Read in full. Adds check-browser-coverage.test.mjs to test:unit, and check-file-audit and runtime.database-url tests. Production audit: 0 advisories; development-only minimatch exception EX-2026-01 applies.",
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "3911b935b91ddecc950ebc2971698cd146852ee5915714ef5086475cd373b12b"
+      "sha256": "1a22a8748875a667377114911e353c7d920e76fa7615c008684970bff7fcc340"
     },
     {
       "path": "packages/core/package.json",
@@ -5256,6 +5256,18 @@
       "evidence": "",
       "reviewer": "",
       "sha256": ""
+    },
+    {
+      "path": "scripts/ci/check-browser-coverage.test.mjs",
+      "category": "tooling-and-tests",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Written in this change and read in full. Three tests read the workflow text and assert the all-engine expression, that the acceptance step runs on pushes to dev and main, and that the install step installs all engines for the same events. Wired into test:unit.",
+      "evidence": "",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "8c1f8279e3bdc6a836c514e34cab2b006cc92edbf255ee2f0dc021c9276950d4"
     },
     {
       "path": "scripts/ci/check-deploy-gate.mjs",
