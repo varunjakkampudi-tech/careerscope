@@ -1011,3 +1011,14 @@ describe('jooble', () => {
     expect(calls).toHaveLength(1);
   });
 });
+
+describe('JSearch unreadable dates (S1-F028)', () => {
+  it('keeps the posting when the epoch timestamp is outside the representable range', () => {
+    const job = jsearchAdapter.toRawJob(
+      { ...JSEARCH_JOB, job_posted_at_datetime_utc: undefined, job_posted_at_timestamp: 1e20 },
+      NOW,
+    );
+    expect(job).not.toBeNull();
+    expect(job?.postedAt).toBeUndefined();
+  });
+});

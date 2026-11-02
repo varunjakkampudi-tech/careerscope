@@ -243,7 +243,8 @@ function readPostedAt(item: JSearchJob): string | undefined {
     // Seconds, as every observed payload has used. A millisecond value would
     // land in the year 58680, so the guard is worth the two comparisons.
     const ms = epoch < 1e12 ? epoch * 1000 : epoch;
-    return new Date(ms).toISOString();
+    // A value outside the representable date range would make toISOString throw and discard the posting (S1-F028).
+    return Number.isFinite(new Date(ms).getTime()) ? new Date(ms).toISOString() : undefined;
   }
   return undefined;
 }

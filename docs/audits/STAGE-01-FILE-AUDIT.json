@@ -4272,26 +4272,42 @@
     {
       "path": "packages/providers/src/ats/greenhouse.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F029",
+          "severity": "low",
+          "status": "open",
+          "summary": "Greenhouse description text is entity-decoded twice before display.",
+          "remediation": "Confirm the double decode with a fixture containing an escaped ampersand entity, then decode once in one place and add a regression test."
+        }
+      ],
+      "observations": "Read in full (107 lines). The board list is fetched without descriptions on purpose, because the content variant exceeds the body ceiling for large boards; descriptions are fetched per posting in fetchDetail. The detail content is HTML-escaped and fetchDetail decodes it once with decodeEntities, and the HTML converter in html.ts also decodes entities, so the text is decoded twice. Open question, not yet tested: a posting whose text literally contains an escaped ampersand entity would render as a bare ampersand. Needs a regression test or a decision that the converter should not decode again.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "8efc73d1753cd03dd4f8a1524c3e47f3aa28995f0f0e5753dc812a5b5025159d"
     },
     {
       "path": "packages/providers/src/ats/lever.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F028",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "Unreadable posting timestamps threw inside the ATS and keyed mappers, which discarded the posting. Lever, JSearch and Indeed were affected.",
+          "remediation": "Each conversion checks the time before it is formatted; regression tests in adapters.test.ts and aggregators.test.ts."
+        }
+      ],
+      "observations": "Read in full (154 lines). The listing is paged at 100 with a ceiling of ten pages and a logged reason when the board is larger than that; the description is assembled from its sections so the intro alone is not taken as the whole posting; the apply link falls back to the board's own URL. Finding S1-F028 (low, fixed): the creation time was converted with toISOString, which throws on an invalid date and so discarded the whole posting. An unreadable time now yields no date (leverPostedAt). adapters.test.ts holds the regression cases.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "d7f023c73c6f5f6ca345c7e7cf94ea4d7c4fe443473d662ecf37942d10b0d916"
     },
     {
       "path": "packages/providers/src/ats/recruitee.ts",
@@ -4571,11 +4587,19 @@
       "reviewMethod": "content-read",
       "state": "partially-reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "Read the header comment and the key placement: the RapidAPI key is sent in a header, not in the URL, which keeps it out of any URL that could be logged. Lines 1 to 110 and 130 to 359 (mapping and salary handling) are not yet read.",
+      "findings": [
+        {
+          "id": "S1-F028",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "An out-of-range JSearch timestamp discarded the posting.",
+          "remediation": "readPostedAt returns no date when the value is not representable; aggregators.test.ts case."
+        }
+      ],
+      "observations": "Read readPostedAt (about lines 222 to 250). The relative posting text is ignored on purpose, so no freshness is invented. Finding S1-F028 (low, fixed): an epoch value outside the representable date range threw inside toISOString and discarded the posting; the guard now returns no date. aggregators.test.ts has the regression case. The salary, location and apply-link mapping and the rest of the file are not yet re-read in this pass.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "bf7e34e515a7736c1a2724786534ca811e29dda752e152ef3987852af642d773"
+      "sha256": "7d8bc66e3fb64a48d4e547691dcc3acca0692ac5ef84bda5e45a800343b1544d"
     },
     {
       "path": "packages/providers/src/normalize.test.ts",
@@ -4872,14 +4896,22 @@
     {
       "path": "packages/providers/src/scrape/indeed.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F028",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "An unreadable Indeed date discarded the card.",
+          "remediation": "postedAt is set only when the value parses."
+        }
+      ],
+      "observations": "Read the posted-date conversion (about lines 225 to 236) and the description policy: a posting from this source is only summarised, because the detail page is disallowed for this app. Finding S1-F028 (low, fixed): an unreadable date discarded the card; postedAt is now set only when the value parses. The card parsing, salary and URL handling are not yet re-read in this pass.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "b8d72e2c525817b7648b6b2e22b1029bcabff57e3d8fbc805854fa904cd7c07d"
     },
     {
       "path": "packages/providers/src/scrape/linkedin.test.ts",

@@ -126,7 +126,8 @@ const adapter: BoardAdapter<LeverPosting> = {
             salaryPeriod: periodFrom(salary.interval),
           }
         : {}),
-      postedAt: item.createdAt ? new Date(item.createdAt).toISOString() : undefined,
+      // An unreadable date is no date. `toISOString` throws on an invalid date, which would discard the whole posting.
+      postedAt: leverPostedAt(item.createdAt),
       applyUrl: item.applyUrl ?? url,
       sourceUrl: url,
       atsType: 'lever',
@@ -134,6 +135,13 @@ const adapter: BoardAdapter<LeverPosting> = {
     } satisfies RawJob;
   },
 };
+
+/** Lever's creation time as ISO, or undefined when it does not parse (S1-F028). */
+function leverPostedAt(value: number | string | undefined): string | undefined {
+  if (value === undefined || value === null || value === '') return undefined;
+  const at = new Date(value).getTime();
+  return Number.isFinite(at) ? new Date(at).toISOString() : undefined;
+}
 
 /** Provider for the Lever boards in the curated list, or in `options.boards`. */
 export function createLeverProvider(options: BoardProviderOptions = {}): JobProvider {

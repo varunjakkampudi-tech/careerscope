@@ -546,3 +546,24 @@ describe('recruitee', () => {
     expect(calls[0]).toBe('https://jobs.recruitee.com/api/offers/');
   });
 });
+
+describe('lever dates (S1-F028)', () => {
+  const board = ref('lever', 'matchgroup', 'Match Group');
+  const base = {
+    id: 'd1',
+    text: 'Platform Engineer',
+    hostedUrl: 'https://jobs.lever.co/matchgroup/d1',
+    categories: { location: 'Remote' },
+  };
+
+  it('keeps the posting when the creation time cannot be read, and leaves its date unknown', () => {
+    const job = leverAdapter.toRawJob({ ...base, createdAt: Number.NaN }, board);
+    expect(job).not.toBeNull();
+    expect(job?.postedAt).toBeUndefined();
+  });
+
+  it('still converts a valid creation time', () => {
+    const job = leverAdapter.toRawJob({ ...base, createdAt: 1_756_000_000_000 }, board);
+    expect(job?.postedAt).toBe(new Date(1_756_000_000_000).toISOString());
+  });
+});

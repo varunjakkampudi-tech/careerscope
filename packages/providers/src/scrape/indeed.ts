@@ -226,7 +226,9 @@ export const indeedAdapter: ScrapeAdapter<IndeedCard> = {
       // posting here is only ever summarised — see INDEED_CEILING_NOTE.
       hasFullDescription: false,
       ...salaryOf(card),
-      ...(posted ? { postedAt: new Date(posted).toISOString() } : {}),
+      ...(posted && Number.isFinite(new Date(posted).getTime())
+        ? { postedAt: new Date(posted).toISOString() }
+        : {}),
       // Linked for the user to open, never fetched by this app.
       applyUrl: card.thirdPartyApplyUrl?.trim() || `${ORIGIN}/viewjob?jk=${jobkey}`,
       sourceUrl: `${ORIGIN}/viewjob?jk=${jobkey}`,
