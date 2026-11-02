@@ -3152,14 +3152,14 @@
     {
       "path": "packages/core/src/bull-queue.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (259 lines). Checked: loopback-only connection; command must match the durable command before any claim; fence and lease gate every settle; heartbeat every 15 seconds against a 60-second lock, aborting the handler when renewal fails; fence above five is dead-lettered; busy results are delayed rather than run; UnrecoverableError for invalid or permanently failed commands; send is idempotent by job id and refuses a data mismatch; initialise checks noeviction and AOF with a bounded wait. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "3efdbb8299c261e80efebc297f46a4075dd0541157d4a7080da4be3049d9a45a"
     },
     {
       "path": "packages/core/src/commands.test.ts",
@@ -3376,14 +3376,14 @@
     {
       "path": "packages/core/src/errors.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (18 lines). The Conflict domain error carries a stable code, defaulting to CONFLICT for internal invariants. The API maps only mapped codes to client messages, so the raw message is not exposed. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "a54dea0111b12532119c77737965112f58962e0ae94ce4d69c09c01d2efd94e1"
     },
     {
       "path": "packages/core/src/failure.test.ts",
@@ -3448,14 +3448,14 @@
     {
       "path": "packages/core/src/interviews.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (314 lines). Checked: every query is owner scoped and round writes check the lead with a share lock; documents must be the user's queued uploads with a parsed result, checked with a key-share lock; updates take the row lock and check the revision; reminder notifications are retired when the round changes; contacts and checklists are stripped and re-validated on read; timezone is validated against Intl. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "5b6aa904e77bd27349075844567d2d350aad378ae23f6e1436c1d50e77aee368"
     },
     {
       "path": "packages/core/src/jobs.ts",
@@ -3528,14 +3528,14 @@
     {
       "path": "packages/core/src/market.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (178 lines). Read-only analysis over the user's own sightings and leads. Every query is owner scoped; thresholds are named; page size is bounded to 1 to 200; the day windows are bound parameters. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "d87cb558a3efbda16eeff714a0c62cca776ba73a9be77c8f6c57be44fc0b6aa3"
     },
     {
       "path": "packages/core/src/notification-delivery.test.ts",
@@ -3552,14 +3552,14 @@
     {
       "path": "packages/core/src/notification-delivery.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (302 lines). Checked: sign-in codes are refused by both channel selection and enqueue, so codes never enter the outbox; fixed template copy means no payload value is rendered; quiet hours use the zone and step through DST; claims use SKIP LOCKED with a two-minute lease and a bounded attempt count, and the send happens outside the claim transaction; failures back off to six hours and dead-letter after five attempts, storing only a fixed error text. Observation, not a defect: if the delivered update fails after a successful send, the delivery is retried, which is at-least-once by design. Maintainability note: the option named killEmailAndSync means skip email deliveries. It is renamed only if the name confuses a reviewer later. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "1692c25951174c6658a39d3bb5f20965ffe94e5287bc2cf5d460afad2b230b7b"
     },
     {
       "path": "packages/core/src/notifications.ts",
@@ -3832,14 +3832,22 @@
     {
       "path": "packages/core/src/schema.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F014",
+          "severity": "low",
+          "status": "accepted-risk",
+          "summary": "users.email has no database check that it is lower-case. Application paths normalise, but a direct write could create a case variant of an existing address.",
+          "remediation": "Add a lower-case check in a migration after verifying existing data. Recorded for the next migration window; no migration is added in Stage 01 to avoid rewriting applied data."
+        }
+      ],
+      "observations": "Read in full (907 lines). Checked: owner columns with composite foreign keys so an event, job, lead history or document cannot reference another owner's run; check constraints on status enums, bounds, hex digests and JSON shapes match the SQL migrations; cascade rules on dependent rows; unique indexes that foreign keys require. Observation S1-F014: users.email is unique but has no database check that it is lower-case. Every write path lower-cases it, and the core functions now normalise too, but the database does not enforce it. A check constraint would need a migration that first verifies existing rows, so it is recorded as a low-severity accepted risk rather than changed here.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "f96a0ec0149128d15dd7a5e70acc4d4a4401574762547bb5f9b08f6aa2ef82f4"
     },
     {
       "path": "packages/core/src/sensitive-data.integration.test.ts",
