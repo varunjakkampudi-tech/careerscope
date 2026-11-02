@@ -5020,26 +5020,34 @@
     {
       "path": "packages/shared/src/constants.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F020",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "A shared resume size constant (10 MiB) disagreed with the server's 5 MiB limit and had no consumer.",
+          "remediation": "Constant removed; the authoritative limit remains in packages/core/src/storage.ts."
+        }
+      ],
+      "observations": "Read in full (about 170 lines). Source groups, the lead and run status lists, employment types, seniority ladder, match weights (they sum to 1), the low-confidence ceiling and default thresholds were checked. Finding S1-F020 (low): MAX_RESUME_BYTES (10 MiB) and ALLOWED_RESUME_MIME had no consumer and contradicted the server limit of 5 MiB in core/storage.ts. Removed; the authoritative definition is in core. Recorded for the shared contract cleanup: the LEAD_STATUSES list (new, dismissed) does not match the core lead status set, and its only consumer is an unused shared schema.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "59ad036abc9b5da22e144d145415e7f4929f4a815425be65a1d567dbc1f48c8b"
     },
     {
       "path": "packages/shared/src/evidence-text.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (138 lines). Refused code points cover controls, invisible joiners, bidirectional controls and variation selectors; zero-width joiners are accepted only between letters of one Indic or Arabic script. Refused syntax is replaced by a space, invisible characters are removed, and whitespace is collapsed. The predicate is shared by the resume extractor and the matching engine so the sets cannot drift. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "fc134f74091c95e413b94ab68701cb2310ddd35d1f73d6daa95f68bc2e61e6e0"
     },
     {
       "path": "packages/shared/src/format.test.ts",
@@ -5056,38 +5064,38 @@
     {
       "path": "packages/shared/src/format.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (217 lines). The compensation parser handles lakh, crore, currency symbols and period words, rejects duration phrases such as '2 years', returns null for undisclosed pay, and the annualisation constants are documented. A bare number without a currency or period is annualised as given. This is a documented ambiguity, not a defect. Formatting helpers are display-only. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "a633967834970eee81aafaababd6629835abd00c27dc41db71b1bc54af8b2fd1"
     },
     {
       "path": "packages/shared/src/index.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (15 lines). Re-exports every shared module. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "0fa80de4b32607dec47c5bb60a934fe5c6e457f68bc754dc6ee45981e19814f7"
     },
     {
       "path": "packages/shared/src/job-feedback.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (18 lines). The five feedback reasons, matching the database check constraint. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "515de5413bf93e5ac17d47a94154136e3ed4d7668f3270dd58ad2e3c5ef091a1"
     },
     {
       "path": "packages/shared/src/job-source-policy.test.ts",
@@ -5104,14 +5112,14 @@
     {
       "path": "packages/shared/src/job-source-policy.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (102 lines). Discovery is closed by default: no approved profile exists, and a source needs a current profile with collection, storage, transformation and candidate-display rights. Expired and not-yet-approved profiles fail closed; the review date must come after approval; credentials are refused by the schema. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "1eb832cc63d1e97965258d1ed5f7fb4378ce06848dd315a844ca69c6accd4e3c"
     },
     {
       "path": "packages/shared/src/keywords.test.ts",
@@ -5128,26 +5136,26 @@
     {
       "path": "packages/shared/src/keywords.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (23 lines). Excluded-keyword matching uses Unicode word boundaries, escapes the keyword before it is used as a pattern, and never matches a blank keyword. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "70e4cd2ba09d0ef1e4b39c2f9dd925701bd202d2e844c9e89ad23ad96896da05"
     },
     {
       "path": "packages/shared/src/locations.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (16 lines). A static list of metro groupings. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "c66650257c0907f6a3d56a941854f3b36d7ccb18358f28222239afec2918a633"
     },
     {
       "path": "packages/shared/src/schemas.test.ts",

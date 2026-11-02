@@ -163,10 +163,6 @@ export const DEFAULT_SEARCH_DAYS = 30;
 /** Default cap on jobs kept per run. */
 export const DEFAULT_MAX_RESULTS = 200;
 
-/** Largest accepted resume upload, in bytes. */
-export const MAX_RESUME_BYTES = 10 * 1024 * 1024;
-/** MIME types accepted for resume upload (PDF and DOCX); content is verified separately. */
-export const ALLOWED_RESUME_MIME = [
-  'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-] as const;
+// Resume size and accepted formats are defined once, in packages/core/src/storage.ts (maximumResumeBytes,
+// 5 MiB) and the resume schema. The 10 MiB constant that used to live here contradicted the server and had no
+// consumer, so it was removed (S1-F019).
