@@ -147,10 +147,19 @@ export async function consumeMessage(
       await database.release(command.id, fence);
       settled('released');
     }
-    await queue.visibility(
-      receipt,
-      Math.max(1, Math.ceil(retryDelay(Number.isInteger(count) && count > 0 ? count : 1) / 1000)),
-    );
+    // A failed hand-back must not replace the handler's error, which is the one the caller needs.
+    await queue
+      .visibility(
+        receipt,
+        Math.max(1, Math.ceil(retryDelay(Number.isInteger(count) && count > 0 ? count : 1) / 1000)),
+      )
+      .catch((visibilityError: unknown) =>
+        logFailure(
+          visibilityError,
+          { commandId: command.id, fence, attempt: count },
+          'Queue message could not be returned for retry',
+        ),
+      );
     throw error;
   } finally {
     heartbeatStop.abort();

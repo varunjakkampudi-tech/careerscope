@@ -3172,14 +3172,14 @@
     {
       "path": "packages/core/src/commands.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (80 lines). Strict envelope schema, the closed command type list, the search schema with sorted and de-duplicated sources, origin defaults with a separate input type, and bounded full-jitter retry delay were checked. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "8c69f0c437ed8a295aaf9a1e640dd5854a79ccb0415e162f346bef051fc80c34"
     },
     {
       "path": "packages/core/src/database.timeout.test.ts",
@@ -3214,16 +3214,36 @@
       "sha256": "6abe50eada2abc65c4734ed5e42f84ce861ed051255f31078cff0949c8f98929"
     },
     {
-      "path": "packages/core/src/dispatch.ts",
+      "path": "packages/core/src/dispatch.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Written in this change and read in full before commit. Uses fake database and queue objects to exercise only the error path, which is the regression for S1-F011. Wired into test:unit.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "c2acecce6b97b1740c585b6f4d4d615056b7d332caa1b5bf44f93204b40a9229"
+    },
+    {
+      "path": "packages/core/src/dispatch.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [
+        {
+          "id": "S1-F011",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "In consumeMessage, a failure to return the message to the queue after a handler error escaped and hid the handler's error.",
+          "remediation": "The hand-back failure is logged and the handler error is rethrown; dispatch.test.ts asserts it (passes)."
+        }
+      ],
+      "observations": "Read in full (179 lines). Checked: outbox publish then mark published (duplicates resolved by fences); message must match the stored command exactly; claim and fence; more than five attempts dead-letter; lease heartbeat every 15 seconds with a 60-second visibility; handler success requires durable completion before acknowledge; release with backoff on failure. Defect S1-F011: a failed visibility call in the error path replaced the handler error, so the caller saw a queue error and lost the cause. Now logged and the handler error is rethrown. Regression test: dispatch.test.ts.",
+      "evidence": "node --import tsx --test packages/core/src/dispatch.test.ts: 1 pass, 0 fail. queue and outbox integration tests: 9 pass, 0 fail.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "2f185c899b4a955f664cdc8d6d817a9cb81d4858782fd1b12d4a4c279c2fef85"
     },
     {
       "path": "packages/core/src/email-change-requests.ts",
@@ -3364,14 +3384,14 @@
     {
       "path": "packages/core/src/failure.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (103 lines). Checked: logs carry only the error name, a safe code token and the work identifiers; messages are dropped except for configuration errors; process crash handler logs and exits 1, so raw stderr with a connection URL is avoided. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "b65baa50adbd627a8382a2838678ac4bc0531f95f8a950f4bd2947881f886229"
     },
     {
       "path": "packages/core/src/file-storage.test.ts",
@@ -3636,14 +3656,14 @@
     {
       "path": "packages/core/src/queue.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (223 lines). Checked: loopback-only Redis endpoint with no query, fragment or non-zero database; ACL credentials decoded; initialize refuses a Redis that is not noeviction with AOF; receive enforces the attempt budget and lease expiry; acknowledge and visibility require a known receipt; lease loss is reported; dead-letter rotation walks the whole set. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "71d2e93cd0485631ad39a7f493f25733ab617199bae418ad3041a4ebd191683e"
     },
     {
       "path": "packages/core/src/recovery-email.integration.test.ts",
@@ -3740,14 +3760,14 @@
     {
       "path": "packages/core/src/rollback.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (26 lines). A failed rollback destroys the connection and turns release into a no-op, so the caller's own error is kept. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "2648ac3488dbbc7610b61f63e4f8b36816b1a00334a3a9e945fd187f491001e7"
     },
     {
       "path": "packages/core/src/runtime.integration.test.ts",
@@ -3824,14 +3844,14 @@
     {
       "path": "packages/core/src/storage.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (44 lines). Resume object schema bounds size to 5 MiB and restricts content types to PDF and DOCX. The store contract matches file-storage.ts. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "ffa6a3ae2dea9ee78f1955e11a88d3a9bb7f7e6e8d6f774c44bf28a13ce52a18"
     },
     {
       "path": "packages/core/src/support-cases.integration.test.ts",
