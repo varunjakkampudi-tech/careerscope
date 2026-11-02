@@ -56,26 +56,34 @@
     {
       "path": ".github/dependabot.yml",
       "category": "github-actions-or-governance",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (27 lines). Weekly updates for npm, GitHub Actions and the Docker build context, all targeting dev and with prefixed commit messages. Pull request count is limited for npm. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "e8c93b3283a0669f583f389bd52a040f2f37f9de41ca96ea17a8c97532dc6b27"
     },
     {
       "path": ".github/workflows/ci.yml",
       "category": "github-actions-or-governance",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F015",
+          "severity": "medium",
+          "status": "open",
+          "summary": "Push runs on dev run the browser suite on Chromium only. Firefox and WebKit are not part of the push gate, so the final SHA needs an explicit cross-browser run.",
+          "remediation": "Run workflow_dispatch with suite=all and browser=all on the final SHA and record the run ID in STAGE-01 evidence. Changing the push default is a separate decision for the owner."
+        }
+      ],
+      "observations": "Read lines 1 to 260 in full and the step list of lines 260 to 430. Checked: top-level permissions read-only; every job sets its own read-only permissions; actions pinned to commit SHAs; checkout without persisted credentials; no repository secrets; the image job only on pull requests; the services job runs synthetic, ephemeral PostgreSQL and two Redis containers with a generated test .env that is never committed; a noeviction and AOF check. Finding S1-F015 (medium, open until the gate is run): push runs to dev select only Chromium (CAREERSCOPE_UI_BROWSER defaults to chromium), so Firefox and WebKit run only on pull requests, nightly and manual cross-browser dispatch. Stage 01 requires all three engines to pass for the final SHA. Remediation: a manual workflow_dispatch of suite all with browser all on the final SHA, recorded with its run ID. Remaining lines 300 to 430 were not read in full.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "907d7737813832794ffc17514ab2ef47b9eba87a49b3b6e2cb2288a0ef44eee0"
     },
     {
       "path": ".gitignore",
