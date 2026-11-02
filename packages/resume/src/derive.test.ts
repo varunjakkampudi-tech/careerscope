@@ -414,3 +414,18 @@ describe('deriveFields on hostile input', () => {
     expect(deriveContact('Work: jane-doe.dev and more').portfolio).toBe('https://jane-doe.dev');
   });
 });
+
+describe('date ranges on hostile input', () => {
+  it('finishes in bounded time on long runs of month names, which backtrack the letter suffix', () => {
+    const started = performance.now();
+    expect(findDateRanges('jan'.repeat(40_000))).toEqual([]);
+    expect(findDateRanges('may'.repeat(40_000))).toEqual([]);
+    expect(performance.now() - started).toBeLessThan(2_000);
+  });
+
+  it('still reads full month names, including September, as range ends', () => {
+    const ranges = findDateRanges('September 2019 - Present', Date.UTC(2024, 0, 1));
+    expect(ranges).toHaveLength(1);
+    expect(ranges[0]?.start).toBe(Date.UTC(2019, 8, 1));
+  });
+});

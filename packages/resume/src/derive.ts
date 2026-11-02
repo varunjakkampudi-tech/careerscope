@@ -272,7 +272,7 @@ const MONTHS: Record<string, number> = {
 };
 
 const MONTH_ALT = Object.keys(MONTHS).join('|');
-const DATE_TOKEN = `(?:(?:${MONTH_ALT})[a-z]*\\.?[ ]?[',]?[ ]?\\d{4}|\\d{1,2}[/-]\\d{4}|\\d{4})`;
+const DATE_TOKEN = `(?:(?:${MONTH_ALT})[a-z]{0,6}\\.?[ ]?[',]?[ ]?\\d{4}|\\d{1,2}[/-]\\d{4}|\\d{4})`;
 const PRESENT = `present|current|now|till date|to date|ongoing`;
 const RANGE_RE = new RegExp(
   `(${DATE_TOKEN})\\s*(?:-|–|—|to|until|through)\\s*(${PRESENT}|${DATE_TOKEN})`,
@@ -291,7 +291,7 @@ function parseDateToken(token: string, now: number): number | null {
   const value = token.trim().toLowerCase();
   if (new RegExp(`^(?:${PRESENT})$`, 'i').test(value)) return now;
 
-  const monthYear = value.match(new RegExp(`^(${MONTH_ALT})[a-z]*\\.?[ ]?[',]?[ ]?(\\d{4})$`));
+  const monthYear = value.match(new RegExp(`^(${MONTH_ALT})[a-z]{0,6}\\.?[ ]?[',]?[ ]?(\\d{4})$`));
   if (monthYear) {
     const month = MONTHS[monthYear[1] ?? ''] ?? 0;
     return Date.UTC(Number(monthYear[2]), month, 1);
@@ -398,7 +398,7 @@ const ROLE_WORDS =
 /** Matches a full date range or a bare month-year, so titles can be de-dated. */
 const DATE_STRIP_RE = new RegExp(
   `(?:${DATE_TOKEN})\\s*(?:-|–|—|to|until|through)\\s*(?:${PRESENT}|${DATE_TOKEN})` +
-    `|(?:${MONTH_ALT})[a-z]*\\.?[ ]?[',]?[ ]?\\d{4}`,
+    `|(?:${MONTH_ALT})[a-z]{0,6}\\.?[ ]?[',]?[ ]?\\d{4}`,
   'gi',
 );
 
