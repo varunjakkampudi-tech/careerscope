@@ -4260,14 +4260,14 @@
     {
       "path": "packages/providers/src/ats/base.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (about 260 lines). The shared loop isolates each board: a failing board is logged and the walk continues, a 404 or 410 is an empty board, and cancellation ends the walk quietly. The result budget is shared fairly with carry-forward. Each adapter's detail URL encodes the slug and the posting id before it is requested, and the Recruitee slug is validated. Non-JSON, primitive and oversized bodies are rejected through the bounded client. A malformed posting is skipped without losing the board. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "404245d7a1d68904bac01627082f1077b3a9669e9afbcd16ff6fe66f5ab3d8aa"
     },
     {
       "path": "packages/providers/src/ats/greenhouse.ts",
@@ -4592,14 +4592,22 @@
     {
       "path": "packages/providers/src/normalize.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F024",
+          "severity": "medium",
+          "status": "fixed",
+          "summary": "Title and company canonicalisation was quadratic on unclosed brackets in provider data, about 22 seconds for a 120 kB title.",
+          "remediation": "Bracketed decoration bounded to 200 characters; normalize.test.ts regression test."
+        }
+      ],
+      "observations": "Read lines 120 to 215 (fingerprint, title, company, location and slug canonicalisation) and the bracket-decoration rule. Defect S1-F024 (medium): canonicalTitle and canonicalCompany removed bracketed decoration with a pattern that scanned to the end of the title for each unclosed opening bracket, so 120,000 '(' characters took about 22 seconds in a search run. The scan is now bounded to 200 characters (BRACKETED_DECORATION); the canonicalisers take about 130 ms on the same input. normalize.test.ts asserts bounded time and that realistic decoration is still stripped (59 pass). Lines 1 to 120 and 215 to 560 (salary, dates, URLs, deduplication and merging) are not yet read.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "4b51e935ab82cf28a3bb769d2f084c1de0497018bad0f93b0bf21835dfe1b5a8"
     },
     {
       "path": "packages/providers/src/rank.ts",

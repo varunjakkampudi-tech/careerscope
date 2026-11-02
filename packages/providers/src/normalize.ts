@@ -132,6 +132,12 @@ export function jobFingerprint(
 }
 
 /**
+ * A bracketed group a board adds to a title or company: "(Remote)", "[Berlin]". Bounded to 200 characters, so
+ * a long run of unclosed brackets cannot make the scan quadratic (S1-F024). No real decoration is that long.
+ */
+const BRACKETED_DECORATION = /[([{][^)\]}]{0,200}[)\]}]/g;
+
+/**
  * Strip the decoration boards bolt onto titles — trailing req ids, bracketed
  * locations, "(Remote)", gendered German suffixes — so the same role posted
  * twice produces one key.
@@ -141,7 +147,7 @@ export function canonicalTitle(title: string): string {
     title
       .toLowerCase()
       .replace(/\((?:m\/f\/d|m\/w\/d|f\/m\/x|all genders)\)/g, ' ')
-      .replace(/[([{][^)\]}]*[)\]}]/g, ' ')
+      .replace(BRACKETED_DECORATION, ' ')
       .replace(/\b(?:job\s*)?(?:id|req(?:uisition)?|ref)[\s#:-]*[a-z0-9-]{3,}\b/g, ' ')
       // A trailing "- JR-2291" or "- 88213": a code, not part of the role.
       .replace(/[–—-]\s*[a-z]{0,4}[\s#:-]*\d{3,}[a-z0-9-]*\s*$/g, ' ')
@@ -154,7 +160,7 @@ export function canonicalCompany(company: string): string {
   return collapse(
     company
       .toLowerCase()
-      .replace(/[([{][^)\]}]*[)\]}]/g, ' ')
+      .replace(BRACKETED_DECORATION, ' ')
       .replace(
         /\b(?:pvt|private|pte|ltd|limited|llp|llc|inc|incorporated|corp|corporation|co|company|gmbh|plc|technologies|technology|solutions|labs|systems|india)\b\.?/g,
         ' ',

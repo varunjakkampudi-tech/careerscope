@@ -534,3 +534,19 @@ describe('mergeDuplicates', () => {
     expect(mergeDuplicates(aggregator, ats).source).toBe('lever');
   });
 });
+
+describe('canonicalisers on hostile input (S1-F024)', () => {
+  it('finishes in bounded time on long runs of unclosed brackets', () => {
+    const started = performance.now();
+    canonicalTitle('('.repeat(120_000));
+    canonicalCompany('('.repeat(120_000));
+    expect(performance.now() - started).toBeLessThan(2_000);
+  });
+
+  it('still strips realistic board decoration from titles and companies', () => {
+    expect(canonicalTitle('Senior Engineer (m/f/d) [Berlin] (Remote)')).toBe(
+      canonicalTitle('Senior Engineer'),
+    );
+    expect(canonicalCompany('Acme Technologies Pvt Ltd (India)')).toBe(canonicalCompany('Acme'));
+  });
+});
