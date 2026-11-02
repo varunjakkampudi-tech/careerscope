@@ -94,9 +94,13 @@ function hasGitHubSecretExpression(workflow) {
 }
 
 const run = (over = {}) => ({
+  id: 1,
+  run_number: 1,
+  run_attempt: 1,
+  event: 'push',
   status: 'completed',
   conclusion: 'success',
-  run_started_at: '2026-09-19T10:00:00Z',
+  created_at: '2026-09-19T10:00:00Z',
   html_url: 'https://example.invalid/run',
   ...over,
 });
@@ -152,13 +156,88 @@ check('no run yet waits', decide(payload([])).verdict, WAIT);
 check('an in-progress run waits', decide(payload([run({ status: 'in_progress' })])).verdict, WAIT);
 check('a queued run waits', decide(payload([run({ status: 'queued' })])).verdict, WAIT);
 
-// The newest run decides, so an older green run cannot authorise a red commit.
+// The newest full-trigger run decides, so neither an older green run nor a
+// successful partial manual dispatch can authorise a red commit.
 check(
-  'an older success does not override a newer failure',
+  'a newer full-trigger failure overrides an older success regardless of API result order',
   decide(
     payload([
-      run({ run_started_at: '2026-09-19T09:00:00Z' }),
-      run({ run_started_at: '2026-09-19T11:00:00Z', conclusion: 'failure' }),
+      run({ id: 2, run_number: 2, created_at: '2026-09-19T11:00:00Z', conclusion: 'failure' }),
+      run({ id: 1, run_number: 1, created_at: '2026-09-19T09:00:00Z' }),
+    ]),
+  ).verdict,
+  REFUSE,
+);
+check(
+  'a partial manual suite cannot authorize a commit by itself',
+  decide(payload([run({ event: 'workflow_dispatch' })])).verdict,
+  WAIT,
+);
+check(
+  'a partial manual success cannot override a newer full-run failure',
+  decide(
+    payload([
+      run({ id: 2, run_number: 2, created_at: '2026-09-19T11:00:00Z', conclusion: 'failure' }),
+      run({ event: 'workflow_dispatch', created_at: '2026-09-19T12:00:00Z' }),
+    ]),
+  ).verdict,
+  REFUSE,
+);
+check(
+  'a partial manual failure does not override a successful full-trigger run',
+  decide(
+    payload([
+      run({ id: 1, run_number: 1, created_at: '2026-09-19T10:00:00Z' }),
+      run({
+        event: 'workflow_dispatch',
+        created_at: '2026-09-19T11:00:00Z',
+        conclusion: 'failure',
+      }),
+    ]),
+  ).verdict,
+  PASS,
+);
+check(
+  'a run without an event refuses',
+  decide(payload([run({ event: undefined })])).verdict,
+  REFUSE,
+);
+check(
+  'a full-trigger run with a missing creation time refuses',
+  decide(payload([run({ created_at: undefined })])).verdict,
+  REFUSE,
+);
+check(
+  'a full-trigger run with an invalid creation time refuses',
+  decide(payload([run({ created_at: 'not-a-date' })])).verdict,
+  REFUSE,
+);
+check(
+  'a full-trigger run with invalid run-number metadata refuses',
+  decide(payload([run({ run_number: undefined })])).verdict,
+  REFUSE,
+);
+check(
+  'a full-trigger run with invalid attempt metadata refuses',
+  decide(payload([run({ run_attempt: undefined })])).verdict,
+  REFUSE,
+);
+check(
+  'a newer run attempt wins when creation times and run numbers tie',
+  decide(
+    payload([
+      run({ id: 2, run_number: 7, run_attempt: 2, conclusion: 'success' }),
+      run({ id: 1, run_number: 7, run_attempt: 1, conclusion: 'failure' }),
+    ]),
+  ).verdict,
+  PASS,
+);
+check(
+  'a higher run ID breaks a fully tied ordering in favor of the newer failure',
+  decide(
+    payload([
+      run({ id: 2, run_number: 7, run_attempt: 1, conclusion: 'failure' }),
+      run({ id: 1, run_number: 7, run_attempt: 1, conclusion: 'success' }),
     ]),
   ).verdict,
   REFUSE,

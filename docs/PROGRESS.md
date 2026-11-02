@@ -6,12 +6,14 @@ is listed in [BLOCKERS](BLOCKERS.md). Stages run one at a time. Deployment is la
 
 | Stage | Name                                 | Status      |
 | ----- | ------------------------------------ | ----------- |
-| 01    | Foundation, governance, architecture | Complete    |
+| 01    | Foundation, governance, architecture | Partial     |
 | 02    | Authentication and account security  | Complete    |
 | 03-20 | See roadmap                          | Not started |
 
-Stage 01 evidence: [FOUNDATIONS](FOUNDATIONS.md), 13 items Complete. The register is enforced by
-`npm run traceability:check`.
+Stage 01 evidence: [FOUNDATIONS](FOUNDATIONS.md). Its enforced thirteen-item register is Complete,
+but the crosswalk for the owner's separate fifteen-item master prompt remains Partial: the prompt's
+full file-by-file audit is not evidenced, and cross-browser hosted acceptance must be tied to the
+closing revision before this prompt's Stage 01 can close. See the Stage 01 master-prompt crosswalk.
 
 Stage 02 evidence: [GAP-MATRIX](GAP-MATRIX.md) rows 2.01 to 2.20 and [TEST-MATRIX](TEST-MATRIX.md).
 Commit `c12838e` passed the local gates, the integration suite, the Chromium browser suite, and

@@ -16,6 +16,12 @@ gate enforces this for the foundations register in [FOUNDATIONS](FOUNDATIONS.md)
 | 1.12 | `scripts/tests/design-system-doc.test.ts`                    | Quality gates  |
 | 1.13 | `scripts/ci/check-traceability.test.mjs`                     | Quality gates  |
 
+The owner's separate fifteen-item Stage 01 prompt maps to this register in
+[FOUNDATIONS](FOUNDATIONS.md). Its release-gate behavior is additionally covered
+by `scripts/ci/check-deploy-gate.test.mjs`, run by `npm run gates:test`; the tests
+ensure manual partial suites cannot authorize a SHA or override a full-trigger
+failure. The prompt's 1.01 full-file audit remains open in [BLOCKERS](BLOCKERS.md).
+
 ## Stage 02
 
 | Item             | Proof                                                                                                                         | Runs in                       |

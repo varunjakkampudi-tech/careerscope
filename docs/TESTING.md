@@ -47,12 +47,11 @@ cross-owner reads and registration/password mutations in test mode.
 ## Security and release evidence
 
 `npm run security:check` includes the privacy scan and production dependency
-audit. The CI-only workflow additionally runs the full dependency audit, which
-currently reports known high-severity development dependency findings and must
-remain a blocking result until fixed or owner-disposed. GitHub Actions is
-disabled in repository settings; local tests cannot prove hosted CI. Manual
-accessibility, hosted provider, backup/restore and live smoke evidence remain
-separate acceptance gates.
+audit. The hosted workflow also runs production and full-tree dependency audits;
+both reject high or critical advisories. GitHub Actions is enabled and runs for
+pushes to `dev` and `main`; hosted results must be checked against the exact
+commit being accepted. Manual accessibility, hosted provider, backup/restore and
+live smoke evidence remain separate acceptance gates.
 
 The Playwright harness runs all three engines when invoked locally without a
 browser selection and accepts

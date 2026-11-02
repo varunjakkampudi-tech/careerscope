@@ -12,6 +12,8 @@ export const PASS = 'PASS';
 export const REFUSE = 'REFUSE';
 export const WAIT = 'WAIT';
 
+export const FULL_CI_EVENTS = new Set(['push', 'pull_request', 'schedule']);
+
 /**
  * Classify a GitHub "list workflow runs" payload.
  *
@@ -51,9 +53,41 @@ export function decide(payload) {
     return { verdict: REFUSE, reason: 'CI run list contained an unreadable entry' };
   }
 
-  const latest = legible.reduce((newest, run) =>
-    String(run.run_started_at ?? '') >= String(newest.run_started_at ?? '') ? run : newest,
-  );
+  if (legible.some((run) => typeof run.event !== 'string')) {
+    return { verdict: REFUSE, reason: 'CI run list contained a run with no event' };
+  }
+
+  const fullRuns = legible.filter((run) => FULL_CI_EVENTS.has(run.event));
+  if (fullRuns.length === 0) {
+    return { verdict: WAIT, reason: 'no full-trigger CI run recorded for this commit yet' };
+  }
+
+  for (const run of fullRuns) {
+    if (typeof run.created_at !== 'string' || !Number.isFinite(Date.parse(run.created_at))) {
+      return { verdict: REFUSE, reason: 'CI run list contained a run with no valid creation time' };
+    }
+    if (
+      !Number.isSafeInteger(run.run_number) ||
+      run.run_number < 1 ||
+      !Number.isSafeInteger(run.run_attempt) ||
+      run.run_attempt < 1 ||
+      !Number.isSafeInteger(run.id) ||
+      run.id < 1
+    ) {
+      return { verdict: REFUSE, reason: 'CI run list contained invalid run ordering metadata' };
+    }
+  }
+
+  const latest = fullRuns.reduce((newest, run) => {
+    const createdAt = Date.parse(run.created_at);
+    const newestCreatedAt = Date.parse(newest.created_at);
+    if (createdAt !== newestCreatedAt) return createdAt > newestCreatedAt ? run : newest;
+    if (run.run_number !== newest.run_number)
+      return run.run_number > newest.run_number ? run : newest;
+    if (run.run_attempt !== newest.run_attempt)
+      return run.run_attempt > newest.run_attempt ? run : newest;
+    return run.id > newest.id ? run : newest;
+  });
 
   const status = typeof latest.status === 'string' ? latest.status : '';
   if (status === '') {

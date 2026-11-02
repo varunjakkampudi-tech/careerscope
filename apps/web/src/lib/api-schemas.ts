@@ -93,7 +93,6 @@ export type AccountSession = z.infer<typeof accountSessionSchema>;
 export const parseAccountSessions = parser(z.object({ sessions: z.array(accountSessionSchema) }));
 
 const marketingConsentSchema = z.object({ optedIn: z.boolean(), version: z.string().nullable() });
-type MarketingConsent = z.infer<typeof marketingConsentSchema>;
 export const parseMarketingConsent = parser(marketingConsentSchema);
 
 export const parseEmailChangeVerification = parser(
@@ -137,7 +136,6 @@ export const parseNotificationList = parser(
 );
 
 const notificationPreferencesSchema = z.object({ interviewRemindersInAppEnabled: z.boolean() });
-type NotificationPreferences = z.infer<typeof notificationPreferencesSchema>;
 export const parseNotificationPreferences = parser(notificationPreferencesSchema);
 
 /* ---------------------------------- Profile --------------------------------- */
@@ -244,7 +242,6 @@ const resumeListSchema = z.object({
   ),
 });
 /** Body of GET /api/resumes. */
-type ResumeList = z.infer<typeof resumeListSchema>;
 export const parseResumeList = parser(resumeListSchema);
 
 const resumeParseOutcomeSchema = z.discriminatedUnion('status', [
@@ -297,15 +294,12 @@ const collectedJobSchema = z.object({
   match: matchBreakdownSchema.nullable(),
 });
 /** One job as stored for a run or lead. */
-type CollectedJob = z.infer<typeof collectedJobSchema>;
-
 const searchRunSchema = z.object({
   id: z.string(),
   status: z.string(),
   createdAt: z.string(),
   request: z.object({ query: z.string() }),
 });
-type SearchRun = z.infer<typeof searchRunSchema>;
 export const parseSearchRuns = parser(z.object({ items: z.array(searchRunSchema) }));
 
 const jobSourceCatalogSchema = z.object({
@@ -435,7 +429,6 @@ const leadHistorySchema = z.object({
   createdAt: z.string(),
 });
 /** One revision of a lead. */
-type LeadHistory = z.infer<typeof leadHistorySchema>;
 export const parseLeadHistoryPage = parser(
   z.object({ items: z.array(leadHistorySchema), nextCursor: z.number().nullable() }),
 );

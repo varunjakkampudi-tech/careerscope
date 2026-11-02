@@ -21,12 +21,11 @@ Hosted Actions is enabled: the workflow runs on pushes to `dev` and `main`. This
 section is the single statement of what has been verified; other documents link here
 instead of repeating it.
 
-- Verified on a hosted runner for the current commit: nothing. Status is **pending
-  until the run on this commit**. Record the run URL and the full SHA here once that
-  run exists and every required job is green.
-- Earlier runs on earlier commits ended in failure and are not acceptance evidence,
-  whatever they covered. No run ID is quoted here because it would go stale with the
-  next push; read the run list on GitHub for the commit under review.
+- Hosted CI is enabled and runs on branch pushes and pull requests. No run ID is
+  treated as evergreen evidence; read the hosted run for the exact commit under
+  review and confirm that every required job is green.
+- Results from another commit do not establish acceptance for the current candidate,
+  regardless of whether they passed or failed.
 - A selected-suite or single-browser manual run does not substitute for a full run of
   all required jobs on the exact integrated candidate.
 
@@ -105,24 +104,28 @@ content has not been scrubbed for personal/sensitive data. The job summary
 records event, ref, SHA, suite and browser; command output remains in individual
 workflow logs. Skipped suites are not described as passed.
 
-## Required status checks
+`scripts/ci/require-ci-success.mjs` authorizes only a completed successful
+`push`, `pull_request` or scheduled run for the exact SHA. Manual dispatches,
+including `suite=all`, are useful validation runs but do not substitute for those
+full-trigger runs and cannot override a failed full-trigger result.
 
-Branch protection is owner-controlled; this repository and its agents cannot
-change it, and no protection setting has been changed. To make the gates
-blocking, the owner must require these exact check names on `main` and `dev`
-(GitHub shows them as the job `name`, under the workflow `CareerScope CI`):
+## Verified branch rulesets
 
-| Required check name                         | Runs on            | What it proves                                                                                                                                                                    |
-| ------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Quality gates`                             | push, PR, nightly  | `npm run gates:test` (`npm run check` with unit tests, EOL, privacy, boundaries, traceability), toolchain check, `drizzle-kit check`, domain tests, build, both dependency audits |
-| `Services, integration, and browser suites` | push, PR, nightly  | Fresh-database migration apply (`npm run db:migrate`), integration tests on PostgreSQL and two Redis service containers, browser/axe/responsive checks                            |
-| `Production image build`                    | pull requests only | `runtime` and `proxy` targets of `infra/docker/Dockerfile` build; nothing is pushed                                                                                               |
+The live ruleset state was read from GitHub on 2026-11-02. Ruleset 26263919,
+`Protect Production Main`, targets only `main`; it requires pull requests and
+the two status checks below, requires linear history, and blocks branch deletion
+and non-fast-forward updates. Repository administrators can bypass it. The
+development branch has no ruleset or required status checks; CI still runs on
+every push to `dev`.
 
-`Production image build` is skipped on pushes and nightly runs. GitHub counts a
-skipped required check as passing, so require it only on pull requests (the
-default for a required check) and do not read a skipped result as a build.
-Require pull requests to be up to date with the base branch so the checks run
-against the merge result.
+| Required check name                         | Runs on      | What it proves                                                                                                                                                                    |
+| ------------------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Quality gates`                             | main push/PR | `npm run gates:test` (`npm run check` with unit tests, EOL, privacy, boundaries, traceability), toolchain check, `drizzle-kit check`, domain tests, build, both dependency audits |
+| `Services, integration, and browser suites` | main push/PR | Fresh-database migration apply (`npm run db:migrate`), integration tests on PostgreSQL and two Redis service containers, browser/axe/responsive checks                            |
+
+The `Production image build` job runs only on pull requests and builds the
+`runtime` and `proxy` targets without pushing them. It is not a required check in
+the current ruleset. The ruleset requires the two named CI checks above.
 
 Workflow properties: every action is pinned to a full commit SHA; the workflow and
 each job declare `permissions: contents: read`; there are no repository secrets;

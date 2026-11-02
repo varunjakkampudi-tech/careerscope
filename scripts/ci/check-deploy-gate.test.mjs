@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { parseDocument } from 'yaml';
+import { FULL_CI_EVENTS } from './require-ci-success.mjs';
 
 const checker = resolve('scripts/ci/check-deploy-gate.mjs');
 
@@ -327,4 +328,16 @@ test('dev and main pushes and pull requests run the read-only service-backed CI 
     );
   }
   assert.equal(parsed.permissions.contents, 'read');
+});
+
+test('the release gate accepts every full CI trigger and excludes manual partial dispatches', () => {
+  const workflow = readFileSync(resolve('.github/workflows/ci.yml'), 'utf8');
+  const document = parseDocument(workflow);
+  assert.equal(document.errors.length, 0, document.errors.map((error) => error.message).join('\n'));
+  const triggers = Object.keys(document.toJS().on);
+  assert.deepEqual(
+    triggers.filter((event) => event !== 'workflow_dispatch').sort(),
+    [...FULL_CI_EVENTS].sort(),
+  );
+  assert.ok(triggers.includes('workflow_dispatch'));
 });

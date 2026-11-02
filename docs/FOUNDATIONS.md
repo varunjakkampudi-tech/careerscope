@@ -1,6 +1,6 @@
 # Foundations register
 
-The foundation items are thirteen, 1.01 to 1.13. This register gives each one a
+The repository's enforced foundation register contains thirteen items, 1.01 to 1.13. This register gives each one a
 status, the files and tests that prove it, the gate that runs it and the command that
 verifies it. `npm run traceability:check` (`scripts/ci/check-traceability.mjs`, part of
 `npm run check`) fails when:
@@ -23,6 +23,49 @@ launch-blocking requirement gaps in 1.02 are a separate list (see
 [V12-RECONCILIATION](requirements/V12-RECONCILIATION.md)). Nothing here records a host check
 that was not performed; the Gap lines say what is unverified.
 
+## Stage 01 master-prompt crosswalk
+
+The owner's Stage 01 master prompt has fifteen checklist items with a different numbering
+from this repository's enforced thirteen-item register. This crosswalk prevents similarly
+named items from being treated as identical evidence. Statuses below describe the prompt's
+scope as reviewed on 2026-11-02; `Partial` means the prompt's full acceptance wording is not
+yet evidenced, even if related repository checks pass.
+
+Several paths named by the prompt are not present on `dev`:
+`docs/requirements/CareerScope-Goal.md`, `docs/requirements/CareerScope-Engineering-Standards.md`,
+`docs/decisions/OWNER_APPROVALS.md`,
+`docs/PRODUCT_PROFILE.md`, root-level `GAP_MATRIX.md`, `PROGRESS.md`, `TEST_MATRIX.md`,
+`QUALITY_AUDIT.md`, `CHANGE_REGISTER.md`, `blocker.txt`, and `docs/GO-NO-GO.md`. The indexed
+current sources are `docs/PRODUCT.md`, `docs/requirements/CareerScope-v12.md`,
+`docs/requirements/V12-RECONCILIATION.md`, `docs/requirements/V12-REQUIREMENT-INVENTORY.json`,
+`docs/ARCHITECTURE.md`, `docs/API-SURFACE.md`, `docs/FOUNDATIONS.md`, `docs/TRACEABILITY.md`,
+`docs/PROGRESS.md`, `docs/GAP-MATRIX.md`, `docs/TEST-MATRIX.md`, `docs/BLOCKERS.md`, and
+`docs/operations/CI-CD.md`. The two absent owner-approval/go-no-go documents have no direct
+file equivalent; recorded stage decisions remain in the current progress and gap documents.
+
+| Prompt item                                 | Repository evidence                                                                                                    | Disposition and remaining gap                                                                                                                |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.01 Complete repository and codebase audit | Local 1.01, `docs/TRACEABILITY.md`, `docs/architecture/BOUNDARIES.md`, targeted API, data/worker, and frontend reviews | **Partial.** No exhaustive file-by-file audit record exists for all 478 tracked files; the independent and specialist reviews were targeted. |
+| 1.02 Requirements reconciliation            | Local 1.02, `docs/requirements/V12-RECONCILIATION.md`, inventory checker                                               | Complete; all 319 source clauses have a disposition, with open requirement gaps preserved.                                                   |
+| 1.03 Dependency and technology validation   | Local 1.06, `docs/operations/TOOLCHAIN.md`, toolchain and audit gates                                                  | Complete; Node 24, dependency compatibility and current audit gates are checked.                                                             |
+| 1.04 PostgreSQL and Drizzle architecture    | Local 1.07, migration integration test and schema docs                                                                 | Complete; the CI migration test uses a fresh UUID-named database.                                                                            |
+| 1.05 Redis and background workers           | Local 1.08, queue/runtime integration tests                                                                            | Complete for the registered scope; CI-backed service tests are the evidence.                                                                 |
+| 1.06 Transactional outbox and commands      | Local 1.08, `docs/architecture/OUTBOX.md`, outbox and queue tests                                                      | Complete for the registered scope; idempotency, redelivery and fencing have test coverage.                                                   |
+| 1.07 API/OpenAPI consistency                | Local 1.09, `docs/API-SURFACE.md`, error and route-contract tests                                                      | Complete for the registered scope; public contract changes remain covered by API documentation and tests.                                    |
+| 1.08 Browser test failures                  | Local 1.05, `docs/UI-VERIFICATION.md`, hosted Services suite                                                           | Chromium fix is verified. Cross-browser hosted evidence must be tied to the final Stage 01 revision before closure.                          |
+| 1.09 Error handling and observability       | Local 1.09, API error tests, request-log privacy tests                                                                 | Complete for the registered scope; logs omit request bodies and error text.                                                                  |
+| 1.10 Technical debt and code quality        | Local 1.10–1.11, format/lint/type/architecture gates                                                                   | **Partial.** No exhaustive code-quality review is evidenced while the item 1.01 audit remains open.                                          |
+| 1.11 Engineering standards                  | Local 1.09–1.12, CI static and privacy checks                                                                          | Complete for enforceable standards represented by current gates; unautomated manual acceptance remains separately reported.                  |
+| 1.12 GitHub Actions quality gates           | Local 1.04, `.github/workflows/ci.yml`, hosted workflow evidence                                                       | Complete; pushes to `dev` and `main` run CI. Hosted evidence is recorded against the tested SHA.                                             |
+| 1.13 GitHub ruleset policy                  | Local 1.03, live GitHub ruleset API                                                                                    | Complete as checked 2026-11-02: the active protection ruleset targets only `main`; `dev` has no ruleset.                                     |
+| 1.14 Requirement-to-test traceability       | Local 1.13, `docs/TRACEABILITY.md`, traceability checker                                                               | Complete; the enforced matrix checks implementation and CI-run test paths.                                                                   |
+| 1.15 Shared frontend foundations            | Local 1.12, `docs/architecture/DESIGN-SYSTEM.md`, browser, accessibility and responsive checks                         | Complete for shared foundations. Visual baselines cover public sign-in at 390px and 1280px only; signed-in screens have no visual baselines. |
+
+The prompt-specific Stage 01 result remains partial until the full 1.01 file-level audit is
+completed and the cross-browser acceptance run is recorded against the closing revision. The
+repository's original thirteen-item register remains enforced independently by the existing
+traceability check.
+
 ## 1.01 Audit dev modules
 
 - **Status:** Complete
@@ -42,18 +85,19 @@ that was not performed; the Gap lines say what is unverified.
 ## 1.03 Preserve dev and main branches
 
 - **Status:** Complete
-- **Evidence:** GitHub rulesets 26263919 (Protect Production Main, on main: pull request, required status checks, linear history, deletion and force-push blocked, repository-admin bypass) and 26263965 (Protect dev, on dev: deletion and force-push blocked), read back with the GitHub rulesets API on 2026-10-31. `.github/workflows/ci.yml`, `scripts/ci/check-deploy-gate.test.mjs`
+- **Evidence:** GitHub ruleset 26263919 (Protect Production Main, targeting only the main branch, with pull request, required status checks, linear history, deletion and force-push blocked) read back with the GitHub rulesets API on 2026-11-02. The same API returned no rules for the development branch. `.github/workflows/ci.yml`, `scripts/ci/check-deploy-gate.test.mjs`
 - **Gate:** CI triggers on pushes and pull requests to main and dev; the deploy gate test runs inside gates:test
 - **Verify:** npm run deploy:gate:test; read the rulesets with the GitHub rulesets API
-- **Note:** dev has no required status check. A required check would block direct pushes, because the owner pushes to dev without a pull request and has no bypass on that ruleset.
+- **Note:** No ruleset targets `dev`; it remains push-tested by the workflow. Historical ruleset 26263965 no longer exists and must not be cited as current policy.
 
 ## 1.04 Enforce GitHub Actions quality gates
 
 - **Status:** Complete
-- **Evidence:** Ruleset 26263919 requires the checks Quality gates and Services, integration, and browser suites on main. Production image build runs on pull requests only, so it is not a push check. `.github/workflows/ci.yml`, `scripts/ci/check-package-scripts.test.mjs`
+- **Evidence:** Ruleset 26263919 requires the checks Quality gates and Services, integration, and browser suites on main. Production image build runs on pull requests only, so it is not a push check. `.github/workflows/ci.yml`, `scripts/ci/check-package-scripts.test.mjs`, `scripts/ci/require-ci-success.mjs`, `scripts/ci/check-deploy-gate.test.mjs`
 - **Gate:** CI job Quality gates (including the shell syntax step over infra/) and Services, integration, and browser suites
-- **Verify:** npm run gates:test; read ruleset 26263919 with the GitHub rulesets API
+- **Verify:** npm run gates:test; npm run deploy:gate:test; read ruleset 26263919 with the GitHub rulesets API
 - **Note:** see 1.03 for why dev has no required check.
+- **Release gate:** Only completed successful `push`, `pull_request` or scheduled runs for the exact SHA count. Manual partial-suite dispatches cannot authorize release; no deployment workflow currently consumes this gate.
 
 ## 1.05 Resolve Chromium acceptance failures
 
@@ -83,7 +127,7 @@ that was not performed; the Gap lines say what is unverified.
 - **Evidence:** `packages/core/src/outbox.integration.test.ts`, `packages/core/src/queue.integration.test.ts`, `packages/core/src/bull-queue.integration.test.ts`, `packages/core/src/runtime.integration.test.ts`, `docs/architecture/OUTBOX.md`
 - **Gate:** CI job `Services, integration, and browser suites`: Redis readiness, append-only and `noeviction` checks, then `npm run test:integration`
 - **Verify:** `npm run test:integration` (needs PostgreSQL and both Redis services from `npm run services` and `npm run services:queue`)
-- **Note:** The queue-runtime crash checks (`npm run test:queue-runtime`) run only in the manual `recovery` suite. Known limitation: no test sends SIGTERM or SIGINT to the worker `main.ts` entry points, so their shutdown on a signal is not covered by a test.
+- **Note:** Queue-runtime crash checks (`npm run test:queue-runtime`) run only in the manual `recovery` suite. `apps/workers/search/src/main.shutdown.integration.test.ts` covers SIGTERM and SIGINT for the search worker's `main.ts` in `test:integration`; it skips on Windows, while hosted CI runs on Linux. The publisher and files worker entry points are not covered by that signal test.
 
 ## 1.09 Standardise typed API responses and errors
 

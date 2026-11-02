@@ -182,7 +182,7 @@ containers, one engine at a time with nothing else running (`CAREERSCOPE_UI_BROW
 ### Environment limits
 
 - All three engines pass. They were run only on the one Windows host.
-- A visual regression baseline set does not exist, so pixel comparison against references was not run.
+- Pixel comparison runs against the tracked public sign-in baselines at 390px and 1280px. Signed-in routes do not yet have visual baselines.
 - The suite takes about seven minutes after a build and needs the Docker services in `.env`.
 
 ## Limits
