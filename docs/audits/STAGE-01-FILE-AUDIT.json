@@ -4593,21 +4593,21 @@
       "path": "packages/providers/src/normalize.ts",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "state": "reviewed",
       "concerns": [],
       "findings": [
         {
-          "id": "S1-F025",
-          "severity": "medium",
+          "id": "S1-F026",
+          "severity": "low",
           "status": "fixed",
-          "summary": "Location normalisation and the dash pattern in title canonicalisation were quadratic on runs of whitespace (about 6 seconds for 60 kB).",
-          "remediation": "Whitespace collapsed before the separator patterns run; a bounded dash pattern; normalize.test.ts location tests (61 pass)."
+          "summary": "A finite but absurd salary figure was annualised to an implausible value that could be shown to the user as pay.",
+          "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
         }
       ],
-      "observations": "Read lines 120 to 280 in this pass, including the canonicalisers, the bracket decoration, the location and separator normalisation, and the salary entry point. Findings: S1-F024 (canonicalisers quadratic on unclosed brackets, fixed) and S1-F025 (location separators and dash handling quadratic on runs of whitespace, fixed by collapsing whitespace before the pattern runs). Sweep of exported single-string functions with hostile shapes now reports no call slower than 300 ms apart from the cases fixed here. Lines 1 to 120 and 280 to 560 (dates, URLs and deduplication) are not yet read in full.",
+      "observations": "Read in full in this and the previous pass. Checked: the normalised job is built only through this module; an absent salary stays null; unparseable dates stay null and future dates are clamped to now; URLs must be http or https and are upgraded, and javascript: links are dropped; fingerprints and the deduplication rule keep distinct reqs from the same source apart; merging backfills the winner from the loser without inventing values. Finding S1-F026 (low): a finite but absurd salary (for example 1e300 an hour) was annualised to a finite, implausible figure. Annual figures above 1e10 or not positive are now left null, and the raw wording is kept. Canonicaliser and location defects were fixed earlier (S1-F024, S1-F025). normalize.test.ts asserts the implausible-figure case and that an ordinary hourly rate still annualises (63 pass).",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "723847273dbb3d2a191e81235c67de2f168a8f14b263da2ce0810944a8014df8"
+      "sha256": "b35ffcb84ad634cd217a1fc8dbf16bb9622830cf6022eabe526b1d29806741a7"
     },
     {
       "path": "packages/providers/src/rank.ts",

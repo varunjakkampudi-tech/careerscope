@@ -570,3 +570,23 @@ describe('location normalisation on hostile whitespace (S1-F025)', () => {
     expect(canonicalLocation('Pune  -  Hybrid')).toBe('pune');
   });
 });
+
+describe('salary plausibility (S1-F026)', () => {
+  it('leaves an absurd annualised figure unknown and keeps the board wording', () => {
+    const salary = normalizeSalary({
+      salaryMin: 1e300,
+      salaryMax: 1e300,
+      salaryPeriod: 'hour',
+      salaryRaw: 'huge',
+    } as never);
+    expect(salary.annualMin).toBeNull();
+    expect(salary.annualMax).toBeNull();
+    expect(salary.raw).toBe('huge');
+  });
+
+  it('still annualises an ordinary hourly rate', () => {
+    const salary = normalizeSalary({ salaryMin: 50, salaryMax: 60, salaryPeriod: 'hour' } as never);
+    expect(salary.annualMin).toBe(104_000);
+    expect(salary.annualMax).toBe(124_800);
+  });
+});

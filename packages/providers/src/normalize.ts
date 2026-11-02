@@ -241,8 +241,8 @@ export function normalizeSalary(raw: RawJob): Salary {
       max: hi,
       currency: raw.salaryCurrency ?? null,
       period,
-      annualMin: lo === null ? null : toAnnual(lo, period),
-      annualMax: hi === null ? null : toAnnual(hi, period),
+      annualMin: plausibleAnnual(lo, period),
+      annualMax: plausibleAnnual(hi, period),
     };
   }
 
@@ -256,6 +256,19 @@ export function normalizeSalary(raw: RawJob): Salary {
     annualMin: parsed.annualMin,
     annualMax: parsed.annualMax,
   };
+}
+
+/** Above this a yearly figure is a board error (a figure in the wrong unit or a corrupted number), not pay. */
+const MAX_PLAUSIBLE_ANNUAL = 1e10;
+
+/**
+ * The annualised figure, or null when it is not plausible. A board that sends 1e300 an hour must not produce a
+ * finite but absurd annual figure, so it is left unknown (S1-F026), in keeping with "never invent".
+ */
+function plausibleAnnual(amount: number | null, period: Salary['period']): number | null {
+  if (amount === null) return null;
+  const annual = toAnnual(amount, period);
+  return Number.isFinite(annual) && annual > 0 && annual <= MAX_PLAUSIBLE_ANNUAL ? annual : null;
 }
 
 /** Tidy a location string, or say "Remote" when that is all we know. */
