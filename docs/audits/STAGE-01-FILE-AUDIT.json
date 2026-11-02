@@ -3484,14 +3484,14 @@
     {
       "path": "packages/core/src/leads.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (514 lines). Checked: every read and write is scoped by owner id; rows are re-validated on each read with a stripping parse, so stored JSON cannot leak unknown fields; revisions are guarded and the edit takes a row lock; history is appended in the same transaction; application evidence is candidate-reported, validated with no future date, and cannot be removed; the evidence and tag rules match the status rules; an unchanged resubmission creates no revision; keyset pagination uses an owner-scoped cursor, so another owner's cursor returns no rows; liveness checks always stamp the check time so an erroring URL cannot starve the queue. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "e162859931d92fdab1e150c89e20684eb643b2b69da123df5da4254ee4abd49d"
     },
     {
       "path": "packages/core/src/legal-acceptance.ts",
