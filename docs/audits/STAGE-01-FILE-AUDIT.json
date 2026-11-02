@@ -260,14 +260,14 @@
     {
       "path": "apps/api/src/application-export.ts",
       "category": "backend-api",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (64 lines). Every cell is quoted and formula-safe: a leading =, +, - or @ after any whitespace or control characters receives an apostrophe prefix, and embedded quotes are doubled. The export takes only the signed-in user's records. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "04060839a7178f16b65c439efc9f982e6ac1616ea9d9bdc50d580e0330b85c99"
     },
     {
       "path": "apps/api/src/applications-export.integration.test.ts",
@@ -1444,26 +1444,26 @@
     {
       "path": "apps/workers/search/src/collect.ts",
       "category": "background-workers",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (380 lines). Checked: exact source attribution; per-source and whole-run timeouts; at most 20 detail fetches; per-posting validation that skips a malformed posting without losing the rest of the results and records only field paths; outcome statuses that distinguish empty from failed; deduplication with disambiguated link buckets; fenced start and settle; permission-pending outcomes for sources without a current permission profile; empty-streak diagnostics that cannot fail a completed search. No defect found. Scoring read uses the snapshot taken at search creation.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "607a72b745e695635f3c85f95eaa527b6b47c93811df5ea53efdbf31ccf6cb9b"
     },
     {
       "path": "apps/workers/search/src/files.ts",
       "category": "background-workers",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (111 lines). Storage is checked before the queue starts, and the worker is idle when private storage is not configured. Capacity reports run every five minutes. Each message goes through consumeMessage with a settle callback that marks a parse rejected if the handler fails. Shutdown closes the queue, storage and database. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "999254d82d34872eb6ff0579ce99a9c61c845d251b7bdf2e12e30aec7dcd22bb"
     },
     {
       "path": "apps/workers/search/src/main.shutdown.integration.test.ts",
@@ -3424,14 +3424,14 @@
     {
       "path": "packages/core/src/file-storage.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (1001 lines). Checked: AES-256-GCM with HKDF-derived keys and a key id; AAD binds owner, resume, digest and version; legacy envelope read-only with its migration rule documented; directory checked as private and not a symlink on every operation; writes go to a temporary file and publish with an exclusive link, so an existing object or marker is never overwritten; body size and digest are checked before encryption and after decryption; reads detect replacement by inode, size and O_NOFOLLOW; markers are recognised by magic and HMAC under a separate key; quota and capacity admission with per-owner marker limits and a reserve; idempotent delete; retention and temporary sweeps that protect live writers by age. Observations, not defects: cancelUpload swallows non-cancellation read errors and then decides on the normal path, which surfaces them when publication fails; the in-process reservation counter does not cover other processes, and this is documented as a guard rather than a guarantee. No Stage 01 blocking defect.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "63f04485f9acd50f6b2236c0d876282510d52d069ae2a3a8b62cbe12b99d2a5f"
     },
     {
       "path": "packages/core/src/index.ts",
@@ -3716,14 +3716,14 @@
     {
       "path": "packages/core/src/resume-parser-child.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (131 lines). The child refuses to run without the permission model, rejects child-process and write permissions, bounds stdin to the resume size limit, rejects unsafe DOCX archives (entry count, duplicate and macro or embedded names, encryption, expansion ratio, and size mismatch) and bounds PDF pages. Output is capped and validated by the strict schema in resume-parser.ts. Errors return only a fixed code. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "1a844264344ea613e3870b8e8d4ea71223568b60a9a44a3528c6390e81da97e8"
     },
     {
       "path": "packages/core/src/resume-parser.ts",
@@ -3760,14 +3760,14 @@
     {
       "path": "packages/core/src/resumes.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (524 lines). Checked: every repository query is scoped by owner id and validated as a UUID; reservation takes the user row lock and a global advisory lock before the quota check (1000 uploads and 1 GiB overall, 50 uploads and 100 MiB per user); reused keys must match metadata; settlement and queueing run under fence and lease checks; deletion removes the object before the rows in one transaction and is retry-safe because the storage delete is idempotent; cancellation is claimed before the marker is written and is repeatable; the parse handler verifies the durable command and the stored upload before reading the object. Observation: deleteSettled can remove the object and then fail the commit, leaving the row. The retry removes nothing new because delete of a missing object returns. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "2ca60231831772274313dad12f7d0d7caca0ff7236430c364c450fb86629ef20"
     },
     {
       "path": "packages/core/src/rollback.test.ts",
