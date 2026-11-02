@@ -3124,10 +3124,10 @@
           "remediation": "Exception documented in docs/security/DEPENDENCY-EXCEPTIONS.md."
         }
       ],
-      "observations": "Read in full. Adds the private-address and browser-coverage tests to test:unit and the runtime database URL test. Production audit: 0 advisories. Development-only minimatch exception EX-2026-01 applies.",
+      "observations": "Read in full. Wires the HTML and resume equivalence tests into test:domain, and the providers and resume suites run inside it (880 domain tests pass). Production audit: 0 advisories. Development-only minimatch exception EX-2026-01 applies.",
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "4706813a7965bdd59e2da53357f37f093717c0bf7060a219e27ba159fe9b57ea"
+      "sha256": "b9168084121831dacd5a4fce22f21f174cedd55e9eab5eff750ed2982fd9b815"
     },
     {
       "path": "packages/core/package.json",
@@ -4438,6 +4438,18 @@
       "sha256": ""
     },
     {
+      "path": "packages/providers/src/html-equivalence.test.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Written in this change and read in full. Keeps the pre-S1-F023 HTML pipeline verbatim and compares it with htmlToText on every provider fixture (five files) and six realistic description fragments. All 10 cases pass, so the bounded tag scanners and the linear raw-content dropper extract the same text as before on real and realistic markup. A sanity case confirms the legacy copy actually removes block tags.",
+      "evidence": "",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "7c92e09626558d4ff65008f3a4aa777cf54a2c92922868f57c1d4e9b7e2916e8"
+    },
+    {
       "path": "packages/providers/src/html.test.ts",
       "category": "shared-domain-package",
       "reviewMethod": "none",
@@ -4936,6 +4948,18 @@
       "evidence": "",
       "reviewer": "",
       "sha256": ""
+    },
+    {
+      "path": "packages/resume/src/derive-equivalence.test.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Written in this change and read in full. Keeps the pre-S1-F022 email and portfolio patterns, and compares the values with deriveContact on six realistic contact lines, with the candidate's own email domain and the skip list applied on both sides. Also checks date ranges for realistic month-name forms (full names, abbreviations, dash and 'to' separators, numeric dates, year-only). All 18 cases pass.",
+      "evidence": "",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "572c1b06be76f0b421e4e28c4ee756dfd50e58f3a07e2f1db587a35cf1d50c88"
     },
     {
       "path": "packages/resume/src/derive.test.ts",
