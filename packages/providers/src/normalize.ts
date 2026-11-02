@@ -150,7 +150,7 @@ export function canonicalTitle(title: string): string {
       .replace(BRACKETED_DECORATION, ' ')
       .replace(/\b(?:job\s*)?(?:id|req(?:uisition)?|ref)[\s#:-]*[a-z0-9-]{3,}\b/g, ' ')
       // A trailing "- JR-2291" or "- 88213": a code, not part of the role.
-      .replace(/[–—-]\s*[a-z]{0,4}[\s#:-]*\d{3,}[a-z0-9-]*\s*$/g, ' ')
+      .replace(/[–—-]\s{0,8}[a-z]{0,4}[\s#:-]{0,8}\d{3,}[a-z0-9-]{0,40}\s{0,8}$/g, ' ')
       .replace(/[^a-z0-9+#.\s]/g, ' '),
   );
 }
@@ -175,9 +175,11 @@ export function canonicalCompany(company: string): string {
  * only the leading city token is reliably comparable.
  */
 export function canonicalLocation(location: string): string {
+  // Whitespace is collapsed first, so the dash separator is a fixed ' - ' and cannot backtrack over a run of spaces (S1-F025).
   const first = location
     .toLowerCase()
-    .split(/[,/|;·]|\s+-\s+/)[0]
+    .replace(/\s+/g, ' ')
+    .split(/[,/|;·]| - /)[0]
     ?.replace(/\b(?:hybrid|on-?site|in-?office|remote|wfh)\b/g, ' ');
   const city = collapse((first ?? '').replace(/[^a-z0-9\s]/g, ' '));
   return CITY_ALIASES[city] ?? city;
@@ -258,10 +260,11 @@ export function normalizeSalary(raw: RawJob): Salary {
 
 /** Tidy a location string, or say "Remote" when that is all we know. */
 export function normalizeLocation(location: string | undefined, isRemote: boolean): string {
-  const cleaned = collapse((location ?? '').replace(/\s*[,|/]\s*/g, ', ')).replace(
-    /^,\s*|,\s*$/g,
-    '',
-  );
+  // Runs of whitespace are collapsed before the separators are rewritten, so the pattern cannot backtrack over
+  // them (S1-F025). The result is the same: `collapse` removes any spacing that is left over.
+  const cleaned = collapse(
+    (location ?? '').replace(/\s+/g, ' ').replace(/ ?[,|/] ?/g, ', '),
+  ).replace(/^,\s*|,\s*$/g, '');
   if (cleaned) return titleCaseLocation(cleaned);
   return isRemote ? 'Remote' : 'Location not stated';
 }

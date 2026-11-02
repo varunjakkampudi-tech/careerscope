@@ -55,6 +55,15 @@ function scriptOf(character: string): RegExp | undefined {
   return ORTHOGRAPHIC_JOINER_SCRIPTS.find((script) => script.test(character));
 }
 
+/** The code point that ends just before `index`, or undefined at the start of the text. */
+function previousCharacter(text: string, index: number): string | undefined {
+  if (index <= 0) return undefined;
+  let start = index - 1;
+  const unit = text.charCodeAt(start);
+  if (unit >= 0xdc00 && unit <= 0xdfff && start > 0) start -= 1;
+  return String.fromCodePoint(text.codePointAt(start) ?? 0);
+}
+
 /**
  * Apply the refusal set with the small amount of context Unicode joiners need.
  * U+200C/U+200D remain refused by the base predicate (the security default),
@@ -66,8 +75,10 @@ export function isRefusedCodePointAt(text: string, index: number): boolean {
   const point = text.codePointAt(index) ?? 0;
   if (point !== 0x200c && point !== 0x200d) return isRefusedCodePoint(point);
 
-  const previous = Array.from(text.slice(0, index)).at(-1);
-  const next = Array.from(text.slice(index + 1))[0];
+  // Look at the neighbours directly. Copying the text on every joiner made a run of joiners quadratic (S1-F025).
+  const previous = previousCharacter(text, index);
+  const next =
+    index + 1 < text.length ? String.fromCodePoint(text.codePointAt(index + 1) ?? 0) : undefined;
   if (!previous || !next || !/[\p{L}\p{M}]/u.test(previous) || !/[\p{L}\p{M}]/u.test(next)) {
     return true;
   }

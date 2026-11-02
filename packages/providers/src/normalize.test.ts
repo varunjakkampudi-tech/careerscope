@@ -550,3 +550,23 @@ describe('canonicalisers on hostile input (S1-F024)', () => {
     expect(canonicalCompany('Acme Technologies Pvt Ltd (India)')).toBe(canonicalCompany('Acme'));
   });
 });
+
+describe('location normalisation on hostile whitespace (S1-F025)', () => {
+  it('finishes in bounded time on long runs of spaces, tabs and dashes', () => {
+    const started = performance.now();
+    normalizeLocation(' '.repeat(60_000), false);
+    normalizeLocation('\t'.repeat(60_000), false);
+    canonicalLocation(' '.repeat(60_000));
+    canonicalTitle('-'.repeat(60_000));
+    expect(performance.now() - started).toBeLessThan(2_000);
+  });
+
+  it('keeps the separators and the city the same as before the change', () => {
+    expect(normalizeLocation('Bengaluru , Karnataka|India', false)).toBe(
+      'Bengaluru, Karnataka, India',
+    );
+    expect(normalizeLocation('  Pune   /  Hybrid ', false)).toBe('Pune, Hybrid');
+    expect(canonicalLocation('Bengaluru, Karnataka, India')).toBe('bangalore');
+    expect(canonicalLocation('Pune  -  Hybrid')).toBe('pune');
+  });
+});

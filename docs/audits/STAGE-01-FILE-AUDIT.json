@@ -3124,10 +3124,10 @@
           "remediation": "Exception documented in docs/security/DEPENDENCY-EXCEPTIONS.md."
         }
       ],
-      "observations": "Read in full. Wires the HTML and resume equivalence tests into test:domain, and the providers and resume suites run inside it (880 domain tests pass). Production audit: 0 advisories. Development-only minimatch exception EX-2026-01 applies.",
+      "observations": "Read in full. Adds the joiner test and the equivalence tests to test:domain. Production audit: 0 advisories. Development-only minimatch exception EX-2026-01 applies.",
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "b9168084121831dacd5a4fce22f21f174cedd55e9eab5eff750ed2982fd9b815"
+      "sha256": "cc5f9e446501b72965fad38832092a913afc588debd933dd85604bb6219c6519"
     },
     {
       "path": "packages/core/package.json",
@@ -4597,17 +4597,17 @@
       "concerns": [],
       "findings": [
         {
-          "id": "S1-F024",
+          "id": "S1-F025",
           "severity": "medium",
           "status": "fixed",
-          "summary": "Title and company canonicalisation was quadratic on unclosed brackets in provider data, about 22 seconds for a 120 kB title.",
-          "remediation": "Bracketed decoration bounded to 200 characters; normalize.test.ts regression test."
+          "summary": "Location normalisation and the dash pattern in title canonicalisation were quadratic on runs of whitespace (about 6 seconds for 60 kB).",
+          "remediation": "Whitespace collapsed before the separator patterns run; a bounded dash pattern; normalize.test.ts location tests (61 pass)."
         }
       ],
-      "observations": "Read lines 120 to 215 (fingerprint, title, company, location and slug canonicalisation) and the bracket-decoration rule. Defect S1-F024 (medium): canonicalTitle and canonicalCompany removed bracketed decoration with a pattern that scanned to the end of the title for each unclosed opening bracket, so 120,000 '(' characters took about 22 seconds in a search run. The scan is now bounded to 200 characters (BRACKETED_DECORATION); the canonicalisers take about 130 ms on the same input. normalize.test.ts asserts bounded time and that realistic decoration is still stripped (59 pass). Lines 1 to 120 and 215 to 560 (salary, dates, URLs, deduplication and merging) are not yet read.",
+      "observations": "Read lines 120 to 280 in this pass, including the canonicalisers, the bracket decoration, the location and separator normalisation, and the salary entry point. Findings: S1-F024 (canonicalisers quadratic on unclosed brackets, fixed) and S1-F025 (location separators and dash handling quadratic on runs of whitespace, fixed by collapsing whitespace before the pattern runs). Sweep of exported single-string functions with hostile shapes now reports no call slower than 300 ms apart from the cases fixed here. Lines 1 to 120 and 280 to 560 (dates, URLs and deduplication) are not yet read in full.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "4b51e935ab82cf28a3bb769d2f084c1de0497018bad0f93b0bf21835dfe1b5a8"
+      "sha256": "723847273dbb3d2a191e81235c67de2f168a8f14b263da2ce0810944a8014df8"
     },
     {
       "path": "packages/providers/src/rank.ts",
@@ -5094,16 +5094,36 @@
       "sha256": "59ad036abc9b5da22e144d145415e7f4929f4a815425be65a1d567dbc1f48c8b"
     },
     {
-      "path": "packages/shared/src/evidence-text.ts",
+      "path": "packages/shared/src/evidence-text.test.ts",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (138 lines). Refused code points cover controls, invisible joiners, bidirectional controls and variation selectors; zero-width joiners are accepted only between letters of one Indic or Arabic script. Refused syntax is replaced by a space, invisible characters are removed, and whitespace is collapsed. The predicate is shared by the resume extractor and the matching engine so the sets cannot drift. No finding.",
+      "observations": "Written in this change and read in full. Three tests: bounded time on runs of joiners, the Indic joiner rule and refusal elsewhere, and the surrogate-pair neighbour. Wired into test:domain.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "fc134f74091c95e413b94ab68701cb2310ddd35d1f73d6daa95f68bc2e61e6e0"
+      "sha256": "46b910e2f1f3ef9728891efa60a2ed10dbe8d77b9f58e875c901efa3f14df874"
+    },
+    {
+      "path": "packages/shared/src/evidence-text.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [
+        {
+          "id": "S1-F025",
+          "severity": "medium",
+          "status": "fixed",
+          "summary": "Joiner handling in evidence text copied the full text for every joiner, which is quadratic and took about a minute for a 60 kB run of joiners.",
+          "remediation": "Neighbour lookups made local; evidence-text.test.ts regression tests; S1-F025 covers the joiner and the whitespace fixes in the providers normalisers."
+        }
+      ],
+      "observations": "Re-read the joiner rule in this pass. The rule is unchanged: a zero-width joiner is kept only between letters of one orthographic script. The neighbour lookup copied the whole text for each joiner, so a run of 60,000 joiners took about 58 seconds in constrainEvidenceText. Finding S1-F025 (medium): fixed with direct neighbour lookups (previousCharacter and a bounded next code point). evidence-text.test.ts asserts bounded time, the Indic joiner rule and the surrogate-pair neighbour (3 pass).",
+      "evidence": "",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "e618531564134f693fa9c2c3436b1c2fffa03afaf4359dbd3e86ea776ef5f497"
     },
     {
       "path": "packages/shared/src/format.test.ts",
