@@ -4452,14 +4452,22 @@
     {
       "path": "packages/providers/src/html.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F023",
+          "severity": "medium",
+          "status": "fixed",
+          "summary": "HTML-to-text conversion of third-party job descriptions was quadratic on repeated '<' and open-tag fragments; 120 kB of such input took 7 to 18 seconds on the search worker.",
+          "remediation": "Tag patterns bounded to exclude '<'; raw-content removal is linear; regression tests in html.test.ts."
+        }
+      ],
+      "observations": "Read lines 1 to 110 and the canonical-link helper (about lines 250 to 270) in full in this pass. Finding S1-F023 (medium): the converter turns third-party job-board HTML into text on the search worker, and its tag patterns scanned to the end of the input for every '<' without a '>', so 120,000 bare '<' characters took about 18 seconds. The unbounded `[^>]*` tag bodies are now `[^<>]*` (each scan stops at the next '<'), the tag-stripping pattern is `<[^<>]+>`, and raw script, style, noscript, iframe, svg and template content is removed by a linear scan (dropRawContent) that searches each closing tag once. Timing probes on eight adversarial shapes now run in under 20 ms. Regression tests in html.test.ts (50 pass, including the bounded-time and raw-content cases), and the providers suite passes (578 tests). Lines 110 to 250 (entity decoding, description conversion, snippet, email extraction and mojibake repair) were not re-read in this pass.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "6bf70acb130bd94d08fb2b8a9cfd31899fa072ed003f69ff1fc35b989ff82147"
     },
     {
       "path": "packages/providers/src/http.test.ts",

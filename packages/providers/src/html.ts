@@ -15,17 +15,21 @@
  */
 
 /** Tags whose content is markup or code, not prose. Dropped whole. */
-const DROP_CONTENT = /<(script|style|noscript|iframe|svg|template)\b[^>]*>[\s\S]*?<\/\1\s*>/gi;
+// Only the opening tag is matched here. `dropRawContent` finds the closing tag with indexOf, so the cost stays
+// linear on hostile input (S1-F023).
+const RAW_CONTENT_OPEN = /<(script|style|noscript|iframe|svg|template)\b[^<>]*>/gi;
 
 /** Tags that end a line of prose. */
 const BLOCK_TAGS =
   'p|div|section|article|header|footer|main|aside|h[1-6]|ul|ol|dl|dt|dd|table|thead|tbody|tr|blockquote|pre|form|fieldset|figure|figcaption|address|hr';
 
-const BLOCK_BOUNDARY = new RegExp(`</?(?:${BLOCK_TAGS})\\b[^>]*>`, 'gi');
-const LIST_ITEM = /<li\b[^>]*>/gi;
+// Tag bodies exclude '<' and '>', so each scan stops at the next '<'. An unbounded `[^>]*` scanned to the end
+// of the input for every '<' that had no '>' after it, which is quadratic on hostile text (S1-F023).
+const BLOCK_BOUNDARY = new RegExp(`</?(?:${BLOCK_TAGS})\\b[^<>]*>`, 'gi');
+const LIST_ITEM = /<li\b[^<>]*>/gi;
 const LINE_BREAK = /<br\s*\/?>/gi;
 const CELL_BOUNDARY = /<\/(?:td|th)\s*>/gi;
-const ANY_TAG = /<[^>]+>/g;
+const ANY_TAG = /<[^<>]+>/g;
 
 /** The handful of entities that actually show up in job posts. */
 const NAMED_ENTITIES: Record<string, string> = {
@@ -80,6 +84,38 @@ export function decodeEntities(input: string): string {
 }
 
 /**
+ * Replaces each script, style, noscript, iframe, svg or template element with a line break. An opener with
+ * no closer is left in place, as the earlier pattern did. The closer for each tag name is searched once: when
+ * none follows an opener, no later opener of that name has one either, so the search is not repeated.
+ */
+function dropRawContent(input: string): string {
+  if (!/<(?:script|style|noscript|iframe|svg|template)\b/i.test(input)) return input;
+  const lower = input.toLowerCase();
+  const missing = new Set<string>();
+  const opener = new RegExp(RAW_CONTENT_OPEN.source, 'gi');
+  let out = '';
+  let cursor = 0;
+  let match: RegExpExecArray | null;
+  while ((match = opener.exec(input)) !== null) {
+    const name = (match[1] ?? '').toLowerCase();
+    if (missing.has(name)) continue;
+    const closeStart = lower.indexOf(`</${name}`, opener.lastIndex);
+    if (closeStart === -1) {
+      missing.add(name);
+      continue;
+    }
+    // A closing tag is short; look only a short way ahead so one '</script' cannot cost a scan to the end.
+    const near = input.slice(closeStart, closeStart + 40);
+    const gt = near.indexOf('>');
+    if (gt === -1 || !/^<\/[a-z]+\s*>$/i.test(near.slice(0, gt + 1))) continue;
+    out += `${input.slice(cursor, match.index)}\n`;
+    cursor = closeStart + gt + 1;
+    opener.lastIndex = cursor;
+  }
+  return out + input.slice(cursor);
+}
+
+/**
  * Convert a description fragment to readable plain text.
  *
  * Block elements become blank lines and `<li>` becomes "- ", so the demand
@@ -89,7 +125,7 @@ export function htmlToText(input: string | null | undefined): string {
   if (!input) return '';
 
   let text = input.replace(/<!--[\s\S]*?-->/g, '');
-  text = text.replace(DROP_CONTENT, '\n');
+  text = dropRawContent(text);
   text = text.replace(LINE_BREAK, '\n');
   text = text.replace(LIST_ITEM, '\n- ');
   text = text.replace(CELL_BOUNDARY, '\t');
@@ -221,9 +257,11 @@ const MOJIBAKE = /[\u00c2\u00c3\u00e2][\u0080-\u00bf]/;
 
 /** `<link rel="canonical">` or `og:url`, when a board buries the real URL. */
 export function extractCanonicalUrl(html: string): string | null {
-  const canonical = html.match(/<link\b[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["']/i)?.[1];
+  const canonical = html.match(
+    /<link\b[^<>]*rel=["']canonical["'][^<>]*href=["']([^"']+)["']/i,
+  )?.[1];
   if (canonical) return decodeEntities(canonical.trim());
 
-  const og = html.match(/<meta\b[^>]*property=["']og:url["'][^>]*content=["']([^"']+)["']/i)?.[1];
+  const og = html.match(/<meta\b[^<>]*property=["']og:url["'][^<>]*content=["']([^"']+)["']/i)?.[1];
   return og ? decodeEntities(og.trim()) : null;
 }

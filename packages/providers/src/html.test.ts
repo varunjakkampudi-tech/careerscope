@@ -327,3 +327,20 @@ describe('repairMojibake', () => {
     expect(repairMojibake('')).toBe('');
   });
 });
+
+describe('htmlToText on hostile input (S1-F023)', () => {
+  it('finishes in bounded time on long runs of angle brackets and unclosed openers', () => {
+    const started = performance.now();
+    htmlToText('<'.repeat(120_000));
+    htmlToText('<a '.repeat(40_000));
+    htmlToText('<script>'.repeat(15_000));
+    htmlToText('<div '.repeat(24_000));
+    expect(performance.now() - started).toBeLessThan(3_000);
+  });
+
+  it('still drops raw script and style content and keeps an unclosed opener as text', () => {
+    expect(htmlToText('<p>Skills</p><script>alert(1)</script><p>React</p>')).not.toContain('alert');
+    expect(htmlToText('<style>p{color:red}</style>Role')).not.toContain('color');
+    expect(htmlToText('Intro <script>never closed')).toContain('never closed');
+  });
+});
