@@ -124,6 +124,15 @@ const adapter: BoardAdapter<SmartRecruitersPosting> = {
       // than inferring it from a short page.
       const total = payload?.totalFound ?? all.length;
       if (all.length >= total || content.length < PAGE_SIZE) break;
+
+      // Reached only when the cap, not the total, ended the walk (S1-F031).
+      if (page === MAX_PAGES - 1) {
+        ctx.log?.({
+          level: 'info',
+          source: 'smartrecruiters',
+          message: `${board.company}: stopped after ${all.length} postings — the board is larger than we page through`,
+        });
+      }
     }
 
     return all;

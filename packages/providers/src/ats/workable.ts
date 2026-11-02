@@ -168,8 +168,17 @@ export function createWorkableAdapter(): BoardAdapter<WorkableJob> {
       absorb(first.results);
 
       let token = first.nextPage ?? null;
-      for (let page = 1; token && page < MAX_PAGES; page += 1) {
+      for (let page = 1; token; page += 1) {
         if (ctx.signal?.aborted) break;
+        // A cap the user cannot see reads as "there were no more", so say when it is the reason we stopped (S1-F030).
+        if (page >= MAX_PAGES) {
+          ctx.log?.({
+            level: 'info',
+            source: 'workable',
+            message: `${board.company}: stopped after ${all.length} postings — the board is larger than we page through`,
+          });
+          break;
+        }
 
         let next: WorkablePage | null = null;
         let fresh: WorkableJob[] = [];

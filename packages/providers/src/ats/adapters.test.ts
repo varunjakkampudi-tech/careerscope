@@ -567,3 +567,68 @@ describe('lever dates (S1-F028)', () => {
     expect(job?.postedAt).toBe(new Date(1_756_000_000_000).toISOString());
   });
 });
+
+/* -------------------------------------------------------------------------- */
+/* Page ceilings are logged (S1-F030, S1-F031)                                */
+/* -------------------------------------------------------------------------- */
+
+describe('list page ceilings are logged (S1-F030, S1-F031)', () => {
+  it('workable says so when the page ceiling, not the end of the board, stops the walk', async () => {
+    let counter = 0;
+    const impl: FetchLike = async () => {
+      const results = Array.from({ length: 10 }, () => ({
+        shortcode: `s${(counter += 1)}`,
+        title: 'Job',
+      }));
+      return new Response(JSON.stringify({ results, nextPage: 'more' }), { status: 200 });
+    };
+    const ctx = context(impl);
+    const items = await createWorkableAdapter().listBoard(
+      ref('workable', 'apna', 'Apna'),
+      ctx,
+      query(),
+    );
+    expect(items).toHaveLength(200);
+    expect(ctx.events.some((event) => event.message.includes('stopped after 200 postings'))).toBe(
+      true,
+    );
+  });
+
+  it('smartrecruiters says so when the page ceiling stops the walk before the total', async () => {
+    let counter = 0;
+    const impl: FetchLike = async () => {
+      const content = Array.from({ length: 100 }, () => ({
+        id: `p${(counter += 1)}`,
+        name: 'Job',
+      }));
+      return new Response(JSON.stringify({ totalFound: 5000, content }), { status: 200 });
+    };
+    const ctx = context(impl);
+    const board = ref('smartrecruiters', 'swiggy', 'Swiggy');
+    const items = await smartRecruitersAdapter.listBoard(board, ctx, query());
+    expect(items).toHaveLength(1000);
+    expect(ctx.events.some((event) => event.message.includes('stopped after 1000 postings'))).toBe(
+      true,
+    );
+  });
+
+  it('smartrecruiters stays silent when the reported total is reached', async () => {
+    let counter = 0;
+    const impl: FetchLike = async () => {
+      const remaining = 150 - counter;
+      const content = Array.from({ length: Math.min(100, remaining) }, () => ({
+        id: `p${(counter += 1)}`,
+        name: 'Job',
+      }));
+      return new Response(JSON.stringify({ totalFound: 150, content }), { status: 200 });
+    };
+    const ctx = context(impl);
+    const items = await smartRecruitersAdapter.listBoard(
+      ref('smartrecruiters', 'swiggy', 'Swiggy'),
+      ctx,
+      query(),
+    );
+    expect(items).toHaveLength(150);
+    expect(ctx.events.some((event) => event.message.includes('stopped after'))).toBe(false);
+  });
+});
