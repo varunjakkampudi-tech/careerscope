@@ -2956,50 +2956,50 @@
     {
       "path": "migrations/0000_initial_schema.sql",
       "category": "database-migration",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read the table list and every CHECK, UNIQUE and REFERENCES line (grep, about 550 lines). Column definitions and index definitions were not read line by line in this pass. Schema is also exercised by tests/integration/migrations.integration.test.ts, which passed in CI.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "7becacde1f8a42f0682143dfb15b5c7d0dc9a40626f7371744e268705906662d"
     },
     {
       "path": "migrations/0001_recovery_email_and_intents.sql",
       "category": "database-migration",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (5 lines). Adds recovery address columns and widens the OTP intent check to the four intents, with the sign-up acceptance rule. The constraints match the code that writes them (recovery-email.ts and email-otp-challenges.ts).",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "c1f50462bc18de4177cf2fd19fc36c1a553e9df3a5c811e0d4340dbb0ef7c8dc"
     },
     {
       "path": "migrations/0002_admin_role_and_totp.sql",
       "category": "database-migration",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (5 lines). Adds role, TOTP secret, enabled time and last counter, a role check, and users_admin_requires_totp so an admin role needs a confirmed authenticator. Exercised by admin-second-factor.integration.test.ts, which asserts the 23514 refusal.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "242ae5adfeb0baed33a83fedb8ddaf3235de3207d38762b75b1b07ee5c869318"
     },
     {
       "path": "migrations/0003_support_cases.sql",
       "category": "database-migration",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (13 lines). support_cases with a 10 to 500 character reason check, an expiry-after-open check, a cascade foreign key to users, and an owner index. Exercised by support-cases.integration.test.ts.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "e9ee3aa89c8c4b8a08ddefe8e3fcf426fcb020002ae6666eed34b8e216ef5244"
     },
     {
       "path": "migrations/meta/0000_snapshot.json",
