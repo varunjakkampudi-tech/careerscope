@@ -5,6 +5,7 @@ import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { fileURLToPath } from 'node:url';
 import type { FastifyInstance } from 'fastify';
 import {
+  Auth,
   Database,
   EmailOtpProviderError,
   createEmailOtp,
@@ -908,6 +909,13 @@ test(
       assert.notEqual(persistedEmailChange.rows[0]?.current_digest, currentAddressCode.code);
       assert.notEqual(persistedEmailChange.rows[0]?.new_digest, newAddressCode.code);
 
+      // A second device signed in before the change. The completed change must end it too.
+      const otherDevice = await new Auth(database).loginWithVerifiedEmail(
+        'candidate@example.test',
+        undefined,
+        'Other device',
+      );
+      assert.ok(otherDevice);
       const verifyEmailAddress = (address: 'current' | 'new', code: string) =>
         appOne!.inject({
           method: 'POST',
@@ -955,17 +963,43 @@ test(
         401,
         'a completed email change cannot replay either code',
       );
-      const changedSession = await appOne!.inject({
+      // Completion ends every earlier session, including the one that made the change, and sets
+      // replacement cookies for this browser. The old cookie and the other device's session stop working.
+      const previousSession = await appOne!.inject({
         method: 'GET',
         url: '/api/session',
         headers: { cookie: rotatedAccessValue },
+      });
+      assert.equal(
+        previousSession.json().authenticated,
+        false,
+        'the old session no longer signs in',
+      );
+      assert.equal(
+        (
+          await database.pool.query(
+            "SELECT 1 FROM sessions WHERE owner_id = $1 AND device_label = 'Other device' AND revoked_at IS NULL",
+            [candidateId],
+          )
+        ).rowCount,
+        0,
+        'the other device session is revoked by the change',
+      );
+      const replacementAccess = newVerified.cookies.find(
+        (cookie) => cookie.name === 'careerscope_v2_session',
+      );
+      assert.ok(replacementAccess, 'the completing request receives a replacement session');
+      const changedSession = await appOne!.inject({
+        method: 'GET',
+        url: '/api/session',
+        headers: { cookie: `careerscope_v2_session=${replacementAccess.value}` },
       });
       assert.equal(changedSession.json().email, changedEmail);
 
       const publicApiDocs = await appOne!.inject({
         method: 'GET',
         url: '/api/docs/json',
-        headers: { cookie: rotatedAccessValue },
+        headers: { cookie: `careerscope_v2_session=${replacementAccess.value}` },
       });
       assert.ok(publicApiDocs.json().paths['/api/account/email-change/request']?.post);
       assert.ok(publicApiDocs.json().paths['/api/account/email-change/verify']?.post);
@@ -973,7 +1007,7 @@ test(
       const docs = await appOne!.inject({
         method: 'GET',
         url: '/api/docs/json',
-        headers: { cookie: rotatedAccessValue },
+        headers: { cookie: `careerscope_v2_session=${replacementAccess.value}` },
       });
       assert.equal(docs.statusCode, 200);
       const openapi = docs.json();

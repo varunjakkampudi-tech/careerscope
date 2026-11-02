@@ -5,7 +5,7 @@
 
 import { rollback } from './rollback.js';
 import { createHmac, randomUUID } from 'node:crypto';
-import type { Pool } from 'pg';
+import type { Pool, PoolClient } from 'pg';
 import { z } from 'zod';
 import { createEmailOtp, emailOtpLifetimeMs, verifyEmailOtp } from './email-otp.js';
 
@@ -157,6 +157,12 @@ export class EmailChangeRequests {
     code: unknown;
     secret: Uint8Array;
     now?: number;
+    /**
+     * Runs in the same transaction as the change, after every session of the account is revoked. Its
+     * work commits with the change or is rolled back with it, so the account never holds a changed
+     * address without the replacement session, or the reverse.
+     */
+    onCompleted?: (client: PoolClient) => Promise<void>;
   }): Promise<EmailChangeVerification> {
     const now = input.now ?? Date.now();
     if (!Number.isSafeInteger(now) || now < 0) return 'invalid';
@@ -269,7 +275,14 @@ export class EmailChangeRequests {
          WHERE id = $1 AND email = $3 AND email_verified_at IS NOT NULL`,
         [input.ownerId, row.new_email, currentEmail],
       );
+      // The address that owns the account has changed, so every existing session ends, including the
+      // one that completed the change. The caller issues the replacement inside onCompleted.
+      await client.query(
+        'UPDATE sessions SET revoked_at = COALESCE(revoked_at, now()) WHERE owner_id = $1',
+        [input.ownerId],
+      );
       await client.query('DELETE FROM email_change_requests WHERE id = $1', [row.id]);
+      if (input.onCompleted) await input.onCompleted(client);
       await client.query('COMMIT');
       return 'completed';
     } catch (error) {

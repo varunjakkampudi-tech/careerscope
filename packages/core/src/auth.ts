@@ -45,6 +45,15 @@ export class Auth {
 
   constructor(private readonly database: Database) {}
 
+  /** A new session for an account, inside the caller's transaction (used when a change ends every other session). */
+  async sessionInTransaction(
+    client: import('pg').PoolClient,
+    ownerId: string,
+    deviceLabel?: string,
+  ): Promise<SessionCredentials> {
+    return this.createSession(client, ownerId, undefined, deviceLabel);
+  }
+
   // Must run inside the caller's transaction so the revoke of the previous session and the insert of
   // the new one commit together.
   private async createSession(

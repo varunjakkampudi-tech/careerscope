@@ -64,6 +64,10 @@ This is the single index of CareerScope documentation. Every document under
 - [STAGING](operations/STAGING.md) - staging status and owner prerequisites
 - [TOOLCHAIN](operations/TOOLCHAIN.md) - toolchain validation (Node, framework majors)
 
+## Security
+
+- [DEPENDENCY-EXCEPTIONS](security/DEPENDENCY-EXCEPTIONS.md) - temporary, reviewed advisory exceptions with remediation triggers
+
 ## Audits
 
 - [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md) and [STAGE-01-FILE-AUDIT.json](audits/STAGE-01-FILE-AUDIT.json) - file-level audit record for every tracked file (checked by `npm run audit:stage01`)

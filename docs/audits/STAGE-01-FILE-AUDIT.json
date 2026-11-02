@@ -240,10 +240,10 @@
       "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read lines 399 (trust-proxy scope), 508 to 600 (error handler, conflict messages, health and readiness), 750 to 830 (OTP verify, admin second-factor gate), 880 to 960 (new-device check, TOTP setup and confirm). Health checks both PostgreSQL and Redis. Trust-proxy is limited to loopback, which matches Caddy on the host. The rest of the roughly 1,000 remaining lines is not yet read.",
+      "observations": "Read lines 399, 508 to 600, 750 to 830, 880 to 960 earlier, and the email-change verify route (about lines 1300 to 1350) in this change. The route now passes onCompleted to the transactional change and sets replacement cookies. The remaining roughly 900 lines are not yet read.",
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "806fc842abb5d217895f40d6d2331633879dc73542d703553b7699784ca7bc48"
+      "sha256": "06dcfda4f911c1ba84926d014080bbb35c48c31a8a8d9226ccc6f7bb900570e9"
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -284,14 +284,14 @@
     {
       "path": "apps/api/src/email-otp.integration.test.ts",
       "category": "backend-api",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read the email-change section (about lines 860 to 1050) and the new revocation assertions this change adds. The rest of this file is not yet read.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "f513ac2e5d002be7cca255403496b408a280afa10978d97e7eef64ea9ea2dd33"
     },
     {
       "path": "apps/api/src/error-handler.test.ts",
@@ -2138,6 +2138,18 @@
       "sha256": ""
     },
     {
+      "path": "docs/security/DEPENDENCY-EXCEPTIONS.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Written in this change and read in full before commit. Records the minimatch exception EX-2026-01 with the verified development-only evidence (npm ls --omit=dev), the exposure assessment, why no compatible fix exists (eslint 10 uses patched minimatch 10 but eslint-plugin-jsx-a11y still pins minimatch 3), the remediation triggers, review criteria and expiry.",
+      "evidence": "",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "4dc525323bee68bba84a33878713bea3c253292255229da4a891f30a93b94a5c"
+    },
+    {
       "path": "docs/security/THREAT-MODEL.md",
       "category": "documentation",
       "reviewMethod": "none",
@@ -3072,14 +3084,14 @@
           "id": "S1-F004",
           "severity": "medium",
           "status": "accepted-risk",
-          "summary": "Development-only minimatch 3.1.5 (GHSA-g3hv-75wg-m249, ReDoS via globparts amplification, fixed in 11.0.1) is used by the ESLint 9 chain. Its suggested fix is a semver-major change to a different ESLint, and overriding minimatch to 11 would change the API that ESLint 9 calls. Not exposed at runtime. No compatible fix exists yet.",
-          "remediation": "Track ESLint and eslint-config-next upgrades. Re-run npm audit when they release."
+          "summary": "Development-only minimatch 3.1.5 (GHSA-g3hv-75wg-m249) in the ESLint plugin chain. Time-limited exception EX-2026-01 applies, with verification, trigger and review criteria in docs/security/DEPENDENCY-EXCEPTIONS.md.",
+          "remediation": "Exception documented; remediation trigger in DEPENDENCY-EXCEPTIONS.md."
         }
       ],
-      "observations": "Read the script table, devDependencies, dependencies and overrides. The check-file-audit test and the recovery-email integration test are wired into test:unit and test:integration. Production dependency audit: 0 advisories. Development-only audit: 15 moderate advisories in the lint toolchain (S1-F004). The output of the first read was truncated mid-scripts, so the truncated range is not yet read.",
+      "observations": "Read the script table, devDependencies, dependencies and overrides in earlier passes; the first output was truncated mid-scripts. This change wires email-change-requests.integration.test.ts into test:integration. Production audit: 0 advisories. Dev-only audit: 15 moderate, covered by EX-2026-01 in docs/security/DEPENDENCY-EXCEPTIONS.md.",
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "9eadf1739faff8d891bb884981e6c0537f19458c2a9b0ce205ffd7868461c4a6"
+      "sha256": "74437c2ff4acfb727e2569d10e2f9f98e5433308b6457449118607d51134f113"
     },
     {
       "path": "packages/core/package.json",
@@ -3119,19 +3131,11 @@
       "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
-      "findings": [
-        {
-          "id": "S1-F007",
-          "severity": "low",
-          "status": "fixed",
-          "summary": "The new-device check in the sign-in route swallowed its failure with no log, so a database fault silently suppressed the alert.",
-          "remediation": "apps/api/src/app.ts logs the failure as a warning (describeError, requestId). Logging-only change; no test covers this failure branch yet."
-        }
-      ],
-      "observations": "Read in full (607 lines). Checked: opaque 256-bit tokens with SHA-256 digests only stored; access token 15 minutes and refresh 30 days; single-use refresh with replay detection (consumed token revokes the session); FOR UPDATE locks on refresh, password login and session revocation; password re-read after verification; constant-time-length CSRF comparison; create-owner under an exclusive table lock; OTP account creation tolerates a concurrent creator without writing a second consent record; logout matches by digest. Known design trade-off, not a defect: two browser tabs refreshing at the same moment look like a replay and revoke the session. Documented in refresh().",
+      "findings": [],
+      "observations": "Read in full in an earlier pass. This change adds sessionInTransaction, a public wrapper around the transactional createSession used by the email-change completion. The existing refresh, replay and locking logic is unchanged.",
       "evidence": "npx tsc -b exit 0 after the change. No behaviour change on the success path.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "cc5dfcb3a879a237fe621bf4fc522bbef30395dd50bec7bfe1d5a4377f8ea0a3"
+      "sha256": "b34f6d2947b14bfb69ca0492591ac725e19258b6faa91dc731ed9fc67c8ec355"
     },
     {
       "path": "packages/core/src/bull-queue.integration.test.ts",
@@ -3246,16 +3250,36 @@
       "sha256": "2f185c899b4a955f664cdc8d6d817a9cb81d4858782fd1b12d4a4c279c2fef85"
     },
     {
-      "path": "packages/core/src/email-change-requests.ts",
+      "path": "packages/core/src/email-change-requests.integration.test.ts",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (290 lines). Checked: one pending request per owner through ON CONFLICT on owner_id; lock order is user then request in both begin and verify; the current address must still match the stored keyed hash or the request is deleted; five wrong codes delete the request; expiry deletes it; a unique-email race after the preflight maps to conflict and removes the request; the email update is conditional on the email read under lock. Observation, not a defect: a completed change does not end the account's other sessions, unlike the support-case change. Both sides were proven by code, so this is a product decision to confirm with the owner.",
+      "observations": "Written in this change and read in full before commit. Covers a failing replacement (no address change, existing session and pending request kept), successful completion (every session revoked, replacement run), and replay refusal for both codes. Wired into test:integration.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "5d0e13ace0f29b0df7b25afd57c4f00e7726d780d61127ea93bfae9f5b9dba9e"
+      "sha256": "d3acd7431337864fe74b367381a7cf78277bf3e0d9884b272cdc8a4527ef7c34"
+    },
+    {
+      "path": "packages/core/src/email-change-requests.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [
+        {
+          "id": "S1-F012",
+          "severity": "medium",
+          "status": "fixed",
+          "summary": "A completed email change kept every other session alive. Revocation ran after commit as a best-effort call whose failure was only logged, so a failure left old sessions usable for the new address.",
+          "remediation": "Revocation and replacement session are part of the change transaction (email-change-requests.ts verify). email-change-requests.integration.test.ts asserts rollback on failure and full revocation on success; email-otp.integration.test.ts asserts the old cookie, the other device and the replacement."
+        }
+      ],
+      "observations": "Read in full (290 lines). Owner decision implemented: on completion, every session of the account is revoked in the same transaction as the address change, and the replacement session is created by the caller through onCompleted, inside that transaction. A failure in the replacement rolls back the change, so the account never holds a new address without a session for it. Single-use codes and replay refusal were already in place. Concurrent completion is serialised by the user row lock taken at the start of verify. Finding S1-F012: completion left the other sessions alive (previously a best-effort call after commit that could fail silently).",
+      "evidence": "node --env-file=.env --import tsx --test --test-concurrency=1 packages/core/src/email-change-requests.integration.test.ts: 1 pass. apps/api/src/email-otp.integration.test.ts: 1 pass.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "0d80cb8f4f0cfca3220aa42a1f5cfbae0fd78d904b1a131cc9309bb0be7ac96a"
     },
     {
       "path": "packages/core/src/email-otp-challenges.clock.test.ts",

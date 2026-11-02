@@ -1302,7 +1302,7 @@ export async function createApp(
       expiresInSeconds: emailOtpLifetimeMs / 1000,
     });
   });
-  app.post('/api/account/email-change/verify', async (request) => {
+  app.post('/api/account/email-change/verify', async (request, reply) => {
     if (!emailChangeRequests || !options.emailOtp)
       throw new HttpError(404, 'Email change is unavailable');
     const input = emailChangeVerifySchema.parse(request.body);
@@ -1321,6 +1321,12 @@ export async function createApp(
     }
     if (!allowed) throw new HttpError(429, 'Too many attempts. Try again later.');
 
+    // On completion every session of the account ends, and the replacement session is created in the same
+    // transaction as the change (see email-change-requests.ts), so the browser gets fresh cookies here.
+    let replacement: import('@careerscope/core').SessionCredentials | undefined;
+    const label = deviceName(
+      typeof request.headers['user-agent'] === 'string' ? request.headers['user-agent'] : undefined,
+    );
     let result;
     try {
       result = await emailChangeRequests.verify({
@@ -1328,6 +1334,9 @@ export async function createApp(
         address: input.address,
         code: input.code,
         secret: options.emailOtp.secret,
+        onCompleted: async (client) => {
+          replacement = await auth.sessionInTransaction(client, request.ownerId!, label);
+        },
       });
     } catch {
       request.log.error({ requestId: request.id }, 'Email-change verification unavailable');
@@ -1336,15 +1345,8 @@ export async function createApp(
     if (result === 'conflict') throw new HttpError(409, 'Email address could not be changed');
     if (!['accepted', 'already-verified', 'completed'].includes(result))
       throw new HttpError(401, 'Invalid or expired verification code');
-    if (result === 'completed') {
-      // The address that owns the account changed; end every other session
-      // and keep the one that completed the change.
-      try {
-        await auth.revokeOtherSessions(request.ownerId!, request.cookies[sessionCookie]!);
-      } catch {
-        request.log.error({ requestId: request.id }, 'Post-email-change session revocation failed');
-      }
-    }
+    if (result === 'completed' && replacement)
+      setSessionCookies(reply, replacement, new URL(origin).protocol === 'https:');
     return { verified: input.address, emailChanged: result === 'completed' };
   });
   app.post('/api/login', async (request, reply) => {
