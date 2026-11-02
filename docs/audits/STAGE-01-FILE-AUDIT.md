@@ -12,13 +12,15 @@ attestation that the record backs with observations, a reviewer and the file has
 - This change adds five tracked files (the validator, its test, the two audit records and a recovery-email integration test), so the count is 483.
 - Local working tree was clean at the start.
 
-## Coverage at this revision
+## Coverage at the latest checkpoint
+
+This table is the current state of `docs/audits/STAGE-01-FILE-AUDIT.json` (490 tracked files). It is regenerated from the JSON at each checkpoint; the JSON is the source of truth.
 
 | State                 | Files | Meaning                                                                                           |
 | --------------------- | ----: | ------------------------------------------------------------------------------------------------- |
-| reviewed              |    24 | Read in full. Observations, reviewer and hash are recorded.                                       |
-| partially-reviewed    |     7 | Some ranges read. The rest is not yet reviewed and still counts as open.                          |
-| not-reviewed          |   438 | Not read at content level. Still open.                                                            |
+| reviewed              |    90 | Read in full. Observations, reviewer and hash are recorded.                                       |
+| partially-reviewed    |    11 | Some ranges read. The rest is not yet reviewed and still counts as open.                          |
+| not-reviewed          |   375 | Not read at content level. Still open.                                                            |
 | not-applicable-source |    14 | Binary assets (6), generated lockfile and migration snapshots (6), and the two audit records (2). |
 
 Review is not complete. B-04 stays open until every tracked file has a completed disposition.
@@ -76,3 +78,26 @@ on Linux CI, one build-tool console use, no open markers.
 2. Resolve every finding that is critical, high, or medium and violates a Stage 01 acceptance criterion.
 3. Re-run `npm run audit:stage01 -- --require-complete`, which fails while any file is unreviewed.
 4. Only then write `docs/stage-closure/STAGE-01-CLOSURE.md`.
+
+## Checkpoint and next batches
+
+Resume here. Every file already marked reviewed or partially-reviewed keeps its evidence; do not re-read it
+unless its hash in the JSON no longer matches the file.
+
+Remaining work, by directory (not-reviewed or partially-reviewed):
+
+- apps/web (66 src files plus the configuration and scripts): frontend review, including the Next.js
+  routes, the auth and session helpers, the API client, and the accessibility-sensitive components.
+- apps/api/src (19): the API routes, the OpenAPI document, the application export and the remaining
+  integration and unit tests.
+- packages/providers/src (57): the ATS, remote, keyed, scrape and email adapters, the normalisation and
+  filter helpers, and the registry. Adversarial timing probes on the scraper, Gmail, Indeed and email
+  helpers were clean in this pass; the adapters' response handling still needs reading.
+- packages/core/src (24): file-storage tests, the leads and interviews tests, the bull-queue integration
+  test and the schema-level tests.
+- infra (about 80): host scripts, checks, systemd units, the Caddy configuration and the maintenance page.
+- scripts (about 60): CI tooling, the job scripts, the browser and recovery checks, and the visual
+  regression tooling.
+- tests/integration (5) and docs (about 50 documentation files, checked for factual accuracy).
+
+Open or accepted findings are listed in the table above. None is open at critical or high severity.
