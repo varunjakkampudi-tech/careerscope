@@ -4344,14 +4344,14 @@
     {
       "path": "packages/providers/src/boards.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (160 lines). A curated list of company boards with their display names, India boards first, with merge and per-source selection that keeps curated names over discovered ones. The header states that every slug was checked against the live API on 2026-09-05; that verification claim cannot be re-established from this review and is recorded as a documentation claim to re-verify before each release, not as a code defect. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "934675d2e7f29027c966c4cc9de41504e4c6b7f3d2351ac4dde2d751eeb596a6"
     },
     {
       "path": "packages/providers/src/email/gmail.test.ts",
@@ -4416,14 +4416,14 @@
     {
       "path": "packages/providers/src/filter.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (347 lines). The pre-filter is generous by design: an unreadable location, a missing date and an absent target list all pass, so a board's oddities cannot silently remove a source. Excluded keywords apply to title and company only, as documented. Title overlap is measured against the target's tokens, with synonyms folded and stopwords removed. Location aliases reuse the matching engine's metro table so the two agree. The window and employment checks treat an unstated value as allowed. Adversarial probes on these exports were clean. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "fb0ea31f6ad18d01dad6f7ff7a3c0a7f84fdb533efaa4bafa14054e653a49ad1"
     },
     {
       "path": "packages/providers/src/harness.fixtures.ts",
@@ -4612,14 +4612,14 @@
     {
       "path": "packages/providers/src/rank.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (56 lines). Sorting is by title relevance, then posting time, with a numeric comparator that never yields NaN, so a capped result is reproducible. The failure description given to the user shows only the HTTP status for HTTP errors, so API keys and URLs are not written to the run log. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "153fe52bb0fbf40ff281323442fa7f5ae1717bcf09ccac19ebff30bc90226be3"
     },
     {
       "path": "packages/providers/src/registry.test.ts",
@@ -4636,14 +4636,14 @@
     {
       "path": "packages/providers/src/registry.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (194 lines). Every source is listed with its availability and reason, and resolution keeps only runnable providers. The scrapers are off unless explicitly enabled, which is recorded as a deliberate choice. Option plumbing adds no property when a value is absent, so no explicit undefined reaches an adapter. The completeness rule (foundit and cutshort have no provider) is asserted in its test. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "05e607e8e6e5bfaa988479e5918ffbfe3912203bd5156d024df639deb89fb977"
     },
     {
       "path": "packages/providers/src/remote/base.ts",
@@ -4924,14 +4924,14 @@
     {
       "path": "packages/providers/src/types.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (76 lines). The JobProvider contract: stop on abort, stop at the result cap, and report a failed page through the log rather than ending the run. Descriptions are fetched only when a detail endpoint exists. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "8ea1bd170b33531f4e5bbdbcca85d95c44daa6678d6a5e26caaa175166596f0e"
     },
     {
       "path": "packages/providers/tsconfig.json",
