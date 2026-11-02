@@ -13,10 +13,10 @@ const emailSchema = z.string().trim().email().max(254);
 const uuidSchema = z.string().uuid();
 const digestSchema = z.string().regex(/^[a-f0-9]{64}$/);
 
-/** Domain-separated HMAC of the lower-cased address, used as the challenge key so raw addresses are not stored. */
 /** Every kind of one-time code. Sign-in and sign-up are the only intents that create or reach an account by themselves. */
 export type OtpIntent = 'sign-in' | 'sign-up' | 'recovery-setup' | 'recovery-sign-in';
 
+/** Domain-separated HMAC of the lower-cased address, used as the challenge key so raw addresses are not stored. */
 export function hashOtpEmail(emailInput: string, secret: Uint8Array): string {
   const email = emailSchema.parse(emailInput).toLowerCase();
   if (!(secret instanceof Uint8Array) || secret.byteLength < 32)

@@ -212,14 +212,14 @@
     {
       "path": "apps/api/src/age-screen.ts",
       "category": "backend-api",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (35 lines). Date-only validation without local-timezone interpretation, calendar round-trip check, and the 18+ birthday rule were checked against month and day boundaries. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "8246b86291e904d52dd7b69feab01b420210b3d8e822dcb0c562088f391bbb5c"
     },
     {
       "path": "apps/api/src/api-shutdown.integration.test.ts",
@@ -240,10 +240,10 @@
       "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read lines 750 to 830 (OTP verify, admin second-factor gate) and 920 to 960 (TOTP setup and confirm). The rest of the file, about 1,000 lines, is not yet read.",
+      "observations": "Read lines 399 (trust-proxy scope), 508 to 600 (error handler, conflict messages, health and readiness), 750 to 830 (OTP verify, admin second-factor gate), 880 to 960 (new-device check, TOTP setup and confirm). Health checks both PostgreSQL and Redis. Trust-proxy is limited to loopback, which matches Caddy on the host. The rest of the roughly 1,000 remaining lines is not yet read.",
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "a50fc39fefbf72033267fdcc289338b11262f78f6592898f52c03f7a0b037ea0"
+      "sha256": "806fc842abb5d217895f40d6d2331633879dc73542d703553b7699784ca7bc48"
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -364,14 +364,14 @@
     {
       "path": "apps/api/src/main.ts",
       "category": "backend-api",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (181 lines). Checked: process failure handlers installed first; shutdown listener registered before any resource opens; 10-second forced exit with unref and a second-signal immediate exit; startup failures during shutdown counted as clean stop; loopback-only listen; close order (sweep, app, rate limiter, database, storage); bounded outer catch. Observation only: testAccessConfiguration receives the raw process.env while every other setting uses the validated configuration. Its keys are read directly, so no defect is claimed.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "0ab58077cba9f92bd3be0fff034bf6a8773ca6fd6409ce201d0c93574555c164"
     },
     {
       "path": "apps/api/src/new-device-alert.integration.test.ts",
@@ -1480,26 +1480,26 @@
     {
       "path": "apps/workers/search/src/main.ts",
       "category": "background-workers",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (91 lines). Checked: BullMQ and Redis LocalQueue transports; the LocalQueue receive loop breaks on shutdown and keeps failed messages for retry or dead-letter handling; consumeMessage is fenced by the database; worker cancellation before close; bounded startup failure exit. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "e3d0d2b8e4873928ef564c02fcf5ef1069b6499445449e9b9ba98ab0cb8b3bd5"
     },
     {
       "path": "apps/workers/search/src/publisher.ts",
       "category": "background-workers",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (145 lines). Checked: outbox publish loop with one-second cadence and abortable delay; dead-letter reconciliation isolated from the other reconciliations; backlog warnings for expired leases, aged work and dead letters; cleanup in finally; bounded startup failure exit. Observation: the files queue is enabled by reading RESUME_STORAGE_DIRECTORY and RESUME_STORAGE_KEY_FILE straight from process.env rather than the validated configuration. Both are needed for resume parsing, so the worker does not start a files queue when either is missing, which is intended but worth a configuration test. No defect claimed.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "30cfd2d5148b4e282c055d0c5d876f52309ccc7331440bfd763f84392090d590"
     },
     {
       "path": "apps/workers/search/tsconfig.json",
@@ -1580,10 +1580,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. B-04 details, reproduction and next action were checked against this audit. No contradiction found.",
+      "observations": "Read in full. B-04 progress, the validator command and the completion condition were updated to match the manifest. History of B-04 kept. No contradiction found with the manifest or with BLOCKERS B-03.",
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "0149f4d9249d25fbdff06022aaf64301ac0080908ebc991f08cc616ada597751"
+      "sha256": "3df0aa0cdaa48c300ac1528ca13d3e1229b5fe289d464e31931aaffcceb9bddd"
     },
     {
       "path": "docs/DATA-MODEL.md",
@@ -1700,10 +1700,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Stage table and stage 01 and 02 evidence pointers checked against GAP-MATRIX and BLOCKERS. No contradiction found.",
+      "observations": "Read in full. Added a line on the Stage 01 file audit progress (19 of 481 reviewed in full; 7 partly). Stage status unchanged: Stage 01 Partial, Stage 02 Complete per the existing evidence.",
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "f9a8cfa2126e17a38601d6a151f28b09151653c6d8d01ecf5a335ca261af7483"
+      "sha256": "2314243a26988be0a36b37f84e5e14f3544673d02a01b38f1b2dce87eaf1073d"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1845,6 +1845,18 @@
       "concerns": [],
       "findings": [],
       "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
+    },
+    {
+      "path": "docs/audits/STAGE-01-FILE-AUDIT.md",
+      "category": "self-referential-audit-record",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Self-referential human summary of this audit. Its figures are taken from the JSON record at each revision; it is not reviewed as source.",
       "evidence": "",
       "reviewer": "",
       "sha256": ""
@@ -3252,14 +3264,22 @@
     {
       "path": "packages/core/src/email-otp-challenges.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "findings": [
+        {
+          "id": "S1-F008",
+          "severity": "info",
+          "status": "fixed",
+          "summary": "The HMAC doc comment for hashOtpEmail sat above the OtpIntent type.",
+          "remediation": "Comment moved to hashOtpEmail. otp-challenges.integration.test.ts and email-otp-challenges.clock.test.ts pass (3 of 3)."
+        }
+      ],
+      "observations": "Read in full (293 lines). Checked: per-address advisory lock serialises issue and read; replace-active keeps one active challenge; cooldown returns without replacing; expired rows are cleared in a bounded batch with SKIP LOCKED; consume locks the row, checks intent, deletes sign-up challenges without a passed age screen, counts wrong codes to five, and runs onAccepted in the same transaction before the delete; invalidate requires the address hash. Misplaced doc comment above OtpIntent (S1-F008) moved to hashOtpEmail. Note: replaceActive checks expiresAt against Date.now while the row expiry uses database time; within tolerance, not changed.",
+      "evidence": "node --env-file=.env --import tsx --test --test-concurrency=1 packages/core/src/otp-challenges.integration.test.ts packages/core/src/email-otp-challenges.clock.test.ts: 3 pass, 0 fail.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "99e2862c8990a1a9ee0d3f60bf8c673ee9da20a9eb2b0df34e88d087cf9881c7"
     },
     {
       "path": "packages/core/src/email-otp-delivery.test.ts",

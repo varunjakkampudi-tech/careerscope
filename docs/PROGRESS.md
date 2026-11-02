@@ -10,7 +10,7 @@ is listed in [BLOCKERS](BLOCKERS.md). Stages run one at a time. Deployment is la
 | 02    | Authentication and account security  | Complete    |
 | 03-20 | See roadmap                          | Not started |
 
-Stage 01 evidence: [FOUNDATIONS](FOUNDATIONS.md). Its enforced thirteen-item register is Complete,
+Stage 01 file audit in progress: [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md) (19 of 481 files reviewed in full; 7 partly). Stage 01 evidence: [FOUNDATIONS](FOUNDATIONS.md). Its enforced thirteen-item register is Complete,
 but the crosswalk for the owner's separate fifteen-item master prompt remains Partial: the prompt's
 full file-by-file audit is not evidenced, and cross-browser hosted acceptance must be tied to the
 closing revision before this prompt's Stage 01 can close. See the Stage 01 master-prompt crosswalk.

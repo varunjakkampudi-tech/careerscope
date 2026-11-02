@@ -20,8 +20,13 @@ was decided by the owners: not in stage 02. The decisions are in [GAP-MATRIX](GA
 - **Reproduction:** Compare the prompt's requirement to review every tracked file with the available audit evidence. The enforced thirteen-item register and current targeted reviews do not prove an exhaustive file-by-file review of the 478 tracked files.
 - **Root cause:** The repository's existing Stage 01 register has thirteen differently numbered items and does not include a file-level audit record for the separate fifteen-item prompt.
 - **Attempted resolution:** Added an explicit prompt-to-register crosswalk and obtained separate targeted API/security, data/worker, frontend and critical-review passes. These do not yet establish every-file coverage.
-- **Current state:** Open. No full repository review is claimed.
+- **Current state:** Open. Progress at this revision: the file-level manifest
+  [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md) covers all 481 tracked files (478 at the start, plus three
+  files added by this work). 19 are reviewed in full and 7 are partly reviewed. The rest are not yet reviewed.
+  Confirmed findings S1-F001 to S1-F008 are recorded there; all are fixed except S1-F004, an accepted development-only
+  advisory. No full repository review is claimed.
 - **Engineering resolution:** Complete the file-accounted review, resolve confirmed Stage 01 findings, and record file coverage and tests in the canonical docs.
 - **Test evidence:** On 2026-11-02, `npm run gates:test` passed with 313 unit tests passing, 3 skipped and 0 failing; its nested `deploy:gate:test` passed all 11 Node tests and the gate policy assertions, including partial-dispatch and timestamp-ordering cases. Hosted exact-SHA evidence is recorded in the Stage 01 completion report.
 - **External dependency:** None.
 - **Next action:** Complete the file-accounted audit and resolve any confirmed findings; rerun applicable gates for any resulting changes.
+- **Validator:** `npm run audit:stage01` (part of `npm run check`) checks completeness and record integrity. `npm run audit:stage01 -- --require-complete` also fails while any file is unreviewed. Close B-04 only when that command passes.
