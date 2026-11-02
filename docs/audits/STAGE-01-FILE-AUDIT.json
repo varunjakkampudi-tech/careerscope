@@ -4520,14 +4520,14 @@
     {
       "path": "packages/providers/src/keyed/adzuna.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read the credential-bearing request path (buildAdapter and fetchPage, about lines 80 to 130) and the mapping of the posting identity and link. Adzuna's error body is surfaced as a failure rather than an empty result, and the app key travels in the query string; that URL is not written to logs (see keyed/base.ts). Lines 1 to 80 (types) and 130 to 259 (salary and category mapping, the URL builder) are not yet read.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "c92555b4944a49c60f4bea6c9b065f085d9b8d2ed635a90ae147e26dfcc6fd3c"
     },
     {
       "path": "packages/providers/src/keyed/aggregators.test.ts",
@@ -4544,38 +4544,38 @@
     {
       "path": "packages/providers/src/keyed/base.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (254 lines). Credentials are passed in rather than read from the environment, and a provider with a missing key is listed as unavailable with the variable names but never the values. The fan-out over target titles is capped at four searches, three pages each and ten requests per run, with a logged reason when a cap ends the walk. Postings are de-duplicated across searches, and a failed keyword does not end the source. Log lines carry the error message only, never the request URL, so a key carried in an Adzuna query string does not reach the run log: HTTP failures show only the status, and network failures show the fetch message, which names no URL. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "c0029711e2680cc1bb104437219edf3bd6c7c5d2493b742771ba38596e740275"
     },
     {
       "path": "packages/providers/src/keyed/jooble.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read the header comment and the request construction (about lines 70 to 100). The key is a path segment of the POST URL, a design decision recorded in the file; because it is a path segment it could appear in an HTTP error message, but HTTP failures are reported by status only. Lines 1 to 70 and 100 to 202 (mapping) are not yet read.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "c5e68f26da6c4974ebb06b874d2575d67e1f836d9c5d5c457159699071f6f616"
     },
     {
       "path": "packages/providers/src/keyed/jsearch.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read the header comment and the key placement: the RapidAPI key is sent in a header, not in the URL, which keeps it out of any URL that could be logged. Lines 1 to 110 and 130 to 359 (mapping and salary handling) are not yet read.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "bf7e34e515a7736c1a2724786534ca811e29dda752e152ef3987852af642d773"
     },
     {
       "path": "packages/providers/src/normalize.test.ts",
