@@ -9,17 +9,17 @@ attestation that the record backs with observations, a reviewer and the file has
 ## Baseline
 
 - Starting point: `dev` at `8008736`, 478 tracked files (matches the baseline recorded in BLOCKERS B-04).
-- This change adds three tracked files (the validator, its test and the record itself), so the count is 481.
+- This change adds five tracked files (the validator, its test, the two audit records and a recovery-email integration test), so the count is 483.
 - Local working tree was clean at the start.
 
 ## Coverage at this revision
 
-| State                 | Files | Meaning                                                                                                                               |
-| --------------------- | ----: | ------------------------------------------------------------------------------------------------------------------------------------- |
-| reviewed              |    19 | Read in full. Observations, reviewer and hash are recorded.                                                                           |
-| partially-reviewed    |     7 | Some ranges read. The rest is not yet reviewed and still counts as open.                                                              |
-| not-reviewed          |   442 | Not read at content level. Still open.                                                                                                |
-| not-applicable-source |    13 | Binary assets (6), generated lockfile and migration snapshots (6), and this record (1). Covered by integrity checks, not line review. |
+| State                 | Files | Meaning                                                                                           |
+| --------------------- | ----: | ------------------------------------------------------------------------------------------------- |
+| reviewed              |    24 | Read in full. Observations, reviewer and hash are recorded.                                       |
+| partially-reviewed    |     7 | Some ranges read. The rest is not yet reviewed and still counts as open.                          |
+| not-reviewed          |   438 | Not read at content level. Still open.                                                            |
+| not-applicable-source |    14 | Binary assets (6), generated lockfile and migration snapshots (6), and the two audit records (2). |
 
 Review is not complete. B-04 stays open until every tracked file has a completed disposition.
 
@@ -35,6 +35,8 @@ Review is not complete. B-04 stays open until every tracked file has a completed
 | S1-F006 | low      | fixed         | apps/api/src/errors.ts                    | The default 409 message said "Idempotency conflict" for every unmapped conflict.                                                      |
 | S1-F007 | low      | fixed         | apps/api/src/app.ts                       | A failed new-device check was dropped silently. Now logged. No test covers that branch yet.                                           |
 | S1-F008 | info     | fixed         | packages/core/src/email-otp-challenges.ts | A doc comment sat above the wrong declaration. Moved.                                                                                 |
+| S1-F009 | medium   | fixed         | packages/core/src/recovery-email.ts       | The core recovery-address guard compared addresses without lower-casing. Core now normalises; regression test added.                  |
+| S1-F010 | low      | fixed         | packages/core/src/legal-acceptance.ts     | The acceptance ledger was read outside the locked transaction. Now read on the locked client.                                         |
 
 Open critical or high findings: none.
 
@@ -63,6 +65,8 @@ on Linux CI, one build-tool console use, no open markers.
   before the final support-case and conflict-message edits.
 - Targeted reruns after those edits: support-case integration (2 of 2), database integration (24 of 24),
   OTP challenge integration and clock tests (3 of 3).
+- Later in this revision: legal-acceptance and recovery API integration tests (2 of 2) and the recovery-email
+  integration test (1 of 1) passed against the same local services.
 - Browser suites, Linux signal tests and soak tests were not rerun locally for this revision. Hosted CI is the
   source for them (see the Stage 01 completion report when it is written).
 
