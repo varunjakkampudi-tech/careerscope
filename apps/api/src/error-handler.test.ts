@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import type { Database } from '@careerscope/core';
+import { apiErrorSchema } from '@careerscope/shared';
+import { errorEnvelope } from './errors.js';
 import { createApp } from './app.js';
 
 const origin = 'http://localhost:5280';
@@ -559,4 +561,16 @@ test('the session response reports AI as disabled (v12 gate)', async () => {
   } finally {
     await app.close();
   }
+});
+
+// The shared contract (S1-F019) must describe the envelope the API really writes, not a nested shape.
+test('the shared API error schema matches the envelope the API writes', () => {
+  assert.deepEqual(apiErrorSchema.parse(errorEnvelope(404, 'request-1')), {
+    code: 'NOT_FOUND',
+    message: 'Not found',
+    requestId: 'request-1',
+  });
+  const withDetails = errorEnvelope(400, 'request-2', { details: { issues: [{ path: 'email' }] } });
+  assert.equal(apiErrorSchema.parse(withDetails).requestId, 'request-2');
+  assert.throws(() => apiErrorSchema.parse({ error: { code: 'X', message: 'y' } }));
 });

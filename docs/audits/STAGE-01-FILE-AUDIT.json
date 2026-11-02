@@ -5164,14 +5164,22 @@
     {
       "path": "packages/shared/src/schemas.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "findings": [
+        {
+          "id": "S1-F019",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The shared API error schema described a nested body the API never writes. Separately, about twenty exported schemas have no consumer.",
+          "remediation": "apiErrorSchema corrected to the flat envelope and tested against errorEnvelope output. Unused exports are recorded as technical debt to remove in the next cleanup pass."
+        }
+      ],
+      "observations": "Read in full (557 lines). Checked: candidate, preference and application schemas bound their free text; the stored profile is revision-guarded in core; core's profile schema requires HTTPS links without credentials; matching breakdown and job schemas match the scoring engine; search and skill-gap query bounds. Defect S1-F019: apiErrorSchema described a nested { error: {...} } body, but the API writes a flat envelope { code, message, requestId, details? }. The schema was unused, so the mismatch could mislead a future client. Fixed: the schema now describes the envelope, and error-handler.test.ts asserts it parses the real errorEnvelope output (14 pass). Technical debt, recorded not fixed: about twenty exported schemas (such as jobSchema, leadPageSchema, runEventSchema, sourceCatalogSchema) have no consumer outside this package. Candidate URL fields use z.string().url(), which accepts non-HTTPS schemes; core's profile schema enforces HTTPS, and profileUpdateSchema is unused.",
+      "evidence": "node --import tsx --test apps/api/src/error-handler.test.ts: 14 pass, 0 fail. npx tsc -b exit 0.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "857d3048af3b2740f0511b9113c8ce2e7cd8701785249f6e41ba2932d8283f33"
     },
     {
       "path": "packages/shared/src/skills.test.ts",

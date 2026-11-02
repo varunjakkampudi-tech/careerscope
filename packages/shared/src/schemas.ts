@@ -546,12 +546,16 @@ export const sourceCatalogSchema = z.object({
 });
 export type SourceCatalog = z.infer<typeof sourceCatalogSchema>;
 
-/** Shape of every API error body. */
-export const apiErrorSchema = z.object({
-  error: z.object({
+/**
+ * Shape of every failed API response, as written by apps/api/src/errors.ts: a flat envelope with a stable
+ * machine code, client-safe text and the request id. Details carry field paths and issue codes only.
+ */
+export const apiErrorSchema = z
+  .object({
     code: z.string(),
     message: z.string(),
-    details: z.unknown().optional(),
-  }),
-});
-export type ApiError = z.infer<typeof apiErrorSchema>;
+    requestId: z.string(),
+    details: z.record(z.string(), z.unknown()).optional(),
+  })
+  .strict();
+export type ApiErrorEnvelope = z.infer<typeof apiErrorSchema>;
