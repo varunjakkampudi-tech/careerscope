@@ -119,7 +119,7 @@ test(
       assert.ok(opened);
 
       assert.equal(
-        await changeEmailWithSupportCase(database, opened.caseId, 'taken@example.test'),
+        (await changeEmailWithSupportCase(database, opened.caseId, 'taken@example.test')).outcome,
         'conflict',
         'an address another account uses is refused',
       );
@@ -130,7 +130,8 @@ test(
       );
 
       assert.equal(
-        await changeEmailWithSupportCase(database, opened.caseId, 'new-address@example.test'),
+        (await changeEmailWithSupportCase(database, opened.caseId, 'new-address@example.test'))
+          .outcome,
         'changed',
       );
       const owner = await database.pool.query<{ email: string }>(
@@ -149,7 +150,7 @@ test(
       );
 
       assert.equal(
-        await changeEmailWithSupportCase(database, opened.caseId, 'again@example.test'),
+        (await changeEmailWithSupportCase(database, opened.caseId, 'again@example.test')).outcome,
         'no-active-case',
         'a closed case cannot change the address again',
       );

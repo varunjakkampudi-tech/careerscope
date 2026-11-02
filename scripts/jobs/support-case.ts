@@ -8,7 +8,9 @@
  * Every open is printed with its id and expiry, so the reason and the operator are recorded in the table.
  */
 
+import { randomUUID } from 'node:crypto';
 import { userInfo } from 'node:os';
+import { ResendEmailOtpProvider } from '../../packages/core/src/email-otp-delivery.js';
 import { Database } from '../../packages/core/src/database.js';
 import {
   changeEmailWithSupportCase,
@@ -18,6 +20,28 @@ import {
 import { installProcessFailureHandlers, logFailure } from '../../packages/core/src/failure.js';
 
 installProcessFailureHandlers();
+
+/**
+ * Tells the previous address that its sign-in address was changed by support. The notice carries no code and
+ * no new address. If email is not configured, the operator is told so the notice can be sent another way.
+ */
+async function noticeToPreviousAddress(previousEmail: string): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM_EMAIL;
+  if (!apiKey || !from) {
+    process.stderr.write(
+      'Email is not configured, so the notice to the previous address was not sent.\n',
+    );
+    return;
+  }
+  const provider = new ResendEmailOtpProvider(apiKey, from);
+  await provider.sendNotice({
+    email: previousEmail,
+    subject: 'Your CareerScope sign-in address was changed',
+    text: 'Support changed the sign-in address for your CareerScope account. If you did not expect this, contact CareerScope support straight away. Every session for the account has been ended.',
+    idempotencyKey: randomUUID(),
+  });
+}
 
 const [command, first, second] = process.argv.slice(2);
 function usage(): never {
@@ -55,17 +79,18 @@ try {
     if (!caseId || !newEmail || newEmail.length > 254 || !newEmail.includes('@')) usage();
     database = new Database(process.env.DATABASE_URL!);
     const result = await changeEmailWithSupportCase(database, caseId, newEmail);
-    if (result === 'changed') {
-      process.stdout.write(
-        'Sign-in address changed. Every session of the account has been ended.\n',
-      );
-    } else {
+    if (result.outcome !== 'changed') {
       process.stderr.write(
-        result === 'conflict'
+        result.outcome === 'conflict'
           ? 'That address already belongs to another account.\n'
           : 'No open case has that id, or it has expired.\n',
       );
       process.exitCode = 1;
+    } else {
+      process.stdout.write(
+        'Sign-in address changed. Every session of the account has been ended.\n',
+      );
+      await noticeToPreviousAddress(result.previousEmail);
     }
   } else {
     usage();

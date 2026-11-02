@@ -53,13 +53,14 @@ export async function hasActiveSupportCase(database: Database, ownerId: string):
   return (active.rowCount ?? 0) > 0;
 }
 
-export type SupportEmailChange = 'changed' | 'no-active-case' | 'conflict';
+export type SupportEmailChange =
+  { outcome: 'changed'; previousEmail: string } | { outcome: 'no-active-case' | 'conflict' };
 
 /**
  * Changes the sign-in address of a locked-out account, once, under an active case. The operator's identity
  * check is the verification, so no code is sent. In one transaction the case is closed, the address is
  * changed, and every session and pending email change of the account is removed, so the old address can no
- * longer be used.
+ * longer be used. The previous address is returned so the caller can send it a notice after the commit.
  */
 export async function changeEmailWithSupportCase(
   database: Database,
@@ -78,7 +79,7 @@ export async function changeEmailWithSupportCase(
     const ownerId = found.rows[0]?.owner_id;
     if (!ownerId) {
       await client.query('ROLLBACK');
-      return 'no-active-case';
+      return { outcome: 'no-active-case' };
     }
     const taken = await client.query('SELECT 1 FROM users WHERE email = $1 AND id <> $2', [
       newEmail,
@@ -86,8 +87,13 @@ export async function changeEmailWithSupportCase(
     ]);
     if ((taken.rowCount ?? 0) > 0) {
       await client.query('ROLLBACK');
-      return 'conflict';
+      return { outcome: 'conflict' };
     }
+    const current = await client.query<{ email: string }>(
+      'SELECT email FROM users WHERE id = $1 FOR UPDATE',
+      [ownerId],
+    );
+    const previousEmail = current.rows[0]!.email;
     await client.query('UPDATE users SET email = $2, email_verified_at = now() WHERE id = $1', [
       ownerId,
       newEmail,
@@ -96,10 +102,10 @@ export async function changeEmailWithSupportCase(
     await client.query('DELETE FROM email_change_requests WHERE owner_id = $1', [ownerId]);
     await client.query('UPDATE support_cases SET closed_at = now() WHERE id = $1', [caseId]);
     await client.query('COMMIT');
-    return 'changed';
+    return { outcome: 'changed', previousEmail };
   } catch (error) {
     await client.query('ROLLBACK').catch(() => undefined);
-    if ((error as { code?: string }).code === '23505') return 'conflict';
+    if ((error as { code?: string }).code === '23505') return { outcome: 'conflict' };
     throw error;
   } finally {
     client.release();
