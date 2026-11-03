@@ -971,6 +971,25 @@ describe('jooble', () => {
     expect(warning?.message).toContain('valid one');
   });
 
+  it('does not call a JSON 403 a bot check (S1-F032)', async () => {
+    const { impl } = routedFetch({
+      'jooble.org': () =>
+        new Response('{"error":"forbidden"}', {
+          status: 403,
+          headers: { 'content-type': 'application/json' },
+        }),
+    });
+    const ctx = context(impl);
+
+    await collect(
+      createJoobleProvider(JOOBLE_CREDS).search(query({ titles: ['Backend Engineer'] }), ctx),
+    );
+
+    const message = ctx.events.find((event) => event.level === 'warn')?.message ?? '';
+    expect(message).not.toContain('bot check');
+    expect(message).toContain('JOOBLE_API_KEY');
+  });
+
   it('says plainly when the key was rejected', async () => {
     const { impl } = routedFetch({
       'jooble.org': () => new Response('{"error":"unauthorized"}', { status: 401 }),

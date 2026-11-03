@@ -160,15 +160,20 @@ const adapter: KeyedAdapter<JoobleJob> = {
 function explain(error: unknown): unknown {
   if (!(error instanceof HttpError)) return error;
 
+  // Only a challenge page is a bot check. A JSON 403 is a refused key, and calling it a bot check would tell
+  // the user there is nothing to fix when there is (S1-F032).
   const body = error.body ?? '';
-  if (error.status === 403 || /just a moment|cf-browser-verification|cloudflare/i.test(body)) {
+  const challenged =
+    /just a moment|cf-browser-verification|cloudflare/i.test(body) ||
+    (error.status === 403 && /<html|<!doctype/i.test(body));
+  if (challenged) {
     return new Error(
       'Jooble answered with a bot check instead of results. Its API host challenges ' +
         'requests from datacentre addresses before it looks at the key, so this can ' +
         'happen with a perfectly valid one. Nothing to fix in the app.',
     );
   }
-  if (error.status === 401) {
+  if (error.status === 401 || error.status === 403) {
     return new Error('Jooble rejected the API key. Check JOOBLE_API_KEY.');
   }
   return error;

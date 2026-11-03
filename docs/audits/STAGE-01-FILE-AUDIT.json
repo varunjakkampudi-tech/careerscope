@@ -4400,14 +4400,14 @@
     {
       "path": "packages/providers/src/email/gmail.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (266 lines). Sender matching uses the domain of the From address and the host must equal or end in a known domain, so look-alike hosts are refused. Links are rebuilt from the extracted job id rather than kept as received. The scan is capped at 200 messages with a log when the cap ends the run. Failures to read one message are logged without content, and the outer error is a fixed message so no token reaches a log. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "b85eccf37e43c1aafe0fe5d64ccf3e86cc6f5ea3edd67fa00e1d4cffd68f32af"
     },
     {
       "path": "packages/providers/src/email/verification.test.ts",
@@ -4424,14 +4424,14 @@
     {
       "path": "packages/providers/src/email/verification.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (140 lines). A code is returned only when exactly one message matches the exact sender and recipient in the window, has no reset or payment wording, and has exactly one distinct code. Redirects are refused and the bearer token is not cached. Observation, not a defect: the address pattern admits braces, which Gmail search reads as OR groups; any such query still has to match the exact sender header, so a wrong code cannot be returned. Observation: the reader is exported from the package index but no caller exists in this repository's apps, workers or scripts.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "705b9ef694da66c4d575767bfdd08f141e56df60f21d46a7bad173560d699456"
     },
     {
       "path": "packages/providers/src/filter.test.ts",
@@ -4553,10 +4553,10 @@
       "path": "packages/providers/src/keyed/adzuna.ts",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the credential-bearing request path (buildAdapter and fetchPage, about lines 80 to 130) and the mapping of the posting identity and link. Adzuna's error body is surfaced as a failure rather than an empty result, and the app key travels in the query string; that URL is not written to logs (see keyed/base.ts). Lines 1 to 80 (types) and 130 to 259 (salary and category mapping, the URL builder) are not yet read.",
+      "observations": "Read in full (260 lines). The full description is preferred and hasFullDescription is set from which field arrived, so a snippet caps the lead. A modelled salary (salary_is_predicted, in any of its boolean-ish forms) is withheld rather than shown as the employer's figure. Errors that arrive as 200-shaped JSON with an exception are raised, not read as empty results. The date window is pushed server-side. No finding.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
       "sha256": "c92555b4944a49c60f4bea6c9b065f085d9b8d2ed635a90ae147e26dfcc6fd3c"
@@ -4589,13 +4589,21 @@
       "path": "packages/providers/src/keyed/jooble.ts",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "Read the header comment and the request construction (about lines 70 to 100). The key is a path segment of the POST URL, a design decision recorded in the file; because it is a path segment it could appear in an HTTP error message, but HTTP failures are reported by status only. Lines 1 to 70 and 100 to 202 (mapping) are not yet read.",
+      "findings": [
+        {
+          "id": "S1-F032",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "A JSON 403 from Jooble was reported as a bot check that needed no action.",
+          "remediation": "The bot-check branch requires a challenge page; a refused key gets the key message; aggregators.test.ts case."
+        }
+      ],
+      "observations": "Read in full (203 lines). Jooble returns snippets, so every lead is marked without a full description, which is the correct cap. Finding S1-F032 (low, fixed): any HTTP 403 was reported as a bot check that needed nothing from the user, including a JSON answer that means the key was refused. Only a challenge page is now a bot check; other 401 and 403 answers say the key was rejected. aggregators.test.ts has the regression case.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "c5e68f26da6c4974ebb06b874d2575d67e1f836d9c5d5c457159699071f6f616"
+      "sha256": "165b6480aacc991a4906efe39e9984b82c97b289233ea50d2f958f9843d7849e"
     },
     {
       "path": "packages/providers/src/keyed/jsearch.ts",
