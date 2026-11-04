@@ -19,7 +19,7 @@ test('enforceRetention deletes only old, settled runs and their jobs - never lea
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -138,7 +138,7 @@ test('enforceRetention deletes expired email-change addresses but retains live r
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -207,7 +207,7 @@ test('enforceRetention deletes expired sessions and their refresh tokens but kee
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {

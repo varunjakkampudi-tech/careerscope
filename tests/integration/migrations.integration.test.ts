@@ -39,7 +39,7 @@ async function freshDatabase<T>(run: (pool: pg.Pool) => Promise<T>) {
   assert.ok(['127.0.0.1', 'localhost'].includes(url.hostname), 'Tests require local PostgreSQL');
   const admin = new pg.Pool({ connectionString: configured, max: 1 });
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.query(`CREATE DATABASE "${name}"`);
+  await admin.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   url.pathname = `/${name}`;
   const pool = new pg.Pool({ connectionString: url.href, max: 2 });
   try {

@@ -23,7 +23,7 @@ const url = new URL(configured);
 assert.ok(['localhost', '127.0.0.1'].includes(url.hostname));
 const admin = new Database(configured);
 const name = `perf_${randomUUID().replaceAll('-', '')}`;
-await admin.pool.query(`CREATE DATABASE "${name}"`);
+await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
 url.pathname = `/${name}`;
 const database = new Database(url.href);
 const origin = 'http://localhost:5280';

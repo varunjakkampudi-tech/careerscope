@@ -46,7 +46,7 @@ const endpoint = process.env.QUEUE_REDIS_URL;
 assert.ok(endpoint);
 const admin = new Database(configured);
 const name = `soak_${randomUUID().replaceAll('-', '')}`;
-await admin.pool.query(`CREATE DATABASE "${name}"`);
+await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
 base.pathname = `/${name}`;
 const database = new Database(base.href);
 const directory = await mkdtemp(join(tmpdir(), 'careerscope-soak-'));

@@ -200,10 +200,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (187 lines). Covers setup and wrong and right confirmation codes, replacement refused after confirmation, the database check constraint on admin roles, a fresh authenticator code accepted, replay of the same code refused, and an earlier-step code refused. No finding.",
+      "observations": "Re-reviewed after a mechanical change: the test database is now created from template0 (TEMPLATE template0), which skips copying template1 and is about 2.5 times faster on this database. The test body is unchanged. Migrations use only SQL functions, so template0 has what they need.",
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "f18275a4e8039a6a487187205245aa8060e7bc49b2e592a7d13207e805d34da3"
+      "sha256": "95355a5222c3b6129b87f17b935903462ff95919ba6039d21e8a550e25a24c40"
     },
     {
       "path": "apps/api/src/age-screen.test.ts",
@@ -3115,19 +3115,11 @@
       "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
-      "findings": [
-        {
-          "id": "S1-F004",
-          "severity": "medium",
-          "status": "accepted-risk",
-          "summary": "Development-only minimatch 3.1.5 (GHSA-g3hv-75wg-m249) in the ESLint plugin chain. Time-limited exception EX-2026-01 applies.",
-          "remediation": "Exception documented in docs/security/DEPENDENCY-EXCEPTIONS.md."
-        }
-      ],
-      "observations": "Read in full. Adds the joiner test and the equivalence tests to test:domain. Production audit: 0 advisories. Development-only minimatch exception EX-2026-01 applies.",
+      "findings": [],
+      "observations": "Re-reviewed after two registrations in test:unit: scripts/tests/check-ui-exit.test.ts and scripts/ci/check-test-types.test.mjs. The rest of the scripts block is unchanged.",
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "cc5f9e446501b72965fad38832092a913afc588debd933dd85604bb6219c6519"
+      "sha256": "7e206488ff213cc9fc2913be9fc135e86ab4ae2000ecf4f27db265a1ebca5ea8"
     },
     {
       "path": "packages/core/package.json",
@@ -3284,10 +3276,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Written and read in full. Three tests: rollback when the replacement fails; full revocation and single replacement; and a completion racing a replacement request, where either a full change or no change must hold. A concurrent run of three simultaneous completions creates exactly one replacement and exactly one completed outcome. Repeated three times with 0 failures.",
+      "observations": "Re-reviewed after a mechanical change: three test databases are now created from template0 (TEMPLATE template0), matching the other harnesses. No other lines changed.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "0168866f88e66dccfd961332028342ec369878b41239f8a644df221ab3974750"
+      "sha256": "f38f39641c601276c9a9c90f8bab49dc132f27840a0111ec7d2a43cfcefeedc6"
     },
     {
       "path": "packages/core/src/email-change-requests.ts",
@@ -3724,10 +3716,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Written in this change and read in full before commit. One database per run, dropped with force in finally. Covers the case-variant refusal, the own-address refusal, a successful set and the cooldown-gated target lookup in mixed case.",
+      "observations": "Re-reviewed after a mechanical change: the test database is created from template0 (TEMPLATE template0). No other lines changed.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "51ad1653fbbedceeaca77cb0705a74527e272a9556ff7de30bb3d39c0be992f8"
+      "sha256": "62e6a3b3aac2ea140bb82020b369c7c8d6e2cd87b117f897d59af0f9bde90fa3"
     },
     {
       "path": "packages/core/src/recovery-email.ts",
@@ -3948,10 +3940,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (163 lines). Covers unknown address opens nothing, expiry window, reason stored with opener, database refusal of a short reason, a stale case not active, closing once, and the case-variant refusal and single change under a case.",
+      "observations": "Re-reviewed after a mechanical change: two test databases are created from template0 (TEMPLATE template0). No other lines changed.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "748be03a52f4a6610c7808e20dcc67cb9971541681aa9b6e8e33b5adcf2c9c7b"
+      "sha256": "3487d48f38c5ffba79ed3f279f98359803d0e3a1f5f3cb06a76adb46f7784b75"
     },
     {
       "path": "packages/core/src/support-cases.ts",
@@ -5467,14 +5459,14 @@
     {
       "path": "scripts/ci/check-deploy-gate.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (320 lines). Policy checks cover the deployment workflow (manual only, protected production environment, gate job present, no override input, pinned checkout of main) and the CI workflow (read-only permissions, action references pinned to full commit SHAs, no secret expressions, no deployment trigger). Each check is an explicit assertion, and the script exits nonzero on any failure. Passes on this tree. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "5cbf38508d451c430b3422598017603b056e5c2c94bc0fddb18ec89be42a567b"
     },
     {
       "path": "scripts/ci/check-deploy-gate.test.mjs",
@@ -5515,14 +5507,14 @@
     {
       "path": "scripts/ci/check-line-endings.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (319 lines). Derives its enforced set from .gitattributes and refuses to pass when the configuration cannot be parsed, is too short, or uses a form it cannot represent. A second direction requires every tracked text file to declare an eol attribute and rejects declarations other than lf. Refuses partial listings. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "e9569fc40c3fc11eded06a3edb0840c2b6d13955448107ff625ae5afd1f5e6a9"
     },
     {
       "path": "scripts/ci/check-node-version.mjs",
@@ -5563,14 +5555,14 @@
     {
       "path": "scripts/ci/check-privacy.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (170 lines). Scans tracked text files for private keys, provider and cloud credentials, JWTs and credential-bearing database URLs as P1, and for personal-looking addresses and phone numbers as P2. Fixture and documentation paths and the operational sender allowlist are limited to exact addresses, so a personal address at the product domain still triggers review. Exits 1 only on P1. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "1a62b23b75dfda756c2e5d1a962e60d39c4f3abadb5c83fc7ef79d24a27e78fa"
     },
     {
       "path": "scripts/ci/check-privacy.test.mjs",
@@ -5611,14 +5603,34 @@
     {
       "path": "scripts/ci/check-test-types.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [
+        {
+          "id": "S1-F038",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The test-type check passed when tsc failed on a configuration error, because it ignored tsc's exit status and only matched .ts error lines.",
+          "remediation": "decide() treats any nonzero or missing status and any error TS line as failure; check-test-types.test.mjs cases including the configuration-error probe."
+        }
+      ],
+      "observations": "Read in full (130 lines). Finding S1-F038 (low, fixed): the script read neither the exit status of tsc nor any error line that named a .json file, so a compiler configuration error (an invalid option, exit 2) printed PASS and exited 0. The verdict is now a pure decide() that fails on any nonzero or missing status and on any error TS line; the floor of 16 resolved test files still refuses an empty set. The entry point runs the check only when executed directly. check-test-types.test.mjs holds the regression cases.",
+      "evidence": "",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "14109f63cfd48d64c487d2ea940d20983f90f6aa30e2d0a43a8fbfb12bb74a8c"
+    },
+    {
+      "path": "scripts/ci/check-test-types.test.mjs",
+      "category": "tooling-and-tests",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (seven cases). Covers a healthy pass, a configuration error with status 2 failing, a nonzero status with no error line, a run killed without a status, a type error in a test file, too few resolved files refusing, and node_modules paths not counting toward the floor. Registered in test:unit.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "858534959da6b2955c8791b2915fcbd37d70e4eba6c23053db083545c167b430"
     },
     {
       "path": "scripts/ci/check-toolchain.mjs",
@@ -5671,14 +5683,14 @@
     {
       "path": "scripts/ci/clean-dist.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (90 lines). Removes dist, dist-types and tsbuildinfo together, so tsc cannot skip a project whose output was deleted, and refuses any target outside the repository root. The comment records why tsc --clean was rejected, which matches the orphan behaviour it guards. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "5cf6ae712ce2d0247d357b5bc65ce5d334d03bf5948d95208ae60889802a4040"
     },
     {
       "path": "scripts/ci/dependency-remediation.test.mjs",
@@ -5695,26 +5707,26 @@
     {
       "path": "scripts/ci/require-ci-success.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (180 lines). The decision is a pure function that refuses malformed payloads, waits while CI is pending, and passes only when the newest full-trigger run for the exact SHA concluded success. A partial manual dispatch cannot authorise a commit, and a newer full run decides. Ordering ties break on creation time, then run number, attempt and id. Fetch failures stop the deploy. Observation: the entry-point guard compares a file URL against process.argv with no drive-letter normalisation, so it never runs on a Windows host; the gate runs on the Linux CI runner, so no defect is reachable there. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "b1bed345c523494e389e460b190b3b1cff20f2eadf77a86e5f7784689e3d12da"
     },
     {
       "path": "scripts/ci/workflow-steps.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (42 lines). A step counts as push or pull_request evidence unless its condition, or its job's condition, is dispatch-only. Conditions that also admit push, pull_request, pull_request_target or schedule are not dispatch-only. The ci.yml expression that admits every non-dispatch event is therefore counted. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "df1a279f93f14feef261287ff415cd94fc11c761936a69d28bf290e960d7a35a"
     },
     {
       "path": "scripts/dev/setup-local.mjs",
@@ -5999,6 +6011,18 @@
       "evidence": "",
       "reviewer": "",
       "sha256": ""
+    },
+    {
+      "path": "scripts/tests/check-ui-exit.test.ts",
+      "category": "tooling-and-tests",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read in full (27 lines). Runs the browser suite with an invalid database user and asserts a nonzero exit, a non-null status and no passed line. A harness that swallowed setup failures and exited 0 would fail it. Registered in test:unit. Note: the suite itself needs no change; the earlier pass reported by the wrapper came from its trailing echo, which is not evidence of the suite's own exit.",
+      "evidence": "",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "c45bd04f1a74a29a1d5b51134c57ed7ebd647ba748d3c832887cffc82b5cb8b6"
     },
     {
       "path": "scripts/tests/check-ui.ts",

@@ -13,7 +13,7 @@ test('private test selection enforces the edge boundary, allowlist, rotation and
   assert.ok(['localhost', '127.0.0.1'].includes(url.hostname));
   const admin = new Database(url.href);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   url.pathname = `/${name}`;
   const database = new Database(url.href);
   const origin = 'https://staging.example.invalid';
@@ -291,7 +291,7 @@ test('local test access is refused unless both the configured origin and the pee
   assert.ok(['localhost', '127.0.0.1'].includes(url.hostname));
   const admin = new Database(url.href);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   url.pathname = `/${name}`;
   const database = new Database(url.href);
   const app = await createApp(database, 'http://localhost:5280', async () => true, {

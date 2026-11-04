@@ -68,7 +68,7 @@ test(
     assert.ok(['localhost', '127.0.0.1'].includes(url.hostname));
     const admin = new Database(configured);
     const name = `test_${randomUUID().replaceAll('-', '')}`;
-    await admin.pool.query(`CREATE DATABASE "${name}"`);
+    await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
     url.pathname = `/${name}`;
     const database = new Database(url.href);
     const endpoint = process.env.SEARCH_QUEUE_REDIS_URL ?? 'redis://127.0.0.1:56480';

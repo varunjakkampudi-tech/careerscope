@@ -16,7 +16,7 @@ test('posting evidence accumulates across searches and detects a refreshed listi
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname));
   const root = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await root.pool.query(`CREATE DATABASE "${name}"`);
+  await root.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -130,7 +130,7 @@ test('the pipeline distinguishes neglected work from finished work', async () =>
   const base = new URL(configured);
   const root = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await root.pool.query(`CREATE DATABASE "${name}"`);
+  await root.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {

@@ -84,7 +84,7 @@ test(
         stdio: ['ignore', 'pipe', 'pipe'],
       }).trim();
     try {
-      await admin.pool.query(`CREATE DATABASE "${sourceName}"`);
+      await admin.pool.query(`CREATE DATABASE "${sourceName}" TEMPLATE template0`);
       sourceCreated = true;
       sourceUrl.pathname = `/${sourceName}`;
       source = new Database(sourceUrl.href);

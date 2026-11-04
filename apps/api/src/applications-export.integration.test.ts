@@ -22,7 +22,7 @@ test(
     const creator = await admin.pool.connect();
     try {
       await creator.query('SET statement_timeout = 0');
-      await creator.query(`CREATE DATABASE "${name}"`);
+      await creator.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
     } finally {
       creator.release();
     }

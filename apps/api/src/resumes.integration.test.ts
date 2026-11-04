@@ -35,7 +35,7 @@ async function withFixture(
   assert.ok(['127.0.0.1', 'localhost'].includes(url.hostname));
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   url.pathname = `/${name}`;
   const database = new Database(url.href);
   try {

@@ -126,7 +126,7 @@ test(
         await docker('volume', 'create', '--label', 'careerscope.test=queue-runtime', entry);
         volumes.push(entry);
       }
-      await admin.pool.query(`CREATE DATABASE "${name}"`);
+      await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
       databaseCreated = true;
       databaseUrl.pathname = `/${name}`;
       database = new Database(databaseUrl.href);

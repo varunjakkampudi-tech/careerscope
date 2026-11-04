@@ -125,7 +125,7 @@ test('Swagger documents every runtime route without changing validation and prot
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname));
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   const origin = 'http://localhost:5280';
@@ -513,7 +513,7 @@ test('market and pipeline HTTP routes preserve evidence, query bounds and owner 
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname));
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   const origin = 'http://localhost:5280';
@@ -858,7 +858,7 @@ test('global resume reservation budgets serialize across owners and preserve ret
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname));
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -1031,7 +1031,7 @@ test('revoke-others serializes with login and enforces CSRF, origin and rate lim
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname));
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -1186,7 +1186,7 @@ test('password account compatibility is atomic while executable API registration
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname));
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -1771,7 +1771,7 @@ test('partial search outcomes are atomic, owner-scoped, terminal and usable thro
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname));
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -2307,7 +2307,7 @@ test('PostgreSQL atomic outbox, owner isolation and stale-worker fencing', async
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -3526,7 +3526,7 @@ test('createSearch snapshots the latest parsed resume onto the matching profile,
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -3659,7 +3659,7 @@ test('recentSourceStatuses reports the most recent outcomes for one source acros
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -3768,7 +3768,7 @@ test('CS-35: conflicts carry a stable code and the HTTP layer surfaces distinct,
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -3987,7 +3987,7 @@ test('CS-57: logging out answers identically with no cookie, a stale cookie and 
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -4094,7 +4094,7 @@ async function withFreshDatabase(run: (database: Database) => Promise<void>) {
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -4241,7 +4241,7 @@ test('CS-61: the session carries a stable, opaque per-owner cache key that diffe
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -4362,7 +4362,7 @@ test('CS-55: every authenticated read carries an owner-keyed budget, and the buc
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -4497,7 +4497,7 @@ test('CS-53: a run event or job belonging to a different owner than its run is u
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {
@@ -4601,7 +4601,7 @@ test('createSearch takes UNPARSED input, and canonicalises it before storing or 
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {

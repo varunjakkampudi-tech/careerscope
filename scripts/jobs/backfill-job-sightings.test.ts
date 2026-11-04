@@ -199,7 +199,7 @@ test('rebuildJobSightings replaces drifted job_sightings state with a fresh repl
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
-  await admin.pool.query(`CREATE DATABASE "${name}"`);
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
   base.pathname = `/${name}`;
   const database = new Database(base.href);
   try {

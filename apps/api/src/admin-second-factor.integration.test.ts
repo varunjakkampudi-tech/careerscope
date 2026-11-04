@@ -31,7 +31,7 @@ test(
     assert.ok(['127.0.0.1', 'localhost'].includes(databaseUrl.hostname));
     const admin = new Database(configuredDatabase);
     const name = `test_${randomUUID().replaceAll('-', '')}`;
-    await admin.pool.query(`CREATE DATABASE "${name}"`);
+    await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
     databaseUrl.pathname = `/${name}`;
     const database = new Database(databaseUrl.href);
     const secret = Buffer.alloc(32, 41);
