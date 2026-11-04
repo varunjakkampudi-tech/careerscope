@@ -4273,18 +4273,18 @@
       "path": "packages/providers/src/ats/greenhouse.ts",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "state": "reviewed",
       "concerns": [],
       "findings": [
         {
           "id": "S1-F029",
           "severity": "low",
-          "status": "open",
-          "summary": "Greenhouse description text is entity-decoded twice before display.",
-          "remediation": "Confirm the double decode with a fixture containing an escaped ampersand entity, then decode once in one place and add a regression test."
+          "status": "no-action",
+          "summary": "Suspected double entity decode of Greenhouse descriptions.",
+          "remediation": "Tested: escaped HTML decodes once to HTML and the converter produces the correct text; no change needed."
         }
       ],
-      "observations": "Read in full (107 lines). The board list is fetched without descriptions on purpose, because the content variant exceeds the body ceiling for large boards; descriptions are fetched per posting in fetchDetail. The detail content is HTML-escaped and fetchDetail decodes it once with decodeEntities, and the HTML converter in html.ts also decodes entities, so the text is decoded twice. Open question, not yet tested: a posting whose text literally contains an escaped ampersand entity would render as a bare ampersand. Needs a regression test or a decision that the converter should not decode again.",
+      "observations": "Read in full (107 lines). The board list is fetched without descriptions on purpose, because the content variant exceeds the body ceiling for large boards; descriptions are fetched per posting in fetchDetail after the filter. The detail content is HTML-escaped, so it is decoded once here and then converted. The earlier double-decode concern (S1-F029) was tested and is not a defect: the escaped HTML decodes to HTML, and the converter then yields the correct display text.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
       "sha256": "8efc73d1753cd03dd4f8a1524c3e47f3aa28995f0f0e5753dc812a5b5025159d"
@@ -4836,14 +4836,14 @@
     {
       "path": "packages/providers/src/scrape/base.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (333 lines). Block, empty and fault outcomes are reported distinctly and a fault is never described as a healthy empty result. The browser lease is released in a finally that also covers abort. The detail fetch runs only for postings that survive the filter and fit the budget. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "bfa73974f25c93e429cfab8ea97476aa0568fa1695ca4e0bd5c7328359ed29c7"
     },
     {
       "path": "packages/providers/src/scrape/block.test.ts",
@@ -4860,14 +4860,22 @@
     {
       "path": "packages/providers/src/scrape/block.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F033",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "Ordinary job-description phrases were read as a wall on healthy results pages.",
+          "remediation": "Prose phrases apply only to pages up to 15,000 characters; structural markers are unchanged; block.test.ts cases."
+        }
+      ],
+      "observations": "Read in full (171 lines). Finding S1-F033 (low, fixed): phrases that ordinary job text can contain (a vendor name such as DataDome, rate limit exceeded, sign in to continue) were matched anywhere in the first 20 KB, so a healthy results page could be reported as walled and stopped. Those phrases now count only on a wall-sized page; structural markers still count everywhere. block.test.ts has regression cases for both sides.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "30da655f93f128819adddad800f0aaa86cc68e39d396f75ca30b9324c08047cf"
     },
     {
       "path": "packages/providers/src/scrape/browser.test.ts",
@@ -4952,14 +4960,14 @@
     {
       "path": "packages/providers/src/scrape/linkedin.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (393 lines). It uses the guest endpoints with the app's own agent, no cookies and no browser. Blocks (auth wall, 403, 451, a 429 that outlasts retries) stop the walk and are reported as blocks. Detail description extraction counts nested divs so a long description is not truncated at its first inner block. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "dc90935879682a6fc35524b9632a091831b53ef75cac8bb871d297c0c0f7d504"
     },
     {
       "path": "packages/providers/src/scrape/naukri.test.ts",
@@ -4976,14 +4984,29 @@
     {
       "path": "packages/providers/src/scrape/naukri.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F034",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "A job link from the search API was navigated to without a host check.",
+          "remediation": "Only https links on naukri.com are kept; naukri.test.ts case."
+        },
+        {
+          "id": "S1-F035",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "Pacing was skipped between Naukri queries, only applied between pages.",
+          "remediation": "A gap runs before every search call except the first; naukri.test.ts case with fake timers."
+        }
+      ],
+      "observations": "Read in full (553 lines before formatting). Two fixes. Finding S1-F034 (low, fixed): the detail step navigates the browser to the job link from the API, and any absolute link was accepted; links are now kept only when they are https on Naukri's host, otherwise the job-listings URL is used. Finding S1-F035 (low, fixed): the courtesy gap was applied only between pages of one query, so the first request of each following query went out at once; the gap now runs before every search call except the first. Regression tests in naukri.test.ts use fake timers.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "2fd35bbd64c463565cb476b857c391838b84fcbbc2721635df1a547b423224b6"
     },
     {
       "path": "packages/providers/src/types.ts",
@@ -5104,14 +5127,22 @@
     {
       "path": "packages/resume/src/sections.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F037",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "A job title beginning with a heading word switched the section it belonged to.",
+          "remediation": "Rest-of-line title or employer words block the heading; derive.test.ts cases."
+        }
+      ],
+      "observations": "Read in full (150 lines). Finding S1-F037 (low, fixed): a short line that starts with a heading word was taken as a section heading even when it was a job title, so a title such as Education Consultant moved the following lines into the education section. A heading is no longer taken when the rest of the line reads as a title or employer. derive.test.ts covers the title case and real heading variants.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "f2ce9d4ad18ffa2dd42c061fb9b7769de01d1b1769b316b6e4ad5fb396c58f6b"
     },
     {
       "path": "packages/resume/tsconfig.json",
@@ -5344,14 +5375,22 @@
     {
       "path": "packages/shared/src/skills.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F036",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "Common English words used as skill aliases matched ordinary prose.",
+          "remediation": "Per-alias contextAliases follow the existing list or role-context rule; skills.test.ts cases."
+        }
+      ],
+      "observations": "Read in full (570 lines). Finding S1-F036 (low, fixed): aliases that are ordinary English words (express, rest, spring, node, apex, apollo, aria, eda, containers, coaching, rtk, rtl) counted as skills anywhere, so ordinary prose produced Express.js, REST API, Spring Boot, Node.js, Salesforce, Docker and Mentoring. The per-alias context rule the file already uses for ambiguous names now covers these spellings. skills.test.ts has negative and positive cases.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "765ecd9bde47bb53ff52783c1427f7ba643a27abde36c034bb56a341fbf5423b"
     },
     {
       "path": "packages/shared/src/types.ts",

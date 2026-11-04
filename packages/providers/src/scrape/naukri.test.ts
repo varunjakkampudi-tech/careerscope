@@ -803,3 +803,40 @@ describe('fetchDetail', () => {
     expect(session.navigations).toHaveLength(0);
   });
 });
+
+describe('pacing and links (S1-F034, S1-F035)', () => {
+  it('waits between queries, not only between the pages of one', async () => {
+    const { session, ctx } = booted({
+      api: { 'jobapi/v3/search': { json: { jobDetails: [], noOfJobs: 0 } } },
+    });
+
+    vi.useFakeTimers();
+    try {
+      const pending = walk(ctx, query({ titles: ['A', 'B'], locations: ['L1'] }));
+      await vi.advanceTimersByTimeAsync(0);
+      // The first query ends on a short page; the second must still wait its turn.
+      expect(session.apiCalls).toHaveLength(1);
+      await vi.advanceTimersByTimeAsync(900);
+      await pending;
+      expect(session.apiCalls).toHaveLength(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('will not send the browser to a link on another host', () => {
+    const job = naukriAdapter.toRawJob(
+      { jobId: 'J1', title: 'Dev', companyName: 'Acme', jdURL: 'https://evil.example/steal' },
+      0,
+    );
+    expect(job?.sourceUrl).toBe(`${ORIGIN}/job-listings-J1`);
+  });
+
+  it('keeps a link on Naukri itself, resolved against the site', () => {
+    const job = naukriAdapter.toRawJob(
+      { jobId: 'J1', title: 'Dev', companyName: 'Acme', jdURL: '/job-listings-dev-123' },
+      0,
+    );
+    expect(job?.sourceUrl).toBe(`${ORIGIN}/job-listings-dev-123`);
+  });
+});

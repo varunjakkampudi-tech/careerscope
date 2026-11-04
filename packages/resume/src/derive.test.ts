@@ -429,3 +429,24 @@ describe('date ranges on hostile input', () => {
     expect(ranges[0]?.start).toBe(Date.UTC(2019, 8, 1));
   });
 });
+
+describe('section headings keep job titles out of the heading list (S1-F037)', () => {
+  it('keeps a title that starts with a heading word inside its own section', () => {
+    const { experience, education } = splitSections(
+      ['Experience', 'Education Consultant', 'Built payments.', 'Education', 'BSc Physics'].join(
+        '\n',
+      ),
+    );
+    expect(experience).toContain('Built payments.');
+    expect(education).toContain('BSc Physics');
+    expect(education).not.toContain('Built payments.');
+  });
+
+  it('still reads real heading variants', () => {
+    const sections = splitSections(
+      ['Skills & Tools', 'Go', 'Work Experience:', 'Built payments.'].join('\n'),
+    );
+    expect(sections.skills).toContain('Go');
+    expect(sections.experience).toContain('Built payments.');
+  });
+});

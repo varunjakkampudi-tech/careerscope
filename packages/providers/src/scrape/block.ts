@@ -37,6 +37,9 @@ export interface BlockDetection {
   message: string;
 }
 
+/** A wall page is small; a results page that merely mentions a phrase is not (S1-F033). */
+const WALL_PAGE_CHARS = 15_000;
+
 /**
  * Substrings that identify each wall, lowercased.
  *
@@ -44,11 +47,21 @@ export interface BlockDetection {
  * description that happens to mention the word — and a false positive here is
  * worse than a false negative, because it would report a healthy source as
  * blocked and send someone debugging a network they cannot see.
+ *
+ * `needles` are structural markers that do not occur in ordinary prose and are
+ * checked on any page. `prose` are phrases a job description can contain
+ * ("rate limit exceeded", a vendor name such as DataDome), so they count only on
+ * a page small enough to be a wall (S1-F033).
  */
-const SIGNATURES: ReadonlyArray<{ kind: BlockKind; needles: readonly string[] }> = [
+const SIGNATURES: ReadonlyArray<{
+  kind: BlockKind;
+  needles: readonly string[];
+  prose: readonly string[];
+}> = [
   {
     kind: 'captcha',
-    needles: ['g-recaptcha', 'hcaptcha.com', 'recaptcha/api.js', 'px-captcha', 'solve this puzzle'],
+    needles: ['g-recaptcha', 'hcaptcha.com', 'recaptcha/api.js', 'px-captcha'],
+    prose: ['solve this puzzle'],
   },
   {
     kind: 'challenge',
@@ -63,26 +76,24 @@ const SIGNATURES: ReadonlyArray<{ kind: BlockKind; needles: readonly string[] }>
       // `cf_chl_opt` above. Matching the broad form would report a live source as
       // walled, which is the failure this module exists to prevent.
       '/challenge-platform/h/',
+      '_incapsula_resource',
+    ],
+    prose: [
       'checking your browser before',
       'enable javascript and cookies to continue',
-      '_incapsula_resource',
       'datadome',
       'perimeterx',
     ],
   },
   {
     kind: 'rate-limited',
-    needles: ['too many requests', 'rate limit exceeded', 'unusual traffic from your'],
+    needles: [],
+    prose: ['too many requests', 'rate limit exceeded', 'unusual traffic from your'],
   },
   {
     kind: 'login-wall',
-    needles: [
-      '/authwall',
-      'sign in to continue',
-      'join linkedin to see',
-      'please log in to continue',
-      'session_redirect',
-    ],
+    needles: ['/authwall', 'join linkedin to see', 'session_redirect'],
+    prose: ['sign in to continue', 'please log in to continue'],
   },
 ];
 
@@ -116,10 +127,13 @@ export function detectBlock(
 
   if (status === 429) return { kind: 'rate-limited', message: MESSAGES['rate-limited'](source) };
 
-  const haystack = `${(input.body ?? '').slice(0, 20_000)}\n${input.url ?? ''}`.toLowerCase();
+  const body = input.body ?? '';
+  const haystack = `${body.slice(0, 20_000)}\n${input.url ?? ''}`.toLowerCase();
+  const wallSized = body.length <= WALL_PAGE_CHARS;
 
-  for (const { kind, needles } of SIGNATURES) {
-    if (needles.some((needle) => haystack.includes(needle))) {
+  for (const { kind, needles, prose } of SIGNATURES) {
+    const phrases = wallSized ? [...needles, ...prose] : needles;
+    if (phrases.some((phrase) => haystack.includes(phrase))) {
       return { kind, message: MESSAGES[kind](source) };
     }
   }

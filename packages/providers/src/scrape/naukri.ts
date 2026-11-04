@@ -127,12 +127,18 @@ export const naukriAdapter: ScrapeAdapter<NaukriJob> = {
     // would otherwise cost a detail navigation downstream.
     const seen = new Set<string>();
 
+    // Paced before every search call but the first, so the gap also holds between
+    // queries and not only between the pages of one (S1-F035).
+    let issued = false;
+
     for (const params of searchQueries(query)) {
       for (let pageNo = 1; pageNo <= MAX_PAGES_PER_QUERY; pageNo += 1) {
         if (ctx.signal?.aborted) return;
 
         const url = `${SEARCH_API}?${new URLSearchParams({ ...params, pageNo: String(pageNo) })}`;
 
+        if (issued) await pace(ctx);
+        issued = true;
         let response = await session.context.request.get(url, { headers });
 
         // 406 mid-walk means the token aged out rather than that we are blocked.
@@ -182,8 +188,6 @@ export const naukriAdapter: ScrapeAdapter<NaukriJob> = {
         // A short page is the end of this query's results.
         if (batch.length < PAGE_SIZE) break;
         if (typeof payload.noOfJobs === 'number' && pageNo * PAGE_SIZE >= payload.noOfJobs) break;
-
-        await pace(ctx);
       }
     }
   },
@@ -196,7 +200,8 @@ export const naukriAdapter: ScrapeAdapter<NaukriJob> = {
 
     const description = item.jobDescription ?? '';
     const location = placeholder(item, 'location');
-    const url = item.jdURL ? absolute(item.jdURL) : `${ORIGIN}/job-listings-${jobId}`;
+    // The link is later navigated to by `fetchDetail`, so only a Naukri address is kept (S1-F034).
+    const url = (item.jdURL && naukriUrl(item.jdURL)) || `${ORIGIN}/job-listings-${jobId}`;
 
     return {
       source: 'naukri',
@@ -517,9 +522,23 @@ function postedAt(createdDate: number | undefined): string | null {
   return Number.isNaN(date.getTime()) ? null : date.toISOString();
 }
 
-/** Resolves a site-relative link against `ORIGIN`. */
-function absolute(path: string): string {
-  return path.startsWith('http') ? path : `${ORIGIN}${path.startsWith('/') ? '' : '/'}${path}`;
+/**
+ * Resolves a link from the API against `ORIGIN`, or returns null unless it is an
+ * https link on Naukri's own host. The browser navigates to it, so a foreign host
+ * is refused here rather than followed.
+ */
+function naukriUrl(path: string): string | null {
+  const candidate = path.startsWith('http')
+    ? path
+    : `${ORIGIN}${path.startsWith('/') ? '' : '/'}${path}`;
+  try {
+    const url = new URL(candidate);
+    return url.protocol === 'https:' && /^(?:www\.)?naukri\.com$/i.test(url.hostname)
+      ? url.href
+      : null;
+  } catch {
+    return null;
+  }
 }
 
 /**

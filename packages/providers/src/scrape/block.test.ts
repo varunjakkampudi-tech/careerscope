@@ -200,3 +200,31 @@ describe('describeEmptyOutcome', () => {
     expect(describeEmptyOutcome('naukri', 12, block, true)).toBe(block.message);
   });
 });
+
+describe('detectBlock — prose phrases only count on a wall-sized page (S1-F033)', () => {
+  const resultsPage = (phrase: string) =>
+    `<html><body>${'<li>Platform engineer, Acme. Must build tooling. </li>'.repeat(400)}` +
+    `<p>We run APIs with a strict rate limit exceeded alert policy. ${phrase}</p></body></html>`;
+
+  it('does not report a large results page that mentions a rate limit in a job description', () => {
+    const body = resultsPage('rate limit exceeded');
+    expect(body.length).toBeGreaterThan(15_000);
+    expect(detectBlock('naukri', { status: 200, body })).toBeNull();
+  });
+
+  it('does not report a large results page that names a bot-protection vendor', () => {
+    expect(
+      detectBlock('indeed', { status: 200, body: resultsPage('Work with DataDome') }),
+    ).toBeNull();
+  });
+
+  it('still reports a small page that says the same thing as a wall', () => {
+    const wall = '<html><body><p>Too many requests. Rate limit exceeded.</p></body></html>';
+    expect(detectBlock('naukri', { status: 200, body: wall })?.kind).toBe('rate-limited');
+  });
+
+  it('still reports a structural marker on a large page', () => {
+    const body = `<script>window.cf_chl_opt = {};</script>${resultsPage('')}`;
+    expect(detectBlock('indeed', { status: 200, body })?.kind).toBe('challenge');
+  });
+});

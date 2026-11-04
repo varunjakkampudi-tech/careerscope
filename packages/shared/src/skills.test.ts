@@ -103,3 +103,21 @@ describe('rarity and families', () => {
     expect(isRelatedSkill('React', 'React')).toBe(false);
   });
 });
+
+describe('ambiguous aliases count only in context (S1-F036)', () => {
+  it('does not read ordinary prose as Express, REST, Spring, Node, Docker or Mentoring', () => {
+    expect(extractSkills('We will express interest and keep the rest of the team.')).toEqual([]);
+    expect(extractSkills('Spring 2026 cohort; our worker node pool runs the pipeline.')).toEqual(
+      [],
+    );
+    expect(extractSkills('Shared containers and coaching sessions for the team.')).toEqual([]);
+  });
+
+  it('still reads the same words as skills in a list or beside a role or verb', () => {
+    expect(extractSkills('Languages: Java, Node, Express, Spring')).toEqual(
+      expect.arrayContaining(['Node.js', 'Express.js', 'Spring Boot']),
+    );
+    expect(extractSkills('Built APIs in Express and Node.js')).toContain('Express.js');
+    expect(extractSkills('Senior Spring developer')).toContain('Spring Boot');
+  });
+});

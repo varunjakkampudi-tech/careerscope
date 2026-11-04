@@ -66,6 +66,13 @@ const HEADINGS: { name: SectionName; patterns: string[] }[] = [
 ];
 
 /**
+ * A role or employer after a heading word makes a job title, not a heading:
+ * "Education Consultant", "Projects Lead", "Experience at Acme" (S1-F037).
+ */
+const TITLE_SUFFIX =
+  /\b(?:at|consultant|designer|engineer|manager|lead|analyst|developer|specialist|architect|coordinator|officer|intern|associate|administrator|executive)\b/;
+
+/**
  * A line is a heading when it is short, mostly free of sentence punctuation, and
  * matches a known section name. Requiring shortness is what keeps a sentence
  * like "I have experience across the stack" from starting a new section.
@@ -83,7 +90,13 @@ function headingOf(line: string): SectionName | null {
     for (const pattern of patterns) {
       if (cleaned === pattern) return name;
       // "TECHNICAL SKILLS —" or "Experience (2019 - Present)" style headings.
-      if (cleaned.startsWith(pattern) && cleaned.length <= pattern.length + 14) return name;
+      if (
+        cleaned.startsWith(pattern) &&
+        cleaned.length <= pattern.length + 14 &&
+        !TITLE_SUFFIX.test(cleaned.slice(pattern.length))
+      ) {
+        return name;
+      }
     }
   }
   return null;

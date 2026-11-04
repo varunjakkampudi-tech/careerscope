@@ -30,6 +30,12 @@ export interface SkillDef {
    * ordinary prose. These only count inside a list or next to a language word.
    */
   needsContext?: boolean;
+  /**
+   * Aliases that are ordinary English words ("express", "rest", "spring"). They
+   * follow the same context rule as `needsContext`, for these spellings only, so
+   * the skill's canonical name and its other aliases still match anywhere (S1-F036).
+   */
+  contextAliases?: string[];
 }
 
 /** The taxonomy, grouped by area. Order is the order `extractSkills` reports hits in. */
@@ -96,7 +102,13 @@ const defs: SkillDef[] = [
   { name: 'Svelte', aliases: ['sveltekit'], family: 'fe-framework', rarity: 1.8 },
   { name: 'Solid.js', aliases: ['solidjs'], family: 'fe-framework', rarity: 1.9 },
   { name: 'jQuery', family: 'fe-framework', rarity: 1.0 },
-  { name: 'Redux', aliases: ['redux toolkit', 'rtk'], family: 'fe-state', rarity: 1.0 },
+  {
+    name: 'Redux',
+    aliases: ['redux toolkit', 'rtk'],
+    family: 'fe-state',
+    rarity: 1.0,
+    contextAliases: ['rtk'],
+  },
   { name: 'Zustand', family: 'fe-state', rarity: 1.7 },
   { name: 'MobX', family: 'fe-state', rarity: 1.7 },
   {
@@ -126,7 +138,13 @@ const defs: SkillDef[] = [
     family: 'fe-arch',
     rarity: 1.7,
   },
-  { name: 'Accessibility', aliases: ['a11y', 'wcag', 'aria'], family: 'fe-quality', rarity: 1.4 },
+  {
+    name: 'Accessibility',
+    aliases: ['a11y', 'wcag', 'aria'],
+    family: 'fe-quality',
+    rarity: 1.4,
+    contextAliases: ['aria'],
+  },
   {
     name: 'Responsive Design',
     aliases: ['responsive web design'],
@@ -143,13 +161,31 @@ const defs: SkillDef[] = [
   { name: 'D3.js', aliases: ['d3js', 'd3'], family: 'fe-graphics', rarity: 1.7 },
 
   // ── Backend ────────────────────────────────────────────────────────────────
-  { name: 'Node.js', aliases: ['nodejs', 'node'], family: 'be-runtime', rarity: 0.8 },
-  { name: 'Express.js', aliases: ['express', 'expressjs'], family: 'be-framework', rarity: 0.9 },
+  {
+    name: 'Node.js',
+    aliases: ['nodejs', 'node'],
+    family: 'be-runtime',
+    rarity: 0.8,
+    contextAliases: ['node'],
+  },
+  {
+    name: 'Express.js',
+    aliases: ['express', 'expressjs'],
+    family: 'be-framework',
+    rarity: 0.9,
+    contextAliases: ['express'],
+  },
   { name: 'NestJS', aliases: ['nest.js', 'nest js'], family: 'be-framework', rarity: 1.5 },
   { name: 'Fastify', family: 'be-framework', rarity: 1.7 },
   { name: 'Deno', family: 'be-runtime', rarity: 1.8 },
   { name: 'Bun', family: 'be-runtime', rarity: 1.8 },
-  { name: 'Spring Boot', aliases: ['springboot', 'spring'], family: 'be-framework', rarity: 1.1 },
+  {
+    name: 'Spring Boot',
+    aliases: ['springboot', 'spring'],
+    family: 'be-framework',
+    rarity: 1.1,
+    contextAliases: ['spring'],
+  },
   { name: 'Hibernate', aliases: ['jpa'], family: 'be-orm', rarity: 1.3 },
   { name: 'Micronaut', family: 'be-framework', rarity: 1.9 },
   { name: 'Quarkus', family: 'be-framework', rarity: 1.9 },
@@ -177,10 +213,17 @@ const defs: SkillDef[] = [
   {
     name: 'REST API',
     aliases: ['rest', 'restful', 'restful api', 'rest apis'],
+    contextAliases: ['rest'],
     family: 'api',
     rarity: 0.6,
   },
-  { name: 'GraphQL', aliases: ['apollo', 'apollo server'], family: 'api', rarity: 1.3 },
+  {
+    name: 'GraphQL',
+    aliases: ['apollo', 'apollo server'],
+    family: 'api',
+    rarity: 1.3,
+    contextAliases: ['apollo'],
+  },
   { name: 'gRPC', aliases: ['protobuf', 'protocol buffers'], family: 'api', rarity: 1.6 },
   {
     name: 'WebSocket',
@@ -200,6 +243,7 @@ const defs: SkillDef[] = [
   {
     name: 'Event-Driven Architecture',
     aliases: ['event driven', 'eda'],
+    contextAliases: ['eda'],
     family: 'arch',
     rarity: 1.5,
   },
@@ -251,7 +295,13 @@ const defs: SkillDef[] = [
   { name: 'S3', aliases: ['amazon s3'], family: 'cloud', rarity: 1.1 },
   { name: 'ECS', aliases: ['amazon ecs', 'fargate'], family: 'cloud', rarity: 1.5 },
   { name: 'CloudFormation', family: 'iac', rarity: 1.6 },
-  { name: 'Docker', aliases: ['containerization', 'containers'], family: 'container', rarity: 0.9 },
+  {
+    name: 'Docker',
+    aliases: ['containerization', 'containers'],
+    family: 'container',
+    rarity: 0.9,
+    contextAliases: ['containers'],
+  },
   { name: 'Kubernetes', aliases: ['k8s', 'eks', 'aks', 'gke'], family: 'container', rarity: 1.4 },
   { name: 'Helm', family: 'container', rarity: 1.7 },
   { name: 'Terraform', family: 'iac', rarity: 1.5 },
@@ -290,6 +340,7 @@ const defs: SkillDef[] = [
   {
     name: 'Testing Library',
     aliases: ['react testing library', 'rtl'],
+    contextAliases: ['rtl'],
     family: 'testing',
     rarity: 1.3,
   },
@@ -374,7 +425,13 @@ const defs: SkillDef[] = [
   { name: 'Strapi', family: 'cms', rarity: 1.7 },
   { name: 'WordPress', family: 'cms', rarity: 1.1 },
   { name: 'Shopify', family: 'commerce', rarity: 1.5 },
-  { name: 'Salesforce', aliases: ['apex', 'lwc'], family: 'enterprise', rarity: 1.4 },
+  {
+    name: 'Salesforce',
+    aliases: ['apex', 'lwc'],
+    family: 'enterprise',
+    rarity: 1.4,
+    contextAliases: ['apex'],
+  },
   { name: 'SAP', family: 'enterprise', rarity: 1.5 },
   { name: 'Stripe', family: 'payments', rarity: 1.4 },
   { name: 'Razorpay', family: 'payments', rarity: 1.6 },
@@ -393,7 +450,13 @@ const defs: SkillDef[] = [
   },
   { name: 'Code Review', aliases: ['peer review'], family: 'process', rarity: 0.7 },
   { name: 'Jira', aliases: ['confluence'], family: 'process', rarity: 0.6 },
-  { name: 'Mentoring', aliases: ['mentorship', 'coaching'], family: 'leadership', rarity: 1.2 },
+  {
+    name: 'Mentoring',
+    aliases: ['mentorship', 'coaching'],
+    family: 'leadership',
+    rarity: 1.2,
+    contextAliases: ['coaching'],
+  },
   {
     name: 'Technical Leadership',
     aliases: ['tech lead', 'team lead'],
@@ -434,7 +497,8 @@ const matchers: Matcher[] = defs.flatMap((def) => {
   return forms.map((form) => ({
     canonical: def.name,
     re: buildFormRegex(form),
-    needsContext: def.needsContext === true,
+    needsContext:
+      def.needsContext === true || (def.contextAliases ?? []).includes(form.toLowerCase()),
   }));
 });
 
