@@ -4528,14 +4528,14 @@
     {
       "path": "packages/providers/src/http.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (657 lines). Retries apply only to statuses that are transient; pacing is per host; GETs are cached and in-flight duplicates share one request; every failure is an HttpError with a kind; the body is read under a streamed byte cap. Observation, not a defect: postJson goes through the same retry loop, so a POST that failed after the server acted could be sent again. Every POST in this codebase is an idempotent search, so no change is needed now; the constraint should be kept if a non-idempotent POST is added.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "363c0b99ba6a9327426cbe675367e558d61ed15c82562470b19f9ffcc011f808"
     },
     {
       "path": "packages/providers/src/index.ts",
@@ -5395,14 +5395,14 @@
     {
       "path": "packages/shared/src/types.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (234 lines). Declarations only, with no runtime code. The provider ingestion contract, the matching inputs and the client-facing shapes are documented, and the AssertSame type is used by core to keep schema types in step. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "77e57d4186ee3cafda21b78c6a2aac4a1bec490e2bf79c5c38fe156fe053939b"
     },
     {
       "path": "packages/shared/tsconfig.json",
