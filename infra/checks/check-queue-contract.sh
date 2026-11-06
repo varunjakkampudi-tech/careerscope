@@ -14,12 +14,14 @@ fi
 # The image under test comes from the release (CAREERSCOPE_IMAGE), never from a mutable tag.
 image=${CAREERSCOPE_IMAGE:?CAREERSCOPE_IMAGE is not set: export the runtime image from infra/.env}
 
-common=(
-  -e DATABASE_URL=postgres://x@127.0.0.1/y
-  -e "REDIS_URL=redis://:${REDIS_PASSWORD}@127.0.0.1:6379"
-  -e "QUEUE_REDIS_URL=redis://:${REDIS_PASSWORD}@127.0.0.1:6380"
-  -e APP_ORIGIN=https://careerscope.tech
-)
+# The Redis URLs carry the password, so they travel in the environment and docker is
+# given only the variable names. `-e NAME` copies the value from this shell, so the
+# password never appears in a process listing or the docker command line (S1-F039).
+export DATABASE_URL=postgres://x@127.0.0.1/y
+export REDIS_URL="redis://:${REDIS_PASSWORD}@127.0.0.1:6379"
+export QUEUE_REDIS_URL="redis://:${REDIS_PASSWORD}@127.0.0.1:6380"
+export APP_ORIGIN=https://careerscope.tech
+common=(-e DATABASE_URL -e REDIS_URL -e QUEUE_REDIS_URL -e APP_ORIGIN)
 
 probe='import("@careerscope/core").then((m) => { try { const c = m.configuration(); console.log("accepted transport=" + c.SEARCH_QUEUE_TRANSPORT); } catch (e) { console.log("refused: " + e.message.slice(0, 100)); } });'
 
@@ -30,7 +32,7 @@ echo "== legacy QUEUE_TRANSPORT"
 docker run --rm "${common[@]}" -e QUEUE_TRANSPORT=bullmq "$image" node -e "$probe"
 
 echo "== queue cannot share the rate-limit Redis"
-docker run --rm "${common[@]}" -e "QUEUE_REDIS_URL=redis://:${REDIS_PASSWORD}@127.0.0.1:6379" "$image" node -e "$probe"
+QUEUE_REDIS_URL="$REDIS_URL" docker run --rm "${common[@]}" "$image" node -e "$probe"
 
 echo "== new name, bullmq without a separate redis"
 docker run --rm "${common[@]}" -e SEARCH_QUEUE_TRANSPORT=bullmq "$image" node -e "$probe"

@@ -1,14 +1,34 @@
 #!/usr/bin/env bash
-# Removes accounts created by the live verification scripts. Only the throwaway
-# verify-* namespace is matched. Deletion order follows the foreign key graph;
-# lead_history and resume_results hang off owned rows rather than off users, so
-# they have to go first.
+# Removes accounts created by the live verification scripts.
+#
+# The match is the verify-* local part at the ONE domain the operator names. The domain is
+# required and has no default, so a real owner whose address merely starts with "verify-" on
+# another domain is never matched (S1-F041). The match count is printed before anything is
+# deleted. Deletion order follows the foreign key graph; lead_history and resume_results hang off
+# owned rows rather than off users, so they have to go first.
+#
+# Usage: PURGE_EMAIL_DOMAIN=<domain> bash host/purge-verification-accounts.sh
 set -euo pipefail
 
-docker exec -i careerscope-postgres-1 psql -U careerscope -d careerscope -v ON_ERROR_STOP=1 <<'SQL'
+domain=${PURGE_EMAIL_DOMAIN:?PURGE_EMAIL_DOMAIN is required: the one domain the throwaway accounts use}
+if ! [[ "$domain" =~ ^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$ ]]; then
+  echo "PURGE_EMAIL_DOMAIN must be a plain lower-case domain such as example.invalid" >&2
+  exit 2
+fi
+pattern="verify-%@${domain}"
+
+matching=$(docker exec careerscope-postgres-1 psql -U careerscope -d careerscope -tAc \
+  "SELECT count(*) FROM users WHERE email LIKE '${pattern}'")
+echo "accounts matching ${pattern}: ${matching}"
+if [ "$matching" = 0 ]; then
+  exit 0
+fi
+
+docker exec -i careerscope-postgres-1 psql -U careerscope -d careerscope -v ON_ERROR_STOP=1 \
+  -v pattern="$pattern" <<'SQL'
 BEGIN;
 CREATE TEMP TABLE purge_owners ON COMMIT DROP AS
-  SELECT id FROM users WHERE email LIKE 'verify-%';
+  SELECT id FROM users WHERE email LIKE :'pattern';
 
 DELETE FROM lead_history WHERE lead_id IN
   (SELECT id FROM saved_leads WHERE owner_id IN (SELECT id FROM purge_owners));

@@ -18,28 +18,30 @@ does not enable signup, create arbitrary users, or delete database records.
 
 All under [infra](../../infra), in `host/` (run on or against the host) and `checks/` (verification). See [infra/README.md](../../infra/README.md).
 
-| Script                                | Purpose                                                                                           |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `host/provision-host.sh`              | Prepares a fresh Ubuntu 24.04 host. Idempotent. Installs Docker from Docker's repository.         |
-| `host/ship.sh`                        | Ships a build context to the host. **Preserves `infra/.env`.**                                    |
-| `host/build-images.sh`                | Builds both images, recording the source revision in each                                         |
-| `host/deploy.sh`                      | Brings the stack up. Generates secrets on the host; they never leave it.                          |
-| `host/apply-migrations.sh`            | Applies pending migrations and reports the publisher's hot query plan                             |
-| `host/restart-stack.sh`               | **The only supported way to restart the proxy**                                                   |
-| `host/maintenance.sh`                 | Proxy-level maintenance page: `enable` / `disable` / `status`                                     |
-| `checks/check-provenance.sh`          | Asserts the deployed revision agrees everywhere                                                   |
-| `checks/check-live-origin.sh`         | Explicit staging smoke: existing test identity, secure cookies, Origin refusal and logout         |
-| `checks/check-host-firewall.sh`       | Firewall and Docker networking assertions                                                         |
-| `host/scan-images.sh`                 | Trivy scan of both images with a clean cache                                                      |
-| `host/purge-verification-accounts.sh` | Removes `verify-*` throwaway accounts                                                             |
-| `host/setup-monitoring.sh`            | Installs the host monitor (systemd timer). See [MONITORING.md](MONITORING.md)                     |
-| `host/monitor.sh`                     | The monitor itself — unreachable/unhealthy/stopped/stale/ok, alerts on change                     |
-| `checks/check-monitoring.sh`          | Proves the monitor's classification and alerting logic against stub `docker`/`curl`               |
-| `host/setup-discovery.sh`             | Installs the scheduled-discovery timer. See [DISCOVERY-SCHEDULE.md](DISCOVERY-SCHEDULE.md)        |
-| `host/setup-lead-lifecycle.sh`        | Installs the liveness/retention timers. See [LEAD-LIFECYCLE.md](LEAD-LIFECYCLE.md)                |
-| `host/setup-proxy-recovery.sh`        | Installs the proxy split-brain detector/auto-recovery. See [PROXY-RECOVERY.md](PROXY-RECOVERY.md) |
-| `host/recover-proxy.sh`               | The detector/recovery itself - confirms an outage, runs `restart-stack.sh`, circuit-breaks        |
-| `checks/check-proxy-recovery.sh`      | Proves the confirm-then-act-then-cooldown state machine against stub `curl`/`restart-stack.sh`    |
+| Script                                   | Purpose                                                                                           |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `host/provision-host.sh`                 | Prepares a fresh Ubuntu 24.04 host. Idempotent. Installs Docker from Docker's repository.         |
+| `host/ship.sh`                           | Ships a build context to the host. **Preserves `infra/.env`.**                                    |
+| `host/build-images.sh`                   | Builds both images, recording the source revision in each                                         |
+| `host/deploy.sh`                         | Brings the stack up. Generates secrets on the host; they never leave it.                          |
+| `host/apply-migrations.sh`               | Applies pending migrations and reports the publisher's hot query plan                             |
+| `host/restart-stack.sh`                  | **The only supported way to restart the proxy**                                                   |
+| `host/maintenance.sh`                    | Proxy-level maintenance page: `enable` / `disable` / `status`                                     |
+| `checks/check-provenance.sh`             | Asserts the deployed revision agrees everywhere                                                   |
+| `checks/check-live-origin.sh`            | Explicit staging smoke: existing test identity, secure cookies, Origin refusal and logout         |
+| `checks/check-host-firewall.sh`          | Firewall and Docker networking assertions                                                         |
+| `host/scan-images.sh`                    | Trivy scan of both images with a clean cache                                                      |
+| `host/purge-verification-accounts.sh`    | Removes `verify-*` throwaway accounts at the one domain in `PURGE_EMAIL_DOMAIN` (required)        |
+| `host/setup-monitoring.sh`               | Installs the host monitor (systemd timer). See [MONITORING.md](MONITORING.md)                     |
+| `host/monitor.sh`                        | The monitor itself — unreachable/unhealthy/stopped/stale/ok, alerts on change                     |
+| `checks/check-monitoring.sh`             | Proves the monitor's classification and alerting logic against stub `docker`/`curl`               |
+| `host/setup-discovery.sh`                | Installs the scheduled-discovery timer. See [DISCOVERY-SCHEDULE.md](DISCOVERY-SCHEDULE.md)        |
+| `host/setup-lead-lifecycle.sh`           | Installs the liveness/retention timers. See [LEAD-LIFECYCLE.md](LEAD-LIFECYCLE.md)                |
+| `host/setup-proxy-recovery.sh`           | Installs the proxy split-brain detector/auto-recovery. See [PROXY-RECOVERY.md](PROXY-RECOVERY.md) |
+| `host/recover-proxy.sh`                  | The detector/recovery itself - confirms an outage, runs `restart-stack.sh`, circuit-breaks        |
+| `checks/check-proxy-recovery.sh`         | Proves the confirm-then-act-then-cooldown state machine against stub `curl`/`restart-stack.sh`    |
+| `checks/check-queue-contract-secrecy.sh` | Proves `check-queue-contract.sh` passes the Redis password to docker by name, never in argv       |
+| `checks/check-purge-scope.sh`            | Proves the verification purge refuses without a domain and deletes only at that domain            |
 
 ---
 

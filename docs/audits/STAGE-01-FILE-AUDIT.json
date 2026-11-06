@@ -2232,74 +2232,82 @@
     {
       "path": "infra/checks/check-full-disk.mjs",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (165 lines). Re-runs itself in a container whose object directory is a small tmpfs, pinned by digest, so exhaustion is real rather than simulated. It asserts typed out-of-space errors, no stranded temporaries, no leaked reservations, typed cancellation on an exhausted volume, and recovery once space is freed. Not executed in this pass: it needs the Docker host and the built core package. No finding from reading.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "944dcb4401c601ac022c5b7ff4f8c41d2fdca9b4c359b50645872d67e21f2b8b"
     },
     {
       "path": "infra/checks/check-host-firewall.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (58 lines). Checks the careerscope nftables table and its drop policy, that Docker's NAT rules survive, container egress, the listening ports (22, 80, 443 open; 5280, 5390, 5432, 6379, 4566 not on all interfaces) and that only the edge publishes container ports. Not executed here: it needs the production host. No finding from reading.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "671b50ac747a9a6e41cf72b7173f2dde2c11882e2a759e88f10a5d44d4d7005e"
     },
     {
       "path": "infra/checks/check-live-origin.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (35 lines). Refuses non-https origins, reads credentials only from a netrc file so they stay out of argv, disables shell tracing, checks the cookie flags, the foreign-origin refusal, the anonymous refusal and logout, and removes its scratch directory on exit. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "e513258ba739484368066d05f28ac08524bb92ae608556050355697470ab89f1"
     },
     {
       "path": "infra/checks/check-maintenance.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F040",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The maintenance check could overwrite a live maintenance page, and a failed enable step left maintenance on.",
+          "remediation": "Refuse when maintenance is already enabled; restore disabled on any exit via trap."
+        }
+      ],
+      "observations": "Read in full (54 lines). Finding S1-F040 (low, fixed): the check writes the live maintenance page and toggles the flag, with no guard. On a host with a real maintenance window open it overwrote that page and ended maintenance, and an enable failure under set -e left the site in maintenance with no restore. It now refuses when maintenance is already enabled and restores the disabled state on any exit. Verified: a clean run leaves maintenance disabled; a run over an open window refuses and leaves the window unchanged.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "6268b67aa5d688489610f31095d1d954c9fc53a735c9ea833d3500e7cd52a682"
     },
     {
       "path": "infra/checks/check-monitoring.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (208 lines). Runs monitor.sh against stub docker and curl and asserts each classification (unreachable, unhealthy, stopped, stale, ok), that an unreadable backlog is unhealthy rather than ok, edge-triggered alerting with re-notify and one recovery message, and that the health URL, health body, database configuration and webhook credentials never reach stdout, stderr or the payload. A plain-http webhook is refused. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "6edbf1cc4b6bb200a96f00ca78a135b20a72790112ba918eb636e4b107f15e86"
     },
     {
       "path": "infra/checks/check-owner-login.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (42 lines). The password is read from stdin or a tty and sent as a request body, never as an argument, and the JSON is escaped for quote and backslash. The session is closed at the end. Observation: the owner's address is printed to the operator's terminal by the account count query; that is the operator's own address on their own host, so no change is made. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "c2b1387273935297023833910a4539fba41cc411a0236d38d167cf6517a3f57f"
     },
     {
       "path": "infra/checks/check-production-config.mjs",
@@ -2316,86 +2324,118 @@
     {
       "path": "infra/checks/check-provenance.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (62 lines). Compares DEPLOYED_COMMIT, the runtime and proxy image labels and the running API revision against the expected revision, and refuses a release record that lacks image names. The default expected value is the recorded commit, so the no-argument run compares it against the labels and running API rather than against itself alone. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "0d1342f6b6393c77c20c65b658453958b790038892f6680a7c262b450f13ae8c"
     },
     {
       "path": "infra/checks/check-proxy-recovery.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (108 lines). Proves the state machine against stub curl and restart-stack: one bad check does not restart, a confirmed outage restarts once, the cooldown stops a second restart, recovery is announced once, and a failed restart still alerts. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "3263cd4d6ac04aa94f371fa30455abe25de1173867946b326de775d9ef831e04"
+    },
+    {
+      "path": "infra/checks/check-purge-scope.sh",
+      "category": "deployment-infrastructure",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "New file (58 lines). Uses a recording stub docker, so no database is touched. Asserts that a missing or malformed domain is refused before any docker call, that zero matches sends no delete, and that a deletion is bound to the named domain with no unbound verify match left in the SQL. Documented in DEPLOYMENT.md. Operator script; not wired into CI.",
+      "evidence": "",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "beaab939f2c2322d3e96f580d0e9a26bf2d3fe61d5674ccb588f7ed719169d68"
     },
     {
       "path": "infra/checks/check-query-plans.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (20 lines). Reports the hot-path index presence and EXPLAIN plans for the publisher poll, lease reclaim and session revoke. EXPLAIN without ANALYZE does not run the statements, so the check cannot change data. Not executed here: it needs the production database container. No finding from reading.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "d55878479f873bc93b9ee0ff620dbb6ff0c7a12051ab5e167ddc70eb920084be"
+    },
+    {
+      "path": "infra/checks/check-queue-contract-secrecy.sh",
+      "category": "deployment-infrastructure",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "New file (48 lines). Runs check-queue-contract.sh against a recording stub docker with a distinctive secret and asserts the secret is absent from every docker argument, that docker run was called once per probe, and that every probe passes the queue URL by name. Failed on the old script (9 occurrences) and passes on the fixed script. Documented in DEPLOYMENT.md's operator checks table. Operator script; not wired into CI, as the other infra checks are not.",
+      "evidence": "",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "ebf9aa0c50bd21101a3aaf4033c4caa3d18a6ebc093f1cc49f0b23e6995acb72"
     },
     {
       "path": "infra/checks/check-queue-contract.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F039",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The production Redis password was passed as docker run arguments, visible to other local users in the process listing.",
+          "remediation": "URLs are exported and passed by name; check-queue-contract-secrecy.sh asserts the password never appears in docker argv."
+        }
+      ],
+      "observations": "Read in full (39 lines). Finding S1-F039 (low, fixed): the Redis password was embedded in the REDIS_URL and QUEUE_REDIS_URL arguments of each docker run, so it appeared in the host process listing while the container started. Confirmed with a recording stub docker: the password appeared 9 times in the arguments. The URLs now travel in the environment and docker receives variable names only. Each probe passes the same value by name, and the queue-sharing probe sets its own URL inline. The companion check-queue-contract-secrecy.sh proves this.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "eae212f189bc0ca1aef7bb47bb6ebe264c229cb3c63c33badeffddb6ed9af05b"
     },
     {
       "path": "infra/checks/check-release-env.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (107 lines). Behavioural checks against stub docker: a missing DEPLOYED_COMMIT is refused unless --first-deploy is given, a mismatch is refused even then, the env file is 0600 after deploy, and newline-less env files are not corrupted. Observation: apply-migrations.sh is checked by grepping its text rather than running it, which the script states. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "cf6ec85caa5e3515d8edbd3e6edaaccefd9b02eb1df9c50b8a444caf428ae637"
     },
     {
       "path": "infra/checks/check-scheduler-health.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (377 lines). Drives scheduler-health.sh with stub systemctl, systemd-analyze and curl. The negative cases are the point: overdue, failed, disabled, inactive, never-run, epoch and unparseable timestamps, missing or garbage systemd output, a missing unit, a missing tool, and an empty list-timers, each asserted to fail loudly. Also covers ranking, aggregation, edge-triggered recovery and sanitisation of systemd values. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "d24b88c148229d5d45dcc2a280f4a9514419357e21854fb1acf316b836ddfc4f"
     },
     {
       "path": "infra/checks/check-webhook-secrecy.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (87 lines). Runs three alert scripts against a recording stub curl and asserts the webhook URL reaches curl only through a config file, is absent from argv and logs, and that non-https and quote, backslash or newline URLs are refused. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "ec7b22f470b775871becc1728adfffd705f3646191cacf652917ee8ef1e4eec7"
     },
     {
       "path": "infra/docker/Dockerfile",
@@ -2612,14 +2652,22 @@
     {
       "path": "infra/host/purge-verification-accounts.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F041",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The verification purge deleted any account whose address starts with verify-, on any domain, with no count or confirmation.",
+          "remediation": "Required, validated PURGE_EMAIL_DOMAIN; count printed first; deletion bound to that domain; check-purge-scope.sh cases."
+        }
+      ],
+      "observations": "Read in full (28 lines). Finding S1-F041 (low, fixed): the purge deleted every account whose address starts with verify- on any domain, and it had no confirmation or count. A real owner whose address happened to start that way would lose all their data. It now requires PURGE_EMAIL_DOMAIN, validates it as a plain domain, prints the match count, does nothing when nothing matches, and binds the deletion to verify-%@<domain>. check-purge-scope.sh holds the regression cases. ROLLBACK.md and DEPLOYMENT.md carry the new usage.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "3079a60472a7da9d3af02577af4dabfa664625dc82dc155d11ba3e3f767a1384"
     },
     {
       "path": "infra/host/recover-proxy.sh",
@@ -2636,14 +2684,14 @@
     {
       "path": "infra/host/release-env.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (65 lines). A sourced helper that fails closed on a missing or mismatched DEPLOYED_COMMIT, a malformed revision, mutable image names, or an image whose ID no longer matches the recorded digest. Exports the image names only after every check passes. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "34013c390a3fa626b42289805ddf59880ad4ffb6fabe34226481a8f5c9ca46f8"
     },
     {
       "path": "infra/host/render-database-password.sh",
@@ -5423,14 +5471,14 @@
     {
       "path": "scripts/ci/check-architecture-boundaries.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (217 lines). Enforces the workspace graph in ALLOWED by scanning every source import, including relative imports resolved to their owning workspace. An unknown workspace name gets no allowance, so it fails closed. Comments are stripped before scanning, and test files may not be imported by production code. Import and export forms are covered: static, side-effect, dynamic import and require. Not covered by design: a computed specifier such as import of a template string, which no static scanner can resolve. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "e6b35c3f2aae3feb8236da76b89f5c52c9943c2415dbd75e2f7cf46e04cdbc47"
     },
     {
       "path": "scripts/ci/check-architecture-boundaries.test.mjs",
@@ -5519,14 +5567,14 @@
     {
       "path": "scripts/ci/check-node-version.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (65 lines). Compares the engines floor, .nvmrc and every workflow NODE_VERSION pin, and fails when they disagree or when the running runtime is older than the floor. A repository with workflows but no pin fails. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "fb7e139453f16430fb3a40ba692d10732f8aeec7b717675efebac50e8860f14f"
     },
     {
       "path": "scripts/ci/check-node-version.test.mjs",
@@ -5579,14 +5627,14 @@
     {
       "path": "scripts/ci/check-requirements-inventory.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (378 lines). Pins the sha256 of the v12 source and the clause count, requires each item's text to match its source line, requires evidence for every IMPLEMENTED clause, and requires each cited test to be named by a CI-run script. The generated summary must match the rendered inventory. Unknown statuses and NOT_ASSESSED fail. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "1eb71a52333a0a8d337e1149c2d136ddbe7aa18eb7963a72f028bede8c2a5680"
     },
     {
       "path": "scripts/ci/check-requirements-inventory.test.mjs",
@@ -5635,14 +5683,14 @@
     {
       "path": "scripts/ci/check-toolchain.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (166 lines). Cross-checks the Node floor, .nvmrc, workflow pins and the Dockerfile base image, and the Next.js and Fastify majors across workspaces and the lockfile, plus eslint-config-next against next. An unreadable manifest or lockfile is an error, not an empty result. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "808e9193d0cc77170f27a916fa6b506dc865bf52736952c55c520ccd206b726b"
     },
     {
       "path": "scripts/ci/check-toolchain.test.mjs",
@@ -5659,14 +5707,14 @@
     {
       "path": "scripts/ci/check-traceability.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (382 lines). Every row must name existing implementing files and test files; a test must be named by a CI-run script or a push or pull_request workflow step, or be marked (manual). Orphan tests and the Foundations register are checked, and the requirement inventory check runs from here. Token matching against script text is exact, so a near-match path cannot satisfy it. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "b3000efe472a24bb6479a84db015a2f56702c59d1b8c7bf4bb87d635550d6ac2"
     },
     {
       "path": "scripts/ci/check-traceability.test.mjs",

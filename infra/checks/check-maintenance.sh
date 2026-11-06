@@ -12,6 +12,17 @@ dir=${CAREERSCOPE_MAINTENANCE_DIR:-/srv/maintenance}
 page="$dir/index.html"
 failures=0
 
+# This check writes the live maintenance page and toggles the flag. Refuse to run over a window
+# someone already opened, and always switch maintenance back off on exit, including when an
+# enable step fails under `set -e` (S1-F040).
+prior=$(bash maintenance.sh status)
+if [ "$prior" != "maintenance=disabled" ]; then
+  echo "refusing: maintenance is already enabled ($prior); this check would overwrite that page" >&2
+  exit 1
+fi
+restore() { bash maintenance.sh disable >/dev/null 2>&1 || true; }
+trap restore EXIT
+
 count() { grep -o -- "$1" "$page" | wc -l | tr -d ' '; }
 
 check() {

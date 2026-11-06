@@ -123,5 +123,5 @@ bash checks/check-provenance.sh <target-sha>     # 4/4 agreement
 bash checks/check-host-firewall.sh               # 14/14
 curl -sS https://careerscope.tech/api/health
 bash checks/check-live-origin.sh                 # cookie, CSRF, proxy headers
-bash host/purge-verification-accounts.sh       # clean up the throwaway account
+PURGE_EMAIL_DOMAIN=<verification-domain> bash host/purge-verification-accounts.sh  # clean up the throwaway account
 ```
