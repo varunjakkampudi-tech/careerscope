@@ -148,6 +148,12 @@ Recorded from commit `e4dad89` and the working tree after it. Clients written ag
 
 The 409 conflict codes and the `Conflict.code` to message mapping are unchanged.
 
+Owner roadmap item 1.09 review: focused API and browser-client unit tests cover the shared response
+envelope, safe status messages, conflict-code mapping, malformed responses, and unread response-body
+cancellation. PostgreSQL integration tests exercise the database-backed 409 and 507 cases. The
+owner-roadmap verification results and local Node-version limitation are recorded in
+[TEST-MATRIX](TEST-MATRIX.md); hosted Node 24 CI on the item PR remains authoritative.
+
 `apps/api/src/error-handler.test.ts` checks the envelope for every status above, probes every documented
 route unauthenticated and cross-origin, and checks the OpenAPI document declares the envelope for every
 4xx and 5xx response. Internal error detail is never returned; 500s are logged against `requestId`.

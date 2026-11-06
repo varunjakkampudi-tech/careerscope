@@ -1627,10 +1627,10 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Read the full API contract: global auth/Origin/CSRF, rate/request limits, error envelope, routes and status codes, ownership, SSE, and owner-scoped market/pipeline surfaces. Found the documented generic 409 fallback still said “Idempotency conflict,” while current errors.ts returns a safe state-conflict message; corrected the row. Route registration is cross-checked by integration tests as the doc describes.",
-      "evidence": "Compared 409 fallback against apps/api/src/errors.ts and apps/api/src/app.ts; updated on current branch.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "a57654a32929d708040218eb5bdde43423e203a7a9d149dccb6d937952979220"
+      "observations": "Read in full. Documents runtime routes, security and the shared error envelope; verified the client-safe contract against implementation and focused unit and database integration evidence.",
+      "evidence": "Reviewed current documentation and item 1.09 evidence on codex/stage01-item-109-error-handling; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.09)",
+      "sha256": "af8b5ae1caa309a6e2b83fa5ea7861a3bddb968c1402e852e2695e3fbd8546be"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed stage status and owner-roadmap item 1.08 evidence, including the distinct final Stage 01 acceptance gate. No new finding.",
-      "evidence": "Content reviewed on codex/stage01-item-108-browser; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.08)",
-      "sha256": "b1738be724a0c0f9392b42a5745c66480b300afa38da80ac924cc5e2c0efe263"
+      "observations": "Read in full. Progress accurately separates item evidence from the Stage 01 completion gate; recorded item 1.09 verification and outstanding hosted Node 24 gate.",
+      "evidence": "Reviewed current documentation and item 1.09 evidence on codex/stage01-item-109-error-handling; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.09)",
+      "sha256": "b0bbc0c21577ad43a324140418004414b705c8f9b735d61a45262ac04ee6477d"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1889,10 +1889,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the owner-roadmap test row, numbering distinction from the repository register, and local versus hosted evidence labels. No new finding.",
-      "evidence": "Content reviewed on codex/stage01-item-108-browser; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.08)",
-      "sha256": "ab1ba9b3164e05edd9082471a62c2ccaeb46501a61435c6b8f7a98bfb822e7a0"
+      "observations": "Read in full. Owner roadmap rows distinguish local item 1.09 proof from hosted CI acceptance; evidence records 27 focused unit tests and two database integration tests.",
+      "evidence": "Reviewed current documentation and item 1.09 evidence on codex/stage01-item-109-error-handling; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.09)",
+      "sha256": "a13240bf4b2ccbd3e0078e9294b712a9877784c790119df33439a940f61f5178"
     },
     {
       "path": "docs/TESTING.md",
