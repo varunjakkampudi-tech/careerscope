@@ -1,103 +1,23 @@
 # Stage 01 file-level audit
 
-Machine-readable record: [STAGE-01-FILE-AUDIT.json](STAGE-01-FILE-AUDIT.json). Validate it with
-`npm run audit:stage01`. The validator checks that every tracked file is listed once, that each state is
-valid, that every reviewed record has a reviewer, observations and a hash that still matches the file, and
-that no critical or high finding is open. It cannot prove that a file was read. A `reviewed` state is an
-attestation that the record backs with observations, a reviewer and the file hash at review time.
+The machine-readable record at [STAGE-01-FILE-AUDIT.json](STAGE-01-FILE-AUDIT.json) is the source of truth. Validate it with `npm run audit:stage01`; require full coverage with `npm run audit:stage01 -- --require-complete`. The validator checks that every tracked file is listed once, every disposition is valid, reviewed records have observations/reviewer/hash evidence, and no critical or high finding remains open. It cannot prove a file was read; a `reviewed` record is an evidence-backed attestation.
 
-## Baseline
+## Baseline and current coverage
 
-- Starting point: `dev` at `8008736`, 478 tracked files (matches the baseline recorded in BLOCKERS B-04).
-- This change adds five tracked files (the validator, its test, the two audit records and a recovery-email integration test), so the count is 483.
-- Local working tree was clean at the start.
+- Audit baseline: `dev` at `8008736`, with 478 tracked files.
+- Current checkpoint: 500 tracked files, all accounted for.
+- 433 files are reviewed; 67 are classified not applicable as source. There are no partially reviewed or unreviewed files.
+- Finding disposition: 69 fixed, one accepted low-severity risk (S1-F014), zero open findings.
 
-## Coverage at the latest checkpoint
+The full prompt-scoped audit was completed and independently approved at PR #18, exact commit `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`. The current manifest was revalidated after later checklist documentation was added. B-04 is resolved. Stage 01 overall remains partial because other roadmap items and final cross-browser acceptance are still outstanding.
 
-This table is the current state of `docs/audits/STAGE-01-FILE-AUDIT.json` (490 tracked files). It is regenerated from the JSON at each checkpoint; the JSON is the source of truth.
+## Accepted risk
 
-| State                 | Files | Meaning                                                                                           |
-| --------------------- | ----: | ------------------------------------------------------------------------------------------------- |
-| reviewed              |    90 | Read in full. Observations, reviewer and hash are recorded.                                       |
-| partially-reviewed    |    11 | Some ranges read. The rest is not yet reviewed and still counts as open.                          |
-| not-reviewed          |   375 | Not read at content level. Still open.                                                            |
-| not-applicable-source |    14 | Binary assets (6), generated lockfile and migration snapshots (6), and the two audit records (2). |
+S1-F014 records that PostgreSQL does not enforce lowercase storage for `users.email`. Application write paths normalize the value. A database check should be added through a future migration after existing data is checked; Stage 01 did not rewrite applied schema.
 
-Review is not complete. B-04 stays open until every tracked file has a completed disposition.
+## Verification evidence and limits
 
-## Findings
-
-| ID      | Severity | Status        | File                                      | Summary                                                                                                                               |
-| ------- | -------- | ------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| S1-F001 | low      | fixed         | packages/core/src/admin-second-factor.ts  | Authenticator enrolment read, then wrote, without checking the row count. Now one conditional write.                                  |
-| S1-F002 | info     | fixed         | packages/core/src/database.ts             | A doc comment sat above the wrong function. Moved.                                                                                    |
-| S1-F003 | info     | fixed         | packages/core/src/email-otp-delivery.ts   | A duplicated doc comment above a different type. Removed.                                                                             |
-| S1-F004 | medium   | accepted-risk | package.json                              | Development-only minimatch 3.1.5 advisory (GHSA-g3hv-75wg-m249) in the ESLint 9 chain. No compatible fix; see below.                  |
-| S1-F005 | medium   | fixed         | packages/core/src/support-cases.ts        | Core change-email did not lower-case the address, so a case variant of another account's address was accepted. Regression test added. |
-| S1-F006 | low      | fixed         | apps/api/src/errors.ts                    | The default 409 message said "Idempotency conflict" for every unmapped conflict.                                                      |
-| S1-F007 | low      | fixed         | apps/api/src/app.ts                       | A failed new-device check was dropped silently. Now logged. No test covers that branch yet.                                           |
-| S1-F008 | info     | fixed         | packages/core/src/email-otp-challenges.ts | A doc comment sat above the wrong declaration. Moved.                                                                                 |
-| S1-F009 | medium   | fixed         | packages/core/src/recovery-email.ts       | The core recovery-address guard compared addresses without lower-casing. Core now normalises; regression test added.                  |
-| S1-F010 | low      | fixed         | packages/core/src/legal-acceptance.ts     | The acceptance ledger was read outside the locked transaction. Now read on the locked client.                                         |
-
-Open critical or high findings: none.
-
-## Dependency advisories
-
-- `npm audit --omit=dev`: 0 advisories.
-- `npm audit` (full tree): 15 moderate advisories, all in development tooling (ESLint, typescript-eslint,
-  eslint-plugin-jsx-a11y, eslint-config-next and minimatch).
-- `minimatch@3.1.5` is used by the ESLint 9 chain and is affected by GHSA-g3hv-75wg-m249 (ReDoS through
-  globparts amplification; fixed in 11.0.1). npm's suggested fix is a semver-major change to ESLint. Forcing
-  minimatch 11 across the tree would change the API that ESLint 9 calls, so no override was applied. Exposure
-  is limited to lint-time globbing of repository-controlled patterns. Revisit when ESLint or
-  eslint-config-next release a version that drops minimatch 3.
-- A clean full-tree audit is not claimed. Only production dependencies have zero advisories.
-
-## Repository scans
-
-Recorded in the JSON `repositoryScans` field: unsafe type escapes, skipped or focused tests, console use in
-product code, open TODO markers. Results: no unsafe casts in product code, three Windows-only skips that run
-on Linux CI, one build-tool console use, no open markers.
-
-## Verification of the changes in this revision
-
-- `npm run check`: passed (formatting, lint, typecheck, 326 unit tests passing, 3 skipped, 0 failing).
-- `npm run test:integration`: passed against the local PostgreSQL and Redis containers from `infra/docker/compose.canonical.yml`, 93 plus 2 tests, 0 failing. Ran
-  before the final support-case and conflict-message edits.
-- Targeted reruns after those edits: support-case integration (2 of 2), database integration (24 of 24),
-  OTP challenge integration and clock tests (3 of 3).
-- Later in this revision: legal-acceptance and recovery API integration tests (2 of 2) and the recovery-email
-  integration test (1 of 1) passed against the same local services.
-- Browser suites, Linux signal tests and soak tests were not rerun locally for this revision. Hosted CI is the
-  source for them (see the Stage 01 completion report when it is written).
-
-## What is still required for B-04
-
-1. Read every `not-reviewed` and `partially-reviewed` file. Record observations, findings and the hash.
-2. Resolve every finding that is critical, high, or medium and violates a Stage 01 acceptance criterion.
-3. Re-run `npm run audit:stage01 -- --require-complete`, which fails while any file is unreviewed.
-4. Only then write `docs/stage-closure/STAGE-01-CLOSURE.md`.
-
-## Checkpoint and next batches
-
-Resume here. Every file already marked reviewed or partially-reviewed keeps its evidence; do not re-read it
-unless its hash in the JSON no longer matches the file.
-
-Remaining work, by directory (not-reviewed or partially-reviewed):
-
-- apps/web (66 src files plus the configuration and scripts): frontend review, including the Next.js
-  routes, the auth and session helpers, the API client, and the accessibility-sensitive components.
-- apps/api/src (19): the API routes, the OpenAPI document, the application export and the remaining
-  integration and unit tests.
-- packages/providers/src (57): the ATS, remote, keyed, scrape and email adapters, the normalisation and
-  filter helpers, and the registry. Adversarial timing probes on the scraper, Gmail, Indeed and email
-  helpers were clean in this pass; the adapters' response handling still needs reading.
-- packages/core/src (24): file-storage tests, the leads and interviews tests, the bull-queue integration
-  test and the schema-level tests.
-- infra (about 80): host scripts, checks, systemd units, the Caddy configuration and the maintenance page.
-- scripts (about 60): CI tooling, the job scripts, the browser and recovery checks, and the visual
-  regression tooling.
-- tests/integration (5) and docs (about 50 documentation files, checked for factual accuracy).
-
-Open or accepted findings are listed in the table above. None is open at critical or high severity.
+- `npm run audit:stage01 -- --require-complete` passed on 2026-11-06: 500 tracked files, 433 reviewed, 67 not-applicable-source, no open findings.
+- The item 1.01 approval is tied to PR #18 and its exact approved SHA. Later item-specific architecture reviews and exact-SHA CI results are recorded in their respective documents and PRs.
+- The file audit is not a substitute for Stage 01 feature checks, cross-browser acceptance, production load validation, or the owner’s later-stage release gates.
+- Hostinger, server backups, and production deployment are excluded from the owner-approved roadmap scope.

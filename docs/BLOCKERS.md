@@ -1,32 +1,17 @@
 # Blockers
 
-Each blocker names what cannot be finished here, who must act, and which stage it affects. Nothing in
-this file is a claim that an item passed.
+Each active blocker names the owner action and the stage it affects. A blocker does not imply a product defect.
 
-| ID   | Blocker                                    | Affects    | Owner action                                                                                                              |
-| ---- | ------------------------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------- |
-| B-04 | Prompt-scoped full file audit              | Stage 01   | Engineering: account for all 478 tracked files, complete the 1.01/1.10 review, fix confirmed defects, and record evidence |
-| B-03 | Enabling new-user registration (item 2.09) | Deployment | The owners approve the legal text and its public HTTPS URLs; then set `REGISTRATION_ENABLED=true` at deploy time          |
+| ID   | Blocker                                    | Affects    | Owner action                                                                                                     |
+| ---- | ------------------------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------- |
+| B-03 | Enabling new-user registration (item 2.09) | Deployment | The owners approve the legal text and its public HTTPS URLs; then set `REGISTRATION_ENABLED=true` at deploy time |
 
-Resolved in stage 02: the Resend domain (item 2.20) is Verified in the dashboard, and a live notice
-reached Delivered status. The owner checked the notice in Gmail: it sits in the inbox, not the spam
-folder. The lost-email recovery policy (item 2.17) was decided and built. B-02 (second email provider)
-was decided by the owners: not in stage 02. The decisions are in [GAP-MATRIX](GAP-MATRIX.md).
+B-03 is a deployment-time legal prerequisite and is outside the current in-scope roadmap work.
 
-## B-04 details
+## Resolved blockers
 
-- **Affected requirement:** Stage 01 master-prompt items 1.01 and 1.10.
-- **Severity:** High for the prompt's completion gate; no production defect is implied.
-- **Reproduction:** Compare the prompt's requirement to review every tracked file with the available audit evidence. The enforced thirteen-item register and current targeted reviews do not prove an exhaustive file-by-file review of the 478 tracked files.
-- **Root cause:** The repository's existing Stage 01 register has thirteen differently numbered items and does not include a file-level audit record for the separate fifteen-item prompt.
-- **Attempted resolution:** Added an explicit prompt-to-register crosswalk and obtained separate targeted API/security, data/worker, frontend and critical-review passes. These do not yet establish every-file coverage.
-- **Current state:** Open. Progress at this revision: the file-level manifest
-  [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md) covers all 481 tracked files (478 at the start, plus three
-  files added by this work). 19 are reviewed in full and 7 are partly reviewed. The rest are not yet reviewed.
-  Confirmed findings S1-F001 to S1-F008 are recorded there; all are fixed except S1-F004, an accepted development-only
-  advisory. No full repository review is claimed.
-- **Engineering resolution:** Complete the file-accounted review, resolve confirmed Stage 01 findings, and record file coverage and tests in the canonical docs.
-- **Test evidence:** On 2026-11-02, `npm run gates:test` passed with 313 unit tests passing, 3 skipped and 0 failing; its nested `deploy:gate:test` passed all 11 Node tests and the gate policy assertions, including partial-dispatch and timestamp-ordering cases. Hosted exact-SHA evidence is recorded in the Stage 01 completion report.
-- **External dependency:** None.
-- **Next action:** Complete the file-accounted audit and resolve any confirmed findings; rerun applicable gates for any resulting changes.
-- **Validator:** `npm run audit:stage01` (part of `npm run check`) checks completeness and record integrity. `npm run audit:stage01 -- --require-complete` also fails while any file is unreviewed. Close B-04 only when that command passes.
+- **B-04 — Prompt-scoped full file audit:** resolved. The full 1.01 file audit was independently
+  approved at PR #18, exact SHA `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`. The current manifest
+  accounts for all 500 tracked files and passes `npm run audit:stage01 -- --require-complete`.
+- **B-02 — Second email provider:** owner decision recorded in [GAP-MATRIX](GAP-MATRIX.md): no second provider in Stage 02.
+- **Stage 02 email and recovery decisions:** the Resend domain was verified, a live notice reached Delivered status and was confirmed in the owner's inbox, and the lost-email recovery policy was decided and built. See [GAP-MATRIX](GAP-MATRIX.md).
