@@ -17,7 +17,7 @@ S1-F014 records that PostgreSQL does not enforce lowercase storage for `users.em
 
 ## Verification evidence and limits
 
-- `npm run audit:stage01 -- --require-complete` passed on 2026-11-06 before the current documentation edits: 502 tracked files, 435 reviewed, 67 not-applicable-source, no open critical/high findings. The manifest's hashes for the updated progress and test-matrix files are refreshed with this item.
+- `npm run audit:stage01 -- --require-complete` passed on 2026-11-06 before the current documentation edits: 502 tracked files, 435 reviewed, 67 not-applicable-source, no open critical/high findings. Item 1.12 updates the reviewed records and hashes for `FOUNDATIONS.md`, `PROGRESS.md`, and `TEST-MATRIX.md`; the current candidate is revalidated by the audit gate.
 - The item 1.01 approval is tied to PR #18 and its exact approved SHA. Later item-specific architecture reviews and exact-SHA CI results are recorded in their respective documents and PRs.
 - The file audit is not a substitute for Stage 01 feature checks, cross-browser acceptance, production load validation, or the owner’s later-stage release gates.
 - Hostinger, server backups, and production deployment are excluded from the owner-approved roadmap scope.
