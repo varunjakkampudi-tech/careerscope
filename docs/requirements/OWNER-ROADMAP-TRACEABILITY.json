@@ -254,11 +254,19 @@
       "stageTitle": "Engineering foundations, architecture and governance",
       "title": "Establish shared design components",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/architecture/DESIGN-SYSTEM.md"],
+      "currentStatus": "verified",
+      "evidence": [
+        "docs/architecture/DESIGN-SYSTEM.md",
+        "apps/web/src/components/ui-states.tsx",
+        "apps/web/src/styles/surface.module.css",
+        "apps/web/src/components/brand-logo.tsx",
+        "apps/web/src/components/match-evidence.tsx",
+        "apps/web/src/components/dashboard-shell.tsx",
+        "apps/web/src/components/authenticated-shell.tsx"
+      ],
       "tests": ["scripts/tests/design-system-doc.test.ts"],
       "externalEvidence": [],
-      "gap": "Sequential gate: begin after item 1.14 is independently approved and merged.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
