@@ -1842,9 +1842,9 @@
         }
       ],
       "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
-      "evidence": "Current content inspected and updated for owner Stage 01 item 1.13 on codex/stage01-item-113-main-ruleset-only; SHA-256 records the reviewed bytes.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.14; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.14)",
-      "sha256": "1406b769fa15a3f084d0c391c7a27864b6733404553761172b8c85cf91b222cf"
+      "sha256": "9b7780e1cc62fd9053df3ca3dc6f8310c7991013ae4c2a1a099f5eb5bc54ca44"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1890,9 +1890,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
-      "evidence": "Current content inspected and updated for owner Stage 01 item 1.13 on codex/stage01-item-113-main-ruleset-only; SHA-256 records the reviewed bytes.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.14; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.14)",
-      "sha256": "f2fafcd54487eb260dda387b77a75cce79b6a1667a74696815cd16654f7f4104"
+      "sha256": "38b7b90d5dd2f7602e14a7d174375204157f554fd3bc864f1b36abde1881c66a"
     },
     {
       "path": "docs/TESTING.md",
@@ -2322,9 +2322,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
-      "evidence": "",
+      "evidence": "Current owner inventory inspected and original roadmap attachment rows compared for item 1.14; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.14)",
-      "sha256": "6413cacdd2fc66f93cca2e7a0e329765070137897c6155b3bea5bcf30589d8ef"
+      "sha256": "fcf0f32f3b3602a4f08f622569e77b5288dc326010a7621b3f0a99423d3d841b"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
