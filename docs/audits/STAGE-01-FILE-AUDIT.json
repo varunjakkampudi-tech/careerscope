@@ -1740,7 +1740,7 @@
       "observations": "Reconciled the Stage 01 item 1.01 Complete row and the nearby progress paragraph; the full audit is complete while other Stage 01 items and final cross-browser acceptance remain outstanding. Also documents the PostgreSQL/Drizzle review.",
       "evidence": "Owner Stage 01 item 1.04 review correction after PR #21 independent review; item 1.01 approval verified at PR #18 SHA 5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964.",
       "reviewer": "Codex (owner Stage 01 item 1.04)",
-      "sha256": "ee743e0cb87afbfae5fdf6558bae33234674fce2f5f954905457f088a6c56461"
+      "sha256": "7abb6ed43b263eaed8620efd83175ea317f497c76b3976b492ec4e9a0f32df00"
     },
     {
       "path": "docs/FRONTEND-ARCHITECTURE.md",
@@ -1868,7 +1868,7 @@
       "observations": "Added the indexed PostgreSQL/Drizzle architecture review to the single documentation index.",
       "evidence": "Owner Stage 01 checklist item 1.04 review on codex/stage01-item-104-postgres-drizzle-architecture; manifest SHA-256 records reviewed bytes.",
       "reviewer": "Codex (owner Stage 01 item 1.04)",
-      "sha256": "0f00ae4d9d2f9159dfade1f2aff4fa53e7059b67aed9e0fb6efd6ca311078bf9"
+      "sha256": "b5fbc6bcd4297438d4ea404940a318fb8756bd80f0d75b50b23e787b020a5cb1"
     },
     {
       "path": "docs/SECURITY.md",
@@ -1989,6 +1989,18 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "26b6ef9c489c166ea310f7bc4738a290faf437d6c97c43fe727daf00c9acac8a"
+    },
+    {
+      "path": "docs/architecture/REDIS-WORKERS-REVIEW.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Records Stage 01 Redis/worker architecture, local service-backed verification, queue observability limits, shutdown-test coverage, and scope boundaries.",
+      "evidence": "Owner Stage 01 checklist item 1.05 review on dev 593dfb5; manifest SHA-256 records reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.05)",
+      "sha256": "98c563b73c8f7fd2ec95dece9fdc8d9c44e4e67693204ef3fdea3fa56253eafe"
     },
     {
       "path": "docs/audits/STAGE-01-FILE-AUDIT.json",
