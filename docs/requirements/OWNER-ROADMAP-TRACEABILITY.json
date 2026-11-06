@@ -228,8 +228,16 @@
       "title": "Build complete requirement/test traceability",
       "sourceStatus": "Partial",
       "currentStatus": "in-progress",
-      "evidence": ["docs/TRACEABILITY.md", "docs/requirements/V12-REQUIREMENT-INVENTORY.json"],
-      "tests": ["scripts/ci/check-traceability.test.mjs"],
+      "evidence": [
+        "docs/TRACEABILITY.md",
+        "docs/requirements/V12-REQUIREMENT-INVENTORY.json",
+        "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
+        "scripts/ci/check-roadmap-traceability.mjs"
+      ],
+      "tests": [
+        "scripts/ci/check-traceability.test.mjs",
+        "scripts/ci/check-roadmap-traceability.test.mjs"
+      ],
       "externalEvidence": [],
       "gap": "The 328-item owner-roadmap register and its automated completeness check are being built in this checklist item; independent approval is pending.",
       "scopeDisposition": "in-scope"

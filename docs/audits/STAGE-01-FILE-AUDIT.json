@@ -2324,7 +2324,7 @@
       "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
       "evidence": "",
       "reviewer": "Codex (Stage 01 item 1.14)",
-      "sha256": "11bae247563ebdd6c8185eda2341f978790d7e07fb2ccc589365ec3a8485e881"
+      "sha256": "d76260016c511dc5df26a7c60003d5c6328d6e66901dbb07aa941f7b29e926f5"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
