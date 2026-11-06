@@ -17,7 +17,7 @@ S1-F014 records that PostgreSQL does not enforce lowercase storage for `users.em
 
 ## Verification evidence and limits
 
-- `npm run audit:stage01 -- --require-complete` passed on 2026-11-06: 500 tracked files, 433 reviewed, 67 not-applicable-source, no open findings.
+- `npm run audit:stage01 -- --require-complete` passed on 2026-11-06: 501 tracked files, 434 reviewed, 67 not-applicable-source, no open findings.
 - The item 1.01 approval is tied to PR #18 and its exact approved SHA. Later item-specific architecture reviews and exact-SHA CI results are recorded in their respective documents and PRs.
 - The file audit is not a substitute for Stage 01 feature checks, cross-browser acceptance, production load validation, or the owner’s later-stage release gates.
 - Hostinger, server backups, and production deployment are excluded from the owner-approved roadmap scope.
