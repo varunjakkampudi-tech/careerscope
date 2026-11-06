@@ -72,11 +72,12 @@ regresses to glob below 14.0.2 or an unpatched minimatch outside the lint path):
   bypass) with a nested `minimatch 11.x` (GHSA-g3hv-75wg-m249).
 - `@typescript-eslint/typescript-estree` uses `minimatch ^11.0.3`.
 
-The previously accepted development-only minimatch advisory is closed in
-[DEPENDENCY-EXCEPTIONS](security/DEPENDENCY-EXCEPTIONS.md): the current lockfile
-audit no longer reports it. The resolved tree may still contain minimatch 3.x
-for ESLint compatibility, so dependency scanning remains enabled and must be
-rechecked at each release gate.
+The previous minimatch exception is closed because GitHub's current affected
+range is `>=7.0.0, <11.0.1`; the installed `minimatch@3.1.5` copies are outside
+that range, and the `11.0.3` copy is patched. The zero-result npm audits are
+consistent with that range. See [DEPENDENCY-EXCEPTIONS](security/DEPENDENCY-EXCEPTIONS.md)
+for the historical assessment and [TECHNICAL-DEBT](architecture/TECHNICAL-DEBT.md)
+for the current disposition.
 
 Review: Dependabot (`.github/dependabot.yml`) opens weekly npm, GitHub Actions
 and Docker update pull requests into `dev`. The nightly CI audit and

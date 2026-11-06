@@ -1737,10 +1737,10 @@
           "remediation": "Clarified that item 1.01 is complete, while other checklist items and final cross-browser acceptance still prevent Stage 01 closure."
         }
       ],
-      "observations": "Reviewed the browser item crosswalk update and retained the final closing-revision acceptance gate. No new finding.",
-      "evidence": "Content reviewed on codex/stage01-item-108-browser; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.08)",
-      "sha256": "27197a471e2fb08718150458022a68e4ff32a6f2face1b0cac92fc08220dc8ac"
+      "observations": "Reviewed the separate 15-item prompt crosswalk and register; reconciled item 1.10 with the owner 22-stage item-specific technical-debt evidence while preserving the Stage 01 partial status.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.10)",
+      "sha256": "c1d7f26661c1306ee5ac0630ecc3ed0f707858ca3d58c8277187ff25a07eae1d"
     },
     {
       "path": "docs/FRONTEND-ARCHITECTURE.md",
@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the 22-stage progress register; records Stage 01 item 1.10 local evidence and explicitly preserves the hosted CI gate.",
+      "observations": "Reviewed the 22-stage progress register; records owner item 1.10 outcome, low-severity residuals, local limitations and hosted gate.",
       "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (owner Stage 01 item 1.10)",
-      "sha256": "41ba2f2b969e15f984e14059330df8db80c6370fc15ed5b6683ccf9b428ea30a"
+      "sha256": "dfc91d06973ccc25c5b7cdcb454537968de8c816291bd603a5039d61c8461952"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1865,10 +1865,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read complete file after the Stage 01 item 1.07 update; verified the API contract evidence, item-number crosswalk, local test results and explicit Node version limitation. No new audit finding.",
-      "evidence": "Content reviewed on codex/stage01-item-107-api-openapi; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.07)",
-      "sha256": "d49db7acd8de1a766a4a01a2d1bc1e266adcd33323449ccbcb270912c976e390"
+      "observations": "Read the full documentation index and added the Stage 01 technical-debt register; all docs remain linked through the traceability index.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.10)",
+      "sha256": "6f9b1261f7da759ef8edf85ce7def3aa08af08d87523fbb25c5d491a32704af9"
     },
     {
       "path": "docs/SECURITY.md",
@@ -1877,10 +1877,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current security controls and refreshed dependency audit results on 2026-11-06. Both production and full npm audits reported zero vulnerabilities; the previous minimatch exception is linked to its closed record.",
+      "observations": "Reviewed current security guidance; records zero current npm audit findings and explains the closed minimatch classification using the publisher affected range.",
       "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (owner Stage 01 item 1.10)",
-      "sha256": "1571e6461228bc004e1ed1dd991189faa7d8a95922c6c4207a136d022b30445b"
+      "sha256": "75b6fc256d37e88dbb3be0f2fbc4f4e3b6bb9a7e6d12dcfe7a8091f79967b858"
     },
     {
       "path": "docs/TEST-MATRIX.md",
@@ -1889,10 +1889,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed owner roadmap evidence; records item 1.10 local checks and the local formatting limitation from the preserved untracked Playwright artifact.",
+      "observations": "Reviewed owner roadmap evidence; records item 1.10 register and local test/gate results with the preserved untracked artifact limitation.",
       "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (owner Stage 01 item 1.10)",
-      "sha256": "72c53b0e99ab17fbd9ba4ec9634cd6d264a80b6f22f668a53998406feca68de9"
+      "sha256": "d2aaad2198efbe19943e46abc92caa317f4bbe9169b12dec3ea06a985474fbdf"
     },
     {
       "path": "docs/TESTING.md",
@@ -2013,6 +2013,18 @@
       "evidence": "Owner Stage 01 checklist item 1.05 review on dev 593dfb5; manifest SHA-256 records reviewed bytes.",
       "reviewer": "Codex (owner Stage 01 item 1.05)",
       "sha256": "98c563b73c8f7fd2ec95dece9fdc8d9c44e4e67693204ef3fdea3fa56253eafe"
+    },
+    {
+      "path": "docs/architecture/TECHNICAL-DEBT.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read in full. Prioritizes the no-critical/high result and retains the minimatch classification, unused schema cleanup, and accepted S1-F014 risk with explicit dispositions and verification limits.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.10)",
+      "sha256": "c3123f227f0e5ff172c74c4a21163b0f5c13741acc49a68b03b0d3dc51be4984"
     },
     {
       "path": "docs/audits/STAGE-01-FILE-AUDIT.json",
@@ -2353,10 +2365,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed exception history and closed EX-2026-01 after production and full lockfile audits reported zero vulnerabilities; the active scanner will detect recurrence.",
+      "observations": "Reviewed and corrected the historical minimatch assessment; closed the exception because version 3.1.5 is outside the published affected range and 11.0.3 is patched.",
       "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (owner Stage 01 item 1.10)",
-      "sha256": "0315c73aa57f7b2cfb7be4a4379f22f9944a61be8582aa4b457a8971091ddd16"
+      "sha256": "09db31bb71f211cd6e45f01a29e79409b4cf1ed8e59584f48fd24e5ced507cfc"
     },
     {
       "path": "docs/security/THREAT-MODEL.md",
