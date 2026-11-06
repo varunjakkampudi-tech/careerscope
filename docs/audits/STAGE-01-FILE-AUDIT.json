@@ -5292,7 +5292,7 @@
       "observations": "Read in full. Covers contact and link extraction, name/location parsing, bounded and overlapping date ranges, experience derivation, title filtering and statuses, skills, full-field output, and hostile-input timing. Finding S1-F062 (low, fixed): fixture content identified a person and contained contact/profile/employer details while claiming a real-PDF source. Replaced with synthetic candidate data and applied the same cleanup to extract.test.ts and derive-equivalence.test.ts.",
       "evidence": "",
       "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "5e2c4a64b5d8dc5d2908242c970b9d10c50986ca7df721c49bb16bbcbcaf5abe"
+      "sha256": "737dddd0cd4538a6fd9c152fa56cf7aed9ec79782832347e883a5cb6fbfed2ea"
     },
     {
       "path": "packages/resume/src/derive.ts",

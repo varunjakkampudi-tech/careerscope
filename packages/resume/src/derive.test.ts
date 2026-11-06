@@ -62,8 +62,8 @@ describe('deriveContact', () => {
   });
 
   it('still finds a real portfolio domain', () => {
-    const contact = deriveContact('Portfolio: candidate.example.dev | mail me at a@b.com');
-    expect(contact.portfolio).toBe('https://candidate.example.dev');
+    const contact = deriveContact('Portfolio: candidate.dev | mail me at a@b.com');
+    expect(contact.portfolio).toBe('https://candidate.dev');
   });
 
   it('ignores the domain the email itself is on', () => {
@@ -90,7 +90,7 @@ describe('deriveName', () => {
 
 describe('deriveLocation', () => {
   it('reads "City, Country" from the header', () => {
-    expect(deriveLocation(RESUME)).toBe('Hyderabad, India');
+    expect(deriveLocation(RESUME)).toBe('Pune, India');
   });
 
   it('falls back to a bare known city', () => {
