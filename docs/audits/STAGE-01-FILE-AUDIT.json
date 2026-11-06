@@ -1715,10 +1715,10 @@
           "remediation": "Updated the crosswalk to the current tracked-file count; future counts should be sourced from the current Git baseline."
         }
       ],
-      "observations": "Read the complete 168-line foundations register and crosswalk, including all thirteen enforced local items and the distinct fifteen-item owner prompt. It correctly keeps the owner prompt 1.01 and 1.10 partial pending the exhaustive audit, and identifies external GitHub ruleset/hosted-run evidence as separately verified. Corrected the stale 478-file count to the current 498 tracked files; the historical ruleset claim still requires live revalidation before any final closure.",
-      "evidence": "Compared the crosswalk count against git ls-files; updated on current branch.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "219d56b3f0c701b391bd7b3ff37c5edb6b238d00ff4a6a0ed93642d5007581c9"
+      "observations": "Re-read the updated foundations register and Stage 01 crosswalk. The owner prompt item 1.02 remains distinct from the repository register, and its source-clause dispositions now reflect the revised scope. Current counts match the validated inventory: 319 clauses, 11 owner-scoped exclusions and 153 in-scope blockers.",
+      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
+      "reviewer": "Codex (Stage 01 item 1.02)",
+      "sha256": "93abe342b325a8218f074fd2e086c5a74bed03412b6b052be3abcc89b95ef6b3"
     },
     {
       "path": "docs/FRONTEND-ARCHITECTURE.md",
@@ -1891,10 +1891,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the full feature-to-source/code/test matrix as a structured 43-row document: 10 product-surface rows, 29 API rows, and four Foundation rows. Parsed each row ID, requirement and source document with implementing/test path counts; npm run traceability:check passed with zero NOT COVERED, validated all 13 Foundation statuses and the 319-clause v12 inventory. This matrix maps evidence but does not claim implementation completeness or branch coverage.",
-      "evidence": "Node 24 scripts/ci/check-traceability.mjs and check-requirements-inventory.mjs passed on current branch.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "b7d2bf3ad938190717b0a09026ab964283a24311ffa0b34a9cdd4383d97a5524"
+      "observations": "Re-read the updated traceability matrix and item 1.02 prose. Confirmed the owner scope boundary, exact inventory status counts, mixed-clause handling and preservation of release-engineering scope. npm run traceability:check passes with 43 rows and zero NOT COVERED.",
+      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
+      "reviewer": "Codex (Stage 01 item 1.02)",
+      "sha256": "a521bcafc72604c5586cbf23e6cd549e44b4149db8180815ba6058df1240ba5f"
     },
     {
       "path": "docs/UI-VERIFICATION.md",
@@ -2254,15 +2254,15 @@
         {
           "id": "S1-F056",
           "severity": "info",
-          "status": "no-action",
+          "status": "fixed",
           "summary": "The legacy v12 reconciliation contains production deployment and server-backup gates that are excluded from the owner-revised checklist scope.",
-          "remediation": "Retained the generated historical reconciliation unchanged; Stage 01 scope classification follows the owner-provided 22-stage/328-item checklist."
+          "remediation": "Item 1.02 records Hostinger, server backup and restore-only clauses as OUT_OF_SCOPE_OWNER under the owner-revised checklist, and the inventory checker enforces the non-blocking scope disposition."
         }
       ],
-      "observations": "Reviewed the generated 319-clause reconciliation and compared its counts, source hash, status definitions, blocking logic, and representative gaps with the machine-readable inventory. The legacy report still records backup/deployment clauses from its source specification; those are excluded by the owner-revised checklist and were not treated as current in-scope gates. Generator/traceability checks pass.",
-      "evidence": "Complete source review or structured inventory validation on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "7a150e45c0190a2cc1d1182c11ff0e2cc806bb088cc194ff4ed38eb1aa54dfb1"
+      "observations": "Reviewed the regenerated report against the updated inventory. It records 319 clauses, 11 owner-scoped Hostinger/backup/restore exclusions, 153 in-scope launch-blocking gaps, and preserves release-engineering requirements. Generated-summary validation passes.",
+      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
+      "reviewer": "Codex (Stage 01 item 1.02)",
+      "sha256": "e0d50641930a3ec732b9d784cbb76ef90e39046fadafeb817d0add061b020c9b"
     },
     {
       "path": "docs/requirements/V12-REQUIREMENT-INVENTORY.json",
@@ -2271,10 +2271,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Parsed and structurally reviewed all 319 source-clause records; source SHA-256 and status distribution are validated by scripts/ci/check-requirements-inventory.mjs. This is the legacy v12 clause inventory, separate from the owner-provided 328-item development checklist. No source data was changed.",
-      "evidence": "Complete source review or structured inventory validation on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "46db15f164cc1a69c6df4bc129689f5fe6d535f5042a584b56cfd311b422f6eb"
+      "observations": "Re-read the 319-clause inventory and checked all 11 owner-scoped exclusions plus mixed clauses retained in scope. Owner-scoped records are non-blocking with a rationale; backup portions of mixed clauses are excluded while other gaps remain. The pinned source digest and clause correspondence still pass.",
+      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
+      "reviewer": "Codex (Stage 01 item 1.02)",
+      "sha256": "3100905c93e3f1858a13ce15c9b619ffe6193235fdaf79dd3f0b19533f8c27e5"
     },
     {
       "path": "docs/security/DATA-CLASSIFICATION.md",
@@ -5817,10 +5817,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (378 lines). Pins the sha256 of the v12 source and the clause count, requires each item's text to match its source line, requires evidence for every IMPLEMENTED clause, and requires each cited test to be named by a CI-run script. The generated summary must match the rendered inventory. Unknown statuses and NOT_ASSESSED fail. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "1eb71a52333a0a8d337e1149c2d136ddbe7aa18eb7963a72f028bede8c2a5680"
+      "observations": "Re-read the inventory validator and its summary generation. OUT_OF_SCOPE_OWNER requires a rationale and launchBlocking=false, and cannot retain gap/evidence fields; its count appears in the generated status and section tables. Requirements and traceability checks pass.",
+      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
+      "reviewer": "Codex (Stage 01 item 1.02)",
+      "sha256": "6452730277d1b97e26a177d556e55847c8329106e015fd0e16b6bb5ef5468a2e"
     },
     {
       "path": "scripts/ci/check-requirements-inventory.test.mjs",
@@ -5829,10 +5829,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the full inventory checker test suite: mutations happen in disposable temp roots, cleanup is in finally, and assertions cover pinned digest, exact clause counts, citations, CI execution, quotes, and summaries. No finding.",
-      "evidence": "Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "f35498d3249d28baed263f0dc463022e683420a0ed2bcbe1f70ca059c2d4ed0a"
+      "observations": "Re-read the inventory checker suite after adding owner-scope validation. The new assertions prove a missing ownerScopeRationale and launchBlocking=true are rejected. All 25 tests pass; mutations use disposable fixture copies.",
+      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
+      "reviewer": "Codex (Stage 01 item 1.02)",
+      "sha256": "d9e2bd4322957338a80830ea257196b917304303c1bc8601957a668ab6529e71"
     },
     {
       "path": "scripts/ci/check-test-types.mjs",
