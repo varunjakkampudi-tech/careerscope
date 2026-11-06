@@ -150,4 +150,3 @@ export function createLeverProvider(options: BoardProviderOptions = {}): JobProv
 
 /** Exported so tests can exercise the mapping without the network. */
 export const leverAdapter: BoardAdapter<LeverPosting> = adapter;
-export type { LeverPosting };

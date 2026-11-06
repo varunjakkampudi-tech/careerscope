@@ -7,8 +7,6 @@ import { useQuery } from '@tanstack/react-query';
 import { apiParsed } from './api';
 import { parseSession, type Session } from './api-schemas';
 
-export type { Session };
-
 /**
  * Sentinel used when no user is known. It never collides with a real digest
  * (which is 64 hex characters), and queries keyed with it are always disabled,

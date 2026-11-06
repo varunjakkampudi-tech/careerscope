@@ -127,4 +127,3 @@ export function createAshbyProvider(options: BoardProviderOptions = {}): JobProv
 
 /** Exported so tests can exercise the mapping without the network. */
 export const ashbyAdapter: BoardAdapter<AshbyJob> = adapter;
-export type { AshbyJob };

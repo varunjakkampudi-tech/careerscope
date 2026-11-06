@@ -200,4 +200,3 @@ export function createSmartRecruitersProvider(options: BoardProviderOptions = {}
 
 /** Exported so tests can exercise the mapping without the network. */
 export const smartRecruitersAdapter: BoardAdapter<SmartRecruitersPosting> = adapter;
-export type { SmartRecruitersPosting };

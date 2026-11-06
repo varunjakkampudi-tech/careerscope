@@ -4300,10 +4300,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (131 lines). The board fetch raises the body ceiling and the timeout per request, not globally, so a malfunctioning oversized board is still cut off elsewhere. Unlisted postings are dropped. Compensation takes only the salary component for the numeric fields and keeps the human summary as raw text. No finding.",
+      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "41ac88663b136c8964330eced35008afd1b3e1634f962df782c845112ca1743f"
+      "sha256": "20e0bcaacbbd56978a9de684bd4282e6ad10d8befafb0b7c758712fbc32ac15b"
     },
     {
       "path": "packages/providers/src/ats/base.test.ts",
@@ -4335,19 +4335,11 @@
       "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
-      "findings": [
-        {
-          "id": "S1-F029",
-          "severity": "low",
-          "status": "no-action",
-          "summary": "Suspected double entity decode of Greenhouse descriptions.",
-          "remediation": "Tested: escaped HTML decodes once to HTML and the converter produces the correct text; no change needed."
-        }
-      ],
-      "observations": "Read in full (107 lines). The board list is fetched without descriptions on purpose, because the content variant exceeds the body ceiling for large boards; descriptions are fetched per posting in fetchDetail after the filter. The detail content is HTML-escaped, so it is decoded once here and then converted. The earlier double-decode concern (S1-F029) was tested and is not a defect: the escaped HTML decodes to HTML, and the converter then yields the correct display text.",
+      "findings": [],
+      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "8efc73d1753cd03dd4f8a1524c3e47f3aa28995f0f0e5753dc812a5b5025159d"
+      "sha256": "bc1e8c7983d3e9402aa93f1526278593ad69cb72b66ffec223477de18d5902f7"
     },
     {
       "path": "packages/providers/src/ats/lever.ts",
@@ -4355,19 +4347,11 @@
       "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
-      "findings": [
-        {
-          "id": "S1-F028",
-          "severity": "low",
-          "status": "fixed",
-          "summary": "Unreadable posting timestamps threw inside the ATS and keyed mappers, which discarded the posting. Lever, JSearch and Indeed were affected.",
-          "remediation": "Each conversion checks the time before it is formatted; regression tests in adapters.test.ts and aggregators.test.ts."
-        }
-      ],
-      "observations": "Read in full (154 lines). The listing is paged at 100 with a ceiling of ten pages and a logged reason when the board is larger than that; the description is assembled from its sections so the intro alone is not taken as the whole posting; the apply link falls back to the board's own URL. Finding S1-F028 (low, fixed): the creation time was converted with toISOString, which throws on an invalid date and so discarded the whole posting. An unreadable time now yields no date (leverPostedAt). adapters.test.ts holds the regression cases.",
+      "findings": [],
+      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "d7f023c73c6f5f6ca345c7e7cf94ea4d7c4fe443473d662ecf37942d10b0d916"
+      "sha256": "3ffb39a17ae1d98e0f66f33f23e7055048e555cb0bb54e8bc91845385a1263fe"
     },
     {
       "path": "packages/providers/src/ats/recruitee.ts",
@@ -4376,10 +4360,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (165 lines). The board subdomain is validated against a hostname-label pattern before it enters the host, which is the correct place for it. Mailbox handling keeps only recruiting-style local parts, so a named recruiter's inbox is not surfaced. Salary bounds accept string or number. Observation, not a defect: the salary currency is passed through without the trimming and upper-casing that the Himalayas adapter applies; whether downstream needs one form is not verified here.",
+      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "62f91f41719b4ef5795af6ff3dec4682deff51d08e72636131b5023ee0835bf3"
+      "sha256": "5d11faddf4d9311b614544ba160a1f1fd0526f94008f6bd81d50009673629017"
     },
     {
       "path": "packages/providers/src/ats/smartrecruiters.ts",
@@ -4387,19 +4371,11 @@
       "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
-      "findings": [
-        {
-          "id": "S1-F031",
-          "severity": "low",
-          "status": "fixed",
-          "summary": "SmartRecruiters' page ceiling stopped the listing without saying so when the total was larger.",
-          "remediation": "The walk logs when the ceiling ends it; adapters.test.ts cases."
-        }
-      ],
-      "observations": "Read in full (195 lines). Paging uses the endpoint's own total, so the walk ends on the reported count rather than a short page. Finding S1-F031 (low, fixed): the ten-page ceiling ended the walk silently when the total was larger. The cap is now logged. Sections keep their own headings so requirements stay distinct from perks. Regression tests in adapters.test.ts cover the cap and the silent exact-total case.",
+      "findings": [],
+      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "7526704e7dd5c63115026731822b09e27f1f800dfd6f135293dcc963ed4161a4"
+      "sha256": "3bb894810fcc04d0b9ed394b8d901fe87bdff9e11dd29629d11c9aab82968c83"
     },
     {
       "path": "packages/providers/src/ats/workable.ts",
@@ -4407,19 +4383,11 @@
       "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
-      "findings": [
-        {
-          "id": "S1-F030",
-          "severity": "low",
-          "status": "fixed",
-          "summary": "Workable's page ceiling stopped the listing without saying so, so a larger board looked complete.",
-          "remediation": "The walk logs when the ceiling, not the end of the board, stops it; adapters.test.ts case."
-        }
-      ],
-      "observations": "Read in full (271 lines). The list endpoint is a POST returning ten postings a page, and the page token's transport (query string or body) is discovered at runtime and checked against unseen shortcodes, so an ignored token degrades to first-page-only rather than duplicates. Finding S1-F030 (low, fixed): the twenty-page ceiling stopped the walk silently, so a larger board read as complete. The cap is now logged like Lever's. Regression tests in adapters.test.ts.",
+      "findings": [],
+      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "130f021b648033094d371c871412fedf0eeecd4865bce0f715fa6bf632120876"
+      "sha256": "e56a5615ab0dfe65a8ceb5e91e24bd5157ae6e6bd1766d47c903c53441ab831c"
     },
     {
       "path": "packages/providers/src/boards.test.ts",

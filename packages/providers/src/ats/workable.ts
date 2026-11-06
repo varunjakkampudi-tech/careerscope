@@ -275,5 +275,3 @@ export function createWorkableAdapter(): BoardAdapter<WorkableJob> {
 export function createWorkableProvider(options: BoardProviderOptions = {}): JobProvider {
   return createBoardProvider(createWorkableAdapter(), options);
 }
-
-export type { WorkableJob };

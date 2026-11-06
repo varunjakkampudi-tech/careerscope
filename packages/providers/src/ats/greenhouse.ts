@@ -104,4 +104,3 @@ export function createGreenhouseProvider(options: BoardProviderOptions = {}): Jo
 
 /** Exported for the fixture tests, which exercise mapping without the network. */
 export const greenhouseAdapter: BoardAdapter<GreenhouseJob> = adapter;
-export type { GreenhouseJob };

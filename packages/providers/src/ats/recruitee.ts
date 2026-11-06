@@ -161,4 +161,3 @@ export function createRecruiteeProvider(options: BoardProviderOptions = {}): Job
 
 /** Exported so tests can exercise the mapping without the network. */
 export const recruiteeAdapter: BoardAdapter<RecruiteeOffer> = adapter;
-export type { RecruiteeOffer };
