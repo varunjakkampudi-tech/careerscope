@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the 22-stage progress register; records owner item 1.10 outcome, low-severity residuals, local limitations and hosted gate.",
-      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.10)",
-      "sha256": "dfc91d06973ccc25c5b7cdcb454537968de8c816291bd603a5039d61c8461952"
+      "observations": "Reviewed and updated the owner Stage 01 engineering-standards progress and verification evidence; records local results, Windows visual-baseline limit, and keeps final Linux CI and independent review as gates.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.11 on codex/stage01-item-111-engineering-standards; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.11)",
+      "sha256": "0f6f9cfbfa9682116160b9467924ffb5391430b7b8dcd77d9bd984b9a9241d30"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1889,10 +1889,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed owner roadmap evidence; records item 1.10 register and local test/gate results with the preserved untracked artifact limitation.",
-      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.10)",
-      "sha256": "d2aaad2198efbe19943e46abc92caa317f4bbe9169b12dec3ea06a985474fbdf"
+      "observations": "Reviewed and updated the owner Stage 01 engineering-standards progress and verification evidence; records local results, Windows visual-baseline limit, and keeps final Linux CI and independent review as gates.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.11 on codex/stage01-item-111-engineering-standards; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.11)",
+      "sha256": "104a12ae46f1f958fd259b3586f5f3f62005026009be95a038b6492c30c0aea0"
     },
     {
       "path": "docs/TESTING.md",
