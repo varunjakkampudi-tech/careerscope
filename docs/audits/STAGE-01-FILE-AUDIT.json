@@ -1829,7 +1829,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-targeted-checks",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the owner Stage 01 item 1.13 live ruleset evidence, noted current enforcement and bypass limits, and preserved Stage 01 partial status.",
+      "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
       "evidence": "Current content inspected and updated for owner Stage 01 item 1.13 on codex/stage01-item-113-main-ruleset-only; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.13)",
-      "sha256": "ec0261902591b5f9adbf3c9a6675b60044f46601fa8fa07691c96957c014103f"
+      "reviewer": "Codex (Stage 01 item 1.14)",
+      "sha256": "1406b769fa15a3f084d0c391c7a27864b6733404553761172b8c85cf91b222cf"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1861,14 +1861,14 @@
     {
       "path": "docs/README.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-targeted-checks",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the full documentation index and added the Stage 01 technical-debt register; all docs remain linked through the traceability index.",
+      "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
       "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.10)",
-      "sha256": "6f9b1261f7da759ef8edf85ce7def3aa08af08d87523fbb25c5d491a32704af9"
+      "reviewer": "Codex (Stage 01 item 1.14)",
+      "sha256": "69147d54756a34f731c6c4224af867df77808aebd52a7d0fac614f48b73cf172"
     },
     {
       "path": "docs/SECURITY.md",
@@ -1885,14 +1885,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-targeted-checks",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the owner Stage 01 item 1.13 live ruleset evidence, noted current enforcement and bypass limits, and preserved Stage 01 partial status.",
+      "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
       "evidence": "Current content inspected and updated for owner Stage 01 item 1.13 on codex/stage01-item-113-main-ruleset-only; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.13)",
-      "sha256": "1f415da28a8315e9112c6e0df04321d2b0c866cb8d06356aaf073fcfddb87107"
+      "reviewer": "Codex (Stage 01 item 1.14)",
+      "sha256": "f2fafcd54487eb260dda387b77a75cce79b6a1667a74696815cd16654f7f4104"
     },
     {
       "path": "docs/TESTING.md",
@@ -1909,14 +1909,14 @@
     {
       "path": "docs/TRACEABILITY.md",
       "category": "documentation",
-      "reviewMethod": "structured-content-and-validator",
+      "reviewMethod": "content-read-and-targeted-checks",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-read the updated traceability matrix and item 1.02 prose. Confirmed the owner scope boundary, exact inventory status counts, mixed-clause handling and preservation of release-engineering scope. npm run traceability:check passes with 43 rows and zero NOT COVERED.",
+      "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
       "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
-      "reviewer": "Codex (Stage 01 item 1.02)",
-      "sha256": "a521bcafc72604c5586cbf23e6cd549e44b4149db8180815ba6058df1240ba5f"
+      "reviewer": "Codex (Stage 01 item 1.14)",
+      "sha256": "20711887a8450e3d3051e3374a136f5e8f967feef9fdc716220c44ea6ac12f8d"
     },
     {
       "path": "docs/UI-VERIFICATION.md",
@@ -2048,7 +2048,7 @@
       "observations": "Self-referential human summary of this audit. Its figures are taken from the JSON record at each revision; it is not reviewed as source.",
       "evidence": "",
       "reviewer": "",
-      "sha256": ""
+      "sha256": "3a415414d399550ba267bdff0c2fa9f27d735d15dd5d8bc0aef37ad08ba8143a"
     },
     {
       "path": "docs/decisions/CSP-STRICT-SCRIPT-SRC.md",
@@ -2313,6 +2313,18 @@
       "evidence": "Complete source review or structured inventory validation on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "35e9a728a65b0620cb9075345216c69c973fee57efad21752554dc338a532167"
+    },
+    {
+      "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
+      "category": "documentation",
+      "reviewMethod": "content-read-and-targeted-checks",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
+      "evidence": "",
+      "reviewer": "Codex (Stage 01 item 1.14)",
+      "sha256": "6413cacdd2fc66f93cca2e7a0e329765070137897c6155b3bea5bcf30589d8ef"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -3401,14 +3413,14 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-targeted-checks",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete file. Workspace scripts expose build, static checks, unit/domain/integration/browser and resilience suites; Node 24 is enforced; CI gates include audit and traceability checks. Provider configuration is loaded from a local environment file by runtime scripts. No immediate manifest finding; individual commands and their implementation are reviewed in their own file records.",
+      "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
       "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "7e206488ff213cc9fc2913be9fc135e86ab4ae2000ecf4f27db265a1ebca5ea8"
+      "reviewer": "Codex (Stage 01 item 1.14)",
+      "sha256": "6ce66962d9a87474172695a191d1ea0cd733bfc59df22634bb1fc721f1cd7dd8"
     },
     {
       "path": "packages/core/package.json",
@@ -5903,6 +5915,30 @@
       "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
       "reviewer": "Codex (Stage 01 item 1.02)",
       "sha256": "d9e2bd4322957338a80830ea257196b917304303c1bc8601957a668ab6529e71"
+    },
+    {
+      "path": "scripts/ci/check-roadmap-traceability.mjs",
+      "category": "tooling-and-tests",
+      "reviewMethod": "content-read-and-targeted-checks",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed for Stage 01 item 1.14: the checker validates the pinned 328-item owner roadmap and source digest, exact sequential IDs and stages, status/gap evidence, referenced files and CI-run tests. The focused checker tests and full Node 24.22.1 unit suite passed.",
+      "evidence": "",
+      "reviewer": "Codex (Stage 01 item 1.14)",
+      "sha256": "cf22120e776fec976a9b1794316b0e4748900ed50682fbcba9c3c3556cdb4ed6"
+    },
+    {
+      "path": "scripts/ci/check-roadmap-traceability.test.mjs",
+      "category": "tooling-and-tests",
+      "reviewMethod": "content-read-and-targeted-checks",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
+      "evidence": "",
+      "reviewer": "Codex (Stage 01 item 1.14)",
+      "sha256": "e82be1f1e674fa8e91f654eda189cdd6c82954ec45223f4362533c9ac3fb75f9"
     },
     {
       "path": "scripts/ci/check-test-types.mjs",

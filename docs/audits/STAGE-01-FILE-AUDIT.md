@@ -5,8 +5,8 @@ The machine-readable record at [STAGE-01-FILE-AUDIT.json](STAGE-01-FILE-AUDIT.js
 ## Baseline and current coverage
 
 - Audit baseline: `dev` at `8008736`, with 478 tracked files.
-- Current checkpoint: 502 tracked files, all accounted for.
-- 435 files are reviewed; 67 are classified not applicable as source. There are no partially reviewed or unreviewed files.
+- Current checkpoint: 505 tracked files, all accounted for.
+- 438 files are reviewed; 67 are classified not applicable as source. There are no partially reviewed or unreviewed files.
 - Finding disposition: 69 fixed, one accepted low-severity risk (S1-F014), zero open findings.
 
 The full prompt-scoped audit was completed and independently approved at PR #18, exact commit `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`. The current manifest was revalidated after later checklist documentation was added. B-04 is resolved. Stage 01 overall remains partial because other roadmap items and final cross-browser acceptance are still outstanding.
@@ -18,6 +18,7 @@ S1-F014 records that PostgreSQL does not enforce lowercase storage for `users.em
 ## Verification evidence and limits
 
 - `npm run audit:stage01 -- --require-complete` passed on 2026-11-06 before the current documentation edits: 502 tracked files, 435 reviewed, 67 not-applicable-source, no open critical/high findings. Item 1.12 updates the reviewed records and hashes for `FOUNDATIONS.md`, `PROGRESS.md`, and `TEST-MATRIX.md`; the current candidate is revalidated by the audit gate.
+- Revalidated on 2026-11-07 after roadmap traceability work: 505 tracked files, 438 reviewed, 67 not-applicable-source, no open critical/high findings. Updated hashes cover the roadmap inventory, checker, tests, manifest, package script and related documentation.
 - The item 1.01 approval is tied to PR #18 and its exact approved SHA. Later item-specific architecture reviews and exact-SHA CI results are recorded in their respective documents and PRs.
 - The file audit is not a substitute for Stage 01 feature checks, cross-browser acceptance, production load validation, or the owner’s later-stage release gates.
 - Hostinger, server backups, and production deployment are excluded from the owner-approved roadmap scope.

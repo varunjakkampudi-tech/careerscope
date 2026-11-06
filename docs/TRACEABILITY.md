@@ -9,6 +9,17 @@ if a row has no implementing file, or if a row names neither tests nor
 
 Scope and limits:
 
+- The owner-supplied 22-stage roadmap has its own exact item-level inventory in
+  [OWNER-ROADMAP-TRACEABILITY](requirements/OWNER-ROADMAP-TRACEABILITY.json): 328
+  checklist IDs, their current status, evidence, CI tests and remaining gap. The
+  `npm run traceability:check` gate validates all IDs, stage counts, pinned item
+  titles/source statuses, referenced files and CI test references. `not-started`
+  items are recorded as gaps, not claimed as implemented.
+- The three inventories serve different purposes: this document maps 43 product
+  and API surfaces, the v12 inventory maps 319 specification clauses, and the
+  owner-roadmap inventory maps 328 checklist items. Their counts are not
+  interchangeable.
+
 - The feature list is derived from [Product surface](PRODUCT-SURFACE.md) (routes,
   `PS-*`) and [API surface](API-SURFACE.md) (endpoint groups and platform
   behaviour, `API-*`). Rows are keyed by surface; the `FND-*` rows tie a Foundations
