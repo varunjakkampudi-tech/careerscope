@@ -17,8 +17,10 @@ const connectSources =
 // cookies, the API's own `default-src 'none'`, no `dangerouslySetInnerHTML`, React escaping.
 // A production build with neither variable set fails instead of shipping `'unsafe-inline'`.
 const scriptSource = () => {
-  if (process.env.CSP_SCRIPT_HASHES && process.env.NODE_ENV === 'production')
-    return `script-src 'self' ${process.env.CSP_SCRIPT_HASHES}; `;
+  // The build wrapper supplies the hashes for production output. CI sets
+  // NODE_ENV=test for its integration job, so NODE_ENV alone cannot identify
+  // whether this config is generating a production build policy.
+  if (process.env.CSP_SCRIPT_HASHES) return `script-src 'self' ${process.env.CSP_SCRIPT_HASHES}; `;
   if (process.env.NEXT_PHASE === 'phase-production-build' && !process.env.CSP_HASH_DISCOVERY)
     throw new Error(
       'CSP_SCRIPT_HASHES is required for a production build; build with "npm run build" (scripts/build-with-csp.mjs).',

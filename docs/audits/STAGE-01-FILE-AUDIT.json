@@ -579,7 +579,7 @@
       "observations": "Read the complete Next config. It binds the API rewrite to loopback, disables powered-by header, sets defensive response headers and uses build-time script hashes in production. Development policy allows local hot reload websocket.",
       "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "260c04d578b321a7b3b7c2a18f8129ca336afe0b77dbdd717092b2e34cff4e4d"
+      "sha256": "fed6b410e0d915a1d22c027023698b4ae532509dbde5f41299e4d4f49546b8c5"
     },
     {
       "path": "apps/web/package.json",
