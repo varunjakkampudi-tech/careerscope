@@ -14,6 +14,8 @@ Stage 01 file audit: [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md); the c
 
 Owner 22-stage roadmap item 1.07, API/OpenAPI contracts, is verified for the registered route surface; see [API-OPENAPI-REVIEW](architecture/API-OPENAPI-REVIEW.md). The 13-item repository foundations register has its own numbering; its item 1.07 refers to migration integrity and is tracked separately in [FOUNDATIONS](FOUNDATIONS.md).
 
+Owner 22-stage roadmap item 1.08, browser acceptance, passed on all three Playwright engines in hosted pull-request run `42250586504` for exact SHA `faaff952a43bd7f23db6caaf545d704a994a8e50`; see [UI-VERIFICATION](UI-VERIFICATION.md). Stage 01 close-out still requires a final cross-browser run on its closing revision.
+
 Stage 02 evidence: [GAP-MATRIX](GAP-MATRIX.md) rows 2.01 to 2.20 and [TEST-MATRIX](TEST-MATRIX.md).
 Commit `c12838e` passed the local gates, the integration suite, the Chromium browser suite, and
 hosted CI on rerun `41221224982`. The first hosted run of `c12838e` failed in the flaky private

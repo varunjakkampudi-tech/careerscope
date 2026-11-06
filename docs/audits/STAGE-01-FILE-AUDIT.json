@@ -1737,10 +1737,10 @@
           "remediation": "Clarified that item 1.01 is complete, while other checklist items and final cross-browser acceptance still prevent Stage 01 closure."
         }
       ],
-      "observations": "Reconciles completed item 1.01 audit status and records owner prompt item 1.06 verification evidence.",
-      "evidence": "Owner roadmap Stage 01 item 1.06 review on dev merge d74a7fb994f9ff65e551c82c260fb0a956969e22; manifest SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.06)",
-      "sha256": "5b00c0d1ac1a3663f416ab99e28ef85b9ff0735b78193d33d695d048dfd2c99a"
+      "observations": "Reviewed the browser item crosswalk update and retained the final closing-revision acceptance gate. No new finding.",
+      "evidence": "Content reviewed on codex/stage01-item-108-browser; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.08)",
+      "sha256": "27197a471e2fb08718150458022a68e4ff32a6f2face1b0cac92fc08220dc8ac"
     },
     {
       "path": "docs/FRONTEND-ARCHITECTURE.md",
@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Read complete file after the Stage 01 item 1.07 update; verified the API contract evidence, item-number crosswalk, local test results and explicit Node version limitation. No new audit finding.",
-      "evidence": "Content reviewed on codex/stage01-item-107-api-openapi; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.07)",
-      "sha256": "4da905036b283da7b0ad6e841d6911b99a8d561ec298b9df993f0be42be7ebd5"
+      "observations": "Reviewed stage status and owner-roadmap item 1.08 evidence, including the distinct final Stage 01 acceptance gate. No new finding.",
+      "evidence": "Content reviewed on codex/stage01-item-108-browser; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.08)",
+      "sha256": "b1738be724a0c0f9392b42a5745c66480b300afa38da80ac924cc5e2c0efe263"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1889,10 +1889,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read complete file after the Stage 01 item 1.07 update; verified the API contract evidence, item-number crosswalk, local test results and explicit Node version limitation. No new audit finding.",
-      "evidence": "Content reviewed on codex/stage01-item-107-api-openapi; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.07)",
-      "sha256": "99368b2b0290cd99e03b3f85e6b88cc95b5d2ac80ed7eb0bc3745ca1ed12261a"
+      "observations": "Reviewed the owner-roadmap test row, numbering distinction from the repository register, and local versus hosted evidence labels. No new finding.",
+      "evidence": "Content reviewed on codex/stage01-item-108-browser; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.08)",
+      "sha256": "ab1ba9b3164e05edd9082471a62c2ccaeb46501a61435c6b8f7a98bfb822e7a0"
     },
     {
       "path": "docs/TESTING.md",
@@ -1925,10 +1925,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete dated UI verification record. Separates browser-engine results by date, names viewport/accessibility/CSP coverage, lists discovered fixes and known limits, and distinguishes historical one-host browser evidence from production/device certification. Current audit has not rerun its full browser suite because Docker is unavailable.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "c3c055bf19cba57ccbfdfb33e6e56f30d27ea0671c23173d535750e909e8fb02"
+      "observations": "Read the complete browser verification record after adding the current hosted evidence. Verified the three-engine selection rule, exact PR SHA and run, skipped optional suites, and final-stage acceptance limit. No new finding.",
+      "evidence": "Content reviewed on codex/stage01-item-108-browser; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.08)",
+      "sha256": "36085a6aa77c9cc27d1c6b21d188beeb89d53b7ddfc32923fff7efed74227147"
     },
     {
       "path": "docs/architecture/API-OPENAPI-REVIEW.md",
