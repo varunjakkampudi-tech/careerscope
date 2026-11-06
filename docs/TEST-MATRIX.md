@@ -3,7 +3,10 @@
 Records which test proves each stage item. Only tests that a CI script runs count. The traceability
 gate enforces this for the foundations register in [FOUNDATIONS](FOUNDATIONS.md).
 
-## Stage 01
+## Stage 01: repository foundations register
+
+The item numbers in this section are the repository's 13-item foundations register, not the
+owner's 22-stage roadmap. See the separate owner-roadmap evidence below when the numbers overlap.
 
 | Item | Proof                                                        | Runs in        |
 | ---- | ------------------------------------------------------------ | -------------- |
@@ -15,6 +18,12 @@ gate enforces this for the foundations register in [FOUNDATIONS](FOUNDATIONS.md)
 | 1.10 | `scripts/tests/domain-events-doc.test.ts`                    | Quality gates  |
 | 1.12 | `scripts/tests/design-system-doc.test.ts`                    | Quality gates  |
 | 1.13 | `scripts/ci/check-traceability.test.mjs`                     | Quality gates  |
+
+## Owner 22-stage roadmap: Stage 01
+
+| Item | Proof                                                                                                                            | Local result on 2026-11-06                                                                                                                             |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1.07 | `apps/api/src/error-handler.test.ts`; `tests/integration/database.integration.test.ts` (“Swagger documents every runtime route”) | 14 unit tests and 1 targeted integration test passed; Node 22 local limitation is recorded in [API-OPENAPI-REVIEW](architecture/API-OPENAPI-REVIEW.md) |
 
 The owner's separate fifteen-item Stage 01 prompt maps to this register in
 [FOUNDATIONS](FOUNDATIONS.md). Its release-gate behavior is additionally covered
