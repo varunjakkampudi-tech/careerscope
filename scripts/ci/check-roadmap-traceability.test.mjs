@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -64,6 +64,25 @@ test('malformed status evidence and paths fail without crashing the checker', ()
     assert.ok(errors.some((error) => error.includes('tests must be an array')));
     assert.ok(errors.some((error) => error.includes('externalEvidence must be an array')));
     assert.ok(errors.some((error) => error.includes('status requires a gap')));
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('changing a checklist title is rejected by the pinned source-content digest', () => {
+  const root = mkdtempSync(join(tmpdir(), 'careerscope-roadmap-source-'));
+  try {
+    mkdirSync(join(root, 'docs/requirements'), { recursive: true });
+    const inventory = JSON.parse(readFileSync(join(process.cwd(), INVENTORY), 'utf8'));
+    inventory.items[0].title += ' changed';
+    writeFileSync(join(root, INVENTORY), JSON.stringify(inventory));
+    writeFileSync(join(root, 'package.json'), JSON.stringify({ scripts: {} }));
+    const { errors } = checkRoadmap(root);
+    assert.ok(
+      errors.includes(
+        'roadmap item IDs, titles, stages or source statuses differ from the pinned checklist',
+      ),
+    );
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

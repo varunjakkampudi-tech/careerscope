@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import process from 'node:process';
@@ -10,6 +11,7 @@ const EXPECTED_COUNTS = [
   15, 14, 16, 12, 15, 13, 16, 12, 14, 15, 14, 17, 16, 10, 13, 18, 20, 15, 20, 14, 14, 15,
 ];
 const SOURCE_SHA256 = '427aa3fd646d1b27c535d6765411bda924755d1dfc8dae14980d73d03b056045';
+const SOURCE_ITEMS_SHA256 = 'b2fd6bfc97ec7483d7da05e5ffb35ae8c70d42fc2c6548406a9aebd63cc91602';
 const STATUSES = new Set(['verified', 'in-progress', 'partial', 'gated', 'not-started']);
 
 export function checkRoadmap(root = process.cwd()) {
@@ -33,6 +35,26 @@ export function checkRoadmap(root = process.cwd()) {
   }
   if (inventory.source?.sha256 !== SOURCE_SHA256)
     errors.push('source.sha256 does not match the pinned owner roadmap');
+  const checklistDigest = createHash('sha256')
+    .update(
+      JSON.stringify(
+        items.map(({ id, stage, stageTitle, title, sourceStatus }) => ({
+          id,
+          stage,
+          stageTitle,
+          title,
+          sourceStatus,
+        })),
+      ),
+    )
+    .digest('hex');
+  if (
+    inventory.source?.checklistSha256 !== SOURCE_ITEMS_SHA256 ||
+    checklistDigest !== SOURCE_ITEMS_SHA256
+  )
+    errors.push(
+      'roadmap item IDs, titles, stages or source statuses differ from the pinned checklist',
+    );
   for (const excluded of ['Hostinger hosting', 'server backups', 'production deployment']) {
     if (!inventory.scopeExclusions?.includes(excluded))
       errors.push(`scopeExclusions must include ${excluded}`);

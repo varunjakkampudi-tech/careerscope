@@ -3,7 +3,8 @@
   "source": {
     "label": "Owner-supplied CareerScope 22-stage roadmap attachment",
     "capturedOn": "2026-11-07",
-    "sha256": "427aa3fd646d1b27c535d6765411bda924755d1dfc8dae14980d73d03b056045"
+    "sha256": "427aa3fd646d1b27c535d6765411bda924755d1dfc8dae14980d73d03b056045",
+    "checklistSha256": "b2fd6bfc97ec7483d7da05e5ffb35ae8c70d42fc2c6548406a9aebd63cc91602"
   },
   "scopeExclusions": ["Hostinger hosting", "server backups", "production deployment"],
   "itemCount": 328,
@@ -343,7 +344,10 @@
       "sourceStatus": "Existing",
       "currentStatus": "verified",
       "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
-      "tests": ["apps/api/src/session-lookup.test.ts"],
+      "tests": [
+        "apps/api/src/session-lookup.test.ts",
+        "apps/api/src/email-otp.integration.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -372,7 +376,7 @@
       "sourceStatus": "Existing",
       "currentStatus": "verified",
       "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
-      "tests": ["scripts/tests/check-ui.ts"],
+      "tests": ["scripts/tests/check-ui.ts", "apps/api/src/email-otp.integration.test.ts"],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
