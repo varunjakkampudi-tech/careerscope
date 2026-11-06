@@ -20,7 +20,8 @@ The owner's separate fifteen-item Stage 01 prompt maps to this register in
 [FOUNDATIONS](FOUNDATIONS.md). Its release-gate behavior is additionally covered
 by `scripts/ci/check-deploy-gate.test.mjs`, run by `npm run gates:test`; the tests
 ensure manual partial suites cannot authorize a SHA or override a full-trigger
-failure. The prompt's 1.01 full-file audit remains open in [BLOCKERS](BLOCKERS.md).
+failure. The prompt's item 1.01 full-file audit is complete and independently
+approved; current coverage is recorded in [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md).
 
 ## Stage 02
 

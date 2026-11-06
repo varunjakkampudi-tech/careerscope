@@ -1,9 +1,10 @@
 # Transactional outbox and queue guarantees
 
 Code: `packages/core/src/database.ts` (outbox, claim, settle), `dispatch.ts`
-(publisher and consumer), `queue.ts` (Redis transport through BullMQ).
+(publisher and consumer), `queue.ts` and `bull-queue.ts` (Redis queue transports).
 Tests: `packages/core/src/outbox.integration.test.ts` (failure injection),
-`packages/core/src/queue.integration.test.ts`, and the outbox section of
+`packages/core/src/queue.integration.test.ts`,
+`packages/core/src/bull-queue.integration.test.ts`, and the outbox section of
 `tests/integration/database.integration.test.ts`.
 
 ## Model
@@ -49,3 +50,9 @@ database fence, not the queue, decides which attempt may apply them.
 - The queue connection must carry the Redis password from `QUEUE_REDIS_URL`.
   A defect that dropped it (every queue call failed with NOAUTH against the
   authenticated local Redis) was found by these tests and fixed in `queue.ts`.
+
+## Stage 01 item 1.06 verification
+
+Review date: 2026-11-06. The owner roadmap classifies “Transactional outbox verification” as existing and requiring verification. The PostgreSQL transaction creates the run and outbox command together; the publisher marks rows only after queue acceptance; consumers validate the command against durable state and settle effects under a live fenced lease before acknowledging delivery. The failure-injection and integration tests above cover publisher crash windows, Redis outage and data loss, worker crash/retry, duplicate and concurrent delivery, retry exhaustion, and cancellation races.
+
+`npm run test:integration` passed again on the Stage 01 item 1.06 review branch on 2026-11-06, including PostgreSQL/Redis outbox tests and the BullMQ suite (2 tests, 0 failures). `npm run test:queue-runtime` passed on rerun during the preceding item 1.05 review, on the same application source baseline. The local integration run used Node 22.23.2 although the repository requires Node 24 or newer. Hosted CI run 42243671494 passed all three required jobs on Node 24 for exact item 1.05 SHA `ea377a3e14f84f94995d5cb08ced7d7d51ee3530`; the item 1.06 PR must obtain its own exact-SHA CI result. No production load, deployment, or backup behavior was tested.

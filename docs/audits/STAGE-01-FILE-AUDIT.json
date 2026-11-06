@@ -1683,10 +1683,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. B-04 progress, the validator command and the completion condition were updated to match the manifest. History of B-04 kept. No contradiction found with the manifest or with BLOCKERS B-03.",
-      "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "3df0aa0cdaa48c300ac1528ca13d3e1229b5fe289d464e31931aaffcceb9bddd"
+      "observations": "Closes B-04 based on complete manifest evidence; retains B-03 as a deployment-time legal prerequisite outside current scope.",
+      "evidence": "Owner roadmap Stage 01 item 1.06 review on dev merge d74a7fb994f9ff65e551c82c260fb0a956969e22; manifest SHA-256 records reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.06)",
+      "sha256": "a9ca16b2b0358d6ccdaf2924b58a6adb81a9979b78181a1cd048ad38935812ef"
     },
     {
       "path": "docs/DATA-MODEL.md",
@@ -1737,10 +1737,10 @@
           "remediation": "Clarified that item 1.01 is complete, while other checklist items and final cross-browser acceptance still prevent Stage 01 closure."
         }
       ],
-      "observations": "Reconciled the Stage 01 item 1.01 Complete row and the nearby progress paragraph; the full audit is complete while other Stage 01 items and final cross-browser acceptance remain outstanding. Also documents the PostgreSQL/Drizzle review.",
-      "evidence": "Owner Stage 01 item 1.04 review correction after PR #21 independent review; item 1.01 approval verified at PR #18 SHA 5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964.",
-      "reviewer": "Codex (owner Stage 01 item 1.04)",
-      "sha256": "7abb6ed43b263eaed8620efd83175ea317f497c76b3976b492ec4e9a0f32df00"
+      "observations": "Reconciles completed item 1.01 audit status and records owner prompt item 1.06 verification evidence.",
+      "evidence": "Owner roadmap Stage 01 item 1.06 review on dev merge d74a7fb994f9ff65e551c82c260fb0a956969e22; manifest SHA-256 records reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.06)",
+      "sha256": "5b00c0d1ac1a3663f416ab99e28ef85b9ff0735b78193d33d695d048dfd2c99a"
     },
     {
       "path": "docs/FRONTEND-ARCHITECTURE.md",
@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Read in full. Replaced the stale count of 19/481 reviewed and 7 partial with a link to the live JSON audit counts; the checkpoint changes during the resumed audit. Existing stage statuses and historical Stage 02 evidence were not rewritten by this item.",
-      "evidence": "Current source content inspected and corrected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "094f3619c65c1919cbdfee24ea20313d7ca14889092502334f1bf00b9f3cb121"
+      "observations": "Updates Stage 01 audit coverage to the current 500-file manifest and preserves the partial stage status for remaining items and browser acceptance.",
+      "evidence": "Owner roadmap Stage 01 item 1.06 review on dev merge d74a7fb994f9ff65e551c82c260fb0a956969e22; manifest SHA-256 records reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.06)",
+      "sha256": "14c23c31c13e8bf1b560ef640048075680af41536d893d1071225b10cbccff0a"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1889,10 +1889,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Maps the registered Stage 01 and Stage 02 items to CI-run evidence and marks the owner prompt 1.01 audit as still open. This matrix does not claim the current full-file audit is complete.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "1126cccccbff7d06d50bc0b18cd6f35ab605fbe7a3df2cadd8bdadc4f15445ed"
+      "observations": "Corrects stale statement that the owner prompt item 1.01 audit remains open; links current audit summary.",
+      "evidence": "Owner roadmap Stage 01 item 1.06 review on dev merge d74a7fb994f9ff65e551c82c260fb0a956969e22; manifest SHA-256 records reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.06)",
+      "sha256": "38854dda6f0bc2c16cade867f6b3f05321479536dcb65a557607bee538a2b576"
     },
     {
       "path": "docs/TESTING.md",
@@ -1985,10 +1985,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Documents transactional command writes, Redis publication, fenced leases, at-least-once delivery, deduplicated effects, retry bounds, recovery windows and named integration tests. It states Redis is transport rather than source of truth and calls out known latency limits.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "26b6ef9c489c166ea310f7bc4738a290faf437d6c97c43fe727daf00c9acac8a"
+      "observations": "Corrects transport/test index and records owner prompt item 1.06 verification, test coverage, CI evidence and Node-version limitation.",
+      "evidence": "Owner roadmap Stage 01 item 1.06 review on dev merge d74a7fb994f9ff65e551c82c260fb0a956969e22; manifest SHA-256 records reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.06)",
+      "sha256": "70abaee0b92140d0ae1b92bb0c93503cf9c2eab79837d3819c2093923a8dfcee"
     },
     {
       "path": "docs/architecture/REDIS-WORKERS-REVIEW.md",

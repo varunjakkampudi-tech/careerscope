@@ -10,10 +10,7 @@ is listed in [BLOCKERS](BLOCKERS.md). Stages run one at a time. Deployment is la
 | 02    | Authentication and account security  | Complete    |
 | 03-20 | See roadmap                          | Not started |
 
-Stage 01 file audit in progress: [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md); see the linked JSON record for current file counts. Stage 01 evidence: [FOUNDATIONS](FOUNDATIONS.md). Its enforced thirteen-item register is Complete,
-but the crosswalk for the owner's separate fifteen-item master prompt remains Partial: the prompt's
-full file-by-file audit is not evidenced, and cross-browser hosted acceptance must be tied to the
-closing revision before this prompt's Stage 01 can close. See the Stage 01 master-prompt crosswalk.
+Stage 01 file audit: [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md); the current JSON record accounts for all 500 tracked files and passes the complete-coverage gate. The owner’s prompt item 1.01 was independently approved at PR #18, exact SHA `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`. Stage 01 remains Partial because other checklist items and final cross-browser hosted acceptance are still outstanding. See the [FOUNDATIONS](FOUNDATIONS.md) crosswalk.
 
 Stage 02 evidence: [GAP-MATRIX](GAP-MATRIX.md) rows 2.01 to 2.20 and [TEST-MATRIX](TEST-MATRIX.md).
 Commit `c12838e` passed the local gates, the integration suite, the Chromium browser suite, and
