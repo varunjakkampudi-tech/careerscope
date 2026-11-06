@@ -13,6 +13,7 @@ This is the single index of CareerScope documentation. Every document under
 - [FRONTEND-ARCHITECTURE](FRONTEND-ARCHITECTURE.md) and [FRONTEND](FRONTEND.md) - web client
 - [API-SURFACE](API-SURFACE.md) - HTTP contracts
 - [DATA-MODEL](DATA-MODEL.md) - persistence and ownership rules
+- [DATABASE-REVIEW](architecture/DATABASE-REVIEW.md) - PostgreSQL and Drizzle architecture review
 - [KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md) - explicit current limitations
 - [TRACEABILITY](TRACEABILITY.md) - requirement to code and test matrix
 - [FOUNDATIONS](FOUNDATIONS.md) - status, evidence, gate and verification command for Foundation items 1.01 to 1.13
