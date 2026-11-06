@@ -8,12 +8,12 @@ const legacyPortfolio =
   /\b((?:https?:\/\/)?(?:www\.)?[a-z0-9][a-z0-9-]+\.(?:in|io|dev|me|app|tech|xyz|co|com|net|site|page)(?:\/[^\s,;]*)?)\b/gi;
 
 const realisticLines = [
-  'Email: jane.doe+resume@gmail.com | Phone: +91 98765 43210',
+  'Email: candidate@example.invalid | Phone: +1 202-555-0100',
   'Contact: first.last@mail.example.co.in, Bengaluru',
-  'Reach me at candidate_42@company-name.io anytime',
-  'Portfolio: jane-doe.dev  |  github.com/janedoe',
-  'Website https://www.janedoe.me and blog janedoe.tech/posts',
-  'Education: B.Tech, IIT Madras (2014 - 2018)',
+  'Reach me at example-candidate@company-name.io anytime',
+  'Portfolio: example-candidate.dev  |  github.com/example-candidate',
+  'Website https://www.example-candidate.me and blog example-candidate.tech/posts',
+  'Education: B.Tech, Example Institute (2014 - 2018)',
 ];
 
 describe('deriveContact keeps the values the pre-fix patterns found (S1-F022)', () => {

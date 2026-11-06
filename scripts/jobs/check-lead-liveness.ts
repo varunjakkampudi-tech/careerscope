@@ -52,8 +52,8 @@ function unwrapIpv4MappedIpv6(ip: string): string | null {
 }
 
 /**
- * Blocks the private/loopback/link-local ranges a resolved applyUrl must
- * never be allowed to reach - applyUrl is provider-sourced data (HTTPS-only,
+ * Blocks private and special-purpose ranges a resolved applyUrl must never
+ * be allowed to reach. The URL is provider-sourced data (HTTPS-only,
  * credential-free per collectedJobSchema, but not restricted to public
  * hosts), and this script runs from inside the same private network the API
  * and database share. Without this check, a malicious or malformed applyUrl
@@ -65,7 +65,7 @@ export function isPrivateOrReservedIp(ip: string): boolean {
 
   const version = isIP(ip);
   if (version === 4) {
-    const [a, b] = ip.split('.').map(Number);
+    const [a, b, c] = ip.split('.').map(Number);
     return (
       a === 10 ||
       a === 127 ||
@@ -75,25 +75,66 @@ export function isPrivateOrReservedIp(ip: string): boolean {
       // Carrier-grade NAT (100.64.0.0/10) and the benchmarking range (198.18.0.0/15) are used
       // inside cloud networks, so they are refused too.
       (a === 100 && b! >= 64 && b! <= 127) ||
-      (a === 198 && (b === 18 || b === 19)) ||
+      (a === 192 && b === 0 && c === 0) || // IETF protocol assignments, including exceptions.
+      (a === 192 && b === 0 && c === 2) || // TEST-NET-1 documentation addresses.
+      (a === 192 && b === 88 && c === 99) || // Deprecated 6to4 relay range.
+      (a === 198 && (b === 18 || b === 19 || (b === 51 && c === 100))) ||
+      (a === 203 && b === 0 && c === 113) || // TEST-NET-3 documentation addresses.
       // Multicast and reserved (224.0.0.0/3), including the broadcast address.
       a! >= 224 ||
       a === 0
     );
   }
   if (version === 6) {
-    const lower = ip.toLowerCase();
+    const address = ipv6Value(ip);
+    if (address === null) return true;
+    const globalUnicastStart = 0x20000000000000000000000000000000n; // 2000::/3
+    const globalUnicastEnd = 0x40000000000000000000000000000000n;
+    if (address < globalUnicastStart || address >= globalUnicastEnd) return true;
+    // These special-purpose subranges are not globally reachable. Keep the
+    // exceptions out even though some sit inside the broad 2000::/3 block.
     return (
-      lower === '::' ||
-      lower === '::1' ||
-      // Multicast (ff00::/8) is never a web server.
-      lower.startsWith('ff') ||
-      lower.startsWith('fe80:') ||
-      lower.startsWith('fc') ||
-      lower.startsWith('fd')
+      inIpv6Range(
+        address,
+        0x20010000000000000000000000000000n,
+        0x20010200000000000000000000000000n,
+      ) || // 2001::/23
+      inIpv6Range(
+        address,
+        0x20010db8000000000000000000000000n,
+        0x20010db9000000000000000000000000n,
+      ) || // 2001:db8::/32
+      inIpv6Range(
+        address,
+        0x20020000000000000000000000000000n,
+        0x20030000000000000000000000000000n,
+      ) || // 2002::/16
+      inIpv6Range(address, 0x3fff0000000000000000000000000000n, 0x3fff1000000000000000000000000000n) // 3fff::/20
     );
   }
   return true; // Not a recognizable IP at all - refuse rather than guess safe.
+}
+
+function ipv6Value(ip: string): bigint | null {
+  const normalized = ip.toLowerCase().replace(/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/, (dotted) => {
+    const octets = dotted.split('.').map(Number);
+    const first = ((octets[0]! << 8) | octets[1]!).toString(16);
+    const second = ((octets[2]! << 8) | octets[3]!).toString(16);
+    return `${first}:${second}`;
+  });
+  const halves = normalized.split('::');
+  if (halves.length > 2) return null;
+  const left = halves[0] ? halves[0].split(':') : [];
+  const right = halves.length === 2 && halves[1] ? halves[1].split(':') : [];
+  const missing = 8 - left.length - right.length;
+  if ((halves.length === 1 && missing !== 0) || (halves.length === 2 && missing < 1)) return null;
+  const words = [...left, ...Array.from({ length: missing }, () => '0'), ...right];
+  if (words.length !== 8 || words.some((word) => !/^[0-9a-f]{1,4}$/.test(word))) return null;
+  return words.reduce((value, word) => (value << 16n) | BigInt(`0x${word}`), 0n);
+}
+
+function inIpv6Range(address: bigint, start: bigint, end: bigint): boolean {
+  return address >= start && address < end;
 }
 
 type CheckResult = 'live' | 'stale' | 'unknown';
@@ -127,7 +168,7 @@ export async function pinnedDispatcher(
     return 'unresolvable';
   }
   if (isPrivateOrReservedIp(resolved.address)) {
-    logger.warn({ hostname }, 'Liveness check refused: applyUrl resolves to a private address');
+    logger.warn({ hostname }, 'Liveness check refused: applyUrl resolves to a non-public address');
     return 'blocked';
   }
   return new Agent({

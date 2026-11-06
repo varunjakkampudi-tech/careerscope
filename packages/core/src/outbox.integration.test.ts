@@ -77,7 +77,9 @@ async function freePort() {
 function redisUrl() {
   const configured = process.env.QUEUE_REDIS_URL;
   assert.ok(configured, 'Integration tests require QUEUE_REDIS_URL');
-  return new URL(configured);
+  const url = new URL(configured);
+  assert.ok(['127.0.0.1', 'localhost'].includes(url.hostname), 'Tests require local Redis');
+  return url;
 }
 
 async function withDatabase(run: (database: Database, ownerId: string) => Promise<void>) {

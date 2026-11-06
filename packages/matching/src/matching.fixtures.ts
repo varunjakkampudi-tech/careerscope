@@ -1,17 +1,15 @@
 import type { CandidateContext, Job } from '@careerscope/shared';
 
 /**
- * Fixtures for the engine's tests. Modelled on the real resume in `data/` and on
- * job descriptions in the shape the ATS providers actually return, so a passing
- * assertion here says something about production behaviour rather than about a
- * strawman.
+ * Synthetic fixtures for the engine's tests, shaped to exercise realistic job
+ * descriptions and candidate data without depending on a personal resume.
  *
  * Not part of the built package — excluded in tsconfig.
  */
 
 export const NOW = Date.parse('2026-09-05T12:00:00Z');
 
-/** Varun's profile: full-stack React/Node, Hyderabad, ~4 years. */
+/** Synthetic full-stack React/Node candidate profile. */
 const CANDIDATE: CandidateContext = {
   skills: [
     'JavaScript',

@@ -90,7 +90,10 @@ test('browser diagnostics retain only same-origin normalized paths', () => {
   assert.equal(sameOriginBrowserPath('https://attacker.example/path?token=secret', origin), null);
   assert.equal(sameOriginBrowserPath('not a URL', origin), null);
   assert.equal(
-    sameOriginBrowserPath('http://localhost:5280/profile/varun@example.com?token=secret', origin),
+    sameOriginBrowserPath(
+      'http://localhost:5280/profile/candidate@example.test?token=secret',
+      origin,
+    ),
     '/profile/:segment',
   );
   assert.equal(sameOriginBrowserPath('http://localhost:5280/private-user', origin), '/:segment');

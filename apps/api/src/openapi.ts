@@ -848,7 +848,7 @@ function contracts(options: {
     'GET /api/leads/by-job/:jobId': operation(
       "Resolve the current owner's saved lead for a search job without exposing other owners",
       object({ lead: nullable(lead) }),
-      { failures: [400, 429] },
+      { params: object({ jobId: uuid }), failures: [400, 429] },
     ),
     'PUT /api/search-jobs/:id/feedback': operation(
       'Record or update the authenticated candidate’s reason-coded feedback for an owned search result',

@@ -12,9 +12,10 @@
  * Disallow: /viewjob?
  * ```
  *
- * So the results page — `/jobs?q=…&l=…&start=N` — is allowed and paginated
- * offsets are allowed by name, while **the job detail page is disallowed**. The
- * rules are byte-identical on `www.indeed.com` and `in.indeed.com`.
+ * So the results page — `/jobs?q=…&l=…&start=N&` — is allowed when the listed
+ * offset is followed by the ampersand required by the allow pattern, while
+ * **the job detail page is disallowed**. The rules are byte-identical on
+ * `www.indeed.com` and `in.indeed.com`.
  *
  * That is an unambiguous, machine-readable instruction, so this source has no
  * `fetchDetail`. Not "we could not work out how" — we are asked not to, and the
@@ -154,7 +155,10 @@ export const indeedAdapter: ScrapeAdapter<IndeedCard> = {
       for (let index = 0; index < MAX_PAGES_PER_QUERY; index += 1) {
         if (ctx.signal?.aborted) return;
 
-        const url = `${base}&start=${index * PAGE_SIZE}`;
+        // The trailing ampersand is significant: robots.txt allows `&start=N&`
+        // and disallows other `&start=` values. Keep the request inside that
+        // explicit allow rule instead of relying on a looser interpretation.
+        const url = `${base}&start=${index * PAGE_SIZE}&`;
         const response = await page.goto(url, { waitUntil: 'domcontentloaded' });
         const html = await page.content();
 

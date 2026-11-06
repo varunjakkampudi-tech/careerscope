@@ -41,12 +41,16 @@ container, twice a day. For every owner with the flag enabled:
    2–160-character check `createSearch` already applies) → skip, log, no
    alert — this is expected, not a failure.
 2. Calls the **existing, unchanged** `Database.createSearch()` with
-   `useProfileTitles: true`, all five wired sources, and
+   `useProfileTitles: true`, the currently permitted launch sources, and
    `origin: 'scheduled'` — the same `search.collect` pipeline a manual click
    already goes through, with the exact same per-source budgets, retries,
    dedup rules and legitimate-access constraints documented in
    [the provider inventory](../PROVIDERS.md).
    No new source, no new command type, no new queue.
+   The launch candidate list currently contains four ATS sources, but no
+   source has an approved, current permission profile. Until one is approved,
+   scheduled discovery skips enqueueing with `skipped-no-permitted-sources`;
+   enabling the per-owner preference alone does not start a search.
 3. The idempotency key is `scheduled-<UTC calendar day>`, so a restart or an
    extra tick on the same day cannot double-enqueue — relies on
    `createSearch`'s own existing idempotency handling.
