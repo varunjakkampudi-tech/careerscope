@@ -2242,6 +2242,18 @@
       "sha256": "944dcb4401c601ac022c5b7ff4f8c41d2fdca9b4c359b50645872d67e21f2b8b"
     },
     {
+      "path": "infra/checks/check-harden-ssh-keys.sh",
+      "category": "deployment-infrastructure",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "New file (34 lines). Sources harden-ssh.sh in source-only mode and asserts the key count for ed25519, ecdsa, security-key, comment-only, empty and missing files, and that the output is always one line. Fails on the old code (the two-line output). Operator check; not wired into CI.",
+      "evidence": "",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "2ae185dc7d079bda0c96d418134b12bb1cca6a0a1826c2f78cd7656006f99323"
+    },
+    {
       "path": "infra/checks/check-host-firewall.sh",
       "category": "deployment-infrastructure",
       "reviewMethod": "content-read",
@@ -2544,14 +2556,14 @@
     {
       "path": "infra/host/apply-migrations.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (22 lines). Loads the release through release-env.sh, which fails closed, then runs the bootstrap container with migrations and reports the hot-path index and plan. No defect.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "b3256dbb1dd38db33b62006d7ece6afb8e373b130fb8286095154850a1394db5"
     },
     {
       "path": "infra/host/audit-host.sh",
@@ -2580,14 +2592,14 @@
     {
       "path": "infra/host/build-images.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (59 lines). Refuses to build without a hexadecimal revision, tags images with the short revision only (no mutable tag), and records content digests in RELEASE_RECORD for deploy-time verification. Observation: the build context is the working directory, so provenance depends on running it from the released archive, as the deployment docs require. No defect.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "fee4a7ff322c9d60c7ead52d9578fba6acc9a1b690852fa67996a896a48e3cfe"
     },
     {
       "path": "infra/host/deploy.sh",
@@ -2604,14 +2616,22 @@
     {
       "path": "infra/host/harden-ssh.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "",
+      "findings": [
+        {
+          "id": "S1-F042",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The SSH lockout guard failed open when authorized_keys held no ssh- key, and did not count ecdsa or security keys.",
+          "remediation": "count_authorized_keys prints exactly one integer and counts ssh-, ecdsa-sha2- and sk- lines; check-harden-ssh-keys.sh cases."
+        }
+      ],
+      "observations": "Read in full (53 lines before the change). Finding S1-F042 (low, fixed): the lockout guard read the key count with grep -c ... || echo 0. An authorized_keys file that exists but has no ssh- line printed two zeros, the numeric test then failed, and the script went on to disable password authentication. Keys of other types (ecdsa-*, sk-*) were not counted at all. The count is now a function that always prints one integer and counts all three prefixes. The script sources cleanly for tests (HARDEN_SSH_SOURCE_ONLY), and hardening runs only when executed.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "8f1f728caeb8fade432c0a008abbe57417f64ee8aab0eaed8624220217625112"
     },
     {
       "path": "infra/host/maintenance.sh",
@@ -2640,14 +2660,14 @@
     {
       "path": "infra/host/provision-host.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (87 lines). Idempotent host preparation for Ubuntu 24.04: unattended security upgrades, Docker from Docker's own repository, and a dedicated careerscope nftables table that is replaced without flushing Docker's NAT rules. It then restarts Docker and proves container egress before reporting ready. Observation: the Docker signing key is fetched over https and installed without a fingerprint check; that is the vendor's documented procedure and is noted for the owner, not changed here. No defect.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "ffa074068c617cef9a6f2ca08b4f5494824f3fdcc73a5c089de7a142d5ab5987"
     },
     {
       "path": "infra/host/purge-verification-accounts.sh",
@@ -2720,14 +2740,14 @@
     {
       "path": "infra/host/render-redis-config.sh",
       "category": "deployment-infrastructure",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
+      "observations": "Read in full (52 lines). Validates the Redis password as a plain token of at least 16 characters before writing it into config lines, writes each file to a temporary then moves it into place, and assigns owners and modes for the Redis user when run as root. Observation: when not run as root the secret files are 0444 inside a 0700 directory, which the script documents. No finding.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "539df97f5f925ce83d1a294feb969de504c21fb3f654c1331491b0591a5d2040"
     },
     {
       "path": "infra/host/restart-stack.sh",
