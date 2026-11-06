@@ -12,7 +12,8 @@
       "PARTIAL": "Some of the clause exists. gap states exactly what is missing.",
       "NOT_IMPLEMENTED": "No code for the clause. gap states what is absent.",
       "OWNER_EVIDENCE": "Needs owner, counsel or host evidence. ownerEvidenceNeeded states what.",
-      "OUT_OF_SCOPE_POST_LAUNCH": "The source itself defers the clause after launch. sourceQuote is verbatim from the source."
+      "OUT_OF_SCOPE_POST_LAUNCH": "The source itself defers the clause after launch. sourceQuote is verbatim from the source.",
+      "OUT_OF_SCOPE_OWNER": "Excluded by the owner-revised checklist scope; ownerScopeRationale records the decision and these clauses do not block checklist completion."
     },
     "verificationValues": {
       "UNIT_TESTS_PASSED": "Every cited test file is in test:unit or test:domain, which passed on 2026-10-31 (245 node tests, 843 vitest tests).",
@@ -20,7 +21,11 @@
       "OWNER_EVIDENCE_PENDING": "Evidence has not been supplied.",
       "NOT_APPLICABLE": "Nothing to verify: no code, or a deferred clause."
     },
-    "launchBlockingRule": "launchBlocking is true when the clause is in launch-core scope (sections 1, 2 Required rows and 4 unless the module is optional, conditional, off or post-launch) or is named in the section 7 acceptance tests, section 13 gates or a Critical or High row of section 15, unless section 14 or 11 excludes it. It is a reading of the source, not an owner waiver."
+    "launchBlockingRule": "launchBlocking is true when the clause is in launch-core scope (sections 1, 2 Required rows and 4 unless the module is optional, conditional, off or post-launch) or is named in the section 7 acceptance tests, section 13 gates or a Critical or High row of section 15, unless section 14 or 11 excludes it. It is a reading of the source, not an owner waiver. Clauses explicitly excluded by the owner-revised checklist scope are OUT_OF_SCOPE_OWNER and do not block checklist completion.",
+    "ownerScopeDecision": {
+      "decidedOn": "2026-11-06",
+      "rationale": "The owner-revised checklist excludes Hostinger, server backups and production deployment. Backup/restore-only clauses are out of scope; mixed clauses retain in-scope gaps while explicitly excluding the backup/deployment portion."
+    }
   },
   "items": [
     {
@@ -257,14 +262,10 @@
       "kind": "TABLE_REQUIREMENT",
       "context": "|---|---|---|",
       "text": "| D12 | Recovery point for application records: 1 hour | Continuous WAL archiving to an off-host store, confirmed by restore drill. If archiving is not ready by launch, the 24-hour fallback applies and candidates are told to re-check records after a restore |",
-      "assessment": "NOT_IMPLEMENTED",
+      "assessment": "OUT_OF_SCOPE_OWNER",
       "verification": "NOT_APPLICABLE",
-      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No WAL archiving, no off-host store and no candidate-facing re-check notice exist.",
-      "launchBlocking": true,
-      "evidence": {
-        "implementation": ["docs/operations/HOSTINGER.md:151"],
-        "tests": []
-      }
+      "launchBlocking": false,
+      "ownerScopeRationale": "Excluded by the owner-revised CareerScope checklist scope: Hostinger hosting, server backups, recovery-point/recovery-time targets, and backup restore drills are excluded."
     },
     {
       "id": "V12-1-013",
@@ -3845,14 +3846,10 @@
       "kind": "CLAUSE",
       "context": "Recovery targets:",
       "text": "- Recovery point objective: 1 hour for user-created application records, using continuous WAL archiving to an off-host store (D12). Fallback if archiving is not ready by launch: 24 hours, with candidates told to re-check records after a restore",
-      "assessment": "NOT_IMPLEMENTED",
+      "assessment": "OUT_OF_SCOPE_OWNER",
       "verification": "NOT_APPLICABLE",
-      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. The 1-hour recovery point is not met and no 24-hour fallback is in place.",
-      "launchBlocking": true,
-      "evidence": {
-        "implementation": ["docs/operations/HOSTINGER.md:151"],
-        "tests": []
-      }
+      "launchBlocking": false,
+      "ownerScopeRationale": "Excluded by the owner-revised CareerScope checklist scope: Hostinger hosting, server backups, recovery-point/recovery-time targets, and backup restore drills are excluded."
     },
     {
       "id": "V12-6-008",
@@ -3862,14 +3859,10 @@
       "kind": "CLAUSE",
       "context": "Recovery targets:",
       "text": "- Recovery time objective: service restored within 4 hours",
-      "assessment": "NOT_IMPLEMENTED",
+      "assessment": "OUT_OF_SCOPE_OWNER",
       "verification": "NOT_APPLICABLE",
-      "launchBlocking": true,
-      "evidence": {
-        "implementation": ["docs/operations/HOSTINGER.md:151"],
-        "tests": []
-      },
-      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No recovery time has been measured."
+      "launchBlocking": false,
+      "ownerScopeRationale": "Excluded by the owner-revised CareerScope checklist scope: Hostinger hosting, server backups, recovery-point/recovery-time targets, and backup restore drills are excluded."
     },
     {
       "id": "V12-6-009",
@@ -3879,14 +3872,10 @@
       "kind": "CLAUSE",
       "context": "Recovery targets:",
       "text": "- Restore drill: performed before launch and monthly after. Drill result recorded in the go/no-go checklist",
-      "assessment": "NOT_IMPLEMENTED",
+      "assessment": "OUT_OF_SCOPE_OWNER",
       "verification": "NOT_APPLICABLE",
-      "launchBlocking": true,
-      "evidence": {
-        "implementation": ["docs/operations/HOSTINGER.md:151"],
-        "tests": []
-      },
-      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No restore drill has been performed or can run until a backup exists."
+      "launchBlocking": false,
+      "ownerScopeRationale": "Excluded by the owner-revised CareerScope checklist scope: Hostinger hosting, server backups, recovery-point/recovery-time targets, and backup restore drills are excluded."
     },
     {
       "id": "V12-6-010",
@@ -3896,14 +3885,10 @@
       "kind": "CLAUSE",
       "context": "Backups:",
       "text": "- Hostinger backups verified for frequency, retention, and off-server copies",
-      "assessment": "OWNER_EVIDENCE",
-      "verification": "OWNER_EVIDENCE_PENDING",
-      "ownerEvidenceNeeded": "Hostinger backup frequency, retention and off-server copy verified in the provider account.",
-      "launchBlocking": true,
-      "evidence": {
-        "implementation": ["docs/operations/HOSTINGER.md:149"],
-        "tests": []
-      }
+      "assessment": "OUT_OF_SCOPE_OWNER",
+      "verification": "NOT_APPLICABLE",
+      "launchBlocking": false,
+      "ownerScopeRationale": "Excluded by the owner-revised CareerScope checklist scope: Hostinger hosting, server backups, recovery-point/recovery-time targets, and backup restore drills are excluded."
     },
     {
       "id": "V12-6-011",
@@ -3913,14 +3898,10 @@
       "kind": "CLAUSE",
       "context": "Backups:",
       "text": "- Off-host copy required before launch",
-      "assessment": "NOT_IMPLEMENTED",
+      "assessment": "OUT_OF_SCOPE_OWNER",
       "verification": "NOT_APPLICABLE",
-      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No off-host copy mechanism exists.",
-      "launchBlocking": true,
-      "evidence": {
-        "implementation": ["docs/operations/HOSTINGER.md:151"],
-        "tests": []
-      }
+      "launchBlocking": false,
+      "ownerScopeRationale": "Excluded by the owner-revised CareerScope checklist scope: Hostinger hosting, server backups, recovery-point/recovery-time targets, and backup restore drills are excluded."
     },
     {
       "id": "V12-6-012",
@@ -3930,14 +3911,10 @@
       "kind": "CLAUSE",
       "context": "Backups:",
       "text": "- Restore tested to a separate environment",
-      "assessment": "NOT_IMPLEMENTED",
+      "assessment": "OUT_OF_SCOPE_OWNER",
       "verification": "NOT_APPLICABLE",
-      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No restore to a separate environment exists.",
-      "launchBlocking": true,
-      "evidence": {
-        "implementation": ["docs/operations/HOSTINGER.md:151"],
-        "tests": []
-      }
+      "launchBlocking": false,
+      "ownerScopeRationale": "Excluded by the owner-revised CareerScope checklist scope: Hostinger hosting, server backups, recovery-point/recovery-time targets, and backup restore drills are excluded."
     },
     {
       "id": "V12-6-013",
@@ -4102,7 +4079,7 @@
       "text": "Test types: smoke (every deploy), sanity (every pull request), regression (nightly and before release), critical path (every deploy), Playwright E2E (pull request and nightly), load (before launch), security (every release), accessibility (pull request), prompt-injection (every release), platform failure (before launch).",
       "assessment": "PARTIAL",
       "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "CI runs gates, unit, domain, integration, query budget, backup restore and Playwright with axe on every push or pull request and nightly. Missing: load tests in default CI (manual dispatch only), a prompt-injection suite, a dedicated platform-failure suite in default CI, and an explicit post-deploy smoke test.",
+      "gap": "CI runs the in-scope test suites on pushes and pull requests. Production-deploy smoke/critical-path runs are excluded with deployment; load tests in default CI, prompt-injection tests, dedicated accessibility automation coverage and nightly regression cadence remain gaps.",
       "launchBlocking": true,
       "evidence": {
         "implementation": [
@@ -4474,14 +4451,10 @@
       "kind": "CLAUSE",
       "context": "Acceptance tests that must pass before launch:",
       "text": "- Restore drill meets the 1-hour recovery point and 4-hour recovery time targets, or the 24-hour fallback is in effect and disclosed internally",
-      "assessment": "NOT_IMPLEMENTED",
+      "assessment": "OUT_OF_SCOPE_OWNER",
       "verification": "NOT_APPLICABLE",
-      "launchBlocking": true,
-      "evidence": {
-        "implementation": ["docs/operations/HOSTINGER.md:151"],
-        "tests": []
-      },
-      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No restore drill measures a recovery point or time."
+      "launchBlocking": false,
+      "ownerScopeRationale": "Excluded by the owner-revised CareerScope checklist scope: Hostinger hosting, server backups, recovery-point/recovery-time targets, and backup restore drills are excluded."
     },
     {
       "id": "V12-7-020",
@@ -4596,7 +4569,7 @@
       "text": "- Alerts: downtime, error spikes, sync failures, AI spend, bounce rate, failed jobs, sign-in outage",
       "assessment": "PARTIAL",
       "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "Alerts exist for unreachable or unhealthy API, stopped workers, stale queues and stopped timers. The backup-failure alert was removed with the Hostinger backup on 2026-10-31. No alert for error spikes, sync failures, bounce rate or sign-in outage, and AI spend does not exist.",
+      "gap": "Alerts cover unreachable or unhealthy API, stopped workers, stale queues and stopped timers. Backup-failure alerts are excluded with server backups. Error spikes, sync failures, bounce rate and AI spend alerts remain missing.",
       "launchBlocking": true,
       "evidence": {
         "implementation": ["infra/host/monitor.sh:1", "infra/host/scheduler-health.sh:1"],
@@ -4763,7 +4736,7 @@
       "text": "- Deletion timelines per data class: primary database, file storage, caches, search, logs, third-party processors, and backups. Legal retention exceptions listed",
       "assessment": "NOT_IMPLEMENTED",
       "verification": "NOT_APPLICABLE",
-      "gap": "No published deletion timelines per data class and no deletion implementation. Retention exists only for search results, expired email-change requests and verification accounts.",
+      "gap": "Deletion timelines for primary database, file storage, caches, search, logs and third-party processors are not published or implemented. Backup retention timelines are excluded from the revised scope.",
       "launchBlocking": true,
       "evidence": {
         "implementation": ["docs/PRIVACY.md:27", "scripts/jobs/enforce-search-retention.ts:1"],
@@ -5202,14 +5175,10 @@
       "kind": "TABLE_REQUIREMENT",
       "context": "|---|---|---|---|",
       "text": "| Hostinger backup verification | Data safety | Owner | To do |",
-      "assessment": "OWNER_EVIDENCE",
-      "verification": "OWNER_EVIDENCE_PENDING",
-      "ownerEvidenceNeeded": "Hostinger backup verification evidence.",
-      "launchBlocking": true,
-      "evidence": {
-        "implementation": ["docs/operations/HOSTINGER.md:149"],
-        "tests": []
-      }
+      "assessment": "OUT_OF_SCOPE_OWNER",
+      "verification": "NOT_APPLICABLE",
+      "launchBlocking": false,
+      "ownerScopeRationale": "Excluded by the owner-revised CareerScope checklist scope: Hostinger hosting, server backups, recovery-point/recovery-time targets, and backup restore drills are excluded."
     },
     {
       "id": "V12-12-010",
@@ -5351,7 +5320,7 @@
       "text": "- Data protection: isolation, deletion, restore drill, consent withdrawal, incident procedure",
       "assessment": "PARTIAL",
       "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "Isolation and marketing-consent withdrawal are implemented and tested. Deletion, an executed restore drill and an incident procedure are not.",
+      "gap": "Isolation and marketing-consent withdrawal are implemented and tested. Deletion and an incident procedure remain gaps; restore drills are excluded with server backup and recovery work.",
       "launchBlocking": true,
       "evidence": {
         "implementation": ["apps/api/src/app.ts:1058", "apps/api/src/app.ts:1017"],
@@ -5449,7 +5418,7 @@
       "text": "- Operations: failure domain plan, recovery targets, degraded modes, and platform failure tests pass",
       "assessment": "PARTIAL",
       "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "Resource limits and some degraded-mode tests exist. The failure-domain plan, default-CI platform failure tests and any backup or recovery point are missing: the Hostinger backup was removed on 2026-10-31 by owner decision and backup for the new server must be designed and verified before launch (see 6-003, 6-007, 7-018).",
+      "gap": "Resource limits and some degraded-mode tests exist. Failure-domain documentation and default-CI platform-failure tests remain gaps. Server backup and restore requirements are excluded; production deployment is excluded.",
       "launchBlocking": true,
       "evidence": {
         "implementation": [
@@ -5719,14 +5688,10 @@
       "kind": "TABLE_REQUIREMENT",
       "context": "|---|---|---|---|---|---|---|",
       "text": "| 9 | 1-hour recovery point with WAL archiving; restore drill meets target | D12 | | | | Critical |",
-      "assessment": "NOT_IMPLEMENTED",
+      "assessment": "OUT_OF_SCOPE_OWNER",
       "verification": "NOT_APPLICABLE",
-      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No WAL archiving and no recovery-point drill (see 6-007).",
-      "launchBlocking": true,
-      "evidence": {
-        "implementation": ["docs/operations/HOSTINGER.md:151"],
-        "tests": []
-      }
+      "launchBlocking": false,
+      "ownerScopeRationale": "Excluded by the owner-revised CareerScope checklist scope: Hostinger hosting, server backups, recovery-point/recovery-time targets, and backup restore drills are excluded."
     },
     {
       "id": "V12-15-011",
@@ -5736,14 +5701,10 @@
       "kind": "TABLE_REQUIREMENT",
       "context": "|---|---|---|---|---|---|---|",
       "text": "| 10 | Off-host backup copy in place | section 6 | | | | Critical |",
-      "assessment": "NOT_IMPLEMENTED",
+      "assessment": "OUT_OF_SCOPE_OWNER",
       "verification": "NOT_APPLICABLE",
-      "gap": "The Hostinger backup (scheduled dump, restore verification, freshness check) was removed on 2026-10-31 by owner decision; backup for the new server must be designed and verified before launch. No off-host backup copy (see 6-011).",
-      "launchBlocking": true,
-      "evidence": {
-        "implementation": ["docs/operations/HOSTINGER.md:151"],
-        "tests": []
-      }
+      "launchBlocking": false,
+      "ownerScopeRationale": "Excluded by the owner-revised CareerScope checklist scope: Hostinger hosting, server backups, recovery-point/recovery-time targets, and backup restore drills are excluded."
     },
     {
       "id": "V12-15-012",

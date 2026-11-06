@@ -80,7 +80,7 @@ traceability check.
 - **Evidence:** `docs/requirements/CareerScope-v12.md`, `docs/requirements/V12-REQUIREMENT-INVENTORY.json`, `docs/requirements/V12-RECONCILIATION.md`, `scripts/ci/check-requirements-inventory.mjs`, `scripts/ci/check-requirements-inventory.test.mjs`, `scripts/ci/check-traceability.test.mjs`
 - **Gate:** CI job `Quality gates`, step `npm run gates:test` (`npm run traceability:check` runs the inventory check; the tests run in `test:unit`)
 - **Verify:** `npm run requirements:check`
-- **Note:** Reconciliation is complete: every clause of the pinned source has a status, and CI fails on NOT_ASSESSED, a stale digest, a clause text that is not equal to its source line, or IMPLEMENTED without a CI-run test. Current counts: 319 clauses (68 IMPLEMENTED, 75 PARTIAL, 121 NOT_IMPLEMENTED, 47 OWNER_EVIDENCE, 8 OUT_OF_SCOPE_POST_LAUNCH); 164 launch-blocking gaps. Those gaps are open for later stages; see [V12-RECONCILIATION](requirements/V12-RECONCILIATION.md).
+- **Note:** Reconciliation is complete: every clause of the pinned source has a status, and CI fails on NOT_ASSESSED, a stale digest, a clause text that is not equal to its source line, or IMPLEMENTED without a CI-run test. The owner-revised scope excludes Hostinger hosting, server backups and production deployment; backup/restore-only clauses carry an owner scope rationale, while mixed clauses retain their in-scope gaps. Current counts: 319 clauses (68 IMPLEMENTED, 75 PARTIAL, 112 NOT_IMPLEMENTED, 45 OWNER_EVIDENCE, 8 OUT_OF_SCOPE_POST_LAUNCH, 11 OUT_OF_SCOPE_OWNER); 153 launch-blocking gaps (all in-scope). Those gaps remain open for later stages; see [V12-RECONCILIATION](requirements/V12-RECONCILIATION.md).
 
 ## 1.03 Preserve dev and main branches
 

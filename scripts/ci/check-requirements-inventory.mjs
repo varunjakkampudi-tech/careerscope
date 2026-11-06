@@ -16,7 +16,8 @@
 //   - an IMPLEMENTED item cites no implementing file or no test, or cites a test that no CI script
 //     or non-comment, non-dispatch-only workflow `run:` step names;
 //   - a cited file does not exist or a cited line is past the end of the file;
-//   - an OUT_OF_SCOPE_POST_LAUNCH quote is not verbatim in the source's post-launch section (11);
+//   - an OUT_OF_SCOPE_POST_LAUNCH quote is not verbatim in the source's post-launch section (11), or
+//     an OUT_OF_SCOPE_OWNER item lacks a rationale and is still marked launch-blocking;
 //   - docs/requirements/V12-RECONCILIATION.md is not the output of this script for the inventory.
 // `--write` regenerates the summary. `--root=<dir>` checks another checkout (used by the tests).
 import { createHash } from 'node:crypto';
@@ -38,6 +39,7 @@ export const STATUSES = [
   'NOT_IMPLEMENTED',
   'OWNER_EVIDENCE',
   'OUT_OF_SCOPE_POST_LAUNCH',
+  'OUT_OF_SCOPE_OWNER',
 ];
 const VERIFICATIONS = [
   'UNIT_TESTS_PASSED',
@@ -145,6 +147,16 @@ function checkStatusFields(item, fail, context) {
       const found = sourceLines.slice(first - 1, last).some((line) => squash(line).includes(quote));
       if (!found) fail(item.id, 'sourceQuote is not verbatim in the source section 11');
     }
+  } else if (status === 'OUT_OF_SCOPE_OWNER') {
+    if (!nonEmpty(item.ownerScopeRationale))
+      fail(item.id, 'OUT_OF_SCOPE_OWNER needs ownerScopeRationale');
+    if (item.launchBlocking !== false)
+      fail(item.id, 'OUT_OF_SCOPE_OWNER needs launchBlocking false');
+    if (item.gap || item.ownerEvidenceNeeded || item.sourceQuote)
+      fail(
+        item.id,
+        'OUT_OF_SCOPE_OWNER must not carry a gap, owner evidence request or post-launch quote',
+      );
   }
 }
 
@@ -277,6 +289,7 @@ export function renderSummary(inventory) {
     `- Clauses: ${items.length}. Launch-blocking gaps: ${items.filter(open).length}.`,
     '- A clause is IMPLEMENTED only when its inventory record cites implementing code and a test',
     '  that a CI script runs. PARTIAL, NOT_IMPLEMENTED and OWNER_EVIDENCE clauses are gaps.',
+    '  OUT_OF_SCOPE_OWNER records clauses excluded by the owner-revised checklist scope.',
     '',
     '## Counts per status',
     '',
@@ -312,11 +325,16 @@ export function renderSummary(inventory) {
     'Reading of the source, not an owner waiver: ' +
       cell(inventory.reconciliation.launchBlockingRule),
     '',
-    header(['ID', 'Status', 'Clause', 'Gap or evidence needed']),
+    header(['ID', 'Status', 'Clause', 'Gap, evidence or scope rationale']),
   );
   for (const item of items.filter(open)) {
     lines.push(
-      row([item.id, item.assessment, clauseText(item), cell(item.gap ?? item.ownerEvidenceNeeded)]),
+      row([
+        item.id,
+        item.assessment,
+        clauseText(item),
+        cell(item.gap ?? item.ownerEvidenceNeeded ?? item.ownerScopeRationale),
+      ]),
     );
   }
   return `${lines.join('\n')}\n`;

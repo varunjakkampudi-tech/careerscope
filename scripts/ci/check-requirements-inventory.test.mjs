@@ -141,11 +141,16 @@ test('gap, launchBlocking, owner evidence and quote requirements are enforced', 
     const missing = find(inventory, 'NOT_IMPLEMENTED');
     delete missing.launchBlocking;
     find(inventory, 'OUT_OF_SCOPE_POST_LAUNCH').sourceQuote = 'text that the source never says';
+    const outOfScope = find(inventory, 'OUT_OF_SCOPE_OWNER');
+    delete outOfScope.ownerScopeRationale;
+    outOfScope.launchBlocking = true;
   });
   assert.match(errors, /PARTIAL needs a gap/);
   assert.match(errors, /OWNER_EVIDENCE needs ownerEvidenceNeeded/);
   assert.match(errors, /NOT_IMPLEMENTED needs launchBlocking/);
   assert.match(errors, /sourceQuote is not verbatim in the source section 11/);
+  assert.match(errors, /OUT_OF_SCOPE_OWNER needs ownerScopeRationale/);
+  assert.match(errors, /OUT_OF_SCOPE_OWNER needs launchBlocking false/);
 });
 
 test('a quote from outside the post-launch section is refused', async () => {
