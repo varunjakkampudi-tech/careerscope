@@ -1843,7 +1843,7 @@
       ],
       "observations": "Reviewed for item 1.15: documents verification of the existing shared UI foundation and design-system test evidence. Stage 01 remains partial.",
       "evidence": "Current content reviewed for owner Stage 01 item 1.15; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.14)",
+      "reviewer": "Codex (Stage 01 item 1.15)",
       "sha256": "986279d62921e5f807af2335c7783e5fd8781b93da26fac3fe6cc1ed43d8098c"
     },
     {
@@ -1891,7 +1891,7 @@
       "findings": [],
       "observations": "Reviewed the owner-roadmap test record for item 1.15 against the design-system guard, UI suite and recorded visual-baseline limits.",
       "evidence": "Current content reviewed for owner Stage 01 item 1.15; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.14)",
+      "reviewer": "Codex (Stage 01 item 1.15)",
       "sha256": "4e3081e16d506935b79567dcea968b5896ad84ceee74be2854fcd5e5abd6bf7f"
     },
     {
@@ -2323,7 +2323,7 @@
       "findings": [],
       "observations": "Verified item 1.15 against the documented shared components, actual web component sources, consumer usage and passing design-system guard.",
       "evidence": "Current owner inventory reviewed and updated for item 1.15; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.14)",
+      "reviewer": "Codex (Stage 01 item 1.15)",
       "sha256": "454a1b5402518fa1c976d1368f128c74d7d04cc72a6f62a54d17733f02015a9b"
     },
     {
