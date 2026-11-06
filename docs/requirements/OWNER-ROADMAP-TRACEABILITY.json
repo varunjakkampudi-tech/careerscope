@@ -238,8 +238,11 @@
         "scripts/ci/check-traceability.test.mjs",
         "scripts/ci/check-roadmap-traceability.test.mjs"
       ],
-      "externalEvidence": [],
-      "gap": "The 328-item owner-roadmap register and its automated completeness check are being built in this checklist item; independent approval is pending.",
+      "externalEvidence": [
+        "Hosted CI run 42294193257 passed all three required jobs on exact SHA 4870801b0efa4d59c3ace0b760251bcc60316bcf.",
+        "Independent review of exact SHA 4870801b0efa4d59c3ace0b760251bcc60316bcf reported no remaining actionable findings."
+      ],
+      "gap": "Owner approval to merge PR #31 into dev is pending.",
       "scopeDisposition": "in-scope"
     },
     {

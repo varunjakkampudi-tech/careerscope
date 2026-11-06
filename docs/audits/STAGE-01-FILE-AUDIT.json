@@ -1844,7 +1844,7 @@
       "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
       "evidence": "Current content inspected and updated for owner Stage 01 item 1.13 on codex/stage01-item-113-main-ruleset-only; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.14)",
-      "sha256": "d02cf68b0a9e07a096efa765bfb3d5f9f483e96d51304a6bd7fda7ac4ef84b30"
+      "sha256": "1406b769fa15a3f084d0c391c7a27864b6733404553761172b8c85cf91b222cf"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1892,7 +1892,7 @@
       "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
       "evidence": "Current content inspected and updated for owner Stage 01 item 1.13 on codex/stage01-item-113-main-ruleset-only; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.14)",
-      "sha256": "d46ab0bb0bd3e3bc26a76122c9fea45c148772fc3035f8ffcebb4ed097ac4fee"
+      "sha256": "f2fafcd54487eb260dda387b77a75cce79b6a1667a74696815cd16654f7f4104"
     },
     {
       "path": "docs/TESTING.md",
@@ -2324,7 +2324,7 @@
       "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
       "evidence": "",
       "reviewer": "Codex (Stage 01 item 1.14)",
-      "sha256": "d76260016c511dc5df26a7c60003d5c6328d6e66901dbb07aa941f7b29e926f5"
+      "sha256": "6413cacdd2fc66f93cca2e7a0e329765070137897c6155b3bea5bcf30589d8ef"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
