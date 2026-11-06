@@ -5926,7 +5926,7 @@
       "observations": "Reviewed for Stage 01 item 1.14: the checker validates the pinned 328-item owner roadmap and source digest, exact sequential IDs and stages, status/gap evidence, referenced files and CI-run tests. The focused checker tests and full Node 24.22.1 unit suite passed.",
       "evidence": "",
       "reviewer": "Codex (Stage 01 item 1.14)",
-      "sha256": "85751ae5863cf701a3905af93f3de2e0ec74eb3f47a613d216de9147f717f01e"
+      "sha256": "c15f168652dd5421fb9be84530e1e21a84377362c2926e444bd87d82bfd4474d"
     },
     {
       "path": "scripts/ci/check-roadmap-traceability.test.mjs",
@@ -5938,7 +5938,7 @@
       "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
       "evidence": "",
       "reviewer": "Codex (Stage 01 item 1.14)",
-      "sha256": "43b4928214ab6abe5a0c6f02d425212eb960606847004918c7476f36005493ab"
+      "sha256": "fc865b0cd0aa75977ba5683037acee75653fefa5197a13a906e78f0eb84259c8"
     },
     {
       "path": "scripts/ci/check-test-types.mjs",

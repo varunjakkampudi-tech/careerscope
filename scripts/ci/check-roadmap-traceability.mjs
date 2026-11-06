@@ -58,28 +58,44 @@ export function checkRoadmap(root = process.cwd()) {
     seen.add(item.id);
     if (!Number.isInteger(item.stage) || item.stage < 1 || item.stage > 22)
       errors.push(`${prefix} invalid stage`);
-    for (const field of ['stageTitle', 'title', 'sourceStatus', 'gap'])
-      if (typeof item[field] !== 'string') errors.push(`${prefix} ${field} must be a string`);
+    for (const field of ['stageTitle', 'title', 'sourceStatus', 'gap']) {
+      if (typeof item[field] !== 'string' || (field !== 'gap' && !item[field].trim()))
+        errors.push(`${prefix} ${field} must be a non-empty string`);
+    }
     if (!STATUSES.has(item.currentStatus)) errors.push(`${prefix} invalid currentStatus`);
     if (!Array.isArray(item.evidence) || !item.evidence.length)
       errors.push(`${prefix} evidence must name at least one path`);
-    for (const path of [...(item.evidence ?? []), ...(item.tests ?? [])])
-      if (!existsSync(join(root, path)))
-        errors.push(`${prefix} referenced file not found: ${path}`);
     if (!Array.isArray(item.tests)) errors.push(`${prefix} tests must be an array`);
-    for (const path of item.tests ?? []) {
+    if (!Array.isArray(item.externalEvidence))
+      errors.push(`${prefix} externalEvidence must be an array`);
+    const evidencePaths = Array.isArray(item.evidence) ? item.evidence : [];
+    const testPaths = Array.isArray(item.tests) ? item.tests : [];
+    const externalEvidence = Array.isArray(item.externalEvidence) ? item.externalEvidence : [];
+    for (const path of [...evidencePaths, ...testPaths]) {
+      if (typeof path !== 'string' || !path || path.startsWith('/') || path.includes('..')) {
+        errors.push(`${prefix} invalid repository-relative path: ${path}`);
+      } else if (!existsSync(join(root, path))) {
+        errors.push(`${prefix} referenced file not found: ${path}`);
+      }
+    }
+    for (const path of testPaths) {
+      if (typeof path !== 'string') continue;
       if (!/(?:\.test\.[cm]?[jt]sx?$)|^(?:scripts\/tests|tests)\//.test(path))
         errors.push(`${prefix} test path is not a test file: ${path}`);
       else if (!manifestText.includes(path))
         errors.push(`${prefix} test is not run by CI: ${path}`);
     }
-    if (
-      ['verified', 'partial'].includes(item.currentStatus) &&
-      !(item.tests?.length || item.externalEvidence?.length)
-    )
+    if (externalEvidence.some((entry) => typeof entry !== 'string' || !entry.trim()))
+      errors.push(`${prefix} externalEvidence entries must be non-empty strings`);
+    if (item.currentStatus === 'verified' && !(testPaths.length || externalEvidence.length))
       errors.push(`${prefix} status requires test or external evidence`);
-    if (['not-started', 'gated', 'in-progress'].includes(item.currentStatus) && !item.gap.trim())
+    if (
+      ['not-started', 'gated', 'in-progress', 'partial'].includes(item.currentStatus) &&
+      (typeof item.gap !== 'string' || !item.gap.trim())
+    )
       errors.push(`${prefix} status requires a gap`);
+    if (item.currentStatus === 'verified' && typeof item.gap === 'string' && item.gap.trim())
+      errors.push(`${prefix} verified status must not carry an open gap`);
     if (!['in-scope', 'excluded'].includes(item.scopeDisposition))
       errors.push(`${prefix} invalid scopeDisposition`);
   }
