@@ -52,6 +52,7 @@ This is the single index of CareerScope documentation. Every document under
 - [CareerScope v12](requirements/CareerScope-v12.md) - the owner's pinned source specification
 - [V12-RECONCILIATION](requirements/V12-RECONCILIATION.md) - generated per-clause status summary
 - [V12-REQUIREMENT-INVENTORY](requirements/V12-REQUIREMENT-INVENTORY.json) - the per-clause inventory the summary is generated from
+- [OWNER-ROADMAP-TRACEABILITY](requirements/OWNER-ROADMAP-TRACEABILITY.json) - item-level status, evidence, tests and gaps for all 328 checklist items across 22 stages
 
 ## Operations
 
