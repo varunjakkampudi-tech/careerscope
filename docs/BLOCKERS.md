@@ -12,6 +12,6 @@ B-03 is a deployment-time legal prerequisite and is outside the current in-scope
 
 - **B-04 — Prompt-scoped full file audit:** resolved. The full 1.01 file audit was independently
   approved at PR #18, exact SHA `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`. The current manifest
-  accounts for all 500 tracked files and passes `npm run audit:stage01 -- --require-complete`.
+  accounts for all 501 tracked files and passes `npm run audit:stage01 -- --require-complete`.
 - **B-02 — Second email provider:** owner decision recorded in [GAP-MATRIX](GAP-MATRIX.md): no second provider in Stage 02.
 - **Stage 02 email and recovery decisions:** the Resend domain was verified, a live notice reached Delivered status and was confirmed in the owner's inbox, and the lost-email recovery policy was decided and built. See [GAP-MATRIX](GAP-MATRIX.md).
