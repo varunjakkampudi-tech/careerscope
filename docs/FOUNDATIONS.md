@@ -61,10 +61,7 @@ file equivalent; recorded stage decisions remain in the current progress and gap
 | 1.14 Requirement-to-test traceability       | Local 1.13, `docs/TRACEABILITY.md`, traceability checker                                                                                                              | Complete; the enforced matrix checks implementation and CI-run test paths.                                                                                                                                                |
 | 1.15 Shared frontend foundations            | Local 1.12, `docs/architecture/DESIGN-SYSTEM.md`, browser, accessibility and responsive checks                                                                        | Complete for shared foundations. Visual baselines cover public sign-in at 390px and 1280px only; signed-in screens have no visual baselines.                                                                              |
 
-The prompt-specific Stage 01 result remains partial until the full 1.01 file-level audit is
-completed and the cross-browser acceptance run is recorded against the closing revision. The
-repository's original thirteen-item register remains enforced independently by the existing
-traceability check.
+The full item 1.01 file-level audit was completed and independently approved at PR #18 (commit `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`). The prompt-specific Stage 01 result remains partial while other checklist items are open and the final cross-browser acceptance run is still to be recorded against the closing revision. The repository's original thirteen-item register remains enforced independently by the existing traceability check.
 
 ## 1.01 Audit dev modules
 

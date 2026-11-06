@@ -1728,12 +1728,19 @@
           "status": "fixed",
           "summary": "The owner Stage 01 crosswalk still marked item 1.01 Partial after its exact SHA was independently approved and merged.",
           "remediation": "Changed the crosswalk status to Complete with the approved commit, full audit scope and final CI approval evidence."
+        },
+        {
+          "id": "S1-F075",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The progress paragraph said the approved item 1.01 audit was still outstanding after the crosswalk marked it complete.",
+          "remediation": "Clarified that item 1.01 is complete, while other checklist items and final cross-browser acceptance still prevent Stage 01 closure."
         }
       ],
-      "observations": "Updated the owner crosswalk to reflect approved item 1.01 evidence and linked the PostgreSQL/Drizzle architecture review to local foundation item 1.07.",
-      "evidence": "Owner Stage 01 item 1.04 review on codex/stage01-item-104-postgres-drizzle-architecture; item 1.01 approval verified at PR #18 SHA 5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964.",
+      "observations": "Reconciled the Stage 01 item 1.01 Complete row and the nearby progress paragraph; the full audit is complete while other Stage 01 items and final cross-browser acceptance remain outstanding. Also documents the PostgreSQL/Drizzle review.",
+      "evidence": "Owner Stage 01 item 1.04 review correction after PR #21 independent review; item 1.01 approval verified at PR #18 SHA 5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964.",
       "reviewer": "Codex (owner Stage 01 item 1.04)",
-      "sha256": "20439667db3ef6773cb48e63273f902be1d3813f8d233be170d96c24f48df355"
+      "sha256": "ee743e0cb87afbfae5fdf6558bae33234674fce2f5f954905457f088a6c56461"
     },
     {
       "path": "docs/FRONTEND-ARCHITECTURE.md",
