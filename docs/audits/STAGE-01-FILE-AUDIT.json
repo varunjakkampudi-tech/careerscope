@@ -1737,10 +1737,10 @@
           "remediation": "Clarified that item 1.01 is complete, while other checklist items and final cross-browser acceptance still prevent Stage 01 closure."
         }
       ],
-      "observations": "Reviewed the owner Stage 01 item 1.12 workflow configuration and exact-SHA CI evidence; retained Stage 01 partial status and stated exclusions.",
-      "evidence": "Current content inspected and updated for owner Stage 01 item 1.12 on codex/stage01-item-112-github-actions-quality-gates; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.12)",
-      "sha256": "089bae189746ec243d06ff6e2d98cb763edd360a87af180ebb3f437085fa192b"
+      "observations": "Reviewed the owner Stage 01 item 1.13 live ruleset evidence, noted current enforcement and bypass limits, and preserved Stage 01 partial status.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.13 on codex/stage01-item-113-main-ruleset-only; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.13)",
+      "sha256": "1a84a9c50441e12e00a2613315cdf5a51c1581bf3e4a5d94efc50ac5a602d9e9"
     },
     {
       "path": "docs/FRONTEND-ARCHITECTURE.md",
@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the owner Stage 01 item 1.12 workflow configuration and exact-SHA CI evidence; retained Stage 01 partial status and stated exclusions.",
-      "evidence": "Current content inspected and updated for owner Stage 01 item 1.12 on codex/stage01-item-112-github-actions-quality-gates; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.12)",
-      "sha256": "010f9b2162b4c048b27565f2cd1af7686281d7c378a786cbf2fec496cc675ef8"
+      "observations": "Reviewed the owner Stage 01 item 1.13 live ruleset evidence, noted current enforcement and bypass limits, and preserved Stage 01 partial status.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.13 on codex/stage01-item-113-main-ruleset-only; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.13)",
+      "sha256": "ec0261902591b5f9adbf3c9a6675b60044f46601fa8fa07691c96957c014103f"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1889,10 +1889,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the owner Stage 01 item 1.12 workflow configuration and exact-SHA CI evidence; retained Stage 01 partial status and stated exclusions.",
-      "evidence": "Current content inspected and updated for owner Stage 01 item 1.12 on codex/stage01-item-112-github-actions-quality-gates; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.12)",
-      "sha256": "8a7a114cc257edde73170e89a7c095f66eedcce0aed1c9bda889adf8f85bc766"
+      "observations": "Reviewed the owner Stage 01 item 1.13 live ruleset evidence, noted current enforcement and bypass limits, and preserved Stage 01 partial status.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.13 on codex/stage01-item-113-main-ruleset-only; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.13)",
+      "sha256": "1f415da28a8315e9112c6e0df04321d2b0c866cb8d06356aaf073fcfddb87107"
     },
     {
       "path": "docs/TESTING.md",
