@@ -321,6 +321,7 @@ function LeadEditor({
   const [showAllHistory, setShowAllHistory] = useState(false);
   const visibleHistory = showAllHistory ? historyEntries : historyEntries.slice(0, 6);
   const pending = save.isPending || reload.isPending;
+  const changedTags = tagsText === record.tags.join(', ') ? {} : { tags: parseLeadTags(tagsText) };
   const links = record.data.sourceLinks?.length
     ? record.data.sourceLinks
     : [{ source: record.data.source, url: record.data.sourceUrl }];
@@ -539,16 +540,17 @@ function LeadEditor({
                   if (next === record.status) return;
                   if (
                     window.confirm(
-                      `Change status to "${statusLabel(next)}" and save current notes?`,
+                      `Change status to "${statusLabel(next)}" and save current notes and tags?`,
                     )
                   )
                     if (next === 'applied' && !record.applicationEvidence)
                       setApplicationEvidenceOpen(true);
-                    else save.mutate({ status: next });
+                    else save.mutate({ status: next, ...changedTags });
                 }}
               >
                 {[
                   ...new Set([
+                    ...(record.status === 'saved' ? ['applied' as const] : []),
                     ...allowedStatuses.filter(
                       (value) =>
                         ['saved', 'archived', 'applied'].includes(value) ||
@@ -580,8 +582,12 @@ function LeadEditor({
               className={styles.btnSecondary}
               disabled={pending || record.status === 'archived'}
               onClick={() => {
-                if (window.confirm('Archive this lead in CareerScope and save current notes?'))
-                  save.mutate({ status: 'archived' });
+                if (
+                  window.confirm(
+                    'Archive this lead in CareerScope and save current notes and tags?',
+                  )
+                )
+                  save.mutate({ status: 'archived', ...changedTags });
               }}
             >
               <Archive size={16} aria-hidden="true" />
@@ -593,8 +599,8 @@ function LeadEditor({
                 className={styles.btnSecondary}
                 disabled={pending}
                 onClick={() => {
-                  if (window.confirm('Restore this lead to Saved and save current notes?'))
-                    save.mutate({ status: 'saved' });
+                  if (window.confirm('Restore this lead to Saved and save current notes and tags?'))
+                    save.mutate({ status: 'saved', ...changedTags });
                 }}
               >
                 <Undo2 size={16} aria-hidden="true" />
@@ -635,6 +641,7 @@ function LeadEditor({
                 if (Number.isNaN(appliedAt.getTime())) return;
                 save.mutate({
                   status: ['saved', 'archived'].includes(record.status) ? 'applied' : record.status,
+                  ...changedTags,
                   applicationEvidence: {
                     method: applicationMethod,
                     appliedAt: appliedAt.toISOString(),

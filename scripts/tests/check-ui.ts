@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createHmac, randomBytes, randomUUID } from 'node:crypto';
+import { createHash, createHmac, randomBytes, randomUUID } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { mkdir, mkdtemp, readFile, rm, utimes, writeFile } from 'node:fs/promises';
@@ -488,7 +488,12 @@ try {
     jobId: foreignJobId,
   });
   assert.ok(foreignLead);
-  await mkdir(new URL('../../test-results/', import.meta.url), { recursive: true });
+  const screenshotDirectory = join(
+    fileURLToPath(new URL('../../test-results/', import.meta.url)),
+    `ui-${Date.now()}-${randomUUID()}`,
+  );
+  const screenshotPath = (name: string) => join(screenshotDirectory, name);
+  await mkdir(screenshotDirectory, { recursive: true });
   await app.listen({ host: '127.0.0.1', port: API_PORT });
   const axeSource = await readFile(
     fileURLToPath(new URL('../../node_modules/axe-core/axe.min.js', import.meta.url)),
@@ -1542,19 +1547,8 @@ try {
           },
           { timeout: 15000 },
         );
-      // CS-54: this block previously asserted that `script-src` did NOT carry
-      // `'unsafe-inline'`, backed by a nonce-based middleware. That middleware
-      // was REMOVED on 2026-09-25 after it was proven to break the production
-      // build (prerendered HTML cannot carry a per-request nonce: 10 script
-      // tags, 0 nonce attributes, suite red against `next start`). The
-      // assertions are therefore reduced to what is currently TRUE, and the
-      // `'unsafe-inline'` weakness stays open on CS-54 rather than being
-      // asserted away.
-      //
-      // What is still worth enforcing is everything that is cheap to lose and
-      // invisible when lost. Each is an equality check, not a substring search,
-      // so a widened value fails rather than passing on a partial match — and
-      // a missing header fails loudly rather than passing while unable to look.
+      // CS-54: check the production hash policy itself and match every inline
+      // script in the rendered page to a hash in the response header.
       const documentResponse = await page.goto(origin);
       const csp = (await documentResponse?.headerValue('content-security-policy')) ?? '';
       const directives = new Map(
@@ -1564,10 +1558,30 @@ try {
           .filter(Boolean)
           .map((directive) => [directive.split(/\s+/)[0]!, directive]),
       );
+      const scriptSource = directives.get('script-src');
+      assert.ok(scriptSource, `${engine} document response carries no script-src directive`);
+      const scriptSources = scriptSource.split(/\s+/).slice(1);
+      assert.ok(scriptSources.includes("'self'"), `${engine} script-src does not allow self`);
       assert.ok(
-        directives.get('script-src'),
-        `${engine} document response carries no script-src directive`,
+        !scriptSources.includes("'unsafe-inline'"),
+        `${engine} production script-src allows unsafe-inline`,
       );
+      assert.ok(
+        !scriptSources.includes("'unsafe-eval'"),
+        `${engine} production script-src allows unsafe-eval`,
+      );
+      const inlineScriptBodies = await page
+        .locator('script:not([src])')
+        .evaluateAll((scripts) =>
+          scripts.map((script) => script.textContent ?? '').filter(Boolean),
+        );
+      const inlineScriptHashes = inlineScriptBodies.map(
+        (body) => `'sha256-${createHash('sha256').update(body).digest('base64')}'`,
+      );
+      assert.ok(inlineScriptHashes.length > 0, `${engine} page has no inline scripts to validate`);
+      for (const hash of inlineScriptHashes) {
+        assert.ok(scriptSources.includes(hash), `${engine} script-src omits an inline script hash`);
+      }
       for (const [name, expected] of [
         ['default-src', "default-src 'self'"],
         ['object-src', "object-src 'none'"],
@@ -1607,9 +1621,7 @@ try {
         );
         if (engine === 'chromium')
           await page.screenshot({
-            path: fileURLToPath(
-              new URL(`../../test-results/account-${width}.png`, import.meta.url),
-            ),
+            path: screenshotPath(`account-${width}.png`),
             fullPage: true,
           });
       }
@@ -2063,9 +2075,7 @@ try {
           true,
         );
         await page.screenshot({
-          path: fileURLToPath(
-            new URL(`../../test-results/dashboard-${engine}-${width}.png`, import.meta.url),
-          ),
+          path: screenshotPath(`dashboard-${engine}-${width}.png`),
           fullPage: true,
         });
       }
@@ -2092,9 +2102,7 @@ try {
           `${engine} /dashboard at ${width}px causes horizontal scrolling`,
         );
         await page.screenshot({
-          path: fileURLToPath(
-            new URL(`../../test-results/dashboard-route-${engine}-${width}.png`, import.meta.url),
-          ),
+          path: screenshotPath(`dashboard-route-${engine}-${width}.png`),
           fullPage: true,
         });
       }
@@ -2485,9 +2493,7 @@ try {
           true,
         );
         await page.screenshot({
-          path: fileURLToPath(
-            new URL(`../../test-results/resources-${engine}-${width}.png`, import.meta.url),
-          ),
+          path: screenshotPath(`resources-${engine}-${width}.png`),
           fullPage: true,
         });
       }
@@ -2614,7 +2620,7 @@ try {
         );
         if (engine === 'chromium')
           await page.screenshot({
-            path: fileURLToPath(new URL(`../../test-results/resume-${width}.png`, import.meta.url)),
+            path: screenshotPath(`resume-${width}.png`),
             fullPage: true,
           });
       }
@@ -2670,9 +2676,7 @@ try {
           true,
         );
         await page.screenshot({
-          path: fileURLToPath(
-            new URL(`../../test-results/preparation-${engine}-${width}.png`, import.meta.url),
-          ),
+          path: screenshotPath(`preparation-${engine}-${width}.png`),
           fullPage: true,
         });
       }
@@ -2873,9 +2877,7 @@ try {
         );
         if (engine === 'chromium')
           await page.screenshot({
-            path: fileURLToPath(
-              new URL(`../../test-results/security-${width}.png`, import.meta.url),
-            ),
+            path: screenshotPath(`security-${width}.png`),
             fullPage: true,
           });
       }
@@ -3040,9 +3042,7 @@ try {
         );
         if (engine === 'chromium')
           await page.screenshot({
-            path: fileURLToPath(
-              new URL(`../../test-results/workspace-${width}.png`, import.meta.url),
-            ),
+            path: screenshotPath(`workspace-${width}.png`),
             fullPage: true,
           });
       }
@@ -3213,7 +3213,7 @@ try {
         assert.ok(bounds && bounds.x >= 0 && bounds.x + bounds.width <= width);
         if (engine === 'chromium')
           await page.screenshot({
-            path: fileURLToPath(new URL(`../../test-results/cancel-${width}.png`, import.meta.url)),
+            path: screenshotPath(`cancel-${width}.png`),
             fullPage: true,
           });
       }
@@ -3401,7 +3401,9 @@ try {
         'saved',
         `${engine}: opening the external destination changed application status`,
       );
-      await openedLead.getByRole('button', { name: 'Record application', exact: true }).click();
+      await openedLead.getByLabel('Comma-separated tags').fill('audit, preserve');
+      page.once('dialog', (dialog) => dialog.accept());
+      await openedLead.getByRole('combobox', { name: 'Status' }).selectOption('applied');
       const evidenceForm = openedLead.locator('form');
       await evidenceForm.getByRole('heading', { name: 'Record your application' }).waitFor();
       await evidenceForm.getByLabel('Application method', { exact: true }).fill('Employer website');
@@ -3435,6 +3437,7 @@ try {
       assert.equal(applicationRecord.status, 'applied');
       assert.equal(applicationRecord.applicationEvidence.method, 'Employer website');
       assert.equal(applicationRecord.applicationEvidence.source, 'Synthetic candidate report');
+      assert.deepEqual(applicationRecord.tags, ['audit', 'preserve']);
       await page.goto(`${origin}/applications`);
       await page.waitForURL(`${origin}/applications`);
       await page.getByRole('heading', { name: 'Applications', exact: true }).waitFor();
@@ -3863,7 +3866,7 @@ try {
         );
         if (engine === 'chromium')
           await page.screenshot({
-            path: fileURLToPath(new URL(`../../test-results/leads-${width}.png`, import.meta.url)),
+            path: screenshotPath(`leads-${width}.png`),
             fullPage: true,
           });
       }
@@ -4108,9 +4111,7 @@ try {
         );
         if (engine === 'chromium')
           await page.screenshot({
-            path: fileURLToPath(
-              new URL(`../../test-results/profile-${width}.png`, import.meta.url),
-            ),
+            path: screenshotPath(`profile-${width}.png`),
             fullPage: true,
           });
       }
@@ -4218,9 +4219,7 @@ try {
         );
         if (engine === 'chromium')
           await page.screenshot({
-            path: fileURLToPath(
-              new URL(`../../test-results/discovery-${width}.png`, import.meta.url),
-            ),
+            path: screenshotPath(`discovery-${width}.png`),
             fullPage: true,
           });
       }

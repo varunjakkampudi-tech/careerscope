@@ -211,10 +211,12 @@ test('a public application origin is accepted only over https', () => {
 });
 
 test('Redis rate limit is atomic and expires rather than persisting authorization', async () => {
-  assert.ok(process.env.REDIS_URL);
+  const redisUrl = process.env.REDIS_URL;
+  assert.ok(redisUrl, 'Integration tests require REDIS_URL');
+  assert.ok(['127.0.0.1', 'localhost'].includes(new URL(redisUrl).hostname));
   const prefix = `test:${randomUUID()}:`;
-  const firstInstance = await rateLimiter(process.env.REDIS_URL, prefix);
-  const secondInstance = await rateLimiter(process.env.REDIS_URL, prefix);
+  const firstInstance = await rateLimiter(redisUrl, prefix);
+  const secondInstance = await rateLimiter(redisUrl, prefix);
   try {
     const admitted = await Promise.all(
       Array.from({ length: 20 }, (_, index) =>

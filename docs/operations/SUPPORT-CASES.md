@@ -9,8 +9,11 @@ support (see [AUTHENTICATION](../AUTHENTICATION.md)).
 1. Ask the candidate to write to support from a channel you can verify. Do not act on a request that
    arrives only as a sign-in reply.
 2. Check the candidate's identity against details that are held only on the account, such as the
-   profile name, date of birth, and the most recent application. Never ask for a password or a sign-in
-   code, because none is needed here.
+   profile name and saved application history. Use only account facts that already exist and that
+   support is authorized to access; the product does not retain the date of birth used for its age
+   screen. If the available account facts are not sufficient, do not change the sign-in address and
+   escalate for an approved recovery process. Never request a password, sign-in code, date of birth,
+   or new identity document.
 3. If the check passes, open a case with a reason of at least 10 characters:
 
    ```bash

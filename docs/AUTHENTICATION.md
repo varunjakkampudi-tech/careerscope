@@ -142,7 +142,11 @@ This is local implementation and synthetic-provider test evidence only; it is
 not live delivery, domain verification, or independent security approval.
 
 Set these server-only values in an approved environment: `EMAIL_OTP_ENABLED`,
-`EMAIL_OTP_HMAC_SECRET` (an independent random secret: 64 hex characters, or 43 or more base64 characters decoding to at least 32 bytes with at least 24 distinct byte values; weaker values are refused at startup),
+`EMAIL_OTP_HMAC_SECRET` (at least 64 even-length hex characters, or at least 43
+base64/base64url characters, decoding to at least 32 bytes. Startup rejects
+fewer than two character classes, short repeating periods, and arithmetic
+byte sequences. This heuristic does not prove randomness; generate with a
+CSPRNG.),
 `RESEND_API_KEY`, and `RESEND_FROM_EMAIL` (the approved sender). The legal
 policy values are `LEGAL_TERMS_VERSION`, `LEGAL_TERMS_URL`, `LEGAL_PRIVACY_VERSION`,
 `LEGAL_PRIVACY_URL` and `LEGAL_MARKETING_VERSION`; registration and test access are

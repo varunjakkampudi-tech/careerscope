@@ -344,11 +344,7 @@ export class LeadRepository {
       }
       if (current.revision !== changes.revision)
         throw new LeadRevisionConflict('Lead revision changed');
-      if (
-        changes.tags !== undefined &&
-        (!['saved', 'archived'].includes(current.status) ||
-          !['saved', 'archived'].includes(changes.status))
-      ) {
+      if (changes.tags !== undefined && !['saved', 'archived'].includes(current.status)) {
         throw new z.ZodError([
           {
             code: 'custom',

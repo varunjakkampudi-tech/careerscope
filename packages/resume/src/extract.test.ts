@@ -37,11 +37,11 @@ describe('extractText', () => {
 });
 
 describe('splitSections', () => {
-  const text = `Jane Doe
-jane@example.com
+  const text = `Candidate Example
+candidate@example.invalid
 
 PROFESSIONAL EXPERIENCE
-Acme Corp — Senior Engineer
+Example Systems — Senior Engineer
 - Shipped things
 
 TECHNICAL SKILLS
@@ -52,13 +52,13 @@ B.Tech, 2019`;
 
   it('routes each block to its section', () => {
     const sections = splitSections(text);
-    expect(sections.experience).toContain('Acme Corp');
+    expect(sections.experience).toContain('Example Systems');
     expect(sections.skills).toContain('React');
     expect(sections.education).toContain('B.Tech');
   });
 
   it('keeps the pre-heading block so contact parsing can find it', () => {
-    expect(splitSections(text).other).toContain('jane@example.com');
+    expect(splitSections(text).other).toContain('candidate@example.invalid');
   });
 
   it('does not start a section on a sentence that merely mentions one', () => {
@@ -69,7 +69,7 @@ B.Tech, 2019`;
   });
 
   it('accepts a decorated heading', () => {
-    expect(splitSections('WORK EXPERIENCE:\nAcme').experience).toBe('Acme');
+    expect(splitSections('WORK EXPERIENCE:\nExample Systems').experience).toBe('Example Systems');
     expect(splitSections('• Technical Skills •\nGo').skills).toBe('Go');
   });
 });

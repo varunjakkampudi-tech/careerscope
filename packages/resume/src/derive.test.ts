@@ -14,24 +14,24 @@ import { splitSections } from './sections.js';
 const NOW = Date.parse('2026-09-05T12:00:00Z');
 
 /**
- * Modelled on the real PDF this was built against: a letter-spaced headline that
- * PDF extraction has already collapsed, a role dated twice (company line and
- * title line), and a degree abbreviation that looks like a domain.
+ * Synthetic resume text exercising a letter-spaced headline that PDF extraction
+ * has already collapsed, a role dated twice (company line and title line), and
+ * a degree abbreviation that looks like a domain.
  */
-const RESUME = `JAKKAMPUDI VARUN
+const RESUME = `ALEX EXAMPLE
 FULL STACK SOFTWARE ENGINEER
-Hyderabad, India | +91 9000000001 | varun.jakkampudi14@example.invalid
-linkedin.com/in/jakkampudi-varun | github.com/varunjakkampudi-tech
+Pune, India | +1 202-555-0100 | alex.example@example.invalid
+linkedin.com/in/example-candidate | github.com/example-candidate
 
 PROFESSIONAL EXPERIENCE
-CREDERA Hyderabad, India | Mar 2023 - Present
-Formerly TA Digital, now part of Omnicom Group
+Example Systems Pune, India | Mar 2023 - Present
+Formerly Sample Works, now part of Example Group
 Senior Associate Mar 2023 - Present
 - Built design-system components in React and TypeScript, documented in Storybook.
 - Cut Largest Contentful Paint by 40% through code splitting and image policy.
 - Authored REST API contracts consumed by three downstream squads.
 
-INFOSYS Bengaluru, India | Jun 2021 - Feb 2023
+Northstar Labs Bengaluru, India | Jun 2021 - Feb 2023
 Systems Engineer Jun 2021 - Feb 2023
 - Maintained Angular dashboards backed by Spring Boot services.
 - Wrote PL/SQL reports against Oracle.
@@ -43,16 +43,16 @@ Backend: Node.js, Express, Spring Boot
 Cloud: AWS, Docker, Kubernetes
 
 EDUCATION
-B.Tech in Information Technology, JNTU Hyderabad, 2021
+B.Tech in Information Technology, Example Institute, 2021
 `;
 
 describe('deriveContact', () => {
   it('reads email, phone and profile links', () => {
     const contact = deriveContact(RESUME);
-    expect(contact.email).toBe('varun.jakkampudi14@example.invalid');
-    expect(contact.phone).toBe('+91 9000000001');
-    expect(contact.linkedin).toBe('https://www.linkedin.com/in/jakkampudi-varun');
-    expect(contact.github).toBe('https://www.github.com/varunjakkampudi-tech');
+    expect(contact.email).toBe('alex.example@example.invalid');
+    expect(contact.phone).toBe('+1 202-555-0100');
+    expect(contact.linkedin).toBe('https://www.linkedin.com/in/example-candidate');
+    expect(contact.github).toBe('https://www.github.com/example-candidate');
   });
 
   it('does not mistake a degree abbreviation for a personal site', () => {
@@ -62,8 +62,8 @@ describe('deriveContact', () => {
   });
 
   it('still finds a real portfolio domain', () => {
-    const contact = deriveContact('Portfolio: varunj.dev | mail me at a@b.com');
-    expect(contact.portfolio).toBe('https://varunj.dev');
+    const contact = deriveContact('Portfolio: candidate.example.dev | mail me at a@b.com');
+    expect(contact.portfolio).toBe('https://candidate.example.dev');
   });
 
   it('ignores the domain the email itself is on', () => {
@@ -74,7 +74,7 @@ describe('deriveContact', () => {
 
 describe('deriveName', () => {
   it('orders surname-first headers using the email local part', () => {
-    expect(deriveName(RESUME, 'varun.jakkampudi14@example.invalid')).toBe('Varun Jakkampudi');
+    expect(deriveName(RESUME, 'alex.example@example.invalid')).toBe('Alex Example');
   });
 
   it('leaves an already-first-name-first header alone', () => {
@@ -341,7 +341,7 @@ Principal Platform Engineer | Acme, Pune | Jan 2020 - Feb 2023
       expect(unreadable.titles).toEqual([]);
       expect(unreadable.titlesStatus).toBe('undeterminable');
 
-      // Paired positive on the same surface: the real resume fixture still
+      // Paired positive on the same surface: the synthetic resume fixture still
       // derives titles and says so.
       const readable = deriveFields(RESUME, NOW);
       expect(readable.titlesStatus).toBe('derived');
@@ -376,10 +376,10 @@ describe('deriveFields', () => {
   it('produces the full derived profile the onboarding form pre-fills', () => {
     const fields = deriveFields(RESUME, NOW);
     expect(fields).toMatchObject({
-      fullName: 'Varun Jakkampudi',
-      email: 'varun.jakkampudi14@example.invalid',
-      phone: '+91 9000000001',
-      location: 'Hyderabad, India',
+      fullName: 'Alex Example',
+      email: 'alex.example@example.invalid',
+      phone: '+1 202-555-0100',
+      location: 'Pune, India',
       portfolio: undefined,
     });
     expect(fields.titles[0]).toBe('Senior Associate');

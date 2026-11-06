@@ -5,7 +5,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { apiParsed } from './api';
-import { parseSession, type Session } from './api-schemas';
+import { parseSession } from './api-schemas';
 
 /**
  * Sentinel used when no user is known. It never collides with a real digest

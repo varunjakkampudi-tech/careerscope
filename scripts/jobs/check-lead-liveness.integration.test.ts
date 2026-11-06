@@ -11,29 +11,48 @@ import {
   type LookupFn,
 } from './check-lead-liveness.ts';
 
-const publicLookup: LookupFn = async () => ({ address: '203.0.113.10', family: 4 });
+const publicLookup: LookupFn = async () => ({ address: '8.8.8.8', family: 4 });
 const privateLookup: LookupFn = async () => ({ address: '10.0.0.5', family: 4 });
 const unresolvableLookup: LookupFn = async () => {
   throw new Error('ENOTFOUND');
 };
 
-test('isPrivateOrReservedIp blocks loopback, RFC1918 and link-local, allows public addresses', () => {
+test('isPrivateOrReservedIp blocks non-public ranges and permits globally routable addresses', () => {
   const blocked = [
     '127.0.0.1',
     '10.0.0.5',
     '172.16.0.1',
     '172.31.255.255',
     '192.168.1.1',
+    '192.0.0.9',
+    '192.0.2.1',
+    '192.88.99.1',
+    '198.18.0.1',
+    '198.51.100.1',
+    '203.0.113.10',
     '169.254.169.254', // cloud metadata endpoint - the classic SSRF target
     '0.0.0.0',
     '::1',
+    '::',
     'fe80::1',
     'fc00::1',
     'fd12:3456::1',
+    '64:ff9b::a9fe:a9fe',
+    '2001:2::1',
+    '2001:db8::1',
+    '2002::1',
+    '3fff::1',
+    '100::1',
   ];
   for (const ip of blocked) assert.equal(isPrivateOrReservedIp(ip), true, ip);
 
-  const allowed = ['8.8.8.8', '1.1.1.1', '203.0.113.10', '2606:4700:4700::1111'];
+  const allowed = [
+    '8.8.8.8',
+    '1.1.1.1',
+    '2606:4700:4700::1111',
+    '2001:4860:4860::8888',
+    '2620:4f:8000::1',
+  ];
   for (const ip of allowed) assert.equal(isPrivateOrReservedIp(ip), false, ip);
 
   // 172.15.x and 172.32.x are outside the RFC1918 172.16-172.31 block.
@@ -59,7 +78,7 @@ test('isPrivateOrReservedIp unwraps IPv4-mapped IPv6 to the identical rule, not 
   ];
   for (const ip of blockedMapped) assert.equal(isPrivateOrReservedIp(ip), true, ip);
 
-  const allowedMapped = ['::ffff:8.8.8.8', '::ffff:203.0.113.10'];
+  const allowedMapped = ['::ffff:8.8.8.8', '::ffff:1.1.1.1'];
   for (const ip of allowedMapped) assert.equal(isPrivateOrReservedIp(ip), false, ip);
 
   // The fully-hex form of the same mapped addresses (RFC 4291 allows both
@@ -68,8 +87,15 @@ test('isPrivateOrReservedIp unwraps IPv4-mapped IPv6 to the identical rule, not 
   assert.equal(isPrivateOrReservedIp('::ffff:0808:0808'), false); // 8.8.8.8 in hex
 });
 
-test('pinnedDispatcher blocks a resolved-private address and reports an unresolvable hostname distinctly', async () => {
+test('pinnedDispatcher blocks non-public addresses and reports unresolvable hostnames distinctly', async () => {
   assert.equal(await pinnedDispatcher('internal.example.test', privateLookup), 'blocked');
+  assert.equal(
+    await pinnedDispatcher('documentation.example.test', async () => ({
+      address: '203.0.113.10',
+      family: 4,
+    })),
+    'blocked',
+  );
   assert.equal(await pinnedDispatcher('nowhere.example.test', unresolvableLookup), 'unresolvable');
   const dispatcher = await pinnedDispatcher('public.example.test', publicLookup);
   assert.notEqual(dispatcher, 'blocked');
@@ -156,7 +182,7 @@ test('classifyResponse re-validates every redirect hop, not only the first URL',
     // The second hop resolves privately - must be caught, not silently
     // followed just because the first hop was fine.
     return hostname === 'safe.example.test'
-      ? { address: '203.0.113.10', family: 4 }
+      ? { address: '8.8.8.8', family: 4 }
       : { address: '10.0.0.5', family: 4 };
   };
   const redirectingFetch = (async (url: string) => {

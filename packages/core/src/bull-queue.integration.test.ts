@@ -24,6 +24,13 @@ function resolveJobWaitMs(raw: string | undefined) {
 const jobWaitMs = resolveJobWaitMs(process.env.INTEGRATION_JOB_WAIT_MS);
 
 test('BullMQ rejects remote endpoints and unsafe queue configuration', async () => {
+  const databaseUrl = process.env.DATABASE_URL;
+  const redisUrl = process.env.REDIS_URL;
+  assert.ok(databaseUrl, 'Integration tests require DATABASE_URL');
+  assert.ok(redisUrl, 'Integration tests require REDIS_URL');
+  assert.ok(['localhost', '127.0.0.1'].includes(new URL(databaseUrl).hostname));
+  assert.ok(['localhost', '127.0.0.1'].includes(new URL(redisUrl).hostname));
+
   for (const url of [
     'redis://example.com',
     'http://localhost',
@@ -34,9 +41,9 @@ test('BullMQ rejects remote endpoints and unsafe queue configuration', async () 
   ]) {
     assert.throws(() => queueConnection(url));
   }
-  const database = new Database(process.env.DATABASE_URL!);
-  const unsafe = new BullSearchQueue(database, process.env.REDIS_URL!, `test-${randomUUID()}`);
-  const client = createClient({ url: process.env.REDIS_URL! });
+  const database = new Database(databaseUrl);
+  const unsafe = new BullSearchQueue(database, redisUrl, `test-${randomUUID()}`);
+  const client = createClient({ url: redisUrl });
   client.on('error', () => {});
   await client.connect();
   const originalAppendOnly = (await client.configGet('appendonly')).appendonly;
@@ -48,7 +55,7 @@ test('BullMQ rejects remote endpoints and unsafe queue configuration', async () 
     await unsafe.close();
     await client.configSet('appendonly', originalAppendOnly);
     await client.quit();
-    const cleanup = new BullSearchQueue(database, process.env.REDIS_URL!, unsafe.name);
+    const cleanup = new BullSearchQueue(database, redisUrl, unsafe.name);
     try {
       await cleanup.queue.obliterate();
     } finally {
@@ -72,6 +79,7 @@ test(
     url.pathname = `/${name}`;
     const database = new Database(url.href);
     const endpoint = process.env.SEARCH_QUEUE_REDIS_URL ?? 'redis://127.0.0.1:56480';
+    assert.ok(['localhost', '127.0.0.1'].includes(new URL(endpoint).hostname));
     const queue = new BullSearchQueue(database, endpoint, `test-${randomUUID()}`);
     const events = new QueueEvents(queue.name, {
       // QueueEvents blocks for about ten seconds by design; the production command timeout would cut that read short.

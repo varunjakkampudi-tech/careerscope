@@ -474,6 +474,9 @@ suite('pages', () => {
     expect(url.searchParams.get('fromage')).toBe('3');
     // Indeed's remote facet, by its own attribute id.
     expect(url.searchParams.get('sc')).toBe('0kf:attr(DSQF7);');
+    // Indeed's robots.txt allow pattern is `&start=N&`; the trailing delimiter
+    // keeps these requests inside the explicit allowance.
+    expect(url.search).toContain('&start=0&');
   });
 
   it('walks a real results page', async () => {
@@ -507,6 +510,7 @@ suite('pages', () => {
         '10',
         '20',
       ]);
+      expect(session.navigations.every((url) => new URL(url).search.endsWith('&'))).toBe(true);
       expect(pages.map((page) => page.items.length)).toEqual([10, 10, 3]);
     } finally {
       vi.useRealTimers();

@@ -1,12 +1,11 @@
 # Removing `script-src 'unsafe-inline'` from the web policy (the relevant regression)
 
-**Status: MEASURED, NOT IMPLEMENTED.** This records what a strict `script-src`
-would actually cost, measured against a real production build rather than
-estimated. It supersedes the assumption — written into `next.config.ts` after
-the failed nonce attempt — that the only routes forward were _"give up static
-prerendering or move to build-time hashes"_, by establishing that **the hash
-route does not require giving up static prerendering** and is far smaller than
-feared.
+**Status: IMPLEMENTED.** The measurements below informed the hash-based
+production script policy. `apps/web/scripts/build-with-csp.mjs` performs a
+discovery build, rebuilds with the discovered hashes, and repeats until the
+generated inline script hashes are covered. `apps/web/next.config.ts` refuses
+a standalone production build without the hash input. The counts below are a
+historical measurement, not a claim about the current build output.
 
 ## What was already known, and cost a production outage to learn
 
@@ -49,27 +48,19 @@ prerendering does not have to be abandoned.**
 `(self.__next_f=self.__next_f||[]).push([0])` bootstrap shared by all 13 pages;
 the rest are per-page React Flight payloads.
 
-## The remaining obstacle is ordering, not feasibility
+## How the build resolves ordering
 
-`headers()` in `next.config.ts` is evaluated **during** the build, before the
-HTML that contains those scripts exists. The hashes cannot be computed and
-consumed in the same pass. That is the same class of problem as the nonce — a
-static header trying to describe content it has not seen — and it is why this is
-still not a header edit.
+`npm run build` runs the web workspace's `build-with-csp.mjs`. It first builds
+with hash discovery enabled, extracts hashes from generated static HTML, then
+rebuilds with `CSP_SCRIPT_HASHES`. It compares the next output with the policy
+and adds newly generated hashes to the union for another pass, failing after
+four enforcement passes if the set does not converge. A normal production
+build without the wrapper fails closed in `next.config.ts`.
 
-Two workable shapes, both of which need a change to the build pipeline:
-
-- **Two-pass build.** Build, compute the hashes from the emitted HTML, write
-  them to a generated file, then build again with `headers()` reading that file.
-  Viable only if the second pass produces byte-identical HTML — **this is the
-  one assumption below that has NOT been verified here**, because rebuilding
-  would overwrite `.next` underneath a running dev server.
-- **Emit the header at the edge.** Generate a hash manifest at build time and
-  have the reverse proxy serve the policy. This removes the ordering problem
-  entirely, because the proxy reads the manifest after the build has finished.
-
-Both touch build or infrastructure files. Neither belongs to the web tier alone,
-and neither should be attempted as a drive-by edit.
+The build is also exercised by the browser acceptance suite against a production
+server; the recorded browser checks require a rendered page and verify the
+script policy. The measurement table above remains historical evidence and
+must not substitute for validation of the current build.
 
 ## Cost of getting it wrong, stated plainly
 
@@ -101,5 +92,7 @@ app; and every rendered value passes through React's automatic escaping.
 `style-src 'unsafe-inline'` is a separate and substantially harder problem and
 is not in scope here.
 
-The residual risk stays recorded in
-[KNOWN-LIMITATIONS.md](../KNOWN-LIMITATIONS.md). **CS-54 stays open.**
+The remaining style policy and the need to validate each candidate build remain
+recorded in [KNOWN-LIMITATIONS.md](../KNOWN-LIMITATIONS.md). The strict
+production `script-src` implementation is in place; this document does not
+certify a build or deployment that has not been tested.

@@ -71,7 +71,7 @@ export default function AccountSecurity({
   const [emailChangePending, setEmailChangePending] = useState(false);
   const [emailChangeError, setEmailChangeError] = useState('');
   const [emailChangeNotice, setEmailChangeNotice] = useState('');
-  const busy = revoking;
+  const busy = revoking || revokingSessionId !== null;
   useEffect(() => onBusyChange?.(busy), [busy, onBusyChange]);
 
   async function requestEmailChange(event: FormEvent<HTMLFormElement>) {
@@ -158,6 +158,7 @@ export default function AccountSecurity({
           : t('pleaseTryAgain'),
       );
     } finally {
+      await queryClient.invalidateQueries({ queryKey: ['accountSessions'] });
       setRevoking(false);
     }
   }

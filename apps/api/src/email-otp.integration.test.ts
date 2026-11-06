@@ -24,7 +24,12 @@ test(
     assert.ok(configuredDatabase, 'integration test requires an isolated DATABASE_URL');
     assert.ok(configuredRedis, 'integration test requires an isolated REDIS_URL');
     const databaseUrl = new URL(configuredDatabase);
+    const redisUrl = new URL(configuredRedis);
     assert.ok(['127.0.0.1', 'localhost'].includes(databaseUrl.hostname));
+    assert.ok(
+      ['127.0.0.1', 'localhost', '[::1]'].includes(redisUrl.hostname),
+      'integration test requires a loopback REDIS_URL',
+    );
 
     const admin = new Database(configuredDatabase);
     const name = `test_${randomUUID().replaceAll('-', '')}`;

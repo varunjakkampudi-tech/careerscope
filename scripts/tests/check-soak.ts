@@ -438,7 +438,9 @@ try {
     `SELECT count(*) AS orphaned FROM command_executions e
       WHERE NOT EXISTS (SELECT 1 FROM outbox_events o WHERE o.id = e.id)`,
   );
+  const reportName = `soak-report-${started}-${randomUUID()}.json`;
   const report = {
+    reportPath: `test-results/${reportName}`,
     durationMs: Date.now() - started,
     counts,
     operations,
@@ -454,8 +456,9 @@ try {
   };
   console.error(JSON.stringify(report, null, 2));
   await writeFile(
-    fileURLToPath(new URL('../../test-results/soak-report.json', import.meta.url)),
+    fileURLToPath(new URL(`../../test-results/${reportName}`, import.meta.url)),
     JSON.stringify({ ...report, samples }, null, 2),
+    { flag: 'wx' },
   );
 
   assert.deepEqual(failures, [], 'the soak recorded application failures');

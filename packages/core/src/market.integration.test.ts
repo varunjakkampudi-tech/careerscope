@@ -128,6 +128,7 @@ test('the pipeline distinguishes neglected work from finished work', async () =>
   const configured = process.env.DATABASE_URL;
   assert.ok(configured);
   const base = new URL(configured);
+  assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname));
   const root = new Database(configured);
   const name = `test_${randomUUID().replaceAll('-', '')}`;
   await root.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);

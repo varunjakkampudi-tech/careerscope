@@ -20,6 +20,7 @@ test('queue endpoints cannot select cloud or arbitrary hosts', () => {
 test('local queue redelivery, acknowledgement and persistence', async () => {
   const endpoint = process.env.QUEUE_REDIS_URL;
   assert.ok(endpoint, 'Integration tests require QUEUE_REDIS_URL');
+  assert.ok(['127.0.0.1', 'localhost'].includes(new URL(endpoint).hostname));
   const queue = new LocalQueue(endpoint);
   try {
     await queue.initialize(`test-${randomUUID()}`);
@@ -53,6 +54,7 @@ test('local queue redelivery, acknowledgement and persistence', async () => {
 test('exhausted deliveries enter the DLQ and every failed command remains observable', async () => {
   const endpoint = process.env.QUEUE_REDIS_URL;
   assert.ok(endpoint, 'Integration tests require QUEUE_REDIS_URL');
+  assert.ok(['127.0.0.1', 'localhost'].includes(new URL(endpoint).hostname));
   const queue = new LocalQueue(endpoint);
   try {
     await queue.initialize(`test-${randomUUID()}`);

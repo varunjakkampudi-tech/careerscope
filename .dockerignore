@@ -51,9 +51,7 @@ logs
 .DS_Store
 Thumbs.db
 
-# The compose file, the nginx config and the systemd unit describe how to run
-# the image; they have no business inside it. The entrypoint does.
+# Host deployment scripts and runtime configuration do not belong in the
+# application image context. A Dockerfile that needs a specific build input
+# uses its Dockerfile-specific ignore file and an explicit COPY instruction.
 infra/**
-!infra/docker-entrypoint.sh
-!infra/xvfb-exec.sh
-!infra/application-exec.sh
