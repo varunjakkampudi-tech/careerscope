@@ -7,6 +7,7 @@ does not fail the gate.
 
 ## EX-2026-01: minimatch 3.x (GHSA-g3hv-75wg-m249)
 
+- **Status:** Closed on 2026-11-06. Both `npm audit --omit=dev` and full `npm audit` on the current lockfile report zero vulnerabilities. The dependency scan remains active and will detect a recurrence.
 - **Advisory:** `minimatch` below 11.0.1 has a denial-of-service issue from globparts amplification (ReDoS).
 - **Affected package:** `minimatch@3.1.5`, reached through `eslint-plugin-jsx-a11y`, `eslint-plugin-import`,
   `eslint-plugin-react` and `@eslint/eslintrc` in the ESLint 9 toolchain. Severity: moderate.
@@ -28,6 +29,5 @@ does not fail the gate.
   3. The advisory is reclassified, or a higher-severity advisory affects this chain.
 - **Review criteria:** before each release gate, re-run `npm ls minimatch --omit=dev` (must stay empty of 3.x)
   and `npm view eslint-plugin-jsx-a11y@latest dependencies`. Close the exception as soon as the trigger is met.
-- **Expiry:** reviewed at Stage 01 closure and at each stage gate. It must not carry into a release without a
-  fresh review.
+- **Expiry:** closed after the current lockfile audit stopped reporting the advisory. Reopen if a future scan reports it.
 - **Authority:** owner decision for Stage 01, permitting a narrow exception only after the checks above were verified (2026-11-02).

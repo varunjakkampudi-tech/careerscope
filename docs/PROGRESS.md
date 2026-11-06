@@ -18,6 +18,8 @@ Owner 22-stage roadmap item 1.08, browser acceptance, passed on all three Playwr
 
 Owner 22-stage roadmap item 1.09, standardized error handling, is verified locally for the API and web client, including database-backed 409 and 507 cases; see [API-SURFACE](API-SURFACE.md) and [TEST-MATRIX](TEST-MATRIX.md). Hosted Node 24 CI on the item PR remains the release gate.
 
+Owner 22-stage roadmap item 1.10, critical technical debt, has no open critical or high file-audit findings or source TODO/FIXME markers. The current dependency audit reports zero vulnerabilities; the stale minimatch exception was closed. Low-severity cleanup (unused exported schemas) and the accepted low audit risk remain documented and are not critical blockers. Local unit, integration, lint, typecheck and security checks passed; `npm run check` was blocked at repository-wide formatting because it included the preserved untracked Playwright artifact. See [TEST-MATRIX](TEST-MATRIX.md) and [DEPENDENCY-EXCEPTIONS](security/DEPENDENCY-EXCEPTIONS.md). Local Node is 22.23.2; hosted Node 24 CI on the item PR remains the release gate.
+
 Stage 02 evidence: [GAP-MATRIX](GAP-MATRIX.md) rows 2.01 to 2.20 and [TEST-MATRIX](TEST-MATRIX.md).
 Commit `c12838e` passed the local gates, the integration suite, the Chromium browser suite, and
 hosted CI on rerun `41221224982`. The first hosted run of `c12838e` failed in the flaky private

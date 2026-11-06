@@ -14,7 +14,7 @@
     "git grep for .only, .skip and .todo: 3 skipped Windows-only POSIX permission tests in runtime.secret-file.test.ts, which run on the Linux CI",
     "git grep for console.log/error/warn in product code: only apps/web/scripts/build-with-csp.mjs build tooling",
     "git grep for TODO, FIXME, XXX, HACK: no open markers in product code",
-    "npm audit --omit=dev: 0 advisories. npm audit (all): 15 moderate, all in the lint toolchain"
+    "Initial audit recorded 15 moderate findings in the development lint tree; rechecked 2026-11-06: npm audit --omit=dev and full npm audit report zero vulnerabilities (see docs/SECURITY.md)"
   ],
   "files": [
     {
@@ -1683,10 +1683,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Closes B-04 based on complete manifest evidence; retains B-03 as a deployment-time legal prerequisite outside current scope.",
-      "evidence": "Owner roadmap Stage 01 item 1.06 review on dev merge d74a7fb994f9ff65e551c82c260fb0a956969e22; manifest SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.06)",
-      "sha256": "a9ca16b2b0358d6ccdaf2924b58a6adb81a9979b78181a1cd048ad38935812ef"
+      "observations": "Reviewed blocker status and corrected resolved full-audit coverage from 500 to the verified 501 tracked files.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.10)",
+      "sha256": "5e645174e0cf990aa63b975ea75a57dade4cc2633e7f7f6283e5c94e9425d9e9"
     },
     {
       "path": "docs/DATA-MODEL.md",
@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Read in full. Progress accurately separates item evidence from the Stage 01 completion gate; recorded item 1.09 verification and outstanding hosted Node 24 gate.",
-      "evidence": "Reviewed current documentation and item 1.09 evidence on codex/stage01-item-109-error-handling; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.09)",
-      "sha256": "b0bbc0c21577ad43a324140418004414b705c8f9b735d61a45262ac04ee6477d"
+      "observations": "Reviewed the 22-stage progress register; records Stage 01 item 1.10 local evidence and explicitly preserves the hosted CI gate.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.10)",
+      "sha256": "41ba2f2b969e15f984e14059330df8db80c6370fc15ed5b6683ccf9b428ea30a"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1877,10 +1877,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Separates source controls from external acceptance, documents OTP/session controls, lack of inbound webhook, dependency advisory exception and required live checks. Security claims require supporting file/code evidence and are not treated as certification.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "8c2aa38475f575f5f8b40ca780aff70144643d94324b23f9c3981affe72023c2"
+      "observations": "Reviewed current security controls and refreshed dependency audit results on 2026-11-06. Both production and full npm audits reported zero vulnerabilities; the previous minimatch exception is linked to its closed record.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.10)",
+      "sha256": "1571e6461228bc004e1ed1dd991189faa7d8a95922c6c4207a136d022b30445b"
     },
     {
       "path": "docs/TEST-MATRIX.md",
@@ -1889,10 +1889,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Owner roadmap rows distinguish local item 1.09 proof from hosted CI acceptance; evidence records 27 focused unit tests and two database integration tests.",
-      "evidence": "Reviewed current documentation and item 1.09 evidence on codex/stage01-item-109-error-handling; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.09)",
-      "sha256": "a13240bf4b2ccbd3e0078e9294b712a9877784c790119df33439a940f61f5178"
+      "observations": "Reviewed owner roadmap evidence; records item 1.10 local checks and the local formatting limitation from the preserved untracked Playwright artifact.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.10)",
+      "sha256": "72c53b0e99ab17fbd9ba4ec9634cd6d264a80b6f22f668a53998406feca68de9"
     },
     {
       "path": "docs/TESTING.md",
@@ -2353,10 +2353,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Written in this change and read in full before commit. Records the minimatch exception EX-2026-01 with the verified development-only evidence (npm ls --omit=dev), the exposure assessment, why no compatible fix exists (eslint 10 uses patched minimatch 10 but eslint-plugin-jsx-a11y still pins minimatch 3), the remediation triggers, review criteria and expiry.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "4dc525323bee68bba84a33878713bea3c253292255229da4a891f30a93b94a5c"
+      "observations": "Reviewed exception history and closed EX-2026-01 after production and full lockfile audits reported zero vulnerabilities; the active scanner will detect recurrence.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.10)",
+      "sha256": "0315c73aa57f7b2cfb7be4a4379f22f9944a61be8582aa4b457a8971091ddd16"
     },
     {
       "path": "docs/security/THREAT-MODEL.md",
