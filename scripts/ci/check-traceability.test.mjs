@@ -295,7 +295,7 @@ test('the Item 1.02 prose and the register must quote the inventory counts', asy
   );
   const claim = await stale(
     'docs/TRACEABILITY.md',
-    '164 launch-blocking gaps',
+    '153 launch-blocking gaps',
     '0 launch-blocking gaps',
   );
   assert.match(claim[0], /TRACEABILITY/);
