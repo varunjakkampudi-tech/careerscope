@@ -179,6 +179,18 @@ containers, one engine at a time with nothing else running (`CAREERSCOPE_UI_BROW
 | Chromium | Pass: both result lines printed, exit 0. |
 | WebKit   | Pass: both result lines printed, exit 0. |
 
+### Current hosted cross-browser acceptance (2026-11-06)
+
+The pull-request workflow for PR #24 passed its full browser, accessibility, keyboard and responsive
+step on exact head `faaff952a43bd7f23db6caaf545d704a994a8e50` (run `42250586504`). For every
+pull-request event, `.github/workflows/ci.yml` sets `CAREERSCOPE_UI_BROWSER=all`; the successful
+`npm run test:ui` step therefore covers Chromium, Firefox and WebKit. The quality-gates and
+production-image jobs also passed on that SHA. Optional performance, soak and recovery jobs were
+skipped and are not counted as browser evidence.
+
+This verifies the owner roadmap's Stage 01 item 1.08 for the current code. Stage 01 is still open;
+its final acceptance must be tied to the exact revision that closes the stage.
+
 ### Environment limits
 
 - All three engines pass. They were run only on the one Windows host.

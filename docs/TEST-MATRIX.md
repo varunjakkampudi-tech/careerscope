@@ -21,9 +21,10 @@ owner's 22-stage roadmap. See the separate owner-roadmap evidence below when the
 
 ## Owner 22-stage roadmap: Stage 01
 
-| Item | Proof                                                                                                                            | Local result on 2026-11-06                                                                                                                             |
+| Item | Proof                                                                                                                            | Verification result on 2026-11-06                                                                                                                      |
 | ---- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 1.07 | `apps/api/src/error-handler.test.ts`; `tests/integration/database.integration.test.ts` (“Swagger documents every runtime route”) | 14 unit tests and 1 targeted integration test passed; Node 22 local limitation is recorded in [API-OPENAPI-REVIEW](architecture/API-OPENAPI-REVIEW.md) |
+| 1.08 | `scripts/tests/check-ui.ts`; hosted CI run `42250586504`, PR #24 exact SHA `faaff952a43bd7f23db6caaf545d704a994a8e50`            | Pull-request browser step passed on Chromium, Firefox and WebKit; final Stage 01 revision still needs its own acceptance run                           |
 
 The owner's separate fifteen-item Stage 01 prompt maps to this register in
 [FOUNDATIONS](FOUNDATIONS.md). Its release-gate behavior is additionally covered
