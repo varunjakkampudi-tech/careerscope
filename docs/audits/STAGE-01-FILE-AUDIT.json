@@ -204,10 +204,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the complete API package manifest. Private ESM package with a TypeScript build and explicit workspace dependencies; no local test or lifecycle scripts that could run unexpectedly. Versions align with the workspace package set.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "9509c5169baa99eb4f5f99a2ea2ae01371cfe1f618dbbd8bedf84fc0c8ced782"
+      "observations": "Reviewed the full API manifest after raising Fastify to the patched 5.12.8 line; the private ESM workspace still declares only its explicit build script.",
+      "evidence": "Stage 01 checklist item 1.03 review on codex/stage01-item-103-dependency-validation, based on dev f93be64; the manifest SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (Stage 01 item 1.03)",
+      "sha256": "b171a7227a15f2695d74e3322635e2bf60ccd091e7591fcb3c2563029944e0de"
     },
     {
       "path": "apps/api/src/admin-second-factor.integration.test.ts",
@@ -588,10 +588,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete web package manifest. Scripts are limited to local loopback dev/start, CSP-wrapped build and lint; package is private.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "06074efbdb8b819df326b565cdf62183f20f3d8048bbd611038d490e77a50f46"
+      "observations": "Reviewed the full web manifest after aligning Next.js and eslint-config-next at 16.4.5; existing build, lint, React pins and private workspace settings remain explicit.",
+      "evidence": "Stage 01 checklist item 1.03 review on codex/stage01-item-103-dependency-validation, based on dev f93be64; the manifest SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (Stage 01 item 1.03)",
+      "sha256": "2db03d12aa411e5d29177cb2fde52ee189f49547f7bd01abddb92d70e26e7e82"
     },
     {
       "path": "apps/web/public/brand/logo-full-transparent.png",
@@ -1715,10 +1715,10 @@
           "remediation": "Updated the crosswalk to the current tracked-file count; future counts should be sourced from the current Git baseline."
         }
       ],
-      "observations": "Re-read the updated foundations register and Stage 01 crosswalk. The owner prompt item 1.02 remains distinct from the repository register, and its source-clause dispositions now reflect the revised scope. Current counts match the validated inventory: 319 clauses, 11 owner-scoped exclusions and 153 in-scope blockers.",
-      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
-      "reviewer": "Codex (Stage 01 item 1.02)",
-      "sha256": "93abe342b325a8218f074fd2e086c5a74bed03412b6b052be3abcc89b95ef6b3"
+      "observations": "Reviewed the updated Stage 01 crosswalk row and surrounding register; item 1.03 now points to the 2026-11-06 Node 24.22.1 and framework validation evidence.",
+      "evidence": "Stage 01 checklist item 1.03 review on codex/stage01-item-103-dependency-validation, based on dev f93be64; the manifest SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (Stage 01 item 1.03)",
+      "sha256": "693a616d7d897ccf39d34d7b6a255b0322a7215793378e9ec903dc29901f07d0"
     },
     {
       "path": "docs/FRONTEND-ARCHITECTURE.md",
@@ -2227,10 +2227,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete dated toolchain/dependency note. Historical versions and audit results are date-labeled; the document directs a fresh audit before release, distinguishes production and development dependency findings, and reports intentional version holds. No live-current claim inferred from this snapshot.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "faea61c792288b4215b643ef4186076a30da072fbb283be6c6d7a918d72462f9"
+      "observations": "Reviewed the full refreshed toolchain record, current version matrix, upstream Next.js/Fastify advisories, audit limitations, exact validation results and remaining dependency-update scope.",
+      "evidence": "Stage 01 checklist item 1.03 review on codex/stage01-item-103-dependency-validation, based on dev f93be64; the manifest SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (Stage 01 item 1.03)",
+      "sha256": "07bf842ac63d7fc2d69fac91644d7e6c6d39303160255222c98c17af17c9fd1d"
     },
     {
       "path": "docs/requirements/CareerScope-v12.md",
