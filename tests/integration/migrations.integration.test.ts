@@ -13,7 +13,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 import * as schema from '../../packages/core/src/schema.js';
 
-// Stage 01 item 1.05: the committed migration, the Drizzle schema, the journal and the snapshot
+// Owner roadmap Stage 01 item 1.04 / repository Foundations item 1.07: migrations, schema, journal and snapshot
 // must describe the same database. Nothing here touches the project database: every test creates
 // and drops its own fresh database on the PostgreSQL named by DATABASE_URL.
 
@@ -240,8 +240,7 @@ test('drizzle-orm migrate() on a fresh database records exactly the journal entr
   });
 });
 
-// With a single migration there is nothing to survive. This is declared as todo, not skipped, so the
-// run output keeps naming it, and it becomes a real test the moment a second journal entry lands.
+// Current journal entries are applied one at a time so this test proves earlier data survives each later migration.
 // If a later migration renames or drops users, update the seed below deliberately.
 test(
   'rows written under earlier migrations survive every later migration',

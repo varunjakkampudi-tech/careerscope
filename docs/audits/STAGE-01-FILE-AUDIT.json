@@ -1694,11 +1694,19 @@
       "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
-      "findings": [],
-      "observations": "Read in full. Documents candidate-owned application evidence, OTP and email-change data, resume state transitions and budgets, owner scoping, outbox, and schema/migration verification. It explicitly separates candidate reports from external receipts and flags retention policy/live timer as unverified.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "b9112673f5ed3d27f092539128a342a50917c0fa81b6cd22c30e80b4f72e4876"
+      "findings": [
+        {
+          "id": "S1-F073",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The data model described migration numbers 0020-0026 that are absent from the active Drizzle journal.",
+          "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
+        }
+      ],
+      "observations": "Reviewed the PostgreSQL data model and reconciled the migration history against the active Drizzle journal; the documented 0020-0026 migrations were stale and are corrected.",
+      "evidence": "Owner Stage 01 item 1.04 review on codex/stage01-item-104-postgres-drizzle-architecture, based on dev 3aabf663; manifest SHA-256 records reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.04)",
+      "sha256": "99636903adff44ea4b61a0d01985bc701bf2b0bb1a9352c36f4bce729301fdc4"
     },
     {
       "path": "docs/FOUNDATIONS.md",
@@ -1713,12 +1721,26 @@
           "status": "fixed",
           "summary": "The Stage 01 crosswalk referred to 478 tracked files although the current dev baseline contains 498.",
           "remediation": "Updated the crosswalk to the current tracked-file count; future counts should be sourced from the current Git baseline."
+        },
+        {
+          "id": "S1-F074",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The owner Stage 01 crosswalk still marked item 1.01 Partial after its exact SHA was independently approved and merged.",
+          "remediation": "Changed the crosswalk status to Complete with the approved commit, full audit scope and final CI approval evidence."
+        },
+        {
+          "id": "S1-F075",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The progress paragraph said the approved item 1.01 audit was still outstanding after the crosswalk marked it complete.",
+          "remediation": "Clarified that item 1.01 is complete, while other checklist items and final cross-browser acceptance still prevent Stage 01 closure."
         }
       ],
-      "observations": "Reviewed the updated Stage 01 crosswalk row and surrounding register; item 1.03 now points to the 2026-11-06 Node 24.22.1 and framework validation evidence.",
-      "evidence": "Stage 01 checklist item 1.03 review on codex/stage01-item-103-dependency-validation, based on dev f93be64; the manifest SHA-256 records the inspected bytes.",
-      "reviewer": "Codex (Stage 01 item 1.03)",
-      "sha256": "693a616d7d897ccf39d34d7b6a255b0322a7215793378e9ec903dc29901f07d0"
+      "observations": "Reconciled the Stage 01 item 1.01 Complete row and the nearby progress paragraph; the full audit is complete while other Stage 01 items and final cross-browser acceptance remain outstanding. Also documents the PostgreSQL/Drizzle review.",
+      "evidence": "Owner Stage 01 item 1.04 review correction after PR #21 independent review; item 1.01 approval verified at PR #18 SHA 5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964.",
+      "reviewer": "Codex (owner Stage 01 item 1.04)",
+      "sha256": "ee743e0cb87afbfae5fdf6558bae33234674fce2f5f954905457f088a6c56461"
     },
     {
       "path": "docs/FRONTEND-ARCHITECTURE.md",
@@ -1843,10 +1865,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Every linked document exists and the index covers the sections the traceability check requires. Security and Audits sections added for the dependency exception and the audit record.",
-      "evidence": "Stage 01 file audit session.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "eb3c88570993d01a828fcc753b095a2ad1d587be98f9cb8ea70effde3dd5367c"
+      "observations": "Added the indexed PostgreSQL/Drizzle architecture review to the single documentation index.",
+      "evidence": "Owner Stage 01 checklist item 1.04 review on codex/stage01-item-104-postgres-drizzle-architecture; manifest SHA-256 records reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.04)",
+      "sha256": "0f00ae4d9d2f9159dfade1f2aff4fa53e7059b67aed9e0fb6efd6ca311078bf9"
     },
     {
       "path": "docs/SECURITY.md",
@@ -1919,6 +1941,18 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "073b60a3b072e73a0eaa20766c70d1de0abed7ba336b251f6b54091e9f3e1a1b"
+    },
+    {
+      "path": "docs/architecture/DATABASE-REVIEW.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Records PostgreSQL/Drizzle architecture scope, verified constraints and migration guarantees, test evidence, review limits, and disposition.",
+      "evidence": "Owner Stage 01 checklist item 1.04 review, based on dev 3aabf663; manifest SHA-256 records reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.04)",
+      "sha256": "a9c29205e7444d3dde8b28733adfb8fdf3cc55eeba292f96146422175a879834"
     },
     {
       "path": "docs/architecture/DESIGN-SYSTEM.md",
@@ -6447,10 +6481,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete migration integration test. It requires a loopback DATABASE_URL, creates random disposable databases, verifies every journaled SQL migration against Drizzle tables/columns/indexes/FKs/checks, checks repeatable migrate(), earlier-row survival when later migrations exist, snapshot and journal consistency, and runs drizzle-kit check. Its current single-migration survivor test is explicitly TODO rather than skipped. The full local integration suite passed.",
-      "evidence": "Complete test content inspected on codex/stage01-item-1.01; full local integration suite passed; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "65a715f99a9a73616e03857ff6129c16c4c320b991e438ab6711a92bde157321"
+      "observations": "Reviewed fresh-database isolation, journal application order, schema-vs-database comparison, repeatable migrator, snapshot/journal checks, and row preservation across all active migrations; corrected stale checklist numbering and test comment.",
+      "evidence": "Owner Stage 01 item 1.04 review on codex/stage01-item-104-postgres-drizzle-architecture; hosted migration and integration steps passed on the unchanged base source tree in CI run 42234042673.",
+      "reviewer": "Codex (owner Stage 01 item 1.04)",
+      "sha256": "08a4407690672c75c45ba8db4aa215337a8a05210607ae94ec1bee85c8de976e"
     },
     {
       "path": "tests/integration/query-budget.integration.test.ts",
