@@ -16,6 +16,8 @@ Owner 22-stage roadmap item 1.07, API/OpenAPI contracts, is verified for the reg
 
 Owner 22-stage roadmap item 1.08, browser acceptance, passed on all three Playwright engines in hosted pull-request run `42250586504` for exact SHA `faaff952a43bd7f23db6caaf545d704a994a8e50`; see [UI-VERIFICATION](UI-VERIFICATION.md). Stage 01 close-out still requires a final cross-browser run on its closing revision.
 
+Owner 22-stage roadmap item 1.09, standardized error handling, is verified locally for the API and web client, including database-backed 409 and 507 cases; see [API-SURFACE](API-SURFACE.md) and [TEST-MATRIX](TEST-MATRIX.md). Hosted Node 24 CI on the item PR remains the release gate.
+
 Stage 02 evidence: [GAP-MATRIX](GAP-MATRIX.md) rows 2.01 to 2.20 and [TEST-MATRIX](TEST-MATRIX.md).
 Commit `c12838e` passed the local gates, the integration suite, the Chromium browser suite, and
 hosted CI on rerun `41221224982`. The first hosted run of `c12838e` failed in the flaky private

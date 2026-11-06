@@ -5,8 +5,8 @@ The machine-readable record at [STAGE-01-FILE-AUDIT.json](STAGE-01-FILE-AUDIT.js
 ## Baseline and current coverage
 
 - Audit baseline: `dev` at `8008736`, with 478 tracked files.
-- Current checkpoint: 500 tracked files, all accounted for.
-- 433 files are reviewed; 67 are classified not applicable as source. There are no partially reviewed or unreviewed files.
+- Current checkpoint: 501 tracked files, all accounted for.
+- 434 files are reviewed; 67 are classified not applicable as source. There are no partially reviewed or unreviewed files.
 - Finding disposition: 69 fixed, one accepted low-severity risk (S1-F014), zero open findings.
 
 The full prompt-scoped audit was completed and independently approved at PR #18, exact commit `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`. The current manifest was revalidated after later checklist documentation was added. B-04 is resolved. Stage 01 overall remains partial because other roadmap items and final cross-browser acceptance are still outstanding.
