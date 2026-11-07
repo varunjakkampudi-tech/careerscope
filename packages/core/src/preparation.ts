@@ -84,7 +84,11 @@ export function prepareProfile(record: ProfileRecord | null): PreparationReport 
   const roles = profile.preferences.titles
     .slice(0, 5)
     .map((value) => evidence('preferences.titles', value));
-  const availability = profile.application.availabilityStatus;
+  // Rows written before availabilityStatus was introduced still contain noticePeriodDays.
+  // Infer the historical state on this read path because repository reads return stored JSON.
+  const availability =
+    profile.application.availabilityStatus ??
+    (profile.application.noticePeriodDays === 0 ? 'immediate' : 'notice_period');
   const availabilityEvidence =
     availability === 'not_specified'
       ? [evidence('application.availabilityStatus', 'Not provided')]

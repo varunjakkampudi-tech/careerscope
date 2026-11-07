@@ -3969,10 +3969,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (166 lines). Rules-only report with no model or network call; output is validated by its own strict schema with length limits; checks are only review or not-assessed, so the report never scores the candidate; evidence values are truncated to 160 characters. No finding. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
+      "observations": "Read in full (166 lines). Rules-only report with no model or network call; output is validated by its own strict schema with length limits; checks are only review or not-assessed, so the report never scores the candidate; evidence values are truncated to 160 characters. No finding. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Re-reviewed modified availability evidence, including raw legacy stored-profile reads where availabilityStatus is absent; zero notice days map to immediate and positive days retain the notice-period value.",
       "evidence": "",
       "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "c0511d58b341fc7c9188d8efc0c373f128c5ad54a325ed6335493881421651e8"
+      "sha256": "fcdf2c82f2b4200d19e323f52be3cc55cf16af7a1464809682354ab758e4aa43"
     },
     {
       "path": "packages/core/src/process-failure.fixture.ts",
@@ -4005,10 +4005,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added profile-domain assertions that normalize and retain salary floor and currency in the saved matching preferences. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
+      "observations": "Added profile-domain assertions that normalize and retain salary floor and currency in the saved matching preferences. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Re-reviewed modified availability evidence, including raw legacy stored-profile reads where availabilityStatus is absent; zero notice days map to immediate and positive days retain the notice-period value.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
       "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "1a9652d4336e257c42dc99f32e5288f5372a7c5976efa82dc36de370f4e2f66d"
+      "sha256": "e90a41f581af1d3734229f501ec975b755ee0a97d247afcbea35992347b72f9b"
     },
     {
       "path": "packages/core/src/profile.ts",

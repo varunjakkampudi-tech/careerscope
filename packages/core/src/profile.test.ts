@@ -114,6 +114,42 @@ test('availability is explicit, legacy-compatible, candidate-owned and excluded 
   assert.equal(legacy.application.preferredContactMethod, 'no_preference');
 });
 
+test('preparation infers availability for legacy stored profiles on the read path', () => {
+  for (const [noticePeriodDays, expectedStatus, expectedLabel] of [
+    [0, 'immediate', 'Immediately available'],
+    [45, 'notice_period', 'Serving a notice period'],
+  ] as const) {
+    const profile = writableProfileSchema.parse({
+      ...syntheticProfile,
+      application: { noticePeriodDays },
+    });
+    const legacyProfile = JSON.parse(JSON.stringify(profile)) as typeof profile;
+    delete (legacyProfile.application as Partial<typeof profile.application>).availabilityStatus;
+    const report = prepareProfile({
+      revision: 1,
+      profile: legacyProfile,
+      updatedAt: new Date(),
+      scheduledDiscoveryEnabled: false,
+    });
+    const evidence = report.checks.find((check) => check.id === 'experience')!.evidence;
+    assert.equal(
+      evidence.find((item) => item.field === 'application.availabilityStatus')?.value,
+      expectedLabel,
+    );
+    if (expectedStatus === 'notice_period') {
+      assert.equal(
+        evidence.find((item) => item.field === 'application.noticePeriodDays')?.value,
+        '45',
+      );
+    } else {
+      assert.equal(
+        evidence.some((item) => item.field === 'application.noticePeriodDays'),
+        false,
+      );
+    }
+  }
+});
+
 test('undisclosed availability does not leak stored notice days into preparation evidence', () => {
   const profile = writableProfileSchema.parse({
     ...syntheticProfile,
