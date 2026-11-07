@@ -46,21 +46,50 @@ export function verificationTransition(
   now = Date.now(),
 ): VerificationTransition {
   if (!Number.isSafeInteger(now) || now < 0) return 'invalid';
-  if (check.status === 'pending') return 'pending';
-  if (check.status === 'revoked') return 'revoked';
-  if (check.status !== 'verified' || check.checkedAt === null) return 'invalid';
-  if (!Number.isSafeInteger(check.checkedAt) || check.checkedAt > now) return 'invalid';
+  if (check.status === 'pending') {
+    return check.checkedAt === null &&
+      check.expiresAt === null &&
+      check.recheckAt === null &&
+      check.revokedAt === null &&
+      check.revocationReason === null &&
+      !check.appealAvailable
+      ? 'pending'
+      : 'invalid';
+  }
+  if (check.status !== 'verified' && check.status !== 'expired' && check.status !== 'revoked')
+    return 'invalid';
+  if (check.checkedAt === null) return 'invalid';
+  if (!Number.isSafeInteger(check.checkedAt) || check.checkedAt < 0 || check.checkedAt > now)
+    return 'invalid';
+  if (check.status === 'expired') {
+    return check.revokedAt === null && check.revocationReason === null && !check.appealAvailable
+      ? 'expired'
+      : 'invalid';
+  }
+  if (check.status === 'revoked') {
+    return check.revokedAt !== null &&
+      Number.isSafeInteger(check.revokedAt) &&
+      check.revokedAt >= check.checkedAt &&
+      check.revokedAt <= now &&
+      check.revocationReason !== null &&
+      Boolean(check.revocationReason.trim())
+      ? 'revoked'
+      : 'invalid';
+  }
   if (
     check.expiresAt !== null &&
-    (!Number.isSafeInteger(check.expiresAt) || check.expiresAt <= now)
+    (!Number.isSafeInteger(check.expiresAt) || check.expiresAt < check.checkedAt)
   )
-    return 'expired';
+    return 'invalid';
+  if (check.expiresAt !== null && check.expiresAt <= now) return 'expired';
   if (
     check.recheckAt !== null &&
-    (!Number.isSafeInteger(check.recheckAt) || check.recheckAt <= now)
+    (!Number.isSafeInteger(check.recheckAt) || check.recheckAt < check.checkedAt)
   )
-    return 'expired';
-  if (check.revokedAt !== null || check.revocationReason !== null) return 'invalid';
+    return 'invalid';
+  if (check.recheckAt !== null && check.recheckAt <= now) return 'expired';
+  if (check.revokedAt !== null || check.revocationReason !== null || check.appealAvailable)
+    return 'invalid';
   return 'verified';
 }
 
@@ -77,9 +106,8 @@ export function revokeVerification(
     !Number.isSafeInteger(input.at) ||
     input.at < 0 ||
     !reason ||
-    check.status !== 'verified' ||
-    check.checkedAt === null ||
-    input.at < check.checkedAt
+    typeof input.appealAvailable !== 'boolean' ||
+    verificationTransition(check, input.at) !== 'verified'
   )
     return null;
 

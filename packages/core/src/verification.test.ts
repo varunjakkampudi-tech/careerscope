@@ -25,6 +25,8 @@ test('a completed check stays current only before its expiry and recheck time', 
   assert.equal(verificationTransition({ ...verified, expiresAt: 200 }, 199), 'verified');
   assert.equal(verificationTransition({ ...verified, expiresAt: 200 }, 200), 'expired');
   assert.equal(verificationTransition({ ...verified, recheckAt: 200 }, 200), 'expired');
+  assert.equal(verificationTransition({ ...verified, status: 'expired' }, 200), 'expired');
+  assert.equal(verificationTransition({ ...verified, expiresAt: 99 }, 100), 'invalid');
 });
 
 test('revocation immediately removes the active tick and records a reason and appeal', () => {
@@ -57,5 +59,28 @@ test('revocation rejects missing reasons, invalid times, and non-active checks',
     }),
     null,
   );
+  assert.equal(
+    revokeVerification(
+      { ...verified, expiresAt: 150 },
+      {
+        at: 150,
+        reason: 'Changed',
+        appealAvailable: false,
+      },
+    ),
+    null,
+  );
   assert.equal(verificationTransition(verified, Number.NaN), 'invalid');
+  assert.equal(
+    verificationTransition(
+      {
+        ...verified,
+        status: 'revoked',
+        revokedAt: null,
+        revocationReason: null,
+      },
+      151,
+    ),
+    'invalid',
+  );
 });
