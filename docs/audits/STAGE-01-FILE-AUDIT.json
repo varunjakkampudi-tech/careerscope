@@ -320,10 +320,10 @@
           "remediation": "The test now parses REDIS_URL and requires localhost, 127.0.0.1, or ::1 before connecting."
         }
       ],
-      "observations": "Reviewed the registration-off integration assertion for false session capability, a 404 signup response, and no OTP delivery; focused PostgreSQL/Redis test passed.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.05 on codex/stage02-item-205-registration-gate; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.05)",
-      "sha256": "49f39f90d8b8581e73f9e0d64293e0082be44efcdbd4b1e810e12d8dfe7d3cf8"
+      "observations": "Expanded owner roadmap item 2.07 coverage for consecutive access and refresh token rotation, old-token invalidation, and session-family revocation on replay.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.07 on codex/stage02-item-207-session-rotation; focused PostgreSQL/Redis integration test passed; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.07)",
+      "sha256": "07ae00c788f277207c59753000d032547dc86cc6ff8df0e7491bfaea79669d55"
     },
     {
       "path": "apps/api/src/error-handler.test.ts",
@@ -1773,10 +1773,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed and updated for owner roadmap item 2.06; exact behavior and canonical-to-local ID mapping recorded.",
-      "evidence": "Reviewed on codex/stage02-item-206-terms-privacy; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.06)",
-      "sha256": "d5610acf612849335fac3a4dcf037662202b3b924f150856ed3418faf2989ce7"
+      "observations": "Recorded canonical owner item 2.07 session rotation mapping to legacy local row 2.14.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.07 on codex/stage02-item-207-session-rotation; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.07)",
+      "sha256": "93214ea40bc47c9d30cbdb46c679893d275649c313f7d09377e644bdc6e2f832"
     },
     {
       "path": "docs/KNOWN-LIMITATIONS.md",
@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed and updated for owner roadmap item 2.06; exact behavior and canonical-to-local ID mapping recorded.",
-      "evidence": "Reviewed on codex/stage02-item-206-terms-privacy; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.06)",
-      "sha256": "f60db4805ad664830eadc1bde71aae951a4bb0a4c289959183c09fc2fd6cb619"
+      "observations": "Recorded owner item 2.07 session-rotation evidence without changing its verified status.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.07 on codex/stage02-item-207-session-rotation; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.07)",
+      "sha256": "3d3745831f8096edf452589f0ac1d9fa6729e43059dfa7af15bd08e5746427bb"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1889,10 +1889,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed and updated for owner roadmap item 2.06; exact behavior and canonical-to-local ID mapping recorded.",
-      "evidence": "Reviewed on codex/stage02-item-206-terms-privacy; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.06)",
-      "sha256": "08dcfa5a702a4824b99e0b6489ee7f0be2aad27f4426937357a6984d878003df"
+      "observations": "Added explicit owner item 2.07 integration evidence for repeated refresh rotation, previous access invalidation, and replay family revocation.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.07 on codex/stage02-item-207-session-rotation; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.07)",
+      "sha256": "d907e0f785c9490d70f0c830cc0d893d12e53807270544c25e96caa5a85e09ee"
     },
     {
       "path": "docs/TESTING.md",

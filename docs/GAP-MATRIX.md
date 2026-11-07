@@ -1,6 +1,6 @@
 # Gap matrix
 
-The Stage 02 rows below retain legacy repository-local numbering and are not canonical owner-roadmap IDs. Use `docs/requirements/OWNER-ROADMAP-TRACEABILITY.json` for canonical IDs; for example, owner item 2.05 is new-account registration (local row 2.09), and owner item 2.06 is Terms/privacy acceptance (local row 2.11).
+The Stage 02 rows below retain legacy repository-local numbering and are not canonical owner-roadmap IDs. Use `docs/requirements/OWNER-ROADMAP-TRACEABILITY.json` for canonical IDs; for example, owner item 2.05 is new-account registration (local row 2.09), owner item 2.06 is Terms/privacy acceptance (local row 2.11), and owner item 2.07 is session rotation (local row 2.14).
 
 Each row names the repository behavior, evidence, and remaining gap. Status values: Done (built and tested here), Existing (built earlier and tested), Gated (disabled
 by configuration pending an owner decision).

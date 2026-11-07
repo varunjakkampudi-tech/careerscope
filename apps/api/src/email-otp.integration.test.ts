@@ -299,9 +299,71 @@ test(
       const rotatedAccess = rotatedCookies.find((value) =>
         value.startsWith('careerscope_v2_session='),
       )!;
+      const rotatedRefresh = rotatedCookies.find((value) =>
+        value.startsWith('careerscope_v2_refresh='),
+      )!;
       assert.ok(rotatedAccess);
       assert.notEqual(rotatedAccess.split(';', 1)[0], sessionValue);
       const rotatedAccessValue = rotatedAccess.split(';', 1)[0]!;
+      assert.ok(rotatedRefresh);
+      const rotatedRefreshValue = rotatedRefresh.split(';', 1)[0]!;
+      assert.notEqual(rotatedRefreshValue, refreshValue);
+      assert.equal(
+        (
+          await appOne!.inject({
+            url: '/api/session',
+            headers: { cookie: sessionValue },
+          })
+        ).json().authenticated,
+        false,
+        'rotation invalidates the previous access token',
+      );
+      assert.equal(
+        (
+          await appOne!.inject({
+            url: '/api/session',
+            headers: { cookie: rotatedAccessValue },
+          })
+        ).json().authenticated,
+        true,
+        'rotation establishes the replacement access session',
+      );
+      const rotatedAgain = await appOne!.inject({
+        method: 'POST',
+        url: '/api/session/refresh',
+        headers: { origin, cookie: rotatedRefreshValue },
+        payload: {},
+      });
+      assert.equal(rotatedAgain.statusCode, 200, 'the replacement refresh token remains usable');
+      const rotatedAgainHeaders = rotatedAgain.headers['set-cookie'];
+      const rotatedAgainCookies = Array.isArray(rotatedAgainHeaders)
+        ? rotatedAgainHeaders
+        : [String(rotatedAgainHeaders)];
+      const rotatedAgainAccess = rotatedAgainCookies.find((value) =>
+        value.startsWith('careerscope_v2_session='),
+      )!;
+      assert.ok(rotatedAgainAccess);
+      const rotatedAgainAccessValue = rotatedAgainAccess.split(';', 1)[0]!;
+      assert.notEqual(rotatedAgainAccessValue, rotatedAccessValue);
+      assert.equal(
+        (
+          await appOne!.inject({
+            url: '/api/session',
+            headers: { cookie: rotatedAgainAccessValue },
+          })
+        ).json().authenticated,
+        true,
+      );
+      assert.equal(
+        (
+          await appOne!.inject({
+            url: '/api/session',
+            headers: { cookie: rotatedAccessValue },
+          })
+        ).json().authenticated,
+        false,
+        'a second rotation invalidates the previously issued access token',
+      );
       assert.equal(
         (
           await database.pool.query<{ email_verified_at: Date | null }>(
@@ -915,8 +977,8 @@ test(
         url: '/api/account/email-change/request',
         headers: {
           origin,
-          cookie: rotatedAccessValue,
-          'x-csrf-token': rotated.json().csrf,
+          cookie: rotatedAgainAccessValue,
+          'x-csrf-token': rotatedAgain.json().csrf,
         },
         payload: { newEmail: changedEmail },
       });
@@ -951,8 +1013,8 @@ test(
           url: '/api/account/email-change/verify',
           headers: {
             origin,
-            cookie: rotatedAccessValue,
-            'x-csrf-token': rotated.json().csrf,
+            cookie: rotatedAgainAccessValue,
+            'x-csrf-token': rotatedAgain.json().csrf,
           },
           payload: { address, code },
         });
@@ -997,7 +1059,7 @@ test(
       const previousSession = await appOne!.inject({
         method: 'GET',
         url: '/api/session',
-        headers: { cookie: rotatedAccessValue },
+        headers: { cookie: rotatedAgainAccessValue },
       });
       assert.equal(
         previousSession.json().authenticated,
@@ -1068,17 +1130,17 @@ test(
       assert.equal(
         replayedRefresh.statusCode,
         401,
-        'reuse of a consumed refresh token is rejected',
+        'a previously consumed refresh token cannot be used again',
       );
       const revoked = await appOne!.inject({
         method: 'GET',
         url: '/api/session',
-        headers: { cookie: rotatedAccessValue },
+        headers: { cookie: rotatedAgainAccessValue },
       });
       assert.equal(
         revoked.json().authenticated,
         false,
-        'reuse revokes the complete session family',
+        'the replaced access token remains unauthenticated',
       );
 
       const unavailable = await createApp(
