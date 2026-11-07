@@ -477,11 +477,11 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Guided onboarding",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "in-progress",
+      "evidence": ["apps/web/src/components/profile-editor.tsx", "scripts/tests/check-ui.ts"],
+      "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Guided onboarding is implemented and tracked in PR #43; final exact-SHA review, hosted CI, and acceptance verification are pending.",
       "scopeDisposition": "in-scope"
     },
     {
