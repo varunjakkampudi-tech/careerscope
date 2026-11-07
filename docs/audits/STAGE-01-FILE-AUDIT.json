@@ -1776,7 +1776,7 @@
       "observations": "Owner-directed AI-only recovery-copy assessment recorded; original source status pinned, native review not claimed.",
       "evidence": "Reviewed on review/stage02-210-ai-only-acceptance; SHA-256 records current bytes.",
       "reviewer": "AI-assisted owner checklist reconciliation (Stage 02 item 2.10)",
-      "sha256": "e0b07f682aac85c2114ddbdf7fc2097b7f05c1bd440c4717808c974d5caf0dc3"
+      "sha256": "80743ad60d08ba83055ab4a6dc8432d2c2110875746c208960e45795de0af1a9"
     },
     {
       "path": "docs/KNOWN-LIMITATIONS.md",
