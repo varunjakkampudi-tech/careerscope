@@ -172,13 +172,22 @@ const profileDataSchema = z.object({
     excludeKeywords: z.array(z.string()).default([]),
     excludeCompanies: z.array(z.string()).default([]),
   }),
-  application: z.object({
-    currentCtc: z.string().default(''),
-    expectedCtc: z.string().default(''),
-    noticePeriodDays: z.number().default(0),
-    willingToRelocate: z.boolean().default(true),
-    yearsOfExperience: z.number().nullable().default(null),
-  }),
+  application: z
+    .object({
+      currentCtc: z.string().default(''),
+      expectedCtc: z.string().default(''),
+      noticePeriodDays: z.number().default(0),
+      availabilityStatus: z.enum(['immediate', 'notice_period', 'not_specified']).optional(),
+      preferredContactMethod: z.enum(['email', 'phone', 'no_preference']).default('no_preference'),
+      willingToRelocate: z.boolean().default(true),
+      yearsOfExperience: z.number().nullable().default(null),
+    })
+    .transform((application) => ({
+      ...application,
+      availabilityStatus:
+        application.availabilityStatus ??
+        (application.noticePeriodDays === 0 ? 'immediate' : 'notice_period'),
+    })),
   accessibility: z.object({ reducedMotion: z.boolean().default(false) }).optional(),
 });
 

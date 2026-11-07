@@ -31,7 +31,7 @@ const fields = {
     })
     .strict(),
   preferences: preferencesSchema.strict(),
-  application: applicationSchema.strict(),
+  application: applicationSchema,
   accessibility: z.object({ reducedMotion: z.boolean().default(false) }).strict(),
 };
 

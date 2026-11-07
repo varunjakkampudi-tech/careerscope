@@ -1141,11 +1141,19 @@
       "text": "- Candidate availability (optional): immediate, notice period, preferred contact, recruiter visibility",
       "assessment": "PARTIAL",
       "verification": "UNIT_TESTS_PASSED",
-      "gap": "Only noticePeriodDays and willingToRelocate exist. No immediate-availability flag, preferred contact method or recruiter visibility.",
+      "gap": "Immediate availability, notice-period state, and preferred contact are implemented. Recruiter visibility remains deferred to owner item 3.15, which covers profile visibility and privacy.",
       "launchBlocking": false,
       "evidence": {
-        "implementation": ["packages/shared/src/schemas.ts:76"],
-        "tests": ["packages/shared/src/schemas.test.ts:1"]
+        "implementation": [
+          "packages/shared/src/schemas.ts",
+          "apps/web/src/components/profile-editor.tsx",
+          "packages/core/src/preparation.ts"
+        ],
+        "tests": [
+          "packages/shared/src/schemas.test.ts",
+          "packages/core/src/profile.test.ts",
+          "scripts/tests/check-ui.ts"
+        ]
       }
     },
     {

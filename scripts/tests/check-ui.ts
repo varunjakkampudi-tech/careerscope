@@ -4013,6 +4013,25 @@ try {
         `${engine}: malformed salary currency must not persist`,
       );
       await currencyField.fill('inr');
+      const availabilityField = page.getByLabel('Availability', { exact: true });
+      const noticePeriodField = page.getByLabel('Notice Period (Days)', { exact: true });
+      await availabilityField.selectOption('notice_period');
+      await noticePeriodField.fill('');
+      await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
+      assert.equal(
+        await noticePeriodField.evaluate(
+          (element) => (element as HTMLInputElement).validity.valueMissing,
+        ),
+        true,
+        `${engine}: selecting a notice period requires the number of days`,
+      );
+      assert.equal(
+        (await profiles.get(ownerId))?.revision ?? 0,
+        profileBeforeInvalidInput?.revision ?? 0,
+        `${engine}: incomplete notice period must not persist`,
+      );
+      await noticePeriodField.fill('45');
+      await page.getByLabel('Preferred Contact Method', { exact: true }).selectOption('phone');
       for (const [field, value] of [
         [educationField, 'B.Tech, Computer Science'],
         [workHistoryField, 'Frontend Engineer at Example Co (2022–2024)'],
@@ -4073,6 +4092,9 @@ try {
       assert.equal(savedProfile?.profile.preferences.minSalary, 1_800_000);
       assert.equal(savedProfile?.profile.preferences.minSalaryCurrency, 'INR');
       assert.equal(savedProfile?.profile.application.expectedCtc, '₹18–22 LPA');
+      assert.equal(savedProfile?.profile.application.availabilityStatus, 'notice_period');
+      assert.equal(savedProfile?.profile.application.noticePeriodDays, 45);
+      assert.equal(savedProfile?.profile.application.preferredContactMethod, 'phone');
       assert.deepEqual(savedProfile?.profile.candidate.education, ['B.Tech, Computer Science']);
       assert.deepEqual(savedProfile?.profile.candidate.experience, [
         'Frontend Engineer at Example Co (2022–2024)',
@@ -4088,6 +4110,12 @@ try {
       assert.equal(await homeLocationField.inputValue(), 'Pune, India');
       assert.equal(await preferredLocationsField.inputValue(), 'Pune\nRemote');
       assert.equal(await remoteOnlyField.isChecked(), true);
+      assert.equal(await availabilityField.inputValue(), 'notice_period');
+      assert.equal(await noticePeriodField.inputValue(), '45');
+      assert.equal(
+        await page.getByLabel('Preferred Contact Method', { exact: true }).inputValue(),
+        'phone',
+      );
       assert.equal(
         await page.getByLabel('Minimum Annual Salary', { exact: true }).inputValue(),
         '1800000',

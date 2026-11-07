@@ -88,6 +88,52 @@ test('an omitted experience value remains unknown in saved profile contracts', (
   );
 });
 
+test('availability is explicit, legacy-compatible, candidate-owned and excluded from matching', () => {
+  const parsed = writableProfileSchema.parse({
+    ...syntheticProfile,
+    application: {
+      availabilityStatus: 'notice_period',
+      noticePeriodDays: 45,
+      preferredContactMethod: 'phone',
+    },
+  });
+  assert.equal(parsed.application.availabilityStatus, 'notice_period');
+  assert.equal(parsed.application.noticePeriodDays, 45);
+  assert.equal(parsed.application.preferredContactMethod, 'phone');
+  assert.deepEqual(matchingProfile(parsed).application, {
+    expectedCtc: '',
+    yearsOfExperience: null,
+    willingToRelocate: true,
+  });
+
+  const legacy = writableProfileSchema.parse({
+    ...syntheticProfile,
+    application: { noticePeriodDays: 60 },
+  });
+  assert.equal(legacy.application.availabilityStatus, 'notice_period');
+  assert.equal(legacy.application.preferredContactMethod, 'no_preference');
+});
+
+test('undisclosed availability does not leak stored notice days into preparation evidence', () => {
+  const profile = writableProfileSchema.parse({
+    ...syntheticProfile,
+    application: { availabilityStatus: 'not_specified', preferredContactMethod: 'email' },
+  });
+  const report = prepareProfile({
+    revision: 1,
+    profile,
+    updatedAt: new Date(),
+    scheduledDiscoveryEnabled: false,
+  });
+  const availabilityEvidence = report.checks
+    .find((check) => check.id === 'experience')!
+    .evidence.filter((item) => item.field.startsWith('application.availability'));
+  assert.deepEqual(availabilityEvidence, [
+    { field: 'application.availabilityStatus', value: 'Not provided' },
+  ]);
+  assert.ok(!JSON.stringify(report).includes(profile.application.preferredContactMethod));
+});
+
 test('saved accessibility preferences are owner profile data, validated and excluded from matching inputs', () => {
   const parsed = writableProfileSchema.parse({
     ...syntheticProfile,

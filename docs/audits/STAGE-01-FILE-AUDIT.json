@@ -432,10 +432,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Added the nullable minSalaryCurrency profile preference to the OpenAPI contract, aligned with the three-letter code validation in the shared profile schema. Item 3.11 local domain and type checks pass; full generated-document/browser checks remain in hosted CI.",
+      "observations": "Added the nullable minSalaryCurrency profile preference to the OpenAPI contract, aligned with the three-letter code validation in the shared profile schema. Item 3.11 local domain and type checks pass; full generated-document/browser checks remain in hosted CI. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "0472362594287f1bf88d731afb9ef7174372a829ccda3085618989fad8e71d66"
+      "reviewer": "Codex (Stage 03 item 3.12)",
+      "sha256": "daa274d9dbe5c79fc52144a9c50d62dd69b85df10487808e82ab297b963ec8c6"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -1168,10 +1168,10 @@
           "remediation": "Prevent the Continue click default and key the Continue and Save and finish buttons as distinct nodes; browser acceptance verifies no pre-final submission and clicks the final control."
         }
       ],
-      "observations": "Added an optional salary-currency input paired with the annual minimum, normalizes user input before save, clears currency when the amount is blank, and explains currency-aware matching. Guided onboarding explicitly validates malformed codes. Browser acceptance asserts invalid input rejection, save, reload and profile-search snapshot values.",
+      "observations": "Added an optional salary-currency input paired with the annual minimum, normalizes user input before save, clears currency when the amount is blank, and explains currency-aware matching. Guided onboarding explicitly validates malformed codes. Browser acceptance asserts invalid input rejection, save, reload and profile-search snapshot values. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "0a8204531680340a55a36ba7e6ad66ea8ae1771b18afc7251d6b3e1e93c3435f"
+      "reviewer": "Codex (Stage 03 item 3.12)",
+      "sha256": "24213a1e644aefe635c1f4ee7ae2b705da894e98a5dfc007baa6492bd30d128e"
     },
     {
       "path": "apps/web/src/components/recovery-email-section.tsx",
@@ -1291,10 +1291,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Extended the profile response preference schema with nullable, normalized three-letter minSalaryCurrency, preserving legacy responses where the field is absent through the null default.",
+      "observations": "Extended the profile response preference schema with nullable, normalized three-letter minSalaryCurrency, preserving legacy responses where the field is absent through the null default. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "5581d2dcd221a932d1851fb39fdc4022b64e7727ea3302d930c4eecca380704f"
+      "reviewer": "Codex (Stage 03 item 3.12)",
+      "sha256": "3e61bfbb7d8b7b74f3ce5d1174fa3ae5307b5470b7de20cc563dad91ab31cc6c"
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
@@ -1861,10 +1861,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded PR #53 item 3.10 merge at eb484909c25ba0bc70add17a9279deb464e3d049 and item 3.11 salary-expectation scope submitted for exact-SHA CI and review. Retained the separate legal gate for item 2.05.",
+      "observations": "Recorded PR #53 item 3.10 merge at eb484909c25ba0bc70add17a9279deb464e3d049 and item 3.11 salary-expectation scope submitted for exact-SHA CI and review. Retained the separate legal gate for item 2.05. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "836916a6c2f755fc3ebeda9b4832c79cc6a7ba93964fbd70a8196e80c4b494ba"
+      "reviewer": "Codex (Stage 03 item 3.12)",
+      "sha256": "127775c44a06c0e4edcae93c79ec0838c29cbf5d797acb78d4d71e75c2509d3b"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1909,10 +1909,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-SHA CI and conditional review disposition for merged item 3.10; added item 3.11 implementation and local validation scope with CI/review pending.",
+      "observations": "Recorded exact-SHA CI and conditional review disposition for merged item 3.10; added item 3.11 implementation and local validation scope with CI/review pending. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "5b571519356c46932f76af1de59dc239611a2a0fdf6717d82883df59efb22a85"
+      "reviewer": "Codex (Stage 03 item 3.12)",
+      "sha256": "e2e6f2fb44a0df75c666a3be6f3323a9e4714f6273c9f206c331263656fe76a7"
     },
     {
       "path": "docs/TESTING.md",
@@ -2341,10 +2341,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 3.11 evidence and tests for optional salary floor/currency persistence and matching behavior. Item 3.11 status is proposed on this PR branch; integration still requires exact-SHA CI and review.",
+      "observations": "Updated owner item 3.11 evidence and tests for optional salary floor/currency persistence and matching behavior. Item 3.11 status is proposed on this PR branch; integration still requires exact-SHA CI and review. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "8b6e8844db7549a2caf89edf0e8fa77ad2718ecb897bb84ea01188c791ca76a2"
+      "reviewer": "Codex (Stage 03 item 3.12)",
+      "sha256": "a0c766541c477d472ab9911d38cce6d104f5bb9917cf78c1f58967d9e65d64b6"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -2373,10 +2373,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-read the 319-clause inventory and checked all 11 owner-scoped exclusions plus mixed clauses retained in scope. Owner-scoped records are non-blocking with a rationale; backup portions of mixed clauses are excluded while other gaps remain. The pinned source digest and clause correspondence still pass.",
+      "observations": "Re-read the 319-clause inventory and checked all 11 owner-scoped exclusions plus mixed clauses retained in scope. Owner-scoped records are non-blocking with a rationale; backup portions of mixed clauses are excluded while other gaps remain. The pinned source digest and clause correspondence still pass. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
       "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
-      "reviewer": "Codex (Stage 01 item 1.02)",
-      "sha256": "3100905c93e3f1858a13ce15c9b619ffe6193235fdaf79dd3f0b19533f8c27e5"
+      "reviewer": "Codex (Stage 03 item 3.12)",
+      "sha256": "a13d7491ea60cefc4ca785aa5985f05fc8de8409dde6af6f67471ca5225d10b9"
     },
     {
       "path": "docs/security/DATA-CLASSIFICATION.md",
@@ -3969,10 +3969,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (166 lines). Rules-only report with no model or network call; output is validated by its own strict schema with length limits; checks are only review or not-assessed, so the report never scores the candidate; evidence values are truncated to 160 characters. No finding.",
+      "observations": "Read in full (166 lines). Rules-only report with no model or network call; output is validated by its own strict schema with length limits; checks are only review or not-assessed, so the report never scores the candidate; evidence values are truncated to 160 characters. No finding. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
       "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "86989d9b0248859ef9fac229f5f2e63122eac46a76ea44bc8f4287954d3ad828"
+      "reviewer": "Codex (Stage 03 item 3.12)",
+      "sha256": "c0511d58b341fc7c9188d8efc0c373f128c5ad54a325ed6335493881421651e8"
     },
     {
       "path": "packages/core/src/process-failure.fixture.ts",
@@ -4005,10 +4005,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added profile-domain assertions that normalize and retain salary floor and currency in the saved matching preferences.",
+      "observations": "Added profile-domain assertions that normalize and retain salary floor and currency in the saved matching preferences. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "51e5140e5a6126cb64bc0403ec4f39df951af957806ea47d05e138c90bfb70ae"
+      "reviewer": "Codex (Stage 03 item 3.12)",
+      "sha256": "1a9652d4336e257c42dc99f32e5288f5372a7c5976efa82dc36de370f4e2f66d"
     },
     {
       "path": "packages/core/src/profile.ts",
@@ -4017,10 +4017,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (183 lines). Checked: strict per-section schemas with one generic issue and no field details; link fields are HTTPS only without credentials, and the URL parse runs only after the base URL check passes; revision-guarded save (revision 0 creates, anything else requires a match, a mismatch raises a 409 conflict); scheduled-discovery toggle is outside the revision and refuses before the profile is saved; matching snapshot copies only the fields scoring reads. No finding.",
+      "observations": "Read in full (183 lines). Checked: strict per-section schemas with one generic issue and no field details; link fields are HTTPS only without credentials, and the URL parse runs only after the base URL check passes; revision-guarded save (revision 0 creates, anything else requires a match, a mismatch raises a 409 conflict); scheduled-discovery toggle is outside the revision and refuses before the profile is saved; matching snapshot copies only the fields scoring reads. No finding. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
       "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "f4e3ada8adf1247b85222361743d5e55e42973e2f37de370b2fbe0b04d9f0279"
+      "reviewer": "Codex (Stage 03 item 3.12)",
+      "sha256": "f2c7d08c70fb69758eeabe1df6eae75403e159ceb5a12d07c3514e908c5f9510"
     },
     {
       "path": "packages/core/src/queue.integration.test.ts",
@@ -4389,10 +4389,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added candidate-context coverage proving the structured salary floor and its currency reach matching when free-text expected compensation is blank; retained range/currency parsing tests.",
+      "observations": "Added candidate-context coverage proving the structured salary floor and its currency reach matching when free-text expected compensation is blank; retained range/currency parsing tests. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "051e09ee84ee7011ec17fafd8a8ef471d917482ddf67c7bc474f6110a859d49d"
+      "reviewer": "Codex (Stage 03 item 3.12)",
+      "sha256": "3ebca2902b7d51630f2aa2b0532c4eddaf3cffb2c35ec57187c8fc9736fa9abf"
     },
     {
       "path": "packages/matching/src/context.ts",
@@ -5663,10 +5663,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added salary-floor boundary and currency-code tests, including lowercase normalization and malformed code rejection.",
+      "observations": "Added salary-floor boundary and currency-code tests, including lowercase normalization and malformed code rejection. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "3c892957e66635b034136b5eb76374aa48a589259cf122b19e363675428e40af"
+      "reviewer": "Codex (Stage 03 item 3.12)",
+      "sha256": "466b9404d6b863083e29eca4a8dfebba202c64ce3808c3b6ee2b02a6e5b732e3"
     },
     {
       "path": "packages/shared/src/schemas.ts",
@@ -5683,10 +5683,10 @@
           "remediation": "apiErrorSchema corrected to the flat envelope and tested against errorEnvelope output. Unused exports are recorded as technical debt to remove in the next cleanup pass."
         }
       ],
-      "observations": "Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid.",
+      "observations": "Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "a764fcd78a237bfcbb102fb72cff8eea89c101d362db75263e3ea86496306708"
+      "reviewer": "Codex (Stage 03 item 3.12)",
+      "sha256": "acc60f4276f704cb13c2ee0d143fd6a594bb024d835b4a48fe859a3b93c81893"
     },
     {
       "path": "packages/shared/src/skills.test.ts",
@@ -6421,10 +6421,10 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Extended the real browser scenario to reject malformed currency without changing profile revision, save and reload the annual salary floor, lowercase currency input and expected package, then assert those values in the persisted profile and profile-based search snapshot. Updated salary-currency browser assertion to use a malformed three-character value (12R), assert native invalidity, and verify profile revision is unchanged; correction reviewed against the hosted Chromium failure.",
+      "observations": "Extended the real browser scenario to reject malformed currency without changing profile revision, save and reload the annual salary floor, lowercase currency input and expected package, then assert those values in the persisted profile and profile-based search snapshot. Updated salary-currency browser assertion to use a malformed three-character value (12R), assert native invalidity, and verify profile revision is unchanged; correction reviewed against the hosted Chromium failure. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "e43b8004d73a58fc77b447aff6bb0d601bdc5a8193f2ae635cc2d4228a194d41"
+      "reviewer": "Codex (Stage 03 item 3.12)",
+      "sha256": "404a6014b6934b80e6706bfc689ab1c483c07b762f83faf8b85e6f17af0178b8"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
