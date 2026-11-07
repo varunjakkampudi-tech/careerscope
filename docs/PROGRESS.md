@@ -30,6 +30,8 @@ Owner 22-stage roadmap item 1.14, complete requirement/test traceability, is ver
 
 Owner 22-stage roadmap item 1.15, shared design components, is verified against the existing reusable UI foundations: documented tokens and component guidance, loading/error/empty states, shared panel surfaces, branding, match evidence, and the authenticated dashboard shell. `scripts/tests/design-system-doc.test.ts` passed all six assertions locally; the hosted closeout CI runs this guard and cross-browser UI/accessibility checks on the reviewed revision. Existing screen-specific control styles remain documented to preserve approved visual differences. No visual redesign was introduced.
 
+Owner roadmap item 2.05, new-account registration, remains gated pending counsel-approved legal text and public HTTPS URLs; production deployment remains excluded. The API denies signup with 404 unless registration is explicitly enabled with its prerequisites. The focused integration assertion verifies the disabled session flag, denial response, and absence of OTP delivery. Stage 02 local gap-matrix IDs are legacy and differ from canonical owner-roadmap IDs; the traceability inventory is authoritative.
+
 Stage 02 evidence: [GAP-MATRIX](GAP-MATRIX.md) rows 2.01 to 2.20 and [TEST-MATRIX](TEST-MATRIX.md).
 Commit `c12838e` passed the local gates, the integration suite, the Chromium browser suite, and
 hosted CI on rerun `41221224982`. The first hosted run of `c12838e` failed in the flaky private

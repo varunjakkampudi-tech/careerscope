@@ -44,6 +44,7 @@ approved; current coverage is recorded in [STAGE-01-FILE-AUDIT](audits/STAGE-01-
 
 | Item             | Proof                                                                                                                         | Runs in                       |
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| Owner 2.05       | `apps/api/src/email-otp.integration.test.ts` (registration disabled by default returns 404 without sending OTP)               | Services suite                |
 | 2.02             | `packages/core/src/email-otp-delivery.test.ts` (notice path, escaping, no code in notices); live check recorded in GAP-MATRIX | Quality gates, Services suite |
 | 2.08             | `apps/api/src/email-otp.integration.test.ts`                                                                                  | Services suite                |
 | 2.10             | `apps/api/src/email-otp.integration.test.ts` (concurrent verification)                                                        | Services suite                |

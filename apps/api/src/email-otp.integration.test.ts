@@ -136,6 +136,30 @@ test(
           remoteAddress,
         });
 
+      const registrationDisabled = await createApp(database, origin, limiterOne.consume, {
+        emailOtp: { secret, provider },
+      });
+      try {
+        const disabledSession = await registrationDisabled.inject('/api/session');
+        assert.equal(disabledSession.json().registrationEnabled, false);
+        const deliveredBeforeSignup = delivered.length;
+        const rejectedSignup = await requestCode(registrationDisabled, 'new@example.test', {
+          intent: 'sign-up',
+          dateOfBirth: '1990-01-01',
+          termsAccepted: true,
+          privacyAcknowledged: true,
+        });
+        assert.equal(rejectedSignup.statusCode, 404);
+        assert.equal(rejectedSignup.json().message, 'Registration unavailable');
+        assert.equal(
+          delivered.length,
+          deliveredBeforeSignup,
+          'disabled registration must not send a verification code',
+        );
+      } finally {
+        await registrationDisabled.close();
+      }
+
       const legacyPasswordLogin = await appOne.inject({
         method: 'POST',
         url: '/api/login',
