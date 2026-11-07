@@ -3974,7 +3974,8 @@ try {
         .fill('Accessible job search prototype');
       // Satisfy the profile form's existing required preference fields so the
       // submit handler reaches the education/project length validation below.
-      await page.getByRole('textbox', { name: 'Target Roles', exact: true }).fill('React Engineer');
+      const targetRolesField = page.getByRole('textbox', { name: 'Target Roles', exact: true });
+      await targetRolesField.fill('React Engineer');
       await page.getByRole('textbox', { name: 'Skills', exact: true }).fill('React\nTypeScript');
       const educationField = page.getByRole('textbox', { name: 'Education', exact: true });
       const workHistoryField = page.getByRole('textbox', {
@@ -4059,6 +4060,11 @@ try {
         await projectsField.inputValue(),
         'Accessible job search prototype',
         `${engine}: saved project summaries must be restored after reload`,
+      );
+      assert.equal(
+        await targetRolesField.inputValue(),
+        'React Engineer',
+        `${engine}: saved preferred job titles must be restored after reload`,
       );
       await settled('work-history profile reload');
       const experienceField = page.getByLabel('Years of Experience', { exact: true });

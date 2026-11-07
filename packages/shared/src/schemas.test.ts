@@ -184,4 +184,20 @@ describe('preferencesSchema bounds every owner-typed entry, not just the array',
       }).success,
     ).toBe(false);
   });
+
+  it('requires a preferred role and accepts at most 25 target titles', () => {
+    expect(preferencesSchema.safeParse({ ...valid, titles: [] }).success).toBe(false);
+    expect(
+      preferencesSchema.safeParse({
+        ...valid,
+        titles: Array.from({ length: 25 }, (_, index) => `Engineer ${index}`),
+      }).success,
+    ).toBe(true);
+    expect(
+      preferencesSchema.safeParse({
+        ...valid,
+        titles: Array.from({ length: 26 }, (_, index) => `Engineer ${index}`),
+      }).success,
+    ).toBe(false);
+  });
 });
