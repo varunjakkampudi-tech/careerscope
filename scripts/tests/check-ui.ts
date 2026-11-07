@@ -3960,7 +3960,15 @@ try {
       await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
       await page.getByLabel('Full Name', { exact: true }).fill('Example Candidate');
       await page.getByLabel('Email', { exact: true }).fill('candidate@example.test');
-      await page.getByLabel('Location', { exact: true }).fill('Hyderabad');
+      const homeLocationField = page.getByLabel('Location', { exact: true });
+      await homeLocationField.fill('Pune, India');
+      const preferredLocationsField = page.getByRole('textbox', {
+        name: 'Preferred Locations',
+        exact: true,
+      });
+      await preferredLocationsField.fill('Pune\nRemote');
+      const remoteOnlyField = page.getByRole('checkbox', { name: 'Remote Only', exact: true });
+      await remoteOnlyField.check();
       await page.getByLabel('Graduation Year', { exact: true }).fill('2024');
       await page.getByRole('checkbox', { name: 'Reduce non-essential motion' }).check();
       await page
@@ -4039,6 +4047,9 @@ try {
       await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
       await page.getByText('Profile saved.', { exact: true }).waitFor();
       const savedProfile = await new ProfileRepository(database).get(ownerId);
+      assert.equal(savedProfile?.profile.candidate.location, 'Pune, India');
+      assert.deepEqual(savedProfile?.profile.preferences.locations, ['Pune', 'Remote']);
+      assert.equal(savedProfile?.profile.preferences.remoteOnly, true);
       assert.deepEqual(savedProfile?.profile.candidate.education, ['B.Tech, Computer Science']);
       assert.deepEqual(savedProfile?.profile.candidate.experience, [
         'Frontend Engineer at Example Co (2022–2024)',
@@ -4051,6 +4062,9 @@ try {
       await settled('profile save before work-history reload');
       await page.reload();
       await page.getByLabel('Full Name', { exact: true }).waitFor();
+      assert.equal(await homeLocationField.inputValue(), 'Pune, India');
+      assert.equal(await preferredLocationsField.inputValue(), 'Pune\nRemote');
+      assert.equal(await remoteOnlyField.isChecked(), true);
       assert.equal(
         await workHistoryField.inputValue(),
         'Frontend Engineer at Example Co (2022–2024)',
@@ -4268,6 +4282,9 @@ try {
       const profileRun = await database.getSearch(ownerId, profileId);
       assert.equal(profileRun?.request.useProfileTitles, true);
       assert.ok(profileRun?.matchingProfile?.preferences.titles.length);
+      assert.equal(profileRun?.matchingProfile?.candidate.location, 'Pune, India');
+      assert.deepEqual(profileRun?.matchingProfile?.preferences.locations, ['Pune', 'Remote']);
+      assert.equal(profileRun?.matchingProfile?.preferences.remoteOnly, true);
       const profileProvider: JobProvider = {
         id: 'greenhouse',
         kind: 'ats',
