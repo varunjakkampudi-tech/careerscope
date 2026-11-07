@@ -578,11 +578,21 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Skills and tech stack",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "verified",
+      "evidence": [
+        "apps/web/src/components/profile-editor.tsx",
+        "packages/shared/src/schemas.ts",
+        "packages/core/src/profile.ts",
+        "apps/api/src/openapi.ts",
+        "docs/TEST-MATRIX.md"
+      ],
+      "tests": [
+        "packages/shared/src/schemas.test.ts",
+        "packages/core/src/profile.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {

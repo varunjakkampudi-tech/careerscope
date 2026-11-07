@@ -1864,7 +1864,7 @@
       "observations": "Owner Stage 03 items 3.01 to 3.04 are verified and merged; item 3.05 education details verification is proposed in open PR #48 with bounded profile and test evidence. Item 2.05 registration legal gate remains open. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
       "evidence": "Updated in owner roadmap item 3.05 closeout PR #48; SHA-256 records current bytes. Current SHA-256 records updated bytes for Stage 03 item 3.06.",
       "reviewer": "Codex (Stage 03 item 3.03)",
-      "sha256": "050b28d0aff2804bdeca4d99f68e692f2424ad45e54033468915ad8cc7077219"
+      "sha256": "0c1e183a82cc9b246e4e2170f61ce09bc4107ddc68b9080ddc4122822ba000fa"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1912,7 +1912,7 @@
       "observations": "Owner Stage 03 items 3.01 to 3.04 are verified and merged; item 3.05 education details verification is proposed in open PR #48 with bounded profile and test evidence. Item 2.05 registration legal gate remains open. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
       "evidence": "Updated in owner roadmap item 3.05 closeout PR #48; SHA-256 records current bytes. Current SHA-256 records updated bytes for Stage 03 item 3.06.",
       "reviewer": "Codex (Stage 03 item 3.03)",
-      "sha256": "a62763ea5d9a3029028da1e18c2bba68d04eeabceee72e8dff668028441f2b76"
+      "sha256": "877282bc629fe6f0726ed85457c9940a28ca9ba79ec4ffac4912f33693c5fbb5"
     },
     {
       "path": "docs/TESTING.md",
@@ -2341,10 +2341,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Owner Stage 03 items 3.01 to 3.04 are verified and merged; item 3.05 education details verification is proposed in open PR #48 with bounded profile and test evidence. Item 2.05 registration legal gate remains open. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
+      "observations": "Owner Stage 03 items 3.01 to 3.06 are verified and merged through PRs #43–#49; item 3.07 skills and tech stack is submitted for exact-SHA review. Skills are candidate-provided, editable profile data persisted for matching. Item 2.05 registration legal gate remains open.",
       "evidence": "Updated in owner roadmap item 3.05 closeout PR #48; SHA-256 records current bytes. Current SHA-256 records updated bytes for Stage 03 item 3.06.",
       "reviewer": "Codex (Stage 03 item 3.03)",
-      "sha256": "e7488b34d4f9a62e9383d7cd0338ebe23baa3a2141bf84429f83df10e27fe5a8"
+      "sha256": "f115888687184573338de0aa1e89dd076e4c76a907a383a29dbc6c7379ecf8c1"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
