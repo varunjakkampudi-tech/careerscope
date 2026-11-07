@@ -47,6 +47,7 @@ export function buildCandidateContext(
     expectedSalary: annualFloor(application.expectedCtc),
     expectedCurrency: parseCompensation(application.expectedCtc).currency,
     minSalary: preferences.minSalary,
+    minSalaryCurrency: preferences.minSalaryCurrency,
     employmentTypes: preferences.employmentTypes,
     excludeKeywords: preferences.excludeKeywords,
     excludeCompanies: preferences.excludeCompanies,

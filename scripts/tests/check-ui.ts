@@ -172,7 +172,7 @@ url.pathname = `/${name}`;
 const database = new Database(url.href);
 const ownerId = randomUUID();
 const password = randomUUID();
-const origin = 'http://localhost:5280';
+const origin = process.env.APP_ORIGIN ?? 'http://localhost:5280';
 const resumeDirectory = await mkdtemp(join(tmpdir(), 'careerscope-resume-ui-'));
 const keyFile = join(resumeDirectory, 'encryption.key');
 const encryptionKey = randomBytes(32).toString('hex');
@@ -3969,6 +3969,9 @@ try {
       await preferredLocationsField.fill('Pune\nRemote');
       const remoteOnlyField = page.getByRole('checkbox', { name: 'Remote Only', exact: true });
       await remoteOnlyField.check();
+      await page.getByLabel('Minimum Annual Salary', { exact: true }).fill('1800000');
+      await page.getByLabel('Currency code', { exact: true }).fill('inr');
+      await page.getByLabel('Expected Compensation', { exact: true }).fill('₹18–22 LPA');
       await page.getByLabel('Graduation Year', { exact: true }).fill('2024');
       await page.getByRole('checkbox', { name: 'Reduce non-essential motion' }).check();
       await page
@@ -3993,6 +3996,22 @@ try {
       const projectsField = page.getByRole('textbox', { name: 'Projects', exact: true });
       const profiles = new ProfileRepository(database);
       const profileBeforeInvalidInput = await profiles.get(ownerId);
+      const currencyField = page.getByLabel('Currency code', { exact: true });
+      await currencyField.fill('INRR');
+      await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
+      assert.equal(
+        await currencyField.evaluate(
+          (element) => (element as HTMLInputElement).validity.customError,
+        ),
+        true,
+        `${engine}: malformed salary currency must show field validation`,
+      );
+      assert.equal(
+        (await profiles.get(ownerId))?.revision ?? 0,
+        profileBeforeInvalidInput?.revision ?? 0,
+        `${engine}: malformed salary currency must not persist`,
+      );
+      await currencyField.fill('inr');
       for (const [field, value] of [
         [educationField, 'B.Tech, Computer Science'],
         [workHistoryField, 'Frontend Engineer at Example Co (2022–2024)'],
@@ -4050,6 +4069,9 @@ try {
       assert.equal(savedProfile?.profile.candidate.location, 'Pune, India');
       assert.deepEqual(savedProfile?.profile.preferences.locations, ['Pune', 'Remote']);
       assert.equal(savedProfile?.profile.preferences.remoteOnly, true);
+      assert.equal(savedProfile?.profile.preferences.minSalary, 1_800_000);
+      assert.equal(savedProfile?.profile.preferences.minSalaryCurrency, 'INR');
+      assert.equal(savedProfile?.profile.application.expectedCtc, '₹18–22 LPA');
       assert.deepEqual(savedProfile?.profile.candidate.education, ['B.Tech, Computer Science']);
       assert.deepEqual(savedProfile?.profile.candidate.experience, [
         'Frontend Engineer at Example Co (2022–2024)',
@@ -4065,6 +4087,15 @@ try {
       assert.equal(await homeLocationField.inputValue(), 'Pune, India');
       assert.equal(await preferredLocationsField.inputValue(), 'Pune\nRemote');
       assert.equal(await remoteOnlyField.isChecked(), true);
+      assert.equal(
+        await page.getByLabel('Minimum Annual Salary', { exact: true }).inputValue(),
+        '1800000',
+      );
+      assert.equal(await page.getByLabel('Currency code', { exact: true }).inputValue(), 'INR');
+      assert.equal(
+        await page.getByLabel('Expected Compensation', { exact: true }).inputValue(),
+        '₹18–22 LPA',
+      );
       assert.equal(
         await workHistoryField.inputValue(),
         'Frontend Engineer at Example Co (2022–2024)',
@@ -4285,6 +4316,9 @@ try {
       assert.equal(profileRun?.matchingProfile?.candidate.location, 'Pune, India');
       assert.deepEqual(profileRun?.matchingProfile?.preferences.locations, ['Pune', 'Remote']);
       assert.equal(profileRun?.matchingProfile?.preferences.remoteOnly, true);
+      assert.equal(profileRun?.matchingProfile?.preferences.minSalary, 1_800_000);
+      assert.equal(profileRun?.matchingProfile?.preferences.minSalaryCurrency, 'INR');
+      assert.equal(profileRun?.matchingProfile?.application.expectedCtc, '₹18–22 LPA');
       const profileProvider: JobProvider = {
         id: 'greenhouse',
         kind: 'ats',

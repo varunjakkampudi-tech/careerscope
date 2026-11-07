@@ -28,6 +28,7 @@ function profile(
       locations: ['Hyderabad', 'Bangalore'],
       remoteOnly: false,
       minSalary: 1_600_000,
+      minSalaryCurrency: null,
       employmentTypes: ['fulltime'],
       excludeKeywords: [],
       excludeCompanies: [],
@@ -154,6 +155,18 @@ describe('buildCandidateContext — expected salary', () => {
     expect(currency('$150k')).toBe('USD');
     expect(currency('150000')).toBeNull();
   });
+
+  it('carries the currency attached to the structured minimum salary', () => {
+    const ctx = buildCandidateContext(
+      profile({
+        preferences: { minSalary: 1_800_000, minSalaryCurrency: 'INR' },
+        application: { expectedCtc: '' },
+      }),
+    );
+    expect(ctx.minSalary).toBe(1_800_000);
+    expect(ctx.minSalaryCurrency).toBe('INR');
+    expect(ctx.expectedSalary).toBeNull();
+  });
 });
 
 describe('buildCandidateContext — years of experience', () => {
@@ -213,6 +226,7 @@ describe('buildCandidateContext — home location', () => {
         locations: [],
         remoteOnly: false,
         minSalary: null,
+        minSalaryCurrency: null,
         employmentTypes: ['fulltime' as const],
         excludeKeywords: [],
         excludeCompanies: [],

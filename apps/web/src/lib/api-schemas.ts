@@ -161,6 +161,13 @@ const profileDataSchema = z.object({
     locations: z.array(z.string()).default([]),
     remoteOnly: z.boolean().default(false),
     minSalary: z.number().nullable().default(null),
+    minSalaryCurrency: z
+      .string()
+      .trim()
+      .toUpperCase()
+      .regex(/^[A-Z]{3}$/)
+      .nullable()
+      .default(null),
     employmentTypes: z.array(z.enum(EMPLOYMENT_TYPES)).default(['fulltime']),
     excludeKeywords: z.array(z.string()).default([]),
     excludeCompanies: z.array(z.string()).default([]),

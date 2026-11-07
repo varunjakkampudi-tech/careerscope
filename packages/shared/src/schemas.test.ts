@@ -223,6 +223,22 @@ describe('preferencesSchema bounds every owner-typed entry, not just the array',
     ).toBe(false);
     expect(preferencesSchema.safeParse({ ...valid, remoteOnly: 'true' }).success).toBe(false);
   });
+
+  it('keeps an optional annual salary floor and normalizes its currency code', () => {
+    expect(preferencesSchema.parse({ ...valid, minSalary: null }).minSalaryCurrency).toBeNull();
+    expect(
+      preferencesSchema.parse({ ...valid, minSalary: 1_800_000, minSalaryCurrency: ' inr ' }),
+    ).toMatchObject({ minSalary: 1_800_000, minSalaryCurrency: 'INR' });
+    for (const minSalary of [-1, 1.5]) {
+      expect(preferencesSchema.safeParse({ ...valid, minSalary }).success).toBe(false);
+    }
+    for (const minSalaryCurrency of ['IN', 'INRR', '12R']) {
+      expect(
+        preferencesSchema.safeParse({ ...valid, minSalaryCurrency }).success,
+        `${minSalaryCurrency} must not be accepted as a three-letter currency code`,
+      ).toBe(false);
+    }
+  });
 });
 
 describe('candidateSchema location', () => {
