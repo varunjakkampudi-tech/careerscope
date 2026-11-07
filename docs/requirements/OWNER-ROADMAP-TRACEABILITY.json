@@ -754,11 +754,11 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Candidate verification workflow",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": ["packages/core/src/verification.ts", "docs/DATA-MODEL.md", "docs/PROGRESS.md"],
+      "tests": ["packages/core/src/verification.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Generic lifecycle primitives are implemented and unit-tested. Evidence schemas, type-specific validity and recheck policy, persistence, candidate notice/appeal workflow and counsel approval remain outstanding; no college/profile-link tick is issued.",
       "scopeDisposition": "in-scope"
     },
     {

@@ -1592,8 +1592,8 @@
       "context": "",
       "text": "- Each tick has an evidence schema, validity period, recheck rule, and revocation procedure",
       "assessment": "NOT_IMPLEMENTED",
-      "verification": "NOT_APPLICABLE",
-      "gap": "No tick evidence schema, validity period, recheck rule or revocation procedure. Only users.email_verified_at exists.",
+      "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
+      "gap": "Generic lifecycle shape and pure expiry/recheck/revocation rules are implemented in packages/core/src/verification.ts and covered by verification.test.ts. Evidence schema and per-tick policy remain unapproved and unpersisted; college/profile-link checks await product and counsel review.",
       "launchBlocking": true,
       "evidence": {
         "implementation": ["packages/core/src/schema.ts:36"],
@@ -1609,8 +1609,8 @@
       "context": "",
       "text": "- Each tick shows its check and date; expires or rechecks; revocable with notice and reason; appeal route",
       "assessment": "NOT_IMPLEMENTED",
-      "verification": "NOT_APPLICABLE",
-      "gap": "No tick expiry, recheck, revocation with notice and reason, or appeal route.",
+      "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
+      "gap": "Lifecycle timestamps, reasoned revocation and appeal availability are modeled. Candidate display, notice delivery, appeal workflow and counsel-approved policy remain unimplemented.",
       "launchBlocking": true,
       "evidence": {
         "implementation": [],

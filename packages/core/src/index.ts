@@ -33,3 +33,4 @@ export * from './resumes.js';
 export * from './resume-parser.js';
 export * from './market.js';
 export * from './support-cases.js';
+export * from './verification.js';
