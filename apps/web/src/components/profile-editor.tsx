@@ -618,9 +618,11 @@ function ProfileForm({
           )}
           {step < onboardingSteps.length - 1 ? (
             <button
+              key="continue"
               type="button"
               className="primary"
               onClick={(event) => {
+                event.preventDefault();
                 const form = event.currentTarget.form;
                 if (form) moveToStep(step + 1, form);
               }}
@@ -628,7 +630,7 @@ function ProfileForm({
               Continue
             </button>
           ) : (
-            <button className="primary" type="submit" disabled={save.isPending}>
+            <button key="finish" className="primary" type="submit" disabled={save.isPending}>
               {save.isPending ? (
                 <>
                   <LoaderCircle className="spin" size={18} aria-hidden="true" /> Saving profile

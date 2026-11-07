@@ -2632,29 +2632,51 @@ try {
       );
       assert.equal(await new ProfileRepository(database).get(account.rows[0]!.id), null);
       await page.getByLabel('Full Name', { exact: true }).fill('Synthetic Candidate');
-      await page.getByLabel('Email', { exact: true }).fill(accountEmail);
-      await page.getByLabel('Location', { exact: true }).fill('Hyderabad');
       // First-time profile creation uses guided onboarding. Verify step
-      // validation and navigation, then save through the final step.
+      // validation focus, back-navigation preservation, and the actual final
+      // submit control before checking the persisted profile.
+      await page.locator('form.profile-form').evaluate((form) => {
+        form.addEventListener(
+          'submit',
+          (event) => {
+            const submitEvent = event as SubmitEvent;
+            window.name = `careerScopeProfileSubmit:${
+              (submitEvent.submitter as HTMLElement | null)?.innerText ?? 'implicit'
+            }`;
+          },
+          true,
+        );
+      });
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
       assert.equal(
-        await page
-          .getByLabel('Full Name', { exact: true })
-          .evaluate((element) => (element as HTMLInputElement).validity.valueMissing),
-        false,
+        await page.evaluate(() => (document.activeElement as HTMLInputElement | null)?.name),
+        'email',
+        `${engine}: invalid contact step did not focus its first missing field`,
       );
+      await page.getByLabel('Email', { exact: true }).fill(accountEmail);
+      await page.getByLabel('Location', { exact: true }).fill('Hyderabad');
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
       await page.getByText('Step 2 of 5: Your background', { exact: true }).waitFor();
       await page
         .getByRole('combobox', { name: 'Career stage', exact: true })
         .selectOption('experienced');
+      await page.getByText(/changing careers, list transferable skills/i).waitFor();
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await page.getByText('Step 3 of 5: Job preferences', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'Back', exact: true }).click();
+      await page.getByText('Step 2 of 5: Your background', { exact: true }).waitFor();
+      assert.equal(
+        await page.getByRole('combobox', { name: 'Career stage', exact: true }).inputValue(),
+        'experienced',
+        `${engine}: returning to an earlier onboarding step lost the selected career stage`,
+      );
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
       await page.getByText('Step 3 of 5: Job preferences', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
       assert.equal(
-        await page
-          .getByLabel('Target Roles', { exact: true })
-          .evaluate((element) => (element as HTMLTextAreaElement).validity.valueMissing),
-        true,
+        await page.evaluate(() => (document.activeElement as HTMLTextAreaElement | null)?.name),
+        'titles',
+        `${engine}: invalid job-preferences step did not focus its first missing field`,
       );
       await page.locator('textarea[name="titles"]').fill('React Engineer');
       await page.locator('textarea[name="techStack"]').fill('React, TypeScript');
@@ -2662,10 +2684,25 @@ try {
       await page.getByText('Step 4 of 5: Application details', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
       await page.getByText('Step 5 of 5: Accessibility', { exact: true }).waitFor();
-      await page.locator('form.profile-form').evaluate((form) => {
-        (form as HTMLFormElement).requestSubmit();
-      });
+      assert.equal(
+        await page.evaluate(() => window.name),
+        '',
+        `${engine}: onboarding submitted before the final button was clicked`,
+      );
+      const finishButton = page.locator('form.profile-form button[type="submit"]');
+      assert.equal(
+        await finishButton.isEnabled(),
+        true,
+        `${engine}: finish button was not ready; form submit source: ${await page.evaluate(() => window.name)}`,
+      );
+      await finishButton.click();
       await page.getByText('Profile saved.', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'Save Profile', exact: true }).waitFor();
+      assert.equal(
+        await page.getByRole('status').filter({ hasText: 'Step ' }).count(),
+        0,
+        `${engine}: successful save did not leave first-time onboarding mode`,
+      );
       const reviewed = await new ProfileRepository(database).get(account.rows[0]!.id);
       // `get` returns null when no profile exists. Three later assertions read
       // `reviewed.revision`; without this the suite would die with a TypeError
