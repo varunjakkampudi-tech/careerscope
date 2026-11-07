@@ -5218,10 +5218,24 @@ try {
       // created at the top of this file, so this also re-proves owner
       // isolation across a session boundary rather than only within one.
       const searchDetailRequests = () =>
-        [...inflight.keys()].filter((request) => {
-          const url = new URL(request.url());
-          return request.method() === 'GET' && /^\/api\/searches\/[^/]+$/.test(url.pathname);
-        });
+        [...inflight]
+          .filter(([request, epoch]) => {
+            const url = new URL(request.url());
+            return (
+              request.method() === 'GET' &&
+              /^\/api\/searches\/[^/]+$/.test(url.pathname) &&
+              !staleSearchRead(request.method(), url.pathname, epoch, routeEpoch) &&
+              !staleEarlierRouteRead(
+                request.method(),
+                request.resourceType(),
+                epoch,
+                routeEpoch,
+                engine,
+                url.pathname,
+              )
+            );
+          })
+          .map(([request]) => request);
       const searchRequestDeadline = Date.now() + 15000;
       while (searchDetailRequests().length > 0 && Date.now() < searchRequestDeadline) {
         await page.waitForTimeout(25);
