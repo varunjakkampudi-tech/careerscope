@@ -330,10 +330,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete test file. Exercises content-type and JSON parse errors; validation, auth, origin, CSRF, not-found, payload, rate-limit, dependency, and internal errors; private-data redaction; method/timeout mapping; health limits; OpenAPI and API-SURFACE route coverage; invalid request bodies across routes; and the shared error schema. No source finding identified.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
+      "observations": "Reviewed complete test file. Exercises content-type and JSON parse errors; validation, auth, origin, CSRF, not-found, payload, rate-limit, dependency, and internal errors; private-data redaction; method/timeout mapping; health limits; OpenAPI and API-SURFACE route coverage; invalid request bodies across routes; the shared error schema; and generated profile-photo success/error media types with bodyless 204 responses. No source finding identified.",
+      "evidence": "Complete tracked file reviewed, including generated profile-photo OpenAPI assertions, on codex/stage03-item-313-profile-picture; SHA-256 records current bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "bace6c6c2280340adef041fac95eeaff6af5410bf0006b4067ee849db9a96881"
+      "sha256": "3942917322b1e94b6c040b2f72bce5a122ba294bfb9079136d0fcb07e7f33318"
     },
     {
       "path": "apps/api/src/errors.ts",
