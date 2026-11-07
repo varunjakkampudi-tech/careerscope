@@ -29,6 +29,13 @@
       "when": 1793512778212,
       "tag": "0003_support_cases",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794057516164,
+      "tag": "0004_profile_photos",
+      "breakpoints": true
     }
   ]
 }

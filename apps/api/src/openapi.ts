@@ -8,6 +8,7 @@ import swaggerUi from '@fastify/swagger-ui';
 import type { FastifyInstance, FastifySchema } from 'fastify';
 import { leadStatusSchema, maximumResumeBytes, sessionCookie } from '@careerscope/core';
 import { jobFeedbackReasons } from '@careerscope/shared';
+import { profilePhotoContentTypes } from './profile-photo.js';
 
 /** JSON Schema fragment. The builders below (`text`, `integer`, `array`, `object`, `nullable`) produce these. */
 type Schema = Record<string, unknown>;
@@ -323,6 +324,7 @@ const errors: Record<number, string> = {
   404: 'Resource not found or feature unavailable',
   409: 'Revision, idempotency or state conflict',
   413: 'Request too large',
+  415: 'Unsupported media type',
   429: 'Rate limit exceeded',
   500: 'Internal error',
   502: 'Upstream provider error',
@@ -338,20 +340,30 @@ const errors: Record<number, string> = {
 function operation(
   summary: string,
   response: Schema,
-  options: FastifySchema & { code?: number; failures?: number[] } = {},
+  options: FastifySchema & {
+    code?: number;
+    failures?: number[];
+    additionalResponses?: Record<number, Schema>;
+  } = {},
 ): Documentation {
-  const { code = 200, failures = [], ...metadata } = options;
+  const { code = 200, failures = [], additionalResponses = {}, ...metadata } = options;
+  const jsonError = (statusCode: number) => ({
+    ...error,
+    description: errors[statusCode],
+    content: { 'application/json': { schema: error } },
+  });
   return {
     summary,
     ...metadata,
     response: {
       [code]: { ...response, description: code === 204 ? 'No content' : summary },
+      ...additionalResponses,
       ...Object.fromEntries(
         // Any route can fail closed when shared infrastructure such as Redis
         // is unavailable; keep that stable dependency failure in every contract.
         [...new Set([500, 503, ...failures])].map((statusCode) => [
           statusCode,
-          { ...error, description: errors[statusCode] },
+          jsonError(statusCode),
         ]),
       ),
     },
@@ -718,6 +730,36 @@ function contracts(options: {
       'Read the saved profile (revision zero when absent)',
       profileRecord,
       { failures: [429] },
+    ),
+    'GET /api/profile/photo': operation(
+      'Read the authenticated candidate’s private profile picture',
+      text({ format: 'binary' }),
+      {
+        produces: ['image/webp'],
+        failures: [401, 403, 429],
+        additionalResponses: {
+          204: { type: 'null', description: 'No profile picture has been saved' },
+        },
+        description:
+          'Owner-only, no-store response. The image is not exposed through recruiter first-pass views or a public URL.',
+      },
+    ),
+    'PUT /api/profile/photo': operation(
+      'Replace the authenticated candidate’s profile picture',
+      { type: 'null' },
+      {
+        code: 204,
+        consumes: [...profilePhotoContentTypes],
+        body: text({ format: 'binary' }),
+        failures: [400, 401, 403, 413, 415, 429],
+        description:
+          'Accepts JPEG, PNG, or WebP up to 5 MiB. The server validates and normalizes the image to metadata-free WebP before private owner-scoped storage.',
+      },
+    ),
+    'DELETE /api/profile/photo': operation(
+      'Remove the authenticated candidate’s profile picture',
+      { type: 'null' },
+      { code: 204, failures: [401, 403, 429] },
     ),
     'GET /api/profile/accessibility': operation(
       'Read only the authenticated candidate’s saved accessibility preference',
@@ -1197,10 +1239,23 @@ export async function registerOpenApi(
       const refreshEndpoint = url === '/api/session/refresh';
       const mutation = !['GET', 'HEAD', 'OPTIONS'].includes(method);
       const response = { ...metadata.response };
-      if (!anonymous) response[401] = { ...error, description: errors[401] };
+      if (!anonymous)
+        response[401] = {
+          ...error,
+          description: errors[401],
+          content: { 'application/json': { schema: error } },
+        };
       if (mutation) {
-        response[403] = { ...error, description: errors[403] };
-        response[413] = { ...error, description: errors[413] };
+        response[403] = {
+          ...error,
+          description: errors[403],
+          content: { 'application/json': { schema: error } },
+        };
+        response[413] = {
+          ...error,
+          description: errors[413],
+          content: { 'application/json': { schema: error } },
+        };
       }
       return {
         url,

@@ -84,6 +84,75 @@
   margin: 20px 0;
 }
 
+.photoField {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.photoField h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.photoField p {
+  max-width: 68ch;
+  margin: 6px 0 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.photoActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.photoActions > label,
+.photoActions > button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 9px 14px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+
+.photoActions label {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.photoActions input[type='file'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.photoActions label:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.photoError {
+  color: var(--danger-text) !important;
+}
+
+.photoStatus {
+  color: var(--good) !important;
+}
+
 @media (max-width: 640px) {
   .onboarding {
     margin-bottom: 16px;

@@ -728,11 +728,20 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Profile picture",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "in-progress",
+      "evidence": [
+        "apps/api/src/profile-photo.ts",
+        "apps/web/src/components/profile-editor.tsx",
+        "apps/web/src/components/dashboard-shell.tsx",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "apps/api/src/profile-photo.test.ts",
+        "tests/integration/database.integration.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Focused local checks pass; awaiting exact-SHA independent review and hosted CI before verification.",
       "scopeDisposition": "in-scope"
     },
     {

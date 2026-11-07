@@ -210,12 +210,16 @@ requires the staging password and private proxy assertion.
 | ------ | ---------------------------------- | ---- | ---- |
 | GET    | `/api/profile`                     | yes  | no   |
 | PUT    | `/api/profile`                     | yes  | yes  |
+| GET    | `/api/profile/photo`               | yes  | no   |
+| PUT    | `/api/profile/photo`               | yes  | yes  |
+| DELETE | `/api/profile/photo`               | yes  | yes  |
 | GET    | `/api/preparation`                 | yes  | no   |
 | GET    | `/api/profile/accessibility`       | yes  | no   |
 | PUT    | `/api/profile/scheduled-discovery` | yes  | yes  |
 
 `GET /api/profile/accessibility` returns `{ reducedMotion }`. `PUT /api/profile/scheduled-discovery`
 takes `{ enabled }` and returns `{ scheduledDiscoveryEnabled }`.
+`GET /api/profile/photo` returns `204 No Content` when no private profile picture is saved.
 
 `PUT /api/profile` carries a revision. A stale revision is a 409, not a
 last-write-wins overwrite.

@@ -280,6 +280,31 @@ test('the OpenAPI document declares the envelope for every error response', asyn
         }
       }
     }
+    const photoPath = document.paths['/api/profile/photo'];
+    assert.ok(photoPath, 'profile photo routes must be documented');
+    const photoGet = photoPath.get?.responses;
+    assert.deepEqual(
+      Object.keys(photoGet?.['200']?.content ?? {}),
+      ['image/webp'],
+      'profile photo success must be documented as WebP',
+    );
+    assert.deepEqual(
+      Object.keys(photoGet?.['401']?.content ?? {}),
+      ['application/json'],
+      'profile photo errors must be documented as JSON',
+    );
+    for (const [method, responses] of [
+      ['GET', photoGet],
+      ['PUT', photoPath.put?.responses],
+      ['DELETE', photoPath.delete?.responses],
+    ] as const) {
+      assert.ok(responses?.['204'], `${method} profile photo must document 204`);
+      assert.deepEqual(
+        Object.keys(responses['204']?.content ?? {}),
+        [],
+        `${method} profile photo 204 must not declare a response body`,
+      );
+    }
     assert.ok(checked > 100, `only ${checked} error responses were declared`);
     // The retired password registration stub is no longer routed or documented.
     assert.equal(document.paths['/api/register'], undefined);

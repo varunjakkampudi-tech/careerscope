@@ -201,13 +201,12 @@
       "path": "apps/api/package.json",
       "category": "backend-api",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the full API manifest after raising Fastify to the patched 5.12.8 line; the private ESM workspace still declares only its explicit build script.",
-      "evidence": "Stage 01 checklist item 1.03 review on codex/stage01-item-103-dependency-validation, based on dev f93be64; the manifest SHA-256 records the inspected bytes.",
-      "reviewer": "Codex (Stage 01 item 1.03)",
-      "sha256": "b171a7227a15f2695d74e3322635e2bf60ccd091e7591fcb3c2563029944e0de"
+      "observations": "Reviewed the full API manifest after raising Fastify to the patched 5.12.8 line; the private ESM workspace still declares only its explicit build script. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Stage 01 checklist item 1.03 review on codex/stage01-item-103-dependency-validation, based on dev f93be64; the manifest SHA-256 records the inspected bytes. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 01 item 1.03)"
     },
     {
       "path": "apps/api/src/admin-second-factor.integration.test.ts",
@@ -261,13 +260,12 @@
       "path": "apps/api/src/app.ts",
       "category": "backend-api",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete 2164-line API application in sequential chunks. Covers strict request schemas, cookie scope and flags, Origin/CSRF hooks, private test-access gate, redacted route-template logging, safe error envelopes, health/readiness, OTP/TOTP/recovery/email changes, session rotation/revocation, legal consent, user-scoped resume storage, per-user rate limits, scoped repositories, permitted-source gating, exports, and bounded SSE cleanup. No additional finding identified in this pass; related error-path and route-contract tests are separately reviewed.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "06dcfda4f911c1ba84926d014080bbb35c48c31a8a8d9226ccc6f7bb900570e9"
+      "observations": "Reviewed complete 2164-line API application in sequential chunks. Covers strict request schemas, cookie scope and flags, Origin/CSRF hooks, private test-access gate, redacted route-template logging, safe error envelopes, health/readiness, OTP/TOTP/recovery/email changes, session rotation/revocation, legal consent, user-scoped resume storage, per-user rate limits, scoped repositories, permitted-source gating, exports, and bounded SSE cleanup. No additional finding identified in this pass; related error-path and route-contract tests are separately reviewed. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 01 item 1.01)"
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -332,10 +330,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete test file. Exercises content-type and JSON parse errors; validation, auth, origin, CSRF, not-found, payload, rate-limit, dependency, and internal errors; private-data redaction; method/timeout mapping; health limits; OpenAPI and API-SURFACE route coverage; invalid request bodies across routes; and the shared error schema. No source finding identified.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
+      "observations": "Reviewed complete test file. Exercises content-type and JSON parse errors; validation, auth, origin, CSRF, not-found, payload, rate-limit, dependency, and internal errors; private-data redaction; method/timeout mapping; health limits; OpenAPI and API-SURFACE route coverage; invalid request bodies across routes; the shared error schema; and generated profile-photo success/error media types with bodyless 204 responses. No source finding identified.",
+      "evidence": "Complete tracked file reviewed, including generated profile-photo OpenAPI assertions, on codex/stage03-item-313-profile-picture; SHA-256 records current bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "bace6c6c2280340adef041fac95eeaff6af5410bf0006b4067ee849db9a96881"
+      "sha256": "3942917322b1e94b6c040b2f72bce5a122ba294bfb9079136d0fcb07e7f33318"
     },
     {
       "path": "apps/api/src/errors.ts",
@@ -421,7 +419,7 @@
       "path": "apps/api/src/openapi.ts",
       "category": "backend-api",
       "reviewMethod": "Focused source review and implementation validation",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [
         {
@@ -432,10 +430,9 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Added the nullable minSalaryCurrency profile preference to the OpenAPI contract, aligned with the three-letter code validation in the shared profile schema. Item 3.11 local domain and type checks pass; full generated-document/browser checks remain in hosted CI. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "daa274d9dbe5c79fc52144a9c50d62dd69b85df10487808e82ab297b963ec8c6"
+      "observations": "Added the nullable minSalaryCurrency profile preference to the OpenAPI contract, aligned with the three-letter code validation in the shared profile schema. Item 3.11 local domain and type checks pass; full generated-document/browser checks remain in hosted CI. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 03 item 3.12)"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -448,6 +445,30 @@
       "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "6048238ccc86fa9bbcc019c4eb6975c6949894e73474f721e5e5ad2117f4f9fa"
+    },
+    {
+      "path": "apps/api/src/profile-photo.test.ts",
+      "category": "backend-api",
+      "reviewMethod": "none",
+      "state": "not-reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
+    },
+    {
+      "path": "apps/api/src/profile-photo.ts",
+      "category": "backend-api",
+      "reviewMethod": "none",
+      "state": "not-reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
     },
     {
       "path": "apps/api/src/rate-limit.test.ts",
@@ -965,25 +986,23 @@
       "path": "apps/web/src/components/dashboard-shell.module.css",
       "category": "frontend",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete dashboard shell stylesheet. Theme tokens cover light/dark surfaces and status colors; sidebar and nav scroll behavior, visible focus, notification popover sizing, and responsive breakpoints are explicit. Disabled nav items remain non-interactive and mobile navigation stays horizontally scrollable. No external CSS or asset imports.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "63485dd6895bb4f9afef557571f564c9cf57226c8b15e1112ee7eed2e9ad31f1"
+      "observations": "Read the complete dashboard shell stylesheet. Theme tokens cover light/dark surfaces and status colors; sidebar and nav scroll behavior, visible focus, notification popover sizing, and responsive breakpoints are explicit. Disabled nav items remain non-interactive and mobile navigation stays horizontally scrollable. No external CSS or asset imports. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 01 item 1.01)"
     },
     {
       "path": "apps/web/src/components/dashboard-shell.tsx",
       "category": "frontend",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete dashboard navigation, topbar and notification center. Navigation destinations are explicit and unavailable concepts are disabled. Notification polling is bounded to a 30-second interval and focus/visibility events; requests are deduplicated, aborted on unmount, parsed at the API boundary, and mark-read failures remain item-specific. User-entered identifiers are URL-encoded before navigation.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "bb3600944af04250eaa48f641ffd9b8dabd3e177d7734f2c3995ff4e2f14b0c7"
+      "observations": "Read the complete dashboard navigation, topbar and notification center. Navigation destinations are explicit and unavailable concepts are disabled. Notification polling is bounded to a 30-second interval and focus/visibility events; requests are deduplicated, aborted on unmount, parsed at the API boundary, and mark-read failures remain item-specific. User-entered identifiers are URL-encoded before navigation. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 01 item 1.01)"
     },
     {
       "path": "apps/web/src/components/hero-illustration.tsx",
@@ -1145,19 +1164,18 @@
       "path": "apps/web/src/components/profile-editor.module.css",
       "category": "frontend",
       "reviewMethod": "content-read-and-execution",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed onboarding progress, step status, step descriptions, navigation actions, responsive layout, and design-token usage.",
-      "evidence": "Focused review and validation for CareerScope Stage 03 item 3.01.",
-      "reviewer": "Codex (Stage 03 item 3.01)",
-      "sha256": "5246186f843cfdb5981f821a0b2465e15e080c156142ae85a671d4889c6939a4"
+      "observations": "Reviewed onboarding progress, step status, step descriptions, navigation actions, responsive layout, and design-token usage. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Focused review and validation for CareerScope Stage 03 item 3.01. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 03 item 3.01)"
     },
     {
       "path": "apps/web/src/components/profile-editor.tsx",
       "category": "frontend",
       "reviewMethod": "Focused source review and implementation validation",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [
         {
@@ -1168,10 +1186,9 @@
           "remediation": "Prevent the Continue click default and key the Continue and Save and finish buttons as distinct nodes; browser acceptance verifies no pre-final submission and clicks the final control."
         }
       ],
-      "observations": "Added an optional salary-currency input paired with the annual minimum, normalizes user input before save, clears currency when the amount is blank, and explains currency-aware matching. Guided onboarding explicitly validates malformed codes. Browser acceptance asserts invalid input rejection, save, reload and profile-search snapshot values. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "24213a1e644aefe635c1f4ee7ae2b705da894e98a5dfc007baa6492bd30d128e"
+      "observations": "Added an optional salary-currency input paired with the annual minimum, normalizes user input before save, clears currency when the amount is blank, and explains currency-aware matching. Guided onboarding explicitly validates malformed codes. Browser acceptance asserts invalid input rejection, save, reload and profile-search snapshot values. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 03 item 3.12)"
     },
     {
       "path": "apps/web/src/components/recovery-email-section.tsx",
@@ -1379,6 +1396,18 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "18cf52f3723fd997ce0809d911c692f29774d0dde123d63dc29a68d8f5da478e"
+    },
+    {
+      "path": "apps/web/src/lib/profile-photo.ts",
+      "category": "frontend",
+      "reviewMethod": "none",
+      "state": "not-reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
     },
     {
       "path": "apps/web/src/lib/query-cache.ts",
@@ -1636,7 +1665,7 @@
       "path": "docs/API-SURFACE.md",
       "category": "documentation",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [
         {
@@ -1647,10 +1676,9 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Read in full. Documents runtime routes, security and the shared error envelope; verified the client-safe contract against implementation and focused unit and database integration evidence. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
-      "evidence": "Reviewed current documentation and item 1.09 evidence on codex/stage01-item-109-error-handling; SHA-256 records the reviewed bytes. Current SHA-256 records updated bytes for Stage 03 item 3.06.",
-      "reviewer": "Codex (owner Stage 01 item 1.09)",
-      "sha256": "e7dca8c0db89c47bab049e867b26eeb31849c39068d242fb4f4c9e8f6a8e19c0"
+      "observations": "Read in full. Documents runtime routes, security and the shared error envelope; verified the client-safe contract against implementation and focused unit and database integration evidence. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Reviewed current documentation and item 1.09 evidence on codex/stage01-item-109-error-handling; SHA-256 records the reviewed bytes. Current SHA-256 records updated bytes for Stage 03 item 3.06. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (owner Stage 01 item 1.09)"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1712,7 +1740,7 @@
       "path": "docs/DATA-MODEL.md",
       "category": "documentation",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [
         {
@@ -1723,10 +1751,9 @@
           "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
         }
       ],
-      "observations": "Reviewed the PostgreSQL data model and reconciled the migration history against the active Drizzle journal; the documented 0020-0026 migrations were stale and are corrected.",
-      "evidence": "Owner Stage 01 item 1.04 review on codex/stage01-item-104-postgres-drizzle-architecture, based on dev 3aabf663; manifest SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.04)",
-      "sha256": "99636903adff44ea4b61a0d01985bc701bf2b0bb1a9352c36f4bce729301fdc4"
+      "observations": "Reviewed the PostgreSQL data model and reconciled the migration history against the active Drizzle journal; the documented 0020-0026 migrations were stale and are corrected. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Owner Stage 01 item 1.04 review on codex/stage01-item-104-postgres-drizzle-architecture, based on dev 3aabf663; manifest SHA-256 records reviewed bytes. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (owner Stage 01 item 1.04)"
     },
     {
       "path": "docs/FOUNDATIONS.md",
@@ -1814,13 +1841,12 @@
       "path": "docs/PRIVACY.md",
       "category": "documentation",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Describes private-data boundaries, OTP and email-change retention, consent/legal status, agent trust boundaries and privacy scanner limits. The Hostinger/backup statement is existing excluded-scope documentation; no backup or deployment work was initiated.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "110309ccbfee7f6fc06441e94a8978caeee203009d19a3032811921548bff9a2"
+      "observations": "Read in full. Describes private-data boundaries, OTP and email-change retention, consent/legal status, agent trust boundaries and privacy scanner limits. The Hostinger/backup statement is existing excluded-scope documentation; no backup or deployment work was initiated. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 01 item 1.01)"
     },
     {
       "path": "docs/PRODUCT-SURFACE.md",
@@ -1850,7 +1876,7 @@
       "path": "docs/PROGRESS.md",
       "category": "documentation",
       "reviewMethod": "Focused source review and implementation validation",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [
         {
@@ -1861,10 +1887,9 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded PR #53 item 3.10 merge at eb484909c25ba0bc70add17a9279deb464e3d049 and item 3.11 salary-expectation scope submitted for exact-SHA CI and review. Retained the separate legal gate for item 2.05. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; At the time of the item 3.11 review, item 3.12 exact-SHA hosted CI and independent review were pending; the later closeout evidence is recorded below. Re-reviewed the item closeout evidence: exact-SHA ChatGPT acceptance, three passing hosted jobs on the reviewed SHA, and merge commit into dev are reflected consistently in progress and test matrix.",
-      "evidence": "Item 3.12 was accepted at SHA 6aca4d9d8996e0f38bd34cecb4c89c9dee4bc6aa; hosted run 42368802616 passed all three jobs; PR #55 merged to dev as 6d9789cb34d0100ba8a5845b2edfca9ea8fd88d4. This record was reconciled in PR #56 at SHA b912b7c72f6c003a4703c61951d663f60e68df66; its hosted run 42369993846 passed all three jobs.",
-      "reviewer": "Codex (Stage 03 item 3.12 closeout)",
-      "sha256": "8efcdaba63d1afb6bbb3f6c90505bf1c4003aed5e8c570fff13018e6dc437683"
+      "observations": "Recorded PR #53 item 3.10 merge at eb484909c25ba0bc70add17a9279deb464e3d049 and item 3.11 salary-expectation scope submitted for exact-SHA CI and review. Retained the separate legal gate for item 2.05. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; At the time of the item 3.11 review, item 3.12 exact-SHA hosted CI and independent review were pending; the later closeout evidence is recorded below. Re-reviewed the item closeout evidence: exact-SHA ChatGPT acceptance, three passing hosted jobs on the reviewed SHA, and merge commit into dev are reflected consistently in progress and test matrix. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Item 3.12 was accepted at SHA 6aca4d9d8996e0f38bd34cecb4c89c9dee4bc6aa; hosted run 42368802616 passed all three jobs; PR #55 merged to dev as 6d9789cb34d0100ba8a5845b2edfca9ea8fd88d4. This record was reconciled in PR #56 at SHA b912b7c72f6c003a4703c61951d663f60e68df66; its hosted run 42369993846 passed all three jobs. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 03 item 3.12 closeout)"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1906,13 +1931,12 @@
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
       "reviewMethod": "Focused source review and implementation validation",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-SHA CI and conditional review disposition for merged item 3.10; added item 3.11 implementation and local validation scope with CI/review pending. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; At the time of the item 3.11 review, item 3.12 exact-SHA hosted CI and independent review were pending; the later closeout evidence is recorded below. Re-reviewed the item closeout evidence: exact-SHA ChatGPT acceptance, three passing hosted jobs on the reviewed SHA, and merge commit into dev are reflected consistently in progress and test matrix.",
-      "evidence": "Item 3.12 was accepted at SHA 6aca4d9d8996e0f38bd34cecb4c89c9dee4bc6aa; hosted run 42368802616 passed all three jobs; PR #55 merged to dev as 6d9789cb34d0100ba8a5845b2edfca9ea8fd88d4. This record was reconciled in PR #56 at SHA b912b7c72f6c003a4703c61951d663f60e68df66; its hosted run 42369993846 passed all three jobs.",
-      "reviewer": "Codex (Stage 03 item 3.12 closeout)",
-      "sha256": "742366547b5cac8b8fd40dae80423e2d3609fda751f07aa1924ef2e3723d6ab6"
+      "observations": "Recorded exact-SHA CI and conditional review disposition for merged item 3.10; added item 3.11 implementation and local validation scope with CI/review pending. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; At the time of the item 3.11 review, item 3.12 exact-SHA hosted CI and independent review were pending; the later closeout evidence is recorded below. Re-reviewed the item closeout evidence: exact-SHA ChatGPT acceptance, three passing hosted jobs on the reviewed SHA, and merge commit into dev are reflected consistently in progress and test matrix. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Item 3.12 was accepted at SHA 6aca4d9d8996e0f38bd34cecb4c89c9dee4bc6aa; hosted run 42368802616 passed all three jobs; PR #55 merged to dev as 6d9789cb34d0100ba8a5845b2edfca9ea8fd88d4. This record was reconciled in PR #56 at SHA b912b7c72f6c003a4703c61951d663f60e68df66; its hosted run 42369993846 passed all three jobs. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 03 item 3.12 closeout)"
     },
     {
       "path": "docs/TESTING.md",
@@ -1930,13 +1954,12 @@
       "path": "docs/TRACEABILITY.md",
       "category": "documentation",
       "reviewMethod": "content-read-and-targeted-checks",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
-      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
-      "reviewer": "Codex (Stage 01 item 1.14)",
-      "sha256": "20711887a8450e3d3051e3374a136f5e8f967feef9fdc716220c44ea6ac12f8d"
+      "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 01 item 1.14)"
     },
     {
       "path": "docs/UI-VERIFICATION.md",
@@ -2338,13 +2361,12 @@
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
       "reviewMethod": "Focused source review and implementation validation",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 3.11 evidence and tests for optional salary floor/currency persistence and matching behavior. Item 3.11 status is proposed on this PR branch; integration still requires exact-SHA CI and review. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "a0c766541c477d472ab9911d38cce6d104f5bb9917cf78c1f58967d9e65d64b6"
+      "observations": "Updated owner item 3.11 evidence and tests for optional salary floor/currency persistence and matching behavior. Item 3.11 status is proposed on this PR branch; integration still requires exact-SHA CI and review. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 03 item 3.12)"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -2382,13 +2404,12 @@
       "path": "docs/security/DATA-CLASSIFICATION.md",
       "category": "documentation",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete classification table and narrative. Covers secret, personal, private-content and operational fields; account/session/OTP, resume data, application evidence, queues and logs; explicitly identifies plaintext parsed resumes in PostgreSQL and unverified host-disk/retention controls. Backup and server-specific remediation is excluded from current scope.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "cbfab3e0e9774086753f3eead9fa57223174f9c523875c44a92426efc95b1215"
+      "observations": "Read the complete classification table and narrative. Covers secret, personal, private-content and operational fields; account/session/OTP, resume data, application evidence, queues and logs; explicitly identifies plaintext parsed resumes in PostgreSQL and unverified host-disk/retention controls. Backup and server-specific remediation is excluded from current scope. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 01 item 1.01)"
     },
     {
       "path": "docs/security/DEPENDENCY-EXCEPTIONS.md",
@@ -3359,6 +3380,18 @@
       "sha256": "e9ee3aa89c8c4b8a08ddefe8e3fcf426fcb020002ae6666eed34b8e216ef5244"
     },
     {
+      "path": "migrations/0004_profile_photos.sql",
+      "category": "database-migration",
+      "reviewMethod": "none",
+      "state": "not-reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
+    },
+    {
       "path": "migrations/meta/0000_snapshot.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
@@ -3407,6 +3440,18 @@
       "sha256": ""
     },
     {
+      "path": "migrations/meta/0004_snapshot.json",
+      "category": "generated-lockfile-or-snapshot",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
+    },
+    {
       "path": "migrations/meta/_journal.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
@@ -3434,13 +3479,12 @@
       "path": "package.json",
       "category": "repository-configuration",
       "reviewMethod": "content-read-and-targeted-checks",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.14)",
-      "sha256": "6ce66962d9a87474172695a191d1ea0cd733bfc59df22634bb1fc721f1cd7dd8"
+      "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 01 item 1.14)"
     },
     {
       "path": "packages/core/package.json",
@@ -3794,13 +3838,12 @@
       "path": "packages/core/src/index.ts",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (34 lines). Re-exports every core module. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "ec98bf4d3e10f825c57fa5582bb77fb3cbd336e9f96e773b2592097a8f89999c"
+      "observations": "Read in full (34 lines). Re-exports every core module. No finding. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": " Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)"
     },
     {
       "path": "packages/core/src/interviews.ts",
@@ -3997,6 +4040,18 @@
       "evidence": "",
       "reviewer": "Codex (Stage 01 implementation audit)",
       "sha256": "30aaba19be9800d868b7ed769cf8405d9e85cd2f20de25f9f3b45a560026a111"
+    },
+    {
+      "path": "packages/core/src/profile-photos.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "none",
+      "state": "not-reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
     },
     {
       "path": "packages/core/src/profile.test.ts",
@@ -4226,7 +4281,7 @@
       "path": "packages/core/src/schema.ts",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [
         {
@@ -4237,10 +4292,9 @@
           "remediation": "Add a lower-case check in a migration after verifying existing data. Recorded for the next migration window; no migration is added in Stage 01 to avoid rewriting applied data."
         }
       ],
-      "observations": "Read in full (907 lines). Checked: owner columns with composite foreign keys so an event, job, lead history or document cannot reference another owner's run; check constraints on status enums, bounds, hex digests and JSON shapes match the SQL migrations; cascade rules on dependent rows; unique indexes that foreign keys require. Observation S1-F014: users.email is unique but has no database check that it is lower-case. Every write path lower-cases it, and the core functions now normalise too, but the database does not enforce it. A check constraint would need a migration that first verifies existing rows, so it is recorded as a low-severity accepted risk rather than changed here.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "f96a0ec0149128d15dd7a5e70acc4d4a4401574762547bb5f9b08f6aa2ef82f4"
+      "observations": "Read in full (907 lines). Checked: owner columns with composite foreign keys so an event, job, lead history or document cannot reference another owner's run; check constraints on status enums, bounds, hex digests and JSON shapes match the SQL migrations; cascade rules on dependent rows; unique indexes that foreign keys require. Observation S1-F014: users.email is unique but has no database check that it is lower-case. Every write path lower-cases it, and the core functions now normalise too, but the database does not enforce it. A check constraint would need a migration that first verifies existing rows, so it is recorded as a low-severity accepted risk rather than changed here. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": " Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)"
     },
     {
       "path": "packages/core/src/sensitive-data.integration.test.ts",
@@ -6403,7 +6457,7 @@
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
       "reviewMethod": "Focused source review and implementation validation",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [
         {
@@ -6421,10 +6475,9 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Extended the real browser scenario to reject malformed currency without changing profile revision, save and reload the annual salary floor, lowercase currency input and expected package, then assert those values in the persisted profile and profile-based search snapshot. Updated salary-currency browser assertion to use a malformed three-character value (12R), assert native invalidity, and verify profile revision is unchanged; correction reviewed against the hosted Chromium failure. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Re-reviewed availability browser acceptance selectors: uniquely named native controls are located directly and existence is asserted before validation and persistence checks. Re-reviewed availability and preferred-contact browser acceptance: unique native control locators are reused for input and reload checks, and existence is asserted before interacting.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "7d6ef7813a76903865cab5103cbefe4991ed55ec3d2fddf5992a593acf6ad52c"
+      "observations": "Extended the real browser scenario to reject malformed currency without changing profile revision, save and reload the annual salary floor, lowercase currency input and expected package, then assert those values in the persisted profile and profile-based search snapshot. Updated salary-currency browser assertion to use a malformed three-character value (12R), assert native invalidity, and verify profile revision is unchanged; correction reviewed against the hosted Chromium failure. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Re-reviewed availability browser acceptance selectors: uniquely named native controls are located directly and existence is asserted before validation and persistence checks. Re-reviewed availability and preferred-contact browser acceptance: unique native control locators are reused for input and reload checks, and existence is asserted before interacting. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Codex (Stage 03 item 3.12)"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
@@ -6558,13 +6611,12 @@
       "path": "tests/integration/database.integration.test.ts",
       "category": "tests",
       "reviewMethod": "sectioned-content-review-and-execution",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the test harness, all top-level test cases and their security, owner-isolation, persistence, queue, resume, lead, migration, and conflict assertions in sections. Fixtures use local loopback PostgreSQL/Redis, random disposable databases, synthetic identities and payloads, and cleanup in finally blocks. No real providers or external writes are exercised. No additional finding from this file.",
-      "evidence": "The complete npm run test:integration suite passed under Node 24.22.1 with Docker-backed PostgreSQL and Redis on 2026-11-06; SHA-256 records the reviewed bytes.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "d124c65b371a6943f8146a73622c2b8232666dbea5c241d3ed079f3ac60425c2"
+      "observations": "Reviewed the test harness, all top-level test cases and their security, owner-isolation, persistence, queue, resume, lead, migration, and conflict assertions in sections. Fixtures use local loopback PostgreSQL/Redis, random disposable databases, synthetic identities and payloads, and cleanup in finally blocks. No real providers or external writes are exercised. No additional finding from this file. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
+      "evidence": "The complete npm run test:integration suite passed under Node 24.22.1 with Docker-backed PostgreSQL and Redis on 2026-11-06; SHA-256 records the reviewed bytes. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)"
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",

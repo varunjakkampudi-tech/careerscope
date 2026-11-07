@@ -13,6 +13,7 @@ import {
   jsonb,
   integer,
   boolean,
+  customType,
   uniqueIndex,
   index,
   check,
@@ -26,6 +27,8 @@ import type { WritableProfile, MatchingProfile } from './profile.js';
 import type { z } from 'zod';
 import type { parsedResumeSchema } from './resume-parser.js';
 import type { ApplicationEvidence } from './leads.js';
+
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({ dataType: () => 'bytea' });
 
 /** Accounts. `passwordHash` is null for accounts created through email one-time codes. */
 export const users = pgTable(
@@ -229,6 +232,21 @@ export const profiles = pgTable(
     scheduledDiscoveryEnabled: boolean('scheduled_discovery_enabled').notNull().default(false),
   },
   (table) => [check('profile_revision_positive', sql`${table.revision} > 0`)],
+);
+
+/** Private, normalized candidate profile image. The owning account controls read and delete access. */
+export const profilePhotos = pgTable(
+  'profile_photos',
+  {
+    ownerId: uuid('owner_id')
+      .primaryKey()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    image: bytea('image').notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    check('profile_photo_bytes_bounded', sql`octet_length(${table.image}) BETWEEN 12 AND 524288`),
+  ],
 );
 
 /** Search runs. `request` and `matchingProfile` are snapshots taken at creation; (owner, idempotency key) is unique. */
