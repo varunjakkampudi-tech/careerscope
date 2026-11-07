@@ -1683,10 +1683,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed blocker status and corrected resolved full-audit coverage from 500 to the verified 501 tracked files.",
-      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.10)",
-      "sha256": "5e645174e0cf990aa63b975ea75a57dade4cc2633e7f7f6283e5c94e9425d9e9"
+      "observations": "Reviewed blocker status and made the resolved full-audit coverage statement count-independent; current coverage counts remain in the manifest and audit validation output.",
+      "evidence": "Content inspected and aligned to the current file audit on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (Stage 01 closeout)",
+      "sha256": "b6b6ff4a142582c1e9bbbada91b20b31ceb74c6b666860fae4a4116c99afd58d"
     },
     {
       "path": "docs/DATA-MODEL.md",
@@ -1734,13 +1734,13 @@
           "severity": "low",
           "status": "fixed",
           "summary": "The progress paragraph said the approved item 1.01 audit was still outstanding after the crosswalk marked it complete.",
-          "remediation": "Clarified that item 1.01 is complete, while other checklist items and final cross-browser acceptance still prevent Stage 01 closure."
+          "remediation": "Clarified that item 1.01 is complete; at that checkpoint other items and closing acceptance remained, and the final Stage 01 closeout is now recorded with exact hosted evidence."
         }
       ],
-      "observations": "Reviewed the owner Stage 01 item 1.13 live ruleset evidence, noted current enforcement and bypass limits, and preserved Stage 01 partial status.",
-      "evidence": "Current content inspected and updated for owner Stage 01 item 1.13 on codex/stage01-item-113-main-ruleset-only; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.13)",
-      "sha256": "1a84a9c50441e12e00a2613315cdf5a51c1581bf3e4a5d94efc50ac5a602d9e9"
+      "observations": "Reviewed the Stage 01 closeout crosswalk, all fifteen verified checklist items, accepted low-severity risk and exact hosted closeout evidence.",
+      "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (Stage 01 closeout)",
+      "sha256": "2fe705eac637977c93ffa34c55c1d8d891208333b58d644f1094a601c99bf90c"
     },
     {
       "path": "docs/FRONTEND-ARCHITECTURE.md",
@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed for item 1.15: documents verification of the existing shared UI foundation and design-system test evidence. Stage 01 remains partial.",
-      "evidence": "Current content reviewed for owner Stage 01 item 1.15; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.15)",
-      "sha256": "986279d62921e5f807af2335c7783e5fd8781b93da26fac3fe6cc1ed43d8098c"
+      "observations": "Reviewed the Stage 01 status against all fifteen traceability rows, the blocker register, complete file audit and exact hosted post-merge quality, integration and cross-browser run.",
+      "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (Stage 01 closeout)",
+      "sha256": "ab1aa59d5331f47ff2510c5e235672d9ef186c9eff3cb33388c250b91b227bde"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1889,10 +1889,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the owner-roadmap test record for item 1.15 against the design-system guard, UI suite and recorded visual-baseline limits.",
-      "evidence": "Current content reviewed for owner Stage 01 item 1.15; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.15)",
-      "sha256": "4e3081e16d506935b79567dcea968b5896ad84ceee74be2854fcd5e5abd6bf7f"
+      "observations": "Reviewed the Stage 01 browser and design-system records against the exact hosted post-merge run and retained visual baseline limits.",
+      "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (Stage 01 closeout)",
+      "sha256": "a9e31f61c304f0238bcbf3ad11af4ceb486334d656a627502a6dcbe39ad3df74"
     },
     {
       "path": "docs/TESTING.md",
@@ -1925,10 +1925,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete browser verification record after adding the current hosted evidence. Verified the three-engine selection rule, exact PR SHA and run, skipped optional suites, and final-stage acceptance limit. No new finding.",
-      "evidence": "Content reviewed on codex/stage01-item-108-browser; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.08)",
-      "sha256": "36085a6aa77c9cc27d1c6b21d188beeb89d53b7ddfc32923fff7efed74227147"
+      "observations": "Reviewed the browser verification record and added exact post-merge Stage 01 closeout evidence; recorded browser, accessibility, keyboard, responsive, integration and quality-gate scope.",
+      "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (Stage 01 closeout)",
+      "sha256": "956e85739218676fbb7f1874901e0bb0651ba3b9c42165341df024593f2aa122"
     },
     {
       "path": "docs/architecture/API-OPENAPI-REVIEW.md",
@@ -2021,10 +2021,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Prioritizes the no-critical/high result and retains the minimatch classification, unused schema cleanup, and accepted S1-F014 risk with explicit dispositions and verification limits.",
-      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.10)",
-      "sha256": "c3123f227f0e5ff172c74c4a21163b0f5c13741acc49a68b03b0d3dc51be4984"
+      "observations": "Reviewed the accepted low-priority follow-ups and S1-F014 risk; current text distinguishes these from completed Stage 01 gates.",
+      "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (Stage 01 closeout)",
+      "sha256": "1733c894b0444d460a59cae2e9e5f8b97f95b080c4f566bc12732d5a11acb728"
     },
     {
       "path": "docs/audits/STAGE-01-FILE-AUDIT.json",
