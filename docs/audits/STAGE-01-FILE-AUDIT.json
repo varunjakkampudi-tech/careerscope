@@ -6421,10 +6421,10 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Reviewed the guided-onboarding browser scenario: invalid-step focus, career-switcher guidance, back-navigation value retention, actual Save and finish click, and persisted profile assertions. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
-      "evidence": "Focused review and validation for CareerScope Stage 03 item 3.01. Current SHA-256 records updated bytes for Stage 03 item 3.06.",
+      "observations": "Reviewed the guided-onboarding browser scenario: invalid-step focus, career-switcher guidance, back-navigation value retention, actual Save and finish click, and persisted profile assertions. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs. Browser acceptance now explicitly reloads a saved work-history entry and verifies it returns in the editor.",
+      "evidence": "Focused review and validation for CareerScope Stage 03 item 3.01. Current SHA-256 records updated bytes for Stage 03 item 3.06. Updated for work-history persistence/reload assertion.",
       "reviewer": "Codex (Stage 03 item 3.01)",
-      "sha256": "c56f64f8d0535b3eb4e9526baa15f1c268bdaebb6a68eb3fd475ad586d205b64"
+      "sha256": "98afebe103f4b82c826232d875ff8a692a4e9c7e787681e38eb596f3a671c74f"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
