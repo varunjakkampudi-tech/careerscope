@@ -1142,16 +1142,36 @@
       "sha256": "ab4e5aa6f15e860ec4e1792087533bde836a2c5cf3bfb0ed3216cf57e5149791"
     },
     {
-      "path": "apps/web/src/components/profile-editor.tsx",
+      "path": "apps/web/src/components/profile-editor.module.css",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-execution",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete profile editor and form. Values are collected from FormData, normalized/deduplicated and bounded before mutation; employment types require at least one value. Profile reads use an owner-scoped key and are gated on owner availability. Revision conflicts alone offer discard-and-reload; save success updates profile and accessibility caches and clears dirty state. No additional finding identified.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "c8fb655d7c4128ced2b71a60220a03666331c3568eb460eec481f39efce07f0a"
+      "observations": "Reviewed onboarding progress, step status, step descriptions, navigation actions, responsive layout, and design-token usage.",
+      "evidence": "Focused review and validation for CareerScope Stage 03 item 3.01.",
+      "reviewer": "Codex (Stage 03 item 3.01)",
+      "sha256": "5246186f843cfdb5981f821a0b2465e15e080c156142ae85a671d4889c6939a4"
+    },
+    {
+      "path": "apps/web/src/components/profile-editor.tsx",
+      "category": "frontend",
+      "reviewMethod": "content-read-and-execution",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [
+        {
+          "id": "S3-F001",
+          "severity": "medium",
+          "status": "fixed",
+          "summary": "The last Continue step transition reused the same button node as Save and finish, allowing one click to both advance and submit the profile.",
+          "remediation": "Prevent the Continue click default and key the Continue and Save and finish buttons as distinct nodes; browser acceptance verifies no pre-final submission and clicks the final control."
+        }
+      ],
+      "observations": "Reviewed the guided first-time profile flow, required contact and job-preference validation, accessible progress announcements, step navigation, career-stage guidance, and revision-safe profile mutation. Existing profile editing remains available after onboarding.",
+      "evidence": "Focused review and validation for CareerScope Stage 03 item 3.01.",
+      "reviewer": "Codex (Stage 03 item 3.01)",
+      "sha256": "1cf392dc0ccac002e4b9afd2781d5cf838582162cded67f7d266040742c43db9"
     },
     {
       "path": "apps/web/src/components/recovery-email-section.tsx",
@@ -2317,14 +2337,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "content-read-and-targeted-checks",
+      "reviewMethod": "content-read-and-execution",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled canonical owner item 2.10 to partial status for its native-language recovery-copy gap and retained linked integration evidence.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.10)",
-      "sha256": "0f5f942ba5ed218034ed3ad04f156ae8caea99c173294ca6c4b91d878f1c6511"
+      "observations": "Updated owner item 3.01 to in-progress and linked the guided onboarding implementation and browser acceptance evidence; item remains unverified pending review and hosted CI.",
+      "evidence": "CareerScope Stage 03 item 3.01 progress tracked on PR #43.",
+      "reviewer": "Codex (Stage 03 item 3.01)",
+      "sha256": "43998aef7521719c7e2df0b8eb7a8d0b9a87d44cc2eae7f0b7891cdc4a2e888a"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -6401,10 +6421,10 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Reviewed the harness setup, routing and fixture boundaries, CSP and accessibility assertions, authenticated navigation, synthetic browser journeys, and cleanup. Full production UI suite passed on 2026-11-06 with Chromium, Firefox, and WebKit, including the two-account selector and eight-width reflow checks. Screenshot outputs now use a unique per-run directory. S1-F049 and S1-F071 fixed.",
-      "evidence": "Node 24.22.1 production build passed; full scripts/tests/check-ui.ts run exited 0 with Chromium, Firefox, and WebKit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "182ab69bef1b3ad81d449cc02668b58341713a038d416241d4e0c42ea6f22617"
+      "observations": "Reviewed the guided-onboarding browser scenario: invalid-step focus, career-switcher guidance, back-navigation value retention, actual Save and finish click, and persisted profile assertions.",
+      "evidence": "Focused review and validation for CareerScope Stage 03 item 3.01.",
+      "reviewer": "Codex (Stage 03 item 3.01)",
+      "sha256": "5ed82785e28c7fa79ccaf3695f4894dd373c802d1ffa34ad36f08354cb4b4587"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",

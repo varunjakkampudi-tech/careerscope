@@ -1,0 +1,121 @@
+.onboarding {
+  max-width: 840px;
+  margin: 0 auto 24px;
+  padding: 20px 24px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.progressList {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.progressList li > span,
+.progressList li > button {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  text-align: left;
+}
+
+.progressList li > button {
+  cursor: pointer;
+}
+
+.progressList li > button:hover {
+  color: var(--accent);
+}
+
+.progressList [aria-current='step'] {
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.stepNumber {
+  display: inline-grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--canvas);
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.progressList [aria-current='step'] .stepNumber {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-solid);
+}
+
+.stepStatus {
+  margin: 16px 0 4px;
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.saveNotice,
+.stepDescription {
+  max-width: 72ch;
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.stepActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+@media (max-width: 640px) {
+  .onboarding {
+    margin-bottom: 16px;
+    padding: 14px 16px;
+  }
+
+  .progressList {
+    gap: 4px;
+  }
+
+  .progressList li > span,
+  .progressList li > button {
+    justify-content: center;
+  }
+
+  .stepLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    clip-path: inset(50%);
+  }
+
+  .stepActions {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    margin: 16px -16px -14px;
+    padding: 12px 16px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+}
