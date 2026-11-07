@@ -4013,8 +4013,10 @@ try {
         `${engine}: malformed salary currency must not persist`,
       );
       await currencyField.fill('inr');
-      const availabilityField = page.getByLabel('Availability', { exact: true });
-      const noticePeriodField = page.getByLabel('Notice Period (Days)', { exact: true });
+      const availabilityField = page.locator('select[name="availabilityStatus"]');
+      const noticePeriodField = page.locator('input[name="noticePeriodDays"]');
+      assert.equal(await availabilityField.count(), 1, `${engine}: availability control renders`);
+      assert.equal(await noticePeriodField.count(), 1, `${engine}: notice period control renders`);
       await availabilityField.selectOption('notice_period');
       await noticePeriodField.fill('');
       await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
@@ -4031,7 +4033,7 @@ try {
         `${engine}: incomplete notice period must not persist`,
       );
       await noticePeriodField.fill('45');
-      await page.getByLabel('Preferred Contact Method', { exact: true }).selectOption('phone');
+      await page.locator('select[name="preferredContactMethod"]').selectOption('phone');
       for (const [field, value] of [
         [educationField, 'B.Tech, Computer Science'],
         [workHistoryField, 'Frontend Engineer at Example Co (2022–2024)'],

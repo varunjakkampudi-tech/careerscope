@@ -6421,10 +6421,10 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Extended the real browser scenario to reject malformed currency without changing profile revision, save and reload the annual salary floor, lowercase currency input and expected package, then assert those values in the persisted profile and profile-based search snapshot. Updated salary-currency browser assertion to use a malformed three-character value (12R), assert native invalidity, and verify profile revision is unchanged; correction reviewed against the hosted Chromium failure. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
+      "observations": "Extended the real browser scenario to reject malformed currency without changing profile revision, save and reload the annual salary floor, lowercase currency input and expected package, then assert those values in the persisted profile and profile-based search snapshot. Updated salary-currency browser assertion to use a malformed three-character value (12R), assert native invalidity, and verify profile revision is unchanged; correction reviewed against the hosted Chromium failure. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Re-reviewed availability browser acceptance selectors: uniquely named native controls are located directly and existence is asserted before validation and persistence checks.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
       "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "404a6014b6934b80e6706bfc689ab1c483c07b762f83faf8b85e6f17af0178b8"
+      "sha256": "678339e98cd45b4da7ca8419e1d9ce911d0a68a451e526fc6a5fc1d59496eced"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
