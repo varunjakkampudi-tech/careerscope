@@ -412,7 +412,9 @@
       "currentStatus": "verified",
       "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": ["apps/api/src/recovery.integration.test.ts"],
-      "externalEvidence": ["Owner-directed AI-only recovery-copy acceptance in docs/PROGRESS.md; no native-speaker review claimed."],
+      "externalEvidence": [
+        "Owner-directed AI-only recovery-copy acceptance in docs/PROGRESS.md; no native-speaker review claimed."
+      ],
       "gap": "",
       "scopeDisposition": "in-scope"
     },
