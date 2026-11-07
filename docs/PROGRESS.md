@@ -41,12 +41,16 @@ pinned source checklist or any legal requirement. Native review has **not** occu
 The localized strings in `apps/web/src/lib/locale.ts` were compared against English
 on the reviewed `dev` commit `2f73198f453c8b332426c2961f8df1128d7e736b`:
 
-| Message keys | Telugu assessment | Hindi assessment |
-| --- | --- | --- |
-| `recoverySetupIntro`, `recoveryConfirm` | Distinguishes a secondary recovery address from the sign-in email and preserves confirmation before availability | Preserves secondary-address setup and confirmation; “खो दें” is a less precise rendering of losing **access** |
-| `recoveryCooldown` | Explicitly preserves 72 hours **after confirmation**; “తెరుచుకుంటుంది” is slightly unnatural UI wording | Explicitly preserves 72 hours after confirmation; “खुलता है” is understandable but colloquial |
-| `recoveryFindIntro`, `recoverySignInButton` | Preserves recovery sign-in through the already-confirmed address | Preserves confirmed-address recovery sign-in |
-| `recoveryRequestNote`, `recoverySent` | Retains conditional responses rather than promising account existence or recovery eligibility | Retains conditional responses without disclosing eligibility |
+- `recoverySetupIntro` and `recoveryConfirm`: both translations distinguish a
+  secondary recovery address from the primary sign-in address and retain the
+  confirmation step. Hindi “खो दें” is less precise than “lose access”.
+- `recoveryCooldown`: both translations preserve a 72-hour wait **after**
+  confirmation. Telugu “తెరుచుకుంటుంది” and Hindi “खुलता है” are
+  understandable but slightly awkward interface wording.
+- `recoveryFindIntro` and `recoverySignInButton`: both describe signing in
+  through a previously confirmed recovery address.
+- `recoveryRequestNote` and `recoverySent`: both retain the conditional
+  wording rather than revealing whether an account or recovery address exists.
 
 **AI-only acceptance result:** No blocking reversal of the reviewed security or timing
 instructions was identified. Minor phrasing/register differences remain accepted as
