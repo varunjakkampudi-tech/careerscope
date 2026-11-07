@@ -320,10 +320,10 @@
           "remediation": "The test now parses REDIS_URL and requires localhost, 127.0.0.1, or ::1 before connecting."
         }
       ],
-      "observations": "Reviewed the complete 1065-line PostgreSQL/Redis integration scenario: account enumeration and signup boundaries, OTP cooldown and IP limits across API instances, cookie/session security and refresh rotation/replay, concurrent verification, delivery/session failures, age and legal consent gates, atomic signup, append-only marketing consent, email changes and session revocation, OpenAPI contracts, and cleanup. Found that DATABASE_URL was loopback-checked but REDIS_URL was not, allowing this mutating rate-limit test to target a remote Redis. Added a loopback-host guard without including the URL in diagnostics.",
-      "evidence": "Complete tracked file read and local source review on codex/stage01-item-101-audit; Redis loopback guard added; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "ade37091ee8dff1a6aa572cc758aa89f8e8f4b519dfdaa15ef95715ff342b0fe"
+      "observations": "Reviewed the registration-off integration assertion for false session capability, a 404 signup response, and no OTP delivery; focused PostgreSQL/Redis test passed.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.05 on codex/stage02-item-205-registration-gate; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.05)",
+      "sha256": "49f39f90d8b8581e73f9e0d64293e0082be44efcdbd4b1e810e12d8dfe7d3cf8"
     },
     {
       "path": "apps/api/src/error-handler.test.ts",
@@ -1773,10 +1773,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Rows 2.01 to 2.20 and the decisions section were checked for consistency with BLOCKERS and PROGRESS. Evidence paths are the ones named in each row; they were not each opened in this review (see the evidence column). No contradiction found.",
-      "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "5661f3ac09e97ccfd51216e49c6ccbee3784d1dd7f4e4d62dea8784458622873"
+      "observations": "Clarified that the existing Stage 02 matrix uses legacy local numbering and explicitly linked local registration row 2.09 to owner roadmap item 2.05.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.05 on codex/stage02-item-205-registration-gate; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.05)",
+      "sha256": "6fd85297d662a0f7dbe894ecf784e74c587a37e0c7d628ce5b9ef9a27a7178e2"
     },
     {
       "path": "docs/KNOWN-LIMITATIONS.md",
@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the Stage 01 status against all fifteen traceability rows, the blocker register, complete file audit and exact hosted post-merge quality, integration and cross-browser run.",
-      "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 closeout)",
-      "sha256": "ab1aa59d5331f47ff2510c5e235672d9ef186c9eff3cb33388c250b91b227bde"
+      "observations": "Recorded owner item 2.05 as externally gated and documented fail-closed behavior and the canonical-versus-legacy numbering clarification.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.05 on codex/stage02-item-205-registration-gate; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.05)",
+      "sha256": "8df217f82cb76542960882db1f125198d91a40ede348910669ff4f9514343dd4"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1889,10 +1889,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 01 browser and design-system records against the exact hosted post-merge run and retained visual baseline limits.",
-      "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 closeout)",
-      "sha256": "a9e31f61c304f0238bcbf3ad11af4ceb486334d656a627502a6dcbe39ad3df74"
+      "observations": "Recorded owner item 2.05 registration-gate coverage in the Services suite.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.05 on codex/stage02-item-205-registration-gate; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.05)",
+      "sha256": "6a8579f13e3c9a59067b10ebe6285fe9c6aa60bdf868eab219f2ab5a3619a997"
     },
     {
       "path": "docs/TESTING.md",
