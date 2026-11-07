@@ -143,6 +143,7 @@ test('runForOwner: disabled, missing-titles, and a settled run are all classifie
         locations: [],
         remoteOnly: false,
         minSalary: null,
+        minSalaryCurrency: null,
         employmentTypes: ['fulltime'] as const,
         excludeKeywords: [],
         excludeCompanies: [],

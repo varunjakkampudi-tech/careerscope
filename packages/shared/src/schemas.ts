@@ -62,8 +62,16 @@ export const preferencesSchema = z.object({
   techStack: z.array(ownerText()).min(1, 'Add at least one skill').max(120),
   locations: z.array(ownerText()).max(25).default([]),
   remoteOnly: z.boolean().default(false),
-  /** Annual figure in the profile currency. null = no floor. */
+  /** Annual figure in the currency recorded by minSalaryCurrency. null = no floor. */
   minSalary: z.number().int().nonnegative().nullable().default(null),
+  /** ISO 4217 code for minSalary. Null preserves legacy profiles with no currency recorded. */
+  minSalaryCurrency: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[A-Z]{3}$/, 'Use a three-letter currency code')
+    .nullable()
+    .default(null),
   employmentTypes: z.array(z.enum(EMPLOYMENT_TYPES)).min(1).default(['fulltime']),
   /** A listing containing any of these is excluded outright. */
   excludeKeywords: z.array(ownerText()).max(60).default([]),

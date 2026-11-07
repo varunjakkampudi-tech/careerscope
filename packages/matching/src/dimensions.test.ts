@@ -296,6 +296,30 @@ describe('scoreCompensation', () => {
     expect(out.reason).toBe('currency differs');
   });
 
+  it('does not compare a structured USD salary floor against an INR range', () => {
+    const usdFloor = candidate({
+      expectedSalary: null,
+      expectedCurrency: null,
+      minSalary: 150_000,
+      minSalaryCurrency: 'USD',
+    });
+    const out = scoreCompensation(job({ salary: salary(2_200_000, 2_800_000) }), usdFloor);
+    expect(out.score).toBe(0.6);
+    expect(out.reason).toBe('currency differs');
+  });
+
+  it('uses a structured salary floor when its currency matches the job', () => {
+    const inrFloor = candidate({
+      expectedSalary: null,
+      expectedCurrency: null,
+      minSalary: 2_000_000,
+      minSalaryCurrency: 'INR',
+    });
+    expect(scoreCompensation(job({ salary: salary(2_200_000, 2_800_000) }), inrFloor).score).toBe(
+      1,
+    );
+  });
+
   it('still compares when the currencies agree or one side names none', () => {
     const usd = candidate({ expectedSalary: 150_000, expectedCurrency: 'USD' });
     const usdJob = { ...salary(160_000, 180_000), currency: 'USD' };

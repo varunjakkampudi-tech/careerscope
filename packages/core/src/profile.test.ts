@@ -230,6 +230,22 @@ test('preferred job titles remain in the saved matching preferences', () => {
   assert.deepEqual(matchingProfile(profile).preferences.titles, titles);
 });
 
+test('salary floor and its currency remain in the saved matching preferences', () => {
+  const profile = writableProfileSchema.parse({
+    ...syntheticProfile,
+    preferences: {
+      ...syntheticProfile.preferences,
+      minSalary: 1_800_000,
+      minSalaryCurrency: 'inr',
+    },
+  });
+
+  assert.equal(profile.preferences.minSalary, 1_800_000);
+  assert.equal(profile.preferences.minSalaryCurrency, 'INR');
+  assert.equal(matchingProfile(profile).preferences.minSalary, 1_800_000);
+  assert.equal(matchingProfile(profile).preferences.minSalaryCurrency, 'INR');
+});
+
 test('home location and work-mode preferences remain in the matching profile', () => {
   const profile = writableProfileSchema.parse({
     ...syntheticProfile,

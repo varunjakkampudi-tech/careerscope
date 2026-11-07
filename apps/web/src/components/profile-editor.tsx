@@ -204,6 +204,13 @@ function ProfileForm({
       field.reportValidity();
       return;
     }
+    const salaryCurrency = text('minSalaryCurrency').trim();
+    if (text('minSalary') && salaryCurrency && !/^[A-Za-z]{3}$/.test(salaryCurrency)) {
+      const field = form.elements.namedItem('minSalaryCurrency') as HTMLInputElement;
+      field.setCustomValidity('Use a three-letter currency code.');
+      field.reportValidity();
+      return;
+    }
     save.mutate({
       candidate: {
         fullName: text('fullName'),
@@ -225,6 +232,9 @@ function ProfileForm({
         locations: list('locations'),
         remoteOnly: data.has('remoteOnly'),
         minSalary: text('minSalary') ? Number(text('minSalary')) : null,
+        minSalaryCurrency: text('minSalary')
+          ? text('minSalaryCurrency').trim().toUpperCase() || null
+          : null,
         employmentTypes,
         excludeKeywords: list('excludeKeywords'),
         excludeCompanies: list('excludeCompanies'),
@@ -487,16 +497,35 @@ function ProfileForm({
               defaultValue={preferences.locations?.join('\n') ?? ''}
             />
           </label>
-          <label>
-            Minimum Annual Salary
+          <div className="field-with-hint">
+            <label>
+              Minimum Annual Salary
+              <input
+                name="minSalary"
+                type="number"
+                min={0}
+                step={1}
+                defaultValue={preferences?.minSalary ?? ''}
+                aria-describedby="minSalary-help"
+              />
+            </label>
+            <label htmlFor="minSalaryCurrency">Currency code</label>
             <input
-              name="minSalary"
-              type="number"
-              min={0}
-              step={1}
-              defaultValue={preferences?.minSalary ?? ''}
+              id="minSalaryCurrency"
+              name="minSalaryCurrency"
+              type="text"
+              maxLength={3}
+              pattern="[A-Za-z]{3}"
+              autoCapitalize="characters"
+              placeholder="INR"
+              defaultValue={preferences?.minSalaryCurrency ?? ''}
+              aria-describedby="minSalary-help"
             />
-          </label>
+            <small id="minSalary-help">
+              Optional annual floor for salary matching. The three-letter currency code is optional;
+              known mismatches are not compared.
+            </small>
+          </div>
           <label>
             Excluded Keywords
             <textarea

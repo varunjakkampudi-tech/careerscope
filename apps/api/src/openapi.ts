@@ -110,6 +110,7 @@ const profile = object({
       locations: stringList(25),
       remoteOnly: { ...bool, default: false },
       minSalary: nullable(integer({ minimum: 0, default: null })),
+      minSalaryCurrency: nullable({ ...text({ pattern: '^[A-Z]{3}$' }), default: null }),
       employmentTypes: array(
         text({ enum: ['fulltime', 'parttime', 'contract', 'internship', 'temporary'] }),
         { minItems: 1, default: ['fulltime'] },
