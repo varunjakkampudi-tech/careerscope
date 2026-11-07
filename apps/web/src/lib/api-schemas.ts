@@ -148,6 +148,7 @@ const profileDataSchema = z.object({
     location: z.string(),
     segment: z.enum(['student', 'fresher', 'experienced']).optional(),
     education: z.array(z.string()).default([]),
+    experience: z.array(z.string()).default([]),
     graduationYear: z.number().optional(),
     projects: z.array(z.string()).default([]),
     linkedin: z.string().default(''),

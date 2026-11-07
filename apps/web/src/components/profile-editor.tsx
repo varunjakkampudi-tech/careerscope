@@ -179,7 +179,7 @@ function ProfileForm({
         return;
       }
     }
-    for (const name of ['education', 'projects']) {
+    for (const name of ['education', 'experience', 'projects']) {
       const entries = lines(name);
       const field = form.elements.namedItem(name) as HTMLTextAreaElement;
       if (entries.length > 20) {
@@ -212,6 +212,7 @@ function ProfileForm({
         location: text('location'),
         ...(segment ? { segment } : {}),
         education: lines('education'),
+        experience: lines('experience'),
         ...(graduationYear ? { graduationYear: Number(graduationYear) } : {}),
         projects: lines('projects'),
         linkedin: text('linkedin'),
@@ -391,6 +392,21 @@ function ProfileForm({
             <span id="education-help">
               Add up to 20 schools, qualifications, or courses; each line is limited to 200
               characters.
+            </span>
+          </label>
+          <label>
+            <span id="experience-label">Work Experience</span>
+            <textarea
+              name="experience"
+              rows={3}
+              maxLength={5000}
+              aria-labelledby="experience-label"
+              aria-describedby="experience-help"
+              defaultValue={candidate?.experience?.join('\n') ?? ''}
+            />
+            <span id="experience-help">
+              Add up to 20 role summaries; each line is limited to 200 characters. These are
+              candidate-provided claims and are not independently verified.
             </span>
           </label>
           <label>

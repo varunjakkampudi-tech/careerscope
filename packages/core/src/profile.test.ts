@@ -59,6 +59,7 @@ test('profile reuses domain defaults without inventing qualifications', () => {
   assert.equal(parsed.candidate.portfolio, '');
   assert.equal(parsed.candidate.segment, undefined);
   assert.deepEqual(parsed.candidate.education, []);
+  assert.deepEqual(parsed.candidate.experience, []);
   assert.deepEqual(parsed.candidate.projects, []);
   assert.equal(parsed.candidate.graduationYear, undefined);
   assert.deepEqual(parsed.accessibility, { reducedMotion: false });
@@ -137,17 +138,21 @@ test('candidate segment is owner-declared, bounded to the approved options and n
   );
 });
 
-test('education, graduation year, and projects are bounded candidate claims and never matching inputs', () => {
+test('education, work experience, graduation year, and projects are bounded candidate claims and never matching inputs', () => {
   const profile = writableProfileSchema.parse({
     ...syntheticProfile,
     candidate: {
       ...syntheticProfile.candidate,
       education: ['B.Tech, Computer Science'],
+      experience: ['Frontend Engineer at Example Co (2022–2024): Built accessible products'],
       graduationYear: 2024,
       projects: ['Accessible job search prototype'],
     },
   });
   assert.deepEqual(profile.candidate.education, ['B.Tech, Computer Science']);
+  assert.deepEqual(profile.candidate.experience, [
+    'Frontend Engineer at Example Co (2022–2024): Built accessible products',
+  ]);
   assert.equal(profile.candidate.graduationYear, 2024);
   assert.deepEqual(profile.candidate.projects, ['Accessible job search prototype']);
   assert.deepEqual(matchingProfile(profile), {
@@ -163,6 +168,8 @@ test('education, graduation year, and projects are bounded candidate claims and 
   for (const candidate of [
     { education: ['x'.repeat(201)] },
     { education: Array.from({ length: 21 }, (_, index) => `School ${index}`) },
+    { experience: ['x'.repeat(201)] },
+    { experience: Array.from({ length: 21 }, (_, index) => `Role ${index}`) },
     { graduationYear: 1899 },
     { graduationYear: 2101 },
     { graduationYear: 2024.5 },

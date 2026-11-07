@@ -226,9 +226,10 @@ is not inferred from age or experience; it does not independently establish
 education, identity, eligibility or verification.
 
 Candidates may also save private, self-reported education entries, a graduation
-year (1900–2100), and project summaries. Each list accepts up to 20 non-empty
-entries of at most 200 characters. These claims are owner-scoped profile data;
-they are neither independently verified nor inputs to deterministic matching.
+year (1900–2100), work-history summaries, and project summaries. Each list
+accepts up to 20 non-empty entries of at most 200 characters. These claims are
+owner-scoped profile data; they are neither independently verified nor inputs
+to deterministic matching.
 Historical profile rows may omit these keys: profile reads preserve the stored
 shape, while the profile editor displays absent lists/year as blank. The first
 successful save writes the normalized empty lists if left blank. No data
