@@ -477,11 +477,13 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Guided onboarding",
       "sourceStatus": "Partial",
-      "currentStatus": "in-progress",
+      "currentStatus": "verified",
       "evidence": ["apps/web/src/components/profile-editor.tsx", "scripts/tests/check-ui.ts"],
       "tests": ["scripts/tests/check-ui.ts"],
-      "externalEvidence": [],
-      "gap": "Guided onboarding is implemented and tracked in PR #43; final exact-SHA review, hosted CI, and acceptance verification are pending.",
+      "externalEvidence": [
+        "PR #43 merged to dev at merge commit ad7f0f7cf9423f26dda3cdc1e3eb6ce98a171a7e; implementation approved at exact head SHA efb4692fbacc97b90751be0f2f2172516fbe1b94 in the designated ChatGPT review conversation; hosted GitHub Actions run 42346547941 passed all three jobs, including Linux browser and visual checks (0 changed pixels on mobile and desktop)."
+      ],
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {

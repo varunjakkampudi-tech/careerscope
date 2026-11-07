@@ -2341,10 +2341,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 3.01 to in-progress and linked the guided onboarding implementation and browser acceptance evidence; item remains unverified pending review and hosted CI.",
-      "evidence": "CareerScope Stage 03 item 3.01 progress tracked on PR #43.",
+      "observations": "Recorded owner item 3.01 as verified after PR #43 merged to dev, exact-SHA implementation review approved, and all three hosted CI jobs passed.",
+      "evidence": "CareerScope Stage 03 item 3.01 final acceptance on PR #43, merged to dev.",
       "reviewer": "Codex (Stage 03 item 3.01)",
-      "sha256": "43998aef7521719c7e2df0b8eb7a8d0b9a87d44cc2eae7f0b7891cdc4a2e888a"
+      "sha256": "bb0b400b2005e3b302ab8b8e4fa95ef63696d09aac53647b0a889e1ceaa1d9da"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
