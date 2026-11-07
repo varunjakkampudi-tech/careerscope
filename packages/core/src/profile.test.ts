@@ -220,6 +220,16 @@ test('project summaries accept 20 bounded entries and stay out of the matching s
   );
 });
 
+test('preferred job titles remain in the saved matching preferences', () => {
+  const titles = ['Staff Platform Engineer', 'Developer Experience Lead'];
+  const profile = writableProfileSchema.parse({
+    ...syntheticProfile,
+    preferences: { ...syntheticProfile.preferences, titles },
+  });
+
+  assert.deepEqual(matchingProfile(profile).preferences.titles, titles);
+});
+
 test('profile rejects unknown ownership fields, unsafe links and malformed revisions', () => {
   assert.equal(
     writableProfileSchema.safeParse({ ...syntheticProfile, ownerId: 'other' }).success,
