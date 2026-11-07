@@ -6421,10 +6421,10 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Extended the real browser scenario to reject malformed currency without changing profile revision, save and reload the annual salary floor, lowercase currency input and expected package, then assert those values in the persisted profile and profile-based search snapshot.",
+      "observations": "Extended the real browser scenario to reject malformed currency without changing profile revision, save and reload the annual salary floor, lowercase currency input and expected package, then assert those values in the persisted profile and profile-based search snapshot. Updated salary-currency browser assertion to use a malformed three-character value (12R), assert native invalidity, and verify profile revision is unchanged; correction reviewed against the hosted Chromium failure.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
       "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "94c5b7ca1f9fe427c8b34d92e78af356fefe6aa50e3d2f86001cd95bc92d8066"
+      "sha256": "e43b8004d73a58fc77b447aff6bb0d601bdc5a8193f2ae635cc2d4228a194d41"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
