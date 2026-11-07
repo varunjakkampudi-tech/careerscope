@@ -1773,10 +1773,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded canonical owner item 2.08 device/session management mapping to legacy local row 2.15.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.08 on codex/stage02-item-208-device-sessions; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.08)",
-      "sha256": "9fdc80a048e7b6735565837bdb888ab33451e177eb1b04ed8b213dc35af10be3"
+      "observations": "Recorded canonical owner item 2.09 secure email change mapping to legacy local row 2.16.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.09 on codex/stage02-item-209-secure-email-change; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.09)",
+      "sha256": "deda2cb8a20f7c28a49bdf3b0cfe844f6475afeac6d11713a3393df66f9dfde2"
     },
     {
       "path": "docs/KNOWN-LIMITATIONS.md",
@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded owner item 2.08 device/session management verification evidence.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.08 on codex/stage02-item-208-device-sessions; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.08)",
-      "sha256": "45bd525c6c8d4574666ad939bb029fadecce79ea558986daf9f7d6025fa77321"
+      "observations": "Recorded owner item 2.09 evidence for address-bound verification, single use, session revocation and browser workflow.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.09 on codex/stage02-item-209-secure-email-change; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.09)",
+      "sha256": "20dddcfcba77ad77941f21554465ce8ed6421b174cd5dcd5952a72e1daeaa90e"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1889,10 +1889,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Clarified owner-prefixed canonical IDs versus legacy local IDs and added owner item 2.08 real database evidence for inventory and revocation behavior.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.08 on codex/stage02-item-208-device-sessions; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.08)",
-      "sha256": "f341cf807bc20a3aeb435f58ac212a60c9b78ca6eea6f858e1b1c85d0725a4e2"
+      "observations": "Added canonical owner item 2.09 integration and browser evidence for the two-address email-change journey.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.09 on codex/stage02-item-209-secure-email-change; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.09)",
+      "sha256": "1d3b4a46d269a7608ac00f86499e1902c476c942b1899ce5228be13a0438bb78"
     },
     {
       "path": "docs/TESTING.md",
