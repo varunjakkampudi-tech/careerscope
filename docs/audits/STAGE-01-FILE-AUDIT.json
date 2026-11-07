@@ -2344,7 +2344,7 @@
       "observations": "Recorded owner item 3.01 as verified after PR #43 merged to dev, exact-SHA implementation review approved, and all three hosted CI jobs passed.",
       "evidence": "CareerScope Stage 03 item 3.01 final acceptance on PR #43, merged to dev.",
       "reviewer": "Codex (Stage 03 item 3.01)",
-      "sha256": "bb0b400b2005e3b302ab8b8e4fa95ef63696d09aac53647b0a889e1ceaa1d9da"
+      "sha256": "a9889aea274c2510978363150a4d48cd7976e1c1156cf63275eccf9053e418dd"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
