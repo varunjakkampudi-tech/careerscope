@@ -409,11 +409,11 @@
       "stageTitle": "Authentication, registration and account security",
       "title": "Account recovery",
       "sourceStatus": "Missing/partial",
-      "currentStatus": "verified",
+      "currentStatus": "partial",
       "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": ["apps/api/src/recovery.integration.test.ts"],
       "externalEvidence": [],
-      "gap": "",
+      "gap": "Native review of Telugu and Hindi account-recovery wording remains outstanding.",
       "scopeDisposition": "in-scope"
     },
     {
