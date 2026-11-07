@@ -4,11 +4,12 @@ One row per roadmap stage. A stage is complete only when its gate in [GAP-MATRIX
 is met, its tests are recorded in [TEST-MATRIX](TEST-MATRIX.md), and every blocker that affects it
 is listed in [BLOCKERS](BLOCKERS.md). Stages run one at a time. Deployment is last, after stage 20.
 
-| Stage | Name                                 | Status      |
-| ----- | ------------------------------------ | ----------- |
-| 01    | Foundation, governance, architecture | Complete    |
-| 02    | Authentication and account security  | Complete    |
-| 03-20 | See roadmap                          | Not started |
+| Stage | Name                                          | Status      |
+| ----- | --------------------------------------------- | ----------- |
+| 01    | Foundation, governance, architecture          | Complete    |
+| 02    | Authentication and account security           | Complete    |
+| 03    | Candidate onboarding and professional profile | In progress |
+| 04-20 | See roadmap                                   | Not started |
 
 Stage 01 file audit: [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md); the current JSON record is the source of truth for tracked-file coverage and passes the complete-coverage gate. The owner’s prompt item 1.01 was independently approved at PR #18, exact SHA `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`. All 15 owner checklist items are verified with no open gaps in the [owner-roadmap inventory](requirements/OWNER-ROADMAP-TRACEABILITY.json). The closing revision, merge commit `397025bdd43ae293a081e2728fadc67dafb62df1`, passed hosted run `42310969989` (Quality gates and Services, integration, and Chromium/Firefox/WebKit browser acceptance). The file audit has complete coverage and no open critical or high findings. The accepted low-severity S1-F014 database risk remains documented; no Stage 01 blocker is open. Hostinger deployment and server backups are excluded from scope. See the [FOUNDATIONS](FOUNDATIONS.md) crosswalk.
 
@@ -38,3 +39,5 @@ hosted CI on rerun `41221224982`. The first hosted run of `c12838e` failed in th
 test-selection integration test, so that flake remains open. Owner decisions: B-02 closed (no second provider in stage 02); B-03
 approved for deployment, pending counsel-approved legal text. Stage 02 is complete with these carried
 to deployment.
+
+Owner Stage 03 progress: item 3.01 guided onboarding was approved and merged through PRs #43 and #44. Item 3.02 age screening is under verification in PR #45. The screen is a self-reported 18+ eligibility check; it does not verify identity. Signup remains disabled pending the separate legal gate for owner item 2.05. See the owner-roadmap inventory and [TEST-MATRIX](TEST-MATRIX.md) for exact implementation and test evidence.
