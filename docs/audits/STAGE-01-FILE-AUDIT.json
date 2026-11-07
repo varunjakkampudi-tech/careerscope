@@ -1861,10 +1861,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded account recovery engineering evidence and AI-assisted preliminary comparison of Telugu and Hindi recovery wording; native-language review remains outstanding.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-ai-language-review; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.10)",
-      "sha256": "847e653793e2801ade578eb1c669875d77f141d644cc4c064ae37fd228b2f008"
+      "observations": "Recorded Stage 03 progress: guided onboarding item 3.01 is verified; age-screen item 3.02 is under verification in PR #45. Stage 02 legal and native-language gates remain listed.",
+      "evidence": "Reviewed and updated for owner roadmap item 3.02; SHA-256 records current bytes.",
+      "reviewer": "Codex (Stage 03 item 3.02)",
+      "sha256": "1c6260bc1f06abe387955860298e8e23868909adb44d32383f5d0257fcba08f7"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1909,10 +1909,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added canonical owner item 2.10 recovery integration coverage and language-review status through the owner inventory.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.10)",
-      "sha256": "9804eb96e6ef7c857de6b8e5c4f4ddcfb38d24942fa67dc6aa8bbfbd307295e5"
+      "observations": "Added Stage 03 evidence for guided onboarding item 3.01 and age-screen item 3.02, including tests, exact-SHA CI, and the self-reported screening limitation.",
+      "evidence": "Reviewed and updated for owner roadmap items 3.01 and 3.02; SHA-256 records current bytes.",
+      "reviewer": "Codex (Stage 03 item 3.02)",
+      "sha256": "10b35d470e1a466a1555f681f6bcf617d9a13c1c80de748b2bd5c57313985e05"
     },
     {
       "path": "docs/TESTING.md",
@@ -2341,10 +2341,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded owner item 3.01 as verified after PR #43 merged to dev, exact-SHA implementation review approved, and all three hosted CI jobs passed.",
-      "evidence": "CareerScope Stage 03 item 3.01 final acceptance on PR #43, merged to dev.",
-      "reviewer": "Codex (Stage 03 item 3.01)",
-      "sha256": "a9889aea274c2510978363150a4d48cd7976e1c1156cf63275eccf9053e418dd"
+      "observations": "Recorded owner item 3.01 verified and item 3.02 as verified proposal on PR #45; age-screen acceptance is self-reported, date-of-birth non-persistence is tested, and signup remains gated by item 2.05.",
+      "evidence": "CareerScope Stage 03 item 3.02 verification on PR #45; hosted CI and review are pending.",
+      "reviewer": "Codex (Stage 03 item 3.02)",
+      "sha256": "bb038ed804f24500e0e6586c458f13353d7a1d4f3e46b6d014f5e4c6353b8f5c"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
