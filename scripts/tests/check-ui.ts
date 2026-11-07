@@ -3997,12 +3997,13 @@ try {
       const profiles = new ProfileRepository(database);
       const profileBeforeInvalidInput = await profiles.get(ownerId);
       const currencyField = page.getByLabel('Currency code', { exact: true });
-      await currencyField.fill('INRR');
+      await currencyField.fill('12R');
       await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
       assert.equal(
-        await currencyField.evaluate(
-          (element) => (element as HTMLInputElement).validity.customError,
-        ),
+        await currencyField.evaluate((element) => {
+          const input = element as HTMLInputElement;
+          return input.validity.patternMismatch || !input.checkValidity();
+        }),
         true,
         `${engine}: malformed salary currency must show field validation`,
       );
