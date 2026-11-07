@@ -40,4 +40,4 @@ test-selection integration test, so that flake remains open. Owner decisions: B-
 approved for deployment, pending counsel-approved legal text. Stage 02 is complete with these carried
 to deployment.
 
-Owner Stage 03 progress: item 3.01 guided onboarding was approved and merged through PRs #43 and #44. Item 3.02 age screening is under verification in PR #45. The screen is a self-reported 18+ eligibility check; it does not verify identity. Signup remains disabled pending the separate legal gate for owner item 2.05. See the owner-roadmap inventory and [TEST-MATRIX](TEST-MATRIX.md) for exact implementation and test evidence.
+Owner Stage 03 progress: items 3.01 guided onboarding and 3.02 age screening are verified and merged through PRs #43–#45. Item 3.03 basic profile is proposed as verified in open PR #46, pending exact-SHA review and hosted CI. Age screening is a self-reported 18+ eligibility check; it does not verify identity. Signup remains disabled pending the separate legal gate for owner item 2.05. See the owner-roadmap inventory and [TEST-MATRIX](TEST-MATRIX.md) for exact implementation and test evidence.
