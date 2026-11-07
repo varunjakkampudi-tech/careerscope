@@ -42,19 +42,20 @@ approved; current coverage is recorded in [STAGE-01-FILE-AUDIT](audits/STAGE-01-
 
 ## Stage 02
 
-| Item             | Proof                                                                                                                            | Runs in                       |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| Owner 2.06       | `apps/api/src/legal-acceptance.integration.test.ts` (repeated current-version acceptance does not duplicate either ledger entry) | Services suite                |
-| Owner 2.05       | `apps/api/src/email-otp.integration.test.ts` (registration disabled by default returns 404 without sending OTP)                  | Services suite                |
-| 2.02             | `packages/core/src/email-otp-delivery.test.ts` (notice path, escaping, no code in notices); live check recorded in GAP-MATRIX    | Quality gates, Services suite |
-| 2.08             | `apps/api/src/email-otp.integration.test.ts`                                                                                     | Services suite                |
-| 2.10             | `apps/api/src/email-otp.integration.test.ts` (concurrent verification)                                                           | Services suite                |
-| 2.11             | `apps/api/src/legal-acceptance.integration.test.ts`                                                                              | Services suite                |
-| 2.17             | `apps/api/src/recovery.integration.test.ts`                                                                                      | Services suite                |
-| 2.18             | `apps/api/src/new-device-alert.integration.test.ts`, `packages/core/src/email-otp-delivery.test.ts`                              | Quality gates, Services suite |
-| 2.19             | `apps/api/src/session-logout.integration.test.ts`, `apps/api/src/session-lookup.test.ts`                                         | Services suite, Quality gates |
-| 2.13, 2.14, 2.15 | `apps/api/src/session-lookup.test.ts`, `apps/web/src/lib/next-proxy-headers.test.ts`                                             | Quality gates                 |
-| 2.16             | `scripts/tests/check-ui.ts` (email-change journey)                                                                               | Browser suite                 |
+| Item             | Proof                                                                                                                                  | Runs in                       |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| Owner 2.07       | `apps/api/src/email-otp.integration.test.ts` (repeated refresh rotates both tokens, invalidates old access, and replay revokes family) | Services suite                |
+| Owner 2.06       | `apps/api/src/legal-acceptance.integration.test.ts` (repeated current-version acceptance does not duplicate either ledger entry)       | Services suite                |
+| Owner 2.05       | `apps/api/src/email-otp.integration.test.ts` (registration disabled by default returns 404 without sending OTP)                        | Services suite                |
+| 2.02             | `packages/core/src/email-otp-delivery.test.ts` (notice path, escaping, no code in notices); live check recorded in GAP-MATRIX          | Quality gates, Services suite |
+| 2.08             | `apps/api/src/email-otp.integration.test.ts`                                                                                           | Services suite                |
+| 2.10             | `apps/api/src/email-otp.integration.test.ts` (concurrent verification)                                                                 | Services suite                |
+| 2.11             | `apps/api/src/legal-acceptance.integration.test.ts`                                                                                    | Services suite                |
+| 2.17             | `apps/api/src/recovery.integration.test.ts`                                                                                            | Services suite                |
+| 2.18             | `apps/api/src/new-device-alert.integration.test.ts`, `packages/core/src/email-otp-delivery.test.ts`                                    | Quality gates, Services suite |
+| 2.19             | `apps/api/src/session-logout.integration.test.ts`, `apps/api/src/session-lookup.test.ts`                                               | Services suite, Quality gates |
+| 2.13, 2.14, 2.15 | `apps/api/src/session-lookup.test.ts`, `apps/web/src/lib/next-proxy-headers.test.ts`                                                   | Quality gates                 |
+| 2.16             | `scripts/tests/check-ui.ts` (email-change journey)                                                                                     | Browser suite                 |
 
 The Chromium browser suite (`scripts/tests/check-ui.ts`) covers the sign-in, settings and shell
 changes of this stage. Its result is recorded with the commit that ships them.
