@@ -2634,11 +2634,37 @@ try {
       await page.getByLabel('Full Name', { exact: true }).fill('Synthetic Candidate');
       await page.getByLabel('Email', { exact: true }).fill(accountEmail);
       await page.getByLabel('Location', { exact: true }).fill('Hyderabad');
+      // First-time profile creation uses guided onboarding. Verify step
+      // validation and navigation, then save through the final step.
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      assert.equal(
+        await page
+          .getByLabel('Full Name', { exact: true })
+          .evaluate((element) => (element as HTMLInputElement).validity.valueMissing),
+        false,
+      );
+      await page.getByText('Step 2 of 5: Your background', { exact: true }).waitFor();
       await page
         .getByRole('combobox', { name: 'Career stage', exact: true })
         .selectOption('experienced');
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await page.getByText('Step 3 of 5: Job preferences', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      assert.equal(
+        await page
+          .getByLabel('Target Roles', { exact: true })
+          .evaluate((element) => (element as HTMLTextAreaElement).validity.valueMissing),
+        true,
+      );
       await page.locator('textarea[name="titles"]').fill('React Engineer');
-      await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
+      await page.locator('textarea[name="techStack"]').fill('React, TypeScript');
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await page.getByText('Step 4 of 5: Application details', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await page.getByText('Step 5 of 5: Accessibility', { exact: true }).waitFor();
+      await page.locator('form.profile-form').evaluate((form) => {
+        (form as HTMLFormElement).requestSubmit();
+      });
       await page.getByText('Profile saved.', { exact: true }).waitFor();
       const reviewed = await new ProfileRepository(database).get(account.rows[0]!.id);
       // `get` returns null when no profile exists. Three later assertions read
@@ -3875,6 +3901,24 @@ try {
       await page.getByRole('button', { name: 'Back to search', exact: true }).click();
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
       await page.setViewportSize({ width: 1440, height: 900 });
+      // This scenario covers editing and validation of an existing profile.
+      // Seed it directly so it exercises the flat editor rather than the
+      // separate first-time guided onboarding flow.
+      const profileFixture = new ProfileRepository(database);
+      const currentProfile = await profileFixture.get(ownerId);
+      await profileFixture.save(ownerId, {
+        revision: currentProfile?.revision ?? 0,
+        profile: {
+          candidate: {
+            fullName: 'Existing Candidate',
+            email: 'candidate@example.test',
+            location: 'Hyderabad',
+          },
+          preferences: { titles: ['React Engineer'], techStack: ['React', 'TypeScript'] },
+          application: {},
+          accessibility: {},
+        },
+      });
       await sidebarNav.getByRole('link', { name: 'Resume', exact: true }).click();
       await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
       await page.getByLabel('Full Name', { exact: true }).fill('Example Candidate');
