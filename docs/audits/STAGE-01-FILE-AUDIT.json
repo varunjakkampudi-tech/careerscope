@@ -1773,10 +1773,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded canonical owner item 2.09 secure email change mapping to legacy local row 2.16.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.09 on codex/stage02-item-209-secure-email-change; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.09)",
-      "sha256": "deda2cb8a20f7c28a49bdf3b0cfe844f6475afeac6d11713a3393df66f9dfde2"
+      "observations": "Mapped canonical owner item 2.10 account recovery to legacy local row 2.17.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.10)",
+      "sha256": "0bb73e5ecd5340081e145ee31441299557ad358057365baf6bab7e40b120d6e9"
     },
     {
       "path": "docs/KNOWN-LIMITATIONS.md",
@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded owner item 2.09 evidence for address-bound verification, single use, session revocation and browser workflow.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.09 on codex/stage02-item-209-secure-email-change; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.09)",
-      "sha256": "20dddcfcba77ad77941f21554465ce8ed6421b174cd5dcd5952a72e1daeaa90e"
+      "observations": "Recorded account recovery engineering evidence and the outstanding native Telugu and Hindi wording review.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.10)",
+      "sha256": "d8b1997d9815fb5bf72b5a33b4ab7ab0f85d0d33359d719f6e2ffe08fd29c424"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1889,10 +1889,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added canonical owner item 2.09 integration and browser evidence for the two-address email-change journey.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.09 on codex/stage02-item-209-secure-email-change; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.09)",
-      "sha256": "1d3b4a46d269a7608ac00f86499e1902c476c942b1899ce5228be13a0438bb78"
+      "observations": "Added canonical owner item 2.10 recovery integration coverage and language-review status through the owner inventory.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.10)",
+      "sha256": "9804eb96e6ef7c857de6b8e5c4f4ddcfb38d24942fa67dc6aa8bbfbd307295e5"
     },
     {
       "path": "docs/TESTING.md",
@@ -2321,10 +2321,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed and updated for owner roadmap item 2.06; exact behavior and canonical-to-local ID mapping recorded.",
-      "evidence": "Reviewed on codex/stage02-item-206-terms-privacy; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.06)",
-      "sha256": "92cb4e9d5aa96f5682f8864edeec062bf82b5b101a52e08ee91d5d0a727249bf"
+      "observations": "Reconciled canonical owner item 2.10 to partial status for its native-language recovery-copy gap and retained linked integration evidence.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.10)",
+      "sha256": "0f5f942ba5ed218034ed3ad04f156ae8caea99c173294ca6c4b91d878f1c6511"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
