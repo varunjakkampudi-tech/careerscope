@@ -188,8 +188,8 @@ pull-request event, `.github/workflows/ci.yml` sets `CAREERSCOPE_UI_BROWSER=all`
 production-image jobs also passed on that SHA. Optional performance, soak and recovery jobs were
 skipped and are not counted as browser evidence.
 
-This verifies the owner roadmap's Stage 01 item 1.08 for the current code. Stage 01 is still open;
-its final acceptance must be tied to the exact revision that closes the stage.
+This verifies the owner roadmap's Stage 01 item 1.08 for the current code. Final Stage 01 browser, accessibility, keyboard, responsive, integration and quality-gate acceptance passed on closing merge
+commit `397025bdd43ae293a081e2728fadc67dafb62df1` in hosted run `42310969989`.
 
 ### Environment limits
 

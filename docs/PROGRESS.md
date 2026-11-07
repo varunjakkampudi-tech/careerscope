@@ -6,15 +6,15 @@ is listed in [BLOCKERS](BLOCKERS.md). Stages run one at a time. Deployment is la
 
 | Stage | Name                                 | Status      |
 | ----- | ------------------------------------ | ----------- |
-| 01    | Foundation, governance, architecture | Partial     |
+| 01    | Foundation, governance, architecture | Complete    |
 | 02    | Authentication and account security  | Complete    |
 | 03-20 | See roadmap                          | Not started |
 
-Stage 01 file audit: [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md); the current JSON record is the source of truth for tracked-file coverage and passes the complete-coverage gate. The owner’s prompt item 1.01 was independently approved at PR #18, exact SHA `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`. Stage 01 remains Partial because other checklist items and final cross-browser hosted acceptance are still outstanding. See the [FOUNDATIONS](FOUNDATIONS.md) crosswalk.
+Stage 01 file audit: [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md); the current JSON record is the source of truth for tracked-file coverage and passes the complete-coverage gate. The owner’s prompt item 1.01 was independently approved at PR #18, exact SHA `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`. All 15 owner checklist items are verified with no open gaps in the [owner-roadmap inventory](requirements/OWNER-ROADMAP-TRACEABILITY.json). The closing revision, merge commit `397025bdd43ae293a081e2728fadc67dafb62df1`, passed hosted run `42310969989` (Quality gates and Services, integration, and Chromium/Firefox/WebKit browser acceptance). The file audit has complete coverage and no open critical or high findings. The accepted low-severity S1-F014 database risk remains documented; no Stage 01 blocker is open. Hostinger deployment and server backups are excluded from scope. See the [FOUNDATIONS](FOUNDATIONS.md) crosswalk.
 
 Owner 22-stage roadmap item 1.07, API/OpenAPI contracts, is verified for the registered route surface; see [API-OPENAPI-REVIEW](architecture/API-OPENAPI-REVIEW.md). The 13-item repository foundations register has its own numbering; its item 1.07 refers to migration integrity and is tracked separately in [FOUNDATIONS](FOUNDATIONS.md).
 
-Owner 22-stage roadmap item 1.08, browser acceptance, passed on all three Playwright engines in hosted pull-request run `42250586504` for exact SHA `faaff952a43bd7f23db6caaf545d704a994a8e50`; see [UI-VERIFICATION](UI-VERIFICATION.md). Stage 01 close-out still requires a final cross-browser run on its closing revision.
+Owner 22-stage roadmap item 1.08, browser acceptance, passed on all three Playwright engines in hosted pull-request run `42250586504` for exact SHA `faaff952a43bd7f23db6caaf545d704a994a8e50`; see [UI-VERIFICATION](UI-VERIFICATION.md). Final Stage 01 cross-browser acceptance also passed on the closing revision in hosted run `42310969989`.
 
 Owner 22-stage roadmap item 1.09, standardized error handling, is verified locally for the API and web client, including database-backed 409 and 507 cases; see [API-SURFACE](API-SURFACE.md) and [TEST-MATRIX](TEST-MATRIX.md). Hosted Node 24 CI on the item PR remains the release gate.
 

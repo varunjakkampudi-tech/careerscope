@@ -9,7 +9,7 @@ The machine-readable record at [STAGE-01-FILE-AUDIT.json](STAGE-01-FILE-AUDIT.js
 - 438 files are reviewed; 67 are classified not applicable as source. There are no partially reviewed or unreviewed files.
 - Finding disposition: 69 fixed, one accepted low-severity risk (S1-F014), zero open findings.
 
-The full prompt-scoped audit was completed and independently approved at PR #18, exact commit `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`. The current manifest was revalidated after later checklist documentation was added. B-04 is resolved. Stage 01 overall remains partial because other roadmap items and final cross-browser acceptance are still outstanding.
+The full prompt-scoped audit was completed and independently approved at PR #18, exact commit `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`. The current manifest was revalidated after later checklist documentation was added. B-04 is resolved. All 15 owner Stage 01 checklist items are verified with no recorded gaps. Final cross-browser acceptance and the required engineering gates passed on closing merge commit `397025bdd43ae293a081e2728fadc67dafb62df1` in hosted run `42310969989`; Stage 01 is complete. The accepted low-severity S1-F014 risk remains recorded below.
 
 ## Accepted risk
 

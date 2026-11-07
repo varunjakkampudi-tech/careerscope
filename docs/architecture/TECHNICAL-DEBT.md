@@ -10,8 +10,8 @@ source scan found no TODO, FIXME, XXX, or HACK markers. The current production a
 audits report zero vulnerabilities.
 
 This is a prioritized register, not a claim that every low-priority cleanup is complete. Two low
-items remain visible below. Stage 01 overall remains partial until its other checklist items and
-closing gates pass.
+items remain visible below. Stage 01 closeout gates have passed; the accepted low-severity items
+remain visible as follow-up work.
 
 ## Prioritized register
 
