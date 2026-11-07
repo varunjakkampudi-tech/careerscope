@@ -2371,7 +2371,7 @@
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
       "category": "documentation",
-      "reviewMethod": "generated-report-and-checker",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2383,22 +2383,22 @@
           "remediation": "Item 1.02 records Hostinger, server backup and restore-only clauses as OUT_OF_SCOPE_OWNER under the owner-revised checklist, and the inventory checker enforces the non-blocking scope disposition."
         }
       ],
-      "observations": "Reviewed the regenerated report against the updated inventory. It records 319 clauses, 11 owner-scoped Hostinger/backup/restore exclusions, 153 in-scope launch-blocking gaps, and preserves release-engineering requirements. Generated-summary validation passes.",
-      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
-      "reviewer": "Codex (Stage 01 item 1.02)",
-      "sha256": "e0d50641930a3ec732b9d784cbb76ef90e39046fadafeb817d0add061b020c9b"
+      "observations": "Reviewed for owner item 3.14. Verification remains inactive without approved type-specific evidence policy; unit coverage confirms lifecycle transition and revocation rules.",
+      "evidence": "Stage 03 item 3.14 local review; npm test (369 tests, 366 passed, 3 skipped), npm run typecheck, npm run requirements:check, npm run traceability:check, and scoped Prettier passed.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
+      "sha256": "d860c02d7568391a5d21d258e8c99fef3b98d360414cb913eb77f6a8fe4399d2"
     },
     {
       "path": "docs/requirements/V12-REQUIREMENT-INVENTORY.json",
       "category": "documentation",
-      "reviewMethod": "structured-data-and-checker",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-read the 319-clause inventory and checked all 11 owner-scoped exclusions plus mixed clauses retained in scope. Owner-scoped records are non-blocking with a rationale; backup portions of mixed clauses are excluded while other gaps remain. The pinned source digest and clause correspondence still pass. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "a13d7491ea60cefc4ca785aa5985f05fc8de8409dde6af6f67471ca5225d10b9"
+      "observations": "Reviewed for owner item 3.14. Verification remains inactive without approved type-specific evidence policy; unit coverage confirms lifecycle transition and revocation rules.",
+      "evidence": "Stage 03 item 3.14 local review; npm test (369 tests, 366 passed, 3 skipped), npm run typecheck, npm run requirements:check, npm run traceability:check, and scoped Prettier passed.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
+      "sha256": "a5bec94590ba223cded96f3df2f1c5fbd06f21249143f0e2e9033ab14b8d1a6e"
     },
     {
       "path": "docs/security/DATA-CLASSIFICATION.md",
@@ -3837,13 +3837,14 @@
     {
       "path": "packages/core/src/index.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "focused-content-review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (34 lines). Re-exports every core module. No finding. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": " Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)"
+      "observations": "Reviewed for owner item 3.14. Verification remains inactive without approved type-specific evidence policy; unit coverage confirms lifecycle transition and revocation rules.",
+      "evidence": "Stage 03 item 3.14 local review; npm test (369 tests, 366 passed, 3 skipped), npm run typecheck, npm run requirements:check, npm run traceability:check, and scoped Prettier passed.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
+      "sha256": "f6c8041d2fea6e9a75516f0edf7ee73e27c52f7611f22fc9c2d6d57bfe4ac1d5"
     },
     {
       "path": "packages/core/src/interviews.ts",
@@ -4411,6 +4412,30 @@
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
       "sha256": "c0aaecc1d5e0ab319fb64a447da18baabd8a13d6182fe7e5245e224d2a5c4633"
+    },
+    {
+      "path": "packages/core/src/verification.test.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "focused-content-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed for owner item 3.14. Verification remains inactive without approved type-specific evidence policy; unit coverage confirms lifecycle transition and revocation rules.",
+      "evidence": "Stage 03 item 3.14 local review; npm test (369 tests, 366 passed, 3 skipped), npm run typecheck, npm run requirements:check, npm run traceability:check, and scoped Prettier passed.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
+      "sha256": "6366b285886189acef8d13ce6fc0fcaaec81f2c8b1203e3686b0bc2fc0df1771"
+    },
+    {
+      "path": "packages/core/src/verification.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "focused-content-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed for owner item 3.14. Verification remains inactive without approved type-specific evidence policy; unit coverage confirms lifecycle transition and revocation rules.",
+      "evidence": "Stage 03 item 3.14 local review; npm test (369 tests, 366 passed, 3 skipped), npm run typecheck, npm run requirements:check, npm run traceability:check, and scoped Prettier passed.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
+      "sha256": "e4d0caba629b22d2e437093d4f7720fc8747e76736d098fecf3ec73497ae4af9"
     },
     {
       "path": "packages/core/tsconfig.json",
