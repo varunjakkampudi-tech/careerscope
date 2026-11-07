@@ -120,6 +120,14 @@ test(
       });
       assert.equal(accepted.statusCode, 200);
       assert.equal(accepted.json().acceptanceRequired, false);
+      const acceptedAgain = await app.inject({
+        method: 'POST',
+        url: '/api/account/legal/accept',
+        headers: { origin, cookie: staleCookie, 'x-csrf-token': staleCsrf },
+        payload: { termsVersion: 'terms-2', privacyVersion: 'privacy-2' },
+      });
+      assert.equal(acceptedAgain.statusCode, 200);
+      assert.equal(acceptedAgain.json().acceptanceRequired, false);
       const after = await app.inject({
         method: 'POST',
         url: '/api/account/marketing-consent',
@@ -145,10 +153,16 @@ test(
 
       // The ledger grows once per accepted version, not on every acceptance.
       const rows = await database.pool.query(
-        `SELECT count(*) FROM account_acceptances WHERE owner_id = $1 AND document = 'terms'`,
+        `SELECT document, count(*) FROM account_acceptances
+         WHERE owner_id = $1 AND document IN ('terms', 'privacy_notice')
+         GROUP BY document`,
         [staleId],
       );
-      assert.equal(Number(rows.rows[0]!.count), 2);
+      assert.deepEqual(
+        Object.fromEntries(rows.rows.map((row) => [row.document, Number(row.count)])),
+        { privacy_notice: 2, terms: 2 },
+        're-accepting current versions must not duplicate ledger entries',
+      );
     } finally {
       await app?.close();
       await database.close();

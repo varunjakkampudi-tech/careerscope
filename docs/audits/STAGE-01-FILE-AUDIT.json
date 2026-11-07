@@ -388,10 +388,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete integration test. Requires a loopback database, creates a fresh synthetic DB, verifies stale-account blocks, reads remain available, outdated/current version acceptance, post-accept writes, legacy-account behavior, and append-only ledger count, then drops the test DB in finally. It does not print or seed personal data.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "be3cd5df72350a45234f18b7bf3e1cf2a8466c8131fec064ef8d4e83eb82b008"
+      "observations": "Reviewed and updated for owner roadmap item 2.06; exact behavior and canonical-to-local ID mapping recorded.",
+      "evidence": "Reviewed on codex/stage02-item-206-terms-privacy; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.06)",
+      "sha256": "d78853cdeeaf4b29b2b8f009ea06a1b09183b149a2879f9520d822e7923cd853"
     },
     {
       "path": "apps/api/src/main.ts",
@@ -1773,10 +1773,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Clarified that the existing Stage 02 matrix uses legacy local numbering and explicitly linked local registration row 2.09 to owner roadmap item 2.05.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.05 on codex/stage02-item-205-registration-gate; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.05)",
-      "sha256": "6fd85297d662a0f7dbe894ecf784e74c587a37e0c7d628ce5b9ef9a27a7178e2"
+      "observations": "Reviewed and updated for owner roadmap item 2.06; exact behavior and canonical-to-local ID mapping recorded.",
+      "evidence": "Reviewed on codex/stage02-item-206-terms-privacy; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.06)",
+      "sha256": "d5610acf612849335fac3a4dcf037662202b3b924f150856ed3418faf2989ce7"
     },
     {
       "path": "docs/KNOWN-LIMITATIONS.md",
@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded owner item 2.05 as externally gated and documented fail-closed behavior and the canonical-versus-legacy numbering clarification.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.05 on codex/stage02-item-205-registration-gate; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.05)",
-      "sha256": "8df217f82cb76542960882db1f125198d91a40ede348910669ff4f9514343dd4"
+      "observations": "Reviewed and updated for owner roadmap item 2.06; exact behavior and canonical-to-local ID mapping recorded.",
+      "evidence": "Reviewed on codex/stage02-item-206-terms-privacy; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.06)",
+      "sha256": "f60db4805ad664830eadc1bde71aae951a4bb0a4c289959183c09fc2fd6cb619"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1889,10 +1889,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded owner item 2.05 registration-gate coverage in the Services suite.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.05 on codex/stage02-item-205-registration-gate; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.05)",
-      "sha256": "6a8579f13e3c9a59067b10ebe6285fe9c6aa60bdf868eab219f2ab5a3619a997"
+      "observations": "Reviewed and updated for owner roadmap item 2.06; exact behavior and canonical-to-local ID mapping recorded.",
+      "evidence": "Reviewed on codex/stage02-item-206-terms-privacy; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.06)",
+      "sha256": "08dcfa5a702a4824b99e0b6489ee7f0be2aad27f4426937357a6984d878003df"
     },
     {
       "path": "docs/TESTING.md",
@@ -2321,10 +2321,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Verified item 1.15 against the documented shared components, actual web component sources, consumer usage and passing design-system guard.",
-      "evidence": "Current owner inventory reviewed and updated for item 1.15; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.15)",
-      "sha256": "454a1b5402518fa1c976d1368f128c74d7d04cc72a6f62a54d17733f02015a9b"
+      "observations": "Reviewed and updated for owner roadmap item 2.06; exact behavior and canonical-to-local ID mapping recorded.",
+      "evidence": "Reviewed on codex/stage02-item-206-terms-privacy; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.06)",
+      "sha256": "92cb4e9d5aa96f5682f8864edeec062bf82b5b101a52e08ee91d5d0a727249bf"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",

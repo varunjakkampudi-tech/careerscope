@@ -355,7 +355,7 @@
       "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": ["apps/api/src/legal-acceptance.integration.test.ts"],
       "externalEvidence": [],
-      "gap": "The program stage is recorded complete with this item-level limitation carried forward; see the cited stage evidence.",
+      "gap": "Native-language review of localized Terms/privacy acceptance copy remains outstanding; engineering versioned re-acceptance behavior is covered by the cited integration test.",
       "scopeDisposition": "in-scope"
     },
     {
