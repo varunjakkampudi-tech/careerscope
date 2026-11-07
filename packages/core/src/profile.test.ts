@@ -186,6 +186,40 @@ test('education, work experience, graduation year, and projects are bounded cand
   }
 });
 
+test('project summaries accept 20 bounded entries and stay out of the matching snapshot', () => {
+  const projects = Array.from(
+    { length: 20 },
+    (_, index) => `Project ${index} ${'x'.repeat(200 - `Project ${index} `.length)}`,
+  );
+  const profile = writableProfileSchema.parse({
+    ...syntheticProfile,
+    candidate: { ...syntheticProfile.candidate, projects },
+  });
+
+  assert.deepEqual(profile.candidate.projects, projects);
+  assert.deepEqual(matchingProfile(profile).candidate, { location: 'Hyderabad' });
+  assert.equal(
+    writableProfileSchema.safeParse({
+      ...syntheticProfile,
+      candidate: {
+        ...syntheticProfile.candidate,
+        projects: Array.from({ length: 21 }, (_, index) => `Project ${index}`),
+      },
+    }).success,
+    false,
+  );
+  assert.equal(
+    writableProfileSchema.safeParse({
+      ...syntheticProfile,
+      candidate: {
+        ...syntheticProfile.candidate,
+        projects: ['x'.repeat(201)],
+      },
+    }).success,
+    false,
+  );
+});
+
 test('profile rejects unknown ownership fields, unsafe links and malformed revisions', () => {
   assert.equal(
     writableProfileSchema.safeParse({ ...syntheticProfile, ownerId: 'other' }).success,

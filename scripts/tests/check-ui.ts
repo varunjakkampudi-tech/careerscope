@@ -4055,6 +4055,11 @@ try {
         'Frontend Engineer at Example Co (2022–2024)',
         `${engine}: saved work history must be restored after reload`,
       );
+      assert.equal(
+        await projectsField.inputValue(),
+        'Accessible job search prototype',
+        `${engine}: saved project summaries must be restored after reload`,
+      );
       await settled('work-history profile reload');
       const experienceField = page.getByLabel('Years of Experience', { exact: true });
       await experienceField.fill('');
