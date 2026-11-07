@@ -4047,6 +4047,7 @@ try {
       assert.deepEqual(savedProfile?.profile.candidate.projects, [
         'Accessible job search prototype',
       ]);
+      await settled('profile save before work-history reload');
       await page.reload();
       await page.getByLabel('Full Name', { exact: true }).waitFor();
       assert.equal(
@@ -4054,6 +4055,7 @@ try {
         'Frontend Engineer at Example Co (2022–2024)',
         `${engine}: saved work history must be restored after reload`,
       );
+      await settled('work-history profile reload');
       const experienceField = page.getByLabel('Years of Experience', { exact: true });
       await experienceField.fill('');
       await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
