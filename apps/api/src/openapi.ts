@@ -324,6 +324,7 @@ const errors: Record<number, string> = {
   404: 'Resource not found or feature unavailable',
   409: 'Revision, idempotency or state conflict',
   413: 'Request too large',
+  415: 'Unsupported media type',
   429: 'Rate limit exceeded',
   500: 'Internal error',
   502: 'Upstream provider error',
@@ -346,6 +347,11 @@ function operation(
   } = {},
 ): Documentation {
   const { code = 200, failures = [], additionalResponses = {}, ...metadata } = options;
+  const jsonError = (statusCode: number) => ({
+    ...error,
+    description: errors[statusCode],
+    content: { 'application/json': { schema: error } },
+  });
   return {
     summary,
     ...metadata,
@@ -357,7 +363,7 @@ function operation(
         // is unavailable; keep that stable dependency failure in every contract.
         [...new Set([500, 503, ...failures])].map((statusCode) => [
           statusCode,
-          { ...error, description: errors[statusCode] },
+          jsonError(statusCode),
         ]),
       ),
     },
@@ -730,7 +736,7 @@ function contracts(options: {
       text({ format: 'binary' }),
       {
         produces: ['image/webp'],
-        failures: [429],
+        failures: [401, 403, 429],
         additionalResponses: {
           204: { type: 'null', description: 'No profile picture has been saved' },
         },
@@ -745,7 +751,7 @@ function contracts(options: {
         code: 204,
         consumes: [...profilePhotoContentTypes],
         body: text({ format: 'binary' }),
-        failures: [400, 413, 415, 429],
+        failures: [400, 401, 403, 413, 415, 429],
         description:
           'Accepts JPEG, PNG, or WebP up to 5 MiB. The server validates and normalizes the image to metadata-free WebP before private owner-scoped storage.',
       },
@@ -753,7 +759,7 @@ function contracts(options: {
     'DELETE /api/profile/photo': operation(
       'Remove the authenticated candidate’s profile picture',
       { type: 'null' },
-      { code: 204, failures: [429] },
+      { code: 204, failures: [401, 403, 429] },
     ),
     'GET /api/profile/accessibility': operation(
       'Read only the authenticated candidate’s saved accessibility preference',
@@ -1233,10 +1239,23 @@ export async function registerOpenApi(
       const refreshEndpoint = url === '/api/session/refresh';
       const mutation = !['GET', 'HEAD', 'OPTIONS'].includes(method);
       const response = { ...metadata.response };
-      if (!anonymous) response[401] = { ...error, description: errors[401] };
+      if (!anonymous)
+        response[401] = {
+          ...error,
+          description: errors[401],
+          content: { 'application/json': { schema: error } },
+        };
       if (mutation) {
-        response[403] = { ...error, description: errors[403] };
-        response[413] = { ...error, description: errors[413] };
+        response[403] = {
+          ...error,
+          description: errors[403],
+          content: { 'application/json': { schema: error } },
+        };
+        response[413] = {
+          ...error,
+          description: errors[413],
+          content: { 'application/json': { schema: error } },
+        };
       }
       return {
         url,

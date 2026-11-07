@@ -1260,6 +1260,28 @@ try {
       });
       let fixtureCredential = password;
       await page.route('**/api/session', async (route) => {
+        if (profilePhotoOnly) {
+          const response = await route.fetch();
+          const body = await response.json();
+          if (body.authenticated !== false) {
+            await route.fulfill({ response });
+            return;
+          }
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            json: {
+              ...body,
+              registrationEnabled: false,
+              emailOtpEnabled: false,
+              testUsersEnabled: true,
+              testAccounts: [accountEmail, 'ui@example.test', 'foreign-owner@example.test'].map(
+                (email) => ({ email, role: 'candidate' }),
+              ),
+            },
+          });
+          return;
+        }
         const response = await route.fetch();
         const body = await response.json();
         if (body.authenticated === false) {
@@ -1277,6 +1299,13 @@ try {
       });
       await page.route('**/api/login', (route) => {
         const { email } = route.request().postDataJSON();
+        if (profilePhotoOnly) {
+          return route
+            .fetch({
+              postData: JSON.stringify({ email, password: fixtureCredential }),
+            })
+            .then((response) => route.fulfill({ response }));
+        }
         return route.continue({ postData: JSON.stringify({ email, password: fixtureCredential }) });
       });
       const selectFixtureAccount = async (email: string, credential = password) => {
@@ -1760,11 +1789,21 @@ try {
         await page.unroute('**/api/profile/photo', failUpload);
         assert.equal(await new ProfilePhotoRepository(database).get(profileOwnerId), null);
 
+        const uploadResponse = page.waitForResponse(
+          (response) =>
+            response.url().endsWith('/api/profile/photo') && response.request().method() === 'PUT',
+        );
         await uploadInput.setInputFiles({
           name: 'profile.png',
           mimeType: 'image/png',
           buffer: profilePhotoFixture,
         });
+        const uploadResult = await uploadResponse;
+        assert.equal(
+          uploadResult.status(),
+          204,
+          `profile upload failed with HTTP ${uploadResult.status()} (request origin: ${uploadResult.request().headers().origin ?? 'absent'}, expected origin: ${origin}, CSRF header: ${uploadResult.request().headers()['x-csrf-token'] ? 'present' : 'absent'})`,
+        );
         await page.getByRole('status').filter({ hasText: 'Profile picture saved.' }).waitFor();
         const photoRepository = new ProfilePhotoRepository(database);
         assert.ok(
@@ -1772,15 +1811,24 @@ try {
           'profile photo must be stored privately',
         );
         const avatars = page.locator('img[src^="data:image/webp;base64,"]');
+        await page.waitForFunction(
+          () => document.querySelectorAll('img[src^="data:image/webp;base64,"]').length === 2,
+        );
         assert.equal(await avatars.count(), 2);
         await page.reload();
         await page.getByLabel('Full Name', { exact: true }).waitFor();
+        await page.waitForFunction(
+          () => document.querySelectorAll('img[src^="data:image/webp;base64,"]').length === 2,
+        );
         assert.equal(await avatars.count(), 2, 'profile picture must persist after reload');
         const removePicture = page.getByRole('button', { name: 'Remove picture', exact: true });
         await removePicture.focus();
         await removePicture.press('Enter');
         await page.getByRole('status').filter({ hasText: 'Profile picture removed.' }).waitFor();
         assert.equal(await photoRepository.get(profileOwnerId), null);
+        await page.waitForFunction(
+          () => document.querySelectorAll('img[src^="data:image/webp;base64,"]').length === 0,
+        );
         assert.equal(await avatars.count(), 0, 'removed picture must not remain in either avatar');
         assert.deepEqual(
           await page.locator(`span[title="${accountEmail}"]`).allTextContents(),
@@ -4416,7 +4464,12 @@ try {
       await page.getByRole('button', { name: 'Back to Search', exact: true }).click();
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
       await page.reload();
+      await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+      await sidebarNav.getByRole('link', { name: 'Resume', exact: true }).click();
       await page.getByLabel('Full Name', { exact: true }).waitFor();
+      await page.waitForFunction(
+        () => document.querySelectorAll('img[src^="data:image/webp;base64,"]').length === 2,
+      );
       assert.equal(await avatar.count(), 2, `${engine}: profile photo survives a page reload`);
       await page.getByRole('button', { name: 'Remove picture', exact: true }).click();
       await page.getByRole('status').filter({ hasText: 'Profile picture removed.' }).waitFor();
