@@ -168,4 +168,20 @@ describe('preferencesSchema bounds every owner-typed entry, not just the array',
       }).success,
     ).toBe(false);
   });
+
+  it('requires skills and accepts at most 120 skill entries', () => {
+    expect(preferencesSchema.safeParse({ ...valid, techStack: [] }).success).toBe(false);
+    expect(
+      preferencesSchema.safeParse({
+        ...valid,
+        techStack: Array.from({ length: 120 }, (_, index) => `Skill ${index}`),
+      }).success,
+    ).toBe(true);
+    expect(
+      preferencesSchema.safeParse({
+        ...valid,
+        techStack: Array.from({ length: 121 }, (_, index) => `Skill ${index}`),
+      }).success,
+    ).toBe(false);
+  });
 });
