@@ -1861,10 +1861,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Owner Stage 03 items 3.01 and 3.02 are verified on dev; item 3.03 verification is proposed in open PR #46 with profile implementation and test evidence. Item 2.05 registration legal gate remains open.",
-      "evidence": "Updated in owner roadmap item 3.03 closeout PR #46; SHA-256 records current bytes.",
+      "observations": "Owner Stage 03 items 3.01 to 3.03 are verified and merged; item 3.04 career stage verification is proposed in open PR #47 with existing profile UI and domain test evidence. Item 2.05 registration legal gate remains open.",
+      "evidence": "Updated in owner roadmap item 3.04 closeout PR #47; SHA-256 records current bytes.",
       "reviewer": "Codex (Stage 03 item 3.03)",
-      "sha256": "d67a35d7c7a6b5ddc793e69e0821339fe909a7260fc4bf5854d4143f3b57bdff"
+      "sha256": "57ade9120021928d849bdbbc8cbef164f039926b2d3146728d53e49c19fb1007"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1909,10 +1909,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Owner Stage 03 items 3.01 and 3.02 are verified on dev; item 3.03 verification is proposed in open PR #46 with profile implementation and test evidence. Item 2.05 registration legal gate remains open.",
-      "evidence": "Updated in owner roadmap item 3.03 closeout PR #46; SHA-256 records current bytes.",
+      "observations": "Owner Stage 03 items 3.01 to 3.03 are verified and merged; item 3.04 career stage verification is proposed in open PR #47 with existing profile UI and domain test evidence. Item 2.05 registration legal gate remains open.",
+      "evidence": "Updated in owner roadmap item 3.04 closeout PR #47; SHA-256 records current bytes.",
       "reviewer": "Codex (Stage 03 item 3.03)",
-      "sha256": "674ed45f7d0a81628512ce4a1cbf8a5c9c9854f70156308ceb5b434e25a2f307"
+      "sha256": "120293e9d26d1defdb3b7a3b41bca23cbc0b38e7a154efef6594c0c565a261e8"
     },
     {
       "path": "docs/TESTING.md",
@@ -2341,10 +2341,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Owner Stage 03 items 3.01 to 3.03 are recorded as verified; item 3.03 profile implementation and test evidence is linked. Item 2.05 registration legal gate remains open.",
-      "evidence": "Reviewed and updated for owner roadmap item 3.03; SHA-256 records current bytes.",
+      "observations": "Owner Stage 03 items 3.01 to 3.03 are verified and merged; item 3.04 career stage verification is proposed in open PR #47 with existing profile UI and domain test evidence. Item 2.05 registration legal gate remains open.",
+      "evidence": "Updated in owner roadmap item 3.04 closeout PR #47; SHA-256 records current bytes.",
       "reviewer": "Codex (Stage 03 item 3.03)",
-      "sha256": "f3c02526b5773f5d239433766e6aedd723c860146ae94bfb5efd647c7fd2604f"
+      "sha256": "4c0100b0d46c65180bbe10778428ad38c503ed55dd03312dbaca25166847cefe"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
