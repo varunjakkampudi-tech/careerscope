@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded account recovery engineering evidence and the outstanding native Telugu and Hindi wording review.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes.",
+      "observations": "Recorded account recovery engineering evidence and AI-assisted preliminary comparison of Telugu and Hindi recovery wording; native-language review remains outstanding.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-ai-language-review; SHA-256 records current bytes.",
       "reviewer": "Codex (owner Stage 02 item 2.10)",
-      "sha256": "d8b1997d9815fb5bf72b5a33b4ab7ab0f85d0d33359d719f6e2ffe08fd29c424"
+      "sha256": "847e653793e2801ade578eb1c669875d77f141d644cc4c064ae37fd228b2f008"
     },
     {
       "path": "docs/PROVIDERS.md",
