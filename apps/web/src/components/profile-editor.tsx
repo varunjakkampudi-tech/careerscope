@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, LoaderCircle, RefreshCw, Save } from 'lucide-react';
+import { ArrowLeft, ImagePlus, LoaderCircle, RefreshCw, Save, Trash2 } from 'lucide-react';
 import type { ApplicationDetails, WritableProfile } from '@careerscope/shared';
-import { apiParsed, offersDiscardAndReload } from '../lib/api';
+import { apiJson, apiParsed, offersDiscardAndReload } from '../lib/api';
 import { parseProfileResponse, type ProfileResponse } from '../lib/api-schemas';
+import { PROFILE_PHOTO_UPDATED_EVENT } from '../lib/profile-photo';
 import { useOwner, ownerKey } from '../lib/session';
 import styles from './profile-editor.module.css';
 import ResumePanel, { type ResumeProposal } from './resume-panel';
@@ -53,6 +54,7 @@ function ProfileForm({
   const invalidFieldToFocus = useRef<
     HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null
   >(null);
+  const [photoMessage, setPhotoMessage] = useState('');
 
   const save = useMutation({
     mutationFn: (profile: WritableProfile) =>
@@ -62,6 +64,25 @@ function ProfileForm({
         body: JSON.stringify({ revision: record.revision, profile }),
       }),
     onSuccess: onSaved,
+  });
+  const photoUpload = useMutation({
+    mutationFn: (file: File) =>
+      apiJson('/profile/photo', {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type },
+        body: file,
+      }),
+    onSuccess: () => {
+      setPhotoMessage('Profile picture saved.');
+      window.dispatchEvent(new Event(PROFILE_PHOTO_UPDATED_EVENT));
+    },
+  });
+  const photoDelete = useMutation({
+    mutationFn: () => apiJson('/profile/photo', { method: 'DELETE' }),
+    onSuccess: () => {
+      setPhotoMessage('Profile picture removed.');
+      window.dispatchEvent(new Event(PROFILE_PHOTO_UPDATED_EVENT));
+    },
   });
   const candidate = {
     ...record.profile?.candidate,
@@ -363,6 +384,59 @@ function ProfileForm({
             />
           </label>
         </div>
+        <section className={styles.photoField} aria-labelledby="profile-photo-heading">
+          <h3 id="profile-photo-heading">Profile picture</h3>
+          <p id="profile-photo-help">
+            Optional. JPEG, PNG, or WebP up to 5 MB. Only you can view this picture; it is not
+            exposed in recruiter views.
+          </p>
+          <div className={styles.photoActions}>
+            <label className="button-secondary">
+              <ImagePlus size={16} aria-hidden="true" />
+              {photoUpload.isPending ? 'Uploading…' : 'Upload picture'}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                aria-label="Upload picture"
+                aria-describedby="profile-photo-help"
+                disabled={photoUpload.isPending || photoDelete.isPending}
+                onChange={(event) => {
+                  const file = event.currentTarget.files?.[0];
+                  event.currentTarget.value = '';
+                  if (file) {
+                    setPhotoMessage('');
+                    photoDelete.reset();
+                    photoUpload.mutate(file);
+                  }
+                }}
+              />
+            </label>
+            <button
+              type="button"
+              className="button-secondary"
+              onClick={() => {
+                setPhotoMessage('');
+                photoUpload.reset();
+                photoDelete.mutate();
+              }}
+              disabled={photoUpload.isPending || photoDelete.isPending}
+            >
+              <Trash2 size={16} aria-hidden="true" />
+              {photoDelete.isPending ? 'Removing…' : 'Remove picture'}
+            </button>
+          </div>
+          {(photoUpload.error || photoDelete.error) && (
+            <p className={styles.photoError} role="alert">
+              {(photoUpload.error ?? photoDelete.error)?.message ??
+                'Could not update your picture.'}
+            </p>
+          )}
+          {photoMessage && (
+            <p className={styles.photoStatus} role="status">
+              {photoMessage}
+            </p>
+          )}
+        </section>
       </fieldset>
       <fieldset
         ref={(element) => {

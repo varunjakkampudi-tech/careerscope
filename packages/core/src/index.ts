@@ -20,6 +20,7 @@ export * from './runtime.js';
 export * from './failure.js';
 export * from './rollback.js';
 export * from './profile.js';
+export * from './profile-photos.js';
 export * from './preparation.js';
 export * from './leads.js';
 export * from './interviews.js';

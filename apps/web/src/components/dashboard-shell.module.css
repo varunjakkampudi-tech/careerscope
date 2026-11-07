@@ -264,6 +264,13 @@
   font-weight: 700;
   background: var(--dash-accent);
   color: var(--on-solid);
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .main {

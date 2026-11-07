@@ -8,6 +8,7 @@ import swaggerUi from '@fastify/swagger-ui';
 import type { FastifyInstance, FastifySchema } from 'fastify';
 import { leadStatusSchema, maximumResumeBytes, sessionCookie } from '@careerscope/core';
 import { jobFeedbackReasons } from '@careerscope/shared';
+import { profilePhotoContentTypes } from './profile-photo.js';
 
 /** JSON Schema fragment. The builders below (`text`, `integer`, `array`, `object`, `nullable`) produce these. */
 type Schema = Record<string, unknown>;
@@ -338,14 +339,19 @@ const errors: Record<number, string> = {
 function operation(
   summary: string,
   response: Schema,
-  options: FastifySchema & { code?: number; failures?: number[] } = {},
+  options: FastifySchema & {
+    code?: number;
+    failures?: number[];
+    additionalResponses?: Record<number, Schema>;
+  } = {},
 ): Documentation {
-  const { code = 200, failures = [], ...metadata } = options;
+  const { code = 200, failures = [], additionalResponses = {}, ...metadata } = options;
   return {
     summary,
     ...metadata,
     response: {
       [code]: { ...response, description: code === 204 ? 'No content' : summary },
+      ...additionalResponses,
       ...Object.fromEntries(
         // Any route can fail closed when shared infrastructure such as Redis
         // is unavailable; keep that stable dependency failure in every contract.
@@ -718,6 +724,36 @@ function contracts(options: {
       'Read the saved profile (revision zero when absent)',
       profileRecord,
       { failures: [429] },
+    ),
+    'GET /api/profile/photo': operation(
+      'Read the authenticated candidate’s private profile picture',
+      text({ format: 'binary' }),
+      {
+        produces: ['image/webp'],
+        failures: [429],
+        additionalResponses: {
+          204: { type: 'null', description: 'No profile picture has been saved' },
+        },
+        description:
+          'Owner-only, no-store response. The image is not exposed through recruiter first-pass views or a public URL.',
+      },
+    ),
+    'PUT /api/profile/photo': operation(
+      'Replace the authenticated candidate’s profile picture',
+      { type: 'null' },
+      {
+        code: 204,
+        consumes: [...profilePhotoContentTypes],
+        body: text({ format: 'binary' }),
+        failures: [400, 413, 415, 429],
+        description:
+          'Accepts JPEG, PNG, or WebP up to 5 MiB. The server validates and normalizes the image to metadata-free WebP before private owner-scoped storage.',
+      },
+    ),
+    'DELETE /api/profile/photo': operation(
+      'Remove the authenticated candidate’s profile picture',
+      { type: 'null' },
+      { code: 204, failures: [429] },
     ),
     'GET /api/profile/accessibility': operation(
       'Read only the authenticated candidate’s saved accessibility preference',

@@ -142,6 +142,17 @@ test('Swagger documents every runtime route without changing validation and prot
     assert.ok(session);
     const cookie = `careerscope_v2_session=${token}`;
     const headers = { cookie, origin, 'x-csrf-token': session.csrf };
+    const otherPassword = randomUUID();
+    await auth.register('photo-other-owner@example.test', otherPassword);
+    const otherToken = await auth.login('photo-other-owner@example.test', otherPassword);
+    assert.ok(otherToken);
+    const otherSession = await auth.session(otherToken);
+    assert.ok(otherSession);
+    const otherHeaders = {
+      cookie: `careerscope_v2_session=${otherToken}`,
+      origin,
+      'x-csrf-token': otherSession.csrf,
+    };
     for (const capability of ['disabled', 'storage', 'cancellation'] as const) {
       const routes = new Map<string, FastifySchema | undefined>();
       const observe = (message: unknown) => {
@@ -223,6 +234,10 @@ test('Swagger documents every runtime route without changing validation and prot
         ].schema.properties.profile.properties.application.required = [];
         assert.throws(() => assertOpenApiRequiredDeclarations(malformedSpec), /required/);
         assert.equal(spec.openapi, '3.0.3');
+        assert.equal(
+          spec.paths['/api/profile/photo'].put.requestBody.content['image/png'].schema.format,
+          'binary',
+        );
         // /api/health deliberately reports no version, so compare with the API package version it is read from.
         const apiPackage = JSON.parse(
           readFileSync(new URL('../../apps/api/package.json', import.meta.url), 'utf8'),
@@ -340,6 +355,65 @@ test('Swagger documents every runtime route without changing validation and prot
           updatedAt: null,
           scheduledDiscoveryEnabled: false,
         });
+        assert.equal((await app.inject({ url: '/api/profile/photo' })).statusCode, 401);
+        assert.equal(
+          (
+            await app.inject({
+              method: 'PUT',
+              url: '/api/profile/photo',
+              headers: { cookie, origin, 'content-type': 'image/png' },
+              payload: Buffer.from('denied'),
+            })
+          ).statusCode,
+          403,
+        );
+        assert.equal(
+          (
+            await app.inject({
+              method: 'PUT',
+              url: '/api/profile/photo',
+              headers: { ...headers, 'content-type': 'image/svg+xml' },
+              payload: Buffer.from('<svg/>'),
+            })
+          ).statusCode,
+          415,
+        );
+        const invalidPhoto = await app.inject({
+          method: 'PUT',
+          url: '/api/profile/photo',
+          headers: { ...headers, 'content-type': 'image/png' },
+          payload: Buffer.from('not an image'),
+        });
+        assert.equal(invalidPhoto.statusCode, 400);
+        assert.equal((await app.inject({ url: '/api/profile/photo', headers })).statusCode, 204);
+        const picture = Buffer.from(
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==',
+          'base64',
+        );
+        const uploadPhoto = await app.inject({
+          method: 'PUT',
+          url: '/api/profile/photo',
+          headers: { ...headers, 'content-type': 'image/png' },
+          payload: picture,
+        });
+        assert.equal(uploadPhoto.statusCode, 204);
+        const photo = await app.inject({ url: '/api/profile/photo', headers });
+        assert.equal(photo.statusCode, 200);
+        assert.equal(photo.headers['content-type'], 'image/webp');
+        assert.equal(photo.headers['x-content-type-options'], 'nosniff');
+        assert.equal(photo.headers['cache-control'], 'no-store');
+        assert.ok(photo.rawPayload.subarray(0, 4).equals(Buffer.from('RIFF')));
+        assert.equal(
+          (await app.inject({ url: '/api/profile/photo', headers: otherHeaders })).statusCode,
+          204,
+        );
+        const profileAfterPhoto = await app.inject({ url: '/api/profile', headers });
+        assert.deepEqual(profileAfterPhoto.json(), profile.json());
+        assert.equal(
+          (await app.inject({ method: 'DELETE', url: '/api/profile/photo', headers })).statusCode,
+          204,
+        );
+        assert.equal((await app.inject({ url: '/api/profile/photo', headers })).statusCode, 204);
 
         const initializer = await app.inject({
           url: '/api/docs/static/swagger-initializer.js',

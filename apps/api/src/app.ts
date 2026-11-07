@@ -24,6 +24,12 @@ import {
 import { registerOpenApi } from './openapi.js';
 import { defaultErrorMessage, errorEnvelope } from './errors.js';
 import { applicationsCsv } from './application-export.js';
+import {
+  InvalidProfilePhoto,
+  maximumProfilePhotoUploadBytes,
+  normalizeProfilePhoto,
+  profilePhotoContentTypes,
+} from './profile-photo.js';
 import { isIsoCalendarDate, passesAgeScreen } from './age-screen.js';
 import {
   Auth,
@@ -57,6 +63,7 @@ import {
   collectedJobSchema,
   sourceOutcomesSchema,
   ProfileRepository,
+  ProfilePhotoRepository,
   prepareProfile,
   LeadRepository,
   InterviewRepository,
@@ -376,6 +383,7 @@ export async function createApp(
     registrationPolicy !== undefined;
   const market = new MarketRepository(database.pool);
   const profiles = new ProfileRepository(database);
+  const profilePhotos = new ProfilePhotoRepository(database);
   const leads = new LeadRepository(database);
   const interviews = new InterviewRepository(database);
   const notifications = new InAppNotificationRepository(database);
@@ -1555,6 +1563,66 @@ export async function createApp(
       client.release();
     }
   });
+  await app.register(async (photos) => {
+    photos.addContentTypeParser(
+      [...profilePhotoContentTypes],
+      { parseAs: 'buffer', bodyLimit: maximumProfilePhotoUploadBytes },
+      (_request, body, done) => done(null, body),
+    );
+    photos.get('/api/profile/photo', async (request, reply) => {
+      if (!(await consumeRateLimit(request, `profile-photo-read:${request.ownerId!}`, 120, 60)))
+        throw new HttpError(429, 'Too many profile photo requests');
+      const photo = await profilePhotos.get(request.ownerId!);
+      if (!photo) return reply.code(204).send();
+      return reply
+        .type('image/webp')
+        .header('X-Content-Type-Options', 'nosniff')
+        .header('Content-Disposition', 'inline; filename="profile.webp"')
+        .send(photo.image);
+    });
+    photos.put(
+      '/api/profile/photo',
+      {
+        bodyLimit: maximumProfilePhotoUploadBytes,
+        onRequest: async (request) => {
+          const contentType = request.headers['content-type']
+            ?.split(';', 1)[0]
+            ?.trim()
+            .toLowerCase();
+          if (
+            !profilePhotoContentTypes.includes(
+              contentType as (typeof profilePhotoContentTypes)[number],
+            )
+          )
+            throw new HttpError(415, 'Use a JPEG, PNG, or WebP image');
+          if (
+            !(await consumeRateLimit(request, `profile-photo-write:${request.ownerId!}`, 10, 3600))
+          )
+            throw new HttpError(429, 'Too many profile photo uploads');
+        },
+      },
+      async (request, reply) => {
+        if (!Buffer.isBuffer(request.body)) throw new HttpError(400, 'Image data is required');
+        let normalized: Buffer;
+        try {
+          normalized = await normalizeProfilePhoto(request.body, request.headers['content-type']);
+        } catch (error) {
+          if (error instanceof InvalidProfilePhoto)
+            throw new HttpError(400, 'Choose a valid JPEG, PNG, or WebP image');
+          throw error;
+        }
+        await profilePhotos.save(request.ownerId!, normalized);
+        return reply.code(204).send();
+      },
+    );
+    photos.delete('/api/profile/photo', async (request, reply) => {
+      if (!(await consumeRateLimit(request, `profile-photo-delete:${request.ownerId!}`, 20, 60)))
+        throw new HttpError(429, 'Too many profile photo requests');
+      await profilePhotos.delete(request.ownerId!);
+      return reply.code(204).send();
+    });
+  });
+
   await app.register(async (resumes) => {
     resumes.addContentTypeParser(
       'application/octet-stream',

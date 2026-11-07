@@ -1,8 +1,8 @@
 # CareerScope privacy and data boundary
 
 CareerScope is a private, single-owner job-search workspace. Profile fields,
-resume files, saved jobs, application notes and sessions are private runtime
-data. They belong in the protected PostgreSQL/storage services and never in
+profile pictures, resume files, saved jobs, application notes and sessions are
+private runtime data. They belong in the protected PostgreSQL/storage services and never in
 Git, public artifacts, issues, pull requests, screenshots,
 fixtures, logs or CI artifacts.
 

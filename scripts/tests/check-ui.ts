@@ -6,6 +6,7 @@ import { mkdir, mkdtemp, readFile, rm, utimes, writeFile } from 'node:fs/promise
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import JSZip from 'jszip';
+import sharp from 'sharp';
 import { fileURLToPath } from 'node:url';
 import { chromium, firefox, webkit } from 'playwright';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
@@ -16,6 +17,7 @@ import {
   passwordHash,
   users,
   ProfileRepository,
+  ProfilePhotoRepository,
   LeadRepository,
   matchingProfile,
   writableProfileSchema,
@@ -45,7 +47,8 @@ import {
 
 const notificationLifecycleOnly =
   process.env.CAREERSCOPE_UI_SCENARIO === 'notification-panel-close-before-mutation';
-if (process.env.CAREERSCOPE_UI_SCENARIO && !notificationLifecycleOnly)
+const profilePhotoOnly = process.env.CAREERSCOPE_UI_SCENARIO === 'profile-photo';
+if (process.env.CAREERSCOPE_UI_SCENARIO && !notificationLifecycleOnly && !profilePhotoOnly)
   throw new Error('Unknown focused browser scenario');
 if (notificationLifecycleOnly) {
   assert.equal(process.env.CAREERSCOPE_UI_BROWSER, 'chromium');
@@ -172,6 +175,16 @@ url.pathname = `/${name}`;
 const database = new Database(url.href);
 const ownerId = randomUUID();
 const password = randomUUID();
+const profilePhotoFixture = await sharp({
+  create: {
+    width: 1,
+    height: 1,
+    channels: 4,
+    background: { r: 20, g: 80, b: 180, alpha: 1 },
+  },
+})
+  .png()
+  .toBuffer();
 const origin = process.env.APP_ORIGIN ?? 'http://localhost:5280';
 const resumeDirectory = await mkdtemp(join(tmpdir(), 'careerscope-resume-ui-'));
 const keyFile = join(resumeDirectory, 'encryption.key');
@@ -555,7 +568,9 @@ try {
       );
     }
   };
-  for (const [engine, browserType] of uiBrowsers) {
+  for (const [engine, browserType] of profilePhotoOnly
+    ? uiBrowsers.filter(([engine]) => engine === 'chromium')
+    : uiBrowsers) {
     // Legacy password-account fixtures exercise existing data/session behavior.
     // The public test selector and its real allowlist are verified separately.
     const accountEmail = `signup-${engine}@example.test`;
@@ -644,6 +659,7 @@ try {
           body: '{"code":"NOT_FOUND","message":"Not found","requestId":"00000000-0000-4000-8000-000000000000"}',
         }),
       );
+      await otpPage.route('**/api/profile/photo**', (route) => route.fulfill({ status: 204 }));
       await otpPage.route('**/api/profile/accessibility', (route) =>
         route.fulfill({ contentType: 'application/json', json: { reducedMotion: false } }),
       );
@@ -909,6 +925,7 @@ try {
           body: '{"code":"NOT_FOUND","message":"Not found","requestId":"00000000-0000-4000-8000-000000000000"}',
         }),
       );
+      await signupPage.route('**/api/profile/photo**', (route) => route.fulfill({ status: 204 }));
       await signupPage.route('**/api/account/recovery-email', (route) =>
         route.fulfill({
           contentType: 'application/json',
@@ -1595,35 +1612,37 @@ try {
           `${engine} ${name} is not "${expected}": ${directives.get(name) ?? 'absent'}`,
         );
       }
-      const skipLink = page.getByRole('link', { name: 'Skip to content', exact: true });
-      const hiddenSkip = await skipLink.boundingBox();
-      assert.ok(hiddenSkip && hiddenSkip.width === 1 && hiddenSkip.height === 1);
-      assert.equal(
-        await skipLink.evaluate((element) => getComputedStyle(element).clipPath),
-        'inset(50%)',
-      );
-      await skipLink.focus();
-      const focusedSkip = await skipLink.boundingBox();
-      assert.ok(
-        focusedSkip && focusedSkip.y >= 0 && focusedSkip.width > 40 && focusedSkip.height > 40,
-      );
-      await skipLink.press('Enter');
-      assert.equal(
-        await page.locator('main').evaluate((element) => element === document.activeElement),
-        true,
-      );
-      await accessible(page, engine, 'test account selector', 'Select test account');
-      for (const width of responsiveWidthsEndingAt(320)) {
-        await page.setViewportSize({ width, height: 900 });
+      if (!profilePhotoOnly) {
+        const skipLink = page.getByRole('link', { name: 'Skip to content', exact: true });
+        const hiddenSkip = await skipLink.boundingBox();
+        assert.ok(hiddenSkip && hiddenSkip.width === 1 && hiddenSkip.height === 1);
         assert.equal(
-          await page.evaluate(() => document.documentElement.scrollWidth > innerWidth),
-          false,
+          await skipLink.evaluate((element) => getComputedStyle(element).clipPath),
+          'inset(50%)',
         );
-        if (engine === 'chromium')
-          await page.screenshot({
-            path: screenshotPath(`account-${width}.png`),
-            fullPage: true,
-          });
+        await skipLink.focus();
+        const focusedSkip = await skipLink.boundingBox();
+        assert.ok(
+          focusedSkip && focusedSkip.y >= 0 && focusedSkip.width > 40 && focusedSkip.height > 40,
+        );
+        await skipLink.press('Enter');
+        assert.equal(
+          await page.locator('main').evaluate((element) => element === document.activeElement),
+          true,
+        );
+        await accessible(page, engine, 'test account selector', 'Select test account');
+        for (const width of responsiveWidthsEndingAt(320)) {
+          await page.setViewportSize({ width, height: 900 });
+          assert.equal(
+            await page.evaluate(() => document.documentElement.scrollWidth > innerWidth),
+            false,
+          );
+          if (engine === 'chromium')
+            await page.screenshot({
+              path: screenshotPath(`account-${width}.png`),
+              fullPage: true,
+            });
+        }
       }
       await page.route(
         '**/api/login',
@@ -1650,6 +1669,56 @@ try {
         [],
         `${engine}: dashboard content and global navigation must not leave speculative RSC prefetches open`,
       );
+      if (profilePhotoOnly) {
+        // The selected account is the newly registered browser fixture, so
+        // seed that account's profile rather than the separate API owner used
+        // by the broad cross-owner scenario below.
+        const profileOwnerId = (
+          await database.pool.query<{ id: string }>('SELECT id FROM users WHERE email = $1', [
+            accountEmail,
+          ])
+        ).rows[0]!.id;
+        const profileFixture = new ProfileRepository(database);
+        await profileFixture.save(profileOwnerId, {
+          revision: 0,
+          profile: {
+            candidate: {
+              fullName: 'Existing Candidate',
+              email: 'candidate@example.test',
+              location: 'Hyderabad',
+            },
+            preferences: { titles: ['React Engineer'], techStack: ['React', 'TypeScript'] },
+            application: {},
+            accessibility: {},
+          },
+        });
+        await page.goto(`${origin}/resume`);
+        await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
+        await page.getByLabel('Full Name', { exact: true }).waitFor();
+        await page.getByLabel('Upload picture').setInputFiles({
+          name: 'profile.png',
+          mimeType: 'image/png',
+          buffer: profilePhotoFixture,
+        });
+        await page.getByRole('status').filter({ hasText: 'Profile picture saved.' }).waitFor();
+        const photoRepository = new ProfilePhotoRepository(database);
+        assert.ok(
+          await photoRepository.get(profileOwnerId),
+          'profile photo must be stored privately',
+        );
+        const avatars = page.locator('img[src^="data:image/webp;base64,"]');
+        assert.equal(await avatars.count(), 2);
+        await page.reload();
+        await page.getByLabel('Full Name', { exact: true }).waitFor();
+        assert.equal(await avatars.count(), 2, 'profile picture must persist after reload');
+        await page.getByRole('button', { name: 'Remove picture', exact: true }).click();
+        await page.getByRole('status').filter({ hasText: 'Profile picture removed.' }).waitFor();
+        assert.equal(await photoRepository.get(profileOwnerId), null);
+        process.stdout.write(
+          `${engine}: profile photo upload, avatar, reload and removal passed\n`,
+        );
+        continue;
+      }
 
       // The shared shell can receive refresh requests from focus, visibility,
       // polling, and panel-open events. Hold one real same-origin response
@@ -4093,6 +4162,24 @@ try {
       );
       await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
       await page.getByText('Profile saved.', { exact: true }).waitFor();
+      await page
+        .getByLabel('Upload picture')
+        .setInputFiles({ name: 'profile.png', mimeType: 'image/png', buffer: profilePhotoFixture });
+      await page.getByRole('status').filter({ hasText: 'Profile picture saved.' }).waitFor();
+      assert.equal(
+        await new ProfilePhotoRepository(database).get(ownerId).then((photo) => photo !== null),
+        true,
+        `${engine}: uploaded profile picture is stored privately`,
+      );
+      const avatar = page.locator('img[src^="data:image/webp;base64,"]');
+      await page.waitForFunction(
+        () =>
+          Array.from(document.images).filter((image) =>
+            image.src.startsWith('data:image/webp;base64,'),
+          ).length === 2,
+        undefined,
+        { timeout: 5000 },
+      );
       const savedProfile = await new ProfileRepository(database).get(ownerId);
       assert.equal(savedProfile?.profile.candidate.location, 'Pune, India');
       assert.deepEqual(savedProfile?.profile.preferences.locations, ['Pune', 'Remote']);
@@ -4253,8 +4340,20 @@ try {
       const resumeResponse = await resumeViewLoaded;
       if (resumeResponse) assert.equal(resumeResponse.status(), 200);
       await settled('resume');
+      await page.getByRole('button', { name: 'Back to Search', exact: true }).click();
+      await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
       await page.reload();
       await page.getByLabel('Full Name', { exact: true }).waitFor();
+      assert.equal(await avatar.count(), 2, `${engine}: profile photo survives a page reload`);
+      await page.getByRole('button', { name: 'Remove picture', exact: true }).click();
+      await page.getByRole('status').filter({ hasText: 'Profile picture removed.' }).waitFor();
+      await page.waitForFunction(
+        () =>
+          !Array.from(document.images).some((image) => image.src.startsWith('data:image/webp;')),
+        undefined,
+        { timeout: 5000 },
+      );
+      assert.equal(await new ProfilePhotoRepository(database).get(ownerId), null);
       assert.equal(await page.getByLabel('Graduation Year', { exact: true }).inputValue(), '2024');
       assert.equal(
         await page.getByRole('textbox', { name: 'Education', exact: true }).inputValue(),
@@ -5110,7 +5209,9 @@ try {
   });
   try {
     await testApp.listen({ host: '127.0.0.1', port: API_PORT });
-    for (const [engine, browserType] of notificationLifecycleOnly ? [] : uiBrowsers) {
+    for (const [engine, browserType] of notificationLifecycleOnly || profilePhotoOnly
+      ? []
+      : uiBrowsers) {
       const browser = await browserType.launch();
       try {
         const page = await browser.newPage();

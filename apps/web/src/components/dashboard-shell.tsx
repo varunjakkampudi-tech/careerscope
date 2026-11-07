@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Bell,
@@ -22,6 +23,7 @@ import {
 import BrandLogo from './brand-logo';
 import { apiJson, apiParsed } from '@/lib/api';
 import { parseNotificationList, type NotificationItem } from '@/lib/api-schemas';
+import { PROFILE_PHOTO_UPDATED_EVENT } from '@/lib/profile-photo';
 import { localizedText, useInterfaceLocale } from '@/lib/locale';
 import styles from './dashboard-shell.module.css';
 
@@ -226,10 +228,60 @@ function initialsFrom(identity: string | undefined) {
   return letters.toUpperCase();
 }
 
-function InitialsAvatar({ identity }: { identity: string | undefined }) {
+function ProfileAvatar({ identity }: { identity: string | undefined }) {
+  const [photoVersion, setPhotoVersion] = useState(0);
+  const [photo, setPhoto] = useState<{
+    identity: string | undefined;
+    version: number;
+    dataUrl: string;
+  } | null>(null);
+  useEffect(() => {
+    const update = () => {
+      setPhotoVersion((version) => version + 1);
+    };
+    window.addEventListener(PROFILE_PHOTO_UPDATED_EVENT, update);
+    return () => window.removeEventListener(PROFILE_PHOTO_UPDATED_EVENT, update);
+  }, []);
+  useEffect(() => {
+    let cancelled = false;
+    const loadPhoto = async () => {
+      try {
+        const response = await fetch(`/api/profile/photo?v=${photoVersion}`, {
+          cache: 'no-store',
+          credentials: 'same-origin',
+        });
+        if (!response.ok) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (!cancelled && typeof reader.result === 'string')
+            setPhoto({ identity, version: photoVersion, dataUrl: reader.result });
+        };
+        reader.readAsDataURL(await response.blob());
+      } catch {
+        // A missing photo or transient read failure keeps the initials avatar.
+      }
+    };
+    void loadPhoto();
+    return () => {
+      cancelled = true;
+    };
+  }, [identity, photoVersion]);
+  const photoDataUrl =
+    photo && photo.identity === identity && photo.version === photoVersion ? photo.dataUrl : null;
   return (
     <span className={styles.avatar} aria-hidden="true" title={identity ?? 'Signed in'}>
-      {initialsFrom(identity)}
+      {photoDataUrl ? (
+        <Image
+          src={photoDataUrl}
+          alt=""
+          width={42}
+          height={42}
+          unoptimized
+          onError={() => setPhoto(null)}
+        />
+      ) : (
+        initialsFrom(identity)
+      )}
     </span>
   );
 }
@@ -291,7 +343,7 @@ export function DashboardSidebar({
         <p>{t('motivationBody')}</p>
       </div>
       <div className={styles.sidebarAccount} lang={locale}>
-        <InitialsAvatar identity={identity} />
+        <ProfileAvatar identity={identity} />
         <div>
           <div className={styles.sidebarAccountEmail}>{identity ?? t('signedIn')}</div>
           <div className={styles.sidebarFooter} lang={locale}>
@@ -395,7 +447,7 @@ export function DashboardTopbar({
           <LogOut size={17} />
         </button>
         <NotificationCenter key={identity ?? 'signed-in'} />
-        <InitialsAvatar identity={identity} />
+        <ProfileAvatar identity={identity} />
       </div>
     </header>
   );
