@@ -733,15 +733,19 @@
         "apps/api/src/profile-photo.ts",
         "apps/web/src/components/profile-editor.tsx",
         "apps/web/src/components/dashboard-shell.tsx",
-        "docs/PROGRESS.md"
+        "docs/PROGRESS.md",
+        "docs/TEST-MATRIX.md"
       ],
       "tests": [
         "apps/api/src/profile-photo.test.ts",
         "tests/integration/database.integration.test.ts",
         "scripts/tests/check-ui.ts"
       ],
-      "externalEvidence": [],
-      "gap": "Focused local checks pass; awaiting exact-SHA independent review and hosted CI before verification.",
+      "externalEvidence": [
+        "PR #57 merged to dev as f62e8d181be3160219b1e7405c6ea6642f394ee9; exact feature SHA 7d671f731234d535c25c5d0279a8d09af986d285 passed hosted run 42386991607.",
+        "PR #58 implementation SHA 3111e670b4746ead4583ed9c473c13ebb6e78faa passed all three hosted CI jobs in run 42391379522; independent ChatGPT implementation review approved that SHA. Current PR head 60539ced371bebfe772afe06ab22a66d074d904c has final acceptance and exact-head CI pending."
+      ],
+      "gap": "Awaiting final acceptance and merge of PR #58; status becomes verified only after exact-SHA review, hosted CI, and merge to dev.",
       "scopeDisposition": "in-scope"
     },
     {

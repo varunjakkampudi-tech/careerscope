@@ -1789,6 +1789,17 @@ try {
         await page.unroute('**/api/profile/photo', failUpload);
         assert.equal(await new ProfilePhotoRepository(database).get(profileOwnerId), null);
 
+        let sharedAvatarRefreshReads = 0;
+        const countSharedAvatarRefresh = (request: import('playwright').Request) => {
+          const url = new URL(request.url());
+          if (
+            request.method() === 'GET' &&
+            url.pathname === '/api/profile/photo' &&
+            url.searchParams.get('v') === '1'
+          )
+            sharedAvatarRefreshReads += 1;
+        };
+        page.on('request', countSharedAvatarRefresh);
         const uploadResponse = page.waitForResponse(
           (response) =>
             response.url().endsWith('/api/profile/photo') && response.request().method() === 'PUT',
@@ -1815,6 +1826,12 @@ try {
           () => document.querySelectorAll('img[src^="data:image/webp;base64,"]').length === 2,
         );
         assert.equal(await avatars.count(), 2);
+        assert.equal(
+          sharedAvatarRefreshReads,
+          1,
+          'sidebar and topbar must share one profile photo refresh request',
+        );
+        page.off('request', countSharedAvatarRefresh);
         await page.reload();
         await page.getByLabel('Full Name', { exact: true }).waitFor();
         await page.waitForFunction(
@@ -4283,6 +4300,17 @@ try {
       );
       await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
       await page.getByText('Profile saved.', { exact: true }).waitFor();
+      let sharedAvatarRefreshReads = 0;
+      const countSharedAvatarRefresh = (request: import('playwright').Request) => {
+        const url = new URL(request.url());
+        if (
+          request.method() === 'GET' &&
+          url.pathname === '/api/profile/photo' &&
+          url.searchParams.get('v') === '1'
+        )
+          sharedAvatarRefreshReads += 1;
+      };
+      page.on('request', countSharedAvatarRefresh);
       await page
         .getByLabel('Upload picture')
         .setInputFiles({ name: 'profile.png', mimeType: 'image/png', buffer: profilePhotoFixture });
@@ -4301,6 +4329,12 @@ try {
         undefined,
         { timeout: 5000 },
       );
+      assert.equal(
+        sharedAvatarRefreshReads,
+        1,
+        `${engine}: sidebar and topbar must share one profile photo refresh request`,
+      );
+      page.off('request', countSharedAvatarRefresh);
       const savedProfile = await new ProfileRepository(database).get(ownerId);
       assert.equal(savedProfile?.profile.candidate.location, 'Pune, India');
       assert.deepEqual(savedProfile?.profile.preferences.locations, ['Pune', 'Remote']);
@@ -5184,10 +5218,24 @@ try {
       // created at the top of this file, so this also re-proves owner
       // isolation across a session boundary rather than only within one.
       const searchDetailRequests = () =>
-        [...inflight.keys()].filter((request) => {
-          const url = new URL(request.url());
-          return request.method() === 'GET' && /^\/api\/searches\/[^/]+$/.test(url.pathname);
-        });
+        [...inflight]
+          .filter(([request, epoch]) => {
+            const url = new URL(request.url());
+            return (
+              request.method() === 'GET' &&
+              /^\/api\/searches\/[^/]+$/.test(url.pathname) &&
+              !staleSearchRead(request.method(), url.pathname, epoch, routeEpoch) &&
+              !staleEarlierRouteRead(
+                request.method(),
+                request.resourceType(),
+                epoch,
+                routeEpoch,
+                engine,
+                url.pathname,
+              )
+            );
+          })
+          .map(([request]) => request);
       const searchRequestDeadline = Date.now() + 15000;
       while (searchDetailRequests().length > 0 && Date.now() < searchRequestDeadline) {
         await page.waitForTimeout(25);

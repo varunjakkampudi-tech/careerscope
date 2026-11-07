@@ -1609,7 +1609,7 @@
         }
       ],
       "observations": "Read the complete test. Added a loopback-only guard for DATABASE_URL and the active Redis queue URL before starting a real worker, with a unit case proving local URLs pass and remote hosts are refused. POSIX signal tests use a readiness log, assert clean exit for SIGTERM/SIGINT, collect child diagnostics and force-kill only on teardown; Windows correctly skips the POSIX behavior. The new guard test passed locally; signal cases were skipped on Windows.",
-      "evidence": "Current source content inspected on codex/stage01-item-1.01; targeted tests passed; SHA-256 records reviewed bytes.",
+      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "910b595a7aa2654ada36224395a04e833361d4325b7345be0a5df624de16c757"
     },
@@ -6511,7 +6511,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Read the complete tests. Verify stable all-engine default, each individual supported engine, and rejection of unsupported values. All 3 tests passed. No finding.",
-      "evidence": "Current source content inspected on codex/stage01-item-1.01; targeted tests passed; SHA-256 records reviewed bytes.",
+      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "7733800459eb89b2df14d1d4ba9336f52533b81167490970d26a1a8a0f10fef9"
     },
@@ -6523,7 +6523,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Read the complete helper. Defaults to all Playwright engines in stable object order, narrows only to a named supported engine, and throws for unsupported selections rather than broadening scope. No finding.",
-      "evidence": "Current source content inspected on codex/stage01-item-1.01; targeted tests passed; SHA-256 records reviewed bytes.",
+      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "3322d51bad5ec59b61061639c8b13b31e9900e69e18c9abe67e468bbaffa3be4"
     },
@@ -6542,10 +6542,10 @@
           "remediation": "Replaced the path fixture with the synthetic candidate@example.test identity."
         }
       ],
-      "observations": "Read the complete tests. Cover route epochs, method/resource/engine/path allowlists, same-origin path normalization, dynamic/query redaction, and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed.",
-      "evidence": "Current source content inspected on codex/stage01-item-1.01; targeted tests passed; SHA-256 records reviewed bytes.",
+      "observations": "Re-reviewed complete tests after Stage 03 item 3.13 regression update. Cover route epochs, method/resource/engine/path allowlists, including prior-route Chromium search detail reads while current-route and non-Chromium requests remain strict; same-origin path normalization, dynamic/query redaction and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed.",
+      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "2be583a6d7e7b163dc2670b538c2154f2062d33d8b5040747225d97f1745b42a"
+      "sha256": "cb3ce3fd9bf8c860e4bb28a0598cf6dd28ae7ff6212fda6851f60f43896c61ed"
     },
     {
       "path": "scripts/tests/ui-requests.ts",
@@ -6554,10 +6554,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete helper. It drops only stale GETs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. No finding.",
-      "evidence": "Current source content inspected on codex/stage01-item-1.01; targeted tests passed; SHA-256 records reviewed bytes.",
+      "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.",
+      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "fcb196cdae05944f655a5b7c6554221ff08c9eb3c301e1c7bcc6a0cef32e919b"
+      "sha256": "4d95c21eb0bbe1ca0139c7b3c262fbaa13ebad23d02b81d80a258271a1580e84"
     },
     {
       "path": "scripts/tests/visual-baselines/sign-in-desktop.png",
