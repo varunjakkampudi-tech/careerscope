@@ -235,6 +235,8 @@ describe('buildCandidateContext — home location', () => {
         currentCtc: '14 LPA',
         expectedCtc: '20 LPA',
         noticePeriodDays: 60,
+        availabilityStatus: 'notice_period' as const,
+        preferredContactMethod: 'phone' as const,
         willingToRelocate: true,
         yearsOfExperience: 4,
       },
@@ -246,5 +248,7 @@ describe('buildCandidateContext — home location', () => {
     expect(ctx.expectedSalary).toBe(2_000_000);
     expect(ctx.willingToRelocate).toBe(true);
     expect(ctx.yearsOfExperience).toBe(4);
+    expect(ctx).not.toHaveProperty('availabilityStatus');
+    expect(ctx).not.toHaveProperty('preferredContactMethod');
   });
 });

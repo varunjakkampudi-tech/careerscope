@@ -79,14 +79,55 @@ export const preferencesSchema = z.object({
   excludeCompanies: z.array(ownerText()).max(200).default([]),
 });
 
-/** Details used when applying and by the matching engine (compensation, notice, relocation). */
-export const applicationSchema = z.object({
+const applicationFieldsSchema = z.object({
   currentCtc: z.string().trim().max(40).default(''),
   expectedCtc: z.string().trim().max(40).default(''),
   noticePeriodDays: z.number().int().min(0).max(365).default(0),
+  /** Candidate-declared availability. Legacy profiles infer this from their saved notice days. */
+  availabilityStatus: z.enum(['immediate', 'notice_period', 'not_specified']).optional(),
+  /** Private candidate preference; it is not included in job matching snapshots. */
+  preferredContactMethod: z.enum(['email', 'phone', 'no_preference']).default('no_preference'),
   willingToRelocate: z.boolean().default(true),
   /** Null means unknown; an explicit zero remains a valid candidate statement. */
   yearsOfExperience: z.number().min(0).max(60).nullable().default(null),
+});
+
+/** Details used when applying and by the matching engine (compensation, notice, relocation). */
+export const applicationSchema = applicationFieldsSchema
+  .strict()
+  .transform((application, context) => {
+    const availabilityStatus =
+      application.availabilityStatus ??
+      (application.noticePeriodDays === 0 ? 'immediate' : 'notice_period');
+    if (
+      (availabilityStatus === 'immediate' || availabilityStatus === 'not_specified') &&
+      application.noticePeriodDays !== 0
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['noticePeriodDays'],
+        message: 'Notice days must be zero unless a notice period is selected',
+      });
+    }
+    if (availabilityStatus === 'notice_period' && application.noticePeriodDays === 0) {
+      context.addIssue({
+        code: 'custom',
+        path: ['noticePeriodDays'],
+        message: 'Enter the number of notice days',
+      });
+    }
+    return { ...application, availabilityStatus };
+  });
+
+/** Partial profile updates must not apply full-profile defaults before deep merge. */
+export const applicationUpdateSchema = z.object({
+  currentCtc: z.string().trim().max(40).optional(),
+  expectedCtc: z.string().trim().max(40).optional(),
+  noticePeriodDays: z.number().int().min(0).max(365).optional(),
+  availabilityStatus: z.enum(['immediate', 'notice_period', 'not_specified']).optional(),
+  preferredContactMethod: z.enum(['email', 'phone', 'no_preference']).optional(),
+  willingToRelocate: z.boolean().optional(),
+  yearsOfExperience: z.number().min(0).max(60).nullable().optional(),
 });
 
 /** The full stored profile: candidate, preferences and application details plus the linked resume. */
@@ -108,7 +149,7 @@ export type Profile = z.infer<typeof profileSchema>;
 export const profileUpdateSchema = z.object({
   candidate: candidateSchema.partial().optional(),
   preferences: preferencesSchema.partial().optional(),
-  application: applicationSchema.partial().optional(),
+  application: applicationUpdateSchema.optional(),
   resumeId: z.string().nullable().optional(),
 });
 export type ProfileUpdate = z.infer<typeof profileUpdateSchema>;

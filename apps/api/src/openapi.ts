@@ -125,6 +125,17 @@ const profile = object({
       currentCtc: text({ maxLength: 40, default: '' }),
       expectedCtc: text({ maxLength: 40, default: '' }),
       noticePeriodDays: integer({ minimum: 0, maximum: 365, default: 0 }),
+      availabilityStatus: {
+        type: 'string',
+        enum: ['immediate', 'notice_period', 'not_specified'],
+        description: 'Candidate-declared availability; not used for job matching.',
+      },
+      preferredContactMethod: {
+        type: 'string',
+        enum: ['email', 'phone', 'no_preference'],
+        default: 'no_preference',
+        description: 'Private candidate preference; not included in matching inputs.',
+      },
       willingToRelocate: { ...bool, default: true },
       yearsOfExperience: { type: 'number', nullable: true, minimum: 0, maximum: 60, default: null },
     },

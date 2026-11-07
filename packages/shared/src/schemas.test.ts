@@ -60,6 +60,44 @@ describe('candidate-declared profile fields', () => {
     ).toBe(false);
   });
 
+  it('captures availability and preferred contact without confusing unknown with immediate', () => {
+    expect(profileSchema.parse(profile).application).toMatchObject({
+      availabilityStatus: 'immediate',
+      noticePeriodDays: 0,
+      preferredContactMethod: 'no_preference',
+    });
+    expect(
+      profileSchema.parse({
+        ...profile,
+        application: { noticePeriodDays: 45 },
+      }).application.availabilityStatus,
+    ).toBe('notice_period');
+    expect(
+      profileSchema.parse({
+        ...profile,
+        application: { availabilityStatus: 'not_specified' },
+      }).application,
+    ).toMatchObject({
+      availabilityStatus: 'not_specified',
+      noticePeriodDays: 0,
+    });
+    expect(
+      profileUpdateSchema.parse({ application: { preferredContactMethod: 'phone' } }).application,
+    ).toEqual({ preferredContactMethod: 'phone' });
+  });
+
+  it('rejects inconsistent availability and notice-day combinations', () => {
+    for (const application of [
+      { availabilityStatus: 'immediate', noticePeriodDays: 30 },
+      { availabilityStatus: 'notice_period', noticePeriodDays: 0 },
+      { availabilityStatus: 'not_specified', noticePeriodDays: 20 },
+      { availabilityStatus: 'not_specified', noticePeriodDays: 366 },
+      { preferredContactMethod: 'text_message' },
+    ]) {
+      expect(profileSchema.safeParse({ ...profile, application }).success).toBe(false);
+    }
+  });
+
   it('accepts bounded education, graduation year, and project entries without changing legacy profiles', () => {
     const expanded = profileSchema.parse({
       ...profile,

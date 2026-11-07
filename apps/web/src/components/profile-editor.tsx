@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, LoaderCircle, RefreshCw, Save } from 'lucide-react';
-import type { WritableProfile } from '@careerscope/shared';
+import type { ApplicationDetails, WritableProfile } from '@careerscope/shared';
 import { apiParsed, offersDiscardAndReload } from '../lib/api';
 import { parseProfileResponse, type ProfileResponse } from '../lib/api-schemas';
 import { useOwner, ownerKey } from '../lib/session';
@@ -87,6 +87,12 @@ function ProfileForm({
       ? { yearsOfExperience: proposal.yearsOfExperience }
       : {}),
   };
+  const [availabilityStatus, setAvailabilityStatus] = useState<
+    ApplicationDetails['availabilityStatus']
+  >(
+    application.availabilityStatus ??
+      ((application.noticePeriodDays ?? 0) === 0 ? 'immediate' : 'notice_period'),
+  );
 
   function invalidFieldInSection(section: HTMLFieldSetElement | null, index: number) {
     if (!section) return null;
@@ -242,7 +248,12 @@ function ProfileForm({
       application: {
         currentCtc: text('currentCtc'),
         expectedCtc: text('expectedCtc'),
-        noticePeriodDays: Number(text('noticePeriodDays')),
+        availabilityStatus,
+        noticePeriodDays:
+          availabilityStatus === 'notice_period' ? Number(text('noticePeriodDays')) : 0,
+        preferredContactMethod: text(
+          'preferredContactMethod',
+        ) as ApplicationDetails['preferredContactMethod'],
         yearsOfExperience: text('yearsOfExperience').trim()
           ? Number(text('yearsOfExperience'))
           : null,
@@ -580,6 +591,10 @@ function ProfileForm({
       >
         <legend>Application Details</legend>
         {guided && <p className={styles.stepDescription}>{onboardingSteps[3].description}</p>}
+        <p>
+          Availability and preferred contact are kept in your profile and are not used for job
+          matching.
+        </p>
         <div className="field-grid">
           <label>
             Current Compensation
@@ -594,16 +609,43 @@ function ProfileForm({
             />
           </label>
           <label>
+            Availability
+            <select
+              name="availabilityStatus"
+              value={availabilityStatus}
+              onChange={(event) =>
+                setAvailabilityStatus(
+                  event.target.value as ApplicationDetails['availabilityStatus'],
+                )
+              }
+            >
+              <option value="immediate">Immediately available</option>
+              <option value="notice_period">Serving a notice period</option>
+              <option value="not_specified">Prefer not to say</option>
+            </select>
+          </label>
+          <label hidden={availabilityStatus !== 'notice_period'}>
             Notice Period (Days)
             <input
               name="noticePeriodDays"
               type="number"
-              required
-              min={0}
+              required={availabilityStatus === 'notice_period'}
+              min={1}
               max={365}
               step={1}
-              defaultValue={application?.noticePeriodDays ?? 0}
+              disabled={availabilityStatus !== 'notice_period'}
+              defaultValue={application?.noticePeriodDays || ''}
+              aria-describedby="noticePeriodDays-help"
             />
+            <small id="noticePeriodDays-help">Enter a value from 1 to 365 days.</small>
+          </label>
+          <label>
+            Preferred Contact Method
+            <select name="preferredContactMethod" defaultValue={application.preferredContactMethod}>
+              <option value="no_preference">No preference</option>
+              <option value="email">Email</option>
+              <option value="phone">Phone</option>
+            </select>
           </label>
           <div className="field-with-hint">
             <label>
