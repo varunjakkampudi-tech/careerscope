@@ -1776,7 +1776,7 @@
       "observations": "Owner-directed AI-only recovery-copy assessment recorded; original source status pinned, native review not claimed.",
       "evidence": "Reviewed on review/stage02-210-ai-only-acceptance; SHA-256 records current bytes.",
       "reviewer": "AI-assisted owner checklist reconciliation (Stage 02 item 2.10)",
-      "sha256": "b670f1d707ceb9f5e7c9fa86726b4cbe0c8197c4e0e918274656e4878d53b91e"
+      "sha256": "e0b07f682aac85c2114ddbdf7fc2097b7f05c1bd440c4717808c974d5caf0dc3"
     },
     {
       "path": "docs/KNOWN-LIMITATIONS.md",
@@ -1844,7 +1844,7 @@
       "observations": "Owner-directed AI-only recovery-copy assessment recorded; original source status pinned, native review not claimed.",
       "evidence": "Reviewed on review/stage02-210-ai-only-acceptance; SHA-256 records current bytes.",
       "reviewer": "AI-assisted owner checklist reconciliation (Stage 02 item 2.10)",
-      "sha256": "fbfda5854d5b6da3c41eb4c6f7fd5eb3fd19befca7d631ce6fbcb2c2fbd68798"
+      "sha256": "30474c5a443ef534f1a55eb7ff3753b5f0c772b029652f26f5d197f7681c5f64"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -2324,7 +2324,7 @@
       "observations": "Owner-directed AI-only recovery-copy assessment recorded; original source status pinned, native review not claimed.",
       "evidence": "Reviewed on review/stage02-210-ai-only-acceptance; SHA-256 records current bytes.",
       "reviewer": "AI-assisted owner checklist reconciliation (Stage 02 item 2.10)",
-      "sha256": "cc12fa181d70c2364c648e485ef94c295c4839764e8be64b34c1098741ba3f04"
+      "sha256": "4060124bfafdaa48aae0d1ebafaf93699926687d0f644a1e0c8b822659b02bb2"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
