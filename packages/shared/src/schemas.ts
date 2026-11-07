@@ -30,6 +30,8 @@ export const candidateSchema = z.object({
   segment: z.enum(['student', 'fresher', 'experienced']).optional(),
   /** Candidate-entered education details; private profile data, not verified evidence. */
   education: z.array(z.string().trim().min(1).max(200)).max(20).default([]),
+  /** Candidate-entered work-history summaries; private claims, not verified evidence or matching input. */
+  experience: z.array(z.string().trim().min(1).max(200)).max(20).default([]),
   graduationYear: z.number().int().min(1900).max(2100).optional(),
   /** Candidate-entered project summaries; private profile data, not matching evidence. */
   projects: z.array(z.string().trim().min(1).max(200)).max(20).default([]),

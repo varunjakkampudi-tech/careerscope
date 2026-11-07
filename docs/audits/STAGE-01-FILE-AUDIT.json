@@ -432,10 +432,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Reviewed complete OpenAPI definitions, route contracts, error schemas, auth/CSRF metadata, Swagger UI request interception, same-origin enforcement, and docs cache controls. A generated-document probe found GET /api/leads/by-job/{jobId} documented its path parameter as an unconstrained string despite UUID validation in the handler; added an explicit UUID schema and confirmed the generated document marks it required with format uuid. No other finding identified in this pass.",
-      "evidence": "Complete tracked file read and generated OpenAPI inspection on codex/stage01-item-101-audit; generated path parameter was re-inspected after remediation; SHA-256 records reviewed bytes.",
+      "observations": "Reviewed complete OpenAPI definitions, route contracts, error schemas, auth/CSRF metadata, Swagger UI request interception, same-origin enforcement, and docs cache controls. A generated-document probe found GET /api/leads/by-job/{jobId} documented its path parameter as an unconstrained string despite UUID validation in the handler; added an explicit UUID schema and confirmed the generated document marks it required with format uuid. No other finding identified in this pass. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
+      "evidence": "Complete tracked file read and generated OpenAPI inspection on codex/stage01-item-101-audit; generated path parameter was re-inspected after remediation; SHA-256 records reviewed bytes. Current SHA-256 records updated bytes for Stage 03 item 3.06.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "f556a833135daa51790f911d401348b56de7c4e6fee5a941e7f13e124cc736b3"
+      "sha256": "c1e444198851c5956362666b30e9b1c4563a5363ff60c3a43a5854333487df23"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -1168,10 +1168,10 @@
           "remediation": "Prevent the Continue click default and key the Continue and Save and finish buttons as distinct nodes; browser acceptance verifies no pre-final submission and clicks the final control."
         }
       ],
-      "observations": "Reviewed the guided first-time profile flow, required contact and job-preference validation, accessible progress announcements, step navigation, career-stage guidance, and revision-safe profile mutation. Existing profile editing remains available after onboarding.",
-      "evidence": "Focused review and validation for CareerScope Stage 03 item 3.01.",
+      "observations": "Reviewed the guided first-time profile flow, required contact and job-preference validation, accessible progress announcements, step navigation, career-stage guidance, and revision-safe profile mutation. Existing profile editing remains available after onboarding. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
+      "evidence": "Focused review and validation for CareerScope Stage 03 item 3.01. Current SHA-256 records updated bytes for Stage 03 item 3.06.",
       "reviewer": "Codex (Stage 03 item 3.01)",
-      "sha256": "1cf392dc0ccac002e4b9afd2781d5cf838582162cded67f7d266040742c43db9"
+      "sha256": "fa409df1f457b34eea83cb76fbb1a95c438383e4b8b8511fb6d9f98b41bf39bb"
     },
     {
       "path": "apps/web/src/components/recovery-email-section.tsx",
@@ -1291,10 +1291,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete runtime response schemas. API bodies are parsed as unknown and schema failures yield a fixed safe message; schemas model screen-consumed API fields and drop unknown keys. Source links are accepted from the server response for external navigation; route handlers remain the trust boundary. No further issue found.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+      "observations": "Read the complete runtime response schemas. API bodies are parsed as unknown and schema failures yield a fixed safe message; schemas model screen-consumed API fields and drop unknown keys. Source links are accepted from the server response for external navigation; route handlers remain the trust boundary. No further issue found. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Current SHA-256 records updated bytes for Stage 03 item 3.06.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "b9eac7b8c0854a93ec17cd5591197e54c41593813272c03fb2ddfaa7f9a4ab3c"
+      "sha256": "0262dc721ba28e7762ab7378ca5dd1ce2fccceb527b20bfb6436fc1f47f70836"
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
@@ -1647,10 +1647,10 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Read in full. Documents runtime routes, security and the shared error envelope; verified the client-safe contract against implementation and focused unit and database integration evidence.",
-      "evidence": "Reviewed current documentation and item 1.09 evidence on codex/stage01-item-109-error-handling; SHA-256 records the reviewed bytes.",
+      "observations": "Read in full. Documents runtime routes, security and the shared error envelope; verified the client-safe contract against implementation and focused unit and database integration evidence. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
+      "evidence": "Reviewed current documentation and item 1.09 evidence on codex/stage01-item-109-error-handling; SHA-256 records the reviewed bytes. Current SHA-256 records updated bytes for Stage 03 item 3.06.",
       "reviewer": "Codex (owner Stage 01 item 1.09)",
-      "sha256": "af8b5ae1caa309a6e2b83fa5ea7861a3bddb968c1402e852e2695e3fbd8546be"
+      "sha256": "e7dca8c0db89c47bab049e867b26eeb31849c39068d242fb4f4c9e8f6a8e19c0"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1861,10 +1861,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Owner Stage 03 items 3.01 to 3.04 are verified and merged; item 3.05 education details verification is proposed in open PR #48 with bounded profile and test evidence. Item 2.05 registration legal gate remains open.",
-      "evidence": "Updated in owner roadmap item 3.05 closeout PR #48; SHA-256 records current bytes.",
+      "observations": "Owner Stage 03 items 3.01 to 3.04 are verified and merged; item 3.05 education details verification is proposed in open PR #48 with bounded profile and test evidence. Item 2.05 registration legal gate remains open. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
+      "evidence": "Updated in owner roadmap item 3.05 closeout PR #48; SHA-256 records current bytes. Current SHA-256 records updated bytes for Stage 03 item 3.06.",
       "reviewer": "Codex (Stage 03 item 3.03)",
-      "sha256": "a07e9499323b6dda27ccd09e403b35dba4fecda2423f5992d04253f488c51d47"
+      "sha256": "050b28d0aff2804bdeca4d99f68e692f2424ad45e54033468915ad8cc7077219"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1909,10 +1909,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Owner Stage 03 items 3.01 to 3.04 are verified and merged; item 3.05 education details verification is proposed in open PR #48 with bounded profile and test evidence. Item 2.05 registration legal gate remains open.",
-      "evidence": "Updated in owner roadmap item 3.05 closeout PR #48; SHA-256 records current bytes.",
+      "observations": "Owner Stage 03 items 3.01 to 3.04 are verified and merged; item 3.05 education details verification is proposed in open PR #48 with bounded profile and test evidence. Item 2.05 registration legal gate remains open. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
+      "evidence": "Updated in owner roadmap item 3.05 closeout PR #48; SHA-256 records current bytes. Current SHA-256 records updated bytes for Stage 03 item 3.06.",
       "reviewer": "Codex (Stage 03 item 3.03)",
-      "sha256": "0de2867fa59ece0ad08c737ed5632e6795f8168bda55cb8a7698bf4db0179953"
+      "sha256": "a62763ea5d9a3029028da1e18c2bba68d04eeabceee72e8dff668028441f2b76"
     },
     {
       "path": "docs/TESTING.md",
@@ -2341,10 +2341,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Owner Stage 03 items 3.01 to 3.04 are verified and merged; item 3.05 education details verification is proposed in open PR #48 with bounded profile and test evidence. Item 2.05 registration legal gate remains open.",
-      "evidence": "Updated in owner roadmap item 3.05 closeout PR #48; SHA-256 records current bytes.",
+      "observations": "Owner Stage 03 items 3.01 to 3.04 are verified and merged; item 3.05 education details verification is proposed in open PR #48 with bounded profile and test evidence. Item 2.05 registration legal gate remains open. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
+      "evidence": "Updated in owner roadmap item 3.05 closeout PR #48; SHA-256 records current bytes. Current SHA-256 records updated bytes for Stage 03 item 3.06.",
       "reviewer": "Codex (Stage 03 item 3.03)",
-      "sha256": "3c14ee79716326b06f37c9cb1747c96c83f1e0046d37931f7d31ca804cf654cc"
+      "sha256": "e7488b34d4f9a62e9383d7cd0338ebe23baa3a2141bf84429f83df10e27fe5a8"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -4005,10 +4005,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Covers bounded evidence-based preparation, no network or invented readiness, null experience preservation, owner-declared segments, accessibility data excluded from matching, bounded optional fields, URL safety, strict revision/ownership, and deterministic output.",
-      "evidence": "",
+      "observations": "Read in full. Covers bounded evidence-based preparation, no network or invented readiness, null experience preservation, owner-declared segments, accessibility data excluded from matching, bounded optional fields, URL safety, strict revision/ownership, and deterministic output. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
+      "evidence": " Current SHA-256 records updated bytes for Stage 03 item 3.06.",
       "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "1dc26acff72de544265b2bb54a5746c0c82c7e474d416197539c707ed2752583"
+      "sha256": "f4c5e0ffaec7e661e807b2ece13375917dda9088e33282ac1cb93acb0e765e6d"
     },
     {
       "path": "packages/core/src/profile.ts",
@@ -5663,10 +5663,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete profile schema tests. They cover supported career segments, legacy compatibility, unknown vs zero experience, bounded education/projects, and preference entry/array limits.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+      "observations": "Read the complete profile schema tests. They cover supported career segments, legacy compatibility, unknown vs zero experience, bounded education/projects, and preference entry/array limits. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Current SHA-256 records updated bytes for Stage 03 item 3.06.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "f6913d79e21f2bea1e18677ce17c0528d689d94de5e0344dd4b088e6cc21b547"
+      "sha256": "e8e1e514d01dbef2853093d5cf9c39417dfc8ee0d746dfd763547ebaa3957e1c"
     },
     {
       "path": "packages/shared/src/schemas.ts",
@@ -5683,10 +5683,10 @@
           "remediation": "apiErrorSchema corrected to the flat envelope and tested against errorEnvelope output. Unused exports are recorded as technical debt to remove in the next cleanup pass."
         }
       ],
-      "observations": "Read in full (557 lines). Checked: candidate, preference and application schemas bound their free text; the stored profile is revision-guarded in core; core's profile schema requires HTTPS links without credentials; matching breakdown and job schemas match the scoring engine; search and skill-gap query bounds. Defect S1-F019: apiErrorSchema described a nested { error: {...} } body, but the API writes a flat envelope { code, message, requestId, details? }. The schema was unused, so the mismatch could mislead a future client. Fixed: the schema now describes the envelope, and error-handler.test.ts asserts it parses the real errorEnvelope output (14 pass). Technical debt, recorded not fixed: about twenty exported schemas (such as jobSchema, leadPageSchema, runEventSchema, sourceCatalogSchema) have no consumer outside this package. Candidate URL fields use z.string().url(), which accepts non-HTTPS schemes; core's profile schema enforces HTTPS, and profileUpdateSchema is unused.",
-      "evidence": "node --import tsx --test apps/api/src/error-handler.test.ts: 14 pass, 0 fail. npx tsc -b exit 0.",
+      "observations": "Read in full (557 lines). Checked: candidate, preference and application schemas bound their free text; the stored profile is revision-guarded in core; core's profile schema requires HTTPS links without credentials; matching breakdown and job schemas match the scoring engine; search and skill-gap query bounds. Defect S1-F019: apiErrorSchema described a nested { error: {...} } body, but the API writes a flat envelope { code, message, requestId, details? }. The schema was unused, so the mismatch could mislead a future client. Fixed: the schema now describes the envelope, and error-handler.test.ts asserts it parses the real errorEnvelope output (14 pass). Technical debt, recorded not fixed: about twenty exported schemas (such as jobSchema, leadPageSchema, runEventSchema, sourceCatalogSchema) have no consumer outside this package. Candidate URL fields use z.string().url(), which accepts non-HTTPS schemes; core's profile schema enforces HTTPS, and profileUpdateSchema is unused. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs.",
+      "evidence": "node --import tsx --test apps/api/src/error-handler.test.ts: 14 pass, 0 fail. npx tsc -b exit 0. Current SHA-256 records updated bytes for Stage 03 item 3.06.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "857d3048af3b2740f0511b9113c8ce2e7cd8701785249f6e41ba2932d8283f33"
+      "sha256": "d7432d42b2cfdc8dcdcb920361bb7b8021016385fafcde12058f9a3d7e467fd1"
     },
     {
       "path": "packages/shared/src/skills.test.ts",
@@ -6421,10 +6421,10 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Reviewed the guided-onboarding browser scenario: invalid-step focus, career-switcher guidance, back-navigation value retention, actual Save and finish click, and persisted profile assertions.",
-      "evidence": "Focused review and validation for CareerScope Stage 03 item 3.01.",
+      "observations": "Reviewed the guided-onboarding browser scenario: invalid-step focus, career-switcher guidance, back-navigation value retention, actual Save and finish click, and persisted profile assertions. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs. Browser acceptance now explicitly reloads a saved work-history entry and verifies it returns in the editor. Acceptance waits for profile and reload requests to settle around the browser reload.",
+      "evidence": "Focused review and validation for CareerScope Stage 03 item 3.01. Current SHA-256 records updated bytes for Stage 03 item 3.06. Updated for work-history persistence/reload assertion. Updated for reload lifecycle assertions.",
       "reviewer": "Codex (Stage 03 item 3.01)",
-      "sha256": "5ed82785e28c7fa79ccaf3695f4894dd373c802d1ffa34ad36f08354cb4b4587"
+      "sha256": "a2a1e051d56f109270aff92076b91c17121ed93fd43e0c7b6c30ae8213236752"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",

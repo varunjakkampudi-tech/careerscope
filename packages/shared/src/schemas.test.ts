@@ -61,18 +61,23 @@ describe('candidate-declared profile fields', () => {
       candidate: {
         ...profile.candidate,
         education: ['B.Tech, Computer Science'],
+        experience: ['Frontend Engineer at Example Co (2022–2024)'],
         graduationYear: 2024,
         projects: ['Accessible job search prototype'],
       },
     });
     expect(expanded.candidate.education).toEqual(['B.Tech, Computer Science']);
+    expect(expanded.candidate.experience).toEqual(['Frontend Engineer at Example Co (2022–2024)']);
     expect(expanded.candidate.graduationYear).toBe(2024);
     expect(expanded.candidate.projects).toEqual(['Accessible job search prototype']);
     expect(profileSchema.parse(profile).candidate.education).toEqual([]);
+    expect(profileSchema.parse(profile).candidate.experience).toEqual([]);
     expect(profileSchema.parse(profile).candidate.projects).toEqual([]);
     for (const invalid of [
       { education: ['x'.repeat(201)] },
       { education: Array.from({ length: 21 }, (_, index) => `School ${index}`) },
+      { experience: ['x'.repeat(201)] },
+      { experience: Array.from({ length: 21 }, (_, index) => `Role ${index}`) },
       { graduationYear: 1899 },
       { graduationYear: 2101 },
       { graduationYear: 2024.5 },

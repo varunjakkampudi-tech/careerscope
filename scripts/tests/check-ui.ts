@@ -3967,6 +3967,9 @@ try {
         .getByRole('textbox', { name: 'Education', exact: true })
         .fill('B.Tech, Computer Science');
       await page
+        .getByRole('textbox', { name: 'Work Experience', exact: true })
+        .fill('Frontend Engineer at Example Co (2022–2024)');
+      await page
         .getByRole('textbox', { name: 'Projects', exact: true })
         .fill('Accessible job search prototype');
       // Satisfy the profile form's existing required preference fields so the
@@ -3974,11 +3977,16 @@ try {
       await page.getByRole('textbox', { name: 'Target Roles', exact: true }).fill('React Engineer');
       await page.getByRole('textbox', { name: 'Skills', exact: true }).fill('React\nTypeScript');
       const educationField = page.getByRole('textbox', { name: 'Education', exact: true });
+      const workHistoryField = page.getByRole('textbox', {
+        name: 'Work Experience',
+        exact: true,
+      });
       const projectsField = page.getByRole('textbox', { name: 'Projects', exact: true });
       const profiles = new ProfileRepository(database);
       const profileBeforeInvalidInput = await profiles.get(ownerId);
       for (const [field, value] of [
         [educationField, 'B.Tech, Computer Science'],
+        [workHistoryField, 'Frontend Engineer at Example Co (2022–2024)'],
         [projectsField, 'Accessible job search prototype'],
       ] as const) {
         await field.fill('x'.repeat(201));
@@ -4031,11 +4039,23 @@ try {
       await page.getByText('Profile saved.', { exact: true }).waitFor();
       const savedProfile = await new ProfileRepository(database).get(ownerId);
       assert.deepEqual(savedProfile?.profile.candidate.education, ['B.Tech, Computer Science']);
+      assert.deepEqual(savedProfile?.profile.candidate.experience, [
+        'Frontend Engineer at Example Co (2022–2024)',
+      ]);
       assert.equal(savedProfile?.profile.candidate.graduationYear, 2024);
       assert.deepEqual(savedProfile?.profile.accessibility, { reducedMotion: true });
       assert.deepEqual(savedProfile?.profile.candidate.projects, [
         'Accessible job search prototype',
       ]);
+      await settled('profile save before work-history reload');
+      await page.reload();
+      await page.getByLabel('Full Name', { exact: true }).waitFor();
+      assert.equal(
+        await workHistoryField.inputValue(),
+        'Frontend Engineer at Example Co (2022–2024)',
+        `${engine}: saved work history must be restored after reload`,
+      );
+      await settled('work-history profile reload');
       const experienceField = page.getByLabel('Years of Experience', { exact: true });
       await experienceField.fill('');
       await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
@@ -4064,6 +4084,7 @@ try {
       await database.pool.query(
         `UPDATE candidate_profiles
          SET data = data #- '{candidate,education}'
+                    #- '{candidate,experience}'
                     #- '{candidate,projects}'
                     #- '{candidate,graduationYear}'
          WHERE owner_id = $1`,
@@ -4078,15 +4099,20 @@ try {
       assert.equal(await page.locator('html').getAttribute('data-reduced-motion'), 'true');
       assert.equal(await page.getByLabel('Graduation Year', { exact: true }).inputValue(), '');
       assert.equal(await educationField.inputValue(), '');
+      assert.equal(await workHistoryField.inputValue(), '');
       assert.equal(await projectsField.inputValue(), '');
       await page.getByLabel('Graduation Year', { exact: true }).fill('2024');
       await educationField.fill('B.Tech, Computer Science');
+      await workHistoryField.fill('Frontend Engineer at Example Co (2022–2024)');
       await projectsField.fill('Accessible job search prototype');
       await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
       await page.getByText('Profile saved.', { exact: true }).waitFor();
       const normalizedProfile = await profiles.get(ownerId);
       assert.deepEqual(normalizedProfile?.profile.candidate.education, [
         'B.Tech, Computer Science',
+      ]);
+      assert.deepEqual(normalizedProfile?.profile.candidate.experience, [
+        'Frontend Engineer at Example Co (2022–2024)',
       ]);
       assert.equal(normalizedProfile?.profile.candidate.graduationYear, 2024);
       assert.deepEqual(normalizedProfile?.profile.candidate.projects, [

@@ -94,6 +94,7 @@ const profile = object({
       location: text({ minLength: 1, maxLength: 120 }),
       segment: text({ enum: ['student', 'fresher', 'experienced'] }),
       education: array(text({ minLength: 1, maxLength: 200 }), { maxItems: 20, default: [] }),
+      experience: array(text({ minLength: 1, maxLength: 200 }), { maxItems: 20, default: [] }),
       graduationYear: integer({ minimum: 1900, maximum: 2100 }),
       projects: array(text({ minLength: 1, maxLength: 200 }), { maxItems: 20, default: [] }),
       linkedin: link,
