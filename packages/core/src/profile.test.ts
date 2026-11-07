@@ -230,6 +230,22 @@ test('preferred job titles remain in the saved matching preferences', () => {
   assert.deepEqual(matchingProfile(profile).preferences.titles, titles);
 });
 
+test('home location and work-mode preferences remain in the matching profile', () => {
+  const profile = writableProfileSchema.parse({
+    ...syntheticProfile,
+    candidate: { ...syntheticProfile.candidate, location: 'Pune, India' },
+    preferences: {
+      ...syntheticProfile.preferences,
+      locations: ['Pune', 'Remote'],
+      remoteOnly: true,
+    },
+  });
+
+  assert.deepEqual(matchingProfile(profile).candidate, { location: 'Pune, India' });
+  assert.deepEqual(matchingProfile(profile).preferences.locations, ['Pune', 'Remote']);
+  assert.equal(matchingProfile(profile).preferences.remoteOnly, true);
+});
+
 test('profile rejects unknown ownership fields, unsafe links and malformed revisions', () => {
   assert.equal(
     writableProfileSchema.safeParse({ ...syntheticProfile, ownerId: 'other' }).success,

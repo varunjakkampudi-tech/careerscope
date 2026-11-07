@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { preferencesSchema, profileSchema, profileUpdateSchema } from './schemas.js';
+import {
+  candidateSchema,
+  preferencesSchema,
+  profileSchema,
+  profileUpdateSchema,
+} from './schemas.js';
 
 describe('candidate-declared profile fields', () => {
   const profile = {
@@ -199,5 +204,33 @@ describe('preferencesSchema bounds every owner-typed entry, not just the array',
         titles: Array.from({ length: 26 }, (_, index) => `Engineer ${index}`),
       }).success,
     ).toBe(false);
+  });
+
+  it('bounds preferred locations and validates remote-only work mode', () => {
+    expect(preferencesSchema.parse(valid).remoteOnly).toBe(false);
+    expect(
+      preferencesSchema.safeParse({
+        ...valid,
+        locations: Array.from({ length: 25 }, (_, index) => `City ${index}`),
+        remoteOnly: true,
+      }).success,
+    ).toBe(true);
+    expect(
+      preferencesSchema.safeParse({
+        ...valid,
+        locations: Array.from({ length: 26 }, (_, index) => `City ${index}`),
+      }).success,
+    ).toBe(false);
+    expect(preferencesSchema.safeParse({ ...valid, remoteOnly: 'true' }).success).toBe(false);
+  });
+});
+
+describe('candidateSchema location', () => {
+  const valid = { fullName: 'Example Candidate', email: 'candidate@example.test' };
+
+  it('requires a non-empty location of at most 120 characters', () => {
+    expect(candidateSchema.safeParse({ ...valid, location: 'Pune, India' }).success).toBe(true);
+    expect(candidateSchema.safeParse({ ...valid, location: '   ' }).success).toBe(false);
+    expect(candidateSchema.safeParse({ ...valid, location: 'x'.repeat(121) }).success).toBe(false);
   });
 });
