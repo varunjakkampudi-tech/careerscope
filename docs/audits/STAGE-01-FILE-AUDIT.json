@@ -1861,10 +1861,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded PR #53 item 3.10 merge at eb484909c25ba0bc70add17a9279deb464e3d049 and item 3.11 salary-expectation scope submitted for exact-SHA CI and review. Retained the separate legal gate for item 2.05. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "127775c44a06c0e4edcae93c79ec0838c29cbf5d797acb78d4d71e75c2509d3b"
+      "observations": "Recorded PR #53 item 3.10 merge at eb484909c25ba0bc70add17a9279deb464e3d049 and item 3.11 salary-expectation scope submitted for exact-SHA CI and review. Retained the separate legal gate for item 2.05. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; At the time of the item 3.11 review, item 3.12 exact-SHA hosted CI and independent review were pending; the later closeout evidence is recorded below. Re-reviewed the item closeout evidence: exact-SHA ChatGPT acceptance, three passing hosted jobs on the reviewed SHA, and merge commit into dev are reflected consistently in progress and test matrix.",
+      "evidence": "Item 3.12 was accepted at SHA 6aca4d9d8996e0f38bd34cecb4c89c9dee4bc6aa; hosted run 42368802616 passed all three jobs; PR #55 merged to dev as 6d9789cb34d0100ba8a5845b2edfca9ea8fd88d4. This record was reconciled in PR #56 at SHA b912b7c72f6c003a4703c61951d663f60e68df66; its hosted run 42369993846 passed all three jobs.",
+      "reviewer": "Codex (Stage 03 item 3.12 closeout)",
+      "sha256": "8efcdaba63d1afb6bbb3f6c90505bf1c4003aed5e8c570fff13018e6dc437683"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1909,10 +1909,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-SHA CI and conditional review disposition for merged item 3.10; added item 3.11 implementation and local validation scope with CI/review pending. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "e2e6f2fb44a0df75c666a3be6f3323a9e4714f6273c9f206c331263656fe76a7"
+      "observations": "Recorded exact-SHA CI and conditional review disposition for merged item 3.10; added item 3.11 implementation and local validation scope with CI/review pending. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; At the time of the item 3.11 review, item 3.12 exact-SHA hosted CI and independent review were pending; the later closeout evidence is recorded below. Re-reviewed the item closeout evidence: exact-SHA ChatGPT acceptance, three passing hosted jobs on the reviewed SHA, and merge commit into dev are reflected consistently in progress and test matrix.",
+      "evidence": "Item 3.12 was accepted at SHA 6aca4d9d8996e0f38bd34cecb4c89c9dee4bc6aa; hosted run 42368802616 passed all three jobs; PR #55 merged to dev as 6d9789cb34d0100ba8a5845b2edfca9ea8fd88d4. This record was reconciled in PR #56 at SHA b912b7c72f6c003a4703c61951d663f60e68df66; its hosted run 42369993846 passed all three jobs.",
+      "reviewer": "Codex (Stage 03 item 3.12 closeout)",
+      "sha256": "742366547b5cac8b8fd40dae80423e2d3609fda751f07aa1924ef2e3723d6ab6"
     },
     {
       "path": "docs/TESTING.md",
