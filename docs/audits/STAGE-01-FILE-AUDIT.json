@@ -1773,10 +1773,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Mapped canonical owner item 2.10 account recovery to legacy local row 2.17.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.10)",
-      "sha256": "0bb73e5ecd5340081e145ee31441299557ad358057365baf6bab7e40b120d6e9"
+      "observations": "Owner-directed AI-only recovery-copy assessment recorded; original source status pinned, native review not claimed.",
+      "evidence": "Reviewed on review/stage02-210-ai-only-acceptance; SHA-256 records current bytes.",
+      "reviewer": "AI-assisted owner checklist reconciliation (Stage 02 item 2.10)",
+      "sha256": "80743ad60d08ba83055ab4a6dc8432d2c2110875746c208960e45795de0af1a9"
     },
     {
       "path": "docs/KNOWN-LIMITATIONS.md",
@@ -1841,10 +1841,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded account recovery engineering evidence and AI-assisted preliminary comparison of Telugu and Hindi recovery wording; native-language review remains outstanding.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-ai-language-review; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.10)",
-      "sha256": "847e653793e2801ade578eb1c669875d77f141d644cc4c064ae37fd228b2f008"
+      "observations": "Owner-directed AI-only recovery-copy assessment recorded; original source status pinned, native review not claimed.",
+      "evidence": "Reviewed on review/stage02-210-ai-only-acceptance; SHA-256 records current bytes.",
+      "reviewer": "AI-assisted owner checklist reconciliation (Stage 02 item 2.10)",
+      "sha256": "30474c5a443ef534f1a55eb7ff3753b5f0c772b029652f26f5d197f7681c5f64"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -2321,10 +2321,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled canonical owner item 2.10 to partial status for its native-language recovery-copy gap and retained linked integration evidence.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.10)",
-      "sha256": "0f5f942ba5ed218034ed3ad04f156ae8caea99c173294ca6c4b91d878f1c6511"
+      "observations": "Owner-directed AI-only recovery-copy assessment recorded; original source status pinned, native review not claimed.",
+      "evidence": "Reviewed on review/stage02-210-ai-only-acceptance; SHA-256 records current bytes.",
+      "reviewer": "AI-assisted owner checklist reconciliation (Stage 02 item 2.10)",
+      "sha256": "4060124bfafdaa48aae0d1ebafaf93699926687d0f644a1e0c8b822659b02bb2"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",

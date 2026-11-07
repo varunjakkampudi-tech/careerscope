@@ -30,7 +30,33 @@ Owner 22-stage roadmap item 1.14, complete requirement/test traceability, is ver
 
 Owner 22-stage roadmap item 1.15, shared design components, is verified against the existing reusable UI foundations: documented tokens and component guidance, loading/error/empty states, shared panel surfaces, branding, match evidence, and the authenticated dashboard shell. `scripts/tests/design-system-doc.test.ts` passed all six assertions locally; the hosted closeout CI runs this guard and cross-browser UI/accessibility checks on the reviewed revision. Existing screen-specific control styles remain documented to preserve approved visual differences. No visual redesign was introduced.
 
-Owner roadmap item 2.05, new-account registration, remains gated pending counsel-approved legal text and public HTTPS URLs; production deployment remains excluded. Owner item 2.06 remains partial pending native-language review of localized acceptance copy. Owner item 2.07, session rotation, and 2.08, device/session management, have PostgreSQL integration evidence recorded in [TEST-MATRIX](TEST-MATRIX.md). Owner item 2.09, secure email change, has PostgreSQL evidence for address-bound codes and session revocation plus browser workflow evidence. Owner item 2.10, account recovery, is partial: its PostgreSQL integration test covers ownership checks, recovery-address confirmation, cooldown, recovery sign-in, rejection and single-use behavior, security notices, and removal. An AI-assisted comparison found no obvious meaning reversal in the Telugu and Hindi recovery strings for address setup, the 72-hour cooldown, or recovery sign-in, but this is preliminary and does not replace native review; the native-language gap remains open (legacy local row 2.17). Stage 02 local gap-matrix IDs are legacy and differ from canonical owner-roadmap IDs; the traceability inventory is authoritative.
+Owner roadmap item 2.05, new-account registration, remains gated pending counsel-approved legal text and public HTTPS URLs; production deployment remains excluded. Owner item 2.06 remains partial pending native-language review of localized acceptance copy. Owner item 2.07, session rotation, and 2.08, device/session management, have PostgreSQL integration evidence recorded in [TEST-MATRIX](TEST-MATRIX.md). Owner item 2.09, secure email change, has PostgreSQL evidence for address-bound codes and session revocation plus browser workflow evidence. Owner item 2.10, account recovery, is verified under the owner's AI-only acceptance decision (not a native-speaker review): its PostgreSQL integration test covers ownership checks, recovery-address confirmation, cooldown, recovery sign-in, rejection and single-use behavior, security notices, and removal. The owner elected AI-only acceptance for account-recovery UI copy so engineering can proceed; this does not represent native-speaker or legal approval (legacy local row 2.17). Stage 02 local gap-matrix IDs are legacy and differ from canonical owner-roadmap IDs; the traceability inventory is authoritative.
+
+### Owner-directed AI-only language acceptance — item 2.10
+
+The product owner requested that this app's completion workflow not wait for a
+native-speaker reviewer and delegated an AI-only review decision for account-recovery
+UI copy. This changes the **owner item 2.10 acceptance criterion**, not the original
+pinned source checklist or any legal requirement. Native review has **not** occurred.
+The localized strings in `apps/web/src/lib/locale.ts` were compared against English
+on the reviewed `dev` commit `2f73198f453c8b332426c2961f8df1128d7e736b`:
+
+- `recoverySetupIntro` and `recoveryConfirm`: both translations distinguish a
+  secondary recovery address from the primary sign-in address and retain the
+  confirmation step. Hindi “खो दें” is less precise than “lose access”.
+- `recoveryCooldown`: both translations preserve a 72-hour wait **after**
+  confirmation. Telugu “తెరుచుకుంటుంది” and Hindi “खुलता है” are
+  understandable but slightly awkward interface wording.
+- `recoveryFindIntro` and `recoverySignInButton`: both describe signing in
+  through a previously confirmed recovery address.
+- `recoveryRequestNote` and `recoverySent`: both retain the conditional
+  wording rather than revealing whether an account or recovery address exists.
+
+**AI-only acceptance result:** No blocking reversal of the reviewed security or timing
+instructions was identified. Minor phrasing/register differences remain accepted as
+editorial risk for this checklist item. This is a model-assisted assessment, **not**
+native-speaker validation, end-user usability testing, or legal sign-off. Subsequent
+native editorial improvements may be tracked separately without blocking Stage 03.
 
 Stage 02 evidence: [GAP-MATRIX](GAP-MATRIX.md) rows 2.01 to 2.20 and [TEST-MATRIX](TEST-MATRIX.md).
 Commit `c12838e` passed the local gates, the integration suite, the Chromium browser suite, and
