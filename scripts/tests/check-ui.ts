@@ -606,6 +606,8 @@ try {
       assert.deepEqual(await unhandledRejections(rejectionGuardProbe), ['TypeError']);
       await rejectionGuardProbe.close();
 
+      // prettier-ignore
+      if (!profilePhotoOnly) {
       const otpPage = await browser.newPage();
       await installUnhandledRejectionGuard(otpPage);
       let otpRequestCount = 0;
@@ -1053,6 +1055,7 @@ try {
         `${engine} signup UI produced an unhandled promise rejection`,
       );
       await signupPage.close();
+      }
 
       const page = await browser.newPage();
       if (notificationLifecycleOnly) await observeNotificationPage(page, origin);
@@ -1278,7 +1281,16 @@ try {
       });
       const selectFixtureAccount = async (email: string, credential = password) => {
         fixtureCredential = credential;
-        await page.getByRole('button').filter({ hasText: email }).click();
+        const accountButton = page.getByRole('button').filter({ hasText: email });
+        if ((await accountButton.count()) === 0) {
+          assert.fail(
+            `${engine} test account ${email} is unavailable at ${new URL(page.url()).pathname}; ` +
+              `rendered page: ${(await page.locator('body').innerText()).slice(0, 500) || 'empty'}; ` +
+              `browser errors: ${errors.slice(-8).join(' | ') || 'none'}; ` +
+              `recent requests: ${recentRequestEvents.slice(-8).join(' | ') || 'none'}`,
+          );
+        }
+        await accountButton.first().click();
       };
       const errors: string[] = [];
       const warningDiagnostics =
@@ -1695,7 +1707,60 @@ try {
         await page.goto(`${origin}/resume`);
         await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
         await page.getByLabel('Full Name', { exact: true }).waitFor();
-        await page.getByLabel('Upload picture').setInputFiles({
+        const uploadInput = page.getByLabel('Upload picture');
+        await uploadInput.focus();
+        assert.equal(
+          await uploadInput.evaluate((element) => element === document.activeElement),
+          true,
+          'profile photo upload control must be reachable by keyboard',
+        );
+        await uploadInput.setInputFiles({
+          name: 'unsupported.svg',
+          mimeType: 'image/svg+xml',
+          buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"/>'),
+        });
+        await page
+          .getByRole('alert')
+          .filter({ hasText: 'Choose a JPEG, PNG, or WebP image.' })
+          .waitFor();
+        assert.equal(await new ProfilePhotoRepository(database).get(profileOwnerId), null);
+        await uploadInput.setInputFiles({
+          name: 'oversized.png',
+          mimeType: 'image/png',
+          buffer: Buffer.alloc(5 * 1024 * 1024 + 1),
+        });
+        await page
+          .getByRole('alert')
+          .filter({ hasText: 'Choose an image no larger than 5 MB.' })
+          .waitFor();
+        assert.equal(await new ProfilePhotoRepository(database).get(profileOwnerId), null);
+
+        const failUpload = (route: import('playwright').Route) => {
+          if (route.request().method() !== 'PUT') return route.fallback();
+          return route.fulfill({
+            status: 503,
+            contentType: 'application/json',
+            json: {
+              code: 'SERVICE_UNAVAILABLE',
+              message: 'Service temporarily unavailable. Please try again shortly.',
+              requestId: randomUUID(),
+            },
+          });
+        };
+        await page.route('**/api/profile/photo', failUpload);
+        await uploadInput.setInputFiles({
+          name: 'profile-failure.png',
+          mimeType: 'image/png',
+          buffer: profilePhotoFixture,
+        });
+        await page
+          .getByRole('alert')
+          .filter({ hasText: 'Service temporarily unavailable. Please try again shortly.' })
+          .waitFor();
+        await page.unroute('**/api/profile/photo', failUpload);
+        assert.equal(await new ProfilePhotoRepository(database).get(profileOwnerId), null);
+
+        await uploadInput.setInputFiles({
           name: 'profile.png',
           mimeType: 'image/png',
           buffer: profilePhotoFixture,
@@ -1711,9 +1776,17 @@ try {
         await page.reload();
         await page.getByLabel('Full Name', { exact: true }).waitFor();
         assert.equal(await avatars.count(), 2, 'profile picture must persist after reload');
-        await page.getByRole('button', { name: 'Remove picture', exact: true }).click();
+        const removePicture = page.getByRole('button', { name: 'Remove picture', exact: true });
+        await removePicture.focus();
+        await removePicture.press('Enter');
         await page.getByRole('status').filter({ hasText: 'Profile picture removed.' }).waitFor();
         assert.equal(await photoRepository.get(profileOwnerId), null);
+        assert.equal(await avatars.count(), 0, 'removed picture must not remain in either avatar');
+        assert.deepEqual(
+          await page.locator(`span[title="${accountEmail}"]`).allTextContents(),
+          ['SC', 'SC'],
+          'removing a photo must restore the signed-in owner’s initials avatar',
+        );
         process.stdout.write(
           `${engine}: profile photo upload, avatar, reload and removal passed\n`,
         );

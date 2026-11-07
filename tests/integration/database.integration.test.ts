@@ -10,6 +10,7 @@ import { join } from 'node:path';
 import test from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { z } from 'zod';
 import {
@@ -361,6 +362,22 @@ test('Swagger documents every runtime route without changing validation and prot
             await app.inject({
               method: 'PUT',
               url: '/api/profile/photo',
+              headers: { origin, 'content-type': 'image/png' },
+              payload: Buffer.from('unauthenticated'),
+            })
+          ).statusCode,
+          401,
+        );
+        assert.equal(
+          (await app.inject({ method: 'DELETE', url: '/api/profile/photo', headers: { origin } }))
+            .statusCode,
+          401,
+        );
+        assert.equal(
+          (
+            await app.inject({
+              method: 'PUT',
+              url: '/api/profile/photo',
               headers: { cookie, origin, 'content-type': 'image/png' },
               payload: Buffer.from('denied'),
             })
@@ -403,9 +420,53 @@ test('Swagger documents every runtime route without changing validation and prot
         assert.equal(photo.headers['x-content-type-options'], 'nosniff');
         assert.equal(photo.headers['cache-control'], 'no-store');
         assert.ok(photo.rawPayload.subarray(0, 4).equals(Buffer.from('RIFF')));
+        const originalImage = Buffer.from(photo.rawPayload);
         assert.equal(
           (await app.inject({ url: '/api/profile/photo', headers: otherHeaders })).statusCode,
           204,
+        );
+        const otherPicture = await sharp({
+          create: {
+            width: 2,
+            height: 2,
+            channels: 3,
+            background: { r: 220, g: 20, b: 30 },
+          },
+        })
+          .png()
+          .toBuffer();
+        assert.equal(
+          (
+            await app.inject({
+              method: 'PUT',
+              url: '/api/profile/photo',
+              headers: { ...otherHeaders, 'content-type': 'image/png' },
+              payload: otherPicture,
+            })
+          ).statusCode,
+          204,
+        );
+        const otherPhoto = await app.inject({ url: '/api/profile/photo', headers: otherHeaders });
+        assert.equal(otherPhoto.statusCode, 200);
+        assert.notDeepEqual(otherPhoto.rawPayload, originalImage);
+        assert.deepEqual(
+          (await app.inject({ url: '/api/profile/photo', headers })).rawPayload,
+          originalImage,
+          'owner B upload must not replace owner A picture',
+        );
+        assert.equal(
+          (await app.inject({ method: 'DELETE', url: '/api/profile/photo', headers: otherHeaders }))
+            .statusCode,
+          204,
+        );
+        assert.equal(
+          (await app.inject({ url: '/api/profile/photo', headers: otherHeaders })).statusCode,
+          204,
+        );
+        assert.deepEqual(
+          (await app.inject({ url: '/api/profile/photo', headers })).rawPayload,
+          originalImage,
+          'owner B delete must not remove owner A picture',
         );
         const profileAfterPhoto = await app.inject({ url: '/api/profile', headers });
         assert.deepEqual(profileAfterPhoto.json(), profile.json());

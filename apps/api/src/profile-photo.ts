@@ -21,6 +21,7 @@ export class InvalidProfilePhoto extends Error {
 export async function normalizeProfilePhoto(
   input: Buffer,
   declaredContentType: string | undefined,
+  maximumOutputBytes = maximumProfilePhotoStorageBytes,
 ): Promise<Buffer> {
   const contentType = declaredContentType?.split(';', 1)[0]?.trim().toLowerCase();
   if (
@@ -53,7 +54,7 @@ export async function normalizeProfilePhoto(
       .resize({ width: 512, height: 512, fit: 'inside', withoutEnlargement: true })
       .webp({ quality: 82, effort: 4 })
       .toBuffer({ resolveWithObject: true });
-    if (data.length > maximumProfilePhotoStorageBytes) throw new InvalidProfilePhoto();
+    if (data.length > maximumOutputBytes) throw new InvalidProfilePhoto();
     return data;
   } catch (error) {
     if (error instanceof InvalidProfilePhoto) throw error;

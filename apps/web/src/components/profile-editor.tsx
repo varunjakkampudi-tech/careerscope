@@ -10,6 +10,9 @@ import styles from './profile-editor.module.css';
 import ResumePanel, { type ResumeProposal } from './resume-panel';
 import { ErrorState, LoadingState } from './ui-states';
 
+const maximumProfilePhotoUploadBytes = 5 * 1024 * 1024;
+const profilePhotoTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
+
 const employmentOptions = [
   ['fulltime', 'Full-time'],
   ['parttime', 'Part-time'],
@@ -55,6 +58,7 @@ function ProfileForm({
     HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null
   >(null);
   const [photoMessage, setPhotoMessage] = useState('');
+  const [photoValidationError, setPhotoValidationError] = useState('');
 
   const save = useMutation({
     mutationFn: (profile: WritableProfile) =>
@@ -405,7 +409,17 @@ function ProfileForm({
                   event.currentTarget.value = '';
                   if (file) {
                     setPhotoMessage('');
+                    setPhotoValidationError('');
                     photoDelete.reset();
+                    photoUpload.reset();
+                    if (!profilePhotoTypes.has(file.type)) {
+                      setPhotoValidationError('Choose a JPEG, PNG, or WebP image.');
+                      return;
+                    }
+                    if (file.size > maximumProfilePhotoUploadBytes) {
+                      setPhotoValidationError('Choose an image no larger than 5 MB.');
+                      return;
+                    }
                     photoUpload.mutate(file);
                   }
                 }}
@@ -416,6 +430,7 @@ function ProfileForm({
               className="button-secondary"
               onClick={() => {
                 setPhotoMessage('');
+                setPhotoValidationError('');
                 photoUpload.reset();
                 photoDelete.mutate();
               }}
@@ -425,9 +440,9 @@ function ProfileForm({
               {photoDelete.isPending ? 'Removing…' : 'Remove picture'}
             </button>
           </div>
-          {(photoUpload.error || photoDelete.error) && (
+          {(photoValidationError || photoUpload.error || photoDelete.error) && (
             <p className={styles.photoError} role="alert">
-              {(photoUpload.error ?? photoDelete.error)?.message ??
+              {(photoValidationError || (photoUpload.error ?? photoDelete.error)?.message) ??
                 'Could not update your picture.'}
             </p>
           )}
