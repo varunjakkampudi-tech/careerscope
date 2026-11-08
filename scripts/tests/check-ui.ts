@@ -4254,6 +4254,15 @@ try {
       });
       await sidebarNav.getByRole('link', { name: 'Resume', exact: true }).click();
       await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
+      const recruiterVisibilityField = page.getByRole('checkbox', {
+        name: 'Allow recruiters to discover my profile when that feature becomes available',
+      });
+      assert.equal(
+        await recruiterVisibilityField.isChecked(),
+        false,
+        `${engine}: legacy profiles must default to private recruiter visibility`,
+      );
+      await recruiterVisibilityField.check();
       await page.getByLabel('Full Name', { exact: true }).fill('Example Candidate');
       await page.getByLabel('Email', { exact: true }).fill('candidate@example.test');
       const homeLocationField = page.getByLabel('Location', { exact: true });
@@ -4446,9 +4455,6 @@ try {
       await settled('profile save before work-history reload');
       await page.reload();
       await page.getByLabel('Full Name', { exact: true }).waitFor();
-      const recruiterVisibilityField = page.getByRole('checkbox', {
-        name: 'Allow recruiters to discover my profile when that feature becomes available',
-      });
       assert.equal(await recruiterVisibilityField.isChecked(), true);
       assert.equal(await homeLocationField.inputValue(), 'Pune, India');
       assert.equal(await preferredLocationsField.inputValue(), 'Pune\nRemote');
