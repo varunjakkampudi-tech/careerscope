@@ -1401,9 +1401,9 @@
       "concerns": [],
       "findings": [],
       "reviewer": "Codex (Stage 03 item 3.16)",
-      "observations": "Reviewed all profile completeness unit cases: empty profile, 100 percent saved profile, exact intermediate increments, student/fresher/experienced background paths, whitespace handling, and optional profile fields excluded.",
-      "evidence": "Included in npm test. Focused tests 6/6; full unit suite 371 passed, 3 skipped, 0 failed.",
-      "sha256": "3b4c9e8438386520d0ad933883a4b5c0e9085ccd00f90abe8b52e31b1d93afd5"
+      "observations": "Reviewed all profile completeness unit cases, including all 12 career-stage/background-source combinations (student, fresher, experienced, unset x education, experience, projects), empty and complete profiles, exact intermediate percentages, whitespace handling, and explicit exclusion of optional contact, link, photo, resume, location, and salary fields.",
+      "evidence": "Focused profile completeness tests passed 6/6; full unit suite passed 371 with 3 skipped and 0 failures; typecheck and Stage 01 audit passed on the current worktree revision.",
+      "sha256": "c4756862bdf43c3157ffc597002ed121376683b7beafcbc64be261ca3f9dc226"
     },
     {
       "path": "apps/web/src/lib/profile-completeness.ts",
@@ -2430,10 +2430,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the owner item 3.16 evidence row mapping its checklist model, unit/browser tests, dashboard route, and API parser. Updated its status to show hosted checks passed while independent ChatGPT final review remains pending and the item remains in progress.",
-      "evidence": "Hosted run 42468793148 passed all three jobs on PR head c2e17053a73f3d1a25ee3d516a60c740d1094592. Local browser suite was unavailable without .env. Exact-SHA final reviewer decision remains pending.",
+      "observations": "Updated the item 3.16 evidence row to separate historical CI and prior exact-SHA review from the current follow-up changes. The row explicitly keeps the item in progress pending new exact-SHA CI/review and integration/roadmap closeout.",
+      "evidence": "Prior run 42469853165 and approval apply only to SHA 5af43622bbb10e87733cd10f34cd17e7f282b5d6. Current follow-up requires a new hosted run and review.",
       "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "b262e576dba1db8d91f968ca55cd66eeedc3997f59d54138565520c914627a6b"
+      "sha256": "66386431b1fdaced48b1c0532b30536c67ac5482c64e283b0040e1acf96b5556"
     },
     {
       "path": "docs/TESTING.md",

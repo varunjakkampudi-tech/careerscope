@@ -57,33 +57,32 @@ describe('profile completeness checklist', () => {
     }
   });
 
-  it('uses the selected stage to accept relevant background information', () => {
-    const fresher = {
-      ...completeProfile,
-      candidate: {
-        ...completeProfile.candidate,
-        segment: 'fresher' as const,
-        education: [],
-        projects: ['Capstone'],
-      },
-    };
-    const experienced = {
-      ...completeProfile,
-      candidate: {
-        ...completeProfile.candidate,
-        segment: 'experienced' as const,
-        education: [],
-        experience: ['Engineer at Acme'],
-      },
-    };
-    assert.equal(
-      profileCompletenessChecks(fresher).find((check) => check.id === 'background')?.done,
-      true,
-    );
-    assert.equal(
-      profileCompletenessChecks(experienced).find((check) => check.id === 'background')?.done,
-      true,
-    );
+  it('covers every career-stage and background-source combination', () => {
+    const segments = ['student', 'fresher', 'experienced', undefined] as const;
+    const sources = ['education', 'experience', 'projects'] as const;
+
+    for (const segment of segments) {
+      for (const source of sources) {
+        const profile = {
+          ...completeProfile,
+          candidate: {
+            ...completeProfile.candidate,
+            segment,
+            education: source === 'education' ? ['BSc Computer Science'] : [],
+            experience: source === 'experience' ? ['Engineer at Acme'] : [],
+            projects: source === 'projects' ? ['Capstone'] : [],
+          },
+        };
+        const expected =
+          segment === 'student' || segment === 'fresher' ? source !== 'experience' : true;
+
+        assert.equal(
+          profileCompletenessChecks(profile).find((check) => check.id === 'background')?.done,
+          expected,
+          `${segment ?? 'unset'} candidates should ${expected ? '' : 'not '}count ${source}`,
+        );
+      }
+    }
   });
 
   it('does not award completion for whitespace-only entries or infer an unset career stage', () => {
@@ -104,17 +103,61 @@ describe('profile completeness checklist', () => {
     assert.equal(checks.find((check) => check.id === 'skills')?.done, false);
   });
 
-  it('accepts education for experienced candidates and does not require optional profile data', () => {
-    const experienced = {
+  it('ignores optional contact, link, photo, resume, location, and salary fields', () => {
+    const incompleteProfile = {
       ...completeProfile,
       candidate: {
         ...completeProfile.candidate,
-        segment: 'experienced' as const,
+        fullName: '',
+        email: '',
+        location: '',
+        segment: undefined,
+        education: [],
         experience: [],
+        projects: [],
+      },
+      preferences: { titles: [], techStack: [] },
+    };
+    const optionalFieldsOnly = {
+      ...incompleteProfile,
+      candidate: {
+        ...incompleteProfile.candidate,
+        phone: '+1-555-0100',
+        website: 'https://example.com',
+        photoUrl: 'https://example.com/photo.webp',
+        resumeFilename: 'resume.pdf',
+      },
+      preferences: {
+        ...incompleteProfile.preferences,
+        locations: ['Pune'],
+        salaryMin: 100000,
       },
     };
-    const checks = profileCompletenessChecks(experienced);
-    assert.equal(checks.find((check) => check.id === 'background')?.done, true);
-    assert.equal(checks.length, 5);
+    const baselineChecks = profileCompletenessChecks(incompleteProfile);
+    const optionalChecks = profileCompletenessChecks(optionalFieldsOnly);
+
+    assert.equal(baselineChecks.length, 5);
+    assert.deepEqual(optionalChecks, baselineChecks);
+    assert.equal(profileCompletenessPercent(optionalChecks), 0);
+
+    const completeWithOptionalFields = {
+      ...completeProfile,
+      candidate: {
+        ...completeProfile.candidate,
+        phone: '+1-555-0100',
+        website: 'https://example.com',
+        photoUrl: 'https://example.com/photo.webp',
+        resumeFilename: 'resume.pdf',
+      },
+      preferences: {
+        ...completeProfile.preferences,
+        locations: ['Pune'],
+        salaryMin: 100000,
+      },
+    };
+    assert.deepEqual(
+      profileCompletenessChecks(completeWithOptionalFields),
+      profileCompletenessChecks(completeProfile),
+    );
   });
 });
