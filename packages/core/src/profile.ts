@@ -63,6 +63,13 @@ export const writableProfileSchema = z
       context.addIssue({ code: 'custom', message: 'Invalid candidate profile' });
       return z.NEVER;
     }
+    if (!privacy.data.recruiterVisible && privacy.data.recruiterVisibleFields.length > 0) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Private profiles cannot retain recruiter-visible fields',
+      });
+      return z.NEVER;
+    }
     return {
       candidate: candidate.data,
       preferences: preferences.data,
@@ -144,8 +151,13 @@ export class ProfileRepository {
     );
     const record = result.rows[0];
     if (!record) return null;
-    // Normalize fields added to the JSON profile contract without rewriting stored legacy rows.
-    return { ...record, profile: writableProfileSchema.parse(record.profile) };
+    // Normalize only the privacy contract so historical profile representations remain readable.
+    const storedProfile = record.profile as WritableProfile & { privacy?: unknown };
+    const parsedPrivacy = profilePrivacySchema.parse(storedProfile.privacy ?? {});
+    const privacy = parsedPrivacy.recruiterVisible
+      ? parsedPrivacy
+      : { ...parsedPrivacy, recruiterVisibleFields: [] };
+    return { ...record, profile: { ...storedProfile, privacy } };
   }
 
   /**
