@@ -2430,10 +2430,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed and added the owner item 3.16 evidence row, mapping its pure checklist model, unit/browser tests, dashboard route, and API parser to the expected checks while leaving hosted acceptance pending.",
-      "evidence": "Stage 03 item 3.16 local checks passed; local browser suite unavailable without .env; exact-SHA hosted CI pending.",
+      "observations": "Reviewed the owner item 3.16 evidence row mapping its checklist model, unit/browser tests, dashboard route, and API parser. Updated its status to show hosted checks passed while independent ChatGPT final review remains pending and the item remains in progress.",
+      "evidence": "Hosted run 42468793148 passed all three jobs on PR head c2e17053a73f3d1a25ee3d516a60c740d1094592. Local browser suite was unavailable without .env. Exact-SHA final reviewer decision remains pending.",
       "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "0289fb033f24d8c3cf2d26f64103fa7c81efcb5bf5ee0a006430e570cdc55d24"
+      "sha256": "b262e576dba1db8d91f968ca55cd66eeedc3997f59d54138565520c914627a6b"
     },
     {
       "path": "docs/TESTING.md",
