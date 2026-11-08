@@ -227,7 +227,9 @@ last-write-wins overwrite.
 The owner profile includes `privacy.recruiterVisible`, defaulting to `false`, and
 `privacy.recruiterVisibleFields`, defaulting to an empty allowlist. Candidates can
 select from a fixed set of non-contact professional fields and withdraw consent
-by disabling visibility or clearing the list. Contact details, compensation,
+by disabling visibility or clearing the list; privacy validation rejects a
+private profile with retained recruiter-visible fields. Changes apply after a
+successful profile save. Contact details, compensation,
 birth date, photos, and resumes cannot be selected. These are preferences only,
 not access grants: recruiter search and recruiter profile-read routes do not
 exist yet, and no current API exposes profiles to recruiters. Candidate photos

@@ -3687,6 +3687,47 @@ test('createSearch snapshots the latest parsed resume onto the matching profile,
     });
     await profileRepo.save(ownerId, { revision: 0, profile: syntheticProfile });
 
+    const legacyProfileWithoutPrivacy = { ...syntheticProfile };
+    delete legacyProfileWithoutPrivacy.privacy;
+    const historicalProfile = {
+      ...legacyProfileWithoutPrivacy,
+      candidate: { ...syntheticProfile.candidate, historicalField: 'preserve this value' },
+    };
+    await database.pool.query(
+      'UPDATE candidate_profiles SET data = $2::jsonb WHERE owner_id = $1',
+      [ownerId, JSON.stringify(historicalProfile)],
+    );
+    const normalizedHistorical = await profileRepo.get(ownerId);
+    assert.deepEqual(normalizedHistorical?.profile.privacy, {
+      recruiterVisible: false,
+      recruiterVisibleFields: [],
+    });
+    assert.equal(
+      (
+        normalizedHistorical?.profile.candidate as typeof syntheticProfile.candidate & {
+          historicalField: string;
+        }
+      ).historicalField,
+      'preserve this value',
+    );
+
+    await database.pool.query(
+      'UPDATE candidate_profiles SET data = $2::jsonb WHERE owner_id = $1',
+      [
+        ownerId,
+        JSON.stringify({
+          ...historicalProfile,
+          privacy: { recruiterVisible: false, recruiterVisibleFields: ['location'] },
+        }),
+      ],
+    );
+    const normalizedOptOut = await profileRepo.get(ownerId);
+    assert.deepEqual(normalizedOptOut?.profile.privacy, {
+      recruiterVisible: false,
+      recruiterVisibleFields: [],
+    });
+    await profileRepo.save(ownerId, { revision: 1, profile: syntheticProfile });
+
     // No resume uploaded yet: derived must be null, not omitted or defaulted
     // to something indistinguishable from "resume present but empty".
     const beforeResume = await database.createSearch(ownerId, 'before-resume', request);

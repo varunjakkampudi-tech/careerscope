@@ -18,6 +18,7 @@ import {
   derivedResumeSchema,
   jobFeedbackReasonSchema,
   matchBreakdownSchema,
+  profilePrivacySchema,
 } from '@careerscope/shared';
 
 /** Message for a response that parsed as JSON but not as the expected shape. Fixed, so no server content reaches the screen. */
@@ -188,12 +189,7 @@ const profileDataSchema = z.object({
         application.availabilityStatus ??
         (application.noticePeriodDays === 0 ? 'immediate' : 'notice_period'),
     })),
-  privacy: z
-    .object({
-      recruiterVisible: z.boolean().default(false),
-      recruiterVisibleFields: z.array(z.string()).default([]),
-    })
-    .default({ recruiterVisible: false, recruiterVisibleFields: [] }),
+  privacy: profilePrivacySchema.default({ recruiterVisible: false, recruiterVisibleFields: [] }),
   accessibility: z.object({ reducedMotion: z.boolean().default(false) }).optional(),
 });
 

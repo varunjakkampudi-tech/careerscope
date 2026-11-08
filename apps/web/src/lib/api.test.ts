@@ -28,6 +28,37 @@ test('legacy profile responses default recruiter visibility to private and allow
   });
 });
 
+test('profile responses reject recruiter fields outside the approved unique allowlist', () => {
+  const response = {
+    revision: 1,
+    updatedAt: '2026-11-08T00:00:00.000Z',
+    profile: {
+      candidate: {
+        fullName: 'Synthetic Candidate',
+        email: 'candidate@example.test',
+        location: 'Pune',
+      },
+      preferences: { titles: ['Engineer'], techStack: ['TypeScript'] },
+      application: {},
+      privacy: { recruiterVisible: true, recruiterVisibleFields: ['location'] },
+    },
+  };
+
+  for (const recruiterVisibleFields of [['email'], ['location', 'location']]) {
+    assert.throws(
+      () =>
+        parseProfileResponse({
+          ...response,
+          profile: {
+            ...response.profile,
+            privacy: { recruiterVisible: true, recruiterVisibleFields },
+          },
+        }),
+      /unexpected response/i,
+    );
+  }
+});
+
 /**
  * CS-35 AC3, client half: every supported conflict code, an unknown code and a
  * set of malformed 409 bodies, asserted against the real `apiJson()` helper the
