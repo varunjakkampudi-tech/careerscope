@@ -1949,7 +1949,7 @@
       "observations": "Re-reviewed Stage 01 item 1.01 record. The verification column no longer labels November 8 evidence as November 6; the row records parent-dev CI and makes clear that the conditional review was for the previous head, with suggested refinements applied and new-head validation pending. Current merged-dev Stage 03 item 3.14 delta reviewed; prior Stage 01 review retained.",
       "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending. Updated for exact merged-dev item 3.14 source; item-specific verification and exact-head CI review recorded separately.",
       "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "09d13cab7e2f4fad4907a2c5ea2c7189dcae6969a4292826750d0235be1247e0"
+      "sha256": "f0d9989dd6355a0ba7b390bbaa250a19d5cb869b63fe9d7ec231965f99cba43c"
     },
     {
       "path": "docs/TESTING.md",
