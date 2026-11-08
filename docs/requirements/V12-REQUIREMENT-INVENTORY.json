@@ -1628,13 +1628,14 @@
       "kind": "CLAUSE",
       "context": "",
       "text": "- A tick is shown only when its check has completed",
-      "assessment": "IMPLEMENTED",
+      "assessment": "PARTIAL",
       "verification": "UNIT_TESTS_PASSED",
+      "gap": "The account-security UI conditionally renders dated email-verification status, and browser checks cover its present and absent states. The UI presents status text rather than a general tick component; no optional college/profile-link ticks or their issuance/display workflow exist.",
       "launchBlocking": false,
       "evidence": {
         "implementation": [
           "apps/web/src/components/account-security.tsx:218",
-          "apps/api/src/app.ts:568"
+          "apps/api/src/app.ts:638"
         ],
         "tests": ["scripts/tests/check-ui.ts:862", "scripts/tests/check-ui.ts:876"]
       }
