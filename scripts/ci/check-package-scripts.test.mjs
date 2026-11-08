@@ -14,6 +14,10 @@ const read = (path) => readFileSync(`${root}${path}`, 'utf8');
 const { scripts } = JSON.parse(read('package.json'));
 const workflow = read('.github/workflows/ci.yml');
 
+test('Stage 01 file audit requires complete review coverage', () => {
+  assert.match(scripts['audit:stage01'], /check-file-audit\.mjs --require-complete$/);
+});
+
 test('test:integration puts --test-concurrency=1 directly after --test', () => {
   assert.ok(
     scripts['test:integration'].includes('--test --test-concurrency=1 '),
