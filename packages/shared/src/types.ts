@@ -11,6 +11,7 @@ import type {
   DerivedResume,
   MatchBreakdown,
   Preferences,
+  ProfilePrivacy,
   Salary,
 } from './schemas.js';
 
@@ -229,6 +230,7 @@ export type WritableProfile = {
   candidate: Candidate;
   preferences: Preferences;
   application: ApplicationDetails;
+  privacy: ProfilePrivacy;
   accessibility: { reducedMotion: boolean };
 };
 

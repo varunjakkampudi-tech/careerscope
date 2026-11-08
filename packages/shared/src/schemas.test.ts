@@ -86,6 +86,25 @@ describe('candidate-declared profile fields', () => {
     ).toEqual({ preferredContactMethod: 'phone' });
   });
 
+  it('defaults recruiter visibility to private and accepts only an explicit boolean preference', () => {
+    expect(profileSchema.parse(profile).privacy).toEqual({ recruiterVisible: false });
+    expect(
+      profileSchema.parse({
+        ...profile,
+        privacy: { recruiterVisible: true },
+      }).privacy,
+    ).toEqual({ recruiterVisible: true });
+    expect(profileUpdateSchema.parse({ privacy: { recruiterVisible: true } }).privacy).toEqual({
+      recruiterVisible: true,
+    });
+    expect(profileUpdateSchema.safeParse({ privacy: { recruiterVisible: 'true' } }).success).toBe(
+      false,
+    );
+    expect(
+      profileUpdateSchema.safeParse({ privacy: { recruiterVisible: true, public: true } }).success,
+    ).toBe(false);
+  });
+
   it('rejects inconsistent availability and notice-day combinations', () => {
     for (const application of [
       { availabilityStatus: 'immediate', noticePeriodDays: 30 },

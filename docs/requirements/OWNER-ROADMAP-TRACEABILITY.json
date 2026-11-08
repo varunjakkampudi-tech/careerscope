@@ -767,11 +767,23 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Profile visibility/privacy",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/shared/src/schemas.ts",
+        "packages/core/src/profile.ts",
+        "apps/web/src/components/profile-editor.tsx",
+        "apps/api/src/openapi.ts",
+        "docs/API-SURFACE.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/shared/src/schemas.test.ts",
+        "packages/core/src/profile.test.ts",
+        "apps/web/src/lib/api.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Owner-controlled recruiter visibility preference is revision-saved and defaults private. No recruiter-facing profile read exists, so the preference does not expose profile data; actual access enforcement, privacy review of exposed fields, and recruiter-path tests remain outstanding.",
       "scopeDisposition": "in-scope"
     },
     {

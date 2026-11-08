@@ -1141,7 +1141,7 @@
       "text": "- Candidate availability (optional): immediate, notice period, preferred contact, recruiter visibility",
       "assessment": "PARTIAL",
       "verification": "UNIT_TESTS_PASSED",
-      "gap": "Immediate availability, notice-period state, and preferred contact are implemented. Recruiter visibility remains deferred to owner item 3.15, which covers profile visibility and privacy.",
+      "gap": "Immediate availability, notice-period state, and preferred contact are implemented. Owner item 3.15 now stores a default-private recruiter-visibility preference, but no recruiter-facing profile read exists and no data is exposed through that setting.",
       "launchBlocking": false,
       "evidence": {
         "implementation": [

@@ -1,7 +1,29 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { ApiError, apiJson, apiParsed, isNotFound, offersDiscardAndReload } from './api';
-import { parseAccountSessions, parseMarketingConsent, parseSession } from './api-schemas';
+import {
+  parseAccountSessions,
+  parseMarketingConsent,
+  parseProfileResponse,
+  parseSession,
+} from './api-schemas';
+
+test('legacy profile responses default recruiter visibility to private', () => {
+  const parsed = parseProfileResponse({
+    revision: 1,
+    updatedAt: '2026-11-08T00:00:00.000Z',
+    profile: {
+      candidate: {
+        fullName: 'Synthetic Candidate',
+        email: 'candidate@example.test',
+        location: 'Pune',
+      },
+      preferences: { titles: ['Engineer'], techStack: ['TypeScript'] },
+      application: {},
+    },
+  });
+  assert.deepEqual(parsed.profile?.privacy, { recruiterVisible: false });
+});
 
 /**
  * CS-35 AC3, client half: every supported conflict code, an unknown code and a
