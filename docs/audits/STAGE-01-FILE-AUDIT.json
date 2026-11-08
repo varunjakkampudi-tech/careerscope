@@ -1898,10 +1898,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Re-reviewed the current progress text and retained the distinction between the partial 3.14 lifecycle foundation and missing product/counsel gates. PR #60 is synchronized at 53ee618c9255cab9e1346a772947478e8b61981d; exact-head run 42497681220 is in progress. The local dynamic-count test fix is not yet committed and is not covered by that run.",
-      "evidence": "Updated after exact PR head and CI state were checked on 2026-11-08. Current local change derives the prose-count mutation test input from the requirement inventory; focused test result 24/24. No completion claim for item 3.14.",
+      "observations": "Re-reviewed the current progress text and retained the distinction between the partial 3.14 lifecycle foundation and missing product/counsel gates. PR #60 is synchronized at a42f3019df908ac6a543a46daf7e36d379feba3a; exact-head run 42497964957 is in progress. Commit a42f301 includes the dynamic-count test fix; prior run 42497681220 is on 53ee618 and does not validate it.",
+      "evidence": "Updated after verifying exact PR head and CI state on 2026-11-08. The committed test change derives the prose-count mutation input from the requirement inventory and passes 24/24 locally. No completion claim for item 3.14.",
       "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "a897072b270ce0554b1c5c4e64f39a47178d76bc15fa7310dce38c6ef5a6dddc"
+      "sha256": "1e3aae8fa3d60e76734e1afd182b0472fa045b60d30783c2c2d44b39466ea93c"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1946,10 +1946,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the Stage 03 item 3.14 row. It records exact PR head 53ee618c9255cab9e1346a772947478e8b61981d and run 42497681220 as in progress; the local count-agnostic regression test change is uncommitted and is not covered by that run. Item 3.14 remains partial.",
-      "evidence": "Updated after checking PR #60 and its exact-head run on 2026-11-08. Focused local traceability test passed 24/24 after deriving the expected inventory count dynamically.",
+      "observations": "Re-reviewed the Stage 03 item 3.14 row. It records exact PR head a42f3019df908ac6a543a46daf7e36d379feba3a and run 42497964957 as in progress. The committed count-agnostic regression test passes 24/24 locally; earlier run 42497681220 is on prior SHA 53ee618.",
+      "evidence": "Updated after checking PR #60 and exact-head run 42497964957 on 2026-11-08. Focused local traceability test passed 24/24 after deriving the expected inventory count dynamically.",
       "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "f0ecce0cce2d51355cc7d8d08528d7f02dc0dcf1dbf7d9744940b93364377564"
+      "sha256": "c84143b8134d03e1387cc3dc2c3912780e72cebf593cf8d80e8c0739b7729a9f"
     },
     {
       "path": "docs/TESTING.md",
@@ -6108,8 +6108,8 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-read the v12 reconciliation assertions and made the Item 1.02 prose-count mutation test derive its fixture from analyzeInventory rather than hard-coding the current IMPLEMENTED count. This avoids false failure when valid inventory counts change.",
-      "evidence": "Focused command: node --test scripts/ci/check-traceability.test.mjs; passed 24/24 locally. Current PR run 42497681220 is on prior exact commit 53ee618c9255cab9e1346a772947478e8b61981d and does not include this uncommitted change.",
+      "observations": "Re-read the v12 reconciliation assertions and made the Item 1.02 prose-count mutation test derive its fixture from analyzeInventory rather than hard-coding the current IMPLEMENTED count. This avoids false failure when inventory counts legitimately change.",
+      "evidence": "Focused command: node --test scripts/ci/check-traceability.test.mjs; passed 24/24 locally. Commit a42f301 includes this change. Exact-head hosted CI run 42497964957 is in progress.",
       "reviewer": "Codex (Stage 01 item 1.02)",
       "sha256": "b1022e02bcea4f1fde82af687ce3ee8dc1993d85f868ca5280c9b99caa24b6d4"
     },
