@@ -2947,6 +2947,11 @@ try {
         .filter({ hasText: 'Could not load your profile completeness.' })
         .waitFor();
       assert.equal(
+        failedProfileReads,
+        2,
+        `${engine}: the error state must follow the two intentionally failed profile reads`,
+      );
+      assert.equal(
         await failedCompletenessPanel.getByRole('progressbar').count(),
         0,
         `${engine}: failed profile reads must not show a calculated completeness value`,
@@ -2956,11 +2961,21 @@ try {
         .getByRole('progressbar', { name: 'Profile completeness' })
         .waitFor();
       assert.equal(
+        failedProfileReads,
+        2,
+        `${engine}: retry should recover using the third profile read`,
+      );
+      assert.equal(
         await failedCompletenessPanel.getByRole('alert').count(),
         0,
         `${engine}: retrying a failed profile read must recover the completeness panel`,
       );
       await page.unroute('**/api/profile');
+      errors.splice(
+        0,
+        errors.length,
+        ...errors.filter((error) => !error.startsWith('resource HTTP 503 at /api/profile')),
+      );
       assert.equal(
         await page.getByRole('status').filter({ hasText: 'Step ' }).count(),
         0,
