@@ -6494,8 +6494,8 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Added Stage 02 localized privacy acknowledgement label assertions for English, Telugu and Hindi; browser execution remains pending.",
-      "evidence": "Updated in the item 2.06 privacy acknowledgement change; source and candidate regression assertions reviewed, hosted browser validation pending.",
+      "observations": "Added Stage 02 localized privacy acknowledgement label assertions for English, Telugu and Hindi; the hosted browser, accessibility, keyboard and responsive checks passed on the exact candidate commit.",
+      "evidence": "Updated in the item 2.06 privacy acknowledgement change; run 42480779521 passed on exact SHA 9def14e0bff27319b50c1bef7c542781ca70bc1a.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
       "sha256": "0753d1277de11fda4b030efab9d3557b5c842e6f945e4f51c31a92a92d3ad9cc"
     },
