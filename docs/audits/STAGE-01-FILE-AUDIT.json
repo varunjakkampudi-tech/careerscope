@@ -2399,7 +2399,7 @@
         }
       ],
       "observations": "Reviewed the generated summary correction for V12-7-009 against its source inventory and lifecycle implementation. The prior wording incorrectly said expiry, recheck and revocation were absent; the regenerated row now distinguishes existing generic lifecycle primitives from the still-unimplemented complete verification acceptance flow. The summary continues to record 319 clauses, 11 owner-scoped Hostinger/backup/restore exclusions, 153 in-scope launch-blocking gaps, and release-engineering requirements. Generated-summary validation passes.",
-      "evidence": "Stage 01 item 1.02 prior full-file review retained; current exact diff reviewed for item 3.14. npm run requirements:check and npm run traceability:check passed; scoped Prettier and git diff --check passed. SHA-256 pins reviewed bytes. Exact-head CI and independent review for this commit remain pending.",
+      "evidence": "Prior Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed. Current focused item 3.14 diff reviewed; npm run requirements:check and npm run traceability:check passed; scoped Prettier and git diff --check passed. SHA-256 pins the current reviewed bytes. Exact-head CI and independent review for this commit remain pending.",
       "reviewer": "Codex (Stage 03 item 3.14)",
       "sha256": "9c8e21efec58d53bf5f58d93e8301efd00ca3fdacf0412b67fc960b81aaaafc2"
     },
@@ -2411,7 +2411,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Re-reviewed the V12-7-009 inventory row against packages/core/src/verification.ts and its focused tests. The updated evidence accurately records generic expiry, recheck and revocation behavior while retaining NOT_IMPLEMENTED because no optional college/profile-link checks are issued or persisted and policy, candidate notice/appeals, recruiter presentation and counsel review remain open. The inventory still pins and validates all 319 clauses and 11 owner-scoped exclusions; every remaining gap is preserved.",
-      "evidence": "Stage 01 item 1.02 prior full-file review retained; current exact diff reviewed for item 3.14. npm run requirements:check and npm run traceability:check passed; scoped Prettier and git diff --check passed. SHA-256 pins reviewed bytes. Exact-head CI and independent review for this commit remain pending.",
+      "evidence": "Prior Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed. Current focused item 3.14 diff reviewed; npm run requirements:check and npm run traceability:check passed; scoped Prettier and git diff --check passed. SHA-256 pins the current reviewed bytes. Exact-head CI and independent review for this commit remain pending.",
       "reviewer": "Codex (Stage 03 item 3.14)",
       "sha256": "885d4ed7398b3a48ce8e3851a8cb729137bd863c4b7799dc73927985bc219ed1"
     },
