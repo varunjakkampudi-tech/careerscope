@@ -3687,7 +3687,10 @@ test('createSearch snapshots the latest parsed resume onto the matching profile,
     });
     await profileRepo.save(ownerId, { revision: 0, profile: syntheticProfile });
 
-    const legacyProfileWithoutPrivacy = { ...syntheticProfile };
+    const legacyProfileWithoutPrivacy = JSON.parse(JSON.stringify(syntheticProfile)) as Record<
+      string,
+      unknown
+    >;
     delete legacyProfileWithoutPrivacy.privacy;
     const historicalProfile = {
       ...legacyProfileWithoutPrivacy,
