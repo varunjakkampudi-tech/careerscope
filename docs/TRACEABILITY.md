@@ -95,7 +95,7 @@ The owner's v12 specification is in the repository as [CareerScope-v12](requirem
 per-status and per-section counts. A clause is called IMPLEMENTED only when its record cites
 implementing code and a test that a CI script runs.
 
-Current status of the inventory: 319 clauses (68 IMPLEMENTED, 75 PARTIAL, 112 NOT_IMPLEMENTED, 45 OWNER_EVIDENCE, 8 OUT_OF_SCOPE_POST_LAUNCH, 11 OUT_OF_SCOPE_OWNER); 153 launch-blocking gaps (all in-scope).
+Current status of the inventory: 319 clauses (69 IMPLEMENTED, 74 PARTIAL, 112 NOT_IMPLEMENTED, 45 OWNER_EVIDENCE, 8 OUT_OF_SCOPE_POST_LAUNCH, 11 OUT_OF_SCOPE_OWNER); 153 launch-blocking gaps (all in-scope).
 
 The owner-revised checklist excludes Hostinger hosting, server backups and production deployment. Backup/restore-only clauses use `OUT_OF_SCOPE_OWNER` with the scope decision recorded in the inventory; mixed clauses keep their other requirements and identify excluded portions in their gap text. Software release versioning, changelogs, CI validation and release candidates remain in scope.
 

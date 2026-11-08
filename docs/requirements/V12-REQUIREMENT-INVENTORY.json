@@ -1596,8 +1596,8 @@
       "gap": "Generic lifecycle shape and pure expiry/recheck/revocation rules are implemented in packages/core/src/verification.ts and covered by verification.test.ts. Evidence schema and per-tick policy remain unapproved and unpersisted; college/profile-link checks await product and counsel review.",
       "launchBlocking": true,
       "evidence": {
-        "implementation": ["packages/core/src/schema.ts:36"],
-        "tests": []
+        "implementation": ["packages/core/src/verification.ts"],
+        "tests": ["packages/core/src/verification.test.ts"]
       }
     },
     {
@@ -1613,8 +1613,11 @@
       "gap": "Lifecycle timestamps, reasoned revocation and appeal availability are modeled. Candidate display, notice delivery, appeal workflow and counsel-approved policy remain unimplemented.",
       "launchBlocking": true,
       "evidence": {
-        "implementation": [],
-        "tests": []
+        "implementation": [
+          "packages/core/src/verification.ts",
+          "apps/web/src/components/account-security.tsx:218"
+        ],
+        "tests": ["packages/core/src/verification.test.ts", "scripts/tests/check-ui.ts:862"]
       }
     },
     {
@@ -1625,16 +1628,15 @@
       "kind": "CLAUSE",
       "context": "",
       "text": "- A tick is shown only when its check has completed",
-      "assessment": "PARTIAL",
+      "assessment": "IMPLEMENTED",
       "verification": "UNIT_TESTS_PASSED",
-      "gap": "The email tick is shown only when email_verified_at is set. No other ticks exist and no UI test asserts the conditional display.",
       "launchBlocking": false,
       "evidence": {
         "implementation": [
           "apps/web/src/components/account-security.tsx:218",
           "apps/api/src/app.ts:568"
         ],
-        "tests": ["apps/web/src/lib/api.test.ts:370"]
+        "tests": ["scripts/tests/check-ui.ts:862", "scripts/tests/check-ui.ts:876"]
       }
     },
     {

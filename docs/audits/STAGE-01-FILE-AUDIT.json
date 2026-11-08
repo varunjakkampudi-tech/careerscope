@@ -1794,10 +1794,10 @@
           "remediation": "Clarified that item 1.01 is complete; at that checkpoint other items and closing acceptance remained, and the final Stage 01 closeout is now recorded with exact hosted evidence."
         }
       ],
-      "observations": "Reviewed the Stage 01 closeout crosswalk, all fifteen verified checklist items, accepted low-severity risk and exact hosted closeout evidence.",
-      "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
+      "observations": "Reviewed the Stage 01 closeout crosswalk and refreshed its generated v12 count to match the verified inventory: 69 implemented, 74 partial and 153 in-scope launch-blocking gaps. Stage 01 status, fifteen verified checklist items and accepted low-severity risk remain unchanged.",
+      "evidence": "Prior content review aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; current v12 count cross-check against the generated inventory passed. SHA-256 records reviewed bytes.",
       "reviewer": "Codex (Stage 01 closeout)",
-      "sha256": "2fe705eac637977c93ffa34c55c1d8d891208333b58d644f1094a601c99bf90c"
+      "sha256": "e9894f7c092fd4e5d722e9c5e124d92b99fed579888bee1043aa10bbb5bed039"
     },
     {
       "path": "docs/FRONTEND-ARCHITECTURE.md",
@@ -1970,10 +1970,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the current traceability addition: inventories and their denominators remain separate, the owner roadmap remains the 328-item source, and the existing crosswalk points to the enforced checker and CI-run tests.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "observations": "Re-reviewed the traceability count update: separate inventories remain distinct, the owner roadmap remains the 328-item source, and the v12 total is now 69 implemented and 74 partial clauses with 153 launch-blocking gaps.",
+      "evidence": "Prior review against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2 and required dev CI run 42396419372 retained. Current count cross-check against the generated v12 inventory passed. SHA-256 pins reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "c386745edee1ba5060402f9fe3bf1feceba9886d48913895166d7198d053454e"
+      "sha256": "6ce92d5a2a7aa808a7a998b3812d96cd93a42e77b4e612828a935295e41f6126"
     },
     {
       "path": "docs/UI-VERIFICATION.md",
@@ -2398,10 +2398,10 @@
           "remediation": "Item 1.02 records Hostinger, server backup and restore-only clauses as OUT_OF_SCOPE_OWNER under the owner-revised checklist, and the inventory checker enforces the non-blocking scope disposition."
         }
       ],
-      "observations": "Reviewed the generated summary correction for V12-7-009 against its source inventory and lifecycle implementation. The prior wording incorrectly said expiry, recheck and revocation were absent; the regenerated row now distinguishes existing generic lifecycle primitives from the still-unimplemented complete verification acceptance flow. The summary continues to record 319 clauses, 11 owner-scoped Hostinger/backup/restore exclusions, 153 in-scope launch-blocking gaps, and release-engineering requirements. Generated-summary validation passes.",
-      "evidence": "Prior Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed. Current focused item 3.14 diff reviewed; npm run requirements:check and npm run traceability:check passed; scoped Prettier and git diff --check passed. SHA-256 pins the current reviewed bytes. Exact-head CI and independent review for this commit remain pending.",
+      "observations": "Reviewed the generated summary corrections for verification lifecycle evidence and email-tick conditional display against the inventory. It distinguishes generic expiry/recheck/revocation primitives from outstanding end-to-end verification policy and notices, and reflects that the mandatory email-tick display is conditionally tested. It continues to record 319 clauses, 11 owner-scoped Hostinger/backup/restore exclusions, 153 in-scope launch-blocking gaps, and release-engineering requirements. Generated-summary validation passes.",
+      "evidence": "Prior Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63 and its historical validation retained; current focused item 3.14 diff reviewed. npm run requirements:check and npm run traceability:check passed; scoped Prettier and git diff --check passed. SHA-256 pins the current reviewed bytes. Exact-head CI and independent review for this update remain pending.",
       "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "9c8e21efec58d53bf5f58d93e8301efd00ca3fdacf0412b67fc960b81aaaafc2"
+      "sha256": "27b71aa8a6d1d5c3b512da1f8e21093b90a043bc8f0892bcfe5b1c9735395cce"
     },
     {
       "path": "docs/requirements/V12-REQUIREMENT-INVENTORY.json",
@@ -2410,10 +2410,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the V12-7-009 inventory row against packages/core/src/verification.ts and its focused tests. The updated evidence accurately records generic expiry, recheck and revocation behavior while retaining NOT_IMPLEMENTED because no optional college/profile-link checks are issued or persisted and policy, candidate notice/appeals, recruiter presentation and counsel review remain open. The inventory still pins and validates all 319 clauses and 11 owner-scoped exclusions; every remaining gap is preserved.",
-      "evidence": "Prior Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed. Current focused item 3.14 diff reviewed; npm run requirements:check and npm run traceability:check passed; scoped Prettier and git diff --check passed. SHA-256 pins the current reviewed bytes. Exact-head CI and independent review for this commit remain pending.",
+      "observations": "Re-reviewed the V12-4.5-008/009/010 and V12-7-009 evidence against packages/core/src/verification.ts, verification.test.ts, account-security.tsx and the browser checks. The corrected evidence now links lifecycle and conditional email-tick display tests, marks only the verified email display clause implemented, and keeps evidence policy, persistence, optional checks, notice/appeals, recruiter presentation and counsel review open. The pinned source and all 319 clause references remain validated.",
+      "evidence": "Prior Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63 and its historical validation retained; current focused item 3.14 diff reviewed. npm run requirements:check and npm run traceability:check passed; scoped Prettier and git diff --check passed. SHA-256 pins the current reviewed bytes. Exact-head CI and independent review for this update remain pending.",
       "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "885d4ed7398b3a48ce8e3851a8cb729137bd863c4b7799dc73927985bc219ed1"
+      "sha256": "c991ab5b02ee9c9f727b8f446c53971a21acd2975b069a4a2a208445c8a501fa"
     },
     {
       "path": "docs/security/DATA-CLASSIFICATION.md",
