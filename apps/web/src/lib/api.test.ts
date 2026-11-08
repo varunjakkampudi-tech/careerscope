@@ -22,7 +22,10 @@ test('legacy profile responses default recruiter visibility to private and allow
       application: {},
     },
   });
-  assert.deepEqual(parsed.profile?.privacy, { recruiterVisible: false, recruiterVisibleFields: [] });
+  assert.deepEqual(parsed.profile?.privacy, {
+    recruiterVisible: false,
+    recruiterVisibleFields: [],
+  });
 });
 
 /**
