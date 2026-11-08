@@ -142,6 +142,17 @@ const profile = object({
     },
     [],
   ),
+  privacy: object(
+    {
+      recruiterVisible: {
+        ...bool,
+        default: false,
+        description:
+          'Owner preference for future recruiter visibility. This setting does not grant or enable recruiter access.',
+      },
+    },
+    [],
+  ),
   accessibility: object({ reducedMotion: { ...bool, default: false } }, []),
 });
 const profileRecord = object({

@@ -2863,22 +2863,22 @@ try {
       await page.getByLabel('Email', { exact: true }).fill(accountEmail);
       await page.getByLabel('Location', { exact: true }).fill('Hyderabad');
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
-      await page.getByText('Step 2 of 5: Your background', { exact: true }).waitFor();
+      await page.getByText('Step 2 of 6: Your background', { exact: true }).waitFor();
       await page
         .getByRole('combobox', { name: 'Career stage', exact: true })
         .selectOption('experienced');
       await page.getByText(/changing careers, list transferable skills/i).waitFor();
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
-      await page.getByText('Step 3 of 5: Job preferences', { exact: true }).waitFor();
+      await page.getByText('Step 3 of 6: Job preferences', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Back', exact: true }).click();
-      await page.getByText('Step 2 of 5: Your background', { exact: true }).waitFor();
+      await page.getByText('Step 2 of 6: Your background', { exact: true }).waitFor();
       assert.equal(
         await page.getByRole('combobox', { name: 'Career stage', exact: true }).inputValue(),
         'experienced',
         `${engine}: returning to an earlier onboarding step lost the selected career stage`,
       );
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
-      await page.getByText('Step 3 of 5: Job preferences', { exact: true }).waitFor();
+      await page.getByText('Step 3 of 6: Job preferences', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
       assert.equal(
         await page.evaluate(() => (document.activeElement as HTMLTextAreaElement | null)?.name),
@@ -2888,9 +2888,25 @@ try {
       await page.locator('textarea[name="titles"]').fill('React Engineer');
       await page.locator('textarea[name="techStack"]').fill('React, TypeScript');
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
-      await page.getByText('Step 4 of 5: Application details', { exact: true }).waitFor();
+      await page.getByText('Step 4 of 6: Application details', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
-      await page.getByText('Step 5 of 5: Accessibility', { exact: true }).waitFor();
+      await page.getByText('Step 5 of 6: Profile privacy', { exact: true }).waitFor();
+      assert.equal(
+        await page
+          .getByRole('checkbox', {
+            name: 'Allow recruiters to discover my profile when that feature becomes available',
+          })
+          .isChecked(),
+        false,
+        `${engine}: new profiles must default to private recruiter visibility`,
+      );
+      await page
+        .getByRole('checkbox', {
+          name: 'Allow recruiters to discover my profile when that feature becomes available',
+        })
+        .check();
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await page.getByText('Step 6 of 6: Accessibility', { exact: true }).waitFor();
       assert.equal(
         await page.evaluate(() => window.name),
         '',
@@ -2921,6 +2937,7 @@ try {
       );
       assert.ok(reviewed?.profile.preferences.techStack.includes('React'));
       assert.equal(reviewed?.profile.candidate.segment, 'experienced');
+      assert.equal(reviewed?.profile.privacy.recruiterVisible, true);
       // The sidebar is hidden below 768px and the screenshot loop above left
       // the viewport at 320px, so widen before navigating through it.
       await page.setViewportSize({ width: 1440, height: 900 });
@@ -4357,6 +4374,10 @@ try {
       await settled('profile save before work-history reload');
       await page.reload();
       await page.getByLabel('Full Name', { exact: true }).waitFor();
+      const recruiterVisibilityField = page.getByRole('checkbox', {
+        name: 'Allow recruiters to discover my profile when that feature becomes available',
+      });
+      assert.equal(await recruiterVisibilityField.isChecked(), true);
       assert.equal(await homeLocationField.inputValue(), 'Pune, India');
       assert.equal(await preferredLocationsField.inputValue(), 'Pune\nRemote');
       assert.equal(await remoteOnlyField.isChecked(), true);
@@ -4386,6 +4407,21 @@ try {
         await targetRolesField.inputValue(),
         'React Engineer',
         `${engine}: saved preferred job titles must be restored after reload`,
+      );
+      await recruiterVisibilityField.uncheck();
+      await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
+      await page.getByText('Profile saved.', { exact: true }).waitFor();
+      assert.equal((await profiles.get(ownerId))?.profile.privacy.recruiterVisible, false);
+      await page.reload();
+      await page.getByLabel('Full Name', { exact: true }).waitFor();
+      assert.equal(
+        await page
+          .getByRole('checkbox', {
+            name: 'Allow recruiters to discover my profile when that feature becomes available',
+          })
+          .isChecked(),
+        false,
+        `${engine}: explicit private visibility must persist after reload`,
       );
       await settled('work-history profile reload');
       const experienceField = page.getByLabel('Years of Experience', { exact: true });

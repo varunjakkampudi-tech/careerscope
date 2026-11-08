@@ -188,6 +188,9 @@ const profileDataSchema = z.object({
         application.availabilityStatus ??
         (application.noticePeriodDays === 0 ? 'immediate' : 'notice_period'),
     })),
+  privacy: z
+    .object({ recruiterVisible: z.boolean().default(false) })
+    .default({ recruiterVisible: false }),
   accessibility: z.object({ reducedMotion: z.boolean().default(false) }).optional(),
 });
 

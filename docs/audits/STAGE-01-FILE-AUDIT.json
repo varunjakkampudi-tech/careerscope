@@ -1305,10 +1305,10 @@
       "path": "apps/web/src/lib/api-schemas.ts",
       "category": "frontend",
       "reviewMethod": "Focused source review and implementation validation",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Extended the profile response preference schema with nullable, normalized three-letter minSalaryCurrency, preserving legacy responses where the field is absent through the null default. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
+      "observations": "Extended the profile response preference schema with nullable, normalized three-letter minSalaryCurrency, preserving legacy responses where the field is absent through the null default. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Updated for owner roadmap item 3.15; previous reviewed hash is stale. Awaiting exact-commit review.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
       "reviewer": "Codex (Stage 03 item 3.12)",
       "sha256": "3e61bfbb7d8b7b74f3ce5d1174fa3ae5307b5470b7de20cc563dad91ab31cc6c"
@@ -1317,10 +1317,10 @@
       "path": "apps/web/src/lib/api.test.ts",
       "category": "frontend",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete API client test suite. It exercises supported and malformed conflicts, safe fixed messages, retry eligibility, 404 handling, OTP outages, one-time and concurrent session refresh, unread response cancellation, schema rejection and both session branches. Fetch/window globals are restored in test cleanup.",
+      "observations": "Read the complete API client test suite. It exercises supported and malformed conflicts, safe fixed messages, retry eligibility, 404 handling, OTP outages, one-time and concurrent session refresh, unread response cancellation, schema rejection and both session branches. Fetch/window globals are restored in test cleanup. Updated for owner roadmap item 3.15; previous reviewed hash is stale. Awaiting exact-commit review.",
       "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "467fee2057ab44d897fc1f5a278a661b7769352a1faf0c574366f449a8c939ee"
@@ -2392,10 +2392,10 @@
       "path": "docs/requirements/V12-REQUIREMENT-INVENTORY.json",
       "category": "documentation",
       "reviewMethod": "structured-data-and-checker",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-read the 319-clause inventory and checked all 11 owner-scoped exclusions plus mixed clauses retained in scope. Owner-scoped records are non-blocking with a rationale; backup portions of mixed clauses are excluded while other gaps remain. The pinned source digest and clause correspondence still pass. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
+      "observations": "Re-read the 319-clause inventory and checked all 11 owner-scoped exclusions plus mixed clauses retained in scope. Owner-scoped records are non-blocking with a rationale; backup portions of mixed clauses are excluded while other gaps remain. The pinned source digest and clause correspondence still pass. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Updated for owner roadmap item 3.15; previous reviewed hash is stale. Awaiting exact-commit review.",
       "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
       "reviewer": "Codex (Stage 03 item 3.12)",
       "sha256": "a13d7491ea60cefc4ca785aa5985f05fc8de8409dde6af6f67471ca5225d10b9"
@@ -4057,10 +4057,10 @@
       "path": "packages/core/src/profile.test.ts",
       "category": "shared-domain-package",
       "reviewMethod": "Focused source review and implementation validation",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added profile-domain assertions that normalize and retain salary floor and currency in the saved matching preferences. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Re-reviewed modified availability evidence, including raw legacy stored-profile reads where availabilityStatus is absent; zero notice days map to immediate and positive days retain the notice-period value.",
+      "observations": "Added profile-domain assertions that normalize and retain salary floor and currency in the saved matching preferences. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Re-reviewed modified availability evidence, including raw legacy stored-profile reads where availabilityStatus is absent; zero notice days map to immediate and positive days retain the notice-period value. Updated for owner roadmap item 3.15; previous reviewed hash is stale. Awaiting exact-commit review.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
       "reviewer": "Codex (Stage 03 item 3.12)",
       "sha256": "e90a41f581af1d3734229f501ec975b755ee0a97d247afcbea35992347b72f9b"
@@ -4069,10 +4069,10 @@
       "path": "packages/core/src/profile.ts",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (183 lines). Checked: strict per-section schemas with one generic issue and no field details; link fields are HTTPS only without credentials, and the URL parse runs only after the base URL check passes; revision-guarded save (revision 0 creates, anything else requires a match, a mismatch raises a 409 conflict); scheduled-discovery toggle is outside the revision and refuses before the profile is saved; matching snapshot copies only the fields scoring reads. No finding. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
+      "observations": "Read in full (183 lines). Checked: strict per-section schemas with one generic issue and no field details; link fields are HTTPS only without credentials, and the URL parse runs only after the base URL check passes; revision-guarded save (revision 0 creates, anything else requires a match, a mismatch raises a 409 conflict); scheduled-discovery toggle is outside the revision and refuses before the profile is saved; matching snapshot copies only the fields scoring reads. No finding. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Updated for owner roadmap item 3.15; previous reviewed hash is stale. Awaiting exact-commit review.",
       "evidence": "",
       "reviewer": "Codex (Stage 03 item 3.12)",
       "sha256": "f2c7d08c70fb69758eeabe1df6eae75403e159ceb5a12d07c3514e908c5f9510"
@@ -5714,10 +5714,10 @@
       "path": "packages/shared/src/schemas.test.ts",
       "category": "shared-domain-package",
       "reviewMethod": "Focused source review and implementation validation",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added salary-floor boundary and currency-code tests, including lowercase normalization and malformed code rejection. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
+      "observations": "Added salary-floor boundary and currency-code tests, including lowercase normalization and malformed code rejection. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Updated for owner roadmap item 3.15; previous reviewed hash is stale. Awaiting exact-commit review.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
       "reviewer": "Codex (Stage 03 item 3.12)",
       "sha256": "466b9404d6b863083e29eca4a8dfebba202c64ce3808c3b6ee2b02a6e5b732e3"
@@ -5726,7 +5726,7 @@
       "path": "packages/shared/src/schemas.ts",
       "category": "shared-domain-package",
       "reviewMethod": "Focused source review and implementation validation",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [
         {
@@ -5737,7 +5737,7 @@
           "remediation": "apiErrorSchema corrected to the flat envelope and tested against errorEnvelope output. Unused exports are recorded as technical debt to remove in the next cleanup pass."
         }
       ],
-      "observations": "Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
+      "observations": "Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Updated for owner roadmap item 3.15; previous reviewed hash is stale. Awaiting exact-commit review.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
       "reviewer": "Codex (Stage 03 item 3.12)",
       "sha256": "acc60f4276f704cb13c2ee0d143fd6a594bb024d835b4a48fe859a3b93c81893"
@@ -5778,10 +5778,10 @@
       "path": "packages/shared/src/types.ts",
       "category": "shared-domain-package",
       "reviewMethod": "Focused source review and implementation validation",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Documented the nullable minSalaryCurrency field on matching candidate context, including null semantics for older or unspecified profiles.",
+      "observations": "Documented the nullable minSalaryCurrency field on matching candidate context, including null semantics for older or unspecified profiles. Updated for owner roadmap item 3.15; previous reviewed hash is stale. Awaiting exact-commit review.",
       "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
       "reviewer": "Codex (Stage 03 item 3.11)",
       "sha256": "80fd31b4c76b2717de5ff615997f8471e64a7ed00db3ec8774433c998c7b4392"
