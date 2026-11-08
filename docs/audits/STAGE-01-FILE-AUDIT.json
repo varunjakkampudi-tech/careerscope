@@ -6518,10 +6518,10 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Reviewed the new browser assertions for successful saved-profile completeness, aria-valuenow, failed profile fetches, accessible error, absence of a score while failed, and retry recovery. The successful fixture now enters a work-history summary for its experienced career stage, consistent with the completeness rules.",
-      "evidence": "Test source/typecheck reviewed; local Playwright suite could not start because .env is absent. Exact-SHA hosted browser CI pending.",
+      "observations": "Reviewed the browser assertions for successful saved-profile completeness, aria-valuenow, failed profile fetches, accessible error, absence of a score while failed, and retry recovery. The onboarding regression checks the saved experience in the database and reloads the dashboard before checking 100 percent, so the displayed score uses persisted profile data.",
+      "evidence": "Test source/typecheck reviewed; local Playwright suite could not start because .env is absent. Hosted run 42467627581 exposed that the initial 100 percent assertion ran against stale dashboard cache; revised regression adds a persistence assertion and reload. Exact-SHA hosted rerun pending.",
       "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "b8621c31e0e60c0489af8926a80dcc24a5b8449f61700520412e407d42a28586"
+      "sha256": "8f262e97300b51407e69b3635486e84168ce6e72037f06560be88164f79843e8"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",

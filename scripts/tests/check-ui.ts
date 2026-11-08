@@ -2906,6 +2906,16 @@ try {
       await finishButton.click();
       await page.getByText('Profile saved.', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Save Profile', exact: true }).waitFor();
+      const persistedOnboardingProfile = await new ProfileRepository(database).get(
+        account.rows[0]!.id,
+      );
+      assert.deepEqual(
+        persistedOnboardingProfile?.profile.candidate.experience,
+        ['Frontend Engineer at Example Co'],
+        `${engine}: saved onboarding profile must retain the background used by completeness`,
+      );
+      await page.goto(`${origin}/dashboard`);
+      await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
       const completenessPanel = page.locator('section[aria-label="Profile completeness"]');
       await completenessPanel.getByText('Profile completeness 100%', { exact: true }).waitFor();
       await completenessPanel.getByRole('progressbar', { name: 'Profile completeness' }).waitFor();
