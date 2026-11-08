@@ -780,11 +780,19 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Profile completeness checklist",
       "sourceStatus": "Existing, expand",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "in-progress",
+      "evidence": [
+        "docs/PROGRESS.md",
+        "docs/TEST-MATRIX.md",
+        "apps/web/src/lib/profile-completeness.ts",
+        "apps/web/src/app/(app)/dashboard/page.tsx"
+      ],
+      "tests": ["apps/web/src/lib/profile-completeness.test.ts", "scripts/tests/check-ui.ts"],
+      "externalEvidence": [
+        "PR #69 exact head c17ad6dad5e86357d6331d3975edc8339f1921e2 passed hosted CI run 42472764595 on all three jobs; the production image was built but not published.",
+        "ChatGPT reviewed and approved implementation and tests on exact head c17ad6dad5e86357d6331d3975edc8339f1921e2."
+      ],
+      "gap": "Implementation and tests are approved at the recorded exact SHA, but PR #69 remains draft and unmerged. Item completion and progression remain pending integration to dev and final canonical closeout.",
       "scopeDisposition": "in-scope"
     },
     {

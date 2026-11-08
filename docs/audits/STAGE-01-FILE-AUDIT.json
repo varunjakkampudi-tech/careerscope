@@ -2282,10 +2282,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Re-reviewed current item 1.01 status: the prior PR head received conditional ChatGPT approval with two nonblocking suggestions; both refinements were applied in a new head, whose CI and independent review remain pending. It preserves the separate accepted S1-F014 risk and does not claim final acceptance.",
-      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "e484542d6a5e62ff3c5f4ce698e267e8d7aa060cf2d4e520b0c3491d995a776f"
+      "observations": "Re-reviewed the Stage 03 item 3.16 closeout record. It distinguishes implementation/test approval from item completion and explicitly records that PR #69 remains draft and unmerged.",
+      "evidence": "Updated for owner Stage 03 item 3.16; records exact-SHA review and hosted CI while keeping the item in progress pending dev integration.",
+      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
+      "sha256": "c758359fac9e1800eb516ed3396bf740eacbb7cfbb82a58b1909832a9c24827b"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -2330,10 +2330,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed item 3.13 closeout and surrounding inventory: the item retains its source title/status, records currentStatus verified with concrete implementation and tests, links PR #57/#58 evidence, and leaves the overall 328-item/stage inventory structure intact. Traceability checker validates row and counts.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "edb923beb53cbffe63c43c25e59dfaeb5d0b32ab5817705cfee50ed1a1c43750"
+      "observations": "Re-reviewed the canonical item 3.16 record. It retains the owner checklist title/source status and records exact-head evidence without marking the item verified; the unmerged PR and integration gap remain explicit.",
+      "evidence": "Updated item 3.16 from stale not-started to in-progress with implementation/test paths, exact-SHA hosted CI and review evidence, and the still-open integration gap.",
+      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
+      "sha256": "e4fb69d0c80c6d32e2de90288f69efd1ebf4396697d68186311e4b44e90a2d43"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -2430,10 +2430,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated the item 3.16 evidence row to separate historical CI and prior exact-SHA review from the current follow-up changes. The row explicitly keeps the item in progress pending new exact-SHA CI/review and integration/roadmap closeout.",
-      "evidence": "Prior run 42469853165 and approval apply only to SHA 5af43622bbb10e87733cd10f34cd17e7f282b5d6. Current follow-up requires a new hosted run and review.",
-      "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "66386431b1fdaced48b1c0532b30536c67ac5482c64e283b0040e1acf96b5556"
+      "observations": "Re-reviewed the item 3.16 row. Historical CI/review remain tied to their original SHAs; current follow-up evidence is tied to c17ad6dad5e86357d6331d3975edc8339f1921e2, and the item remains in progress pending integration and canonical closeout.",
+      "evidence": "Updated item 3.16 row with exact follow-up head c17ad6dad5e86357d6331d3975edc8339f1921e2, hosted run 42472764595, exact-SHA review, and pending integration status.",
+      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
+      "sha256": "faef4daa99aba33f6330b5e402c9618bb86ccb458d3279f8fa511524e8be05b9"
     },
     {
       "path": "docs/TESTING.md",
