@@ -2867,6 +2867,7 @@ try {
       await page
         .getByRole('combobox', { name: 'Career stage', exact: true })
         .selectOption('experienced');
+      await page.locator('textarea[name="experience"]').fill('Frontend Engineer at Example Co');
       await page.getByText(/changing careers, list transferable skills/i).waitFor();
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
       await page.getByText('Step 3 of 5: Job preferences', { exact: true }).waitFor();

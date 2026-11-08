@@ -6518,10 +6518,10 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Reviewed the new browser assertions for successful saved-profile completeness, aria-valuenow, failed profile fetches, accessible error, absence of a score while failed, and retry recovery.",
+      "observations": "Reviewed the new browser assertions for successful saved-profile completeness, aria-valuenow, failed profile fetches, accessible error, absence of a score while failed, and retry recovery. The successful fixture now enters a work-history summary for its experienced career stage, consistent with the completeness rules.",
       "evidence": "Test source/typecheck reviewed; local Playwright suite could not start because .env is absent. Exact-SHA hosted browser CI pending.",
       "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "915973ca5936a1b4cdc6554ec145369bd17797202e95b1a0c420991fe74b662f"
+      "sha256": "b8621c31e0e60c0489af8926a80dcc24a5b8449f61700520412e407d42a28586"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
