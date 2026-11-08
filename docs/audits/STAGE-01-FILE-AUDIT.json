@@ -1949,7 +1949,7 @@
       "observations": "Added item 2.06 locale and browser accessible-label regression test coverage; validation is pending for the candidate revision.",
       "evidence": "Updated in the item 2.06 privacy acknowledgement change; revalidated on this revision.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "423b42a5c339a9570586273359f5a170df453be999abe1c7656bab66ef7d042e"
+      "sha256": "1ee23476bcb6558f8e1740202d93e5d7e98c14cef75173354218f46d77450c08"
     },
     {
       "path": "docs/TESTING.md",
