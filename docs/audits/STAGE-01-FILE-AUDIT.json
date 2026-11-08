@@ -2383,8 +2383,8 @@
           "remediation": "Item 1.02 records Hostinger, server backup and restore-only clauses as OUT_OF_SCOPE_OWNER under the owner-revised checklist, and the inventory checker enforces the non-blocking scope disposition."
         }
       ],
-      "observations": "Reviewed for owner item 3.14. Added coverage confirms an explicit expired state remains expired, malformed expiry dates are rejected, revoked records require revocation metadata, and an inactive check cannot be revoked. Verification remains inactive without approved type-specific evidence policy.",
-      "evidence": "Stage 03 item 3.14 follow-up; focused verification tests passed 4/4 and npm run build:core passed locally under Node 22 (below the required Node 24); hosted CI has not yet run for this revision.",
+      "observations": "Reviewed for owner item 3.14. Verification remains inactive without approved type-specific evidence policy. Hosted CI passed on earlier head 7ce58095599fe1749efb71db12daf338a93933bb in run 42399271691; review found malformed timestamp and runtime appealAvailable validation gaps, corrected in current head dc7f3f72bbf7dea84e9302563d32d3c6b95df636.",
+      "evidence": "Follow-up focused verification tests passed 4/4 and npm run build:core passed locally under Node 22 (below required Node 24). Exact-SHA hosted CI for dc7f3f72bbf7dea84e9302563d32d3c6b95df636 is pending; prior head 7ce58095599fe1749efb71db12daf338a93933bb passed run 42399271691.",
       "reviewer": "Codex (Stage 03 item 3.14)",
       "sha256": "d860c02d7568391a5d21d258e8c99fef3b98d360414cb913eb77f6a8fe4399d2"
     },
@@ -4423,7 +4423,7 @@
       "observations": "Reviewed for owner item 3.14. Verification remains inactive without approved type-specific evidence policy; unit coverage confirms lifecycle transition and revocation rules.",
       "evidence": "Stage 03 item 3.14 follow-up; npm test passed (369 total: 366 passed, 3 skipped), and npm run build:core passed locally under Node 22 (below the required Node 24); hosted CI has not yet run for this revision.",
       "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "ec941ac1e570efaefd103094d8de156893c378366332daed57717c595e23dec7"
+      "sha256": "176d6ae23d8371756e191844042143252b7c7554d48dbe49a364ed65fb552c2b"
     },
     {
       "path": "packages/core/src/verification.ts",
@@ -4432,10 +4432,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for owner item 3.14. Added runtime validation for explicit expired and revoked states, invalid time windows, and revocation only while a check is active. Verification remains inactive without approved type-specific evidence policy.",
-      "evidence": "Stage 03 item 3.14 follow-up; npm test passed (369 total: 366 passed, 3 skipped), and npm run build:core passed locally under Node 22 (below the required Node 24); hosted CI has not yet run for this revision.",
+      "observations": "Reviewed for owner item 3.14. All timestamp windows and runtime revocation metadata are validated before terminal statuses; expired and revoked states remain subject to cross-field invariants. Verification remains inactive without approved type-specific evidence policy.",
+      "evidence": "Follow-up focused verification tests passed 4/4 and npm run build:core passed locally under Node 22 (below required Node 24). Exact-SHA hosted CI for dc7f3f72bbf7dea84e9302563d32d3c6b95df636 is pending; prior head 7ce58095599fe1749efb71db12daf338a93933bb passed run 42399271691.",
       "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "b959a200715ad6cd0e4720bf1b777d17fd8db005205fa138a20d7332820400bf"
+      "sha256": "2e8d05f17c19bab7b10cd4796447f7774fa4e7eba94c8219afcf1c19d8335792"
     },
     {
       "path": "packages/core/tsconfig.json",
