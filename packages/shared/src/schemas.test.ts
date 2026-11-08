@@ -105,7 +105,6 @@ describe('candidate-declared profile fields', () => {
     ).toEqual({ recruiterVisible: true, recruiterVisibleFields: ['location', 'techStack'] });
     expect(profileUpdateSchema.parse({ privacy: { recruiterVisible: true } }).privacy).toEqual({
       recruiterVisible: true,
-      recruiterVisibleFields: [],
     });
     expect(profileUpdateSchema.parse({ privacy: { recruiterVisibleFields: [] } }).privacy).toEqual({
       recruiterVisibleFields: [],
