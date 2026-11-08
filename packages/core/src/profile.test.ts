@@ -216,7 +216,10 @@ test('recruiter visibility preference is private by default and excluded from ma
     recruiterVisibleFields: ['location', 'techStack'],
   });
   assert.deepEqual(
-    writableProfileSchema.parse({ ...optedInProfile, privacy: { recruiterVisible: false, recruiterVisibleFields: [] } }).privacy,
+    writableProfileSchema.parse({
+      ...optedInProfile,
+      privacy: { recruiterVisible: false, recruiterVisibleFields: [] },
+    }).privacy,
     { recruiterVisible: false, recruiterVisibleFields: [] },
   );
   assert.deepEqual(matchingProfile(optedInProfile), {

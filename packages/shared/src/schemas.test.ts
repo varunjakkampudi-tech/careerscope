@@ -116,7 +116,9 @@ describe('candidate-declared profile fields', () => {
       profileUpdateSchema.safeParse({ privacy: { recruiterVisible: true, public: true } }).success,
     ).toBe(false);
     for (const recruiterVisibleFields of [['email'], ['resumeId'], ['location', 'location']]) {
-      expect(profileUpdateSchema.safeParse({ privacy: { recruiterVisibleFields } }).success).toBe(false);
+      expect(profileUpdateSchema.safeParse({ privacy: { recruiterVisibleFields } }).success).toBe(
+        false,
+      );
     }
   });
 

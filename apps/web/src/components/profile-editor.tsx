@@ -836,14 +836,19 @@ function ProfileForm({
                 name="recruiterVisibleFields"
                 type="checkbox"
                 value={field}
-                defaultChecked={record.profile?.privacy?.recruiterVisibleFields?.includes(field) ?? false}
+                defaultChecked={
+                  record.profile?.privacy?.recruiterVisibleFields?.includes(field) ?? false
+                }
                 aria-describedby="recruiter-visibility-help"
               />
               {label}
             </label>
           ))}
         </fieldset>
-        <p>You can withdraw consent at any time by turning visibility off or clearing selected fields.</p>
+        <p>
+          You can withdraw consent at any time by turning visibility off or clearing selected
+          fields.
+        </p>
       </fieldset>
       <fieldset
         ref={(element) => {
