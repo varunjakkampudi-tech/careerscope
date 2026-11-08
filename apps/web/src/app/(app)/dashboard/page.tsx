@@ -621,7 +621,25 @@ function DashboardContent() {
               required.
             </p>
             {!completenessLoaded ? (
-              <LoadingState variant="inline" className={styles.stateNotice} message="Loading…" />
+              profile.isError ? (
+                <ErrorState
+                  variant="inline"
+                  className={styles.stateNotice}
+                  what="Could not load your profile completeness."
+                  detail={t('pleaseTryAgain')}
+                  action={
+                    <button
+                      type="button"
+                      className={styles.retryButton}
+                      onClick={() => void profile.refetch()}
+                    >
+                      <RefreshCw size={13} aria-hidden="true" /> {t('retry')}
+                    </button>
+                  }
+                />
+              ) : (
+                <LoadingState variant="inline" className={styles.stateNotice} message="Loading…" />
+              )
             ) : (
               <>
                 <div

@@ -33,6 +33,30 @@ describe('profile completeness checklist', () => {
     );
   });
 
+  it('calculates exact intermediate percentages', () => {
+    for (const [completed, percent] of [
+      [1, 20],
+      [2, 40],
+      [3, 60],
+      [4, 80],
+    ] as const) {
+      const checks = profileCompletenessChecks({
+        ...completeProfile,
+        candidate: {
+          ...completeProfile.candidate,
+          fullName: completed >= 1 ? 'Sam Candidate' : '',
+          location: completed >= 2 ? 'Pune' : '',
+          education: completed >= 3 ? ['BSc Computer Science'] : [],
+        },
+        preferences: {
+          titles: completed >= 4 ? ['Software Engineer'] : [],
+          techStack: [],
+        },
+      });
+      assert.equal(profileCompletenessPercent(checks), percent);
+    }
+  });
+
   it('uses the selected stage to accept relevant background information', () => {
     const fresher = {
       ...completeProfile,

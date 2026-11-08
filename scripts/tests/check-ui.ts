@@ -2914,6 +2914,43 @@ try {
         `${engine}: saved onboarding profile must complete each profile-only checklist item`,
       );
       assert.equal(
+        await completenessPanel
+          .getByRole('progressbar', { name: 'Profile completeness' })
+          .getAttribute('aria-valuenow'),
+        '100',
+        `${engine}: completed profile progressbar must expose the current value`,
+      );
+      let failedProfileReads = 0;
+      await page.route('**/api/profile', async (route) => {
+        if (failedProfileReads < 2) {
+          failedProfileReads += 1;
+          await route.fulfill({ status: 503, contentType: 'application/json', body: '{}' });
+          return;
+        }
+        await route.continue();
+      });
+      await page.goto(`${origin}/dashboard`);
+      const failedCompletenessPanel = page.locator('section[aria-label="Profile completeness"]');
+      await failedCompletenessPanel
+        .getByRole('alert')
+        .filter({ hasText: 'Could not load your profile completeness.' })
+        .waitFor();
+      assert.equal(
+        await failedCompletenessPanel.getByRole('progressbar').count(),
+        0,
+        `${engine}: failed profile reads must not show a calculated completeness value`,
+      );
+      await failedCompletenessPanel.getByRole('button', { name: /retry/i }).click();
+      await failedCompletenessPanel
+        .getByRole('progressbar', { name: 'Profile completeness' })
+        .waitFor();
+      assert.equal(
+        await failedCompletenessPanel.getByRole('alert').count(),
+        0,
+        `${engine}: retrying a failed profile read must recover the completeness panel`,
+      );
+      await page.unroute('**/api/profile');
+      assert.equal(
         await page.getByRole('status').filter({ hasText: 'Step ' }).count(),
         0,
         `${engine}: successful save did not leave first-time onboarding mode`,
