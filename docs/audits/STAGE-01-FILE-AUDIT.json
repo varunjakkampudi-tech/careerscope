@@ -7,14 +7,15 @@
     "trackedFilesAtStart": 478
   },
   "reviewers": {
-    "stage-01-implementation": "Claude (Stage 01 implementation agent, self-validation)"
+    "stage-01-implementation": "Claude (Stage 01 implementation agent, self-validation)",
+    "stage-01-item-1.01-refresh": "Codex (Stage 01 item 1.01 audit refresh)"
   },
   "repositoryScans": [
-    "git grep for as any, @ts-ignore, @ts-expect-error and eslint-disable: 1 eslint-disable in test code with a stated reason",
-    "git grep for .only, .skip and .todo: 3 skipped Windows-only POSIX permission tests in runtime.secret-file.test.ts, which run on the Linux CI",
-    "git grep for console.log/error/warn in product code: only apps/web/scripts/build-with-csp.mjs build tooling",
-    "git grep for TODO, FIXME, XXX, HACK: no open markers in product code",
-    "Initial audit recorded 15 moderate findings in the development lint tree; rechecked 2026-11-06: npm audit --omit=dev and full npm audit report zero vulnerabilities (see docs/SECURITY.md)"
+    "2026-11-08 origin/dev source scan: no code any assertions, @ts-ignore or @ts-expect-error; one eslint-disable-next-line require-yield in provider test with an explicit reason.",
+    "2026-11-08 origin/dev test scan: three conditional context.skip cases for Windows-incompatible symlink/POSIX-permission assertions in runtime.secret-file.test.ts; Linux CI executes them.",
+    "2026-11-08 origin/dev console scan: product console output is confined to apps/web/scripts/build-with-csp.mjs; the other console.log is in a test.",
+    "2026-11-08 origin/dev marker scan: no TODO, FIXME, XXX or HACK markers in apps/ or packages/.",
+    "2026-11-08 Node 24.22.1/npm 11.19.0 locked install audit: npm ci reported zero vulnerabilities; CI run 42396419372 passed quality gates and services/browser checks."
   ],
   "files": [
     {
@@ -200,13 +201,14 @@
     {
       "path": "apps/api/package.json",
       "category": "backend-api",
-      "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the full API manifest after raising Fastify to the patched 5.12.8 line; the private ESM workspace still declares only its explicit build script. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Stage 01 checklist item 1.03 review on codex/stage01-item-103-dependency-validation, based on dev f93be64; the manifest SHA-256 records the inspected bytes. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 01 item 1.03)"
+      "observations": "Reviewed the current manifest delta: Sharp is declared as an API runtime dependency for bounded image normalization; workspace identity, build script and dependency declarations remain aligned with the lockfile. The exact-dev CI dependency audit passed.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "0380af40e2162a03aced226b1ee587dedd27444d7736892c68ce8b1e88d4c648"
     },
     {
       "path": "apps/api/src/admin-second-factor.integration.test.ts",
@@ -259,13 +261,14 @@
     {
       "path": "apps/api/src/app.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete 2164-line API application in sequential chunks. Covers strict request schemas, cookie scope and flags, Origin/CSRF hooks, private test-access gate, redacted route-template logging, safe error envelopes, health/readiness, OTP/TOTP/recovery/email changes, session rotation/revocation, legal consent, user-scoped resume storage, per-user rate limits, scoped repositories, permitted-source gating, exports, and bounded SSE cleanup. No additional finding identified in this pass; related error-path and route-contract tests are separately reviewed. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 01 item 1.01)"
+      "observations": "Re-reviewed the complete profile-photo route delta against the existing app hooks: parent onRequest enforces no-store, private test access, Origin, authenticated session, CSRF and legal gates before the scoped routes. Upload content types and 5 MiB body are bounded; only the authenticated owner id reaches the repository; Sharp errors are returned as a generic 400; reads set nosniff and use the global no-store header; read/write/delete are rate-limited. No public or cross-owner route is added. Database integration covers auth, validation, headers and owner isolation.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "e141b90baf2b7d5176ccf56aba2370a177eea3ffab7c5abcce86133ff457d1b6"
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -418,8 +421,8 @@
     {
       "path": "apps/api/src/openapi.ts",
       "category": "backend-api",
-      "reviewMethod": "Focused source review and implementation validation",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [
         {
@@ -430,9 +433,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Added the nullable minSalaryCurrency profile preference to the OpenAPI contract, aligned with the three-letter code validation in the shared profile schema. Item 3.11 local domain and type checks pass; full generated-document/browser checks remain in hosted CI. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 03 item 3.12)"
+      "observations": "Re-reviewed the full profile-photo contract delta: authenticated GET returns binary WebP or 204, PUT accepts only JPEG/PNG/WebP and documents size/error statuses, DELETE returns 204, and declared error bodies remain JSON. The parent response hook and route integration test verify no-store and content headers. No contract discrepancy found.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "2137e44a7a4f26d1f930981c39efeef0018f0ad34d36cef7a1313ef56cf90342"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -449,26 +453,26 @@
     {
       "path": "apps/api/src/profile-photo.test.ts",
       "category": "backend-api",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "full-content review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "observations": "Read the complete new test file. It checks decoded WebP output, dimensions, EXIF/ICC stripping and orientation, animation rejection, pixel and output caps, unsupported/mismatched/malformed media, and the exact 5 MiB boundary. The test file is included in test:unit.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "a7fd9ed3f48360a6fcf54fbb3bcf42617b75d133371d8e1be248cfcae727d684"
     },
     {
       "path": "apps/api/src/profile-photo.ts",
       "category": "backend-api",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "full-content review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "observations": "Read the complete decoder. It bounds input to 5 MiB and 16 MP, allowlists JPEG/PNG/WebP, checks declared type against decoded format, rejects animated or invalid dimensions, normalizes orientation, resizes within 512x512, re-encodes metadata-free WebP, caps storage output at 512 KiB, and hides decoder details behind a stable error.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "0ac837c934b6321f03dcd159709facc731471e6f03a08c338becba976f3ca1d9"
     },
     {
       "path": "apps/api/src/rate-limit.test.ts",
@@ -985,24 +989,26 @@
     {
       "path": "apps/web/src/components/dashboard-shell.module.css",
       "category": "frontend",
-      "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete dashboard shell stylesheet. Theme tokens cover light/dark surfaces and status colors; sidebar and nav scroll behavior, visible focus, notification popover sizing, and responsive breakpoints are explicit. Disabled nav items remain non-interactive and mobile navigation stays horizontally scrollable. No external CSS or asset imports. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 01 item 1.01)"
+      "observations": "Re-reviewed the complete current avatar style delta: avatar overflow is clipped and the image fills the existing avatar box with object-fit cover; existing theme and layout tokens are retained.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "0a3001d4a8882fffa1bddd1cc91edee13a885f54c096c3162452bdf378e84bef"
     },
     {
       "path": "apps/web/src/components/dashboard-shell.tsx",
       "category": "frontend",
-      "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete dashboard navigation, topbar and notification center. Navigation destinations are explicit and unavailable concepts are disabled. Notification polling is bounded to a 30-second interval and focus/visibility events; requests are deduplicated, aborted on unmount, parsed at the API boundary, and mark-read failures remain item-specific. User-entered identifiers are URL-encoded before navigation. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 01 item 1.01)"
+      "observations": "Re-reviewed profile avatar changes: query identity is owner-scoped, fetch is same-origin/no-store and abortable, two avatar slots share React Query, update events remove cached owner photo and refetch, errors fall back to initials, and the data URL is rendered unoptimized with empty alt inside an aria-hidden avatar. Integration/browser checks cover two slots, reload, removal and one shared refresh.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "85bf6cd00b7de1fecaea0c249b87680b27ffc146d4f6f5d53dba0b93e2fa0b3e"
     },
     {
       "path": "apps/web/src/components/hero-illustration.tsx",
@@ -1163,19 +1169,20 @@
     {
       "path": "apps/web/src/components/profile-editor.module.css",
       "category": "frontend",
-      "reviewMethod": "content-read-and-execution",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed onboarding progress, step status, step descriptions, navigation actions, responsive layout, and design-token usage. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Focused review and validation for CareerScope Stage 03 item 3.01. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 03 item 3.01)"
+      "observations": "Re-reviewed profile-photo styles: controls retain existing surface/theme tokens, provide a visible focus-within outline, 42px minimum targets, responsive wrapping, and distinct alert/status colors. No external asset or global style change.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "5ae41c724fc5df429fe9ddab0f748fb9548e1d3eb183ae2267aee7d11882989b"
     },
     {
       "path": "apps/web/src/components/profile-editor.tsx",
       "category": "frontend",
-      "reviewMethod": "Focused source review and implementation validation",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [
         {
@@ -1186,9 +1193,10 @@
           "remediation": "Prevent the Continue click default and key the Continue and Save and finish buttons as distinct nodes; browser acceptance verifies no pre-final submission and clicks the final control."
         }
       ],
-      "observations": "Added an optional salary-currency input paired with the annual minimum, normalizes user input before save, clears currency when the amount is blank, and explains currency-aware matching. Guided onboarding explicitly validates malformed codes. Browser acceptance asserts invalid input rejection, save, reload and profile-search snapshot values. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 03 item 3.12)"
+      "observations": "Re-reviewed profile-photo UI changes: client checks type and 5 MiB size while server validation remains authoritative; upload/delete mutations report accessible alert/status feedback, dispatch the shared avatar refresh event only on success, disable conflicting controls while pending, and explain the owner-only privacy boundary. Browser coverage includes keyboard access, invalid file rejection, API failure, upload, reload and delete.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "e9cf0cbd78ab72e0a63ddae82c82d3f62e2f5394bb2768299c9d89a658d435d6"
     },
     {
       "path": "apps/web/src/components/recovery-email-section.tsx",
@@ -1400,14 +1408,14 @@
     {
       "path": "apps/web/src/lib/profile-photo.ts",
       "category": "frontend",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "full-content review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "observations": "Read the complete new module; it exports only the shared local event name used to refresh owner-scoped avatar queries after successful upload or deletion. No data or network access.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "192b775222ae7d7b59825f7a3ee6b7611eb23870e9c251b52a31145d32a12dc5"
     },
     {
       "path": "apps/web/src/lib/query-cache.ts",
@@ -1664,8 +1672,8 @@
     {
       "path": "docs/API-SURFACE.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [
         {
@@ -1676,9 +1684,10 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Read in full. Documents runtime routes, security and the shared error envelope; verified the client-safe contract against implementation and focused unit and database integration evidence. Owner item 3.06 change: candidate-entered work-history summaries are bounded, stored as private candidate claims, and excluded from matching inputs. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Reviewed current documentation and item 1.09 evidence on codex/stage01-item-109-error-handling; SHA-256 records the reviewed bytes. Current SHA-256 records updated bytes for Stage 03 item 3.06. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (owner Stage 01 item 1.09)"
+      "observations": "Re-reviewed the complete profile-photo documentation delta. Authenticated route methods and the no-photo 204 behavior match the API contract; photo is documented separately from recruiter/public access.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "4588e77f0861e2c906336d3395c6cc44fbaeaaf3743084057be1793a79f41139"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1739,8 +1748,8 @@
     {
       "path": "docs/DATA-MODEL.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior full-file review plus current item 3.14 change review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [
         {
@@ -1751,9 +1760,9 @@
           "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
         }
       ],
-      "observations": "Reviewed the PostgreSQL data model and reconciled the migration history against the active Drizzle journal; the documented 0020-0026 migrations were stale and are corrected. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Owner Stage 01 item 1.04 review on codex/stage01-item-104-postgres-drizzle-architecture, based on dev 3aabf663; manifest SHA-256 records reviewed bytes. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (owner Stage 01 item 1.04)",
+      "observations": "Re-reviewed the profile-photo data-model text against migration 0004 and the repository: one bounded bytea WebP per owner, cascade on account deletion, session-only owner reads and unresolved retention policy are accurately stated. Existing migration numbering and applied-file immutability are preserved. Current merged-dev Stage 03 item 3.14 delta reviewed; prior Stage 01 review retained.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source. Updated for exact merged-dev item 3.14 source; item-specific verification and exact-head CI review recorded separately.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
       "sha256": "57339022bcb3edc21dbf21d5e26739faf1d231c2b59d506f88634a16ff33cc42"
     },
     {
@@ -1841,13 +1850,14 @@
     {
       "path": "docs/PRIVACY.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Describes private-data boundaries, OTP and email-change retention, consent/legal status, agent trust boundaries and privacy scanner limits. The Hostinger/backup statement is existing excluded-scope documentation; no backup or deployment work was initiated. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 01 item 1.01)"
+      "observations": "Re-reviewed privacy text update; profile pictures are explicitly treated as private runtime data and excluded from Git, public artifacts, issues, screenshots, fixtures, logs and CI artifacts.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "dcd707959c4f3d92ca8018d09df6b41419522dbe727e1e9140b919e99f9f8d0f"
     },
     {
       "path": "docs/PRODUCT-SURFACE.md",
@@ -1876,8 +1886,8 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "Focused source review and implementation validation",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior full-file review plus current item 3.14 change review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [
         {
@@ -1888,9 +1898,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded PR #53 item 3.10 merge at eb484909c25ba0bc70add17a9279deb464e3d049 and item 3.11 salary-expectation scope submitted for exact-SHA CI and review. Retained the separate legal gate for item 2.05. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; At the time of the item 3.11 review, item 3.12 exact-SHA hosted CI and independent review were pending; the later closeout evidence is recorded below. Re-reviewed the item closeout evidence: exact-SHA ChatGPT acceptance, three passing hosted jobs on the reviewed SHA, and merge commit into dev are reflected consistently in progress and test matrix. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Item 3.12 was accepted at SHA 6aca4d9d8996e0f38bd34cecb4c89c9dee4bc6aa; hosted run 42368802616 passed all three jobs; PR #55 merged to dev as 6d9789cb34d0100ba8a5845b2edfca9ea8fd88d4. This record was reconciled in PR #56 at SHA b912b7c72f6c003a4703c61951d663f60e68df66; its hosted run 42369993846 passed all three jobs. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 03 item 3.12 closeout)"
+      "observations": "Re-reviewed current item 1.01 status: the prior PR head received conditional ChatGPT approval with two nonblocking suggestions; both refinements were applied in a new head, whose CI and independent review remain pending. It preserves the separate accepted S1-F014 risk and does not claim final acceptance. Current merged-dev Stage 03 item 3.14 delta reviewed; prior Stage 01 review retained.",
+      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending. Updated for exact merged-dev item 3.14 source; item-specific verification and exact-head CI review recorded separately.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
+      "sha256": "0701815d2b9a99aac919964b820f58dc08855f1f8a056748bab030a20bd8ca31"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1907,14 +1918,14 @@
     {
       "path": "docs/README.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-targeted-checks",
+      "reviewMethod": "source review plus current item 1.01 change review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass.",
-      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.14)",
-      "sha256": "69147d54756a34f731c6c4224af867df77808aebd52a7d0fac614f48b73cf172"
+      "observations": "Re-reviewed the audit index: it accurately links the human-readable and machine-readable Stage 01 file audit and now states that npm run audit:stage01 enforces full coverage.",
+      "evidence": "Current audit refresh commit candidate based on origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; exact candidate SHA-256 recorded; new exact-head CI/review pending.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "d2e34505b004259829698be7adb5ac06224f377971ef6da3c367c05e8b72f1b1"
     },
     {
       "path": "docs/SECURITY.md",
@@ -1931,13 +1942,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "Focused source review and implementation validation",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior full-file review plus current item 3.14 change review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-SHA CI and conditional review disposition for merged item 3.10; added item 3.11 implementation and local validation scope with CI/review pending. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; At the time of the item 3.11 review, item 3.12 exact-SHA hosted CI and independent review were pending; the later closeout evidence is recorded below. Re-reviewed the item closeout evidence: exact-SHA ChatGPT acceptance, three passing hosted jobs on the reviewed SHA, and merge commit into dev are reflected consistently in progress and test matrix. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Item 3.12 was accepted at SHA 6aca4d9d8996e0f38bd34cecb4c89c9dee4bc6aa; hosted run 42368802616 passed all three jobs; PR #55 merged to dev as 6d9789cb34d0100ba8a5845b2edfca9ea8fd88d4. This record was reconciled in PR #56 at SHA b912b7c72f6c003a4703c61951d663f60e68df66; its hosted run 42369993846 passed all three jobs. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 03 item 3.12 closeout)"
+      "observations": "Re-reviewed Stage 01 item 1.01 record. The verification column no longer labels November 8 evidence as November 6; the row records parent-dev CI and makes clear that the conditional review was for the previous head, with suggested refinements applied and new-head validation pending. Current merged-dev Stage 03 item 3.14 delta reviewed; prior Stage 01 review retained.",
+      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending. Updated for exact merged-dev item 3.14 source; item-specific verification and exact-head CI review recorded separately.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
+      "sha256": "09d13cab7e2f4fad4907a2c5ea2c7189dcae6969a4292826750d0235be1247e0"
     },
     {
       "path": "docs/TESTING.md",
@@ -1954,13 +1966,14 @@
     {
       "path": "docs/TRACEABILITY.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-targeted-checks",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 01 item 1.14)"
+      "observations": "Re-reviewed the current traceability addition: inventories and their denominators remain separate, the owner roadmap remains the 328-item source, and the existing crosswalk points to the enforced checker and CI-run tests.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "c386745edee1ba5060402f9fe3bf1feceba9886d48913895166d7198d053454e"
     },
     {
       "path": "docs/UI-VERIFICATION.md",
@@ -2361,18 +2374,19 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "Focused source review and implementation validation",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior full-file review plus current item 3.14 change review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 3.11 evidence and tests for optional salary floor/currency persistence and matching behavior. Item 3.11 status is proposed on this PR branch; integration still requires exact-SHA CI and review. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 03 item 3.12)"
+      "observations": "Re-reviewed item 3.13 closeout and surrounding inventory: the item retains its source title/status, records currentStatus verified with concrete implementation and tests, links PR #57/#58 evidence, and leaves the overall 328-item/stage inventory structure intact. Traceability checker validates row and counts. Current merged-dev Stage 03 item 3.14 delta reviewed; prior Stage 01 review retained.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source. Updated for exact merged-dev item 3.14 source; item-specific verification and exact-head CI review recorded separately.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
+      "sha256": "ee55118ab5ccf13061a0da2860ce61f896b7522f1d5d248bb032334c2d50a570"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
       "category": "documentation",
-      "reviewMethod": "generated-report-and-checker",
+      "reviewMethod": "prior full-file review plus current item 3.14 change review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2384,33 +2398,34 @@
           "remediation": "Item 1.02 records Hostinger, server backup and restore-only clauses as OUT_OF_SCOPE_OWNER under the owner-revised checklist, and the inventory checker enforces the non-blocking scope disposition."
         }
       ],
-      "observations": "Reviewed the regenerated report against the updated inventory. It records 319 clauses, 11 owner-scoped Hostinger/backup/restore exclusions, 153 in-scope launch-blocking gaps, and preserves release-engineering requirements. Generated-summary validation passes. A focused Stage 03 item 3.14 update describes the generic lifecycle while keeping evidence policy and counsel approval open; this focused change does not replace the Stage 01 review.",
-      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
-      "reviewer": "Codex (Stage 01 item 1.02)",
+      "observations": "Reviewed the regenerated report against the updated inventory. It records 319 clauses, 11 owner-scoped Hostinger/backup/restore exclusions, 153 in-scope launch-blocking gaps, and preserves release-engineering requirements. Generated-summary validation passes. Current merged-dev Stage 03 item 3.14 delta reviewed; prior Stage 01 review retained.",
+      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed. Updated for exact merged-dev item 3.14 source; item-specific verification and exact-head CI review recorded separately.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
       "sha256": "d860c02d7568391a5d21d258e8c99fef3b98d360414cb913eb77f6a8fe4399d2"
     },
     {
       "path": "docs/requirements/V12-REQUIREMENT-INVENTORY.json",
       "category": "documentation",
-      "reviewMethod": "structured-data-and-checker",
+      "reviewMethod": "prior full-file review plus current item 3.14 change review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-read the 319-clause inventory and checked all 11 owner-scoped exclusions plus mixed clauses retained in scope. Owner-scoped records are non-blocking with a rationale; backup portions of mixed clauses are excluded while other gaps remain. The pinned source digest and clause correspondence still pass. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
+      "observations": "Re-read the 319-clause inventory and checked all 11 owner-scoped exclusions plus mixed clauses retained in scope. Owner-scoped records are non-blocking with a rationale; backup portions of mixed clauses are excluded while other gaps remain. The pinned source digest and clause correspondence still pass. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current merged-dev Stage 03 item 3.14 delta reviewed; prior Stage 01 review retained.",
+      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed. Updated for exact merged-dev item 3.14 source; item-specific verification and exact-head CI review recorded separately.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
       "sha256": "a5bec94590ba223cded96f3df2f1c5fbd06f21249143f0e2e9033ab14b8d1a6e"
     },
     {
       "path": "docs/security/DATA-CLASSIFICATION.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete classification table and narrative. Covers secret, personal, private-content and operational fields; account/session/OTP, resume data, application evidence, queues and logs; explicitly identifies plaintext parsed resumes in PostgreSQL and unverified host-disk/retention controls. Backup and server-specific remediation is excluded from current scope. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 01 item 1.01)"
+      "observations": "Re-reviewed profile-picture classification: it is personal/private content stored in bounded normalized WebP, protected by session-only owner-scoped API, excluded from recruiter first-pass views, and retained only until owner removal or account deletion while the broader retention policy remains pending.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "88ab1872caa2cdc4c41f29db1c891697de7a0f66e6068f7ebce17ff5c6104018"
     },
     {
       "path": "docs/security/DEPENDENCY-EXCEPTIONS.md",
@@ -3383,14 +3398,14 @@
     {
       "path": "migrations/0004_profile_photos.sql",
       "category": "database-migration",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "full-content review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "observations": "Read the complete new migration: one profile_photos row per owner via UUID primary key, bytea bounded to 12..524288 bytes, updated timestamp default, and cascading foreign key to users. No destructive data rewrite or public reference.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "55e3e843da5238f026a38a1b5386f97c6bcff35f01bc8580c9f152434ebd94a9"
     },
     {
       "path": "migrations/meta/0000_snapshot.json",
@@ -3479,13 +3494,14 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "content-read-and-targeted-checks",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior full-file review plus current item 3.14 change review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for Stage 01 item 1.14: the 328-item owner roadmap traceability inventory, checker, CI wiring and documentation cross-references. Referenced paths and CI test execution pass the checker; focused checker tests pass. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 01 item 1.14)"
+      "observations": "Re-reviewed root script/dependency delta: the new image-normalization unit test is in test:unit and audit:stage01 now requires complete file coverage. Existing Node >=24 engine and workspace test/build scripts remain intact; lockfile installation on this source revision reported zero vulnerabilities. Current merged-dev Stage 03 item 3.14 delta reviewed; prior Stage 01 review retained.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source. Updated for exact merged-dev item 3.14 source; item-specific verification and exact-head CI review recorded separately.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
+      "sha256": "7084ddc33eb3992c35b2ccac02b196ac7ba6df1f9ad2a5073df4c080b97c2195"
     },
     {
       "path": "packages/core/package.json",
@@ -3838,13 +3854,13 @@
     {
       "path": "packages/core/src/index.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior full-file review plus current item 3.14 change review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (34 lines). Re-exports every core module. No finding. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Historical Stage 01 full-file review remains partial; focused Stage 03 item 3.14 review covers only the verification re-export. Exact-head hosted CI and independent review are required for the PR.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "observations": "Re-reviewed export delta: ProfilePhotoRepository is exported from the existing core package barrel without changing other public exports. Current merged-dev Stage 03 item 3.14 delta reviewed; prior Stage 01 review retained.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source. Updated for exact merged-dev item 3.14 source; item-specific verification and exact-head CI review recorded separately.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
       "sha256": "f6c8041d2fea6e9a75516f0edf7ee73e27c52f7611f22fc9c2d6d57bfe4ac1d5"
     },
     {
@@ -4046,14 +4062,14 @@
     {
       "path": "packages/core/src/profile-photos.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "full-content review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "observations": "Read the complete repository: UUID parsing precedes SQL; every query binds the authenticated owner id; save enforces normalized-byte bounds and upserts one row per owner; delete is owner-scoped and idempotently reports row count. It exposes no public URL or cross-owner lookup.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "4db6daff2695f81af7d2dfb64b74f8a9a7f1b94c8c722797571f60f71dabc0b4"
     },
     {
       "path": "packages/core/src/profile.test.ts",
@@ -4282,8 +4298,8 @@
     {
       "path": "packages/core/src/schema.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [
         {
@@ -4294,9 +4310,10 @@
           "remediation": "Add a lower-case check in a migration after verifying existing data. Recorded for the next migration window; no migration is added in Stage 01 to avoid rewriting applied data."
         }
       ],
-      "observations": "Read in full (907 lines). Checked: owner columns with composite foreign keys so an event, job, lead history or document cannot reference another owner's run; check constraints on status enums, bounds, hex digests and JSON shapes match the SQL migrations; cascade rules on dependent rows; unique indexes that foreign keys require. Observation S1-F014: users.email is unique but has no database check that it is lower-case. Every write path lower-cases it, and the core functions now normalise too, but the database does not enforce it. A check constraint would need a migration that first verifies existing rows, so it is recorded as a low-severity accepted risk rather than changed here. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": " Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)"
+      "observations": "Re-reviewed the full current schema delta: bytea type maps Buffer to PostgreSQL, profile_photos uses owner_id primary key and cascading users FK, and storage size has a SQL check. Existing S1-F014 email-case database constraint gap remains accurately recorded as accepted low risk, with migration deferred pending existing-data validation.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "190803e9e235cb6690c2cb34db2f1881e39cf2b4027056e41ee9083736e5f553"
     },
     {
       "path": "packages/core/src/sensitive-data.integration.test.ts",
@@ -4413,30 +4430,6 @@
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
       "sha256": "c0aaecc1d5e0ab319fb64a447da18baabd8a13d6182fe7e5245e224d2a5c4633"
-    },
-    {
-      "path": "packages/core/src/verification.test.ts",
-      "category": "shared-domain-package",
-      "reviewMethod": "focused-content-review",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Focused Stage 03 item 3.14 unit tests cover pending state, expiry and recheck boundaries, revocation reason/appeal metadata, timestamp invariants, and persistence of revoked history after its original expiry/recheck deadlines. This does not constitute a full Stage 01 audit.",
-      "evidence": "Focused Node test passed 5/5 locally under Node 22; repository requires Node 24+. Hosted exact-head CI is the release gate.",
-      "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "2cbb75a65efe96aaef5b6dd4ef65b92dc9f63818052efb59856f77a8bb94bc6c"
-    },
-    {
-      "path": "packages/core/src/verification.ts",
-      "category": "shared-domain-package",
-      "reviewMethod": "focused-content-review",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Focused Stage 03 item 3.14 lifecycle primitives remain policy-neutral and do not issue checks. Any future issuance boundary must require approved type-specific evidence and enforce its required deadlines. A revoked historical record remains revoked after its original expiry or recheck deadline when those deadlines follow revocation.",
-      "evidence": "npm run build:core passed locally under Node 22; repository requires Node 24+. Hosted exact-head CI is the release gate.",
-      "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "be9e8717f27e91bdb793a34cb52db67c13d7b23a4fbff1926518cc80724985eb"
     },
     {
       "path": "packages/core/tsconfig.json",
@@ -5911,14 +5904,14 @@
     {
       "path": "scripts/ci/check-file-audit.test.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "content-read",
+      "reviewMethod": "source review plus item 1.01 reviewer-feedback update",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Written in this change and read in full before commit. 12 tests cover each validator rule and the classification and sync behaviour.",
-      "evidence": "Self-review before commit efdd55a.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "228a2a487fcfc3c92e05c6bfec3c540d1a0bc97599a7b1a161e6dff93ad294c3"
+      "observations": "Re-reviewed the test suite after the ChatGPT refinement. Strict mode is table-tested against not-reviewed, partially-reviewed and requires-investigation records, each mixed with a valid reviewed entry; all three cases must fail with the exact expected state diagnostic.",
+      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "ff780acc81177fde50aeca408b3cc7ac47ff0c5293e18f6506f826c98994b354"
     },
     {
       "path": "scripts/ci/check-line-endings.mjs",
@@ -5959,14 +5952,14 @@
     {
       "path": "scripts/ci/check-package-scripts.test.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "content-read",
+      "reviewMethod": "source review plus current item 1.01 change review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete tests. Pin serial integration execution, timeout isolation, CI command wiring and required status-check names; the test also executes the repository toolchain check. No finding.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "34b6176120a30420000c9b572d9f392b3228d4ba4beaa8ac116086b57896c9dc"
+      "observations": "Re-reviewed the complete test file and added a focused regression assertion that audit:stage01 always passes --require-complete; it is in test:unit and prevents CI configuration from silently permitting incomplete file coverage.",
+      "evidence": "Current audit refresh commit candidate based on origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; exact candidate SHA-256 recorded; new exact-head CI/review pending.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "9449bd00696772597a966dcac783a134b34037750a39779bce2f44e357b922f8"
     },
     {
       "path": "scripts/ci/check-privacy.mjs",
@@ -6482,8 +6475,8 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "Focused source review and implementation validation",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [
         {
@@ -6501,9 +6494,10 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Extended the real browser scenario to reject malformed currency without changing profile revision, save and reload the annual salary floor, lowercase currency input and expected package, then assert those values in the persisted profile and profile-based search snapshot. Updated salary-currency browser assertion to use a malformed three-character value (12R), assert native invalidity, and verify profile revision is unchanged; correction reviewed against the hosted Chromium failure. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Re-reviewed availability browser acceptance selectors: uniquely named native controls are located directly and existence is asserted before validation and persistence checks. Re-reviewed availability and preferred-contact browser acceptance: unique native control locators are reused for input and reload checks, and existence is asserted before interacting. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Codex (Stage 03 item 3.12)"
+      "observations": "Re-reviewed the complete Stage 03 photo test delta on top of the previously reviewed full browser harness. Focused mode limits to Chromium; checks file keyboard access, unsupported/oversize rejection, API failure without persistence, upload and stored private row, both avatar slots sharing one refresh, reload persistence and deletion restoring initials. Broad browser scenario also covers owner image lifecycle, account switching/isolation, responsive/accessibility checks. Exact dev CI passed the browser suite.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "a52151ba6566b5b5d2430f81f02250edffc5ca1072b49c1c4a214a042c4462ab"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
@@ -6636,13 +6630,14 @@
     {
       "path": "tests/integration/database.integration.test.ts",
       "category": "tests",
-      "reviewMethod": "sectioned-content-review-and-execution",
-      "state": "partially-reviewed",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the test harness, all top-level test cases and their security, owner-isolation, persistence, queue, resume, lead, migration, and conflict assertions in sections. Fixtures use local loopback PostgreSQL/Redis, random disposable databases, synthetic identities and payloads, and cleanup in finally blocks. No real providers or external writes are exercised. No additional finding from this file. Stage 03 item 3.13 changes supersede this snapshot; current feature-specific review is ongoing, while a complete Stage 01 file re-review is pending.",
-      "evidence": "The complete npm run test:integration suite passed under Node 24.22.1 with Docker-backed PostgreSQL and Redis on 2026-11-06; SHA-256 records the reviewed bytes. Updated content hash intentionally omitted until the full Stage 01 file review is repeated.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)"
+      "observations": "Re-reviewed the complete photo API integration delta: OpenAPI binary contract; unauthenticated and CSRF-denied paths; unsupported and malformed inputs; empty 204 and normalized WebP/no-store/nosniff response; two-owner read/write/delete isolation; profile data remains unchanged. Test fixtures and database cleanup use isolated synthetic accounts.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "511b4fa476973f099d087b6b30c2e35ed7e4f1a4bb3a2ccb2405be3827d2ffe6"
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",
@@ -6727,6 +6722,30 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "6040b0afb6dbae5f400cfaeb18fb8595d5644a4bea2f0dccc43797d136d58863"
+    },
+    {
+      "path": "packages/core/src/verification.test.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "prior full-file review plus current item 3.14 change review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Focused Stage 03 item 3.14 unit tests cover pending state, expiry and recheck boundaries, revocation reason/appeal metadata, timestamp invariants, and persistence of revoked history after its original expiry/recheck deadlines. This does not constitute a full Stage 01 audit. Current merged-dev Stage 03 item 3.14 delta reviewed; prior Stage 01 review retained.",
+      "evidence": "Focused Node test passed 5/5 locally under Node 22; repository requires Node 24+. Hosted exact-head CI is the release gate. Updated for exact merged-dev item 3.14 source; item-specific verification and exact-head CI review recorded separately.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
+      "sha256": "2cbb75a65efe96aaef5b6dd4ef65b92dc9f63818052efb59856f77a8bb94bc6c"
+    },
+    {
+      "path": "packages/core/src/verification.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "prior full-file review plus current item 3.14 change review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Focused Stage 03 item 3.14 lifecycle primitives remain policy-neutral and do not issue checks. Any future issuance boundary must require approved type-specific evidence and enforce its required deadlines. A revoked historical record remains revoked after its original expiry or recheck deadline when those deadlines follow revocation. Current merged-dev Stage 03 item 3.14 delta reviewed; prior Stage 01 review retained.",
+      "evidence": "npm run build:core passed locally under Node 22; repository requires Node 24+. Hosted exact-head CI is the release gate. Updated for exact merged-dev item 3.14 source; item-specific verification and exact-head CI review recorded separately.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
+      "sha256": "be9e8717f27e91bdb793a34cb52db67c13d7b23a4fbff1926518cc80724985eb"
     }
   ]
 }

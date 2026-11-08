@@ -66,7 +66,7 @@
     "check": "npm run eol:check && npm run privacy:check && npm run audit:stage01 && npm run architecture:check && npm run traceability:check && npm run format:check && npm run lint && npm run typecheck && npm run test:unit",
     "prepare": "husky",
     "requirements:check": "node scripts/ci/check-requirements-inventory.mjs",
-    "audit:stage01": "node scripts/ci/check-file-audit.mjs"
+    "audit:stage01": "node scripts/ci/check-file-audit.mjs --require-complete"
   },
   "devDependencies": {
     "@careerscope/matching": "3.0.0",
