@@ -2333,7 +2333,7 @@
       "observations": "Re-reviewed the canonical item 3.16 record. It retains the owner checklist title/source status and records exact-head evidence without marking the item verified; the unmerged PR and integration gap remain explicit.",
       "evidence": "Updated item 3.16 from stale not-started to in-progress with implementation/test paths, exact-SHA hosted CI and review evidence, and the still-open integration gap.",
       "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "e4fb69d0c80c6d32e2de90288f69efd1ebf4396697d68186311e4b44e90a2d43"
+      "sha256": "ac5560d5f75cb1173508d67e7533d7211df07e3a3116a9117bbe01df559025a6"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
