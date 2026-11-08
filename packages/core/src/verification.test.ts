@@ -27,6 +27,18 @@ test('a completed check stays current only before its expiry and recheck time', 
   assert.equal(verificationTransition({ ...verified, recheckAt: 200 }, 200), 'expired');
   assert.equal(verificationTransition({ ...verified, status: 'expired' }, 200), 'expired');
   assert.equal(verificationTransition({ ...verified, expiresAt: 99 }, 100), 'invalid');
+  assert.equal(
+    verificationTransition({ ...verified, expiresAt: 200, recheckAt: Number.NaN }, 200),
+    'invalid',
+  );
+  assert.equal(
+    verificationTransition({ ...verified, expiresAt: 200, revokedAt: Number.NaN }, 200),
+    'invalid',
+  );
+  assert.equal(
+    verificationTransition({ ...verified, status: 'expired', recheckAt: Number.NaN }, 200),
+    'invalid',
+  );
 });
 
 test('revocation immediately removes the active tick and records a reason and appeal', () => {
@@ -40,6 +52,12 @@ test('revocation immediately removes the active tick and records a reason and ap
   assert.equal(revoked.revocationReason, 'Evidence could not be revalidated');
   assert.equal(revoked.appealAvailable, true);
   assert.equal(verificationTransition(revoked, 151), 'revoked');
+  assert.equal(
+    verificationTransition({ ...revoked, appealAvailable: 'yes' as unknown as boolean }, 151),
+    'invalid',
+  );
+  assert.equal(verificationTransition({ ...revoked, expiresAt: Number.NaN }, 151), 'invalid');
+  assert.equal(verificationTransition({ ...revoked, recheckAt: 140 }, 151), 'invalid');
 });
 
 test('revocation rejects missing reasons, invalid times, and non-active checks', () => {

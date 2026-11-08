@@ -46,13 +46,18 @@ export function verificationTransition(
   now = Date.now(),
 ): VerificationTransition {
   if (!Number.isSafeInteger(now) || now < 0) return 'invalid';
+  if (
+    !['email', 'college', 'profile-link'].includes(check.type) ||
+    typeof check.appealAvailable !== 'boolean'
+  )
+    return 'invalid';
   if (check.status === 'pending') {
     return check.checkedAt === null &&
       check.expiresAt === null &&
       check.recheckAt === null &&
       check.revokedAt === null &&
       check.revocationReason === null &&
-      !check.appealAvailable
+      check.appealAvailable === false
       ? 'pending'
       : 'invalid';
   }
@@ -61,35 +66,39 @@ export function verificationTransition(
   if (check.checkedAt === null) return 'invalid';
   if (!Number.isSafeInteger(check.checkedAt) || check.checkedAt < 0 || check.checkedAt > now)
     return 'invalid';
-  if (check.status === 'expired') {
-    return check.revokedAt === null && check.revocationReason === null && !check.appealAvailable
-      ? 'expired'
-      : 'invalid';
-  }
-  if (check.status === 'revoked') {
-    return check.revokedAt !== null &&
-      Number.isSafeInteger(check.revokedAt) &&
-      check.revokedAt >= check.checkedAt &&
-      check.revokedAt <= now &&
-      check.revocationReason !== null &&
-      Boolean(check.revocationReason.trim())
-      ? 'revoked'
-      : 'invalid';
-  }
   if (
     check.expiresAt !== null &&
-    (!Number.isSafeInteger(check.expiresAt) || check.expiresAt < check.checkedAt)
+    (!Number.isSafeInteger(check.expiresAt) ||
+      check.expiresAt < check.checkedAt ||
+      check.expiresAt < 0)
   )
     return 'invalid';
-  if (check.expiresAt !== null && check.expiresAt <= now) return 'expired';
   if (
     check.recheckAt !== null &&
-    (!Number.isSafeInteger(check.recheckAt) || check.recheckAt < check.checkedAt)
+    (!Number.isSafeInteger(check.recheckAt) ||
+      check.recheckAt < check.checkedAt ||
+      check.recheckAt < 0)
   )
     return 'invalid';
-  if (check.recheckAt !== null && check.recheckAt <= now) return 'expired';
+  if (check.status === 'revoked') {
+    if (
+      check.revokedAt === null ||
+      !Number.isSafeInteger(check.revokedAt) ||
+      check.revokedAt < check.checkedAt ||
+      check.revokedAt > now ||
+      typeof check.revocationReason !== 'string' ||
+      !check.revocationReason.trim() ||
+      (check.expiresAt !== null && check.expiresAt <= check.revokedAt) ||
+      (check.recheckAt !== null && check.recheckAt <= check.revokedAt)
+    )
+      return 'invalid';
+    return 'revoked';
+  }
   if (check.revokedAt !== null || check.revocationReason !== null || check.appealAvailable)
     return 'invalid';
+  if (check.status === 'expired') return 'expired';
+  if (check.expiresAt !== null && check.expiresAt <= now) return 'expired';
+  if (check.recheckAt !== null && check.recheckAt <= now) return 'expired';
   return 'verified';
 }
 
