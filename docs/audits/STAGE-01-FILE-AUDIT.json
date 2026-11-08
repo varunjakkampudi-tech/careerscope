@@ -1898,10 +1898,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Re-reviewed the current progress text and retained the distinction between the partial 3.14 lifecycle foundation and missing product/counsel gates. PR #60 is synchronized at a42f3019df908ac6a543a46daf7e36d379feba3a; exact-head run 42497964957 is in progress. Commit a42f301 includes the dynamic-count test fix; prior run 42497681220 is on 53ee618 and does not validate it.",
-      "evidence": "Updated after verifying exact PR head and CI state on 2026-11-08. The committed test change derives the prose-count mutation input from the requirement inventory and passes 24/24 locally. No completion claim for item 3.14.",
+      "observations": "Re-reviewed the Stage 03 item 3.14 progress entry. It now records commit-specific test and documentation history without describing a commit as the perpetually current PR head. Item 3.14 remains partial with product and counsel gaps open.",
+      "evidence": "Commit a42f301 introduced the dynamic-count test and focused 24/24 result. Follow-up documentation correction is recorded at 9d02e556af70bd5a830a536f3d85c707be45bf8b with associated run 42498303461. No completion claim for item 3.14.",
       "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "1e3aae8fa3d60e76734e1afd182b0472fa045b60d30783c2c2d44b39466ea93c"
+      "sha256": "d23ecd53dd02c47575e233637a8518eadbbb56aacf5c6fc16e5e8cc6f34f9d9e"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1946,10 +1946,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the Stage 03 item 3.14 row. It records exact PR head a42f3019df908ac6a543a46daf7e36d379feba3a and run 42497964957 as in progress. The committed count-agnostic regression test passes 24/24 locally; earlier run 42497681220 is on prior SHA 53ee618.",
-      "evidence": "Updated after checking PR #60 and exact-head run 42497964957 on 2026-11-08. Focused local traceability test passed 24/24 after deriving the expected inventory count dynamically.",
+      "observations": "Re-reviewed the Stage 03 item 3.14 row. It uses durable commit and run references for the dynamic-count test and follow-up documentation correction; it no longer describes a historical head as the current PR head. Item 3.14 remains partial.",
+      "evidence": "Focused local traceability test passed 24/24 after deriving the expected inventory count dynamically in a42f301. Subsequent documentation correction is recorded at 9d02e556af70bd5a830a536f3d85c707be45bf8b; associated hosted run 42498303461.",
       "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "c84143b8134d03e1387cc3dc2c3912780e72cebf593cf8d80e8c0739b7729a9f"
+      "sha256": "1efa4f36a9f26d68b9f35b2ed5dd6cd7413f0f1ba5bc142d2c5a35132d8bcb59"
     },
     {
       "path": "docs/TESTING.md",
@@ -6109,7 +6109,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Re-read the v12 reconciliation assertions and made the Item 1.02 prose-count mutation test derive its fixture from analyzeInventory rather than hard-coding the current IMPLEMENTED count. This avoids false failure when inventory counts legitimately change.",
-      "evidence": "Focused command: node --test scripts/ci/check-traceability.test.mjs; passed 24/24 locally. Commit a42f301 includes this change. Exact-head hosted CI run 42497964957 is in progress.",
+      "evidence": "Focused command: node --test scripts/ci/check-traceability.test.mjs; passed 24/24 locally. Commit a42f301 includes this change; hosted run 42497964957 was initiated for that exact SHA. Subsequent docs correction in 9d02e556af70bd5a830a536f3d85c707be45bf8b is associated with run 42498303461.",
       "reviewer": "Codex (Stage 01 item 1.02)",
       "sha256": "b1022e02bcea4f1fde82af687ce3ee8dc1993d85f868ca5280c9b99caa24b6d4"
     },
