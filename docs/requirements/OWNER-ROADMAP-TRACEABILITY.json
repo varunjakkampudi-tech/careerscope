@@ -783,7 +783,7 @@
         "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "Owner-controlled recruiter visibility preference is revision-saved and defaults private. No recruiter-facing profile read exists, so the preference does not expose profile data; actual access enforcement, privacy review of exposed fields, and recruiter-path tests remain outstanding.",
+      "gap": "Owner-controlled recruiter visibility preference is revision-saved and defaults private; it is only a preference and grants no access. No recruiter account, employer verification, recruiter-facing profile read, or public profile link exists. V12 requires public profiles off by default and recruiter first-pass views to hide candidate photos. Before any profile is exposed, define and approve the visible field set and consent/withdrawal behavior, implement authorization and access enforcement, and add recruiter-path privacy tests. External privacy review remains outstanding.",
       "scopeDisposition": "in-scope"
     },
     {
