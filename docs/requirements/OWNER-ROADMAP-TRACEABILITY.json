@@ -773,6 +773,7 @@
         "packages/core/src/profile.ts",
         "apps/web/src/components/profile-editor.tsx",
         "apps/api/src/openapi.ts",
+        "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
         "docs/API-SURFACE.md",
         "docs/PROGRESS.md"
       ],
@@ -783,7 +784,7 @@
         "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "Owner-controlled recruiter visibility preference is revision-saved and defaults private; it is only a preference and grants no access. No recruiter account, employer verification, recruiter-facing profile read, or public profile link exists. V12 requires public profiles off by default and recruiter first-pass views to hide candidate photos. Before any profile is exposed, define and approve the visible field set and consent/withdrawal behavior, implement authorization and access enforcement, and add recruiter-path privacy tests. External privacy review remains outstanding.",
+      "gap": "Candidate-selected recruiter discovery consent and an explicit professional-field allowlist are revision-saved; both default to private/empty, and withdrawing visibility clears the allowlist. Contact details, compensation, birth date, photos, resumes, and account/security data are excluded. These settings grant no access and remain excluded from matching. No recruiter account, employer verification, recruiter-facing profile read, or public profile link exists. Before exposure, implement verified-employer authorization and default-deny access, V12 recruiter first-pass photo restrictions, withdrawal/revocation enforcement, recruiter-path isolation/privacy tests, and external privacy review. Stage 13 foundations remain unstarted.",
       "scopeDisposition": "in-scope"
     },
     {

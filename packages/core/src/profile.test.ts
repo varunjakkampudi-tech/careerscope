@@ -61,7 +61,7 @@ test('profile reuses domain defaults without inventing qualifications', () => {
   assert.deepEqual(parsed.candidate.education, []);
   assert.deepEqual(parsed.candidate.experience, []);
   assert.deepEqual(parsed.candidate.projects, []);
-  assert.deepEqual(parsed.privacy, { recruiterVisible: false });
+  assert.deepEqual(parsed.privacy, { recruiterVisible: false, recruiterVisibleFields: [] });
   assert.equal(parsed.candidate.graduationYear, undefined);
   assert.deepEqual(parsed.accessibility, { reducedMotion: false });
 });
@@ -205,13 +205,20 @@ test('saved accessibility preferences are owner profile data, validated and excl
 
 test('recruiter visibility preference is private by default and excluded from matching snapshots', () => {
   const privateProfile = writableProfileSchema.parse(syntheticProfile);
-  assert.deepEqual(privateProfile.privacy, { recruiterVisible: false });
+  assert.deepEqual(privateProfile.privacy, { recruiterVisible: false, recruiterVisibleFields: [] });
 
   const optedInProfile = writableProfileSchema.parse({
     ...syntheticProfile,
-    privacy: { recruiterVisible: true },
+    privacy: { recruiterVisible: true, recruiterVisibleFields: ['location', 'techStack'] },
   });
-  assert.deepEqual(optedInProfile.privacy, { recruiterVisible: true });
+  assert.deepEqual(optedInProfile.privacy, {
+    recruiterVisible: true,
+    recruiterVisibleFields: ['location', 'techStack'],
+  });
+  assert.deepEqual(
+    writableProfileSchema.parse({ ...optedInProfile, privacy: { recruiterVisible: false, recruiterVisibleFields: [] } }).privacy,
+    { recruiterVisible: false, recruiterVisibleFields: [] },
+  );
   assert.deepEqual(matchingProfile(optedInProfile), {
     candidate: { location: 'Hyderabad' },
     preferences: optedInProfile.preferences,

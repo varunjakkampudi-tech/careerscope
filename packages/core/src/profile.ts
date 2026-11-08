@@ -142,7 +142,10 @@ export class ProfileRepository {
        FROM candidate_profiles WHERE owner_id = $1`,
       [ownerId],
     );
-    return result.rows[0] ?? null;
+    const record = result.rows[0];
+    if (!record) return null;
+    // Normalize fields added to the JSON profile contract without rewriting stored legacy rows.
+    return { ...record, profile: writableProfileSchema.parse(record.profile) };
   }
 
   /**
