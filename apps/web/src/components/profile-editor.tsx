@@ -39,6 +39,9 @@ const recruiterShareableFields = [
   ['techStack', 'Skills'],
   ['yearsOfExperience', 'Years of experience'],
 ] as const;
+type RecruiterShareableField = (typeof recruiterShareableFields)[number][0];
+const isRecruiterShareableField = (value: string): value is RecruiterShareableField =>
+  recruiterShareableFields.some(([field]) => field === value);
 
 const onboardingSteps = [
   { title: 'Contact', description: 'Start with the details you want employers to use.' },
@@ -305,7 +308,7 @@ function ProfileForm({
       privacy: {
         recruiterVisible,
         recruiterVisibleFields: recruiterVisible
-          ? data.getAll('recruiterVisibleFields').map(String)
+          ? data.getAll('recruiterVisibleFields').map(String).filter(isRecruiterShareableField)
           : [],
       },
       accessibility: {
