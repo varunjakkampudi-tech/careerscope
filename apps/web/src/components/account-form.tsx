@@ -313,6 +313,7 @@ export default function AccountForm({
                     <a href={legalDocuments.privacyUrl} target="_blank" rel="noreferrer">
                       {t('privacyNoticeWithVersion', legalDocuments.privacyVersion)}
                     </a>
+                    {t('acknowledgePrivacySuffix') ? <> {t('acknowledgePrivacySuffix')}</> : null}
                   </label>
                   <label>
                     <input

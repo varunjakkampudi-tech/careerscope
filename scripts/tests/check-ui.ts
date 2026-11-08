@@ -1006,6 +1006,22 @@ try {
         await signupPage.getByLabel(/optional CareerScope product updates/).isChecked(),
         false,
       );
+      for (const [locale, label] of [
+        ['te', 'నేను గోప్యతా నోటీసు (test-privacy-1) ను గుర్తిస్తున్నాను'],
+        ['hi', 'मैं गोपनीयता सूचना (test-privacy-1) की प्राप्ति की पुष्टि करता/करती हूँ'],
+        ['en', 'I acknowledge the Privacy Notice (test-privacy-1)'],
+      ] as const) {
+        await signupPage.evaluate((value) => {
+          const key = 'careerscope:interface-language';
+          localStorage.setItem(key, value);
+          window.dispatchEvent(new StorageEvent('storage', { key, newValue: value }));
+        }, locale);
+        assert.equal(
+          await signupPage.getByLabel(label).isChecked(),
+          true,
+          `${engine} ${locale} privacy acknowledgement label should describe the notice without implying acceptance`,
+        );
+      }
       for (const width of responsiveWidthsEndingAt(1440)) {
         await signupPage.setViewportSize({ width, height: 900 });
         assert.equal(

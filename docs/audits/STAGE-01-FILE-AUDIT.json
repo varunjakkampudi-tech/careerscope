@@ -913,10 +913,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete sign-in and registration form. Test-user and OTP modes are separated, code inputs enforce six digits, date-of-birth state is cleared after signup submission, legal acknowledgements are explicit, and errors/status changes are announced. Account-provided legal links open in a new tab with noreferrer.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+      "observations": "Updated legal acceptance rendering to compose full localized acknowledgement labels while retaining required Terms acceptance and separate optional marketing consent.",
+      "evidence": "Updated in the item 2.06 privacy acknowledgement change; revalidated on this revision.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "aae7f070068b0181c539590255d8c83a8d1216f733220bf9c55316a5b6c8f07e"
+      "sha256": "10a1372a9fc7498149d4e606132107bca3a58603ee0da10e95673cc728be6750"
     },
     {
       "path": "apps/web/src/components/account-security.module.css",
@@ -1376,10 +1376,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete localization tests. They verify the supported locale allowlist, translation presence and distinctness for navigation, notifications, security, sign-in, search, and error categories, plus interpolation values.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+      "observations": "Added complete English, Telugu and Hindi privacy acknowledgement label assertions; AI-only copy review did not replace native-speaker review.",
+      "evidence": "Updated in the item 2.06 privacy acknowledgement change; revalidated on this revision.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "c683aa6f7b8d98ac1bcce990ed1faaa7dcd6c5232fa28add6cbd994904a204e2"
+      "sha256": "ba73e4345193290fe609021a58372b7a02875da4264b972c0f233fd9e4d7db60"
     },
     {
       "path": "apps/web/src/lib/locale.ts",
@@ -1388,10 +1388,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item.",
-      "evidence": "Locale implementation and representative message groups inspected on codex/stage01-item-101-audit; structural parity is enforced by the full typecheck.",
+      "observations": "Corrected Hindi and Telugu privacy acknowledgement wording to say acknowledge/confirm receipt rather than accept; native-speaker review remains outstanding.",
+      "evidence": "Updated in the item 2.06 privacy acknowledgement change; revalidated on this revision.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "dbd14b6a0ebe273efeaa5dd175345d3bffa0efb7d80606f21c46e0c34ca9e469"
+      "sha256": "75e45067aee7990decb4433d3c5e5a4499274933e5b65a938e2fb8eaae91ffcc"
     },
     {
       "path": "apps/web/src/lib/next-proxy-headers.test.ts",
@@ -1898,10 +1898,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Re-reviewed current item 1.01 status: the prior PR head received conditional ChatGPT approval with two nonblocking suggestions; both refinements were applied in a new head, whose CI and independent review remain pending. It preserves the separate accepted S1-F014 risk and does not claim final acceptance.",
-      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending.",
+      "observations": "Corrected Stage 02 status to in progress and documented item 2.06 AI-only wording review, regression checks, and remaining native-language review gate.",
+      "evidence": "Updated in the item 2.06 privacy acknowledgement change; revalidated on this revision.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "e484542d6a5e62ff3c5f4ce698e267e8d7aa060cf2d4e520b0c3491d995a776f"
+      "sha256": "cc8e55b960dec38aa56d230510b4bc762b6a1ed99f6081451fb531fa976f03f0"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1946,10 +1946,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed Stage 01 item 1.01 record. The verification column no longer labels November 8 evidence as November 6; the row records parent-dev CI and makes clear that the conditional review was for the previous head, with suggested refinements applied and new-head validation pending.",
-      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending.",
+      "observations": "Added item 2.06 locale and browser accessible-label regression test coverage; validation is pending for the candidate revision.",
+      "evidence": "Updated in the item 2.06 privacy acknowledgement change; revalidated on this revision.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "47e48ae2068e86b130494fedda77c11b7fdc974a04502dbb3960dd7069e90eba"
+      "sha256": "423b42a5c339a9570586273359f5a170df453be999abe1c7656bab66ef7d042e"
     },
     {
       "path": "docs/TESTING.md",
@@ -2378,10 +2378,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed item 3.13 closeout and surrounding inventory: the item retains its source title/status, records currentStatus verified with concrete implementation and tests, links PR #57/#58 evidence, and leaves the overall 328-item/stage inventory structure intact. Traceability checker validates row and counts.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "observations": "Kept item 2.06 partial, added source/test paths, and retained native-language review as an explicit gap after AI-only copy refinement.",
+      "evidence": "Updated in the item 2.06 privacy acknowledgement change; revalidated on this revision.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "edb923beb53cbffe63c43c25e59dfaeb5d0b32ab5817705cfee50ed1a1c43750"
+      "sha256": "45faaef0de62c70679ad5f24cfc9005b3f99416fe03a3c974a9bff1d9a33e8e5"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -6494,10 +6494,10 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Re-reviewed the complete Stage 03 photo test delta on top of the previously reviewed full browser harness. Focused mode limits to Chromium; checks file keyboard access, unsupported/oversize rejection, API failure without persistence, upload and stored private row, both avatar slots sharing one refresh, reload persistence and deletion restoring initials. Broad browser scenario also covers owner image lifecycle, account switching/isolation, responsive/accessibility checks. Exact dev CI passed the browser suite.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "observations": "Added Stage 02 localized privacy acknowledgement label assertions for English, Telugu and Hindi; browser execution remains pending.",
+      "evidence": "Updated in the item 2.06 privacy acknowledgement change; source and candidate regression assertions reviewed, hosted browser validation pending.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "a52151ba6566b5b5d2430f81f02250edffc5ca1072b49c1c4a214a042c4462ab"
+      "sha256": "0753d1277de11fda4b030efab9d3557b5c842e6f945e4f51c31a92a92d3ad9cc"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
