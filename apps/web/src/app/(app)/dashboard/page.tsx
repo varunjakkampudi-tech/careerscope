@@ -28,6 +28,7 @@ import {
   type DashboardSearchDetail,
 } from '@/lib/api-schemas';
 import { panelState, statDisplay } from '@/lib/dashboard-state';
+import { profileCompletenessChecks, profileCompletenessPercent } from '@/lib/profile-completeness';
 import { ownerKey, useSession } from '@/lib/session';
 import HeroIllustration from '@/components/hero-illustration';
 import { SaveJob } from '@/components/saved-leads';
@@ -187,10 +188,8 @@ function DashboardContent() {
     return entries.sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime()).slice(0, 5);
   }, [runs.data, savedLeads.data, resumes.data]);
 
-  // Every checklist item is a real, independently verifiable fact — never a
-  // fabricated "profile completeness" figure. See docs/FRONTEND-ADMIN-ROADMAP.md,
-  // "Planning snapshot: 2026-09-23" for why this replaces the design's single
-  // invented "94% Profile Match" figure.
+  // Career progress reflects activity; profile completeness below is derived only
+  // from saved profile fields and never from resume, application, or engagement data.
   const checks = useMemo(
     () => [
       {
@@ -213,6 +212,9 @@ function DashboardContent() {
   const progressPercent = Math.round(
     (checks.filter((check) => check.done).length / checks.length) * 100,
   );
+  const completenessChecks = profileCompletenessChecks(profile.data?.profile);
+  const completenessLoaded = profile.isSuccess;
+  const completenessPercent = profileCompletenessPercent(completenessChecks);
 
   // CS-38: "freshness semantics" - an honest "as of" indicator for the
   // owner-scoped data on this page, computed only from each query's own
@@ -608,6 +610,53 @@ function DashboardContent() {
             )}
             <Link href="/resume" prefetch={false} className={styles.ctaLink}>
               Improve My Profile
+              <ChevronRight size={14} aria-hidden="true" />
+            </Link>
+          </section>
+
+          <section className={styles.panel} aria-label="Profile completeness">
+            <h2>Profile completeness {completenessLoaded ? `${completenessPercent}%` : ''}</h2>
+            <p className={styles.stateNotice}>
+              Based on saved profile details. Optional contact details, links, and resume are not
+              required.
+            </p>
+            {!completenessLoaded ? (
+              <LoadingState variant="inline" className={styles.stateNotice} message="Loading…" />
+            ) : (
+              <>
+                <div
+                  className={styles.progressBarTrack}
+                  role="progressbar"
+                  aria-label="Profile completeness"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={completenessPercent}
+                >
+                  <div
+                    className={styles.progressBarFill}
+                    style={{ width: `${completenessPercent}%` }}
+                  />
+                </div>
+                <ul className={styles.checklist}>
+                  {completenessChecks.map((check) => (
+                    <li key={check.id}>
+                      {check.done ? (
+                        <Check size={15} aria-hidden="true" color="#157539" />
+                      ) : (
+                        <Circle size={15} aria-hidden="true" />
+                      )}
+                      <span data-done={check.done}>{check.label}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className={styles.stateNotice}>
+                  Education, experience, or projects can describe your background; we don&apos;t
+                  verify these candidate-entered claims.
+                </p>
+              </>
+            )}
+            <Link href="/resume" prefetch={false} className={styles.ctaLink}>
+              Complete your profile
               <ChevronRight size={14} aria-hidden="true" />
             </Link>
           </section>

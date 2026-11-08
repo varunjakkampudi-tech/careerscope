@@ -2905,6 +2905,14 @@ try {
       await finishButton.click();
       await page.getByText('Profile saved.', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Save Profile', exact: true }).waitFor();
+      const completenessPanel = page.locator('section[aria-label="Profile completeness"]');
+      await completenessPanel.getByText('Profile completeness 100%', { exact: true }).waitFor();
+      await completenessPanel.getByRole('progressbar', { name: 'Profile completeness' }).waitFor();
+      assert.equal(
+        await completenessPanel.locator('[data-done="true"]').count(),
+        5,
+        `${engine}: saved onboarding profile must complete each profile-only checklist item`,
+      );
       assert.equal(
         await page.getByRole('status').filter({ hasText: 'Step ' }).count(),
         0,
