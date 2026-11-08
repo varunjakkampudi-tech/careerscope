@@ -1886,7 +1886,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "source review plus current item 1.01 change review",
+      "reviewMethod": "source review plus item 1.01 reviewer-feedback update",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1898,10 +1898,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Re-reviewed the Stage 01 audit status update. It distinguishes the historical independent PR #18 approval from the current refresh candidate, records exact current coverage and retained S1-F014 risk, and says candidate CI/independent review are pending.",
-      "evidence": "Current audit refresh commit candidate based on origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; exact candidate SHA-256 recorded; new exact-head CI/review pending.",
+      "observations": "Re-reviewed current item 1.01 status: the prior PR head received conditional ChatGPT approval with two nonblocking suggestions; both refinements were applied in a new head, whose CI and independent review remain pending. It preserves the separate accepted S1-F014 risk and does not claim final acceptance.",
+      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "aff2285203d71d98d07ac5a23730cba01b6326d81ad34ac2231ad5cfc5761df3"
+      "sha256": "e484542d6a5e62ff3c5f4ce698e267e8d7aa060cf2d4e520b0c3491d995a776f"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1942,14 +1942,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "source review plus current item 1.01 change review",
+      "reviewMethod": "source review plus item 1.01 reviewer-feedback update",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the owner Stage 01 item 1.01 entry and Stage 03 closeouts. The new row cites audit artifacts/tests, 512-file coverage counts, strict gate and parent-dev CI; candidate CI and ChatGPT review are correctly pending.",
-      "evidence": "Current audit refresh commit candidate based on origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; exact candidate SHA-256 recorded; new exact-head CI/review pending.",
+      "observations": "Re-reviewed Stage 01 item 1.01 record. The verification column no longer labels November 8 evidence as November 6; the row records parent-dev CI and makes clear that the conditional review was for the previous head, with suggested refinements applied and new-head validation pending.",
+      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "5df856e2abbccfe7d681f8a7da11347ab3c3dfb4f346bd2b89f32b9012c8a787"
+      "sha256": "47e48ae2068e86b130494fedda77c11b7fdc974a04502dbb3960dd7069e90eba"
     },
     {
       "path": "docs/TESTING.md",
@@ -5904,14 +5904,14 @@
     {
       "path": "scripts/ci/check-file-audit.test.mjs",
       "category": "tooling-and-tests",
-      "reviewMethod": "content-read",
+      "reviewMethod": "source review plus item 1.01 reviewer-feedback update",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Written in this change and read in full before commit. 12 tests cover each validator rule and the classification and sync behaviour.",
-      "evidence": "Self-review before commit efdd55a.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "228a2a487fcfc3c92e05c6bfec3c540d1a0bc97599a7b1a161e6dff93ad294c3"
+      "observations": "Re-reviewed the test suite after the ChatGPT refinement. Strict mode is table-tested against not-reviewed, partially-reviewed and requires-investigation records, each mixed with a valid reviewed entry; all three cases must fail with the exact expected state diagnostic.",
+      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "ff780acc81177fde50aeca408b3cc7ac47ff0c5293e18f6506f826c98994b354"
     },
     {
       "path": "scripts/ci/check-line-endings.mjs",
