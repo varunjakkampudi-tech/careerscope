@@ -86,16 +86,29 @@ describe('candidate-declared profile fields', () => {
     ).toEqual({ preferredContactMethod: 'phone' });
   });
 
-  it('defaults recruiter visibility to private and accepts only an explicit boolean preference', () => {
-    expect(profileSchema.parse(profile).privacy).toEqual({ recruiterVisible: false });
+  it('defaults recruiter visibility and field allowlist to private and empty', () => {
+    expect(profileSchema.parse(profile).privacy).toEqual({
+      recruiterVisible: false,
+      recruiterVisibleFields: [],
+    });
     expect(
       profileSchema.parse({
         ...profile,
-        privacy: { recruiterVisible: true },
+        privacy: { recruiterVisible: true, recruiterVisibleFields: [] },
       }).privacy,
-    ).toEqual({ recruiterVisible: true });
+    ).toEqual({ recruiterVisible: true, recruiterVisibleFields: [] });
+    expect(
+      profileSchema.parse({
+        ...profile,
+        privacy: { recruiterVisible: true, recruiterVisibleFields: ['location', 'techStack'] },
+      }).privacy,
+    ).toEqual({ recruiterVisible: true, recruiterVisibleFields: ['location', 'techStack'] });
     expect(profileUpdateSchema.parse({ privacy: { recruiterVisible: true } }).privacy).toEqual({
       recruiterVisible: true,
+      recruiterVisibleFields: [],
+    });
+    expect(profileUpdateSchema.parse({ privacy: { recruiterVisibleFields: [] } }).privacy).toEqual({
+      recruiterVisibleFields: [],
     });
     expect(profileUpdateSchema.safeParse({ privacy: { recruiterVisible: 'true' } }).success).toBe(
       false,
@@ -103,6 +116,9 @@ describe('candidate-declared profile fields', () => {
     expect(
       profileUpdateSchema.safeParse({ privacy: { recruiterVisible: true, public: true } }).success,
     ).toBe(false);
+    for (const recruiterVisibleFields of [['email'], ['resumeId'], ['location', 'location']]) {
+      expect(profileUpdateSchema.safeParse({ privacy: { recruiterVisibleFields } }).success).toBe(false);
+    }
   });
 
   it('rejects inconsistent availability and notice-day combinations', () => {

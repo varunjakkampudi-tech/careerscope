@@ -224,12 +224,14 @@ takes `{ enabled }` and returns `{ scheduledDiscoveryEnabled }`.
 `PUT /api/profile` carries a revision. A stale revision is a 409, not a
 last-write-wins overwrite.
 
-The owner profile includes `privacy.recruiterVisible`, defaulting to `false`.
-The owner can save this preference through the revision-guarded profile route.
-It is not an access grant: recruiter search and recruiter profile-read routes do
-not exist yet, and no current API exposes the profile to recruiters. Candidate
-photos remain owner-only regardless of this setting. The preference is excluded
-from job-matching inputs.
+The owner profile includes `privacy.recruiterVisible`, defaulting to `false`, and
+`privacy.recruiterVisibleFields`, defaulting to an empty allowlist. Candidates can
+select from a fixed set of non-contact professional fields and withdraw consent
+by disabling visibility or clearing the list. Contact details, compensation,
+birth date, photos, and resumes cannot be selected. These are preferences only,
+not access grants: recruiter search and recruiter profile-read routes do not
+exist yet, and no current API exposes profiles to recruiters. Candidate photos
+remain owner-only. These fields are excluded from job-matching inputs.
 
 The candidate profile may include the explicitly selected career segment
 `student`, `fresher`, or `experienced`. It is optional for legacy profiles and

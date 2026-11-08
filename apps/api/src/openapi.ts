@@ -150,6 +150,21 @@ const profile = object({
         description:
           'Owner preference for future recruiter visibility. This setting does not grant or enable recruiter access.',
       },
+      recruiterVisibleFields: {
+        type: 'array',
+        uniqueItems: true,
+        maxItems: 12,
+        items: {
+          type: 'string',
+          enum: [
+            'fullName', 'location', 'segment', 'education', 'experience', 'projects',
+            'linkedin', 'github', 'portfolio', 'titles', 'techStack', 'yearsOfExperience',
+          ],
+        },
+        default: [],
+        description:
+          'Candidate-selected fields that may be shared if recruiter discovery is later enabled. Empty by default; selecting fields grants no access. Contact details, compensation, birth date, photos, and resumes are excluded.',
+      },
     },
     [],
   ),

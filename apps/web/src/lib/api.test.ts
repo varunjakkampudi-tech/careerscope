@@ -8,7 +8,7 @@ import {
   parseSession,
 } from './api-schemas';
 
-test('legacy profile responses default recruiter visibility to private', () => {
+test('legacy profile responses default recruiter visibility to private and allowlist to empty', () => {
   const parsed = parseProfileResponse({
     revision: 1,
     updatedAt: '2026-11-08T00:00:00.000Z',
@@ -22,7 +22,7 @@ test('legacy profile responses default recruiter visibility to private', () => {
       application: {},
     },
   });
-  assert.deepEqual(parsed.profile?.privacy, { recruiterVisible: false });
+  assert.deepEqual(parsed.profile?.privacy, { recruiterVisible: false, recruiterVisibleFields: [] });
 });
 
 /**
