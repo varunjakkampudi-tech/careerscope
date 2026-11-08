@@ -4275,11 +4275,15 @@
       "text": "- Verification ticks: each shown only when its check completed; expiry and revocation tested",
       "assessment": "NOT_IMPLEMENTED",
       "verification": "NOT_APPLICABLE",
-      "gap": "Only the email tick exists. No expiry, recheck or revocation exists, so none can be tested.",
+      "gap": "Only the mandatory email tick exists. Generic expiry, recheck and revocation lifecycle primitives are covered by packages/core/src/verification.test.ts, but no optional college/profile-link checks are issued or persisted and no tick is displayed from them. The lifecycle test does not prove the complete candidate-facing verification acceptance flow; evidence and validity policy, persistence, candidate notice and appeal workflows, recruiter tier/date presentation, and counsel review remain outstanding.",
       "launchBlocking": true,
       "evidence": {
-        "implementation": ["packages/core/src/schema.ts:36"],
-        "tests": []
+        "implementation": [
+          "packages/core/src/verification.ts",
+          "packages/core/src/auth.ts:247",
+          "apps/web/src/components/account-security.tsx:220"
+        ],
+        "tests": ["packages/core/src/verification.test.ts"]
       }
     },
     {
