@@ -2383,8 +2383,8 @@
           "remediation": "Item 1.02 records Hostinger, server backup and restore-only clauses as OUT_OF_SCOPE_OWNER under the owner-revised checklist, and the inventory checker enforces the non-blocking scope disposition."
         }
       ],
-      "observations": "Reviewed for owner item 3.14. Verification remains inactive without approved type-specific evidence policy. Hosted CI passed on earlier head 7ce58095599fe1749efb71db12daf338a93933bb in run 42399271691; review found malformed timestamp and runtime appealAvailable validation gaps, corrected in implementation commit dc7f3f72bbf7dea84e9302563d32d3c6b95df636; current docs-inclusive PR head is 95efc2ad2eac0882bf1cc3d7dd508c59fadae31f.",
-      "evidence": "Follow-up focused verification tests passed 4/4 and npm run build:core passed locally under Node 22 (below required Node 24). Exact-SHA hosted CI for docs-inclusive PR head 95efc2ad2eac0882bf1cc3d7dd508c59fadae31f is pending; prior head 7ce58095599fe1749efb71db12daf338a93933bb passed run 42399271691.",
+      "observations": "Reviewed for owner item 3.14. Verification remains inactive without approved type-specific evidence policy. Hosted CI passed on earlier head 7ce58095599fe1749efb71db12daf338a93933bb in run 42399271691; review found malformed timestamp and runtime appealAvailable validation gaps, corrected in implementation commit dc7f3f72bbf7dea84e9302563d32d3c6b95df636; PR #60 current head is a live value and must be verified from GitHub at review time.",
+      "evidence": "Follow-up focused verification tests passed 4/4 and npm run build:core passed locally under Node 22 (below required Node 24). Every later PR head requires exact-SHA hosted CI; prior head 7ce58095599fe1749efb71db12daf338a93933bb passed run 42399271691.",
       "reviewer": "Codex (Stage 03 item 3.14)",
       "sha256": "d860c02d7568391a5d21d258e8c99fef3b98d360414cb913eb77f6a8fe4399d2"
     },
@@ -4433,7 +4433,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed for owner item 3.14. All timestamp windows and runtime revocation metadata are validated before terminal statuses; expired and revoked states remain subject to cross-field invariants. Verification remains inactive without approved type-specific evidence policy.",
-      "evidence": "Follow-up focused verification tests passed 4/4 and npm run build:core passed locally under Node 22 (below required Node 24). Exact-SHA hosted CI for docs-inclusive PR head 95efc2ad2eac0882bf1cc3d7dd508c59fadae31f is pending; prior head 7ce58095599fe1749efb71db12daf338a93933bb passed run 42399271691.",
+      "evidence": "Follow-up focused verification tests passed 4/4 and npm run build:core passed locally under Node 22 (below required Node 24). Every later PR head requires exact-SHA hosted CI; prior head 7ce58095599fe1749efb71db12daf338a93933bb passed run 42399271691.",
       "reviewer": "Codex (Stage 03 item 3.14)",
       "sha256": "2e8d05f17c19bab7b10cd4796447f7774fa4e7eba94c8219afcf1c19d8335792"
     },
