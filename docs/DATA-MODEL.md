@@ -42,6 +42,12 @@ appeals. The email tick continues to use `users.email_verified_at` and is tied t
 the account's current address. College and profile-link verification remain
 unavailable until their evidence, validity, recheck, notice and appeal policies
 receive product and counsel approval. See [V12-RECONCILIATION](requirements/V12-RECONCILIATION.md).
+The generic verified state permits null expiry and recheck timestamps because
+no type-specific schedule is approved yet. Any future issuance boundary must
+require an approved evidence policy and enforce its required deadline before a
+tick can be exposed. Once revoked, a historical record remains revoked even
+after its original expiry or recheck time; those deadlines must be later than
+the revocation timestamp. These primitives do not authorize issuing ticks.
 
 The active Drizzle journal contains five migrations. `0000_initial_schema.sql`
 establishes the baseline, including the OTP/session/consent/email-change and

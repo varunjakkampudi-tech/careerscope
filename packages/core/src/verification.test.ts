@@ -60,6 +60,23 @@ test('revocation immediately removes the active tick and records a reason and ap
   assert.equal(verificationTransition({ ...revoked, recheckAt: 140 }, 151), 'invalid');
 });
 
+test('revoked history stays revoked after its original expiry or recheck deadline', () => {
+  const revokedAt = 150;
+  const expiresLater = revokeVerification(
+    { ...verified, expiresAt: 200 },
+    { at: revokedAt, reason: 'Evidence could not be revalidated', appealAvailable: true },
+  );
+  const rechecksLater = revokeVerification(
+    { ...verified, recheckAt: 200 },
+    { at: revokedAt, reason: 'Evidence could not be revalidated', appealAvailable: true },
+  );
+
+  assert.ok(expiresLater);
+  assert.ok(rechecksLater);
+  assert.equal(verificationTransition(expiresLater, 250), 'revoked');
+  assert.equal(verificationTransition(rechecksLater, 250), 'revoked');
+});
+
 test('revocation rejects missing reasons, invalid times, and non-active checks', () => {
   assert.equal(
     revokeVerification(verified, { at: 150, reason: '  ', appealAvailable: false }),

@@ -23,6 +23,15 @@ export type VerificationCheck = {
 
 export type VerificationTransition = 'pending' | 'verified' | 'expired' | 'revoked' | 'invalid';
 
+/**
+ * The pure lifecycle is policy-neutral: verified records may omit both
+ * deadlines until a type-specific schedule is approved. Any issuance boundary
+ * must require an approved evidence policy and enforce its expiry/recheck
+ * deadline before exposing a tick. A revoked record remains revoked after its
+ * original expiry or recheck deadline, provided both deadlines followed its
+ * revocation time.
+ */
+
 /** Returns a non-verified placeholder; creating a record never confers a tick. */
 export function pendingVerification(type: VerificationType): VerificationCheck {
   return {
