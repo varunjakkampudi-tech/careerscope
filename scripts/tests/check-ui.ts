@@ -2976,6 +2976,7 @@ try {
         errors.length,
         ...errors.filter((error) => !error.startsWith('resource HTTP 503 at /api/profile')),
       );
+
       assert.equal(
         await page.getByRole('status').filter({ hasText: 'Step ' }).count(),
         0,
@@ -5330,6 +5331,49 @@ try {
       );
       await selectFixtureAccount('foreign-owner@example.test', password);
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+
+      // Hold the foreign owner's saved profile response across sign-out. Once
+      // owner A signs in, its previously complete profile must remain at 100%
+      // even after the old 80% response is released.
+      let releaseForeignProfile!: () => void;
+      let foreignProfileFetched!: () => void;
+      const foreignProfileGate = new Promise<void>((resolve) => {
+        releaseForeignProfile = resolve;
+      });
+      const foreignProfileHeld = new Promise<void>((resolve) => {
+        foreignProfileFetched = resolve;
+      });
+      const holdForeignProfile = async (route: import('playwright').Route) => {
+        const response = await route.fetch();
+        foreignProfileFetched();
+        await foreignProfileGate;
+        await route.fulfill({ response });
+      };
+      try {
+        await page.route('**/api/profile', holdForeignProfile);
+        await page.goto(`${origin}/dashboard`);
+        await foreignProfileHeld;
+        page.once('dialog', (dialog) => dialog.accept());
+        await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+        await page.getByRole('heading', { name: 'Select test account', exact: true }).waitFor();
+        releaseForeignProfile();
+        await page.unroute('**/api/profile', holdForeignProfile);
+        await selectFixtureAccount(accountEmail, password);
+        await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+        const switchedCompleteness = page.locator('section[aria-label="Profile completeness"]');
+        await switchedCompleteness
+          .getByText('Profile completeness 100%', { exact: true })
+          .waitFor();
+        await page.waitForTimeout(150);
+        assert.equal(
+          await switchedCompleteness.getByText('Profile completeness 80%', { exact: true }).count(),
+          0,
+          `${engine}: a late foreign-owner profile response replaced owner A completeness`,
+        );
+      } finally {
+        releaseForeignProfile();
+        await page.unroute('**/api/profile', holdForeignProfile);
+      }
 
       // Each route asserts a POSITIVE anchor belonging to the NEW owner
       // before asserting the absence of the old one. Without that, every
