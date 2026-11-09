@@ -1899,9 +1899,9 @@
         }
       ],
       "observations": "Re-reviewed current item 1.01 status: the prior PR head received conditional ChatGPT approval with two nonblocking suggestions; both refinements were applied in a new head, whose CI and independent review remain pending. It preserves the separate accepted S1-F014 risk and does not claim final acceptance. Follow-up item 2.05 review: inspected Stage 02 progress against canonical inventory; Stage 02 remains in progress and item 2.05 remains gated.",
-      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending. Additional focused item 2.05 documentation review; SHA-256 records current bytes.",
+      "evidence": "Hash refreshed during exact-dev evidence reconciliation; PR #18 approval remains tied to its exact SHA, and independent review of refreshed audit evidence is pending.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "98627602dd931ec189f1947f42ebfd28ae82665a144cdd7cebf08794d95c9481"
+      "sha256": "e5e54854a146f595416368603fb0138d68c625635a3e426af3654ace339c89b2"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1947,9 +1947,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Re-reviewed Stage 01 item 1.01 record. The verification column no longer labels November 8 evidence as November 6; the row records parent-dev CI and makes clear that the conditional review was for the previous head, with suggested refinements applied and new-head validation pending.",
-      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending.",
+      "evidence": "Hash refreshed during exact-dev evidence reconciliation; current-dev CI is recorded, prior approval boundaries are explicit, and independent review of refreshed audit evidence is pending.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "47e48ae2068e86b130494fedda77c11b7fdc974a04502dbb3960dd7069e90eba"
+      "sha256": "97e2d6445a98f33b8e05fb5d76469129b770d298c30c3b6d189c911cf102be04"
     },
     {
       "path": "docs/TESTING.md",
@@ -5909,7 +5909,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Re-reviewed the test suite after the ChatGPT refinement. Strict mode is table-tested against not-reviewed, partially-reviewed and requires-investigation records, each mixed with a valid reviewed entry; all three cases must fail with the exact expected state diagnostic.",
-      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending.",
+      "evidence": "Content and SHA-256 reviewed in refreshed audit against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; current-dev CI run 42558636661 passed at 8aa281c85a7d7950fa8bbfcd9706686be84a1808. Independent reviewer acceptance of refreshed audit remains pending; prior PR #68 review was conditional.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
       "sha256": "ff780acc81177fde50aeca408b3cc7ac47ff0c5293e18f6506f826c98994b354"
     },
@@ -5957,7 +5957,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Re-reviewed the complete test file and added a focused regression assertion that audit:stage01 always passes --require-complete; it is in test:unit and prevents CI configuration from silently permitting incomplete file coverage.",
-      "evidence": "Current audit refresh commit candidate based on origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; exact candidate SHA-256 recorded; new exact-head CI/review pending.",
+      "evidence": "Content and SHA-256 reviewed in refreshed audit against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; current-dev CI run 42558636661 passed at 8aa281c85a7d7950fa8bbfcd9706686be84a1808. Independent reviewer acceptance of refreshed audit remains pending; prior PR #68 review was conditional.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
       "sha256": "9449bd00696772597a966dcac783a134b34037750a39779bce2f44e357b922f8"
     },
