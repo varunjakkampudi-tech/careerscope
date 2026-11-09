@@ -888,7 +888,7 @@
       ],
       "tests": ["packages/resume/src/derive.test.ts"],
       "externalEvidence": [],
-      "gap": "Experience, skills, titles and years are derived and tested; robust education normalization and validated per-field provenance/confidence remain incomplete.",
+      "gap": "Experience, skills, titles and years are derived and tested. Education lines are copied only from the explicitly labeled section and preserved as unverified candidate claims; robust education normalization and validated per-field provenance/confidence remain incomplete.",
       "scopeDisposition": "in-scope"
     },
     {

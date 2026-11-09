@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   deriveContact,
+  deriveEducation,
   deriveFields,
   deriveLocation,
   deriveName,
@@ -385,6 +386,25 @@ describe('deriveFields', () => {
     expect(fields.titles[0]).toBe('Senior Associate');
     expect(fields.techStack.length).toBeGreaterThan(8);
     expect(fields.yearsOfExperience).toBeGreaterThan(4);
+    expect(fields.education).toEqual(['B.Tech in Information Technology, Example Institute, 2021']);
+  });
+
+  it('copies education claims only from the education section without implying verification', () => {
+    expect(
+      deriveEducation(
+        [
+          '• B.Sc. Physics, Example University (2019–2023)',
+          '',
+          'Email: ignored@example.invalid',
+        ].join('\n'),
+      ),
+    ).toEqual(['B.Sc. Physics, Example University (2019–2023)']);
+    expect(
+      deriveFields('Alex Example\nEDUCATION\nB.A. History, College Name, 2020').education,
+    ).toEqual(['B.A. History, College Name, 2020']);
+    expect(
+      deriveFields('Alex Example\nWORK EXPERIENCE\nEducation Consultant at Acme').education,
+    ).toEqual([]);
   });
 });
 

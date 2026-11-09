@@ -862,7 +862,13 @@ test('a skill known only from the parsed resume still reaches scoring through co
       preferences: { titles: ['Platform Engineer'], techStack: ['React'] },
       application: { yearsOfExperience: 4 },
     }),
-    { techStack: ['Kubernetes'], recentSkills: [], titles: [], yearsOfExperience: null },
+    {
+      techStack: ['Kubernetes'],
+      recentSkills: [],
+      titles: [],
+      yearsOfExperience: null,
+      education: [],
+    },
   );
   const job = {
     source: 'remoteok' as const,

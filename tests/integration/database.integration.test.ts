@@ -3717,6 +3717,7 @@ test('createSearch snapshots the latest parsed resume onto the matching profile,
       recentSkills: [],
       titles: [],
       yearsOfExperience: 3,
+      education: [],
     });
     const afterFirstResume = await database.createSearch(ownerId, 'after-first-resume', request);
     assert.deepEqual(afterFirstResume.matchingProfile?.derived?.techStack, ['Kubernetes']);
@@ -3729,6 +3730,7 @@ test('createSearch snapshots the latest parsed resume onto the matching profile,
       recentSkills: [],
       titles: [],
       yearsOfExperience: 5,
+      education: [],
     });
     const afterSecondResume = await database.createSearch(ownerId, 'after-second-resume', request);
     assert.deepEqual(afterSecondResume.matchingProfile?.derived?.techStack, ['Terraform']);

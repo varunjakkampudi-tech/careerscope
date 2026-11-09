@@ -45,6 +45,7 @@ export async function parseResume(buffer: Uint8Array, now = Date.now()): Promise
     titles: fields.titles,
     titlesStatus: fields.titlesStatus,
     yearsOfExperience: fields.yearsOfExperience,
+    education: fields.education,
   };
 
   return { format, text, derived };

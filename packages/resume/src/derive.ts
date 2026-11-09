@@ -663,6 +663,27 @@ export interface DerivedFields {
   /** Why `titles` is what it is; cannot be inferred from the array alone. */
   titlesStatus: TitleDerivationStatus;
   yearsOfExperience: number | null;
+  /** Education claims copied from the explicitly labeled education section. */
+  education: string[];
+}
+
+/**
+ * Copy candidate education lines only from the dedicated education section.
+ * Keep wording and dates intact: these are unverified claims, not normalized
+ * credentials. Drop blanks and obvious contact-only lines, and cap the output.
+ */
+export function deriveEducation(educationSection: string): string[] {
+  return educationSection
+    .split(/\r?\n/)
+    .map((line) =>
+      line
+        .replace(/^[\s•*\-–—]+/, '')
+        .replace(/\s+/g, ' ')
+        .trim(),
+    )
+    .filter((line) => line.length >= 3 && line.length <= 200)
+    .filter((line) => !/^(?:email|phone|mobile|linkedin|github|portfolio)\s*:/i.test(line))
+    .slice(0, 20);
 }
 
 /** Runs every extractor over the resume text. `now` is injectable so years of experience are testable. */
@@ -685,5 +706,6 @@ export function deriveFields(text: string, now = Date.now()): DerivedFields {
     titles: titles.titles,
     titlesStatus: titles.status,
     yearsOfExperience: deriveYears(text, sections.experience, now),
+    education: deriveEducation(sections.education),
   };
 }

@@ -184,6 +184,8 @@ export const derivedResumeSchema = z.object({
    */
   titlesStatus: z.enum(['derived', 'no-content', 'undeterminable']).optional(),
   yearsOfExperience: z.number().nullable(),
+  /** Candidate-supplied education text copied from the labeled resume section; not verified. */
+  education: z.array(z.string().trim().min(1).max(200)).max(20).default([]),
 });
 export type DerivedResume = z.infer<typeof derivedResumeSchema>;
 
