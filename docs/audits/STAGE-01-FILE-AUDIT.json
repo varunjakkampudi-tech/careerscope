@@ -275,7 +275,7 @@
           "reviewer": "ChatGPT independent review",
           "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
           "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         }
       ]
     },
@@ -452,7 +452,7 @@
           "reviewer": "ChatGPT independent review",
           "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
           "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         }
       ]
     },
@@ -533,7 +533,7 @@
           "reviewer": "ChatGPT independent review",
           "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
           "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         }
       ]
     },
@@ -1266,7 +1266,7 @@
           "reviewer": "ChatGPT independent review",
           "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
           "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         }
       ]
     },
@@ -1287,7 +1287,7 @@
           "reviewer": "ChatGPT independent review",
           "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
           "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         }
       ]
     },
@@ -1739,7 +1739,7 @@
           "reviewer": "ChatGPT independent review",
           "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
           "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         }
       ]
     },
@@ -2010,7 +2010,7 @@
           "reviewer": "ChatGPT independent review",
           "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
           "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         }
       ]
     },
@@ -2043,7 +2043,7 @@
           "reviewer": "ChatGPT independent review",
           "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
           "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         }
       ]
     },
@@ -2453,14 +2453,21 @@
       "observations": "Re-reviewed item 3.13 closeout and surrounding inventory: the item retains its source title/status, records currentStatus verified with concrete implementation and tests, links PR #57/#58 evidence, and leaves the overall 328-item/stage inventory structure intact. Traceability checker validates row and counts.",
       "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "d3fc98a72f6644bf373979b5e2fdd9f33474bb3763008afe70a731b85290f7ec",
+      "sha256": "8991cec045d587a5e9afa61851376ac36bb6ac7a1e4d1be1948d4a39e6a1241e",
       "deltaReviews": [
         {
           "scope": "CareerScope Stage 04 item 4.06 focused change review",
           "reviewer": "ChatGPT independent review",
           "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
           "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
+        },
+        {
+          "scope": "CareerScope Stage 04 item 4.06 closeout evidence reconciliation",
+          "reviewer": "Codex (evidence reconciliation)",
+          "reviewedHead": "9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc",
+          "result": "Updated the in-progress gap with verified independent-review and exact-head CI evidence; status remains in-progress pending merge and post-merge verification.",
+          "evidence": "PR #73 exact-head CI run 42628516861 completed successfully across Quality, Services/integration/browser, and Production image jobs."
         }
       ]
     },
@@ -3589,7 +3596,7 @@
           "reviewer": "ChatGPT independent review",
           "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
           "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         }
       ]
     },
@@ -5532,7 +5539,7 @@
           "reviewer": "ChatGPT independent review",
           "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
           "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         }
       ]
     },
@@ -6603,15 +6610,15 @@
           "reviewer": "ChatGPT independent review",
           "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
           "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         },
         {
           "scope": "Follow-up synthetic DOCX fixture correction after prior Stage 04 item 4.06 review",
           "reviewer": "ChatGPT independent focused review",
           "reviewedHead": "a538580308c6931ddcde621c7b37a8b81a277e35",
           "result": "Source/test correction accepted; prior fixture skill mismatch resolved. Independent review confirmed the multi-section reconstruction, keyboard navigation and boundary checks.",
-          "status": "Independent review complete; hosted validation pending.",
-          "hostedValidation": "Pending successful exact-head browser and CI execution."
+          "status": "Independent review and hosted exact-head validation complete.",
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         }
       ]
     },
@@ -6856,7 +6863,7 @@
           "reviewer": "ChatGPT independent review",
           "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
           "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         }
       ]
     },
@@ -6877,7 +6884,7 @@
           "reviewer": "ChatGPT independent review",
           "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
           "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         }
       ]
     }

@@ -869,8 +869,11 @@
         "scripts/tests/check-ui.ts",
         "packages/resume/src/preview-segments.test.ts"
       ],
-      "externalEvidence": [],
-      "gap": "Implementation and evidence are in progress; exact-head CI and independent item review remain pending.",
+      "externalEvidence": [
+        "PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc; hosted CI run 42628516861 passed Quality, Services/integration/browser, and Production image jobs.",
+        "ChatGPT independent focused source review accepted the preview, fixture correction and audit provenance."
+      ],
+      "gap": "Feature implementation and independent review are complete on PR #73, and exact-head CI run 42628516861 passed. Awaiting authorized merge and post-merge dev verification before status can be verified.",
       "scopeDisposition": "in-scope"
     },
     {
