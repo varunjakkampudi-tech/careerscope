@@ -887,8 +887,10 @@
         "docs/requirements/V12-RECONCILIATION.md"
       ],
       "tests": ["packages/resume/src/derive.test.ts"],
-      "externalEvidence": [],
-      "gap": "The current branch adds bounded source-section and source-snippet extraction evidence with confidence for skills, recent skills, titles, experience-years and education; education claims also preserve normalized text, original source text and explicit unverified credential status. Exact-head CI and independent review for this follow-up remain pending.",
+      "externalEvidence": [
+        "GitHub Actions run 42581255959 completed successfully on exact PR head 9a1c46fc9060e30eef58475b6f0f5cdf381ecdc3: Quality gates, production image build (not published), and services/integration/browser suites all passed."
+      ],
+      "gap": "The current branch adds bounded source-section and source-snippet extraction evidence with confidence for skills, recent skills, titles, experience-years and education; education claims also preserve normalized text, original source text and explicit unverified credential status. Independent review for exact PR head 9a1c46fc9060e30eef58475b6f0f5cdf381ecdc3 remains pending; item status remains partial.",
       "scopeDisposition": "in-scope"
     },
     {
