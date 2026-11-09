@@ -29,6 +29,7 @@ import {
 import { createApp } from '../../apps/api/src/app.js';
 import { collect } from '../../apps/workers/search/src/collect.js';
 import { createRemoteOkProvider, type JobProvider } from '@careerscope/providers';
+import { segmentResumeText } from '@careerscope/resume/preview-segments';
 import { selectUiBrowsers } from './ui-browsers.js';
 import {
   browserRequestFailureCategory,
@@ -2821,10 +2822,13 @@ try {
         .waitFor({ timeout: 45000 });
       await page.getByRole('heading', { name: 'Resume preview', exact: true }).waitFor();
       const longPreview = `${'Synthetic resume line one.\n\nSynthetic resume line two.\n\n'.repeat(199)}Synthetic resume line one.\n\nSynthetic resume line two.`;
+      const expectedPreviewSections = segmentResumeText(longPreview);
+      assert.equal(expectedPreviewSections.length, 3);
+      assert.equal(expectedPreviewSections.join(''), longPreview);
       await page.getByLabel('Resume text section 1 of 3').waitFor();
       assert.equal(
         await page.locator('[aria-label="Resume text section 1 of 3"]').innerText(),
-        longPreview.slice(0, 4000),
+        expectedPreviewSections[0],
         `${engine}: first resume preview section differs from parsed text`,
       );
       await page.getByRole('button', { name: 'Previous section', exact: true }).press('Enter');
@@ -2839,14 +2843,14 @@ try {
       await page.getByLabel('Resume text section 2 of 3').waitFor();
       assert.equal(
         await page.locator('[aria-label="Resume text section 2 of 3"]').innerText(),
-        longPreview.slice(4000, 8000),
+        expectedPreviewSections[1],
         `${engine}: resume section navigation lost or altered text`,
       );
       await page.getByRole('button', { name: 'Next section', exact: true }).press('Enter');
       await page.getByLabel('Resume text section 3 of 3').waitFor();
       assert.equal(
         await page.locator('[aria-label="Resume text section 3 of 3"]').innerText(),
-        longPreview.slice(8000),
+        expectedPreviewSections[2],
         `${engine}: final resume preview section differs from parsed text`,
       );
       await page.getByRole('button', { name: 'Next section', exact: true }).press('Enter');
@@ -2859,7 +2863,7 @@ try {
         .locator('[aria-label^="Resume text section "]')
         .allTextContents();
       assert.equal(displayedSections.length, 1, `${engine}: preview rendered a hidden section`);
-      assert.equal(displayedSections.join(''), longPreview.slice(0, 4000));
+      assert.equal(displayedSections.join(''), expectedPreviewSections[0]);
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });
         assert.equal(
