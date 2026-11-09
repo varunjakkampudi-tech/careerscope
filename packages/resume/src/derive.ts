@@ -696,19 +696,22 @@ export function deriveExperienceClaims(experience: string, now = Date.now()): Ex
         .trim();
       const previousLine = lineIndex > 0 ? lines[lineIndex - 1]?.trim() : undefined;
       const previousRanges = previousLine ? findDateRanges(previousLine, now) : [];
-      const matchingEmployerHeader =
+      const adjacentSameDates = Boolean(
         previousLine &&
-        previousLine.length <= 120 &&
-        !/^[-•*·]/.test(previousLine) &&
-        !ROLE_WORDS.test(previousLine.replace(RANGE_RE, ' ')) &&
         previousRanges.some(
           (range) => range.start === ranges[0]!.start && range.end === ranges[0]!.end,
-        )
-          ? previousLine
-              .replace(RANGE_RE, ' ')
-              .replace(/[|–—-]+$/g, '')
-              .trim()
-          : undefined;
+        ),
+      );
+      const labeledEmployer = previousLine?.match(
+        /^(?:employer|company|organization)\s*:\s*(.+)$/i,
+      );
+      const matchingEmployerHeader = adjacentSameDates
+        ? labeledEmployer?.[1]
+            ?.replace(RANGE_RE, ' ')
+            .trim()
+            .replace(/[|–—-]+$/g, '')
+            .trim()
+        : undefined;
       const key = `${titleLine.toLocaleLowerCase()}|${ranges[0]!.start}|${ranges[0]!.end}`;
       if (seen.has(key)) {
         continue;
@@ -719,11 +722,11 @@ export function deriveExperienceClaims(experience: string, now = Date.now()): Ex
       );
       const blockEnd =
         nextBoundary < 0 ? experience.length : (offsets[nextBoundary] ?? experience.length);
-      const roleBlock = experience.slice(offsets[lineIndex] ?? 0, blockEnd).trim();
+      const sourceStartLine = adjacentSameDates ? Math.max(0, lineIndex - 1) : lineIndex;
+      const roleBlock = experience.slice(offsets[sourceStartLine] ?? 0, blockEnd).trim();
       const sourceText = roleBlock.slice(0, 200);
-      const description = roleBlock
-        .split(/\r?\n/)
-        .slice(1)
+      const description = lines
+        .slice(lineIndex + 1, nextBoundary < 0 ? lines.length : nextBoundary)
         .map((candidate) => candidate.trim().replace(/^[-•*·]\s*/, ''))
         .find((candidate) => candidate && !isRoleHeader(candidate));
       records.push({

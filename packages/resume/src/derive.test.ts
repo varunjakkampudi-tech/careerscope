@@ -442,6 +442,22 @@ describe('deriveFields', () => {
     expect(claim).not.toHaveProperty('employer');
   });
 
+  it('does not promote a same-date project line to employer, but accepts an explicit employer label', () => {
+    const [ambiguous] = deriveExperienceClaims(
+      'Migrated legacy systems | Jan 2020 - Jan 2022\nEngineer | Jan 2020 - Jan 2022\nBuilt distributed services.',
+      NOW,
+    );
+    expect(ambiguous).not.toHaveProperty('employer');
+    expect(ambiguous?.sourceText).toContain('Migrated legacy systems');
+
+    const [labeled] = deriveExperienceClaims(
+      'Company: Acme Corp | Jan 2020 - Jan 2022\nEngineer | Jan 2020 - Jan 2022\nBuilt distributed services.',
+      NOW,
+    );
+    expect(labeled?.employer).toBe('Acme Corp');
+    expect(labeled?.sourceText).toContain('Company: Acme Corp');
+  });
+
   it('bounds a role description before the next undated role header', () => {
     const [first] = deriveExperienceClaims(
       'Senior Engineer | Jan 2020 - Jan 2022\nProduct Designer at Gamma\nDesigned candidate research workflows.',
@@ -469,7 +485,8 @@ describe('deriveFields', () => {
     expect(claims[0]?.startDate).toBe(Date.UTC(2020, 0, 1));
     expect(claims[0]?.endDate).toBe(NOW);
     expect(claims[0]?.sourceText).toContain('Led migration from Jan 2022 - Mar 2022');
-    expect(claims[1]?.employer).toContain('Beta Labs');
+    expect(claims[1]).not.toHaveProperty('employer');
+    expect(claims[1]?.sourceText).toContain('Beta Labs');
   });
 
   it('produces the full derived profile the onboarding form pre-fills', () => {
