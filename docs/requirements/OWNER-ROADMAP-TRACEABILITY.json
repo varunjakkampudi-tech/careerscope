@@ -793,11 +793,21 @@
       "stageTitle": "Resume management and parsing",
       "title": "Resume upload",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "verified",
+      "evidence": [
+        "apps/api/src/app.ts",
+        "packages/core/src/resumes.ts",
+        "packages/core/src/storage.ts",
+        "apps/web/src/components/resume-panel.tsx"
+      ],
+      "tests": [
+        "apps/api/src/resumes.integration.test.ts",
+        "packages/core/src/resumes.integration.test.ts"
+      ],
+      "externalEvidence": [
+        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
+      ],
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -806,11 +816,20 @@
       "stageTitle": "Resume management and parsing",
       "title": "Encrypted storage",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "verified",
+      "evidence": [
+        "packages/core/src/file-storage.ts",
+        "docs/PRIVACY.md",
+        "docs/security/DATA-CLASSIFICATION.md"
+      ],
+      "tests": [
+        "packages/core/src/file-storage.test.ts",
+        "tests/integration/database.integration.test.ts"
+      ],
+      "externalEvidence": [
+        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
+      ],
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -819,11 +838,16 @@
       "stageTitle": "Resume management and parsing",
       "title": "PDF processing",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "verified",
+      "evidence": ["packages/core/src/resume-parser-child.ts", "packages/resume/src/extract.ts"],
+      "tests": [
+        "packages/core/src/resumes.integration.test.ts",
+        "packages/resume/src/extract.test.ts"
+      ],
+      "externalEvidence": [
+        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
+      ],
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -832,11 +856,22 @@
       "stageTitle": "Resume management and parsing",
       "title": "Resume parsing",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "verified",
+      "evidence": [
+        "packages/core/src/resume-parser.ts",
+        "packages/core/src/resume-parser-child.ts",
+        "packages/resume/src/extract.ts",
+        "packages/resume/src/derive.ts"
+      ],
+      "tests": [
+        "packages/core/src/resumes.integration.test.ts",
+        "packages/resume/src/extract.test.ts",
+        "packages/resume/src/derive.test.ts"
+      ],
+      "externalEvidence": [
+        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
+      ],
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -845,11 +880,15 @@
       "stageTitle": "Resume management and parsing",
       "title": "Extract experience, education and skills",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/resume/src/derive.ts",
+        "packages/shared/src/schemas.ts",
+        "docs/requirements/V12-RECONCILIATION.md"
+      ],
+      "tests": ["packages/resume/src/derive.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Experience, skills, titles and years are derived and tested; robust education normalization and validated per-field provenance/confidence remain incomplete.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -858,11 +897,14 @@
       "stageTitle": "Resume management and parsing",
       "title": "Resume preview",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/resume-panel.tsx",
+        "apps/web/src/components/profile-editor.tsx"
+      ],
+      "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Candidates can read extracted text and preview a profile draft, but there is no full document preview, accessible rendered-document navigation, or acceptance test for resume review behavior.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -871,11 +913,18 @@
       "stageTitle": "Resume management and parsing",
       "title": "Multiple resume versions",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/core/src/resumes.ts",
+        "apps/web/src/components/resume-panel.tsx",
+        "docs/requirements/V12-RECONCILIATION.md"
+      ],
+      "tests": [
+        "packages/core/src/resumes.integration.test.ts",
+        "apps/api/src/resumes.integration.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Multiple uploads can be listed; target-role labels, explicit version lineage, role-aware selection and corresponding candidate workflow are absent.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -884,11 +933,14 @@
       "stageTitle": "Resume management and parsing",
       "title": "Manual correction of parsed information",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/resume-panel.tsx",
+        "apps/web/src/components/profile-editor.tsx"
+      ],
+      "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Parsed fields can seed an editable profile draft, but the extracted resume text is read-only and there is no per-field correction/acceptance workflow tied to the parsed result.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -898,10 +950,10 @@
       "title": "Profile synchronization",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": ["apps/web/src/components/profile-editor.tsx", "packages/core/src/profile.ts"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "No explicit profile synchronization action/version/conflict policy exists for parsed resume data; manual profile-form population is not synchronization.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -910,11 +962,21 @@
       "stageTitle": "Resume management and parsing",
       "title": "Resume deletion",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "verified",
+      "evidence": [
+        "apps/api/src/app.ts",
+        "packages/core/src/resumes.ts",
+        "packages/core/src/file-storage.ts",
+        "apps/web/src/components/resume-panel.tsx"
+      ],
+      "tests": [
+        "apps/api/src/resumes.integration.test.ts",
+        "packages/core/src/resumes.integration.test.ts"
+      ],
+      "externalEvidence": [
+        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
+      ],
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -923,11 +985,11 @@
       "stageTitle": "Resume management and parsing",
       "title": "Resume quality diagnostics",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": ["packages/resume/src/extract.ts", "apps/web/src/components/resume-panel.tsx"],
+      "tests": ["packages/resume/src/extract.test.ts", "packages/resume/src/derive.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Parser reports rejected/corrupt/unsupported/oversized inputs, but no candidate-facing quality diagnostics (missing sections, readability or actionable quality report) is implemented.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -936,11 +998,18 @@
       "stageTitle": "Resume management and parsing",
       "title": "Recompute matching after resume change",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/core/src/database.ts",
+        "packages/core/src/profile.ts",
+        "tests/integration/database.integration.test.ts"
+      ],
+      "tests": [
+        "tests/integration/database.integration.test.ts",
+        "apps/workers/search/src/collect.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "New searches snapshot the latest parsed derived profile; existing searches are not invalidated or recomputed on resume changes, and there is no resume-change recomputation event/acceptance flow.",
       "scopeDisposition": "in-scope"
     },
     {
