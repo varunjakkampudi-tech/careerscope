@@ -1241,10 +1241,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete resume upload/review flow. Upload size is bounded in the UI and server validation remains authoritative; mutations use CSRF and idempotency keys; resume data uses owner-scoped queries; destructive actions require confirmation; failures trigger refresh and parsed content is presented as escaped text. Reviewed preview rendering: parser output is rendered as escaped plain text, section controls are keyboard accessible, and uploaded markup is not interpreted.",
+      "observations": "Reviewed preview rendering: parser output is rendered as escaped plain text, section controls remain keyboard reachable at boundaries with clamped actions, and uploaded markup is not interpreted.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
       "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "28e16198bbc74f9478d616982a92068b12e6fbee977605279276667d7411c7b6"
+      "sha256": "e2765bef203fccb5b7a5493f7935ffe0bd14ee537ab747ba1218279da74e54b6"
     },
     {
       "path": "apps/web/src/components/saved-leads.module.css",
