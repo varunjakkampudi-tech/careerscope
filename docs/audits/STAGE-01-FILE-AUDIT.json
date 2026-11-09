@@ -2285,7 +2285,7 @@
       "observations": "Re-reviewed the Stage 03 item 3.16 closeout record. It distinguishes implementation/test approval from item completion and explicitly records that PR #69 remains draft and unmerged.",
       "evidence": "Updated for owner Stage 03 item 3.16; records exact-SHA review and hosted CI while keeping the item in progress pending dev integration.",
       "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "44b4cc62012189da3729b4811fb03aa561c7f8e0b60e5893b21321a27ba9a06d"
+      "sha256": "cd109f2544702cc85d4d34b1980067a6254aa6e7f623fb6fc797c0b8186d7ec2"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -2333,7 +2333,7 @@
       "observations": "Re-reviewed the canonical item 3.16 record. It retains the owner checklist title/source status and records exact-head evidence without marking the item verified; the unmerged PR and integration gap remain explicit.",
       "evidence": "Updated item 3.16 from stale not-started to in-progress with implementation/test paths, exact-SHA hosted CI and review evidence, and the still-open integration gap.",
       "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "4b977a12c86669976201a0f7b6535e303e7b6b247ec4c974e4a30a865ff10351"
+      "sha256": "06913c56c78fab82ed96756d0870aff600b7797119d5000a9542edb5f74837fa"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -2433,7 +2433,7 @@
       "observations": "Re-reviewed the item 3.16 row. Historical CI/review remain tied to their original SHAs; current follow-up evidence is tied to c17ad6dad5e86357d6331d3975edc8339f1921e2, and the item remains in progress pending integration and canonical closeout.",
       "evidence": "Updated item 3.16 row with exact follow-up head c17ad6dad5e86357d6331d3975edc8339f1921e2, hosted run 42472764595, exact-SHA review, and pending integration status.",
       "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "7ddd23434dea0bb714ff181628fd5c5e143eb3939882098562b659ccd1d7289e"
+      "sha256": "46d1b6e8959f935ae44bb1cf24fed9f354b3a323a41153449e8ccbb897ce041c"
     },
     {
       "path": "docs/TESTING.md",
@@ -6521,7 +6521,7 @@
       "observations": "Reviewed the browser assertions for successful saved-profile completeness, aria-valuenow, failed profile fetches, accessible error, absence of a score while failed, and retry recovery. The onboarding regression verifies the saved experience in the database and reloads the dashboard before checking 100 percent. The error-state regression verifies the two intentional 503 reads and the subsequent retry.",
       "evidence": "Current exact-head diff review on codex/stage03-item316-profile-completeness.",
       "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "ab52e7bdff133c1d8d8b6a50f1b0eb5bd858c4d0cece9fcb16704899595c2bdc"
+      "sha256": "e16c219ca37416e24a72291c07c6fd5d47a321561521fb24a9b59d5921b99e33"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",

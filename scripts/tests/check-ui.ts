@@ -5337,39 +5337,134 @@ try {
       // even after the old 80% response is released.
       let releaseForeignProfile!: () => void;
       let foreignProfileFetched!: () => void;
+      let resolveForeignProfileCompletion!: (outcome: 'fulfilled' | 'cancelled') => void;
+      let rejectForeignProfileCompletion!: (error: Error) => void;
       const foreignProfileGate = new Promise<void>((resolve) => {
         releaseForeignProfile = resolve;
       });
       const foreignProfileHeld = new Promise<void>((resolve) => {
         foreignProfileFetched = resolve;
       });
+      const foreignProfileCompletion = new Promise<'fulfilled' | 'cancelled'>((resolve, reject) => {
+        resolveForeignProfileCompletion = resolve;
+        rejectForeignProfileCompletion = reject;
+      });
+      let foreignProfileRequest: import('playwright').Request | undefined;
+      let holdNextProfileRequest = true;
       const holdForeignProfile = async (route: import('playwright').Route) => {
+        if (!holdNextProfileRequest) return route.fallback();
+        holdNextProfileRequest = false;
         const response = await route.fetch();
+        assert.equal(response.status(), 200, `${engine}: foreign profile read must succeed`);
+        const profileResponse = await response.json();
+        assert.equal(
+          profileResponse.profile?.candidate?.fullName,
+          'Foreign Owner Candidate',
+          `${engine}: held profile response must belong to the foreign owner`,
+        );
+        assert.equal(
+          profileResponse.profile?.candidate?.email,
+          'foreign-owner@example.test',
+          `${engine}: held profile response must carry the foreign owner's saved email`,
+        );
+        const foreignProfile = profileResponse.profile;
+        assert.ok(foreignProfile);
+        const foreignCandidate = foreignProfile.candidate;
+        const foreignPreferences = foreignProfile.preferences;
+        const savedProfileChecks = [
+          Boolean(foreignCandidate.fullName.trim() && foreignCandidate.email.trim()),
+          Boolean(foreignCandidate.location.trim()),
+          [foreignCandidate.education, foreignCandidate.experience, foreignCandidate.projects].some(
+            (entries) => entries.some((entry: string) => entry.trim().length > 0),
+          ),
+          foreignPreferences.titles.some((entry: string) => entry.trim().length > 0),
+          foreignPreferences.techStack.some((entry: string) => entry.trim().length > 0),
+        ];
+        assert.equal(
+          Math.round((savedProfileChecks.filter(Boolean).length / savedProfileChecks.length) * 100),
+          80,
+          `${engine}: the actual foreign-owner response must calculate to 80% completeness`,
+        );
+        foreignProfileRequest = route.request();
         foreignProfileFetched();
         await foreignProfileGate;
-        await route.fulfill({ response });
+        try {
+          await route.fulfill({
+            status: response.status(),
+            contentType: 'application/json',
+            json: profileResponse,
+          });
+          resolveForeignProfileCompletion('fulfilled');
+        } catch (error) {
+          if (/aborted|closed|already handled|target page/i.test(String(error))) {
+            resolveForeignProfileCompletion('cancelled');
+            return;
+          }
+          rejectForeignProfileCompletion(
+            error instanceof Error ? error : new Error('Could not complete held profile response'),
+          );
+          throw error;
+        }
       };
       try {
         await page.route('**/api/profile', holdForeignProfile);
         await page.goto(`${origin}/dashboard`);
         await foreignProfileHeld;
+        assert.ok(foreignProfileRequest, `${engine}: captured the held foreign profile request`);
+        const foreignRequestOutcome = Promise.race([
+          page
+            .waitForResponse((response) => response.request() === foreignProfileRequest)
+            .then(() => 'response' as const),
+          page
+            .waitForEvent('requestfailed', {
+              predicate: (request) => request === foreignProfileRequest,
+            })
+            .then(() => 'failed' as const),
+        ]);
         page.once('dialog', (dialog) => dialog.accept());
         await page.getByRole('button', { name: 'Sign out', exact: true }).click();
         await page.getByRole('heading', { name: 'Select test account', exact: true }).waitFor();
-        releaseForeignProfile();
-        await page.unroute('**/api/profile', holdForeignProfile);
         await selectFixtureAccount(accountEmail, password);
         await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
         const switchedCompleteness = page.locator('section[aria-label="Profile completeness"]');
         await switchedCompleteness
           .getByText('Profile completeness 100%', { exact: true })
           .waitFor();
-        await page.waitForTimeout(150);
+        releaseForeignProfile();
+        await foreignProfileCompletion;
+        const requestOutcome = await foreignRequestOutcome;
+        if (requestOutcome === 'failed') {
+          assert.equal(
+            await switchedCompleteness
+              .getByRole('progressbar', { name: 'Profile completeness' })
+              .getAttribute('aria-valuenow'),
+            '100',
+            `${engine}: cancelling the foreign request must leave owner A's score intact`,
+          );
+        } else {
+          await page.evaluate(
+            () =>
+              new Promise<void>((resolve) =>
+                requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+              ),
+          );
+        }
         assert.equal(
-          await switchedCompleteness.getByText('Profile completeness 80%', { exact: true }).count(),
-          0,
-          `${engine}: a late foreign-owner profile response replaced owner A completeness`,
+          await switchedCompleteness
+            .getByRole('progressbar', { name: 'Profile completeness' })
+            .getAttribute('aria-valuenow'),
+          '100',
+          `${engine}: a late or cancelled foreign-owner response must not replace owner A completeness`,
         );
+        page.once('dialog', (dialog) => dialog.accept());
+        await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+        await page.getByRole('heading', { name: 'Select test account', exact: true }).waitFor();
+        await selectFixtureAccount('foreign-owner@example.test', password);
+        await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+        await page
+          .locator('section[aria-label="Profile completeness"]')
+          .getByText('Profile completeness 80%', { exact: true })
+          .waitFor();
       } finally {
         releaseForeignProfile();
         await page.unroute('**/api/profile', holdForeignProfile);
