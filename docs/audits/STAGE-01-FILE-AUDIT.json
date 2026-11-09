@@ -1466,9 +1466,7 @@
       "category": "frontend",
       "reviewMethod": "content-read",
       "state": "reviewed",
-      "concerns": [
-        "localStorage access may throw in restricted browser contexts"
-      ],
+      "concerns": ["localStorage access may throw in restricted browser contexts"],
       "findings": [
         {
           "id": "S1-F057",
