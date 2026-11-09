@@ -745,8 +745,10 @@ function findFieldEvidence(
             matched.line,
             matched.match.index + matched.match[1]!.length,
           ),
-          evidenceKind: 'direct-claim',
-          extractionConfidence: 'probable',
+          // A document-wide match proves presence only; it does not show which
+          // section established the derived field. Keep that provenance weaker.
+          evidenceKind: candidate.section === 'document' ? 'supporting-source' : 'direct-claim',
+          extractionConfidence: candidate.section === 'document' ? 'unverified' : 'probable',
         });
         break;
       }
@@ -911,7 +913,14 @@ export function deriveFields(text: string, now = Date.now()): DerivedFields {
     : undefined;
   const yearsOfExperience = deriveYears(text, sections.experience, now);
   const extractionEvidence = [
-    ...findFieldEvidence('techStack', techStack, evidenceSections),
+    ...findFieldEvidence('techStack', techStack, [
+      { section: 'skills', text: sections.skills },
+      { section: 'experience', text: sections.experience },
+      { section: 'summary', text: sections.summary },
+      { section: 'projects', text: sections.projects },
+      { section: 'certifications', text: sections.certifications },
+      { section: 'document', text },
+    ]),
     ...findFieldEvidence('recentSkills', recentSkills, [
       { section: 'experience', text: sections.experience },
     ]),

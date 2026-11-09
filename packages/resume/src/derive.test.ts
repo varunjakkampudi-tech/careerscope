@@ -567,6 +567,23 @@ describe('deriveFields', () => {
     ).toBe(false);
   });
 
+  it('marks document-wide skill matches as supporting evidence when the occurrence is outside a skill section', () => {
+    const fields = deriveFields(
+      'EDUCATION\nBachelor of Science in React Studies, Example University, 2020\n',
+      NOW,
+    );
+    const evidence = fields.extractionEvidence.find(
+      (entry) => entry.field === 'techStack' && entry.value === 'React',
+    );
+
+    expect(fields.techStack).toContain('React');
+    expect(evidence).toMatchObject({
+      sourceSection: 'document',
+      evidenceKind: 'supporting-source',
+      extractionConfidence: 'unverified',
+    });
+  });
+
   it('labels calculated experience years as supported by employment dates, not directly claimed', () => {
     const fields = deriveFields(
       'PROFESSIONAL EXPERIENCE\nRole A Jan 2020 - Jan 2024\nRole B Jan 2021 - Jan 2023\nBuilt services.',
