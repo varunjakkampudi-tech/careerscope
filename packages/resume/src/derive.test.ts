@@ -433,6 +433,25 @@ describe('deriveFields', () => {
     expect(claim).not.toHaveProperty('employer');
   });
 
+  it('does not infer an employer from an unrelated preceding experience sentence', () => {
+    const [claim] = deriveExperienceClaims(
+      'Worked on cloud migration and reliability\nEngineer | Jan 2020 - Jan 2022\nBuilt distributed services.',
+      NOW,
+    );
+    expect(claim).toMatchObject({ title: 'Engineer', claimStatus: 'unverified' });
+    expect(claim).not.toHaveProperty('employer');
+  });
+
+  it('bounds a role description before the next undated role header', () => {
+    const [first] = deriveExperienceClaims(
+      'Senior Engineer | Jan 2020 - Jan 2022\nProduct Designer at Gamma\nDesigned candidate research workflows.',
+      NOW,
+    );
+    expect(first).toBeDefined();
+    expect(first).not.toHaveProperty('description');
+    expect(first?.sourceText).not.toContain('Designed candidate research workflows');
+  });
+
   it('keeps duplicate role dates together and leaves dated bullet projects inside the role', () => {
     const claims = deriveExperienceClaims(
       [

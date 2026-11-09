@@ -651,8 +651,27 @@ export function deriveExperienceClaims(experience: string, now = Date.now()): Ex
   if (!experience) return [];
   const records: ExperienceClaim[] = [];
   const seen = new Set<string>();
-  let offset = 0;
-  for (const line of experience.split(/\r?\n/)) {
+  const lines = experience.split(/\r?\n/);
+  const offsets: number[] = [];
+  let cursor = 0;
+  for (const line of lines) {
+    offsets.push(cursor);
+    cursor += line.length + 1;
+  }
+
+  const isRoleHeader = (candidate: string): boolean => {
+    const trimmed = candidate.trim();
+    if (!trimmed || trimmed.length > 100 || /^[-•*·]/.test(trimmed)) return false;
+    const hasRole = ROLE_WORDS.test(trimmed.replace(RANGE_RE, ' '));
+    if (!hasRole) return false;
+    return (
+      findDateRanges(trimmed, now).length > 0 ||
+      /\s+(?:at|\||[–—])\s+/i.test(trimmed) ||
+      trimmed.length <= 80
+    );
+  };
+
+  for (const [lineIndex, line] of lines.entries()) {
     const ranges = findDateRanges(line, now);
     const cleanLine = line.trim();
     if (
@@ -675,28 +694,38 @@ export function deriveExperienceClaims(experience: string, now = Date.now()): Ex
         .join(' ')
         .replace(/[|–—-]+$/g, '')
         .trim();
-      const companyBeforeTitle = experience
-        .slice(Math.max(0, offset - 140), offset)
-        .split(/\r?\n/)
-        .map((candidate) => candidate.trim())
-        .find(
-          (candidate) => candidate && !ROLE_WORDS.test(candidate) && !/^[-•*·]/.test(candidate),
-        );
+      const previousLine = lineIndex > 0 ? lines[lineIndex - 1]?.trim() : undefined;
+      const previousRanges = previousLine ? findDateRanges(previousLine, now) : [];
+      const matchingEmployerHeader =
+        previousLine &&
+        previousLine.length <= 120 &&
+        !/^[-•*·]/.test(previousLine) &&
+        !ROLE_WORDS.test(previousLine.replace(RANGE_RE, ' ')) &&
+        previousRanges.some(
+          (range) => range.start === ranges[0]!.start && range.end === ranges[0]!.end,
+        )
+          ? previousLine
+              .replace(RANGE_RE, ' ')
+              .replace(/[|–—-]+$/g, '')
+              .trim()
+          : undefined;
       const key = `${titleLine.toLocaleLowerCase()}|${ranges[0]!.start}|${ranges[0]!.end}`;
       if (seen.has(key)) {
-        offset += line.length + 1;
         continue;
       }
       seen.add(key);
-      const sourceText = experience
-        .slice(offset, offset + line.length + 1 + 160)
-        .trim()
-        .slice(0, 200);
-      const description = experience
-        .slice(offset + line.length + 1, offset + line.length + 161)
+      const nextBoundary = lines.findIndex(
+        (candidate, index) => index > lineIndex && isRoleHeader(candidate),
+      );
+      const blockEnd =
+        nextBoundary < 0 ? experience.length : (offsets[nextBoundary] ?? experience.length);
+      const roleBlock = experience.slice(offsets[lineIndex] ?? 0, blockEnd).trim();
+      const sourceText = roleBlock.slice(0, 200);
+      const description = roleBlock
         .split(/\r?\n/)
+        .slice(1)
         .map((candidate) => candidate.trim().replace(/^[-•*·]\s*/, ''))
-        .find((candidate) => candidate && !findDateRanges(candidate, now).length);
+        .find((candidate) => candidate && !isRoleHeader(candidate));
       records.push({
         normalizedText: [titleLine, sourceText].filter(Boolean).join(' — ').slice(0, 200),
         sourceText,
@@ -706,15 +735,14 @@ export function deriveExperienceClaims(experience: string, now = Date.now()): Ex
         ...(title ? { title: title.slice(0, 80) } : {}),
         ...(employer && employer.length <= 120
           ? { employer }
-          : companyBeforeTitle && companyBeforeTitle.length <= 120
-            ? { employer: companyBeforeTitle }
+          : matchingEmployerHeader && matchingEmployerHeader.length <= 120
+            ? { employer: matchingEmployerHeader }
             : {}),
         startDate: ranges[0]!.start,
         endDate: ranges[0]!.end,
         ...(description ? { description: description.slice(0, 200) } : {}),
       });
     }
-    offset += line.length + 1;
   }
   return records.slice(0, 30);
 }
