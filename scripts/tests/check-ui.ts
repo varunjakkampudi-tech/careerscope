@@ -5411,18 +5411,6 @@ try {
         await page.goto(`${origin}/dashboard`);
         await foreignProfileHeld;
         assert.ok(foreignProfileRequest, `${engine}: captured the held foreign profile request`);
-        const foreignRequestOutcome = Promise.race([
-          page
-            .waitForEvent('requestfinished', {
-              predicate: (request) => request === foreignProfileRequest,
-            })
-            .then(() => 'finished' as const),
-          page
-            .waitForEvent('requestfailed', {
-              predicate: (request) => request === foreignProfileRequest,
-            })
-            .then(() => 'failed' as const),
-        ]);
         page.once('dialog', (dialog) => dialog.accept());
         await page.getByRole('button', { name: 'Sign out', exact: true }).click();
         await page.getByRole('heading', { name: 'Select test account', exact: true }).waitFor();
@@ -5433,24 +5421,13 @@ try {
           .getByText('Profile completeness 100%', { exact: true })
           .waitFor();
         releaseForeignProfile();
-        await foreignProfileCompletion;
-        const requestOutcome = await foreignRequestOutcome;
-        if (requestOutcome === 'failed') {
-          assert.equal(
-            await switchedCompleteness
-              .getByRole('progressbar', { name: 'Profile completeness' })
-              .getAttribute('aria-valuenow'),
-            '100',
-            `${engine}: cancelling the foreign request must leave owner A's score intact`,
-          );
-        } else {
-          await page.evaluate(
-            () =>
-              new Promise<void>((resolve) =>
-                requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-              ),
-          );
-        }
+        assert.equal(await foreignProfileCompletion, 'fulfilled');
+        await page.evaluate(
+          () =>
+            new Promise<void>((resolve) =>
+              requestAnimationFrame(() => requestAnimationFrame(resolve)),
+            ),
+        );
         assert.equal(
           await switchedCompleteness
             .getByRole('progressbar', { name: 'Profile completeness' })
