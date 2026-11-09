@@ -665,6 +665,77 @@ export interface DerivedFields {
   yearsOfExperience: number | null;
   /** Education claims copied from the explicitly labeled education section. */
   education: string[];
+  educationClaims: EducationClaim[];
+  extractionEvidence: ExtractionEvidence[];
+}
+
+export interface EducationClaim {
+  normalizedText: string;
+  sourceText: string;
+  sourceSection: 'education';
+  extractionConfidence: 'probable' | 'unverified';
+  credentialStatus: 'unverified';
+  degree?: string;
+  fieldOfStudy?: string;
+  institution?: string;
+  startYear?: number;
+  endYear?: number;
+}
+
+export interface ExtractionEvidence {
+  field: 'techStack' | 'recentSkills' | 'titles' | 'yearsOfExperience' | 'education';
+  value: string;
+  sourceSection:
+    | 'document'
+    | 'other'
+    | 'summary'
+    | 'experience'
+    | 'skills'
+    | 'education'
+    | 'projects'
+    | 'certifications';
+  sourceText: string;
+  extractionConfidence: 'probable' | 'unverified';
+}
+
+function boundedSourceExcerpt(line: string, matchIndex: number): string {
+  const start = Math.max(0, Math.min(matchIndex - 70, line.length - 200));
+  return line.slice(start, start + 200);
+}
+
+function findFieldEvidence(
+  field: ExtractionEvidence['field'],
+  values: string[],
+  candidates: Array<{ section: ExtractionEvidence['sourceSection']; text: string }>,
+): ExtractionEvidence[] {
+  const result: ExtractionEvidence[] = [];
+  for (const value of values) {
+    const variants = [value.toLocaleLowerCase()];
+    if (/\.js$/i.test(value)) variants.push(value.replace(/\.js$/i, '').toLocaleLowerCase());
+    for (const candidate of candidates) {
+      const matched = candidate.text
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .map((line) => ({
+          line,
+          offset: variants
+            .map((variant) => line.toLocaleLowerCase().indexOf(variant))
+            .find((index) => index >= 0),
+        }))
+        .find((match) => match.offset !== undefined);
+      if (matched && matched.offset !== undefined) {
+        result.push({
+          field,
+          value,
+          sourceSection: candidate.section,
+          sourceText: boundedSourceExcerpt(matched.line, matched.offset),
+          extractionConfidence: 'probable',
+        });
+        break;
+      }
+    }
+  }
+  return result;
 }
 
 /**
@@ -686,12 +757,190 @@ export function deriveEducation(educationSection: string): string[] {
     .slice(0, 20);
 }
 
+const DEGREE =
+  /\b(Doctor of Philosophy|Ph\.?D\.?|Doctorate|Master of Business Administration|M\.?B\.?A\.?|Master of Science|M\.?Sc\.?|M\.?S\.?|Bachelor of Science|B\.?Sc\.?|B\.?S\.?|Master of Technology|M\.?Tech\.?|Bachelor of Technology|B\.?Tech\.?|Master of Engineering|M\.?Eng\.?|M\.?E\.?|Bachelor of Engineering|B\.?Eng\.?|B\.?E\.?|Master of Arts|M\.?A\.?|Bachelor of Arts|B\.?A\.?|Master of Computer Applications|M\.?C\.?A\.?|Bachelor of Computer Applications|B\.?C\.?A\.?)(?=\s|,|\(|$)/i;
+const YEAR = /\b(?:19|20|21)\d{2}\b/g;
+
+/** Extract conservative structure while retaining exact candidate-provided evidence. */
+export function deriveEducationClaims(educationSection: string): EducationClaim[] {
+  return deriveEducation(educationSection).map((sourceText) => {
+    const normalizedText = sourceText
+      .replace(/[\u2010-\u2015]/g, '-')
+      .replace(/\s*,\s*/g, ', ')
+      .replace(/\s*\(\s*/g, ' (')
+      .replace(/\s*\)\s*/g, ') ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    const parts = normalizedText
+      .split(',')
+      .map((part) => part.trim())
+      .filter(Boolean);
+    const degreeMatch = normalizedText.match(DEGREE)?.[0];
+    const years = [...normalizedText.matchAll(YEAR)].map((match) => Number(match[0]));
+    const degreePartIndex = parts.findIndex((part) => DEGREE.test(part));
+    const degreePart = degreePartIndex >= 0 ? parts[degreePartIndex]! : undefined;
+    const fieldOfStudy = degreePart
+      ?.match(/\bin\s+(.+?)(?=\s+(?:at|from)\b|\s*\(|$)/i)?.[1]
+      ?.trim();
+    const institutionFromPhrase = normalizedText
+      .match(/\b(?:at|from)\s+(.+?)(?=\s*\(|,\s*\d{4}|$)/i)?.[1]
+      ?.trim();
+    const institution =
+      institutionFromPhrase ??
+      (parts.length > 1
+        ? parts.find(
+            (part, index) =>
+              index !== degreePartIndex &&
+              !/\b(?:19|20|21)\d{2}\b/.test(part) &&
+              /\b(?:university|college|institute|school|polytechnic|academy|campus)\b/i.test(part),
+          )
+        : undefined);
+    const yearRangeValid = years.length < 2 || years[0]! <= years[years.length - 1]!;
+    const claim: EducationClaim = {
+      normalizedText,
+      sourceText,
+      sourceSection: 'education',
+      extractionConfidence:
+        degreeMatch && institution && years.length > 0 && yearRangeValid
+          ? 'probable'
+          : 'unverified',
+      credentialStatus: 'unverified',
+    };
+    if (degreeMatch) claim.degree = normalizeDegree(degreeMatch);
+    if (fieldOfStudy) claim.fieldOfStudy = fieldOfStudy;
+    if (institution) claim.institution = institution;
+    if (years.length === 1) claim.endYear = years[0];
+    if (years.length >= 2) {
+      claim.startYear = years[0];
+      claim.endYear = years[years.length - 1];
+    }
+    return claim;
+  });
+}
+
+function normalizeDegree(degree: string): string {
+  const compact = degree.replace(/[^a-z]/gi, '').toLowerCase();
+  const known: Record<string, string> = {
+    doctorofphilosophy: 'Doctor of Philosophy',
+    phd: 'Doctor of Philosophy',
+    doctorate: 'Doctorate',
+    masterofbusinessadministration: 'Master of Business Administration',
+    mba: 'Master of Business Administration',
+    masterofscience: 'Master of Science',
+    msc: 'Master of Science',
+    ms: 'Master of Science',
+    bachelorofscience: 'Bachelor of Science',
+    bsc: 'Bachelor of Science',
+    bs: 'Bachelor of Science',
+    masteroftechnology: 'Master of Technology',
+    mtech: 'Master of Technology',
+    bacheloroftechnology: 'Bachelor of Technology',
+    btech: 'Bachelor of Technology',
+    masterofengineering: 'Master of Engineering',
+    meng: 'Master of Engineering',
+    me: 'Master of Engineering',
+    bachelorofengineering: 'Bachelor of Engineering',
+    beng: 'Bachelor of Engineering',
+    be: 'Bachelor of Engineering',
+    masterofarts: 'Master of Arts',
+    ma: 'Master of Arts',
+    bachelorofarts: 'Bachelor of Arts',
+    ba: 'Bachelor of Arts',
+    masterofcomputerapplications: 'Master of Computer Applications',
+    mca: 'Master of Computer Applications',
+    bachelorofcomputerapplications: 'Bachelor of Computer Applications',
+    bca: 'Bachelor of Computer Applications',
+  };
+  return known[compact] ?? degree.replace(/\./g, '').replace(/\s+/g, ' ').trim();
+}
+
 /** Runs every extractor over the resume text. `now` is injectable so years of experience are testable. */
 export function deriveFields(text: string, now = Date.now()): DerivedFields {
   const sections = splitSections(text);
   const contact = deriveContact(text);
   const { techStack, recentSkills } = deriveSkills(text, sections, now);
   const titles = deriveTitles(text, sections.experience);
+  const educationClaims = deriveEducationClaims(sections.education);
+  const evidenceSections = [
+    { section: 'skills' as const, text: sections.skills },
+    { section: 'experience' as const, text: sections.experience },
+    { section: 'summary' as const, text: sections.summary },
+    { section: 'other' as const, text: sections.other },
+    { section: 'education' as const, text: sections.education },
+    { section: 'projects' as const, text: sections.projects },
+    { section: 'certifications' as const, text: sections.certifications },
+    { section: 'document' as const, text },
+  ];
+  const explicitYears = text.match(
+    /\d{1,2}(?:\.\d)?\s*\+?\s*(?:years?|yrs?)(?:\s+\d+\s*(?:months?|mos?))?\s+(?:of\s+)?(?:professional\s+|industry\s+|relevant\s+|hands[- ]on\s+)?(?:work\s+)?experience/i,
+  )?.[0];
+  const yearEvidenceSources = sections.experience
+    ? [{ section: 'experience' as const, text: sections.experience }]
+    : [{ section: 'document' as const, text }];
+  const inferredYearLines = yearEvidenceSources
+    .flatMap(({ section, text: source }) =>
+      source
+        .split(/\r?\n/)
+        .filter((line) => /\b(?:19|20|21)\d{2}\b/.test(line))
+        .map((line) => ({ section, line })),
+    )
+    .slice(0, 40);
+  const yearsEvidenceSource = explicitYears
+    ? evidenceSections
+        .map((section) => ({
+          ...section,
+          line: section.text
+            .split(/\r?\n/)
+            .find((line) => line.toLocaleLowerCase().includes(explicitYears.toLocaleLowerCase())),
+        }))
+        .find((section) => section.line)
+    : undefined;
+  const yearsOfExperience = deriveYears(text, sections.experience, now);
+  const extractionEvidence = [
+    ...findFieldEvidence('techStack', techStack, evidenceSections),
+    ...findFieldEvidence('recentSkills', recentSkills, [
+      { section: 'experience', text: sections.experience },
+    ]),
+    ...findFieldEvidence('titles', titles.titles, [
+      { section: 'experience', text: sections.experience },
+      { section: 'other', text: sections.other },
+    ]),
+    ...(yearsEvidenceSource?.line && yearsOfExperience !== null
+      ? [
+          {
+            field: 'yearsOfExperience' as const,
+            value: String(yearsOfExperience),
+            sourceSection: yearsEvidenceSource.section,
+            sourceText: boundedSourceExcerpt(
+              yearsEvidenceSource.line,
+              yearsEvidenceSource.line
+                .toLocaleLowerCase()
+                .indexOf(explicitYears?.toLocaleLowerCase() ?? ''),
+            ),
+            extractionConfidence: 'probable' as const,
+          },
+        ]
+      : !explicitYears && inferredYearLines.length > 0 && yearsOfExperience !== null
+        ? inferredYearLines.map(({ section, line }) => {
+            const normalizedLine = line.trim();
+            const matchIndex = /\b(?:19|20|21)\d{2}\b/.exec(normalizedLine)?.index ?? 0;
+            return {
+              field: 'yearsOfExperience' as const,
+              value: String(yearsOfExperience),
+              sourceSection: section,
+              sourceText: boundedSourceExcerpt(normalizedLine, matchIndex),
+              extractionConfidence: 'probable' as const,
+            };
+          })
+        : []),
+    ...educationClaims.map((claim) => ({
+      field: 'education' as const,
+      value: claim.normalizedText,
+      sourceSection: claim.sourceSection,
+      sourceText: claim.sourceText,
+      extractionConfidence: claim.extractionConfidence,
+    })),
+  ];
 
   return {
     fullName: deriveName(text, contact.email),
@@ -705,7 +954,9 @@ export function deriveFields(text: string, now = Date.now()): DerivedFields {
     recentSkills,
     titles: titles.titles,
     titlesStatus: titles.status,
-    yearsOfExperience: deriveYears(text, sections.experience, now),
+    yearsOfExperience,
     education: deriveEducation(sections.education),
+    educationClaims,
+    extractionEvidence,
   };
 }

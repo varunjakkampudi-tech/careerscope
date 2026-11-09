@@ -186,6 +186,49 @@ export const derivedResumeSchema = z.object({
   yearsOfExperience: z.number().nullable(),
   /** Candidate-supplied education text copied from the labeled resume section; not verified. */
   education: z.array(z.string().trim().min(1).max(200)).max(20).default([]),
+  /** Structured, explicitly unverified claims with source text retained for review. */
+  educationClaims: z
+    .array(
+      z
+        .object({
+          normalizedText: z.string().trim().min(1).max(200),
+          sourceText: z.string().trim().min(1).max(200),
+          sourceSection: z.literal('education'),
+          extractionConfidence: z.enum(['probable', 'unverified']),
+          credentialStatus: z.literal('unverified'),
+          degree: z.string().trim().min(1).max(80).optional(),
+          fieldOfStudy: z.string().trim().min(1).max(120).optional(),
+          institution: z.string().trim().min(1).max(120).optional(),
+          startYear: z.number().int().min(1900).max(2200).optional(),
+          endYear: z.number().int().min(1900).max(2200).optional(),
+        })
+        .strict(),
+    )
+    .max(20)
+    .default([]),
+  extractionEvidence: z
+    .array(
+      z
+        .object({
+          field: z.enum(['techStack', 'recentSkills', 'titles', 'yearsOfExperience', 'education']),
+          value: z.string().trim().min(1).max(200),
+          sourceSection: z.enum([
+            'document',
+            'other',
+            'summary',
+            'experience',
+            'skills',
+            'education',
+            'projects',
+            'certifications',
+          ]),
+          sourceText: z.string().trim().min(1).max(200),
+          extractionConfidence: z.enum(['probable', 'unverified']),
+        })
+        .strict(),
+    )
+    .max(350)
+    .default([]),
 });
 export type DerivedResume = z.infer<typeof derivedResumeSchema>;
 

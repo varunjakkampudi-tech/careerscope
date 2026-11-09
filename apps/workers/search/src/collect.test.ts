@@ -868,6 +868,8 @@ test('a skill known only from the parsed resume still reaches scoring through co
       titles: [],
       yearsOfExperience: null,
       education: [],
+      educationClaims: [],
+      extractionEvidence: [],
     },
   );
   const job = {

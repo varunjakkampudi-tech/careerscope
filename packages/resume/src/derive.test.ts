@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   deriveContact,
   deriveEducation,
+  deriveEducationClaims,
   deriveFields,
   deriveLocation,
   deriveName,
@@ -405,6 +406,105 @@ describe('deriveFields', () => {
     expect(
       deriveFields('Alex Example\nWORK EXPERIENCE\nEducation Consultant at Acme').education,
     ).toEqual([]);
+  });
+
+  it('normalizes structured education details and retains unverified source provenance', () => {
+    expect(
+      deriveEducationClaims('• B.Tech in Information Technology, Example Institute, 2021'),
+    ).toEqual([
+      {
+        normalizedText: 'B.Tech in Information Technology, Example Institute, 2021',
+        sourceText: 'B.Tech in Information Technology, Example Institute, 2021',
+        sourceSection: 'education',
+        extractionConfidence: 'probable',
+        credentialStatus: 'unverified',
+        degree: 'Bachelor of Technology',
+        fieldOfStudy: 'Information Technology',
+        institution: 'Example Institute',
+        endYear: 2021,
+      },
+    ]);
+    expect(deriveEducationClaims('Completed relevant coursework')).toEqual([
+      {
+        normalizedText: 'Completed relevant coursework',
+        sourceText: 'Completed relevant coursework',
+        sourceSection: 'education',
+        extractionConfidence: 'unverified',
+        credentialStatus: 'unverified',
+      },
+    ]);
+    expect(
+      deriveEducationClaims('Completed relevant coursework, online platform, 2021')[0],
+    ).not.toHaveProperty('institution');
+    expect(
+      deriveEducationClaims(
+        'Bachelor of Science in Computer Science from Example University (2020–2023)',
+      ),
+    ).toMatchObject([
+      {
+        normalizedText:
+          'Bachelor of Science in Computer Science from Example University (2020-2023)',
+        sourceSection: 'education',
+        extractionConfidence: 'probable',
+        credentialStatus: 'unverified',
+        degree: 'Bachelor of Science',
+        fieldOfStudy: 'Computer Science',
+        institution: 'Example University',
+        startYear: 2020,
+        endYear: 2023,
+      },
+    ]);
+  });
+
+  it('retains source-section evidence for extracted experience and skill fields', () => {
+    const fields = deriveFields(RESUME, NOW);
+    expect(fields.extractionEvidence).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          field: 'techStack',
+          sourceSection: 'skills',
+          extractionConfidence: 'probable',
+        }),
+        expect.objectContaining({
+          field: 'titles',
+          sourceSection: 'experience',
+          extractionConfidence: 'probable',
+        }),
+        expect.objectContaining({
+          field: 'education',
+          sourceSection: 'education',
+          extractionConfidence: 'probable',
+          sourceText: 'B.Tech in Information Technology, Example Institute, 2021',
+        }),
+      ]),
+    );
+    for (const [field, values] of [
+      ['techStack', fields.techStack],
+      ['recentSkills', fields.recentSkills],
+      ['titles', fields.titles],
+      ['education', fields.education],
+    ] as const) {
+      for (const value of values) {
+        expect(
+          fields.extractionEvidence.some(
+            (evidence) => evidence.field === field && evidence.value === value,
+          ),
+          field + ' value ' + value + ' should retain source evidence',
+        ).toBe(true);
+      }
+    }
+    if (fields.yearsOfExperience !== null) {
+      expect(
+        fields.extractionEvidence.some(
+          (evidence) =>
+            evidence.field === 'yearsOfExperience' &&
+            evidence.value === String(fields.yearsOfExperience),
+        ),
+      ).toBe(true);
+    }
+    expect(fields.extractionEvidence.every((evidence) => evidence.sourceText.length <= 200)).toBe(
+      true,
+    );
   });
 });
 

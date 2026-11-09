@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   candidateSchema,
+  derivedResumeSchema,
   preferencesSchema,
   profileSchema,
   profileUpdateSchema,
@@ -132,6 +133,70 @@ describe('candidate-declared profile fields', () => {
           .success,
       ).toBe(false);
     }
+  });
+});
+
+describe('derived education claim evidence', () => {
+  it('defaults new evidence fields for legacy parser results and validates provenance', () => {
+    const legacy = derivedResumeSchema.parse({ techStack: [], yearsOfExperience: null });
+    expect(legacy.education).toEqual([]);
+    expect(legacy.educationClaims).toEqual([]);
+    expect(legacy.extractionEvidence).toEqual([]);
+
+    const claim = {
+      normalizedText: 'BSc Computer Science, Example University, 2020-2023',
+      sourceText: 'B.Sc Computer Science, Example University, 2020–2023',
+      sourceSection: 'education',
+      extractionConfidence: 'probable',
+      credentialStatus: 'unverified',
+      degree: 'BSc',
+      fieldOfStudy: 'Computer Science',
+      institution: 'Example University',
+      startYear: 2020,
+      endYear: 2023,
+    };
+    expect(
+      derivedResumeSchema.parse({
+        techStack: [],
+        yearsOfExperience: null,
+        educationClaims: [claim],
+      }).educationClaims,
+    ).toEqual([claim]);
+    expect(
+      derivedResumeSchema.safeParse({
+        techStack: [],
+        yearsOfExperience: null,
+        educationClaims: [{ ...claim, credentialStatus: 'verified' }],
+      }).success,
+    ).toBe(false);
+    expect(
+      derivedResumeSchema.safeParse({
+        techStack: [],
+        yearsOfExperience: null,
+        educationClaims: [{ ...claim, sourceSection: 'experience' }],
+      }).success,
+    ).toBe(false);
+    const evidence = {
+      field: 'education',
+      value: claim.normalizedText,
+      sourceSection: 'education',
+      sourceText: claim.sourceText,
+      extractionConfidence: 'probable',
+    };
+    expect(
+      derivedResumeSchema.parse({
+        techStack: [],
+        yearsOfExperience: null,
+        extractionEvidence: [evidence],
+      }).extractionEvidence,
+    ).toEqual([evidence]);
+    expect(
+      derivedResumeSchema.safeParse({
+        techStack: [],
+        yearsOfExperience: null,
+        extractionEvidence: [{ ...evidence, sourceText: '' }],
+      }).success,
+    ).toBe(false);
   });
 });
 
