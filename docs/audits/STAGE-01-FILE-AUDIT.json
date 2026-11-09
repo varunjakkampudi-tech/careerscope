@@ -6499,7 +6499,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "source review plus Stage 03 item 3.16 cross-account stale-response regression",
+      "reviewMethod": "source review plus Stage 03 item 3.16 cross-account delayed-response regression",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6516,12 +6516,19 @@
           "status": "fixed",
           "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
           "remediation": "Write screenshots to a unique per-run directory under test-results."
+        },
+        {
+          "id": "S1-F072",
+          "severity": "medium",
+          "status": "open",
+          "summary": "The cross-account stale-response browser regression has not passed exact-head CI: the initial implementation timed out waiting for a response after route.fetch, and the updated requestfinished synchronization is awaiting full CI.",
+          "remediation": "Obtain a passing exact-head Quality Gates and Services/browser run, then confirm the foreign response is released or cancelled and owner A completeness stays at 100%."
         }
       ],
-      "observations": "Reviewed the browser assertions for successful saved-profile completeness, aria-valuenow, failed profile fetches, accessible error, absence of a score while failed, and retry recovery. The onboarding regression verifies the saved experience in the database and reloads the dashboard before checking 100 percent. The error-state regression verifies the two intentional 503 reads and the subsequent retry.",
-      "evidence": "Current exact-head diff review on codex/stage03-item316-profile-completeness.",
+      "observations": "Reviewed the full browser suite and the changed owner-switch regression. Existing coverage verifies profile-completeness success, API failure/retry, persisted profile state, and cross-account data isolation. The delayed foreign-profile response is validated against the actual foreign response body and expected 80% score. First exact-head run 42565646692 failed at waitForResponse after route.fetch had already emitted its upstream response; corrected code now waits for requestfinished/requestfailed. Follow-up run 42566835211 is in progress and npm run check failed because the prior audit hash was stale.",
+      "evidence": "Current exact-head source review on codex/stage03-item316-profile-completeness. CI run 42565646692 failed at scripts/tests/check-ui.ts:5416; follow-up run 42566835211 awaits Services/browser completion. Local typecheck, Prettier, ESLint, and diff check passed; local browser run was blocked by a PostgreSQL authentication mismatch.",
       "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "e16c219ca37416e24a72291c07c6fd5d47a321561521fb24a9b59d5921b99e33"
+      "sha256": "be090156e221bd016188b9b28d61f59700c9f37496b25aca063064f7df14de0f"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
