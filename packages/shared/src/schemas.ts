@@ -220,11 +220,53 @@ export const derivedResumeSchema = z.object({
     )
     .max(20)
     .default([]),
+  /** Structured candidate-supplied work history; extraction never verifies employment. */
+  experienceClaims: z
+    .array(
+      z
+        .object({
+          normalizedText: z.string().trim().min(1).max(200),
+          sourceText: z.string().trim().min(1).max(200),
+          sourceSection: z.literal('experience'),
+          extractionConfidence: z.enum(['probable', 'unverified']),
+          claimStatus: z.literal('unverified'),
+          title: z.string().trim().min(1).max(80).optional(),
+          employer: z.string().trim().min(1).max(120).optional(),
+          startDate: z
+            .number()
+            .int()
+            .min(Date.UTC(1970, 0, 1)),
+          endDate: z
+            .number()
+            .int()
+            .min(Date.UTC(1970, 0, 1)),
+          description: z.string().trim().min(1).max(200).optional(),
+        })
+        .strict()
+        .superRefine((claim, context) => {
+          if (claim.startDate > claim.endDate) {
+            context.addIssue({
+              code: 'custom',
+              path: ['startDate'],
+              message: 'startDate must not be after endDate',
+            });
+          }
+        }),
+    )
+    .max(30)
+    .default([]),
   extractionEvidence: z
     .array(
       z
         .object({
-          field: z.enum(['techStack', 'recentSkills', 'titles', 'yearsOfExperience', 'education']),
+          field: z.enum([
+            'techStack',
+            'recentSkills',
+            'titles',
+            'yearsOfExperience',
+            'education',
+            'experience',
+          ]),
           value: z.string().trim().min(1).max(200),
           sourceSection: z.enum([
             'document',

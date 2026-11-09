@@ -869,6 +869,7 @@ test('a skill known only from the parsed resume still reaches scoring through co
       yearsOfExperience: null,
       education: [],
       educationClaims: [],
+      experienceClaims: [],
       extractionEvidence: [],
     },
   );

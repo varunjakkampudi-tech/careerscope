@@ -4,6 +4,7 @@ import {
   deriveEducation,
   deriveEducationClaims,
   deriveFields,
+  deriveExperienceClaims,
   deriveLocation,
   deriveName,
   deriveSkills,
@@ -379,6 +380,79 @@ describe('deriveSkills', () => {
 });
 
 describe('deriveFields', () => {
+  it('extracts bounded per-role experience claims with source provenance and unverified status', () => {
+    const fields = deriveFields(
+      [
+        'PROFESSIONAL EXPERIENCE',
+        'Senior Software Engineer at Acme Corp | Jan 2021 - Present',
+        '- Built React services for millions of users.',
+        'Software Developer — Beta Labs | Jan 2018 - Dec 2020',
+        '- Delivered TypeScript applications.',
+        'EDUCATION',
+        'Bachelor of Science, Example University, 2017',
+      ].join('\n'),
+      NOW,
+    );
+    expect(fields.experienceClaims).toHaveLength(2);
+    expect(fields.experienceClaims[0]).toMatchObject({
+      title: 'Senior Software Engineer',
+      employer: 'Acme Corp',
+      startDate: Date.UTC(2021, 0, 1),
+      endDate: NOW,
+      sourceSection: 'experience',
+      claimStatus: 'unverified',
+      description: expect.stringContaining('Built React services'),
+    });
+    expect(fields.experienceClaims[1]).toMatchObject({
+      title: 'Software Developer',
+      employer: 'Beta Labs',
+      startDate: Date.UTC(2018, 0, 1),
+      endDate: Date.UTC(2020, 11, 1),
+      claimStatus: 'unverified',
+    });
+    expect(fields.extractionEvidence).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          field: 'experience',
+          sourceSection: 'experience',
+          evidenceKind: 'direct-claim',
+        }),
+      ]),
+    );
+  });
+
+  it('does not create work-history claims from education dates or invent employer fields', () => {
+    expect(
+      deriveFields('EDUCATION\nBachelor of Science, University, 2018-2022', NOW).experienceClaims,
+    ).toEqual([]);
+    const [claim] = deriveExperienceClaims(
+      'Engineer Jan 2020 - Jan 2022\nBuilt reliable systems.',
+      NOW,
+    );
+    expect(claim).toMatchObject({ title: 'Engineer', claimStatus: 'unverified' });
+    expect(claim).not.toHaveProperty('employer');
+  });
+
+  it('keeps duplicate role dates together and leaves dated bullet projects inside the role', () => {
+    const claims = deriveExperienceClaims(
+      [
+        'Acme Corp | Jan 2020 - Present',
+        'Senior Engineer | Jan 2020 - Present',
+        '- Led migration from Jan 2022 - Mar 2022',
+        '- Improved service reliability.',
+        'Beta Labs | Feb 2017 - Dec 2019',
+        'Developer | Feb 2017 - Dec 2019',
+        '- Built platform services.',
+      ].join('\n'),
+      NOW,
+    );
+    expect(claims).toHaveLength(2);
+    expect(claims[0]?.startDate).toBe(Date.UTC(2020, 0, 1));
+    expect(claims[0]?.endDate).toBe(NOW);
+    expect(claims[0]?.sourceText).toContain('Led migration from Jan 2022 - Mar 2022');
+    expect(claims[1]?.employer).toContain('Beta Labs');
+  });
+
   it('produces the full derived profile the onboarding form pre-fills', () => {
     const fields = deriveFields(RESUME, NOW);
     expect(fields).toMatchObject({

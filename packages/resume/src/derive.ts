@@ -646,6 +646,79 @@ function roleBoundaries(ranges: DateRange[]): DateRange[] {
   return out;
 }
 
+/** Derives dated work-history claims only from the explicitly labeled experience section. */
+export function deriveExperienceClaims(experience: string, now = Date.now()): ExperienceClaim[] {
+  if (!experience) return [];
+  const records: ExperienceClaim[] = [];
+  const seen = new Set<string>();
+  let offset = 0;
+  for (const line of experience.split(/\r?\n/)) {
+    const ranges = findDateRanges(line, now);
+    const cleanLine = line.trim();
+    if (
+      ranges.length &&
+      !/^[-•*·]/.test(cleanLine) &&
+      ROLE_WORDS.test(cleanLine.replace(RANGE_RE, ' '))
+    ) {
+      const titleLine = cleanLine
+        .replace(RANGE_RE, ' ')
+        .replace(/[|–—-]+$/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+      const title = titleLine
+        .split(/\s+at\s+|\s+\|\s+|\s+[–—]\s+/i)[0]
+        ?.replace(/[|–—-]+$/g, '')
+        .trim();
+      const employer = titleLine
+        .split(/\s+at\s+|\s+\|\s+|\s+[–—]\s+/i)
+        .slice(1)
+        .join(' ')
+        .replace(/[|–—-]+$/g, '')
+        .trim();
+      const companyBeforeTitle = experience
+        .slice(Math.max(0, offset - 140), offset)
+        .split(/\r?\n/)
+        .map((candidate) => candidate.trim())
+        .find(
+          (candidate) => candidate && !ROLE_WORDS.test(candidate) && !/^[-•*·]/.test(candidate),
+        );
+      const key = `${titleLine.toLocaleLowerCase()}|${ranges[0]!.start}|${ranges[0]!.end}`;
+      if (seen.has(key)) {
+        offset += line.length + 1;
+        continue;
+      }
+      seen.add(key);
+      const sourceText = experience
+        .slice(offset, offset + line.length + 1 + 160)
+        .trim()
+        .slice(0, 200);
+      const description = experience
+        .slice(offset + line.length + 1, offset + line.length + 161)
+        .split(/\r?\n/)
+        .map((candidate) => candidate.trim().replace(/^[-•*·]\s*/, ''))
+        .find((candidate) => candidate && !findDateRanges(candidate, now).length);
+      records.push({
+        normalizedText: [titleLine, sourceText].filter(Boolean).join(' — ').slice(0, 200),
+        sourceText,
+        sourceSection: 'experience',
+        extractionConfidence: title ? 'probable' : 'unverified',
+        claimStatus: 'unverified',
+        ...(title ? { title: title.slice(0, 80) } : {}),
+        ...(employer && employer.length <= 120
+          ? { employer }
+          : companyBeforeTitle && companyBeforeTitle.length <= 120
+            ? { employer: companyBeforeTitle }
+            : {}),
+        startDate: ranges[0]!.start,
+        endDate: ranges[0]!.end,
+        ...(description ? { description: description.slice(0, 200) } : {}),
+      });
+    }
+    offset += line.length + 1;
+  }
+  return records.slice(0, 30);
+}
+
 /* -------------------------------------------------------------------------- */
 /* Entry point                                                                */
 /* -------------------------------------------------------------------------- */
@@ -668,7 +741,22 @@ export interface DerivedFields {
   /** Education claims copied from the explicitly labeled education section. */
   education: string[];
   educationClaims: EducationClaim[];
+  /** Structured work-history claims with bounded source text and unverified provenance. */
+  experienceClaims: ExperienceClaim[];
   extractionEvidence: ExtractionEvidence[];
+}
+
+export interface ExperienceClaim {
+  normalizedText: string;
+  sourceText: string;
+  sourceSection: 'experience';
+  extractionConfidence: 'probable' | 'unverified';
+  claimStatus: 'unverified';
+  title?: string;
+  employer?: string;
+  startDate: number;
+  endDate: number;
+  description?: string;
 }
 
 export interface EducationClaim {
@@ -686,7 +774,7 @@ export interface EducationClaim {
 }
 
 export interface ExtractionEvidence {
-  field: 'techStack' | 'recentSkills' | 'titles' | 'yearsOfExperience' | 'education';
+  field: 'techStack' | 'recentSkills' | 'titles' | 'yearsOfExperience' | 'education' | 'experience';
   value: string;
   sourceSection:
     | 'document'
@@ -877,6 +965,7 @@ export function deriveFields(text: string, now = Date.now()): DerivedFields {
   const { techStack, recentSkills } = deriveSkills(text, sections, now);
   const titles = deriveTitles(text, sections.experience);
   const educationClaims = deriveEducationClaims(sections.education);
+  const experienceClaims = deriveExperienceClaims(sections.experience, now);
   const evidenceSections = [
     { section: 'skills' as const, text: sections.skills },
     { section: 'experience' as const, text: sections.experience },
@@ -966,6 +1055,14 @@ export function deriveFields(text: string, now = Date.now()): DerivedFields {
       evidenceKind: 'direct-claim' as const,
       extractionConfidence: claim.extractionConfidence,
     })),
+    ...experienceClaims.map((claim) => ({
+      field: 'experience' as const,
+      value: claim.normalizedText,
+      sourceSection: claim.sourceSection,
+      sourceText: claim.sourceText,
+      evidenceKind: 'direct-claim' as const,
+      extractionConfidence: claim.extractionConfidence,
+    })),
   ];
 
   return {
@@ -983,6 +1080,7 @@ export function deriveFields(text: string, now = Date.now()): DerivedFields {
     yearsOfExperience,
     education: deriveEducation(sections.education),
     educationClaims,
+    experienceClaims,
     extractionEvidence,
   };
 }

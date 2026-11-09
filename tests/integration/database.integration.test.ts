@@ -3719,6 +3719,7 @@ test('createSearch snapshots the latest parsed resume onto the matching profile,
       yearsOfExperience: 3,
       education: [],
       educationClaims: [],
+      experienceClaims: [],
       extractionEvidence: [],
     });
     const afterFirstResume = await database.createSearch(ownerId, 'after-first-resume', request);
@@ -3734,6 +3735,7 @@ test('createSearch snapshots the latest parsed resume onto the matching profile,
       yearsOfExperience: 5,
       education: [],
       educationClaims: [],
+      experienceClaims: [],
       extractionEvidence: [],
     });
     const afterSecondResume = await database.createSearch(ownerId, 'after-second-resume', request);
