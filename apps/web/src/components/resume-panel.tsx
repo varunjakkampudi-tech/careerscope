@@ -23,11 +23,7 @@ function ResumeTextPreview({ text }: { text: string }) {
   return (
     <div className={styles.preview} aria-label="Resume document preview">
       <div className={styles.previewControls}>
-        <button
-          type="button"
-          onClick={() => setPage((value) => Math.max(0, value - 1))}
-          disabled={current === 0}
-        >
+        <button type="button" onClick={() => setPage((value) => Math.max(0, value - 1))}>
           Previous section
         </button>
         <span aria-live="polite">
@@ -36,7 +32,6 @@ function ResumeTextPreview({ text }: { text: string }) {
         <button
           type="button"
           onClick={() => setPage((value) => Math.min(pages.length - 1, value + 1))}
-          disabled={current === pages.length - 1}
         >
           Next section
         </button>
