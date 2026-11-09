@@ -265,10 +265,19 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the complete profile-photo route delta against the existing app hooks: parent onRequest enforces no-store, private test access, Origin, authenticated session, CSRF and legal gates before the scoped routes. Upload content types and 5 MiB body are bounded; only the authenticated owner id reaches the repository; Sharp errors are returned as a generic 400; reads set nosniff and use the global no-store header; read/write/delete are rate-limited. No public or cross-owner route is added. Database integration covers auth, validation, headers and owner isolation. Reviewed the resume file endpoint for authenticated ownership, settled parsed status, bucket and object version matching, bounded rate limits and no-store attachment response.",
-      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "93afe69091083a0287bab5ee86986deda15b4cd8f7865406f615125e8d0b56af"
+      "observations": "Re-reviewed the complete profile-photo route delta against the existing app hooks: parent onRequest enforces no-store, private test access, Origin, authenticated session, CSRF and legal gates before the scoped routes. Upload content types and 5 MiB body are bounded; only the authenticated owner id reaches the repository; Sharp errors are returned as a generic 400; reads set nosniff and use the global no-store header; read/write/delete are rate-limited. No public or cross-owner route is added. Database integration covers auth, validation, headers and owner isolation.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "93afe69091083a0287bab5ee86986deda15b4cd8f7865406f615125e8d0b56af",
+      "deltaReviews": [
+        {
+          "scope": "CareerScope Stage 04 item 4.06 focused change review",
+          "reviewer": "ChatGPT independent review",
+          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
+          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+        }
+      ]
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -422,7 +431,7 @@
       "path": "apps/api/src/openapi.ts",
       "category": "backend-api",
       "reviewMethod": "prior complete source review plus current exact-dev-diff review",
-      "state": "partially-reviewed",
+      "state": "reviewed",
       "concerns": [],
       "findings": [
         {
@@ -433,10 +442,19 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
-      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "ed13e26679f64c2cc6ad765d2fa8d842371053796360cf75825ed68b0100c3f3"
+      "observations": "Re-reviewed the full profile-photo contract delta: authenticated GET returns binary WebP or 204, PUT accepts only JPEG/PNG/WebP and documents size/error statuses, DELETE returns 204, and declared error bodies remain JSON. The parent response hook and route integration test verify no-store and content headers. No contract discrepancy found.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "ed13e26679f64c2cc6ad765d2fa8d842371053796360cf75825ed68b0100c3f3",
+      "deltaReviews": [
+        {
+          "scope": "CareerScope Stage 04 item 4.06 focused change review",
+          "reviewer": "ChatGPT independent review",
+          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
+          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+        }
+      ]
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -502,13 +520,22 @@
       "path": "apps/api/src/resumes.integration.test.ts",
       "category": "backend-api",
       "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
-      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "ad0a6d43c4a91b97df097b0d6b717fde1544f340cc856fdd3a3dccb00935802c"
+      "observations": "Reviewed complete 423-line resume integration suite and fixture helpers. Covers owner isolation, upload cancellation only before durable queueing, unavailable cancellation capability, owner quota before storage IO, idempotent retries/content conflicts, disconnect abort and recovery state, cancellation/deletion quota release, and local loopback database isolation with synthetic storage. No external object storage is configured.",
+      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "ad0a6d43c4a91b97df097b0d6b717fde1544f340cc856fdd3a3dccb00935802c",
+      "deltaReviews": [
+        {
+          "scope": "CareerScope Stage 04 item 4.06 focused change review",
+          "reviewer": "ChatGPT independent review",
+          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
+          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+        }
+      ]
     },
     {
       "path": "apps/api/src/session-logout.integration.test.ts",
@@ -1229,22 +1256,40 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed preview layout for narrow widths, bounded scroll, wrapping and visible keyboard focus using the approved --dash-focus token.",
-      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "d83152f5901dfd7799f544e5b633849f8fac2e6182ddfe4482744c077cdef4c4"
+      "observations": "Read the complete resume upload styles. Native file input and picker button have adequate target size and themed borders/backgrounds.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "d83152f5901dfd7799f544e5b633849f8fac2e6182ddfe4482744c077cdef4c4",
+      "deltaReviews": [
+        {
+          "scope": "CareerScope Stage 04 item 4.06 focused change review",
+          "reviewer": "ChatGPT independent review",
+          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
+          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+        }
+      ]
     },
     {
       "path": "apps/web/src/components/resume-panel.tsx",
       "category": "frontend",
       "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
-      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "73c6af2039402415d40e36d51cdf295b90b2533842d362ed93a068cd9633ed30"
+      "observations": "Read the complete resume upload/review flow. Upload size is bounded in the UI and server validation remains authoritative; mutations use CSRF and idempotency keys; resume data uses owner-scoped queries; destructive actions require confirmation; failures trigger refresh and parsed content is presented as escaped text.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "73c6af2039402415d40e36d51cdf295b90b2533842d362ed93a068cd9633ed30",
+      "deltaReviews": [
+        {
+          "scope": "CareerScope Stage 04 item 4.06 focused change review",
+          "reviewer": "ChatGPT independent review",
+          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
+          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+        }
+      ]
     },
     {
       "path": "apps/web/src/components/saved-leads.module.css",
@@ -1684,10 +1729,19 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Re-reviewed the complete profile-photo documentation delta. Authenticated route methods and the no-photo 204 behavior match the API contract; photo is documented separately from recruiter/public access. Reviewed API documentation for private file retrieval, not-found behavior and plain-text browser preview.",
-      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "69deeb8891ead3289179197ec2170a5e8ebb11a2541928423be46f0744da4ba6"
+      "observations": "Re-reviewed the complete profile-photo documentation delta. Authenticated route methods and the no-photo 204 behavior match the API contract; photo is documented separately from recruiter/public access.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "69deeb8891ead3289179197ec2170a5e8ebb11a2541928423be46f0744da4ba6",
+      "deltaReviews": [
+        {
+          "scope": "CareerScope Stage 04 item 4.06 focused change review",
+          "reviewer": "ChatGPT independent review",
+          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
+          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+        }
+      ]
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1943,13 +1997,22 @@
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
       "reviewMethod": "source review plus item 1.01 reviewer-feedback update",
-      "state": "partially-reviewed",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
-      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "2467bc1d6dba02cd27265565aa7dd7420c0235b41b7b9f5de2e9f0a6ecc19f40"
+      "observations": "Re-reviewed Stage 01 item 1.01 record. The verification column no longer labels November 8 evidence as November 6; the row records parent-dev CI and makes clear that the conditional review was for the previous head, with suggested refinements applied and new-head validation pending.",
+      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "2467bc1d6dba02cd27265565aa7dd7420c0235b41b7b9f5de2e9f0a6ecc19f40",
+      "deltaReviews": [
+        {
+          "scope": "CareerScope Stage 04 item 4.06 focused change review",
+          "reviewer": "ChatGPT independent review",
+          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
+          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+        }
+      ]
     },
     {
       "path": "docs/TESTING.md",
@@ -1967,13 +2030,22 @@
       "path": "docs/TRACEABILITY.md",
       "category": "documentation",
       "reviewMethod": "prior complete source review plus current exact-dev-diff review",
-      "state": "partially-reviewed",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
-      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "d8c21aa242de4200ad25f687b723b0f569f5fec406ab5deb4881ca768928100b"
+      "observations": "Re-reviewed the current traceability addition: inventories and their denominators remain separate, the owner roadmap remains the 328-item source, and the existing crosswalk points to the enforced checker and CI-run tests.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "d8c21aa242de4200ad25f687b723b0f569f5fec406ab5deb4881ca768928100b",
+      "deltaReviews": [
+        {
+          "scope": "CareerScope Stage 04 item 4.06 focused change review",
+          "reviewer": "ChatGPT independent review",
+          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
+          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+        }
+      ]
     },
     {
       "path": "docs/UI-VERIFICATION.md",
@@ -2375,13 +2447,22 @@
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
       "reviewMethod": "prior complete source review plus current exact-dev-diff review",
-      "state": "partially-reviewed",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
-      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "d3fc98a72f6644bf373979b5e2fdd9f33474bb3763008afe70a731b85290f7ec"
+      "observations": "Re-reviewed item 3.13 closeout and surrounding inventory: the item retains its source title/status, records currentStatus verified with concrete implementation and tests, links PR #57/#58 evidence, and leaves the overall 328-item/stage inventory structure intact. Traceability checker validates row and counts.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "d3fc98a72f6644bf373979b5e2fdd9f33474bb3763008afe70a731b85290f7ec",
+      "deltaReviews": [
+        {
+          "scope": "CareerScope Stage 04 item 4.06 focused change review",
+          "reviewer": "ChatGPT independent review",
+          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
+          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+        }
+      ]
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -3495,13 +3576,22 @@
       "path": "package.json",
       "category": "repository-configuration",
       "reviewMethod": "prior complete source review plus current exact-dev-diff review",
-      "state": "partially-reviewed",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
+      "observations": "Re-reviewed root script/dependency delta: the new image-normalization unit test is in test:unit and audit:stage01 now requires complete file coverage. Existing Node >=24 engine and workspace test/build scripts remain intact; lockfile installation on this source revision reported zero vulnerabilities.",
       "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "e017756b420ac819a4f2eb6f76043cf5346a638e0dff11b11445992a9b9264bb"
+      "sha256": "e017756b420ac819a4f2eb6f76043cf5346a638e0dff11b11445992a9b9264bb",
+      "deltaReviews": [
+        {
+          "scope": "CareerScope Stage 04 item 4.06 focused change review",
+          "reviewer": "ChatGPT independent review",
+          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
+          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+        }
+      ]
     },
     {
       "path": "packages/core/package.json",
@@ -5429,13 +5519,22 @@
       "path": "packages/resume/package.json",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
-      "state": "partially-reviewed",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
+      "observations": "Read package metadata. Public output is built dist; dependencies are shared plus PDF/DOCX text extraction libraries. No test-only dependency is declared here.",
       "evidence": "",
       "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "e463228d14e6fd00df7e5af6a17c42662bb95e92d818dfe54fff418b23918a32"
+      "sha256": "e463228d14e6fd00df7e5af6a17c42662bb95e92d818dfe54fff418b23918a32",
+      "deltaReviews": [
+        {
+          "scope": "CareerScope Stage 04 item 4.06 focused change review",
+          "reviewer": "ChatGPT independent review",
+          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
+          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+        }
+      ]
     },
     {
       "path": "packages/resume/src/derive-equivalence.test.ts",
@@ -6494,10 +6593,26 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
-      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "f7a875f3ba83795ae36fefc3f512ded6a68b4734d511264d46abaecf89a476f4"
+      "observations": "Re-reviewed the complete Stage 03 photo test delta on top of the previously reviewed full browser harness. Focused mode limits to Chromium; checks file keyboard access, unsupported/oversize rejection, API failure without persistence, upload and stored private row, both avatar slots sharing one refresh, reload persistence and deletion restoring initials. Broad browser scenario also covers owner image lifecycle, account switching/isolation, responsive/accessibility checks. Exact dev CI passed the browser suite.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "267ea9fa58474cb05c917738e099a0f10291b37e0ede926e8d53b82303b6c66e",
+      "deltaReviews": [
+        {
+          "scope": "CareerScope Stage 04 item 4.06 focused change review",
+          "reviewer": "ChatGPT independent review",
+          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
+          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+        },
+        {
+          "scope": "Follow-up synthetic DOCX fixture correction after prior Stage 04 item 4.06 review",
+          "reviewer": "Codex implementation",
+          "reviewedHead": "uncommitted working tree based on df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Added React and TypeScript to the first parsed paragraph so existing profile-draft assertions remain valid; three-section preview text and complete reconstruction expectation updated accordingly.",
+          "status": "Awaiting exact-head independent review and hosted browser execution."
+        }
+      ]
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
@@ -6726,26 +6841,44 @@
     {
       "path": "packages/resume/src/preview-segments.ts",
       "category": "production-source",
-      "reviewMethod": "source-review",
-      "state": "partially-reviewed",
+      "reviewMethod": "source review plus exact-head independent review",
+      "state": "reviewed",
       "concerns": ["Lossless bounded segmentation of parsed resume text"],
       "findings": [],
-      "observations": "New Stage 04 item 4.06 code under independent review; refreshed content hash records current bytes while review state remains partial.",
-      "evidence": "Stage 04 item 4.06 branch; independent review pending.",
-      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
-      "sha256": "dbf5c68392f556746bb3a3d451f9e2ca98561a61d426916b7d6de2f90b1c4b1c"
+      "observations": "Independent review confirmed deterministic, lossless, newline-aware preview segmentation with bounded sections.",
+      "evidence": "ChatGPT independent review of PR #73 exact head df352241cb4b2421f35f667464d0e62273ea383d; hosted CI closeout remains pending.",
+      "reviewer": "ChatGPT independent review",
+      "sha256": "dbf5c68392f556746bb3a3d451f9e2ca98561a61d426916b7d6de2f90b1c4b1c",
+      "deltaReviews": [
+        {
+          "scope": "CareerScope Stage 04 item 4.06 focused change review",
+          "reviewer": "ChatGPT independent review",
+          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
+          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+        }
+      ]
     },
     {
       "path": "packages/resume/src/preview-segments.test.ts",
       "category": "test-source",
-      "reviewMethod": "source-review",
-      "state": "partially-reviewed",
+      "reviewMethod": "source review plus exact-head independent review",
+      "state": "reviewed",
       "concerns": ["Unit coverage of lossless segmentation"],
       "findings": [],
-      "observations": "New Stage 04 item 4.06 code under independent review; refreshed content hash records current bytes while review state remains partial.",
-      "evidence": "Stage 04 item 4.06 branch; independent review pending.",
-      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
-      "sha256": "7f50cdeea616e537935300c713425930efa6abc4cc677942448dd7b9c847dc47"
+      "observations": "Independent review confirmed focused regression coverage for lossless, newline-aware resume preview segmentation.",
+      "evidence": "ChatGPT independent review of PR #73 exact head df352241cb4b2421f35f667464d0e62273ea383d; hosted CI closeout remains pending.",
+      "reviewer": "ChatGPT independent review",
+      "sha256": "7f50cdeea616e537935300c713425930efa6abc4cc677942448dd7b9c847dc47",
+      "deltaReviews": [
+        {
+          "scope": "CareerScope Stage 04 item 4.06 focused change review",
+          "reviewer": "ChatGPT independent review",
+          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
+          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
+          "hostedValidation": "Exact-head hosted closeout pending; do not infer CI success from this review."
+        }
+      ]
     }
   ]
 }

@@ -2730,7 +2730,11 @@ try {
       );
       archive.file(
         'word/document.xml',
-        `<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${Array.from({ length: 200 }, () => '<w:p><w:r><w:t>Synthetic resume line one.</w:t></w:r></w:p><w:p><w:r><w:t>Synthetic resume line two.</w:t></w:r></w:p>').join('')}</w:body></w:document>`,
+        `<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${Array.from(
+          { length: 200 },
+          (_, index) =>
+            `<w:p><w:r><w:t>${index === 0 ? 'Synthetic resume line one with React and TypeScript.' : 'Synthetic resume line one.'}</w:t></w:r></w:p><w:p><w:r><w:t>Synthetic resume line two.</w:t></w:r></w:p>`,
+        ).join('')}</w:body></w:document>`,
       );
       await page.getByLabel('Resume file (PDF or DOCX, up to 5 MiB)').setInputFiles({
         name: 'synthetic.docx',
@@ -2821,7 +2825,7 @@ try {
         .filter({ hasText: 'Resume ready for review.' })
         .waitFor({ timeout: 45000 });
       await page.getByRole('heading', { name: 'Resume preview', exact: true }).waitFor();
-      const longPreview = `${'Synthetic resume line one.\n\nSynthetic resume line two.\n\n'.repeat(199)}Synthetic resume line one.\n\nSynthetic resume line two.`;
+      const longPreview = `Synthetic resume line one with React and TypeScript.\n\nSynthetic resume line two.\n\n${'Synthetic resume line one.\n\nSynthetic resume line two.\n\n'.repeat(198)}Synthetic resume line one.\n\nSynthetic resume line two.`;
       const expectedPreviewSections = segmentResumeText(longPreview);
       assert.equal(expectedPreviewSections.length, 3);
       assert.equal(expectedPreviewSections.join(''), longPreview);
