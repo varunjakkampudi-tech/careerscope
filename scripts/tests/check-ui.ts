@@ -5413,8 +5413,10 @@ try {
         assert.ok(foreignProfileRequest, `${engine}: captured the held foreign profile request`);
         const foreignRequestOutcome = Promise.race([
           page
-            .waitForResponse((response) => response.request() === foreignProfileRequest)
-            .then(() => 'response' as const),
+            .waitForEvent('requestfinished', {
+              predicate: (request) => request === foreignProfileRequest,
+            })
+            .then(() => 'finished' as const),
           page
             .waitForEvent('requestfailed', {
               predicate: (request) => request === foreignProfileRequest,
