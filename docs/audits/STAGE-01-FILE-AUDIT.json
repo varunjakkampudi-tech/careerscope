@@ -265,10 +265,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the complete profile-photo route delta against the existing app hooks: parent onRequest enforces no-store, private test access, Origin, authenticated session, CSRF and legal gates before the scoped routes. Upload content types and 5 MiB body are bounded; only the authenticated owner id reaches the repository; Sharp errors are returned as a generic 400; reads set nosniff and use the global no-store header; read/write/delete are rate-limited. No public or cross-owner route is added. Database integration covers auth, validation, headers and owner isolation.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "e141b90baf2b7d5176ccf56aba2370a177eea3ffab7c5abcce86133ff457d1b6"
+      "observations": "Re-reviewed the complete profile-photo route delta against the existing app hooks: parent onRequest enforces no-store, private test access, Origin, authenticated session, CSRF and legal gates before the scoped routes. Upload content types and 5 MiB body are bounded; only the authenticated owner id reaches the repository; Sharp errors are returned as a generic 400; reads set nosniff and use the global no-store header; read/write/delete are rate-limited. No public or cross-owner route is added. Database integration covers auth, validation, headers and owner isolation. Reviewed the resume file endpoint for authenticated ownership, settled parsed status, bucket and object version matching, bounded rate limits and no-store attachment response.",
+      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
+      "sha256": "93afe69091083a0287bab5ee86986deda15b4cd8f7865406f615125e8d0b56af"
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -433,10 +433,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Re-reviewed the full profile-photo contract delta: authenticated GET returns binary WebP or 204, PUT accepts only JPEG/PNG/WebP and documents size/error statuses, DELETE returns 204, and declared error bodies remain JSON. The parent response hook and route integration test verify no-store and content headers. No contract discrepancy found.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "2137e44a7a4f26d1f930981c39efeef0018f0ad34d36cef7a1313ef56cf90342"
+      "observations": "Re-reviewed the full profile-photo contract delta: authenticated GET returns binary WebP or 204, PUT accepts only JPEG/PNG/WebP and documents size/error statuses, DELETE returns 204, and declared error bodies remain JSON. The parent response hook and route integration test verify no-store and content headers. No contract discrepancy found. Reviewed the binary resume file route contract and its owner-scoped error responses.",
+      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
+      "sha256": "1eee290641acbc70c8930376300168b767f0470ee3db1191f8c5408fed14922f"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -505,10 +505,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete 423-line resume integration suite and fixture helpers. Covers owner isolation, upload cancellation only before durable queueing, unavailable cancellation capability, owner quota before storage IO, idempotent retries/content conflicts, disconnect abort and recovery state, cancellation/deletion quota release, and local loopback database isolation with synthetic storage. No external object storage is configured.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "ef26c8af86271f50e79d5c034d719cf0d4592454e7b6b1c4abb4e7205ec48cc4"
+      "observations": "Reviewed complete 423-line resume integration suite and fixture helpers. Covers owner isolation, upload cancellation only before durable queueing, unavailable cancellation capability, owner quota before storage IO, idempotent retries/content conflicts, disconnect abort and recovery state, cancellation/deletion quota release, and local loopback database isolation with synthetic storage. No external object storage is configured. Reviewed integration coverage for parsed file retrieval, storage version, response headers, foreign owner, unknown id, pending upload and rejected parse outcome.",
+      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
+      "sha256": "3a1c342a6743bfbfedde0f578b48c6dff01119b9f2123ded392c46f52a07f56f"
     },
     {
       "path": "apps/api/src/session-logout.integration.test.ts",
@@ -1229,10 +1229,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete resume upload styles. Native file input and picker button have adequate target size and themed borders/backgrounds.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "eedde3ee29ee997abbb1d5e9dcb9772f0a6effafa3f4b1b4fc442cec6017177a"
+      "observations": "Read the complete resume upload styles. Native file input and picker button have adequate target size and themed borders/backgrounds. Reviewed preview layout for narrow widths, bounded scroll, wrapping and visible keyboard focus.",
+      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
+      "sha256": "5536c3cd0691ac1d45d9e14e4530e8e86583a41ea5b7e52c07551ef3d933773f"
     },
     {
       "path": "apps/web/src/components/resume-panel.tsx",
@@ -1241,10 +1241,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete resume upload/review flow. Upload size is bounded in the UI and server validation remains authoritative; mutations use CSRF and idempotency keys; resume data uses owner-scoped queries; destructive actions require confirmation; failures trigger refresh and parsed content is presented as escaped text.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "ad7d22814d2f7be29d2b9d8e0af01dd2051ddb0734ce3123a1fc024a593f1c43"
+      "observations": "Read the complete resume upload/review flow. Upload size is bounded in the UI and server validation remains authoritative; mutations use CSRF and idempotency keys; resume data uses owner-scoped queries; destructive actions require confirmation; failures trigger refresh and parsed content is presented as escaped text. Reviewed preview rendering: parser output is rendered as escaped plain text, section controls are keyboard accessible, and uploaded markup is not interpreted.",
+      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
+      "sha256": "28e16198bbc74f9478d616982a92068b12e6fbee977605279276667d7411c7b6"
     },
     {
       "path": "apps/web/src/components/saved-leads.module.css",
@@ -1466,7 +1466,9 @@
       "category": "frontend",
       "reviewMethod": "content-read",
       "state": "reviewed",
-      "concerns": ["localStorage access may throw in restricted browser contexts"],
+      "concerns": [
+        "localStorage access may throw in restricted browser contexts"
+      ],
       "findings": [
         {
           "id": "S1-F057",
@@ -1684,10 +1686,10 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Re-reviewed the complete profile-photo documentation delta. Authenticated route methods and the no-photo 204 behavior match the API contract; photo is documented separately from recruiter/public access.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "4588e77f0861e2c906336d3395c6cc44fbaeaaf3743084057be1793a79f41139"
+      "observations": "Re-reviewed the complete profile-photo documentation delta. Authenticated route methods and the no-photo 204 behavior match the API contract; photo is documented separately from recruiter/public access. Reviewed API documentation for private file retrieval, not-found behavior and plain-text browser preview.",
+      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
+      "sha256": "69deeb8891ead3289179197ec2170a5e8ebb11a2541928423be46f0744da4ba6"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1946,10 +1948,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed Stage 01 item 1.01 record. The verification column no longer labels November 8 evidence as November 6; the row records parent-dev CI and makes clear that the conditional review was for the previous head, with suggested refinements applied and new-head validation pending.",
-      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "47e48ae2068e86b130494fedda77c11b7fdc974a04502dbb3960dd7069e90eba"
+      "observations": "Re-reviewed Stage 01 item 1.01 record. The verification column no longer labels November 8 evidence as November 6; the row records parent-dev CI and makes clear that the conditional review was for the previous head, with suggested refinements applied and new-head validation pending. Reviewed Stage 04 item 4.06 test mapping; CI and independent acceptance remain pending.",
+      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
+      "sha256": "02f01a58dbeab1f915f502768c15d1b33ee1368ac5c0743cbbec856c2a95a6ca"
     },
     {
       "path": "docs/TESTING.md",
@@ -1970,10 +1972,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the current traceability addition: inventories and their denominators remain separate, the owner roadmap remains the 328-item source, and the existing crosswalk points to the enforced checker and CI-run tests.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "c386745edee1ba5060402f9fe3bf1feceba9886d48913895166d7198d053454e"
+      "observations": "Re-reviewed the current traceability addition: inventories and their denominators remain separate, the owner roadmap remains the 328-item source, and the existing crosswalk points to the enforced checker and CI-run tests. Reviewed PS-06 implementation and test file mapping for the preview.",
+      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
+      "sha256": "d83e0eebf222b205a83370cf374f8fe5915634289d7ea55d4af1d43f38b90bbb"
     },
     {
       "path": "docs/UI-VERIFICATION.md",
@@ -2378,10 +2380,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed item 3.13 closeout and surrounding inventory: the item retains its source title/status, records currentStatus verified with concrete implementation and tests, links PR #57/#58 evidence, and leaves the overall 328-item/stage inventory structure intact. Traceability checker validates row and counts.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "edb923beb53cbffe63c43c25e59dfaeb5d0b32ab5817705cfee50ed1a1c43750"
+      "observations": "Re-reviewed item 3.13 closeout and surrounding inventory: the item retains its source title/status, records currentStatus verified with concrete implementation and tests, links PR #57/#58 evidence, and leaves the overall 328-item/stage inventory structure intact. Traceability checker validates row and counts. Reviewed canonical item 4.06 evidence and tests; status remains in-progress pending hosted CI and independent review.",
+      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
+      "sha256": "b94ce3e794e00ee5bd23d8aca42cbc135d94488e3e07913de169498c6c5d7d7f"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -6494,10 +6496,10 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Re-reviewed the complete Stage 03 photo test delta on top of the previously reviewed full browser harness. Focused mode limits to Chromium; checks file keyboard access, unsupported/oversize rejection, API failure without persistence, upload and stored private row, both avatar slots sharing one refresh, reload persistence and deletion restoring initials. Broad browser scenario also covers owner image lifecycle, account switching/isolation, responsive/accessibility checks. Exact dev CI passed the browser suite.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "a52151ba6566b5b5d2430f81f02250edffc5ca1072b49c1c4a214a042c4462ab"
+      "observations": "Re-reviewed the complete Stage 03 photo test delta on top of the previously reviewed full browser harness. Focused mode limits to Chromium; checks file keyboard access, unsupported/oversize rejection, API failure without persistence, upload and stored private row, both avatar slots sharing one refresh, reload persistence and deletion restoring initials. Broad browser scenario also covers owner image lifecycle, account switching/isolation, responsive/accessibility checks. Exact dev CI passed the browser suite. Reviewed browser assertions for preview availability and keyboard operation.",
+      "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
+      "sha256": "0867902b7383359a5430a2f17037f911a8a2dc37c1182cb7f381427e25404df5"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
