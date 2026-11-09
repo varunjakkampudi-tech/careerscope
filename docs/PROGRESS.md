@@ -2,12 +2,12 @@
 
 One row per roadmap stage. A stage is complete only when its gate in [GAP-MATRIX](GAP-MATRIX.md)
 is met, its tests are recorded in [TEST-MATRIX](TEST-MATRIX.md), and every blocker that affects it
-is listed in [BLOCKERS](BLOCKERS.md). Stages run one at a time. Deployment is last, after stage 20.
+is listed in [BLOCKERS](BLOCKERS.md). Stages run one at a time. Hosting, backups, and deployment are outside the revised 22-stage checklist scope.
 
 | Stage | Name                                          | Status      |
 | ----- | --------------------------------------------- | ----------- |
 | 01    | Foundation, governance, architecture          | Complete    |
-| 02    | Authentication and account security           | Complete    |
+| 02    | Authentication and account security           | In progress |
 | 03    | Candidate onboarding and professional profile | In progress |
 | 04-20 | See roadmap                                   | Not started |
 
@@ -34,11 +34,14 @@ Owner 22-stage roadmap item 1.15, shared design components, is verified against 
 Owner roadmap item 2.05, new-account registration, remains gated pending counsel-approved legal text and public HTTPS URLs; production deployment remains excluded. Owner item 2.06 remains partial pending native-language review of localized acceptance copy. Owner item 2.07, session rotation, and 2.08, device/session management, have PostgreSQL integration evidence recorded in [TEST-MATRIX](TEST-MATRIX.md). Owner item 2.09, secure email change, has PostgreSQL evidence for address-bound codes and session revocation plus browser workflow evidence. Owner item 2.10, account recovery, is partial: its PostgreSQL integration test covers ownership checks, recovery-address confirmation, cooldown, recovery sign-in, rejection and single-use behavior, security notices, and removal. An AI-assisted comparison found no obvious meaning reversal in the Telugu and Hindi recovery strings for address setup, the 72-hour cooldown, or recovery sign-in, but this is preliminary and does not replace native review; the native-language gap remains open (legacy local row 2.17). Stage 02 local gap-matrix IDs are legacy and differ from canonical owner-roadmap IDs; the traceability inventory is authoritative.
 
 Stage 02 evidence: [GAP-MATRIX](GAP-MATRIX.md) rows 2.01 to 2.20 and [TEST-MATRIX](TEST-MATRIX.md).
-Commit `c12838e` passed the local gates, the integration suite, the Chromium browser suite, and
-hosted CI on rerun `41221224982`. The first hosted run of `c12838e` failed in the flaky private
-test-selection integration test, so that flake remains open. Owner decisions: B-02 closed (no second provider in stage 02); B-03
-approved for deployment, pending counsel-approved legal text. Stage 02 is complete with these carried
-to deployment.
+The historical commit `c12838e` passed the recorded local gates, integration suite, Chromium browser
+suite, and hosted rerun `41221224982`; its first hosted run failed in the private test-selection
+integration test. That historical evidence does not close the current owner checklist gaps. B-02 is
+closed (no second provider in Stage 02). Owner item 2.05 remains gated on counsel-approved legal text
+and public HTTPS URLs; its registration implementation is already covered by tests, but those tests
+do not satisfy the external approval gate. Items 2.06, 2.10, 2.11, and 2.12 remain partial in the
+authoritative [owner-roadmap inventory](requirements/OWNER-ROADMAP-TRACEABILITY.json). Stage 02 is
+therefore in progress; none of these item-level gaps is deferred to deployment.
 
 Owner Stage 03 progress: items 3.01–3.12 are verified and merged through PR #55. Item 3.11 Salary expectations was approved at exact SHA `bdade0c6910cd3193717d12cd9de47e669e882c4`; hosted run `42365143652` passed all three jobs and the merge commit is `8515e871337a03349d96736d0f31f6580012662f`. Item 3.12 Availability/notice period was accepted at exact SHA `6aca4d9d8996e0f38bd34cecb4c89c9dee4bc6aa`; hosted run `42368802616` passed all three jobs, including profile save/reload, accessibility, keyboard, and responsive browser checks. ChatGPT issued final acceptance and PR #55 merged as `6d9789cb34d0100ba8a5845b2edfca9ea8fd88d4`. Candidate availability and preferred contact are owner-controlled profile details and are excluded from job matching. Legacy profiles infer availability from saved notice days; recruiter visibility remains under owner item 3.15. See the owner-roadmap inventory and [TEST-MATRIX](TEST-MATRIX.md). Preferred titles are candidate-defined preferences. Projects, work-history and education are candidate-provided claims, not independently verified and excluded from matching inputs. Age screening is a self-reported 18+ eligibility check and does not verify identity. Signup remains disabled pending the separate legal gate for owner item 2.05.
 

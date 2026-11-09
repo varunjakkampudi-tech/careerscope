@@ -1466,7 +1466,9 @@
       "category": "frontend",
       "reviewMethod": "content-read",
       "state": "reviewed",
-      "concerns": ["localStorage access may throw in restricted browser contexts"],
+      "concerns": [
+        "localStorage access may throw in restricted browser contexts"
+      ],
       "findings": [
         {
           "id": "S1-F057",
@@ -1740,10 +1742,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed blocker status and made the resolved full-audit coverage statement count-independent; current coverage counts remain in the manifest and audit validation output.",
-      "evidence": "Content inspected and aligned to the current file audit on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
+      "observations": "Reviewed blocker status and made the resolved full-audit coverage statement count-independent; current coverage counts remain in the manifest and audit validation output. Follow-up item 2.05 review: inspected owner/legacy ID mapping and legal gate wording; records counsel-approved legal text and public HTTPS URLs remain outstanding.",
+      "evidence": "Content inspected and aligned to the current file audit on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes. Additional focused item 2.05 documentation review; SHA-256 records current bytes.",
       "reviewer": "Codex (Stage 01 closeout)",
-      "sha256": "b6b6ff4a142582c1e9bbbada91b20b31ceb74c6b666860fae4a4116c99afd58d"
+      "sha256": "10f198095caa1372d2447db323e2f39420d534b7696c9f28a30d13b929e2402e"
     },
     {
       "path": "docs/DATA-MODEL.md",
@@ -1830,10 +1832,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Mapped canonical owner item 2.10 account recovery to legacy local row 2.17.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes.",
+      "observations": "Mapped canonical owner item 2.10 account recovery to legacy local row 2.17. Follow-up item 2.05 review: inspected legacy registration row 2.09 mapping to canonical owner item 2.05; registration remains disabled pending counsel-approved legal text and public HTTPS URLs.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes. Additional focused item 2.05 documentation review; SHA-256 records current bytes.",
       "reviewer": "Codex (owner Stage 02 item 2.10)",
-      "sha256": "0bb73e5ecd5340081e145ee31441299557ad358057365baf6bab7e40b120d6e9"
+      "sha256": "48433ac26de38acb95b1a52679c1fb767a56b5b125b0e99185a0b15256ede397"
     },
     {
       "path": "docs/KNOWN-LIMITATIONS.md",
@@ -1898,10 +1900,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Re-reviewed the Stage 03 item 3.14 progress entry. It now records commit-specific test and documentation history without describing a commit as the perpetually current PR head. Item 3.14 remains partial with product and counsel gaps open.",
-      "evidence": "Commit a42f301 introduced the dynamic-count test and focused 24/24 result. Follow-up documentation correction is recorded at 9d02e556af70bd5a830a536f3d85c707be45bf8b with associated run 42498303461. No completion claim for item 3.14.",
-      "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "45804b7a9ce5d799abee43f9e0af178d8312a9571757a2d73a5ffef9176ccafa"
+      "observations": "Re-reviewed the Stage 03 item 3.14 progress entry and the Stage 02 item 2.05 legal-gate correction. Item 3.14 remains partial with product and counsel gaps open; item 2.05 remains gated and registration stays disabled. The documentation does not claim either checklist item complete.",
+      "evidence": "Stage 03 item 3.14 history records the dynamic-count test and subsequent documentation correction. Stage 02 PR #71 exact head 318c3233890df83979e5996a78fc274e33594c07 passed hosted run 42484867026 and received ChatGPT approval; merged to dev as 8aa281c85a7d7950fa8bbfcd9706686be84a1808.",
+      "reviewer": "Codex (Stage 01 audit refresh and CareerScope roadmap review)",
+      "sha256": "f65080ae6bf766ea8813ddf3b44f09a6453c7c4eb0aeaeb70e57469cde95ef70"
     },
     {
       "path": "docs/PROVIDERS.md",
