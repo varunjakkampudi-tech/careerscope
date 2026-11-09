@@ -863,6 +863,15 @@ function contracts(options: {
       }),
       { failures: [400, 404, 429, 503], description: resumeDescription },
     ),
+    'GET /api/resumes/:id/file': operation(
+      'Download the authenticated owner’s settled resume file for local preview',
+      { type: 'string', format: 'binary', contentType: 'application/octet-stream' },
+      {
+        failures: [404, 429],
+        description:
+          'Owner-scoped, rate-limited, no-store retrieval. The browser preview uses parsed plain text.',
+      },
+    ),
     'POST /api/resumes/:id/recover': operation('Reconcile an interrupted upload', upload, {
       failures: [400, 404, 409, 429, 503, 507],
       description: resumeDescription,

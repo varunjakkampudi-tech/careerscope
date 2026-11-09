@@ -248,6 +248,7 @@ Preparation is deterministic. External AI elaboration has been removed.
 | GET    | `/api/resumes`             | yes  | no   | —           |
 | POST   | `/api/resumes`             | yes  | yes  | 5 / hour    |
 | GET    | `/api/resumes/:id`         | yes  | no   | —           |
+| GET    | `/api/resumes/:id/file`    | yes  | no   | 30 / minute |
 | POST   | `/api/resumes/:id/recover` | yes  | yes  | 10 / hour   |
 | POST   | `/api/resumes/:id/cancel`  | yes  | yes  | 20 / minute |
 | DELETE | `/api/resumes/:id`         | yes  | yes  | 20 / minute |
@@ -266,6 +267,13 @@ which is true only when the server has the storage cancel capability and the
 status is `uploading` or `cancelling`. The response also carries
 `cancellationEnabled`. The web panel shows the cancel control only when
 `cancellable` is true.
+
+`GET /api/resumes/:id/file` returns a settled file only to its owner. The
+server verifies the stored object version and digest-bound metadata, serves it
+with `private, no-store` and `nosniff`, and uses the same `404` response for
+foreign, missing, pending and rejected uploads. The browser preview renders the
+parser's plain text in keyboard-navigable sections; it never embeds uploaded
+PDF or DOCX content as active markup.
 
 `POST /api/resumes/:id/cancel` is synchronous and owner-scoped. It moves an
 `uploading` upload to `cancelling`, writes the storage cancellation marker, then

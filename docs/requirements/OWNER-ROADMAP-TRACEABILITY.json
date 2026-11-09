@@ -858,11 +858,15 @@
       "stageTitle": "Resume management and parsing",
       "title": "Resume preview",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "in-progress",
+      "evidence": [
+        "apps/web/src/components/resume-panel.tsx",
+        "apps/api/src/app.ts",
+        "docs/API-SURFACE.md"
+      ],
+      "tests": ["apps/api/src/resumes.integration.test.ts", "scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Implementation and evidence are in progress; exact-head CI and independent item review remain pending.",
       "scopeDisposition": "in-scope"
     },
     {

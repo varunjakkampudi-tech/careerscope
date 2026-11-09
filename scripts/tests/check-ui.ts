@@ -2819,6 +2819,14 @@ try {
         .getByRole('status')
         .filter({ hasText: 'Resume ready for review.' })
         .waitFor({ timeout: 45000 });
+      await page.getByRole('heading', { name: 'Resume preview', exact: true }).waitFor();
+      await page.getByLabel('Resume text section 1 of 1').waitFor();
+      await page.getByRole('button', { name: 'Previous section', exact: true }).focus();
+      assert.equal(
+        await page.evaluate(() => (document.activeElement as HTMLElement | null)?.innerText),
+        'Previous section',
+        `${engine}: resume preview is not keyboard navigable`,
+      );
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });
         assert.equal(

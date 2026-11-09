@@ -27,3 +27,42 @@
   color: var(--muted);
   font-size: 13px;
 }
+
+.preview {
+  max-width: 100%;
+  margin-block: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.previewControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.previewControls button {
+  min-height: 44px;
+}
+
+.previewText {
+  max-height: min(60vh, 640px);
+  overflow: auto;
+  margin: 0;
+  padding: 16px;
+  color: var(--ink);
+  font: inherit;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.previewText:focus-visible {
+  outline: 3px solid var(--focus-ring, #2563eb);
+  outline-offset: -3px;
+}

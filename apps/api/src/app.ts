@@ -75,6 +75,7 @@ import {
   maximumResumeBytes,
   MarketRepository,
   type UploadStorage,
+  type ResumeObject,
   type EmailOtpProvider,
   type Database,
 } from '@careerscope/core';
@@ -1698,6 +1699,42 @@ export async function createApp(
       if (!upload) throw new HttpError(404, 'Resume not found');
       const result = await uploads.result(request.ownerId!, id);
       return { id, status: result?.status ?? upload.status, result };
+    });
+    resumes.get('/api/resumes/:id/file', async (request, reply) => {
+      const storage = options.resumeStorage;
+      if (!coordinator || !storage) throw new HttpError(503, 'Resume uploads unavailable');
+      if (!(await consumeRateLimit(request, `resume-file:${request.ownerId!}`, 30, 60)))
+        throw new HttpError(429, 'Too many requests');
+      const { id } = identifier.parse(request.params);
+      const upload = await uploads.get(request.ownerId!, id);
+      // Use the same response for foreign, missing, pending, or rejected uploads.
+      if (
+        !upload ||
+        upload.status !== 'queued' ||
+        upload.bucket !== storage.bucket ||
+        !upload.objectVersion
+      )
+        throw new HttpError(404, 'Resume file not found');
+      const outcome = await uploads.result(request.ownerId!, id);
+      if (outcome?.status !== 'parsed') throw new HttpError(404, 'Resume file not found');
+      const body = await storage.get(
+        {
+          ownerId: upload.ownerId,
+          resumeId: upload.id,
+          sha256: upload.sha256,
+          bytes: upload.bytes,
+          contentType: upload.contentType,
+        } satisfies ResumeObject,
+        upload.objectVersion,
+        AbortSignal.timeout(15000),
+      );
+      return reply
+        .type(upload.contentType)
+        .header('Content-Length', String(body.byteLength))
+        .header('Content-Disposition', 'attachment; filename="resume-preview"')
+        .header('Cache-Control', 'private, no-store')
+        .header('X-Content-Type-Options', 'nosniff')
+        .send(body);
     });
     resumes.post('/api/resumes/:id/recover', async (request, reply) => {
       if (!coordinator) throw new HttpError(503, 'Resume uploads unavailable');

@@ -16,6 +16,41 @@ import { useOwner, ownerKey } from '../lib/session';
 import { EmptyState, ErrorState, LoadingState } from './ui-states';
 import styles from './resume-panel.module.css';
 
+function ResumeTextPreview({ text }: { text: string }) {
+  const [page, setPage] = useState(0);
+  const pages = text.match(/[\s\S]{1,4000}(?:\s|$)/g) ?? [text];
+  const current = Math.min(page, pages.length - 1);
+  return (
+    <div className={styles.preview} aria-label="Resume document preview">
+      <div className={styles.previewControls}>
+        <button
+          type="button"
+          onClick={() => setPage((value) => Math.max(0, value - 1))}
+          disabled={current === 0}
+        >
+          Previous section
+        </button>
+        <span aria-live="polite">
+          Section {current + 1} of {pages.length}
+        </span>
+        <button
+          type="button"
+          onClick={() => setPage((value) => Math.min(pages.length - 1, value + 1))}
+          disabled={current === pages.length - 1}
+        >
+          Next section
+        </button>
+      </div>
+      <pre
+        aria-label={`Resume text section ${current + 1} of ${pages.length}`}
+        className={styles.previewText}
+      >
+        {pages[current]}
+      </pre>
+    </div>
+  );
+}
+
 export type { ResumeProposal };
 
 /** User-facing text for a failed resume call: 507 and 409 come from localized copy, anything else keeps the client message. */
@@ -311,6 +346,8 @@ export default function ResumePanel({
                 {result?.status === 'parsed' && (
                   <>
                     <p role="status">Resume ready for review.</p>
+                    <h3>Resume preview</h3>
+                    <ResumeTextPreview key={selected} text={result.parsed.text} />
                     <button type="button" onClick={() => onReview(result.parsed.derived)}>
                       <FileText size={17} />
                       Review profile draft
