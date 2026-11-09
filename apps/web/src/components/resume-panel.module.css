@@ -63,6 +63,6 @@
 }
 
 .previewText:focus-visible {
-  outline: 3px solid var(--focus-ring, #2563eb);
-  outline-offset: -3px;
+  outline: 3px solid var(--dash-focus, #4055d6);
+  outline-offset: 3px;
 }
