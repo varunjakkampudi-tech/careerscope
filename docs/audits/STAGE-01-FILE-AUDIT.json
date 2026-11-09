@@ -6525,10 +6525,10 @@
           "remediation": "Obtain a passing exact-head Quality Gates and Services/browser run, then confirm the foreign response is released or cancelled and owner A completeness stays at 100%."
         }
       ],
-      "observations": "Reviewed the full browser suite and changed owner-switch regression. Existing coverage verifies profile-completeness success, API failure/retry, persisted profile state, and cross-account data isolation. The delayed foreign-profile response is validated against the actual foreign response body and expected 80% score. Exact-head CI 42565646692 timed out waiting for the response event after route.fetch; run 42567874083 timed out on requestfinished. Current implementation waits for route.fulfill completion and remains under validation.",
-      "evidence": "Current exact-head source review on codex/stage03-item316-profile-completeness. CI run 42567874083 failed in the browser step at requestfinished timeout; current correction has not passed hosted CI. Prior local typecheck, Prettier and ESLint passed; browser execution was blocked by local PostgreSQL credential mismatch.",
+      "observations": "Reviewed the full browser suite and changed owner-switch regression. Existing coverage verifies profile-completeness success, API failure/retry, persisted profile state, and cross-account data isolation. The delayed foreign-profile response is validated against the actual foreign response body and expected 80% score. Earlier exact-head CI runs failed on response lifecycle timeouts and then the requestAnimationFrame callback type; the lifecycle waits were replaced with route.fulfill completion and the timestamp callback is now wrapped. Latest exact-head hosted validation is pending.",
+      "evidence": "Current source review on codex/stage03-item316-profile-completeness. Exact-head hosted CI 42569316968 passed browser/services but Quality Gates failed with TS2345 at check-ui.ts:5428; correction is made and awaits rerun. Prior local browser execution was blocked by a local PostgreSQL authentication mismatch.",
       "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "3eb3284eeae4df9921e393aae336bc10d5136bada652c78a5a1a576b0b186f27"
+      "sha256": "c7381bf94892b37b0996f7231849c1fa9e3aecfd1485ee98012012b3817251cc"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
