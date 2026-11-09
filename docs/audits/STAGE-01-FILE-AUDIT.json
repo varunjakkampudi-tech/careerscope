@@ -1572,10 +1572,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding.",
-      "evidence": "Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.",
+      "observations": "Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.",
+      "evidence": "Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "413dbf9c771abb37049ab6dc2e68f7dfaac6291fc15af3f7e2c81ecd7e233455"
+      "sha256": "16e19dd92ce211cd940a1b9defe920cf06414ce98390cff1c7673f0b78ba56d3"
     },
     {
       "path": "apps/workers/search/src/collect.ts",
@@ -1898,10 +1898,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Re-reviewed current item 1.01 status: the prior PR head received conditional ChatGPT approval with two nonblocking suggestions; both refinements were applied in a new head, whose CI and independent review remain pending. It preserves the separate accepted S1-F014 risk and does not claim final acceptance. Follow-up item 2.05 review: inspected Stage 02 progress against canonical inventory; Stage 02 remains in progress and item 2.05 remains gated.",
-      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending. Additional focused item 2.05 documentation review; SHA-256 records current bytes.",
+      "observations": "Re-reviewed current item 1.01 status: the prior PR head received conditional ChatGPT approval with two nonblocking suggestions; both refinements were applied in a new head, whose CI and independent review remain pending. It preserves the separate accepted S1-F014 risk and does not claim final acceptance. Follow-up item 2.05 review: inspected Stage 02 progress against canonical inventory; Stage 02 remains in progress and item 2.05 remains gated. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.",
+      "evidence": "Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "98627602dd931ec189f1947f42ebfd28ae82665a144cdd7cebf08794d95c9481"
+      "sha256": "2b28e94c6c68dfc523904f65bbc5fdf30e663481fb50e233f50fc658eaa0c4bd"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1946,10 +1946,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed Stage 01 item 1.01 record. The verification column no longer labels November 8 evidence as November 6; the row records parent-dev CI and makes clear that the conditional review was for the previous head, with suggested refinements applied and new-head validation pending.",
-      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending.",
+      "observations": "Re-reviewed Stage 01 item 1.01 record. The verification column no longer labels November 8 evidence as November 6; the row records parent-dev CI and makes clear that the conditional review was for the previous head, with suggested refinements applied and new-head validation pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.",
+      "evidence": "Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "47e48ae2068e86b130494fedda77c11b7fdc974a04502dbb3960dd7069e90eba"
+      "sha256": "7bc780ccd8161aa9e3cc98fa7c8387149677839a9d750b5134ec936d7c6e4587"
     },
     {
       "path": "docs/TESTING.md",
@@ -2378,10 +2378,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed item 3.13 closeout and surrounding inventory: the item retains its source title/status, records currentStatus verified with concrete implementation and tests, links PR #57/#58 evidence, and leaves the overall 328-item/stage inventory structure intact. Traceability checker validates row and counts.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "observations": "Re-reviewed item 3.13 closeout and surrounding inventory: the item retains its source title/status, records currentStatus verified with concrete implementation and tests, links PR #57/#58 evidence, and leaves the overall 328-item/stage inventory structure intact. Traceability checker validates row and counts. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.",
+      "evidence": "Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "edb923beb53cbffe63c43c25e59dfaeb5d0b32ab5817705cfee50ed1a1c43750"
+      "sha256": "a9a0d9947905b1d466642652e505b5cdfbe526460f443d6af5edb87c31640d5a"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -4462,10 +4462,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added candidate-context coverage proving the structured salary floor and its currency reach matching when free-text expected compensation is blank; retained range/currency parsing tests. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
+      "observations": "Added candidate-context coverage proving the structured salary floor and its currency reach matching when free-text expected compensation is blank; retained range/currency parsing tests. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.",
+      "evidence": "Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.",
       "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "3ebca2902b7d51630f2aa2b0532c4eddaf3cffb2c35ec57187c8fc9736fa9abf"
+      "sha256": "f6482416743d8c2ebe4987511a750ed64f9b2cfac068bffaa0d133011fb01e3f"
     },
     {
       "path": "packages/matching/src/context.ts",
@@ -5464,10 +5464,10 @@
           "remediation": "Replaced the name, contact details, profile handles, and employer/education history in derive.test.ts, extract.test.ts, and derive-equivalence.test.ts with synthetic examples."
         }
       ],
-      "observations": "Read in full. Covers contact and link extraction, name/location parsing, bounded and overlapping date ranges, experience derivation, title filtering and statuses, skills, full-field output, and hostile-input timing. Finding S1-F062 (low, fixed): fixture content identified a person and contained contact/profile/employer details while claiming a real-PDF source. Replaced with synthetic candidate data and applied the same cleanup to extract.test.ts and derive-equivalence.test.ts.",
-      "evidence": "",
+      "observations": "Read in full. Covers contact and link extraction, name/location parsing, bounded and overlapping date ranges, experience derivation, title filtering and statuses, skills, full-field output, and hostile-input timing. Finding S1-F062 (low, fixed): fixture content identified a person and contained contact/profile/employer details while claiming a real-PDF source. Replaced with synthetic candidate data and applied the same cleanup to extract.test.ts and derive-equivalence.test.ts. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.",
+      "evidence": "Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.",
       "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "737dddd0cd4538a6fd9c152fa56cf7aed9ec79782832347e883a5cb6fbfed2ea"
+      "sha256": "b906128b7c3b7c385db1e812e75463585e10c635c4c2bfef8b9f617475ae67a2"
     },
     {
       "path": "packages/resume/src/derive.ts",
@@ -5484,10 +5484,10 @@
           "remediation": "Quantifiers bounded in packages/resume/src/derive.ts; hostile-input tests in derive.test.ts; timing probes on six adversarial shapes now under 200 ms each."
         }
       ],
-      "observations": "Read in full (687 lines). Checked: contact fields never invent a value; the portfolio rule ignores degree abbreviations and the candidate's own email domain; names avoid place and role lines; cities and regions are recognised; date ranges reject reversed, pre-1970 and far-future values; years are merged so overlaps are not counted twice; titles are constrained by the shared refusal set and an English role vocabulary, reported as undeterminable when unreadable; recent skills come from the latest-dated role block. Finding S1-F022 (medium): unbounded quantifiers were quadratic on hostile text in three places: the email and portfolio patterns, and the month-name suffix in the date patterns. Probes on 80k to 160k character adversarial inputs took 7 to 12 seconds before the fix and under 200 ms after. All three are now bounded (the month suffix to six letters, the longest month suffix being six). derive.test.ts asserts linear time and ordinary reading (64 pass). No other finding.",
-      "evidence": "",
+      "observations": "Read in full (687 lines). Checked: contact fields never invent a value; the portfolio rule ignores degree abbreviations and the candidate's own email domain; names avoid place and role lines; cities and regions are recognised; date ranges reject reversed, pre-1970 and far-future values; years are merged so overlaps are not counted twice; titles are constrained by the shared refusal set and an English role vocabulary, reported as undeterminable when unreadable; recent skills come from the latest-dated role block. Finding S1-F022 (medium): unbounded quantifiers were quadratic on hostile text in three places: the email and portfolio patterns, and the month-name suffix in the date patterns. Probes on 80k to 160k character adversarial inputs took 7 to 12 seconds before the fix and under 200 ms after. All three are now bounded (the month suffix to six letters, the longest month suffix being six). derive.test.ts asserts linear time and ordinary reading (64 pass). No other finding. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.",
+      "evidence": "Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "5f5d117335a5a868d24f7567dbd92a4d328deacefd063b70b237565f59e3f5ed"
+      "sha256": "f0860ad8d94fd2e76368068c5fde62a82ae7a8d142c4e98ea17729650e3d0db6"
     },
     {
       "path": "packages/resume/src/extract.test.ts",
@@ -5520,10 +5520,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Rejects unsupported magic bytes before extraction, derives fields from extracted text, and returns only present optional contact fields plus typed derived data. Parsing accepts bytes rather than writing uploads to a path. No finding.",
-      "evidence": "",
+      "observations": "Read in full. Rejects unsupported magic bytes before extraction, derives fields from extracted text, and returns only present optional contact fields plus typed derived data. Parsing accepts bytes rather than writing uploads to a path. No finding. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.",
+      "evidence": "Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.",
       "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "7ee519323a8a3e391ac47ee98476a54b53af02a8921e5693b2fe378c7fe1015c"
+      "sha256": "f61c1ca2aae8ca6c1f11462fd325dc78236e960f09f228b6ac134f296462a208"
     },
     {
       "path": "packages/resume/src/sections.ts",
@@ -5756,10 +5756,10 @@
           "remediation": "apiErrorSchema corrected to the flat envelope and tested against errorEnvelope output. Unused exports are recorded as technical debt to remove in the next cleanup pass."
         }
       ],
-      "observations": "Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
+      "observations": "Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.",
+      "evidence": "Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.",
       "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "acc60f4276f704cb13c2ee0d143fd6a594bb024d835b4a48fe859a3b93c81893"
+      "sha256": "375a135fb1d924e89c87fe08cfd136362fff49920a14ec6ecd0f04c36ff79e69"
     },
     {
       "path": "packages/shared/src/skills.test.ts",
@@ -6634,10 +6634,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the complete photo API integration delta: OpenAPI binary contract; unauthenticated and CSRF-denied paths; unsupported and malformed inputs; empty 204 and normalized WebP/no-store/nosniff response; two-owner read/write/delete isolation; profile data remains unchanged. Test fixtures and database cleanup use isolated synthetic accounts.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "observations": "Re-reviewed the complete photo API integration delta: OpenAPI binary contract; unauthenticated and CSRF-denied paths; unsupported and malformed inputs; empty 204 and normalized WebP/no-store/nosniff response; two-owner read/write/delete isolation; profile data remains unchanged. Test fixtures and database cleanup use isolated synthetic accounts. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.",
+      "evidence": "Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "511b4fa476973f099d087b6b30c2e35ed7e4f1a4bb3a2ccb2405be3827d2ffe6"
+      "sha256": "287cb2102bc8d89893aef9ec9424e06d95dd4ef246b4403c117aebcb8617e39b"
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",
