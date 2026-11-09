@@ -1901,7 +1901,7 @@
       "observations": "Re-reviewed the Stage 03 item 3.14 progress entry. It now records commit-specific test and documentation history without describing a commit as the perpetually current PR head. Item 3.14 remains partial with product and counsel gaps open.",
       "evidence": "Commit a42f301 introduced the dynamic-count test and focused 24/24 result. Follow-up documentation correction is recorded at 9d02e556af70bd5a830a536f3d85c707be45bf8b with associated run 42498303461. No completion claim for item 3.14.",
       "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "d23ecd53dd02c47575e233637a8518eadbbb56aacf5c6fc16e5e8cc6f34f9d9e"
+      "sha256": "45804b7a9ce5d799abee43f9e0af178d8312a9571757a2d73a5ffef9176ccafa"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1949,7 +1949,7 @@
       "observations": "Re-reviewed the Stage 03 item 3.14 row. It uses durable commit and run references for the dynamic-count test and follow-up documentation correction; it no longer describes a historical head as the current PR head. Item 3.14 remains partial.",
       "evidence": "Focused local traceability test passed 24/24 after deriving the expected inventory count dynamically in a42f301. Subsequent documentation correction is recorded at 9d02e556af70bd5a830a536f3d85c707be45bf8b; associated hosted run 42498303461.",
       "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "1efa4f36a9f26d68b9f35b2ed5dd6cd7413f0f1ba5bc142d2c5a35132d8bcb59"
+      "sha256": "b52caa88d0c146995c88ad9fbf1707ace1bb6422b10c9514b33516eed63004d4"
     },
     {
       "path": "docs/TESTING.md",
@@ -6730,10 +6730,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Focused Stage 03 item 3.14 unit tests cover pending state, expiry and recheck boundaries, revocation reason/appeal metadata, timestamp invariants, and persistence of revoked history after its original expiry/recheck deadlines. This does not constitute a full Stage 01 audit. Current merged-dev Stage 03 item 3.14 delta reviewed; prior Stage 01 review retained.",
-      "evidence": "Focused Node test passed 5/5 locally under Node 22; repository requires Node 24+. Hosted exact-head CI is the release gate. Updated for exact merged-dev item 3.14 source; item-specific verification and exact-head CI review recorded separately.",
+      "observations": "Focused lifecycle tests cover pending state, expiry/recheck boundaries, revocation metadata and history, timestamp invariants, plus fail-closed handling for null/undefined records and malformed revocation payloads.",
+      "evidence": "Focused Node 24.22.2 Docker test passes 5/5; this targeted run does not replace exact-head hosted CI.",
       "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "2cbb75a65efe96aaef5b6dd4ef65b92dc9f63818052efb59856f77a8bb94bc6c"
+      "sha256": "4d208efd92f21f0ac3736263b4787b6620287d02c055c42413e2e639f482d12c"
     },
     {
       "path": "packages/core/src/verification.ts",
@@ -6742,10 +6742,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Focused Stage 03 item 3.14 lifecycle primitives remain policy-neutral and do not issue checks. Any future issuance boundary must require approved type-specific evidence and enforce its required deadlines. A revoked historical record remains revoked after its original expiry or recheck deadline when those deadlines follow revocation. Current merged-dev Stage 03 item 3.14 delta reviewed; prior Stage 01 review retained.",
-      "evidence": "npm run build:core passed locally under Node 22; repository requires Node 24+. Hosted exact-head CI is the release gate. Updated for exact merged-dev item 3.14 source; item-specific verification and exact-head CI review recorded separately.",
+      "observations": "Policy-neutral lifecycle primitives still do not issue or persist optional verification ticks. Current review adds runtime guards for null/undefined checks and malformed revocation payloads; evidence policy, persistence, candidate notice/appeal workflow, recruiter display and counsel review remain open.",
+      "evidence": "Runtime lifecycle helpers fail closed on malformed check/revocation inputs. Focused Node 24.22.2 Docker tests pass 5/5; exact-head hosted CI remains required.",
       "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "be9e8717f27e91bdb793a34cb52db67c13d7b23a4fbff1926518cc80724985eb"
+      "sha256": "abbb815c04daa1ca155dbef0cff88ef7d468542d21691480c79272ca27f6ad08"
     }
   ]
 }

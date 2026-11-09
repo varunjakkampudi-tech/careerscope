@@ -106,6 +106,24 @@ test('revocation rejects missing reasons, invalid times, and non-active checks',
     null,
   );
   assert.equal(verificationTransition(verified, Number.NaN), 'invalid');
+  assert.equal(verificationTransition(null as unknown as VerificationCheck, 151), 'invalid');
+  assert.equal(verificationTransition(undefined as unknown as VerificationCheck, 151), 'invalid');
+  assert.equal(
+    revokeVerification(verified, null as unknown as Parameters<typeof revokeVerification>[1]),
+    null,
+  );
+  assert.equal(
+    revokeVerification(verified, undefined as unknown as Parameters<typeof revokeVerification>[1]),
+    null,
+  );
+  assert.equal(
+    revokeVerification(verified, {
+      at: 150,
+      reason: 42 as unknown as string,
+      appealAvailable: false,
+    }),
+    null,
+  );
   assert.equal(
     verificationTransition(
       {

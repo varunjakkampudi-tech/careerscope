@@ -55,6 +55,7 @@ export function verificationTransition(
   now = Date.now(),
 ): VerificationTransition {
   if (!Number.isSafeInteger(now) || now < 0) return 'invalid';
+  if (check === null || typeof check !== 'object') return 'invalid';
   if (
     !['email', 'college', 'profile-link'].includes(check.type) ||
     typeof check.appealAvailable !== 'boolean'
@@ -119,15 +120,19 @@ export function revokeVerification(
   check: VerificationCheck,
   input: { at: number; reason: string; appealAvailable: boolean },
 ): VerificationCheck | null {
-  const reason = input.reason.trim();
   if (
+    input === null ||
+    typeof input !== 'object' ||
     !Number.isSafeInteger(input.at) ||
     input.at < 0 ||
-    !reason ||
+    typeof input.reason !== 'string' ||
+    !input.reason.trim() ||
     typeof input.appealAvailable !== 'boolean' ||
     verificationTransition(check, input.at) !== 'verified'
   )
     return null;
+
+  const reason = input.reason.trim();
 
   return {
     ...check,
