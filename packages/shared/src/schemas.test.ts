@@ -176,12 +176,20 @@ describe('derived education claim evidence', () => {
         educationClaims: [{ ...claim, sourceSection: 'experience' }],
       }).success,
     ).toBe(false);
+    expect(
+      derivedResumeSchema.safeParse({
+        techStack: [],
+        yearsOfExperience: null,
+        educationClaims: [{ ...claim, startYear: 2024, endYear: 2020 }],
+      }).success,
+    ).toBe(false);
     const evidence = {
       field: 'education',
       value: claim.normalizedText,
       sourceSection: 'education',
       sourceText: claim.sourceText,
       extractionConfidence: 'probable',
+      evidenceKind: 'direct-claim',
     };
     expect(
       derivedResumeSchema.parse({

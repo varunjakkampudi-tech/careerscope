@@ -347,7 +347,9 @@ export function deriveYears(text: string, experience: string, now = Date.now()):
     if (Number.isFinite(value) && value > 0 && value < 60) return value;
   }
 
-  const ranges = findDateRanges(experience || text, now);
+  // Only date ranges from the explicitly identified experience section can
+  // support an inferred employment duration. Education dates are not work history.
+  const ranges = findDateRanges(experience, now);
   if (ranges.length === 0) return null;
 
   // Merge first so overlapping jobs are not double counted. 365.25 days per year averages out leap years.
@@ -673,6 +675,7 @@ export interface EducationClaim {
   normalizedText: string;
   sourceText: string;
   sourceSection: 'education';
+  /** Confidence in parsing the text, never evidence that the credential is authentic. */
   extractionConfidence: 'probable' | 'unverified';
   credentialStatus: 'unverified';
   degree?: string;
@@ -695,6 +698,9 @@ export interface ExtractionEvidence {
     | 'projects'
     | 'certifications';
   sourceText: string;
+  /** Direct claims quote the asserted value; supporting sources explain a derived value. */
+  evidenceKind: 'direct-claim' | 'supporting-source';
+  /** Confidence describes extraction only; it does not verify candidate-supplied claims. */
   extractionConfidence: 'probable' | 'unverified';
 }
 
@@ -710,25 +716,36 @@ function findFieldEvidence(
 ): ExtractionEvidence[] {
   const result: ExtractionEvidence[] = [];
   for (const value of values) {
-    const variants = [value.toLocaleLowerCase()];
-    if (/\.js$/i.test(value)) variants.push(value.replace(/\.js$/i, '').toLocaleLowerCase());
+    const normalizedValue = value.toLocaleLowerCase();
+    const variants = [normalizedValue];
+    // The skill extractor canonicalizes a few JavaScript packages with `.js`;
+    // resumes commonly use their exact package token without that suffix.
+    if (field === 'techStack' && /\.js$/.test(normalizedValue)) {
+      variants.push(normalizedValue.replace(/\.js$/, ''));
+    }
+    const tokenMatches = variants.map((variant) => {
+      const escaped = variant.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return new RegExp(`(^|[^\\p{L}\\p{N}])(${escaped})(?=$|[^\\p{L}\\p{N}])`, 'u');
+    });
     for (const candidate of candidates) {
       const matched = candidate.text
         .split(/\r?\n/)
         .map((line) => line.trim())
         .map((line) => ({
           line,
-          offset: variants
-            .map((variant) => line.toLocaleLowerCase().indexOf(variant))
-            .find((index) => index >= 0),
+          match: tokenMatches.map((regex) => regex.exec(line.toLocaleLowerCase())).find(Boolean),
         }))
-        .find((match) => match.offset !== undefined);
-      if (matched && matched.offset !== undefined) {
+        .find((match) => match.match !== undefined);
+      if (matched?.match) {
         result.push({
           field,
           value,
           sourceSection: candidate.section,
-          sourceText: boundedSourceExcerpt(matched.line, matched.offset),
+          sourceText: boundedSourceExcerpt(
+            matched.line,
+            matched.match.index + matched.match[1]!.length,
+          ),
+          evidenceKind: 'direct-claim',
           extractionConfidence: 'probable',
         });
         break;
@@ -782,19 +799,16 @@ export function deriveEducationClaims(educationSection: string): EducationClaim[
     const fieldOfStudy = degreePart
       ?.match(/\bin\s+(.+?)(?=\s+(?:at|from)\b|\s*\(|$)/i)?.[1]
       ?.trim();
-    const institutionFromPhrase = normalizedText
-      .match(/\b(?:at|from)\s+(.+?)(?=\s*\(|,\s*\d{4}|$)/i)?.[1]
-      ?.trim();
-    const institution =
-      institutionFromPhrase ??
-      (parts.length > 1
-        ? parts.find(
-            (part, index) =>
-              index !== degreePartIndex &&
-              !/\b(?:19|20|21)\d{2}\b/.test(part) &&
-              /\b(?:university|college|institute|school|polytechnic|academy|campus)\b/i.test(part),
-          )
-        : undefined);
+    const institutionMarkers =
+      /\b(?:university|college|institute|school|polytechnic|academy|campus)\b|\b(?:iit|iiit|nit|iim|bits)\b/i;
+    const institutionFromPhrase = normalizedText.match(/\b(?:at|from)\s+([^,;()]+)/i)?.[1]?.trim();
+    const institution = [
+      institutionFromPhrase,
+      ...parts.filter((part, index) => index !== degreePartIndex),
+    ].find(
+      (candidate) =>
+        candidate && !/\b(?:19|20|21)\d{2}\b/.test(candidate) && institutionMarkers.test(candidate),
+    );
     const yearRangeValid = years.length < 2 || years[0]! <= years[years.length - 1]!;
     const claim: EducationClaim = {
       normalizedText,
@@ -809,8 +823,8 @@ export function deriveEducationClaims(educationSection: string): EducationClaim[
     if (degreeMatch) claim.degree = normalizeDegree(degreeMatch);
     if (fieldOfStudy) claim.fieldOfStudy = fieldOfStudy;
     if (institution) claim.institution = institution;
-    if (years.length === 1) claim.endYear = years[0];
-    if (years.length >= 2) {
+    if (years.length === 1 && yearRangeValid) claim.endYear = years[0];
+    if (years.length >= 2 && yearRangeValid) {
       claim.startYear = years[0];
       claim.endYear = years[years.length - 1];
     }
@@ -876,12 +890,12 @@ export function deriveFields(text: string, now = Date.now()): DerivedFields {
   )?.[0];
   const yearEvidenceSources = sections.experience
     ? [{ section: 'experience' as const, text: sections.experience }]
-    : [{ section: 'document' as const, text }];
+    : [];
   const inferredYearLines = yearEvidenceSources
     .flatMap(({ section, text: source }) =>
       source
         .split(/\r?\n/)
-        .filter((line) => /\b(?:19|20|21)\d{2}\b/.test(line))
+        .filter((line) => findDateRanges(line, now).length > 0)
         .map((line) => ({ section, line })),
     )
     .slice(0, 40);
@@ -917,6 +931,7 @@ export function deriveFields(text: string, now = Date.now()): DerivedFields {
                 .toLocaleLowerCase()
                 .indexOf(explicitYears?.toLocaleLowerCase() ?? ''),
             ),
+            evidenceKind: 'direct-claim' as const,
             extractionConfidence: 'probable' as const,
           },
         ]
@@ -929,6 +944,7 @@ export function deriveFields(text: string, now = Date.now()): DerivedFields {
               value: String(yearsOfExperience),
               sourceSection: section,
               sourceText: boundedSourceExcerpt(normalizedLine, matchIndex),
+              evidenceKind: 'supporting-source' as const,
               extractionConfidence: 'probable' as const,
             };
           })
@@ -938,6 +954,7 @@ export function deriveFields(text: string, now = Date.now()): DerivedFields {
       value: claim.normalizedText,
       sourceSection: claim.sourceSection,
       sourceText: claim.sourceText,
+      evidenceKind: 'direct-claim' as const,
       extractionConfidence: claim.extractionConfidence,
     })),
   ];

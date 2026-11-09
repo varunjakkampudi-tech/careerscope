@@ -194,6 +194,7 @@ export const derivedResumeSchema = z.object({
           normalizedText: z.string().trim().min(1).max(200),
           sourceText: z.string().trim().min(1).max(200),
           sourceSection: z.literal('education'),
+          /** Parser confidence only; credential authenticity is always unverified. */
           extractionConfidence: z.enum(['probable', 'unverified']),
           credentialStatus: z.literal('unverified'),
           degree: z.string().trim().min(1).max(80).optional(),
@@ -202,7 +203,20 @@ export const derivedResumeSchema = z.object({
           startYear: z.number().int().min(1900).max(2200).optional(),
           endYear: z.number().int().min(1900).max(2200).optional(),
         })
-        .strict(),
+        .strict()
+        .superRefine((claim, context) => {
+          if (
+            claim.startYear !== undefined &&
+            claim.endYear !== undefined &&
+            claim.startYear > claim.endYear
+          ) {
+            context.addIssue({
+              code: 'custom',
+              path: ['startYear'],
+              message: 'startYear must not be after endYear',
+            });
+          }
+        }),
     )
     .max(20)
     .default([]),
@@ -223,6 +237,9 @@ export const derivedResumeSchema = z.object({
             'certifications',
           ]),
           sourceText: z.string().trim().min(1).max(200),
+          /** Whether this excerpt directly states the value or supports a derived value. */
+          evidenceKind: z.enum(['direct-claim', 'supporting-source']).default('direct-claim'),
+          /** Parser confidence only; never a claim that a candidate-supplied fact is verified. */
           extractionConfidence: z.enum(['probable', 'unverified']),
         })
         .strict(),

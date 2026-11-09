@@ -884,13 +884,15 @@
       "evidence": [
         "packages/resume/src/derive.ts",
         "packages/shared/src/schemas.ts",
+        "packages/resume/src/derive.test.ts",
+        "packages/shared/src/schemas.test.ts",
         "docs/requirements/V12-RECONCILIATION.md"
       ],
-      "tests": ["packages/resume/src/derive.test.ts"],
+      "tests": ["packages/resume/src/derive.test.ts", "packages/shared/src/schemas.test.ts"],
       "externalEvidence": [
         "GitHub Actions run 42581255959 completed successfully on exact PR head 9a1c46fc9060e30eef58475b6f0f5cdf381ecdc3: Quality gates, production image build (not published), and services/integration/browser suites all passed."
       ],
-      "gap": "The current branch adds bounded source-section and source-snippet extraction evidence with confidence for skills, recent skills, titles, experience-years and education; education claims also preserve normalized text, original source text and explicit unverified credential status. Independent review for exact PR head 9a1c46fc9060e30eef58475b6f0f5cdf381ecdc3 remains pending; item status remains partial.",
+      "gap": "The branch adds bounded source-section and source-snippet extraction evidence for skills, recent skills, titles, experience-years and education. A fallback ChatGPT review in CareerScope Engineering Continuation at head 162a53e0d393426f8a2d8f686a931320ff8d9dba identified ambiguous institution parsing, reversed education dates, duration-evidence attribution and substring matching; a later correction also prevents dates outside a labeled experience section from producing inferred work duration; the current follow-up corrects these and distinguishes direct claims from supporting sources. Extraction confidence describes parser confidence only; credential authenticity remains unverified. The designated review thread returned Unknown error; exact-head hosted CI and final review of the correction commit remain pending; item status remains partial.",
       "scopeDisposition": "in-scope"
     },
     {
