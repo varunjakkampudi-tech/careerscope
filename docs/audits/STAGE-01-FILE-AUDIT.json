@@ -433,10 +433,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
+      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
-      "sha256": "fe2d14da99739032676eca4cb2371c4b19c8438b83e7e9819cb7c3925cad407a"
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
+      "sha256": "ed13e26679f64c2cc6ad765d2fa8d842371053796360cf75825ed68b0100c3f3"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -505,9 +505,9 @@
       "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
+      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
       "sha256": "ad0a6d43c4a91b97df097b0d6b717fde1544f340cc856fdd3a3dccb00935802c"
     },
     {
@@ -1241,9 +1241,9 @@
       "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
+      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
       "sha256": "73c6af2039402415d40e36d51cdf295b90b2533842d362ed93a068cd9633ed30"
     },
     {
@@ -1946,10 +1946,10 @@
       "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
+      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
-      "sha256": "61c6e5d4e1262c86cc05a7ccd47a975da2dbe0e477733a2f02c28073112b8e5c"
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
+      "sha256": "2467bc1d6dba02cd27265565aa7dd7420c0235b41b7b9f5de2e9f0a6ecc19f40"
     },
     {
       "path": "docs/TESTING.md",
@@ -1970,9 +1970,9 @@
       "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
+      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
       "sha256": "d8c21aa242de4200ad25f687b723b0f569f5fec406ab5deb4881ca768928100b"
     },
     {
@@ -2378,9 +2378,9 @@
       "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
+      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
       "sha256": "d3fc98a72f6644bf373979b5e2fdd9f33474bb3763008afe70a731b85290f7ec"
     },
     {
@@ -3483,13 +3483,13 @@
       "path": "package-lock.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
-      "state": "partially-reviewed",
+      "state": "not-applicable-source",
       "concerns": [],
       "findings": [],
-      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
+      "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
       "evidence": "",
-      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
-      "sha256": "283cbf67a50e5ca8b7e4676e34600a16ae6e7fc5b4dd739a254a6a8cf940c47c"
+      "reviewer": "",
+      "sha256": ""
     },
     {
       "path": "package.json",
@@ -3498,9 +3498,9 @@
       "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
+      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
       "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
       "sha256": "e017756b420ac819a4f2eb6f76043cf5346a638e0dff11b11445992a9b9264bb"
     },
     {
@@ -5432,9 +5432,9 @@
       "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
+      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
       "evidence": "",
-      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "reviewer": "Codex (Stage 01 implementation audit)",
       "sha256": "e463228d14e6fd00df7e5af6a17c42662bb95e92d818dfe54fff418b23918a32"
     },
     {
@@ -6494,10 +6494,10 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
+      "observations": "Stage 04 item 4.06 correction under independent review. Historical reviewer provenance preserved; refreshed content hash records the current bytes, while this review state remains partial.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
-      "sha256": "f45f1c881f8f1e0d7c60d05f2aeec5c18081ae91f476a935adf57aa6a1d6c4e1"
+      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
+      "sha256": "f7a875f3ba83795ae36fefc3f512ded6a68b4734d511264d46abaecf89a476f4"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
@@ -6730,7 +6730,7 @@
       "state": "partially-reviewed",
       "concerns": ["Lossless bounded segmentation of parsed resume text"],
       "findings": [],
-      "observations": "New item 4.06 code; unit and browser validation in progress.",
+      "observations": "New Stage 04 item 4.06 code under independent review; refreshed content hash records current bytes while review state remains partial.",
       "evidence": "Stage 04 item 4.06 branch; independent review pending.",
       "reviewer": "Codex (Stage 04 item 4.06 correction review)",
       "sha256": "dbf5c68392f556746bb3a3d451f9e2ca98561a61d426916b7d6de2f90b1c4b1c"
@@ -6742,7 +6742,7 @@
       "state": "partially-reviewed",
       "concerns": ["Unit coverage of lossless segmentation"],
       "findings": [],
-      "observations": "New item 4.06 unit test; validation in progress.",
+      "observations": "New Stage 04 item 4.06 code under independent review; refreshed content hash records current bytes while review state remains partial.",
       "evidence": "Stage 04 item 4.06 branch; independent review pending.",
       "reviewer": "Codex (Stage 04 item 4.06 correction review)",
       "sha256": "7f50cdeea616e537935300c713425930efa6abc4cc677942448dd7b9c847dc47"

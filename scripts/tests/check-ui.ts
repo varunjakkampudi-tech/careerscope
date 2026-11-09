@@ -2729,7 +2729,7 @@ try {
       );
       archive.file(
         'word/document.xml',
-        '<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Synthetic Candidate, React and TypeScript developer with experience building accessible web applications.</w:t></w:r></w:p></w:body></w:document>',
+        `<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${Array.from({ length: 200 }, () => '<w:p><w:r><w:t>Synthetic resume line one.</w:t></w:r></w:p><w:p><w:r><w:t>Synthetic resume line two.</w:t></w:r></w:p>').join('')}</w:body></w:document>`,
       );
       await page.getByLabel('Resume file (PDF or DOCX, up to 5 MiB)').setInputFiles({
         name: 'synthetic.docx',
@@ -2820,13 +2820,15 @@ try {
         .filter({ hasText: 'Resume ready for review.' })
         .waitFor({ timeout: 45000 });
       await page.getByRole('heading', { name: 'Resume preview', exact: true }).waitFor();
-      await page.getByLabel('Resume text section 1 of 1').waitFor();
-      const longPreview = `${'Synthetic resume line one.\n'.repeat(200)}${'Synthetic resume line two.\n'.repeat(200)}`;
-      await page.evaluate((text) => {
-        const preview = document.querySelector('[aria-label="Resume document preview"] pre');
-        if (!preview) throw new Error('Resume preview text was not rendered');
-        preview.textContent = text;
-      }, longPreview);
+      const longPreview = `${'Synthetic resume line one.\n\nSynthetic resume line two.\n\n'.repeat(199)}Synthetic resume line one.\n\nSynthetic resume line two.`;
+      await page.getByLabel('Resume text section 1 of 3').waitFor();
+      assert.equal(
+        await page.locator('[aria-label="Resume text section 1 of 3"]').innerText(),
+        longPreview.slice(0, 4000),
+        `${engine}: first resume preview section differs from parsed text`,
+      );
+      await page.getByRole('button', { name: 'Previous section', exact: true }).press('Enter');
+      await page.getByLabel('Resume text section 1 of 3').waitFor();
       await page.getByRole('button', { name: 'Next section', exact: true }).focus();
       assert.equal(
         await page.evaluate(() => (document.activeElement as HTMLElement | null)?.innerText),
@@ -2837,9 +2839,27 @@ try {
       await page.getByLabel('Resume text section 2 of 3').waitFor();
       assert.equal(
         await page.locator('[aria-label="Resume text section 2 of 3"]').innerText(),
-        'Synthetic resume line one.\n'.repeat(154),
+        longPreview.slice(4000, 8000),
         `${engine}: resume section navigation lost or altered text`,
       );
+      await page.getByRole('button', { name: 'Next section', exact: true }).press('Enter');
+      await page.getByLabel('Resume text section 3 of 3').waitFor();
+      assert.equal(
+        await page.locator('[aria-label="Resume text section 3 of 3"]').innerText(),
+        longPreview.slice(8000),
+        `${engine}: final resume preview section differs from parsed text`,
+      );
+      await page.getByRole('button', { name: 'Next section', exact: true }).press('Enter');
+      await page.getByLabel('Resume text section 3 of 3').waitFor();
+      await page.getByRole('button', { name: 'Previous section', exact: true }).press('Enter');
+      await page.getByLabel('Resume text section 2 of 3').waitFor();
+      await page.getByRole('button', { name: 'Previous section', exact: true }).press('Enter');
+      await page.getByLabel('Resume text section 1 of 3').waitFor();
+      const displayedSections = await page
+        .locator('[aria-label^="Resume text section "]')
+        .allTextContents();
+      assert.equal(displayedSections.length, 1, `${engine}: preview rendered a hidden section`);
+      assert.equal(displayedSections.join(''), longPreview.slice(0, 4000));
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });
         assert.equal(
