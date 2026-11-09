@@ -1229,10 +1229,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete resume upload styles. Native file input and picker button have adequate target size and themed borders/backgrounds. Reviewed preview layout for narrow widths, bounded scroll, wrapping and visible keyboard focus.",
+      "observations": "Reviewed preview layout for narrow widths, bounded scroll, wrapping and visible keyboard focus using the approved --dash-focus token.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
       "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "5536c3cd0691ac1d45d9e14e4530e8e86583a41ea5b7e52c07551ef3d933773f"
+      "sha256": "d83152f5901dfd7799f544e5b633849f8fac2e6182ddfe4482744c077cdef4c4"
     },
     {
       "path": "apps/web/src/components/resume-panel.tsx",
