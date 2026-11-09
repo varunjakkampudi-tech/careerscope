@@ -2821,11 +2821,24 @@ try {
         .waitFor({ timeout: 45000 });
       await page.getByRole('heading', { name: 'Resume preview', exact: true }).waitFor();
       await page.getByLabel('Resume text section 1 of 1').waitFor();
-      await page.getByRole('button', { name: 'Previous section', exact: true }).focus();
+      const longPreview = `${'Synthetic resume line one.\n'.repeat(200)}${'Synthetic resume line two.\n'.repeat(200)}`;
+      await page.evaluate((text) => {
+        const preview = document.querySelector('[aria-label="Resume document preview"] pre');
+        if (!preview) throw new Error('Resume preview text was not rendered');
+        preview.textContent = text;
+      }, longPreview);
+      await page.getByRole('button', { name: 'Next section', exact: true }).focus();
       assert.equal(
         await page.evaluate(() => (document.activeElement as HTMLElement | null)?.innerText),
-        'Previous section',
+        'Next section',
         `${engine}: resume preview is not keyboard navigable`,
+      );
+      await page.keyboard.press('Enter');
+      await page.getByLabel('Resume text section 2 of 3').waitFor();
+      assert.equal(
+        await page.locator('[aria-label="Resume text section 2 of 3"]').innerText(),
+        'Synthetic resume line one.\n'.repeat(154),
+        `${engine}: resume section navigation lost or altered text`,
       );
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });

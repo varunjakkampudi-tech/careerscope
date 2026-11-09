@@ -418,7 +418,7 @@ test(
         const url = `/api/resumes/${settled.id}/file`;
         const response = await app.inject({ url, headers: owner.headers });
         assert.equal(response.statusCode, 200);
-        assert.equal(response.body, pdf.toString());
+        assert.deepEqual(response.rawPayload, pdf);
         assert.equal(response.headers['content-type'], 'application/pdf');
         assert.equal(
           response.headers['content-disposition'],

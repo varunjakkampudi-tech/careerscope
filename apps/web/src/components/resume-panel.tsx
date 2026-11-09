@@ -14,11 +14,12 @@ import {
 import { localizedApiErrorMessage, localizedText, useInterfaceLocale } from '../lib/locale';
 import { useOwner, ownerKey } from '../lib/session';
 import { EmptyState, ErrorState, LoadingState } from './ui-states';
+import { segmentResumeText } from '@careerscope/resume/preview-segments';
 import styles from './resume-panel.module.css';
 
 function ResumeTextPreview({ text }: { text: string }) {
   const [page, setPage] = useState(0);
-  const pages = text.match(/[\s\S]{1,4000}(?:\s|$)/g) ?? [text];
+  const pages = segmentResumeText(text);
   const current = Math.min(page, pages.length - 1);
   return (
     <div className={styles.preview} aria-label="Resume document preview">

@@ -864,7 +864,11 @@
         "apps/api/src/app.ts",
         "docs/API-SURFACE.md"
       ],
-      "tests": ["apps/api/src/resumes.integration.test.ts", "scripts/tests/check-ui.ts"],
+      "tests": [
+        "apps/api/src/resumes.integration.test.ts",
+        "scripts/tests/check-ui.ts",
+        "packages/resume/src/preview-segments.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "Implementation and evidence are in progress; exact-head CI and independent item review remain pending.",
       "scopeDisposition": "in-scope"

@@ -865,11 +865,11 @@ function contracts(options: {
     ),
     'GET /api/resumes/:id/file': operation(
       'Download the authenticated owner’s settled resume file for local preview',
-      { type: 'string', format: 'binary', contentType: 'application/octet-stream' },
+      { type: 'string', format: 'binary' },
       {
-        failures: [404, 429],
+        failures: [400, 404, 409, 429, 503, 507],
         description:
-          'Owner-scoped, rate-limited, no-store retrieval. The browser preview uses parsed plain text.',
+          'Owner-scoped, rate-limited, private no-store attachment. Successful responses use the validated stored PDF or DOCX media type and an attachment content-disposition. A 409 indicates the upload has not settled; 503 indicates resume storage is unavailable; 507 indicates storage capacity is exhausted. The browser preview uses parsed plain text.',
       },
     ),
     'POST /api/resumes/:id/recover': operation('Reconcile an interrupted upload', upload, {

@@ -422,7 +422,7 @@
       "path": "apps/api/src/openapi.ts",
       "category": "backend-api",
       "reviewMethod": "prior complete source review plus current exact-dev-diff review",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [
         {
@@ -433,10 +433,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Re-reviewed the full profile-photo contract delta: authenticated GET returns binary WebP or 204, PUT accepts only JPEG/PNG/WebP and documents size/error statuses, DELETE returns 204, and declared error bodies remain JSON. The parent response hook and route integration test verify no-store and content headers. No contract discrepancy found. Reviewed the binary resume file route contract and its owner-scoped error responses.",
+      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "1eee290641acbc70c8930376300168b767f0470ee3db1191f8c5408fed14922f"
+      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "sha256": "fe2d14da99739032676eca4cb2371c4b19c8438b83e7e9819cb7c3925cad407a"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -502,13 +502,13 @@
       "path": "apps/api/src/resumes.integration.test.ts",
       "category": "backend-api",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete 423-line resume integration suite and fixture helpers. Covers owner isolation, upload cancellation only before durable queueing, unavailable cancellation capability, owner quota before storage IO, idempotent retries/content conflicts, disconnect abort and recovery state, cancellation/deletion quota release, and local loopback database isolation with synthetic storage. No external object storage is configured. Reviewed integration coverage for parsed file retrieval, storage version, response headers, foreign owner, unknown id, pending upload and rejected parse outcome.",
+      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "3a1c342a6743bfbfedde0f578b48c6dff01119b9f2123ded392c46f52a07f56f"
+      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "sha256": "ad0a6d43c4a91b97df097b0d6b717fde1544f340cc856fdd3a3dccb00935802c"
     },
     {
       "path": "apps/api/src/session-logout.integration.test.ts",
@@ -1238,13 +1238,13 @@
       "path": "apps/web/src/components/resume-panel.tsx",
       "category": "frontend",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed preview rendering: parser output is rendered as escaped plain text, section controls remain keyboard reachable at boundaries with clamped actions, and uploaded markup is not interpreted.",
+      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "e2765bef203fccb5b7a5493f7935ffe0bd14ee537ab747ba1218279da74e54b6"
+      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "sha256": "73c6af2039402415d40e36d51cdf295b90b2533842d362ed93a068cd9633ed30"
     },
     {
       "path": "apps/web/src/components/saved-leads.module.css",
@@ -1943,13 +1943,13 @@
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
       "reviewMethod": "source review plus item 1.01 reviewer-feedback update",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed Stage 01 item 1.01 record. The verification column no longer labels November 8 evidence as November 6; the row records parent-dev CI and makes clear that the conditional review was for the previous head, with suggested refinements applied and new-head validation pending. Reviewed Stage 04 item 4.06 test mapping; CI and independent acceptance remain pending.",
+      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "02f01a58dbeab1f915f502768c15d1b33ee1368ac5c0743cbbec856c2a95a6ca"
+      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "sha256": "61c6e5d4e1262c86cc05a7ccd47a975da2dbe0e477733a2f02c28073112b8e5c"
     },
     {
       "path": "docs/TESTING.md",
@@ -1967,13 +1967,13 @@
       "path": "docs/TRACEABILITY.md",
       "category": "documentation",
       "reviewMethod": "prior complete source review plus current exact-dev-diff review",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the current traceability addition: inventories and their denominators remain separate, the owner roadmap remains the 328-item source, and the existing crosswalk points to the enforced checker and CI-run tests. Reviewed PS-06 implementation and test file mapping for the preview.",
+      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "d83e0eebf222b205a83370cf374f8fe5915634289d7ea55d4af1d43f38b90bbb"
+      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "sha256": "d8c21aa242de4200ad25f687b723b0f569f5fec406ab5deb4881ca768928100b"
     },
     {
       "path": "docs/UI-VERIFICATION.md",
@@ -2375,13 +2375,13 @@
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
       "reviewMethod": "prior complete source review plus current exact-dev-diff review",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed item 3.13 closeout and surrounding inventory: the item retains its source title/status, records currentStatus verified with concrete implementation and tests, links PR #57/#58 evidence, and leaves the overall 328-item/stage inventory structure intact. Traceability checker validates row and counts. Reviewed canonical item 4.06 evidence and tests; status remains in-progress pending hosted CI and independent review.",
+      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "b94ce3e794e00ee5bd23d8aca42cbc135d94488e3e07913de169498c6c5d7d7f"
+      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "sha256": "d3fc98a72f6644bf373979b5e2fdd9f33474bb3763008afe70a731b85290f7ec"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -3483,25 +3483,25 @@
       "path": "package-lock.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
-      "state": "not-applicable-source",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
+      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
       "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "sha256": "283cbf67a50e5ca8b7e4676e34600a16ae6e7fc5b4dd739a254a6a8cf940c47c"
     },
     {
       "path": "package.json",
       "category": "repository-configuration",
       "reviewMethod": "prior complete source review plus current exact-dev-diff review",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed root script/dependency delta: the new image-normalization unit test is in test:unit and audit:stage01 now requires complete file coverage. Existing Node >=24 engine and workspace test/build scripts remain intact; lockfile installation on this source revision reported zero vulnerabilities.",
+      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
       "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "daf234b218fbe1c224c0dfab6401095f59d9a1da1260eeac397af4f5d37d5606"
+      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "sha256": "e017756b420ac819a4f2eb6f76043cf5346a638e0dff11b11445992a9b9264bb"
     },
     {
       "path": "packages/core/package.json",
@@ -5429,13 +5429,13 @@
       "path": "packages/resume/package.json",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read package metadata. Public output is built dist; dependencies are shared plus PDF/DOCX text extraction libraries. No test-only dependency is declared here.",
+      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
       "evidence": "",
-      "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "a3694ed8b763b8bb8c56f97b43a0a61abc76db5407f23a5f944c335e373b9b34"
+      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "sha256": "e463228d14e6fd00df7e5af6a17c42662bb95e92d818dfe54fff418b23918a32"
     },
     {
       "path": "packages/resume/src/derive-equivalence.test.ts",
@@ -6476,7 +6476,7 @@
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
       "reviewMethod": "prior complete source review plus current exact-dev-diff review",
-      "state": "reviewed",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [
         {
@@ -6494,10 +6494,10 @@
           "remediation": "Write screenshots to a unique per-run directory under test-results."
         }
       ],
-      "observations": "Re-reviewed the complete Stage 03 photo test delta on top of the previously reviewed full browser harness. Focused mode limits to Chromium; checks file keyboard access, unsupported/oversize rejection, API failure without persistence, upload and stored private row, both avatar slots sharing one refresh, reload persistence and deletion restoring initials. Broad browser scenario also covers owner image lifecycle, account switching/isolation, responsive/accessibility checks. Exact dev CI passed the browser suite. Reviewed browser assertions for preview availability and keyboard operation.",
+      "observations": "Independent review required corrections for Stage 04 item 4.06; corrected code and documentation are under validation. Content hash not recorded as reviewed pending completion.",
       "evidence": "Source review and local validation for Stage 04 item 4.06 on codex/stage04-item406-resume-preview, commit 8fe6f2b04f0e06877d75587f367f9dad705e7b04.",
-      "reviewer": "Codex (Stage 04 item 4.06 implementation review)",
-      "sha256": "0867902b7383359a5430a2f17037f911a8a2dc37c1182cb7f381427e25404df5"
+      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "sha256": "f45f1c881f8f1e0d7c60d05f2aeec5c18081ae91f476a935adf57aa6a1d6c4e1"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
@@ -6722,6 +6722,30 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "6040b0afb6dbae5f400cfaeb18fb8595d5644a4bea2f0dccc43797d136d58863"
+    },
+    {
+      "path": "packages/resume/src/preview-segments.ts",
+      "category": "production-source",
+      "reviewMethod": "source-review",
+      "state": "partially-reviewed",
+      "concerns": ["Lossless bounded segmentation of parsed resume text"],
+      "findings": [],
+      "observations": "New item 4.06 code; unit and browser validation in progress.",
+      "evidence": "Stage 04 item 4.06 branch; independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "sha256": "dbf5c68392f556746bb3a3d451f9e2ca98561a61d426916b7d6de2f90b1c4b1c"
+    },
+    {
+      "path": "packages/resume/src/preview-segments.test.ts",
+      "category": "test-source",
+      "reviewMethod": "source-review",
+      "state": "partially-reviewed",
+      "concerns": ["Unit coverage of lossless segmentation"],
+      "findings": [],
+      "observations": "New item 4.06 unit test; validation in progress.",
+      "evidence": "Stage 04 item 4.06 branch; independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.06 correction review)",
+      "sha256": "7f50cdeea616e537935300c713425930efa6abc4cc677942448dd7b9c847dc47"
     }
   ]
 }
