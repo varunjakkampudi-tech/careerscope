@@ -6520,13 +6520,13 @@
         {
           "id": "S1-F072",
           "severity": "medium",
-          "status": "open",
-          "summary": "The cross-account stale-response browser regression has not passed exact-head CI: the initial implementation timed out waiting for a response after route.fetch, and the updated requestfinished synchronization is awaiting full CI.",
-          "remediation": "Obtain a passing exact-head Quality Gates and Services/browser run, then confirm the foreign response is released or cancelled and owner A completeness stays at 100%."
+          "status": "fixed",
+          "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+          "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the full browser suite and changed owner-switch regression. Existing coverage verifies profile-completeness success, API failure/retry, persisted profile state, and cross-account data isolation. The delayed foreign-profile response is validated against the actual foreign response body and expected 80% score. Earlier exact-head CI runs failed on response lifecycle timeouts and then the requestAnimationFrame callback type; the lifecycle waits were replaced with route.fulfill completion and the timestamp callback is now wrapped. Latest exact-head hosted validation is pending.",
-      "evidence": "Current source review on codex/stage03-item316-profile-completeness. Exact-head hosted CI 42569316968 passed browser/services but Quality Gates failed with TS2345 at check-ui.ts:5428; correction is made and awaits rerun. Prior local browser execution was blocked by a local PostgreSQL authentication mismatch.",
+      "observations": "Reviewed the full browser suite and changed owner-switch regression. Existing coverage verifies profile-completeness success, API failure/retry, persisted profile state, and cross-account data isolation. The delayed foreign-profile response is checked against the actual foreign-owner body and expected 80% score; the response remains held through sign-out/sign-in, is released through route.fulfill, and owner A remains at 100% after render. Earlier requestfinished/response waits timed out and a TypeScript requestAnimationFrame callback error was corrected. No remaining finding.",
+      "evidence": "Exact-head hosted CI run 42570381867 passed Quality gates, Services/integration/browser suites, and Production image build on db7a7df3011c344dd6a8d2dab64196287ffa787b. Local browser execution was unavailable because the worktree PostgreSQL credentials did not match the shared Docker service.",
       "reviewer": "Codex (Stage 03 item 3.16)",
       "sha256": "c7381bf94892b37b0996f7231849c1fa9e3aecfd1485ee98012012b3817251cc"
     },
