@@ -29,6 +29,34 @@ test('shared navigation and reminder messages are present for each supported lan
   assert.notEqual(localizedText('en', 'jobs'), localizedText('hi', 'jobs'));
 });
 
+test('resume preview controls and accessible section labels have distinct localized copy', () => {
+  const keys = [
+    'resumePreviewHeading',
+    'resumePreviewPrevious',
+    'resumePreviewNext',
+    'resumePreviewSectionCount',
+    'resumePreviewSectionLabel',
+  ] as const;
+  for (const key of keys) {
+    const values = interfaceLocales.map((locale) => localizedText(locale, key));
+    assert.ok(
+      values.every((value) => value.trim().length > 0),
+      key,
+    );
+    assert.equal(new Set(values).size, interfaceLocales.length, key);
+  }
+  for (const locale of interfaceLocales) {
+    assert.equal(
+      localizedValue(locale, 'resumePreviewSectionCount', 2).replace('{total}', '3').includes('2'),
+      true,
+    );
+    assert.equal(
+      localizedValue(locale, 'resumePreviewSectionLabel', 2).replace('{total}', '3').includes('3'),
+      true,
+    );
+  }
+});
+
 test('interview notification preference labels and safety notes are localized for each language', () => {
   const keys = [
     'notificationPreferencesHeading',

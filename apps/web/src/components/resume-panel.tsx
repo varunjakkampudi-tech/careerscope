@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, type FormEvent } from 'react';
+import { useMemo, useRef, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { FileText, LoaderCircle, RefreshCw, Trash2, Upload, X } from 'lucide-react';
 import { ApiError, apiJson, apiParsed } from '../lib/api';
@@ -11,39 +11,56 @@ import {
   parseResumeUpload,
   type ResumeProposal,
 } from '../lib/api-schemas';
-import { localizedApiErrorMessage, localizedText, useInterfaceLocale } from '../lib/locale';
+import {
+  localizedApiErrorMessage,
+  localizedText,
+  localizedValue,
+  useInterfaceLocale,
+} from '../lib/locale';
 import { useOwner, ownerKey } from '../lib/session';
 import { EmptyState, ErrorState, LoadingState } from './ui-states';
 import { segmentResumeText } from '@careerscope/resume/preview-segments';
 import styles from './resume-panel.module.css';
 
-function ResumeTextPreview({ text }: { text: string }) {
+function ResumeTextPreview({
+  text,
+  locale,
+}: {
+  text: string;
+  locale: ReturnType<typeof useInterfaceLocale>;
+}) {
   const [page, setPage] = useState(0);
-  const pages = segmentResumeText(text);
+  const pages = useMemo(() => segmentResumeText(text), [text]);
   const current = Math.min(page, pages.length - 1);
   return (
-    <div className={styles.preview} aria-label="Resume document preview">
+    <section className={styles.preview} aria-labelledby="resume-preview-heading" lang={locale}>
       <div className={styles.previewControls}>
         <button type="button" onClick={() => setPage((value) => Math.max(0, value - 1))}>
-          Previous section
+          {localizedText(locale, 'resumePreviewPrevious')}
         </button>
         <span aria-live="polite">
-          Section {current + 1} of {pages.length}
+          {localizedValue(locale, 'resumePreviewSectionCount', current + 1).replace(
+            '{total}',
+            String(pages.length),
+          )}
         </span>
         <button
           type="button"
           onClick={() => setPage((value) => Math.min(pages.length - 1, value + 1))}
         >
-          Next section
+          {localizedText(locale, 'resumePreviewNext')}
         </button>
       </div>
       <pre
-        aria-label={`Resume text section ${current + 1} of ${pages.length}`}
+        aria-label={localizedValue(locale, 'resumePreviewSectionLabel', current + 1).replace(
+          '{total}',
+          String(pages.length),
+        )}
         className={styles.previewText}
       >
         {pages[current]}
       </pre>
-    </div>
+    </section>
   );
 }
 
@@ -342,8 +359,10 @@ export default function ResumePanel({
                 {result?.status === 'parsed' && (
                   <>
                     <p role="status">Resume ready for review.</p>
-                    <h3>Resume preview</h3>
-                    <ResumeTextPreview key={selected} text={result.parsed.text} />
+                    <h3 id="resume-preview-heading">
+                      {localizedText(locale, 'resumePreviewHeading')}
+                    </h3>
+                    <ResumeTextPreview key={selected} text={result.parsed.text} locale={locale} />
                     <button type="button" onClick={() => onReview(result.parsed.derived)}>
                       <FileText size={17} />
                       Review profile draft

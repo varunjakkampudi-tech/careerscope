@@ -1241,10 +1241,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed text-only preview component: section state is bounded, controls are native buttons, current section is announced, and uploaded PDF/DOCX is not embedded as active markup.",
-      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
-      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
-      "sha256": "73c6af2039402415d40e36d51cdf295b90b2533842d362ed93a068cd9633ed30"
+      "observations": "Reviewed follow-up diff: preview labels derive from the selected interface locale, preview section is a named region linked to its heading, text segmentation is memoized by text, and current page remains clamped to available sections.",
+      "evidence": "Review of the Stage 04.06 follow-up diff on the refreshed PR branch; corrected-head CI and independent acceptance remain pending.",
+      "reviewer": "Codex (Stage 04.06 follow-up review)",
+      "sha256": "0a846c8e2842042773efaa2a58afbf40bb2b5f12ac33fccf1cae54f2b87a64d0"
     },
     {
       "path": "apps/web/src/components/saved-leads.module.css",
@@ -1372,26 +1372,26 @@
     {
       "path": "apps/web/src/lib/locale.test.ts",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "scoped-diff-and-test-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete localization tests. They verify the supported locale allowlist, translation presence and distinctness for navigation, notifications, security, sign-in, search, and error categories, plus interpolation values.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "c683aa6f7b8d98ac1bcce990ed1faaa7dcd6c5232fa28add6cbd994904a204e2"
+      "observations": "Reviewed new catalog assertions for preview heading, controls and section labels across en/te/hi, including current and total interpolation. This validates catalog wiring, not native translation quality.",
+      "evidence": "Review of the Stage 04.06 follow-up diff on the refreshed PR branch; corrected-head CI and independent acceptance remain pending.",
+      "reviewer": "Codex (Stage 04.06 follow-up review)",
+      "sha256": "9b8cad1ed162e5ef17b4f36f8406f7dc2ac1ebb733da924e50241faa2ea356bc"
     },
     {
       "path": "apps/web/src/lib/locale.ts",
       "category": "frontend",
-      "reviewMethod": "content-and-structural-review",
+      "reviewMethod": "scoped-diff-and-test-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item.",
-      "evidence": "Locale implementation and representative message groups inspected on codex/stage01-item-101-audit; structural parity is enforced by the full typecheck.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "dbd14b6a0ebe273efeaa5dd175345d3bffa0efb7d80606f21c46e0c34ca9e469"
+      "observations": "Reviewed new English/Telugu/Hindi preview strings and placeholders. Telugu/Hindi strings are explicitly machine-drafted and still need native-speaker review before release.",
+      "evidence": "Review of the Stage 04.06 follow-up diff on the refreshed PR branch; corrected-head CI and independent acceptance remain pending.",
+      "reviewer": "Codex (Stage 04.06 follow-up review)",
+      "sha256": "b1f92dfac70eb0c5bfa9c75a3295cdc05120a086fe951acbd32db0b9287a759c"
     },
     {
       "path": "apps/web/src/lib/next-proxy-headers.test.ts",
@@ -1966,14 +1966,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused source, test and exact-head CI provenance review",
+      "reviewMethod": "scoped-diff-and-test-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the item 3.16 row. Historical failures and approvals remain tied to their original SHAs; exact-head approval and CI, dev merge, and post-merge CI are recorded, and the item is verified.",
-      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; run 42758118526 passed all three required jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b. Post-merge run 42759315007 passed Quality gates and Services/integration/browser suites; image build skipped on push.",
-      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "353f038dcbc10b6340abba22e7aa7766991a7158fcd49bb4f33583047eab03e7"
+      "observations": "Reviewed the added Stage 04 item 4.06 test row: historical CI is labeled historical, follow-up review gaps and pending corrected-head evidence are stated, and status remains not verified.",
+      "evidence": "Review of the Stage 04.06 follow-up diff on the refreshed PR branch; corrected-head CI and independent acceptance remain pending.",
+      "reviewer": "Codex (Stage 04.06 follow-up review)",
+      "sha256": "ab9e4a01ae8e2960d1b1978b069410155b5354cd3a516a939f9af722e6c52abe"
     },
     {
       "path": "docs/TESTING.md",
@@ -2402,10 +2402,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed 4.06 remains in-progress with implementation evidence, tests, historical exact-head CI/review, and explicit merge/post-merge verification gap.",
-      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
-      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
-      "sha256": "00e3d27ee74ca3682d019996e49142b011276e99d1b5263451cb1ae59901bdeb"
+      "observations": "Reviewed item 4.06 evidence update: historical run/review are not presented as current approval; status remains in-progress with exact-head CI, final review, merge and post-merge verification outstanding.",
+      "evidence": "Review of the Stage 04.06 follow-up diff on the refreshed PR branch; corrected-head CI and independent acceptance remain pending.",
+      "reviewer": "Codex (Stage 04.06 follow-up review)",
+      "sha256": "9fe3cc0e46164fd8765d8fe5583c856f3e9ca9e63d499a592df6c126b8cefac6"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -6549,10 +6549,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed browser fixture and assertions: generated multi-section DOCX text is compared losslessly; keyboard navigation, boundaries and only-one-visible-section are checked.",
-      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
-      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
-      "sha256": "c19a86b94a3f9005a8b36ba01523742a01474e2b3d8b6101867e50c3dd4870d7"
+      "observations": "Reviewed added browser assertions for all three supported locale labels, named region, section label/count, while retaining lossless content, keyboard navigation and boundary checks.",
+      "evidence": "Review of the Stage 04.06 follow-up diff on the refreshed PR branch; corrected-head CI and independent acceptance remain pending.",
+      "reviewer": "Codex (Stage 04.06 follow-up review)",
+      "sha256": "07d2ffd98a993448a4b5b7ff760f4d29058b35739b416d0a71d09ec55198818d"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",

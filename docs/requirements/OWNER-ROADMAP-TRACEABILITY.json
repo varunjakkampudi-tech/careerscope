@@ -872,19 +872,24 @@
       "currentStatus": "in-progress",
       "evidence": [
         "apps/web/src/components/resume-panel.tsx",
+        "apps/web/src/components/resume-panel.module.css",
         "apps/api/src/app.ts",
+        "packages/resume/src/preview-segments.ts",
         "docs/API-SURFACE.md"
       ],
       "tests": [
         "apps/api/src/resumes.integration.test.ts",
         "scripts/tests/check-ui.ts",
-        "packages/resume/src/preview-segments.test.ts"
+        "packages/resume/src/preview-segments.test.ts",
+        "apps/web/src/lib/locale.test.ts"
       ],
       "externalEvidence": [
-        "PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc; hosted CI run 42628516861 passed Quality, Services/integration/browser, and Production image jobs.",
-        "ChatGPT independent focused source review accepted the preview, fixture correction and audit provenance."
+        "Historical PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc passed hosted CI run 42628516861. This evidence predates the current dev base and does not validate the refreshed branch.",
+        "A prior ChatGPT focused review accepted an earlier preview implementation and audit provenance; that approval is historical and is not final acceptance for the current branch.",
+        "Refreshed PR #73 head 8d14f8c4b10b4097bde2b819854ead100bf34546 was based on dev 036dd3c11278a26534544792f4834a0902214d17. Run 42788552835 passed quality gates, production image build (not published), and integration; browser checks were still pending when follow-up review began.",
+        "ChatGPT reviewed refreshed head 8d14f8c4b10b4097bde2b819854ead100bf34546 and withheld acceptance, identifying a traceability P1 and accessibility/localization/performance improvements. This follow-up addresses those findings; final review for its resulting head is pending."
       ],
-      "gap": "Feature implementation and independent review are complete on PR #73, and exact-head CI run 42628516861 passed. Awaiting authorized merge and post-merge dev verification before status can be verified.",
+      "gap": "Item 4.06 remains in progress. This follow-up includes the identified localization, accessibility landmark, rendering-efficiency and traceability corrections. Exact-head CI and independent acceptance for the resulting head, authorized merge, and post-merge dev verification remain outstanding.",
       "scopeDisposition": "in-scope"
     },
     {

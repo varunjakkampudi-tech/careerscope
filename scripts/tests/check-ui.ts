@@ -30,6 +30,7 @@ import { createApp } from '../../apps/api/src/app.js';
 import { collect } from '../../apps/workers/search/src/collect.js';
 import { createRemoteOkProvider, type JobProvider } from '@careerscope/providers';
 import { segmentResumeText } from '@careerscope/resume/preview-segments';
+import { interfaceLocales, localizedText, localizedValue } from '../../apps/web/src/lib/locale.js';
 import { selectUiBrowsers } from './ui-browsers.js';
 import {
   browserRequestFailureCategory,
@@ -2824,7 +2825,67 @@ try {
         .getByRole('status')
         .filter({ hasText: 'Resume ready for review.' })
         .waitFor({ timeout: 45000 });
-      await page.getByRole('heading', { name: 'Resume preview', exact: true }).waitFor();
+      const storedLocale = await page.evaluate(() =>
+        localStorage.getItem('careerscope:interface-language'),
+      );
+      const originalLocale = interfaceLocales.includes(
+        storedLocale as (typeof interfaceLocales)[number],
+      )
+        ? (storedLocale as (typeof interfaceLocales)[number])
+        : 'en';
+      for (const locale of interfaceLocales) {
+        await page.evaluate((nextLocale) => {
+          localStorage.setItem('careerscope:interface-language', nextLocale);
+          window.dispatchEvent(
+            new StorageEvent('storage', {
+              key: 'careerscope:interface-language',
+              newValue: nextLocale,
+            }),
+          );
+        }, locale);
+        const heading = localizedText(locale, 'resumePreviewHeading');
+        const region = page.getByRole('region', { name: heading, exact: true });
+        await page.getByRole('heading', { name: heading, exact: true }).waitFor();
+        await region.waitFor();
+        await region
+          .getByRole('button', {
+            name: localizedText(locale, 'resumePreviewPrevious'),
+            exact: true,
+          })
+          .waitFor();
+        await region
+          .getByRole('button', {
+            name: localizedText(locale, 'resumePreviewNext'),
+            exact: true,
+          })
+          .waitFor();
+        await region
+          .getByLabel(
+            localizedValue(locale, 'resumePreviewSectionLabel', 1).replace('{total}', '3'),
+          )
+          .waitFor();
+        assert.ok(
+          (await region.innerText()).includes(
+            localizedValue(locale, 'resumePreviewSectionCount', 1).replace('{total}', '3'),
+          ),
+          `${engine}: resume preview section count is not localized for ${locale}`,
+        );
+      }
+      await page.evaluate((locale) => {
+        localStorage.setItem('careerscope:interface-language', locale);
+        window.dispatchEvent(
+          new StorageEvent('storage', {
+            key: 'careerscope:interface-language',
+            newValue: locale,
+          }),
+        );
+      }, originalLocale);
+      await page
+        .getByRole('heading', {
+          name: localizedText(originalLocale, 'resumePreviewHeading'),
+          exact: true,
+        })
+        .waitFor();
       const longPreview = `Synthetic resume line one with React and TypeScript.\n\nSynthetic resume line two.\n\n${'Synthetic resume line one.\n\nSynthetic resume line two.\n\n'.repeat(198)}Synthetic resume line one.\n\nSynthetic resume line two.`;
       const expectedPreviewSections = segmentResumeText(longPreview);
       assert.equal(expectedPreviewSections.length, 3);
