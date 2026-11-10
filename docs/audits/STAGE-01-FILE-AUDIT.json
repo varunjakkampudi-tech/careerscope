@@ -1970,10 +1970,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the added Stage 04 item 4.06 test row: historical CI is labeled historical, follow-up review gaps and pending corrected-head evidence are stated, and status remains not verified.",
-      "evidence": "Review of the Stage 04.06 follow-up diff on the refreshed PR branch; corrected-head CI and independent acceptance remain pending.",
-      "reviewer": "Codex (Stage 04.06 follow-up review)",
-      "sha256": "ab9e4a01ae8e2960d1b1978b069410155b5354cd3a516a939f9af722e6c52abe"
+      "observations": "Reviewed Stage 04 test-matrix history: prior exact-head quality-gate failure from cross-workspace import is recorded, the corrected test now inspects rendered localized labels directly, local typecheck passed, and exact-head CI/final review remain pending.",
+      "evidence": "Follow-up diff review; Node 24 typecheck passed for 98 canonical test files, and exact-head hosted CI remains pending.",
+      "reviewer": "Codex (Stage 04.06 typecheck correction)",
+      "sha256": "bbe5e81428fb98e4208d63514290da76028780adcfa2e7d67bd560f63d1ba96b"
     },
     {
       "path": "docs/TESTING.md",
@@ -2402,10 +2402,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed item 4.06 evidence update: historical run/review are not presented as current approval; status remains in-progress with exact-head CI, final review, merge and post-merge verification outstanding.",
-      "evidence": "Review of the Stage 04.06 follow-up diff on the refreshed PR branch; corrected-head CI and independent acceptance remain pending.",
-      "reviewer": "Codex (Stage 04.06 follow-up review)",
-      "sha256": "9fe3cc0e46164fd8765d8fe5583c856f3e9ca9e63d499a592df6c126b8cefac6"
+      "observations": "Reviewed item 4.06 historical evidence and current gap: prior run/review are labeled historical, the exact failure and follow-up correction are documented, and item remains in-progress pending CI/review/merge/post-merge verification.",
+      "evidence": "Follow-up diff review; Node 24 typecheck passed for 98 canonical test files, and exact-head hosted CI remains pending.",
+      "reviewer": "Codex (Stage 04.06 typecheck correction)",
+      "sha256": "9b2a8e2433a4b05d30f1c2cc5e0e160513908fdfe769d364a4fc763a0256d54c"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -6549,10 +6549,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed added browser assertions for all three supported locale labels, named region, section label/count, while retaining lossless content, keyboard navigation and boundary checks.",
-      "evidence": "Review of the Stage 04.06 follow-up diff on the refreshed PR branch; corrected-head CI and independent acceptance remain pending.",
-      "reviewer": "Codex (Stage 04.06 follow-up review)",
-      "sha256": "07d2ffd98a993448a4b5b7ff760f4d29058b35739b416d0a71d09ec55198818d"
+      "observations": "Reviewed browser acceptance change: tests rendered labels for en/te/hi without importing web-local TypeScript into the root tooling package; verifies named region, distinct labels, count and section accessible name, then resets the synthetic browser locale to English before keyboard/content checks.",
+      "evidence": "Follow-up diff review; Node 24 typecheck passed for 98 canonical test files, and exact-head hosted CI remains pending.",
+      "reviewer": "Codex (Stage 04.06 typecheck correction)",
+      "sha256": "ce1306cceee5402b2e51e0150731d2a5fa0737d70014da90364dcc72d1f63b66"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",

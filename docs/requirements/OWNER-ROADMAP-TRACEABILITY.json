@@ -887,9 +887,9 @@
         "Historical PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc passed hosted CI run 42628516861. This evidence predates the current dev base and does not validate the refreshed branch.",
         "A prior ChatGPT focused review accepted an earlier preview implementation and audit provenance; that approval is historical and is not final acceptance for the current branch.",
         "Refreshed PR #73 head 8d14f8c4b10b4097bde2b819854ead100bf34546 was based on dev 036dd3c11278a26534544792f4834a0902214d17. Run 42788552835 passed quality gates, production image build (not published), and integration; browser checks were still pending when follow-up review began.",
-        "ChatGPT reviewed refreshed head 8d14f8c4b10b4097bde2b819854ead100bf34546 and withheld acceptance, identifying a traceability P1 and accessibility/localization/performance improvements. This follow-up addresses those findings; final review for its resulting head is pending."
+        "ChatGPT reviewed refreshed head 8d14f8c4b10b4097bde2b819854ead100bf34546 and withheld acceptance, identifying a traceability P1 and accessibility/localization/performance improvements. Follow-up head 2495f0f82e42c04f9385893a817cd42a4e6a4789 addressed those findings but failed Quality gates run 42790723161 during test typechecking because the browser test imported the web-local locale module across package module boundaries. The current follow-up removes that cross-package import and checks rendered locale labels directly; its exact-head CI and review are pending."
       ],
-      "gap": "Item 4.06 remains in progress. This follow-up includes the identified localization, accessibility landmark, rendering-efficiency and traceability corrections. Exact-head CI and independent acceptance for the resulting head, authorized merge, and post-merge dev verification remain outstanding.",
+      "gap": "Item 4.06 remains in progress. The current follow-up retains the localization, accessibility landmark, rendering-efficiency and traceability corrections and removes the cross-package import that caused the prior quality-gate failure. Exact-head CI and independent acceptance for the resulting head, authorized merge, and post-merge dev verification remain outstanding.",
       "scopeDisposition": "in-scope"
     },
     {

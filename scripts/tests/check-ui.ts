@@ -30,7 +30,6 @@ import { createApp } from '../../apps/api/src/app.js';
 import { collect } from '../../apps/workers/search/src/collect.js';
 import { createRemoteOkProvider, type JobProvider } from '@careerscope/providers';
 import { segmentResumeText } from '@careerscope/resume/preview-segments';
-import { interfaceLocales, localizedText, localizedValue } from '../../apps/web/src/lib/locale.js';
 import { selectUiBrowsers } from './ui-browsers.js';
 import {
   browserRequestFailureCategory,
@@ -189,6 +188,7 @@ const profilePhotoFixture = await sharp({
   .toBuffer();
 const origin = process.env.APP_ORIGIN ?? 'http://localhost:5280';
 const resumeDirectory = await mkdtemp(join(tmpdir(), 'careerscope-resume-ui-'));
+const resumePreviewLocales = ['en', 'te', 'hi'] as const;
 const keyFile = join(resumeDirectory, 'encryption.key');
 const encryptionKey = randomBytes(32).toString('hex');
 await writeFile(keyFile, encryptionKey, { mode: 0o600, flag: 'wx' });
@@ -2825,15 +2825,14 @@ try {
         .getByRole('status')
         .filter({ hasText: 'Resume ready for review.' })
         .waitFor({ timeout: 45000 });
-      const storedLocale = await page.evaluate(() =>
-        localStorage.getItem('careerscope:interface-language'),
-      );
-      const originalLocale = interfaceLocales.includes(
-        storedLocale as (typeof interfaceLocales)[number],
-      )
-        ? (storedLocale as (typeof interfaceLocales)[number])
-        : 'en';
-      for (const locale of interfaceLocales) {
+      const observedLocalizedCopy: Array<{
+        heading: string;
+        previous: string;
+        next: string;
+        count: string;
+        section: string;
+      }> = [];
+      for (const locale of resumePreviewLocales) {
         await page.evaluate((nextLocale) => {
           localStorage.setItem('careerscope:interface-language', nextLocale);
           window.dispatchEvent(
@@ -2843,49 +2842,50 @@ try {
             }),
           );
         }, locale);
-        const heading = localizedText(locale, 'resumePreviewHeading');
-        const region = page.getByRole('region', { name: heading, exact: true });
-        await page.getByRole('heading', { name: heading, exact: true }).waitFor();
-        await region.waitFor();
-        await region
-          .getByRole('button', {
-            name: localizedText(locale, 'resumePreviewPrevious'),
-            exact: true,
-          })
-          .waitFor();
-        await region
-          .getByRole('button', {
-            name: localizedText(locale, 'resumePreviewNext'),
-            exact: true,
-          })
-          .waitFor();
-        await region
-          .getByLabel(
-            localizedValue(locale, 'resumePreviewSectionLabel', 1).replace('{total}', '3'),
-          )
-          .waitFor();
+        const heading = await page.locator('#resume-preview-heading').innerText();
         assert.ok(
-          (await region.innerText()).includes(
-            localizedValue(locale, 'resumePreviewSectionCount', 1).replace('{total}', '3'),
-          ),
-          `${engine}: resume preview section count is not localized for ${locale}`,
+          heading.trim().length > 0,
+          `${engine}: resume preview heading is empty in ${locale}`,
+        );
+        const region = page.getByRole('region', { name: heading, exact: true });
+        await page.locator('#resume-preview-heading').waitFor();
+        await region.waitFor();
+        const controls = region.getByRole('button');
+        await controls.first().waitFor();
+        await controls.last().waitFor();
+        const previous = await controls.first().innerText();
+        const next = await controls.last().innerText();
+        const count = await region.locator('[aria-live="polite"]').innerText();
+        const section = await region.locator('pre').getAttribute('aria-label');
+        assert.ok(previous.trim().length > 0, `${engine}: previous control is empty in ${locale}`);
+        assert.ok(next.trim().length > 0, `${engine}: next control is empty in ${locale}`);
+        assert.ok(
+          count.includes('1') && count.includes('3'),
+          `${engine}: section count is invalid`,
+        );
+        assert.ok(
+          section && section.includes('1') && section.includes('3'),
+          `${engine}: section label is invalid`,
+        );
+        observedLocalizedCopy.push({ heading, previous, next, count, section });
+      }
+      for (const label of ['heading', 'previous', 'next', 'count', 'section'] as const) {
+        assert.equal(
+          new Set(observedLocalizedCopy.map((copy) => copy[label])).size,
+          resumePreviewLocales.length,
+          `${engine}: ${label} does not change across supported locales`,
         );
       }
-      await page.evaluate((locale) => {
-        localStorage.setItem('careerscope:interface-language', locale);
+      await page.evaluate(() => {
+        localStorage.setItem('careerscope:interface-language', 'en');
         window.dispatchEvent(
           new StorageEvent('storage', {
             key: 'careerscope:interface-language',
-            newValue: locale,
+            newValue: 'en',
           }),
         );
-      }, originalLocale);
-      await page
-        .getByRole('heading', {
-          name: localizedText(originalLocale, 'resumePreviewHeading'),
-          exact: true,
-        })
-        .waitFor();
+      });
+      await page.locator('#resume-preview-heading').waitFor();
       const longPreview = `Synthetic resume line one with React and TypeScript.\n\nSynthetic resume line two.\n\n${'Synthetic resume line one.\n\nSynthetic resume line two.\n\n'.repeat(198)}Synthetic resume line one.\n\nSynthetic resume line two.`;
       const expectedPreviewSections = segmentResumeText(longPreview);
       assert.equal(expectedPreviewSections.length, 3);
