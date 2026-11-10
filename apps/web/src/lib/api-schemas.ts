@@ -202,12 +202,21 @@ export const parseProfileResponse = parser(profileResponseSchema);
 
 export const parseAccessibilityPreference = parser(z.object({ reducedMotion: z.boolean() }));
 
-/** The part of GET /api/profile the dashboard checklist and skills panel read. */
+/** The owner-scoped profile fields used by the dashboard skills and completeness panels. */
 export const parseDashboardProfile = parser(
   z.object({
     revision: z.number(),
     profile: z
       .object({
+        candidate: z.object({
+          fullName: z.string(),
+          email: z.string(),
+          location: z.string(),
+          segment: z.enum(['student', 'fresher', 'experienced']).optional(),
+          education: z.array(z.string()).default([]),
+          experience: z.array(z.string()).default([]),
+          projects: z.array(z.string()).default([]),
+        }),
         preferences: z.object({ techStack: z.array(z.string()), titles: z.array(z.string()) }),
       })
       .nullable(),
