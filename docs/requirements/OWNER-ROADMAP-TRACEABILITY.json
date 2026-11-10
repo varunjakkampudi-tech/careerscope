@@ -352,10 +352,20 @@
       "title": "Terms/privacy acceptance",
       "sourceStatus": "Partial",
       "currentStatus": "partial",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
-      "tests": ["apps/api/src/legal-acceptance.integration.test.ts"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md",
+        "apps/web/src/lib/locale.ts",
+        "apps/web/src/components/account-form.tsx"
+      ],
+      "tests": [
+        "apps/api/src/legal-acceptance.integration.test.ts",
+        "apps/web/src/lib/locale.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Native-language review of localized Terms/privacy acceptance copy remains outstanding; engineering versioned re-acceptance behavior is covered by the cited integration test.",
+      "gap": "AI-only copy review found and corrected a Hindi privacy acknowledgement that implied acceptance instead of acknowledging receipt; Telugu and Hindi strings have regression assertions. Native-language review remains outstanding; engineering versioned re-acceptance behavior is covered by the cited integration test.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -413,7 +423,7 @@
       "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": ["apps/api/src/recovery.integration.test.ts"],
       "externalEvidence": [],
-      "gap": "Native review of Telugu and Hindi account-recovery wording remains outstanding.",
+      "gap": "Native Telugu and Hindi review of recovery copy remains outstanding. The owner selected AI-only review, which did not waive this gap.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -780,11 +790,22 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Profile completeness checklist",
       "sourceStatus": "Existing, expand",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "verified",
+      "evidence": [
+        "docs/PROGRESS.md",
+        "docs/TEST-MATRIX.md",
+        "apps/web/src/lib/profile-completeness.ts",
+        "apps/web/src/app/(app)/dashboard/page.tsx"
+      ],
+      "tests": ["apps/web/src/lib/profile-completeness.test.ts", "scripts/tests/check-ui.ts"],
+      "externalEvidence": [
+        "PR #69 exact head c17ad6dad5e86357d6331d3975edc8339f1921e2 passed hosted CI run 42472764595 on all three jobs; the production image was built but not published.",
+        "ChatGPT independently reviewed and approved implementation and tests on exact head c17ad6dad5e86357d6331d3975edc8339f1921e2.",
+        "PR #69 implementation and account-switch-fix head 1e7dab01b81441d33fb697db9497564d3c30b052 passed all three required hosted CI jobs in run 42571457149; the image was built but not published.",
+        "ChatGPT approved implementation and documentation at exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; hosted run 42758118526 passed all three required jobs on that SHA, with the image built but not published.",
+        "PR #69 merged to dev as 43f34f9863ac3e5d528df88fb356da380252282b. Post-merge dev run 42759315007 passed Quality gates and Services/integration/browser suites; the image job was skipped for the push event."
+      ],
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
