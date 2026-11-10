@@ -1831,7 +1831,7 @@
       "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
       "evidence": "",
       "reviewer": "",
-      "sha256": ""
+      "sha256": "2f552a7a5240ec7d56f4e13398a56b2deae2f26f6d741abfb30948bbf73731a3"
     },
     {
       "path": "docs/audits/STAGE-01-FILE-AUDIT.md",
@@ -1892,10 +1892,10 @@
           "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
         }
       ],
-      "observations": "Re-reviewed the profile-photo data-model text against migration 0004 and the repository: one bounded bytea WebP per owner, cascade on account deletion, session-only owner reads and unresolved retention policy are accurately stated. Existing migration numbering and applied-file immutability are preserved.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "b1b7f819f76581cf1dc07fb546847dbbac14f4dcf0f07ce9aa12e8b6d8c7cb9b"
+      "observations": "Re-reviewed the candidate-verification section against the policy-neutral lifecycle module and V12 requirements. It distinguishes the mandatory email tick from optional college/profile-link checks and explicitly says generic lifecycle state does not issue ticks; counsel and product policy remain gates.",
+      "evidence": "Re-reviewed the current content during PR #60 integration on 2026-11-10; SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (CareerScope PR #60 merge reconciliation)",
+      "sha256": "57339022bcb3edc21dbf21d5e26739faf1d231c2b59d506f88634a16ff33cc42"
     },
     {
       "path": "docs/decisions/CSP-STRICT-SCRIPT-SRC.md",
@@ -2282,10 +2282,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Re-reviewed the Stage 03 item 3.16 closeout record. It now distinguishes exact-head approval and CI, verifies the successful dev merge and post-merge checks, and records the checklist item as verified.",
-      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; hosted run 42758118526 passed all three jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b, and post-merge run 42759315007 passed Quality gates and Services/integration/browser suites.",
-      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "d3b8cd0cdcce56aebe32a20c5d4ac1bd4d3faa2afd0d3e2587d26acd187638b0"
+      "observations": "Re-reviewed Stage 03 progress. Item 3.14 remains partial; PR #60's scoped lifecycle foundation received final ChatGPT approval at exact head 78106a7ff969418def60c1841e79765299f50d70 and all three jobs passed in exact-head run 42768295522. No verification policy, issuance flow, or checklist completion is implied.",
+      "evidence": "Updated for the exact-head review and CI evidence recorded in PR #60; SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (CareerScope PR #60 merge reconciliation)",
+      "sha256": "e49a582f1949988c35e5fef2330cf1ea7c348993898bea3e5d892382a9da5fca"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -2330,10 +2330,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the canonical item 3.16 record. It retains the owner checklist title, records verified status and evidence for exact-head approval, successful CI, merge to dev, and successful post-merge gates.",
-      "evidence": "Item 3.16 is verified after ChatGPT approval at exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031, all three exact-head jobs passed in run 42758118526, PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b, and post-merge run 42759315007 passed Quality gates and Services/integration/browser suites.",
-      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "89d2793761d4b033d7115994e5869f5088c2b2727331b3a67b15cc114392b43a"
+      "observations": "Re-reviewed Stage 03 tracker records and validated the 328-item, 22-stage structure with the roadmap checker. 3.14 remains partial; its scoped PR #60 lifecycle foundation was approved at exact head 78106a7ff969418def60c1841e79765299f50d70 and exact-head run 42768295522 passed all three jobs. 3.16 remains verified with its merge evidence.",
+      "evidence": "Updated with exact-head PR #60 review and CI evidence; SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (CareerScope PR #60 merge reconciliation)",
+      "sha256": "94d4c202c98d5281c59a3faf00769ce56e44535c1b23933f60bc5ecb0a175f8a"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -2350,10 +2350,10 @@
           "remediation": "Item 1.02 records Hostinger, server backup and restore-only clauses as OUT_OF_SCOPE_OWNER under the owner-revised checklist, and the inventory checker enforces the non-blocking scope disposition."
         }
       ],
-      "observations": "Reviewed the regenerated report against the updated inventory. It records 319 clauses, 11 owner-scoped Hostinger/backup/restore exclusions, 153 in-scope launch-blocking gaps, and preserves release-engineering requirements. Generated-summary validation passes.",
-      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
-      "reviewer": "Codex (Stage 01 item 1.02)",
-      "sha256": "e0d50641930a3ec732b9d784cbb76ef90e39046fadafeb817d0add061b020c9b"
+      "observations": "Regenerated-summary consistency check passes against the inventory: 319 clauses, 68 implemented, 75 partial, 112 not implemented, 45 owner evidence, 19 scoped out, and 153 blocking gaps. Verification clauses remain gaps; no counsel or product approval is implied.",
+      "evidence": "Re-reviewed the current content during PR #60 integration on 2026-11-10; SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (CareerScope PR #60 merge reconciliation)",
+      "sha256": "9c8e21efec58d53bf5f58d93e8301efd00ca3fdacf0412b67fc960b81aaaafc2"
     },
     {
       "path": "docs/requirements/V12-REQUIREMENT-INVENTORY.json",
@@ -2362,10 +2362,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-read the 319-clause inventory and checked all 11 owner-scoped exclusions plus mixed clauses retained in scope. Owner-scoped records are non-blocking with a rationale; backup portions of mixed clauses are excluded while other gaps remain. The pinned source digest and clause correspondence still pass. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "a13d7491ea60cefc4ca785aa5985f05fc8de8409dde6af6f67471ca5225d10b9"
+      "observations": "Re-reviewed verification clauses 4.5-001 through 4.5-012 and test clause 7-009. Only the mandatory email tick is implemented; optional checks and V12-7-009 remain not implemented with the generic lifecycle tests cited only as partial evidence.",
+      "evidence": "Re-reviewed the current content during PR #60 integration on 2026-11-10; SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (CareerScope PR #60 merge reconciliation)",
+      "sha256": "691666a8bf2603c54636eabddcdfd45d3deb1452ae028de4fed700528ce0a30f"
     },
     {
       "path": "docs/SECURITY.md",
@@ -2430,10 +2430,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the item 3.16 row. Historical failures and approvals remain tied to their original SHAs; exact-head approval and CI, dev merge, and post-merge CI are recorded, and the item is verified.",
-      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; run 42758118526 passed all three required jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b. Post-merge run 42759315007 passed Quality gates and Services/integration/browser suites; image build skipped on push.",
-      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "353f038dcbc10b6340abba22e7aa7766991a7158fcd49bb4f33583047eab03e7"
+      "observations": "Reconciled Stage 03 rows against the canonical tracker: 3.14 is partial with lifecycle evidence, exact-head ChatGPT approval and passing CI recorded; 3.16 remains verified with its exact accepted SHA, CI, merge, and post-merge evidence. Rows are unique and ordered.",
+      "evidence": "Updated with PR #60 exact-head review and CI evidence; SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (CareerScope PR #60 merge reconciliation)",
+      "sha256": "905b29b1d8e02720d2f9184418b530bce0221fb498278a97b27f362a281d24e4"
     },
     {
       "path": "docs/TESTING.md",
@@ -3510,10 +3510,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the root test command delta: it registers the profile completeness node:test file in the explicit unit suite. No dependency or runtime command changed.",
-      "evidence": "npm test passed 371 tests with 3 skips and no failures on the Stage 03 item 3.16 revision.",
-      "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "6b71db79c2e0c943a5e51833a4703d66d01d1deae90b10101e9327b8efd8a373"
+      "observations": "Re-reviewed the explicit unit-test script: it retains packages/core/src/verification.test.ts and includes apps/web/src/lib/profile-completeness.test.ts. No dependency, runtime, or unrelated command changed.",
+      "evidence": "Re-reviewed the current content during PR #60 integration on 2026-11-10; SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (CareerScope PR #60 merge reconciliation)",
+      "sha256": "62847bbc01409fce4013d1ccfda6ae1627ff27f9bc19c1874eab6f25d85b2367"
     },
     {
       "path": "packages/core/package.json",
@@ -3870,9 +3870,9 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed export delta: ProfilePhotoRepository is exported from the existing core package barrel without changing other public exports.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "observations": "Re-reviewed the core public barrel: the generic verification lifecycle is deliberately not exported through the public API until an approved issuance policy and authorized evidence flow exist. Other exports are unchanged.",
+      "evidence": "Reviewed current test and API-boundary diff after independent exact-head review; SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (CareerScope PR #60 exact-head review corrections)",
       "sha256": "4cf28863d78321d8e3ec5abf31e8d406dd8bd108260917af097cb9af45dc2e48"
     },
     {
@@ -4442,6 +4442,30 @@
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
       "sha256": "c0aaecc1d5e0ab319fb64a447da18baabd8a13d6182fe7e5245e224d2a5c4633"
+    },
+    {
+      "path": "packages/core/src/verification.test.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "prior full-file review plus current item 3.14 change review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Re-reviewed lifecycle and public API regression tests: they import the built @careerscope/core entry point and assert the generic helpers are absent until approved issuance exists; unknown types/statuses, missing fields, arrays, fractional timestamps and malformed revocation metadata fail closed.",
+      "evidence": "Reviewed current test and API-boundary diff after independent exact-head review; SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (CareerScope PR #60 exact-head review corrections)",
+      "sha256": "4d415239fb2430e91b0e164f09366c8ec44156b9744cceb7347abc011dbb0276"
+    },
+    {
+      "path": "packages/core/src/verification.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "prior full-file review plus current item 3.14 change review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Policy-neutral lifecycle primitives still do not issue or persist optional verification ticks. Current review adds runtime guards for null/undefined checks and malformed revocation payloads; evidence policy, persistence, candidate notice/appeal workflow, recruiter display and counsel review remain open.",
+      "evidence": "Runtime lifecycle helpers fail closed on malformed check/revocation inputs. Focused Node 24.22.2 Docker tests pass 5/5; exact-head hosted CI remains required.",
+      "reviewer": "Codex (Stage 03 item 3.14)",
+      "sha256": "abbb815c04daa1ca155dbef0cff88ef7d468542d21691480c79272ca27f6ad08"
     },
     {
       "path": "packages/core/tsconfig.json",
@@ -6120,10 +6144,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-read the v12 reconciliation assertions after updating the stale launch-blocking count fixture from 164 to 153. The item 1.02 prose-count mutation test now validates the owner-scoped exclusions; focused inventory and traceability suites pass 49/49.",
-      "evidence": "Stage 01 item 1.02 review on commit 08af3d4635bfc93e73f2dfa47b86190ba58024f4; node --test scripts/ci/check-requirements-inventory.test.mjs scripts/ci/check-traceability.test.mjs passed 49/49.",
-      "reviewer": "Codex (Stage 01 item 1.02)",
-      "sha256": "aff1329611c70a50498a2dc49eb05135dd6970e210267e4f08aba23343f3e95f"
+      "observations": "Re-reviewed the mutation test change: expected inventory counts are derived dynamically via analyzeInventory and summaryLine instead of a hard-coded implemented count; this preserves the stale-prose assertion when inventory changes.",
+      "evidence": "Re-reviewed the current content during PR #60 integration on 2026-11-10; SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (CareerScope PR #60 merge reconciliation)",
+      "sha256": "b1022e02bcea4f1fde82af687ce3ee8dc1993d85f868ca5280c9b99caa24b6d4"
     },
     {
       "path": "scripts/ci/clean-dist.mjs",

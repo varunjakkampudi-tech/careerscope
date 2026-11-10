@@ -33,6 +33,21 @@ retention job deletes rows whose `expires_at` has passed and preserves unexpired
 requests. If that timer runs as configured, an abandoned address is removed by
 the next weekly sweep after its five-minute challenge expiry. Live timer
 operation and the legal retention policy remain unverified.
+Candidate verification ticks are not inferred from profile claims or the presence
+of links. `packages/core/src/verification.ts` defines the technical lifecycle
+shape for pending, checked, expired and revoked checks, including timestamps,
+recheck time, revocation reason and appeal availability. It does not create
+verification evidence, confer a verified status, deliver notices, or implement
+appeals. The email tick continues to use `users.email_verified_at` and is tied to
+the account's current address. College and profile-link verification remain
+unavailable until their evidence, validity, recheck, notice and appeal policies
+receive product and counsel approval. See [V12-RECONCILIATION](requirements/V12-RECONCILIATION.md).
+The generic verified state permits null expiry and recheck timestamps because
+no type-specific schedule is approved yet. Any future issuance boundary must
+require an approved evidence policy and enforce its required deadline before a
+tick can be exposed. Once revoked, a historical record remains revoked even
+after its original expiry or recheck time; those deadlines must be later than
+the revocation timestamp. These primitives do not authorize issuing ticks.
 
 The active Drizzle journal contains five migrations. `0000_initial_schema.sql`
 establishes the baseline, including the OTP/session/consent/email-change and

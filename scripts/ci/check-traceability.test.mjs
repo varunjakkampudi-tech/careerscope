@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { analyzeInventory, summaryLine } from './check-requirements-inventory.mjs';
 import {
   analyze,
   analyzeFoundations,
@@ -263,6 +264,7 @@ test('parseFoundations reads wrapped field values', () => {
 
 test('the Item 1.02 prose and the register must quote the inventory counts', async () => {
   const real = fileURLToPath(new URL('../..', import.meta.url));
+  const inventory = analyzeInventory(real, '');
   assert.deepEqual(await checkReconciliationProse(real), []);
   const stale = async (path, from, to) => {
     const root = mkdtempSync(join(tmpdir(), 'careerscope-prose-'));
@@ -287,12 +289,11 @@ test('the Item 1.02 prose and the register must quote the inventory counts', asy
       rmSync(root, { recursive: true, force: true });
     }
   };
-  const trace = await stale('docs/TRACEABILITY.md', '68 IMPLEMENTED', '69 IMPLEMENTED');
+  const currentImplemented = `${inventory.counts.IMPLEMENTED} IMPLEMENTED`;
+  const changedImplemented = `${inventory.counts.IMPLEMENTED + 1} IMPLEMENTED`;
+  const trace = await stale('docs/TRACEABILITY.md', currentImplemented, changedImplemented);
   assert.equal(trace.length, 1);
-  assert.match(
-    trace[0],
-    /docs\/TRACEABILITY\.md must quote the inventory counts exactly: "319 clauses \(68 IMPLEMENTED/,
-  );
+  assert.ok(trace[0].includes(summaryLine(inventory)));
   const claim = await stale(
     'docs/TRACEABILITY.md',
     '153 launch-blocking gaps',
