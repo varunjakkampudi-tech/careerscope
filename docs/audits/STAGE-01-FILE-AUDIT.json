@@ -187,18 +187,6 @@
       "sha256": "40144f03a9de3c98e1a75306bf3b155817ab251a0ada3e7b34a1c0c0ad2be754"
     },
     {
-      "path": "README.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Read the complete file. Documents the stack, Node/Docker prerequisites, local setup, script purposes, test-service requirements, repository layout, and documentation entry points. It warns against committing credentials. The deployment section is existing documentation, not an authorization to deploy. No finding.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "6ac7a427ad9169fb533ad0668c7a3fc206296de7f92d9c1c5924a15df3338cb6"
-    },
-    {
       "path": "apps/api/package.json",
       "category": "backend-api",
       "reviewMethod": "prior complete source review plus current exact-dev-diff review",
@@ -571,18 +559,6 @@
       "sha256": "207e265ff4901f9ad9f96d8ce08530e04f9fc600815472a66d0a446096d654cd"
     },
     {
-      "path": "apps/web/README.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Reviewed complete web workspace README. Documents local preview/API ports, build/start commands, synthetic UI-test services, private-cache/credential constraints, and links to repo architecture. Its Caddy deployment note is descriptive context, not authorization; deployment work is excluded by the owner scope.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "60e5bfe282b5b5b86ccd47364c0fadcd1950c59ad208b44bb270a7a2b468abe4"
-    },
-    {
       "path": "apps/web/eslint.config.mjs",
       "category": "frontend",
       "reviewMethod": "content-read",
@@ -667,6 +643,18 @@
       "sha256": ""
     },
     {
+      "path": "apps/web/README.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed complete web workspace README. Documents local preview/API ports, build/start commands, synthetic UI-test services, private-cache/credential constraints, and links to repo architecture. Its Caddy deployment note is descriptive context, not authorization; deployment work is excluded by the owner scope.",
+      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "60e5bfe282b5b5b86ccd47364c0fadcd1950c59ad208b44bb270a7a2b468abe4"
+    },
+    {
       "path": "apps/web/scripts/build-with-csp.mjs",
       "category": "frontend",
       "reviewMethod": "content-read",
@@ -705,14 +693,14 @@
     {
       "path": "apps/web/src/app/(app)/dashboard/page.tsx",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused source and test review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete dashboard page. All API reads are owner-scoped and gated on authenticated session; progress and counts distinguish exact values from capped/paginated data. Recommended results and skills come only from the owner’s latest usable search, and loading/error/empty states are explicit. Links preserve run and lead identifiers via URL encoding. AI availability is accurately stated.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "35213cb29f20b67f6ab37ab1568c8004652fe664160b48152a2e8db022dd4c02"
+      "observations": "Reviewed the full dashboard page and item 3.16 diff. Profile completeness is separate from activity-based Career Progress, derives only from the authenticated owner-scoped profile response, distinguishes loading/error/success, has accessible error recovery and progress semantics, and labels candidate background as unverified.",
+      "evidence": "Stage 03 item 3.16 local validation: focused profile tests 6/6, complete npm test 371 passed/3 skipped/0 failed, npm run build including CSP, typecheck, lint, format, and roadmap traceability passed. Local browser execution unavailable because .env is absent; exact-SHA hosted CI pending.",
+      "reviewer": "Codex (Stage 03 item 3.16)",
+      "sha256": "426f217e4ff42415820d074e179244ae83dfdf89471a12d22ef5674a05e14b1d"
     },
     {
       "path": "apps/web/src/app/(app)/jobs/page.tsx",
@@ -1312,14 +1300,14 @@
     {
       "path": "apps/web/src/lib/api-schemas.ts",
       "category": "frontend",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "focused source and test review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Extended the profile response preference schema with nullable, normalized three-letter minSalaryCurrency, preserving legacy responses where the field is absent through the null default. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "3e61bfbb7d8b7b74f3ce5d1174fa3ae5307b5470b7de20cc563dad91ab31cc6c"
+      "observations": "Reviewed the dashboard profile parser extension. It selects only saved candidate and preference fields required by the completeness meter and tolerates additional server response fields; the optional legacy career segment and arrays have safe defaults.",
+      "evidence": "Compared against GET /api/profile response and schema, then validated with Stage 03 item 3.16 typecheck, production build, tests, and hosted CI pending.",
+      "reviewer": "Codex (Stage 03 item 3.16)",
+      "sha256": "43df1ddc875f7f463c7e7ea28c1067c0cbcc5033dfc27395749e691d74a8da80"
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
@@ -1404,6 +1392,30 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "18cf52f3723fd997ce0809d911c692f29774d0dde123d63dc29a68d8f5da478e"
+    },
+    {
+      "path": "apps/web/src/lib/profile-completeness.test.ts",
+      "category": "frontend",
+      "reviewMethod": "focused source and test review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "reviewer": "Codex (Stage 03 item 3.16)",
+      "observations": "Reviewed all profile completeness unit cases, including all 12 career-stage/background-source combinations (student, fresher, experienced, unset x education, experience, projects), empty and complete profiles, exact intermediate percentages, whitespace handling, and explicit exclusion of optional contact, link, photo, resume, location, and salary fields.",
+      "evidence": "Focused profile completeness tests passed 6/6; full unit suite passed 371 with 3 skipped and 0 failures; typecheck and Stage 01 audit passed on the current worktree revision.",
+      "sha256": "c4756862bdf43c3157ffc597002ed121376683b7beafcbc64be261ca3f9dc226"
+    },
+    {
+      "path": "apps/web/src/lib/profile-completeness.ts",
+      "category": "frontend",
+      "reviewMethod": "focused source and test review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "reviewer": "Codex (Stage 03 item 3.16)",
+      "observations": "Reviewed the complete pure checklist calculator. It equally weights five saved owner profile criteria, trims whitespace, supports segment-relevant background evidence, excludes optional fields and unrelated activity, and computes a bounded percentage from completed checklist entries.",
+      "evidence": "Focused unit tests 6/6 and full npm test passed; typecheck and production build passed. Independent exact-SHA review is conditional on hosted CI.",
+      "sha256": "1da94af9f8b6d79f399fb8474fb4a8490fd57922db0f83949bfdc0321223d0e1"
     },
     {
       "path": "apps/web/src/lib/profile-photo.ts",
@@ -1714,280 +1726,6 @@
       "sha256": "8ea8636442e8f3d024156340394943846a4fda4017dbddd899e89cbe1d029c3a"
     },
     {
-      "path": "docs/AUTHENTICATION.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [
-        {
-          "id": "S1-F046",
-          "severity": "low",
-          "status": "fixed",
-          "summary": "Authentication documentation required at least 24 distinct bytes for the OTP secret, contradicting the runtime predicate and test that correctly accepts a valid random sample with fewer distinct values.",
-          "remediation": "Documented the current format/heuristic checks and clarified that only a CSPRNG can establish the required random generation process."
-        }
-      ],
-      "observations": "Read the complete authentication contract. The OTP secret paragraph inaccurately required 24 distinct byte values; runtime validation and its regression test intentionally accept a valid CSPRNG sample with fewer than 24 distinct bytes. Updated the doc to describe the actual format and heuristic checks, and to state clearly that the heuristic cannot prove randomness. Other text distinguishes test access, production prohibition, session behavior, provider/legal gates and unverified host timers.",
-      "evidence": "Compared the claim with packages/core/src/runtime.ts and runtime.integration.test.ts; corrected on current branch.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "38f787d5abf5ff92706b491e2963e7159b23e561b583178d920239f0ec9ec93a"
-    },
-    {
-      "path": "docs/BLOCKERS.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Reviewed blocker status and made the resolved full-audit coverage statement count-independent; current coverage counts remain in the manifest and audit validation output. Follow-up item 2.05 review: inspected owner/legacy ID mapping and legal gate wording; records counsel-approved legal text and public HTTPS URLs remain outstanding.",
-      "evidence": "Content inspected and aligned to the current file audit on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes. Additional focused item 2.05 documentation review; SHA-256 records current bytes.",
-      "reviewer": "Codex (Stage 01 closeout)",
-      "sha256": "10f198095caa1372d2447db323e2f39420d534b7696c9f28a30d13b929e2402e"
-    },
-    {
-      "path": "docs/DATA-MODEL.md",
-      "category": "documentation",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [
-        {
-          "id": "S1-F073",
-          "severity": "low",
-          "status": "fixed",
-          "summary": "The data model described migration numbers 0020-0026 that are absent from the active Drizzle journal.",
-          "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
-        }
-      ],
-      "observations": "Re-reviewed the profile-photo data-model text against migration 0004 and the repository: one bounded bytea WebP per owner, cascade on account deletion, session-only owner reads and unresolved retention policy are accurately stated. Existing migration numbering and applied-file immutability are preserved.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "b1b7f819f76581cf1dc07fb546847dbbac14f4dcf0f07ce9aa12e8b6d8c7cb9b"
-    },
-    {
-      "path": "docs/FOUNDATIONS.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [
-        {
-          "id": "S1-F048",
-          "severity": "low",
-          "status": "fixed",
-          "summary": "The Stage 01 crosswalk referred to 478 tracked files although the current dev baseline contains 498.",
-          "remediation": "Updated the crosswalk to the current tracked-file count; future counts should be sourced from the current Git baseline."
-        },
-        {
-          "id": "S1-F074",
-          "severity": "low",
-          "status": "fixed",
-          "summary": "The owner Stage 01 crosswalk still marked item 1.01 Partial after its exact SHA was independently approved and merged.",
-          "remediation": "Changed the crosswalk status to Complete with the approved commit, full audit scope and final CI approval evidence."
-        },
-        {
-          "id": "S1-F075",
-          "severity": "low",
-          "status": "fixed",
-          "summary": "The progress paragraph said the approved item 1.01 audit was still outstanding after the crosswalk marked it complete.",
-          "remediation": "Clarified that item 1.01 is complete; at that checkpoint other items and closing acceptance remained, and the final Stage 01 closeout is now recorded with exact hosted evidence."
-        }
-      ],
-      "observations": "Reviewed the Stage 01 closeout crosswalk, all fifteen verified checklist items, accepted low-severity risk and exact hosted closeout evidence.",
-      "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 closeout)",
-      "sha256": "2fe705eac637977c93ffa34c55c1d8d891208333b58d644f1094a601c99bf90c"
-    },
-    {
-      "path": "docs/FRONTEND-ARCHITECTURE.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Read in full. Describes route groups, client API/CSRF/session/SSE contracts, rendering, CSP and accessibility claims, plus unavailable backend surfaces. Automated accessibility claims require separate test evidence; route and CSP claims are checked against frontend files.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "698e032d5b9b22698b29b4c12edd5051aaf4d22ec36978cc7aaca2e4de7d0ea3"
-    },
-    {
-      "path": "docs/FRONTEND.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Read in full. Describes the single Next.js app, React Server Components, TanStack Query, typed API helper responsibilities and brand asset location.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "7400efa7e1173a2a956094a90cb177b20babfaf86814a79670775bdfe820e91a"
-    },
-    {
-      "path": "docs/GAP-MATRIX.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Mapped canonical owner item 2.10 account recovery to legacy local row 2.17. Follow-up item 2.05 review: inspected legacy registration row 2.09 mapping to canonical owner item 2.05; registration remains disabled pending counsel-approved legal text and public HTTPS URLs.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes. Additional focused item 2.05 documentation review; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.10)",
-      "sha256": "48433ac26de38acb95b1a52679c1fb767a56b5b125b0e99185a0b15256ede397"
-    },
-    {
-      "path": "docs/KNOWN-LIMITATIONS.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Read in full. Lists service/provider/live-environment limitations, CSP style exception, removal of external AI and limits of the admin test identity. Off-host backup/live infrastructure work is explicitly outside the current roadmap scope.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "bce85b972952a14231f83a364e905b6c723b19b799c21f57f957698d9cf08ace"
-    },
-    {
-      "path": "docs/PRIVACY.md",
-      "category": "documentation",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Re-reviewed privacy text update; profile pictures are explicitly treated as private runtime data and excluded from Git, public artifacts, issues, screenshots, fixtures, logs and CI artifacts.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "dcd707959c4f3d92ca8018d09df6b41419522dbe727e1e9140b919e99f9f8d0f"
-    },
-    {
-      "path": "docs/PRODUCT-SURFACE.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Read in full. Lists the intended web routes and distinguishes current API-backed surfaces from design-only future surfaces; states that external job navigation does not change application status. Route existence is checked alongside frontend audit.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "d34cdad4a37f68e9fbe1ff9cfd6aaa60e6b9b3316c0ddd42d8950dcc8a4163f8"
-    },
-    {
-      "path": "docs/PRODUCT.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Read in full. Defines candidate-controlled discovery and tracking, supported and out-of-scope behavior, roles, language/browser targets, provider gates and product profile. Recovery and hosting entries mention plans now excluded from the active roadmap; no infrastructure action taken.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "b7d2b3bfdf8b67618c21dea3abce23d004bf1d326183965a8ee75341f1c2dc39"
-    },
-    {
-      "path": "docs/PROGRESS.md",
-      "category": "documentation",
-      "reviewMethod": "source review plus item 1.01 reviewer-feedback update",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [
-        {
-          "id": "S1-F045",
-          "severity": "low",
-          "status": "fixed",
-          "summary": "The progress page published stale Stage 01 audit counts (19/481 reviewed and 7 partial) while the current manifest contained 160/498 reviewed at the audit start.",
-          "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
-        }
-      ],
-      "observations": "Re-reviewed current item 1.01 status: the prior PR head received conditional ChatGPT approval with two nonblocking suggestions; both refinements were applied in a new head, whose CI and independent review remain pending. It preserves the separate accepted S1-F014 risk and does not claim final acceptance. Follow-up item 2.05 review: inspected Stage 02 progress against canonical inventory; Stage 02 remains in progress and item 2.05 remains gated.",
-      "evidence": "Hash refreshed during exact-dev evidence reconciliation; PR #18 approval remains tied to its exact SHA, and independent review of refreshed audit evidence is pending.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "e5e54854a146f595416368603fb0138d68c625635a3e426af3654ace339c89b2"
-    },
-    {
-      "path": "docs/PROVIDERS.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Read in full. Separates implemented adapters, request identifiers and permitted launch candidates; states current rights profiles are empty and gates fail closed. No live rights or provider call is claimed.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "a1e58339cdbb9c4caf21495fd49480c0f550811f11990da5a1aea5e20bc73cf3"
-    },
-    {
-      "path": "docs/README.md",
-      "category": "documentation",
-      "reviewMethod": "source review plus current item 1.01 change review",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Re-reviewed the audit index: it accurately links the human-readable and machine-readable Stage 01 file audit and now states that npm run audit:stage01 enforces full coverage.",
-      "evidence": "Current audit refresh commit candidate based on origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; exact candidate SHA-256 recorded; new exact-head CI/review pending.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "d2e34505b004259829698be7adb5ac06224f377971ef6da3c367c05e8b72f1b1"
-    },
-    {
-      "path": "docs/SECURITY.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Reviewed current security guidance; records zero current npm audit findings and explains the closed minimatch classification using the publisher affected range.",
-      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.10)",
-      "sha256": "75b6fc256d37e88dbb3be0f2fbc4f4e3b6bb9a7e6d12dcfe7a8091f79967b858"
-    },
-    {
-      "path": "docs/TEST-MATRIX.md",
-      "category": "documentation",
-      "reviewMethod": "source review plus item 1.01 reviewer-feedback update",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Re-reviewed Stage 01 item 1.01 record. The verification column no longer labels November 8 evidence as November 6; the row records parent-dev CI and makes clear that the conditional review was for the previous head, with suggested refinements applied and new-head validation pending.",
-      "evidence": "Hash refreshed during exact-dev evidence reconciliation; current-dev CI is recorded, prior approval boundaries are explicit, and independent review of refreshed audit evidence is pending.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "97e2d6445a98f33b8e05fb5d76469129b770d298c30c3b6d189c911cf102be04"
-    },
-    {
-      "path": "docs/TESTING.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Read in full. Separates fast, service-backed, browser and recovery checks; explains explicit test-file registration and test typechecking, and distinguishes hosted/provider/legal/accessibility evidence from local execution.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "369e5ec089f053ad2c96d8f17e98bd80e7d774d06b93cd368f5896faa5877dd4"
-    },
-    {
-      "path": "docs/TRACEABILITY.md",
-      "category": "documentation",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Re-reviewed the current traceability addition: inventories and their denominators remain separate, the owner roadmap remains the 328-item source, and the existing crosswalk points to the enforced checker and CI-run tests.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "c386745edee1ba5060402f9fe3bf1feceba9886d48913895166d7198d053454e"
-    },
-    {
-      "path": "docs/UI-VERIFICATION.md",
-      "category": "documentation",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Reviewed the browser verification record and added exact post-merge Stage 01 closeout evidence; recorded browser, accessibility, keyboard, responsive, integration and quality-gate scope.",
-      "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 closeout)",
-      "sha256": "956e85739218676fbb7f1874901e0bb0651ba3b9c42165341df024593f2aa122"
-    },
-    {
       "path": "docs/architecture/API-OPENAPI-REVIEW.md",
       "category": "documentation",
       "reviewMethod": "content-read",
@@ -2108,6 +1846,58 @@
       "sha256": "3a415414d399550ba267bdff0c2fa9f27d735d15dd5d8bc0aef37ad08ba8143a"
     },
     {
+      "path": "docs/AUTHENTICATION.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [
+        {
+          "id": "S1-F046",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "Authentication documentation required at least 24 distinct bytes for the OTP secret, contradicting the runtime predicate and test that correctly accepts a valid random sample with fewer distinct values.",
+          "remediation": "Documented the current format/heuristic checks and clarified that only a CSPRNG can establish the required random generation process."
+        }
+      ],
+      "observations": "Read the complete authentication contract. The OTP secret paragraph inaccurately required 24 distinct byte values; runtime validation and its regression test intentionally accept a valid CSPRNG sample with fewer than 24 distinct bytes. Updated the doc to describe the actual format and heuristic checks, and to state clearly that the heuristic cannot prove randomness. Other text distinguishes test access, production prohibition, session behavior, provider/legal gates and unverified host timers.",
+      "evidence": "Compared the claim with packages/core/src/runtime.ts and runtime.integration.test.ts; corrected on current branch.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "38f787d5abf5ff92706b491e2963e7159b23e561b583178d920239f0ec9ec93a"
+    },
+    {
+      "path": "docs/BLOCKERS.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed blocker status and made the resolved full-audit coverage statement count-independent; current coverage counts remain in the manifest and audit validation output. Follow-up item 2.05 review: inspected owner/legacy ID mapping and legal gate wording; records counsel-approved legal text and public HTTPS URLs remain outstanding.",
+      "evidence": "Content inspected and aligned to the current file audit on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes. Additional focused item 2.05 documentation review; SHA-256 records current bytes.",
+      "reviewer": "Codex (Stage 01 closeout)",
+      "sha256": "10f198095caa1372d2447db323e2f39420d534b7696c9f28a30d13b929e2402e"
+    },
+    {
+      "path": "docs/DATA-MODEL.md",
+      "category": "documentation",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [
+        {
+          "id": "S1-F073",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The data model described migration numbers 0020-0026 that are absent from the active Drizzle journal.",
+          "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
+        }
+      ],
+      "observations": "Re-reviewed the profile-photo data-model text against migration 0004 and the repository: one bounded bytea WebP per owner, cascade on account deletion, session-only owner reads and unresolved retention policy are accurately stated. Existing migration numbering and applied-file immutability are preserved.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "b1b7f819f76581cf1dc07fb546847dbbac14f4dcf0f07ce9aa12e8b6d8c7cb9b"
+    },
+    {
       "path": "docs/decisions/CSP-STRICT-SCRIPT-SRC.md",
       "category": "documentation",
       "reviewMethod": "content-read",
@@ -2140,6 +1930,76 @@
       "sha256": "4f350da38afb8faddf295d5e809a6d88198fe776a0ccdb810f83e5497024f921"
     },
     {
+      "path": "docs/FOUNDATIONS.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [
+        {
+          "id": "S1-F048",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The Stage 01 crosswalk referred to 478 tracked files although the current dev baseline contains 498.",
+          "remediation": "Updated the crosswalk to the current tracked-file count; future counts should be sourced from the current Git baseline."
+        },
+        {
+          "id": "S1-F074",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The owner Stage 01 crosswalk still marked item 1.01 Partial after its exact SHA was independently approved and merged.",
+          "remediation": "Changed the crosswalk status to Complete with the approved commit, full audit scope and final CI approval evidence."
+        },
+        {
+          "id": "S1-F075",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The progress paragraph said the approved item 1.01 audit was still outstanding after the crosswalk marked it complete.",
+          "remediation": "Clarified that item 1.01 is complete; at that checkpoint other items and closing acceptance remained, and the final Stage 01 closeout is now recorded with exact hosted evidence."
+        }
+      ],
+      "observations": "Reviewed the Stage 01 closeout crosswalk, all fifteen verified checklist items, accepted low-severity risk and exact hosted closeout evidence.",
+      "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (Stage 01 closeout)",
+      "sha256": "2fe705eac637977c93ffa34c55c1d8d891208333b58d644f1094a601c99bf90c"
+    },
+    {
+      "path": "docs/FRONTEND-ARCHITECTURE.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read in full. Describes route groups, client API/CSRF/session/SSE contracts, rendering, CSP and accessibility claims, plus unavailable backend surfaces. Automated accessibility claims require separate test evidence; route and CSP claims are checked against frontend files.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "698e032d5b9b22698b29b4c12edd5051aaf4d22ec36978cc7aaca2e4de7d0ea3"
+    },
+    {
+      "path": "docs/FRONTEND.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read in full. Describes the single Next.js app, React Server Components, TanStack Query, typed API helper responsibilities and brand asset location.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "7400efa7e1173a2a956094a90cb177b20babfaf86814a79670775bdfe820e91a"
+    },
+    {
+      "path": "docs/GAP-MATRIX.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Mapped canonical owner item 2.10 account recovery to legacy local row 2.17. Follow-up item 2.05 review: inspected legacy registration row 2.09 mapping to canonical owner item 2.05; registration remains disabled pending counsel-approved legal text and public HTTPS URLs.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes. Additional focused item 2.05 documentation review; SHA-256 records current bytes.",
+      "reviewer": "Codex (owner Stage 02 item 2.10)",
+      "sha256": "48433ac26de38acb95b1a52679c1fb767a56b5b125b0e99185a0b15256ede397"
+    },
+    {
       "path": "docs/governance/AGENT-SECURITY.md",
       "category": "documentation",
       "reviewMethod": "content-read",
@@ -2150,6 +2010,18 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "8ecae903813fa125c1d27463d32c6aa51511188dc92d0815ac4d74591c727bac"
+    },
+    {
+      "path": "docs/KNOWN-LIMITATIONS.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read in full. Lists service/provider/live-environment limitations, CSP style exception, removal of external AI and limits of the admin test identity. Off-host backup/live infrastructure work is explicitly outside the current roadmap scope.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "bce85b972952a14231f83a364e905b6c723b19b799c21f57f957698d9cf08ace"
     },
     {
       "path": "docs/legal/PRIVACY-POLICY-DRAFT.md",
@@ -2360,6 +2232,86 @@
       "sha256": "07bf842ac63d7fc2d69fac91644d7e6c6d39303160255222c98c17af17c9fd1d"
     },
     {
+      "path": "docs/PRIVACY.md",
+      "category": "documentation",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Re-reviewed privacy text update; profile pictures are explicitly treated as private runtime data and excluded from Git, public artifacts, issues, screenshots, fixtures, logs and CI artifacts.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "dcd707959c4f3d92ca8018d09df6b41419522dbe727e1e9140b919e99f9f8d0f"
+    },
+    {
+      "path": "docs/PRODUCT-SURFACE.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read in full. Lists the intended web routes and distinguishes current API-backed surfaces from design-only future surfaces; states that external job navigation does not change application status. Route existence is checked alongside frontend audit.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "d34cdad4a37f68e9fbe1ff9cfd6aaa60e6b9b3316c0ddd42d8950dcc8a4163f8"
+    },
+    {
+      "path": "docs/PRODUCT.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read in full. Defines candidate-controlled discovery and tracking, supported and out-of-scope behavior, roles, language/browser targets, provider gates and product profile. Recovery and hosting entries mention plans now excluded from the active roadmap; no infrastructure action taken.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "b7d2b3bfdf8b67618c21dea3abce23d004bf1d326183965a8ee75341f1c2dc39"
+    },
+    {
+      "path": "docs/PROGRESS.md",
+      "category": "documentation",
+      "reviewMethod": "source review plus implementation exact-head CI and status reconciliation",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [
+        {
+          "id": "S1-F045",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The progress page published stale Stage 01 audit counts (19/481 reviewed and 7 partial) while the current manifest contained 160/498 reviewed at the audit start.",
+          "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
+        }
+      ],
+      "observations": "Re-reviewed the Stage 01 item 1.01 audit refresh. Current dev audit has complete coverage for 514 tracked files (446 reviewed, 68 not-applicable-source), no partial/unreviewed entries, and no open critical/high findings. Current dev CI run 42763470961 passed Quality gates and Services/integration/browser on 036dd3c11278a26534544792f4834a0902214d17; image build was skipped for the push. PR #18 remains the item approval; PR #74 refresh awaits exact-head review.",
+      "evidence": "Reviewed the current dev audit manifest and exact historical CI record; the documentation refresh is based on current dev after PR #75. PR #74 exact-head CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "1addad9d227b67cb8260b9eab3ccad89a045505482844bf0aa05b67c5cf5b4d3"
+    },
+    {
+      "path": "docs/PROVIDERS.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read in full. Separates implemented adapters, request identifiers and permitted launch candidates; states current rights profiles are empty and gates fail closed. No live rights or provider call is claimed.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "a1e58339cdbb9c4caf21495fd49480c0f550811f11990da5a1aea5e20bc73cf3"
+    },
+    {
+      "path": "docs/README.md",
+      "category": "documentation",
+      "reviewMethod": "source review plus current item 1.01 change review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Re-reviewed the audit index: it accurately links the human-readable and machine-readable Stage 01 file audit and now states that npm run audit:stage01 enforces full coverage.",
+      "evidence": "Current audit refresh commit candidate based on origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; exact candidate SHA-256 recorded; new exact-head CI/review pending.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "d2e34505b004259829698be7adb5ac06224f377971ef6da3c367c05e8b72f1b1"
+    },
+    {
       "path": "docs/requirements/CareerScope-v12.md",
       "category": "documentation",
       "reviewMethod": "content-read",
@@ -2374,14 +2326,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "prior complete source review plus current implementation CI and status reconciliation",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed item 3.13 closeout and surrounding inventory: the item retains its source title/status, records currentStatus verified with concrete implementation and tests, links PR #57/#58 evidence, and leaves the overall 328-item/stage inventory structure intact. Traceability checker validates row and counts.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "edb923beb53cbffe63c43c25e59dfaeb5d0b32ab5817705cfee50ed1a1c43750"
+      "observations": "Re-reviewed the canonical item 3.16 record. It retains the owner checklist title, records verified status and evidence for exact-head approval, successful CI, merge to dev, and successful post-merge gates.",
+      "evidence": "Item 3.16 is verified after ChatGPT approval at exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031, all three exact-head jobs passed in run 42758118526, PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b, and post-merge run 42759315007 passed Quality gates and Services/integration/browser suites.",
+      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
+      "sha256": "89d2793761d4b033d7115994e5869f5088c2b2727331b3a67b15cc114392b43a"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -2414,6 +2366,18 @@
       "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
       "reviewer": "Codex (Stage 03 item 3.12)",
       "sha256": "a13d7491ea60cefc4ca785aa5985f05fc8de8409dde6af6f67471ca5225d10b9"
+    },
+    {
+      "path": "docs/SECURITY.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed current security guidance; records zero current npm audit findings and explains the closed minimatch classification using the publisher affected range.",
+      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.10)",
+      "sha256": "75b6fc256d37e88dbb3be0f2fbc4f4e3b6bb9a7e6d12dcfe7a8091f79967b858"
     },
     {
       "path": "docs/security/DATA-CLASSIFICATION.md",
@@ -2460,6 +2424,54 @@
       "sha256": "298b3896d175b5a5dadf22296f082d36fe1a0d8facb793d37327d3016ebfd67b"
     },
     {
+      "path": "docs/TEST-MATRIX.md",
+      "category": "documentation",
+      "reviewMethod": "focused source, test and exact-head CI provenance review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Re-reviewed the Stage 01 item 1.01 row. It records current 514-file audit coverage, exact current-dev CI provenance, the original PR #18 acceptance boundary, and the pending exact-head review of PR #74.",
+      "evidence": "Current dev SHA 036dd3c11278a26534544792f4834a0902214d17 passed hosted run 42763470961 (Quality gates and Services/integration/browser); production image build was skipped on the push. PR #74 exact-head CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "35f4771b0ae6864f59766d832f173ab0179b7fa1dc7589dc757b729a86e3d0c0"
+    },
+    {
+      "path": "docs/TESTING.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read in full. Separates fast, service-backed, browser and recovery checks; explains explicit test-file registration and test typechecking, and distinguishes hosted/provider/legal/accessibility evidence from local execution.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "369e5ec089f053ad2c96d8f17e98bd80e7d774d06b93cd368f5896faa5877dd4"
+    },
+    {
+      "path": "docs/TRACEABILITY.md",
+      "category": "documentation",
+      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Re-reviewed the current traceability addition: inventories and their denominators remain separate, the owner roadmap remains the 328-item source, and the existing crosswalk points to the enforced checker and CI-run tests.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "c386745edee1ba5060402f9fe3bf1feceba9886d48913895166d7198d053454e"
+    },
+    {
+      "path": "docs/UI-VERIFICATION.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed the browser verification record and added exact post-merge Stage 01 closeout evidence; recorded browser, accessibility, keyboard, responsive, integration and quality-gate scope.",
+      "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
+      "reviewer": "Codex (Stage 01 closeout)",
+      "sha256": "956e85739218676fbb7f1874901e0bb0651ba3b9c42165341df024593f2aa122"
+    },
+    {
       "path": "drizzle.config.ts",
       "category": "repository-configuration",
       "reviewMethod": "content-read",
@@ -2482,18 +2494,6 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "b0aff517430775d0fbbab5101ff3ce655869aa51bd9a1870f3bc6d74f1dd6439"
-    },
-    {
-      "path": "infra/README.md",
-      "category": "documentation",
-      "reviewMethod": "scope-classification",
-      "state": "not-applicable-source",
-      "concerns": [],
-      "findings": [],
-      "observations": "Outside the owner-revised checklist scope: Hostinger/server deployment, production hosting, backup/rollback, and production host operations are excluded. No deployment or host action was performed.",
-      "evidence": "Scope classification from the owner instruction for Stage 01 item 1.01.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "d8422ff3ddd3b1eab18da05656143f5a4f33e2e24f0f1fe99a613f70ae75f1b2"
     },
     {
       "path": "infra/caddy/Caddyfile",
@@ -2740,30 +2740,6 @@
       "sha256": "ec7b22f470b775871becc1728adfffd705f3646191cacf652917ee8ef1e4eec7"
     },
     {
-      "path": "infra/docker/Dockerfile",
-      "category": "deployment-infrastructure",
-      "reviewMethod": "content-read",
-      "state": "reviewed",
-      "concerns": [],
-      "findings": [],
-      "observations": "Read in full (about 130 lines). Base images are digest pinned; the Caddy proxy is rebuilt from committed, pinned Go modules with -mod=readonly; the proxy and runtime stages run as uid 1000 and node; no apt or apk upgrade runs at build time; production dependencies are pruned before the runtime copy; no secret is copied into an image. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "7f94fa6980d143700b6c502728458d744b39a6e4af48870ab1c24fdad3f43e0c"
-    },
-    {
-      "path": "infra/docker/Dockerfile.dockerignore",
-      "category": "deployment-infrastructure",
-      "reviewMethod": "scope-classification",
-      "state": "not-applicable-source",
-      "concerns": [],
-      "findings": [],
-      "observations": "Outside the owner-revised checklist scope: Hostinger/server deployment, production hosting, backup/rollback, and production host operations are excluded. No deployment or host action was performed.",
-      "evidence": "Scope classification from the owner instruction for Stage 01 item 1.01.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "01a208bba6f454582473fb4fd4a2cf37fa5cfae8ab3d2ca7be5e57c5b8806cc2"
-    },
-    {
       "path": "infra/docker/caddy-proxy/go.mod",
       "category": "deployment-infrastructure",
       "reviewMethod": "scope-classification",
@@ -2842,6 +2818,30 @@
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
       "sha256": "aacf2cdeab7d0972374a83c244e0bdfe146d819593551f10686285650d662775"
+    },
+    {
+      "path": "infra/docker/Dockerfile",
+      "category": "deployment-infrastructure",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read in full (about 130 lines). Base images are digest pinned; the Caddy proxy is rebuilt from committed, pinned Go modules with -mod=readonly; the proxy and runtime stages run as uid 1000 and node; no apt or apk upgrade runs at build time; production dependencies are pruned before the runtime copy; no secret is copied into an image. No finding.",
+      "evidence": "",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+      "sha256": "7f94fa6980d143700b6c502728458d744b39a6e4af48870ab1c24fdad3f43e0c"
+    },
+    {
+      "path": "infra/docker/Dockerfile.dockerignore",
+      "category": "deployment-infrastructure",
+      "reviewMethod": "scope-classification",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Outside the owner-revised checklist scope: Hostinger/server deployment, production hosting, backup/rollback, and production host operations are excluded. No deployment or host action was performed.",
+      "evidence": "Scope classification from the owner instruction for Stage 01 item 1.01.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "01a208bba6f454582473fb4fd4a2cf37fa5cfae8ab3d2ca7be5e57c5b8806cc2"
     },
     {
       "path": "infra/host/apply-migrations.sh",
@@ -3192,6 +3192,18 @@
       "sha256": "aba359671616c9ad1db81fe7d1b72d5abeda83aae81f7401205b228cde5af1df"
     },
     {
+      "path": "infra/README.md",
+      "category": "documentation",
+      "reviewMethod": "scope-classification",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Outside the owner-revised checklist scope: Hostinger/server deployment, production hosting, backup/rollback, and production host operations are excluded. No deployment or host action was performed.",
+      "evidence": "Scope classification from the owner instruction for Stage 01 item 1.01.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "d8422ff3ddd3b1eab18da05656143f5a4f33e2e24f0f1fe99a613f70ae75f1b2"
+    },
+    {
       "path": "infra/systemd/careerscope-discovery.service",
       "category": "deployment-infrastructure",
       "reviewMethod": "scope-classification",
@@ -3408,6 +3420,18 @@
       "sha256": "55e3e843da5238f026a38a1b5386f97c6bcff35f01bc8580c9f152434ebd94a9"
     },
     {
+      "path": "migrations/meta/_journal.json",
+      "category": "generated-lockfile-or-snapshot",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
+    },
+    {
       "path": "migrations/meta/0000_snapshot.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
@@ -3468,18 +3492,6 @@
       "sha256": ""
     },
     {
-      "path": "migrations/meta/_journal.json",
-      "category": "generated-lockfile-or-snapshot",
-      "reviewMethod": "classification-only",
-      "state": "not-applicable-source",
-      "concerns": [],
-      "findings": [],
-      "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
-    },
-    {
       "path": "package-lock.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
@@ -3494,14 +3506,14 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "focused source and test review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed root script/dependency delta: the new image-normalization unit test is in test:unit and audit:stage01 now requires complete file coverage. Existing Node >=24 engine and workspace test/build scripts remain intact; lockfile installation on this source revision reported zero vulnerabilities.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "daf234b218fbe1c224c0dfab6401095f59d9a1da1260eeac397af4f5d37d5606"
+      "observations": "Reviewed the root test command delta: it registers the profile completeness node:test file in the explicit unit suite. No dependency or runtime command changed.",
+      "evidence": "npm test passed 371 tests with 3 skips and no failures on the Stage 03 item 3.16 revision.",
+      "reviewer": "Codex (Stage 03 item 3.16)",
+      "sha256": "6b71db79c2e0c943a5e51833a4703d66d01d1deae90b10101e9327b8efd8a373"
     },
     {
       "path": "packages/core/package.json",
@@ -5818,16 +5830,16 @@
       "sha256": "ddbc7ea525501873218104652ce61074a8435c7af9032be8605d5b92c1f67c77"
     },
     {
-      "path": "scripts/README.md",
+      "path": "README.md",
       "category": "documentation",
       "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete script catalog. Separates CI gates, runtime jobs, test harnesses, and local setup, and identifies entry-point packaging into the runtime image. Descriptive inventory only; no command was run from this README.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
+      "observations": "Read the complete file. Documents the stack, Node/Docker prerequisites, local setup, script purposes, test-service requirements, repository layout, and documentation entry points. It warns against committing credentials. The deployment section is existing documentation, not an authorization to deploy. No finding.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "35c79e5c608bbb4b5618f4b32987ddc73d658f6b4824723fac5e9aebba7c13da"
+      "sha256": "6ac7a427ad9169fb533ad0668c7a3fc206296de7f92d9c1c5924a15df3338cb6"
     },
     {
       "path": "scripts/ci/check-architecture-boundaries.mjs",
@@ -5909,7 +5921,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Re-reviewed the test suite after the ChatGPT refinement. Strict mode is table-tested against not-reviewed, partially-reviewed and requires-investigation records, each mixed with a valid reviewed entry; all three cases must fail with the exact expected state diagnostic.",
-      "evidence": "Content and SHA-256 reviewed in refreshed audit against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; current-dev CI run 42558636661 passed at 8aa281c85a7d7950fa8bbfcd9706686be84a1808. Independent reviewer acceptance of refreshed audit remains pending; prior PR #68 review was conditional.",
+      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
       "sha256": "ff780acc81177fde50aeca408b3cc7ac47ff0c5293e18f6506f826c98994b354"
     },
@@ -5957,7 +5969,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Re-reviewed the complete test file and added a focused regression assertion that audit:stage01 always passes --require-complete; it is in test:unit and prevents CI configuration from silently permitting incomplete file coverage.",
-      "evidence": "Content and SHA-256 reviewed in refreshed audit against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; current-dev CI run 42558636661 passed at 8aa281c85a7d7950fa8bbfcd9706686be84a1808. Independent reviewer acceptance of refreshed audit remains pending; prior PR #68 review was conditional.",
+      "evidence": "Current audit refresh commit candidate based on origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; exact candidate SHA-256 recorded; new exact-head CI/review pending.",
       "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
       "sha256": "9449bd00696772597a966dcac783a134b34037750a39779bce2f44e357b922f8"
     },
@@ -6381,6 +6393,18 @@
       "sha256": "467f80deb5f49df84522335d01b41ec8f027f4df5a45d5d6e503836fdab6d772"
     },
     {
+      "path": "scripts/README.md",
+      "category": "documentation",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed complete script catalog. Separates CI gates, runtime jobs, test harnesses, and local setup, and identifies entry-point packaging into the runtime image. Descriptive inventory only; no command was run from this README.",
+      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
+      "reviewer": "Codex (Stage 01 item 1.01)",
+      "sha256": "35c79e5c608bbb4b5618f4b32987ddc73d658f6b4824723fac5e9aebba7c13da"
+    },
+    {
       "path": "scripts/tests/bull-queue.integration.env",
       "category": "tooling-and-tests",
       "reviewMethod": "content-read",
@@ -6475,7 +6499,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "source review plus Stage 03 item 3.16 cross-account delayed-response regression",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6492,12 +6516,19 @@
           "status": "fixed",
           "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
           "remediation": "Write screenshots to a unique per-run directory under test-results."
+        },
+        {
+          "id": "S1-F072",
+          "severity": "medium",
+          "status": "fixed",
+          "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+          "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Re-reviewed the complete Stage 03 photo test delta on top of the previously reviewed full browser harness. Focused mode limits to Chromium; checks file keyboard access, unsupported/oversize rejection, API failure without persistence, upload and stored private row, both avatar slots sharing one refresh, reload persistence and deletion restoring initials. Broad browser scenario also covers owner image lifecycle, account switching/isolation, responsive/accessibility checks. Exact dev CI passed the browser suite.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "a52151ba6566b5b5d2430f81f02250edffc5ca1072b49c1c4a214a042c4462ab"
+      "observations": "Reviewed the full browser suite and changed owner-switch regression. Existing coverage verifies profile-completeness success, API failure/retry, persisted profile state, and cross-account data isolation. The delayed foreign-profile response is checked against the actual foreign-owner body and expected 80% score; the response remains held through sign-out/sign-in, is released through route.fulfill, and owner A remains at 100% after render. Earlier requestfinished/response waits timed out and a TypeScript requestAnimationFrame callback error was corrected. No remaining finding.",
+      "evidence": "Exact-head hosted CI run 42570381867 passed Quality gates, Services/integration/browser suites, and Production image build on db7a7df3011c344dd6a8d2dab64196287ffa787b. Local browser execution was unavailable because the worktree PostgreSQL credentials did not match the shared Docker service.",
+      "reviewer": "Codex (Stage 03 item 3.16)",
+      "sha256": "c7381bf94892b37b0996f7231849c1fa9e3aecfd1485ee98012012b3817251cc"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
