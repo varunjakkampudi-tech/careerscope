@@ -913,12 +913,7 @@
         "packages/matching/src/context.test.ts",
         "tests/integration/database.integration.test.ts"
       ],
-      "tests": [
-        "packages/resume/src/derive.test.ts",
-        "packages/shared/src/schemas.test.ts",
-        "packages/resume/src/derive.test.ts",
-        "packages/shared/src/schemas.test.ts"
-      ],
+      "tests": ["packages/resume/src/derive.test.ts", "packages/shared/src/schemas.test.ts"],
       "externalEvidence": [
         "GitHub Actions run 42581255959 completed successfully on exact PR head 9a1c46fc9060e30eef58475b6f0f5cdf381ecdc3: Quality gates, production image build (not published), and services/integration/browser suites all passed.",
         "GitHub Actions run 42585568281 completed successfully on exact PR head 8734dae78e83470350b45094da9a57ef5176d644: Quality gates, production image build (not published), and services/integration/browser suites all passed. A subsequent review found a technology-evidence provenance issue and the branch was updated; this run does not validate the later correction.",
