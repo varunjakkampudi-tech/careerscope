@@ -2867,6 +2867,7 @@ try {
       await page
         .getByRole('combobox', { name: 'Career stage', exact: true })
         .selectOption('experienced');
+      await page.locator('textarea[name="experience"]').fill('Frontend Engineer at Example Co');
       await page.getByText(/changing careers, list transferable skills/i).waitFor();
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
       await page.getByText('Step 3 of 5: Job preferences', { exact: true }).waitFor();
@@ -2905,6 +2906,77 @@ try {
       await finishButton.click();
       await page.getByText('Profile saved.', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Save Profile', exact: true }).waitFor();
+      const persistedOnboardingProfile = await new ProfileRepository(database).get(
+        account.rows[0]!.id,
+      );
+      assert.deepEqual(
+        persistedOnboardingProfile?.profile.candidate.experience,
+        ['Frontend Engineer at Example Co'],
+        `${engine}: saved onboarding profile must retain the background used by completeness`,
+      );
+      await page.goto(`${origin}/dashboard`);
+      await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+      const completenessPanel = page.locator('section[aria-label="Profile completeness"]');
+      await completenessPanel.getByText('Profile completeness 100%', { exact: true }).waitFor();
+      await completenessPanel.getByRole('progressbar', { name: 'Profile completeness' }).waitFor();
+      assert.equal(
+        await completenessPanel.locator('[data-done="true"]').count(),
+        5,
+        `${engine}: saved onboarding profile must complete each profile-only checklist item`,
+      );
+      assert.equal(
+        await completenessPanel
+          .getByRole('progressbar', { name: 'Profile completeness' })
+          .getAttribute('aria-valuenow'),
+        '100',
+        `${engine}: completed profile progressbar must expose the current value`,
+      );
+      let failedProfileReads = 0;
+      await page.route('**/api/profile', async (route) => {
+        if (failedProfileReads < 2) {
+          failedProfileReads += 1;
+          await route.fulfill({ status: 503, contentType: 'application/json', body: '{}' });
+          return;
+        }
+        await route.continue();
+      });
+      await page.goto(`${origin}/dashboard`);
+      const failedCompletenessPanel = page.locator('section[aria-label="Profile completeness"]');
+      await failedCompletenessPanel
+        .getByRole('alert')
+        .filter({ hasText: 'Could not load your profile completeness.' })
+        .waitFor();
+      assert.equal(
+        failedProfileReads,
+        2,
+        `${engine}: the error state must follow the two intentionally failed profile reads`,
+      );
+      assert.equal(
+        await failedCompletenessPanel.getByRole('progressbar').count(),
+        0,
+        `${engine}: failed profile reads must not show a calculated completeness value`,
+      );
+      await failedCompletenessPanel.getByRole('button', { name: /retry/i }).click();
+      await failedCompletenessPanel
+        .getByRole('progressbar', { name: 'Profile completeness' })
+        .waitFor();
+      assert.equal(
+        failedProfileReads,
+        2,
+        `${engine}: retry should recover using the third profile read`,
+      );
+      assert.equal(
+        await failedCompletenessPanel.getByRole('alert').count(),
+        0,
+        `${engine}: retrying a failed profile read must recover the completeness panel`,
+      );
+      await page.unroute('**/api/profile');
+      errors.splice(
+        0,
+        errors.length,
+        ...errors.filter((error) => !error.startsWith('resource HTTP 503 at /api/profile')),
+      );
+
       assert.equal(
         await page.getByRole('status').filter({ hasText: 'Step ' }).count(),
         0,
@@ -5259,6 +5331,123 @@ try {
       );
       await selectFixtureAccount('foreign-owner@example.test', password);
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+
+      // Hold the foreign owner's saved profile response across sign-out. Once
+      // owner A signs in, its previously complete profile must remain at 100%
+      // even after the old 80% response is released.
+      let releaseForeignProfile!: () => void;
+      let foreignProfileFetched!: () => void;
+      let resolveForeignProfileCompletion!: (outcome: 'fulfilled' | 'cancelled') => void;
+      let rejectForeignProfileCompletion!: (error: Error) => void;
+      const foreignProfileGate = new Promise<void>((resolve) => {
+        releaseForeignProfile = resolve;
+      });
+      const foreignProfileHeld = new Promise<void>((resolve) => {
+        foreignProfileFetched = resolve;
+      });
+      const foreignProfileCompletion = new Promise<'fulfilled' | 'cancelled'>((resolve, reject) => {
+        resolveForeignProfileCompletion = resolve;
+        rejectForeignProfileCompletion = reject;
+      });
+      let foreignProfileRequest: import('playwright').Request | undefined;
+      let holdNextProfileRequest = true;
+      const holdForeignProfile = async (route: import('playwright').Route) => {
+        if (!holdNextProfileRequest) return route.fallback();
+        holdNextProfileRequest = false;
+        const response = await route.fetch();
+        assert.equal(response.status(), 200, `${engine}: foreign profile read must succeed`);
+        const profileResponse = await response.json();
+        assert.equal(
+          profileResponse.profile?.candidate?.fullName,
+          'Foreign Owner Candidate',
+          `${engine}: held profile response must belong to the foreign owner`,
+        );
+        assert.equal(
+          profileResponse.profile?.candidate?.email,
+          'foreign-owner@example.test',
+          `${engine}: held profile response must carry the foreign owner's saved email`,
+        );
+        const foreignProfile = profileResponse.profile;
+        assert.ok(foreignProfile);
+        const foreignCandidate = foreignProfile.candidate;
+        const foreignPreferences = foreignProfile.preferences;
+        const savedProfileChecks = [
+          Boolean(foreignCandidate.fullName.trim() && foreignCandidate.email.trim()),
+          Boolean(foreignCandidate.location.trim()),
+          [foreignCandidate.education, foreignCandidate.experience, foreignCandidate.projects].some(
+            (entries) => entries.some((entry: string) => entry.trim().length > 0),
+          ),
+          foreignPreferences.titles.some((entry: string) => entry.trim().length > 0),
+          foreignPreferences.techStack.some((entry: string) => entry.trim().length > 0),
+        ];
+        assert.equal(
+          Math.round((savedProfileChecks.filter(Boolean).length / savedProfileChecks.length) * 100),
+          80,
+          `${engine}: the actual foreign-owner response must calculate to 80% completeness`,
+        );
+        foreignProfileRequest = route.request();
+        foreignProfileFetched();
+        await foreignProfileGate;
+        try {
+          await route.fulfill({
+            status: response.status(),
+            contentType: 'application/json',
+            json: profileResponse,
+          });
+          resolveForeignProfileCompletion('fulfilled');
+        } catch (error) {
+          if (/aborted|closed|already handled|target page/i.test(String(error))) {
+            resolveForeignProfileCompletion('cancelled');
+            return;
+          }
+          rejectForeignProfileCompletion(
+            error instanceof Error ? error : new Error('Could not complete held profile response'),
+          );
+          throw error;
+        }
+      };
+      try {
+        await page.route('**/api/profile', holdForeignProfile);
+        await page.goto(`${origin}/dashboard`);
+        await foreignProfileHeld;
+        assert.ok(foreignProfileRequest, `${engine}: captured the held foreign profile request`);
+        page.once('dialog', (dialog) => dialog.accept());
+        await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+        await page.getByRole('heading', { name: 'Select test account', exact: true }).waitFor();
+        await selectFixtureAccount(accountEmail, password);
+        await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+        const switchedCompleteness = page.locator('section[aria-label="Profile completeness"]');
+        await switchedCompleteness
+          .getByText('Profile completeness 100%', { exact: true })
+          .waitFor();
+        releaseForeignProfile();
+        assert.equal(await foreignProfileCompletion, 'fulfilled');
+        await page.evaluate(
+          () =>
+            new Promise<void>((resolve) =>
+              requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+            ),
+        );
+        assert.equal(
+          await switchedCompleteness
+            .getByRole('progressbar', { name: 'Profile completeness' })
+            .getAttribute('aria-valuenow'),
+          '100',
+          `${engine}: a late or cancelled foreign-owner response must not replace owner A completeness`,
+        );
+        page.once('dialog', (dialog) => dialog.accept());
+        await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+        await page.getByRole('heading', { name: 'Select test account', exact: true }).waitFor();
+        await selectFixtureAccount('foreign-owner@example.test', password);
+        await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+        await page
+          .locator('section[aria-label="Profile completeness"]')
+          .getByText('Profile completeness 80%', { exact: true })
+          .waitFor();
+      } finally {
+        releaseForeignProfile();
+        await page.unroute('**/api/profile', holdForeignProfile);
+      }
 
       // Each route asserts a POSITIVE anchor belonging to the NEW owner
       // before asserting the absence of the old one. Without that, every
