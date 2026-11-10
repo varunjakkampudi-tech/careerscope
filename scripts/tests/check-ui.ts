@@ -2842,6 +2842,12 @@ try {
             }),
           );
         }, locale);
+        await page.waitForFunction((nextLocale) => {
+          const preview = document.querySelector(
+            'section[aria-labelledby="resume-preview-heading"]',
+          );
+          return preview?.getAttribute('lang') === nextLocale;
+        }, locale);
         const heading = await page.locator('#resume-preview-heading').innerText();
         assert.ok(
           heading.trim().length > 0,

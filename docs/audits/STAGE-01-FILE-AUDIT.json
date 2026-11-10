@@ -1970,10 +1970,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 04 test-matrix history: prior exact-head quality-gate failure from cross-workspace import is recorded, the corrected test now inspects rendered localized labels directly, local typecheck passed, and exact-head CI/final review remain pending.",
-      "evidence": "Follow-up diff review; Node 24 typecheck passed for 98 canonical test files, and exact-head hosted CI remains pending.",
-      "reviewer": "Codex (Stage 04.06 typecheck correction)",
-      "sha256": "bbe5e81428fb98e4208d63514290da76028780adcfa2e7d67bd560f63d1ba96b"
+      "observations": "Reviewed Stage 04 evidence including historical CI, exact typecheck failure and the current wait-for-render correction; records remain in-progress until exact-head CI, final review, merge and post-merge verification.",
+      "evidence": "Follow-up diff review; Node 24 typecheck passed for 98 canonical test files, and exact-head hosted CI/review remain pending.",
+      "reviewer": "Codex (Stage 04.06 locale timing follow-up)",
+      "sha256": "0ab6cc28cb9e7cd8027e413981e8b7da7fdec8357ac63c610b624c0a343e70db"
     },
     {
       "path": "docs/TESTING.md",
@@ -2402,10 +2402,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed item 4.06 historical evidence and current gap: prior run/review are labeled historical, the exact failure and follow-up correction are documented, and item remains in-progress pending CI/review/merge/post-merge verification.",
-      "evidence": "Follow-up diff review; Node 24 typecheck passed for 98 canonical test files, and exact-head hosted CI remains pending.",
-      "reviewer": "Codex (Stage 04.06 typecheck correction)",
-      "sha256": "9b2a8e2433a4b05d30f1c2cc5e0e160513908fdfe769d364a4fc763a0256d54c"
+      "observations": "Reviewed item 4.06 record: historical review/run status, exact prior CI failure and follow-up locale-render wait are explicit; currentStatus remains in-progress with exact-head acceptance and post-merge gaps.",
+      "evidence": "Follow-up diff review; Node 24 typecheck passed for 98 canonical test files, and exact-head hosted CI/review remain pending.",
+      "reviewer": "Codex (Stage 04.06 locale timing follow-up)",
+      "sha256": "c96ce6f9eacd8d9f70a5fa53514281cdcccbbe7fa89d159b4ed9e7c8c672b7ce"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -6549,10 +6549,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed browser acceptance change: tests rendered labels for en/te/hi without importing web-local TypeScript into the root tooling package; verifies named region, distinct labels, count and section accessible name, then resets the synthetic browser locale to English before keyboard/content checks.",
-      "evidence": "Follow-up diff review; Node 24 typecheck passed for 98 canonical test files, and exact-head hosted CI remains pending.",
-      "reviewer": "Codex (Stage 04.06 typecheck correction)",
-      "sha256": "ce1306cceee5402b2e51e0150731d2a5fa0737d70014da90364dcc72d1f63b66"
+      "observations": "Reviewed browser assertions for all supported locale labels; test now waits for the preview section lang attribute to match the selected locale before sampling labels, then resets its synthetic context to English before content/keyboard checks.",
+      "evidence": "Follow-up diff review; Node 24 typecheck passed for 98 canonical test files, and exact-head hosted CI/review remain pending.",
+      "reviewer": "Codex (Stage 04.06 locale timing follow-up)",
+      "sha256": "7edd139b9201c253dc5e58ef2035752d9cc4c446d1573cad4c1bc15ad5203d79"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
