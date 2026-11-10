@@ -86,6 +86,44 @@ describe('candidate-declared profile fields', () => {
     ).toEqual({ preferredContactMethod: 'phone' });
   });
 
+  it('defaults recruiter visibility and field allowlist to private and empty', () => {
+    expect(profileSchema.parse(profile).privacy).toEqual({
+      recruiterVisible: false,
+      recruiterVisibleFields: [],
+    });
+    expect(
+      profileSchema.parse({
+        ...profile,
+        privacy: { recruiterVisible: true, recruiterVisibleFields: [] },
+      }).privacy,
+    ).toEqual({ recruiterVisible: true, recruiterVisibleFields: [] });
+    expect(
+      profileSchema.parse({
+        ...profile,
+        privacy: { recruiterVisible: true, recruiterVisibleFields: ['location', 'techStack'] },
+      }).privacy,
+    ).toEqual({ recruiterVisible: true, recruiterVisibleFields: ['location', 'techStack'] });
+    expect(profileUpdateSchema.parse({ privacy: { recruiterVisible: true } }).privacy).toEqual({
+      recruiterVisible: true,
+      recruiterVisibleFields: [],
+    });
+    expect(profileUpdateSchema.parse({ privacy: { recruiterVisibleFields: [] } }).privacy).toEqual({
+      recruiterVisible: false,
+      recruiterVisibleFields: [],
+    });
+    expect(profileUpdateSchema.safeParse({ privacy: { recruiterVisible: 'true' } }).success).toBe(
+      false,
+    );
+    expect(
+      profileUpdateSchema.safeParse({ privacy: { recruiterVisible: true, public: true } }).success,
+    ).toBe(false);
+    for (const recruiterVisibleFields of [['email'], ['resumeId'], ['location', 'location']]) {
+      expect(profileUpdateSchema.safeParse({ privacy: { recruiterVisibleFields } }).success).toBe(
+        false,
+      );
+    }
+  });
+
   it('rejects inconsistent availability and notice-day combinations', () => {
     for (const application of [
       { availabilityStatus: 'immediate', noticePeriodDays: 30 },

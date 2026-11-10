@@ -8,6 +8,7 @@ import {
   candidateSchema,
   preferencesSchema,
   applicationSchema,
+  profilePrivacySchema,
   type DerivedResume,
 } from '@careerscope/shared';
 import type { Database } from './database.js';
@@ -32,6 +33,7 @@ const fields = {
     .strict(),
   preferences: preferencesSchema.strict(),
   application: applicationSchema,
+  privacy: profilePrivacySchema,
   accessibility: z.object({ reducedMotion: z.boolean().default(false) }).strict(),
 };
 
@@ -41,6 +43,7 @@ export const writableProfileSchema = z
     candidate: z.unknown(),
     preferences: z.unknown(),
     application: z.unknown(),
+    privacy: z.unknown().optional(),
     accessibility: z.unknown().optional(),
   })
   .strict()
@@ -48,20 +51,30 @@ export const writableProfileSchema = z
     const candidate = fields.candidate.safeParse(input.candidate);
     const preferences = fields.preferences.safeParse(input.preferences);
     const application = fields.application.safeParse(input.application);
+    const privacy = fields.privacy.safeParse(input.privacy ?? {});
     const accessibility = fields.accessibility.safeParse(input.accessibility ?? {});
     if (
       !candidate.success ||
       !preferences.success ||
       !application.success ||
+      !privacy.success ||
       !accessibility.success
     ) {
       context.addIssue({ code: 'custom', message: 'Invalid candidate profile' });
+      return z.NEVER;
+    }
+    if (!privacy.data.recruiterVisible && privacy.data.recruiterVisibleFields.length > 0) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Private profiles cannot retain recruiter-visible fields',
+      });
       return z.NEVER;
     }
     return {
       candidate: candidate.data,
       preferences: preferences.data,
       application: application.data,
+      privacy: privacy.data,
       accessibility: accessibility.data,
     };
   });
@@ -136,7 +149,15 @@ export class ProfileRepository {
        FROM candidate_profiles WHERE owner_id = $1`,
       [ownerId],
     );
-    return result.rows[0] ?? null;
+    const record = result.rows[0];
+    if (!record) return null;
+    // Normalize only the privacy contract so historical profile representations remain readable.
+    const storedProfile = record.profile as WritableProfile & { privacy?: unknown };
+    const parsedPrivacy = profilePrivacySchema.parse(storedProfile.privacy ?? {});
+    const privacy = parsedPrivacy.recruiterVisible
+      ? parsedPrivacy
+      : { ...parsedPrivacy, recruiterVisibleFields: [] };
+    return { ...record, profile: { ...storedProfile, privacy } };
   }
 
   /**

@@ -25,12 +25,30 @@ const careerSegments = [
   ['fresher', 'Fresher'],
   ['experienced', 'Experienced'],
 ] as const;
+const recruiterShareableFields = [
+  ['fullName', 'Name'],
+  ['location', 'City or region'],
+  ['segment', 'Career stage'],
+  ['education', 'Education'],
+  ['experience', 'Work experience'],
+  ['projects', 'Projects'],
+  ['linkedin', 'LinkedIn link'],
+  ['github', 'GitHub link'],
+  ['portfolio', 'Portfolio link'],
+  ['titles', 'Target job titles'],
+  ['techStack', 'Skills'],
+  ['yearsOfExperience', 'Years of experience'],
+] as const;
+type RecruiterShareableField = (typeof recruiterShareableFields)[number][0];
+const isRecruiterShareableField = (value: string): value is RecruiterShareableField =>
+  recruiterShareableFields.some(([field]) => field === value);
 
 const onboardingSteps = [
   { title: 'Contact', description: 'Start with the details you want employers to use.' },
   { title: 'Your background', description: 'Choose what best describes your career stage.' },
   { title: 'Job preferences', description: 'Tell us what work you want to find.' },
   { title: 'Application details', description: 'Add optional details that help you prepare.' },
+  { title: 'Profile privacy', description: 'Choose your recruiter visibility preference.' },
   { title: 'Accessibility', description: 'Set a workspace preference, then save your profile.' },
 ] as const;
 
@@ -52,6 +70,9 @@ function ProfileForm({
   const guided = record.profile === null;
   const [step, setStep] = useState(0);
   const [careerSegment, setCareerSegment] = useState(record.profile?.candidate.segment ?? '');
+  const [recruiterVisible, setRecruiterVisible] = useState(
+    record.profile?.privacy?.recruiterVisible ?? false,
+  );
   const formElement = useRef<HTMLFormElement | null>(null);
   const stepSections = useRef<Array<HTMLFieldSetElement | null>>([]);
   const invalidFieldToFocus = useRef<
@@ -283,6 +304,12 @@ function ProfileForm({
           ? Number(text('yearsOfExperience'))
           : null,
         willingToRelocate: data.has('willingToRelocate'),
+      },
+      privacy: {
+        recruiterVisible,
+        recruiterVisibleFields: recruiterVisible
+          ? data.getAll('recruiterVisibleFields').map(String).filter(isRecruiterShareableField)
+          : [],
       },
       accessibility: {
         reducedMotion: data.has('reducedMotion'),
@@ -772,7 +799,68 @@ function ProfileForm({
         hidden={guided && step !== 4}
         disabled={save.isPending}
       >
+        <legend>Profile privacy</legend>
+        {guided && <p className={styles.stepDescription}>{onboardingSteps[4].description}</p>}
+        <p id="recruiter-visibility-help">
+          Your profile is private by default. Recruiter search is not available yet, so these
+          choices will not make your profile visible today. Contact details, compensation, birth
+          date, photos, and resumes are outside this allowlist and need separate authorization
+          before any future recruiter sharing. You can withdraw consent by clearing these choices or
+          turning visibility off. Changes take effect after you save your profile. Your profile
+          picture stays private.
+        </p>
+        <div className="check-row">
+          <label>
+            <input
+              name="recruiterVisible"
+              type="checkbox"
+              defaultChecked={record.profile?.privacy?.recruiterVisible ?? false}
+              aria-describedby="recruiter-visibility-help"
+              onChange={(event) => {
+                setRecruiterVisible(event.currentTarget.checked);
+                if (!event.currentTarget.checked) {
+                  for (const input of event.currentTarget.form?.querySelectorAll<HTMLInputElement>(
+                    'input[name="recruiterVisibleFields"]',
+                  ) ?? []) {
+                    input.checked = false;
+                  }
+                }
+              }}
+            />
+            Allow recruiters to discover my profile when that feature becomes available
+          </label>
+        </div>
+        <fieldset disabled={save.isPending || !recruiterVisible}>
+          <legend>Fields I may share if I enable recruiter visibility</legend>
+          {recruiterShareableFields.map(([field, label]) => (
+            <label className="check-row" key={field}>
+              <input
+                name="recruiterVisibleFields"
+                type="checkbox"
+                value={field}
+                defaultChecked={
+                  record.profile?.privacy?.recruiterVisibleFields?.includes(field) ?? false
+                }
+                aria-describedby="recruiter-visibility-help"
+              />
+              {label}
+            </label>
+          ))}
+        </fieldset>
+        <p>
+          You can withdraw consent at any time by turning visibility off or clearing selected
+          fields.
+        </p>
+      </fieldset>
+      <fieldset
+        ref={(element) => {
+          stepSections.current[5] = element;
+        }}
+        hidden={guided && step !== 5}
+        disabled={save.isPending}
+      >
         <legend>Accessibility</legend>
+        {guided && <p className={styles.stepDescription}>{onboardingSteps[5].description}</p>}
         <div className="check-row">
           <label>
             <input

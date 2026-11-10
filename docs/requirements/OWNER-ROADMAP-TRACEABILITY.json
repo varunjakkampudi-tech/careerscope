@@ -767,11 +767,27 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Profile visibility/privacy",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/shared/src/schemas.ts",
+        "packages/shared/src/types.ts",
+        "packages/core/src/profile.ts",
+        "apps/web/src/components/profile-editor.tsx",
+        "apps/web/src/lib/api-schemas.ts",
+        "apps/api/src/openapi.ts",
+        "docs/API-SURFACE.md",
+        "docs/DATA-MODEL.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/shared/src/schemas.test.ts",
+        "packages/core/src/profile.test.ts",
+        "apps/web/src/lib/api.test.ts",
+        "scripts/tests/check-ui.ts",
+        "tests/integration/database.integration.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "The owner-controlled recruiter visibility preference and candidate-selected allowlist save with private defaults and fail-closed normalization. No recruiter-facing profile read or access enforcement exists, so the preference exposes no candidate data. Recruiter-path tests and independent privacy review remain outstanding; excluded sensitive fields need separate authorization before any future recruiter sharing.",
       "scopeDisposition": "in-scope"
     },
     {

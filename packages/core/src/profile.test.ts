@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { matchingProfile, writableProfileSchema, saveProfileSchema } from './profile.js';
+import {
+  matchingProfile,
+  ProfileRepository,
+  writableProfileSchema,
+  saveProfileSchema,
+} from './profile.js';
 import { prepareProfile, preparationReportSchema } from './preparation.js';
+import type { Database } from './database.js';
 
 const syntheticProfile = {
   candidate: {
@@ -61,6 +67,7 @@ test('profile reuses domain defaults without inventing qualifications', () => {
   assert.deepEqual(parsed.candidate.education, []);
   assert.deepEqual(parsed.candidate.experience, []);
   assert.deepEqual(parsed.candidate.projects, []);
+  assert.deepEqual(parsed.privacy, { recruiterVisible: false, recruiterVisibleFields: [] });
   assert.equal(parsed.candidate.graduationYear, undefined);
   assert.deepEqual(parsed.accessibility, { reducedMotion: false });
 });
@@ -200,6 +207,102 @@ test('saved accessibility preferences are owner profile data, validated and excl
     }).success,
     false,
   );
+});
+
+test('recruiter visibility preference is private by default and excluded from matching snapshots', () => {
+  const privateProfile = writableProfileSchema.parse(syntheticProfile);
+  assert.deepEqual(privateProfile.privacy, { recruiterVisible: false, recruiterVisibleFields: [] });
+
+  const optedInProfile = writableProfileSchema.parse({
+    ...syntheticProfile,
+    privacy: { recruiterVisible: true, recruiterVisibleFields: ['location', 'techStack'] },
+  });
+  assert.deepEqual(optedInProfile.privacy, {
+    recruiterVisible: true,
+    recruiterVisibleFields: ['location', 'techStack'],
+  });
+  assert.deepEqual(
+    writableProfileSchema.parse({
+      ...optedInProfile,
+      privacy: { recruiterVisible: false, recruiterVisibleFields: [] },
+    }).privacy,
+    { recruiterVisible: false, recruiterVisibleFields: [] },
+  );
+  assert.equal(
+    writableProfileSchema.safeParse({
+      ...optedInProfile,
+      privacy: { recruiterVisible: false, recruiterVisibleFields: ['location'] },
+    }).success,
+    false,
+    'server validation must refuse retained fields when discovery consent is withdrawn',
+  );
+  assert.deepEqual(matchingProfile(optedInProfile), {
+    candidate: { location: 'Hyderabad' },
+    preferences: optedInProfile.preferences,
+    application: {
+      expectedCtc: '',
+      yearsOfExperience: 4,
+      willingToRelocate: true,
+    },
+    derived: null,
+  });
+  assert.equal(
+    writableProfileSchema.safeParse({
+      ...syntheticProfile,
+      privacy: { recruiterVisible: 'true' },
+    }).success,
+    false,
+  );
+});
+
+test('profile reads normalize only privacy defaults and preserve historical fields', async () => {
+  const legacyProfiles = [
+    {
+      candidate: { fullName: 'Legacy Candidate', historicalField: 'keep me' },
+      preferences: { oldPreference: true },
+      application: {},
+      historicalRootField: 'also keep me',
+    },
+    {
+      candidate: { fullName: 'Legacy Candidate', historicalField: 'keep me' },
+      preferences: { oldPreference: true },
+      application: {},
+      privacy: { recruiterVisible: false, recruiterVisibleFields: ['location'] },
+      historicalRootField: 'also keep me',
+    },
+  ];
+  let profileIndex = 0;
+  const repository = new ProfileRepository({
+    pool: {
+      query: async () => ({
+        rows: [
+          {
+            revision: 1,
+            profile: legacyProfiles[profileIndex++],
+            updatedAt: new Date('2026-11-08T00:00:00.000Z'),
+            scheduledDiscoveryEnabled: false,
+          },
+        ],
+      }),
+    },
+  } as unknown as Database);
+
+  const withoutPrivacy = await repository.get('owner-id');
+  const privateWithStaleFields = await repository.get('owner-id');
+  for (const record of [withoutPrivacy, privateWithStaleFields]) {
+    assert.deepEqual(record?.profile.privacy, {
+      recruiterVisible: false,
+      recruiterVisibleFields: [],
+    });
+    assert.equal(
+      (record?.profile as unknown as (typeof legacyProfiles)[number]).historicalRootField,
+      'also keep me',
+    );
+    assert.equal(
+      (record?.profile.candidate as unknown as { historicalField: string }).historicalField,
+      'keep me',
+    );
+  }
 });
 
 test('candidate segment is owner-declared, bounded to the approved options and never inferred', () => {

@@ -130,12 +130,40 @@ export const applicationUpdateSchema = z.object({
   yearsOfExperience: z.number().min(0).max(60).nullable().optional(),
 });
 
+/** Candidate-selected, default-private recruiter field allowlist; never an access grant. */
+export const profilePrivacySchema = z
+  .object({
+    recruiterVisible: z.boolean().default(false),
+    recruiterVisibleFields: z
+      .array(
+        z.enum([
+          'fullName',
+          'location',
+          'segment',
+          'education',
+          'experience',
+          'projects',
+          'linkedin',
+          'github',
+          'portfolio',
+          'titles',
+          'techStack',
+          'yearsOfExperience',
+        ]),
+      )
+      .max(12)
+      .refine((fields) => new Set(fields).size === fields.length, 'Fields must be unique')
+      .default([]),
+  })
+  .strict();
+
 /** The full stored profile: candidate, preferences and application details plus the linked resume. */
 export const profileSchema = z.object({
   id: z.string().optional(),
   candidate: candidateSchema,
   preferences: preferencesSchema,
   application: applicationSchema,
+  privacy: profilePrivacySchema.default({ recruiterVisible: false, recruiterVisibleFields: [] }),
   resumeId: z.string().nullable().default(null),
   updatedAt: z.string().optional(),
 });
@@ -143,6 +171,7 @@ export const profileSchema = z.object({
 export type Candidate = z.infer<typeof candidateSchema>;
 export type Preferences = z.infer<typeof preferencesSchema>;
 export type ApplicationDetails = z.infer<typeof applicationSchema>;
+export type ProfilePrivacy = z.infer<typeof profilePrivacySchema>;
 export type Profile = z.infer<typeof profileSchema>;
 
 /** PUT /api/profile accepts a partial and deep-merges it. */
@@ -150,6 +179,7 @@ export const profileUpdateSchema = z.object({
   candidate: candidateSchema.partial().optional(),
   preferences: preferencesSchema.partial().optional(),
   application: applicationUpdateSchema.optional(),
+  privacy: profilePrivacySchema.partial().optional(),
   resumeId: z.string().nullable().optional(),
 });
 export type ProfileUpdate = z.infer<typeof profileUpdateSchema>;
