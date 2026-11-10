@@ -2270,7 +2270,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "source review plus current exact-head CI and status reconciliation",
+      "reviewMethod": "source review plus implementation exact-head CI and status reconciliation",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2282,10 +2282,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Re-reviewed the Stage 03 item 3.16 closeout record. It distinguishes historical approvals from the current exact head, records the passing current-head hosted CI, and keeps the item in progress because exact-head independent review and dev integration remain pending.",
-      "evidence": "Current PR #69 head 1e7dab01b81441d33fb697db9497564d3c30b052 passed all three required jobs in hosted run 42571457149. PR remains draft and unmerged; no checklist status was advanced.",
+      "observations": "Re-reviewed the Stage 03 item 3.16 closeout record. It distinguishes historical approvals from the implementation/fix head, records passing hosted CI, and keeps the item in progress because independent review of the current PR head and dev integration remain pending.",
+      "evidence": "Implementation and account-switch-fix head 1e7dab01b81441d33fb697db9497564d3c30b052 passed all three required jobs in hosted run 42571457149. PR remains draft and unmerged; no checklist status was advanced.",
       "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "2c8543004f1674735e46bbff1d84cecf78339038175a2e88c3116393b481d6e8"
+      "sha256": "438cd558125420e84ebe2bc2e265bf1c2c1d733b31d9901b8372e4f276c70b9b"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -2326,14 +2326,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "prior complete source review plus current exact-head CI and status reconciliation",
+      "reviewMethod": "prior complete source review plus current implementation CI and status reconciliation",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the canonical item 3.16 record. It retains the owner checklist title and in-progress status, records current exact-head CI, and preserves the unmerged PR and independent-review gap without marking the item verified.",
-      "evidence": "Updated current PR #69 exact-head CI provenance while keeping item completion pending independent review, integration to dev, and canonical closeout.",
+      "observations": "Re-reviewed the canonical item 3.16 record. It retains the owner checklist title and in-progress status, records implementation-head CI, and preserves the unmerged PR and current-head independent-review gap without marking the item verified.",
+      "evidence": "Updated item 3.16 with the implementation/fix head exact-SHA CI result while keeping item completion pending current-head independent review, integration to dev, and canonical closeout.",
       "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "2e67abfe35c051e471c7e745b80509c41906e764e5c63ec06be924159ec50e6e"
+      "sha256": "8f4adc01505f24f6a563c7bd424771b576820e74069a177b3e47657a96d90521"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -2430,10 +2430,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the item 3.16 row. Historical failures and approvals remain tied to their original SHAs; the current account-switch regression and exact-head CI are recorded separately, and the item remains in progress pending independent review and dev integration.",
-      "evidence": "Current PR #69 head 1e7dab01b81441d33fb697db9497564d3c30b052 passed hosted run 42571457149 on all three required jobs. Exact-head independent review and integration remain pending.",
+      "observations": "Re-reviewed the item 3.16 row. Historical failures and approvals remain tied to their original SHAs; the current account-switch regression and implementation-head CI are recorded separately, and the item remains in progress pending independent review and dev integration.",
+      "evidence": "Implementation and account-switch-fix head 1e7dab01b81441d33fb697db9497564d3c30b052 passed hosted run 42571457149 on all three required jobs. Independent review of the current PR head and integration remain pending.",
       "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "c00cfe87851cf1a6e881277a1caf3d2a7527b88191ff753542f19bbfd6f09206"
+      "sha256": "a7f9a2c33f3d7e2e5207bc05b1d2fd9f5a0d931209daf99e2277265195757650"
     },
     {
       "path": "docs/TESTING.md",
