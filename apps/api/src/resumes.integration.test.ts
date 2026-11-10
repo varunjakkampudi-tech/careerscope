@@ -85,7 +85,7 @@ const storageStub = (overrides: Partial<NonNullable<Storage>> = {}): NonNullable
 });
 
 test(
-  'F-021: the authenticated upload endpoint queues bounded PDF bytes idempotently and keeps them owner-scoped',
+  'F-021: the authenticated upload endpoint queues bounded PDF and DOCX bytes idempotently and keeps them owner-scoped',
   { timeout: 60_000 },
   async () => {
     await withFixture(async ({ database, owner, other }) => {
@@ -95,8 +95,7 @@ test(
         resumeStorage: storageStub({
           put: async (object, body) => {
             stored.push(object);
-            assert.equal(body.byteLength, maximumResumeBytes);
-            assert.equal(body.subarray(0, 8).toString(), '%PDF-1.7');
+            assert.ok(body.byteLength > 0);
             assert.equal(object.sha256, createHash('sha256').update(body).digest('hex'));
             return 'synthetic-version';
           },
@@ -138,18 +137,42 @@ test(
         assert.equal(stored[0]?.bytes, maximumResumeBytes);
         assert.equal(stored[0]?.contentType, 'application/pdf');
 
+        const docx = Buffer.from('PK\\u0003\\u0004synthetic DOCX route signature');
+        const docxAccepted = await upload(
+          { ...owner.headers, 'idempotency-key': 'route-resume-docx' },
+          docx,
+        );
+        assert.equal(docxAccepted.statusCode, 202, docxAccepted.body);
+        assert.equal(docxAccepted.json().status, 'queued');
+        assert.equal(
+          stored[1]?.contentType,
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        );
+        assert.equal(stored[1]?.sha256, createHash('sha256').update(docx).digest('hex'));
+
         const retry = await upload({ ...owner.headers, 'idempotency-key': key }, atLimit);
         assert.equal(retry.statusCode, 202);
         assert.equal(retry.json().id, accepted.json().id);
         assert.equal(stored.length, 1, 'an idempotent retry must not write a second object');
 
+        const otherOwnerKeyReuse = await upload(
+          { ...other.headers, 'idempotency-key': key },
+          atLimit,
+        );
+        assert.equal(otherOwnerKeyReuse.statusCode, 202, otherOwnerKeyReuse.body);
+        assert.notEqual(otherOwnerKeyReuse.json().id, accepted.json().id);
+        assert.equal(stored.length, 3, 'idempotency keys are scoped to their owner');
+
         const ownList = await app.inject({ url: '/api/resumes', headers: owner.headers });
         assert.deepEqual(
           ownList.json().items.map((item: { id: string }) => item.id),
-          [accepted.json().id],
+          [accepted.json().id, docxAccepted.json().id],
         );
         const otherList = await app.inject({ url: '/api/resumes', headers: other.headers });
-        assert.deepEqual(otherList.json().items, []);
+        assert.deepEqual(
+          otherList.json().items.map((item: { id: string }) => item.id),
+          [otherOwnerKeyReuse.json().id],
+        );
         const foreignDetail = await app.inject({
           url: `/api/resumes/${accepted.json().id}`,
           headers: other.headers,

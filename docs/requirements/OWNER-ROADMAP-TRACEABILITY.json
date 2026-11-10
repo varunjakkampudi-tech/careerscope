@@ -814,7 +814,7 @@
       "stageTitle": "Resume management and parsing",
       "title": "Resume upload",
       "sourceStatus": "Existing",
-      "currentStatus": "verified",
+      "currentStatus": "partial",
       "evidence": [
         "apps/api/src/app.ts",
         "packages/core/src/resumes.ts",
@@ -827,9 +827,9 @@
       ],
       "externalEvidence": [
         "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push.",
-        "Current sequential review adds an API regression for authentication, invalid signatures, acceptance at the 5 MiB boundary, rejection above the limit, idempotent retry without a second storage write, and owner-scoped list/detail. The API and core resume integration suites passed locally (9/9) using synthetic data and a loopback database with a 60-second development statement timeout. Exact-head hosted CI and final review remain pending."
+        "Current sequential review adds route-level API regressions for authentication, invalid signatures, acceptance at the 5 MiB PDF boundary, rejection above the limit, PDF and DOCX queueing, same-owner idempotent retry without a second object write, same-key isolation across owners, and owner-scoped reads. Existing core tests cover DOCX full-workflow parsing and same-owner repository key conflicts. The API and core resume integration suites passed locally (9/9) before the latest added DOCX and cross-owner route assertions; those additions still require rerun. Tests use synthetic storage/data and a loopback database with a 60-second development statement timeout. Local browser acceptance did not reach the resume flow because the expected sign-in heading was absent on an already-running server at port 5280. Exact-head hosted CI and final review remain pending."
       ],
-      "gap": "",
+      "gap": "Final acceptance is pending exact-head hosted CI, a successful browser acceptance run, review approval, and resolution of DOCX route-level and cross-owner idempotency coverage gaps.",
       "scopeDisposition": "in-scope"
     },
     {
