@@ -755,10 +755,17 @@
       "title": "Candidate verification workflow",
       "sourceStatus": "New",
       "currentStatus": "partial",
-      "evidence": ["packages/core/src/verification.ts", "docs/DATA-MODEL.md", "docs/PROGRESS.md"],
+      "evidence": [
+        "packages/core/src/verification.ts",
+        "docs/DATA-MODEL.md",
+        "docs/PROGRESS.md",
+        "docs/TEST-MATRIX.md"
+      ],
       "tests": ["packages/core/src/verification.test.ts"],
-      "externalEvidence": [],
-      "gap": "Generic lifecycle primitives are implemented and unit-tested. Evidence schemas, type-specific validity and recheck policy, persistence, candidate notice/appeal workflow and counsel approval remain outstanding; no college/profile-link tick is issued.",
+      "externalEvidence": [
+        "PR #60 exact head 78106a7ff969418def60c1841e79765299f50d70 received final ChatGPT approval for the scoped lifecycle-foundation change. Exact-head GitHub Actions run 42768295522 passed Quality gates, Services/integration/browser suites, and Production image build; images were built but not published. This approval does not complete item 3.14; PR #60 remains draft and unmerged."
+      ],
+      "gap": "The scoped generic lifecycle foundation is implemented and approved, but no college/profile-link tick is issued. Approved evidence schemas, type-specific validity and recheck policy, secure persistence and controlled issuance, candidate status/notice/appeal workflow, recruiter tier/date display, and counsel approval remain outstanding.",
       "scopeDisposition": "in-scope"
     },
     {
