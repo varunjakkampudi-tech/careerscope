@@ -2433,7 +2433,7 @@
       "observations": "Re-reviewed the item 3.16 row. Historical failures and approvals remain tied to their original SHAs; exact-head approval and CI, dev merge, and post-merge CI are recorded, and the item is verified.",
       "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; run 42758118526 passed all three required jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b. Post-merge run 42759315007 passed Quality gates and Services/integration/browser suites; image build skipped on push.",
       "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "a6887b43ef30a1274663ad03ffa66a8040f332cbd9fcdb550c0dbb120e606a5a"
+      "sha256": "353f038dcbc10b6340abba22e7aa7766991a7158fcd49bb4f33583047eab03e7"
     },
     {
       "path": "docs/TESTING.md",
