@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   deriveContact,
+  deriveEducation,
+  deriveEducationClaims,
   deriveFields,
+  deriveExperienceClaims,
   deriveLocation,
   deriveName,
   deriveSkills,
@@ -138,6 +141,10 @@ describe('deriveYears', () => {
 
   it('returns null when there is nothing to measure', () => {
     expect(deriveYears('Skills: React', '', NOW)).toBeNull();
+  });
+
+  it('does not treat education dates as employment duration without an experience section', () => {
+    expect(deriveYears('EDUCATION\nExample University 2020 - 2024', '', NOW)).toBeNull();
   });
 });
 
@@ -373,6 +380,115 @@ describe('deriveSkills', () => {
 });
 
 describe('deriveFields', () => {
+  it('extracts bounded per-role experience claims with source provenance and unverified status', () => {
+    const fields = deriveFields(
+      [
+        'PROFESSIONAL EXPERIENCE',
+        'Senior Software Engineer at Acme Corp | Jan 2021 - Present',
+        '- Built React services for millions of users.',
+        'Software Developer — Beta Labs | Jan 2018 - Dec 2020',
+        '- Delivered TypeScript applications.',
+        'EDUCATION',
+        'Bachelor of Science, Example University, 2017',
+      ].join('\n'),
+      NOW,
+    );
+    expect(fields.experienceClaims).toHaveLength(2);
+    expect(fields.experienceClaims[0]).toMatchObject({
+      title: 'Senior Software Engineer',
+      employer: 'Acme Corp',
+      startDate: Date.UTC(2021, 0, 1),
+      endDate: NOW,
+      sourceSection: 'experience',
+      claimStatus: 'unverified',
+      description: expect.stringContaining('Built React services'),
+    });
+    expect(fields.experienceClaims[1]).toMatchObject({
+      title: 'Software Developer',
+      employer: 'Beta Labs',
+      startDate: Date.UTC(2018, 0, 1),
+      endDate: Date.UTC(2020, 11, 1),
+      claimStatus: 'unverified',
+    });
+    expect(fields.extractionEvidence).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          field: 'experience',
+          sourceSection: 'experience',
+          evidenceKind: 'direct-claim',
+        }),
+      ]),
+    );
+  });
+
+  it('does not create work-history claims from education dates or invent employer fields', () => {
+    expect(
+      deriveFields('EDUCATION\nBachelor of Science, University, 2018-2022', NOW).experienceClaims,
+    ).toEqual([]);
+    const [claim] = deriveExperienceClaims(
+      'Engineer Jan 2020 - Jan 2022\nBuilt reliable systems.',
+      NOW,
+    );
+    expect(claim).toMatchObject({ title: 'Engineer', claimStatus: 'unverified' });
+    expect(claim).not.toHaveProperty('employer');
+  });
+
+  it('does not infer an employer from an unrelated preceding experience sentence', () => {
+    const [claim] = deriveExperienceClaims(
+      'Worked on cloud migration and reliability\nEngineer | Jan 2020 - Jan 2022\nBuilt distributed services.',
+      NOW,
+    );
+    expect(claim).toMatchObject({ title: 'Engineer', claimStatus: 'unverified' });
+    expect(claim).not.toHaveProperty('employer');
+  });
+
+  it('does not promote a same-date project line to employer, but accepts an explicit employer label', () => {
+    const [ambiguous] = deriveExperienceClaims(
+      'Migrated legacy systems | Jan 2020 - Jan 2022\nEngineer | Jan 2020 - Jan 2022\nBuilt distributed services.',
+      NOW,
+    );
+    expect(ambiguous).not.toHaveProperty('employer');
+    expect(ambiguous?.sourceText).toContain('Migrated legacy systems');
+
+    const [labeled] = deriveExperienceClaims(
+      'Company: Acme Corp | Jan 2020 - Jan 2022\nEngineer | Jan 2020 - Jan 2022\nBuilt distributed services.',
+      NOW,
+    );
+    expect(labeled?.employer).toBe('Acme Corp');
+    expect(labeled?.sourceText).toContain('Company: Acme Corp');
+  });
+
+  it('bounds a role description before the next undated role header', () => {
+    const [first] = deriveExperienceClaims(
+      'Senior Engineer | Jan 2020 - Jan 2022\nProduct Designer at Gamma\nDesigned candidate research workflows.',
+      NOW,
+    );
+    expect(first).toBeDefined();
+    expect(first).not.toHaveProperty('description');
+    expect(first?.sourceText).not.toContain('Designed candidate research workflows');
+  });
+
+  it('keeps duplicate role dates together and leaves dated bullet projects inside the role', () => {
+    const claims = deriveExperienceClaims(
+      [
+        'Acme Corp | Jan 2020 - Present',
+        'Senior Engineer | Jan 2020 - Present',
+        '- Led migration from Jan 2022 - Mar 2022',
+        '- Improved service reliability.',
+        'Beta Labs | Feb 2017 - Dec 2019',
+        'Developer | Feb 2017 - Dec 2019',
+        '- Built platform services.',
+      ].join('\n'),
+      NOW,
+    );
+    expect(claims).toHaveLength(2);
+    expect(claims[0]?.startDate).toBe(Date.UTC(2020, 0, 1));
+    expect(claims[0]?.endDate).toBe(NOW);
+    expect(claims[0]?.sourceText).toContain('Led migration from Jan 2022 - Mar 2022');
+    expect(claims[1]).not.toHaveProperty('employer');
+    expect(claims[1]?.sourceText).toContain('Beta Labs');
+  });
+
   it('produces the full derived profile the onboarding form pre-fills', () => {
     const fields = deriveFields(RESUME, NOW);
     expect(fields).toMatchObject({
@@ -385,6 +501,211 @@ describe('deriveFields', () => {
     expect(fields.titles[0]).toBe('Senior Associate');
     expect(fields.techStack.length).toBeGreaterThan(8);
     expect(fields.yearsOfExperience).toBeGreaterThan(4);
+    expect(fields.education).toEqual(['B.Tech in Information Technology, Example Institute, 2021']);
+  });
+
+  it('copies education claims only from the education section without implying verification', () => {
+    expect(
+      deriveEducation(
+        [
+          '• B.Sc. Physics, Example University (2019–2023)',
+          '',
+          'Email: ignored@example.invalid',
+        ].join('\n'),
+      ),
+    ).toEqual(['B.Sc. Physics, Example University (2019–2023)']);
+    expect(
+      deriveFields('Alex Example\nEDUCATION\nB.A. History, College Name, 2020').education,
+    ).toEqual(['B.A. History, College Name, 2020']);
+    expect(
+      deriveFields('Alex Example\nWORK EXPERIENCE\nEducation Consultant at Acme').education,
+    ).toEqual([]);
+  });
+
+  it('normalizes structured education details and retains unverified source provenance', () => {
+    expect(
+      deriveEducationClaims('• B.Tech in Information Technology, Example Institute, 2021'),
+    ).toEqual([
+      {
+        normalizedText: 'B.Tech in Information Technology, Example Institute, 2021',
+        sourceText: 'B.Tech in Information Technology, Example Institute, 2021',
+        sourceSection: 'education',
+        extractionConfidence: 'probable',
+        credentialStatus: 'unverified',
+        degree: 'Bachelor of Technology',
+        fieldOfStudy: 'Information Technology',
+        institution: 'Example Institute',
+        endYear: 2021,
+      },
+    ]);
+    expect(deriveEducationClaims('Completed relevant coursework')).toEqual([
+      {
+        normalizedText: 'Completed relevant coursework',
+        sourceText: 'Completed relevant coursework',
+        sourceSection: 'education',
+        extractionConfidence: 'unverified',
+        credentialStatus: 'unverified',
+      },
+    ]);
+    expect(
+      deriveEducationClaims('Completed relevant coursework, online platform, 2021')[0],
+    ).not.toHaveProperty('institution');
+    expect(
+      deriveEducationClaims(
+        'Bachelor of Science in Computer Science from Example University (2020–2023)',
+      ),
+    ).toMatchObject([
+      {
+        normalizedText:
+          'Bachelor of Science in Computer Science from Example University (2020-2023)',
+        sourceSection: 'education',
+        extractionConfidence: 'probable',
+        credentialStatus: 'unverified',
+        degree: 'Bachelor of Science',
+        fieldOfStudy: 'Computer Science',
+        institution: 'Example University',
+        startYear: 2020,
+        endYear: 2023,
+      },
+    ]);
+  });
+
+  it('does not infer an institution from an unrelated phrase after at or from', () => {
+    expect(
+      deriveEducationClaims('Bachelor of Science from 2019 to 2023; internship at Acme')[0],
+    ).toMatchObject({
+      degree: 'Bachelor of Science',
+      credentialStatus: 'unverified',
+      extractionConfidence: 'unverified',
+    });
+    expect(
+      deriveEducationClaims('Bachelor of Science from 2019 to 2023; internship at Acme')[0],
+    ).not.toHaveProperty('institution');
+  });
+
+  it('stops institution extraction before later employment text', () => {
+    expect(
+      deriveEducationClaims(
+        'Bachelor of Science from Example University, internship at Acme, 2020',
+      )[0],
+    ).toMatchObject({ institution: 'Example University' });
+  });
+
+  it('preserves reversed education dates as source text without structured dates', () => {
+    const [claim] = deriveEducationClaims('Bachelor of Science, Example University, 2023-2020');
+    expect(claim).toMatchObject({
+      sourceText: 'Bachelor of Science, Example University, 2023-2020',
+      credentialStatus: 'unverified',
+      extractionConfidence: 'unverified',
+      institution: 'Example University',
+    });
+    expect(claim).not.toHaveProperty('startYear');
+    expect(claim).not.toHaveProperty('endYear');
+  });
+
+  it('retains source-section evidence for extracted experience and skill fields', () => {
+    const fields = deriveFields(RESUME, NOW);
+    expect(fields.extractionEvidence).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          field: 'techStack',
+          sourceSection: 'skills',
+          extractionConfidence: 'probable',
+        }),
+        expect.objectContaining({
+          field: 'titles',
+          sourceSection: 'experience',
+          extractionConfidence: 'probable',
+        }),
+        expect.objectContaining({
+          field: 'education',
+          sourceSection: 'education',
+          extractionConfidence: 'probable',
+          sourceText: 'B.Tech in Information Technology, Example Institute, 2021',
+        }),
+      ]),
+    );
+    for (const [field, values] of [
+      ['techStack', fields.techStack],
+      ['recentSkills', fields.recentSkills],
+      ['titles', fields.titles],
+      ['education', fields.education],
+    ] as const) {
+      for (const value of values) {
+        expect(
+          fields.extractionEvidence.some(
+            (evidence) => evidence.field === field && evidence.value === value,
+          ),
+          field + ' value ' + value + ' should retain source evidence',
+        ).toBe(true);
+      }
+    }
+    if (fields.yearsOfExperience !== null) {
+      expect(
+        fields.extractionEvidence.some(
+          (evidence) =>
+            evidence.field === 'yearsOfExperience' &&
+            evidence.value === String(fields.yearsOfExperience),
+        ),
+      ).toBe(true);
+    }
+    expect(fields.extractionEvidence.every((evidence) => evidence.sourceText.length <= 200)).toBe(
+      true,
+    );
+  });
+
+  it('requires whole-token source evidence for extracted skills', () => {
+    const fields = deriveFields(
+      'PROFESSIONAL EXPERIENCE\nEngineer at Google from Jan 2020 - Jan 2024\nBuilt internal tools.\n\nTECHNICAL SKILLS\nGo',
+      NOW,
+    );
+    expect(fields.techStack).toContain('Go');
+    expect(
+      fields.extractionEvidence.some(
+        (entry) => entry.field === 'techStack' && entry.value === 'Go',
+      ),
+    ).toBe(true);
+
+    const substringOnly = deriveFields(
+      'PROFESSIONAL EXPERIENCE\nEngineer at Google from Jan 2020 - Jan 2024\nBuilt Google integrations.\n\nTECHNICAL SKILLS\nGoogle Workspace',
+      NOW,
+    );
+    expect(
+      substringOnly.extractionEvidence.some(
+        (entry) => entry.field === 'techStack' && entry.value === 'Go',
+      ),
+    ).toBe(false);
+  });
+
+  it('marks document-wide skill matches as supporting evidence when the occurrence is outside a skill section', () => {
+    const fields = deriveFields(
+      'EDUCATION\nBachelor of Science in React Studies, Example University, 2020\n',
+      NOW,
+    );
+    const evidence = fields.extractionEvidence.find(
+      (entry) => entry.field === 'techStack' && entry.value === 'React',
+    );
+
+    expect(fields.techStack).toContain('React');
+    expect(evidence).toMatchObject({
+      sourceSection: 'document',
+      evidenceKind: 'supporting-source',
+      extractionConfidence: 'unverified',
+    });
+  });
+
+  it('labels calculated experience years as supported by employment dates, not directly claimed', () => {
+    const fields = deriveFields(
+      'PROFESSIONAL EXPERIENCE\nRole A Jan 2020 - Jan 2024\nRole B Jan 2021 - Jan 2023\nBuilt services.',
+      NOW,
+    );
+    const evidence = fields.extractionEvidence.filter(
+      (entry) => entry.field === 'yearsOfExperience',
+    );
+    expect(fields.yearsOfExperience).toBe(4);
+    expect(evidence).toHaveLength(2);
+    expect(evidence.every((entry) => entry.evidenceKind === 'supporting-source')).toBe(true);
+    expect(evidence.every((entry) => /2020|2021|2023|2024/.test(entry.sourceText))).toBe(true);
   });
 });
 

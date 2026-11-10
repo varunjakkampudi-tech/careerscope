@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   candidateSchema,
+  derivedResumeSchema,
   preferencesSchema,
   profileSchema,
   profileUpdateSchema,
@@ -132,6 +133,115 @@ describe('candidate-declared profile fields', () => {
           .success,
       ).toBe(false);
     }
+  });
+});
+
+describe('derived education claim evidence', () => {
+  it('defaults new evidence fields for legacy parser results and validates provenance', () => {
+    const legacy = derivedResumeSchema.parse({ techStack: [], yearsOfExperience: null });
+    expect(legacy.education).toEqual([]);
+    expect(legacy.educationClaims).toEqual([]);
+    expect(legacy.extractionEvidence).toEqual([]);
+    expect(legacy.experienceClaims).toEqual([]);
+
+    const claim = {
+      normalizedText: 'BSc Computer Science, Example University, 2020-2023',
+      sourceText: 'B.Sc Computer Science, Example University, 2020–2023',
+      sourceSection: 'education',
+      extractionConfidence: 'probable',
+      credentialStatus: 'unverified',
+      degree: 'BSc',
+      fieldOfStudy: 'Computer Science',
+      institution: 'Example University',
+      startYear: 2020,
+      endYear: 2023,
+    };
+    expect(
+      derivedResumeSchema.parse({
+        techStack: [],
+        yearsOfExperience: null,
+        educationClaims: [claim],
+      }).educationClaims,
+    ).toEqual([claim]);
+    expect(
+      derivedResumeSchema.safeParse({
+        techStack: [],
+        yearsOfExperience: null,
+        educationClaims: [{ ...claim, credentialStatus: 'verified' }],
+      }).success,
+    ).toBe(false);
+    expect(
+      derivedResumeSchema.safeParse({
+        techStack: [],
+        yearsOfExperience: null,
+        educationClaims: [{ ...claim, sourceSection: 'experience' }],
+      }).success,
+    ).toBe(false);
+    expect(
+      derivedResumeSchema.safeParse({
+        techStack: [],
+        yearsOfExperience: null,
+        educationClaims: [{ ...claim, startYear: 2024, endYear: 2020 }],
+      }).success,
+    ).toBe(false);
+    const evidence = {
+      field: 'education',
+      value: claim.normalizedText,
+      sourceSection: 'education',
+      sourceText: claim.sourceText,
+      extractionConfidence: 'probable',
+      evidenceKind: 'direct-claim',
+    };
+    expect(
+      derivedResumeSchema.parse({
+        techStack: [],
+        yearsOfExperience: null,
+        extractionEvidence: [evidence],
+      }).extractionEvidence,
+    ).toEqual([evidence]);
+    expect(
+      derivedResumeSchema.safeParse({
+        techStack: [],
+        yearsOfExperience: null,
+        extractionEvidence: [{ ...evidence, sourceText: '' }],
+      }).success,
+    ).toBe(false);
+  });
+
+  it('accepts bounded unverified experience claims and rejects reversed dates or verification', () => {
+    const claim = {
+      normalizedText: 'Senior Engineer — Acme',
+      sourceText: 'Senior Engineer at Acme Jan 2020 - Jan 2024',
+      sourceSection: 'experience',
+      extractionConfidence: 'probable',
+      claimStatus: 'unverified',
+      title: 'Senior Engineer',
+      employer: 'Acme',
+      startDate: Date.UTC(2020, 0, 1),
+      endDate: Date.UTC(2024, 0, 1),
+      description: 'Built systems',
+    };
+    expect(
+      derivedResumeSchema.parse({
+        techStack: [],
+        yearsOfExperience: null,
+        experienceClaims: [claim],
+      }).experienceClaims,
+    ).toEqual([claim]);
+    expect(
+      derivedResumeSchema.safeParse({
+        techStack: [],
+        yearsOfExperience: null,
+        experienceClaims: [{ ...claim, startDate: claim.endDate, endDate: claim.startDate }],
+      }).success,
+    ).toBe(false);
+    expect(
+      derivedResumeSchema.safeParse({
+        techStack: [],
+        yearsOfExperience: null,
+        experienceClaims: [{ ...claim, claimStatus: 'verified' }],
+      }).success,
+    ).toBe(false);
   });
 });
 

@@ -8,6 +8,10 @@ function derived(overrides: Partial<DerivedResume> = {}): DerivedResume {
     recentSkills: [],
     titles: [],
     yearsOfExperience: null,
+    education: [],
+    educationClaims: [],
+    experienceClaims: [],
+    extractionEvidence: [],
     ...overrides,
   };
 }

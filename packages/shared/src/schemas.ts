@@ -184,6 +184,110 @@ export const derivedResumeSchema = z.object({
    */
   titlesStatus: z.enum(['derived', 'no-content', 'undeterminable']).optional(),
   yearsOfExperience: z.number().nullable(),
+  /** Candidate-supplied education text copied from the labeled resume section; not verified. */
+  education: z.array(z.string().trim().min(1).max(200)).max(20).default([]),
+  /** Structured, explicitly unverified claims with source text retained for review. */
+  educationClaims: z
+    .array(
+      z
+        .object({
+          normalizedText: z.string().trim().min(1).max(200),
+          sourceText: z.string().trim().min(1).max(200),
+          sourceSection: z.literal('education'),
+          /** Parser confidence only; credential authenticity is always unverified. */
+          extractionConfidence: z.enum(['probable', 'unverified']),
+          credentialStatus: z.literal('unverified'),
+          degree: z.string().trim().min(1).max(80).optional(),
+          fieldOfStudy: z.string().trim().min(1).max(120).optional(),
+          institution: z.string().trim().min(1).max(120).optional(),
+          startYear: z.number().int().min(1900).max(2200).optional(),
+          endYear: z.number().int().min(1900).max(2200).optional(),
+        })
+        .strict()
+        .superRefine((claim, context) => {
+          if (
+            claim.startYear !== undefined &&
+            claim.endYear !== undefined &&
+            claim.startYear > claim.endYear
+          ) {
+            context.addIssue({
+              code: 'custom',
+              path: ['startYear'],
+              message: 'startYear must not be after endYear',
+            });
+          }
+        }),
+    )
+    .max(20)
+    .default([]),
+  /** Structured candidate-supplied work history; extraction never verifies employment. */
+  experienceClaims: z
+    .array(
+      z
+        .object({
+          normalizedText: z.string().trim().min(1).max(200),
+          sourceText: z.string().trim().min(1).max(200),
+          sourceSection: z.literal('experience'),
+          extractionConfidence: z.enum(['probable', 'unverified']),
+          claimStatus: z.literal('unverified'),
+          title: z.string().trim().min(1).max(80).optional(),
+          employer: z.string().trim().min(1).max(120).optional(),
+          startDate: z
+            .number()
+            .int()
+            .min(Date.UTC(1970, 0, 1)),
+          endDate: z
+            .number()
+            .int()
+            .min(Date.UTC(1970, 0, 1)),
+          description: z.string().trim().min(1).max(200).optional(),
+        })
+        .strict()
+        .superRefine((claim, context) => {
+          if (claim.startDate > claim.endDate) {
+            context.addIssue({
+              code: 'custom',
+              path: ['startDate'],
+              message: 'startDate must not be after endDate',
+            });
+          }
+        }),
+    )
+    .max(30)
+    .default([]),
+  extractionEvidence: z
+    .array(
+      z
+        .object({
+          field: z.enum([
+            'techStack',
+            'recentSkills',
+            'titles',
+            'yearsOfExperience',
+            'education',
+            'experience',
+          ]),
+          value: z.string().trim().min(1).max(200),
+          sourceSection: z.enum([
+            'document',
+            'other',
+            'summary',
+            'experience',
+            'skills',
+            'education',
+            'projects',
+            'certifications',
+          ]),
+          sourceText: z.string().trim().min(1).max(200),
+          /** Whether this excerpt directly states the value or supports a derived value. */
+          evidenceKind: z.enum(['direct-claim', 'supporting-source']).default('direct-claim'),
+          /** Parser confidence only; never a claim that a candidate-supplied fact is verified. */
+          extractionConfidence: z.enum(['probable', 'unverified']),
+        })
+        .strict(),
+    )
+    .max(350)
+    .default([]),
 });
 export type DerivedResume = z.infer<typeof derivedResumeSchema>;
 
