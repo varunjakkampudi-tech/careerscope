@@ -4450,10 +4450,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed lifecycle boundary and regression tests: the helper is asserted absent from the public barrel; unknown types/statuses, missing required fields, arrays, fractional timestamps and malformed revocation metadata fail closed without throwing.",
+      "observations": "Re-reviewed lifecycle and public API regression tests: they import the built @careerscope/core entry point and assert the generic helpers are absent until approved issuance exists; unknown types/statuses, missing fields, arrays, fractional timestamps and malformed revocation metadata fail closed.",
       "evidence": "Reviewed current test and API-boundary diff after independent exact-head review; SHA-256 records the inspected bytes.",
       "reviewer": "Codex (CareerScope PR #60 exact-head review corrections)",
-      "sha256": "9447c9c7b4a498dfbad6adb98b428850afa17bab31e0c7b94c2182e8d75c66db"
+      "sha256": "4d415239fb2430e91b0e164f09366c8ec44156b9744cceb7347abc011dbb0276"
     },
     {
       "path": "packages/core/src/verification.ts",

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import * as publicCoreApi from '@careerscope/core';
 import {
   pendingVerification,
   revokeVerification,
@@ -21,9 +21,10 @@ test('new verification records do not grant a tick', () => {
   assert.equal(verificationTransition(check, 100), 'pending');
 });
 
-test('verification lifecycle stays out of the public core API until issuance policy is approved', async () => {
-  const publicApi = await readFile(new URL('./index.ts', import.meta.url), 'utf8');
-  assert.doesNotMatch(publicApi, /from ['"]\.\/verification\.js['"]/);
+test('verification lifecycle stays out of the public core API until issuance policy is approved', () => {
+  for (const member of ['verificationTransition', 'pendingVerification', 'revokeVerification']) {
+    assert.equal(member in publicCoreApi, false, `${member} must not be exposed by the core API`);
+  }
 });
 
 test('a completed check stays current only before its expiry and recheck time', () => {
