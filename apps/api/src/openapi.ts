@@ -173,7 +173,7 @@ const profile = object({
         },
         default: [],
         description:
-          'Candidate-selected fields that may be shared if recruiter discovery is later enabled. Empty by default; selecting fields grants no access. Contact details, compensation, birth date, photos, and resumes are excluded.',
+          'Candidate-selected fields that may be shared if recruiter discovery is later enabled. Empty by default; selecting fields grants no access. Contact details, compensation, birth date, photos, and resumes are outside this allowlist and need separate authorization before any future recruiter sharing.',
       },
     },
     [],

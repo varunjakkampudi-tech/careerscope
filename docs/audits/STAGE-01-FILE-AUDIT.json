@@ -409,7 +409,7 @@
     {
       "path": "apps/api/src/openapi.ts",
       "category": "backend-api",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -421,10 +421,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Re-reviewed the full profile-photo contract delta: authenticated GET returns binary WebP or 204, PUT accepts only JPEG/PNG/WebP and documents size/error statuses, DELETE returns 204, and declared error bodies remain JSON. The parent response hook and route integration test verify no-store and content headers. No contract discrepancy found.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "2137e44a7a4f26d1f930981c39efeef0018f0ad34d36cef7a1313ef56cf90342"
+      "observations": "Re-reviewed the full profile-photo contract delta: authenticated GET returns binary WebP or 204, PUT accepts only JPEG/PNG/WebP and documents size/error statuses, DELETE returns 204, and declared error bodies remain JSON. The parent response hook and route integration test verify no-store and content headers. No contract discrepancy found. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "da64c6f480ad3858f124979f7202d6223978e222a7927a8cf4677f5b6ceed99e"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -1169,7 +1169,7 @@
     {
       "path": "apps/web/src/components/profile-editor.tsx",
       "category": "frontend",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1181,10 +1181,10 @@
           "remediation": "Prevent the Continue click default and key the Continue and Save and finish buttons as distinct nodes; browser acceptance verifies no pre-final submission and clicks the final control."
         }
       ],
-      "observations": "Re-reviewed profile-photo UI changes: client checks type and 5 MiB size while server validation remains authoritative; upload/delete mutations report accessible alert/status feedback, dispatch the shared avatar refresh event only on success, disable conflicting controls while pending, and explain the owner-only privacy boundary. Browser coverage includes keyboard access, invalid file rejection, API failure, upload, reload and delete.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "e9cf0cbd78ab72e0a63ddae82c82d3f62e2f5394bb2768299c9d89a658d435d6"
+      "observations": "Re-reviewed profile-photo UI changes: client checks type and 5 MiB size while server validation remains authoritative; upload/delete mutations report accessible alert/status feedback, dispatch the shared avatar refresh event only on success, disable conflicting controls while pending, and explain the owner-only privacy boundary. Browser coverage includes keyboard access, invalid file rejection, API failure, upload, reload and delete. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "15e543d888ccc6ef6655e60a5b28578a12d6cc79c2d332971c864769489faecb"
     },
     {
       "path": "apps/web/src/components/recovery-email-section.tsx",
@@ -1300,26 +1300,26 @@
     {
       "path": "apps/web/src/lib/api-schemas.ts",
       "category": "frontend",
-      "reviewMethod": "focused source and test review",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the dashboard profile parser extension. It selects only saved candidate and preference fields required by the completeness meter and tolerates additional server response fields; the optional legacy career segment and arrays have safe defaults.",
-      "evidence": "Compared against GET /api/profile response and schema, then validated with Stage 03 item 3.16 typecheck, production build, tests, and hosted CI pending.",
-      "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "43df1ddc875f7f463c7e7ea28c1067c0cbcc5033dfc27395749e691d74a8da80"
+      "observations": "Reviewed the dashboard profile parser extension. It selects only saved candidate and preference fields required by the completeness meter and tolerates additional server response fields; the optional legacy career segment and arrays have safe defaults. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Compared against GET /api/profile response and schema, then validated with Stage 03 item 3.16 typecheck, production build, tests, and hosted CI pending. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "46526999c6bc0b8f395b52a5815781c7616f294f753663fcb6a56d2053eb9475"
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete API client test suite. It exercises supported and malformed conflicts, safe fixed messages, retry eligibility, 404 handling, OTP outages, one-time and concurrent session refresh, unread response cancellation, schema rejection and both session branches. Fetch/window globals are restored in test cleanup.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "467fee2057ab44d897fc1f5a278a661b7769352a1faf0c574366f449a8c939ee"
+      "observations": "Read the complete API client test suite. It exercises supported and malformed conflicts, safe fixed messages, retry eligibility, 404 handling, OTP outages, one-time and concurrent session refresh, unread response cancellation, schema rejection and both session branches. Fetch/window globals are restored in test cleanup. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "a9abea198427073b003c68ee47873595d4e2999bd1c2c272aafe691bee9f5ce6"
     },
     {
       "path": "apps/web/src/lib/api.ts",
@@ -1684,7 +1684,7 @@
     {
       "path": "docs/API-SURFACE.md",
       "category": "documentation",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1696,10 +1696,10 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Re-reviewed the complete profile-photo documentation delta. Authenticated route methods and the no-photo 204 behavior match the API contract; photo is documented separately from recruiter/public access.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "4588e77f0861e2c906336d3395c6cc44fbaeaaf3743084057be1793a79f41139"
+      "observations": "Re-reviewed the complete profile-photo documentation delta. Authenticated route methods and the no-photo 204 behavior match the API contract; photo is documented separately from recruiter/public access. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "d26e1d0550d24f64449b2a4554f190f62e7c9ec54f224104c20433d15fa2b17b"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1880,7 +1880,7 @@
     {
       "path": "docs/DATA-MODEL.md",
       "category": "documentation",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1892,10 +1892,10 @@
           "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
         }
       ],
-      "observations": "Re-reviewed the profile-photo data-model text against migration 0004 and the repository: one bounded bytea WebP per owner, cascade on account deletion, session-only owner reads and unresolved retention policy are accurately stated. Existing migration numbering and applied-file immutability are preserved.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "b1b7f819f76581cf1dc07fb546847dbbac14f4dcf0f07ce9aa12e8b6d8c7cb9b"
+      "observations": "Re-reviewed the profile-photo data-model text against migration 0004 and the repository: one bounded bytea WebP per owner, cascade on account deletion, session-only owner reads and unresolved retention policy are accurately stated. Existing migration numbering and applied-file immutability are preserved. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "80333c4aa9c0f3e5e7a804f3081aa3cd9709748554908c2acf73cbdbb4859b90"
     },
     {
       "path": "docs/decisions/CSP-STRICT-SCRIPT-SRC.md",
@@ -2270,7 +2270,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "source review plus implementation exact-head CI and status reconciliation",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2282,10 +2282,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Re-reviewed the Stage 03 item 3.16 closeout record. It now distinguishes exact-head approval and CI, verifies the successful dev merge and post-merge checks, and records the checklist item as verified.",
-      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; hosted run 42758118526 passed all three jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b, and post-merge run 42759315007 passed Quality gates and Services/integration/browser suites.",
-      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "d3b8cd0cdcce56aebe32a20c5d4ac1bd4d3faa2afd0d3e2587d26acd187638b0"
+      "observations": "Re-reviewed the Stage 03 item 3.16 closeout record. It now distinguishes exact-head approval and CI, verifies the successful dev merge and post-merge checks, and records the checklist item as verified. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; hosted run 42758118526 passed all three jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b, and post-merge run 42759315007 passed Quality gates and Services/integration/browser suites. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "efec21fe999cba54062c9c20ef8988ca7fda2e59598964ac5ff6f0a0a7aa8701"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -2326,14 +2326,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "prior complete source review plus current implementation CI and status reconciliation",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the canonical item 3.16 record. It retains the owner checklist title, records verified status and evidence for exact-head approval, successful CI, merge to dev, and successful post-merge gates.",
-      "evidence": "Item 3.16 is verified after ChatGPT approval at exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031, all three exact-head jobs passed in run 42758118526, PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b, and post-merge run 42759315007 passed Quality gates and Services/integration/browser suites.",
-      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "89d2793761d4b033d7115994e5869f5088c2b2727331b3a67b15cc114392b43a"
+      "observations": "Re-reviewed the canonical item 3.16 record. It retains the owner checklist title, records verified status and evidence for exact-head approval, successful CI, merge to dev, and successful post-merge gates. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Item 3.16 is verified after ChatGPT approval at exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031, all three exact-head jobs passed in run 42758118526, PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b, and post-merge run 42759315007 passed Quality gates and Services/integration/browser suites. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "e3d65b717d73e3aa096defed1fa08975a85455a944e06fe28333d2f4e657b8f5"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -2358,14 +2358,14 @@
     {
       "path": "docs/requirements/V12-REQUIREMENT-INVENTORY.json",
       "category": "documentation",
-      "reviewMethod": "structured-data-and-checker",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-read the 319-clause inventory and checked all 11 owner-scoped exclusions plus mixed clauses retained in scope. Owner-scoped records are non-blocking with a rationale; backup portions of mixed clauses are excluded while other gaps remain. The pinned source digest and clause correspondence still pass. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "a13d7491ea60cefc4ca785aa5985f05fc8de8409dde6af6f67471ca5225d10b9"
+      "observations": "Re-read the 319-clause inventory and checked all 11 owner-scoped exclusions plus mixed clauses retained in scope. Owner-scoped records are non-blocking with a rationale; backup portions of mixed clauses are excluded while other gaps remain. The pinned source digest and clause correspondence still pass. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "d2e8c9521b16815e08bb184ea8c03e2908f2462ca0c4a57cf5d75a98f0980ae7"
     },
     {
       "path": "docs/SECURITY.md",
@@ -2426,14 +2426,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused source, test and exact-head CI provenance review",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the item 3.16 row. Historical failures and approvals remain tied to their original SHAs; exact-head approval and CI, dev merge, and post-merge CI are recorded, and the item is verified.",
-      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; run 42758118526 passed all three required jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b. Post-merge run 42759315007 passed Quality gates and Services/integration/browser suites; image build skipped on push.",
-      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "353f038dcbc10b6340abba22e7aa7766991a7158fcd49bb4f33583047eab03e7"
+      "observations": "Re-reviewed the item 3.16 row. Historical failures and approvals remain tied to their original SHAs; exact-head approval and CI, dev merge, and post-merge CI are recorded, and the item is verified. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; run 42758118526 passed all three required jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b. Post-merge run 42759315007 passed Quality gates and Services/integration/browser suites; image build skipped on push. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "e7615b5e712ea643d050303f2ec3acff0ac0648baa701158f947ed9735344df7"
     },
     {
       "path": "docs/TESTING.md",
@@ -4086,26 +4086,26 @@
     {
       "path": "packages/core/src/profile.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added profile-domain assertions that normalize and retain salary floor and currency in the saved matching preferences. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Re-reviewed modified availability evidence, including raw legacy stored-profile reads where availabilityStatus is absent; zero notice days map to immediate and positive days retain the notice-period value.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "e90a41f581af1d3734229f501ec975b755ee0a97d247afcbea35992347b72f9b"
+      "observations": "Added profile-domain assertions that normalize and retain salary floor and currency in the saved matching preferences. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Re-reviewed modified availability evidence, including raw legacy stored-profile reads where availabilityStatus is absent; zero notice days map to immediate and positive days retain the notice-period value. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "f60be2b0765ed4e3cbfc9040c45db4ef4ac0dad6bbe4075b8f3d343669e51b2d"
     },
     {
       "path": "packages/core/src/profile.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (183 lines). Checked: strict per-section schemas with one generic issue and no field details; link fields are HTTPS only without credentials, and the URL parse runs only after the base URL check passes; revision-guarded save (revision 0 creates, anything else requires a match, a mismatch raises a 409 conflict); scheduled-discovery toggle is outside the revision and refuses before the profile is saved; matching snapshot copies only the fields scoring reads. No finding. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "f2c7d08c70fb69758eeabe1df6eae75403e159ceb5a12d07c3514e908c5f9510"
+      "observations": "Read in full (183 lines). Checked: strict per-section schemas with one generic issue and no field details; link fields are HTTPS only without credentials, and the URL parse runs only after the base URL check passes; revision-guarded save (revision 0 creates, anything else requires a match, a mismatch raises a 409 conflict); scheduled-discovery toggle is outside the revision and refuses before the profile is saved; matching snapshot copies only the fields scoring reads. No finding. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "d5b667482fe275ae3553258ed7aab0b13b2d72650b9467c298bb3353883636ff"
     },
     {
       "path": "packages/core/src/queue.integration.test.ts",
@@ -5744,19 +5744,19 @@
     {
       "path": "packages/shared/src/schemas.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added salary-floor boundary and currency-code tests, including lowercase normalization and malformed code rejection. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "466b9404d6b863083e29eca4a8dfebba202c64ce3808c3b6ee2b02a6e5b732e3"
+      "observations": "Added salary-floor boundary and currency-code tests, including lowercase normalization and malformed code rejection. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "9a8e8746b56422d1073b295328f529e686c686238690dcaaba2ff80aa8770dbc"
     },
     {
       "path": "packages/shared/src/schemas.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -5768,10 +5768,10 @@
           "remediation": "apiErrorSchema corrected to the flat envelope and tested against errorEnvelope output. Unused exports are recorded as technical debt to remove in the next cleanup pass."
         }
       ],
-      "observations": "Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "acc60f4276f704cb13c2ee0d143fd6a594bb024d835b4a48fe859a3b93c81893"
+      "observations": "Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "64653725c222dd0a3cbadd10954e58ff1462b523793f985ae6449d2b52056440"
     },
     {
       "path": "packages/shared/src/skills.test.ts",
@@ -5808,14 +5808,14 @@
     {
       "path": "packages/shared/src/types.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Documented the nullable minSalaryCurrency field on matching candidate context, including null semantics for older or unspecified profiles.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "80fd31b4c76b2717de5ff615997f8471e64a7ed00db3ec8774433c998c7b4392"
+      "observations": "Documented the nullable minSalaryCurrency field on matching candidate context, including null semantics for older or unspecified profiles. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "92be0983d83ed0a9a19a599a203ba2da3126d4dfbb7e3cfbf95c897a75187137"
     },
     {
       "path": "packages/shared/tsconfig.json",
@@ -6499,7 +6499,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "source review plus Stage 03 item 3.16 cross-account delayed-response regression",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6525,10 +6525,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the full browser suite and changed owner-switch regression. Existing coverage verifies profile-completeness success, API failure/retry, persisted profile state, and cross-account data isolation. The delayed foreign-profile response is checked against the actual foreign-owner body and expected 80% score; the response remains held through sign-out/sign-in, is released through route.fulfill, and owner A remains at 100% after render. Earlier requestfinished/response waits timed out and a TypeScript requestAnimationFrame callback error was corrected. No remaining finding.",
-      "evidence": "Exact-head hosted CI run 42570381867 passed Quality gates, Services/integration/browser suites, and Production image build on db7a7df3011c344dd6a8d2dab64196287ffa787b. Local browser execution was unavailable because the worktree PostgreSQL credentials did not match the shared Docker service.",
-      "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "c7381bf94892b37b0996f7231849c1fa9e3aecfd1485ee98012012b3817251cc"
+      "observations": "Reviewed the full browser suite and changed owner-switch regression. Existing coverage verifies profile-completeness success, API failure/retry, persisted profile state, and cross-account data isolation. The delayed foreign-profile response is checked against the actual foreign-owner body and expected 80% score; the response remains held through sign-out/sign-in, is released through route.fulfill, and owner A remains at 100% after render. Earlier requestfinished/response waits timed out and a TypeScript requestAnimationFrame callback error was corrected. No remaining finding. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Exact-head hosted CI run 42570381867 passed Quality gates, Services/integration/browser suites, and Production image build on db7a7df3011c344dd6a8d2dab64196287ffa787b. Local browser execution was unavailable because the worktree PostgreSQL credentials did not match the shared Docker service. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "74cec7cb87b1eb546ad653c563e32778d028ad7d3403a6e900fef510afae1e97"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
@@ -6661,14 +6661,14 @@
     {
       "path": "tests/integration/database.integration.test.ts",
       "category": "tests",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "targeted-current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the complete photo API integration delta: OpenAPI binary contract; unauthenticated and CSRF-denied paths; unsupported and malformed inputs; empty 204 and normalized WebP/no-store/nosniff response; two-owner read/write/delete isolation; profile data remains unchanged. Test fixtures and database cleanup use isolated synthetic accounts.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "511b4fa476973f099d087b6b30c2e35ed7e4f1a4bb3a2ccb2405be3827d2ffe6"
+      "observations": "Re-reviewed the complete photo API integration delta: OpenAPI binary contract; unauthenticated and CSRF-denied paths; unsupported and malformed inputs; empty 204 and normalized WebP/no-store/nosniff response; two-owner read/write/delete isolation; profile data remains unchanged. Test fixtures and database cleanup use isolated synthetic accounts. Stage 03.15 diff reviewed: private-by-default candidate-selected fields, revocation/clearing behavior, legacy normalization, and no recruiter access path.",
+      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source. Compared with origin/dev 036dd3c11278a26534544792f4834a0902214d17; local full unit suite passed 375 with 3 platform skips. Hosted exact-head review remains pending.",
+      "reviewer": "Codex (Stage 03 item 3.15 privacy continuation)",
+      "sha256": "c3e591a068c4ee3d860e3e5d499888b59e01f98d317277ebc389bd95ccb76c78"
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",

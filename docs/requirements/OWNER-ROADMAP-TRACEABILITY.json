@@ -770,20 +770,24 @@
       "currentStatus": "partial",
       "evidence": [
         "packages/shared/src/schemas.ts",
+        "packages/shared/src/types.ts",
         "packages/core/src/profile.ts",
         "apps/web/src/components/profile-editor.tsx",
+        "apps/web/src/lib/api-schemas.ts",
         "apps/api/src/openapi.ts",
         "docs/API-SURFACE.md",
+        "docs/DATA-MODEL.md",
         "docs/PROGRESS.md"
       ],
       "tests": [
         "packages/shared/src/schemas.test.ts",
         "packages/core/src/profile.test.ts",
         "apps/web/src/lib/api.test.ts",
-        "scripts/tests/check-ui.ts"
+        "scripts/tests/check-ui.ts",
+        "tests/integration/database.integration.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Owner-controlled recruiter visibility preference is revision-saved and defaults private. No recruiter-facing profile read exists, so the preference does not expose profile data; actual access enforcement, privacy review of exposed fields, and recruiter-path tests remain outstanding.",
+      "gap": "The owner-controlled recruiter visibility preference and candidate-selected allowlist save with private defaults and fail-closed normalization. No recruiter-facing profile read or access enforcement exists, so the preference exposes no candidate data. Recruiter-path tests and independent privacy review remain outstanding; excluded sensitive fields need separate authorization before any future recruiter sharing.",
       "scopeDisposition": "in-scope"
     },
     {

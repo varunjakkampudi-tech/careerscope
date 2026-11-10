@@ -229,8 +229,9 @@ The owner profile includes `privacy.recruiterVisible`, defaulting to `false`, an
 select from a fixed set of non-contact professional fields and withdraw consent
 by disabling visibility or clearing the list; privacy validation rejects a
 private profile with retained recruiter-visible fields. Changes apply after a
-successful profile save. Contact details, compensation,
-birth date, photos, and resumes cannot be selected. These are preferences only,
+successful profile save. Contact details, compensation, birth date, photos, and
+resumes cannot be selected through this preference; any future recruiter
+disclosure of those fields requires separate explicit authorization. These are preferences only,
 not access grants: recruiter search and recruiter profile-read routes do not
 exist yet, and no current API exposes profiles to recruiters. Candidate photos
 remain owner-only. These fields are excluded from job-matching inputs.

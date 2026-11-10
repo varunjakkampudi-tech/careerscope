@@ -803,9 +803,10 @@ function ProfileForm({
         {guided && <p className={styles.stepDescription}>{onboardingSteps[4].description}</p>}
         <p id="recruiter-visibility-help">
           Your profile is private by default. Recruiter search is not available yet, so these
-          choices will not make your profile visible today. Contact details, salary, birth date,
-          photos, and resumes are never included. You can withdraw consent by clearing these choices
-          or turning visibility off. Changes take effect after you save your profile. Your profile
+          choices will not make your profile visible today. Contact details, compensation, birth
+          date, photos, and resumes are outside this allowlist and need separate authorization
+          before any future recruiter sharing. You can withdraw consent by clearing these choices or
+          turning visibility off. Changes take effect after you save your profile. Your profile
           picture stays private.
         </p>
         <div className="check-row">
