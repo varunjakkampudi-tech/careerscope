@@ -352,10 +352,20 @@
       "title": "Terms/privacy acceptance",
       "sourceStatus": "Partial",
       "currentStatus": "partial",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
-      "tests": ["apps/api/src/legal-acceptance.integration.test.ts"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md",
+        "apps/web/src/lib/locale.ts",
+        "apps/web/src/components/account-form.tsx"
+      ],
+      "tests": [
+        "apps/api/src/legal-acceptance.integration.test.ts",
+        "apps/web/src/lib/locale.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Native-language review of localized Terms/privacy acceptance copy remains outstanding; engineering versioned re-acceptance behavior is covered by the cited integration test.",
+      "gap": "AI-only copy review found and corrected a Hindi privacy acknowledgement that implied acceptance instead of acknowledging receipt; Telugu and Hindi strings have regression assertions. Native-language review remains outstanding; engineering versioned re-acceptance behavior is covered by the cited integration test.",
       "scopeDisposition": "in-scope"
     },
     {

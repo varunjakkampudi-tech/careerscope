@@ -264,6 +264,7 @@ const messages = {
     termsOfServiceWithVersion: 'Terms of Service ({value})',
     acknowledgePrivacyPrefix: 'I acknowledge the',
     privacyNoticeWithVersion: 'Privacy Notice ({value})',
+    acknowledgePrivacySuffix: '',
     marketingOptInLabel:
       'Send me optional CareerScope product updates. This is not required and can be withdrawn later.',
     sendVerificationCode: 'Send verification code',
@@ -529,8 +530,9 @@ const messages = {
     legalNotices: 'చట్టపరమైన నోటీసులు',
     acceptTermsPrefix: 'నేను అంగీకరిస్తున్నాను',
     termsOfServiceWithVersion: 'సేవా నిబంధనలు ({value})',
-    acknowledgePrivacyPrefix: 'నేను గుర్తించాను',
+    acknowledgePrivacyPrefix: 'నేను',
     privacyNoticeWithVersion: 'గోప్యతా నోటీసు ({value})',
+    acknowledgePrivacySuffix: 'ను గుర్తిస్తున్నాను',
     marketingOptInLabel:
       'నాకు ఐచ్ఛిక CareerScope ఉత్పత్తి నవీకరణలను పంపండి. ఇది తప్పనిసరి కాదు మరియు తర్వాత ఉపసంహరించుకోవచ్చు.',
     sendVerificationCode: 'ధృవీకరణ కోడ్‌ను పంపండి',
@@ -790,8 +792,9 @@ const messages = {
     legalNotices: 'कानूनी नोटिस',
     acceptTermsPrefix: 'मैं स्वीकार करता/करती हूँ',
     termsOfServiceWithVersion: 'सेवा की शर्तें ({value})',
-    acknowledgePrivacyPrefix: 'मैं स्वीकार करता/करती हूँ',
+    acknowledgePrivacyPrefix: 'मैं',
     privacyNoticeWithVersion: 'गोपनीयता सूचना ({value})',
+    acknowledgePrivacySuffix: 'की प्राप्ति की पुष्टि करता/करती हूँ',
     marketingOptInLabel:
       'मुझे वैकल्पिक CareerScope उत्पाद अपडेट भेजें। यह आवश्यक नहीं है और इसे बाद में वापस लिया जा सकता है।',
     sendVerificationCode: 'सत्यापन कोड भेजें',

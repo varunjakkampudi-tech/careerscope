@@ -29,6 +29,21 @@ test('shared navigation and reminder messages are present for each supported lan
   assert.notEqual(localizedText('en', 'jobs'), localizedText('hi', 'jobs'));
 });
 
+test('privacy notice acknowledgement copy does not imply acceptance in supported languages', () => {
+  const label = (locale: (typeof interfaceLocales)[number]) =>
+    [
+      localizedText(locale, 'acknowledgePrivacyPrefix'),
+      localizedValue(locale, 'privacyNoticeWithVersion', 'v1.0'),
+      localizedText(locale, 'acknowledgePrivacySuffix'),
+    ]
+      .filter(Boolean)
+      .join(' ');
+
+  assert.equal(label('en'), 'I acknowledge the Privacy Notice (v1.0)');
+  assert.equal(label('te'), 'నేను గోప్యతా నోటీసు (v1.0) ను గుర్తిస్తున్నాను');
+  assert.equal(label('hi'), 'मैं गोपनीयता सूचना (v1.0) की प्राप्ति की पुष्टि करता/करती हूँ');
+});
+
 test('interview notification preference labels and safety notes are localized for each language', () => {
   const keys = [
     'notificationPreferencesHeading',
