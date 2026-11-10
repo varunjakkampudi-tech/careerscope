@@ -2270,7 +2270,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "source review plus implementation exact-head CI and status reconciliation",
+      "reviewMethod": "Source, test, exact-SHA review, and audit-manifest reconciliation",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2282,10 +2282,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Re-reviewed the Stage 03 item 3.16 closeout record. It now distinguishes exact-head approval and CI, verifies the successful dev merge and post-merge checks, and records the checklist item as verified.",
-      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; hosted run 42758118526 passed all three jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b, and post-merge run 42759315007 passed Quality gates and Services/integration/browser suites.",
-      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "5305a42c91a04373976ce0ee1d13f6b165d0c5b252ae1feeb1b1fb18641c910f"
+      "observations": "Reconciles the Stage 01 item 1.01 audit refresh with the Stage 02 item 2.06 localization correction. PR #74 was independently approved at exact SHA 2953f9124832807d3e47dfdfff95b62ed7b434a0, passed all three jobs in run 42797486814, and merged as fe79b695d00447537d5993d97ac66cec0a6e2ee5. Item 2.06 remains partial pending native-language review; its privacy acknowledgement correction and automated coverage are recorded without claiming native review.",
+      "evidence": "PR #74 exact-head run 42797486814 passed all three jobs and its exact SHA was approved before merge. PR #70 exact-head run 42778280163 passed all three jobs; current merged development of item 2.06 retains the open native-language review limitation. Current post-merge dev run 42799635203 is being revalidated after the browser suite reported an active /api/leads/:id request.",
+      "reviewer": "Codex (CareerScope item 1.01 evidence refresh and item 2.06 correction)",
+      "sha256": "94d9b0707b15e2a8cc43f4788810908418d6cbc0f46439f4dbed65a2b069b5d9"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -2426,14 +2426,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused source, test and exact-head CI provenance review",
+      "reviewMethod": "Source, test, exact-SHA review, and audit-manifest reconciliation",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the item 3.16 row. Historical failures and approvals remain tied to their original SHAs; exact-head approval and CI, dev merge, and post-merge CI are recorded, and the item is verified.",
-      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; run 42758118526 passed all three required jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b. Post-merge run 42759315007 passed Quality gates and Services/integration/browser suites; image build skipped on push.",
-      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "49811e9d7d6360d3d44217e3fd6b839515f4e480e47d0596c7300e7214c02661"
+      "observations": "Reconciles the Stage 01 item 1.01 audit refresh with the Stage 02 item 2.06 localization correction. PR #74 was independently approved at exact SHA 2953f9124832807d3e47dfdfff95b62ed7b434a0, passed all three jobs in run 42797486814, and merged as fe79b695d00447537d5993d97ac66cec0a6e2ee5. Item 2.06 remains partial pending native-language review; its privacy acknowledgement correction and automated coverage are recorded without claiming native review.",
+      "evidence": "PR #74 exact-head run 42797486814 passed all three jobs and its exact SHA was approved before merge. PR #70 exact-head run 42778280163 passed all three jobs; current merged development of item 2.06 retains the open native-language review limitation. Current post-merge dev run 42799635203 is being revalidated after the browser suite reported an active /api/leads/:id request.",
+      "reviewer": "Codex (CareerScope item 1.01 evidence refresh and item 2.06 correction)",
+      "sha256": "50979650a1934676d6b42f30583aaf25da07b8183189c7ed437d5e9b7a1558c2"
     },
     {
       "path": "docs/TESTING.md",
