@@ -1512,7 +1512,7 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete import-order regression test. It checks the detector’s type-only handling and scans client modules for zod/shared runtime imports that precede configuration.",
+      "observations": "Read the complete import-order regression test. It checks the detector\u2019s type-only handling and scans client modules for zod/shared runtime imports that precede configuration.",
       "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "6ce2ff57d576604df8060aea0a4657ad2f8f4a96c0bf681563c42e84eb25c791"
@@ -1692,7 +1692,7 @@
           "id": "S1-F047",
           "severity": "low",
           "status": "fixed",
-          "summary": "The API contract documented an obsolete 409 fallback message (“Idempotency conflict”) after the handler had been corrected.",
+          "summary": "The API contract documented an obsolete 409 fallback message (\u201cIdempotency conflict\u201d) after the handler had been corrected.",
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
@@ -2330,10 +2330,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the canonical item 3.16 record. It retains the owner checklist title, records verified status and evidence for exact-head approval, successful CI, merge to dev, and successful post-merge gates.",
-      "evidence": "Item 3.16 is verified after ChatGPT approval at exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031, all three exact-head jobs passed in run 42758118526, PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b, and post-merge run 42759315007 passed Quality gates and Services/integration/browser suites.",
-      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "32408953a253567dbed6266a2086e4408601137b19c739d67fd64cd225a594c5"
+      "observations": "Historical item 3.16 review: retains the owner checklist title and verified evidence for exact-head approval, successful CI, merge to dev, and successful post-merge gates. Current item 2.10 re-review: AI-only recovery-copy review does not waive the outstanding native Telugu and Hindi review. Item 2.10 remains partial; no translation certification is claimed.",
+      "evidence": "Historical item 3.16: ChatGPT approval at exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; all three exact-head jobs passed in run 42758118526; PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b; post-merge run 42759315007 passed Quality gates and Services/integration/browser suites. Current item 2.10: reviewed for PR #42 correction; SHA-256 records current corrected bytes.",
+      "reviewer": "Codex (Stage 01 item 3.16 closeout record; CareerScope item 2.10 status correction)",
+      "sha256": "9df5abc81d556766c9282d20f53bf39735d054dcc9c09ac4073937b3b85f085f"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -4438,7 +4438,7 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. RFC 4226 HOTP and RFC 6238 step matching use constant-time comparison per candidate and a ±1 drift window. Base32 encode and decode are bounded for the 20-byte secret. AES-256-GCM uses a fresh 12-byte nonce per encryption, stores the 16-byte tag, and derives its key with HKDF from the master secret under a fixed info string. Decryption throws on tag mismatch, which is the intended failure. No finding.",
+      "observations": "Read in full. RFC 4226 HOTP and RFC 6238 step matching use constant-time comparison per candidate and a \u00b11 drift window. Base32 encode and decode are bounded for the 20-byte secret. AES-256-GCM uses a fresh 12-byte nonce per encryption, stores the 16-byte tag, and derives its key with HKDF from the master secret under a fixed info string. Decryption throws on tag mismatch, which is the intended failure. No finding.",
       "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
       "sha256": "c0aaecc1d5e0ab319fb64a447da18baabd8a13d6182fe7e5245e224d2a5c4633"
@@ -4670,7 +4670,7 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
+      "observations": "Re-reviewed after one change: the unused re-export of this file\u2019s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
       "sha256": "20e0bcaacbbd56978a9de684bd4282e6ad10d8befafb0b7c758712fbc32ac15b"
@@ -4706,7 +4706,7 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
+      "observations": "Re-reviewed after one change: the unused re-export of this file\u2019s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
       "sha256": "bc1e8c7983d3e9402aa93f1526278593ad69cb72b66ffec223477de18d5902f7"
@@ -4718,7 +4718,7 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
+      "observations": "Re-reviewed after one change: the unused re-export of this file\u2019s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
       "sha256": "3ffb39a17ae1d98e0f66f33f23e7055048e555cb0bb54e8bc91845385a1263fe"
@@ -4730,7 +4730,7 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
+      "observations": "Re-reviewed after one change: the unused re-export of this file\u2019s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
       "sha256": "5d11faddf4d9311b614544ba160a1f1fd0526f94008f6bd81d50009673629017"
@@ -4742,7 +4742,7 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
+      "observations": "Re-reviewed after one change: the unused re-export of this file\u2019s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
       "sha256": "3bb894810fcc04d0b9ed394b8d901fe87bdff9e11dd29629d11c9aab82968c83"
@@ -4754,7 +4754,7 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
+      "observations": "Re-reviewed after one change: the unused re-export of this file\u2019s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
       "evidence": "",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
       "sha256": "e56a5615ab0dfe65a8ceb5e91e24bd5157ae6e6bd1766d47c903c53441ab831c"

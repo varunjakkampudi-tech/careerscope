@@ -423,7 +423,7 @@
       "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": ["apps/api/src/recovery.integration.test.ts"],
       "externalEvidence": [],
-      "gap": "Native review of Telugu and Hindi account-recovery wording remains outstanding.",
+      "gap": "Native Telugu and Hindi review of recovery copy remains outstanding. The owner selected AI-only review, which did not waive this gap.",
       "scopeDisposition": "in-scope"
     },
     {
