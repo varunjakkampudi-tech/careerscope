@@ -814,7 +814,7 @@
       "stageTitle": "Resume management and parsing",
       "title": "Resume upload",
       "sourceStatus": "Existing",
-      "currentStatus": "partial",
+      "currentStatus": "verified",
       "evidence": [
         "apps/api/src/app.ts",
         "packages/core/src/resumes.ts",
@@ -826,9 +826,10 @@
         "packages/core/src/resumes.integration.test.ts"
       ],
       "externalEvidence": [
-        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
+        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push.",
+        "Current sequential review adds an API regression for authentication, invalid signatures, acceptance at the 5 MiB boundary, rejection above the limit, idempotent retry without a second storage write, and owner-scoped list/detail. The API and core resume integration suites passed locally (9/9) using synthetic data and a loopback database with a 60-second development statement timeout. Exact-head hosted CI and final review remain pending."
       ],
-      "gap": "Existing implementation and test evidence are present, but item-specific checklist criteria have not yet completed the sequential review and exact-commit approval gate.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {

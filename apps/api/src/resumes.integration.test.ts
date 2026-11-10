@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import {
   Auth,
   Database,
+  maximumResumeBytes,
   ResumeUploadRepository,
   refreshCookie,
   sessionCookie,
@@ -82,6 +83,84 @@ const storageStub = (overrides: Partial<NonNullable<Storage>> = {}): NonNullable
   delete: async () => {},
   ...overrides,
 });
+
+test(
+  'F-021: the authenticated upload endpoint queues bounded PDF bytes idempotently and keeps them owner-scoped',
+  { timeout: 60_000 },
+  async () => {
+    await withFixture(async ({ database, owner, other }) => {
+      const stored: ResumeObject[] = [];
+      const app = await createApp(database, origin, async () => true, {
+        testAccess: { mode: 'disabled' },
+        resumeStorage: storageStub({
+          put: async (object, body) => {
+            stored.push(object);
+            assert.equal(body.byteLength, maximumResumeBytes);
+            assert.equal(body.subarray(0, 8).toString(), '%PDF-1.7');
+            assert.equal(object.sha256, createHash('sha256').update(body).digest('hex'));
+            return 'synthetic-version';
+          },
+        }),
+      });
+      try {
+        const upload = (headers: Record<string, string>, payload: Buffer) =>
+          app.inject({
+            method: 'POST',
+            url: '/api/resumes',
+            headers: { ...headers, 'content-type': 'application/octet-stream' },
+            payload,
+          });
+        const key = 'route-resume-upload';
+        const atLimit = Buffer.alloc(maximumResumeBytes);
+        Buffer.from('%PDF-1.7').copy(atLimit);
+
+        assert.equal((await upload({ origin }, pdf)).statusCode, 401);
+
+        const invalid = await upload(
+          { ...owner.headers, 'idempotency-key': key },
+          Buffer.from('<html>not a resume</html>'),
+        );
+        assert.equal(invalid.statusCode, 400);
+        assert.equal(stored.length, 0);
+
+        const oversized = await upload(
+          { ...owner.headers, 'idempotency-key': 'oversized-resume' },
+          Buffer.concat([atLimit, Buffer.from('x')]),
+        );
+        assert.equal(oversized.statusCode, 413);
+        assert.equal(stored.length, 0);
+
+        const accepted = await upload({ ...owner.headers, 'idempotency-key': key }, atLimit);
+        assert.equal(accepted.statusCode, 202, accepted.body);
+        assert.equal(accepted.json().status, 'queued');
+        assert.equal(stored.length, 1);
+        assert.equal(stored[0]?.ownerId, owner.id);
+        assert.equal(stored[0]?.bytes, maximumResumeBytes);
+        assert.equal(stored[0]?.contentType, 'application/pdf');
+
+        const retry = await upload({ ...owner.headers, 'idempotency-key': key }, atLimit);
+        assert.equal(retry.statusCode, 202);
+        assert.equal(retry.json().id, accepted.json().id);
+        assert.equal(stored.length, 1, 'an idempotent retry must not write a second object');
+
+        const ownList = await app.inject({ url: '/api/resumes', headers: owner.headers });
+        assert.deepEqual(
+          ownList.json().items.map((item: { id: string }) => item.id),
+          [accepted.json().id],
+        );
+        const otherList = await app.inject({ url: '/api/resumes', headers: other.headers });
+        assert.deepEqual(otherList.json().items, []);
+        const foreignDetail = await app.inject({
+          url: `/api/resumes/${accepted.json().id}`,
+          headers: other.headers,
+        });
+        assert.equal(foreignDetail.statusCode, 404);
+      } finally {
+        await app.close();
+      }
+    });
+  },
+);
 
 test(
   'F-023: a candidate cancels only their own unfinished upload; queued and completed uploads return 409',
