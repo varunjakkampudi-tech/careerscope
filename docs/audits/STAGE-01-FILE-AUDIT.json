@@ -3870,10 +3870,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the single barrel export for the policy-neutral verification lifecycle module; it adds the module without changing other exports or granting verification status.",
-      "evidence": "Re-reviewed the current content during PR #60 integration on 2026-11-10; SHA-256 records the inspected bytes.",
-      "reviewer": "Codex (CareerScope PR #60 merge reconciliation)",
-      "sha256": "f6c8041d2fea6e9a75516f0edf7ee73e27c52f7611f22fc9c2d6d57bfe4ac1d5"
+      "observations": "Re-reviewed the core public barrel: the generic verification lifecycle is deliberately not exported through the public API until an approved issuance policy and authorized evidence flow exist. Other exports are unchanged.",
+      "evidence": "Reviewed current test and API-boundary diff after independent exact-head review; SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (CareerScope PR #60 exact-head review corrections)",
+      "sha256": "4cf28863d78321d8e3ec5abf31e8d406dd8bd108260917af097cb9af45dc2e48"
     },
     {
       "path": "packages/core/src/interviews.ts",
@@ -4450,10 +4450,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Focused lifecycle tests cover pending state, expiry/recheck boundaries, revocation metadata and history, timestamp invariants, plus fail-closed handling for null/undefined records and malformed revocation payloads.",
-      "evidence": "Focused Node 24.22.2 Docker test passes 5/5; this targeted run does not replace exact-head hosted CI.",
-      "reviewer": "Codex (Stage 03 item 3.14)",
-      "sha256": "4d208efd92f21f0ac3736263b4787b6620287d02c055c42413e2e639f482d12c"
+      "observations": "Re-reviewed lifecycle boundary and regression tests: the helper is asserted absent from the public barrel; unknown types/statuses, missing required fields, arrays, fractional timestamps and malformed revocation metadata fail closed without throwing.",
+      "evidence": "Reviewed current test and API-boundary diff after independent exact-head review; SHA-256 records the inspected bytes.",
+      "reviewer": "Codex (CareerScope PR #60 exact-head review corrections)",
+      "sha256": "9447c9c7b4a498dfbad6adb98b428850afa17bab31e0c7b94c2182e8d75c66db"
     },
     {
       "path": "packages/core/src/verification.ts",

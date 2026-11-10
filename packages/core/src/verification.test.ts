@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import {
   pendingVerification,
@@ -18,6 +19,11 @@ test('new verification records do not grant a tick', () => {
   assert.equal(check.status, 'pending');
   assert.equal(check.checkedAt, null);
   assert.equal(verificationTransition(check, 100), 'pending');
+});
+
+test('verification lifecycle stays out of the public core API until issuance policy is approved', async () => {
+  const publicApi = await readFile(new URL('./index.ts', import.meta.url), 'utf8');
+  assert.doesNotMatch(publicApi, /from ['"]\.\/verification\.js['"]/);
 });
 
 test('a completed check stays current only before its expiry and recheck time', () => {
@@ -136,4 +142,44 @@ test('revocation rejects missing reasons, invalid times, and non-active checks',
     ),
     'invalid',
   );
+});
+
+test('malformed verification records fail closed without throwing', () => {
+  const malformedRecords: Array<[string, unknown]> = [
+    ['unknown verification type', { ...verified, type: 'identity' }],
+    ['unknown status', { ...verified, status: 'approved' }],
+    ['missing type', { ...verified, type: undefined }],
+    ['missing status', { ...verified, status: undefined }],
+    ['missing checkedAt', { ...verified, checkedAt: undefined }],
+    ['missing expiresAt', { ...verified, expiresAt: undefined }],
+    ['missing recheckAt', { ...verified, recheckAt: undefined }],
+    ['missing appealAvailable', { ...verified, appealAvailable: undefined }],
+    ['array record', []],
+  ];
+
+  for (const [name, record] of malformedRecords) {
+    assert.equal(verificationTransition(record as VerificationCheck, 151), 'invalid', name);
+  }
+  assert.equal(verificationTransition(verified, 151.5), 'invalid', 'fractional current time');
+  assert.equal(
+    verificationTransition({ ...verified, checkedAt: 100.5 }, 151),
+    'invalid',
+    'fractional check time',
+  );
+});
+
+test('malformed revocation metadata fails closed without throwing', () => {
+  const malformedRequests: Array<[string, unknown]> = [
+    ['array request', []],
+    ['fractional revocation time', { at: 150.5, reason: 'Changed', appealAvailable: false }],
+    ['invalid appeal value', { at: 150, reason: 'Changed', appealAvailable: 'yes' }],
+  ];
+
+  for (const [name, request] of malformedRequests) {
+    assert.equal(
+      revokeVerification(verified, request as Parameters<typeof revokeVerification>[1]),
+      null,
+      name,
+    );
+  }
 });
