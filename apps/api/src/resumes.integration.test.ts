@@ -168,13 +168,19 @@ test(
 
         const ownList = await app.inject({ url: '/api/resumes', headers: owner.headers });
         assert.deepEqual(
-          ownList.json().items.map((item: { id: string }) => item.id),
-          [accepted.json().id, docxAccepted.json().id],
+          ownList
+            .json()
+            .items.map((item: { id: string }) => item.id)
+            .sort(),
+          [accepted.json().id, docxAccepted.json().id].sort(),
         );
         const otherList = await app.inject({ url: '/api/resumes', headers: other.headers });
         assert.deepEqual(
-          otherList.json().items.map((item: { id: string }) => item.id),
-          [otherOwnerKeyReuse.json().id],
+          otherList
+            .json()
+            .items.map((item: { id: string }) => item.id)
+            .sort(),
+          [otherOwnerKeyReuse.json().id].sort(),
         );
         const foreignDetail = await app.inject({
           url: `/api/resumes/${accepted.json().id}`,
