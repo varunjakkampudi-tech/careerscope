@@ -137,7 +137,10 @@ test(
         assert.equal(stored[0]?.bytes, maximumResumeBytes);
         assert.equal(stored[0]?.contentType, 'application/pdf');
 
-        const docx = Buffer.from('PK\\u0003\\u0004synthetic DOCX route signature');
+        const docx = Buffer.concat([
+          Buffer.from([0x50, 0x4b, 0x03, 0x04]),
+          Buffer.from('synthetic DOCX route signature'),
+        ]);
         const docxAccepted = await upload(
           { ...owner.headers, 'idempotency-key': 'route-resume-docx' },
           docx,
@@ -153,7 +156,7 @@ test(
         const retry = await upload({ ...owner.headers, 'idempotency-key': key }, atLimit);
         assert.equal(retry.statusCode, 202);
         assert.equal(retry.json().id, accepted.json().id);
-        assert.equal(stored.length, 1, 'an idempotent retry must not write a second object');
+        assert.equal(stored.length, 2, 'an idempotent retry must not write a second object');
 
         const otherOwnerKeyReuse = await upload(
           { ...other.headers, 'idempotency-key': key },
