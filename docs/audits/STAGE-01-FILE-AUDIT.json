@@ -2282,10 +2282,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Re-reviewed the Stage 03 item 3.16 closeout record. It now distinguishes exact-head approval and CI, verifies the successful dev merge and post-merge checks, and records the checklist item as verified.",
-      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; hosted run 42758118526 passed all three jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b, and post-merge run 42759315007 passed Quality gates and Services/integration/browser suites.",
-      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "d3b8cd0cdcce56aebe32a20c5d4ac1bd4d3faa2afd0d3e2587d26acd187638b0"
+      "observations": "Re-reviewed the Stage 01 item 1.01 audit refresh. Current dev audit has complete coverage for 514 tracked files (446 reviewed, 68 not-applicable-source), no partial/unreviewed entries, and no open critical/high findings. Current dev CI run 42763470961 passed Quality gates and Services/integration/browser on 036dd3c11278a26534544792f4834a0902214d17; image build was skipped for the push. PR #18 remains the item approval; PR #74 refresh awaits exact-head review.",
+      "evidence": "Reviewed the current dev audit manifest and exact historical CI record; the documentation refresh is based on current dev after PR #75. PR #74 exact-head CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "1addad9d227b67cb8260b9eab3ccad89a045505482844bf0aa05b67c5cf5b4d3"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -2430,10 +2430,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the item 3.16 row. Historical failures and approvals remain tied to their original SHAs; exact-head approval and CI, dev merge, and post-merge CI are recorded, and the item is verified.",
-      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; run 42758118526 passed all three required jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b. Post-merge run 42759315007 passed Quality gates and Services/integration/browser suites; image build skipped on push.",
-      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "353f038dcbc10b6340abba22e7aa7766991a7158fcd49bb4f33583047eab03e7"
+      "observations": "Re-reviewed the Stage 01 item 1.01 row. It records current 514-file audit coverage, exact current-dev CI provenance, the original PR #18 acceptance boundary, and the pending exact-head review of PR #74.",
+      "evidence": "Current dev SHA 036dd3c11278a26534544792f4834a0902214d17 passed hosted run 42763470961 (Quality gates and Services/integration/browser); production image build was skipped on the push. PR #74 exact-head CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+      "sha256": "35f4771b0ae6864f59766d832f173ab0179b7fa1dc7589dc757b729a86e3d0c0"
     },
     {
       "path": "docs/TESTING.md",
