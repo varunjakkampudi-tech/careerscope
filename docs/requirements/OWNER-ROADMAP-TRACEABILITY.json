@@ -780,7 +780,7 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Profile completeness checklist",
       "sourceStatus": "Existing, expand",
-      "currentStatus": "in-progress",
+      "currentStatus": "verified",
       "evidence": [
         "docs/PROGRESS.md",
         "docs/TEST-MATRIX.md",
@@ -791,9 +791,11 @@
       "externalEvidence": [
         "PR #69 exact head c17ad6dad5e86357d6331d3975edc8339f1921e2 passed hosted CI run 42472764595 on all three jobs; the production image was built but not published.",
         "ChatGPT independently reviewed and approved implementation and tests on exact head c17ad6dad5e86357d6331d3975edc8339f1921e2.",
-        "PR #69 implementation and account-switch-fix head 1e7dab01b81441d33fb697db9497564d3c30b052 passed all three required hosted CI jobs in run 42571457149; the image was built but not published."
+        "PR #69 implementation and account-switch-fix head 1e7dab01b81441d33fb697db9497564d3c30b052 passed all three required hosted CI jobs in run 42571457149; the image was built but not published.",
+        "ChatGPT approved implementation and documentation at exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; hosted run 42758118526 passed all three required jobs on that SHA, with the image built but not published.",
+        "PR #69 merged to dev as 43f34f9863ac3e5d528df88fb356da380252282b. Post-merge dev run 42759315007 passed Quality gates and Services/integration/browser suites; the image job was skipped for the push event."
       ],
-      "gap": "Implementation and tests were approved at the recorded exact SHA, and follow-up hosted CI passed on 8ecfc5c133960553fab86d72419571bcad20f299. Head 94fe59d6c2d856e23bab149f4184cfe430ba528c failed browser CI at a subsequent foreign-owner assertion; independent review also found flaws in the new delayed-response test. Follow-up commits correct response ordering, validate the actual saved foreign profile and 80% score, wait on response completion or cancellation, and restore the foreign-owner state for later assertions. The implementation and account-switch-fix head 1e7dab01b81441d33fb697db9497564d3c30b052 passed hosted run 42571457149 on all three required jobs. Independent review of the current PR head and integration to dev remain pending. PR #69 remains draft and unmerged. Legacy profiles with no career-stage value may satisfy the background criterion through education, experience, or projects; these are candidate claims, not verified professional history. Item completion and progression remain pending review, integration to dev, and final canonical closeout.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {

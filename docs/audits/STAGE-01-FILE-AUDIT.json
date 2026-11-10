@@ -2282,10 +2282,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Re-reviewed the Stage 03 item 3.16 closeout record. It distinguishes historical approvals from the implementation/fix head, records passing hosted CI, and keeps the item in progress because independent review of the current PR head and dev integration remain pending.",
-      "evidence": "Implementation and account-switch-fix head 1e7dab01b81441d33fb697db9497564d3c30b052 passed all three required jobs in hosted run 42571457149. PR remains draft and unmerged; no checklist status was advanced.",
+      "observations": "Re-reviewed the Stage 03 item 3.16 closeout record. It now distinguishes exact-head approval and CI, verifies the successful dev merge and post-merge checks, and records the checklist item as verified.",
+      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; hosted run 42758118526 passed all three jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b, and post-merge run 42759315007 passed Quality gates and Services/integration/browser suites.",
       "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "438cd558125420e84ebe2bc2e265bf1c2c1d733b31d9901b8372e4f276c70b9b"
+      "sha256": "d3b8cd0cdcce56aebe32a20c5d4ac1bd4d3faa2afd0d3e2587d26acd187638b0"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -2330,10 +2330,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the canonical item 3.16 record. It retains the owner checklist title and in-progress status, records implementation-head CI, and preserves the unmerged PR and current-head independent-review gap without marking the item verified.",
-      "evidence": "Updated item 3.16 with the implementation/fix head exact-SHA CI result while keeping item completion pending current-head independent review, integration to dev, and canonical closeout.",
+      "observations": "Re-reviewed the canonical item 3.16 record. It retains the owner checklist title, records verified status and evidence for exact-head approval, successful CI, merge to dev, and successful post-merge gates.",
+      "evidence": "Item 3.16 is verified after ChatGPT approval at exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031, all three exact-head jobs passed in run 42758118526, PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b, and post-merge run 42759315007 passed Quality gates and Services/integration/browser suites.",
       "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "69f913a0b304892bb5372baad79634fe9394a5d8676bf5dbb759f63092199a76"
+      "sha256": "89d2793761d4b033d7115994e5869f5088c2b2727331b3a67b15cc114392b43a"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -2430,10 +2430,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the item 3.16 row. Historical failures and approvals remain tied to their original SHAs; the current account-switch regression and implementation-head CI are recorded separately, and the item remains in progress pending independent review and dev integration.",
-      "evidence": "Implementation and account-switch-fix head 1e7dab01b81441d33fb697db9497564d3c30b052 passed hosted run 42571457149 on all three required jobs. Independent review of the current PR head and integration remain pending.",
+      "observations": "Re-reviewed the item 3.16 row. Historical failures and approvals remain tied to their original SHAs; exact-head approval and CI, dev merge, and post-merge CI are recorded, and the item is verified.",
+      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; run 42758118526 passed all three required jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b. Post-merge run 42759315007 passed Quality gates and Services/integration/browser suites; image build skipped on push.",
       "reviewer": "Codex (CareerScope item 3.16 closeout record)",
-      "sha256": "a7f9a2c33f3d7e2e5207bc05b1d2fd9f5a0d931209daf99e2277265195757650"
+      "sha256": "a6887b43ef30a1274663ad03ffa66a8040f332cbd9fcdb550c0dbb120e606a5a"
     },
     {
       "path": "docs/TESTING.md",
