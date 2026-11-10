@@ -2330,9 +2330,9 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed canonical item 2.10 after checking the user decision: AI-only recovery-copy review does not waive the outstanding native Telugu and Hindi review. Item remains partial; no translation certification is claimed.",
-      "evidence": "Current PR #42 correction review; prior full file review remains recorded. SHA-256 records the corrected bytes.",
-      "reviewer": "Codex (CareerScope item 2.10 status correction)",
+      "observations": "Historical item 3.16 review: retains the owner checklist title and verified evidence for exact-head approval, successful CI, merge to dev, and successful post-merge gates. Current item 2.10 re-review: AI-only recovery-copy review does not waive the outstanding native Telugu and Hindi review. Item 2.10 remains partial; no translation certification is claimed.",
+      "evidence": "Historical item 3.16: ChatGPT approval at exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; all three exact-head jobs passed in run 42758118526; PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b; post-merge run 42759315007 passed Quality gates and Services/integration/browser suites. Current item 2.10: reviewed for PR #42 correction; SHA-256 records current corrected bytes.",
+      "reviewer": "Codex (Stage 01 item 3.16 closeout record; CareerScope item 2.10 status correction)",
       "sha256": "9df5abc81d556766c9282d20f53bf39735d054dcc9c09ac4073937b3b85f085f"
     },
     {
