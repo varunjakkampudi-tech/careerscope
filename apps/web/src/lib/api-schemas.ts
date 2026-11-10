@@ -148,6 +148,7 @@ const profileDataSchema = z.object({
     location: z.string(),
     segment: z.enum(['student', 'fresher', 'experienced']).optional(),
     education: z.array(z.string()).default([]),
+    experience: z.array(z.string()).default([]),
     graduationYear: z.number().optional(),
     projects: z.array(z.string()).default([]),
     linkedin: z.string().default(''),
@@ -160,17 +161,33 @@ const profileDataSchema = z.object({
     locations: z.array(z.string()).default([]),
     remoteOnly: z.boolean().default(false),
     minSalary: z.number().nullable().default(null),
+    minSalaryCurrency: z
+      .string()
+      .trim()
+      .toUpperCase()
+      .regex(/^[A-Z]{3}$/)
+      .nullable()
+      .default(null),
     employmentTypes: z.array(z.enum(EMPLOYMENT_TYPES)).default(['fulltime']),
     excludeKeywords: z.array(z.string()).default([]),
     excludeCompanies: z.array(z.string()).default([]),
   }),
-  application: z.object({
-    currentCtc: z.string().default(''),
-    expectedCtc: z.string().default(''),
-    noticePeriodDays: z.number().default(0),
-    willingToRelocate: z.boolean().default(true),
-    yearsOfExperience: z.number().nullable().default(null),
-  }),
+  application: z
+    .object({
+      currentCtc: z.string().default(''),
+      expectedCtc: z.string().default(''),
+      noticePeriodDays: z.number().default(0),
+      availabilityStatus: z.enum(['immediate', 'notice_period', 'not_specified']).optional(),
+      preferredContactMethod: z.enum(['email', 'phone', 'no_preference']).default('no_preference'),
+      willingToRelocate: z.boolean().default(true),
+      yearsOfExperience: z.number().nullable().default(null),
+    })
+    .transform((application) => ({
+      ...application,
+      availabilityStatus:
+        application.availabilityStatus ??
+        (application.noticePeriodDays === 0 ? 'immediate' : 'notice_period'),
+    })),
   accessibility: z.object({ reducedMotion: z.boolean().default(false) }).optional(),
 });
 
@@ -185,12 +202,21 @@ export const parseProfileResponse = parser(profileResponseSchema);
 
 export const parseAccessibilityPreference = parser(z.object({ reducedMotion: z.boolean() }));
 
-/** The part of GET /api/profile the dashboard checklist and skills panel read. */
+/** The owner-scoped profile fields used by the dashboard skills and completeness panels. */
 export const parseDashboardProfile = parser(
   z.object({
     revision: z.number(),
     profile: z
       .object({
+        candidate: z.object({
+          fullName: z.string(),
+          email: z.string(),
+          location: z.string(),
+          segment: z.enum(['student', 'fresher', 'experienced']).optional(),
+          education: z.array(z.string()).default([]),
+          experience: z.array(z.string()).default([]),
+          projects: z.array(z.string()).default([]),
+        }),
         preferences: z.object({ techStack: z.array(z.string()), titles: z.array(z.string()) }),
       })
       .nullable(),

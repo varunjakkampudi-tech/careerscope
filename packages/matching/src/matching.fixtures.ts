@@ -67,6 +67,7 @@ const CANDIDATE: CandidateContext = {
   expectedSalary: 2_000_000,
   expectedCurrency: 'INR',
   minSalary: 1_600_000,
+  minSalaryCurrency: null,
   employmentTypes: ['fulltime'],
   excludeKeywords: [],
   excludeCompanies: [],

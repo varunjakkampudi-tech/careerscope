@@ -352,10 +352,20 @@
       "title": "Terms/privacy acceptance",
       "sourceStatus": "Partial",
       "currentStatus": "partial",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
-      "tests": ["apps/api/src/legal-acceptance.integration.test.ts"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md",
+        "apps/web/src/lib/locale.ts",
+        "apps/web/src/components/account-form.tsx"
+      ],
+      "tests": [
+        "apps/api/src/legal-acceptance.integration.test.ts",
+        "apps/web/src/lib/locale.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Native-language review of localized Terms/privacy acceptance copy remains outstanding; engineering versioned re-acceptance behavior is covered by the cited integration test.",
+      "gap": "AI-only copy review found and corrected a Hindi privacy acknowledgement that implied acceptance instead of acknowledging receipt; Telugu and Hindi strings have regression assertions. Native-language review remains outstanding; engineering versioned re-acceptance behavior is covered by the cited integration test.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -409,13 +419,11 @@
       "stageTitle": "Authentication, registration and account security",
       "title": "Account recovery",
       "sourceStatus": "Missing/partial",
-      "currentStatus": "verified",
+      "currentStatus": "partial",
       "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": ["apps/api/src/recovery.integration.test.ts"],
-      "externalEvidence": [
-        "Owner-directed AI-only recovery-copy acceptance in docs/PROGRESS.md; no native-speaker review claimed."
-      ],
-      "gap": "",
+      "externalEvidence": [],
+      "gap": "Native Telugu and Hindi review of recovery copy remains outstanding. The owner selected AI-only review, which did not waive this gap.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -479,11 +487,13 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Guided onboarding",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "verified",
+      "evidence": ["apps/web/src/components/profile-editor.tsx", "scripts/tests/check-ui.ts"],
+      "tests": ["scripts/tests/check-ui.ts"],
+      "externalEvidence": [
+        "PR #43 merged to dev at merge commit ad7f0f7cf9423f26dda3cdc1e3eb6ce98a171a7e; implementation approved at exact head SHA efb4692fbacc97b90751be0f2f2172516fbe1b94 in the designated ChatGPT review conversation; hosted GitHub Actions run 42346547941 passed all three jobs, including Linux browser and visual checks (0 changed pixels on mobile and desktop)."
+      ],
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -492,11 +502,18 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Age screening",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "verified",
+      "evidence": [
+        "apps/api/src/age-screen.ts",
+        "apps/api/src/app.ts",
+        "packages/core/src/email-otp-challenges.ts",
+        "packages/core/src/auth.ts"
+      ],
+      "tests": ["apps/api/src/age-screen.test.ts", "apps/api/src/email-otp.integration.test.ts"],
+      "externalEvidence": [
+        "PR #44 hosted run 42348015262 passed Quality gates, Services/integration/browser suites, and Production image build on exact SHA d5e2c724ba12c9454e2db54abd3c3e6cfac31aca; integration coverage verifies under-18 rejection before OTP/account persistence and raw birth-date non-persistence."
+      ],
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -505,11 +522,16 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Basic profile",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "verified",
+      "evidence": [
+        "apps/web/src/components/profile-editor.tsx",
+        "packages/core/src/profile.ts",
+        "apps/api/src/app.ts",
+        "apps/api/src/openapi.ts"
+      ],
+      "tests": ["packages/core/src/profile.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -518,11 +540,11 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Career stage",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "verified",
+      "evidence": ["apps/web/src/components/profile-editor.tsx", "packages/core/src/profile.ts"],
+      "tests": ["packages/core/src/profile.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -531,11 +553,11 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Education details",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "verified",
+      "evidence": ["apps/web/src/components/profile-editor.tsx", "packages/core/src/profile.ts"],
+      "tests": ["packages/core/src/profile.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -544,11 +566,20 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Experience",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "verified",
+      "evidence": [
+        "apps/web/src/components/profile-editor.tsx",
+        "packages/shared/src/schemas.ts",
+        "packages/core/src/profile.ts",
+        "apps/api/src/openapi.ts"
+      ],
+      "tests": [
+        "packages/core/src/profile.test.ts",
+        "packages/shared/src/schemas.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -557,11 +588,21 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Skills and tech stack",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "verified",
+      "evidence": [
+        "apps/web/src/components/profile-editor.tsx",
+        "packages/shared/src/schemas.ts",
+        "packages/core/src/profile.ts",
+        "apps/api/src/openapi.ts",
+        "docs/TEST-MATRIX.md"
+      ],
+      "tests": [
+        "packages/shared/src/schemas.test.ts",
+        "packages/core/src/profile.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -570,11 +611,21 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Projects",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "verified",
+      "evidence": [
+        "apps/web/src/components/profile-editor.tsx",
+        "packages/shared/src/schemas.ts",
+        "packages/core/src/profile.ts",
+        "apps/api/src/openapi.ts",
+        "docs/TEST-MATRIX.md"
+      ],
+      "tests": [
+        "packages/core/src/profile.test.ts",
+        "packages/shared/src/schemas.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -583,11 +634,21 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Preferred job titles",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "verified",
+      "evidence": [
+        "apps/web/src/components/profile-editor.tsx",
+        "packages/shared/src/schemas.ts",
+        "packages/core/src/profile.ts",
+        "apps/api/src/openapi.ts",
+        "docs/TEST-MATRIX.md"
+      ],
+      "tests": [
+        "packages/shared/src/schemas.test.ts",
+        "packages/core/src/profile.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -596,11 +657,26 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Location and work mode",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "verified",
+      "evidence": [
+        "apps/web/src/components/profile-editor.tsx",
+        "packages/shared/src/schemas.ts",
+        "packages/core/src/profile.ts",
+        "packages/matching/src/context.ts",
+        "packages/matching/src/dimensions.ts",
+        "apps/api/src/openapi.ts",
+        "docs/TEST-MATRIX.md"
+      ],
+      "tests": [
+        "packages/shared/src/schemas.test.ts",
+        "packages/core/src/profile.test.ts",
+        "packages/matching/src/context.test.ts",
+        "packages/matching/src/dimensions.test.ts",
+        "packages/matching/src/score.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -609,11 +685,25 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Salary expectations",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "verified",
+      "evidence": [
+        "apps/web/src/components/profile-editor.tsx",
+        "packages/shared/src/schemas.ts",
+        "packages/core/src/profile.ts",
+        "packages/matching/src/context.ts",
+        "packages/matching/src/dimensions.ts",
+        "apps/api/src/openapi.ts",
+        "docs/TEST-MATRIX.md"
+      ],
+      "tests": [
+        "packages/shared/src/schemas.test.ts",
+        "packages/core/src/profile.test.ts",
+        "packages/matching/src/context.test.ts",
+        "packages/matching/src/dimensions.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -622,11 +712,24 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Availability/notice period",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "verified",
+      "evidence": [
+        "apps/web/src/components/profile-editor.tsx",
+        "packages/shared/src/schemas.ts",
+        "packages/core/src/profile.ts",
+        "packages/core/src/preparation.ts",
+        "apps/api/src/openapi.ts",
+        "apps/web/src/lib/api-schemas.ts",
+        "docs/TEST-MATRIX.md"
+      ],
+      "tests": [
+        "packages/shared/src/schemas.test.ts",
+        "packages/core/src/profile.test.ts",
+        "packages/matching/src/context.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -635,11 +738,24 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Profile picture",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "verified",
+      "evidence": [
+        "apps/api/src/profile-photo.ts",
+        "apps/web/src/components/profile-editor.tsx",
+        "apps/web/src/components/dashboard-shell.tsx",
+        "docs/PROGRESS.md",
+        "docs/TEST-MATRIX.md"
+      ],
+      "tests": [
+        "apps/api/src/profile-photo.test.ts",
+        "tests/integration/database.integration.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
+      "externalEvidence": [
+        "PR #57 merged to dev as f62e8d181be3160219b1e7405c6ea6642f394ee9; exact feature SHA 7d671f731234d535c25c5d0279a8d09af986d285 passed hosted run 42386991607.",
+        "PR #58 merged to dev as 6a81241c9d3c1b1fc7ff04fbb7e8fa76aff91845 from accepted head 05fa7a1edcf9178ec3f6e8c49a63810842aab8ea. Exact-head hosted run 42394248888 passed Quality gates, Services/integration/browser suites, and Production image build; independent final acceptance approved that exact head."
+      ],
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -674,11 +790,22 @@
       "stageTitle": "Candidate onboarding and professional profile",
       "title": "Profile completeness checklist",
       "sourceStatus": "Existing, expand",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "verified",
+      "evidence": [
+        "docs/PROGRESS.md",
+        "docs/TEST-MATRIX.md",
+        "apps/web/src/lib/profile-completeness.ts",
+        "apps/web/src/app/(app)/dashboard/page.tsx"
+      ],
+      "tests": ["apps/web/src/lib/profile-completeness.test.ts", "scripts/tests/check-ui.ts"],
+      "externalEvidence": [
+        "PR #69 exact head c17ad6dad5e86357d6331d3975edc8339f1921e2 passed hosted CI run 42472764595 on all three jobs; the production image was built but not published.",
+        "ChatGPT independently reviewed and approved implementation and tests on exact head c17ad6dad5e86357d6331d3975edc8339f1921e2.",
+        "PR #69 implementation and account-switch-fix head 1e7dab01b81441d33fb697db9497564d3c30b052 passed all three required hosted CI jobs in run 42571457149; the image was built but not published.",
+        "ChatGPT approved implementation and documentation at exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; hosted run 42758118526 passed all three required jobs on that SHA, with the image built but not published.",
+        "PR #69 merged to dev as 43f34f9863ac3e5d528df88fb356da380252282b. Post-merge dev run 42759315007 passed Quality gates and Services/integration/browser suites; the image job was skipped for the push event."
+      ],
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {

@@ -44,7 +44,8 @@ export function staleSearchRead(
  *
  * Only a GET fetch or script (or the image optimiser path) from an earlier route is dropped. A
  * request from the current route, a write, an HTML document or any other image still counts, so a
- * real hang on the current route is still caught. This generalises `staleSavedRead` and `staleSearchRead`.
+ * real hang on the current route is still caught. A previous-route search-detail fetch is explicitly
+ * included; search-list reads use `staleSearchRead`.
  *
  * The cancelled-fetch behaviour was measured only in Chromium, so the allowance applies to the
  * `chromium` engine alone. Firefox and WebKit report aborted requests as failed, so there nothing

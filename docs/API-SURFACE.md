@@ -210,12 +210,16 @@ requires the staging password and private proxy assertion.
 | ------ | ---------------------------------- | ---- | ---- |
 | GET    | `/api/profile`                     | yes  | no   |
 | PUT    | `/api/profile`                     | yes  | yes  |
+| GET    | `/api/profile/photo`               | yes  | no   |
+| PUT    | `/api/profile/photo`               | yes  | yes  |
+| DELETE | `/api/profile/photo`               | yes  | yes  |
 | GET    | `/api/preparation`                 | yes  | no   |
 | GET    | `/api/profile/accessibility`       | yes  | no   |
 | PUT    | `/api/profile/scheduled-discovery` | yes  | yes  |
 
 `GET /api/profile/accessibility` returns `{ reducedMotion }`. `PUT /api/profile/scheduled-discovery`
 takes `{ enabled }` and returns `{ scheduledDiscoveryEnabled }`.
+`GET /api/profile/photo` returns `204 No Content` when no private profile picture is saved.
 
 `PUT /api/profile` carries a revision. A stale revision is a 409, not a
 last-write-wins overwrite.
@@ -226,9 +230,10 @@ is not inferred from age or experience; it does not independently establish
 education, identity, eligibility or verification.
 
 Candidates may also save private, self-reported education entries, a graduation
-year (1900–2100), and project summaries. Each list accepts up to 20 non-empty
-entries of at most 200 characters. These claims are owner-scoped profile data;
-they are neither independently verified nor inputs to deterministic matching.
+year (1900–2100), work-history summaries, and project summaries. Each list
+accepts up to 20 non-empty entries of at most 200 characters. These claims are
+owner-scoped profile data; they are neither independently verified nor inputs
+to deterministic matching.
 Historical profile rows may omit these keys: profile reads preserve the stored
 shape, while the profile editor displays absent lists/year as blank. The first
 successful save writes the normalized empty lists if left blank. No data

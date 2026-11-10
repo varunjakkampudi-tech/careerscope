@@ -78,13 +78,23 @@ test('a fixed finding needs a remediation reference', () => {
   assert.ok(errors.some((error) => error.includes('X-2 is fixed but has no remediation')));
 });
 
-test('require-complete fails while any file is still not reviewed', () => {
-  const manifest = manifestWith([entry('a.ts')]);
-  assert.deepEqual(validate(manifest, ['a.ts']), []);
-  assert.ok(
-    validate(manifest, ['a.ts'], { requireComplete: true }).includes('a.ts: still not-reviewed'),
-  );
-});
+for (const state of ['not-reviewed', 'partially-reviewed', 'requires-investigation']) {
+  test(`require-complete rejects ${state} entries in a mixed manifest`, () => {
+    const manifest = manifestWith([
+      entry('reviewed.ts', {
+        state: 'reviewed',
+        reviewer: 'test reviewer',
+        observations: 'Reviewed for strict-mode regression coverage.',
+        sha256: 'a'.repeat(64),
+      }),
+      entry('incomplete.ts', { state }),
+    ]);
+    assert.deepEqual(
+      validate(manifest, ['reviewed.ts', 'incomplete.ts'], { requireComplete: true }),
+      [`incomplete.ts: still ${state}`],
+    );
+  });
+}
 
 test('classification separates generated files, binaries and source', () => {
   assert.equal(classify('package-lock.json').state, 'not-applicable-source');

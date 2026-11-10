@@ -6,6 +6,7 @@ import { mkdir, mkdtemp, readFile, rm, utimes, writeFile } from 'node:fs/promise
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import JSZip from 'jszip';
+import sharp from 'sharp';
 import { fileURLToPath } from 'node:url';
 import { chromium, firefox, webkit } from 'playwright';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
@@ -16,6 +17,7 @@ import {
   passwordHash,
   users,
   ProfileRepository,
+  ProfilePhotoRepository,
   LeadRepository,
   matchingProfile,
   writableProfileSchema,
@@ -45,7 +47,8 @@ import {
 
 const notificationLifecycleOnly =
   process.env.CAREERSCOPE_UI_SCENARIO === 'notification-panel-close-before-mutation';
-if (process.env.CAREERSCOPE_UI_SCENARIO && !notificationLifecycleOnly)
+const profilePhotoOnly = process.env.CAREERSCOPE_UI_SCENARIO === 'profile-photo';
+if (process.env.CAREERSCOPE_UI_SCENARIO && !notificationLifecycleOnly && !profilePhotoOnly)
   throw new Error('Unknown focused browser scenario');
 if (notificationLifecycleOnly) {
   assert.equal(process.env.CAREERSCOPE_UI_BROWSER, 'chromium');
@@ -172,7 +175,17 @@ url.pathname = `/${name}`;
 const database = new Database(url.href);
 const ownerId = randomUUID();
 const password = randomUUID();
-const origin = 'http://localhost:5280';
+const profilePhotoFixture = await sharp({
+  create: {
+    width: 1,
+    height: 1,
+    channels: 4,
+    background: { r: 20, g: 80, b: 180, alpha: 1 },
+  },
+})
+  .png()
+  .toBuffer();
+const origin = process.env.APP_ORIGIN ?? 'http://localhost:5280';
 const resumeDirectory = await mkdtemp(join(tmpdir(), 'careerscope-resume-ui-'));
 const keyFile = join(resumeDirectory, 'encryption.key');
 const encryptionKey = randomBytes(32).toString('hex');
@@ -555,7 +568,9 @@ try {
       );
     }
   };
-  for (const [engine, browserType] of uiBrowsers) {
+  for (const [engine, browserType] of profilePhotoOnly
+    ? uiBrowsers.filter(([engine]) => engine === 'chromium')
+    : uiBrowsers) {
     // Legacy password-account fixtures exercise existing data/session behavior.
     // The public test selector and its real allowlist are verified separately.
     const accountEmail = `signup-${engine}@example.test`;
@@ -591,6 +606,8 @@ try {
       assert.deepEqual(await unhandledRejections(rejectionGuardProbe), ['TypeError']);
       await rejectionGuardProbe.close();
 
+      // prettier-ignore
+      if (!profilePhotoOnly) {
       const otpPage = await browser.newPage();
       await installUnhandledRejectionGuard(otpPage);
       let otpRequestCount = 0;
@@ -644,6 +661,7 @@ try {
           body: '{"code":"NOT_FOUND","message":"Not found","requestId":"00000000-0000-4000-8000-000000000000"}',
         }),
       );
+      await otpPage.route('**/api/profile/photo**', (route) => route.fulfill({ status: 204 }));
       await otpPage.route('**/api/profile/accessibility', (route) =>
         route.fulfill({ contentType: 'application/json', json: { reducedMotion: false } }),
       );
@@ -909,6 +927,7 @@ try {
           body: '{"code":"NOT_FOUND","message":"Not found","requestId":"00000000-0000-4000-8000-000000000000"}',
         }),
       );
+      await signupPage.route('**/api/profile/photo**', (route) => route.fulfill({ status: 204 }));
       await signupPage.route('**/api/account/recovery-email', (route) =>
         route.fulfill({
           contentType: 'application/json',
@@ -987,6 +1006,22 @@ try {
         await signupPage.getByLabel(/optional CareerScope product updates/).isChecked(),
         false,
       );
+      for (const [locale, label] of [
+        ['te', 'నేను గోప్యతా నోటీసు (test-privacy-1) ను గుర్తిస్తున్నాను'],
+        ['hi', 'मैं गोपनीयता सूचना (test-privacy-1) की प्राप्ति की पुष्टि करता/करती हूँ'],
+        ['en', 'I acknowledge the Privacy Notice (test-privacy-1)'],
+      ] as const) {
+        await signupPage.evaluate((value) => {
+          const key = 'careerscope:interface-language';
+          localStorage.setItem(key, value);
+          window.dispatchEvent(new StorageEvent('storage', { key, newValue: value }));
+        }, locale);
+        assert.equal(
+          await signupPage.getByLabel(label).isChecked(),
+          true,
+          `${engine} ${locale} privacy acknowledgement label should describe the notice without implying acceptance`,
+        );
+      }
       for (const width of responsiveWidthsEndingAt(1440)) {
         await signupPage.setViewportSize({ width, height: 900 });
         assert.equal(
@@ -1036,6 +1071,7 @@ try {
         `${engine} signup UI produced an unhandled promise rejection`,
       );
       await signupPage.close();
+      }
 
       const page = await browser.newPage();
       if (notificationLifecycleOnly) await observeNotificationPage(page, origin);
@@ -1240,6 +1276,28 @@ try {
       });
       let fixtureCredential = password;
       await page.route('**/api/session', async (route) => {
+        if (profilePhotoOnly) {
+          const response = await route.fetch();
+          const body = await response.json();
+          if (body.authenticated !== false) {
+            await route.fulfill({ response });
+            return;
+          }
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            json: {
+              ...body,
+              registrationEnabled: false,
+              emailOtpEnabled: false,
+              testUsersEnabled: true,
+              testAccounts: [accountEmail, 'ui@example.test', 'foreign-owner@example.test'].map(
+                (email) => ({ email, role: 'candidate' }),
+              ),
+            },
+          });
+          return;
+        }
         const response = await route.fetch();
         const body = await response.json();
         if (body.authenticated === false) {
@@ -1257,11 +1315,27 @@ try {
       });
       await page.route('**/api/login', (route) => {
         const { email } = route.request().postDataJSON();
+        if (profilePhotoOnly) {
+          return route
+            .fetch({
+              postData: JSON.stringify({ email, password: fixtureCredential }),
+            })
+            .then((response) => route.fulfill({ response }));
+        }
         return route.continue({ postData: JSON.stringify({ email, password: fixtureCredential }) });
       });
       const selectFixtureAccount = async (email: string, credential = password) => {
         fixtureCredential = credential;
-        await page.getByRole('button').filter({ hasText: email }).click();
+        const accountButton = page.getByRole('button').filter({ hasText: email });
+        if ((await accountButton.count()) === 0) {
+          assert.fail(
+            `${engine} test account ${email} is unavailable at ${new URL(page.url()).pathname}; ` +
+              `rendered page: ${(await page.locator('body').innerText()).slice(0, 500) || 'empty'}; ` +
+              `browser errors: ${errors.slice(-8).join(' | ') || 'none'}; ` +
+              `recent requests: ${recentRequestEvents.slice(-8).join(' | ') || 'none'}`,
+          );
+        }
+        await accountButton.first().click();
       };
       const errors: string[] = [];
       const warningDiagnostics =
@@ -1595,35 +1669,37 @@ try {
           `${engine} ${name} is not "${expected}": ${directives.get(name) ?? 'absent'}`,
         );
       }
-      const skipLink = page.getByRole('link', { name: 'Skip to content', exact: true });
-      const hiddenSkip = await skipLink.boundingBox();
-      assert.ok(hiddenSkip && hiddenSkip.width === 1 && hiddenSkip.height === 1);
-      assert.equal(
-        await skipLink.evaluate((element) => getComputedStyle(element).clipPath),
-        'inset(50%)',
-      );
-      await skipLink.focus();
-      const focusedSkip = await skipLink.boundingBox();
-      assert.ok(
-        focusedSkip && focusedSkip.y >= 0 && focusedSkip.width > 40 && focusedSkip.height > 40,
-      );
-      await skipLink.press('Enter');
-      assert.equal(
-        await page.locator('main').evaluate((element) => element === document.activeElement),
-        true,
-      );
-      await accessible(page, engine, 'test account selector', 'Select test account');
-      for (const width of responsiveWidthsEndingAt(320)) {
-        await page.setViewportSize({ width, height: 900 });
+      if (!profilePhotoOnly) {
+        const skipLink = page.getByRole('link', { name: 'Skip to content', exact: true });
+        const hiddenSkip = await skipLink.boundingBox();
+        assert.ok(hiddenSkip && hiddenSkip.width === 1 && hiddenSkip.height === 1);
         assert.equal(
-          await page.evaluate(() => document.documentElement.scrollWidth > innerWidth),
-          false,
+          await skipLink.evaluate((element) => getComputedStyle(element).clipPath),
+          'inset(50%)',
         );
-        if (engine === 'chromium')
-          await page.screenshot({
-            path: screenshotPath(`account-${width}.png`),
-            fullPage: true,
-          });
+        await skipLink.focus();
+        const focusedSkip = await skipLink.boundingBox();
+        assert.ok(
+          focusedSkip && focusedSkip.y >= 0 && focusedSkip.width > 40 && focusedSkip.height > 40,
+        );
+        await skipLink.press('Enter');
+        assert.equal(
+          await page.locator('main').evaluate((element) => element === document.activeElement),
+          true,
+        );
+        await accessible(page, engine, 'test account selector', 'Select test account');
+        for (const width of responsiveWidthsEndingAt(320)) {
+          await page.setViewportSize({ width, height: 900 });
+          assert.equal(
+            await page.evaluate(() => document.documentElement.scrollWidth > innerWidth),
+            false,
+          );
+          if (engine === 'chromium')
+            await page.screenshot({
+              path: screenshotPath(`account-${width}.png`),
+              fullPage: true,
+            });
+        }
       }
       await page.route(
         '**/api/login',
@@ -1650,6 +1726,153 @@ try {
         [],
         `${engine}: dashboard content and global navigation must not leave speculative RSC prefetches open`,
       );
+      if (profilePhotoOnly) {
+        // The selected account is the newly registered browser fixture, so
+        // seed that account's profile rather than the separate API owner used
+        // by the broad cross-owner scenario below.
+        const profileOwnerId = (
+          await database.pool.query<{ id: string }>('SELECT id FROM users WHERE email = $1', [
+            accountEmail,
+          ])
+        ).rows[0]!.id;
+        const profileFixture = new ProfileRepository(database);
+        await profileFixture.save(profileOwnerId, {
+          revision: 0,
+          profile: {
+            candidate: {
+              fullName: 'Existing Candidate',
+              email: 'candidate@example.test',
+              location: 'Hyderabad',
+            },
+            preferences: { titles: ['React Engineer'], techStack: ['React', 'TypeScript'] },
+            application: {},
+            accessibility: {},
+          },
+        });
+        await page.goto(`${origin}/resume`);
+        await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
+        await page.getByLabel('Full Name', { exact: true }).waitFor();
+        const uploadInput = page.getByLabel('Upload picture');
+        await uploadInput.focus();
+        assert.equal(
+          await uploadInput.evaluate((element) => element === document.activeElement),
+          true,
+          'profile photo upload control must be reachable by keyboard',
+        );
+        await uploadInput.setInputFiles({
+          name: 'unsupported.svg',
+          mimeType: 'image/svg+xml',
+          buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"/>'),
+        });
+        await page
+          .getByRole('alert')
+          .filter({ hasText: 'Choose a JPEG, PNG, or WebP image.' })
+          .waitFor();
+        assert.equal(await new ProfilePhotoRepository(database).get(profileOwnerId), null);
+        await uploadInput.setInputFiles({
+          name: 'oversized.png',
+          mimeType: 'image/png',
+          buffer: Buffer.alloc(5 * 1024 * 1024 + 1),
+        });
+        await page
+          .getByRole('alert')
+          .filter({ hasText: 'Choose an image no larger than 5 MB.' })
+          .waitFor();
+        assert.equal(await new ProfilePhotoRepository(database).get(profileOwnerId), null);
+
+        const failUpload = (route: import('playwright').Route) => {
+          if (route.request().method() !== 'PUT') return route.fallback();
+          return route.fulfill({
+            status: 503,
+            contentType: 'application/json',
+            json: {
+              code: 'SERVICE_UNAVAILABLE',
+              message: 'Service temporarily unavailable. Please try again shortly.',
+              requestId: randomUUID(),
+            },
+          });
+        };
+        await page.route('**/api/profile/photo', failUpload);
+        await uploadInput.setInputFiles({
+          name: 'profile-failure.png',
+          mimeType: 'image/png',
+          buffer: profilePhotoFixture,
+        });
+        await page
+          .getByRole('alert')
+          .filter({ hasText: 'Service temporarily unavailable. Please try again shortly.' })
+          .waitFor();
+        await page.unroute('**/api/profile/photo', failUpload);
+        assert.equal(await new ProfilePhotoRepository(database).get(profileOwnerId), null);
+
+        let sharedAvatarRefreshReads = 0;
+        const countSharedAvatarRefresh = (request: import('playwright').Request) => {
+          const url = new URL(request.url());
+          if (
+            request.method() === 'GET' &&
+            url.pathname === '/api/profile/photo' &&
+            url.searchParams.get('v') === '1'
+          )
+            sharedAvatarRefreshReads += 1;
+        };
+        page.on('request', countSharedAvatarRefresh);
+        const uploadResponse = page.waitForResponse(
+          (response) =>
+            response.url().endsWith('/api/profile/photo') && response.request().method() === 'PUT',
+        );
+        await uploadInput.setInputFiles({
+          name: 'profile.png',
+          mimeType: 'image/png',
+          buffer: profilePhotoFixture,
+        });
+        const uploadResult = await uploadResponse;
+        assert.equal(
+          uploadResult.status(),
+          204,
+          `profile upload failed with HTTP ${uploadResult.status()} (request origin: ${uploadResult.request().headers().origin ?? 'absent'}, expected origin: ${origin}, CSRF header: ${uploadResult.request().headers()['x-csrf-token'] ? 'present' : 'absent'})`,
+        );
+        await page.getByRole('status').filter({ hasText: 'Profile picture saved.' }).waitFor();
+        const photoRepository = new ProfilePhotoRepository(database);
+        assert.ok(
+          await photoRepository.get(profileOwnerId),
+          'profile photo must be stored privately',
+        );
+        const avatars = page.locator('img[src^="data:image/webp;base64,"]');
+        await page.waitForFunction(
+          () => document.querySelectorAll('img[src^="data:image/webp;base64,"]').length === 2,
+        );
+        assert.equal(await avatars.count(), 2);
+        assert.equal(
+          sharedAvatarRefreshReads,
+          1,
+          'sidebar and topbar must share one profile photo refresh request',
+        );
+        page.off('request', countSharedAvatarRefresh);
+        await page.reload();
+        await page.getByLabel('Full Name', { exact: true }).waitFor();
+        await page.waitForFunction(
+          () => document.querySelectorAll('img[src^="data:image/webp;base64,"]').length === 2,
+        );
+        assert.equal(await avatars.count(), 2, 'profile picture must persist after reload');
+        const removePicture = page.getByRole('button', { name: 'Remove picture', exact: true });
+        await removePicture.focus();
+        await removePicture.press('Enter');
+        await page.getByRole('status').filter({ hasText: 'Profile picture removed.' }).waitFor();
+        assert.equal(await photoRepository.get(profileOwnerId), null);
+        await page.waitForFunction(
+          () => document.querySelectorAll('img[src^="data:image/webp;base64,"]').length === 0,
+        );
+        assert.equal(await avatars.count(), 0, 'removed picture must not remain in either avatar');
+        assert.deepEqual(
+          await page.locator(`span[title="${accountEmail}"]`).allTextContents(),
+          ['SC', 'SC'],
+          'removing a photo must restore the signed-in owner’s initials avatar',
+        );
+        process.stdout.write(
+          `${engine}: profile photo upload, avatar, reload and removal passed\n`,
+        );
+        continue;
+      }
 
       // The shared shell can receive refresh requests from focus, visibility,
       // polling, and panel-open events. Hold one real same-origin response
@@ -2632,14 +2855,149 @@ try {
       );
       assert.equal(await new ProfileRepository(database).get(account.rows[0]!.id), null);
       await page.getByLabel('Full Name', { exact: true }).fill('Synthetic Candidate');
+      // First-time profile creation uses guided onboarding. Verify step
+      // validation focus, back-navigation preservation, and the actual final
+      // submit control before checking the persisted profile.
+      await page.locator('form.profile-form').evaluate((form) => {
+        form.addEventListener(
+          'submit',
+          (event) => {
+            const submitEvent = event as SubmitEvent;
+            window.name = `careerScopeProfileSubmit:${
+              (submitEvent.submitter as HTMLElement | null)?.innerText ?? 'implicit'
+            }`;
+          },
+          true,
+        );
+      });
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      assert.equal(
+        await page.evaluate(() => (document.activeElement as HTMLInputElement | null)?.name),
+        'email',
+        `${engine}: invalid contact step did not focus its first missing field`,
+      );
       await page.getByLabel('Email', { exact: true }).fill(accountEmail);
       await page.getByLabel('Location', { exact: true }).fill('Hyderabad');
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await page.getByText('Step 2 of 5: Your background', { exact: true }).waitFor();
       await page
         .getByRole('combobox', { name: 'Career stage', exact: true })
         .selectOption('experienced');
+      await page.locator('textarea[name="experience"]').fill('Frontend Engineer at Example Co');
+      await page.getByText(/changing careers, list transferable skills/i).waitFor();
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await page.getByText('Step 3 of 5: Job preferences', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'Back', exact: true }).click();
+      await page.getByText('Step 2 of 5: Your background', { exact: true }).waitFor();
+      assert.equal(
+        await page.getByRole('combobox', { name: 'Career stage', exact: true }).inputValue(),
+        'experienced',
+        `${engine}: returning to an earlier onboarding step lost the selected career stage`,
+      );
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await page.getByText('Step 3 of 5: Job preferences', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      assert.equal(
+        await page.evaluate(() => (document.activeElement as HTMLTextAreaElement | null)?.name),
+        'titles',
+        `${engine}: invalid job-preferences step did not focus its first missing field`,
+      );
       await page.locator('textarea[name="titles"]').fill('React Engineer');
-      await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
+      await page.locator('textarea[name="techStack"]').fill('React, TypeScript');
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await page.getByText('Step 4 of 5: Application details', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await page.getByText('Step 5 of 5: Accessibility', { exact: true }).waitFor();
+      assert.equal(
+        await page.evaluate(() => window.name),
+        '',
+        `${engine}: onboarding submitted before the final button was clicked`,
+      );
+      const finishButton = page.locator('form.profile-form button[type="submit"]');
+      assert.equal(
+        await finishButton.isEnabled(),
+        true,
+        `${engine}: finish button was not ready; form submit source: ${await page.evaluate(() => window.name)}`,
+      );
+      await finishButton.click();
       await page.getByText('Profile saved.', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'Save Profile', exact: true }).waitFor();
+      const persistedOnboardingProfile = await new ProfileRepository(database).get(
+        account.rows[0]!.id,
+      );
+      assert.deepEqual(
+        persistedOnboardingProfile?.profile.candidate.experience,
+        ['Frontend Engineer at Example Co'],
+        `${engine}: saved onboarding profile must retain the background used by completeness`,
+      );
+      await page.goto(`${origin}/dashboard`);
+      await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+      const completenessPanel = page.locator('section[aria-label="Profile completeness"]');
+      await completenessPanel.getByText('Profile completeness 100%', { exact: true }).waitFor();
+      await completenessPanel.getByRole('progressbar', { name: 'Profile completeness' }).waitFor();
+      assert.equal(
+        await completenessPanel.locator('[data-done="true"]').count(),
+        5,
+        `${engine}: saved onboarding profile must complete each profile-only checklist item`,
+      );
+      assert.equal(
+        await completenessPanel
+          .getByRole('progressbar', { name: 'Profile completeness' })
+          .getAttribute('aria-valuenow'),
+        '100',
+        `${engine}: completed profile progressbar must expose the current value`,
+      );
+      let failedProfileReads = 0;
+      await page.route('**/api/profile', async (route) => {
+        if (failedProfileReads < 2) {
+          failedProfileReads += 1;
+          await route.fulfill({ status: 503, contentType: 'application/json', body: '{}' });
+          return;
+        }
+        await route.continue();
+      });
+      await page.goto(`${origin}/dashboard`);
+      const failedCompletenessPanel = page.locator('section[aria-label="Profile completeness"]');
+      await failedCompletenessPanel
+        .getByRole('alert')
+        .filter({ hasText: 'Could not load your profile completeness.' })
+        .waitFor();
+      assert.equal(
+        failedProfileReads,
+        2,
+        `${engine}: the error state must follow the two intentionally failed profile reads`,
+      );
+      assert.equal(
+        await failedCompletenessPanel.getByRole('progressbar').count(),
+        0,
+        `${engine}: failed profile reads must not show a calculated completeness value`,
+      );
+      await failedCompletenessPanel.getByRole('button', { name: /retry/i }).click();
+      await failedCompletenessPanel
+        .getByRole('progressbar', { name: 'Profile completeness' })
+        .waitFor();
+      assert.equal(
+        failedProfileReads,
+        2,
+        `${engine}: retry should recover using the third profile read`,
+      );
+      assert.equal(
+        await failedCompletenessPanel.getByRole('alert').count(),
+        0,
+        `${engine}: retrying a failed profile read must recover the completeness panel`,
+      );
+      await page.unroute('**/api/profile');
+      errors.splice(
+        0,
+        errors.length,
+        ...errors.filter((error) => !error.startsWith('resource HTTP 503 at /api/profile')),
+      );
+
+      assert.equal(
+        await page.getByRole('status').filter({ hasText: 'Step ' }).count(),
+        0,
+        `${engine}: successful save did not leave first-time onboarding mode`,
+      );
       const reviewed = await new ProfileRepository(database).get(account.rows[0]!.id);
       // `get` returns null when no profile exists. Three later assertions read
       // `reviewed.revision`; without this the suite would die with a TypeError
@@ -3875,29 +4233,111 @@ try {
       await page.getByRole('button', { name: 'Back to search', exact: true }).click();
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
       await page.setViewportSize({ width: 1440, height: 900 });
+      // This scenario covers editing and validation of an existing profile.
+      // Seed it directly so it exercises the flat editor rather than the
+      // separate first-time guided onboarding flow.
+      const profileFixture = new ProfileRepository(database);
+      const currentProfile = await profileFixture.get(ownerId);
+      await profileFixture.save(ownerId, {
+        revision: currentProfile?.revision ?? 0,
+        profile: {
+          candidate: {
+            fullName: 'Existing Candidate',
+            email: 'candidate@example.test',
+            location: 'Hyderabad',
+          },
+          preferences: { titles: ['React Engineer'], techStack: ['React', 'TypeScript'] },
+          application: {},
+          accessibility: {},
+        },
+      });
       await sidebarNav.getByRole('link', { name: 'Resume', exact: true }).click();
       await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
       await page.getByLabel('Full Name', { exact: true }).fill('Example Candidate');
       await page.getByLabel('Email', { exact: true }).fill('candidate@example.test');
-      await page.getByLabel('Location', { exact: true }).fill('Hyderabad');
+      const homeLocationField = page.getByLabel('Location', { exact: true });
+      await homeLocationField.fill('Pune, India');
+      const preferredLocationsField = page.getByRole('textbox', {
+        name: 'Preferred Locations',
+        exact: true,
+      });
+      await preferredLocationsField.fill('Pune\nRemote');
+      const remoteOnlyField = page.getByRole('checkbox', { name: 'Remote Only', exact: true });
+      await remoteOnlyField.check();
+      await page.getByLabel('Minimum Annual Salary', { exact: true }).fill('1800000');
+      await page.getByLabel('Currency code', { exact: true }).fill('inr');
+      await page.getByLabel('Expected Compensation', { exact: true }).fill('₹18–22 LPA');
       await page.getByLabel('Graduation Year', { exact: true }).fill('2024');
       await page.getByRole('checkbox', { name: 'Reduce non-essential motion' }).check();
       await page
         .getByRole('textbox', { name: 'Education', exact: true })
         .fill('B.Tech, Computer Science');
       await page
+        .getByRole('textbox', { name: 'Work Experience', exact: true })
+        .fill('Frontend Engineer at Example Co (2022–2024)');
+      await page
         .getByRole('textbox', { name: 'Projects', exact: true })
         .fill('Accessible job search prototype');
       // Satisfy the profile form's existing required preference fields so the
       // submit handler reaches the education/project length validation below.
-      await page.getByRole('textbox', { name: 'Target Roles', exact: true }).fill('React Engineer');
+      const targetRolesField = page.getByRole('textbox', { name: 'Target Roles', exact: true });
+      await targetRolesField.fill('React Engineer');
       await page.getByRole('textbox', { name: 'Skills', exact: true }).fill('React\nTypeScript');
       const educationField = page.getByRole('textbox', { name: 'Education', exact: true });
+      const workHistoryField = page.getByRole('textbox', {
+        name: 'Work Experience',
+        exact: true,
+      });
       const projectsField = page.getByRole('textbox', { name: 'Projects', exact: true });
       const profiles = new ProfileRepository(database);
       const profileBeforeInvalidInput = await profiles.get(ownerId);
+      const currencyField = page.getByLabel('Currency code', { exact: true });
+      await currencyField.fill('12R');
+      await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
+      assert.equal(
+        await currencyField.evaluate((element) => {
+          const input = element as HTMLInputElement;
+          return input.validity.patternMismatch || !input.checkValidity();
+        }),
+        true,
+        `${engine}: malformed salary currency must show field validation`,
+      );
+      assert.equal(
+        (await profiles.get(ownerId))?.revision ?? 0,
+        profileBeforeInvalidInput?.revision ?? 0,
+        `${engine}: malformed salary currency must not persist`,
+      );
+      await currencyField.fill('inr');
+      const availabilityField = page.locator('select[name="availabilityStatus"]');
+      const noticePeriodField = page.locator('input[name="noticePeriodDays"]');
+      const preferredContactField = page.locator('select[name="preferredContactMethod"]');
+      assert.equal(await availabilityField.count(), 1, `${engine}: availability control renders`);
+      assert.equal(await noticePeriodField.count(), 1, `${engine}: notice period control renders`);
+      assert.equal(
+        await preferredContactField.count(),
+        1,
+        `${engine}: preferred contact control renders`,
+      );
+      await availabilityField.selectOption('notice_period');
+      await noticePeriodField.fill('');
+      await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
+      assert.equal(
+        await noticePeriodField.evaluate(
+          (element) => (element as HTMLInputElement).validity.valueMissing,
+        ),
+        true,
+        `${engine}: selecting a notice period requires the number of days`,
+      );
+      assert.equal(
+        (await profiles.get(ownerId))?.revision ?? 0,
+        profileBeforeInvalidInput?.revision ?? 0,
+        `${engine}: incomplete notice period must not persist`,
+      );
+      await noticePeriodField.fill('45');
+      await preferredContactField.selectOption('phone');
       for (const [field, value] of [
         [educationField, 'B.Tech, Computer Science'],
+        [workHistoryField, 'Frontend Engineer at Example Co (2022–2024)'],
         [projectsField, 'Accessible job search prototype'],
       ] as const) {
         await field.fill('x'.repeat(201));
@@ -3948,13 +4388,94 @@ try {
       );
       await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
       await page.getByText('Profile saved.', { exact: true }).waitFor();
+      let sharedAvatarRefreshReads = 0;
+      const countSharedAvatarRefresh = (request: import('playwright').Request) => {
+        const url = new URL(request.url());
+        if (
+          request.method() === 'GET' &&
+          url.pathname === '/api/profile/photo' &&
+          url.searchParams.get('v') === '1'
+        )
+          sharedAvatarRefreshReads += 1;
+      };
+      page.on('request', countSharedAvatarRefresh);
+      await page
+        .getByLabel('Upload picture')
+        .setInputFiles({ name: 'profile.png', mimeType: 'image/png', buffer: profilePhotoFixture });
+      await page.getByRole('status').filter({ hasText: 'Profile picture saved.' }).waitFor();
+      assert.equal(
+        await new ProfilePhotoRepository(database).get(ownerId).then((photo) => photo !== null),
+        true,
+        `${engine}: uploaded profile picture is stored privately`,
+      );
+      const avatar = page.locator('img[src^="data:image/webp;base64,"]');
+      await page.waitForFunction(
+        () =>
+          Array.from(document.images).filter((image) =>
+            image.src.startsWith('data:image/webp;base64,'),
+          ).length === 2,
+        undefined,
+        { timeout: 5000 },
+      );
+      assert.equal(
+        sharedAvatarRefreshReads,
+        1,
+        `${engine}: sidebar and topbar must share one profile photo refresh request`,
+      );
+      page.off('request', countSharedAvatarRefresh);
       const savedProfile = await new ProfileRepository(database).get(ownerId);
+      assert.equal(savedProfile?.profile.candidate.location, 'Pune, India');
+      assert.deepEqual(savedProfile?.profile.preferences.locations, ['Pune', 'Remote']);
+      assert.equal(savedProfile?.profile.preferences.remoteOnly, true);
+      assert.equal(savedProfile?.profile.preferences.minSalary, 1_800_000);
+      assert.equal(savedProfile?.profile.preferences.minSalaryCurrency, 'INR');
+      assert.equal(savedProfile?.profile.application.expectedCtc, '₹18–22 LPA');
+      assert.equal(savedProfile?.profile.application.availabilityStatus, 'notice_period');
+      assert.equal(savedProfile?.profile.application.noticePeriodDays, 45);
+      assert.equal(savedProfile?.profile.application.preferredContactMethod, 'phone');
       assert.deepEqual(savedProfile?.profile.candidate.education, ['B.Tech, Computer Science']);
+      assert.deepEqual(savedProfile?.profile.candidate.experience, [
+        'Frontend Engineer at Example Co (2022–2024)',
+      ]);
       assert.equal(savedProfile?.profile.candidate.graduationYear, 2024);
       assert.deepEqual(savedProfile?.profile.accessibility, { reducedMotion: true });
       assert.deepEqual(savedProfile?.profile.candidate.projects, [
         'Accessible job search prototype',
       ]);
+      await settled('profile save before work-history reload');
+      await page.reload();
+      await page.getByLabel('Full Name', { exact: true }).waitFor();
+      assert.equal(await homeLocationField.inputValue(), 'Pune, India');
+      assert.equal(await preferredLocationsField.inputValue(), 'Pune\nRemote');
+      assert.equal(await remoteOnlyField.isChecked(), true);
+      assert.equal(await availabilityField.inputValue(), 'notice_period');
+      assert.equal(await noticePeriodField.inputValue(), '45');
+      assert.equal(await preferredContactField.inputValue(), 'phone');
+      assert.equal(
+        await page.getByLabel('Minimum Annual Salary', { exact: true }).inputValue(),
+        '1800000',
+      );
+      assert.equal(await page.getByLabel('Currency code', { exact: true }).inputValue(), 'INR');
+      assert.equal(
+        await page.getByLabel('Expected Compensation', { exact: true }).inputValue(),
+        '₹18–22 LPA',
+      );
+      assert.equal(
+        await workHistoryField.inputValue(),
+        'Frontend Engineer at Example Co (2022–2024)',
+        `${engine}: saved work history must be restored after reload`,
+      );
+      assert.equal(
+        await projectsField.inputValue(),
+        'Accessible job search prototype',
+        `${engine}: saved project summaries must be restored after reload`,
+      );
+      assert.equal(
+        await targetRolesField.inputValue(),
+        'React Engineer',
+        `${engine}: saved preferred job titles must be restored after reload`,
+      );
+      await settled('work-history profile reload');
       const experienceField = page.getByLabel('Years of Experience', { exact: true });
       await experienceField.fill('');
       await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
@@ -3983,6 +4504,7 @@ try {
       await database.pool.query(
         `UPDATE candidate_profiles
          SET data = data #- '{candidate,education}'
+                    #- '{candidate,experience}'
                     #- '{candidate,projects}'
                     #- '{candidate,graduationYear}'
          WHERE owner_id = $1`,
@@ -3997,15 +4519,20 @@ try {
       assert.equal(await page.locator('html').getAttribute('data-reduced-motion'), 'true');
       assert.equal(await page.getByLabel('Graduation Year', { exact: true }).inputValue(), '');
       assert.equal(await educationField.inputValue(), '');
+      assert.equal(await workHistoryField.inputValue(), '');
       assert.equal(await projectsField.inputValue(), '');
       await page.getByLabel('Graduation Year', { exact: true }).fill('2024');
       await educationField.fill('B.Tech, Computer Science');
+      await workHistoryField.fill('Frontend Engineer at Example Co (2022–2024)');
       await projectsField.fill('Accessible job search prototype');
       await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
       await page.getByText('Profile saved.', { exact: true }).waitFor();
       const normalizedProfile = await profiles.get(ownerId);
       assert.deepEqual(normalizedProfile?.profile.candidate.education, [
         'B.Tech, Computer Science',
+      ]);
+      assert.deepEqual(normalizedProfile?.profile.candidate.experience, [
+        'Frontend Engineer at Example Co (2022–2024)',
       ]);
       assert.equal(normalizedProfile?.profile.candidate.graduationYear, 2024);
       assert.deepEqual(normalizedProfile?.profile.candidate.projects, [
@@ -4056,8 +4583,25 @@ try {
       const resumeResponse = await resumeViewLoaded;
       if (resumeResponse) assert.equal(resumeResponse.status(), 200);
       await settled('resume');
+      await page.getByRole('button', { name: 'Back to Search', exact: true }).click();
+      await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
       await page.reload();
+      await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+      await sidebarNav.getByRole('link', { name: 'Resume', exact: true }).click();
       await page.getByLabel('Full Name', { exact: true }).waitFor();
+      await page.waitForFunction(
+        () => document.querySelectorAll('img[src^="data:image/webp;base64,"]').length === 2,
+      );
+      assert.equal(await avatar.count(), 2, `${engine}: profile photo survives a page reload`);
+      await page.getByRole('button', { name: 'Remove picture', exact: true }).click();
+      await page.getByRole('status').filter({ hasText: 'Profile picture removed.' }).waitFor();
+      await page.waitForFunction(
+        () =>
+          !Array.from(document.images).some((image) => image.src.startsWith('data:image/webp;')),
+        undefined,
+        { timeout: 5000 },
+      );
+      assert.equal(await new ProfilePhotoRepository(database).get(ownerId), null);
       assert.equal(await page.getByLabel('Graduation Year', { exact: true }).inputValue(), '2024');
       assert.equal(
         await page.getByRole('textbox', { name: 'Education', exact: true }).inputValue(),
@@ -4150,6 +4694,12 @@ try {
       const profileRun = await database.getSearch(ownerId, profileId);
       assert.equal(profileRun?.request.useProfileTitles, true);
       assert.ok(profileRun?.matchingProfile?.preferences.titles.length);
+      assert.equal(profileRun?.matchingProfile?.candidate.location, 'Pune, India');
+      assert.deepEqual(profileRun?.matchingProfile?.preferences.locations, ['Pune', 'Remote']);
+      assert.equal(profileRun?.matchingProfile?.preferences.remoteOnly, true);
+      assert.equal(profileRun?.matchingProfile?.preferences.minSalary, 1_800_000);
+      assert.equal(profileRun?.matchingProfile?.preferences.minSalaryCurrency, 'INR');
+      assert.equal(profileRun?.matchingProfile?.application.expectedCtc, '₹18–22 LPA');
       const profileProvider: JobProvider = {
         id: 'greenhouse',
         kind: 'ats',
@@ -4756,10 +5306,24 @@ try {
       // created at the top of this file, so this also re-proves owner
       // isolation across a session boundary rather than only within one.
       const searchDetailRequests = () =>
-        [...inflight.keys()].filter((request) => {
-          const url = new URL(request.url());
-          return request.method() === 'GET' && /^\/api\/searches\/[^/]+$/.test(url.pathname);
-        });
+        [...inflight]
+          .filter(([request, epoch]) => {
+            const url = new URL(request.url());
+            return (
+              request.method() === 'GET' &&
+              /^\/api\/searches\/[^/]+$/.test(url.pathname) &&
+              !staleSearchRead(request.method(), url.pathname, epoch, routeEpoch) &&
+              !staleEarlierRouteRead(
+                request.method(),
+                request.resourceType(),
+                epoch,
+                routeEpoch,
+                engine,
+                url.pathname,
+              )
+            );
+          })
+          .map(([request]) => request);
       const searchRequestDeadline = Date.now() + 15000;
       while (searchDetailRequests().length > 0 && Date.now() < searchRequestDeadline) {
         await page.waitForTimeout(25);
@@ -4783,6 +5347,123 @@ try {
       );
       await selectFixtureAccount('foreign-owner@example.test', password);
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+
+      // Hold the foreign owner's saved profile response across sign-out. Once
+      // owner A signs in, its previously complete profile must remain at 100%
+      // even after the old 80% response is released.
+      let releaseForeignProfile!: () => void;
+      let foreignProfileFetched!: () => void;
+      let resolveForeignProfileCompletion!: (outcome: 'fulfilled' | 'cancelled') => void;
+      let rejectForeignProfileCompletion!: (error: Error) => void;
+      const foreignProfileGate = new Promise<void>((resolve) => {
+        releaseForeignProfile = resolve;
+      });
+      const foreignProfileHeld = new Promise<void>((resolve) => {
+        foreignProfileFetched = resolve;
+      });
+      const foreignProfileCompletion = new Promise<'fulfilled' | 'cancelled'>((resolve, reject) => {
+        resolveForeignProfileCompletion = resolve;
+        rejectForeignProfileCompletion = reject;
+      });
+      let foreignProfileRequest: import('playwright').Request | undefined;
+      let holdNextProfileRequest = true;
+      const holdForeignProfile = async (route: import('playwright').Route) => {
+        if (!holdNextProfileRequest) return route.fallback();
+        holdNextProfileRequest = false;
+        const response = await route.fetch();
+        assert.equal(response.status(), 200, `${engine}: foreign profile read must succeed`);
+        const profileResponse = await response.json();
+        assert.equal(
+          profileResponse.profile?.candidate?.fullName,
+          'Foreign Owner Candidate',
+          `${engine}: held profile response must belong to the foreign owner`,
+        );
+        assert.equal(
+          profileResponse.profile?.candidate?.email,
+          'foreign-owner@example.test',
+          `${engine}: held profile response must carry the foreign owner's saved email`,
+        );
+        const foreignProfile = profileResponse.profile;
+        assert.ok(foreignProfile);
+        const foreignCandidate = foreignProfile.candidate;
+        const foreignPreferences = foreignProfile.preferences;
+        const savedProfileChecks = [
+          Boolean(foreignCandidate.fullName.trim() && foreignCandidate.email.trim()),
+          Boolean(foreignCandidate.location.trim()),
+          [foreignCandidate.education, foreignCandidate.experience, foreignCandidate.projects].some(
+            (entries) => entries.some((entry: string) => entry.trim().length > 0),
+          ),
+          foreignPreferences.titles.some((entry: string) => entry.trim().length > 0),
+          foreignPreferences.techStack.some((entry: string) => entry.trim().length > 0),
+        ];
+        assert.equal(
+          Math.round((savedProfileChecks.filter(Boolean).length / savedProfileChecks.length) * 100),
+          80,
+          `${engine}: the actual foreign-owner response must calculate to 80% completeness`,
+        );
+        foreignProfileRequest = route.request();
+        foreignProfileFetched();
+        await foreignProfileGate;
+        try {
+          await route.fulfill({
+            status: response.status(),
+            contentType: 'application/json',
+            json: profileResponse,
+          });
+          resolveForeignProfileCompletion('fulfilled');
+        } catch (error) {
+          if (/aborted|closed|already handled|target page/i.test(String(error))) {
+            resolveForeignProfileCompletion('cancelled');
+            return;
+          }
+          rejectForeignProfileCompletion(
+            error instanceof Error ? error : new Error('Could not complete held profile response'),
+          );
+          throw error;
+        }
+      };
+      try {
+        await page.route('**/api/profile', holdForeignProfile);
+        await page.goto(`${origin}/dashboard`);
+        await foreignProfileHeld;
+        assert.ok(foreignProfileRequest, `${engine}: captured the held foreign profile request`);
+        page.once('dialog', (dialog) => dialog.accept());
+        await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+        await page.getByRole('heading', { name: 'Select test account', exact: true }).waitFor();
+        await selectFixtureAccount(accountEmail, password);
+        await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+        const switchedCompleteness = page.locator('section[aria-label="Profile completeness"]');
+        await switchedCompleteness
+          .getByText('Profile completeness 100%', { exact: true })
+          .waitFor();
+        releaseForeignProfile();
+        assert.equal(await foreignProfileCompletion, 'fulfilled');
+        await page.evaluate(
+          () =>
+            new Promise<void>((resolve) =>
+              requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+            ),
+        );
+        assert.equal(
+          await switchedCompleteness
+            .getByRole('progressbar', { name: 'Profile completeness' })
+            .getAttribute('aria-valuenow'),
+          '100',
+          `${engine}: a late or cancelled foreign-owner response must not replace owner A completeness`,
+        );
+        page.once('dialog', (dialog) => dialog.accept());
+        await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+        await page.getByRole('heading', { name: 'Select test account', exact: true }).waitFor();
+        await selectFixtureAccount('foreign-owner@example.test', password);
+        await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
+        await page
+          .locator('section[aria-label="Profile completeness"]')
+          .getByText('Profile completeness 80%', { exact: true })
+          .waitFor();
+      } finally {
+        releaseForeignProfile();
+        await page.unroute('**/api/profile', holdForeignProfile);
+      }
 
       // Each route asserts a POSITIVE anchor belonging to the NEW owner
       // before asserting the absence of the old one. Without that, every
@@ -4907,7 +5588,9 @@ try {
   });
   try {
     await testApp.listen({ host: '127.0.0.1', port: API_PORT });
-    for (const [engine, browserType] of notificationLifecycleOnly ? [] : uiBrowsers) {
+    for (const [engine, browserType] of notificationLifecycleOnly || profilePhotoOnly
+      ? []
+      : uiBrowsers) {
       const browser = await browserType.launch();
       try {
         const page = await browser.newPage();

@@ -14,6 +14,7 @@ const evidenceSchema = z
       'preferences.techStack',
       'candidate.portfolio',
       'application.yearsOfExperience',
+      'application.availabilityStatus',
       'application.noticePeriodDays',
     ]),
     value: z.string().max(160),
@@ -83,6 +84,28 @@ export function prepareProfile(record: ProfileRecord | null): PreparationReport 
   const roles = profile.preferences.titles
     .slice(0, 5)
     .map((value) => evidence('preferences.titles', value));
+  // Rows written before availabilityStatus was introduced still contain noticePeriodDays.
+  // Infer the historical state on this read path because repository reads return stored JSON.
+  const availability =
+    profile.application.availabilityStatus ??
+    (profile.application.noticePeriodDays === 0 ? 'immediate' : 'notice_period');
+  const availabilityEvidence =
+    availability === 'not_specified'
+      ? [evidence('application.availabilityStatus', 'Not provided')]
+      : [
+          evidence(
+            'application.availabilityStatus',
+            availability === 'immediate' ? 'Immediately available' : 'Serving a notice period',
+          ),
+          ...(availability === 'notice_period'
+            ? [
+                evidence(
+                  'application.noticePeriodDays',
+                  String(profile.application.noticePeriodDays),
+                ),
+              ]
+            : []),
+        ];
   report.checks = [
     {
       id: 'target',
@@ -96,7 +119,7 @@ export function prepareProfile(record: ProfileRecord | null): PreparationReport 
       title: 'Experience and availability',
       state: 'review',
       detail:
-        'Confirm experience and notice period. Unknown experience is not treated as a mismatch.',
+        'Confirm your stated experience and availability. Unknown details are not treated as a mismatch.',
       evidence: [
         evidence(
           'application.yearsOfExperience',
@@ -104,7 +127,7 @@ export function prepareProfile(record: ProfileRecord | null): PreparationReport 
             ? 'Not provided'
             : String(profile.application.yearsOfExperience),
         ),
-        evidence('application.noticePeriodDays', String(profile.application.noticePeriodDays)),
+        ...availabilityEvidence,
       ],
     },
     {
@@ -137,7 +160,7 @@ export function prepareProfile(record: ProfileRecord | null): PreparationReport 
       id: 'experience',
       kind: 'clarification',
       question:
-        'Are your saved years of experience and notice period accurate, including any zero values?',
+        'Are your saved years of experience and availability accurate, including any stated notice period?',
       evidence: report.checks[1]!.evidence,
     },
     {

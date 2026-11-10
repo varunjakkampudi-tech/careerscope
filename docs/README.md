@@ -73,4 +73,4 @@ This is the single index of CareerScope documentation. Every document under
 
 ## Audits
 
-- [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md) and [STAGE-01-FILE-AUDIT.json](audits/STAGE-01-FILE-AUDIT.json) - file-level audit record for every tracked file (checked by `npm run audit:stage01`)
+- [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md) and [STAGE-01-FILE-AUDIT.json](audits/STAGE-01-FILE-AUDIT.json) - file-level audit record for every tracked file (full coverage enforced by `npm run audit:stage01`)

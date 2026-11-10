@@ -28,6 +28,7 @@ function profile(
       locations: ['Hyderabad', 'Bangalore'],
       remoteOnly: false,
       minSalary: 1_600_000,
+      minSalaryCurrency: null,
       employmentTypes: ['fulltime'],
       excludeKeywords: [],
       excludeCompanies: [],
@@ -154,6 +155,18 @@ describe('buildCandidateContext — expected salary', () => {
     expect(currency('$150k')).toBe('USD');
     expect(currency('150000')).toBeNull();
   });
+
+  it('carries the currency attached to the structured minimum salary', () => {
+    const ctx = buildCandidateContext(
+      profile({
+        preferences: { minSalary: 1_800_000, minSalaryCurrency: 'INR' },
+        application: { expectedCtc: '' },
+      }),
+    );
+    expect(ctx.minSalary).toBe(1_800_000);
+    expect(ctx.minSalaryCurrency).toBe('INR');
+    expect(ctx.expectedSalary).toBeNull();
+  });
 });
 
 describe('buildCandidateContext — years of experience', () => {
@@ -213,6 +226,7 @@ describe('buildCandidateContext — home location', () => {
         locations: [],
         remoteOnly: false,
         minSalary: null,
+        minSalaryCurrency: null,
         employmentTypes: ['fulltime' as const],
         excludeKeywords: [],
         excludeCompanies: [],
@@ -221,6 +235,8 @@ describe('buildCandidateContext — home location', () => {
         currentCtc: '14 LPA',
         expectedCtc: '20 LPA',
         noticePeriodDays: 60,
+        availabilityStatus: 'notice_period' as const,
+        preferredContactMethod: 'phone' as const,
         willingToRelocate: true,
         yearsOfExperience: 4,
       },
@@ -232,5 +248,7 @@ describe('buildCandidateContext — home location', () => {
     expect(ctx.expectedSalary).toBe(2_000_000);
     expect(ctx.willingToRelocate).toBe(true);
     expect(ctx.yearsOfExperience).toBe(4);
+    expect(ctx).not.toHaveProperty('availabilityStatus');
+    expect(ctx).not.toHaveProperty('preferredContactMethod');
   });
 });

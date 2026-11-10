@@ -2,15 +2,16 @@
 
 One row per roadmap stage. A stage is complete only when its gate in [GAP-MATRIX](GAP-MATRIX.md)
 is met, its tests are recorded in [TEST-MATRIX](TEST-MATRIX.md), and every blocker that affects it
-is listed in [BLOCKERS](BLOCKERS.md). Stages run one at a time. Deployment is last, after stage 20.
+is listed in [BLOCKERS](BLOCKERS.md). Stages run one at a time. Hosting, backups, and deployment are outside the revised 22-stage checklist scope.
 
-| Stage | Name                                 | Status      |
-| ----- | ------------------------------------ | ----------- |
-| 01    | Foundation, governance, architecture | Complete    |
-| 02    | Authentication and account security  | Complete    |
-| 03-20 | See roadmap                          | Not started |
+| Stage | Name                                          | Status      |
+| ----- | --------------------------------------------- | ----------- |
+| 01    | Foundation, governance, architecture          | Complete    |
+| 02    | Authentication and account security           | In progress |
+| 03    | Candidate onboarding and professional profile | In progress |
+| 04-20 | See roadmap                                   | Not started |
 
-Stage 01 file audit: [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md); the current JSON record is the source of truth for tracked-file coverage and passes the complete-coverage gate. The owner’s prompt item 1.01 was independently approved at PR #18, exact SHA `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`. All 15 owner checklist items are verified with no open gaps in the [owner-roadmap inventory](requirements/OWNER-ROADMAP-TRACEABILITY.json). The closing revision, merge commit `397025bdd43ae293a081e2728fadc67dafb62df1`, passed hosted run `42310969989` (Quality gates and Services, integration, and Chromium/Firefox/WebKit browser acceptance). The file audit has complete coverage and no open critical or high findings. The accepted low-severity S1-F014 database risk remains documented; no Stage 01 blocker is open. Hostinger deployment and server backups are excluded from scope. See the [FOUNDATIONS](FOUNDATIONS.md) crosswalk.
+Stage 01 file audit: [STAGE-01-FILE-AUDIT](audits/STAGE-01-FILE-AUDIT.md); the current JSON record is the source of truth for tracked-file coverage and passes the complete-coverage gate. Checklist item 1.01 was independently approved at PR #18, exact SHA 5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964. All 15 Stage 01 checklist items are verified in the [owner-roadmap inventory](requirements/OWNER-ROADMAP-TRACEABILITY.json). The closing revision, merge commit 397025bdd43ae293a081e2728fadc67dafb62df1, passed hosted run 42310969989 (Quality gates and Services, integration, and Chromium/Firefox/WebKit browser acceptance). The refreshed audit on current dev contains 514 tracked files: 446 reviewed and 68 not-applicable-source, with no partial or unreviewed entries and no open critical/high findings. The audit re-reviewed stale/new records and now requires complete coverage; the conditional PR #68 review comments were addressed. Current dev SHA 036dd3c11278a26534544792f4834a0902214d17 passed hosted run 42763470961 (Quality gates and Services/integration/browser; the production image build was skipped for the push). PR #74 was approved by independent review at exact SHA 2953f9124832807d3e47dfdfff95b62ed7b434a0, passed all three required jobs in run 42797486814, and merged to dev as fe79b695d00447537d5993d97ac66cec0a6e2ee5. Post-merge run 42799635203 passed Quality gates but its Services/integration/browser job failed on the first attempt with an active PUT /api/leads/:id request during an unrelated profile reload; failed-job rerun attempt 2 is in progress. No image was published. The earlier PR #18 approval remains tied to its exact SHA. The accepted low-severity S1-F014 database risk remains documented. Hostinger deployment and server backups are excluded from scope. See the [FOUNDATIONS](FOUNDATIONS.md) crosswalk.
 
 Owner 22-stage roadmap item 1.07, API/OpenAPI contracts, is verified for the registered route surface; see [API-OPENAPI-REVIEW](architecture/API-OPENAPI-REVIEW.md). The 13-item repository foundations register has its own numbering; its item 1.07 refers to migration integrity and is tracked separately in [FOUNDATIONS](FOUNDATIONS.md).
 
@@ -30,37 +31,20 @@ Owner 22-stage roadmap item 1.14, complete requirement/test traceability, is ver
 
 Owner 22-stage roadmap item 1.15, shared design components, is verified against the existing reusable UI foundations: documented tokens and component guidance, loading/error/empty states, shared panel surfaces, branding, match evidence, and the authenticated dashboard shell. `scripts/tests/design-system-doc.test.ts` passed all six assertions locally; the hosted closeout CI runs this guard and cross-browser UI/accessibility checks on the reviewed revision. Existing screen-specific control styles remain documented to preserve approved visual differences. No visual redesign was introduced.
 
-Owner roadmap item 2.05, new-account registration, remains gated pending counsel-approved legal text and public HTTPS URLs; production deployment remains excluded. Owner item 2.06 remains partial pending native-language review of localized acceptance copy. Owner item 2.07, session rotation, and 2.08, device/session management, have PostgreSQL integration evidence recorded in [TEST-MATRIX](TEST-MATRIX.md). Owner item 2.09, secure email change, has PostgreSQL evidence for address-bound codes and session revocation plus browser workflow evidence. Owner item 2.10, account recovery, is verified under the owner's AI-only acceptance decision (not a native-speaker review): its PostgreSQL integration test covers ownership checks, recovery-address confirmation, cooldown, recovery sign-in, rejection and single-use behavior, security notices, and removal. The owner elected AI-only acceptance for account-recovery UI copy so engineering can proceed; this does not represent native-speaker or legal approval (legacy local row 2.17). Stage 02 local gap-matrix IDs are legacy and differ from canonical owner-roadmap IDs; the traceability inventory is authoritative.
-
-### Owner-directed AI-only language acceptance — item 2.10
-
-The product owner requested that this app's completion workflow not wait for a
-native-speaker reviewer and delegated an AI-only review decision for account-recovery
-UI copy. This changes the **owner item 2.10 acceptance criterion**, not the original
-pinned source checklist or any legal requirement. Native review has **not** occurred.
-The localized strings in `apps/web/src/lib/locale.ts` were compared against English
-on the reviewed `dev` commit `2f73198f453c8b332426c2961f8df1128d7e736b`:
-
-- `recoverySetupIntro` and `recoveryConfirm`: both translations distinguish a
-  secondary recovery address from the primary sign-in address and retain the
-  confirmation step. Hindi “खो दें” is less precise than “lose access”.
-- `recoveryCooldown`: both translations preserve a 72-hour wait **after**
-  confirmation. Telugu “తెరుచుకుంటుంది” and Hindi “खुलता है” are
-  understandable but slightly awkward interface wording.
-- `recoveryFindIntro` and `recoverySignInButton`: both describe signing in
-  through a previously confirmed recovery address.
-- `recoveryRequestNote` and `recoverySent`: both retain the conditional
-  wording rather than revealing whether an account or recovery address exists.
-
-**AI-only acceptance result:** No blocking reversal of the reviewed security or timing
-instructions was identified. Minor phrasing/register differences remain accepted as
-editorial risk for this checklist item. This is a model-assisted assessment, **not**
-native-speaker validation, end-user usability testing, or legal sign-off. Subsequent
-native editorial improvements may be tracked separately without blocking Stage 03.
+Owner roadmap item 2.05, new-account registration, remains gated pending counsel-approved legal text and public HTTPS URLs; production deployment remains excluded. Owner item 2.06 remains partial pending native-language review of localized acceptance copy. An AI-only comparison found the Hindi privacy acknowledgement used acceptance language where English says acknowledge; the Telugu and Hindi labels now confirm receipt, and locale plus rendered accessible-label assertions cover the full copy. This automated review is preliminary and does not replace native-language review. Owner item 2.07, session rotation, and 2.08, device/session management, have PostgreSQL integration evidence recorded in [TEST-MATRIX](TEST-MATRIX.md). Owner item 2.09, secure email change, has PostgreSQL evidence for address-bound codes and session revocation plus browser workflow evidence. Owner item 2.10, account recovery, is partial: its PostgreSQL integration test covers ownership checks, recovery-address confirmation, cooldown, recovery sign-in, rejection and single-use behavior, security notices, and removal. An AI-assisted comparison found no obvious meaning reversal in the Telugu and Hindi recovery strings for address setup, the 72-hour cooldown, or recovery sign-in, but this is preliminary and does not replace native review; the native-language gap remains open (legacy local row 2.17). Stage 02 local gap-matrix IDs are legacy and differ from canonical owner-roadmap IDs; the traceability inventory is authoritative.
 
 Stage 02 evidence: [GAP-MATRIX](GAP-MATRIX.md) rows 2.01 to 2.20 and [TEST-MATRIX](TEST-MATRIX.md).
-Commit `c12838e` passed the local gates, the integration suite, the Chromium browser suite, and
-hosted CI on rerun `41221224982`. The first hosted run of `c12838e` failed in the flaky private
-test-selection integration test, so that flake remains open. Owner decisions: B-02 closed (no second provider in stage 02); B-03
-approved for deployment, pending counsel-approved legal text. Stage 02 is complete with these carried
-to deployment.
+The historical commit `c12838e` passed the recorded local gates, integration suite, Chromium browser
+suite, and hosted rerun `41221224982`; its first hosted run failed in the private test-selection
+integration test. That historical evidence does not close the current owner checklist gaps. B-02 is
+closed (no second provider in Stage 02). Owner item 2.05 remains gated on counsel-approved legal text
+and public HTTPS URLs; its registration implementation is already covered by tests, but those tests
+do not satisfy the external approval gate. Items 2.06, 2.10, 2.11, and 2.12 remain partial in the
+authoritative [owner-roadmap inventory](requirements/OWNER-ROADMAP-TRACEABILITY.json). Stage 02 is
+therefore in progress; none of these item-level gaps is deferred to deployment.
+
+Owner Stage 03 progress: items 3.01–3.12 are verified and merged through PR #55. Item 3.11 Salary expectations was approved at exact SHA `bdade0c6910cd3193717d12cd9de47e669e882c4`; hosted run `42365143652` passed all three jobs and the merge commit is `8515e871337a03349d96736d0f31f6580012662f`. Item 3.12 Availability/notice period was accepted at exact SHA `6aca4d9d8996e0f38bd34cecb4c89c9dee4bc6aa`; hosted run `42368802616` passed all three jobs, including profile save/reload, accessibility, keyboard, and responsive browser checks. ChatGPT issued final acceptance and PR #55 merged as `6d9789cb34d0100ba8a5845b2edfca9ea8fd88d4`. Candidate availability and preferred contact are owner-controlled profile details and are excluded from job matching. Legacy profiles infer availability from saved notice days; recruiter visibility remains under owner item 3.15. See the owner-roadmap inventory and [TEST-MATRIX](TEST-MATRIX.md). Preferred titles are candidate-defined preferences. Projects, work-history and education are candidate-provided claims, not independently verified and excluded from matching inputs. Age screening is a self-reported 18+ eligibility check and does not verify identity. Signup remains disabled pending the separate legal gate for owner item 2.05.
+
+Owner item 3.13 (Profile picture) is verified and merged to `dev` in PR #58 as `6a81241c9d3c1b1fc7ff04fbb7e8fa76aff91845`. The feature stores one private, normalized WebP per account and exposes authenticated owner-scoped read/replace/remove endpoints, with no public or recruiter-facing photo path. PR #57 feature SHA `7d671f731234d535c25c5d0279a8d09af986d285` passed hosted run `42386991607`; the post-merge run `42388956384` exposed a browser request-lifecycle issue. PR #58 shares owner-scoped avatar reads, passes React Query cancellation to fetch, and verifies one photo refresh request serves both avatar slots. Exact accepted head `05fa7a1edcf9178ec3f6e8c49a63810842aab8ea` passed all three jobs in hosted run `42394248888` and received independent final acceptance. The checklist now records 37/328 verified; the prior live `dev` count was 36/328.
+
+Owner item 3.16 (Profile completeness checklist) is verified and merged to `dev` in PR #69 as merge commit `43f34f9863ac3e5d528df88fb356da380252282b`. ChatGPT approved the implementation and documentation at exact PR head `1a02c9b9a48773e62f65b93703d5e0f0aae17031`; hosted run `42758118526` passed all three required jobs on that exact head (the image was built but not published). The post-merge `dev` run `42759315007` passed Quality gates and Services/integration/browser suites; the image job was skipped for the push event. The canonical inventory now records 38/328 verified items (14 in Stage 03); no next checklist item has started. Earlier failed account-switch test revisions and their corrections remain documented in [TEST-MATRIX](TEST-MATRIX.md). The checklist measures saved candidate-entered fields only; legacy profiles with no career-stage value may satisfy the background criterion through education, experience, or projects. These are candidate claims, not verified professional history.

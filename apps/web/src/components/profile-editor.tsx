@@ -1,12 +1,17 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, LoaderCircle, RefreshCw, Save } from 'lucide-react';
-import type { WritableProfile } from '@careerscope/shared';
-import { apiParsed, offersDiscardAndReload } from '../lib/api';
+import { ArrowLeft, ImagePlus, LoaderCircle, RefreshCw, Save, Trash2 } from 'lucide-react';
+import type { ApplicationDetails, WritableProfile } from '@careerscope/shared';
+import { apiJson, apiParsed, offersDiscardAndReload } from '../lib/api';
 import { parseProfileResponse, type ProfileResponse } from '../lib/api-schemas';
+import { PROFILE_PHOTO_UPDATED_EVENT } from '../lib/profile-photo';
 import { useOwner, ownerKey } from '../lib/session';
+import styles from './profile-editor.module.css';
 import ResumePanel, { type ResumeProposal } from './resume-panel';
 import { ErrorState, LoadingState } from './ui-states';
+
+const maximumProfilePhotoUploadBytes = 5 * 1024 * 1024;
+const profilePhotoTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 const employmentOptions = [
   ['fulltime', 'Full-time'],
@@ -19,6 +24,14 @@ const careerSegments = [
   ['student', 'Student'],
   ['fresher', 'Fresher'],
   ['experienced', 'Experienced'],
+] as const;
+
+const onboardingSteps = [
+  { title: 'Contact', description: 'Start with the details you want employers to use.' },
+  { title: 'Your background', description: 'Choose what best describes your career stage.' },
+  { title: 'Job preferences', description: 'Tell us what work you want to find.' },
+  { title: 'Application details', description: 'Add optional details that help you prepare.' },
+  { title: 'Accessibility', description: 'Set a workspace preference, then save your profile.' },
 ] as const;
 
 function ProfileForm({
@@ -36,6 +49,17 @@ function ProfileForm({
   onDirty: () => void;
   onReload: () => void;
 }) {
+  const guided = record.profile === null;
+  const [step, setStep] = useState(0);
+  const [careerSegment, setCareerSegment] = useState(record.profile?.candidate.segment ?? '');
+  const formElement = useRef<HTMLFormElement | null>(null);
+  const stepSections = useRef<Array<HTMLFieldSetElement | null>>([]);
+  const invalidFieldToFocus = useRef<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null
+  >(null);
+  const [photoMessage, setPhotoMessage] = useState('');
+  const [photoValidationError, setPhotoValidationError] = useState('');
+
   const save = useMutation({
     mutationFn: (profile: WritableProfile) =>
       apiParsed('/profile', parseProfileResponse, {
@@ -44,6 +68,25 @@ function ProfileForm({
         body: JSON.stringify({ revision: record.revision, profile }),
       }),
     onSuccess: onSaved,
+  });
+  const photoUpload = useMutation({
+    mutationFn: (file: File) =>
+      apiJson('/profile/photo', {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type },
+        body: file,
+      }),
+    onSuccess: () => {
+      setPhotoMessage('Profile picture saved.');
+      window.dispatchEvent(new Event(PROFILE_PHOTO_UPDATED_EVENT));
+    },
+  });
+  const photoDelete = useMutation({
+    mutationFn: () => apiJson('/profile/photo', { method: 'DELETE' }),
+    onSuccess: () => {
+      setPhotoMessage('Profile picture removed.');
+      window.dispatchEvent(new Event(PROFILE_PHOTO_UPDATED_EVENT));
+    },
   });
   const candidate = {
     ...record.profile?.candidate,
@@ -69,9 +112,72 @@ function ProfileForm({
       ? { yearsOfExperience: proposal.yearsOfExperience }
       : {}),
   };
+  const [availabilityStatus, setAvailabilityStatus] = useState<
+    ApplicationDetails['availabilityStatus']
+  >(
+    application.availabilityStatus ??
+      ((application.noticePeriodDays ?? 0) === 0 ? 'immediate' : 'notice_period'),
+  );
+
+  function invalidFieldInSection(section: HTMLFieldSetElement | null, index: number) {
+    if (!section) return null;
+    const controls = Array.from(
+      section.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+        'input, select, textarea',
+      ),
+    );
+    if (index === 2) {
+      const employment = controls.filter(
+        (control) => control instanceof HTMLInputElement && control.name.startsWith('employment:'),
+      ) as HTMLInputElement[];
+      if (employment.length && !employment.some((control) => control.checked)) {
+        employment[0]!.setCustomValidity('Select at least one employment type.');
+        return employment[0]!;
+      }
+    }
+    return controls.find((control) => control.willValidate && !control.checkValidity()) ?? null;
+  }
+
+  useEffect(() => {
+    const invalid = invalidFieldToFocus.current;
+    if (!invalid) return;
+    invalidFieldToFocus.current = null;
+    requestAnimationFrame(() => {
+      invalid.focus();
+      invalid.reportValidity();
+    });
+  }, [step]);
+
+  function moveToStep(nextStep: number, form: HTMLFormElement) {
+    if (nextStep > step) {
+      const invalid = invalidFieldInSection(stepSections.current[step] ?? null, step);
+      if (invalid) {
+        invalid.reportValidity();
+        return;
+      }
+    }
+    if (nextStep !== step) setStep(nextStep);
+    form.querySelector('[aria-live="polite"]')?.scrollIntoView({ block: 'nearest' });
+  }
+
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
+    if (guided) {
+      for (let index = 0; index < onboardingSteps.length; index += 1) {
+        const invalid = invalidFieldInSection(stepSections.current[index] ?? null, index);
+        if (invalid) {
+          invalidFieldToFocus.current = invalid;
+          setStep(index);
+          if (index === step) {
+            invalidFieldToFocus.current = null;
+            invalid.focus();
+            invalid.reportValidity();
+          }
+          return;
+        }
+      }
+    }
     const data = new FormData(form);
     const text = (name: string) => String(data.get(name) ?? '').trim();
     const list = (name: string) => [
@@ -104,7 +210,7 @@ function ProfileForm({
         return;
       }
     }
-    for (const name of ['education', 'projects']) {
+    for (const name of ['education', 'experience', 'projects']) {
       const entries = lines(name);
       const field = form.elements.namedItem(name) as HTMLTextAreaElement;
       if (entries.length > 20) {
@@ -129,6 +235,13 @@ function ProfileForm({
       field.reportValidity();
       return;
     }
+    const salaryCurrency = text('minSalaryCurrency').trim();
+    if (text('minSalary') && salaryCurrency && !/^[A-Za-z]{3}$/.test(salaryCurrency)) {
+      const field = form.elements.namedItem('minSalaryCurrency') as HTMLInputElement;
+      field.setCustomValidity('Use a three-letter currency code.');
+      field.reportValidity();
+      return;
+    }
     save.mutate({
       candidate: {
         fullName: text('fullName'),
@@ -137,6 +250,7 @@ function ProfileForm({
         location: text('location'),
         ...(segment ? { segment } : {}),
         education: lines('education'),
+        experience: lines('experience'),
         ...(graduationYear ? { graduationYear: Number(graduationYear) } : {}),
         projects: lines('projects'),
         linkedin: text('linkedin'),
@@ -149,6 +263,9 @@ function ProfileForm({
         locations: list('locations'),
         remoteOnly: data.has('remoteOnly'),
         minSalary: text('minSalary') ? Number(text('minSalary')) : null,
+        minSalaryCurrency: text('minSalary')
+          ? text('minSalaryCurrency').trim().toUpperCase() || null
+          : null,
         employmentTypes,
         excludeKeywords: list('excludeKeywords'),
         excludeCompanies: list('excludeCompanies'),
@@ -156,7 +273,12 @@ function ProfileForm({
       application: {
         currentCtc: text('currentCtc'),
         expectedCtc: text('expectedCtc'),
-        noticePeriodDays: Number(text('noticePeriodDays')),
+        availabilityStatus,
+        noticePeriodDays:
+          availabilityStatus === 'notice_period' ? Number(text('noticePeriodDays')) : 0,
+        preferredContactMethod: text(
+          'preferredContactMethod',
+        ) as ApplicationDetails['preferredContactMethod'],
         yearsOfExperience: text('yearsOfExperience').trim()
           ? Number(text('yearsOfExperience'))
           : null,
@@ -169,7 +291,9 @@ function ProfileForm({
   }
   return (
     <form
+      ref={formElement}
       className="profile-form"
+      noValidate={guided}
       onSubmit={submit}
       onChange={(event) => {
         onDirty();
@@ -180,7 +304,46 @@ function ProfileForm({
         if (employment instanceof HTMLInputElement) employment.setCustomValidity('');
       }}
     >
-      <fieldset disabled={save.isPending}>
+      {guided && (
+        <div className={styles.onboarding}>
+          <nav aria-label="Profile setup progress">
+            <ol className={styles.progressList}>
+              {onboardingSteps.map(({ title }, index) => (
+                <li key={title}>
+                  {index < step ? (
+                    <button
+                      type="button"
+                      onClick={() => formElement.current && moveToStep(index, formElement.current)}
+                    >
+                      <span className={styles.stepNumber}>{index + 1}</span>
+                      <span className={styles.stepLabel}>{title}</span>
+                    </button>
+                  ) : (
+                    <span aria-current={index === step ? 'step' : undefined}>
+                      <span className={styles.stepNumber}>{index + 1}</span>
+                      <span className={styles.stepLabel}>{title}</span>
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </nav>
+          <p className={styles.stepStatus} role="status" aria-live="polite">
+            Step {step + 1} of {onboardingSteps.length}: {onboardingSteps[step]!.title}
+          </p>
+          <p className={styles.saveNotice}>
+            Your answers are saved together when you finish. You can return to earlier steps before
+            saving.
+          </p>
+        </div>
+      )}
+      <fieldset
+        ref={(element) => {
+          stepSections.current[0] = element;
+        }}
+        hidden={guided && step !== 0}
+        disabled={save.isPending}
+      >
         <legend>Contact</legend>
         <div className="field-grid">
           <label>
@@ -224,9 +387,89 @@ function ProfileForm({
               defaultValue={candidate?.location ?? ''}
             />
           </label>
+        </div>
+        <section className={styles.photoField} aria-labelledby="profile-photo-heading">
+          <h3 id="profile-photo-heading">Profile picture</h3>
+          <p id="profile-photo-help">
+            Optional. JPEG, PNG, or WebP up to 5 MB. Only you can view this picture; it is not
+            exposed in recruiter views.
+          </p>
+          <div className={styles.photoActions}>
+            <label className="button-secondary">
+              <ImagePlus size={16} aria-hidden="true" />
+              {photoUpload.isPending ? 'Uploading…' : 'Upload picture'}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                aria-label="Upload picture"
+                aria-describedby="profile-photo-help"
+                disabled={photoUpload.isPending || photoDelete.isPending}
+                onChange={(event) => {
+                  const file = event.currentTarget.files?.[0];
+                  event.currentTarget.value = '';
+                  if (file) {
+                    setPhotoMessage('');
+                    setPhotoValidationError('');
+                    photoDelete.reset();
+                    photoUpload.reset();
+                    if (!profilePhotoTypes.has(file.type)) {
+                      setPhotoValidationError('Choose a JPEG, PNG, or WebP image.');
+                      return;
+                    }
+                    if (file.size > maximumProfilePhotoUploadBytes) {
+                      setPhotoValidationError('Choose an image no larger than 5 MB.');
+                      return;
+                    }
+                    photoUpload.mutate(file);
+                  }
+                }}
+              />
+            </label>
+            <button
+              type="button"
+              className="button-secondary"
+              onClick={() => {
+                setPhotoMessage('');
+                setPhotoValidationError('');
+                photoUpload.reset();
+                photoDelete.mutate();
+              }}
+              disabled={photoUpload.isPending || photoDelete.isPending}
+            >
+              <Trash2 size={16} aria-hidden="true" />
+              {photoDelete.isPending ? 'Removing…' : 'Remove picture'}
+            </button>
+          </div>
+          {(photoValidationError || photoUpload.error || photoDelete.error) && (
+            <p className={styles.photoError} role="alert">
+              {(photoValidationError || (photoUpload.error ?? photoDelete.error)?.message) ??
+                'Could not update your picture.'}
+            </p>
+          )}
+          {photoMessage && (
+            <p className={styles.photoStatus} role="status">
+              {photoMessage}
+            </p>
+          )}
+        </section>
+      </fieldset>
+      <fieldset
+        ref={(element) => {
+          stepSections.current[1] = element;
+        }}
+        hidden={guided && step !== 1}
+        disabled={save.isPending}
+      >
+        <legend>Your background</legend>
+        {guided && <p className={styles.stepDescription}>{onboardingSteps[1].description}</p>}
+        <div className="field-grid">
           <label>
             Career stage
-            <select name="segment" defaultValue={candidate?.segment ?? ''}>
+            <select
+              name="segment"
+              defaultValue={candidate?.segment ?? ''}
+              onChange={(event) => setCareerSegment(event.currentTarget.value)}
+            >
               <option value="">Choose a stage</option>
               {careerSegments.map(([value, label]) => (
                 <option key={value} value={value}>
@@ -262,6 +505,21 @@ function ProfileForm({
             </span>
           </label>
           <label>
+            <span id="experience-label">Work Experience</span>
+            <textarea
+              name="experience"
+              rows={3}
+              maxLength={5000}
+              aria-labelledby="experience-label"
+              aria-describedby="experience-help"
+              defaultValue={candidate?.experience?.join('\n') ?? ''}
+            />
+            <span id="experience-help">
+              Add up to 20 role summaries; each line is limited to 200 characters. These are
+              candidate-provided claims and are not independently verified.
+            </span>
+          </label>
+          <label>
             <span id="projects-label">Projects</span>
             <textarea
               name="projects"
@@ -288,9 +546,27 @@ function ProfileForm({
             </label>
           ))}
         </div>
+        {guided && (
+          <p className={styles.stepDescription}>
+            {careerSegment === 'student'
+              ? 'Include courses, projects, and skills you have actually used.'
+              : careerSegment === 'fresher'
+                ? 'Internships, coursework, and projects can help show your strengths.'
+                : careerSegment === 'experienced'
+                  ? 'If you are changing careers, list transferable skills here and the roles you want in the next step.'
+                  : 'Choose a stage if it feels useful. Career stage is self-reported and is not inferred or verified.'}
+          </p>
+        )}
       </fieldset>
-      <fieldset disabled={save.isPending}>
+      <fieldset
+        ref={(element) => {
+          stepSections.current[2] = element;
+        }}
+        hidden={guided && step !== 2}
+        disabled={save.isPending}
+      >
         <legend>Job Preferences</legend>
+        {guided && <p className={styles.stepDescription}>{onboardingSteps[2].description}</p>}
         <div className="field-grid">
           <label>
             Target Roles
@@ -321,16 +597,35 @@ function ProfileForm({
               defaultValue={preferences.locations?.join('\n') ?? ''}
             />
           </label>
-          <label>
-            Minimum Annual Salary
+          <div className="field-with-hint">
+            <label>
+              Minimum Annual Salary
+              <input
+                name="minSalary"
+                type="number"
+                min={0}
+                step={1}
+                defaultValue={preferences?.minSalary ?? ''}
+                aria-describedby="minSalary-help"
+              />
+            </label>
+            <label htmlFor="minSalaryCurrency">Currency code</label>
             <input
-              name="minSalary"
-              type="number"
-              min={0}
-              step={1}
-              defaultValue={preferences?.minSalary ?? ''}
+              id="minSalaryCurrency"
+              name="minSalaryCurrency"
+              type="text"
+              maxLength={3}
+              pattern="[A-Za-z]{3}"
+              autoCapitalize="characters"
+              placeholder="INR"
+              defaultValue={preferences?.minSalaryCurrency ?? ''}
+              aria-describedby="minSalary-help"
             />
-          </label>
+            <small id="minSalary-help">
+              Optional annual floor for salary matching. The three-letter currency code is optional;
+              known mismatches are not compared.
+            </small>
+          </div>
           <label>
             Excluded Keywords
             <textarea
@@ -376,8 +671,19 @@ function ProfileForm({
           </div>
         </fieldset>
       </fieldset>
-      <fieldset disabled={save.isPending}>
+      <fieldset
+        ref={(element) => {
+          stepSections.current[3] = element;
+        }}
+        hidden={guided && step !== 3}
+        disabled={save.isPending}
+      >
         <legend>Application Details</legend>
+        {guided && <p className={styles.stepDescription}>{onboardingSteps[3].description}</p>}
+        <p>
+          Availability and preferred contact are kept in your profile and are not used for job
+          matching.
+        </p>
         <div className="field-grid">
           <label>
             Current Compensation
@@ -392,16 +698,43 @@ function ProfileForm({
             />
           </label>
           <label>
+            Availability
+            <select
+              name="availabilityStatus"
+              value={availabilityStatus}
+              onChange={(event) =>
+                setAvailabilityStatus(
+                  event.target.value as ApplicationDetails['availabilityStatus'],
+                )
+              }
+            >
+              <option value="immediate">Immediately available</option>
+              <option value="notice_period">Serving a notice period</option>
+              <option value="not_specified">Prefer not to say</option>
+            </select>
+          </label>
+          <label hidden={availabilityStatus !== 'notice_period'}>
             Notice Period (Days)
             <input
               name="noticePeriodDays"
               type="number"
-              required
-              min={0}
+              required={availabilityStatus === 'notice_period'}
+              min={1}
               max={365}
               step={1}
-              defaultValue={application?.noticePeriodDays ?? 0}
+              disabled={availabilityStatus !== 'notice_period'}
+              defaultValue={application?.noticePeriodDays || ''}
+              aria-describedby="noticePeriodDays-help"
             />
+            <small id="noticePeriodDays-help">Enter a value from 1 to 365 days.</small>
+          </label>
+          <label>
+            Preferred Contact Method
+            <select name="preferredContactMethod" defaultValue={application.preferredContactMethod}>
+              <option value="no_preference">No preference</option>
+              <option value="email">Email</option>
+              <option value="phone">Phone</option>
+            </select>
           </label>
           <div className="field-with-hint">
             <label>
@@ -432,7 +765,13 @@ function ProfileForm({
           </label>
         </div>
       </fieldset>
-      <fieldset disabled={save.isPending}>
+      <fieldset
+        ref={(element) => {
+          stepSections.current[4] = element;
+        }}
+        hidden={guided && step !== 4}
+        disabled={save.isPending}
+      >
         <legend>Accessibility</legend>
         <div className="check-row">
           <label>
@@ -446,11 +785,48 @@ function ProfileForm({
         </div>
         <p>CareerScope will minimize animation and scrolling motion across your workspace.</p>
       </fieldset>
+      {guided && (
+        <div className={styles.stepActions}>
+          {step > 0 && (
+            <button type="button" onClick={() => setStep((current) => current - 1)}>
+              Back
+            </button>
+          )}
+          {step < onboardingSteps.length - 1 ? (
+            <button
+              key="continue"
+              type="button"
+              className="primary"
+              onClick={(event) => {
+                event.preventDefault();
+                const form = event.currentTarget.form;
+                if (form) moveToStep(step + 1, form);
+              }}
+            >
+              Continue
+            </button>
+          ) : (
+            <button key="finish" className="primary" type="submit" disabled={save.isPending}>
+              {save.isPending ? (
+                <>
+                  <LoaderCircle className="spin" size={18} aria-hidden="true" /> Saving profile
+                </>
+              ) : (
+                <>
+                  <Save size={18} aria-hidden="true" /> Save and finish
+                </>
+              )}
+            </button>
+          )}
+        </div>
+      )}
       <div className="profile-actions">
-        <button className="primary" disabled={save.isPending}>
-          {save.isPending ? <LoaderCircle className="spin" size={18} /> : <Save size={18} />}Save
-          Profile
-        </button>
+        {!guided && (
+          <button className="primary" disabled={save.isPending}>
+            {save.isPending ? <LoaderCircle className="spin" size={18} /> : <Save size={18} />}Save
+            Profile
+          </button>
+        )}
         {/* CS-35: only a revision conflict is repaired by reloading. Offering
             it for, say, PROFILE_NOT_SAVED would invite the owner to destroy
             edits that are not stale. */}

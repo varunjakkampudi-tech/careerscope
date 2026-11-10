@@ -116,6 +116,8 @@ export interface CandidateContext {
    */
   expectedCurrency: string | null;
   minSalary: number | null;
+  /** Currency of the structured minimum salary, null for older or unspecified profiles. */
+  minSalaryCurrency: string | null;
   employmentTypes: EmploymentType[];
   excludeKeywords: string[];
   excludeCompanies: string[];

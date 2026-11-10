@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Bell,
   Bookmark,
@@ -22,6 +24,8 @@ import {
 import BrandLogo from './brand-logo';
 import { apiJson, apiParsed } from '@/lib/api';
 import { parseNotificationList, type NotificationItem } from '@/lib/api-schemas';
+import { PROFILE_PHOTO_UPDATED_EVENT } from '@/lib/profile-photo';
+import { ownerKey, useOwner } from '@/lib/session';
 import { localizedText, useInterfaceLocale } from '@/lib/locale';
 import styles from './dashboard-shell.module.css';
 
@@ -226,10 +230,60 @@ function initialsFrom(identity: string | undefined) {
   return letters.toUpperCase();
 }
 
-function InitialsAvatar({ identity }: { identity: string | undefined }) {
+function ProfileAvatar({ identity }: { identity: string | undefined }) {
+  const owner = useOwner();
+  const queryClient = useQueryClient();
+  const [photoVersion, setPhotoVersion] = useState(0);
+  const queryKey = ownerKey(owner, 'profile-photo', photoVersion);
+  const photo = useQuery({
+    queryKey,
+    enabled: !!owner,
+    queryFn: async ({ signal }): Promise<string | null> => {
+      const response = await fetch(`/api/profile/photo?v=${photoVersion}`, {
+        cache: 'no-store',
+        credentials: 'same-origin',
+        signal,
+      });
+      if (response.status === 204) return null;
+      if (!response.ok) throw new Error('Profile photo could not be loaded');
+
+      const reader = new FileReader();
+      return new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          if (typeof reader.result === 'string') resolve(reader.result);
+          else reject(new Error('Profile photo could not be read'));
+        };
+        reader.onerror = () => reject(new Error('Profile photo could not be read'));
+        void response.blob().then((blob) => reader.readAsDataURL(blob), reject);
+      });
+    },
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+  useEffect(() => {
+    const update = () => {
+      queryClient.removeQueries({ queryKey: ownerKey(owner, 'profile-photo') });
+      setPhotoVersion((version) => version + 1);
+    };
+    window.addEventListener(PROFILE_PHOTO_UPDATED_EVENT, update);
+    return () => window.removeEventListener(PROFILE_PHOTO_UPDATED_EVENT, update);
+  }, [owner, queryClient]);
+  const photoDataUrl = photo.data ?? null;
   return (
     <span className={styles.avatar} aria-hidden="true" title={identity ?? 'Signed in'}>
-      {initialsFrom(identity)}
+      {photoDataUrl ? (
+        <Image
+          src={photoDataUrl}
+          alt=""
+          width={42}
+          height={42}
+          unoptimized
+          onError={() => queryClient.setQueryData<string | null>(queryKey, null)}
+        />
+      ) : (
+        initialsFrom(identity)
+      )}
     </span>
   );
 }
@@ -291,7 +345,7 @@ export function DashboardSidebar({
         <p>{t('motivationBody')}</p>
       </div>
       <div className={styles.sidebarAccount} lang={locale}>
-        <InitialsAvatar identity={identity} />
+        <ProfileAvatar identity={identity} />
         <div>
           <div className={styles.sidebarAccountEmail}>{identity ?? t('signedIn')}</div>
           <div className={styles.sidebarFooter} lang={locale}>
@@ -395,7 +449,7 @@ export function DashboardTopbar({
           <LogOut size={17} />
         </button>
         <NotificationCenter key={identity ?? 'signed-in'} />
-        <InitialsAvatar identity={identity} />
+        <ProfileAvatar identity={identity} />
       </div>
     </header>
   );

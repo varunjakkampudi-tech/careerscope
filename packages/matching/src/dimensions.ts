@@ -447,6 +447,8 @@ export function scoreLocation(job: Job, candidate: CandidateContext): MatchDimen
  */
 export function scoreCompensation(job: Job, candidate: CandidateContext): MatchDimensionScore {
   const target = candidate.expectedSalary ?? candidate.minSalary;
+  const targetCurrency =
+    candidate.expectedSalary !== null ? candidate.expectedCurrency : candidate.minSalaryCurrency;
   const { annualMin, annualMax } = job.salary;
 
   if (annualMin === null && annualMax === null) {
@@ -456,15 +458,10 @@ export function scoreCompensation(job: Job, candidate: CandidateContext): MatchD
     return dim('compensation', 0.7, 'No expected package set');
   }
 
-  // Comparing dollars to rupees says nothing about fit; only an expectation
-  // that actually drove `target` carries a currency worth checking.
+  // Comparing different currencies says nothing about fit. Legacy salary
+  // floors without a currency retain their historical unqualified comparison.
   const jobCurrency = job.salary.currency;
-  if (
-    candidate.expectedSalary !== null &&
-    candidate.expectedCurrency &&
-    jobCurrency &&
-    candidate.expectedCurrency !== jobCurrency
-  ) {
+  if (targetCurrency && jobCurrency && targetCurrency !== jobCurrency) {
     return dim('compensation', 0.6, 'currency differs');
   }
 

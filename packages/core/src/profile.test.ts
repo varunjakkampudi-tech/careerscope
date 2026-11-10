@@ -59,6 +59,7 @@ test('profile reuses domain defaults without inventing qualifications', () => {
   assert.equal(parsed.candidate.portfolio, '');
   assert.equal(parsed.candidate.segment, undefined);
   assert.deepEqual(parsed.candidate.education, []);
+  assert.deepEqual(parsed.candidate.experience, []);
   assert.deepEqual(parsed.candidate.projects, []);
   assert.equal(parsed.candidate.graduationYear, undefined);
   assert.deepEqual(parsed.accessibility, { reducedMotion: false });
@@ -85,6 +86,88 @@ test('an omitted experience value remains unknown in saved profile contracts', (
     report.checks.find((check) => check.id === 'experience')?.evidence[0]?.value,
     'Not provided',
   );
+});
+
+test('availability is explicit, legacy-compatible, candidate-owned and excluded from matching', () => {
+  const parsed = writableProfileSchema.parse({
+    ...syntheticProfile,
+    application: {
+      availabilityStatus: 'notice_period',
+      noticePeriodDays: 45,
+      preferredContactMethod: 'phone',
+    },
+  });
+  assert.equal(parsed.application.availabilityStatus, 'notice_period');
+  assert.equal(parsed.application.noticePeriodDays, 45);
+  assert.equal(parsed.application.preferredContactMethod, 'phone');
+  assert.deepEqual(matchingProfile(parsed).application, {
+    expectedCtc: '',
+    yearsOfExperience: null,
+    willingToRelocate: true,
+  });
+
+  const legacy = writableProfileSchema.parse({
+    ...syntheticProfile,
+    application: { noticePeriodDays: 60 },
+  });
+  assert.equal(legacy.application.availabilityStatus, 'notice_period');
+  assert.equal(legacy.application.preferredContactMethod, 'no_preference');
+});
+
+test('preparation infers availability for legacy stored profiles on the read path', () => {
+  for (const [noticePeriodDays, expectedStatus, expectedLabel] of [
+    [0, 'immediate', 'Immediately available'],
+    [45, 'notice_period', 'Serving a notice period'],
+  ] as const) {
+    const profile = writableProfileSchema.parse({
+      ...syntheticProfile,
+      application: { noticePeriodDays },
+    });
+    const legacyProfile = JSON.parse(JSON.stringify(profile)) as typeof profile;
+    delete (legacyProfile.application as Partial<typeof profile.application>).availabilityStatus;
+    const report = prepareProfile({
+      revision: 1,
+      profile: legacyProfile,
+      updatedAt: new Date(),
+      scheduledDiscoveryEnabled: false,
+    });
+    const evidence = report.checks.find((check) => check.id === 'experience')!.evidence;
+    assert.equal(
+      evidence.find((item) => item.field === 'application.availabilityStatus')?.value,
+      expectedLabel,
+    );
+    if (expectedStatus === 'notice_period') {
+      assert.equal(
+        evidence.find((item) => item.field === 'application.noticePeriodDays')?.value,
+        '45',
+      );
+    } else {
+      assert.equal(
+        evidence.some((item) => item.field === 'application.noticePeriodDays'),
+        false,
+      );
+    }
+  }
+});
+
+test('undisclosed availability does not leak stored notice days into preparation evidence', () => {
+  const profile = writableProfileSchema.parse({
+    ...syntheticProfile,
+    application: { availabilityStatus: 'not_specified', preferredContactMethod: 'email' },
+  });
+  const report = prepareProfile({
+    revision: 1,
+    profile,
+    updatedAt: new Date(),
+    scheduledDiscoveryEnabled: false,
+  });
+  const availabilityEvidence = report.checks
+    .find((check) => check.id === 'experience')!
+    .evidence.filter((item) => item.field.startsWith('application.availability'));
+  assert.deepEqual(availabilityEvidence, [
+    { field: 'application.availabilityStatus', value: 'Not provided' },
+  ]);
+  assert.ok(!JSON.stringify(report).includes(profile.application.preferredContactMethod));
 });
 
 test('saved accessibility preferences are owner profile data, validated and excluded from matching inputs', () => {
@@ -137,17 +220,21 @@ test('candidate segment is owner-declared, bounded to the approved options and n
   );
 });
 
-test('education, graduation year, and projects are bounded candidate claims and never matching inputs', () => {
+test('education, work experience, graduation year, and projects are bounded candidate claims and never matching inputs', () => {
   const profile = writableProfileSchema.parse({
     ...syntheticProfile,
     candidate: {
       ...syntheticProfile.candidate,
       education: ['B.Tech, Computer Science'],
+      experience: ['Frontend Engineer at Example Co (2022–2024): Built accessible products'],
       graduationYear: 2024,
       projects: ['Accessible job search prototype'],
     },
   });
   assert.deepEqual(profile.candidate.education, ['B.Tech, Computer Science']);
+  assert.deepEqual(profile.candidate.experience, [
+    'Frontend Engineer at Example Co (2022–2024): Built accessible products',
+  ]);
   assert.equal(profile.candidate.graduationYear, 2024);
   assert.deepEqual(profile.candidate.projects, ['Accessible job search prototype']);
   assert.deepEqual(matchingProfile(profile), {
@@ -163,6 +250,8 @@ test('education, graduation year, and projects are bounded candidate claims and 
   for (const candidate of [
     { education: ['x'.repeat(201)] },
     { education: Array.from({ length: 21 }, (_, index) => `School ${index}`) },
+    { experience: ['x'.repeat(201)] },
+    { experience: Array.from({ length: 21 }, (_, index) => `Role ${index}`) },
     { graduationYear: 1899 },
     { graduationYear: 2101 },
     { graduationYear: 2024.5 },
@@ -177,6 +266,82 @@ test('education, graduation year, and projects are bounded candidate claims and 
       false,
     );
   }
+});
+
+test('project summaries accept 20 bounded entries and stay out of the matching snapshot', () => {
+  const projects = Array.from(
+    { length: 20 },
+    (_, index) => `Project ${index} ${'x'.repeat(200 - `Project ${index} `.length)}`,
+  );
+  const profile = writableProfileSchema.parse({
+    ...syntheticProfile,
+    candidate: { ...syntheticProfile.candidate, projects },
+  });
+
+  assert.deepEqual(profile.candidate.projects, projects);
+  assert.deepEqual(matchingProfile(profile).candidate, { location: 'Hyderabad' });
+  assert.equal(
+    writableProfileSchema.safeParse({
+      ...syntheticProfile,
+      candidate: {
+        ...syntheticProfile.candidate,
+        projects: Array.from({ length: 21 }, (_, index) => `Project ${index}`),
+      },
+    }).success,
+    false,
+  );
+  assert.equal(
+    writableProfileSchema.safeParse({
+      ...syntheticProfile,
+      candidate: {
+        ...syntheticProfile.candidate,
+        projects: ['x'.repeat(201)],
+      },
+    }).success,
+    false,
+  );
+});
+
+test('preferred job titles remain in the saved matching preferences', () => {
+  const titles = ['Staff Platform Engineer', 'Developer Experience Lead'];
+  const profile = writableProfileSchema.parse({
+    ...syntheticProfile,
+    preferences: { ...syntheticProfile.preferences, titles },
+  });
+
+  assert.deepEqual(matchingProfile(profile).preferences.titles, titles);
+});
+
+test('salary floor and its currency remain in the saved matching preferences', () => {
+  const profile = writableProfileSchema.parse({
+    ...syntheticProfile,
+    preferences: {
+      ...syntheticProfile.preferences,
+      minSalary: 1_800_000,
+      minSalaryCurrency: 'inr',
+    },
+  });
+
+  assert.equal(profile.preferences.minSalary, 1_800_000);
+  assert.equal(profile.preferences.minSalaryCurrency, 'INR');
+  assert.equal(matchingProfile(profile).preferences.minSalary, 1_800_000);
+  assert.equal(matchingProfile(profile).preferences.minSalaryCurrency, 'INR');
+});
+
+test('home location and work-mode preferences remain in the matching profile', () => {
+  const profile = writableProfileSchema.parse({
+    ...syntheticProfile,
+    candidate: { ...syntheticProfile.candidate, location: 'Pune, India' },
+    preferences: {
+      ...syntheticProfile.preferences,
+      locations: ['Pune', 'Remote'],
+      remoteOnly: true,
+    },
+  });
+
+  assert.deepEqual(matchingProfile(profile).candidate, { location: 'Pune, India' });
+  assert.deepEqual(matchingProfile(profile).preferences.locations, ['Pune', 'Remote']);
+  assert.equal(matchingProfile(profile).preferences.remoteOnly, true);
 });
 
 test('profile rejects unknown ownership fields, unsafe links and malformed revisions', () => {

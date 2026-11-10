@@ -30,6 +30,8 @@ export const candidateSchema = z.object({
   segment: z.enum(['student', 'fresher', 'experienced']).optional(),
   /** Candidate-entered education details; private profile data, not verified evidence. */
   education: z.array(z.string().trim().min(1).max(200)).max(20).default([]),
+  /** Candidate-entered work-history summaries; private claims, not verified evidence or matching input. */
+  experience: z.array(z.string().trim().min(1).max(200)).max(20).default([]),
   graduationYear: z.number().int().min(1900).max(2100).optional(),
   /** Candidate-entered project summaries; private profile data, not matching evidence. */
   projects: z.array(z.string().trim().min(1).max(200)).max(20).default([]),
@@ -60,8 +62,16 @@ export const preferencesSchema = z.object({
   techStack: z.array(ownerText()).min(1, 'Add at least one skill').max(120),
   locations: z.array(ownerText()).max(25).default([]),
   remoteOnly: z.boolean().default(false),
-  /** Annual figure in the profile currency. null = no floor. */
+  /** Annual figure in the currency recorded by minSalaryCurrency. null = no floor. */
   minSalary: z.number().int().nonnegative().nullable().default(null),
+  /** ISO 4217 code for minSalary. Null preserves legacy profiles with no currency recorded. */
+  minSalaryCurrency: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[A-Z]{3}$/, 'Use a three-letter currency code')
+    .nullable()
+    .default(null),
   employmentTypes: z.array(z.enum(EMPLOYMENT_TYPES)).min(1).default(['fulltime']),
   /** A listing containing any of these is excluded outright. */
   excludeKeywords: z.array(ownerText()).max(60).default([]),
@@ -69,14 +79,55 @@ export const preferencesSchema = z.object({
   excludeCompanies: z.array(ownerText()).max(200).default([]),
 });
 
-/** Details used when applying and by the matching engine (compensation, notice, relocation). */
-export const applicationSchema = z.object({
+const applicationFieldsSchema = z.object({
   currentCtc: z.string().trim().max(40).default(''),
   expectedCtc: z.string().trim().max(40).default(''),
   noticePeriodDays: z.number().int().min(0).max(365).default(0),
+  /** Candidate-declared availability. Legacy profiles infer this from their saved notice days. */
+  availabilityStatus: z.enum(['immediate', 'notice_period', 'not_specified']).optional(),
+  /** Private candidate preference; it is not included in job matching snapshots. */
+  preferredContactMethod: z.enum(['email', 'phone', 'no_preference']).default('no_preference'),
   willingToRelocate: z.boolean().default(true),
   /** Null means unknown; an explicit zero remains a valid candidate statement. */
   yearsOfExperience: z.number().min(0).max(60).nullable().default(null),
+});
+
+/** Details used when applying and by the matching engine (compensation, notice, relocation). */
+export const applicationSchema = applicationFieldsSchema
+  .strict()
+  .transform((application, context) => {
+    const availabilityStatus =
+      application.availabilityStatus ??
+      (application.noticePeriodDays === 0 ? 'immediate' : 'notice_period');
+    if (
+      (availabilityStatus === 'immediate' || availabilityStatus === 'not_specified') &&
+      application.noticePeriodDays !== 0
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['noticePeriodDays'],
+        message: 'Notice days must be zero unless a notice period is selected',
+      });
+    }
+    if (availabilityStatus === 'notice_period' && application.noticePeriodDays === 0) {
+      context.addIssue({
+        code: 'custom',
+        path: ['noticePeriodDays'],
+        message: 'Enter the number of notice days',
+      });
+    }
+    return { ...application, availabilityStatus };
+  });
+
+/** Partial profile updates must not apply full-profile defaults before deep merge. */
+export const applicationUpdateSchema = z.object({
+  currentCtc: z.string().trim().max(40).optional(),
+  expectedCtc: z.string().trim().max(40).optional(),
+  noticePeriodDays: z.number().int().min(0).max(365).optional(),
+  availabilityStatus: z.enum(['immediate', 'notice_period', 'not_specified']).optional(),
+  preferredContactMethod: z.enum(['email', 'phone', 'no_preference']).optional(),
+  willingToRelocate: z.boolean().optional(),
+  yearsOfExperience: z.number().min(0).max(60).nullable().optional(),
 });
 
 /** The full stored profile: candidate, preferences and application details plus the linked resume. */
@@ -98,7 +149,7 @@ export type Profile = z.infer<typeof profileSchema>;
 export const profileUpdateSchema = z.object({
   candidate: candidateSchema.partial().optional(),
   preferences: preferencesSchema.partial().optional(),
-  application: applicationSchema.partial().optional(),
+  application: applicationUpdateSchema.optional(),
   resumeId: z.string().nullable().optional(),
 });
 export type ProfileUpdate = z.infer<typeof profileUpdateSchema>;
