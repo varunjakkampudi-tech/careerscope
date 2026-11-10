@@ -29,6 +29,7 @@ import {
 import { createApp } from '../../apps/api/src/app.js';
 import { collect } from '../../apps/workers/search/src/collect.js';
 import { createRemoteOkProvider, type JobProvider } from '@careerscope/providers';
+import { segmentResumeText } from '@careerscope/resume/preview-segments';
 import { selectUiBrowsers } from './ui-browsers.js';
 import {
   browserRequestFailureCategory,
@@ -187,6 +188,7 @@ const profilePhotoFixture = await sharp({
   .toBuffer();
 const origin = process.env.APP_ORIGIN ?? 'http://localhost:5280';
 const resumeDirectory = await mkdtemp(join(tmpdir(), 'careerscope-resume-ui-'));
+const resumePreviewLocales = ['en', 'te', 'hi'] as const;
 const keyFile = join(resumeDirectory, 'encryption.key');
 const encryptionKey = randomBytes(32).toString('hex');
 await writeFile(keyFile, encryptionKey, { mode: 0o600, flag: 'wx' });
@@ -2729,7 +2731,11 @@ try {
       );
       archive.file(
         'word/document.xml',
-        '<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Synthetic Candidate, React and TypeScript developer with experience building accessible web applications.</w:t></w:r></w:p></w:body></w:document>',
+        `<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${Array.from(
+          { length: 200 },
+          (_, index) =>
+            `<w:p><w:r><w:t>${index === 0 ? 'Synthetic resume line one with React and TypeScript.' : 'Synthetic resume line one.'}</w:t></w:r></w:p><w:p><w:r><w:t>Synthetic resume line two.</w:t></w:r></w:p>`,
+        ).join('')}</w:body></w:document>`,
       );
       await page.getByLabel('Resume file (PDF or DOCX, up to 5 MiB)').setInputFiles({
         name: 'synthetic.docx',
@@ -2819,6 +2825,116 @@ try {
         .getByRole('status')
         .filter({ hasText: 'Resume ready for review.' })
         .waitFor({ timeout: 45000 });
+      const observedLocalizedCopy: Array<{
+        heading: string;
+        previous: string;
+        next: string;
+        count: string;
+        section: string;
+      }> = [];
+      for (const locale of resumePreviewLocales) {
+        await page.evaluate((nextLocale) => {
+          localStorage.setItem('careerscope:interface-language', nextLocale);
+          window.dispatchEvent(
+            new StorageEvent('storage', {
+              key: 'careerscope:interface-language',
+              newValue: nextLocale,
+            }),
+          );
+        }, locale);
+        await page.waitForFunction((nextLocale) => {
+          const preview = document.querySelector(
+            'section[aria-labelledby="resume-preview-heading"]',
+          );
+          return preview?.getAttribute('lang') === nextLocale;
+        }, locale);
+        const heading = await page.locator('#resume-preview-heading').innerText();
+        assert.ok(
+          heading.trim().length > 0,
+          `${engine}: resume preview heading is empty in ${locale}`,
+        );
+        const region = page.getByRole('region', { name: heading, exact: true });
+        await page.locator('#resume-preview-heading').waitFor();
+        await region.waitFor();
+        const controls = region.getByRole('button');
+        await controls.first().waitFor();
+        await controls.last().waitFor();
+        const previous = await controls.first().innerText();
+        const next = await controls.last().innerText();
+        const count = await region.locator('[aria-live="polite"]').innerText();
+        const section = await region.locator('pre').getAttribute('aria-label');
+        assert.ok(previous.trim().length > 0, `${engine}: previous control is empty in ${locale}`);
+        assert.ok(next.trim().length > 0, `${engine}: next control is empty in ${locale}`);
+        assert.ok(
+          count.includes('1') && count.includes('3'),
+          `${engine}: section count is invalid`,
+        );
+        assert.ok(
+          section && section.includes('1') && section.includes('3'),
+          `${engine}: section label is invalid`,
+        );
+        observedLocalizedCopy.push({ heading, previous, next, count, section });
+      }
+      for (const label of ['heading', 'previous', 'next', 'count', 'section'] as const) {
+        assert.equal(
+          new Set(observedLocalizedCopy.map((copy) => copy[label])).size,
+          resumePreviewLocales.length,
+          `${engine}: ${label} does not change across supported locales`,
+        );
+      }
+      await page.evaluate(() => {
+        localStorage.setItem('careerscope:interface-language', 'en');
+        window.dispatchEvent(
+          new StorageEvent('storage', {
+            key: 'careerscope:interface-language',
+            newValue: 'en',
+          }),
+        );
+      });
+      await page.locator('#resume-preview-heading').waitFor();
+      const longPreview = `Synthetic resume line one with React and TypeScript.\n\nSynthetic resume line two.\n\n${'Synthetic resume line one.\n\nSynthetic resume line two.\n\n'.repeat(198)}Synthetic resume line one.\n\nSynthetic resume line two.`;
+      const expectedPreviewSections = segmentResumeText(longPreview);
+      assert.equal(expectedPreviewSections.length, 3);
+      assert.equal(expectedPreviewSections.join(''), longPreview);
+      await page.getByLabel('Resume text section 1 of 3').waitFor();
+      assert.equal(
+        await page.locator('[aria-label="Resume text section 1 of 3"]').innerText(),
+        expectedPreviewSections[0],
+        `${engine}: first resume preview section differs from parsed text`,
+      );
+      await page.getByRole('button', { name: 'Previous section', exact: true }).press('Enter');
+      await page.getByLabel('Resume text section 1 of 3').waitFor();
+      await page.getByRole('button', { name: 'Next section', exact: true }).focus();
+      assert.equal(
+        await page.evaluate(() => (document.activeElement as HTMLElement | null)?.innerText),
+        'Next section',
+        `${engine}: resume preview is not keyboard navigable`,
+      );
+      await page.keyboard.press('Enter');
+      await page.getByLabel('Resume text section 2 of 3').waitFor();
+      assert.equal(
+        await page.locator('[aria-label="Resume text section 2 of 3"]').innerText(),
+        expectedPreviewSections[1],
+        `${engine}: resume section navigation lost or altered text`,
+      );
+      await page.getByRole('button', { name: 'Next section', exact: true }).press('Enter');
+      await page.getByLabel('Resume text section 3 of 3').waitFor();
+      assert.equal(
+        await page.locator('[aria-label="Resume text section 3 of 3"]').innerText(),
+        expectedPreviewSections[2],
+        `${engine}: final resume preview section differs from parsed text`,
+      );
+      await page.getByRole('button', { name: 'Next section', exact: true }).press('Enter');
+      await page.getByLabel('Resume text section 3 of 3').waitFor();
+      await page.getByRole('button', { name: 'Previous section', exact: true }).press('Enter');
+      await page.getByLabel('Resume text section 2 of 3').waitFor();
+      await page.getByRole('button', { name: 'Previous section', exact: true }).press('Enter');
+      await page.getByLabel('Resume text section 1 of 3').waitFor();
+      const displayedSections = await page
+        .locator('[aria-label^="Resume text section "]')
+        .allTextContents();
+      assert.equal(displayedSections.length, 1, `${engine}: preview rendered a hidden section`);
+      assert.equal(displayedSections.join(''), expectedPreviewSections[0]);
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });
         assert.equal(

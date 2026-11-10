@@ -863,6 +863,15 @@ function contracts(options: {
       }),
       { failures: [400, 404, 429, 503], description: resumeDescription },
     ),
+    'GET /api/resumes/:id/file': operation(
+      'Download the authenticated owner’s settled resume file for local preview',
+      { type: 'string', format: 'binary' },
+      {
+        failures: [400, 404, 429, 503],
+        description:
+          'Owner-scoped, rate-limited, private no-store attachment. Successful responses use the validated stored PDF or DOCX media type and an attachment content-disposition. Missing, foreign, pending, and rejected uploads all return 404. A 503 indicates resume storage is unavailable. Storage-capacity errors arise during upload operations; this download route does not document 507. The browser preview uses parsed plain text.',
+      },
+    ),
     'POST /api/resumes/:id/recover': operation('Reconcile an interrupted upload', upload, {
       failures: [400, 404, 409, 429, 503, 507],
       description: resumeDescription,

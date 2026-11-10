@@ -9,6 +9,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./preview-segments": {
+      "types": "./dist/preview-segments.d.ts",
+      "default": "./dist/preview-segments.js"
     }
   },
   "scripts": {

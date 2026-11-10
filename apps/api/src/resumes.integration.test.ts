@@ -385,6 +385,82 @@ async function listIds(database: Database, ownerId: string) {
 }
 
 test(
+  'F-024: settled resume file retrieval is owner-scoped, version-bound and non-cacheable',
+  { timeout: 60_000 },
+  async () => {
+    await withFixture(async ({ database, uploads, owner, other }) => {
+      const reads: ResumeObject[] = [];
+      const app = await createApp(database, origin, async () => true, {
+        testAccess: { mode: 'disabled' },
+        resumeStorage: storageStub({
+          get: async (object, version) => {
+            assert.equal(version, 'synthetic-version');
+            reads.push(object);
+            return pdf;
+          },
+        }),
+      });
+      try {
+        const settled = await uploads.reserve(owner.id, 'preview-settled', bucket, metadata);
+        await uploads.queueStoredUpload(owner.id, settled.id, 'synthetic-version');
+        await database.pool.query(
+          `INSERT INTO resume_results (upload_id, owner_id, command_id, status, parsed)
+           SELECT id, owner_id, command_id, 'parsed', $2::jsonb FROM resume_uploads WHERE id = $1`,
+          [
+            settled.id,
+            JSON.stringify({
+              format: 'pdf',
+              text: 'Synthetic resume preview content with enough text to validate the parser result.',
+              derived: { techStack: [], yearsOfExperience: null },
+            }),
+          ],
+        );
+        const url = `/api/resumes/${settled.id}/file`;
+        const response = await app.inject({ url, headers: owner.headers });
+        assert.equal(response.statusCode, 200);
+        assert.deepEqual(response.rawPayload, pdf);
+        assert.equal(response.headers['content-type'], 'application/pdf');
+        assert.equal(
+          response.headers['content-disposition'],
+          'attachment; filename="resume-preview"',
+        );
+        assert.equal(response.headers['cache-control'], 'private, no-store');
+        assert.equal(response.headers['x-content-type-options'], 'nosniff');
+        assert.equal(reads.length, 1);
+        assert.equal(reads[0]?.ownerId, owner.id);
+        assert.equal((await app.inject({ url, headers: other.headers })).statusCode, 404);
+        assert.equal(
+          (await app.inject({ url: `/api/resumes/${randomUUID()}/file`, headers: owner.headers }))
+            .statusCode,
+          404,
+        );
+        const pending = await uploads.reserve(owner.id, 'preview-pending', bucket, metadata);
+        assert.equal(
+          (await app.inject({ url: `/api/resumes/${pending.id}/file`, headers: owner.headers }))
+            .statusCode,
+          404,
+        );
+        const rejected = await uploads.reserve(owner.id, 'preview-rejected', bucket, metadata);
+        await uploads.queueStoredUpload(owner.id, rejected.id, 'synthetic-version');
+        await database.pool.query(
+          `INSERT INTO resume_results (upload_id, owner_id, command_id, status, error_code)
+           SELECT id, owner_id, command_id, 'rejected', 'invalid_document' FROM resume_uploads WHERE id = $1`,
+          [rejected.id],
+        );
+        assert.equal(
+          (await app.inject({ url: `/api/resumes/${rejected.id}/file`, headers: owner.headers }))
+            .statusCode,
+          404,
+        );
+        assert.equal(reads.length, 1);
+      } finally {
+        await app.close();
+      }
+    });
+  },
+);
+
+test(
   'F-022: a cancelled upload can be deleted and stops counting toward the owner quota',
   { timeout: 60_000 },
   async () => {

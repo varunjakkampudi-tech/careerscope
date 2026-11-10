@@ -191,6 +191,12 @@ const messages = {
     apiError503: 'The service is temporarily unavailable. Please try again shortly.',
     apiError507: 'Resume storage is full. Remove an unneeded completed resume or try again later.',
     apiErrorDefault: 'Request failed. Please try again.',
+    // Machine-drafted Telugu and Hindi UI copy below requires native-speaker review before release.
+    resumePreviewHeading: 'Resume preview',
+    resumePreviewPrevious: 'Previous section',
+    resumePreviewNext: 'Next section',
+    resumePreviewSectionCount: 'Section {value} of {total}',
+    resumePreviewSectionLabel: 'Resume text section {value} of {total}',
     resumeUploadChanged:
       'This upload changed while it was being saved. Check your resume list, then upload again if needed.',
     resumeCancelUnavailable:
@@ -452,6 +458,11 @@ const messages = {
     apiError507:
       'రెజ్యూమ్ నిల్వ నిండింది. అనవసరమైన పూర్తయిన రెజ్యూమ్‌ను తొలగించండి లేదా తర్వాత మళ్లీ ప్రయత్నించండి.',
     apiErrorDefault: 'అభ్యర్థనను పూర్తి చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.',
+    resumePreviewHeading: 'రెజ్యూమ్ ప్రివ్యూ',
+    resumePreviewPrevious: 'మునుపటి విభాగం',
+    resumePreviewNext: 'తదుపరి విభాగం',
+    resumePreviewSectionCount: 'విభాగం {value} / {total}',
+    resumePreviewSectionLabel: 'రెజ్యూమ్ టెక్స్ట్ విభాగం {value} / {total}',
     // Machine-drafted: requires native-speaker review before release.
     resumeUploadChanged:
       'సేవ్ అవుతున్నప్పుడు ఈ అప్‌లోడ్ మారింది. మీ రెజ్యూమ్ జాబితాను చూసి, అవసరమైతే మళ్లీ అప్‌లోడ్ చేయండి.',
@@ -715,6 +726,11 @@ const messages = {
     apiError507:
       'रिज़्यूमे स्टोरेज भर गया है। कोई अनावश्यक पूरा रिज़्यूमे हटाएँ या बाद में कोशिश करें।',
     apiErrorDefault: 'अनुरोध पूरा नहीं हो सका। फिर कोशिश करें।',
+    resumePreviewHeading: 'रिज़्यूमे पूर्वावलोकन',
+    resumePreviewPrevious: 'पिछला अनुभाग',
+    resumePreviewNext: 'अगला अनुभाग',
+    resumePreviewSectionCount: 'अनुभाग {value} / {total}',
+    resumePreviewSectionLabel: 'रिज़्यूमे पाठ अनुभाग {value} / {total}',
     // Machine-drafted: requires native-speaker review before release.
     resumeUploadChanged:
       'सहेजते समय यह अपलोड बदल गया। अपनी रिज़्यूमे सूची देखें और ज़रूरत हो तो फिर अपलोड करें।',
