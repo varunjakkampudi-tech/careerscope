@@ -506,9 +506,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed the complete resume API integration suite and isolated loopback-PostgreSQL fixtures. Existing tests cover owner isolation, cancellation boundaries, storage-unavailable behavior, quota limits, idempotency conflicts, client disconnect recovery, and deletion. The item 4.01 route regression now covers unauthenticated rejection, invalid signature before storage, exact 5 MiB PDF acceptance, 413 above the limit, DOCX signature queueing, same-owner idempotent retry, same-key independence across owners, and owner-scoped list/detail. Storage is synthetic; no external object storage is configured.",
-      "evidence": "Re-reviewed complete tracked file for Stage 04 item 4.01. Earlier API/core resume integration suites passed 9/9 on prior commit 5b4d67bb557d927f1333b47e9882ad1cd7993ec1. The latest DOCX and cross-owner assertions have not yet run locally because this worktree has no isolated DATABASE_URL; exact-head CI is in progress. SHA-256 records reviewed bytes.",
+      "evidence": "Re-reviewed complete tracked file for Stage 04 item 4.01. Earlier API/core resume integration suites passed 9/9 on prior commit 5b4d67bb557d927f1333b47e9882ad1cd7993ec1. The latest DOCX and cross-owner assertions have not yet run locally because this worktree has no isolated DATABASE_URL; exact-head CI is in progress. SHA-256 records reviewed bytes. Result-order correction committed as 149660d0f94a36cc6b3b6bc785da5eec776cbb41; refreshed content hash after that test-only change. This updates integrity metadata and does not claim execution of the new route assertions.",
       "reviewer": "Codex (Stage 04 item 4.01 review)",
-      "sha256": "0bf84d73f146348953ac761d24b8de0636436a6d4f9f4cdcf4be1abd517a103f"
+      "sha256": "f475150e6dc69ce739e2ebee73002db543159bccd5970cbf5aea458de53ef2aa"
     },
     {
       "path": "apps/api/src/session-logout.integration.test.ts",
