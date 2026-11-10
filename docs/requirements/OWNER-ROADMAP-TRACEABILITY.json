@@ -826,9 +826,10 @@
         "packages/core/src/resumes.integration.test.ts"
       ],
       "externalEvidence": [
-        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
+        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push.",
+        "Current sequential review adds route-level API assertions for authentication, invalid signatures, acceptance at the 5 MiB PDF boundary, rejection above the limit, PDF and DOCX queueing, same-owner retry without a second object write, identical idempotency-key independence across owners, and owner-scoped reads. The exact-head GitHub workflow_dispatch run 42852863961 passed quality gates, isolated PostgreSQL/Redis integration (including these assertions), production configuration/pool checks, browser/accessibility/keyboard/responsive checks, performance, soak, and recovery on 964cdd9f4b2141d7d4edbd5d2f4e4d5d4d299bed. Its production-image job was skipped because that job only runs for pull_request events. The browser suite includes the resume upload/recovery scenario in scripts/tests/check-ui.ts (around lines 2736–2855). Local exact-SHA Docker runtime and proxy image builds both passed on the same commit. The documentation-sync PR head 000a1ceb61921100c1b66b7c5dea15752cd74236 then passed all three required hosted jobs in run 42863082516 and received final independent exact-head approval. These CI and review results are pinned to their stated SHAs. Item 4.01 remains partial pending authorized merge and post-merge verification; see PR #77 for any later head updates."
       ],
-      "gap": "Existing implementation and test evidence are present, but item-specific checklist criteria have not yet completed the sequential review and exact-commit approval gate.",
+      "gap": "The implementation checks passed on 964cdd9f4b2141d7d4edbd5d2f4e4d5d4d299bed; the documentation-sync PR head 000a1ceb61921100c1b66b7c5dea15752cd74236 passed all three required hosted jobs and final independent review. These results apply only to the named SHAs. Item 4.01 remains partial pending authorized merge and post-merge verification; see PR #77 for any later head updates.",
       "scopeDisposition": "in-scope"
     },
     {
