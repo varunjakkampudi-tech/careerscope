@@ -261,23 +261,14 @@
     {
       "path": "apps/api/src/app.ts",
       "category": "backend-api",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "scoped-diff-and-test-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the complete profile-photo route delta against the existing app hooks: parent onRequest enforces no-store, private test access, Origin, authenticated session, CSRF and legal gates before the scoped routes. Upload content types and 5 MiB body are bounded; only the authenticated owner id reaches the repository; Sharp errors are returned as a generic 400; reads set nosniff and use the global no-store header; read/write/delete are rate-limited. No public or cross-owner route is added. Database integration covers auth, validation, headers and owner isolation.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "93afe69091083a0287bab5ee86986deda15b4cd8f7865406f615125e8d0b56af",
-      "deltaReviews": [
-        {
-          "scope": "CareerScope Stage 04 item 4.06 focused change review",
-          "reviewer": "ChatGPT independent review",
-          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
-          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
-        }
-      ]
+      "observations": "Reviewed the resumed file route diff: authenticated owner scope, fixed-window rate limit, uniform 404 states, settled parse requirement, version-bound storage read, timeout, attachment and no-store/nosniff headers.",
+      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
+      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
+      "sha256": "93afe69091083a0287bab5ee86986deda15b4cd8f7865406f615125e8d0b56af"
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -430,7 +421,7 @@
     {
       "path": "apps/api/src/openapi.ts",
       "category": "backend-api",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "scoped-diff-and-test-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -442,19 +433,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Re-reviewed the full profile-photo contract delta: authenticated GET returns binary WebP or 204, PUT accepts only JPEG/PNG/WebP and documents size/error statuses, DELETE returns 204, and declared error bodies remain JSON. The parent response hook and route integration test verify no-store and content headers. No contract discrepancy found.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "ed13e26679f64c2cc6ad765d2fa8d842371053796360cf75825ed68b0100c3f3",
-      "deltaReviews": [
-        {
-          "scope": "CareerScope Stage 04 item 4.06 focused change review",
-          "reviewer": "ChatGPT independent review",
-          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
-          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
-        }
-      ]
+      "observations": "Reviewed the file-download contract diff against route behavior: binary response, 400/404/429/503, private no-store attachment, uniform 404 description, no upload-only 507 claim.",
+      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
+      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
+      "sha256": "ed13e26679f64c2cc6ad765d2fa8d842371053796360cf75825ed68b0100c3f3"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -519,23 +501,14 @@
     {
       "path": "apps/api/src/resumes.integration.test.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read",
+      "reviewMethod": "scoped-diff-and-test-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete 423-line resume integration suite and fixture helpers. Covers owner isolation, upload cancellation only before durable queueing, unavailable cancellation capability, owner quota before storage IO, idempotent retries/content conflicts, disconnect abort and recovery state, cancellation/deletion quota release, and local loopback database isolation with synthetic storage. No external object storage is configured.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "ad0a6d43c4a91b97df097b0d6b717fde1544f340cc856fdd3a3dccb00935802c",
-      "deltaReviews": [
-        {
-          "scope": "CareerScope Stage 04 item 4.06 focused change review",
-          "reviewer": "ChatGPT independent review",
-          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
-          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
-        }
-      ]
+      "observations": "Reviewed new integration coverage for settled owner access, raw bytes and headers, foreign/missing/pending/rejected 404 behavior, storage version binding, and no unauthorized storage read.",
+      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
+      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
+      "sha256": "ad0a6d43c4a91b97df097b0d6b717fde1544f340cc856fdd3a3dccb00935802c"
     },
     {
       "path": "apps/api/src/session-logout.integration.test.ts",
@@ -732,14 +705,14 @@
     {
       "path": "apps/web/src/app/(app)/dashboard/page.tsx",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused source and test review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete dashboard page. All API reads are owner-scoped and gated on authenticated session; progress and counts distinguish exact values from capped/paginated data. Recommended results and skills come only from the owner’s latest usable search, and loading/error/empty states are explicit. Links preserve run and lead identifiers via URL encoding. AI availability is accurately stated.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "35213cb29f20b67f6ab37ab1568c8004652fe664160b48152a2e8db022dd4c02"
+      "observations": "Reviewed the full dashboard page and item 3.16 diff. Profile completeness is separate from activity-based Career Progress, derives only from the authenticated owner-scoped profile response, distinguishes loading/error/success, has accessible error recovery and progress semantics, and labels candidate background as unverified.",
+      "evidence": "Stage 03 item 3.16 local validation: focused profile tests 6/6, complete npm test 371 passed/3 skipped/0 failed, npm run build including CSP, typecheck, lint, format, and roadmap traceability passed. Local browser execution unavailable because .env is absent; exact-SHA hosted CI pending.",
+      "reviewer": "Codex (Stage 03 item 3.16)",
+      "sha256": "426f217e4ff42415820d074e179244ae83dfdf89471a12d22ef5674a05e14b1d"
     },
     {
       "path": "apps/web/src/app/(app)/jobs/page.tsx",
@@ -1252,44 +1225,26 @@
     {
       "path": "apps/web/src/components/resume-panel.module.css",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "scoped-diff-and-test-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete resume upload styles. Native file input and picker button have adequate target size and themed borders/backgrounds.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "d83152f5901dfd7799f544e5b633849f8fac2e6182ddfe4482744c077cdef4c4",
-      "deltaReviews": [
-        {
-          "scope": "CareerScope Stage 04 item 4.06 focused change review",
-          "reviewer": "ChatGPT independent review",
-          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
-          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
-        }
-      ]
+      "observations": "Reviewed preview styles: bounded scroll area, responsive width, wrapping text, visible focus and 44px controls.",
+      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
+      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
+      "sha256": "d83152f5901dfd7799f544e5b633849f8fac2e6182ddfe4482744c077cdef4c4"
     },
     {
       "path": "apps/web/src/components/resume-panel.tsx",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "scoped-diff-and-test-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete resume upload/review flow. Upload size is bounded in the UI and server validation remains authoritative; mutations use CSRF and idempotency keys; resume data uses owner-scoped queries; destructive actions require confirmation; failures trigger refresh and parsed content is presented as escaped text.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "73c6af2039402415d40e36d51cdf295b90b2533842d362ed93a068cd9633ed30",
-      "deltaReviews": [
-        {
-          "scope": "CareerScope Stage 04 item 4.06 focused change review",
-          "reviewer": "ChatGPT independent review",
-          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
-          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
-        }
-      ]
+      "observations": "Reviewed text-only preview component: section state is bounded, controls are native buttons, current section is announced, and uploaded PDF/DOCX is not embedded as active markup.",
+      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
+      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
+      "sha256": "73c6af2039402415d40e36d51cdf295b90b2533842d362ed93a068cd9633ed30"
     },
     {
       "path": "apps/web/src/components/saved-leads.module.css",
@@ -1357,14 +1312,14 @@
     {
       "path": "apps/web/src/lib/api-schemas.ts",
       "category": "frontend",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "focused source and test review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Extended the profile response preference schema with nullable, normalized three-letter minSalaryCurrency, preserving legacy responses where the field is absent through the null default. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "3e61bfbb7d8b7b74f3ce5d1174fa3ae5307b5470b7de20cc563dad91ab31cc6c"
+      "observations": "Reviewed the dashboard profile parser extension. It selects only saved candidate and preference fields required by the completeness meter and tolerates additional server response fields; the optional legacy career segment and arrays have safe defaults.",
+      "evidence": "Compared against GET /api/profile response and schema, then validated with Stage 03 item 3.16 typecheck, production build, tests, and hosted CI pending.",
+      "reviewer": "Codex (Stage 03 item 3.16)",
+      "sha256": "43df1ddc875f7f463c7e7ea28c1067c0cbcc5033dfc27395749e691d74a8da80"
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
@@ -1449,6 +1404,30 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "18cf52f3723fd997ce0809d911c692f29774d0dde123d63dc29a68d8f5da478e"
+    },
+    {
+      "path": "apps/web/src/lib/profile-completeness.test.ts",
+      "category": "frontend",
+      "reviewMethod": "focused source and test review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "reviewer": "Codex (Stage 03 item 3.16)",
+      "observations": "Reviewed all profile completeness unit cases, including all 12 career-stage/background-source combinations (student, fresher, experienced, unset x education, experience, projects), empty and complete profiles, exact intermediate percentages, whitespace handling, and explicit exclusion of optional contact, link, photo, resume, location, and salary fields.",
+      "evidence": "Focused profile completeness tests passed 6/6; full unit suite passed 371 with 3 skipped and 0 failures; typecheck and Stage 01 audit passed on the current worktree revision.",
+      "sha256": "c4756862bdf43c3157ffc597002ed121376683b7beafcbc64be261ca3f9dc226"
+    },
+    {
+      "path": "apps/web/src/lib/profile-completeness.ts",
+      "category": "frontend",
+      "reviewMethod": "focused source and test review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "reviewer": "Codex (Stage 03 item 3.16)",
+      "observations": "Reviewed the complete pure checklist calculator. It equally weights five saved owner profile criteria, trims whitespace, supports segment-relevant background evidence, excludes optional fields and unrelated activity, and computes a bounded percentage from completed checklist entries.",
+      "evidence": "Focused unit tests 6/6 and full npm test passed; typecheck and production build passed. Independent exact-SHA review is conditional on hosted CI.",
+      "sha256": "1da94af9f8b6d79f399fb8474fb4a8490fd57922db0f83949bfdc0321223d0e1"
     },
     {
       "path": "apps/web/src/lib/profile-photo.ts",
@@ -1717,7 +1696,7 @@
     {
       "path": "docs/API-SURFACE.md",
       "category": "documentation",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "scoped-diff-and-test-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1729,19 +1708,10 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Re-reviewed the complete profile-photo documentation delta. Authenticated route methods and the no-photo 204 behavior match the API contract; photo is documented separately from recruiter/public access.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "69deeb8891ead3289179197ec2170a5e8ebb11a2541928423be46f0744da4ba6",
-      "deltaReviews": [
-        {
-          "scope": "CareerScope Stage 04 item 4.06 focused change review",
-          "reviewer": "ChatGPT independent review",
-          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
-          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
-        }
-      ]
+      "observations": "Reviewed added endpoint table and description against server behavior, including owner scope, rate limit, storage version check, private no-store, nosniff and uniform 404.",
+      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
+      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
+      "sha256": "69deeb8891ead3289179197ec2170a5e8ebb11a2541928423be46f0744da4ba6"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1940,7 +1910,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "source review plus item 1.01 reviewer-feedback update",
+      "reviewMethod": "source review plus implementation exact-head CI and status reconciliation",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1952,10 +1922,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Re-reviewed current item 1.01 status: the prior PR head received conditional ChatGPT approval with two nonblocking suggestions; both refinements were applied in a new head, whose CI and independent review remain pending. It preserves the separate accepted S1-F014 risk and does not claim final acceptance. Follow-up item 2.05 review: inspected Stage 02 progress against canonical inventory; Stage 02 remains in progress and item 2.05 remains gated.",
-      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending. Additional focused item 2.05 documentation review; SHA-256 records current bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "98627602dd931ec189f1947f42ebfd28ae82665a144cdd7cebf08794d95c9481"
+      "observations": "Re-reviewed the Stage 03 item 3.16 closeout record. It now distinguishes exact-head approval and CI, verifies the successful dev merge and post-merge checks, and records the checklist item as verified.",
+      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; hosted run 42758118526 passed all three jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b, and post-merge run 42759315007 passed Quality gates and Services/integration/browser suites.",
+      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
+      "sha256": "d3b8cd0cdcce56aebe32a20c5d4ac1bd4d3faa2afd0d3e2587d26acd187638b0"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1996,23 +1966,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "source review plus item 1.01 reviewer-feedback update",
+      "reviewMethod": "focused source, test and exact-head CI provenance review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed Stage 01 item 1.01 record. The verification column no longer labels November 8 evidence as November 6; the row records parent-dev CI and makes clear that the conditional review was for the previous head, with suggested refinements applied and new-head validation pending.",
-      "evidence": "Updated following ChatGPT conditional review of PR #68 head 864e173abc0f3f8025730f74714fb52609d0b359. New exact-head CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "2467bc1d6dba02cd27265565aa7dd7420c0235b41b7b9f5de2e9f0a6ecc19f40",
-      "deltaReviews": [
-        {
-          "scope": "CareerScope Stage 04 item 4.06 focused change review",
-          "reviewer": "ChatGPT independent review",
-          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
-          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
-        }
-      ]
+      "observations": "Re-reviewed the item 3.16 row. Historical failures and approvals remain tied to their original SHAs; exact-head approval and CI, dev merge, and post-merge CI are recorded, and the item is verified.",
+      "evidence": "ChatGPT approved exact PR head 1a02c9b9a48773e62f65b93703d5e0f0aae17031; run 42758118526 passed all three required jobs. PR #69 merged as 43f34f9863ac3e5d528df88fb356da380252282b. Post-merge run 42759315007 passed Quality gates and Services/integration/browser suites; image build skipped on push.",
+      "reviewer": "Codex (CareerScope item 3.16 closeout record)",
+      "sha256": "353f038dcbc10b6340abba22e7aa7766991a7158fcd49bb4f33583047eab03e7"
     },
     {
       "path": "docs/TESTING.md",
@@ -2029,23 +1990,14 @@
     {
       "path": "docs/TRACEABILITY.md",
       "category": "documentation",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "scoped-diff-and-test-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the current traceability addition: inventories and their denominators remain separate, the owner roadmap remains the 328-item source, and the existing crosswalk points to the enforced checker and CI-run tests.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "d8c21aa242de4200ad25f687b723b0f569f5fec406ab5deb4881ca768928100b",
-      "deltaReviews": [
-        {
-          "scope": "CareerScope Stage 04 item 4.06 focused change review",
-          "reviewer": "ChatGPT independent review",
-          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
-          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
-        }
-      ]
+      "observations": "Reviewed PS-06 mapping changes to ensure preview route, UI, segmentation tests and browser acceptance are linked.",
+      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
+      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
+      "sha256": "d8c21aa242de4200ad25f687b723b0f569f5fec406ab5deb4881ca768928100b"
     },
     {
       "path": "docs/UI-VERIFICATION.md",
@@ -2446,30 +2398,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "scoped-diff-and-test-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed item 3.13 closeout and surrounding inventory: the item retains its source title/status, records currentStatus verified with concrete implementation and tests, links PR #57/#58 evidence, and leaves the overall 328-item/stage inventory structure intact. Traceability checker validates row and counts.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "8991cec045d587a5e9afa61851376ac36bb6ac7a1e4d1be1948d4a39e6a1241e",
-      "deltaReviews": [
-        {
-          "scope": "CareerScope Stage 04 item 4.06 focused change review",
-          "reviewer": "ChatGPT independent review",
-          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
-          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
-        },
-        {
-          "scope": "CareerScope Stage 04 item 4.06 closeout evidence reconciliation",
-          "reviewer": "Codex (evidence reconciliation)",
-          "reviewedHead": "9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc",
-          "result": "Updated the in-progress gap with verified independent-review and exact-head CI evidence; status remains in-progress pending merge and post-merge verification.",
-          "evidence": "PR #73 exact-head CI run 42628516861 completed successfully across Quality, Services/integration/browser, and Production image jobs."
-        }
-      ]
+      "observations": "Reviewed 4.06 remains in-progress with implementation evidence, tests, historical exact-head CI/review, and explicit merge/post-merge verification gap.",
+      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
+      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
+      "sha256": "00e3d27ee74ca3682d019996e49142b011276e99d1b5263451cb1ae59901bdeb"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -3582,23 +3518,14 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "scoped-diff-and-test-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed root script/dependency delta: the new image-normalization unit test is in test:unit and audit:stage01 now requires complete file coverage. Existing Node >=24 engine and workspace test/build scripts remain intact; lockfile installation on this source revision reported zero vulnerabilities.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "e017756b420ac819a4f2eb6f76043cf5346a638e0dff11b11445992a9b9264bb",
-      "deltaReviews": [
-        {
-          "scope": "CareerScope Stage 04 item 4.06 focused change review",
-          "reviewer": "ChatGPT independent review",
-          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
-          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
-        }
-      ]
+      "observations": "Reviewed domain test command change: adds the preview segmentation unit file without removing existing test targets.",
+      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
+      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
+      "sha256": "f9e6ed21301a4554794b60d741464e5701c05bf9f0c2070e4dde39511ef287f5"
     },
     {
       "path": "packages/core/package.json",
@@ -5525,23 +5452,14 @@
     {
       "path": "packages/resume/package.json",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "scoped-diff-and-test-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read package metadata. Public output is built dist; dependencies are shared plus PDF/DOCX text extraction libraries. No test-only dependency is declared here.",
-      "evidence": "",
-      "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "e463228d14e6fd00df7e5af6a17c42662bb95e92d818dfe54fff418b23918a32",
-      "deltaReviews": [
-        {
-          "scope": "CareerScope Stage 04 item 4.06 focused change review",
-          "reviewer": "ChatGPT independent review",
-          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
-          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
-        }
-      ]
+      "observations": "Reviewed package export addition; preview-segments subpath points to generated type and JavaScript outputs.",
+      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
+      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
+      "sha256": "e463228d14e6fd00df7e5af6a17c42662bb95e92d818dfe54fff418b23918a32"
     },
     {
       "path": "packages/resume/src/derive-equivalence.test.ts",
@@ -5630,6 +5548,30 @@
       "evidence": "",
       "reviewer": "Codex (Stage 01 implementation audit)",
       "sha256": "7ee519323a8a3e391ac47ee98476a54b53af02a8921e5693b2fe378c7fe1015c"
+    },
+    {
+      "path": "packages/resume/src/preview-segments.test.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "scoped-diff-and-test-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed full new unit cases for lossless multi-chunk newline handling, maximum size, empty text and invalid limit.",
+      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
+      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
+      "sha256": "7f50cdeea616e537935300c713425930efa6abc4cc677942448dd7b9c847dc47"
+    },
+    {
+      "path": "packages/resume/src/preview-segments.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "scoped-diff-and-test-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed full new helper: positive integer limit validation, newline-aware chunk boundaries, no dropped or duplicated characters, empty-text handling.",
+      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
+      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
+      "sha256": "dbf5c68392f556746bb3a3d451f9e2ca98561a61d426916b7d6de2f90b1c4b1c"
     },
     {
       "path": "packages/resume/src/sections.ts",
@@ -6581,7 +6523,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "scoped-diff-and-test-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6598,29 +6540,19 @@
           "status": "fixed",
           "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
           "remediation": "Write screenshots to a unique per-run directory under test-results."
-        }
-      ],
-      "observations": "Re-reviewed the complete Stage 03 photo test delta on top of the previously reviewed full browser harness. Focused mode limits to Chromium; checks file keyboard access, unsupported/oversize rejection, API failure without persistence, upload and stored private row, both avatar slots sharing one refresh, reload persistence and deletion restoring initials. Broad browser scenario also covers owner image lifecycle, account switching/isolation, responsive/accessibility checks. Exact dev CI passed the browser suite.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "267ea9fa58474cb05c917738e099a0f10291b37e0ede926e8d53b82303b6c66e",
-      "deltaReviews": [
-        {
-          "scope": "CareerScope Stage 04 item 4.06 focused change review",
-          "reviewer": "ChatGPT independent review",
-          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
-          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
         },
         {
-          "scope": "Follow-up synthetic DOCX fixture correction after prior Stage 04 item 4.06 review",
-          "reviewer": "ChatGPT independent focused review",
-          "reviewedHead": "a538580308c6931ddcde621c7b37a8b81a277e35",
-          "result": "Source/test correction accepted; prior fixture skill mismatch resolved. Independent review confirmed the multi-section reconstruction, keyboard navigation and boundary checks.",
-          "status": "Independent review and hosted exact-head validation complete.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
+          "id": "S1-F072",
+          "severity": "medium",
+          "status": "fixed",
+          "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+          "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
-      ]
+      ],
+      "observations": "Reviewed browser fixture and assertions: generated multi-section DOCX text is compared losslessly; keyboard navigation, boundaries and only-one-visible-section are checked.",
+      "evidence": "Refreshed against the staged PR #73 tree after merging current dev 036dd3c11278a26534544792f4834a0902214d17; exact refreshed-head CI and approval remain pending.",
+      "reviewer": "Codex (Stage 04.06 refreshed branch review)",
+      "sha256": "c19a86b94a3f9005a8b36ba01523742a01474e2b3d8b6101867e50c3dd4870d7"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
@@ -6845,48 +6777,6 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "6040b0afb6dbae5f400cfaeb18fb8595d5644a4bea2f0dccc43797d136d58863"
-    },
-    {
-      "path": "packages/resume/src/preview-segments.ts",
-      "category": "production-source",
-      "reviewMethod": "source review plus exact-head independent review",
-      "state": "reviewed",
-      "concerns": ["Lossless bounded segmentation of parsed resume text"],
-      "findings": [],
-      "observations": "Independent review confirmed deterministic, lossless, newline-aware preview segmentation with bounded sections.",
-      "evidence": "ChatGPT independent review of PR #73 exact head df352241cb4b2421f35f667464d0e62273ea383d; hosted CI closeout remains pending.",
-      "reviewer": "ChatGPT independent review",
-      "sha256": "dbf5c68392f556746bb3a3d451f9e2ca98561a61d426916b7d6de2f90b1c4b1c",
-      "deltaReviews": [
-        {
-          "scope": "CareerScope Stage 04 item 4.06 focused change review",
-          "reviewer": "ChatGPT independent review",
-          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
-          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
-        }
-      ]
-    },
-    {
-      "path": "packages/resume/src/preview-segments.test.ts",
-      "category": "test-source",
-      "reviewMethod": "source review plus exact-head independent review",
-      "state": "reviewed",
-      "concerns": ["Unit coverage of lossless segmentation"],
-      "findings": [],
-      "observations": "Independent review confirmed focused regression coverage for lossless, newline-aware resume preview segmentation.",
-      "evidence": "ChatGPT independent review of PR #73 exact head df352241cb4b2421f35f667464d0e62273ea383d; hosted CI closeout remains pending.",
-      "reviewer": "ChatGPT independent review",
-      "sha256": "7f50cdeea616e537935300c713425930efa6abc4cc677942448dd7b9c847dc47",
-      "deltaReviews": [
-        {
-          "scope": "CareerScope Stage 04 item 4.06 focused change review",
-          "reviewer": "ChatGPT independent review",
-          "reviewedHead": "df352241cb4b2421f35f667464d0e62273ea383d",
-          "result": "Reviewed; no blocking functional defect identified in this file-level change.",
-          "hostedValidation": "Hosted exact-head CI run 42628516861 passed on PR #73 head 9f7bff8fca18d6c2452dc5c2c528b8b4ea8fa8cc, including the browser, accessibility, keyboard and responsive suite."
-        }
-      ]
     }
   ]
 }
