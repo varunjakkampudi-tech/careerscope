@@ -2333,7 +2333,7 @@
       "observations": "Re-reviewed canonical item 2.10 after checking the user decision: AI-only recovery-copy review does not waive the outstanding native Telugu and Hindi review. Item remains partial; no translation certification is claimed.",
       "evidence": "Current PR #42 correction review; prior full file review remains recorded. SHA-256 records the corrected bytes.",
       "reviewer": "Codex (CareerScope item 2.10 status correction)",
-      "sha256": "ff1d5645520ef40dd446f89f5e8135b02711b8ec211f5d8300c7639e4aada406"
+      "sha256": "9df5abc81d556766c9282d20f53bf39735d054dcc9c09ac4073937b3b85f085f"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
