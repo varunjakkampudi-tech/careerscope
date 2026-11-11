@@ -849,9 +849,10 @@
         "tests/integration/database.integration.test.ts"
       ],
       "externalEvidence": [
-        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
+        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push.",
+        "Exact PR #80 head 9ebc65368bbd6acd13411d5cffe67153be3f08c7 passed workflow 43014116720 and independent exact-head review; merged as 991a105cc33bc629176ce5675efee77b31f10ffe. Post-merge run 43033261565 is in progress."
       ],
-      "gap": "Existing implementation and test evidence are present, but item-specific checklist criteria have not yet completed the sequential review and exact-commit approval gate.",
+      "gap": "PR #80 head 9ebc65368bbd6acd13411d5cffe67153be3f08c7 passed exact-head hosted CI, received independent review approval, and merged to dev as 991a105cc33bc629176ce5675efee77b31f10ffe. Repository-level encrypted resume-file storage evidence is accepted. Host-volume encryption and encryption of parsed resume content stored in PostgreSQL remain unverified; the full item remains partial.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -867,9 +868,10 @@
         "packages/resume/src/extract.test.ts"
       ],
       "externalEvidence": [
-        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
+        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push.",
+        "PR #81 exact head affa62eb29badfeb03352e8a60b0be15ce7bb099 passed workflow 43015662683 and received independent exact-head review approval; this head predates synchronization with PR #80 and requires revalidation."
       ],
-      "gap": "Focused Node 24 extraction tests passed 10/10 and the isolated parser integration test passed 1/1 on 2026-11-11. Exact PR-head hosted CI and item-level review remain pending.",
+      "gap": "Focused Node 24 extraction tests passed 10/10 and the isolated parser integration test passed 1/1. PR #81 head affa62eb29badfeb03352e8a60b0be15ce7bb099 passed exact-head hosted CI and received independent review approval. Synchronization with the newly merged PR #80 changes the PR candidate; rerun exact-head CI and review before formal closeout. Evidence covers the specified bounded scenarios, not exhaustive malformed-document or parser-library vulnerability coverage.",
       "scopeDisposition": "in-scope"
     },
     {
