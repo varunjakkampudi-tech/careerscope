@@ -23,7 +23,6 @@ import {
   writableProfileSchema,
   PrivateFileResumeStorage,
   LocalQueue,
-  publishPending,
   publishDueInterviewReminders,
 } from '@careerscope/core';
 import { createApp } from '../../apps/api/src/app.js';
@@ -2747,6 +2746,7 @@ try {
         'word/document.xml',
         '<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Synthetic Candidate, React and TypeScript developer with experience building accessible web applications.</w:t></w:r></w:p></w:body></w:document>',
       );
+      await page.getByLabel('Target role (optional)', { exact: true }).fill('Software Engineer');
       await page.getByLabel('Resume file (PDF or DOCX, up to 5 MiB)').setInputFiles({
         name: 'synthetic.docx',
         mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -2830,16 +2830,118 @@ try {
         recoveryGate.resolve();
       }
       assert.equal((await recoveredUpload).status(), 200);
-      await publishPending(database, { 'resume.parse': filesQueue });
+      const markBrowserResumeParsed = async (id: string) => {
+        await database.pool.query(
+          `INSERT INTO resume_results (upload_id, owner_id, command_id, status, parsed)
+           SELECT id, owner_id, command_id, 'parsed', $2::jsonb FROM resume_uploads WHERE id = $1`,
+          [
+            id,
+            JSON.stringify({
+              format: 'docx',
+              text: 'Synthetic candidate resume with React and TypeScript experience.',
+              derived: { techStack: ['React'], yearsOfExperience: null },
+            }),
+          ],
+        );
+      };
+      const firstVersionList = await (await page.request.get(`${origin}/api/resumes`)).json();
+      const firstVersion = firstVersionList.items.find(
+        (item: { targetRole: string | null; versionNumber: number }) =>
+          item.targetRole === 'Software Engineer' && item.versionNumber === 1,
+      );
+      assert.ok(firstVersion, `${engine}: first role-labelled resume version was not listed`);
+      await markBrowserResumeParsed(firstVersion.id);
+      const parsedResumeList = await (await page.request.get(`${origin}/api/resumes`)).json();
+      const parsedFirstVersion = parsedResumeList.items.find(
+        (item: { id: string }) => item.id === firstVersion.id,
+      );
+      assert.equal(parsedFirstVersion?.status, 'parsed');
+      assert.equal(parsedFirstVersion?.targetRole, 'Software Engineer');
+      await page.route(
+        '**/api/resumes',
+        async (route) => {
+          if (route.request().method() !== 'GET') return route.fallback();
+          const response = await route.fetch();
+          const body = await response.json();
+          await route.fulfill({
+            response,
+            body: JSON.stringify({
+              ...body,
+              items: body.items.map((item: { id: string; status: string }) =>
+                item.id === firstVersion.id ? { ...item, status: 'parsed' } : item,
+              ),
+            }),
+          });
+        },
+        { times: 1 },
+      );
+      await page.reload();
+      await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
+      const versionSeries = page.getByLabel(/Add as a new version of/);
+      await page.waitForFunction(
+        (id) =>
+          Array.from(document.querySelectorAll<HTMLSelectElement>('select'))
+            .flatMap((select) => Array.from(select.options))
+            .some((option) => option.value === id),
+        firstVersion.versionGroupId,
+        { timeout: 45000 },
+      );
+      await versionSeries.selectOption(firstVersion.versionGroupId);
+      assert.equal(
+        await page.getByLabel('Target role (optional)', { exact: true }).isDisabled(),
+        true,
+        `${engine}: a version upload can change its target role`,
+      );
+      await page.getByLabel('Resume file (PDF or DOCX, up to 5 MiB)').setInputFiles({
+        name: 'synthetic-v2.docx',
+        mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        buffer: await archive.generateAsync({ type: 'nodebuffer' }),
+      });
+      const secondVersionUpload = page.waitForResponse(
+        (response) =>
+          response.url().endsWith('/api/resumes') && response.request().method() === 'POST',
+      );
+      await page.getByRole('button', { name: 'Upload resume', exact: true }).click();
+      assert.equal((await secondVersionUpload).status(), 202);
+      const secondVersionList = await (await page.request.get(`${origin}/api/resumes`)).json();
+      const secondVersion = secondVersionList.items.find(
+        (item: { targetRole: string | null; versionNumber: number }) =>
+          item.targetRole === 'Software Engineer' && item.versionNumber === 2,
+      );
+      assert.ok(secondVersion, `${engine}: second role-labelled resume version was not listed`);
+      await markBrowserResumeParsed(secondVersion.id);
       await page
         .getByRole('status')
         .filter({ hasText: 'Resume ready for review.' })
         .waitFor({ timeout: 45000 });
+      await page.getByLabel(/Filter resumes by target role/).selectOption('Software Engineer');
+      const roleVersions = page.locator('.resume-list > li');
+      await page
+        .getByRole('button', { name: /Software Engineer · Version 2/ })
+        .waitFor({ timeout: 45000 });
+      assert.equal(await roleVersions.count(), 2, `${engine}: role filter lost a resume version`);
+      const versionButtons = [
+        page.getByRole('button', { name: /Software Engineer · Version 1/ }),
+        page.getByRole('button', { name: /Software Engineer · Version 2/ }),
+      ];
+      for (const versionButton of versionButtons) {
+        await versionButton.click();
+        assert.equal(await versionButton.getAttribute('aria-pressed'), 'true');
+        await page
+          .getByRole('status')
+          .filter({ hasText: 'Resume ready for review.' })
+          .waitFor({ timeout: 45000 });
+      }
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });
+        const resumeOverflow = await page.locator('.resume-section').evaluate((element) => ({
+          scrollWidth: element.scrollWidth,
+          clientWidth: element.clientWidth,
+        }));
         assert.equal(
-          await page.evaluate(() => document.documentElement.scrollWidth > innerWidth),
+          resumeOverflow.scrollWidth > resumeOverflow.clientWidth,
           false,
+          `${engine} /resume panel overflow at ${width}px: ${JSON.stringify(resumeOverflow)}`,
         );
         if (engine === 'chromium')
           await page.screenshot({
@@ -2849,6 +2951,14 @@ try {
       }
       await page.getByRole('button', { name: 'Review profile draft', exact: true }).click();
       assert.match(await page.locator('textarea[name="techStack"]').inputValue(), /React/);
+      for (const versionNumber of [2]) {
+        const versionRow = page
+          .locator('.resume-list li')
+          .filter({ hasText: `Software Engineer · Version ${versionNumber}` });
+        page.once('dialog', (dialog) => dialog.accept());
+        await versionRow.getByRole('button', { name: 'Delete resume', exact: true }).click();
+        await versionRow.waitFor({ state: 'detached' });
+      }
       const account = await database.pool.query<{ id: string }>(
         'SELECT id FROM users WHERE email = $1',
         [accountEmail],

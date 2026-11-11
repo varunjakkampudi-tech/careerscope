@@ -952,16 +952,19 @@
       "sourceStatus": "Partial",
       "currentStatus": "partial",
       "evidence": [
+        "migrations/0005_resume_versions.sql",
         "packages/core/src/resumes.ts",
+        "apps/api/src/app.ts",
         "apps/web/src/components/resume-panel.tsx",
         "docs/requirements/V12-RECONCILIATION.md"
       ],
       "tests": [
         "packages/core/src/resumes.integration.test.ts",
-        "apps/api/src/resumes.integration.test.ts"
+        "apps/api/src/resumes.integration.test.ts",
+        "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "Multiple uploads can be listed; target-role labels, explicit version lineage, role-aware selection and corresponding candidate workflow are absent.",
+      "gap": "Implementation and focused local checks are present. Exact-head CI, independent item review, and post-merge verification remain pending; item is not verified.",
       "scopeDisposition": "in-scope"
     },
     {

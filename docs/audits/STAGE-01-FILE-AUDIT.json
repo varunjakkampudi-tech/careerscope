@@ -261,14 +261,14 @@
     {
       "path": "apps/api/src/app.ts",
       "category": "backend-api",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the complete profile-photo route delta against the existing app hooks: parent onRequest enforces no-store, private test access, Origin, authenticated session, CSRF and legal gates before the scoped routes. Upload content types and 5 MiB body are bounded; only the authenticated owner id reaches the repository; Sharp errors are returned as a generic 400; reads set nosniff and use the global no-store header; read/write/delete are rate-limited. No public or cross-owner route is added. Database integration covers auth, validation, headers and owner isolation.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "e141b90baf2b7d5176ccf56aba2370a177eea3ffab7c5abcce86133ff457d1b6"
+      "observations": "Reviewed route schemas and wiring for candidate resume target-role and version-group metadata; validation, listing and upload coordination are consistent.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "608697156e7369b604bd0c7c9a9b05f72b4473f08f0e1e414c51fb80b9b32260"
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -361,14 +361,14 @@
     {
       "path": "apps/api/src/interviews.integration.test.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the complete 842-line loopback-PostgreSQL integration scenario. Verifies candidate/tenant ownership, profile and resume privacy, interview CRUD and optimistic revision conflicts, application lifecycle separation, notification ownership/read state, reminder creation/retirement/rescheduling and timestamp precision, 50-item list cap with unread count, owner preference isolation, disabled/enabled reminder behavior, advisory-lock serialization, API docs, and resume deletion unlinking. Uses synthetic rows and drops its isolated test database in finally.",
-      "evidence": "Complete tracked file read in sequential chunks on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "4a0a2c091accf69781c7a8b18af169fdca5b1798a993cb267aab52cb05a009d4"
+      "observations": "Reviewed fixture updates for required resume version lineage metadata; behavior scope is fixture-only.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "f48f0a1450b502b005f5876f95e3e0e2b9b15bf857cec1bd59229d12ea41beb9"
     },
     {
       "path": "apps/api/src/job-feedback.integration.test.ts",
@@ -421,7 +421,7 @@
     {
       "path": "apps/api/src/openapi.ts",
       "category": "backend-api",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -433,10 +433,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Re-reviewed the full profile-photo contract delta: authenticated GET returns binary WebP or 204, PUT accepts only JPEG/PNG/WebP and documents size/error statuses, DELETE returns 204, and declared error bodies remain JSON. The parent response hook and route integration test verify no-store and content headers. No contract discrepancy found.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "2137e44a7a4f26d1f930981c39efeef0018f0ad34d36cef7a1313ef56cf90342"
+      "observations": "Reviewed OpenAPI upload and listing contract additions for target role and version lineage.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "214ffecd324c7f6ef0c95bd73118fe978281575bbe70d8a9abe90335183a30b8"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -501,14 +501,14 @@
     {
       "path": "apps/api/src/resumes.integration.test.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the complete resume API integration suite and isolated loopback-PostgreSQL fixtures. Existing tests cover owner isolation, cancellation boundaries, storage-unavailable behavior, quota limits, idempotency conflicts, client disconnect recovery, and deletion. The item 4.01 route regression now covers unauthenticated rejection, invalid signature before storage, exact 5 MiB PDF acceptance, 413 above the limit, DOCX signature queueing, same-owner idempotent retry, same-key independence across owners, and owner-scoped list/detail. Storage is synthetic; no external object storage is configured.",
-      "evidence": "Re-reviewed complete tracked file for Stage 04 item 4.01. Earlier API/core resume integration suites passed 9/9 on prior commit 5b4d67bb557d927f1333b47e9882ad1cd7993ec1. The exact-head GitHub workflow_dispatch run 42852863961 passed isolated PostgreSQL/Redis integration, including the DOCX and cross-owner route assertions, on 964cdd9f4b2141d7d4edbd5d2f4e4d5d4d299bed. Result-order correction committed as 149660d0f94a36cc6b3b6bc785da5eec776cbb41; refreshed content hash after that test-only change. This records hosted execution evidence; it does not claim local execution of the isolated database suite.",
-      "reviewer": "Codex (Stage 04 item 4.01 review)",
-      "sha256": "f475150e6dc69ce739e2ebee73002db543159bccd5970cbf5aea458de53ef2aa"
+      "observations": "Reviewed F-025 coverage for owner isolation, role consistency, sequential versions and idempotent retry.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "3fc3bc1be2c48f08775e3ccf23cf5c60b651f4607b679f724923d16aa339c998"
     },
     {
       "path": "apps/api/src/session-logout.integration.test.ts",
@@ -837,14 +837,14 @@
     {
       "path": "apps/web/src/app/globals.css",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete global stylesheet. It imports the shared reset, defines semantic light/dark tokens, global focus and touch sizing, responsive search/profile/resume layouts, dark-theme overrides, and reduced-motion support including owner preference. No remote font/style injection or active CSS content.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "4eeb0e1809d220928fc8462f53b68954249dac58c779db71f6aafeff687f9d0e"
+      "observations": "Reviewed responsive sizing and box sizing for resume role controls.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "d7d871a13b97c32da89756423ff3240913fa16be352fa26f419e1ab999f7553f"
     },
     {
       "path": "apps/web/src/app/icon.svg",
@@ -1237,14 +1237,14 @@
     {
       "path": "apps/web/src/components/resume-panel.tsx",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete resume upload/review flow. Upload size is bounded in the UI and server validation remains authoritative; mutations use CSRF and idempotency keys; resume data uses owner-scoped queries; destructive actions require confirmation; failures trigger refresh and parsed content is presented as escaped text.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "ad7d22814d2f7be29d2b9d8e0af01dd2051ddb0734ce3123a1fc024a593f1c43"
+      "observations": "Reviewed candidate role labeling, parsed-series continuation, filtering and exact-version selection flow.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "d6deacd394604940e88faf6e4d1591a21f737322ab5568f3329ad0bc3a25f95e"
     },
     {
       "path": "apps/web/src/components/saved-leads.module.css",
@@ -1312,14 +1312,14 @@
     {
       "path": "apps/web/src/lib/api-schemas.ts",
       "category": "frontend",
-      "reviewMethod": "focused source and test review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the dashboard profile parser extension. It selects only saved candidate and preference fields required by the completeness meter and tolerates additional server response fields; the optional legacy career segment and arrays have safe defaults.",
-      "evidence": "Compared against GET /api/profile response and schema, then validated with Stage 03 item 3.16 typecheck, production build, tests, and hosted CI pending.",
-      "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "43df1ddc875f7f463c7e7ea28c1067c0cbcc5033dfc27395749e691d74a8da80"
+      "observations": "Reviewed response validation for resume role, group and version fields.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "b70601872ca1f347f8a1b4a141c8f59ed184d2d357683aa947ed09197f6115b5"
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
@@ -1696,7 +1696,7 @@
     {
       "path": "docs/API-SURFACE.md",
       "category": "documentation",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1708,10 +1708,10 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Re-reviewed the complete profile-photo documentation delta. Authenticated route methods and the no-photo 204 behavior match the API contract; photo is documented separately from recruiter/public access.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "4588e77f0861e2c906336d3395c6cc44fbaeaaf3743084057be1793a79f41139"
+      "observations": "Reviewed documented resume upload and listing fields against the API implementation.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "0552a978654a01ef7f2441283595c6b0580cc90d882c58fddd281e5e7f113630"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1772,7 +1772,7 @@
     {
       "path": "docs/DATA-MODEL.md",
       "category": "documentation",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1784,10 +1784,10 @@
           "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
         }
       ],
-      "observations": "Re-reviewed the profile-photo data-model text against migration 0004 and the repository: one bounded bytea WebP per owner, cascade on account deletion, session-only owner reads and unresolved retention policy are accurately stated. Existing migration numbering and applied-file immutability are preserved.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "b1b7f819f76581cf1dc07fb546847dbbac14f4dcf0f07ce9aa12e8b6d8c7cb9b"
+      "observations": "Reviewed version lineage, owner scoping, uniqueness and existing-row backfill documentation.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "ed2ef685b89438df6962ee119e634865e2c3f4e03d29370da1a26882c30731da"
     },
     {
       "path": "docs/FOUNDATIONS.md",
@@ -1886,14 +1886,14 @@
     {
       "path": "docs/PRODUCT-SURFACE.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Lists the intended web routes and distinguishes current API-backed surfaces from design-only future surfaces; states that external job navigation does not change application status. Route existence is checked alongside frontend audit.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "d34cdad4a37f68e9fbe1ff9cfd6aaa60e6b9b3316c0ddd42d8950dcc8a4163f8"
+      "observations": "Reviewed candidate-facing description of role-specific resume versions.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "37c287e5da5c73afbb202ad34176222e007c8558dda2a1dfe37e55ee02dbace3"
     },
     {
       "path": "docs/PRODUCT.md",
@@ -1910,7 +1910,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "content-read plus current-dev merge reconciliation",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1922,10 +1922,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Prior dev audit: Reconciles the Stage 01 item 1.01 audit refresh with the Stage 02 item 2.06 localization correction. PR #74 was independently approved at exact SHA 2953f9124832807d3e47dfdfff95b62ed7b434a0, passed all three jobs in run 42797486814, and merged as fe79b695d00447537d5993d97ac66cec0a6e2ee5. Item 2.06 remains partial pending native-language review; its privacy acknowledgement correction and automated coverage are recorded without claiming native review.\n\nStage 04 PR #72 audit history: Re-reviewed current item 1.01 status: the prior PR head received conditional ChatGPT approval with two nonblocking suggestions; both refinements were applied in a new head, whose CI and independent review remain pending. It preserves the separate accepted S1-F014 risk and does not claim final acceptance. Follow-up item 2.05 review: inspected Stage 02 progress against canonical inventory; Stage 02 remains in progress and item 2.05 remains gated. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 evidence/status documentation; exact-head hosted CI and independent review remain pending.\n\nItem 4.05 evidence/status documentation updated; exact-head hosted CI and independent review remain pending.\n\nItem 4.05 follow-up: exact-head run 42581255959 passed on 9a1c46fc9060e30eef58475b6f0f5cdf381ecdc3; independent review is still pending. This documentation follow-up records that evidence and keeps item 4.05 partial.\n\nItem 4.05 review follow-up: fallback ChatGPT review in CareerScope Engineering Continuation at head 162a53e identified false institution attribution, reversed structured years, unsupported direct experience-duration evidence and substring source matching. The designated review thread returned Unknown error. This follow-up adds marker-constrained institutions, omits reversed structured years, labels date ranges as supporting sources, uses token-boundary evidence matching with an explicit .js alias, and documents extraction confidence separately from credential authenticity. Focused review/tests updated; new exact-head CI and designated-thread review remain pending.\nLatest correction also restricts inferred employment duration to valid ranges in the explicitly labeled experience section; education dates alone do not produce work duration.\nInstitution extraction follow-up: capture stops at the first comma, semicolon or parenthesis so trailing employment text cannot be folded into an institution even when a recognized institution marker appears.\n\nCurrent branch synchronization review: independent review identified and resolved a stale Stage 04 item 4.05 test-matrix status and duplicate canonical test references. Refreshed both file hashes after correction. Run 42811473098 was cancelled when the branch advanced; superseding run 42819440306 passed all three jobs on exact head d88dad558af82c05e4ad27585c2bbd20c34386ea. PR #72 merged to dev as 444ed255cb02a72fa543c5fdf9b65b8151c9d494; post-merge run 42821920705 is still in progress.\n\nStage 04 item 4.05 post-merge reconciliation records PR #72 merge 444ed255, current 39/328 verified inventory, and pending post-merge CI run 42821920705. Other previously changed Stage 04 statuses are partial until their own sequential reviews.",
-      "evidence": "Re-reviewed current contents and refreshed integrity hash for exact PR #77 head; 4.01 remains partial pending validation and acceptance gates. Stage 04 item 4.01 follow-up: current content and SHA-256 rechecked on PR #77 head 15f199f19caddf8b00bc400e51cbd238909e0da7; item remains partial and latest assertions are not yet validated.\n\nItem 4.01 closeout: PR #77 merged as 973082d33eaf59ede35217e34c128d074d65c46c; exact-head PR run 42865852562 passed all required jobs and post-merge run 42868494961 passed on the merge SHA. Inventory is 40/328. This documentation closeout supersedes the earlier pending-status notes above; those notes are retained as history.",
-      "reviewer": "Codex (Stage 04 item 4.01 documentation closeout)",
-      "sha256": "59035903f75c4fd92fc1d7d9d4da2fbd96cfd458c98660d536d56910daac316f"
+      "observations": "Reviewed progress wording; item 4.07 remains partial pending exact-head review and integration evidence.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "8789fc15206f0bb97ef9ccd426fa8d77717bf2240449bb5ae512d66ef097bdc7"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1966,14 +1966,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-read plus focused Stage 04 item 4.02 evidence and invariant re-review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Prior dev audit: Reconciles the Stage 01 item 1.01 audit refresh with the Stage 02 item 2.06 localization correction. PR #74 was independently approved at exact SHA 2953f9124832807d3e47dfdfff95b62ed7b434a0, passed all three jobs in run 42797486814, and merged as fe79b695d00447537d5993d97ac66cec0a6e2ee5. Item 2.06 remains partial pending native-language review; its privacy acknowledgement correction and automated coverage are recorded without claiming native review.\n\nStage 04 PR #72 audit history: Reviewed item 4.05 evidence/status closeout and verified checklist consistency against final owner approval and exact-head CI evidence. Reconciled existing stale roadmap status for item 2.06 to partial while preserving its native-language review gap. This record attests this documentation review only.\n\nCurrent branch synchronization review: independent review identified and resolved a stale Stage 04 item 4.05 test-matrix status and duplicate canonical test references. Refreshed both file hashes after correction. Run 42811473098 was cancelled when the branch advanced; superseding run 42819440306 passed all three jobs on exact head d88dad558af82c05e4ad27585c2bbd20c34386ea. PR #72 merged to dev as 444ed255cb02a72fa543c5fdf9b65b8151c9d494; post-merge run 42821920705 is still in progress.\n\nStage 04 item 4.02 documentation re-review: checked the encrypted-storage evidence, local Node 24 focused run (31/31), and roadmap traceability (328 items across 22 stages). PR #80 exact candidate eea34e5 recorded this evidence; independent ChatGPT review found the wording accurate conditional on exact-head CI. Its Quality gates job exposed stale file-audit hashes for these two documentation files; hashes are refreshed in this candidate for revalidation. Host-volume encryption remains unverified.",
-      "evidence": "Re-reviewed current contents and refreshed integrity hash for exact PR #77 head; 4.01 remains partial pending validation and acceptance gates. Stage 04 item 4.01 follow-up: current content and SHA-256 rechecked on PR #77 head 15f199f19caddf8b00bc400e51cbd238909e0da7; item remains partial and latest assertions are not yet validated.\n\nItem 4.01 final evidence: approved PR #77 head d4223c9c0012b7d5699b2ad55f5a27e7e9145e60 passed run 42865852562; merged as 973082d33eaf59ede35217e34c128d074d65c46c; post-merge run 42868494961 passed Quality and Services/integration/browser. Status is verified.",
-      "reviewer": "Codex (Stage 04 item 4.02 evidence re-review)",
-      "sha256": "016e3666b53a23e26d09cb2fb9a62ae391b15c0f820fb49e25a1b9bd147d7ea2"
+      "observations": "Reviewed test evidence mapping and remaining release gates for item 4.07.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "2b9957bbc5a05cdf12d183cdee4d9e2e601b01039580a974b96544d9be7ab5fb"
     },
     {
       "path": "docs/TESTING.md",
@@ -1990,14 +1990,14 @@
     {
       "path": "docs/TRACEABILITY.md",
       "category": "documentation",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the current traceability addition: inventories and their denominators remain separate, the owner roadmap remains the 328-item source, and the existing crosswalk points to the enforced checker and CI-run tests.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "c386745edee1ba5060402f9fe3bf1feceba9886d48913895166d7198d053454e"
+      "observations": "Reviewed requirement-to-test mapping for resume versioning.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "e86830a96ec8a5b58cae326a3d4bb30730cd596336baafaae70cd58d48abb5c4"
     },
     {
       "path": "docs/UI-VERIFICATION.md",
@@ -2398,14 +2398,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "content-read plus focused Stage 04 item 4.02 evidence and invariant re-review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Prior dev audit: Historical item 3.16 review: retains the owner checklist title and verified evidence for exact-head approval, successful CI, merge to dev, and successful post-merge gates. Current item 2.10 re-review: AI-only recovery-copy review does not waive the outstanding native Telugu and Hindi review. Item 2.10 remains partial; no translation certification is claimed.\n\nStage 04 PR #72 audit history: Reviewed item 4.05 evidence/status closeout and verified checklist consistency against final owner approval and exact-head CI evidence. Reconciled existing stale roadmap status for item 2.06 to partial while preserving its native-language review gap. This record attests this documentation review only.\n\nCurrent branch synchronization review: independent review identified and resolved a stale Stage 04 item 4.05 test-matrix status and duplicate canonical test references. Refreshed both file hashes after correction. Run 42811473098 was cancelled when the branch advanced; superseding run 42819440306 passed all three jobs on exact head d88dad558af82c05e4ad27585c2bbd20c34386ea. PR #72 merged to dev as 444ed255cb02a72fa543c5fdf9b65b8151c9d494; post-merge run 42821920705 is still in progress.\n\nSequential status correction: item 4.05 remains verified after exact-head owner acceptance and merge. Items 4.01–4.04 and 4.10 are partial because implementations exist but item-specific acceptance is pending; they were not part of the PR #72 review.\n\nStage 04 item 4.02 documentation re-review: checked the encrypted-storage evidence, local Node 24 focused run (31/31), and roadmap traceability (328 items across 22 stages). PR #80 exact candidate eea34e5 recorded this evidence; independent ChatGPT review found the wording accurate conditional on exact-head CI. Its Quality gates job exposed stale file-audit hashes for these two documentation files; hashes are refreshed in this candidate for revalidation. Host-volume encryption remains unverified.",
-      "evidence": "Re-reviewed current contents and refreshed integrity hash for exact PR #77 head; 4.01 remains partial pending validation and acceptance gates. Stage 04 item 4.01 follow-up: current content and SHA-256 rechecked on PR #77 head 15f199f19caddf8b00bc400e51cbd238909e0da7; item remains partial and latest assertions are not yet validated.\n\nItem 4.01 final evidence: PR #77 approved head d4223c9c0012b7d5699b2ad55f5a27e7e9145e60 passed run 42865852562 and merged as 973082d33eaf59ede35217e34c128d074d65c46c. Post-merge run 42868494961 passed Quality and Services/integration/browser on exact merge SHA; approved prior implementation run 42852863961 covers performance, soak, recovery and runtime/proxy image builds. Item 4.01 verified; inventory 40/328. Earlier pending notes are preserved as historical evidence.",
-      "reviewer": "Codex (Stage 04 item 4.02 evidence re-review)",
-      "sha256": "953ae6815c2d0a74d8da28ade6364da1b87ae37f25368c9bcfcfb690871e75d0"
+      "observations": "Reviewed item 4.07 remains partial with evidence and unresolved gates; no completion claim.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "20923dfad21dd5ab5b879dcd74d50a0ea6d8f851a0469a230d0ce05dd9e89dea"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -3432,6 +3432,18 @@
       "sha256": "55e3e843da5238f026a38a1b5386f97c6bcff35f01bc8580c9f152434ebd94a9"
     },
     {
+      "path": "migrations/0005_resume_versions.sql",
+      "category": "database-migration",
+      "reviewMethod": "content-read-and-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed additive version metadata migration, existing-row backfill, constraints and indexes.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "6399cbad9beff0fcbd3318187920cecaeefeaf8691a3b570bf14ea5a95ab479b"
+    },
+    {
       "path": "migrations/meta/0000_snapshot.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
@@ -3492,16 +3504,26 @@
       "sha256": ""
     },
     {
-      "path": "migrations/meta/_journal.json",
+      "path": "migrations/meta/0005_snapshot.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
       "state": "not-applicable-source",
       "concerns": [],
       "findings": [],
-      "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "observations": "Generated migration snapshot; schema integrity is validated by migration tooling and migration integration tests.",
+      "evidence": ""
+    },
+    {
+      "path": "migrations/meta/_journal.json",
+      "category": "generated-lockfile-or-snapshot",
+      "reviewMethod": "content-read-and-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed current change and its role in the resume-version implementation.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "1fdfdbd4bebb2fefae2a652410051225e435afa027214b8ecae7f4e69f74a383"
     },
     {
       "path": "package-lock.json",
@@ -4222,14 +4244,14 @@
     {
       "path": "packages/core/src/resumes.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (524 lines). Checked: every repository query is scoped by owner id and validated as a UUID; reservation takes the user row lock and a global advisory lock before the quota check (1000 uploads and 1 GiB overall, 50 uploads and 100 MiB per user); reused keys must match metadata; settlement and queueing run under fence and lease checks; deletion removes the object before the rows in one transaction and is retry-safe because the storage delete is idempotent; cancellation is claimed before the marker is written and is repeatable; the parse handler verifies the durable command and the stored upload before reading the object. Observation: deleteSettled can remove the object and then fail the commit, leaving the row. The retry removes nothing new because delete of a missing object returns. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "2ca60231831772274313dad12f7d0d7caca0ff7236430c364c450fb86629ef20"
+      "observations": "Reviewed owner-scoped group checks, parsed-series requirement, role validation and server-side version allocation.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "346f34b0fe3a799d44c1a05f0eaab773037b142fc96104e3bf7c3805269e3bee"
     },
     {
       "path": "packages/core/src/rollback.test.ts",
@@ -4322,7 +4344,7 @@
     {
       "path": "packages/core/src/schema.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -4334,10 +4356,10 @@
           "remediation": "Add a lower-case check in a migration after verifying existing data. Recorded for the next migration window; no migration is added in Stage 01 to avoid rewriting applied data."
         }
       ],
-      "observations": "Re-reviewed the full current schema delta: bytea type maps Buffer to PostgreSQL, profile_photos uses owner_id primary key and cascading users FK, and storage size has a SQL check. Existing S1-F014 email-case database constraint gap remains accurately recorded as accepted low risk, with migration deferred pending existing-data validation.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "190803e9e235cb6690c2cb34db2f1881e39cf2b4027056e41ee9083736e5f553"
+      "observations": "Reviewed resume role and lineage columns plus uniqueness constraints.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "d7c0e69e94bec81e76b3769b45097774ef1465ece94e09031ee22ba10c576d84"
     },
     {
       "path": "packages/core/src/sensitive-data.integration.test.ts",
@@ -6499,7 +6521,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "source review plus Stage 03 item 3.16 cross-account delayed-response regression",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6525,10 +6547,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the full browser suite and changed owner-switch regression. Existing coverage verifies profile-completeness success, API failure/retry, persisted profile state, and cross-account data isolation. The delayed foreign-profile response is checked against the actual foreign-owner body and expected 80% score; the response remains held through sign-out/sign-in, is released through route.fulfill, and owner A remains at 100% after render. The suite also exercises resume upload, pending/recovery and responsive states around lines 2736–2855. Earlier requestfinished/response waits timed out and a TypeScript requestAnimationFrame callback error was corrected. No remaining finding.",
-      "evidence": "Historical exact-head hosted CI run 42570381867 passed Quality gates, Services/integration/browser suites, and Production image build on db7a7df3011c344dd6a8d2dab64196287ffa787b. For Stage 04 item 4.01, hosted run 42852863961 passed browser, accessibility, keyboard and responsive checks on 964cdd9f4b2141d7d4edbd5d2f4e4d5d4d299bed, including the resume upload/recovery scenario. Local browser execution was unavailable in the earlier attempt because the worktree PostgreSQL credentials did not match the shared Docker service. Post-merge run 42868494961 passed browser, accessibility, keyboard and responsive checks on merge SHA 973082d33eaf59ede35217e34c128d074d65c46c; the resume upload/recovery scenario remained included.",
-      "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "31fb1b7ab6789a0a720d5536f7dbdb315061a8ee58783aeff9844410dd9b35e2"
+      "observations": "Reviewed browser coverage for role entry, version continuation, filtering, selection and responsive viewport behavior.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "a06f4fd151b0245fb5ba54dec328d0386c7bc40e20dfaef173ca904d279c2486"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
@@ -6661,14 +6683,14 @@
     {
       "path": "tests/integration/database.integration.test.ts",
       "category": "tests",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Prior dev audit: Re-reviewed the complete photo API integration delta: OpenAPI binary contract; unauthenticated and CSRF-denied paths; unsupported and malformed inputs; empty 204 and normalized WebP/no-store/nosniff response; two-owner read/write/delete isolation; profile data remains unchanged. Test fixtures and database cleanup use isolated synthetic accounts.\n\nStage 04 PR #72 audit history: Re-reviewed the complete photo API integration delta: OpenAPI binary contract; unauthenticated and CSRF-denied paths; unsupported and malformed inputs; empty 204 and normalized WebP/no-store/nosniff response; two-owner read/write/delete isolation; profile data remains unchanged. Test fixtures and database cleanup use isolated synthetic accounts. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 type/test fixture or assertions for bounded field-level resume extraction evidence; current local domain suite and typecheck pass.\n\nItem 4.05 follow-up test or typed fixture: bounded source evidence coverage for derived skills, titles, experience-years and education is validated; test suite and canonical test typecheck pass.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
-      "evidence": "Prior dev audit: Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "a82800e409dbb64c0eeb4e5479045188e494f83ebb28fb13f0e9008e4f6d6e9f"
+      "observations": "Reviewed migration fixture and persistence assertions for resume version metadata.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+      "sha256": "b0edc933184e36519e769294c25b3e43ab0972ef123cc797f0c653d0fdb0656f"
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",

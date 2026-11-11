@@ -817,6 +817,9 @@ function contracts(options: {
               bytes: integer(),
               contentType: text(),
               createdAt: timestamp,
+              targetRole: nullable(text({ maxLength: 80 })),
+              versionGroupId: uuid,
+              versionNumber: integer({ minimum: 1 }),
               status: uploadStatus,
               cancellable: bool,
             }),
@@ -826,14 +829,25 @@ function contracts(options: {
       ),
       { failures: [429], description: resumeDescription },
     ),
-    'POST /api/resumes': operation('Upload a PDF or DOCX as raw bytes', upload, {
-      code: 202,
-      consumes: ['application/octet-stream'],
-      body: text({ format: 'binary' }),
-      headers: object({ 'idempotency-key': key }),
-      failures: [400, 409, 413, 429, 503, 507],
-      description: resumeDescription,
-    }),
+    'POST /api/resumes': operation(
+      'Upload a PDF or DOCX as raw bytes with optional role version metadata',
+      upload,
+      {
+        code: 202,
+        consumes: ['application/octet-stream'],
+        body: text({ format: 'binary' }),
+        headers: object(
+          {
+            'idempotency-key': key,
+            'x-resume-target-role': text({ minLength: 1, maxLength: 80 }),
+            'x-resume-version-group': uuid,
+          },
+          ['idempotency-key'],
+        ),
+        failures: [400, 409, 413, 429, 503, 507],
+        description: `${resumeDescription} Optional role metadata groups resumes into owner-scoped, incrementing version series. A version upload must name an existing parsed version group and keep the same target role.`,
+      },
+    ),
     'GET /api/resumes/:id': operation(
       'Read resume upload status and parsing result',
       object({

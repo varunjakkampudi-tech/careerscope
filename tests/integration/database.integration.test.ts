@@ -1012,9 +1012,13 @@ test('global resume reservation budgets serialize across owners and preserve ret
     const seed = (count: number, bytes: number) =>
       database.pool.query(
         `
-      INSERT INTO resume_uploads (id, owner_id, idempotency_key, bucket, sha256, bytes, content_type)
-      SELECT gen_random_uuid(), $1, 'synthetic-budget-' || series, 'synthetic-resumes', $2, $3, 'application/pdf'
-      FROM generate_series(1, $4) AS series`,
+      WITH rows AS (
+        SELECT gen_random_uuid() AS id, series FROM generate_series(1, $4) AS series
+      )
+      INSERT INTO resume_uploads
+        (id, owner_id, idempotency_key, bucket, sha256, bytes, content_type, version_group_id)
+      SELECT id, $1, 'synthetic-budget-' || series, 'synthetic-resumes', $2, $3, 'application/pdf', id
+      FROM rows`,
         [owners[0], metadata.sha256, bytes, count],
       );
     await seed(999, 100);

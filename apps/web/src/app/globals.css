@@ -855,6 +855,20 @@ h3 {
   width: 100%;
   min-width: 0;
 }
+.resume-upload input[type='text'],
+.resume-upload select,
+.resume-section > label select {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
 .resume-list {
   list-style: none;
   padding: 0;

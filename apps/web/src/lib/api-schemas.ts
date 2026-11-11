@@ -261,6 +261,9 @@ const resumeListSchema = z.object({
       bytes: z.number(),
       contentType: z.string(),
       createdAt: z.string(),
+      targetRole: z.string().nullable(),
+      versionGroupId: z.string().uuid(),
+      versionNumber: z.number().int().positive(),
       status: z.string(),
       // Server decision: only then does the panel offer cancel.
       cancellable: z.boolean().optional(),

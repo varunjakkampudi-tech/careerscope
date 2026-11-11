@@ -644,6 +644,9 @@ export const resumeUploads = pgTable(
     sha256: text('sha256').notNull(),
     bytes: integer('bytes').notNull(),
     contentType: text('content_type').notNull(),
+    targetRole: text('target_role'),
+    versionGroupId: uuid('version_group_id').notNull(),
+    versionNumber: integer('version_number').notNull().default(1),
     objectVersion: text('object_version'),
     commandId: uuid('command_id').references(() => outbox.id),
     status: text('status')
@@ -657,7 +660,18 @@ export const resumeUploads = pgTable(
     uniqueIndex('resume_upload_owner_key').on(table.ownerId, table.idempotencyKey),
     uniqueIndex('resume_upload_command').on(table.commandId),
     uniqueIndex('resume_upload_owner_id').on(table.ownerId, table.id),
+    uniqueIndex('resume_upload_owner_group_version').on(
+      table.ownerId,
+      table.versionGroupId,
+      table.versionNumber,
+    ),
     index('resume_upload_owner_created').on(table.ownerId, table.createdAt, table.id),
+    index('resume_upload_owner_role_created').on(table.ownerId, table.targetRole, table.createdAt),
+    check(
+      'resume_upload_target_role_valid',
+      sql`${table.targetRole} IS NULL OR (length(btrim(${table.targetRole})) BETWEEN 1 AND 80 AND ${table.targetRole} = btrim(${table.targetRole}))`,
+    ),
+    check('resume_upload_version_number_valid', sql`${table.versionNumber} >= 1`),
     check('resume_upload_key_valid', sql`${table.idempotencyKey} ~ '^[a-zA-Z0-9_-]{8,128}$'`),
     check('resume_upload_bucket_valid', sql`${table.bucket} ~ '^[a-z][a-z0-9-]{1,61}[a-z0-9]$'`),
     check('resume_upload_sha_valid', sql`${table.sha256} ~ '^[a-f0-9]{64}$'`),
