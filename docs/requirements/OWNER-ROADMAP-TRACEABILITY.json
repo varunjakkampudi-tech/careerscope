@@ -869,7 +869,7 @@
       "externalEvidence": [
         "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
       ],
-      "gap": "Existing implementation and test evidence are present, but item-specific checklist criteria have not yet completed the sequential review and exact-commit approval gate.",
+      "gap": "Focused Node 24 extraction tests passed 10/10 and the isolated parser integration test passed 1/1 on 2026-11-11. Exact PR-head hosted CI and item-level review remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
