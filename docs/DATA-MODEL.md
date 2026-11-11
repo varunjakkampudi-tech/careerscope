@@ -7,9 +7,13 @@ application lifecycle/history records.
 
 The revisioned candidate profile JSON can retain `resumeId` and
 `resumeImportFields` when the owner explicitly accepts corrected values from a
-parsed upload. The API validates a newly selected source against the session
-owner and parsed status. These fields are historical import provenance; they
-do not claim that later profile edits remain synchronized with that resume.
+parsed upload. The API validates the selected source against the session owner
+and parsed status on every save. If a previously linked source is no longer
+available, the API clears its stale source link and field list while preserving
+the candidate's profile values. `resumeImportFields` records the candidate's
+reported selection; it is not a server-verifiable audit record proving that a
+person reviewed each field. These fields are historical import metadata and do
+not claim that later profile edits remain synchronized with that resume.
 
 Candidate application records are stored in `saved_leads`. The optional
 `application_evidence` JSON value records a candidate's own method, reported

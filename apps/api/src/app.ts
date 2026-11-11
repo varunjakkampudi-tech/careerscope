@@ -1831,6 +1831,7 @@ export async function createApp(
   app.put('/api/profile', async (request) => {
     if (!(await consumeRateLimit(request, `profile:${request.ownerId!}`, 30, 60)))
       throw new HttpError(429, 'Too many profile updates');
+    let profilePayload: unknown = request.body;
     const resumeSource = z
       .object({
         profile: z
@@ -1845,14 +1846,23 @@ export async function createApp(
     if (resumeSource.success && resumeSource.data.profile.resumeId) {
       const existing = await profiles.get(request.ownerId!);
       const resumeId = resumeSource.data.profile.resumeId;
-      if (resumeId !== existing?.profile.resumeId) {
-        const upload = await uploads.get(request.ownerId!, resumeId);
-        const parsed = await uploads.result(request.ownerId!, resumeId);
-        if (!upload || parsed?.status !== 'parsed')
+      const upload = await uploads.get(request.ownerId!, resumeId);
+      const parsed = await uploads.result(request.ownerId!, resumeId);
+      if (!upload || parsed?.status !== 'parsed') {
+        if (resumeId !== existing?.profile.resumeId)
           throw new HttpError(409, 'The selected resume is no longer available for review');
+        // Retain the candidate's profile values while dropping stale, unverified source metadata.
+        profilePayload = {
+          ...(request.body as Record<string, unknown>),
+          profile: {
+            ...resumeSource.data.profile,
+            resumeId: null,
+            resumeImportFields: [],
+          },
+        };
       }
     }
-    return profiles.save(request.ownerId!, request.body);
+    return profiles.save(request.ownerId!, profilePayload);
   });
   // A separate endpoint from PUT /api/profile on purpose: enabling or disabling
   // unattended discovery is not an edit to the revisioned profile data, so it

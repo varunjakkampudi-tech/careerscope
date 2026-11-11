@@ -142,6 +142,31 @@ test(
           (await app.inject({ url: '/api/profile', headers: other.headers })).json().profile,
           null,
         );
+
+        await database.pool.query('DELETE FROM resume_results WHERE upload_id = $1', [upload.id]);
+        const updatedWithoutAvailableSource = await app.inject({
+          method: 'PUT',
+          url: '/api/profile',
+          headers: owner.headers,
+          payload: {
+            revision: accepted.json().revision,
+            profile: {
+              ...accepted.json().profile,
+              candidate: { ...accepted.json().profile.candidate, location: 'Pune, India' },
+            },
+          },
+        });
+        assert.equal(
+          updatedWithoutAvailableSource.statusCode,
+          200,
+          updatedWithoutAvailableSource.body,
+        );
+        assert.equal(
+          updatedWithoutAvailableSource.json().profile.candidate.location,
+          'Pune, India',
+        );
+        assert.equal(updatedWithoutAvailableSource.json().profile.resumeId, null);
+        assert.deepEqual(updatedWithoutAvailableSource.json().profile.resumeImportFields, []);
       } finally {
         await app.close();
       }

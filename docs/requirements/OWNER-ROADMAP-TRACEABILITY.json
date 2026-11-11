@@ -997,7 +997,7 @@
         "apps/web/src/lib/locale.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Candidate-side field correction, explicit selection, owner-scoped parsed-source validation, and saved accepted-field provenance are implemented on codex/stage04-item408-manual-corrections. Typecheck, formatting, 25 focused profile/locale tests, and 937 domain tests passed locally. PostgreSQL API integration and browser acceptance were not run because the retained local database volume rejected this worktree's generated password; the volume was preserved. Exact-head hosted CI, independent review, merge, and post-merge verification remain pending. Telugu/Hindi strings are AI-assisted without native-speaker review.",
+      "gap": "Candidate-side field correction and explicit selection are implemented on codex/stage04-item408-manual-corrections. Every save validates an attached resume against the session owner and parsed state; if a previously linked source is no longer available, the API clears its source link and field list while preserving profile values. resumeImportFields is candidate-reported selection metadata, not a server-verifiable audit record proving human review. Local typecheck, full npm run check (374 passed, 3 skipped), 9 focused locale tests, and file-audit checks passed. The latest hosted run failed on an accessible-name mismatch that is corrected on the current branch; exact-head hosted CI and independent review remain pending. Telugu/Hindi strings are AI-assisted without native-speaker review.",
       "scopeDisposition": "in-scope"
     },
     {

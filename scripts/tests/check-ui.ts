@@ -3025,7 +3025,7 @@ try {
         `${engine}: fields were accepted implicitly`,
       );
       await page
-        .getByLabel('Correct Full name', { exact: true })
+        .getByLabel('Correct Full Name', { exact: true })
         .fill('Corrected Synthetic Candidate');
       const acceptedName = page.getByLabel('Use this corrected value in my profile draft').nth(0);
       await acceptedName.focus();
