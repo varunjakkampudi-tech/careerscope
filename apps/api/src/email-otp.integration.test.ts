@@ -156,6 +156,32 @@ test(
           deliveredBeforeSignup,
           'disabled registration must not send a verification code',
         );
+
+        const rejectedVerification = await verifyCode(
+          registrationDisabled,
+          'new@example.test',
+          '000000',
+          { intent: 'sign-up' },
+        );
+        assert.equal(rejectedVerification.statusCode, 404);
+        assert.equal(rejectedVerification.json().message, 'Registration unavailable');
+        assert.equal(rejectedVerification.headers['set-cookie'], undefined);
+        assert.equal(
+          (await database.pool.query('SELECT id FROM users WHERE email = $1', ['new@example.test']))
+            .rowCount,
+          0,
+          'disabled registration must not create an account during verification',
+        );
+        const disabledEmailHash = hashOtpEmail('new@example.test', secret);
+        assert.equal(
+          (
+            await database.pool.query('SELECT id FROM email_otp_challenges WHERE email_hash = $1', [
+              disabledEmailHash,
+            ])
+          ).rowCount,
+          0,
+          'disabled registration must not persist an OTP challenge',
+        );
       } finally {
         await registrationDisabled.close();
       }
