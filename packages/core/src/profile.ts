@@ -9,6 +9,7 @@ import {
   preferencesSchema,
   applicationSchema,
   type DerivedResume,
+  resumeImportFieldsSchema,
 } from '@careerscope/shared';
 import type { Database } from './database.js';
 import { Conflict } from './errors.js';
@@ -42,6 +43,8 @@ export const writableProfileSchema = z
     preferences: z.unknown(),
     application: z.unknown(),
     accessibility: z.unknown().optional(),
+    resumeId: z.string().uuid().nullable().default(null),
+    resumeImportFields: resumeImportFieldsSchema.default([]),
   })
   .strict()
   .transform((input, context) => {
@@ -49,11 +52,17 @@ export const writableProfileSchema = z
     const preferences = fields.preferences.safeParse(input.preferences);
     const application = fields.application.safeParse(input.application);
     const accessibility = fields.accessibility.safeParse(input.accessibility ?? {});
+    const resumeImportFields = resumeImportFieldsSchema.safeParse(input.resumeImportFields);
+    const resumeId = z.string().uuid().nullable().safeParse(input.resumeId);
     if (
       !candidate.success ||
       !preferences.success ||
       !application.success ||
-      !accessibility.success
+      !accessibility.success ||
+      !resumeImportFields.success ||
+      !resumeId.success ||
+      (resumeId.data === null && resumeImportFields.data.length > 0) ||
+      (resumeId.data !== null && resumeImportFields.data.length === 0)
     ) {
       context.addIssue({ code: 'custom', message: 'Invalid candidate profile' });
       return z.NEVER;
@@ -63,6 +72,8 @@ export const writableProfileSchema = z
       preferences: preferences.data,
       application: application.data,
       accessibility: accessibility.data,
+      resumeId: resumeId.data,
+      resumeImportFields: resumeImportFields.data,
     };
   });
 

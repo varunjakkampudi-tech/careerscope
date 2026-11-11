@@ -29,6 +29,35 @@ test('shared navigation and reminder messages are present for each supported lan
   assert.notEqual(localizedText('en', 'jobs'), localizedText('hi', 'jobs'));
 });
 
+test('resume correction review copy is localized and names its selected source', () => {
+  const keys = [
+    'resumeReviewHeading',
+    'resumeReviewDescription',
+    'resumeReviewNotice',
+    'resumeReviewUseField',
+    'resumeReviewSource',
+    'resumeReviewApply',
+    'resumeReviewCancel',
+    'resumeReviewSelectedSource',
+    'resumeReviewField_fullName',
+    'resumeReviewField_techStack',
+    'resumeReviewField_education',
+    'resumeReviewField_experience',
+  ] as const;
+  for (const key of keys) {
+    const translations = interfaceLocales.map((locale) => localizedText(locale, key));
+    assert.ok(
+      translations.every((value) => value.trim().length > 0),
+      key,
+    );
+    assert.equal(new Set(translations).size, interfaceLocales.length, key);
+  }
+  assert.equal(
+    localizedValue('en', 'resumeReviewSelectedSource', 'synthetic.docx'),
+    'Selected resume: synthetic.docx',
+  );
+});
+
 test('privacy notice acknowledgement copy does not imply acceptance in supported languages', () => {
   const label = (locale: (typeof interfaceLocales)[number]) =>
     [

@@ -3003,12 +3003,65 @@ try {
       page.once('dialog', (dialog) => dialog.accept());
       await thirdVersionRow.getByRole('button', { name: 'Delete resume', exact: true }).click();
       await thirdVersionRow.waitFor({ state: 'detached' });
+      await page
+        .getByRole('heading', { name: 'Review extracted information', exact: true })
+        .waitFor();
+      for (const width of [320, 375, 480, 768, 1280]) {
+        await page.setViewportSize({ width, height: 900 });
+        assert.equal(
+          await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+          true,
+          `${engine}: resume correction review overflows at ${width}px`,
+        );
+      }
+      await page.setViewportSize({ width: 320, height: 900 });
+      const applyResumeFields = page.getByRole('button', {
+        name: 'Use selected fields in profile draft',
+        exact: true,
+      });
+      assert.equal(
+        await applyResumeFields.isDisabled(),
+        true,
+        `${engine}: fields were accepted implicitly`,
+      );
+      await page
+        .getByLabel('Correct Full name', { exact: true })
+        .fill('Corrected Synthetic Candidate');
+      const acceptedName = page.getByLabel('Use this corrected value in my profile draft').nth(0);
+      await acceptedName.focus();
+      await page.keyboard.press('Space');
+      assert.equal(
+        await acceptedName.isChecked(),
+        true,
+        `${engine}: correction checkbox is not keyboard operable`,
+      );
+      await page
+        .getByLabel('Correct Skills', { exact: true })
+        .fill('React\nTypeScript\nAccessible interfaces');
+      const skillsReview = page.getByRole('group', { name: 'Skills', exact: true });
+      await skillsReview.getByLabel('Use this corrected value in my profile draft').check();
+      await applyResumeFields.focus();
+      await page.keyboard.press('Enter');
+      assert.equal(
+        await page.getByLabel('Full Name', { exact: true }).inputValue(),
+        'Corrected Synthetic Candidate',
+        `${engine}: corrected resume field did not populate the profile draft`,
+      );
+      assert.match(
+        await page.locator('textarea[name="techStack"]').inputValue(),
+        /Accessible interfaces/,
+      );
       const account = await database.pool.query<{ id: string }>(
         'SELECT id FROM users WHERE email = $1',
         [accountEmail],
       );
+      const parsedResume = await database.pool.query<{ id: string }>(
+        `SELECT id FROM resume_uploads WHERE owner_id = $1 AND status = 'parsed'
+         ORDER BY created_at DESC LIMIT 1`,
+        [account.rows[0]!.id],
+      );
+      assert.ok(parsedResume.rows[0]?.id, `${engine}: parsed resume fixture is missing`);
       assert.equal(await new ProfileRepository(database).get(account.rows[0]!.id), null);
-      await page.getByLabel('Full Name', { exact: true }).fill('Synthetic Candidate');
       // First-time profile creation uses guided onboarding. Verify step
       // validation focus, back-navigation preservation, and the actual final
       // submit control before checking the persisted profile.
@@ -3057,7 +3110,6 @@ try {
         `${engine}: invalid job-preferences step did not focus its first missing field`,
       );
       await page.locator('textarea[name="titles"]').fill('React Engineer');
-      await page.locator('textarea[name="techStack"]').fill('React, TypeScript');
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
       await page.getByText('Step 4 of 5: Application details', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
@@ -3162,6 +3214,14 @@ try {
         'the reviewed profile must exist before the preparation screen is driven',
       );
       assert.ok(reviewed?.profile.preferences.techStack.includes('React'));
+      assert.ok(reviewed?.profile.preferences.techStack.includes('Accessible interfaces'));
+      assert.equal(reviewed?.profile.candidate.fullName, 'Corrected Synthetic Candidate');
+      assert.equal(reviewed?.profile.resumeId, parsedResume.rows[0]!.id);
+      assert.deepEqual(
+        reviewed?.profile.resumeImportFields.slice().sort(),
+        ['fullName', 'techStack'].sort(),
+        `${engine}: saved import provenance does not match individually accepted fields`,
+      );
       assert.equal(reviewed?.profile.candidate.segment, 'experienced');
       // The sidebar is hidden below 768px and the screenshot loop above left
       // the viewport at 320px, so widen before navigating through it.

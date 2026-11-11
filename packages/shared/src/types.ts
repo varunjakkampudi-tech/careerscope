@@ -11,6 +11,7 @@ import type {
   DerivedResume,
   MatchBreakdown,
   Preferences,
+  ResumeImportField,
   Salary,
 } from './schemas.js';
 
@@ -230,6 +231,8 @@ export type WritableProfile = {
   preferences: Preferences;
   application: ApplicationDetails;
   accessibility: { reducedMotion: boolean };
+  resumeId: string | null;
+  resumeImportFields: ResumeImportField[];
 };
 
 /** Compile-time equality check used by core to keep its Zod-derived types in step with the ones above. */

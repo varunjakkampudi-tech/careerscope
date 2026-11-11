@@ -63,6 +63,31 @@ test('profile reuses domain defaults without inventing qualifications', () => {
   assert.deepEqual(parsed.candidate.projects, []);
   assert.equal(parsed.candidate.graduationYear, undefined);
   assert.deepEqual(parsed.accessibility, { reducedMotion: false });
+  assert.equal(parsed.resumeId, null);
+  assert.deepEqual(parsed.resumeImportFields, []);
+});
+
+test('resume import provenance binds a saved resume identifier to distinct accepted fields', () => {
+  const resumeId = '00000000-0000-4000-8000-000000000123';
+  const imported = writableProfileSchema.parse({
+    ...syntheticProfile,
+    resumeId,
+    resumeImportFields: ['fullName', 'techStack'],
+  });
+  assert.equal(imported.resumeId, resumeId);
+  assert.deepEqual(imported.resumeImportFields, ['fullName', 'techStack']);
+
+  for (const invalid of [
+    { resumeId: null, resumeImportFields: ['fullName'] },
+    { resumeId, resumeImportFields: [] },
+    { resumeId, resumeImportFields: ['techStack', 'techStack'] },
+    { resumeId, resumeImportFields: ['accountRole'] },
+  ]) {
+    assert.equal(
+      writableProfileSchema.safeParse({ ...syntheticProfile, ...invalid }).success,
+      false,
+    );
+  }
 });
 
 test('an omitted experience value remains unknown in saved profile contracts', () => {

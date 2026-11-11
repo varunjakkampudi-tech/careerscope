@@ -130,13 +130,35 @@ export const applicationUpdateSchema = z.object({
   yearsOfExperience: z.number().min(0).max(60).nullable().optional(),
 });
 
+/** Fields a candidate explicitly accepted from a parsed resume into the profile draft. */
+export const resumeImportFieldSchema = z.enum([
+  'fullName',
+  'email',
+  'phone',
+  'location',
+  'linkedin',
+  'github',
+  'portfolio',
+  'techStack',
+  'titles',
+  'yearsOfExperience',
+  'education',
+  'experience',
+]);
+export type ResumeImportField = z.infer<typeof resumeImportFieldSchema>;
+export const resumeImportFieldsSchema = z
+  .array(resumeImportFieldSchema)
+  .max(12)
+  .refine((fields) => new Set(fields).size === fields.length);
+
 /** The full stored profile: candidate, preferences and application details plus the linked resume. */
 export const profileSchema = z.object({
   id: z.string().optional(),
   candidate: candidateSchema,
   preferences: preferencesSchema,
   application: applicationSchema,
-  resumeId: z.string().nullable().default(null),
+  resumeId: z.string().uuid().nullable().default(null),
+  resumeImportFields: resumeImportFieldsSchema.default([]),
   updatedAt: z.string().optional(),
 });
 
@@ -150,7 +172,8 @@ export const profileUpdateSchema = z.object({
   candidate: candidateSchema.partial().optional(),
   preferences: preferencesSchema.partial().optional(),
   application: applicationUpdateSchema.optional(),
-  resumeId: z.string().nullable().optional(),
+  resumeId: z.string().uuid().nullable().optional(),
+  resumeImportFields: resumeImportFieldsSchema.optional(),
 });
 export type ProfileUpdate = z.infer<typeof profileUpdateSchema>;
 

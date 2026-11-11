@@ -5,6 +5,12 @@ includes owner-scoped profiles/preferences, encrypted resume metadata and
 processing state, provider jobs/provenance, saved jobs, searches, and explicit
 application lifecycle/history records.
 
+The revisioned candidate profile JSON can retain `resumeId` and
+`resumeImportFields` when the owner explicitly accepts corrected values from a
+parsed upload. The API validates a newly selected source against the session
+owner and parsed status. These fields are historical import provenance; they
+do not claim that later profile edits remain synchronized with that resume.
+
 Candidate application records are stored in `saved_leads`. The optional
 `application_evidence` JSON value records a candidate's own method, reported
 timestamp, confirmation, source and confidence; it is not an employer/ATS

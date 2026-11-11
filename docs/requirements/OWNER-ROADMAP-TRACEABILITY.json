@@ -982,11 +982,22 @@
       "currentStatus": "partial",
       "evidence": [
         "apps/web/src/components/resume-panel.tsx",
-        "apps/web/src/components/profile-editor.tsx"
+        "apps/web/src/components/resume-proposal-review.tsx",
+        "apps/web/src/components/resume-proposal-review.module.css",
+        "apps/web/src/components/profile-editor.tsx",
+        "apps/web/src/lib/api-schemas.ts",
+        "apps/api/src/app.ts",
+        "packages/core/src/profile.ts",
+        "packages/shared/src/schemas.ts"
       ],
-      "tests": ["scripts/tests/check-ui.ts"],
+      "tests": [
+        "scripts/tests/check-ui.ts",
+        "packages/core/src/profile.test.ts",
+        "apps/api/src/resumes.integration.test.ts",
+        "apps/web/src/lib/locale.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Parsed fields can seed an editable profile draft, but the extracted resume text is read-only and there is no per-field correction/acceptance workflow tied to the parsed result.",
+      "gap": "Candidate-side field correction, explicit selection, owner-scoped parsed-source validation, and saved accepted-field provenance are implemented on codex/stage04-item408-manual-corrections. Typecheck, formatting, 25 focused profile/locale tests, and 937 domain tests passed locally. PostgreSQL API integration and browser acceptance were not run because the retained local database volume rejected this worktree's generated password; the volume was preserved. Exact-head hosted CI, independent review, merge, and post-merge verification remain pending. Telugu/Hindi strings are AI-assisted without native-speaker review.",
       "scopeDisposition": "in-scope"
     },
     {

@@ -19,6 +19,7 @@ import {
   SOURCE_LABELS,
   isJobSourcePermittedForCandidateDiscovery,
   jobFeedbackReasonSchema,
+  resumeImportFieldsSchema,
   type SourceId,
 } from '@careerscope/shared';
 import { registerOpenApi } from './openapi.js';
@@ -1830,6 +1831,27 @@ export async function createApp(
   app.put('/api/profile', async (request) => {
     if (!(await consumeRateLimit(request, `profile:${request.ownerId!}`, 30, 60)))
       throw new HttpError(429, 'Too many profile updates');
+    const resumeSource = z
+      .object({
+        profile: z
+          .object({
+            resumeId: z.string().uuid().nullable(),
+            resumeImportFields: resumeImportFieldsSchema,
+          })
+          .passthrough(),
+      })
+      .passthrough()
+      .safeParse(request.body);
+    if (resumeSource.success && resumeSource.data.profile.resumeId) {
+      const existing = await profiles.get(request.ownerId!);
+      const resumeId = resumeSource.data.profile.resumeId;
+      if (resumeId !== existing?.profile.resumeId) {
+        const upload = await uploads.get(request.ownerId!, resumeId);
+        const parsed = await uploads.result(request.ownerId!, resumeId);
+        if (!upload || parsed?.status !== 'parsed')
+          throw new HttpError(409, 'The selected resume is no longer available for review');
+      }
+    }
     return profiles.save(request.ownerId!, request.body);
   });
   // A separate endpoint from PUT /api/profile on purpose: enabling or disabling

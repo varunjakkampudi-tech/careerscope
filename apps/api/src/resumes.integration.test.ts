@@ -85,6 +85,70 @@ const storageStub = (overrides: Partial<NonNullable<Storage>> = {}): NonNullable
 });
 
 test(
+  'profile import provenance is owner-scoped, requires a parsed resume, and persists accepted fields',
+  { timeout: 60_000 },
+  async () => {
+    await withFixture(async ({ database, uploads, owner, other }) => {
+      const app = await createApp(database, origin, async () => true, {
+        testAccess: { mode: 'disabled' },
+        resumeStorage: storageStub(),
+      });
+      try {
+        const upload = await uploads.reserve(owner.id, 'profile-import-source', bucket, metadata);
+        await uploads.queueStoredUpload(owner.id, upload.id, 'synthetic-version');
+        await database.pool.query(
+          `INSERT INTO resume_results (upload_id, owner_id, command_id, status, parsed)
+           VALUES ($1, $2, $3, 'parsed', $4::jsonb)`,
+          [
+            upload.id,
+            owner.id,
+            (await uploads.get(owner.id, upload.id))!.commandId,
+            JSON.stringify({
+              text: 'Example Candidate React Engineer',
+              derived: { techStack: ['React'], yearsOfExperience: 3 },
+            }),
+          ],
+        );
+        const profile = {
+          candidate: {
+            fullName: 'Example Candidate',
+            email: 'owner@example.test',
+            location: 'Hyderabad',
+          },
+          preferences: { titles: ['React Engineer'], techStack: ['React'] },
+          application: {},
+          resumeId: upload.id,
+          resumeImportFields: ['fullName', 'techStack'],
+        };
+        const accepted = await app.inject({
+          method: 'PUT',
+          url: '/api/profile',
+          headers: owner.headers,
+          payload: { revision: 0, profile },
+        });
+        assert.equal(accepted.statusCode, 200, accepted.body);
+        assert.equal(accepted.json().profile.resumeId, upload.id);
+        assert.deepEqual(accepted.json().profile.resumeImportFields, ['fullName', 'techStack']);
+
+        const forged = await app.inject({
+          method: 'PUT',
+          url: '/api/profile',
+          headers: other.headers,
+          payload: { revision: 0, profile },
+        });
+        assert.equal(forged.statusCode, 409);
+        assert.equal(
+          (await app.inject({ url: '/api/profile', headers: other.headers })).json().profile,
+          null,
+        );
+      } finally {
+        await app.close();
+      }
+    });
+  },
+);
+
+test(
   'F-021: the authenticated upload endpoint queues bounded PDF and DOCX bytes idempotently and keeps them owner-scoped',
   { timeout: 60_000 },
   async () => {
