@@ -505,10 +505,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "aec5f29e94b09e66076739d9f51b4f40941b3601da29f5ca8dbada0fbdf694f8"
+      "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends. Also reviewed owner-scoped resume import integration coverage and corrected the synthetic parsed result to satisfy the production parser schema (format and minimum text length), so the test exercises route ownership and provenance rather than failing fixture validation.",
+      "evidence": "4.07 focused lifecycle, migration integration, and Chromium browser evidence was run locally. For 4.08, PR #83 initial exact-head run 43069985875 failed because the synthetic parsed payload omitted format and had too-short text; the fixture is corrected and exact-head CI remains required.",
+      "reviewer": "Codex (CareerScope Stage 04 resume verification)",
+      "sha256": "pending-rehash-after-rebase"
     },
     {
       "path": "apps/api/src/session-logout.integration.test.ts",

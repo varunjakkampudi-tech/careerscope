@@ -104,7 +104,8 @@ test(
             owner.id,
             (await uploads.get(owner.id, upload.id))!.commandId,
             JSON.stringify({
-              text: 'Example Candidate React Engineer',
+              format: 'docx',
+              text: 'Example Candidate React Engineer with relevant software experience',
               derived: { techStack: ['React'], yearsOfExperience: 3 },
             }),
           ],
