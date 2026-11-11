@@ -6543,7 +6543,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "current exact-diff and durable outbox assertion review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6569,10 +6569,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed browser coverage for continuing from version 1 after version 2 deletion without reusing its number.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "807095a3266af7e21da51983084eaca5da09d534ac4e9c010c3d6333432a4fc3"
+      "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
+      "evidence": "PR #82 exact head 179bc1645052d41235d3bec1e854fab0b29c6a15 exposed the pending-only queue race in run 43061560382. This change fixes the assertion at its durable source; local typecheck passes, and hosted exact-head CI after this commit remains required.",
+      "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
+      "sha256": "e040ae1ea4ea64f9707a43d7d7684a542b8fd16625304fd0bc5c73621f56e344"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",

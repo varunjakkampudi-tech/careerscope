@@ -12,6 +12,7 @@ import { chromium, firefox, webkit } from 'playwright';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import {
   Auth,
+  commandSchema,
   testUsers,
   Database,
   passwordHash,
@@ -3702,9 +3703,16 @@ try {
       ]);
       await page.getByText('Search in progress', { exact: true }).waitFor();
       assert.equal((await progressStream).status(), 200);
-      const startedCommand = (await database.unpublished()).find(
-        (entry) => entry.command.aggregateId === submittedId,
-      )!.command;
+      // The publisher can mark the durable outbox row as published before the
+      // browser assertion runs. Read by aggregate id instead of depending on
+      // it still appearing in the pending-only unpublished() queue.
+      const startedCommandResult = await database.pool.query<{ command: unknown }>(
+        `SELECT command FROM outbox_events
+         WHERE command->>'aggregateId' = $1 AND command->>'type' = 'search.collect'
+         ORDER BY created_at DESC LIMIT 1`,
+        [submittedId],
+      );
+      const startedCommand = commandSchema.parse(startedCommandResult.rows[0]?.command);
       const startedFence = await database.claim(startedCommand.id);
       assert.ok(startedFence);
       assert.equal(await database.startSearch(startedCommand, startedFence), true);
