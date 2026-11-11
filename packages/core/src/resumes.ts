@@ -238,29 +238,52 @@ export class ResumeUploadRepository {
       let versionGroupId: string = id;
       let versionNumber = 1;
       if (requestedGroup) {
-        const latest = await client.query<ResumeUploadRecord>(
-          `SELECT ${columns} FROM resume_uploads
-           WHERE owner_id = $1 AND version_group_id = $2
-           ORDER BY version_number DESC LIMIT 1 FOR UPDATE`,
+        const group = await client.query<{ targetRole: string; nextVersionNumber: number }>(
+          `SELECT target_role AS "targetRole", next_version_number AS "nextVersionNumber"
+           FROM resume_version_groups WHERE owner_id = $1 AND id = $2 FOR UPDATE`,
           [ownerId, requestedGroup],
         );
-        const previous = latest.rows[0];
-        const settled = previous
-          ? await client.query(
-              `SELECT 1 FROM resume_results WHERE owner_id = $1 AND upload_id = $2 AND status = 'parsed'`,
-              [ownerId, previous.id],
-            )
-          : null;
+        const pending = await client.query(
+          `SELECT 1 FROM resume_uploads upload
+           LEFT JOIN resume_results result
+             ON result.upload_id = upload.id AND result.owner_id = upload.owner_id
+           WHERE upload.owner_id = $1 AND upload.version_group_id = $2
+             AND (upload.status IN ('uploading', 'cancelling')
+               OR (upload.status = 'queued' AND result.upload_id IS NULL))
+           LIMIT 1`,
+          [ownerId, requestedGroup],
+        );
+        const latestParsed = await client.query<{ targetRole: string }>(
+          `SELECT upload.target_role AS "targetRole" FROM resume_uploads upload
+           JOIN resume_results result
+             ON result.upload_id = upload.id AND result.owner_id = upload.owner_id
+           WHERE upload.owner_id = $1 AND upload.version_group_id = $2
+             AND upload.status = 'queued' AND result.status = 'parsed'
+           ORDER BY upload.version_number DESC LIMIT 1 FOR UPDATE OF upload`,
+          [ownerId, requestedGroup],
+        );
         if (
-          !previous ||
-          previous.status !== 'queued' ||
-          !settled?.rowCount ||
-          previous.targetRole?.toLowerCase() !== targetRole?.toLowerCase()
+          !group.rowCount ||
+          group.rows[0]!.targetRole.toLowerCase() !== targetRole?.toLowerCase() ||
+          !latestParsed.rowCount ||
+          latestParsed.rows[0]!.targetRole.toLowerCase() !== targetRole?.toLowerCase() ||
+          pending.rowCount
         ) {
           throw new Conflict('Resume version series is unavailable', 'RESUME_VERSION_CONFLICT');
         }
-        versionGroupId = previous.versionGroupId;
-        versionNumber = previous.versionNumber + 1;
+        versionGroupId = requestedGroup;
+        versionNumber = group.rows[0]!.nextVersionNumber;
+        await client.query(
+          `UPDATE resume_version_groups SET next_version_number = next_version_number + 1
+           WHERE owner_id = $1 AND id = $2`,
+          [ownerId, requestedGroup],
+        );
+      } else if (targetRole) {
+        await client.query(
+          `INSERT INTO resume_version_groups (owner_id, id, target_role)
+           VALUES ($1, $2, $3)`,
+          [ownerId, id, targetRole],
+        );
       }
       const inserted = await client.query<ResumeUploadRecord>(
         `INSERT INTO resume_uploads

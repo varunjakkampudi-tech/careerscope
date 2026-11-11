@@ -691,6 +691,27 @@ export const resumeUploads = pgTable(
   ],
 );
 
+/** Persistent counters prevent a deleted or rejected upload from reusing a version number. */
+export const resumeVersionGroups = pgTable(
+  'resume_version_groups',
+  {
+    ownerId: uuid('owner_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    id: uuid('id').notNull(),
+    targetRole: text('target_role').notNull(),
+    nextVersionNumber: integer('next_version_number').notNull().default(2),
+  },
+  (table) => [
+    primaryKey({ columns: [table.ownerId, table.id] }),
+    check(
+      'resume_version_group_role_valid',
+      sql`length(btrim(${table.targetRole})) BETWEEN 1 AND 80 AND ${table.targetRole} = btrim(${table.targetRole})`,
+    ),
+    check('resume_version_group_next_number_valid', sql`${table.nextVersionNumber} >= 2`),
+  ],
+);
+
 export const interviewRoundDocuments = pgTable(
   'interview_round_documents',
   {

@@ -256,8 +256,11 @@ Preparation is deterministic. External AI elaboration has been removed.
 `Idempotency-Key` header, and returns `202` with the upload id and status. An
 optional `X-Resume-Target-Role` stores a candidate-chosen label (up to 80
 characters). `X-Resume-Version-Group` starts a new version in an existing
-owner-scoped series and requires the same label and a successfully parsed
-current version; the server allocates the next version number. It
+owner-scoped series and requires the same label, no active upload, and at least
+one successfully parsed version. A rejected, cancelled, or deleted later
+version does not block continuation from the latest parsed version; a
+persistent series counter ensures the next number is never reused. The server
+allocates that number transactionally. It
 returns `507` when storage capacity is exhausted, and `409` if the upload record
 changed underneath it. A reused idempotency key with different content returns
 `409` with code `IDEMPOTENCY_KEY_REUSED`. Client disconnect aborts the in-flight

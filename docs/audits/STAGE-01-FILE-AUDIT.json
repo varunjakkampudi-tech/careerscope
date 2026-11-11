@@ -505,10 +505,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed F-025 coverage for owner isolation, role consistency, sequential versions and idempotent retry.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "3fc3bc1be2c48f08775e3ccf23cf5c60b651f4607b679f724923d16aa339c998"
+      "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+      "sha256": "aec5f29e94b09e66076739d9f51b4f40941b3601da29f5ca8dbada0fbdf694f8"
     },
     {
       "path": "apps/api/src/session-logout.integration.test.ts",
@@ -1241,10 +1241,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed candidate role labeling, parsed-series continuation, filtering and exact-version selection flow.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "d6deacd394604940e88faf6e4d1591a21f737322ab5568f3329ad0bc3a25f95e"
+      "observations": "Reviewed version picker eligibility: latest parsed resume remains selectable after terminal failures/deletions; active uploads block continuation; label says which version continuation starts from.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+      "sha256": "993d12ec7d56be30e4ed6514c6fb22cdf89f53cdf08e3d014a043f8610f37719"
     },
     {
       "path": "apps/web/src/components/saved-leads.module.css",
@@ -1708,10 +1708,10 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Reviewed documented resume upload and listing fields against the API implementation.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "0552a978654a01ef7f2441283595c6b0580cc90d882c58fddd281e5e7f113630"
+      "observations": "Reviewed documented resume-version eligibility and persistent allocation behavior against the implementation.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+      "sha256": "0368522c5ecd80a87ce647f7e0f3859464308bb204fc73cfc1f4339f82a9343f"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1784,10 +1784,10 @@
           "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
         }
       ],
-      "observations": "Reviewed version lineage, owner scoping, uniqueness and existing-row backfill documentation.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "ed2ef685b89438df6962ee119e634865e2c3f4e03d29370da1a26882c30731da"
+      "observations": "Reviewed group counter table, counter backfill, latest-parsed continuation and no-reuse semantics.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+      "sha256": "63294de61a5fafe40af7f3a6f8667d1750c70a9df636bf1fe7c3c2e7e0b163db"
     },
     {
       "path": "docs/FOUNDATIONS.md",
@@ -1922,10 +1922,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed progress wording; item 4.07 remains partial pending exact-head review and integration evidence.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "8789fc15206f0bb97ef9ccd426fa8d77717bf2240449bb5ae512d66ef097bdc7"
+      "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+      "sha256": "8f6e594cdf7e4345c9ac00055faca7605da125fca39dbc2decd2d0b5ac53ae8e"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1970,10 +1970,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed test evidence mapping and remaining release gates for item 4.07.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "2b9957bbc5a05cdf12d183cdee4d9e2e601b01039580a974b96544d9be7ab5fb"
+      "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+      "sha256": "0501d849b139f394a7434158b327132b8b684e5811db505c27843ec42d3f564f"
     },
     {
       "path": "docs/TESTING.md",
@@ -2402,10 +2402,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed item 4.07 remains partial with evidence and unresolved gates; no completion claim.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "20923dfad21dd5ab5b879dcd74d50a0ea6d8f851a0469a230d0ce05dd9e89dea"
+      "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+      "sha256": "1c607b9dbad6a8666ea351b7e993412a0e332d0b4653de7cc4f9daf31b375590"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -3444,6 +3444,18 @@
       "sha256": "6399cbad9beff0fcbd3318187920cecaeefeaf8691a3b570bf14ea5a95ab479b"
     },
     {
+      "path": "migrations/0006_resume_version_group_counters.sql",
+      "category": "database-migration",
+      "reviewMethod": "content-read-and-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed owner-scoped persistent counter table and backfill from existing version groups.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+      "sha256": "d35552c187eb6dc3a885ee028bc960803ac1fbf015a1de240f8871b8fa03d216"
+    },
+    {
       "path": "migrations/meta/0000_snapshot.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
@@ -3514,16 +3526,26 @@
       "evidence": ""
     },
     {
+      "path": "migrations/meta/0006_snapshot.json",
+      "category": "generated-lockfile-or-snapshot",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Generated Drizzle snapshot for migration 0006; schema integrity is checked against schema.ts and migration tests.",
+      "evidence": ""
+    },
+    {
       "path": "migrations/meta/_journal.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current change and its role in the resume-version implementation.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "1fdfdbd4bebb2fefae2a652410051225e435afa027214b8ecae7f4e69f74a383"
+      "observations": "Reviewed generated migration journal entry for resume version group counters.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+      "sha256": "f12ac6eb8e1e812a5f8891939117bfa46de80d7ddc90f2a92584511a41f3e855"
     },
     {
       "path": "package-lock.json",
@@ -4248,10 +4270,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed owner-scoped group checks, parsed-series requirement, role validation and server-side version allocation.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "346f34b0fe3a799d44c1a05f0eaab773037b142fc96104e3bf7c3805269e3bee"
+      "observations": "Reviewed transaction-locked persistent allocation, owner and role scope, parsed-anchor eligibility, active-upload exclusion and terminal-version continuation.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+      "sha256": "494d37efaba470275e1cba78183c5ab7ef8545b01387c33cc6ca109c1a26ea64"
     },
     {
       "path": "packages/core/src/rollback.test.ts",
@@ -4356,10 +4378,10 @@
           "remediation": "Add a lower-case check in a migration after verifying existing data. Recorded for the next migration window; no migration is added in Stage 01 to avoid rewriting applied data."
         }
       ],
-      "observations": "Reviewed resume role and lineage columns plus uniqueness constraints.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "d7c0e69e94bec81e76b3769b45097774ef1465ece94e09031ee22ba10c576d84"
+      "observations": "Reviewed resume version group table, owner composite primary key, role constraint and next-number check.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+      "sha256": "25d91936158d9f95f3e6d5827fb1be9a00a18e103b813ebea15e07dbe8f3208e"
     },
     {
       "path": "packages/core/src/sensitive-data.integration.test.ts",
@@ -6547,10 +6569,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed browser coverage for role entry, version continuation, filtering, selection and responsive viewport behavior.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "a06f4fd151b0245fb5ba54dec328d0386c7bc40e20dfaef173ca904d279c2486"
+      "observations": "Reviewed browser coverage for continuing from version 1 after version 2 deletion without reusing its number.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+      "sha256": "807095a3266af7e21da51983084eaca5da09d534ac4e9c010c3d6333432a4fc3"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",
@@ -6695,14 +6717,14 @@
     {
       "path": "tests/integration/migrations.integration.test.ts",
       "category": "tests",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed fresh-database isolation, journal application order, schema-vs-database comparison, repeatable migrator, snapshot/journal checks, and row preservation across all active migrations; corrected stale checklist numbering and test comment.",
-      "evidence": "Owner Stage 01 item 1.04 review on codex/stage01-item-104-postgres-drizzle-architecture; hosted migration and integration steps passed on the unchanged base source tree in CI run 42234042673.",
-      "reviewer": "Codex (owner Stage 01 item 1.04)",
-      "sha256": "08a4407690672c75c45ba8db4aa215337a8a05210607ae94ec1bee85c8de976e"
+      "observations": "Reviewed migration counter backfill regression against pre-0006 version rows.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+      "sha256": "5775d5e853949728fa129bdbc67219209fe9a9d0eab2e7ffe369b8edd89ca65e"
     },
     {
       "path": "tests/integration/query-budget.integration.test.ts",

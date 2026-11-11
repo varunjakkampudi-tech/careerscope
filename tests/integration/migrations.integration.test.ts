@@ -270,6 +270,35 @@ test(
   },
 );
 
+test('resume version group counters backfill the next number from existing uploads', async () => {
+  const journal = await readJournal();
+  const groupId = randomUUID();
+  const secondId = randomUUID();
+  await freshDatabase(async (pool) => {
+    await applyEntries(pool, journal.entries.slice(0, 6));
+    const ownerId = randomUUID();
+    await pool.query(`INSERT INTO users (id, email, password_hash) VALUES ($1, $2, 'synthetic')`, [
+      ownerId,
+      `${ownerId}@example.test`,
+    ]);
+    await pool.query(
+      `INSERT INTO resume_uploads
+       (id, owner_id, idempotency_key, bucket, sha256, bytes, content_type, target_role, version_group_id, version_number)
+       VALUES
+       ($1, $3, 'migration-version-one', 'synthetic-resumes', $4, 100, 'application/pdf', 'Data Analyst', $1, 1),
+       ($2, $3, 'migration-version-four', 'synthetic-resumes', $4, 100, 'application/pdf', 'Data Analyst', $1, 4)`,
+      [groupId, secondId, ownerId, 'a'.repeat(64)],
+    );
+    await applyEntries(pool, [journal.entries[6]!]);
+    const counter = await pool.query<{ nextVersionNumber: number }>(
+      `SELECT next_version_number AS "nextVersionNumber" FROM resume_version_groups
+       WHERE owner_id = $1 AND id = $2`,
+      [ownerId, groupId],
+    );
+    assert.equal(counter.rows[0]?.nextVersionNumber, 5);
+  });
+});
+
 test('schema.ts produces no diff against the committed snapshot', async () => {
   const snapshots = (await readdir(join(migrationsFolder, 'meta')))
     .filter((file) => file.endsWith('_snapshot.json'))

@@ -953,6 +953,7 @@
       "currentStatus": "partial",
       "evidence": [
         "migrations/0005_resume_versions.sql",
+        "migrations/0006_resume_version_group_counters.sql",
         "packages/core/src/resumes.ts",
         "apps/api/src/app.ts",
         "apps/web/src/components/resume-panel.tsx",
@@ -961,10 +962,11 @@
       "tests": [
         "packages/core/src/resumes.integration.test.ts",
         "apps/api/src/resumes.integration.test.ts",
+        "tests/integration/migrations.integration.test.ts",
         "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "Implementation and focused local checks are present. Exact-head CI, independent item review, and post-merge verification remain pending; item is not verified.",
+      "gap": "Follow-up implementation adds persistent counters and covers rejected, cancelled, deleted, and concurrent versions. Local F-025, migration integration, aggregate check, build, and updated Chromium resume continuation journey pass. Exact-head CI, independent review, and post-merge verification remain pending; item is not verified.",
       "scopeDisposition": "in-scope"
     },
     {

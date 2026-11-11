@@ -2959,6 +2959,49 @@ try {
         await versionRow.getByRole('button', { name: 'Delete resume', exact: true }).click();
         await versionRow.waitFor({ state: 'detached' });
       }
+      await page.waitForFunction(
+        (id) =>
+          Array.from(document.querySelectorAll<HTMLSelectElement>('select'))
+            .flatMap((select) => Array.from(select.options))
+            .some(
+              (option) =>
+                option.value === id && /continue from version 1/i.test(option.textContent ?? ''),
+            ),
+        firstVersion.versionGroupId,
+        { timeout: 45000 },
+      );
+      await page.getByLabel(/Add as a new version of/).selectOption(firstVersion.versionGroupId);
+      await page.getByLabel('Resume file (PDF or DOCX, up to 5 MiB)').setInputFiles({
+        name: 'synthetic-v3-after-delete.docx',
+        mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        buffer: await archive.generateAsync({ type: 'nodebuffer' }),
+      });
+      const thirdVersionUpload = page.waitForResponse(
+        (response) =>
+          response.url().endsWith('/api/resumes') && response.request().method() === 'POST',
+      );
+      await page.getByRole('button', { name: 'Upload resume', exact: true }).click();
+      assert.equal((await thirdVersionUpload).status(), 202);
+      const thirdVersionList = await (await page.request.get(`${origin}/api/resumes`)).json();
+      const thirdVersion = thirdVersionList.items.find(
+        (item: { targetRole: string | null; versionNumber: number }) =>
+          item.targetRole === 'Software Engineer' && item.versionNumber === 3,
+      );
+      assert.ok(
+        thirdVersion,
+        `${engine}: deleting version 2 must not block or renumber the next append`,
+      );
+      await markBrowserResumeParsed(thirdVersion.id);
+      await page
+        .getByRole('status')
+        .filter({ hasText: 'Resume ready for review.' })
+        .waitFor({ timeout: 45000 });
+      const thirdVersionRow = page
+        .locator('.resume-list li')
+        .filter({ hasText: 'Software Engineer · Version 3' });
+      page.once('dialog', (dialog) => dialog.accept());
+      await thirdVersionRow.getByRole('button', { name: 'Delete resume', exact: true }).click();
+      await thirdVersionRow.waitFor({ state: 'detached' });
       const account = await database.pool.query<{ id: string }>(
         'SELECT id FROM users WHERE email = $1',
         [accountEmail],

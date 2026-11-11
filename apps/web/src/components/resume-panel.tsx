@@ -77,17 +77,32 @@ export default function ResumePanel({
       query.state.data && ['queued', 'uploading'].includes(query.state.data.status) ? 3000 : false,
   });
   const latestRoleVersions = useMemo(() => {
-    const latest = new Map<
+    const groups = new Map<
       string,
-      { versionGroupId: string; targetRole: string | null; versionNumber: number; status: string }
+      {
+        latestParsed?: {
+          versionGroupId: string;
+          targetRole: string | null;
+          versionNumber: number;
+          status: string;
+        };
+        pending: boolean;
+      }
     >();
     for (const item of resumes.data?.items ?? []) {
       if (!item.targetRole) continue;
-      const current = latest.get(item.versionGroupId);
-      if (!current || item.versionNumber > current.versionNumber)
-        latest.set(item.versionGroupId, item);
+      const group = groups.get(item.versionGroupId) ?? { pending: false };
+      if (['uploading', 'cancelling', 'queued'].includes(item.status)) group.pending = true;
+      if (
+        item.status === 'parsed' &&
+        (!group.latestParsed || item.versionNumber > group.latestParsed.versionNumber)
+      )
+        group.latestParsed = item;
+      groups.set(item.versionGroupId, group);
     }
-    return [...latest.values()].filter((item) => item.status === 'parsed');
+    return [...groups.values()]
+      .filter((group) => !group.pending && group.latestParsed)
+      .map((group) => group.latestParsed!);
   }, [resumes.data?.items]);
   const roleLabels = useMemo(
     () =>
@@ -233,7 +248,7 @@ export default function ResumePanel({
                 <option value="">Start a new series</option>
                 {latestRoleVersions.map((item) => (
                   <option key={item.versionGroupId} value={item.versionGroupId}>
-                    {item.targetRole} · current version {item.versionNumber}
+                    {item.targetRole} · continue from version {item.versionNumber}
                   </option>
                 ))}
               </select>
