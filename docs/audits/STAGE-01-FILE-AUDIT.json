@@ -322,9 +322,9 @@
         }
       ],
       "observations": "Expanded owner roadmap item 2.07 coverage for consecutive access and refresh token rotation, old-token invalidation, and session-family revocation on replay. Follow-up owner item 2.05 audit adds disabled-signup verification assertions for 404 rejection, no session cookie, no account, and no OTP challenge; item 2.05 remains legally gated.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.07 on codex/stage02-item-207-session-rotation; focused PostgreSQL/Redis integration test passed; SHA-256 records current bytes. Follow-up item 2.05 test change reviewed on PR #79 exact head a866c1685cb6b10d10e7394f3efdf633ca698964; hosted CI rerun pending after audit refresh.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.07 on codex/stage02-item-207-session-rotation; focused PostgreSQL/Redis integration test passed; SHA-256 records current bytes. Follow-up item 2.05 test change reviewed on PR #79; the stale audit hash was corrected and the test was formatted after hosted CI findings; final exact-head CI is pending.",
       "reviewer": "Codex (owner Stage 02 items 2.07 and 2.05 audit follow-up)",
-      "sha256": "d59887ee050dc39a5539a3263b7a91aa5453a5a5ca29ab631d4d02580e61c688"
+      "sha256": "08f0d8f5426bb9461e373673083315db33e08cbb9abe820afd62d2389a03f001"
     },
     {
       "path": "apps/api/src/error-handler.test.ts",

@@ -167,21 +167,17 @@ test(
         assert.equal(rejectedVerification.json().message, 'Registration unavailable');
         assert.equal(rejectedVerification.headers['set-cookie'], undefined);
         assert.equal(
-          (
-            await database.pool.query('SELECT id FROM users WHERE email = $1', [
-              'new@example.test',
-            ])
-          ).rowCount,
+          (await database.pool.query('SELECT id FROM users WHERE email = $1', ['new@example.test']))
+            .rowCount,
           0,
           'disabled registration must not create an account during verification',
         );
         const disabledEmailHash = hashOtpEmail('new@example.test', secret);
         assert.equal(
           (
-            await database.pool.query(
-              'SELECT id FROM email_otp_challenges WHERE email_hash = $1',
-              [disabledEmailHash],
-            )
+            await database.pool.query('SELECT id FROM email_otp_challenges WHERE email_hash = $1', [
+              disabledEmailHash,
+            ])
           ).rowCount,
           0,
           'disabled registration must not persist an OTP challenge',
