@@ -321,10 +321,10 @@
           "remediation": "The test now parses REDIS_URL and requires localhost, 127.0.0.1, or ::1 before connecting."
         }
       ],
-      "observations": "Expanded owner roadmap item 2.07 coverage for consecutive access and refresh token rotation, old-token invalidation, and session-family revocation on replay.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.07 on codex/stage02-item-207-session-rotation; focused PostgreSQL/Redis integration test passed; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.07)",
-      "sha256": "07ae00c788f277207c59753000d032547dc86cc6ff8df0e7491bfaea79669d55"
+      "observations": "Expanded owner roadmap item 2.07 coverage for consecutive access and refresh token rotation, old-token invalidation, and session-family revocation on replay. Follow-up owner item 2.05 audit adds disabled-signup verification assertions for 404 rejection, no session cookie, no account, and no OTP challenge; item 2.05 remains legally gated.",
+      "evidence": "Reviewed and updated for owner roadmap item 2.07 on codex/stage02-item-207-session-rotation; focused PostgreSQL/Redis integration test passed; SHA-256 records current bytes. Follow-up item 2.05 test change reviewed on PR #79 exact head a866c1685cb6b10d10e7394f3efdf633ca698964; hosted CI rerun pending after audit refresh.",
+      "reviewer": "Codex (owner Stage 02 items 2.07 and 2.05 audit follow-up)",
+      "sha256": "d59887ee050dc39a5539a3263b7a91aa5453a5a5ca29ab631d4d02580e61c688"
     },
     {
       "path": "apps/api/src/error-handler.test.ts",
