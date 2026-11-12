@@ -3089,6 +3089,11 @@ try {
         await page.locator('textarea[name="techStack"]').inputValue(),
         /Accessible interfaces/,
       );
+      await page.getByRole('button', { name: /Software Engineer · Version 1/ }).click();
+      await page
+        .getByRole('status')
+        .filter({ hasText: 'Resume ready for review.' })
+        .waitFor({ timeout: 45000 });
       const replaceDraftPrompt = page.waitForEvent('dialog');
       const replaceDraftClick = page
         .getByRole('button', { name: 'Review profile draft', exact: true })

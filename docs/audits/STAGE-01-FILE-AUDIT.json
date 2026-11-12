@@ -6793,10 +6793,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "The shared manual parser fixture for resume versions 2 and 3 now includes the same Synthetic Candidate name as version 1. This gives the explicit correction review panel consistent candidate fields throughout the combined versioning and correction journey. Earlier findings and run failures remain in append-only history; item 4.08 remains partial.",
-      "evidence": "Run 43267484171 on exact SHA 3996a6964c50f583b785ca6def00c5e74f2b6e8e passed Quality gates and integration checks but the browser failed when corrected Full Name was absent from the manually seeded version 2/3 result. The fixture now includes fullName; new exact-head CI and review are pending.",
-      "reviewer": "Codex (Stage 04 item 4.08 browser fixture follow-up)",
-      "sha256": "95a36c20824d77d4f8de39ef740ee150bf9fa6a4e514992885717399803cb1fa",
+      "observations": "After deleting version 3, the browser journey now explicitly selects remaining version 1 before exercising the unsaved draft replacement confirmation, because deletion clears the selected upload by design. Parsed test fixtures for all versions contain candidate name and skills; item 4.08 remains partial.",
+      "evidence": "Run 43268819804 on exact SHA f2dd213a20a8b7497c721a795bf82f487ed4432e passed Quality gates and the browser flow through correction validation/application, then timed out on Review profile draft because deletion had cleared selection. Follow-up reselects version 1 before that assertion. New exact-head workflow_dispatch CI is pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 browser flow follow-up)",
+      "sha256": "54c5d972752c2b49246de42ac0104e523b35bd4ac3a18ed13832aed79fd46880",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -6845,6 +6845,12 @@
           "evidence": "Run 43266114717 on exact SHA e19221009259f937471554065839f4df994389b0 passed Quality gates and PostgreSQL/Redis integration but failed browser acceptance because the test cancelled the correction panel before later steps that assert it remains open. New full workflow CI will be run on this follow-up revision.",
           "reviewer": "Codex (Stage 04 item 4.08 browser flow follow-up)",
           "sha256": "d7f417a9ada42585182841ea27e303f5d1ecf9d1237edc8c521ab9a7f32d6efd"
+        },
+        {
+          "observations": "The shared manual parser fixture for resume versions 2 and 3 now includes the same Synthetic Candidate name as version 1. This gives the explicit correction review panel consistent candidate fields throughout the combined versioning and correction journey. Earlier findings and run failures remain in append-only history; item 4.08 remains partial.",
+          "evidence": "Run 43267484171 on exact SHA 3996a6964c50f583b785ca6def00c5e74f2b6e8e passed Quality gates and integration checks but the browser failed when corrected Full Name was absent from the manually seeded version 2/3 result. The fixture now includes fullName; new exact-head CI and review are pending.",
+          "reviewer": "Codex (Stage 04 item 4.08 browser fixture follow-up)",
+          "sha256": "95a36c20824d77d4f8de39ef740ee150bf9fa6a4e514992885717399803cb1fa"
         }
       ]
     },
