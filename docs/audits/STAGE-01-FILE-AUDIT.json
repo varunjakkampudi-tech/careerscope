@@ -6763,10 +6763,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made.",
-      "evidence": "Stage 04 item 4.11 working branch; focused tests, typecheck, web lint, formatting, and production build run locally. Exact-head hosted CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.11)",
-      "sha256": "e61516e88459c0173fbc592c1a0665d2192065efafa5ef7f1e54c65b789adfc9",
+      "observations": "Reviewed the Stage 04 item 4.11 settlement-filter delta: only explicitly tagged Next router prefetches from an earlier route epoch are eligible for exclusion across engines; ordinary requests and active-route prefetches remain in the barrier. The second search-detail assertion also passes the request prefetch marker into the shared predicate.",
+      "evidence": "Stage 04 item 4.11 abandoned-prefetch CI follow-up on 68b1ad1; focused unit tests pass. Exact-head hosted CI remains in progress.",
+      "reviewer": "Codex (Stage 04 item 4.11 CI follow-up)",
+      "sha256": "6e4484ffe5a6f2292b71a63391ace42dfccd36145ee8112b2e250cdabe1bf19e",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -6779,6 +6779,12 @@
           "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "d32dab0fbf925bb7b7a4650421a58f4c93583090ac5d2426e65ab1ec1d921043"
+        },
+        {
+          "observations": "Reviewed the Stage 04 item 4.11 settlement-filter delta: only explicitly tagged Next router prefetches from an earlier route epoch are eligible for exclusion across engines; ordinary requests and active-route prefetches remain in the barrier. The second search-detail assertion also passes the request prefetch marker into the shared predicate.",
+          "evidence": "Reviewed the exact Stage 04 item 4.11 request-settlement diff on commit 68b1ad1; focused scripts/tests/ui-requests.test.ts passed 6/6, Prettier and git diff --check passed. Exact-head hosted CI is in progress; this entry records review scope and does not claim the whole browser suite passed.",
+          "reviewer": "Codex (Stage 04 item 4.11 CI follow-up)",
+          "sha256": "e61516e88459c0173fbc592c1a0665d2192065efafa5ef7f1e54c65b789adfc9"
         }
       ]
     },
@@ -6845,10 +6851,18 @@
           "remediation": "Replaced the path fixture with the synthetic candidate@example.test identity."
         }
       ],
-      "observations": "Re-reviewed complete tests after Stage 03 item 3.13 regression update. Cover route epochs, method/resource/engine/path allowlists, including prior-route Chromium search detail reads while current-route and non-Chromium requests remain strict; same-origin path normalization, dynamic/query redaction and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed.",
-      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "cb3ce3fd9bf8c860e4bb28a0598cf6dd28ae7ff6212fda6851f60f43896c61ed"
+      "observations": "Reviewed the focused tests for the abandoned-prefetch allowance. They verify earlier-route Firefox prefetches are excluded while active-route prefetches and writes remain counted. Focused test file passed 6/6 on the working tree.",
+      "evidence": "Stage 04 item 4.11 abandoned-prefetch CI follow-up on 68b1ad1; focused unit tests pass. Exact-head hosted CI remains in progress.",
+      "reviewer": "Codex (Stage 04 item 4.11 CI follow-up)",
+      "sha256": "3e48c5bb44730bdb51bb7c7dc7ac7f29f853a26b1dd64a40152cdea29ab12f85",
+      "history": [
+        {
+          "observations": "Reviewed the focused tests for the abandoned-prefetch allowance. They verify earlier-route Firefox prefetches are excluded while active-route prefetches and writes remain counted. Focused test file passed 6/6 on the working tree.",
+          "evidence": "Reviewed the exact Stage 04 item 4.11 request-settlement diff on commit 68b1ad1; focused scripts/tests/ui-requests.test.ts passed 6/6, Prettier and git diff --check passed. Exact-head hosted CI is in progress; this entry records review scope and does not claim the whole browser suite passed.",
+          "reviewer": "Codex (Stage 04 item 4.11 CI follow-up)",
+          "sha256": "cb3ce3fd9bf8c860e4bb28a0598cf6dd28ae7ff6212fda6851f60f43896c61ed"
+        }
+      ]
     },
     {
       "path": "scripts/tests/ui-requests.ts",
@@ -6857,10 +6871,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.",
-      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "4d95c21eb0bbe1ca0139c7b3c262fbaa13ebad23d02b81d80a258271a1580e84"
+      "observations": "Reviewed the helper change for abandoned Next router prefetches. The allowance requires GET, an allowed fetch/script/image type, a prior route epoch and explicit prefetch marker (or the pre-existing Chromium stale-read allowance). Current-route requests remain counted. Focused tests passed 6/6 on the working tree.",
+      "evidence": "Stage 04 item 4.11 abandoned-prefetch CI follow-up on 68b1ad1; focused unit tests pass. Exact-head hosted CI remains in progress.",
+      "reviewer": "Codex (Stage 04 item 4.11 CI follow-up)",
+      "sha256": "1b301a5ee559d8c18719042337502d271693ea9420fa80d09f0d284e32dbcf15",
+      "history": [
+        {
+          "observations": "Reviewed the helper change for abandoned Next router prefetches. The allowance requires GET, an allowed fetch/script/image type, a prior route epoch and explicit prefetch marker (or the pre-existing Chromium stale-read allowance). Current-route requests remain counted. Focused tests passed 6/6 on the working tree.",
+          "evidence": "Reviewed the exact Stage 04 item 4.11 request-settlement diff on commit 68b1ad1; focused scripts/tests/ui-requests.test.ts passed 6/6, Prettier and git diff --check passed. Exact-head hosted CI is in progress; this entry records review scope and does not claim the whole browser suite passed.",
+          "reviewer": "Codex (Stage 04 item 4.11 CI follow-up)",
+          "sha256": "4d95c21eb0bbe1ca0139c7b3c262fbaa13ebad23d02b81d80a258271a1580e84"
+        }
+      ]
     },
     {
       "path": "scripts/tests/visual-baselines/sign-in-desktop.png",
