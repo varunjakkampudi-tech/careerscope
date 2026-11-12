@@ -2746,7 +2746,7 @@ try {
       );
       archive.file(
         'word/document.xml',
-        '<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Synthetic Candidate</w:t></w:r></w:p><w:p><w:r><w:t>React and TypeScript developer with experience building accessible web applications.</w:t></w:r></w:p></w:body></w:document>',
+        '<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Synthetic Candidate</w:t></w:r></w:p><w:p><w:r><w:t>TECHNICAL SKILLS</w:t></w:r></w:p><w:p><w:r><w:t>React, TypeScript, Accessible interfaces</w:t></w:r></w:p></w:body></w:document>',
       );
       await page.getByLabel('Target role (optional)', { exact: true }).fill('Software Engineer');
       await page.getByLabel('Resume file (PDF or DOCX, up to 5 MiB)').setInputFiles({
