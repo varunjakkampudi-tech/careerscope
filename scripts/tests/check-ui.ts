@@ -2939,9 +2939,9 @@ try {
         `SELECT result.parsed FROM resume_results result
          JOIN resume_uploads upload ON upload.id = result.upload_id
          JOIN users ON users.id = upload.owner_id
-         WHERE users.email = $1 AND result.status = 'parsed'
-         ORDER BY upload.created_at DESC LIMIT 1`,
-        [accountEmail],
+         WHERE upload.id = $1 AND result.status = 'parsed'
+         LIMIT 1`,
+        [firstVersion.id],
       );
       assert.equal(
         parserResult.rows[0]?.parsed.derived?.fullName,
