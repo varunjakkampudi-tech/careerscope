@@ -2971,7 +2971,12 @@ try {
           });
       }
       await page.getByRole('button', { name: 'Review profile draft', exact: true }).click();
-      assert.match(await page.locator('textarea[name="techStack"]').inputValue(), /React/);
+      await page
+        .getByRole('heading', { name: 'Review extracted information', exact: true })
+        .waitFor();
+      assert.match(await page.getByLabel('Correct Skills', { exact: true }).inputValue(), /React/);
+      await page.getByRole('button', { name: 'Cancel review', exact: true }).click();
+      await page.getByLabel('Full Name', { exact: true }).waitFor();
       for (const versionNumber of [2]) {
         const versionRow = page
           .locator('.resume-list li')

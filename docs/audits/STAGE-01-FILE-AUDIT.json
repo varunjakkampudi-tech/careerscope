@@ -6793,10 +6793,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the real-parser browser fixture correction: the synthetic DOCX now has an explicit TECHNICAL SKILLS section with React and TypeScript, matching what the derivation pipeline requires to populate the Skills draft. The prior browser failure reflected an underspecified fixture, not a product behavior defect. Item 4.08 remains partial; exact-head CI and final independent review are pending.",
-      "evidence": "Run 43261565866 on SHA 20440a1f9ca52e0476fa31009ace2613555918e5 passed Quality gates and production image build plus PostgreSQL/Redis integration, but browser acceptance failed because the synthetic DOCX prose produced no techStack field. The follow-up fixture explicitly labels skills. Run typecheck, format:check, and traceability:check passed locally; exact-head CI is pending.",
-      "reviewer": "Codex (Stage 04 item 4.08 browser fixture follow-up)",
-      "sha256": "b343ddf9e485a99b4669a7bc2fe565e6090be18cefe12ab11023d77dd1e208fb",
+      "observations": "Updated the combined browser journey for the current explicit resume review flow: after opening a parsed draft, it verifies the candidate-facing corrected Skills value and cancels review before continuing. The parser fixture has a labeled TECHNICAL SKILLS section and the original upload uses the real parser. Item 4.08 remains partial; exact-head CI and independent review are pending.",
+      "evidence": "Run 43263755927 on SHA aeaa996b2e8a387b9f2d2b11d50a11397e08854c passed Quality gates, production image build, PostgreSQL/Redis integration, pool budget and configuration checks, but browser acceptance still expected the legacy direct-to-profile behavior after Review profile draft. This follow-up asserts the current correction review flow. Exact-head CI is pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 browser flow follow-up)",
+      "sha256": "b15acae53e26d83a67e6bade1c458cbef2c66f547ce67414e631752415ee4487",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -6827,6 +6827,12 @@
           "evidence": "Run 43257367648 on SHA 6ec5e88023469f7eb926966041cf0990873e751e exposed an assertion selecting a later parsed upload. Run 43259110649 on SHA 2a09cc0dee8e822be1dd70ef0dc4a1a193519ce4 still failed because its first-version fixture was manually seeded without derived.fullName. The current revision uses the actual resume.parse queue for the original upload; new exact-head CI and final review remain pending.",
           "reviewer": "Codex (Stage 04 item 4.08 browser follow-up)",
           "sha256": "b2838b1f3a4c9af6fe7c99c298bda5d4ae80e55f4d63320be1c3aef751b622d5"
+        },
+        {
+          "observations": "Reviewed the real-parser browser fixture correction: the synthetic DOCX now has an explicit TECHNICAL SKILLS section with React and TypeScript, matching what the derivation pipeline requires to populate the Skills draft. The prior browser failure reflected an underspecified fixture, not a product behavior defect. Item 4.08 remains partial; exact-head CI and final independent review are pending.",
+          "evidence": "Run 43261565866 on SHA 20440a1f9ca52e0476fa31009ace2613555918e5 passed Quality gates and production image build plus PostgreSQL/Redis integration, but browser acceptance failed because the synthetic DOCX prose produced no techStack field. The follow-up fixture explicitly labels skills. Run typecheck, format:check, and traceability:check passed locally; exact-head CI is pending.",
+          "reviewer": "Codex (Stage 04 item 4.08 browser fixture follow-up)",
+          "sha256": "b343ddf9e485a99b4669a7bc2fe565e6090be18cefe12ab11023d77dd1e208fb"
         }
       ]
     },
