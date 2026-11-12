@@ -207,9 +207,10 @@ export default function ResumeProposalReview({
                     type="checkbox"
                     checked={accepted[field.id] ?? false}
                     onChange={(event) => {
+                      const checked = event.currentTarget.checked;
                       setAccepted((current) => ({
                         ...current,
-                        [field.id]: event.currentTarget.checked,
+                        [field.id]: checked,
                       }));
                       onDirty();
                     }}
@@ -223,9 +224,10 @@ export default function ResumeProposalReview({
                     rows={Math.min(Math.max(value.split('\n').length, 2), 6)}
                     value={value}
                     onChange={(event) => {
+                      const correctedValue = event.currentTarget.value;
                       setValues((current) => ({
                         ...current,
-                        [field.id]: event.currentTarget.value,
+                        [field.id]: correctedValue,
                       }));
                       onDirty();
                     }}
@@ -240,9 +242,10 @@ export default function ResumeProposalReview({
                     step={field.kind === 'number' ? 0.5 : undefined}
                     value={value}
                     onChange={(event) => {
+                      const correctedValue = event.currentTarget.value;
                       setValues((current) => ({
                         ...current,
-                        [field.id]: event.currentTarget.value,
+                        [field.id]: correctedValue,
                       }));
                       onDirty();
                     }}

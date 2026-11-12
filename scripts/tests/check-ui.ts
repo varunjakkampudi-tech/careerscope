@@ -2933,6 +2933,21 @@ try {
           .filter({ hasText: 'Resume ready for review.' })
           .waitFor({ timeout: 45000 });
       }
+      const parserResult = await database.pool.query<{
+        parsed: { derived?: { fullName?: string } };
+      }>(
+        `SELECT result.parsed FROM resume_results result
+         JOIN resume_uploads upload ON upload.id = result.upload_id
+         JOIN users ON users.id = upload.owner_id
+         WHERE users.email = $1 AND result.status = 'parsed'
+         ORDER BY upload.created_at DESC LIMIT 1`,
+        [accountEmail],
+      );
+      assert.equal(
+        parserResult.rows[0]?.parsed.derived?.fullName,
+        'Synthetic Candidate',
+        `${engine}: isolated parser did not persist the synthetic candidate name`,
+      );
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });
         const resumeOverflow = await page.locator('.resume-section').evaluate((element) => ({
@@ -3027,7 +3042,9 @@ try {
       await page
         .getByLabel('Correct Full Name', { exact: true })
         .fill('Corrected Synthetic Candidate');
-      const acceptedName = page.getByLabel('Use this corrected value in my profile draft').nth(0);
+      const acceptedName = page
+        .getByRole('group', { name: 'Full Name', exact: true })
+        .getByRole('checkbox');
       await acceptedName.focus();
       await page.keyboard.press('Space');
       assert.equal(
@@ -3052,10 +3069,13 @@ try {
         /Accessible interfaces/,
       );
       const replaceDraftPrompt = page.waitForEvent('dialog');
-      await page.getByRole('button', { name: 'Review profile draft', exact: true }).click();
+      const replaceDraftClick = page
+        .getByRole('button', { name: 'Review profile draft', exact: true })
+        .click();
       const replaceDraftDialog = await replaceDraftPrompt;
       assert.equal(replaceDraftDialog.message(), 'Replace unsaved edits with the resume draft?');
       await replaceDraftDialog.accept();
+      await replaceDraftClick;
       await page
         .getByRole('heading', { name: 'Review extracted information', exact: true })
         .waitFor();
@@ -3066,8 +3086,10 @@ try {
         [accountEmail],
       );
       const parsedResume = await database.pool.query<{ id: string }>(
-        `SELECT id FROM resume_uploads WHERE owner_id = $1 AND status = 'parsed'
-         ORDER BY created_at DESC LIMIT 1`,
+        `SELECT upload.id FROM resume_uploads upload
+         JOIN resume_results result ON result.upload_id = upload.id
+         WHERE upload.owner_id = $1 AND result.status = 'parsed'
+         ORDER BY upload.created_at DESC LIMIT 1`,
         [account.rows[0]!.id],
       );
       assert.ok(parsedResume.rows[0]?.id, `${engine}: parsed resume fixture is missing`);
@@ -3090,7 +3112,7 @@ try {
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
       assert.equal(
         await page.evaluate(() => (document.activeElement as HTMLInputElement | null)?.name),
-        'email',
+        'fullName',
         `${engine}: invalid contact step did not focus its first missing field`,
       );
       await page.getByLabel('Full Name', { exact: true }).fill('Saved Synthetic Candidate');
@@ -3121,6 +3143,7 @@ try {
         `${engine}: invalid job-preferences step did not focus its first missing field`,
       );
       await page.locator('textarea[name="titles"]').fill('React Engineer');
+      await page.locator('textarea[name="techStack"]').fill('React');
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
       await page.getByText('Step 4 of 5: Application details', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Continue', exact: true }).click();

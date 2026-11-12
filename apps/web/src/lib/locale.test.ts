@@ -56,6 +56,12 @@ test('resume correction review copy is localized and names its selected source',
     localizedValue('en', 'resumeReviewSelectedSource', 'synthetic.docx'),
     'Selected resume: synthetic.docx',
   );
+  assert.equal(localizedValue('en', 'resumeReviewCorrectField', 'Full Name'), 'Correct Full Name');
+  assert.equal(
+    localizedValue('te', 'resumeReviewCorrectField', 'పూర్తి పేరు'),
+    'పూర్తి పేరు సరిచేయండి',
+  );
+  assert.equal(localizedValue('hi', 'resumeReviewCorrectField', 'पूरा नाम'), 'पूरा नाम सुधारें');
 });
 
 test('privacy notice acknowledgement copy does not imply acceptance in supported languages', () => {
