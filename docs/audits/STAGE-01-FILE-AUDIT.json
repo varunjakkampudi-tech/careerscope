@@ -1922,16 +1922,22 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated item 4.07 status with the two durable outbox search-command lookups, the prior exact-head CI failures, and the pending exact-head rerun and independent review.",
-      "evidence": "Run 43173577319 on SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d passed the image build, failed Quality gates on the stale scripts/tests/check-ui.ts audit hash, and failed browser acceptance at a second unpublished-queue lookup. The refreshed test hash and both durable outbox lookups are included; run the full exact-head CI before acceptance.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "d5ceb78b7de653f64d617f2de47850ac85645b57b600cf5ff35d52988d3d17a3",
+      "observations": "Updated item 4.07 exact-head hosted CI evidence; item remains partial pending independent review and post-merge verification.",
+      "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
+      "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
+      "sha256": "163991b76a46b5cee698343d42d736b589374423e8eca95529f55ecce34e073b",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
           "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
           "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
           "sha256": "8f6e594cdf7e4345c9ac00055faca7605da125fca39dbc2decd2d0b5ac53ae8e"
+        },
+        {
+          "observations": "Updated item 4.07 status with the two durable outbox search-command lookups, the prior exact-head CI failures, and the pending exact-head rerun and independent review.",
+          "evidence": "Run 43173577319 on SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d passed the image build, failed Quality gates on the stale scripts/tests/check-ui.ts audit hash, and failed browser acceptance at a second unpublished-queue lookup. The refreshed test hash and both durable outbox lookups are included; run the full exact-head CI before acceptance.",
+          "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+          "sha256": "d5ceb78b7de653f64d617f2de47850ac85645b57b600cf5ff35d52988d3d17a3"
         }
       ]
     },
@@ -1978,16 +1984,22 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated 4.07 browser failure evidence and durable outbox correction mapping; hosted exact-head CI and independent review remain pending.",
-      "evidence": "Run 43173577319 passed the production image build but quality failed on stale audit hash; browser failed at the four-source search command lookup. Both search assertions now read durable outbox records by aggregate id/type and parse commandSchema.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "a275b0914b53270209283ec907cdc9cbeed8d949fea44e19cbf62d2031ea9e13",
+      "observations": "Updated item 4.07 exact-head hosted CI evidence; item remains partial pending independent review and post-merge verification.",
+      "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
+      "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
+      "sha256": "3ea4af0af90b41558ec9c0fca9dc522ed0e8941b4d49834566de484b0d631e99",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
           "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
           "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
           "sha256": "0501d849b139f394a7434158b327132b8b684e5811db505c27843ec42d3f564f"
+        },
+        {
+          "observations": "Updated 4.07 browser failure evidence and durable outbox correction mapping; hosted exact-head CI and independent review remain pending.",
+          "evidence": "Run 43173577319 passed the production image build but quality failed on stale audit hash; browser failed at the four-source search command lookup. Both search assertions now read durable outbox records by aggregate id/type and parse commandSchema.",
+          "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+          "sha256": "a275b0914b53270209283ec907cdc9cbeed8d949fea44e19cbf62d2031ea9e13"
         }
       ]
     },
@@ -2418,16 +2430,22 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 4.07 traceability gap with the two search-command race fixes, audit hash refresh, and pending exact-head acceptance.",
-      "evidence": "Exact-head run 43173577319 exposed a stale test-file audit hash and a second pending-only search command lookup. Both durable outbox query fixes and refreshed manifest hash are present; exact-head CI and independent review are pending.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "92cf4f670aa2cdf8ae711a7bf14ec6033e535669c98869eff5e1bf88de4abe04",
+      "observations": "Updated item 4.07 exact-head hosted CI evidence; item remains partial pending independent review and post-merge verification.",
+      "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
+      "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
+      "sha256": "db3df24cde8f5d4b533b075a352b8ef53fc0ca1a2631f6df264945c55309cfc5",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
           "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
           "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
           "sha256": "1c607b9dbad6a8666ea351b7e993412a0e332d0b4653de7cc4f9daf31b375590"
+        },
+        {
+          "observations": "Updated item 4.07 traceability gap with the two search-command race fixes, audit hash refresh, and pending exact-head acceptance.",
+          "evidence": "Exact-head run 43173577319 exposed a stale test-file audit hash and a second pending-only search command lookup. Both durable outbox query fixes and refreshed manifest hash are present; exact-head CI and independent review are pending.",
+          "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+          "sha256": "92cf4f670aa2cdf8ae711a7bf14ec6033e535669c98869eff5e1bf88de4abe04"
         }
       ]
     },
