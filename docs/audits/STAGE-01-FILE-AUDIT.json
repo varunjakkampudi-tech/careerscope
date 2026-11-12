@@ -4058,10 +4058,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for Stage 04 item 4.12 by the authoring agent. Current evidence: focused PostgreSQL integration passes for duplicate-fingerprint score selection, older-run lead save, save/recompute locking, and saved-lead refresh on collection settlement; npm run check passes with 378 unit tests passed, 0 failed, 3 skipped, 98 canonical test files type-checked, 4 existing lint warnings and no errors; production build with CSP verification passes. Exact-head hosted CI and independent review remain pending.",
-      "evidence": "CareerScope item 4.12 current local verification; exact-head CI and independent review pending.",
+      "observations": "Reviewed for Stage 04 item 4.12 by the authoring agent. Current evidence: focused PostgreSQL integration passes for duplicate-fingerprint score selection, older-run lead save, save/recompute locking, saved-lead refresh on collection settlement, and legacy collected-job lead saves; exact-head hosted CI previously exposed legacy top-level job fields rejected when saving leads. LeadRepository.save now uses the public read projection, which validates required fields while stripping unknown and private fields. Affected lead lifecycle and retention suites pass 12/12; resume recompute PostgreSQL regression passes. Updated quality gate and exact-head CI are pending.",
+      "evidence": "CareerScope item 4.12 current local verification; new exact-head CI and independent review pending.",
       "reviewer": "Codex (Stage 04 item 4.12 authoring review)",
-      "sha256": "481ec257be71b15af1e9e7cd7b160ea4d3a8cdb86e923294b1b1f53d265ac83b"
+      "sha256": "9428d85ff5e350fc1b16b6a4884db21a65c98b95d837c1f4fae6970e335112f2"
     },
     {
       "path": "packages/core/src/legal-acceptance.ts",
