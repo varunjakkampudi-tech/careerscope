@@ -912,6 +912,10 @@ export default function ProfileEditor({
     const result = await profile.refetch();
     if (result.isSuccess) {
       setProposal(undefined);
+      setProposalForReview(undefined);
+      setProposalResumeId(undefined);
+      setProposalResumeName('');
+      setAcceptedResumeImport(undefined);
       setDirty(false);
       onDirty(false);
       setSaved(false);
@@ -937,6 +941,7 @@ export default function ProfileEditor({
         onReview={(derived, resumeId, resumeName) => {
           if (dirty && !window.confirm('Replace unsaved edits with the resume draft?')) return;
           setProposal(undefined);
+          setAcceptedResumeImport(undefined);
           setProposalForReview(derived);
           setProposalResumeId(resumeId);
           setProposalResumeName(resumeName);
@@ -983,7 +988,9 @@ export default function ProfileEditor({
               return;
             setProposalForReview(undefined);
             setProposalResumeId(undefined);
+            setProposalResumeName('');
             setProposal(undefined);
+            setAcceptedResumeImport(undefined);
             setGeneration((value) => value + 1);
             setDirty(false);
             onDirty(false);
@@ -1007,6 +1014,7 @@ export default function ProfileEditor({
           onReload={reload}
           onSaved={(record) => {
             setProposal(undefined);
+            setAcceptedResumeImport(undefined);
             cache.setQueryData(ownerKey(owner, 'profile'), record);
             cache.setQueryData(ownerKey(owner, 'profile-accessibility'), {
               reducedMotion: record.profile?.accessibility?.reducedMotion ?? false,

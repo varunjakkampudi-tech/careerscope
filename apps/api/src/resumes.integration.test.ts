@@ -131,6 +131,40 @@ test(
         assert.equal(accepted.json().profile.resumeId, upload.id);
         assert.deepEqual(accepted.json().profile.resumeImportFields, ['fullName', 'techStack']);
 
+        const retainedEdit = await app.inject({
+          method: 'PUT',
+          url: '/api/profile',
+          headers: owner.headers,
+          payload: {
+            revision: accepted.json().revision,
+            profile: {
+              ...accepted.json().profile,
+              candidate: { ...accepted.json().profile.candidate, location: 'Pune, India' },
+            },
+          },
+        });
+        assert.equal(retainedEdit.statusCode, 200, retainedEdit.body);
+        assert.equal(retainedEdit.json().profile.resumeId, upload.id);
+        assert.deepEqual(retainedEdit.json().profile.resumeImportFields, ['fullName', 'techStack']);
+
+        const newUnavailableSource = await app.inject({
+          method: 'PUT',
+          url: '/api/profile',
+          headers: owner.headers,
+          payload: {
+            revision: retainedEdit.json().revision,
+            profile: { ...retainedEdit.json().profile, resumeId: randomUUID() },
+          },
+        });
+        assert.equal(newUnavailableSource.statusCode, 409);
+        const unchangedAfterRejection = await app.inject({
+          url: '/api/profile',
+          headers: owner.headers,
+        });
+        assert.equal(unchangedAfterRejection.json().revision, retainedEdit.json().revision);
+        assert.equal(unchangedAfterRejection.json().profile.resumeId, upload.id);
+        assert.equal(unchangedAfterRejection.json().profile.candidate.location, 'Pune, India');
+
         const forged = await app.inject({
           method: 'PUT',
           url: '/api/profile',
@@ -149,10 +183,10 @@ test(
           url: '/api/profile',
           headers: owner.headers,
           payload: {
-            revision: accepted.json().revision,
+            revision: retainedEdit.json().revision,
             profile: {
-              ...accepted.json().profile,
-              candidate: { ...accepted.json().profile.candidate, location: 'Pune, India' },
+              ...retainedEdit.json().profile,
+              candidate: { ...retainedEdit.json().profile.candidate, location: 'Pune, India' },
             },
           },
         });

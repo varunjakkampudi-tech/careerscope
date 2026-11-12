@@ -2745,7 +2745,7 @@ try {
       );
       archive.file(
         'word/document.xml',
-        '<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Synthetic Candidate, React and TypeScript developer with experience building accessible web applications.</w:t></w:r></w:p></w:body></w:document>',
+        '<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Synthetic Candidate</w:t></w:r></w:p><w:p><w:r><w:t>React and TypeScript developer with experience building accessible web applications.</w:t></w:r></w:p></w:body></w:document>',
       );
       await page.getByLabel('Target role (optional)', { exact: true }).fill('Software Engineer');
       await page.getByLabel('Resume file (PDF or DOCX, up to 5 MiB)').setInputFiles({
@@ -3051,6 +3051,16 @@ try {
         await page.locator('textarea[name="techStack"]').inputValue(),
         /Accessible interfaces/,
       );
+      const replaceDraftPrompt = page.waitForEvent('dialog');
+      await page.getByRole('button', { name: 'Review profile draft', exact: true }).click();
+      const replaceDraftDialog = await replaceDraftPrompt;
+      assert.equal(replaceDraftDialog.message(), 'Replace unsaved edits with the resume draft?');
+      await replaceDraftDialog.accept();
+      await page
+        .getByRole('heading', { name: 'Review extracted information', exact: true })
+        .waitFor();
+      await page.getByRole('button', { name: 'Cancel review', exact: true }).click();
+      await page.getByLabel('Full Name', { exact: true }).waitFor();
       const account = await database.pool.query<{ id: string }>(
         'SELECT id FROM users WHERE email = $1',
         [accountEmail],
@@ -3083,6 +3093,7 @@ try {
         'email',
         `${engine}: invalid contact step did not focus its first missing field`,
       );
+      await page.getByLabel('Full Name', { exact: true }).fill('Saved Synthetic Candidate');
       await page.getByLabel('Email', { exact: true }).fill(accountEmail);
       await page.getByLabel('Location', { exact: true }).fill('Hyderabad');
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
@@ -3136,6 +3147,46 @@ try {
         ['Frontend Engineer at Example Co'],
         `${engine}: saved onboarding profile must retain the background used by completeness`,
       );
+      assert.equal(
+        persistedOnboardingProfile?.profile.resumeId,
+        null,
+        `${engine}: cancelling an unsaved replacement review must clear pending resume provenance`,
+      );
+      assert.deepEqual(
+        persistedOnboardingProfile?.profile.resumeImportFields,
+        [],
+        `${engine}: cancelling an unsaved replacement review must not attribute unrelated fields`,
+      );
+      await page.getByRole('button', { name: 'Review profile draft', exact: true }).click();
+      await page
+        .getByRole('heading', { name: 'Review extracted information', exact: true })
+        .waitFor();
+      await page.getByRole('button', { name: 'Cancel review', exact: true }).click();
+      assert.equal(
+        await page.getByLabel('Full Name', { exact: true }).inputValue(),
+        'Saved Synthetic Candidate',
+        `${engine}: cancelling a new review must preserve the previously saved profile`,
+      );
+      await page.getByRole('button', { name: 'Review profile draft', exact: true }).click();
+      await page
+        .getByRole('heading', { name: 'Review extracted information', exact: true })
+        .waitFor();
+      await page
+        .getByLabel('Correct Full Name', { exact: true })
+        .fill('Corrected Synthetic Candidate');
+      await page.getByLabel('Use this corrected value in my profile draft').nth(0).check();
+      await page
+        .getByLabel('Correct Skills', { exact: true })
+        .fill('React\nTypeScript\nAccessible interfaces');
+      const savedProfileSkillsReview = page.getByRole('group', { name: 'Skills', exact: true });
+      await savedProfileSkillsReview
+        .getByLabel('Use this corrected value in my profile draft')
+        .check();
+      await page
+        .getByRole('button', { name: 'Use selected fields in profile draft', exact: true })
+        .click();
+      await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
+      await page.getByText('Profile saved.', { exact: true }).waitFor();
       await page.goto(`${origin}/dashboard`);
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
       const completenessPanel = page.locator('section[aria-label="Profile completeness"]');
