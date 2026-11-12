@@ -1990,7 +1990,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "source and failure-follow-up review; exact-head CI pending",
+      "reviewMethod": "source and CI failure-follow-up review; exact-head CI pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2002,10 +2002,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reconciled item 4.08 browser evidence after the exact-head run exposed an assertion that selected the newest parsed upload instead of the intended first version. The parser assertion now binds to the original upload id. Item 4.08 remains partial.",
-      "evidence": "Run 43257367648 on SHA 6ec5e88023469f7eb926966041cf0990873e751e passed Quality gates and production image builds but failed browser acceptance at the parser-result assertion after the 4.07 version journey. The corrected assertion scopes to firstVersion.id. New exact-head CI and independent review remain pending.",
+      "observations": "Reconciled the Stage 04 item 4.08 browser evidence across the combined item 4.07/4.08 journey. The original upload now runs through the real parser; its persisted derived full name assertion is scoped to that upload id. Item 4.08 remains partial.",
+      "evidence": "Run 43257367648 on SHA 6ec5e88023469f7eb926966041cf0990873e751e exposed an assertion selecting a later parsed upload. Run 43259110649 on SHA 2a09cc0dee8e822be1dd70ef0dc4a1a193519ce4 still failed because its first-version fixture was manually seeded without derived.fullName. The current revision uses the actual resume.parse queue for the original upload; new exact-head CI and final review remain pending.",
       "reviewer": "Codex (Stage 04 item 4.08 browser follow-up)",
-      "sha256": "309c32b7f07cdcac0c54a932aa68346bc1712c4a541cea491ff10c378112151c",
+      "sha256": "0580791ccd0dc3a7909598b1bb093621a64e8b3c2974493b3aabf0167ab0a3b3",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2030,6 +2030,12 @@
           "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
           "reviewer": "Codex (Stage 04 item 4.07 closeout)",
           "sha256": "7fbc00a69f2b371da2f2eaa9bbc7e9449ed2af006d566ea20796a3c3c6b52ad3"
+        },
+        {
+          "observations": "Reconciled item 4.08 browser evidence after the exact-head run exposed an assertion that selected the newest parsed upload instead of the intended first version. The parser assertion now binds to the original upload id. Item 4.08 remains partial.",
+          "evidence": "Run 43257367648 on SHA 6ec5e88023469f7eb926966041cf0990873e751e passed Quality gates and production image builds but failed browser acceptance at the parser-result assertion after the 4.07 version journey. The corrected assertion scopes to firstVersion.id. New exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 04 item 4.08 browser follow-up)",
+          "sha256": "309c32b7f07cdcac0c54a932aa68346bc1712c4a541cea491ff10c378112151c"
         }
       ]
     },
@@ -2072,14 +2078,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "source and failure-follow-up review; exact-head CI pending",
+      "reviewMethod": "source and CI failure-follow-up review; exact-head CI pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled item 4.08 browser evidence after the exact-head run exposed an assertion that selected the newest parsed upload instead of the intended first version. The parser assertion now binds to the original upload id. Item 4.08 remains partial.",
-      "evidence": "Run 43257367648 on SHA 6ec5e88023469f7eb926966041cf0990873e751e passed Quality gates and production image builds but failed browser acceptance at the parser-result assertion after the 4.07 version journey. The corrected assertion scopes to firstVersion.id. New exact-head CI and independent review remain pending.",
+      "observations": "Reconciled the Stage 04 item 4.08 browser evidence across the combined item 4.07/4.08 journey. The original upload now runs through the real parser; its persisted derived full name assertion is scoped to that upload id. Item 4.08 remains partial.",
+      "evidence": "Run 43257367648 on SHA 6ec5e88023469f7eb926966041cf0990873e751e exposed an assertion selecting a later parsed upload. Run 43259110649 on SHA 2a09cc0dee8e822be1dd70ef0dc4a1a193519ce4 still failed because its first-version fixture was manually seeded without derived.fullName. The current revision uses the actual resume.parse queue for the original upload; new exact-head CI and final review remain pending.",
       "reviewer": "Codex (Stage 04 item 4.08 browser follow-up)",
-      "sha256": "bff7801b311adcb4f71dc87cd4b7750d2a82d660458c22db0efc8c2b37ca6f43",
+      "sha256": "accee16afd269be46c57240a7b507df6fe6d956467c6d87af3330223286615e1",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2110,6 +2116,12 @@
           "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
           "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
           "sha256": "ad5bf2f4b47dd83f7076f15aa2e569d3ce1b2f29a052dc39147967f723ce1ed9"
+        },
+        {
+          "observations": "Reconciled item 4.08 browser evidence after the exact-head run exposed an assertion that selected the newest parsed upload instead of the intended first version. The parser assertion now binds to the original upload id. Item 4.08 remains partial.",
+          "evidence": "Run 43257367648 on SHA 6ec5e88023469f7eb926966041cf0990873e751e passed Quality gates and production image builds but failed browser acceptance at the parser-result assertion after the 4.07 version journey. The corrected assertion scopes to firstVersion.id. New exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 04 item 4.08 browser follow-up)",
+          "sha256": "bff7801b311adcb4f71dc87cd4b7750d2a82d660458c22db0efc8c2b37ca6f43"
         }
       ]
     },
@@ -6755,7 +6767,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "source and failure-follow-up review; exact-head CI pending",
+      "reviewMethod": "source and CI failure-follow-up review; exact-head CI pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6781,10 +6793,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reconciled item 4.08 browser evidence after the exact-head run exposed an assertion that selected the newest parsed upload instead of the intended first version. The parser assertion now binds to the original upload id. Item 4.08 remains partial.",
-      "evidence": "Run 43257367648 on SHA 6ec5e88023469f7eb926966041cf0990873e751e passed Quality gates and production image builds but failed browser acceptance at the parser-result assertion after the 4.07 version journey. The corrected assertion scopes to firstVersion.id. New exact-head CI and independent review remain pending.",
+      "observations": "Reconciled the Stage 04 item 4.08 browser evidence across the combined item 4.07/4.08 journey. The original upload now runs through the real parser; its persisted derived full name assertion is scoped to that upload id. Item 4.08 remains partial.",
+      "evidence": "Run 43257367648 on SHA 6ec5e88023469f7eb926966041cf0990873e751e exposed an assertion selecting a later parsed upload. Run 43259110649 on SHA 2a09cc0dee8e822be1dd70ef0dc4a1a193519ce4 still failed because its first-version fixture was manually seeded without derived.fullName. The current revision uses the actual resume.parse queue for the original upload; new exact-head CI and final review remain pending.",
       "reviewer": "Codex (Stage 04 item 4.08 browser follow-up)",
-      "sha256": "37d0644fa200e1e06daff7bfabd2ac5d0d9b9b526e9f709a44a541d25fee3fd6",
+      "sha256": "b2838b1f3a4c9af6fe7c99c298bda5d4ae80e55f4d63320be1c3aef751b622d5",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -6803,6 +6815,12 @@
           "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
           "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
           "sha256": "399fcdc5cbc528f29832ead9b3da4a794ec869d185a834e6f14fbf0a4cb151e0"
+        },
+        {
+          "observations": "Reconciled item 4.08 browser evidence after the exact-head run exposed an assertion that selected the newest parsed upload instead of the intended first version. The parser assertion now binds to the original upload id. Item 4.08 remains partial.",
+          "evidence": "Run 43257367648 on SHA 6ec5e88023469f7eb926966041cf0990873e751e passed Quality gates and production image builds but failed browser acceptance at the parser-result assertion after the 4.07 version journey. The corrected assertion scopes to firstVersion.id. New exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 04 item 4.08 browser follow-up)",
+          "sha256": "37d0644fa200e1e06daff7bfabd2ac5d0d9b9b526e9f709a44a541d25fee3fd6"
         }
       ]
     },

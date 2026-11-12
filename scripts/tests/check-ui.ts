@@ -24,6 +24,7 @@ import {
   writableProfileSchema,
   PrivateFileResumeStorage,
   LocalQueue,
+  publishPending,
   publishDueInterviewReminders,
 } from '@careerscope/core';
 import { createApp } from '../../apps/api/src/app.js';
@@ -2831,6 +2832,11 @@ try {
         recoveryGate.resolve();
       }
       assert.equal((await recoveredUpload).status(), 200);
+      await publishPending(database, { 'resume.parse': filesQueue });
+      await page
+        .getByRole('status')
+        .filter({ hasText: 'Resume ready for review.' })
+        .waitFor({ timeout: 45000 });
       const markBrowserResumeParsed = async (id: string) => {
         await database.pool.query(
           `INSERT INTO resume_results (upload_id, owner_id, command_id, status, parsed)
@@ -2851,7 +2857,6 @@ try {
           item.targetRole === 'Software Engineer' && item.versionNumber === 1,
       );
       assert.ok(firstVersion, `${engine}: first role-labelled resume version was not listed`);
-      await markBrowserResumeParsed(firstVersion.id);
       const parsedResumeList = await (await page.request.get(`${origin}/api/resumes`)).json();
       const parsedFirstVersion = parsedResumeList.items.find(
         (item: { id: string }) => item.id === firstVersion.id,
