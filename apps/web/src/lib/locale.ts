@@ -52,6 +52,8 @@ const messages = {
     resumeReviewEmpty: 'No profile fields were extracted from this resume.',
     resumeReviewUseField: 'Use this corrected value in my profile draft',
     resumeReviewCorrectField: 'Correct {value}',
+    resumeReviewInvalidField:
+      'Check the value or entries for {value} and correct the highlighted limits.',
     resumeReviewField_fullName: 'Full Name',
     resumeReviewSource: 'View source text',
     resumeReviewSelectedSource: 'Selected resume: {value}',
@@ -339,6 +341,8 @@ const messages = {
     resumeReviewEmpty: 'ఈ రెజ్యూమ్ నుంచి ప్రొఫైల్ వివరాలు సేకరించబడలేదు.',
     resumeReviewUseField: 'ఈ సరిచేసిన విలువను నా ప్రొఫైల్ డ్రాఫ్ట్‌లో ఉపయోగించండి',
     resumeReviewCorrectField: '{value} సరిచేయండి',
+    resumeReviewInvalidField:
+      '{value} విలువ లేదా నమోదులను తనిఖీ చేసి, చూపిన పరిమితుల ప్రకారం సరిచేయండి.',
     resumeReviewSource: 'మూల పాఠ్యాన్ని చూడండి',
     resumeReviewSelectedSource: 'ఎంచుకున్న రెజ్యూమ్: {value}',
     resumeReviewApply: 'ఎంచుకున్న వివరాలను ప్రొఫైల్ డ్రాఫ్ట్‌లో ఉపయోగించండి',
@@ -631,6 +635,8 @@ const messages = {
     resumeReviewEmpty: 'इस रिज़्यूमे से प्रोफ़ाइल फ़ील्ड नहीं निकाले गए।',
     resumeReviewUseField: 'इस सुधारे गए मान को मेरी प्रोफ़ाइल ड्राफ़्ट में उपयोग करें',
     resumeReviewCorrectField: '{value} सुधारें',
+    resumeReviewInvalidField:
+      '{value} का मान या प्रविष्टियाँ जाँचें और दिखाई गई सीमाओं के अनुसार सुधारें।',
     resumeReviewSource: 'स्रोत पाठ देखें',
     resumeReviewSelectedSource: 'चुना गया रिज़्यूमे: {value}',
     resumeReviewApply: 'चुने गए फ़ील्ड प्रोफ़ाइल ड्राफ़्ट में उपयोग करें',

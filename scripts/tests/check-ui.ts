@@ -3052,11 +3052,20 @@ try {
         true,
         `${engine}: correction checkbox is not keyboard operable`,
       );
+      await page.getByLabel('Correct Skills', { exact: true }).fill(`x`.repeat(121));
+      const skillsReview = page.getByRole('group', { name: 'Skills', exact: true });
+      await skillsReview.getByLabel('Use this corrected value in my profile draft').check();
+      await page
+        .getByText('Check the value or entries for Skills and correct the highlighted limits.')
+        .waitFor();
+      assert.equal(
+        await applyResumeFields.isDisabled(),
+        true,
+        `${engine}: invalid skill correction was allowed to apply`,
+      );
       await page
         .getByLabel('Correct Skills', { exact: true })
         .fill('React\nTypeScript\nAccessible interfaces');
-      const skillsReview = page.getByRole('group', { name: 'Skills', exact: true });
-      await skillsReview.getByLabel('Use this corrected value in my profile draft').check();
       await applyResumeFields.focus();
       await page.keyboard.press('Enter');
       assert.equal(

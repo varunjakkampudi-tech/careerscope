@@ -38,6 +38,7 @@ test('resume correction review copy is localized and names its selected source',
     'resumeReviewSource',
     'resumeReviewApply',
     'resumeReviewCancel',
+    'resumeReviewInvalidField',
     'resumeReviewSelectedSource',
     'resumeReviewField_fullName',
     'resumeReviewField_techStack',
@@ -62,6 +63,9 @@ test('resume correction review copy is localized and names its selected source',
     'పూర్తి పేరు సరిచేయండి',
   );
   assert.equal(localizedValue('hi', 'resumeReviewCorrectField', 'पूरा नाम'), 'पूरा नाम सुधारें');
+  assert.match(localizedValue('en', 'resumeReviewInvalidField', 'Skills'), /Skills/);
+  assert.match(localizedValue('te', 'resumeReviewInvalidField', 'నైపుణ్యాలు'), /నైపుణ్యాలు/);
+  assert.match(localizedValue('hi', 'resumeReviewInvalidField', 'कौशल'), /कौशल/);
 });
 
 test('privacy notice acknowledgement copy does not imply acceptance in supported languages', () => {

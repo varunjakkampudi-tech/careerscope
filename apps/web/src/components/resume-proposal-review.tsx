@@ -8,6 +8,7 @@ import {
   type InterfaceMessage,
 } from '../lib/locale';
 import type { ResumeProposal } from '../lib/api-schemas';
+import { isValidResumeCorrection } from './resume-proposal-validation';
 import styles from './resume-proposal-review.module.css';
 
 export type AcceptedResumeProposal = Partial<Omit<ResumeProposal, 'experienceClaims'>> & {
@@ -120,13 +121,10 @@ export default function ResumeProposalReview({
   );
   const [accepted, setAccepted] = useState<Record<string, boolean>>({});
   const selectedCount = Object.values(accepted).filter(Boolean).length;
-  const invalidNumber = fields.some((field) => {
-    if (field.id !== 'yearsOfExperience' || !accepted[field.id]) return false;
-    const value = values[field.id]?.trim() ?? '';
-    return (
-      value !== '' && (!Number.isFinite(Number(value)) || Number(value) < 0 || Number(value) > 60)
-    );
-  });
+  const invalidFields = fields.filter(
+    (field) => accepted[field.id] && !isValidResumeCorrection(field.id, values[field.id] ?? ''),
+  );
+  const invalidFieldIds = new Set(invalidFields.map((field) => field.id));
 
   useEffect(() => {
     headingRef.current?.focus();
@@ -221,6 +219,10 @@ export default function ResumeProposalReview({
                   <textarea
                     id={inputId}
                     aria-label={localizedValue(locale, 'resumeReviewCorrectField', label)}
+                    aria-invalid={invalidFieldIds.has(field.id)}
+                    aria-describedby={
+                      invalidFieldIds.has(field.id) ? `${inputId}-error` : undefined
+                    }
                     rows={Math.min(Math.max(value.split('\n').length, 2), 6)}
                     value={value}
                     onChange={(event) => {
@@ -236,6 +238,10 @@ export default function ResumeProposalReview({
                   <input
                     id={inputId}
                     aria-label={localizedValue(locale, 'resumeReviewCorrectField', label)}
+                    aria-invalid={invalidFieldIds.has(field.id)}
+                    aria-describedby={
+                      invalidFieldIds.has(field.id) ? `${inputId}-error` : undefined
+                    }
                     type={field.kind === 'number' ? 'number' : 'text'}
                     min={field.kind === 'number' ? 0 : undefined}
                     max={field.kind === 'number' ? 60 : undefined}
@@ -250,6 +256,11 @@ export default function ResumeProposalReview({
                       onDirty();
                     }}
                   />
+                )}
+                {invalidFieldIds.has(field.id) && (
+                  <p id={`${inputId}-error`} role="alert">
+                    {localizedValue(locale, 'resumeReviewInvalidField', label)}
+                  </p>
                 )}
                 {evidence.length > 0 && (
                   <details>
@@ -271,7 +282,7 @@ export default function ResumeProposalReview({
           type="button"
           className="primary"
           onClick={apply}
-          disabled={selectedCount === 0 || invalidNumber}
+          disabled={selectedCount === 0 || invalidFields.length > 0}
         >
           {localizedText(locale, 'resumeReviewApply')}
         </button>
