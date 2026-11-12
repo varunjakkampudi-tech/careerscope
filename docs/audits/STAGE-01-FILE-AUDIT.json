@@ -1922,10 +1922,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "observations": "Updated item 4.07 status with the two durable outbox search-command lookups, the prior exact-head CI failures, and the pending exact-head rerun and independent review.",
+      "evidence": "Run 43173577319 on SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d passed the image build, failed Quality gates on the stale scripts/tests/check-ui.ts audit hash, and failed browser acceptance at a second unpublished-queue lookup. The refreshed test hash and both durable outbox lookups are included; run the full exact-head CI before acceptance.",
       "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "8f6e594cdf7e4345c9ac00055faca7605da125fca39dbc2decd2d0b5ac53ae8e"
+      "sha256": "d5ceb78b7de653f64d617f2de47850ac85645b57b600cf5ff35d52988d3d17a3"
     },
     {
       "path": "docs/PROVIDERS.md",
@@ -1970,10 +1970,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "observations": "Updated 4.07 browser failure evidence and durable outbox correction mapping; hosted exact-head CI and independent review remain pending.",
+      "evidence": "Run 43173577319 passed the production image build but quality failed on stale audit hash; browser failed at the four-source search command lookup. Both search assertions now read durable outbox records by aggregate id/type and parse commandSchema.",
       "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "0501d849b139f394a7434158b327132b8b684e5811db505c27843ec42d3f564f"
+      "sha256": "a275b0914b53270209283ec907cdc9cbeed8d949fea44e19cbf62d2031ea9e13"
     },
     {
       "path": "docs/TESTING.md",
@@ -2402,10 +2402,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+      "observations": "Updated item 4.07 traceability gap with the two search-command race fixes, audit hash refresh, and pending exact-head acceptance.",
+      "evidence": "Exact-head run 43173577319 exposed a stale test-file audit hash and a second pending-only search command lookup. Both durable outbox query fixes and refreshed manifest hash are present; exact-head CI and independent review are pending.",
       "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "1c607b9dbad6a8666ea351b7e993412a0e332d0b4653de7cc4f9daf31b375590"
+      "sha256": "92cf4f670aa2cdf8ae711a7bf14ec6033e535669c98869eff5e1bf88de4abe04"
     },
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
@@ -6569,10 +6569,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
-      "evidence": "PR #82 exact head 179bc1645052d41235d3bec1e854fab0b29c6a15 exposed the pending-only queue race in run 43061560382. This change fixes the assertion at its durable source; local typecheck passes, and hosted exact-head CI after this commit remains required.",
+      "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification.",
+      "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
       "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
-      "sha256": "e040ae1ea4ea64f9707a43d7d7684a542b8fd16625304fd0bc5c73621f56e344"
+      "sha256": "d32dab0fbf925bb7b7a4650421a58f4c93583090ac5d2426e65ab1ec1d921043"
     },
     {
       "path": "scripts/tests/design-system-doc.test.ts",

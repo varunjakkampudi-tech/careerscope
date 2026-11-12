@@ -4970,9 +4970,13 @@ try {
       const fourId = (await fourResponse.json()).runId;
       const fourRun = await database.getSearch(ownerId, fourId);
       assert.equal(fourRun?.request.sources.length, 4);
-      const fourCommand = (await database.unpublished()).find(
-        (entry) => entry.command.aggregateId === fourId,
-      )!.command;
+      const fourCommandResult = await database.pool.query<{ command: unknown }>(
+        `SELECT command FROM outbox_events
+         WHERE command->>'aggregateId' = $1 AND command->>'type' = 'search.collect'
+         ORDER BY created_at DESC LIMIT 1`,
+        [fourId],
+      );
+      const fourCommand = commandSchema.parse(fourCommandResult.rows[0]?.command);
       const fourFence = await database.claim(fourCommand.id);
       assert.ok(fourFence);
       const fourTerminalRead = waitForSearchStatusResponse(fourId, 'completed');
