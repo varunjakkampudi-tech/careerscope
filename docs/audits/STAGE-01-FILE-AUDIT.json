@@ -1910,7 +1910,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read-and-diff-review; Stage 05 item 5.01 delta reviewed",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1922,10 +1922,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "102ee77f92d7a0abf3d728024ce1dd4e5db91a514737d4d96eaea83a36026322",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed Stage 05 item 5.01 evidence and partial status; production permissions remain explicitly unresolved.",
+      "evidence": "Stage 05 item 5.01 branch; provider adapter sources and focused local fixture suites inspected/run; exact-head Node 24 CI and owner permitted-use evidence pending.",
+      "reviewer": "Codex (Stage 05 item 5.01)",
+      "sha256": "b881e0e4720ab442a592380e3da6d6a95d1dbee37ca045fbfe9c8e81ef73a86b",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -1944,6 +1944,12 @@
           "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "163991b76a46b5cee698343d42d736b589374423e8eca95529f55ecce34e073b"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
+          "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
+          "reviewer": "Codex (Stage 04 item 4.07 closeout)",
+          "sha256": "102ee77f92d7a0abf3d728024ce1dd4e5db91a514737d4d96eaea83a36026322"
         }
       ]
     },
@@ -1986,14 +1992,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read-and-diff-review; Stage 05 item 5.01 delta reviewed",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "4a83d02f88d60394b7fea55bec23fdeea68c2bbc8a1a9542934867f6642b2894",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed Stage 05 item 5.01 evidence and partial status; production permissions remain explicitly unresolved.",
+      "evidence": "Stage 05 item 5.01 branch; provider adapter sources and focused local fixture suites inspected/run; exact-head Node 24 CI and owner permitted-use evidence pending.",
+      "reviewer": "Codex (Stage 05 item 5.01)",
+      "sha256": "299fc828d34d3a585adeae58f1954b951e0709eda0967fcb05dcb02276eca773",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2012,6 +2018,12 @@
           "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "3ea4af0af90b41558ec9c0fca9dc522ed0e8941b4d49834566de484b0d631e99"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
+          "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
+          "reviewer": "Codex (Stage 04 item 4.07 closeout)",
+          "sha256": "4a83d02f88d60394b7fea55bec23fdeea68c2bbc8a1a9542934867f6642b2894"
         }
       ]
     },
@@ -2438,14 +2450,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read-and-diff-review; Stage 05 item 5.01 delta reviewed",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "32a340ef0445218bb61935754032e5da565380b32ed462b401397b064cf99243",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed Stage 05 item 5.01 evidence and partial status; production permissions remain explicitly unresolved.",
+      "evidence": "Stage 05 item 5.01 branch; provider adapter sources and focused local fixture suites inspected/run; exact-head Node 24 CI and owner permitted-use evidence pending.",
+      "reviewer": "Codex (Stage 05 item 5.01)",
+      "sha256": "97211a04e02936a84199f0f9011ce1b325688b8ff1e24cfb9a38b7f04f3cccd5",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2464,6 +2476,12 @@
           "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "db3df24cde8f5d4b533b075a352b8ef53fc0ca1a2631f6df264945c55309cfc5"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
+          "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
+          "reviewer": "Codex (Stage 04 item 4.07 closeout)",
+          "sha256": "32a340ef0445218bb61935754032e5da565380b32ed462b401397b064cf99243"
         }
       ]
     },
