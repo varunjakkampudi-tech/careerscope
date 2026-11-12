@@ -1946,10 +1946,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed for Stage 04 item 4.12 by the authoring agent. Current evidence: focused PostgreSQL resume recompute and lead synchronization integration passes; full production build with CSP verification passes; typecheck, lint, architecture and roadmap traceability pass. The 378/0/3 unit result was run on prior head 7ee70cf, before the latest saved-lead regression. Exact-head CI and independent review of the latest revision remain pending.",
+      "observations": "Reviewed for Stage 04 item 4.12 by the authoring agent. Current evidence: focused PostgreSQL integration passes for duplicate-fingerprint score selection, older-run lead save, save/recompute locking, and saved-lead refresh on collection settlement; npm run check passes with 378 unit tests passed, 0 failed, 3 skipped, 98 canonical test files type-checked, 4 existing lint warnings and no errors; production build with CSP verification passes. Exact-head hosted CI and independent review remain pending.",
       "evidence": "CareerScope item 4.12 current local verification; exact-head CI and independent review pending.",
       "reviewer": "Codex (Stage 04 item 4.12 authoring review)",
-      "sha256": "b87b4b6864eb7856ea6176fc37e3fd04ce4d3aec88b4b3035b605e2f59995718",
+      "sha256": "7f2025f4fb2d199d5857e419095a78ddea0e7b2661f4449de941a0b29c27e5a1",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -3774,10 +3774,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for Stage 04 item 4.12 by the authoring agent. Current evidence: focused PostgreSQL resume recompute and lead synchronization integration passes; full production build with CSP verification passes; typecheck, lint, architecture and roadmap traceability pass. The 378/0/3 unit result was run on prior head 7ee70cf, before the latest saved-lead regression. Exact-head CI and independent review of the latest revision remain pending.",
+      "observations": "Reviewed for Stage 04 item 4.12 by the authoring agent. Current evidence: focused PostgreSQL integration passes for duplicate-fingerprint score selection, older-run lead save, save/recompute locking, and saved-lead refresh on collection settlement; npm run check passes with 378 unit tests passed, 0 failed, 3 skipped, 98 canonical test files type-checked, 4 existing lint warnings and no errors; production build with CSP verification passes. Exact-head hosted CI and independent review remain pending.",
       "evidence": "CareerScope item 4.12 current local verification; exact-head CI and independent review pending.",
       "reviewer": "Codex (Stage 04 item 4.12 authoring review)",
-      "sha256": "57502f8eba4d3633dfc016eb8257310278baa02b5731822fe6012e2c0e1e50b2"
+      "sha256": "0ab6fd3774eefb3243188b7a4ef59da98573c4a44b26ab8771df6cb149e3d2e4"
     },
     {
       "path": "packages/core/src/dispatch.test.ts",
@@ -4058,10 +4058,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for Stage 04 item 4.12 by the authoring agent. Current evidence: focused PostgreSQL resume recompute and lead synchronization integration passes; full production build with CSP verification passes; typecheck, lint, architecture and roadmap traceability pass. The 378/0/3 unit result was run on prior head 7ee70cf, before the latest saved-lead regression. Exact-head CI and independent review of the latest revision remain pending.",
+      "observations": "Reviewed for Stage 04 item 4.12 by the authoring agent. Current evidence: focused PostgreSQL integration passes for duplicate-fingerprint score selection, older-run lead save, save/recompute locking, and saved-lead refresh on collection settlement; npm run check passes with 378 unit tests passed, 0 failed, 3 skipped, 98 canonical test files type-checked, 4 existing lint warnings and no errors; production build with CSP verification passes. Exact-head hosted CI and independent review remain pending.",
       "evidence": "CareerScope item 4.12 current local verification; exact-head CI and independent review pending.",
       "reviewer": "Codex (Stage 04 item 4.12 authoring review)",
-      "sha256": "0aa4e66ce072ec41bba428671f6f377a6f41d7ce52a10b85fceb8d3e7bf79173"
+      "sha256": "481ec257be71b15af1e9e7cd7b160ea4d3a8cdb86e923294b1b1f53d265ac83b"
     },
     {
       "path": "packages/core/src/legal-acceptance.ts",
@@ -6801,10 +6801,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for Stage 04 item 4.12 by the authoring agent. Current evidence: focused PostgreSQL resume recompute and lead synchronization integration passes; full production build with CSP verification passes; typecheck, lint, architecture and roadmap traceability pass. The 378/0/3 unit result was run on prior head 7ee70cf, before the latest saved-lead regression. Exact-head CI and independent review of the latest revision remain pending.",
+      "observations": "Reviewed for Stage 04 item 4.12 by the authoring agent. Current evidence: focused PostgreSQL integration passes for duplicate-fingerprint score selection, older-run lead save, save/recompute locking, and saved-lead refresh on collection settlement; npm run check passes with 378 unit tests passed, 0 failed, 3 skipped, 98 canonical test files type-checked, 4 existing lint warnings and no errors; production build with CSP verification passes. Exact-head hosted CI and independent review remain pending.",
       "evidence": "CareerScope item 4.12 current local verification; exact-head CI and independent review pending.",
       "reviewer": "Codex (Stage 04 item 4.12 authoring review)",
-      "sha256": "200f92383462294df490f7eb25b284484663a24a447036d893f956ba8bf44f82"
+      "sha256": "d03ec0bf971790947c76bdacbd452a3ea4a3f4d5c2eeed740f9638fc38e63315"
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",

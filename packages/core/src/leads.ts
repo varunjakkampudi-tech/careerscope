@@ -285,8 +285,18 @@ export class LeadRepository {
       // snapshot read below happen either wholly before or wholly after a recompute transaction.
       await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [ownerId]);
       const source = await client.query<{ data: unknown }>(
-        `SELECT job.data FROM search_jobs job JOIN search_runs run ON run.id = job.run_id
-         AND run.owner_id = job.owner_id WHERE job.owner_id = $1 AND job.id = $2 AND run.status IN ('completed', 'partial')`,
+        `SELECT jsonb_set(job.data, '{match}', COALESCE(latest_job.data->'match', 'null'::jsonb), true) AS data
+         FROM search_jobs job JOIN search_runs run ON run.id = job.run_id
+           AND run.owner_id = job.owner_id
+         JOIN LATERAL (
+           SELECT candidate_job.data FROM search_jobs candidate_job
+           JOIN search_runs candidate_run ON candidate_run.id = candidate_job.run_id
+             AND candidate_run.owner_id = candidate_job.owner_id
+           WHERE candidate_job.owner_id = $1 AND candidate_job.fingerprint = job.fingerprint
+             AND candidate_run.status IN ('completed', 'partial')
+           ORDER BY candidate_run.created_at DESC, candidate_run.id DESC LIMIT 1
+         ) latest_job ON true
+         WHERE job.owner_id = $1 AND job.id = $2 AND run.status IN ('completed', 'partial')`,
         [ownerId, jobId],
       );
       if (!source.rows[0]) {

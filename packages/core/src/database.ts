@@ -792,6 +792,25 @@ export class Database {
           ],
         );
       }
+      // A completed search can become the newest score source for an existing saved lead even
+      // when no resume parse triggered a recomputation. Refresh that public match projection in
+      // the same transaction, but only when this run wins the deterministic latest-run ordering.
+      await client.query(
+        `UPDATE saved_leads lead
+         SET data = jsonb_set(lead.data, '{match}', COALESCE(source_job.data->'match', 'null'::jsonb), true)
+         FROM search_jobs source_job
+         WHERE source_job.owner_id = $1 AND source_job.run_id = $2
+           AND lead.owner_id = $1 AND lead.fingerprint = source_job.fingerprint
+           AND source_job.run_id = (
+             SELECT latest_run.id FROM search_runs latest_run
+             JOIN search_jobs latest_job ON latest_job.run_id = latest_run.id
+               AND latest_job.owner_id = latest_run.owner_id
+             WHERE latest_run.owner_id = $1 AND latest_job.fingerprint = source_job.fingerprint
+               AND latest_run.status IN ('completed', 'partial')
+             ORDER BY latest_run.created_at DESC, latest_run.id DESC LIMIT 1
+           )`,
+        [command.ownerId, command.aggregateId],
+      );
       await client.query(
         `INSERT INTO run_events (id, run_id, owner_id, type) VALUES ($1, $2, $3, $4)`,
         [

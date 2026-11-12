@@ -3948,6 +3948,35 @@ test('createSearch snapshots the latest parsed resume and recompute retries stal
       true,
       'collection can settle after a recompute has updated its running profile',
     );
+    assert.deepEqual(
+      (await leadRepository.get(ownerId, savedLead.id))?.data.match,
+      matchBreakdownSchema.parse(racingMatchAfter),
+      'newest search settlement refreshes an existing saved lead in the same transaction',
+    );
+    const lateSaveFingerprint = `${storedJob.fingerprint}-late-save-policy`;
+    const oldRunJobId = randomUUID();
+    const latestRunJobId = randomUUID();
+    const lateSaveJob = { ...collectedJob, fingerprint: lateSaveFingerprint };
+    await database.pool.query(
+      `INSERT INTO search_jobs (id, run_id, owner_id, fingerprint, data)
+       VALUES ($1, $2, $3, $4, $5::jsonb), ($6, $7, $3, $4, $8::jsonb)`,
+      [
+        oldRunJobId,
+        beforeResume.id,
+        ownerId,
+        lateSaveFingerprint,
+        JSON.stringify({ ...lateSaveJob, match: null }),
+        latestRunJobId,
+        racingSearchAfter.id,
+        JSON.stringify({ ...lateSaveJob, match: matchBreakdownSchema.parse(racingMatchAfter) }),
+      ],
+    );
+    const lateSavedLead = await leadRepository.save(ownerId, { jobId: oldRunJobId });
+    assert.deepEqual(
+      lateSavedLead?.data.match,
+      matchBreakdownSchema.parse(racingMatchAfter),
+      'saving an older run resolves its match from the latest completed run without another recompute',
+    );
     const collectionCompensation = (await database.unpublished(['search.recompute'])).find(
       (item) => item.command.causationId === racingCommandAfter.id,
     )?.command;
