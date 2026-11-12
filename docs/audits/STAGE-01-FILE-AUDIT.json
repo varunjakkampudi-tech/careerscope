@@ -1990,7 +1990,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "source and CI failure-follow-up review; exact-head CI pending",
+      "reviewMethod": "current source/documentation and exact-head CI/review reconciliation",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2002,10 +2002,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reconciled the Stage 04 item 4.08 browser evidence across the combined item 4.07/4.08 journey. The original upload now runs through the real parser; its persisted derived full name assertion is scoped to that upload id. Item 4.08 remains partial.",
-      "evidence": "Run 43257367648 on SHA 6ec5e88023469f7eb926966041cf0990873e751e exposed an assertion selecting a later parsed upload. Run 43259110649 on SHA 2a09cc0dee8e822be1dd70ef0dc4a1a193519ce4 still failed because its first-version fixture was manually seeded without derived.fullName. The current revision uses the actual resume.parse queue for the original upload; new exact-head CI and final review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.08 browser follow-up)",
-      "sha256": "0580791ccd0dc3a7909598b1bb093621a64e8b3c2974493b3aabf0167ab0a3b3",
+      "observations": "Updated the 4.08 progress record with exact-head automatic and manual CI results, independent engineering acceptance, and the remaining owner/merge/post-merge gates.",
+      "evidence": "PR #83 exact head 76d88673ffce923c30d7924a736f9f3bbc30f11d; runs 43270750798 and 43270545677; independent review in the CareerScope review chat.",
+      "reviewer": "Codex (Stage 04 item 4.08 closeout update)",
+      "sha256": "1de706c9c722bf11676d73ec39ab5deaef3a3e87362e2259c006f5fe203781e4",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2036,6 +2036,16 @@
           "evidence": "Run 43257367648 on SHA 6ec5e88023469f7eb926966041cf0990873e751e passed Quality gates and production image builds but failed browser acceptance at the parser-result assertion after the 4.07 version journey. The corrected assertion scopes to firstVersion.id. New exact-head CI and independent review remain pending.",
           "reviewer": "Codex (Stage 04 item 4.08 browser follow-up)",
           "sha256": "309c32b7f07cdcac0c54a932aa68346bc1712c4a541cea491ff10c378112151c"
+        },
+        {
+          "observations": "Updated the 4.08 progress record with exact-head automatic and manual CI results, independent engineering acceptance, and the remaining owner/merge/post-merge gates.",
+          "evidence": "PR #83 exact head 76d88673ffce923c30d7924a736f9f3bbc30f11d; runs 43270750798 and 43270545677; independent review in the CareerScope review chat.",
+          "reviewer": "Codex (Stage 04 item 4.08 closeout update)"
+        },
+        {
+          "observations": "Reformatted the Stage 04 item 4.08 evidence update and refreshed its content hash.",
+          "evidence": "Prettier check and complete Stage 01 audit/roadmap traceability gates run on the documentation-sync revision.",
+          "reviewer": "Codex (Stage 04 item 4.08 documentation synchronization)"
         }
       ]
     },
@@ -2078,14 +2088,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "source and CI failure-follow-up review; exact-head CI pending",
+      "reviewMethod": "current source/documentation and exact-head CI/review reconciliation",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled the Stage 04 item 4.08 browser evidence across the combined item 4.07/4.08 journey. The original upload now runs through the real parser; its persisted derived full name assertion is scoped to that upload id. Item 4.08 remains partial.",
-      "evidence": "Run 43257367648 on SHA 6ec5e88023469f7eb926966041cf0990873e751e exposed an assertion selecting a later parsed upload. Run 43259110649 on SHA 2a09cc0dee8e822be1dd70ef0dc4a1a193519ce4 still failed because its first-version fixture was manually seeded without derived.fullName. The current revision uses the actual resume.parse queue for the original upload; new exact-head CI and final review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.08 browser follow-up)",
-      "sha256": "accee16afd269be46c57240a7b507df6fe6d956467c6d87af3330223286615e1",
+      "observations": "Updated item 4.08 test evidence with exact-head CI, performance, soak, recovery, review approval, and the unclosed translation/merge gates.",
+      "evidence": "PR #83 exact head 76d88673ffce923c30d7924a736f9f3bbc30f11d; runs 43270750798 and 43270545677.",
+      "reviewer": "Codex (Stage 04 item 4.08 closeout update)",
+      "sha256": "6fab6f2d9b7ff40ed62e734ad68612adba7bf217e9a0a62a6eeb85c70084468b",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2122,6 +2132,16 @@
           "evidence": "Run 43257367648 on SHA 6ec5e88023469f7eb926966041cf0990873e751e passed Quality gates and production image builds but failed browser acceptance at the parser-result assertion after the 4.07 version journey. The corrected assertion scopes to firstVersion.id. New exact-head CI and independent review remain pending.",
           "reviewer": "Codex (Stage 04 item 4.08 browser follow-up)",
           "sha256": "bff7801b311adcb4f71dc87cd4b7750d2a82d660458c22db0efc8c2b37ca6f43"
+        },
+        {
+          "observations": "Updated item 4.08 test evidence with exact-head CI, performance, soak, recovery, review approval, and the unclosed translation/merge gates.",
+          "evidence": "PR #83 exact head 76d88673ffce923c30d7924a736f9f3bbc30f11d; runs 43270750798 and 43270545677.",
+          "reviewer": "Codex (Stage 04 item 4.08 closeout update)"
+        },
+        {
+          "observations": "Reformatted the Stage 04 item 4.08 evidence update and refreshed its content hash.",
+          "evidence": "Prettier check and complete Stage 01 audit/roadmap traceability gates run on the documentation-sync revision.",
+          "reviewer": "Codex (Stage 04 item 4.08 documentation synchronization)"
         }
       ]
     },
@@ -2556,14 +2576,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
+      "reviewMethod": "current source/documentation and exact-head CI/review reconciliation",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
-      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
-      "sha256": "3dfb49a41da3f78e54c46734886c333ace81eb313e719c6607265377142fce6d",
+      "observations": "Appended current exact-head CI and review evidence to item 4.08 while preserving partial status and historical run notes.",
+      "evidence": "PR #83 exact head 76d88673ffce923c30d7924a736f9f3bbc30f11d; runs 43270750798 and 43270545677.",
+      "reviewer": "Codex (Stage 04 item 4.08 closeout update)",
+      "sha256": "3628a27ad55b55d66f95dd01dfd0c4aabc94ceef7694c30e2cd3341487fc81a6",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2588,6 +2608,16 @@
           "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
           "reviewer": "Codex (Stage 04 item 4.07 closeout)",
           "sha256": "32a340ef0445218bb61935754032e5da565380b32ed462b401397b064cf99243"
+        },
+        {
+          "observations": "Appended current exact-head CI and review evidence to item 4.08 while preserving partial status and historical run notes.",
+          "evidence": "PR #83 exact head 76d88673ffce923c30d7924a736f9f3bbc30f11d; runs 43270750798 and 43270545677.",
+          "reviewer": "Codex (Stage 04 item 4.08 closeout update)"
+        },
+        {
+          "observations": "Reformatted the Stage 04 item 4.08 evidence update and refreshed its content hash.",
+          "evidence": "Prettier check and complete Stage 01 audit/roadmap traceability gates run on the documentation-sync revision.",
+          "reviewer": "Codex (Stage 04 item 4.08 documentation synchronization)"
         }
       ]
     },
@@ -6767,7 +6797,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "source and CI failure-follow-up review; exact-head CI pending",
+      "reviewMethod": "current source/documentation and exact-head CI/review reconciliation",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6793,9 +6823,9 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "After deleting version 3, the browser journey now explicitly selects remaining version 1 before exercising the unsaved draft replacement confirmation, because deletion clears the selected upload by design. Parsed test fixtures for all versions contain candidate name and skills; item 4.08 remains partial.",
-      "evidence": "Run 43268819804 on exact SHA f2dd213a20a8b7497c721a795bf82f487ed4432e passed Quality gates and the browser flow through correction validation/application, then timed out on Review profile draft because deletion had cleared selection. Follow-up reselects version 1 before that assertion. New exact-head workflow_dispatch CI is pending.",
-      "reviewer": "Codex (Stage 04 item 4.08 browser flow follow-up)",
+      "observations": "The updated resume-version journey reselects a remaining resume after deletion and waits for its accessible ready state. Exact-head automatic browser CI passed; independent review approved this delta.",
+      "evidence": "PR #83 exact head 76d88673ffce923c30d7924a736f9f3bbc30f11d; automatic run 43270750798 and manual run 43270545677.",
+      "reviewer": "Codex (Stage 04 item 4.08 closeout update)",
       "sha256": "54c5d972752c2b49246de42ac0104e523b35bd4ac3a18ed13832aed79fd46880",
       "history": [
         {
@@ -6851,6 +6881,11 @@
           "evidence": "Run 43267484171 on exact SHA 3996a6964c50f583b785ca6def00c5e74f2b6e8e passed Quality gates and integration checks but the browser failed when corrected Full Name was absent from the manually seeded version 2/3 result. The fixture now includes fullName; new exact-head CI and review are pending.",
           "reviewer": "Codex (Stage 04 item 4.08 browser fixture follow-up)",
           "sha256": "95a36c20824d77d4f8de39ef740ee150bf9fa6a4e514992885717399803cb1fa"
+        },
+        {
+          "observations": "The updated resume-version journey reselects a remaining resume after deletion and waits for its accessible ready state. Exact-head automatic browser CI passed; independent review approved this delta.",
+          "evidence": "PR #83 exact head 76d88673ffce923c30d7924a736f9f3bbc30f11d; automatic run 43270750798 and manual run 43270545677.",
+          "reviewer": "Codex (Stage 04 item 4.08 closeout update)"
         }
       ]
     },
