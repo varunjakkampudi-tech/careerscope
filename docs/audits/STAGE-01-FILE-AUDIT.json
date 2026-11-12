@@ -6793,10 +6793,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Updated the combined browser journey for the current explicit resume review flow: after opening a parsed draft, it verifies the candidate-facing corrected Skills value and cancels review before continuing. The parser fixture has a labeled TECHNICAL SKILLS section and the original upload uses the real parser. Item 4.08 remains partial; exact-head CI and independent review are pending.",
-      "evidence": "Run 43263755927 on SHA aeaa996b2e8a387b9f2d2b11d50a11397e08854c passed Quality gates, production image build, PostgreSQL/Redis integration, pool budget and configuration checks, but browser acceptance still expected the legacy direct-to-profile behavior after Review profile draft. This follow-up asserts the current correction review flow. Exact-head CI is pending.",
+      "observations": "Updated the combined browser journey for the explicit resume review flow: it verifies the parsed Skills value in the candidate correction panel and keeps that panel open while version deletion/continuation is exercised, matching subsequent correction acceptance steps. The synthetic DOCX has a labeled TECHNICAL SKILLS section and the original upload uses the real parser. Item 4.08 remains partial; exact-head CI and independent review remain pending.",
+      "evidence": "Run 43266114717 on exact SHA e19221009259f937471554065839f4df994389b0 passed Quality gates and PostgreSQL/Redis integration but failed browser acceptance because the test cancelled the correction panel before later steps that assert it remains open. New full workflow CI will be run on this follow-up revision.",
       "reviewer": "Codex (Stage 04 item 4.08 browser flow follow-up)",
-      "sha256": "b15acae53e26d83a67e6bade1c458cbef2c66f547ce67414e631752415ee4487",
+      "sha256": "d7f417a9ada42585182841ea27e303f5d1ecf9d1237edc8c521ab9a7f32d6efd",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -6833,6 +6833,12 @@
           "evidence": "Run 43261565866 on SHA 20440a1f9ca52e0476fa31009ace2613555918e5 passed Quality gates and production image build plus PostgreSQL/Redis integration, but browser acceptance failed because the synthetic DOCX prose produced no techStack field. The follow-up fixture explicitly labels skills. Run typecheck, format:check, and traceability:check passed locally; exact-head CI is pending.",
           "reviewer": "Codex (Stage 04 item 4.08 browser fixture follow-up)",
           "sha256": "b343ddf9e485a99b4669a7bc2fe565e6090be18cefe12ab11023d77dd1e208fb"
+        },
+        {
+          "observations": "Updated the combined browser journey for the current explicit resume review flow: after opening a parsed draft, it verifies the candidate-facing corrected Skills value and cancels review before continuing. The parser fixture has a labeled TECHNICAL SKILLS section and the original upload uses the real parser. Item 4.08 remains partial; exact-head CI and independent review are pending.",
+          "evidence": "Run 43263755927 on SHA aeaa996b2e8a387b9f2d2b11d50a11397e08854c passed Quality gates, production image build, PostgreSQL/Redis integration, pool budget and configuration checks, but browser acceptance still expected the legacy direct-to-profile behavior after Review profile draft. This follow-up asserts the current correction review flow. Exact-head CI is pending.",
+          "reviewer": "Codex (Stage 04 item 4.08 browser flow follow-up)",
+          "sha256": "b15acae53e26d83a67e6bade1c458cbef2c66f547ce67414e631752415ee4487"
         }
       ]
     },
