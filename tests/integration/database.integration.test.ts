@@ -25,7 +25,7 @@ import {
   logger,
 } from '@careerscope/core';
 import type { DerivedResume } from '@careerscope/shared';
-import { buildCandidateContext } from '@careerscope/matching';
+import { buildCandidateContext, scoreJob } from '@careerscope/matching';
 import { LocalQueue } from '../../packages/core/src/queue.js';
 import { executeBullCommand } from '../../packages/core/src/bull-queue.js';
 import {
@@ -46,7 +46,11 @@ import JSZip from 'jszip';
 import { createApp as createApiApp } from '../../apps/api/src/app.js';
 import type { SourceOutcome } from '../../packages/core/src/jobs.js';
 import { searchHandler } from '../../apps/workers/search/src/collect.js';
-import { createRemoteOkProvider, createHimalayasProvider } from '@careerscope/providers';
+import {
+  createRemoteOkProvider,
+  createHimalayasProvider,
+  normalizeJob,
+} from '@careerscope/providers';
 import { createSearchSchema } from '../../packages/core/src/commands.js';
 
 // These legacy HTTP contract fixtures intentionally exercise password/session
@@ -3695,6 +3699,46 @@ test('createSearch snapshots the latest parsed resume onto the matching profile,
     // to something indistinguishable from "resume present but empty".
     const beforeResume = await database.createSearch(ownerId, 'before-resume', request);
     assert.equal(beforeResume.matchingProfile?.derived, null);
+    const storedJob = normalizeJob(
+      {
+        source: 'remoteok',
+        sourceJobId: 'resume-recompute-fixture',
+        title: 'Platform Engineer',
+        companyName: 'Synthetic Employer',
+        location: 'Remote',
+        isRemote: true,
+        hasFullDescription: true,
+        description: 'Build and operate a Terraform infrastructure platform. '.repeat(15),
+        sourceUrl: 'https://example.test/jobs/terraform',
+        applyUrl: 'https://example.test/apply/terraform',
+      },
+      { now: beforeResume.createdAt.getTime() },
+    );
+    const storedJobId = randomUUID();
+    await database.pool.query(
+      `INSERT INTO search_jobs (id, run_id, owner_id, fingerprint, data)
+       VALUES ($1, $2, $3, $4, $5::jsonb)`,
+      [
+        storedJobId,
+        beforeResume.id,
+        ownerId,
+        storedJob.fingerprint,
+        JSON.stringify({
+          fingerprint: storedJob.fingerprint,
+          sourceJobId: storedJob.sourceJobId,
+          title: storedJob.title,
+          company: storedJob.company.name,
+          location: storedJob.location,
+          description: storedJob.descriptionText,
+          source: storedJob.source,
+          sourceUrl: storedJob.sourceUrl,
+          applyUrl: storedJob.applyUrl,
+          postedAt: storedJob.postedAt,
+          match: null,
+          matchingInput: storedJob,
+        }),
+      ],
+    );
 
     const uploads = new ResumeUploadRepository(database);
     const settle = async (key: string, derived: DerivedResume) => {
@@ -3742,6 +3786,45 @@ test('createSearch snapshots the latest parsed resume onto the matching profile,
       experienceClaims: [],
       extractionEvidence: [],
     });
+    const recomputeCommands = await database.unpublished(['search.recompute']);
+    assert.ok(recomputeCommands.length >= 1);
+    const recomputeCommand = recomputeCommands.at(-1)!.command;
+    assert.equal(recomputeCommand.type, 'search.recompute');
+    assert.equal(recomputeCommand.ownerId, ownerId);
+    assert.equal(recomputeCommand.aggregateId.length > 0, true);
+    const recomputeFence = await database.claim(recomputeCommand.id);
+    assert.ok(recomputeFence);
+    const recomputeSnapshot = await database.resumeRecomputeSnapshot(ownerId);
+    assert.ok(recomputeSnapshot.searches.length >= 2);
+    assert.equal(
+      await database.completeResumeRecompute(recomputeCommand, recomputeFence, {
+        searches: recomputeSnapshot.searches.map((search) => ({
+          id: search.id,
+          profileRevision: search.profileRevision,
+          matchingProfile: search.matchingProfile,
+          jobs: search.jobs.map((job) => ({
+            fingerprint: job.fingerprint,
+            match: search.matchingProfile
+              ? scoreJob(job.data.matchingInput!, buildCandidateContext(search.matchingProfile), {
+                  now: search.createdAt.getTime(),
+                  windowDays: 30,
+                })
+              : null,
+          })),
+        })),
+      }),
+      true,
+    );
+    assert.deepEqual(
+      (await database.getSearch(ownerId, beforeResume.id))?.matchingProfile?.derived?.techStack,
+      ['Terraform'],
+      'a successfully parsed resume refreshes the profile snapshot on an existing queued search',
+    );
+    const refreshedJob = await database.pool.query<{ data: { match: { resumeSkills: string[] } } }>(
+      'SELECT data FROM search_jobs WHERE owner_id = $1 AND id = $2',
+      [ownerId, storedJobId],
+    );
+    assert.deepEqual(refreshedJob.rows[0]?.data.match.resumeSkills, ['Terraform']);
     const afterSecondResume = await database.createSearch(ownerId, 'after-second-resume', request);
     assert.deepEqual(afterSecondResume.matchingProfile?.derived?.techStack, ['Terraform']);
     assert.equal(afterSecondResume.matchingProfile?.derived?.yearsOfExperience, 5);
@@ -3785,10 +3868,10 @@ test('createSearch snapshots the latest parsed resume onto the matching profile,
     assert.ok(candidateContext.skills.includes('Terraform'));
     assert.deepEqual(candidateContext.resumeSkills, ['Terraform']);
 
-    const noResumeProfile = await database.getSearch(ownerId, beforeResume.id);
-    const noResumeContext = buildCandidateContext(noResumeProfile!.matchingProfile!);
-    assert.equal(noResumeContext.resumeConsidered, false);
-    assert.deepEqual(noResumeContext.resumeSkills, []);
+    const refreshedExistingSearch = await database.getSearch(ownerId, beforeResume.id);
+    const refreshedContext = buildCandidateContext(refreshedExistingSearch!.matchingProfile!);
+    assert.equal(refreshedContext.resumeConsidered, true);
+    assert.deepEqual(refreshedContext.resumeSkills, ['Terraform']);
   } finally {
     await database.close();
     await admin.pool.query(`DROP DATABASE "${name}"`);

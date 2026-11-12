@@ -132,6 +132,22 @@ export class ResumeUploadRepository {
         ],
       );
       if (!inserted.rowCount) throw new Conflict('Upload is not eligible for parse completion');
+      if (parsed.status === 'parsed') {
+        const recompute: Command = {
+          id: randomUUID(),
+          type: 'search.recompute',
+          version: 1,
+          aggregateId: command.aggregateId,
+          ownerId: command.ownerId,
+          occurredAt: new Date().toISOString(),
+          correlationId: command.aggregateId,
+          causationId: command.id,
+        };
+        await client.query('INSERT INTO outbox_events (id, command) VALUES ($1, $2::jsonb)', [
+          recompute.id,
+          JSON.stringify(recompute),
+        ]);
+      }
       await client.query('COMMIT');
       return true;
     } catch (error) {

@@ -173,13 +173,14 @@ export async function consumeMessage(
 export async function reconcileDeadLetter(
   database: Database,
   message: Message,
-  type: Command['type'] = 'search.collect',
+  type: Command['type'] | readonly Command['type'][] = ['search.collect', 'search.recompute'],
   fail: (command: Command, fence: number) => Promise<boolean> = (command, fence) =>
     database.fail(command, fence),
 ) {
   const command = commandSchema.parse(JSON.parse(message.Body ?? ''));
   const stored = await database.command(command.id);
-  if (!stored || !isDeepStrictEqual(stored, command) || command.type !== type) {
+  const supported = Array.isArray(type) ? type : [type];
+  if (!stored || !isDeepStrictEqual(stored, command) || !supported.includes(command.type)) {
     throw new Error('Dead letter does not match a supported durable command');
   }
   const fence = await database.claim(command.id);

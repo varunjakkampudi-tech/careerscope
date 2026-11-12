@@ -5,7 +5,7 @@
 
 import { z } from 'zod';
 import { searchSourceSchema } from './commands.js';
-import { matchBreakdownSchema } from '@careerscope/shared';
+import { jobSchema, matchBreakdownSchema, type Job } from '@careerscope/shared';
 
 // Accepts null/undefined as "not scored"; anything else must be a valid, strict match breakdown.
 const match = z
@@ -55,11 +55,14 @@ export const collectedJobSchema = z
     applyUrl: publicLink,
     postedAt: z.string().datetime().nullable(),
     match,
+    // Private persisted scoring input. API response schemas must omit this field.
+    matchingInput: jobSchema.optional(),
   })
   .strict();
 
 export type CollectedJob = z.infer<typeof collectedJobSchema>;
 export type CollectedJobInput = z.input<typeof collectedJobSchema>;
+export type CollectedJobWithMatchingInput = CollectedJobInput & { matchingInput: Job };
 /** At most 100 jobs per collection call. */
 export const collectedJobsSchema = z.array(collectedJobSchema).max(100);
 

@@ -48,7 +48,7 @@ export async function executeBullCommand(
   shutdown: AbortSignal,
 ) {
   const parsed = commandSchema.safeParse(input);
-  if (!parsed.success || parsed.data.type !== 'search.collect') {
+  if (!parsed.success || !['search.collect', 'search.recompute'].includes(parsed.data.type)) {
     throw new UnrecoverableError('Unsupported queue command');
   }
   const command = parsed.data;
@@ -179,7 +179,7 @@ export class BullSearchQueue {
   async send(input: Command) {
     const command = commandSchema.parse(input);
     if (
-      command.type !== 'search.collect' ||
+      !['search.collect', 'search.recompute'].includes(command.type) ||
       !isDeepStrictEqual(await this.database.command(command.id), command)
     ) {
       throw new Error('Unsupported durable command');

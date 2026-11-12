@@ -75,7 +75,11 @@ try {
     logger.info('outbox publisher ready');
     while (!shutdown.signal.aborted) {
       try {
-        await publishPending(db, { 'search.collect': queue, 'resume.parse': filesQueue });
+        await publishPending(db, {
+          'search.collect': queue,
+          'search.recompute': queue,
+          'resume.parse': filesQueue,
+        });
         try {
           const created = await publishDueInterviewReminders(db);
           if (created > 0)

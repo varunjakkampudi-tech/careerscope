@@ -254,6 +254,7 @@ export async function collect(
         applyUrl: normalized.applyUrl,
         postedAt: normalized.postedAt,
         match,
+        matchingInput: normalized,
       }),
     );
   }

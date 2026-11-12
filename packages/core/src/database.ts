@@ -10,17 +10,18 @@ import { createHash, randomUUID } from 'node:crypto';
 import { and, desc, eq, inArray, isNull, or, lt, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
-import type { DerivedResume } from '@careerscope/shared';
+import { matchBreakdownSchema, type DerivedResume } from '@careerscope/shared';
 import { createSearchSchema, type Command, type CreateSearchInput } from './commands.js';
 import * as tables from './schema.js';
 import {
   collectedJobsSchema,
   collectionStatus,
   sourceOutcomesSchema,
+  type CollectedJob,
   type SourceOutcome,
   type CollectedJobInput,
 } from './jobs.js';
-import { matchingProfile } from './profile.js';
+import { matchingProfile, type MatchingProfile } from './profile.js';
 import { logger } from './runtime.js';
 
 import { Conflict } from './errors.js';
@@ -210,6 +211,111 @@ export class Database {
         .values({ id: randomUUID(), runId: id, ownerId, type: 'SearchQueued' });
       return inserted[0];
     });
+  }
+
+  /** Current owner-scoped scoring inputs and stored jobs for the resume recomputation worker. */
+  async resumeRecomputeSnapshot(ownerId: string) {
+    const resumeResult = await this.pool.query<{ derived: DerivedResume | null }>(
+      `SELECT parsed->'derived' AS derived FROM resume_results
+         WHERE owner_id = $1 AND status = 'parsed' ORDER BY created_at DESC LIMIT 1`,
+      [ownerId],
+    );
+    const derived = resumeResult.rows[0]?.derived ?? null;
+    const searches = await this.pool.query<{
+      id: string;
+      createdAt: Date;
+      status: 'queued' | 'completed' | 'partial';
+      profileRevision: number | null;
+      matchingProfile: MatchingProfile | null;
+    }>(
+      `SELECT id, created_at AS "createdAt", status, profile_revision AS "profileRevision",
+              matching_profile AS "matchingProfile" FROM search_runs
+       WHERE owner_id = $1 AND status IN ('queued', 'completed', 'partial') ORDER BY created_at, id`,
+      [ownerId],
+    );
+    if (searches.rows.length === 0) return { searches: [] };
+    const jobs = await this.pool.query<{
+      runId: string;
+      fingerprint: string;
+      data: CollectedJob;
+    }>(
+      `SELECT run_id AS "runId", fingerprint, data FROM search_jobs
+       WHERE owner_id = $1 AND run_id = ANY($2::uuid[]) ORDER BY run_id, fingerprint`,
+      [ownerId, searches.rows.map((search) => search.id)],
+    );
+    const jobsByRun = new Map<string, typeof jobs.rows>();
+    for (const job of jobs.rows) {
+      const runJobs = jobsByRun.get(job.runId) ?? [];
+      runJobs.push(job);
+      jobsByRun.set(job.runId, runJobs);
+    }
+    return {
+      searches: searches.rows.map((search) => ({
+        ...search,
+        matchingProfile: search.matchingProfile ? { ...search.matchingProfile, derived } : null,
+        jobs: jobsByRun.get(search.id) ?? [],
+      })),
+    };
+  }
+
+  /** Applies a fully computed resume refresh only while its durable command lease is current. */
+  async completeResumeRecompute(
+    command: Command,
+    fence: number,
+    result: {
+      searches: Array<{
+        id: string;
+        profileRevision: number | null;
+        matchingProfile: MatchingProfile | null;
+        jobs: Array<{ fingerprint: string; match: unknown }>;
+      }>;
+    },
+  ) {
+    if (command.type !== 'search.recompute') throw new Conflict('Unsupported recompute type');
+    const client = await this.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const owned = await client.query(
+        `UPDATE command_executions SET status = 'completed'
+         WHERE id = $1 AND fence = $2 AND status = 'running' AND lease_until > now()
+         AND EXISTS (SELECT 1 FROM outbox_events WHERE id = $1 AND command = $3::jsonb)
+         RETURNING id`,
+        [command.id, fence, JSON.stringify(command)],
+      );
+      if (!owned.rowCount) {
+        await rollback(client);
+        return false;
+      }
+      for (const search of result.searches) {
+        const saved = await client.query(
+          `UPDATE search_runs SET matching_profile = $3::jsonb, profile_revision = $4
+           WHERE id = $1 AND owner_id = $2 AND status IN ('queued', 'completed', 'partial')
+           RETURNING id`,
+          [
+            search.id,
+            command.ownerId,
+            JSON.stringify(search.matchingProfile),
+            search.profileRevision,
+          ],
+        );
+        if (!saved.rowCount) continue;
+        for (const job of search.jobs) {
+          const match = job.match == null ? null : matchBreakdownSchema.parse(job.match);
+          await client.query(
+            `UPDATE search_jobs SET data = jsonb_set(data, '{match}', $4::jsonb, true)
+             WHERE owner_id = $1 AND run_id = $2 AND fingerprint = $3`,
+            [command.ownerId, search.id, job.fingerprint, JSON.stringify(match)],
+          );
+        }
+      }
+      await client.query('COMMIT');
+      return true;
+    } catch (error) {
+      await rollback(client);
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 
   /** The run if it belongs to `ownerId`, otherwise undefined; ownership is part of the query. */
@@ -469,6 +575,16 @@ export class Database {
 
   /** Settles the command as `failed` with no jobs. Returns false if the lease or fence was lost. */
   async fail(command: Command, fence: number) {
+    if (command.type === 'search.recompute') {
+      const result = await this.pool.query(
+        `UPDATE command_executions SET status = 'failed'
+         WHERE id = $1 AND fence = $2 AND status = 'running' AND lease_until > now()
+         AND EXISTS (SELECT 1 FROM outbox_events WHERE id = $1 AND command = $3::jsonb)
+         RETURNING id`,
+        [command.id, fence, JSON.stringify(command)],
+      );
+      return result.rowCount === 1;
+    }
     return this.settle(command, fence, [], 'failed');
   }
 

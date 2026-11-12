@@ -169,7 +169,7 @@ const qualifiedColumns = (alias: string) =>
 function hydrate(row: LeadRecord): LeadRecord {
   return {
     ...row,
-    data: collectedJobSchema.strip().parse(row.data),
+    data: collectedJobSchema.omit({ matchingInput: true }).parse(row.data),
     tags: leadTagsSchema.parse(row.tags),
     applicationEvidence:
       row.applicationEvidence === null
@@ -290,7 +290,7 @@ export class LeadRepository {
         await rollback(client);
         return null;
       }
-      const data = collectedJobSchema.strip().parse(source.rows[0].data);
+      const data = collectedJobSchema.omit({ matchingInput: true }).parse(source.rows[0].data);
       const inserted = await client.query<LeadRecord>(
         `INSERT INTO saved_leads (id, owner_id, fingerprint, data) VALUES ($1, $2, $3, $4::jsonb)
          ON CONFLICT (owner_id, fingerprint) DO NOTHING RETURNING ${columns}`,

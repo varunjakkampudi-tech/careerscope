@@ -2078,7 +2078,9 @@ export async function createApp(
           ? sourceOutcomesSchema.parse(search.sourceOutcomes)
           : null,
         request: createSearchSchema.parse(search.request),
-        jobs: jobs.rows.map((row) => collectedJobSchema.strip().parse(row.data)),
+        jobs: jobs.rows.map((row) =>
+          collectedJobSchema.omit({ matchingInput: true }).parse(row.data),
+        ),
       });
   });
   app.get('/api/searches/:id/events', async (request, reply) => {
@@ -2237,7 +2239,7 @@ export async function createApp(
       // unfiltered here.
       jobs: jobs.rows.map((row) => ({
         id: row.id,
-        data: collectedJobSchema.strip().parse(row.data),
+        data: collectedJobSchema.omit({ matchingInput: true }).parse(row.data),
         feedbackReason: row.feedbackReason,
       })),
       events: events.rows,

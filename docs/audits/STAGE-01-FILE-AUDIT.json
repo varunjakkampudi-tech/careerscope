@@ -261,14 +261,14 @@
     {
       "path": "apps/api/src/app.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed route schemas and wiring for candidate resume target-role and version-group metadata; validation, listing and upload coordination are consistent.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "608697156e7369b604bd0c7c9a9b05f72b4473f08f0e1e414c51fb80b9b32260"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "935d9bed74bd87b0059141c5d1fd711456e14d0b986d9f24fc7af4165fa49e07"
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -1596,10 +1596,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Prior dev audit: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding.\n\nStage 04 PR #72 audit history: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 type/test fixture or assertions for bounded field-level resume extraction evidence; current local domain suite and typecheck pass.\n\nItem 4.05 follow-up test or typed fixture: bounded source evidence coverage for derived skills, titles, experience-years and education is validated; test suite and canonical test typecheck pass.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
-      "evidence": "Prior dev audit: Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "bb3814671498c171107cf6d0662758d1ed4396f2e155eff745566e6b528aa286"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "7e1e92bdc5bef48dafcfc2f8dc78ea0614155db097ff4dbc7143299776fc0956"
     },
     {
       "path": "apps/workers/search/src/collect.ts",
@@ -1608,10 +1608,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (380 lines). Checked: exact source attribution; per-source and whole-run timeouts; at most 20 detail fetches; per-posting validation that skips a malformed posting without losing the rest of the results and records only field paths; outcome statuses that distinguish empty from failed; deduplication with disambiguated link buckets; fenced start and settle; permission-pending outcomes for sources without a current permission profile; empty-streak diagnostics that cannot fail a completed search. No defect found. Scoring read uses the snapshot taken at search creation.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "607a72b745e695635f3c85f95eaa527b6b47c93811df5ea53efdbf31ccf6cb9b"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "da642e86c8294fbd716760357e905a1a5e70a9fcb66f537840fb6b6c925dd8c7"
     },
     {
       "path": "apps/workers/search/src/files.ts",
@@ -1652,10 +1652,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (91 lines). Checked: BullMQ and Redis LocalQueue transports; the LocalQueue receive loop breaks on shutdown and keeps failed messages for retry or dead-letter handling; consumeMessage is fenced by the database; worker cancellation before close; bounded startup failure exit. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "e3d0d2b8e4873928ef564c02fcf5ef1069b6499445449e9b9ba98ab0cb8b3bd5"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "76508d3b7c697438bb17573fae9ad655b31f7a93c7f382ccfc342e17cae8c899"
     },
     {
       "path": "apps/workers/search/src/publisher.ts",
@@ -1664,10 +1664,34 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (145 lines). Checked: outbox publish loop with one-second cadence and abortable delay; dead-letter reconciliation isolated from the other reconciliations; backlog warnings for expired leases, aged work and dead letters; cleanup in finally; bounded startup failure exit. Observation: the files queue is enabled by reading RESUME_STORAGE_DIRECTORY and RESUME_STORAGE_KEY_FILE straight from process.env rather than the validated configuration. Both are needed for resume parsing, so the worker does not start a files queue when either is missing, which is intended but worth a configuration test. No defect claimed.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "30cfd2d5148b4e282c055d0c5d876f52309ccc7331440bfd763f84392090d590"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "3be67f3398c91be36f24f4894804e6ed19369d154509e32d6b6ce5dc3ee021b5"
+    },
+    {
+      "path": "apps/workers/search/src/recompute.test.ts",
+      "category": "background-workers",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "6065d3863fc43659be6a6fd41b65c1564fee3c2f78236a86bf32950ae133e132"
+    },
+    {
+      "path": "apps/workers/search/src/recompute.ts",
+      "category": "background-workers",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "5be87048177236c38d677be4401c8849f28ae1525b94a8110c244a4537071d7d"
     },
     {
       "path": "apps/workers/search/tsconfig.json",
@@ -1910,7 +1934,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1922,10 +1946,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "102ee77f92d7a0abf3d728024ce1dd4e5db91a514737d4d96eaea83a36026322",
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "b57c43c13dc4d872a4a01d64dd0f89032ca6cd09b3c910642f4f4850c49f669b",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -1986,14 +2010,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "4a83d02f88d60394b7fea55bec23fdeea68c2bbc8a1a9542934867f6642b2894",
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "188db0fc6cd40229a8a462daad06f18e24db344e4d881503967c43d243cd38cb",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2106,10 +2130,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete event-contract guide. Documents durable command/outbox guarantees, run events, notification delivery (explicitly no live producers/transports), in-app reminders, SSE, direct OTP emails and a field inventory; it points to source-backed guards that detect contract drift. No production provider calls are implied.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "0d6043a01af557a643839b572d293dd2d0b80f7068523a530238a51089fe24c2"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "798ae15d6f17c99baf25c6c1e47a01777b8dcd5b20971d3ae335a06cded3a6a8"
     },
     {
       "path": "docs/architecture/OUTBOX.md",
@@ -2438,14 +2462,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "32a340ef0445218bb61935754032e5da565380b32ed462b401397b064cf99243",
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "51d6d2438cff43d6c5fd09719a7a754c600420ba2eae16182e6f7b4f64aaea0d",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3622,14 +3646,14 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "focused source and test review",
+      "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the root test command delta: it registers the profile completeness node:test file in the explicit unit suite. No dependency or runtime command changed.",
-      "evidence": "npm test passed 371 tests with 3 skips and no failures on the Stage 03 item 3.16 revision.",
-      "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "6b71db79c2e0c943a5e51833a4703d66d01d1deae90b10101e9327b8efd8a373"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "d91e9a2ee2ac43f5521997c0efd7d652ef0d8b53b39ea773c1586062a4a93f8a"
     },
     {
       "path": "packages/core/package.json",
@@ -3702,10 +3726,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (259 lines). Checked: loopback-only connection; command must match the durable command before any claim; fence and lease gate every settle; heartbeat every 15 seconds against a 60-second lock, aborting the handler when renewal fails; fence above five is dead-lettered; busy results are delayed rather than run; UnrecoverableError for invalid or permanently failed commands; send is idempotent by job id and refuses a data mismatch; initialise checks noeviction and AOF with a bounded wait. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "3efdbb8299c261e80efebc297f46a4075dd0541157d4a7080da4be3049d9a45a"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "b932f39a31ebd3d9e6651467d40d2c1557b50ee9393e57efd00d40a0b9d77dad"
     },
     {
       "path": "packages/core/src/commands.test.ts",
@@ -3714,10 +3738,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Commands reject private/arbitrary payloads and unsupported providers; scheduled origin is explicit; retries are bounded; Redis ACL username/password parsing preserves secret handling and rejects non-loopback hosts.",
-      "evidence": "",
-      "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "acdb70e5dca9f4c116be1063e2f02b2dd1dda514f680d31c5361889f9fdafaee"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "e04d86b093c9a1f0aa70c7705431d1f0701fcabcaae75796651c82c6b9a4c16a"
     },
     {
       "path": "packages/core/src/commands.ts",
@@ -3726,10 +3750,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (80 lines). Strict envelope schema, the closed command type list, the search schema with sorted and de-duplicated sources, origin defaults with a separate input type, and bounded full-jitter retry delay were checked. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "8c69f0c437ed8a295aaf9a1e640dd5854a79ccb0415e162f346bef051fc80c34"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "c94c3f7fb317f21374f6c77bcb44bec716c87392869d44725aacb8f01c2967d1"
     },
     {
       "path": "packages/core/src/database.timeout.test.ts",
@@ -3750,10 +3774,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (624 lines, in ranges 1 to 135 and 136 to 625). Checked: pool limits and timeouts; error listener; createSearch idempotency with a canonical request hash, a snapshot of profile and latest derived resume, and the command enqueued in the same transaction; cancelSearch fences the execution so a stale worker cannot settle; outbox selection with a two-minute republish rule that excludes finished or leased work; claim takes a lease with fence increment only on an expired lease; renew and release are fence-checked; settle checks fence, lease and the stored command in one transaction, derives run status from outcomes and refuses results for a different source set; job sightings are written with the job. Earlier finding S1-F002 fixed. No further finding.",
-      "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "6abe50eada2abc65c4734ed5e42f84ce861ed051255f31078cff0949c8f98929"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "ebb53d5bd32e9894eecbdbb2a2228139f5c82bd25775a6e2b3c17894498c0895"
     },
     {
       "path": "packages/core/src/dispatch.test.ts",
@@ -3762,10 +3786,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Written in this change and read in full before commit. Uses fake database and queue objects to exercise only the error path, which is the regression for S1-F011. Wired into test:unit.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "c2acecce6b97b1740c585b6f4d4d615056b7d332caa1b5bf44f93204b40a9229"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "2fd8ec5365f686347a738791706a843cfb93b71388ddeb84e42c85f151df6872"
     },
     {
       "path": "packages/core/src/dispatch.ts",
@@ -3782,10 +3806,10 @@
           "remediation": "The hand-back failure is logged and the handler error is rethrown; dispatch.test.ts asserts it (passes)."
         }
       ],
-      "observations": "Read in full (179 lines). Checked: outbox publish then mark published (duplicates resolved by fences); message must match the stored command exactly; claim and fence; more than five attempts dead-letter; lease heartbeat every 15 seconds with a 60-second visibility; handler success requires durable completion before acknowledge; release with backoff on failure. Defect S1-F011: a failed visibility call in the error path replaced the handler error, so the caller saw a queue error and lost the cause. Now logged and the handler error is rethrown. Regression test: dispatch.test.ts.",
-      "evidence": "node --import tsx --test packages/core/src/dispatch.test.ts: 1 pass, 0 fail. queue and outbox integration tests: 9 pass, 0 fail.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "2f185c899b4a955f664cdc8d6d817a9cb81d4858782fd1b12d4a4c279c2fef85"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "ea6c424bc215da81ef5201c8de4faef9edf409c0d8e7f6c72ea64b254de6e4ab"
     },
     {
       "path": "packages/core/src/email-change-requests.integration.test.ts",
@@ -4010,10 +4034,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (102 lines). Checked: strict collected-job schema; HTTPS-only public links without embedded credentials; match breakdown validated and strict; per-source outcome refinements tie failed to an error code and empty to zero accepted jobs; at most six sources with no repeats; collection status rule. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "26044b3168e00eff840fd500e61081bf0951107b987373542526e09316e8bcce"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "135980dd62a07b9ede7e1014066cf28f44ceff5f718b71843d93d87ab82f52b1"
     },
     {
       "path": "packages/core/src/leads.test.ts",
@@ -4034,10 +4058,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (514 lines). Checked: every read and write is scoped by owner id; rows are re-validated on each read with a stripping parse, so stored JSON cannot leak unknown fields; revisions are guarded and the edit takes a row lock; history is appended in the same transaction; application evidence is candidate-reported, validated with no future date, and cannot be removed; the evidence and tag rules match the status rules; an unchanged resubmission creates no revision; keyset pagination uses an owner-scoped cursor, so another owner's cursor returns no rows; liveness checks always stamp the check time so an erroring URL cannot starve the queue. No finding. Fixed S1-F072 so tags may be included when transitioning from a saved or archived state to an application status, while subsequent tag edits remain restricted.",
-      "evidence": "Node 24.22.1 production build and full Chromium, Firefox, and WebKit UI acceptance passed.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "7293aa9232c7fa877def321d92862c3f8181166f00502e9d5db743b9c65244ed"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "4d82f908e7a2e6ffc1e7386b2b5f25f00ead800c966f0e964aecb45ea0f35cbe"
     },
     {
       "path": "packages/core/src/legal-acceptance.ts",
@@ -4326,14 +4350,14 @@
     {
       "path": "packages/core/src/resumes.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed transaction-locked persistent allocation, owner and role scope, parsed-anchor eligibility, active-upload exclusion and terminal-version continuation.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "494d37efaba470275e1cba78183c5ab7ef8545b01387c33cc6ca109c1a26ea64"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "ce437a5fbab1aa406d0baae27f06d74875936b3d823ba4f0524198f5afba61d9"
     },
     {
       "path": "packages/core/src/rollback.test.ts",
@@ -6773,14 +6797,14 @@
     {
       "path": "tests/integration/database.integration.test.ts",
       "category": "tests",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed migration fixture and persistence assertions for resume version metadata.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "b0edc933184e36519e769294c25b3e43ab0972ef123cc797f0c653d0fdb0656f"
+      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
+      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
+      "sha256": "4178d94f45f0a35f64f5cdcf45c47067977961e3de063e401aedfea5ecfe5805"
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",

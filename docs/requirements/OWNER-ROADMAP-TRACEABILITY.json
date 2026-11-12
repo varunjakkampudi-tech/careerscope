@@ -1046,16 +1046,23 @@
       "sourceStatus": "New",
       "currentStatus": "partial",
       "evidence": [
+        "packages/core/src/resumes.ts",
         "packages/core/src/database.ts",
-        "packages/core/src/profile.ts",
+        "apps/workers/search/src/recompute.ts",
+        "apps/workers/search/src/publisher.ts",
+        "apps/workers/search/src/main.ts",
+        "packages/core/src/jobs.ts",
         "tests/integration/database.integration.test.ts"
       ],
       "tests": [
         "tests/integration/database.integration.test.ts",
-        "apps/workers/search/src/collect.test.ts"
+        "apps/workers/search/src/collect.test.ts",
+        "apps/workers/search/src/recompute.test.ts",
+        "packages/core/src/dispatch.test.ts",
+        "packages/core/src/commands.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "New searches snapshot the latest parsed derived profile; existing searches are not invalidated or recomputed on resume changes, and there is no resume-change recomputation event/acceptance flow.",
+      "gap": "Implementation and focused local coverage are present on codex/stage04-item412-resume-match-recompute. Item remains partial pending final exact-head CI, independent review and post-merge verification. Legacy jobs are rescored from stored display fields because the original full normalized provider payload was not retained; compensation, location and recency dimensions are preserved from their prior breakdowns. New full normalized scoring inputs are private and omitted from API projections.",
       "scopeDisposition": "in-scope"
     },
     {
