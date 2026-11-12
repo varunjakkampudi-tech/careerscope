@@ -4888,9 +4888,13 @@ try {
         undefined,
         { profile: profileRun!.matchingProfile },
       );
-      const profileCommand = (await database.unpublished()).find(
-        (entry) => entry.command.aggregateId === profileId,
-      )!.command;
+      const profileCommandResult = await database.pool.query<{ command: unknown }>(
+        `SELECT command FROM outbox_events
+         WHERE command->>'aggregateId' = $1 AND command->>'type' = 'search.collect'
+         ORDER BY created_at DESC LIMIT 1`,
+        [profileId],
+      );
+      const profileCommand = commandSchema.parse(profileCommandResult.rows[0]?.command);
       const profileFence = await database.claim(profileCommand.id);
       assert.ok(profileFence);
       const profileTerminalRead = waitForSearchStatusResponse(profileId, 'partial');
