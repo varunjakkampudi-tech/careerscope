@@ -261,14 +261,22 @@
     {
       "path": "apps/api/src/app.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed route schemas and wiring for candidate resume target-role and version-group metadata; validation, listing and upload coordination are consistent.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "608697156e7369b604bd0c7c9a9b05f72b4473f08f0e1e414c51fb80b9b32260"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "5c8468cfba01c1d0f8fd2124983dc55e177d38748e1b1f1acb78680d3df81e44",
+      "history": [
+        {
+          "observations": "Reviewed route schemas and wiring for candidate resume target-role and version-group metadata; validation, listing and upload coordination are consistent.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+          "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+          "sha256": "608697156e7369b604bd0c7c9a9b05f72b4473f08f0e1e414c51fb80b9b32260"
+        }
+      ]
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -501,14 +509,22 @@
     {
       "path": "apps/api/src/resumes.integration.test.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends. Also reviewed owner-scoped resume import integration coverage and corrected the synthetic parsed result to satisfy the production parser schema (format and minimum text length), so the test exercises route ownership and provenance rather than failing fixture validation.",
-      "evidence": "4.07 focused lifecycle, migration integration, and Chromium browser evidence was run locally. For 4.08, PR #83 initial exact-head run 43069985875 failed because the synthetic parsed payload omitted format and had too-short text; the fixture is corrected and exact-head CI remains required.",
-      "reviewer": "Codex (CareerScope Stage 04 resume verification)",
-      "sha256": "pending-rehash-after-rebase"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "81aa4d334393da1f9e31b9338a101485d66cbd8b4954fd660cb966f8b718108c",
+      "history": [
+        {
+          "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+          "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+          "sha256": "aec5f29e94b09e66076739d9f51b4f40941b3601da29f5ca8dbada0fbdf694f8"
+        }
+      ]
     },
     {
       "path": "apps/api/src/session-logout.integration.test.ts",
@@ -789,14 +805,22 @@
     {
       "path": "apps/web/src/app/(app)/resume/page.tsx",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete resume/profile route. It lazily loads the profile editor with a loading fallback and passes CSRF, navigation and dirty-state callbacks.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "21c4fc110757561604f92efc2e6de982f43ad401d7cea2088962e0fe8d688418"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "5277b351924c431893b52aac5912bfc05310e470beb5fcefbd5b6f0c5b8bef08",
+      "history": [
+        {
+          "observations": "Read the complete resume/profile route. It lazily loads the profile editor with a loading fallback and passes CSRF, navigation and dirty-state callbacks.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "21c4fc110757561604f92efc2e6de982f43ad401d7cea2088962e0fe8d688418"
+        }
+      ]
     },
     {
       "path": "apps/web/src/app/(app)/saved/page.tsx",
@@ -1181,7 +1205,7 @@
     {
       "path": "apps/web/src/components/profile-editor.tsx",
       "category": "frontend",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1193,10 +1217,18 @@
           "remediation": "Prevent the Continue click default and key the Continue and Save and finish buttons as distinct nodes; browser acceptance verifies no pre-final submission and clicks the final control."
         }
       ],
-      "observations": "Re-reviewed profile-photo UI changes: client checks type and 5 MiB size while server validation remains authoritative; upload/delete mutations report accessible alert/status feedback, dispatch the shared avatar refresh event only on success, disable conflicting controls while pending, and explain the owner-only privacy boundary. Browser coverage includes keyboard access, invalid file rejection, API failure, upload, reload and delete.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "e9cf0cbd78ab72e0a63ddae82c82d3f62e2f5394bb2768299c9d89a658d435d6"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "7f0df8da1199e21a5defab0f25ee8c30c989f7fdafe3e7c621f26d14f63dc0ab",
+      "history": [
+        {
+          "observations": "Re-reviewed profile-photo UI changes: client checks type and 5 MiB size while server validation remains authoritative; upload/delete mutations report accessible alert/status feedback, dispatch the shared avatar refresh event only on success, disable conflicting controls while pending, and explain the owner-only privacy boundary. Browser coverage includes keyboard access, invalid file rejection, API failure, upload, reload and delete.",
+          "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
+          "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
+          "sha256": "e9cf0cbd78ab72e0a63ddae82c82d3f62e2f5394bb2768299c9d89a658d435d6"
+        }
+      ]
     },
     {
       "path": "apps/web/src/components/recovery-email-section.tsx",
@@ -1237,14 +1269,22 @@
     {
       "path": "apps/web/src/components/resume-panel.tsx",
       "category": "frontend",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed version picker eligibility: latest parsed resume remains selectable after terminal failures/deletions; active uploads block continuation; label says which version continuation starts from.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "993d12ec7d56be30e4ed6514c6fb22cdf89f53cdf08e3d014a043f8610f37719"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "7b73c88527c73cecdc7c8bd038697cc5a48ef18843e7d25d8548e16564e6e27a",
+      "history": [
+        {
+          "observations": "Reviewed version picker eligibility: latest parsed resume remains selectable after terminal failures/deletions; active uploads block continuation; label says which version continuation starts from.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+          "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+          "sha256": "993d12ec7d56be30e4ed6514c6fb22cdf89f53cdf08e3d014a043f8610f37719"
+        }
+      ]
     },
     {
       "path": "apps/web/src/components/saved-leads.module.css",
@@ -1312,14 +1352,22 @@
     {
       "path": "apps/web/src/lib/api-schemas.ts",
       "category": "frontend",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed response validation for resume role, group and version fields.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "b70601872ca1f347f8a1b4a141c8f59ed184d2d357683aa947ed09197f6115b5"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "522f3f1aecb73115770b9031c6e2c4a9cae4b30bc271b3ee1d823db86f251f74",
+      "history": [
+        {
+          "observations": "Reviewed response validation for resume role, group and version fields.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+          "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+          "sha256": "b70601872ca1f347f8a1b4a141c8f59ed184d2d357683aa947ed09197f6115b5"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
@@ -1372,26 +1420,42 @@
     {
       "path": "apps/web/src/lib/locale.test.ts",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete localization tests. They verify the supported locale allowlist, translation presence and distinctness for navigation, notifications, security, sign-in, search, and error categories, plus interpolation values. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "ba73e4345193290fe609021a58372b7a02875da4264b972c0f233fd9e4d7db60"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "da2454aa9b64d218c6c03672033fd0a1084ae5e0be629a0bc9819747d5ad33a2",
+      "history": [
+        {
+          "observations": "Read the complete localization tests. They verify the supported locale allowlist, translation presence and distinctness for navigation, notifications, security, sign-in, search, and error categories, plus interpolation values. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "ba73e4345193290fe609021a58372b7a02875da4264b972c0f233fd9e4d7db60"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/locale.ts",
       "category": "frontend",
-      "reviewMethod": "content-and-structural-review",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
-      "evidence": "Locale implementation and representative message groups inspected on codex/stage01-item-101-audit; structural parity is enforced by the full typecheck. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "75e45067aee7990decb4433d3c5e5a4499274933e5b65a938e2fb8eaae91ffcc"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "0b81d4143e355c105a9a4ebab3d33a92afaf852287495b17c84b1b02db4c95c1",
+      "history": [
+        {
+          "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
+          "evidence": "Locale implementation and representative message groups inspected on codex/stage01-item-101-audit; structural parity is enforced by the full typecheck. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "75e45067aee7990decb4433d3c5e5a4499274933e5b65a938e2fb8eaae91ffcc"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/next-proxy-headers.test.ts",
@@ -1696,7 +1760,7 @@
     {
       "path": "docs/API-SURFACE.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1708,10 +1772,18 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Reviewed documented resume-version eligibility and persistent allocation behavior against the implementation.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "0368522c5ecd80a87ce647f7e0f3859464308bb204fc73cfc1f4339f82a9343f"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "43583ac065ce2ef955fea5df81df2c4770b119b4e4b081818715eae0bceaaf59",
+      "history": [
+        {
+          "observations": "Reviewed documented resume-version eligibility and persistent allocation behavior against the implementation.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+          "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+          "sha256": "0368522c5ecd80a87ce647f7e0f3859464308bb204fc73cfc1f4339f82a9343f"
+        }
+      ]
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1772,7 +1844,7 @@
     {
       "path": "docs/DATA-MODEL.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1784,10 +1856,18 @@
           "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
         }
       ],
-      "observations": "Reviewed group counter table, counter backfill, latest-parsed continuation and no-reuse semantics.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "63294de61a5fafe40af7f3a6f8667d1750c70a9df636bf1fe7c3c2e7e0b163db"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "b433cfd9f768673c1b0609701d53152b7a903e8e95edf473be3087f0bf0657af",
+      "history": [
+        {
+          "observations": "Reviewed group counter table, counter backfill, latest-parsed continuation and no-reuse semantics.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+          "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+          "sha256": "63294de61a5fafe40af7f3a6f8667d1750c70a9df636bf1fe7c3c2e7e0b163db"
+        }
+      ]
     },
     {
       "path": "docs/FOUNDATIONS.md",
@@ -1925,7 +2005,7 @@
       "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
       "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
       "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "102ee77f92d7a0abf3d728024ce1dd4e5db91a514737d4d96eaea83a36026322",
+      "sha256": "7fbc00a69f2b371da2f2eaa9bbc7e9449ed2af006d566ea20796a3c3c6b52ad3",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -1986,14 +2066,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "4a83d02f88d60394b7fea55bec23fdeea68c2bbc8a1a9542934867f6642b2894",
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "ad5bf2f4b47dd83f7076f15aa2e569d3ce1b2f29a052dc39147967f723ce1ed9",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2012,6 +2092,12 @@
           "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "3ea4af0af90b41558ec9c0fca9dc522ed0e8941b4d49834566de484b0d631e99"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
+          "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
+          "reviewer": "Codex (Stage 04 item 4.07 closeout)",
+          "sha256": "4a83d02f88d60394b7fea55bec23fdeea68c2bbc8a1a9542934867f6642b2894"
         }
       ]
     },
@@ -2150,14 +2236,22 @@
     {
       "path": "docs/audits/STAGE-01-FILE-AUDIT.json",
       "category": "self-referential-audit-record",
-      "reviewMethod": "classification-only",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "not-applicable-source",
       "concerns": [],
       "findings": [],
-      "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "fd6d7ec39749e6803f7737772728ce1d1c54565fe202a5e34b8291918ce64711",
+      "history": [
+        {
+          "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
+          "evidence": "",
+          "reviewer": "",
+          "sha256": ""
+        }
+      ]
     },
     {
       "path": "docs/audits/STAGE-01-FILE-AUDIT.md",
@@ -2438,14 +2532,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "32a340ef0445218bb61935754032e5da565380b32ed462b401397b064cf99243",
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "3dfb49a41da3f78e54c46734886c333ace81eb313e719c6607265377142fce6d",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2464,6 +2558,12 @@
           "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "db3df24cde8f5d4b533b075a352b8ef53fc0ca1a2631f6df264945c55309cfc5"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
+          "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
+          "reviewer": "Codex (Stage 04 item 4.07 closeout)",
+          "sha256": "32a340ef0445218bb61935754032e5da565380b32ed462b401397b064cf99243"
         }
       ]
     },
@@ -3622,14 +3722,22 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "focused source and test review",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the root test command delta: it registers the profile completeness node:test file in the explicit unit suite. No dependency or runtime command changed.",
-      "evidence": "npm test passed 371 tests with 3 skips and no failures on the Stage 03 item 3.16 revision.",
-      "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "6b71db79c2e0c943a5e51833a4703d66d01d1deae90b10101e9327b8efd8a373"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "99489b6d4e53584cf101cd3a7beaa80e7e7c331fa9ec0322aaf32bbf3335482b",
+      "history": [
+        {
+          "observations": "Reviewed the root test command delta: it registers the profile completeness node:test file in the explicit unit suite. No dependency or runtime command changed.",
+          "evidence": "npm test passed 371 tests with 3 skips and no failures on the Stage 03 item 3.16 revision.",
+          "reviewer": "Codex (Stage 03 item 3.16)",
+          "sha256": "6b71db79c2e0c943a5e51833a4703d66d01d1deae90b10101e9327b8efd8a373"
+        }
+      ]
     },
     {
       "path": "packages/core/package.json",
@@ -4202,26 +4310,42 @@
     {
       "path": "packages/core/src/profile.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added profile-domain assertions that normalize and retain salary floor and currency in the saved matching preferences. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Re-reviewed modified availability evidence, including raw legacy stored-profile reads where availabilityStatus is absent; zero notice days map to immediate and positive days retain the notice-period value.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "e90a41f581af1d3734229f501ec975b755ee0a97d247afcbea35992347b72f9b"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "5355887eae9ca39a97dbea310d9f3fd4efb900bfa9204e2a8fb34039082504ff",
+      "history": [
+        {
+          "observations": "Added profile-domain assertions that normalize and retain salary floor and currency in the saved matching preferences. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Re-reviewed modified availability evidence, including raw legacy stored-profile reads where availabilityStatus is absent; zero notice days map to immediate and positive days retain the notice-period value.",
+          "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 03 item 3.12)",
+          "sha256": "e90a41f581af1d3734229f501ec975b755ee0a97d247afcbea35992347b72f9b"
+        }
+      ]
     },
     {
       "path": "packages/core/src/profile.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (183 lines). Checked: strict per-section schemas with one generic issue and no field details; link fields are HTTPS only without credentials, and the URL parse runs only after the base URL check passes; revision-guarded save (revision 0 creates, anything else requires a match, a mismatch raises a 409 conflict); scheduled-discovery toggle is outside the revision and refuses before the profile is saved; matching snapshot copies only the fields scoring reads. No finding. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "f2c7d08c70fb69758eeabe1df6eae75403e159ceb5a12d07c3514e908c5f9510"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "c74ddcdefecc6dac4f90ba662f00529c62c19558cdedae8810f648a03684c218",
+      "history": [
+        {
+          "observations": "Read in full (183 lines). Checked: strict per-section schemas with one generic issue and no field details; link fields are HTTPS only without credentials, and the URL parse runs only after the base URL check passes; revision-guarded save (revision 0 creates, anything else requires a match, a mismatch raises a 409 conflict); scheduled-discovery toggle is outside the revision and refuses before the profile is saved; matching snapshot copies only the fields scoring reads. No finding. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
+          "evidence": "",
+          "reviewer": "Codex (Stage 03 item 3.12)",
+          "sha256": "f2c7d08c70fb69758eeabe1df6eae75403e159ceb5a12d07c3514e908c5f9510"
+        }
+      ]
     },
     {
       "path": "packages/core/src/queue.integration.test.ts",
@@ -5872,7 +5996,7 @@
     {
       "path": "packages/shared/src/schemas.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -5884,10 +6008,18 @@
           "remediation": "apiErrorSchema corrected to the flat envelope and tested against errorEnvelope output. Unused exports are recorded as technical debt to remove in the next cleanup pass."
         }
       ],
-      "observations": "Prior dev audit: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nReviewed item 4.05 schema follow-up: evidence entries are strict, bounded and backward-compatible through empty-array defaults; education credential status is fixed to unverified.\n\nItem 4.05 schema follow-up reviewed: strict evidence schema is bounded and backward-compatible; education status cannot be represented as verified.\n\nItem 4.05 review follow-up: fallback ChatGPT review in CareerScope Engineering Continuation at head 162a53e identified false institution attribution, reversed structured years, unsupported direct experience-duration evidence and substring source matching. The designated review thread returned Unknown error. This follow-up adds marker-constrained institutions, omits reversed structured years, labels date ranges as supporting sources, uses token-boundary evidence matching with an explicit .js alias, and documents extraction confidence separately from credential authenticity. Focused review/tests updated; new exact-head CI and designated-thread review remain pending.\nLatest correction also restricts inferred employment duration to valid ranges in the explicitly labeled experience section; education dates alone do not produce work duration.\nInstitution extraction follow-up: capture stops at the first comma, semicolon or parenthesis so trailing employment text cannot be folded into an institution even when a recognized institution marker appears.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
-      "evidence": "Prior dev audit: Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nFocused tests: resume derivation/schema suites 93 passed; full domain suite 927 tests across 33 files passed; typecheck passed including 97 canonical test files. Local Node was v22, below the Node 24 project requirement; hosted exact-head CI remains pending.\nFinal local follow-up: domain suite passed 928 tests across 33 files; full typecheck passed, including 97 canonical test files. Runtime Node was v22.23.2, below required Node 24; hosted exact-head CI is required.\nLatest domain run passed 929 tests across 33 files after adding the institution-phrase boundary regression.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "d2702301693ee15e895119944183d7cc8391ee780393984031a5899fae403984"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "ed69e57db2b14d28a581415c038d9aa6bb39e7c0fba8d3718dfbd18d421133c8",
+      "history": [
+        {
+          "observations": "Prior dev audit: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nReviewed item 4.05 schema follow-up: evidence entries are strict, bounded and backward-compatible through empty-array defaults; education credential status is fixed to unverified.\n\nItem 4.05 schema follow-up reviewed: strict evidence schema is bounded and backward-compatible; education status cannot be represented as verified.\n\nItem 4.05 review follow-up: fallback ChatGPT review in CareerScope Engineering Continuation at head 162a53e identified false institution attribution, reversed structured years, unsupported direct experience-duration evidence and substring source matching. The designated review thread returned Unknown error. This follow-up adds marker-constrained institutions, omits reversed structured years, labels date ranges as supporting sources, uses token-boundary evidence matching with an explicit .js alias, and documents extraction confidence separately from credential authenticity. Focused review/tests updated; new exact-head CI and designated-thread review remain pending.\nLatest correction also restricts inferred employment duration to valid ranges in the explicitly labeled experience section; education dates alone do not produce work duration.\nInstitution extraction follow-up: capture stops at the first comma, semicolon or parenthesis so trailing employment text cannot be folded into an institution even when a recognized institution marker appears.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
+          "evidence": "Prior dev audit: Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nFocused tests: resume derivation/schema suites 93 passed; full domain suite 927 tests across 33 files passed; typecheck passed including 97 canonical test files. Local Node was v22, below the Node 24 project requirement; hosted exact-head CI remains pending.\nFinal local follow-up: domain suite passed 928 tests across 33 files; full typecheck passed, including 97 canonical test files. Runtime Node was v22.23.2, below required Node 24; hosted exact-head CI is required.\nLatest domain run passed 929 tests across 33 files after adding the institution-phrase boundary regression.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
+          "reviewer": "Codex (Stage 03 item 3.12)",
+          "sha256": "d2702301693ee15e895119944183d7cc8391ee780393984031a5899fae403984"
+        }
+      ]
     },
     {
       "path": "packages/shared/src/skills.test.ts",
@@ -5924,14 +6056,22 @@
     {
       "path": "packages/shared/src/types.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Documented the nullable minSalaryCurrency field on matching candidate context, including null semantics for older or unspecified profiles.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "80fd31b4c76b2717de5ff615997f8471e64a7ed00db3ec8774433c998c7b4392"
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "9a3c429e7997d46fdcfcf835bbbae85f4b0f05aece46fd6d26fd9438957a707a",
+      "history": [
+        {
+          "observations": "Documented the nullable minSalaryCurrency field on matching candidate context, including null semantics for older or unspecified profiles.",
+          "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 03 item 3.11)",
+          "sha256": "80fd31b4c76b2717de5ff615997f8471e64a7ed00db3ec8774433c998c7b4392"
+        }
+      ]
     },
     {
       "path": "packages/shared/tsconfig.json",
@@ -6603,7 +6743,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "current exact-diff and durable outbox assertion review",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6629,16 +6769,22 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification.",
-      "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
-      "sha256": "d32dab0fbf925bb7b7a4650421a58f4c93583090ac5d2426e65ab1ec1d921043",
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "399fcdc5cbc528f29832ead9b3da4a794ec869d185a834e6f14fbf0a4cb151e0",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
           "evidence": "PR #82 exact head 179bc1645052d41235d3bec1e854fab0b29c6a15 exposed the pending-only queue race in run 43061560382. This change fixes the assertion at its durable source; local typecheck passes, and hosted exact-head CI after this commit remains required.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "e040ae1ea4ea64f9707a43d7d7684a542b8fd16625304fd0bc5c73621f56e344"
+        },
+        {
+          "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification.",
+          "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
+          "sha256": "d32dab0fbf925bb7b7a4650421a58f4c93583090ac5d2426e65ab1ec1d921043"
         }
       ]
     },
@@ -6865,6 +7011,58 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "6040b0afb6dbae5f400cfaeb18fb8595d5644a4bea2f0dccc43797d136d58863"
+    },
+    {
+      "path": "apps/web/src/components/resume-proposal-review.module.css",
+      "category": "frontend",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "805da32e2919d00a96efec04679351c320595b506074b7492772f50525b231de",
+      "history": []
+    },
+    {
+      "path": "apps/web/src/components/resume-proposal-review.tsx",
+      "category": "frontend",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "29735586d922f562ac559b36bbcc255bba932de805813beb343c33591e22207f",
+      "history": []
+    },
+    {
+      "path": "apps/web/src/components/resume-proposal-validation.test.ts",
+      "category": "frontend",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "4b9d0934cdab2a8d63fa7fa6b6f4453d9cf5cbd6b70593646590581bfd93fe08",
+      "history": []
+    },
+    {
+      "path": "apps/web/src/components/resume-proposal-validation.ts",
+      "category": "frontend",
+      "reviewMethod": "source and rebase reconciliation; current exact-head gates pending",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+      "sha256": "f7540705bdc6e64a2215c0110571611e486fa378f4c74698c6a56470ab47930d",
+      "history": []
     }
   ]
 }
