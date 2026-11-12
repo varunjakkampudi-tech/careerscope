@@ -1990,7 +1990,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "implementation approved at 76d88673ffce923c30d7924a736f9f3bbc30f11d; current documentation head 14cb770a5d5f6a2f75ba78c534b1c89d00e5125d validation tracked separately",
+      "reviewMethod": "implementation evidence at approved SHA 76d8867; documentation closeout tracked through PR #83",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2002,10 +2002,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Corrected the grammar and identified 14cb770 as the current documentation head; recorded fdfa69a workflow runs as cancelled and replacement runs as in progress.",
-      "evidence": "Implementation approval and passed CI remain on 76d88673ffce923c30d7924a736f9f3bbc30f11d; fdfa69a runs 43279006784/43279040920 cancelled; current docs head 14cb770a5d5f6a2f75ba78c534b1c89d00e5125d has runs 43279843329/43279897681 in progress.",
-      "reviewer": "Codex (Stage 04 item 4.08 review correction)",
-      "sha256": "840e96a4517ddd7bff5857e64f369822e2450c43d1f622fe7aef5ec731a3637a",
+      "observations": "Removed mutable PR-head and in-progress run claims. Records the approved implementation evidence and points live docs-closeout status to PR #83.",
+      "evidence": "Implementation/test SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d: runs 43270750798 and 43270545677 passed. Superseded docs revisions fdfa69a and 14cb770: runs 43279006784, 43279040920, 43279843329 and 43279897681 cancelled. Live checks: https://github.com/varunjakkampudi-tech/careerscope/pull/83.",
+      "reviewer": "Codex (Stage 04 item 4.08 stable closeout provenance)",
+      "sha256": "7cf5f90a50c243ba72efc116c968a3fae6190baf841d7d3b1bec4b5b5c6ec472",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2061,6 +2061,11 @@
           "observations": "Corrected the grammar and identified 14cb770 as the current documentation head; recorded fdfa69a workflow runs as cancelled and replacement runs as in progress.",
           "evidence": "Implementation approval and passed CI remain on 76d88673ffce923c30d7924a736f9f3bbc30f11d; fdfa69a runs 43279006784/43279040920 cancelled; current docs head 14cb770a5d5f6a2f75ba78c534b1c89d00e5125d has runs 43279843329/43279897681 in progress.",
           "reviewer": "Codex (Stage 04 item 4.08 review correction)"
+        },
+        {
+          "observations": "Removed mutable PR-head and in-progress run claims. Records the approved implementation evidence and points live docs-closeout status to PR #83.",
+          "evidence": "Implementation/test SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d: runs 43270750798 and 43270545677 passed. Superseded docs revisions fdfa69a and 14cb770: runs 43279006784, 43279040920, 43279843329 and 43279897681 cancelled. Live checks: https://github.com/varunjakkampudi-tech/careerscope/pull/83.",
+          "reviewer": "Codex (Stage 04 item 4.08 stable closeout provenance)"
         }
       ]
     },
@@ -2103,14 +2108,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "implementation approved at 76d88673ffce923c30d7924a736f9f3bbc30f11d; current documentation head 14cb770a5d5f6a2f75ba78c534b1c89d00e5125d validation tracked separately",
+      "reviewMethod": "implementation evidence at approved SHA 76d8867; documentation closeout tracked through PR #83",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Distinguished the superseded fdfa69a docs revision from current head 14cb770 and identified cancelled versus in-progress CI runs.",
-      "evidence": "Implementation/test evidence on 76d88673ffce923c30d7924a736f9f3bbc30f11d; fdfa69a runs 43279006784/43279040920 cancelled; current 14cb770a5d5f6a2f75ba78c534b1c89d00e5125d runs 43279843329/43279897681 in progress.",
-      "reviewer": "Codex (Stage 04 item 4.08 review correction)",
-      "sha256": "d3d2e9fd236ead9b08150f6adec668f886d36fe93cbaeff8ba2d620c67ca536f",
+      "observations": "Removed mutable PR-head and in-progress run claims; retained fixed implementation evidence and linked live closeout status to PR #83.",
+      "evidence": "Implementation/test SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d passed runs 43270750798 and 43270545677. Superseded docs workflow runs were cancelled; live checks at PR #83.",
+      "reviewer": "Codex (Stage 04 item 4.08 stable closeout provenance)",
+      "sha256": "dcf7edd6beb08f58ad7c5b866bbf43a3cdec855ecab573ec941d5cd282a7c837",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2167,6 +2172,11 @@
           "observations": "Distinguished the superseded fdfa69a docs revision from current head 14cb770 and identified cancelled versus in-progress CI runs.",
           "evidence": "Implementation/test evidence on 76d88673ffce923c30d7924a736f9f3bbc30f11d; fdfa69a runs 43279006784/43279040920 cancelled; current 14cb770a5d5f6a2f75ba78c534b1c89d00e5125d runs 43279843329/43279897681 in progress.",
           "reviewer": "Codex (Stage 04 item 4.08 review correction)"
+        },
+        {
+          "observations": "Removed mutable PR-head and in-progress run claims; retained fixed implementation evidence and linked live closeout status to PR #83.",
+          "evidence": "Implementation/test SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d passed runs 43270750798 and 43270545677. Superseded docs workflow runs were cancelled; live checks at PR #83.",
+          "reviewer": "Codex (Stage 04 item 4.08 stable closeout provenance)"
         }
       ]
     },
@@ -2601,14 +2611,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "implementation approved at 76d88673ffce923c30d7924a736f9f3bbc30f11d; current documentation head 14cb770a5d5f6a2f75ba78c534b1c89d00e5125d validation tracked separately",
+      "reviewMethod": "implementation evidence at approved SHA 76d8867; documentation closeout tracked through PR #83",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 4.08 provenance to record cancellation of superseded docs-head CI and pending validation of corrected docs head 14cb770.",
-      "evidence": "Implementation evidence on 76d88673ffce923c30d7924a736f9f3bbc30f11d; old docs head fdfa69a81fcecb6f6753722c1a79c34170e1af2f runs 43279006784/43279040920 cancelled; current docs head 14cb770a5d5f6a2f75ba78c534b1c89d00e5125d, runs 43279843329/43279897681 in progress.",
-      "reviewer": "Codex (Stage 04 item 4.08 review correction)",
-      "sha256": "02e96ff8204a5728f7c240e6bc4314e5b8f9311c9daf4ddd8906f484c2b82ed0",
+      "observations": "Kept item 4.08 partial and removed mutable current-head claims; cancelled documentation-run IDs remain in audit history and active checks are linked through PR #83.",
+      "evidence": "Implementation/test SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d passed runs 43270750798 and 43270545677. Superseded docs runs cancelled; live checks at PR #83.",
+      "reviewer": "Codex (Stage 04 item 4.08 stable closeout provenance)",
+      "sha256": "20822698c0f5316ed4d41b2b57f963de71dde25167c46b9b3b254bfbdb96c0a4",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2653,6 +2663,11 @@
           "observations": "Updated item 4.08 provenance to record cancellation of superseded docs-head CI and pending validation of corrected docs head 14cb770.",
           "evidence": "Implementation evidence on 76d88673ffce923c30d7924a736f9f3bbc30f11d; old docs head fdfa69a81fcecb6f6753722c1a79c34170e1af2f runs 43279006784/43279040920 cancelled; current docs head 14cb770a5d5f6a2f75ba78c534b1c89d00e5125d, runs 43279843329/43279897681 in progress.",
           "reviewer": "Codex (Stage 04 item 4.08 review correction)"
+        },
+        {
+          "observations": "Kept item 4.08 partial and removed mutable current-head claims; cancelled documentation-run IDs remain in audit history and active checks are linked through PR #83.",
+          "evidence": "Implementation/test SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d passed runs 43270750798 and 43270545677. Superseded docs runs cancelled; live checks at PR #83.",
+          "reviewer": "Codex (Stage 04 item 4.08 stable closeout provenance)"
         }
       ]
     },
@@ -6832,7 +6847,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "implementation approved at 76d88673ffce923c30d7924a736f9f3bbc30f11d; current documentation head 14cb770a5d5f6a2f75ba78c534b1c89d00e5125d validation tracked separately",
+      "reviewMethod": "implementation evidence at approved SHA 76d8867; documentation closeout tracked through PR #83",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6858,9 +6873,9 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Browser test implementation remains the approved and tested delta at 76d8867; documentation revisions do not modify the test. Latest full CI is now running at documentation head 14cb770.",
-      "evidence": "Code/test passed on 76d88673ffce923c30d7924a736f9f3bbc30f11d; prior docs-head runs 43279006784/43279040920 cancelled; current full CI runs 43279843329/43279897681 in progress at 14cb770a5d5f6a2f75ba78c534b1c89d00e5125d.",
-      "reviewer": "Codex (Stage 04 item 4.08 review correction)",
+      "observations": "Browser test delta remains approved and covered by exact-head CI at implementation SHA 76d8867; active docs-only validation is linked to PR #83.",
+      "evidence": "Implementation/test SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d passed runs 43270750798 and 43270545677; later documentation runs were cancelled; live closeout checks at PR #83.",
+      "reviewer": "Codex (Stage 04 item 4.08 stable closeout provenance)",
       "sha256": "54c5d972752c2b49246de42ac0104e523b35bd4ac3a18ed13832aed79fd46880",
       "history": [
         {
@@ -6931,6 +6946,11 @@
           "observations": "Browser test implementation remains the approved and tested delta at 76d8867; documentation revisions do not modify the test. Latest full CI is now running at documentation head 14cb770.",
           "evidence": "Code/test passed on 76d88673ffce923c30d7924a736f9f3bbc30f11d; prior docs-head runs 43279006784/43279040920 cancelled; current full CI runs 43279843329/43279897681 in progress at 14cb770a5d5f6a2f75ba78c534b1c89d00e5125d.",
           "reviewer": "Codex (Stage 04 item 4.08 review correction)"
+        },
+        {
+          "observations": "Browser test delta remains approved and covered by exact-head CI at implementation SHA 76d8867; active docs-only validation is linked to PR #83.",
+          "evidence": "Implementation/test SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d passed runs 43270750798 and 43270545677; later documentation runs were cancelled; live closeout checks at PR #83.",
+          "reviewer": "Codex (Stage 04 item 4.08 stable closeout provenance)"
         }
       ]
     },
