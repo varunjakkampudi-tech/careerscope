@@ -1994,10 +1994,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 04 item 4.11 records with the exact-head successful CI run, final ChatGPT approval, owner-approved AI translation review policy, and the remaining merge/post-merge gate. Telugu/Hindi copy remains AI-assisted without native-speaker validation; no linguistic accuracy is certified. Optional passive-notification, performance, soak and recovery steps remain recorded as skipped, not passed.",
-      "evidence": "PR #85 exact head 514ca8a81c643e1365e52d0cd27c1d80bd4c77ab; exact-head run 43295668525 passed Quality gates, PostgreSQL/Redis integration, browser/axe/keyboard/responsive checks, and runtime/proxy image builds. Final ChatGPT review approved the implementation and documentation at that SHA; the owner policy accepts AI translation review with limitations recorded. Item 4.11 remains partial pending merge to dev and post-merge verification.",
-      "reviewer": "Codex (Stage 04 item 4.11 final CI and review closeout)",
-      "sha256": "9301f0e8d0eb42ea95f663a93d779436f3a16abfa5ca51167a69c689bf83b8a4",
+      "observations": "Updated item 4.11 progress/test/traceability evidence to the final PR head, exact-head CI success and final independent review. Kept currentStatus partial and documented merge/post-merge verification as the remaining gate. Translation and skipped-check limitations remain explicit.",
+      "evidence": "PR #85 exact head 796cbc68e006978c5bbefe15fd8f823f4fd9e296; GitHub Actions run 43305195451 passed all three required jobs, and the independent reviewer gave final approval. Item remains partial pending merge to dev and post-merge verification.",
+      "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
+      "sha256": "e2912c498c43639ab09da0f6a7422b755077c95937f1c04099c7c9a03b72b263",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2034,6 +2034,12 @@
           "evidence": "Stage 04 item 4.11 follow-up on exact implementation SHA 7703e735265645a5321ff4207851fcde20893002; run 43292301601 required jobs passed; final owner-designated ChatGPT review pending.",
           "reviewer": "Codex (Stage 04 item 4.11 exact-CI follow-up)",
           "sha256": "72bf1c1a7063211b022dbd1a02ec6743ba9ad8df325e3cb5e70a111889ba649f"
+        },
+        {
+          "observations": "Updated item 4.11 evidence to the final reviewed PR head, successful exact-head CI run 43305195451, resolved request-settlement scope, and final independent review while preserving partial status pending merge/post-merge verification.",
+          "evidence": "Compared the documentation diff against PR #85 SHA 796cbc68e006978c5bbefe15fd8f823f4fd9e296 and hosted run 43305195451. Traceability and complete file-audit checks passed after the update.",
+          "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
+          "sha256": "9301f0e8d0eb42ea95f663a93d779436f3a16abfa5ca51167a69c689bf83b8a4"
         }
       ]
     },
@@ -2080,10 +2086,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 04 item 4.11 records with the exact-head successful CI run, final ChatGPT approval, owner-approved AI translation review policy, and the remaining merge/post-merge gate. Telugu/Hindi copy remains AI-assisted without native-speaker validation; no linguistic accuracy is certified. Optional passive-notification, performance, soak and recovery steps remain recorded as skipped, not passed.",
-      "evidence": "PR #85 exact head 514ca8a81c643e1365e52d0cd27c1d80bd4c77ab; exact-head run 43295668525 passed Quality gates, PostgreSQL/Redis integration, browser/axe/keyboard/responsive checks, and runtime/proxy image builds. Final ChatGPT review approved the implementation and documentation at that SHA; the owner policy accepts AI translation review with limitations recorded. Item 4.11 remains partial pending merge to dev and post-merge verification.",
-      "reviewer": "Codex (Stage 04 item 4.11 final CI and review closeout)",
-      "sha256": "b36ac0f35a2de1ddfc6a81224746c9705cd206d05772944d79b030e1798762f8",
+      "observations": "Updated item 4.11 progress/test/traceability evidence to the final PR head, exact-head CI success and final independent review. Kept currentStatus partial and documented merge/post-merge verification as the remaining gate. Translation and skipped-check limitations remain explicit.",
+      "evidence": "PR #85 exact head 796cbc68e006978c5bbefe15fd8f823f4fd9e296; GitHub Actions run 43305195451 passed all three required jobs, and the independent reviewer gave final approval. Item remains partial pending merge to dev and post-merge verification.",
+      "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
+      "sha256": "a0787f7c1df9f969d3949bff79a09ee7e0f1daf7f18176aaad7df8224a2a9ecd",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2120,6 +2126,12 @@
           "evidence": "Stage 04 item 4.11 follow-up on exact implementation SHA 7703e735265645a5321ff4207851fcde20893002; run 43292301601 required jobs passed; final owner-designated ChatGPT review pending.",
           "reviewer": "Codex (Stage 04 item 4.11 exact-CI follow-up)",
           "sha256": "4ebf500cb71fc97dff2d10951d4a7899815a972992f725569b2afdb8f94cda73"
+        },
+        {
+          "observations": "Updated item 4.11 evidence to the final reviewed PR head, successful exact-head CI run 43305195451, resolved request-settlement scope, and final independent review while preserving partial status pending merge/post-merge verification.",
+          "evidence": "Compared the documentation diff against PR #85 SHA 796cbc68e006978c5bbefe15fd8f823f4fd9e296 and hosted run 43305195451. Traceability and complete file-audit checks passed after the update.",
+          "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
+          "sha256": "b36ac0f35a2de1ddfc6a81224746c9705cd206d05772944d79b030e1798762f8"
         }
       ]
     },
@@ -2550,10 +2562,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 04 item 4.11 records with the exact-head successful CI run, final ChatGPT approval, owner-approved AI translation review policy, and the remaining merge/post-merge gate. Telugu/Hindi copy remains AI-assisted without native-speaker validation; no linguistic accuracy is certified. Optional passive-notification, performance, soak and recovery steps remain recorded as skipped, not passed.",
-      "evidence": "PR #85 exact head 514ca8a81c643e1365e52d0cd27c1d80bd4c77ab; exact-head run 43295668525 passed Quality gates, PostgreSQL/Redis integration, browser/axe/keyboard/responsive checks, and runtime/proxy image builds. Final ChatGPT review approved the implementation and documentation at that SHA; the owner policy accepts AI translation review with limitations recorded. Item 4.11 remains partial pending merge to dev and post-merge verification.",
-      "reviewer": "Codex (Stage 04 item 4.11 final CI and review closeout)",
-      "sha256": "50141831d488f6a4d0c9954af7c9014577a9769caf48489c60ef646e47967cad",
+      "observations": "Updated item 4.11 progress/test/traceability evidence to the final PR head, exact-head CI success and final independent review. Kept currentStatus partial and documented merge/post-merge verification as the remaining gate. Translation and skipped-check limitations remain explicit.",
+      "evidence": "PR #85 exact head 796cbc68e006978c5bbefe15fd8f823f4fd9e296; GitHub Actions run 43305195451 passed all three required jobs, and the independent reviewer gave final approval. Item remains partial pending merge to dev and post-merge verification.",
+      "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
+      "sha256": "f910e4d3c900405c688afeb163995dca55a9cada40e67fd4b3fda68926f447e4",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2590,6 +2602,12 @@
           "evidence": "Stage 04 item 4.11 follow-up on exact implementation SHA 7703e735265645a5321ff4207851fcde20893002; run 43292301601 required jobs passed; final owner-designated ChatGPT review pending.",
           "reviewer": "Codex (Stage 04 item 4.11 exact-CI follow-up)",
           "sha256": "e2867cb6a801dac94fa2e6d51cc93a4c7a0e501f2314678b23d10db214fd1de0"
+        },
+        {
+          "observations": "Updated item 4.11 evidence to the final reviewed PR head, successful exact-head CI run 43305195451, resolved request-settlement scope, and final independent review while preserving partial status pending merge/post-merge verification.",
+          "evidence": "Compared the documentation diff against PR #85 SHA 796cbc68e006978c5bbefe15fd8f823f4fd9e296 and hosted run 43305195451. Traceability and complete file-audit checks passed after the update.",
+          "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
+          "sha256": "50141831d488f6a4d0c9954af7c9014577a9769caf48489c60ef646e47967cad"
         }
       ]
     },
@@ -6763,9 +6781,9 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the Stage 04 item 4.11 settlement-filter delta: only explicitly tagged Next router prefetches from an earlier route epoch are eligible for exclusion across engines; ordinary requests and active-route prefetches remain in the barrier. The second search-detail assertion also passes the request prefetch marker into the shared predicate.",
-      "evidence": "Stage 04 item 4.11 abandoned-prefetch CI follow-up. Caller wiring is unchanged; fresh exact-head CI remains required.",
-      "reviewer": "Codex (Stage 04 item 4.11 CI follow-up)",
+      "observations": "Reviewed the item 4.11 caller delta and final cross-engine behavior: both settlement call sites pass the explicit Next prefetch marker. The shared helper exempts only explicitly tagged earlier-route GET fetches across engines; ordinary requests and current-route requests remain counted.",
+      "evidence": "Final exact-head PR #85 review on 796cbc68e006978c5bbefe15fd8f823f4fd9e296; run 43305195451 passed all required CI jobs. Item 4.11 remains partial until merge and post-merge verification.",
+      "reviewer": "Codex (Stage 04 item 4.11 final exact-head review)",
       "sha256": "6e4484ffe5a6f2292b71a63391ace42dfccd36145ee8112b2e250cdabe1bf19e",
       "history": [
         {
@@ -6790,6 +6808,12 @@
           "observations": "Caller logic is unchanged from the previous review; the shared predicate was narrowed to cross-engine fetch prefetches only. Both callers continue passing the explicit Next prefetch header value.",
           "evidence": "Independent review found the initial cross-engine marker branch could include tagged script/image requests. Follow-up commit narrows the helper; caller diff unchanged.",
           "reviewer": "Codex (Stage 04 item 4.11 CI follow-up)",
+          "sha256": "6e4484ffe5a6f2292b71a63391ace42dfccd36145ee8112b2e250cdabe1bf19e"
+        },
+        {
+          "observations": "Reviewed the item 4.11 caller delta and final cross-engine behavior: both settlement call sites pass the explicit Next prefetch marker. The shared helper exempts only explicitly tagged earlier-route GET fetches across engines; ordinary requests and current-route requests remain counted.",
+          "evidence": "Final exact-head PR #85 review on 796cbc68e006978c5bbefe15fd8f823f4fd9e296; run 43305195451 passed all required CI jobs and the independent reviewer gave final approval.",
+          "reviewer": "Codex (Stage 04 item 4.11 final exact-head review)",
           "sha256": "6e4484ffe5a6f2292b71a63391ace42dfccd36145ee8112b2e250cdabe1bf19e"
         }
       ]
@@ -6857,9 +6881,9 @@
           "remediation": "Replaced the path fixture with the synthetic candidate@example.test identity."
         }
       ],
-      "observations": "Reviewed focused tests after independent review identified excess scope in the cross-engine prefetch exception. They verify earlier-route Firefox fetch prefetches are excluded, while active-route fetches, writes, tagged scripts and tagged images remain counted. Focused test file passed 6/6 on the working tree.",
-      "evidence": "Stage 04 item 4.11 prefetch-scope follow-up after independent review; focused tests pass. Exact-head hosted CI and final review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.11 CI follow-up)",
+      "observations": "Focused tests cover earlier-route Firefox fetch prefetches, current-route prefetches, writes, and tagged Firefox script/image requests remaining in the settlement barrier. All 6 tests pass on the final reviewed branch.",
+      "evidence": "Final exact-head PR #85 review on 796cbc68e006978c5bbefe15fd8f823f4fd9e296; run 43305195451 passed all required CI jobs. Item 4.11 remains partial until merge and post-merge verification.",
+      "reviewer": "Codex (Stage 04 item 4.11 final exact-head review)",
       "sha256": "a2734fa8be4236ac5b19e4ad653e21a2a636f4666fc38fe13c1c5b36930bd9c6",
       "history": [
         {
@@ -6873,6 +6897,12 @@
           "evidence": "Addressed the independent review scope concern on PR #85 after ea48d6b; focused scripts/tests/ui-requests.test.ts passed 6/6, Prettier and git diff --check passed. This new code change requires fresh exact-head CI and independent review.",
           "reviewer": "Codex (Stage 04 item 4.11 CI follow-up)",
           "sha256": "3e48c5bb44730bdb51bb7c7dc7ac7f29f853a26b1dd64a40152cdea29ab12f85"
+        },
+        {
+          "observations": "Focused tests cover earlier-route Firefox fetch prefetches, current-route prefetches, writes, and tagged Firefox script/image requests remaining in the settlement barrier. All 6 tests pass on the final reviewed branch.",
+          "evidence": "Final exact-head PR #85 review on 796cbc68e006978c5bbefe15fd8f823f4fd9e296; run 43305195451 passed all required CI jobs and the independent reviewer gave final approval.",
+          "reviewer": "Codex (Stage 04 item 4.11 final exact-head review)",
+          "sha256": "a2734fa8be4236ac5b19e4ad653e21a2a636f4666fc38fe13c1c5b36930bd9c6"
         }
       ]
     },
@@ -6883,9 +6913,9 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the narrowed helper after independent review: the cross-engine exception now applies only to explicitly tagged GET fetches from prior route epochs. Tagged script/image requests are not exempt outside Chromium; existing Chromium stale fetch/script and exact optimizer-image allowances remain. Current-route requests remain counted. Focused tests passed 6/6.",
-      "evidence": "Stage 04 item 4.11 prefetch-scope follow-up after independent review; focused tests pass. Exact-head hosted CI and final review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.11 CI follow-up)",
+      "observations": "The final helper limits the cross-engine exception to explicitly tagged GET fetch prefetches from a prior route epoch. Existing Chromium stale GET fetch/script and exact image-optimizer allowances remain; current-route requests are still counted. Focused tests pass 6/6.",
+      "evidence": "Final exact-head PR #85 review on 796cbc68e006978c5bbefe15fd8f823f4fd9e296; run 43305195451 passed all required CI jobs. Item 4.11 remains partial until merge and post-merge verification.",
+      "reviewer": "Codex (Stage 04 item 4.11 final exact-head review)",
       "sha256": "aa432875a103402521ba75e217fa26c6dcace9ed3f8354ec3a4b2824c9a06121",
       "history": [
         {
@@ -6899,6 +6929,12 @@
           "evidence": "Addressed the independent review scope concern on PR #85 after ea48d6b; focused scripts/tests/ui-requests.test.ts passed 6/6, Prettier and git diff --check passed. This new code change requires fresh exact-head CI and independent review.",
           "reviewer": "Codex (Stage 04 item 4.11 CI follow-up)",
           "sha256": "1b301a5ee559d8c18719042337502d271693ea9420fa80d09f0d284e32dbcf15"
+        },
+        {
+          "observations": "The final helper limits the cross-engine exception to explicitly tagged GET fetch prefetches from a prior route epoch. Existing Chromium stale GET fetch/script and exact image-optimizer allowances remain; current-route requests are still counted. Focused tests pass 6/6.",
+          "evidence": "Final exact-head PR #85 review on 796cbc68e006978c5bbefe15fd8f823f4fd9e296; run 43305195451 passed all required CI jobs and the independent reviewer gave final approval.",
+          "reviewer": "Codex (Stage 04 item 4.11 final exact-head review)",
+          "sha256": "aa432875a103402521ba75e217fa26c6dcace9ed3f8354ec3a4b2824c9a06121"
         }
       ]
     },
