@@ -1429,6 +1429,7 @@ try {
               routeEpoch,
               engine,
               new URL(request.url()).pathname,
+              request.headers()['next-router-prefetch'] === '1',
             ),
         );
       const recentRequestEvents: string[] = [];
@@ -5507,6 +5508,7 @@ try {
                 routeEpoch,
                 engine,
                 url.pathname,
+                request.headers()['next-router-prefetch'] === '1',
               )
             );
           })
