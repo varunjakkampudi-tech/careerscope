@@ -1237,14 +1237,46 @@
     {
       "path": "apps/web/src/components/resume-panel.tsx",
       "category": "frontend",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read-and-diff-review; Stage 04 item 4.11 delta reviewed",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed version picker eligibility: latest parsed resume remains selectable after terminal failures/deletions; active uploads block continuation; label says which version continuation starts from.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "993d12ec7d56be30e4ed6514c6fb22cdf89f53cdf08e3d014a043f8610f37719"
+      "observations": "Reviewed version picker eligibility: latest parsed resume remains selectable after terminal failures/deletions; active uploads block continuation; label says which version continuation starts from. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made.",
+      "evidence": "Stage 04 item 4.11 working branch; focused tests, typecheck, web lint, formatting, and production build run locally. Exact-head hosted CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.11)",
+      "sha256": "7e06cb47eebd263eec57dcb20eeb914e987d33776866cabfca01379123318c7d",
+      "history": [
+        {
+          "observations": "Reviewed version picker eligibility: latest parsed resume remains selectable after terminal failures/deletions; active uploads block continuation; label says which version continuation starts from.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+          "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+          "sha256": "993d12ec7d56be30e4ed6514c6fb22cdf89f53cdf08e3d014a043f8610f37719"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/components/resume-quality-diagnostics.module.css",
+      "category": "frontend",
+      "reviewMethod": "content-read and production build",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Responsive styling for the accessible resume quality report; content wraps at narrow widths and uses existing design tokens.",
+      "evidence": "Production build and formatting pass locally. Hosted responsive browser check is pending.",
+      "reviewer": "Codex (Stage 04 item 4.11)",
+      "sha256": "e00dd6f8e7f539e603a3363c72f7289668dba16603517771a532d26115a04d7e"
+    },
+    {
+      "path": "apps/web/src/components/resume-quality-diagnostics.tsx",
+      "category": "frontend",
+      "reviewMethod": "content-read and focused tests",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Candidate-facing parser-only resume quality report. Presents extracted character count and skills, work-experience and education detection; states it cannot verify accuracy or completeness and directs candidates to inspect/correct extracted text. No score is produced.",
+      "evidence": "Focused parser/locale tests pass locally. Hosted browser acceptance and independent review are pending.",
+      "reviewer": "Codex (Stage 04 item 4.11)",
+      "sha256": "c4baae3b300c48951497e7f09a5e5cc4f32eaf9e1676cf3787a2142aedd76635"
     },
     {
       "path": "apps/web/src/components/saved-leads.module.css",
@@ -1372,26 +1404,42 @@
     {
       "path": "apps/web/src/lib/locale.test.ts",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read; Stage 04 item 4.11 delta reviewed",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete localization tests. They verify the supported locale allowlist, translation presence and distinctness for navigation, notifications, security, sign-in, search, and error categories, plus interpolation values. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "ba73e4345193290fe609021a58372b7a02875da4264b972c0f233fd9e4d7db60"
+      "observations": "Read the complete localization tests. They verify the supported locale allowlist, translation presence and distinctness for navigation, notifications, security, sign-in, search, and error categories, plus interpolation values. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made.",
+      "evidence": "Stage 04 item 4.11 working branch; focused tests, typecheck, web lint, formatting, and production build run locally. Exact-head hosted CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.11)",
+      "sha256": "9fbdee268f0d62caa1d16fa13c6a0e480d8ebacde21355e04f3c8871935edc46",
+      "history": [
+        {
+          "observations": "Read the complete localization tests. They verify the supported locale allowlist, translation presence and distinctness for navigation, notifications, security, sign-in, search, and error categories, plus interpolation values. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "ba73e4345193290fe609021a58372b7a02875da4264b972c0f233fd9e4d7db60"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/locale.ts",
       "category": "frontend",
-      "reviewMethod": "content-and-structural-review",
+      "reviewMethod": "content-and-structural-review; Stage 04 item 4.11 delta reviewed",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
-      "evidence": "Locale implementation and representative message groups inspected on codex/stage01-item-101-audit; structural parity is enforced by the full typecheck. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "75e45067aee7990decb4433d3c5e5a4499274933e5b65a938e2fb8eaae91ffcc"
+      "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made.",
+      "evidence": "Stage 04 item 4.11 working branch; focused tests, typecheck, web lint, formatting, and production build run locally. Exact-head hosted CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.11)",
+      "sha256": "6ae2c46e8da5042913708afc49b670fd6c9478c5e6b8f5313525fee75b2969a7",
+      "history": [
+        {
+          "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
+          "evidence": "Locale implementation and representative message groups inspected on codex/stage01-item-101-audit; structural parity is enforced by the full typecheck. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "75e45067aee7990decb4433d3c5e5a4499274933e5b65a938e2fb8eaae91ffcc"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/next-proxy-headers.test.ts",
@@ -1452,6 +1500,30 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "a078362c2d85b80b462d034580975ebed8cfb40fd32de04105cb10ebbc0a9dbc"
+    },
+    {
+      "path": "apps/web/src/lib/resume-quality.test.ts",
+      "category": "frontend",
+      "reviewMethod": "content-read and focused tests",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Covers empty/missing parser detections, present detections including zero years of experience, and claims-only text without parser evidence.",
+      "evidence": "Focused test run passed. Exact-head hosted CI remains pending.",
+      "reviewer": "Codex (Stage 04 item 4.11)",
+      "sha256": "f85dbdc8711164ee5cdc99558f40288fc32dbbc7ebd2457f01835047d241be22"
+    },
+    {
+      "path": "apps/web/src/lib/resume-quality.ts",
+      "category": "frontend",
+      "reviewMethod": "content-read and focused tests",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Pure parser-output assessment reports extracted character count and presence/absence of skills, experience, and education detections; it does not infer correctness or produce a quality score.",
+      "evidence": "Focused resume-quality tests pass locally. Exact-head hosted CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.11)",
+      "sha256": "92bfd391f3ab40c6056708fe4b6f748d0b26a47bdaf3753379aeb870d96f81d2"
     },
     {
       "path": "apps/web/src/lib/session.test.ts",
@@ -1910,7 +1982,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read-and-diff-review; Stage 04 item 4.11 delta reviewed",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1922,10 +1994,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "102ee77f92d7a0abf3d728024ce1dd4e5db91a514737d4d96eaea83a36026322",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made.",
+      "evidence": "Stage 04 item 4.11 working branch; focused tests, typecheck, web lint, formatting, and production build run locally. Exact-head hosted CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.11)",
+      "sha256": "f4f3c2a232e72e13e393ee4d016c440697577491afcfa378032bd76f94c9c2a6",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -1944,6 +2016,12 @@
           "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "163991b76a46b5cee698343d42d736b589374423e8eca95529f55ecce34e073b"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
+          "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
+          "reviewer": "Codex (Stage 04 item 4.07 closeout)",
+          "sha256": "102ee77f92d7a0abf3d728024ce1dd4e5db91a514737d4d96eaea83a36026322"
         }
       ]
     },
@@ -1986,14 +2064,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read-and-diff-review; Stage 04 item 4.11 delta reviewed",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "4a83d02f88d60394b7fea55bec23fdeea68c2bbc8a1a9542934867f6642b2894",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made.",
+      "evidence": "Stage 04 item 4.11 working branch; focused tests, typecheck, web lint, formatting, and production build run locally. Exact-head hosted CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.11)",
+      "sha256": "af0180d4eaa81cbd26750f9e30d4bf18ed9beadcb13392d174bf452aba63ccf5",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2012,6 +2090,12 @@
           "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "3ea4af0af90b41558ec9c0fca9dc522ed0e8941b4d49834566de484b0d631e99"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
+          "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
+          "reviewer": "Codex (Stage 04 item 4.07 closeout)",
+          "sha256": "4a83d02f88d60394b7fea55bec23fdeea68c2bbc8a1a9542934867f6642b2894"
         }
       ]
     },
@@ -2438,14 +2522,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read-and-diff-review; Stage 04 item 4.11 delta reviewed",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "32a340ef0445218bb61935754032e5da565380b32ed462b401397b064cf99243",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made.",
+      "evidence": "Stage 04 item 4.11 working branch; focused tests, typecheck, web lint, formatting, and production build run locally. Exact-head hosted CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.11)",
+      "sha256": "6a04967e094fd94d745aa2ded229f2326b7a71b1ef85d9af1dbf1bbc1015482a",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2464,6 +2548,12 @@
           "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "db3df24cde8f5d4b533b075a352b8ef53fc0ca1a2631f6df264945c55309cfc5"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
+          "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
+          "reviewer": "Codex (Stage 04 item 4.07 closeout)",
+          "sha256": "32a340ef0445218bb61935754032e5da565380b32ed462b401397b064cf99243"
         }
       ]
     },
@@ -3622,14 +3712,22 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "focused source and test review",
+      "reviewMethod": "focused source and test review; Stage 04 item 4.11 test wiring reviewed",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the root test command delta: it registers the profile completeness node:test file in the explicit unit suite. No dependency or runtime command changed.",
-      "evidence": "npm test passed 371 tests with 3 skips and no failures on the Stage 03 item 3.16 revision.",
-      "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "6b71db79c2e0c943a5e51833a4703d66d01d1deae90b10101e9327b8efd8a373"
+      "observations": "Reviewed the root test command delta: it registers the profile completeness node:test file in the explicit unit suite. No dependency or runtime command changed. Updated the canonical unit-test script to run the Stage 04 item 4.11 resume-quality test.",
+      "evidence": "Stage 04 item 4.11 working branch; package script wiring inspected; exact-head CI remains pending.",
+      "reviewer": "Codex (Stage 04 item 4.11)",
+      "sha256": "4b5ff6d519782927f4dbea7c36c92a6822a1c1523afa7d0d2f206afb33c2d0b6",
+      "history": [
+        {
+          "observations": "Reviewed the root test command delta: it registers the profile completeness node:test file in the explicit unit suite. No dependency or runtime command changed.",
+          "evidence": "npm test passed 371 tests with 3 skips and no failures on the Stage 03 item 3.16 revision.",
+          "reviewer": "Codex (Stage 03 item 3.16)",
+          "sha256": "6b71db79c2e0c943a5e51833a4703d66d01d1deae90b10101e9327b8efd8a373"
+        }
+      ]
     },
     {
       "path": "packages/core/package.json",
@@ -6603,7 +6701,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "current exact-diff and durable outbox assertion review",
+      "reviewMethod": "current exact-diff and durable outbox assertion review; Stage 04 item 4.11 delta reviewed",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6629,16 +6727,22 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification.",
-      "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
-      "sha256": "d32dab0fbf925bb7b7a4650421a58f4c93583090ac5d2426e65ab1ec1d921043",
+      "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made.",
+      "evidence": "Stage 04 item 4.11 working branch; focused tests, typecheck, web lint, formatting, and production build run locally. Exact-head hosted CI and independent review remain pending.",
+      "reviewer": "Codex (Stage 04 item 4.11)",
+      "sha256": "e61516e88459c0173fbc592c1a0665d2192065efafa5ef7f1e54c65b789adfc9",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
           "evidence": "PR #82 exact head 179bc1645052d41235d3bec1e854fab0b29c6a15 exposed the pending-only queue race in run 43061560382. This change fixes the assertion at its durable source; local typecheck passes, and hosted exact-head CI after this commit remains required.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "e040ae1ea4ea64f9707a43d7d7684a542b8fd16625304fd0bc5c73621f56e344"
+        },
+        {
+          "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification.",
+          "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
+          "sha256": "d32dab0fbf925bb7b7a4650421a58f4c93583090ac5d2426e65ab1ec1d921043"
         }
       ]
     },

@@ -13,6 +13,7 @@ import {
 } from '../lib/api-schemas';
 import { localizedApiErrorMessage, localizedText, useInterfaceLocale } from '../lib/locale';
 import { useOwner, ownerKey } from '../lib/session';
+import ResumeQualityDiagnostics from './resume-quality-diagnostics';
 import { EmptyState, ErrorState, LoadingState } from './ui-states';
 import styles from './resume-panel.module.css';
 
@@ -405,6 +406,10 @@ export default function ResumePanel({
                 {result?.status === 'parsed' && (
                   <>
                     <p role="status">Resume ready for review.</p>
+                    <ResumeQualityDiagnostics
+                      text={result.parsed.text}
+                      derived={result.parsed.derived}
+                    />
                     <button type="button" onClick={() => onReview(result.parsed.derived)}>
                       <FileText size={17} />
                       Review profile draft

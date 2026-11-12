@@ -195,6 +195,17 @@ const messages = {
       'This upload changed while it was being saved. Check your resume list, then upload again if needed.',
     resumeCancelUnavailable:
       'This upload can no longer be cancelled. Refresh to see its current status.',
+    resumeQualityHeading: 'Resume quality check',
+    resumeQualityDescription:
+      'These checks show what the parser recognized. They do not verify accuracy or completeness.',
+    resumeQualityCharacterCount: '{value} characters were extracted.',
+    resumeQualitySkills: 'Skills',
+    resumeQualityExperience: 'Work experience',
+    resumeQualityEducation: 'Education',
+    resumeQualityDetected: 'Detected by parser',
+    resumeQualityNotDetected: 'Not detected by parser',
+    resumeQualityGuidance:
+      'Review the extracted text below. If a section is missing or incorrect, add or correct it manually before using these fields.',
     accountSecurityBack: 'Back to search',
     emailVerificationUnrecorded: 'Email verification is not recorded.',
     emailChangeUnavailable: 'Change sign-in email',
@@ -459,6 +470,18 @@ const messages = {
     // Machine-drafted: requires native-speaker review before release.
     resumeCancelUnavailable:
       'ఈ అప్‌లోడ్‌ను ఇకపై రద్దు చేయలేరు. ప్రస్తుత స్థితిని చూడటానికి రిఫ్రెష్ చేయండి.',
+    // AI-assisted translation; native-speaker review pending.
+    resumeQualityHeading: 'రెజ్యూమ్ నాణ్యత తనిఖీ',
+    resumeQualityDescription:
+      'పార్సర్ గుర్తించిన విషయాలను ఈ తనిఖీలు చూపిస్తాయి. అవి ఖచ్చితత్వం లేదా సంపూర్ణతను నిర్ధారించవు.',
+    resumeQualityCharacterCount: '{value} అక్షరాలు వెలికితీయబడ్డాయి.',
+    resumeQualitySkills: 'నైపుణ్యాలు',
+    resumeQualityExperience: 'పని అనుభవం',
+    resumeQualityEducation: 'విద్య',
+    resumeQualityDetected: 'పార్సర్ గుర్తించింది',
+    resumeQualityNotDetected: 'పార్సర్ గుర్తించలేదు',
+    resumeQualityGuidance:
+      'క్రింద ఉన్న వెలికితీసిన పాఠ్యాన్ని పరిశీలించండి. ఏదైనా విభాగం లేకపోతే లేదా తప్పుగా ఉంటే, ఈ వివరాలను ఉపయోగించే ముందు దాన్ని చేతితో జోడించండి లేదా సరిచేయండి.',
     accountSecurityBack: 'శోధనకు తిరిగి వెళ్ళండి',
     emailVerificationUnrecorded: 'ఇమెయిల్ ధృవీకరణ నమోదు కాలేదు.',
     emailChangeUnavailable: 'సైన్-ఇన్ ఇమెయిల్ మార్చండి',
@@ -723,6 +746,18 @@ const messages = {
     // Machine-drafted: requires native-speaker review before release.
     resumeCancelUnavailable:
       'इस अपलोड को अब रद्द नहीं किया जा सकता। मौजूदा स्थिति देखने के लिए रीफ़्रेश करें।',
+    // AI-assisted translation; native-speaker review pending.
+    resumeQualityHeading: 'रिज़्यूमे गुणवत्ता जाँच',
+    resumeQualityDescription:
+      'ये जाँचें दिखाती हैं कि पार्सर ने क्या पहचाना। ये सटीकता या पूर्णता की पुष्टि नहीं करतीं।',
+    resumeQualityCharacterCount: '{value} अक्षर निकाले गए।',
+    resumeQualitySkills: 'कौशल',
+    resumeQualityExperience: 'कार्य अनुभव',
+    resumeQualityEducation: 'शिक्षा',
+    resumeQualityDetected: 'पार्सर ने पहचाना',
+    resumeQualityNotDetected: 'पार्सर ने नहीं पहचाना',
+    resumeQualityGuidance:
+      'नीचे निकाले गए पाठ की समीक्षा करें। यदि कोई अनुभाग छूटा है या गलत है, तो इन फ़ील्ड का उपयोग करने से पहले उसे स्वयं जोड़ें या सुधारें।',
     accountSecurityBack: 'खोज पर वापस जाएँ',
     emailVerificationUnrecorded: 'ईमेल सत्यापन दर्ज नहीं है।',
     emailChangeUnavailable: 'साइन-इन ईमेल बदलें',
