@@ -307,7 +307,13 @@ export function searchHandler(
         { runId: command.aggregateId, sourceCount: outcomes.length },
         'Search was not run because a source lacks a current permission profile',
       );
-      return database.completeCollection(command, fence, [], outcomes);
+      return database.completeCollection(
+        command,
+        fence,
+        [],
+        outcomes,
+        search.matchingProfile?.derived ?? null,
+      );
     }
     if (!(await database.startSearch(command, fence))) return false;
     const started = performance.now();
@@ -353,7 +359,13 @@ export function searchHandler(
       'Search collection finished',
     );
     signal.throwIfAborted();
-    const settled = await database.completeCollection(command, fence, result.jobs, outcomes);
+    const settled = await database.completeCollection(
+      command,
+      fence,
+      result.jobs,
+      outcomes,
+      search.matchingProfile?.derived ?? null,
+    );
     // Checked after the current outcome is on record, so a streak that completes
     // on this run is counted. A source that runs without error but finds nothing
     // across several consecutive runs, system-wide, looks like a job board's

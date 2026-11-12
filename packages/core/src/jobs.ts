@@ -60,6 +60,9 @@ export const collectedJobSchema = z
   })
   .strict();
 
+/** Public read projection: validate required job fields while dropping private and legacy extras. */
+export const collectedJobReadSchema = collectedJobSchema.omit({ matchingInput: true }).strip();
+
 export type CollectedJob = z.infer<typeof collectedJobSchema>;
 export type CollectedJobInput = z.input<typeof collectedJobSchema>;
 export type CollectedJobWithMatchingInput = CollectedJobInput & { matchingInput: Job };

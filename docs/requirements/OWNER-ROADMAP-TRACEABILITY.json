@@ -1052,6 +1052,7 @@
         "apps/workers/search/src/publisher.ts",
         "apps/workers/search/src/main.ts",
         "packages/core/src/jobs.ts",
+        "packages/core/src/leads.ts",
         "tests/integration/database.integration.test.ts"
       ],
       "tests": [

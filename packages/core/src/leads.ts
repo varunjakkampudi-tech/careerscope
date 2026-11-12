@@ -8,7 +8,7 @@ import { rollback } from './rollback.js';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import type { Database } from './database.js';
-import { collectedJobSchema, type CollectedJob } from './jobs.js';
+import { collectedJobReadSchema, collectedJobSchema, type CollectedJob } from './jobs.js';
 import { Conflict } from './errors.js';
 
 /** Pipeline statuses a user can set; `applied` and later statuses require candidate-reported application evidence. */
@@ -169,7 +169,7 @@ const qualifiedColumns = (alias: string) =>
 function hydrate(row: LeadRecord): LeadRecord {
   return {
     ...row,
-    data: collectedJobSchema.omit({ matchingInput: true }).parse(row.data),
+    data: collectedJobReadSchema.parse(row.data),
     tags: leadTagsSchema.parse(row.tags),
     applicationEvidence:
       row.applicationEvidence === null
@@ -290,7 +290,9 @@ export class LeadRepository {
         await rollback(client);
         return null;
       }
-      const data = collectedJobSchema.omit({ matchingInput: true }).parse(source.rows[0].data);
+      const storedJob = collectedJobSchema.parse(source.rows[0].data);
+      const { matchingInput: _privateMatchingInput, ...publicJob } = storedJob;
+      const data = collectedJobReadSchema.parse(publicJob);
       const inserted = await client.query<LeadRecord>(
         `INSERT INTO saved_leads (id, owner_id, fingerprint, data) VALUES ($1, $2, $3, $4::jsonb)
          ON CONFLICT (owner_id, fingerprint) DO NOTHING RETURNING ${columns}`,

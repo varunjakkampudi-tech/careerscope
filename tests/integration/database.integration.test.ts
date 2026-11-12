@@ -16,6 +16,7 @@ import { z } from 'zod';
 import {
   Database,
   Conflict,
+  collectedJobSchema,
   ResumeUploadCancelled as PublishedResumeUploadCancelled,
   users,
   LeadRepository,
@@ -24,7 +25,7 @@ import {
   writableProfileSchema,
   logger,
 } from '@careerscope/core';
-import type { DerivedResume } from '@careerscope/shared';
+import { matchBreakdownSchema, type DerivedResume } from '@careerscope/shared';
 import { buildCandidateContext, scoreJob } from '@careerscope/matching';
 import { LocalQueue } from '../../packages/core/src/queue.js';
 import { executeBullCommand } from '../../packages/core/src/bull-queue.js';
@@ -46,6 +47,7 @@ import JSZip from 'jszip';
 import { createApp as createApiApp } from '../../apps/api/src/app.js';
 import type { SourceOutcome } from '../../packages/core/src/jobs.js';
 import { searchHandler } from '../../apps/workers/search/src/collect.js';
+import { resumeRecomputeHandler } from '../../apps/workers/search/src/recompute.js';
 import {
   createRemoteOkProvider,
   createHimalayasProvider,
@@ -3662,7 +3664,7 @@ test('PostgreSQL atomic outbox, owner isolation and stale-worker fencing', async
 // derived skills/titles/years onto matchingProfile, distinguishes "no resume"
 // from "resume present" (never silently defaults one into looking like the
 // other), and that a rejected or superseded parse is not used.
-test('createSearch snapshots the latest parsed resume onto the matching profile, or null when absent', async () => {
+test('createSearch snapshots the latest parsed resume and recompute retries stale snapshots', async () => {
   const configured = process.env.DATABASE_URL;
   assert.ok(configured, 'Integration tests require the isolated v2 DATABASE_URL');
   const base = new URL(configured);
@@ -3714,31 +3716,71 @@ test('createSearch snapshots the latest parsed resume onto the matching profile,
       },
       { now: beforeResume.createdAt.getTime() },
     );
-    const storedJobId = randomUUID();
-    await database.pool.query(
-      `INSERT INTO search_jobs (id, run_id, owner_id, fingerprint, data)
-       VALUES ($1, $2, $3, $4, $5::jsonb)`,
-      [
-        storedJobId,
-        beforeResume.id,
-        ownerId,
-        storedJob.fingerprint,
-        JSON.stringify({
-          fingerprint: storedJob.fingerprint,
-          sourceJobId: storedJob.sourceJobId,
-          title: storedJob.title,
-          company: storedJob.company.name,
-          location: storedJob.location,
-          description: storedJob.descriptionText,
-          source: storedJob.source,
-          sourceUrl: storedJob.sourceUrl,
-          applyUrl: storedJob.applyUrl,
-          postedAt: storedJob.postedAt,
-          match: null,
-          matchingInput: storedJob,
+    const beforeCommand = (await database.unpublished(['search.collect'])).find(
+      (item) => item.command.aggregateId === beforeResume.id,
+    )?.command;
+    assert.ok(beforeCommand);
+    const beforeFence = await database.claim(beforeCommand!.id);
+    assert.ok(await database.startSearch(beforeCommand!, beforeFence!));
+    const collectedJob = collectedJobSchema.parse({
+      fingerprint: storedJob.fingerprint,
+      sourceJobId: storedJob.sourceJobId,
+      title: storedJob.title,
+      company: storedJob.company.name,
+      location: storedJob.location,
+      description: storedJob.descriptionText,
+      source: 'remoteok',
+      sourceUrl: storedJob.sourceUrl,
+      sourceLinks: [{ source: 'remoteok', url: storedJob.sourceUrl }],
+      applyUrl: storedJob.applyUrl,
+      postedAt: storedJob.postedAt,
+      match: matchBreakdownSchema.parse(
+        scoreJob(storedJob, buildCandidateContext(beforeResume.matchingProfile!), {
+          now: beforeResume.createdAt.getTime(),
         }),
-      ],
+      ),
+      matchingInput: storedJob,
+    });
+    const collectionOutcomes: SourceOutcome[] = [
+      { source: 'remoteok', status: 'completed', accepted: 1, limited: false, errorCode: null },
+    ];
+    assert.equal(
+      await database.completeCollection(
+        beforeCommand!,
+        beforeFence!,
+        [collectedJob],
+        collectionOutcomes,
+        beforeResume.matchingProfile?.derived ?? null,
+      ),
+      true,
     );
+    const storedJobRow = await database.pool.query<{ id: string }>(
+      'SELECT id FROM search_jobs WHERE owner_id = $1 AND run_id = $2 AND fingerprint = $3',
+      [ownerId, beforeResume.id, storedJob.fingerprint],
+    );
+    const storedJobId = storedJobRow.rows[0]!.id;
+    const leadRepository = new LeadRepository(database);
+    const savedLead = await leadRepository.save(ownerId, { jobId: storedJobId });
+    assert.ok(savedLead);
+    assert.equal('matchingInput' in savedLead.data, false);
+    const racingSearch = await database.createSearch(ownerId, 'resume-collection-race', request);
+    const racingCommand = (await database.unpublished(['search.collect'])).find(
+      (item) => item.command.aggregateId === racingSearch.id,
+    )?.command;
+    assert.ok(racingCommand);
+    const racingFence = await database.claim(racingCommand!.id);
+    assert.ok(await database.startSearch(racingCommand!, racingFence!));
+    const racingSearchAfter = await database.createSearch(
+      ownerId,
+      'resume-collection-after-recompute',
+      request,
+    );
+    const racingCommandAfter = (await database.unpublished(['search.collect'])).find(
+      (item) => item.command.aggregateId === racingSearchAfter.id,
+    )?.command;
+    assert.ok(racingCommandAfter);
+    const racingFenceAfter = await database.claim(racingCommandAfter.id);
+    assert.ok(await database.startSearch(racingCommandAfter, racingFenceAfter!));
 
     const uploads = new ResumeUploadRepository(database);
     const settle = async (key: string, derived: DerivedResume) => {
@@ -3794,40 +3836,125 @@ test('createSearch snapshots the latest parsed resume onto the matching profile,
     assert.equal(recomputeCommand.aggregateId.length > 0, true);
     const recomputeFence = await database.claim(recomputeCommand.id);
     assert.ok(recomputeFence);
-    const recomputeSnapshot = await database.resumeRecomputeSnapshot(ownerId);
-    assert.ok(recomputeSnapshot.searches.length >= 2);
+    let racedCollection = false;
+    const recomputeDatabase = new Proxy(database, {
+      get(target, property) {
+        if (property === 'resumeRecomputeSnapshot')
+          return async (targetOwnerId: string) => {
+            const snapshot = await target.resumeRecomputeSnapshot(targetOwnerId);
+            if (!racedCollection) {
+              racedCollection = true;
+              await settle('third-resume', {
+                techStack: ['Go'],
+                recentSkills: [],
+                titles: [],
+                yearsOfExperience: 6,
+                education: [],
+                educationClaims: [],
+                experienceClaims: [],
+                extractionEvidence: [],
+              });
+              const racingMatch = scoreJob(
+                storedJob,
+                buildCandidateContext(racingSearch.matchingProfile!),
+                { now: racingSearch.createdAt.getTime() },
+              );
+              assert.equal(
+                await target.completeCollection(
+                  racingCommand!,
+                  racingFence!,
+                  [{ ...collectedJob, match: matchBreakdownSchema.parse(racingMatch) }],
+                  collectionOutcomes,
+                  racingSearch.matchingProfile?.derived ?? null,
+                ),
+                true,
+              );
+            }
+            return snapshot;
+          };
+        const value = Reflect.get(target, property, target) as unknown;
+        return typeof value === 'function' ? value.bind(target) : value;
+      },
+    }) as Database;
+    const recomputeHandler = resumeRecomputeHandler(recomputeDatabase);
     assert.equal(
-      await database.completeResumeRecompute(recomputeCommand, recomputeFence, {
-        searches: recomputeSnapshot.searches.map((search) => ({
-          id: search.id,
-          profileRevision: search.profileRevision,
-          matchingProfile: search.matchingProfile,
-          jobs: search.jobs.map((job) => ({
-            fingerprint: job.fingerprint,
-            match: search.matchingProfile
-              ? scoreJob(job.data.matchingInput!, buildCandidateContext(search.matchingProfile), {
-                  now: search.createdAt.getTime(),
-                  windowDays: 30,
-                })
-              : null,
-          })),
-        })),
-      }),
-      true,
+      await recomputeHandler(recomputeCommand, recomputeFence, new AbortController().signal),
+      false,
+      'a stale recompute snapshot is rejected after a newer parse and collection commit',
     );
+    assert.equal(
+      await recomputeHandler(recomputeCommand, recomputeFence, new AbortController().signal),
+      true,
+      'retry reads the latest resume and includes jobs committed during the stale attempt',
+    );
+    const racingMatchAfter = scoreJob(
+      storedJob,
+      buildCandidateContext(racingSearchAfter.matchingProfile!),
+      { now: racingSearchAfter.createdAt.getTime() },
+    );
+    assert.equal(
+      await database.completeCollection(
+        racingCommandAfter,
+        racingFenceAfter!,
+        [{ ...collectedJob, match: matchBreakdownSchema.parse(racingMatchAfter) }],
+        collectionOutcomes,
+        racingSearchAfter.matchingProfile?.derived ?? null,
+      ),
+      true,
+      'collection can settle after a recompute has updated its running profile',
+    );
+    const collectionCompensation = (await database.unpublished(['search.recompute'])).find(
+      (item) => item.command.causationId === racingCommandAfter.id,
+    )?.command;
+    assert.ok(collectionCompensation);
+    const compensationFence = await database.claim(collectionCompensation.id);
+    assert.ok(compensationFence);
+    assert.equal(
+      await resumeRecomputeHandler(database)(
+        collectionCompensation,
+        compensationFence,
+        new AbortController().signal,
+      ),
+      true,
+      'the compensating command rescales jobs settled with the old profile',
+    );
+    assert.ok((await database.unpublished(['search.recompute'])).length >= 5);
     assert.deepEqual(
       (await database.getSearch(ownerId, beforeResume.id))?.matchingProfile?.derived?.techStack,
-      ['Terraform'],
-      'a successfully parsed resume refreshes the profile snapshot on an existing queued search',
+      ['Go'],
+      'a successfully parsed resume refreshes a previously completed search',
     );
     const refreshedJob = await database.pool.query<{ data: { match: { resumeSkills: string[] } } }>(
       'SELECT data FROM search_jobs WHERE owner_id = $1 AND id = $2',
       [ownerId, storedJobId],
     );
-    assert.deepEqual(refreshedJob.rows[0]?.data.match.resumeSkills, ['Terraform']);
+    assert.deepEqual(refreshedJob.rows[0]?.data.match.resumeSkills, []);
+    assert.deepEqual(
+      (await leadRepository.get(ownerId, savedLead.id))?.data.match?.resumeSkills,
+      [],
+      'saved leads receive the refreshed match without replacing lead metadata',
+    );
+    const refreshedRacingSearch = await database.getSearch(ownerId, racingSearch.id);
+    assert.deepEqual(refreshedRacingSearch?.matchingProfile?.derived?.techStack, ['Go']);
+    const racingJob = await database.pool.query<{
+      data: { match: { resumeConsidered: boolean; resumeSkills: string[] } };
+    }>('SELECT data FROM search_jobs WHERE owner_id = $1 AND run_id = $2', [
+      ownerId,
+      racingSearch.id,
+    ]);
+    assert.equal(racingJob.rows[0]?.data.match.resumeConsidered, true);
+    const refreshedSearchAfter = await database.getSearch(ownerId, racingSearchAfter.id);
+    assert.deepEqual(refreshedSearchAfter?.matchingProfile?.derived?.techStack, ['Go']);
+    const racingJobAfter = await database.pool.query<{
+      data: { match: { resumeConsidered: boolean } };
+    }>('SELECT data FROM search_jobs WHERE owner_id = $1 AND run_id = $2', [
+      ownerId,
+      racingSearchAfter.id,
+    ]);
+    assert.equal(racingJobAfter.rows[0]?.data.match.resumeConsidered, true);
     const afterSecondResume = await database.createSearch(ownerId, 'after-second-resume', request);
-    assert.deepEqual(afterSecondResume.matchingProfile?.derived?.techStack, ['Terraform']);
-    assert.equal(afterSecondResume.matchingProfile?.derived?.yearsOfExperience, 5);
+    assert.deepEqual(afterSecondResume.matchingProfile?.derived?.techStack, ['Go']);
+    assert.equal(afterSecondResume.matchingProfile?.derived?.yearsOfExperience, 6);
 
     // A rejected parse (corrupt/unreadable document) must never be treated as
     // resume data - the last genuinely *parsed* result still wins.
@@ -3844,7 +3971,7 @@ test('createSearch snapshots the latest parsed resume onto the matching profile,
       errorCode: 'invalid_document',
     });
     const afterRejected = await database.createSearch(ownerId, 'after-rejected', request);
-    assert.deepEqual(afterRejected.matchingProfile?.derived?.techStack, ['Terraform']);
+    assert.deepEqual(afterRejected.matchingProfile?.derived?.techStack, ['Go']);
 
     // Owner isolation: a resume never leaks into another owner's profile.
     const otherOwner = randomUUID();
@@ -3865,13 +3992,13 @@ test('createSearch snapshots the latest parsed resume onto the matching profile,
     assert.ok(withResume?.matchingProfile);
     const candidateContext = buildCandidateContext(withResume.matchingProfile);
     assert.ok(candidateContext.resumeConsidered);
-    assert.ok(candidateContext.skills.includes('Terraform'));
-    assert.deepEqual(candidateContext.resumeSkills, ['Terraform']);
+    assert.ok(candidateContext.skills.includes('Go'));
+    assert.deepEqual(candidateContext.resumeSkills, ['Go']);
 
     const refreshedExistingSearch = await database.getSearch(ownerId, beforeResume.id);
     const refreshedContext = buildCandidateContext(refreshedExistingSearch!.matchingProfile!);
     assert.equal(refreshedContext.resumeConsidered, true);
-    assert.deepEqual(refreshedContext.resumeSkills, ['Terraform']);
+    assert.deepEqual(refreshedContext.resumeSkills, ['Go']);
   } finally {
     await database.close();
     await admin.pool.query(`DROP DATABASE "${name}"`);

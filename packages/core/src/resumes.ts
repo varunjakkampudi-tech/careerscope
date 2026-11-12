@@ -108,6 +108,8 @@ export class ResumeUploadRepository {
     const client = await this.database.pool.connect();
     try {
       await client.query('BEGIN');
+      // Serialize parsed-resume changes with match recomputations for this owner.
+      await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [command.ownerId]);
       const owned = await client.query(
         `UPDATE command_executions SET status = $4
         WHERE id = $1 AND fence = $2 AND status = 'running' AND lease_until > now()

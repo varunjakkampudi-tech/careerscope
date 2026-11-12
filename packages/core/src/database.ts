@@ -215,25 +215,30 @@ export class Database {
 
   /** Current owner-scoped scoring inputs and stored jobs for the resume recomputation worker. */
   async resumeRecomputeSnapshot(ownerId: string) {
-    const resumeResult = await this.pool.query<{ derived: DerivedResume | null }>(
-      `SELECT parsed->'derived' AS derived FROM resume_results
-         WHERE owner_id = $1 AND status = 'parsed' ORDER BY created_at DESC LIMIT 1`,
+    const resumeResult = await this.pool.query<{
+      uploadId: string;
+      derived: DerivedResume | null;
+    }>(
+      `SELECT upload_id AS "uploadId", parsed->'derived' AS derived FROM resume_results
+         WHERE owner_id = $1 AND status = 'parsed' ORDER BY created_at DESC, upload_id DESC LIMIT 1`,
       [ownerId],
     );
     const derived = resumeResult.rows[0]?.derived ?? null;
+    const sourceUploadId = resumeResult.rows[0]?.uploadId ?? null;
     const searches = await this.pool.query<{
       id: string;
       createdAt: Date;
-      status: 'queued' | 'completed' | 'partial';
+      status: 'queued' | 'running' | 'completed' | 'partial';
       profileRevision: number | null;
       matchingProfile: MatchingProfile | null;
     }>(
       `SELECT id, created_at AS "createdAt", status, profile_revision AS "profileRevision",
               matching_profile AS "matchingProfile" FROM search_runs
-       WHERE owner_id = $1 AND status IN ('queued', 'completed', 'partial') ORDER BY created_at, id`,
+       WHERE owner_id = $1 AND status IN ('queued', 'running', 'completed', 'partial')
+       ORDER BY created_at, id`,
       [ownerId],
     );
-    if (searches.rows.length === 0) return { searches: [] };
+    if (searches.rows.length === 0) return { sourceUploadId, searches: [] };
     const jobs = await this.pool.query<{
       runId: string;
       fingerprint: string;
@@ -250,6 +255,7 @@ export class Database {
       jobsByRun.set(job.runId, runJobs);
     }
     return {
+      sourceUploadId,
       searches: searches.rows.map((search) => ({
         ...search,
         matchingProfile: search.matchingProfile ? { ...search.matchingProfile, derived } : null,
@@ -263,6 +269,7 @@ export class Database {
     command: Command,
     fence: number,
     result: {
+      sourceUploadId: string | null;
       searches: Array<{
         id: string;
         profileRevision: number | null;
@@ -275,6 +282,18 @@ export class Database {
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
+      // Match the lock used by successful parse settlement. The snapshot may have gone stale
+      // while jobs were rescored, so retry it if a newer parsed resume committed in the meantime.
+      await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [command.ownerId]);
+      const latestResume = await client.query<{ uploadId: string }>(
+        `SELECT upload_id AS "uploadId" FROM resume_results
+         WHERE owner_id = $1 AND status = 'parsed' ORDER BY created_at DESC, upload_id DESC LIMIT 1`,
+        [command.ownerId],
+      );
+      if ((latestResume.rows[0]?.uploadId ?? null) !== result.sourceUploadId) {
+        await client.query('ROLLBACK');
+        return false;
+      }
       const owned = await client.query(
         `UPDATE command_executions SET status = 'completed'
          WHERE id = $1 AND fence = $2 AND status = 'running' AND lease_until > now()
@@ -289,7 +308,7 @@ export class Database {
       for (const search of result.searches) {
         const saved = await client.query(
           `UPDATE search_runs SET matching_profile = $3::jsonb, profile_revision = $4
-           WHERE id = $1 AND owner_id = $2 AND status IN ('queued', 'completed', 'partial')
+           WHERE id = $1 AND owner_id = $2 AND status IN ('queued', 'running', 'completed', 'partial')
            RETURNING id`,
           [
             search.id,
@@ -305,6 +324,13 @@ export class Database {
             `UPDATE search_jobs SET data = jsonb_set(data, '{match}', $4::jsonb, true)
              WHERE owner_id = $1 AND run_id = $2 AND fingerprint = $3`,
             [command.ownerId, search.id, job.fingerprint, JSON.stringify(match)],
+          );
+          // Saved leads keep a private job snapshot separate from search_jobs. Refresh only its
+          // match projection so notes, tags, status and application evidence remain owner-managed.
+          await client.query(
+            `UPDATE saved_leads SET data = jsonb_set(data, '{match}', $3::jsonb, true)
+             WHERE owner_id = $1 AND fingerprint = $2`,
+            [command.ownerId, job.fingerprint, JSON.stringify(match)],
           );
         }
       }
@@ -598,6 +624,7 @@ export class Database {
     fence: number,
     jobs: CollectedJobInput[],
     sourceOutcomes: SourceOutcome[],
+    expectedResumeDerived?: DerivedResume | null,
   ) {
     const validated = collectedJobsSchema.parse(jobs);
     const outcomes = sourceOutcomesSchema.parse(sourceOutcomes);
@@ -617,7 +644,14 @@ export class Database {
       )
     )
       throw new Conflict('Jobs do not match source outcomes');
-    return this.settle(command, fence, validated, collectionStatus(validated, outcomes), outcomes);
+    return this.settle(
+      command,
+      fence,
+      validated,
+      collectionStatus(validated, outcomes),
+      outcomes,
+      expectedResumeDerived,
+    );
   }
 
   /**
@@ -631,12 +665,46 @@ export class Database {
     jobs: CollectedJobInput[],
     status: 'completed' | 'partial' | 'failed',
     outcomes: SourceOutcome[] | null = null,
+    expectedResumeDerived?: DerivedResume | null,
   ): Promise<boolean> {
     const validated = collectedJobsSchema.parse(jobs);
     if (command.type !== 'search.collect') throw new Conflict('Unsupported completion type');
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
+      if (command.type === 'search.collect') {
+        // Serialize collection settlement with resume parses and recomputations. If the worker
+        // collected against an older resume, persist a compensating recompute in this transaction.
+        await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [command.ownerId]);
+        if (expectedResumeDerived !== undefined) {
+          const latestResume = await client.query<{
+            uploadId: string;
+            derived: DerivedResume | null;
+          }>(
+            `SELECT upload_id AS "uploadId", parsed->'derived' AS derived FROM resume_results
+             WHERE owner_id = $1 AND status = 'parsed'
+             ORDER BY created_at DESC, upload_id DESC LIMIT 1`,
+            [command.ownerId],
+          );
+          const latest = latestResume.rows[0];
+          if (JSON.stringify(latest?.derived ?? null) !== JSON.stringify(expectedResumeDerived)) {
+            const recompute: Command = {
+              id: randomUUID(),
+              type: 'search.recompute',
+              version: 1,
+              aggregateId: latest?.uploadId ?? command.aggregateId,
+              ownerId: command.ownerId,
+              occurredAt: new Date().toISOString(),
+              correlationId: command.correlationId,
+              causationId: command.id,
+            };
+            await client.query('INSERT INTO outbox_events (id, command) VALUES ($1, $2::jsonb)', [
+              recompute.id,
+              JSON.stringify(recompute),
+            ]);
+          }
+        }
+      }
       const owned = await client.query(
         `UPDATE command_executions SET status = $4
         WHERE id = $1 AND fence = $2 AND status = 'running' AND lease_until > now()

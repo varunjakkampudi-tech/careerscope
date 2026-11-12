@@ -181,6 +181,89 @@ test('legacy result rows are rescored from display fields while preserving non-r
   );
 });
 
+test('exact stored inputs re-evaluate exclusions against the refreshed candidate context', async () => {
+  const job = normalizeJob(
+    {
+      source: 'remoteok',
+      sourceJobId: 'onsite-job',
+      title: 'Platform Engineer',
+      companyName: 'Example',
+      location: 'Hyderabad',
+      isRemote: false,
+      hasFullDescription: true,
+      description: 'Build and operate Kubernetes infrastructure. '.repeat(15),
+      sourceUrl: 'https://example.test/jobs/onsite',
+      applyUrl: 'https://example.test/apply/onsite',
+    },
+    { now: Date.parse('2026-11-01T12:00:00Z') },
+  );
+  const remoteOnlyProfile = matchingProfile(
+    writableProfileSchema.parse({
+      candidate: {
+        fullName: 'Synthetic Candidate',
+        email: 'synthetic@example.test',
+        location: 'Hyderabad',
+      },
+      preferences: { titles: ['Platform Engineer'], techStack: ['React'], remoteOnly: true },
+      application: {},
+    }),
+  );
+  const previouslyExcluded = scoreJob(job, buildCandidateContext(remoteOnlyProfile), {
+    now: Date.parse('2026-11-01T12:00:00Z'),
+  });
+  assert.ok(previouslyExcluded.excludedReason);
+
+  let completion: unknown;
+  const database = {
+    async resumeRecomputeSnapshot() {
+      return {
+        sourceUploadId: command.aggregateId,
+        searches: [
+          {
+            id: randomUUID(),
+            createdAt: new Date('2026-11-01T12:00:00Z'),
+            status: 'completed' as const,
+            profileRevision: 1,
+            matchingProfile: profile,
+            jobs: [
+              {
+                runId: randomUUID(),
+                fingerprint: job.fingerprint,
+                data: {
+                  fingerprint: job.fingerprint,
+                  sourceJobId: job.sourceJobId,
+                  title: job.title,
+                  company: job.company.name,
+                  location: job.location,
+                  description: job.descriptionText,
+                  source: job.source,
+                  sourceUrl: job.sourceUrl,
+                  applyUrl: job.applyUrl,
+                  postedAt: job.postedAt,
+                  match: previouslyExcluded,
+                  matchingInput: job,
+                },
+              },
+            ],
+          },
+        ],
+      };
+    },
+    async completeResumeRecompute(_command: Command, _fence: number, result: unknown) {
+      completion = result;
+      return true;
+    },
+  } as unknown as Database;
+  assert.equal(
+    await resumeRecomputeHandler(database)(command, 1, new AbortController().signal),
+    true,
+  );
+  const saved = completion as {
+    searches: Array<{ jobs: Array<{ match: { excludedReason: string | null } }> }>;
+  };
+  assert.equal(saved.searches[0]!.jobs[0]!.match.excludedReason, null);
+});
+
 test('cancelled recompute does not read or commit a snapshot', async () => {
   let read = false;
   const database = {

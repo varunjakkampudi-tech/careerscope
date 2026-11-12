@@ -10,22 +10,25 @@ import { normalizeJob } from '@careerscope/providers';
 import { logger, type CollectedJob, type Database, type Handler } from '@careerscope/core';
 
 function scoreInput(data: CollectedJob, createdAt: Date) {
-  if (data.matchingInput) return data.matchingInput;
-  return normalizeJob(
-    {
-      source: data.source,
-      sourceJobId: data.sourceJobId ?? data.fingerprint,
-      title: data.title,
-      companyName: data.company,
-      location: data.location,
-      description: data.description,
-      hasFullDescription: data.match?.confidence === 'high',
-      postedAt: data.postedAt ?? undefined,
-      sourceUrl: data.sourceUrl,
-      applyUrl: data.applyUrl,
-    },
-    { now: createdAt.getTime() },
-  );
+  if (data.matchingInput) return { job: data.matchingInput, exact: true };
+  return {
+    job: normalizeJob(
+      {
+        source: data.source,
+        sourceJobId: data.sourceJobId ?? data.fingerprint,
+        title: data.title,
+        companyName: data.company,
+        location: data.location,
+        description: data.description,
+        hasFullDescription: data.match?.confidence === 'high',
+        postedAt: data.postedAt ?? undefined,
+        sourceUrl: data.sourceUrl,
+        applyUrl: data.applyUrl,
+      },
+      { now: createdAt.getTime() },
+    ),
+    exact: false,
+  };
 }
 
 export function resumeRecomputeHandler(database: Database): Handler {
@@ -46,14 +49,18 @@ export function resumeRecomputeHandler(database: Database): Handler {
             fingerprint: job.fingerprint,
             match: candidate
               ? (() => {
-                  const rescored = scoreJob(scoreInput(job.data, search.createdAt), candidate, {
+                  const input = scoreInput(job.data, search.createdAt);
+                  const rescored = scoreJob(input.job, candidate, {
                     now: search.createdAt.getTime(),
                     windowDays: 30,
                   });
                   const previous = job.data.match;
                   if (!previous) return rescored;
-                  if (previous.excludedReason)
+                  // Legacy display rows do not retain remote/employment details, so keep a
+                  // previous hard exclusion when its original input cannot be reconstructed.
+                  if (previous.excludedReason && !input.exact)
                     return { ...previous, resumeConsidered: candidate.resumeConsidered };
+                  if (rescored.excludedReason) return rescored;
                   const dimensions = {
                     ...rescored.dimensions,
                     location: previous.dimensions.location,
@@ -75,7 +82,10 @@ export function resumeRecomputeHandler(database: Database): Handler {
       ];
     });
     signal.throwIfAborted();
-    const committed = await database.completeResumeRecompute(command, fence, { searches });
+    const committed = await database.completeResumeRecompute(command, fence, {
+      sourceUploadId: snapshot.sourceUploadId,
+      searches,
+    });
     if (committed)
       logger.info(
         { runCount: searches.length },
