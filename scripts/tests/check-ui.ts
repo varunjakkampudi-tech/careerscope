@@ -2846,7 +2846,11 @@ try {
             JSON.stringify({
               format: 'docx',
               text: 'Synthetic candidate resume with React and TypeScript experience.',
-              derived: { techStack: ['React'], yearsOfExperience: null },
+              derived: {
+                fullName: 'Synthetic Candidate',
+                techStack: ['React'],
+                yearsOfExperience: null,
+              },
             }),
           ],
         );
