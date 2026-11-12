@@ -1982,7 +1982,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review; Stage 04 item 4.11 delta reviewed",
+      "reviewMethod": "content-read-and-diff-review; Stage 04 item 4.11 delta reviewed; Stage 04 item 4.11 exact-CI follow-up reviewed",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1994,10 +1994,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made.",
-      "evidence": "Stage 04 item 4.11 working branch; focused tests, typecheck, web lint, formatting, and production build run locally. Exact-head hosted CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.11)",
-      "sha256": "f4f3c2a232e72e13e393ee4d016c440697577491afcfa378032bd76f94c9c2a6",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made. Updated the Stage 04 item 4.11 record with exact-head hosted CI and prior independent review status while keeping native-language and merge gates open.",
+      "evidence": "Stage 04 item 4.11 follow-up on exact implementation SHA 7703e735265645a5321ff4207851fcde20893002; run 43292301601 required jobs passed; final owner-designated ChatGPT review pending.",
+      "reviewer": "Codex (Stage 04 item 4.11 exact-CI follow-up)",
+      "sha256": "72bf1c1a7063211b022dbd1a02ec6743ba9ad8df325e3cb5e70a111889ba649f",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2022,6 +2022,12 @@
           "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
           "reviewer": "Codex (Stage 04 item 4.07 closeout)",
           "sha256": "102ee77f92d7a0abf3d728024ce1dd4e5db91a514737d4d96eaea83a36026322"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made.",
+          "evidence": "Stage 04 item 4.11 working branch; focused tests, typecheck, web lint, formatting, and production build run locally. Exact-head hosted CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 04 item 4.11)",
+          "sha256": "f4f3c2a232e72e13e393ee4d016c440697577491afcfa378032bd76f94c9c2a6"
         }
       ]
     },
@@ -2064,14 +2070,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review; Stage 04 item 4.11 delta reviewed",
+      "reviewMethod": "content-read-and-diff-review; Stage 04 item 4.11 delta reviewed; Stage 04 item 4.11 exact-CI follow-up reviewed",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made.",
-      "evidence": "Stage 04 item 4.11 working branch; focused tests, typecheck, web lint, formatting, and production build run locally. Exact-head hosted CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.11)",
-      "sha256": "af0180d4eaa81cbd26750f9e30d4bf18ed9beadcb13392d174bf452aba63ccf5",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made. Updated the Stage 04 item 4.11 record with exact-head hosted CI and prior independent review status while keeping native-language and merge gates open.",
+      "evidence": "Stage 04 item 4.11 follow-up on exact implementation SHA 7703e735265645a5321ff4207851fcde20893002; run 43292301601 required jobs passed; final owner-designated ChatGPT review pending.",
+      "reviewer": "Codex (Stage 04 item 4.11 exact-CI follow-up)",
+      "sha256": "4ebf500cb71fc97dff2d10951d4a7899815a972992f725569b2afdb8f94cda73",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2096,6 +2102,12 @@
           "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
           "reviewer": "Codex (Stage 04 item 4.07 closeout)",
           "sha256": "4a83d02f88d60394b7fea55bec23fdeea68c2bbc8a1a9542934867f6642b2894"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made.",
+          "evidence": "Stage 04 item 4.11 working branch; focused tests, typecheck, web lint, formatting, and production build run locally. Exact-head hosted CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 04 item 4.11)",
+          "sha256": "af0180d4eaa81cbd26750f9e30d4bf18ed9beadcb13392d174bf452aba63ccf5"
         }
       ]
     },
@@ -2522,14 +2534,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review; Stage 04 item 4.11 delta reviewed",
+      "reviewMethod": "content-read-and-diff-review; Stage 04 item 4.11 delta reviewed; Stage 04 item 4.11 exact-CI follow-up reviewed",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made.",
-      "evidence": "Stage 04 item 4.11 working branch; focused tests, typecheck, web lint, formatting, and production build run locally. Exact-head hosted CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.11)",
-      "sha256": "6a04967e094fd94d745aa2ded229f2326b7a71b1ef85d9af1dbf1bbc1015482a",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made. Updated the Stage 04 item 4.11 record with exact-head hosted CI and prior independent review status while keeping native-language and merge gates open.",
+      "evidence": "Stage 04 item 4.11 follow-up on exact implementation SHA 7703e735265645a5321ff4207851fcde20893002; run 43292301601 required jobs passed; final owner-designated ChatGPT review pending.",
+      "reviewer": "Codex (Stage 04 item 4.11 exact-CI follow-up)",
+      "sha256": "e2867cb6a801dac94fa2e6d51cc93a4c7a0e501f2314678b23d10db214fd1de0",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2554,6 +2566,12 @@
           "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
           "reviewer": "Codex (Stage 04 item 4.07 closeout)",
           "sha256": "32a340ef0445218bb61935754032e5da565380b32ed462b401397b064cf99243"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed the Stage 04 item 4.11 delta; no resume accuracy or completeness claim is made.",
+          "evidence": "Stage 04 item 4.11 working branch; focused tests, typecheck, web lint, formatting, and production build run locally. Exact-head hosted CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 04 item 4.11)",
+          "sha256": "6a04967e094fd94d745aa2ded229f2326b7a71b1ef85d9af1dbf1bbc1015482a"
         }
       ]
     },
