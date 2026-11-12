@@ -1990,7 +1990,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "current source/documentation and exact-head CI/review reconciliation",
+      "reviewMethod": "implementation evidence at approved SHA 76d8867; documentation-head fdfa69a validation status recorded separately",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2002,10 +2002,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated the 4.08 progress record with exact-head automatic and manual CI results, independent engineering acceptance, and the remaining owner/merge/post-merge gates.",
-      "evidence": "PR #83 exact head 76d88673ffce923c30d7924a736f9f3bbc30f11d; runs 43270750798 and 43270545677; independent review in the CareerScope review chat.",
-      "reviewer": "Codex (Stage 04 item 4.08 closeout update)",
-      "sha256": "1de706c9c722bf11676d73ec39ab5deaef3a3e87362e2259c006f5fe203781e4",
+      "observations": "Clarified that independent approval applies to the implementation/test SHA 76d8867 and pre-merge CI, not the current documentation-only revision fdfa69a.",
+      "evidence": "Prior approved implementation SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d; current documentation SHA fdfa69a81fcecb6f6753722c1a79c34170e1af2f has runs 43279006784 and 43279040920 in progress and awaits documentation review.",
+      "reviewer": "Codex (Stage 04 item 4.08 exact-SHA documentation reconciliation)",
+      "sha256": "fd229885fff2592a7164738819f74226c5e8da6393f5d3d3366487722aa2c19b",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2046,6 +2046,16 @@
           "observations": "Reformatted the Stage 04 item 4.08 evidence update and refreshed its content hash.",
           "evidence": "Prettier check and complete Stage 01 audit/roadmap traceability gates run on the documentation-sync revision.",
           "reviewer": "Codex (Stage 04 item 4.08 documentation synchronization)"
+        },
+        {
+          "observations": "Corrected the PR #83 head reference: 76d8867 is the independently approved implementation/test revision; fdfa69a is the current documentation-only revision awaiting exact-head CI/review.",
+          "evidence": "Runs 43270750798 and 43270545677 passed on implementation SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d; CI runs 43279006784 and 43279040920 are pending on documentation SHA fdfa69a81fcecb6f6753722c1a79c34170e1af2f.",
+          "reviewer": "Codex (Stage 04 item 4.08 exact-SHA documentation reconciliation)"
+        },
+        {
+          "observations": "Clarified that independent approval applies to the implementation/test SHA 76d8867 and pre-merge CI, not the current documentation-only revision fdfa69a.",
+          "evidence": "Prior approved implementation SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d; current documentation SHA fdfa69a81fcecb6f6753722c1a79c34170e1af2f has runs 43279006784 and 43279040920 in progress and awaits documentation review.",
+          "reviewer": "Codex (Stage 04 item 4.08 approval provenance correction)"
         }
       ]
     },
@@ -2088,14 +2098,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "current source/documentation and exact-head CI/review reconciliation",
+      "reviewMethod": "implementation evidence at approved SHA 76d8867; documentation-head fdfa69a validation status recorded separately",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 4.08 test evidence with exact-head CI, performance, soak, recovery, review approval, and the unclosed translation/merge gates.",
-      "evidence": "PR #83 exact head 76d88673ffce923c30d7924a736f9f3bbc30f11d; runs 43270750798 and 43270545677.",
-      "reviewer": "Codex (Stage 04 item 4.08 closeout update)",
-      "sha256": "6fab6f2d9b7ff40ed62e734ad68612adba7bf217e9a0a62a6eeb85c70084468b",
+      "observations": "Separated successful implementation/test evidence at 76d8867 from pending exact-head validation of documentation-only commit fdfa69a.",
+      "evidence": "Implementation runs 43270750798 and 43270545677; documentation SHA fdfa69a81fcecb6f6753722c1a79c34170e1af2f has runs 43279006784 and 43279040920 in progress.",
+      "reviewer": "Codex (Stage 04 item 4.08 exact-SHA documentation reconciliation)",
+      "sha256": "fa331ab1d094d5ce0f47504a52894a292b5a11da48314dccba507f96bc11060f",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2142,6 +2152,11 @@
           "observations": "Reformatted the Stage 04 item 4.08 evidence update and refreshed its content hash.",
           "evidence": "Prettier check and complete Stage 01 audit/roadmap traceability gates run on the documentation-sync revision.",
           "reviewer": "Codex (Stage 04 item 4.08 documentation synchronization)"
+        },
+        {
+          "observations": "Separated successful implementation/test evidence at 76d8867 from pending exact-head validation of documentation-only commit fdfa69a.",
+          "evidence": "Implementation runs 43270750798 and 43270545677; documentation SHA fdfa69a81fcecb6f6753722c1a79c34170e1af2f has runs 43279006784 and 43279040920 in progress.",
+          "reviewer": "Codex (Stage 04 item 4.08 exact-SHA documentation reconciliation)"
         }
       ]
     },
@@ -2576,14 +2591,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "current source/documentation and exact-head CI/review reconciliation",
+      "reviewMethod": "implementation evidence at approved SHA 76d8867; documentation-head fdfa69a validation status recorded separately",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Appended current exact-head CI and review evidence to item 4.08 while preserving partial status and historical run notes.",
-      "evidence": "PR #83 exact head 76d88673ffce923c30d7924a736f9f3bbc30f11d; runs 43270750798 and 43270545677.",
-      "reviewer": "Codex (Stage 04 item 4.08 closeout update)",
-      "sha256": "3628a27ad55b55d66f95dd01dfd0c4aabc94ceef7694c30e2cd3341487fc81a6",
+      "observations": "Preserved historical item 4.08 evidence and clarified that successful test runs apply to implementation SHA 76d8867 while current docs head fdfa69a awaits CI/review.",
+      "evidence": "Implementation SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d; passed runs 43270750798 and 43270545677. Docs SHA fdfa69a81fcecb6f6753722c1a79c34170e1af2f; pending runs 43279006784 and 43279040920.",
+      "reviewer": "Codex (Stage 04 item 4.08 exact-SHA documentation reconciliation)",
+      "sha256": "1dfc114814854e4d47e3df46d9901d2203c9a5bc50e629b34d386d8df4aefb73",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2618,6 +2633,11 @@
           "observations": "Reformatted the Stage 04 item 4.08 evidence update and refreshed its content hash.",
           "evidence": "Prettier check and complete Stage 01 audit/roadmap traceability gates run on the documentation-sync revision.",
           "reviewer": "Codex (Stage 04 item 4.08 documentation synchronization)"
+        },
+        {
+          "observations": "Preserved historical item 4.08 evidence and clarified that successful test runs apply to implementation SHA 76d8867 while current docs head fdfa69a awaits CI/review.",
+          "evidence": "Implementation SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d; passed runs 43270750798 and 43270545677. Docs SHA fdfa69a81fcecb6f6753722c1a79c34170e1af2f; pending runs 43279006784 and 43279040920.",
+          "reviewer": "Codex (Stage 04 item 4.08 exact-SHA documentation reconciliation)"
         }
       ]
     },
@@ -6797,7 +6817,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "current source/documentation and exact-head CI/review reconciliation",
+      "reviewMethod": "implementation evidence at approved SHA 76d8867; documentation-head fdfa69a validation status recorded separately",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6823,9 +6843,9 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "The updated resume-version journey reselects a remaining resume after deletion and waits for its accessible ready state. Exact-head automatic browser CI passed; independent review approved this delta.",
-      "evidence": "PR #83 exact head 76d88673ffce923c30d7924a736f9f3bbc30f11d; automatic run 43270750798 and manual run 43270545677.",
-      "reviewer": "Codex (Stage 04 item 4.08 closeout update)",
+      "observations": "Browser test correction approved and verified at implementation SHA 76d8867; later PR change is documentation-only and does not modify this test.",
+      "evidence": "Automatic run 43270750798 and manual run 43270545677 passed on 76d88673ffce923c30d7924a736f9f3bbc30f11d.",
+      "reviewer": "Codex (Stage 04 item 4.08 exact-SHA documentation reconciliation)",
       "sha256": "54c5d972752c2b49246de42ac0104e523b35bd4ac3a18ed13832aed79fd46880",
       "history": [
         {
@@ -6886,6 +6906,11 @@
           "observations": "The updated resume-version journey reselects a remaining resume after deletion and waits for its accessible ready state. Exact-head automatic browser CI passed; independent review approved this delta.",
           "evidence": "PR #83 exact head 76d88673ffce923c30d7924a736f9f3bbc30f11d; automatic run 43270750798 and manual run 43270545677.",
           "reviewer": "Codex (Stage 04 item 4.08 closeout update)"
+        },
+        {
+          "observations": "Browser test correction approved and verified at implementation SHA 76d8867; later PR change is documentation-only and does not modify this test.",
+          "evidence": "Automatic run 43270750798 and manual run 43270545677 passed on 76d88673ffce923c30d7924a736f9f3bbc30f11d.",
+          "reviewer": "Codex (Stage 04 item 4.08 exact-SHA documentation reconciliation)"
         }
       ]
     },
