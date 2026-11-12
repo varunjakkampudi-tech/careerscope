@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, type FormEvent } from 'react';
+import { useMemo, useRef, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { FileText, LoaderCircle, RefreshCw, Trash2, Upload, X } from 'lucide-react';
 import { ApiError, apiJson, apiParsed } from '../lib/api';
@@ -49,6 +49,9 @@ export default function ResumePanel({
   const owner = useOwner();
   const input = useRef<HTMLInputElement>(null);
   const [selected, setSelected] = useState<string | null>(null);
+  const [targetRole, setTargetRole] = useState('');
+  const [versionGroupId, setVersionGroupId] = useState('');
+  const [roleFilter, setRoleFilter] = useState('');
   const [file, setFile] = useState<{ value: File; key: string } | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
@@ -73,6 +76,43 @@ export default function ResumePanel({
     refetchInterval: (query) =>
       query.state.data && ['queued', 'uploading'].includes(query.state.data.status) ? 3000 : false,
   });
+  const latestRoleVersions = useMemo(() => {
+    const groups = new Map<
+      string,
+      {
+        latestParsed?: {
+          versionGroupId: string;
+          targetRole: string | null;
+          versionNumber: number;
+          status: string;
+        };
+        pending: boolean;
+      }
+    >();
+    for (const item of resumes.data?.items ?? []) {
+      if (!item.targetRole) continue;
+      const group = groups.get(item.versionGroupId) ?? { pending: false };
+      if (['uploading', 'cancelling', 'queued'].includes(item.status)) group.pending = true;
+      if (
+        item.status === 'parsed' &&
+        (!group.latestParsed || item.versionNumber > group.latestParsed.versionNumber)
+      )
+        group.latestParsed = item;
+      groups.set(item.versionGroupId, group);
+    }
+    return [...groups.values()]
+      .filter((group) => !group.pending && group.latestParsed)
+      .map((group) => group.latestParsed!);
+  }, [resumes.data?.items]);
+  const roleLabels = useMemo(
+    () =>
+      [
+        ...new Set(
+          (resumes.data?.items ?? []).flatMap((item) => (item.targetRole ? [item.targetRole] : [])),
+        ),
+      ].sort(),
+    [resumes.data?.items],
+  );
   const remove = useMutation({
     mutationFn: (id: string) =>
       apiJson(`/resumes/${id}`, { method: 'DELETE', headers: { 'x-csrf-token': csrf } }),
@@ -128,10 +168,13 @@ export default function ResumePanel({
           'content-type': 'application/octet-stream',
           'x-csrf-token': csrf,
           'idempotency-key': file.key,
+          ...(targetRole.trim() ? { 'x-resume-target-role': targetRole.trim() } : {}),
+          ...(versionGroupId ? { 'x-resume-version-group': versionGroupId } : {}),
         },
       });
       setSelected(result.id);
       setFile(null);
+      setVersionGroupId('');
       if (input.current) input.current.value = '';
       await cache.invalidateQueries({ queryKey: ['resumes'] });
     } catch (failure) {
@@ -177,6 +220,39 @@ export default function ResumePanel({
                 }}
               />
             </label>
+            <label>
+              Target role (optional)
+              <input
+                type="text"
+                maxLength={80}
+                value={targetRole}
+                disabled={!!versionGroupId}
+                onChange={(event) => setTargetRole(event.target.value)}
+                aria-describedby="resume-target-role-hint"
+              />
+            </label>
+            <span id="resume-target-role-hint" className={styles.uploadHint}>
+              Add a role to organize this resume series, or leave blank for a general resume.
+            </span>
+            <label>
+              Add as a new version of
+              <select
+                value={versionGroupId}
+                onChange={(event) => {
+                  const groupId = event.target.value;
+                  setVersionGroupId(groupId);
+                  const group = latestRoleVersions.find((item) => item.versionGroupId === groupId);
+                  if (group?.targetRole) setTargetRole(group.targetRole);
+                }}
+              >
+                <option value="">Start a new series</option>
+                {latestRoleVersions.map((item) => (
+                  <option key={item.versionGroupId} value={item.versionGroupId}>
+                    {item.targetRole} · continue from version {item.versionNumber}
+                  </option>
+                ))}
+              </select>
+            </label>
             <button
               type="submit"
               disabled={!file || pending}
@@ -196,72 +272,90 @@ export default function ResumePanel({
             // This list has no filter — its only empty is "nothing yet".
             <EmptyState variant="inline" reason="nothing-yet" message="No resumes uploaded." />
           )}
+          {roleLabels.length > 0 && (
+            <label>
+              Filter resumes by target role
+              <select value={roleFilter} onChange={(event) => setRoleFilter(event.target.value)}>
+                <option value="">All resumes</option>
+                {roleLabels.map((role) => (
+                  <option key={role} value={role}>
+                    {role}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <ul className="resume-list">
-            {resumes.data.items.map((item) => (
-              <li key={item.id}>
-                <button
-                  type="button"
-                  aria-pressed={selected === item.id}
-                  onClick={() => {
-                    setSelected(item.id);
-                    remove.reset();
-                    recover.reset();
-                    cancel.reset();
-                  }}
-                >
-                  <FileText size={17} aria-hidden="true" />
-                  {new Date(item.createdAt).toLocaleDateString()}
-                  <span>{item.status}</span>
-                </button>
-                {item.status === 'uploading' && (
+            {resumes.data.items
+              .filter((item) => !roleFilter || item.targetRole === roleFilter)
+              .map((item) => (
+                <li key={item.id}>
                   <button
                     type="button"
-                    title="Recover upload"
-                    aria-label="Recover upload"
-                    disabled={recover.isPending || cancel.isPending || pending}
-                    onClick={() => recover.mutate(item.id)}
+                    aria-pressed={selected === item.id}
+                    onClick={() => {
+                      setSelected(item.id);
+                      remove.reset();
+                      recover.reset();
+                      cancel.reset();
+                    }}
                   >
-                    <RefreshCw className={recover.isPending ? 'spin' : undefined} size={17} />
+                    <FileText size={17} aria-hidden="true" />
+                    {item.targetRole ?? 'General resume'} · Version {item.versionNumber} ·{' '}
+                    {new Date(item.createdAt).toLocaleDateString()}
+                    <span>{item.status}</span>
                   </button>
-                )}
-                {item.cancellable === true && (
+                  {item.status === 'uploading' && (
+                    <button
+                      type="button"
+                      title="Recover upload"
+                      aria-label="Recover upload"
+                      disabled={recover.isPending || cancel.isPending || pending}
+                      onClick={() => recover.mutate(item.id)}
+                    >
+                      <RefreshCw className={recover.isPending ? 'spin' : undefined} size={17} />
+                    </button>
+                  )}
+                  {item.cancellable === true && (
+                    <button
+                      type="button"
+                      title={
+                        item.status === 'cancelling' ? 'Retry upload cleanup' : 'Cancel upload'
+                      }
+                      aria-label={
+                        item.status === 'cancelling' ? 'Retry upload cleanup' : 'Cancel upload'
+                      }
+                      disabled={cancel.isPending || recover.isPending || pending}
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            'Cancel this unfinished upload and remove its file? This upload cannot be recovered afterward.',
+                          )
+                        )
+                          cancel.mutate(item.id);
+                      }}
+                    >
+                      <X size={17} />
+                    </button>
+                  )}
                   <button
                     type="button"
-                    title={item.status === 'cancelling' ? 'Retry upload cleanup' : 'Cancel upload'}
-                    aria-label={
-                      item.status === 'cancelling' ? 'Retry upload cleanup' : 'Cancel upload'
-                    }
-                    disabled={cancel.isPending || recover.isPending || pending}
+                    title="Delete resume"
+                    aria-label="Delete resume"
+                    disabled={remove.isPending || !['parsed', 'rejected'].includes(item.status)}
                     onClick={() => {
                       if (
                         window.confirm(
-                          'Cancel this unfinished upload and remove its file? This upload cannot be recovered afterward.',
+                          'Delete this resume and its extracted text? Saved profile fields will remain.',
                         )
                       )
-                        cancel.mutate(item.id);
+                        remove.mutate(item.id);
                     }}
                   >
-                    <X size={17} />
+                    <Trash2 size={17} />
                   </button>
-                )}
-                <button
-                  type="button"
-                  title="Delete resume"
-                  aria-label="Delete resume"
-                  disabled={remove.isPending || !['parsed', 'rejected'].includes(item.status)}
-                  onClick={() => {
-                    if (
-                      window.confirm(
-                        'Delete this resume and its extracted text? Saved profile fields will remain.',
-                      )
-                    )
-                      remove.mutate(item.id);
-                  }}
-                >
-                  <Trash2 size={17} />
-                </button>
-              </li>
-            ))}
+                </li>
+              ))}
           </ul>
           {remove.error && (
             <ErrorState

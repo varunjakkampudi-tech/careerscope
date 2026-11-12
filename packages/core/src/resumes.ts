@@ -48,6 +48,9 @@ export type ResumeUploadRecord = z.infer<typeof resumeUploadMetadataSchema> & {
   id: string;
   ownerId: string;
   bucket: string;
+  targetRole: string | null;
+  versionGroupId: string;
+  versionNumber: number;
   objectVersion: string | null;
   commandId: string | null;
   status: 'uploading' | 'queued' | 'cancelling' | 'cancelled';
@@ -57,7 +60,9 @@ export type ResumeUploadRecord = z.infer<typeof resumeUploadMetadataSchema> & {
 
 /** Column list that maps `resume_uploads` snake_case columns onto `ResumeUploadRecord` fields. */
 const columns = `id, owner_id AS "ownerId", bucket, sha256, bytes,
-  content_type AS "contentType", object_version AS "objectVersion", command_id AS "commandId",
+  content_type AS "contentType", target_role AS "targetRole",
+  version_group_id AS "versionGroupId", version_number AS "versionNumber",
+  object_version AS "objectVersion", command_id AS "commandId",
   status, created_at AS "createdAt", updated_at AS "updatedAt"`;
 
 /** A quota or capacity limit was hit; a `Conflict`, so the API reports it as a refusal rather than a server fault. */
@@ -156,21 +161,59 @@ export class ResumeUploadRepository {
     key: string,
     bucket: string,
     input: unknown,
+    version: { targetRole?: string | null; versionGroupId?: string | null } = {},
   ): Promise<ResumeUploadRecord> {
     identifier.parse(ownerId);
     keySchema.parse(key);
     bucketSchema.parse(bucket);
     const metadata = resumeUploadMetadataSchema.parse(input);
+    const targetRole =
+      version.targetRole == null
+        ? null
+        : z
+            .string()
+            .trim()
+            .min(1)
+            .max(80)
+            .refine(
+              (value) =>
+                !Array.from(value).some((character) => {
+                  const code = character.charCodeAt(0);
+                  return code <= 0x1f || code === 0x7f;
+                }),
+            )
+            .parse(version.targetRole);
+    const requestedGroup =
+      version.versionGroupId == null ? null : identifier.parse(version.versionGroupId);
+    if (requestedGroup && !targetRole)
+      throw new Conflict('A target role is required to add a resume version');
     const client = await this.database.pool.connect();
     try {
       await client.query('BEGIN');
       await client.query('SELECT id FROM users WHERE id = $1 FOR UPDATE', [ownerId]);
       await client.query('SELECT pg_advisory_xact_lock(734205, 1)');
       const existingKey = await client.query(
-        'SELECT id FROM resume_uploads WHERE owner_id = $1 AND idempotency_key = $2',
+        `SELECT ${columns} FROM resume_uploads WHERE owner_id = $1 AND idempotency_key = $2`,
         [ownerId, key],
       );
-      if (!existingKey.rowCount) {
+      const existing = existingKey.rows[0] as ResumeUploadRecord | undefined;
+      if (existing) {
+        if (
+          existing.bucket !== bucket ||
+          existing.sha256 !== metadata.sha256 ||
+          existing.bytes !== metadata.bytes ||
+          existing.contentType !== metadata.contentType ||
+          existing.targetRole !== targetRole ||
+          (requestedGroup !== null && existing.versionGroupId !== requestedGroup)
+        ) {
+          throw new Conflict(
+            'Upload idempotency key reused with different metadata',
+            'IDEMPOTENCY_KEY_REUSED',
+          );
+        }
+        await client.query('COMMIT');
+        return existing;
+      } else {
         const globalUsage = await client.query<{ count: string; bytes: string }>(
           'SELECT count(*) AS count, COALESCE(sum(bytes), 0) AS bytes FROM resume_uploads',
         );
@@ -191,11 +234,74 @@ export class ResumeUploadRepository {
           throw new ResumeStorageLimit('Resume storage limit reached');
         }
       }
+      const id = randomUUID();
+      let versionGroupId: string = id;
+      let versionNumber = 1;
+      if (requestedGroup) {
+        const group = await client.query<{ targetRole: string; nextVersionNumber: number }>(
+          `SELECT target_role AS "targetRole", next_version_number AS "nextVersionNumber"
+           FROM resume_version_groups WHERE owner_id = $1 AND id = $2 FOR UPDATE`,
+          [ownerId, requestedGroup],
+        );
+        const pending = await client.query(
+          `SELECT 1 FROM resume_uploads upload
+           LEFT JOIN resume_results result
+             ON result.upload_id = upload.id AND result.owner_id = upload.owner_id
+           WHERE upload.owner_id = $1 AND upload.version_group_id = $2
+             AND (upload.status IN ('uploading', 'cancelling')
+               OR (upload.status = 'queued' AND result.upload_id IS NULL))
+           LIMIT 1`,
+          [ownerId, requestedGroup],
+        );
+        const latestParsed = await client.query<{ targetRole: string }>(
+          `SELECT upload.target_role AS "targetRole" FROM resume_uploads upload
+           JOIN resume_results result
+             ON result.upload_id = upload.id AND result.owner_id = upload.owner_id
+           WHERE upload.owner_id = $1 AND upload.version_group_id = $2
+             AND upload.status = 'queued' AND result.status = 'parsed'
+           ORDER BY upload.version_number DESC LIMIT 1 FOR UPDATE OF upload`,
+          [ownerId, requestedGroup],
+        );
+        if (
+          !group.rowCount ||
+          group.rows[0]!.targetRole.toLowerCase() !== targetRole?.toLowerCase() ||
+          !latestParsed.rowCount ||
+          latestParsed.rows[0]!.targetRole.toLowerCase() !== targetRole?.toLowerCase() ||
+          pending.rowCount
+        ) {
+          throw new Conflict('Resume version series is unavailable', 'RESUME_VERSION_CONFLICT');
+        }
+        versionGroupId = requestedGroup;
+        versionNumber = group.rows[0]!.nextVersionNumber;
+        await client.query(
+          `UPDATE resume_version_groups SET next_version_number = next_version_number + 1
+           WHERE owner_id = $1 AND id = $2`,
+          [ownerId, requestedGroup],
+        );
+      } else if (targetRole) {
+        await client.query(
+          `INSERT INTO resume_version_groups (owner_id, id, target_role)
+           VALUES ($1, $2, $3)`,
+          [ownerId, id, targetRole],
+        );
+      }
       const inserted = await client.query<ResumeUploadRecord>(
-        `INSERT INTO resume_uploads (id, owner_id, idempotency_key, bucket, sha256, bytes, content_type)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
+        `INSERT INTO resume_uploads
+         (id, owner_id, idempotency_key, bucket, sha256, bytes, content_type, target_role, version_group_id, version_number)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
          ON CONFLICT (owner_id, idempotency_key) DO NOTHING RETURNING ${columns}`,
-        [randomUUID(), ownerId, key, bucket, metadata.sha256, metadata.bytes, metadata.contentType],
+        [
+          id,
+          ownerId,
+          key,
+          bucket,
+          metadata.sha256,
+          metadata.bytes,
+          metadata.contentType,
+          targetRole,
+          versionGroupId,
+          versionNumber,
+        ],
       );
       let record = inserted.rows[0];
       if (!record) {
@@ -209,7 +315,9 @@ export class ResumeUploadRepository {
           record.bucket !== bucket ||
           record.sha256 !== metadata.sha256 ||
           record.bytes !== metadata.bytes ||
-          record.contentType !== metadata.contentType
+          record.contentType !== metadata.contentType ||
+          record.targetRole !== targetRole ||
+          (requestedGroup !== null && record.versionGroupId !== requestedGroup)
         ) {
           throw new Conflict(
             'Upload idempotency key reused with different metadata',
@@ -417,7 +525,13 @@ export class ResumeUploadCoordinator {
    * object, verifies it reads back, and queues parsing. Safe to retry with the same `key`: an object
    * already stored is reused through `recoverVersion`. The whole call has a 45 second deadline.
    */
-  async upload(ownerId: string, key: string, body: Uint8Array, signal?: AbortSignal) {
+  async upload(
+    ownerId: string,
+    key: string,
+    body: Uint8Array,
+    signal?: AbortSignal,
+    versionMetadata?: { targetRole?: string | null; versionGroupId?: string | null },
+  ) {
     const deadline = AbortSignal.any([AbortSignal.timeout(45_000), ...(signal ? [signal] : [])]);
     deadline.throwIfAborted();
     identifier.parse(ownerId);
@@ -437,7 +551,13 @@ export class ResumeUploadCoordinator {
           ? 'application/pdf'
           : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     });
-    const record = await this.uploads.reserve(ownerId, key, this.storage.bucket, metadata);
+    const record = await this.uploads.reserve(
+      ownerId,
+      key,
+      this.storage.bucket,
+      metadata,
+      versionMetadata,
+    );
     if (record.status === 'queued') return record;
     if (record.status !== 'uploading') throw new Conflict('Upload cancelled', 'UPLOAD_CANCELLED');
     const object = this.object(record);

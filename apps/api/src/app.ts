@@ -1635,7 +1635,9 @@ export async function createApp(
       if (!coordinator) return { enabled: false, items: [] };
       const result = await database.pool.query(
         `SELECT upload.id, upload.bytes, upload.content_type AS "contentType",
-         upload.created_at AS "createdAt", COALESCE(result.status, upload.status) AS status
+         upload.created_at AS "createdAt", upload.target_role AS "targetRole",
+         upload.version_group_id AS "versionGroupId", upload.version_number AS "versionNumber",
+         COALESCE(result.status, upload.status) AS status
          FROM resume_uploads upload LEFT JOIN resume_results result
          ON result.upload_id = upload.id AND result.owner_id = upload.owner_id
          WHERE upload.owner_id = $1 ORDER BY upload.created_at DESC, upload.id DESC LIMIT 50`,
@@ -1674,11 +1676,24 @@ export async function createApp(
         request.raw.once('aborted', abort);
         reply.raw.once('close', abort);
         try {
+          const targetRoleHeader = request.headers['x-resume-target-role'];
+          const versionGroupHeader = request.headers['x-resume-version-group'];
+          if (Array.isArray(targetRoleHeader) || Array.isArray(versionGroupHeader))
+            throw new HttpError(400, 'Invalid resume version metadata');
+          const targetRole = targetRoleHeader
+            ? z.string().trim().min(1).max(80).parse(targetRoleHeader)
+            : null;
+          const versionGroupId = versionGroupHeader
+            ? z.string().uuid().parse(versionGroupHeader)
+            : null;
+          if (versionGroupId && !targetRole)
+            throw new HttpError(400, 'A target role is required to add a resume version');
           const upload = await coordinator!.upload(
             request.ownerId!,
             idempotencyKey.parse(request.headers['idempotency-key']),
             request.body,
             controller.signal,
+            { targetRole, versionGroupId },
           );
           if (!upload) throw new HttpError(409, 'Upload changed; retry');
           return reply.code(202).send({ id: upload.id, status: upload.status });

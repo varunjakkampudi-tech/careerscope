@@ -952,16 +952,21 @@
       "sourceStatus": "Partial",
       "currentStatus": "partial",
       "evidence": [
+        "migrations/0005_resume_versions.sql",
+        "migrations/0006_resume_version_group_counters.sql",
         "packages/core/src/resumes.ts",
+        "apps/api/src/app.ts",
         "apps/web/src/components/resume-panel.tsx",
         "docs/requirements/V12-RECONCILIATION.md"
       ],
       "tests": [
         "packages/core/src/resumes.integration.test.ts",
-        "apps/api/src/resumes.integration.test.ts"
+        "apps/api/src/resumes.integration.test.ts",
+        "tests/integration/migrations.integration.test.ts",
+        "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "Multiple uploads can be listed; target-role labels, explicit version lineage, role-aware selection and corresponding candidate workflow are absent.",
+      "gap": "Follow-up implementation adds persistent counters and covers rejected, cancelled, deleted, and concurrent versions. Local F-025, migration integration, aggregate check, build, and updated Chromium resume continuation journey pass. Exact-head run 43176172908 passed Quality gates, Services/integration/browser suites (including browser, axe, keyboard and responsive checks), and Production image build on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history is preserved in docs/audits/STAGE-01-FILE-AUDIT.json. Independent exact-head review and post-merge verification remain pending; this item is not verified.",
       "scopeDisposition": "in-scope"
     },
     {

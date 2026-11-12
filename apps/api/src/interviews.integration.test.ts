@@ -141,9 +141,9 @@ test(
       await database.pool.query(
         `INSERT INTO resume_uploads
           (id, owner_id, idempotency_key, bucket, sha256, bytes, content_type,
-           object_version, command_id, status)
+           object_version, command_id, status, version_group_id)
          VALUES ($1, $2, 'interviewdoc1', 'careerscope-private', $3, 64,
-           'application/pdf', 'synthetic-version', $4, 'queued')`,
+           'application/pdf', 'synthetic-version', $4, 'queued', $1)`,
         [uploadId, ownerId, 'a'.repeat(64), parseCommandId],
       );
       await database.pool.query(

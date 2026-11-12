@@ -195,6 +195,205 @@ test(
 );
 
 test(
+  'F-025: resume versions stay in an owner-scoped target-role series and list stable version numbers',
+  { timeout: 60_000 },
+  async () => {
+    await withFixture(async ({ database, uploads, owner, other }) => {
+      let writes = 0;
+      const app = await createApp(database, origin, async () => true, {
+        testAccess: { mode: 'disabled' },
+        resumeStorage: storageStub({
+          put: async () => {
+            writes += 1;
+            return 'synthetic-version';
+          },
+        }),
+      });
+      try {
+        const upload = (headers: Record<string, string>) =>
+          app.inject({
+            method: 'POST',
+            url: '/api/resumes',
+            headers: {
+              ...headers,
+              'content-type': 'application/octet-stream',
+            },
+            payload: pdf,
+          });
+        const markParsed = async (id: string) =>
+          database.pool.query(
+            `INSERT INTO resume_results (upload_id, owner_id, command_id, status, parsed)
+             SELECT id, owner_id, command_id, 'parsed', $2::jsonb FROM resume_uploads WHERE id = $1
+             ON CONFLICT (upload_id) DO UPDATE SET status = 'parsed', parsed = EXCLUDED.parsed, error_code = NULL`,
+            [
+              id,
+              JSON.stringify({
+                format: 'pdf',
+                text: 'A synthetic parsed resume used to validate version selection.',
+                derived: {},
+              }),
+            ],
+          );
+        const firstResponse = await upload({
+          ...owner.headers,
+          'idempotency-key': 'role-resume-first',
+          'x-resume-target-role': 'Software Engineer',
+        });
+        assert.equal(firstResponse.statusCode, 202, firstResponse.body);
+        const firstId = firstResponse.json().id as string;
+        await markParsed(firstId);
+        const firstList = await app.inject({ url: '/api/resumes', headers: owner.headers });
+        const first = firstList.json().items[0] as {
+          id: string;
+          targetRole: string | null;
+          versionGroupId: string;
+          versionNumber: number;
+        };
+        assert.equal(first.id, firstId);
+        assert.equal(first.targetRole, 'Software Engineer');
+        assert.equal(first.versionGroupId, firstId);
+        assert.equal(first.versionNumber, 1);
+
+        const secondHeaders = {
+          ...owner.headers,
+          'idempotency-key': 'role-resume-second',
+          'x-resume-target-role': 'Software Engineer',
+          'x-resume-version-group': first.versionGroupId,
+        };
+        const secondResponse = await upload(secondHeaders);
+        assert.equal(secondResponse.statusCode, 202, secondResponse.body);
+        const secondId = secondResponse.json().id as string;
+        assert.notEqual(secondId, firstId);
+        const listed = await app.inject({ url: '/api/resumes', headers: owner.headers });
+        const versions = listed.json().items as Array<{
+          id: string;
+          targetRole: string | null;
+          versionGroupId: string;
+          versionNumber: number;
+        }>;
+        assert.deepEqual(
+          versions
+            .filter((item) => item.versionGroupId === first.versionGroupId)
+            .map((item) => [item.id, item.targetRole, item.versionNumber])
+            .sort((left, right) => Number(left[2]) - Number(right[2])),
+          [
+            [firstId, 'Software Engineer', 1],
+            [secondId, 'Software Engineer', 2],
+          ],
+        );
+        assert.equal(
+          (
+            await upload({
+              ...other.headers,
+              'idempotency-key': 'foreign-version-attempt',
+              'x-resume-target-role': 'Software Engineer',
+              'x-resume-version-group': first.versionGroupId,
+            })
+          ).statusCode,
+          409,
+        );
+        assert.equal(
+          (
+            await upload({
+              ...owner.headers,
+              'idempotency-key': 'role-mismatch-version',
+              'x-resume-target-role': 'Product Designer',
+              'x-resume-version-group': first.versionGroupId,
+            })
+          ).statusCode,
+          409,
+        );
+        assert.equal(writes, 2, 'rejected series changes must not write another resume object');
+        const retry = await upload(secondHeaders);
+        assert.equal(retry.statusCode, 202);
+        assert.equal(retry.json().id, secondId);
+        assert.equal(writes, 2, 'idempotent version retries must not duplicate stored objects');
+
+        await database.pool.query(
+          `INSERT INTO resume_results (upload_id, owner_id, command_id, status, error_code)
+           SELECT id, owner_id, command_id, 'rejected', 'processing_failed'
+           FROM resume_uploads WHERE id = $1`,
+          [secondId],
+        );
+        const thirdResponse = await upload({
+          ...owner.headers,
+          'idempotency-key': 'role-resume-after-rejection',
+          'x-resume-target-role': 'Software Engineer',
+          'x-resume-version-group': first.versionGroupId,
+        });
+        assert.equal(thirdResponse.statusCode, 202, thirdResponse.body);
+        const thirdId = thirdResponse.json().id as string;
+        assert.equal((await uploads.get(owner.id, thirdId))?.versionNumber, 3);
+        await markParsed(thirdId);
+
+        const cancelled = await uploads.reserve(
+          owner.id,
+          'role-resume-cancelled',
+          bucket,
+          { ...metadata, sha256: 'c'.repeat(64) },
+          { targetRole: 'Software Engineer', versionGroupId: first.versionGroupId },
+        );
+        assert.equal(cancelled.versionNumber, 4);
+        await uploads.cancelUpload(owner.id, cancelled.id, bucket, async () => {});
+        assert.equal((await uploads.get(owner.id, cancelled.id))?.status, 'cancelled');
+        const fifthResponse = await upload({
+          ...owner.headers,
+          'idempotency-key': 'role-resume-after-cancellation',
+          'x-resume-target-role': 'Software Engineer',
+          'x-resume-version-group': first.versionGroupId,
+        });
+        assert.equal(fifthResponse.statusCode, 202, fifthResponse.body);
+        const fifthId = fifthResponse.json().id as string;
+        assert.equal((await uploads.get(owner.id, fifthId))?.versionNumber, 5);
+        await markParsed(fifthId);
+
+        const parallel = await Promise.all([
+          upload({
+            ...owner.headers,
+            'idempotency-key': 'role-resume-parallel-a',
+            'x-resume-target-role': 'Software Engineer',
+            'x-resume-version-group': first.versionGroupId,
+          }),
+          upload({
+            ...owner.headers,
+            'idempotency-key': 'role-resume-parallel-b',
+            'x-resume-target-role': 'Software Engineer',
+            'x-resume-version-group': first.versionGroupId,
+          }),
+        ]);
+        assert.deepEqual(parallel.map((response) => response.statusCode).sort(), [202, 409]);
+        assert.equal(writes, 5, 'a concurrent loser must not reserve another stored object');
+        const sixthId = parallel.find((response) => response.statusCode === 202)!.json()
+          .id as string;
+        assert.equal((await uploads.get(owner.id, sixthId))?.versionNumber, 6);
+        await markParsed(sixthId);
+        const deletion = await app.inject({
+          method: 'DELETE',
+          url: `/api/resumes/${sixthId}`,
+          headers: owner.headers,
+        });
+        assert.equal(deletion.statusCode, 204, deletion.body);
+
+        const seventhResponse = await upload({
+          ...owner.headers,
+          'idempotency-key': 'role-resume-after-deletion',
+          'x-resume-target-role': 'Software Engineer',
+          'x-resume-version-group': first.versionGroupId,
+        });
+        assert.equal(seventhResponse.statusCode, 202, seventhResponse.body);
+        const seventhId = seventhResponse.json().id as string;
+        assert.equal((await uploads.get(owner.id, seventhId))?.versionNumber, 7);
+        assert.equal(writes, 6);
+        const otherList = await app.inject({ url: '/api/resumes', headers: other.headers });
+        assert.equal(otherList.json().items.length, 0);
+      } finally {
+        await app.close();
+      }
+    });
+  },
+);
+
+test(
   'F-023: a candidate cancels only their own unfinished upload; queued and completed uploads return 409',
   { timeout: 60_000 },
   async () => {
@@ -330,9 +529,12 @@ test(
       try {
         // The per-owner upload count limit is 50.
         await database.pool.query(
-          `INSERT INTO resume_uploads (id, owner_id, idempotency_key, bucket, sha256, bytes, content_type)
-           SELECT gen_random_uuid(), $1, 'synthetic-fill-' || series, $2, $3, 100, 'application/pdf'
-           FROM generate_series(1, 50) AS series`,
+          `WITH rows AS (
+             SELECT gen_random_uuid() AS id, series FROM generate_series(1, 50) AS series
+           )
+           INSERT INTO resume_uploads
+             (id, owner_id, idempotency_key, bucket, sha256, bytes, content_type, version_group_id)
+           SELECT id, $1, 'synthetic-fill-' || series, $2, $3, 100, 'application/pdf', id FROM rows`,
           [owner.id, bucket, 'b'.repeat(64)],
         );
         const upload = (key: string) =>
