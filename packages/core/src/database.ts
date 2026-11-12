@@ -329,8 +329,22 @@ export class Database {
           // match projection so notes, tags, status and application evidence remain owner-managed.
           await client.query(
             `UPDATE saved_leads SET data = jsonb_set(data, '{match}', $3::jsonb, true)
-             WHERE owner_id = $1 AND fingerprint = $2`,
-            [command.ownerId, job.fingerprint, JSON.stringify(match)],
+             WHERE owner_id = $1 AND fingerprint = $2
+               AND EXISTS (
+                 SELECT 1 FROM search_runs current_run
+                 JOIN search_jobs current_job ON current_job.run_id = current_run.id
+                   AND current_job.owner_id = current_run.owner_id
+                 WHERE current_run.owner_id = $1 AND current_job.fingerprint = $2
+                   AND current_run.id = (
+                     SELECT latest_run.id FROM search_runs latest_run
+                     JOIN search_jobs latest_job ON latest_job.run_id = latest_run.id
+                       AND latest_job.owner_id = latest_run.owner_id
+                     WHERE latest_run.owner_id = $1 AND latest_job.fingerprint = $2
+                       AND latest_run.status IN ('completed', 'partial')
+                     ORDER BY latest_run.created_at DESC, latest_run.id DESC LIMIT 1
+                   ) AND current_run.id = $4
+               )`,
+            [command.ownerId, job.fingerprint, JSON.stringify(match), search.id],
           );
         }
       }

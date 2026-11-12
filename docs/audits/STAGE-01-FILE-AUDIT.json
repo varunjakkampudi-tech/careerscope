@@ -1946,10 +1946,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
-      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
-      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
-      "sha256": "704ab4b0a12d06e240a2362a7c9a7398f7cfaef3207500d25a8d31bbbb5f9ef1",
+      "observations": "Reviewed for Stage 04 item 4.12 by the authoring agent. Current evidence: focused PostgreSQL resume recompute and lead synchronization integration passes; full production build with CSP verification passes; typecheck, lint, architecture and roadmap traceability pass. The 378/0/3 unit result was run on prior head 7ee70cf, before the latest saved-lead regression. Exact-head CI and independent review of the latest revision remain pending.",
+      "evidence": "CareerScope item 4.12 current local verification; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 authoring review)",
+      "sha256": "b87b4b6864eb7856ea6176fc37e3fd04ce4d3aec88b4b3035b605e2f59995718",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -3774,10 +3774,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
-      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
-      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
-      "sha256": "53d950c6a92580f30b9a9af8485a500276fea8318bc92c371a880ec286ed4ad6"
+      "observations": "Reviewed for Stage 04 item 4.12 by the authoring agent. Current evidence: focused PostgreSQL resume recompute and lead synchronization integration passes; full production build with CSP verification passes; typecheck, lint, architecture and roadmap traceability pass. The 378/0/3 unit result was run on prior head 7ee70cf, before the latest saved-lead regression. Exact-head CI and independent review of the latest revision remain pending.",
+      "evidence": "CareerScope item 4.12 current local verification; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 authoring review)",
+      "sha256": "57502f8eba4d3633dfc016eb8257310278baa02b5731822fe6012e2c0e1e50b2"
     },
     {
       "path": "packages/core/src/dispatch.test.ts",
@@ -4058,10 +4058,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
-      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
-      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
-      "sha256": "10613cc09639e38690a50e7bf9abc06d7b85f6fd83c25368ec77b36657f8f210"
+      "observations": "Reviewed for Stage 04 item 4.12 by the authoring agent. Current evidence: focused PostgreSQL resume recompute and lead synchronization integration passes; full production build with CSP verification passes; typecheck, lint, architecture and roadmap traceability pass. The 378/0/3 unit result was run on prior head 7ee70cf, before the latest saved-lead regression. Exact-head CI and independent review of the latest revision remain pending.",
+      "evidence": "CareerScope item 4.12 current local verification; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 authoring review)",
+      "sha256": "0aa4e66ce072ec41bba428671f6f377a6f41d7ce52a10b85fceb8d3e7bf79173"
     },
     {
       "path": "packages/core/src/legal-acceptance.ts",
@@ -6801,10 +6801,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the item 4.12 change and relevant call sites. This is implementation review by the authoring agent, not an independent review. Local evidence: aggregate unit tests 377 passed, 0 failed, 3 skipped; production build, typecheck, lint, formatting, architecture and traceability checks passed; focused PostgreSQL resume recompute integration passed. Exact-head hosted CI and independent review remain pending.",
-      "evidence": "CareerScope Stage 04 item 4.12 local verification on this worktree; exact-head CI and independent review pending.",
-      "reviewer": "Codex (Stage 04 item 4.12 implementation review)",
-      "sha256": "4012d40811be0c56e9a8f4d6453235028e24e277aef20080de5f2c8df7d68da4"
+      "observations": "Reviewed for Stage 04 item 4.12 by the authoring agent. Current evidence: focused PostgreSQL resume recompute and lead synchronization integration passes; full production build with CSP verification passes; typecheck, lint, architecture and roadmap traceability pass. The 378/0/3 unit result was run on prior head 7ee70cf, before the latest saved-lead regression. Exact-head CI and independent review of the latest revision remain pending.",
+      "evidence": "CareerScope item 4.12 current local verification; exact-head CI and independent review pending.",
+      "reviewer": "Codex (Stage 04 item 4.12 authoring review)",
+      "sha256": "200f92383462294df490f7eb25b284484663a24a447036d893f956ba8bf44f82"
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",

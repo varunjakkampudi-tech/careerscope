@@ -3763,6 +3763,51 @@ test('createSearch snapshots the latest parsed resume and recompute retries stal
     const savedLead = await leadRepository.save(ownerId, { jobId: storedJobId });
     assert.ok(savedLead);
     assert.equal('matchingInput' in savedLead.data, false);
+    const concurrentFingerprint = `${storedJob.fingerprint}-save-lock`;
+    const concurrentJobId = randomUUID();
+    const concurrentJob = { ...collectedJob, fingerprint: concurrentFingerprint };
+    await database.pool.query(
+      `INSERT INTO search_jobs (id, run_id, owner_id, fingerprint, data)
+       VALUES ($1, $2, $3, $4, $5::jsonb)`,
+      [
+        concurrentJobId,
+        beforeResume.id,
+        ownerId,
+        concurrentFingerprint,
+        JSON.stringify(concurrentJob),
+      ],
+    );
+    const saveLock = await database.pool.connect();
+    await saveLock.query('BEGIN');
+    await saveLock.query('SELECT pg_advisory_xact_lock(hashtext($1))', [ownerId]);
+    let concurrentSaveSettled = false;
+    const concurrentSavePromise = leadRepository
+      .save(ownerId, { jobId: concurrentJobId })
+      .then((lead) => {
+        concurrentSaveSettled = true;
+        return lead;
+      });
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 30));
+      assert.equal(
+        concurrentSaveSettled,
+        false,
+        'lead creation waits for owner recomputation lock',
+      );
+      await saveLock.query(
+        `UPDATE search_jobs SET data = jsonb_set(data, '{match}', 'null'::jsonb)
+         WHERE owner_id = $1 AND id = $2`,
+        [ownerId, concurrentJobId],
+      );
+      await saveLock.query('COMMIT');
+    } catch (error) {
+      await saveLock.query('ROLLBACK');
+      throw error;
+    } finally {
+      await saveLock.release();
+    }
+    const concurrentSavedLead = await concurrentSavePromise;
+    assert.equal(concurrentSavedLead?.data.match, null);
     const racingSearch = await database.createSearch(ownerId, 'resume-collection-race', request);
     const racingCommand = (await database.unpublished(['search.collect'])).find(
       (item) => item.command.aggregateId === racingSearch.id,
@@ -3934,6 +3979,25 @@ test('createSearch snapshots the latest parsed resume and recompute retries stal
       [],
       'saved leads receive the refreshed match without replacing lead metadata',
     );
+    const newestCompletedMatch = await database.pool.query<{ match: unknown }>(
+      `SELECT job.data->'match' AS match FROM search_jobs job
+       JOIN search_runs run ON run.id = job.run_id AND run.owner_id = job.owner_id
+       WHERE job.owner_id = $1 AND job.fingerprint = $2 AND run.status IN ('completed', 'partial')
+       ORDER BY run.created_at DESC, run.id DESC LIMIT 1`,
+      [ownerId, storedJob.fingerprint],
+    );
+    assert.deepEqual(
+      (await leadRepository.get(ownerId, savedLead.id))?.data.match,
+      newestCompletedMatch.rows[0]?.match,
+      'saved leads use the deterministic latest completed search score for a shared fingerprint',
+    );
+    const duplicateFingerprintRuns = await database.pool.query<{ count: string }>(
+      `SELECT count(*)::text AS count FROM search_jobs job
+       JOIN search_runs run ON run.id = job.run_id AND run.owner_id = job.owner_id
+       WHERE job.owner_id = $1 AND job.fingerprint = $2 AND run.status IN ('completed', 'partial')`,
+      [ownerId, storedJob.fingerprint],
+    );
+    assert.ok(Number(duplicateFingerprintRuns.rows[0]?.count) > 1);
     const refreshedRacingSearch = await database.getSearch(ownerId, racingSearch.id);
     assert.deepEqual(refreshedRacingSearch?.matchingProfile?.derived?.techStack, ['Go']);
     const racingJob = await database.pool.query<{
