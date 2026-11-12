@@ -53,6 +53,8 @@ test('settlement drops only fetch and script reads belonging to an earlier route
   assert.equal(staleEarlierRouteRead('GET', 'fetch', 1, 2, 'firefox', '/jobs', true), true);
   assert.equal(staleEarlierRouteRead('GET', 'fetch', 2, 2, 'firefox', '/jobs', true), false);
   assert.equal(staleEarlierRouteRead('POST', 'fetch', 1, 2, 'firefox', '/jobs', true), false);
+  assert.equal(staleEarlierRouteRead('GET', 'script', 1, 2, 'firefox', '/jobs', true), false);
+  assert.equal(staleEarlierRouteRead('GET', 'image', 1, 2, 'firefox', '/_next/image', true), false);
   assert.equal(staleEarlierRouteRead('GET', 'script', 1, 2, 'chromium'), true);
   // The current route's read still counts, so a real hang on this route is still caught.
   assert.equal(staleEarlierRouteRead('GET', 'fetch', 2, 2, 'chromium'), false);

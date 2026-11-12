@@ -42,11 +42,11 @@ export function staleSearchRead(
  * away as soon as the image request starts (about 3 of 4 tries; it is not specific to a cold server).
  * Only that one path is dropped among images.
  *
- * An explicitly tagged Next router prefetch from an earlier route is dropped in every engine: it
- * is speculative by definition, and Firefox was observed to leave one pending after its source
+ * An explicitly tagged Next router fetch prefetch from an earlier route is dropped in every engine:
+ * it is speculative by definition, and Firefox was observed to leave one pending after its source
  * route had been replaced without reporting finish or failure. Other earlier-route reads remain
- * measured only in Chromium. In addition, only a GET fetch or script (or the image optimiser path)
- * from an earlier route is dropped there. A
+ * measured only in Chromium. There, only a GET fetch or script (or the image optimiser path) from
+ * an earlier route is dropped. A
  * request from the current route, a write, an HTML document or any other image still counts, so a
  * real hang on the current route is still caught. A previous-route search-detail fetch is explicitly
  * included; search-list reads use `staleSearchRead`.
@@ -69,7 +69,7 @@ export function staleEarlierRouteRead(
       resourceType === 'script' ||
       (resourceType === 'image' && pathname === '/_next/image')) &&
     startedEpoch !== currentEpoch &&
-    (isRouterPrefetch ||
+    ((isRouterPrefetch && resourceType === 'fetch') ||
       (engine === 'chromium' &&
         (resourceType === 'fetch' ||
           resourceType === 'script' ||
