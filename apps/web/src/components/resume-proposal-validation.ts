@@ -1,3 +1,4 @@
+import '../lib/zod-config';
 import { applicationUpdateSchema, candidateSchema, preferencesSchema } from '@careerscope/shared';
 
 export type ResumeCorrectionField =
