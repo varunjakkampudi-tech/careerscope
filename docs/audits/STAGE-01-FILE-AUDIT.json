@@ -6356,10 +6356,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete test. Unit cases cover IPv4, IPv4-mapped IPv6, globally routable IPv6, reserved/documentation ranges, DNS pinning, redirect revalidation, response classification, and 405 fallback. The PostgreSQL case requires a loopback host and uses a random disposable database to verify due-check ordering, freshness, archived exclusion, and persistence. All 8 tests passed against local services.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; targeted liveness integration test passed against local PostgreSQL; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "a0c383cc821480056a54392450c421fb9848f71ed265b8559927452156233f53"
+      "observations": "Read the complete test. Unit cases cover IPv4, IPv4-mapped IPv6, globally routable IPv6, reserved/documentation ranges, DNS pinning, redirect revalidation, response classification, and 405 fallback. The PostgreSQL case requires a loopback host and uses a random disposable database to verify due-check ordering, freshness, archived exclusion, and persistence. All 8 tests passed against local services. Follow-up for Stage 04 item 4.12: the saved-lead integration fixture now includes legacy provider fields and private matchingInput; save assertions prove the lead projection strips all three.",
+      "evidence": "Current PostgreSQL integration suite: check-lead-liveness and search-retention passed 12/12; file SHA-256 records these reviewed bytes.",
+      "reviewer": "Codex (Stage 04 item 4.12 test follow-up)",
+      "sha256": "58ebc2ad333c71e871ff1a54fb11cbfbdaf2517084618f5e00f6806c8137da62"
     },
     {
       "path": "scripts/jobs/check-lead-liveness.ts",
