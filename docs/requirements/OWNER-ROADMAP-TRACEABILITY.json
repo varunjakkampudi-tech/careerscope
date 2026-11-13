@@ -1063,7 +1063,7 @@
         "packages/core/src/commands.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Implementation and focused local coverage are present on codex/stage04-item412-resume-match-recompute. Item remains partial pending final exact-head CI, independent review and post-merge verification. Legacy jobs are rescored from stored display fields because the original full normalized provider payload was not retained; compensation, location and recency dimensions are preserved from their prior breakdowns. New full normalized scoring inputs are private and omitted from API projections.",
+      "gap": "Implementation, focused local coverage, exact-head hosted CI and independent review are complete for PR #87 head 0c73714c77037e04325f26d4e177cc804fd6b4fb. Item remains partial pending merge and post-merge verification. Legacy jobs are rescored from stored display fields because the original full normalized provider payload was not retained; compensation, location and recency dimensions are preserved from their prior breakdowns. New full normalized scoring inputs are private and omitted from API projections.",
       "scopeDisposition": "in-scope"
     },
     {
