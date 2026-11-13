@@ -2493,10 +2493,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed Stage 05 item 5.01 evidence and partial status; production permissions remain explicitly unresolved.",
-      "evidence": "Stage 05 item 5.01 branch; provider adapter sources and focused local fixture suites inspected/run; exact-head Node 24 CI and owner permitted-use evidence pending.",
-      "reviewer": "Codex (Stage 05 item 5.01)",
-      "sha256": "5877a229d0bfb2855401e7a6cb810a089c7a246c11a9a70c6e08ddbf59f85285",
+      "observations": "Updated Stage 05 item 5.01 evidence with the exact prior CI and review, current-dev synchronization run, 42/328 checkpoint, and explicit partial/legal gate.",
+      "evidence": "Prior Stage 05 exact-head run 43294137194 and review apply to cbb47f3; current synchronization SHA 3c5e61fa46026bbf8e16d46031182081562520f8 awaits exact-head CI and review. No provider rights or activation are claimed.",
+      "reviewer": "Codex (Stage 05 item 5.01 synchronized evidence)",
+      "sha256": "2efb0d2a1f1e6d38a112d58c15c08ef04b66bf1ab72183a2b826fea4b50207b8",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2551,6 +2551,12 @@
           "evidence": "Stage 05 item 5.01 branch; provider adapter sources and focused local fixture suites inspected/run; exact-head Node 24 CI and owner permitted-use evidence pending.",
           "reviewer": "Codex (Stage 05 item 5.01)",
           "sha256": "b881e0e4720ab442a592380e3da6d6a95d1dbee37ca045fbfe9c8e81ef73a86b"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed Stage 05 item 5.01 evidence and partial status; production permissions remain explicitly unresolved.",
+          "evidence": "Stage 05 item 5.01 branch; provider adapter sources and focused local fixture suites inspected/run; exact-head Node 24 CI and owner permitted-use evidence pending.",
+          "reviewer": "Codex (Stage 05 item 5.01)",
+          "sha256": "5877a229d0bfb2855401e7a6cb810a089c7a246c11a9a70c6e08ddbf59f85285"
         }
       ]
     },
@@ -2600,10 +2606,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed Stage 05 item 5.01 evidence and partial status; production permissions remain explicitly unresolved.",
-      "evidence": "Stage 05 item 5.01 branch; provider adapter sources and focused local fixture suites inspected/run; exact-head Node 24 CI and owner permitted-use evidence pending.",
-      "reviewer": "Codex (Stage 05 item 5.01)",
-      "sha256": "9465caee4641c308ddb6d35ddee628120cca35362d03fcc4707b89e8e2aff248",
+      "observations": "Updated Stage 05 item 5.01 traceability to retain partial status and record prior CI/review separately from current-dev synchronization validation.",
+      "evidence": "Owner roadmap remains 328 items across 22 stages; prior exact-head run 43294137194 and review on cbb47f3; current sync commit 3c5e61fa46026bbf8e16d46031182081562520f8 under CI/review. Production permissions remain empty.",
+      "reviewer": "Codex (Stage 05 item 5.01 synchronized evidence)",
+      "sha256": "63374e472f49ac23b8d9f4cf59e275fc2b0c7cdecd632373903dd3f73b0f2390",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2652,6 +2658,18 @@
           "evidence": "Stage 05 item 5.01 branch; provider adapter sources and focused local fixture suites inspected/run; exact-head Node 24 CI and owner permitted-use evidence pending.",
           "reviewer": "Codex (Stage 05 item 5.01)",
           "sha256": "97211a04e02936a84199f0f9011ce1b325688b8ff1e24cfb9a38b7f04f3cccd5"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed Stage 05 item 5.01 evidence and partial status; production permissions remain explicitly unresolved.",
+          "evidence": "Stage 05 item 5.01 branch; provider adapter sources and focused local fixture suites inspected/run; exact-head Node 24 CI and owner permitted-use evidence pending.",
+          "reviewer": "Codex (Stage 05 item 5.01)",
+          "sha256": "9465caee4641c308ddb6d35ddee628120cca35362d03fcc4707b89e8e2aff248"
+        },
+        {
+          "observations": "Updated Stage 05 item 5.01 traceability to retain partial status and record prior CI/review separately from current-dev synchronization validation.",
+          "evidence": "Owner roadmap remains 328 items across 22 stages; prior exact-head run 43294137194 and review on cbb47f3; current sync commit 3c5e61fa46026bbf8e16d46031182081562520f8 under CI/review. Production permissions remain empty.",
+          "reviewer": "Codex (Stage 05 item 5.01 synchronized evidence)",
+          "sha256": "91ed6d35cdaa638f8bc1734f2b9870a936affea095cafb12e522918ced57afa6"
         }
       ]
     },
@@ -2756,10 +2774,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed Stage 05 item 5.01 evidence and partial status; production permissions remain explicitly unresolved.",
-      "evidence": "Stage 05 item 5.01 branch; provider adapter sources and focused local fixture suites inspected/run; exact-head Node 24 CI and owner permitted-use evidence pending.",
-      "reviewer": "Codex (Stage 05 item 5.01)",
-      "sha256": "b116d10f1f7b2bf7cf63b3c54544633022868e05695200545d62e0525814f7ed",
+      "observations": "Updated Stage 05 item 5.01 test matrix to distinguish prior exact-head CI/review from current synchronized-head validation and retain the partial permission gate.",
+      "evidence": "Focused local provider fixtures 162/162 on Node 22.23.2; prior exact-head Node 24 CI run 43294137194 passed on cbb47f3; current synchronization run 43364755061 is pending on 3c5e61f.",
+      "reviewer": "Codex (Stage 05 item 5.01 synchronized evidence)",
+      "sha256": "2e94d899e73b69448444228dedd03bd1484e7068ba1ef8f71ecfc5e212afa5f6",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2814,6 +2832,18 @@
           "evidence": "Stage 05 item 5.01 branch; provider adapter sources and focused local fixture suites inspected/run; exact-head Node 24 CI and owner permitted-use evidence pending.",
           "reviewer": "Codex (Stage 05 item 5.01)",
           "sha256": "299fc828d34d3a585adeae58f1954b951e0709eda0967fcb05dcb02276eca773"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Reviewed Stage 05 item 5.01 evidence and partial status; production permissions remain explicitly unresolved.",
+          "evidence": "Stage 05 item 5.01 branch; provider adapter sources and focused local fixture suites inspected/run; exact-head Node 24 CI and owner permitted-use evidence pending.",
+          "reviewer": "Codex (Stage 05 item 5.01)",
+          "sha256": "b116d10f1f7b2bf7cf63b3c54544633022868e05695200545d62e0525814f7ed"
+        },
+        {
+          "observations": "Updated Stage 05 item 5.01 test matrix to distinguish prior exact-head CI/review from current synchronized-head validation and retain the partial permission gate.",
+          "evidence": "Focused local provider fixtures 162/162 on Node 22.23.2; prior exact-head Node 24 CI run 43294137194 passed on cbb47f3; current synchronization run 43364755061 is pending on 3c5e61f.",
+          "reviewer": "Codex (Stage 05 item 5.01 synchronized evidence)",
+          "sha256": "b44382b119d9639d9c9aaa95a9b9c6f008e7be15d7741c474a058e1096725d9b"
         }
       ]
     },

@@ -1087,7 +1087,7 @@
         "packages/providers/src/keyed/aggregators.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Existing ATS, remote-feed and credentialed-aggregator adapters are registered and focused fixture suites pass 162/162 tests across four files on local Node 22.23.2 (repository requires Node 24). No live provider requests or permitted-use rights were verified. docs/PROVIDERS.md records an empty production permission profile and disables all sources for production discovery. Item remains partial pending exact-head Node 24 CI and source-specific owner-approved permitted-use evidence.",
+      "gap": "Existing ATS, remote-feed and credentialed-aggregator adapters are registered. Focused fixture suites passed 162/162 on local Node 22.23.2 (repository requires Node 24). Prior docs head cbb47f32311ba540a6f266d54c1781f7b3b9950a passed all required jobs in run 43294137194 and independent documentation-scope review. Current-dev sync head 3c5e61fa46026bbf8e16d46031182081562520f8 is undergoing exact-head CI and fresh review. No live provider calls or permitted-use rights were verified; the production permission profile remains empty. Item remains partial pending source-specific owner-approved permitted-use evidence and any required live validation.",
       "scopeDisposition": "in-scope"
     },
     {
