@@ -513,16 +513,22 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
-      "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
-      "sha256": "81aa4d334393da1f9e31b9338a101485d66cbd8b4954fd660cb966f8b718108c",
+      "observations": "Reviewed the merged Stage 04 item 4.10 owner-isolation and deletion-failure integration coverage retained on the current stacked branch. These tests remain from the separately verified PR #90; no item 4.09 behavior is claimed by them.",
+      "evidence": "PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8; hosted run 43349595125 attempt 2; merge f11c50714f1840f43263010257e617b0294ce733.",
+      "reviewer": "Codex (Stage 04 item 4.09 dev synchronization review)",
+      "sha256": "696fe3cd4d7a15987042e7c3d177b76e02d823a9850423213cd5acdf984e936d",
       "history": [
         {
           "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends.",
           "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
           "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
           "sha256": "aec5f29e94b09e66076739d9f51b4f40941b3601da29f5ca8dbada0fbdf694f8"
+        },
+        {
+          "observations": "Reconciled the Stage 04 item 4.08 change with the verified item 4.07 dev baseline. Candidate field selection remains distinct from independent verification; Telugu/Hindi native-speaker review is outstanding. This record covers source review and hash only, not checklist completion.",
+          "evidence": "Current rebased branch codex/stage04-item408-manual-corrections. Previous exact-head run 43169443046 and independent review were on pre-rebase SHA d9afd234e7e5da846089a53d7e860b8c785ace38 and do not validate this head. New exact-head CI and review remain pending.",
+          "reviewer": "Codex (Stage 04 item 4.08 rebase reconciliation)",
+          "sha256": "81aa4d334393da1f9e31b9338a101485d66cbd8b4954fd660cb966f8b718108c"
         }
       ]
     },
@@ -1578,7 +1584,9 @@
       "category": "frontend",
       "reviewMethod": "content-read",
       "state": "reviewed",
-      "concerns": ["localStorage access may throw in restricted browser contexts"],
+      "concerns": [
+        "localStorage access may throw in restricted browser contexts"
+      ],
       "findings": [
         {
           "id": "S1-F057",
@@ -2038,10 +2046,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed Stage 04 item 4.09 synchronization evidence and its explicit partial disposition. Local full check passed; local Chromium run was blocked by PostgreSQL authentication before browser execution. No completion is claimed.",
-      "evidence": "Stacked branch codex/stage04-item409-profile-sync; Node 24.22.1 npm run check passed (378 passed, 0 failed, 3 skipped); local Chromium acceptance failed at setup with PostgreSQL 28P01. Exact-head CI and independent review pending.",
-      "reviewer": "Codex (Stage 04 item 4.09 documentation review)",
-      "sha256": "9fcefaffddec5016bd494947b090a4efc17f91f6e9fd1178d4806f7e5d48a3c9",
+      "observations": "Reconciled item 4.09 progress with current 4.08 engineering review and 4.10 verified merge; current count is 42/328. PR #89 stack synchronization is recorded with exact-head checks pending.",
+      "evidence": "PR #83 head b98d88a5c0ec789265ae8a918e362ee2d54b4b0e; PR #90 merge f11c50714f1840f43263010257e617b0294ce733.",
+      "reviewer": "Codex (Stage 04 item 4.09 dev synchronization review)",
+      "sha256": "7e4841675323aa3d85dc948d1db876541fa724b3e2034f2abd7186eabb9fa65c",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2120,6 +2128,42 @@
           "evidence": "Stacked branch codex/stage04-item409-profile-sync based on reviewed item 4.08 head 9e48e057ce471e48ea4a97bb395f311a4112a975. Local validation is pending; exact-head CI and independent review are not yet available. Hash pins this reviewed file content.",
           "reviewer": "Codex (Stage 04 item 4.09 source review)",
           "sha256": "e4c3a1dbabf0080bb069a0e5d868f927910a056b73193e5d20a7cd18c4724fdc"
+        },
+        {
+          "observations": "Updated the file audit after Stage 04 item 4.10 deletion test and progress evidence changes; the checklist item remains partial pending hosted integration/browser CI and independent approval.",
+          "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
+          "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
+          "sha256": "ccc10224cfba14de5b1688e2a4b94eb40f5e7de767a51494211ac509524451cc"
+        },
+        {
+          "observations": "Corrected Stage 04 item 4.10 API fixture after exact-head CI found a foreign-key failure: the parse result now uses the upload row command id rather than a random id. The item remains partial pending corrected hosted CI and independent review.",
+          "evidence": "Failure: hosted run 43346619700 on 185e9cd921977525ef07904f6e98ee2972d07d75 failed F-024 at resume_results command_id foreign key. Corrected fixture locally; npm run check passed 372/0/3 on this worktree. New exact-head hosted CI pending.",
+          "reviewer": "Codex (Stage 04 item 4.10 CI correction)",
+          "sha256": "622e0969d60a8df8c9337bc22e58425130d5e3205c313e0f4911969aee0e9a03"
+        },
+        {
+          "observations": "Updated Stage 04 item 4.10 records after conditional exact-SHA review: added explicit random unknown-ID response parity and clarified the superseded historical 404 observation. Item remains partial pending new exact-head CI and final approval.",
+          "evidence": "ChatGPT conditional review was tied to 5ed4c58e780cc068e51cd9377fd2dfc7ca25fc44. This documentation/source revision requires CI and review at its own new SHA.",
+          "reviewer": "Codex (Stage 04 item 4.10 review correction)",
+          "sha256": "fdc543e9ca5a7e7ebf96e94b13d6e89a223074cb097bb93a2c516048dbfa56bd"
+        },
+        {
+          "observations": "Recorded owner item 4.10 final exact-SHA review approval, PR #90 merge and successful post-merge verification; inventory is 42/328 with sourceStatus Partial preserved.",
+          "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
+          "reviewer": "Codex (Stage 04 item 4.10 closeout)",
+          "sha256": "dfa5320ed0f63ac9aac51df12296ebe346727dfd567ea57ff1d5d1c90bc08c6f"
+        },
+        {
+          "observations": "Merged current dev progress: item 4.10 closeout is verified; item 4.08 remains partial with its limitations and prior evidence retained.",
+          "evidence": "Merged dev synchronization for the Stage 04 item 4.08 branch at origin/dev SHA 8d109aec7e25a9f106be07a36feca2f13da357b0; item 4.08 exact-head hosted CI and independent review remain pending. Item 4.10 closeout evidence from PRs #90 and #91 remains retained.",
+          "reviewer": "Codex (Stage 04 item 4.08 dev synchronization audit)",
+          "sha256": "273cf326852a1593453a213e5652dbd4b75535ac18b5a96f7e6d27a6da5f5b5e"
+        },
+        {
+          "observations": "Reviewed Stage 04 item 4.09 synchronization evidence and its explicit partial disposition. Local full check passed; local Chromium run was blocked by PostgreSQL authentication before browser execution. No completion is claimed.",
+          "evidence": "Stacked branch codex/stage04-item409-profile-sync; Node 24.22.1 npm run check passed (378 passed, 0 failed, 3 skipped); local Chromium acceptance failed at setup with PostgreSQL 28P01. Exact-head CI and independent review pending.",
+          "reviewer": "Codex (Stage 04 item 4.09 documentation review)",
+          "sha256": "9fcefaffddec5016bd494947b090a4efc17f91f6e9fd1178d4806f7e5d48a3c9"
         }
       ]
     },
@@ -2166,10 +2210,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 04 item 4.09 synchronization evidence and its explicit partial disposition. Local full check passed; local Chromium run was blocked by PostgreSQL authentication before browser execution. No completion is claimed.",
-      "evidence": "Stacked branch codex/stage04-item409-profile-sync; Node 24.22.1 npm run check passed (378 passed, 0 failed, 3 skipped); local Chromium acceptance failed at setup with PostgreSQL 28P01. Exact-head CI and independent review pending.",
-      "reviewer": "Codex (Stage 04 item 4.09 documentation review)",
-      "sha256": "8970f7300fa140251f855ab4f117c44c0a3274a34e2f4d5c502eb6df30624ea6",
+      "observations": "Updated Stage 04 rows 4.08 to 4.10: item 4.08 engineering-approved but owner-gated and partial, item 4.09 implemented but synced-head validation pending, and item 4.10 verified after merge.",
+      "evidence": "PR #83 current head b98d88a5c0ec789265ae8a918e362ee2d54b4b0e; PR #89 current base stack; PR #90 merge f11c50714f1840f43263010257e617b0294ce733.",
+      "reviewer": "Codex (Stage 04 item 4.09 dev synchronization review)",
+      "sha256": "b2ccd99cd506121ba773859d54b7f98fd901a7fdf98e4153915d24f13ab434c0",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2243,6 +2287,42 @@
           "evidence": "Stacked branch codex/stage04-item409-profile-sync based on reviewed item 4.08 head 9e48e057ce471e48ea4a97bb395f311a4112a975. Local validation is pending; exact-head CI and independent review are not yet available. Hash pins this reviewed file content.",
           "reviewer": "Codex (Stage 04 item 4.09 source review)",
           "sha256": "6fa03b5bfbdc668da3e545168c9bca3dc1632f1189641ade4d968d902587039a"
+        },
+        {
+          "observations": "Updated the file audit after Stage 04 item 4.10 deletion test and progress evidence changes; the checklist item remains partial pending hosted integration/browser CI and independent approval.",
+          "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
+          "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
+          "sha256": "dde8245ebff7f1ac6160ecb577ffbe720013e0d71817154734093b85ef9e91cd"
+        },
+        {
+          "observations": "Corrected Stage 04 item 4.10 API fixture after exact-head CI found a foreign-key failure: the parse result now uses the upload row command id rather than a random id. The item remains partial pending corrected hosted CI and independent review.",
+          "evidence": "Failure: hosted run 43346619700 on 185e9cd921977525ef07904f6e98ee2972d07d75 failed F-024 at resume_results command_id foreign key. Corrected fixture locally; npm run check passed 372/0/3 on this worktree. New exact-head hosted CI pending.",
+          "reviewer": "Codex (Stage 04 item 4.10 CI correction)",
+          "sha256": "d011a48a8c52e3e17bcc1e3d662e0c55a1e729563bd698ff9651522a63110cf7"
+        },
+        {
+          "observations": "Updated Stage 04 item 4.10 records after conditional exact-SHA review: added explicit random unknown-ID response parity and clarified the superseded historical 404 observation. Item remains partial pending new exact-head CI and final approval.",
+          "evidence": "ChatGPT conditional review was tied to 5ed4c58e780cc068e51cd9377fd2dfc7ca25fc44. This documentation/source revision requires CI and review at its own new SHA.",
+          "reviewer": "Codex (Stage 04 item 4.10 review correction)",
+          "sha256": "616d63d84f313fd856fcd480ecf753a2e92c3439eae1d1105b24e9e4e721b4c0"
+        },
+        {
+          "observations": "Updated item 4.10 with exact-head CI attempt 2, final approval, merge commit and post-merge CI evidence; item scope and skipped push-only image build are stated precisely.",
+          "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
+          "reviewer": "Codex (Stage 04 item 4.10 closeout)",
+          "sha256": "d4565a161c6a4d0dabb3f25b502b789a0dde5f56ec798b9f6362d2267cf041a9"
+        },
+        {
+          "observations": "Merged item 4.10 passing evidence with item 4.08 coverage; the latter still requires exact-head revalidation and final review.",
+          "evidence": "Merged dev synchronization for the Stage 04 item 4.08 branch at origin/dev SHA 8d109aec7e25a9f106be07a36feca2f13da357b0; item 4.08 exact-head hosted CI and independent review remain pending. Item 4.10 closeout evidence from PRs #90 and #91 remains retained.",
+          "reviewer": "Codex (Stage 04 item 4.08 dev synchronization audit)",
+          "sha256": "676355d9fb5d3cf5464c97c21cafdd5468ea4a45d22811ca4703149fcc7e2643"
+        },
+        {
+          "observations": "Reviewed Stage 04 item 4.09 synchronization evidence and its explicit partial disposition. Local full check passed; local Chromium run was blocked by PostgreSQL authentication before browser execution. No completion is claimed.",
+          "evidence": "Stacked branch codex/stage04-item409-profile-sync; Node 24.22.1 npm run check passed (378 passed, 0 failed, 3 skipped); local Chromium acceptance failed at setup with PostgreSQL 28P01. Exact-head CI and independent review pending.",
+          "reviewer": "Codex (Stage 04 item 4.09 documentation review)",
+          "sha256": "8970f7300fa140251f855ab4f117c44c0a3274a34e2f4d5c502eb6df30624ea6"
         }
       ]
     },
@@ -2681,10 +2761,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 04 item 4.09 synchronization evidence and its explicit partial disposition. Local full check passed; local Chromium run was blocked by PostgreSQL authentication before browser execution. No completion is claimed.",
-      "evidence": "Stacked branch codex/stage04-item409-profile-sync; Node 24.22.1 npm run check passed (378 passed, 0 failed, 3 skipped); local Chromium acceptance failed at setup with PostgreSQL 28P01. Exact-head CI and independent review pending.",
-      "reviewer": "Codex (Stage 04 item 4.09 documentation review)",
-      "sha256": "c8381ae3f7fc876e23cac12554ddc32cf134f1d28a32678dc32de05af339652a",
+      "observations": "Updated owner roadmap evidence for 4.08 exact-head engineering approval and 4.09 synchronized stacked branch while retaining both items as partial.",
+      "evidence": "PR #83 exact head b98d88a5c0ec789265ae8a918e362ee2d54b4b0e; PR #89 current stack based on PR #83.",
+      "reviewer": "Codex (Stage 04 item 4.09 dev synchronization review)",
+      "sha256": "03b4e31141574227d198da85129f3bfc5d51bc7be3e315f0e0818f9a6cbfc450",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2746,6 +2826,36 @@
           "evidence": "Stacked branch codex/stage04-item409-profile-sync based on reviewed item 4.08 head 9e48e057ce471e48ea4a97bb395f311a4112a975. Local validation is pending; exact-head CI and independent review are not yet available. Hash pins this reviewed file content.",
           "reviewer": "Codex (Stage 04 item 4.09 source review)",
           "sha256": "505312b0fc886bf813cb5430d52ee1df0e3dc7ab91a1e3a3bf6f932063d8b6b6"
+        },
+        {
+          "observations": "Updated the file audit after Stage 04 item 4.10 deletion test and progress evidence changes; the checklist item remains partial pending hosted integration/browser CI and independent approval.",
+          "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
+          "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
+          "sha256": "ac9e962ff57c003cb35d0c1cfb89065dcdf48a9bdc09f150edaedf07d43112c1"
+        },
+        {
+          "observations": "Updated Stage 04 item 4.10 records after conditional exact-SHA review: added explicit random unknown-ID response parity and clarified the superseded historical 404 observation. Item remains partial pending new exact-head CI and final approval.",
+          "evidence": "ChatGPT conditional review was tied to 5ed4c58e780cc068e51cd9377fd2dfc7ca25fc44. This documentation/source revision requires CI and review at its own new SHA.",
+          "reviewer": "Codex (Stage 04 item 4.10 review correction)",
+          "sha256": "ce04688de306ee7c08ed339cc90f4d690cee02acb16a56bd0ac279774330080c"
+        },
+        {
+          "observations": "Marked owner item 4.10 verified after exact-SHA review approval, successful exact-head CI, merge to dev and successful post-merge CI; sourceStatus Partial remains unchanged.",
+          "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
+          "reviewer": "Codex (Stage 04 item 4.10 closeout)",
+          "sha256": "2dd62fad43450f9c3b64011c274c06b4d329149aba8571b6452e8ada0928a083"
+        },
+        {
+          "observations": "Corrected the cross-item gap misattribution: 4.03 remains partial for its own review, 4.10 is verified, and 4.08 remains partial pending its exact gates.",
+          "evidence": "Merged dev synchronization for the Stage 04 item 4.08 branch at origin/dev SHA 8d109aec7e25a9f106be07a36feca2f13da357b0; item 4.08 exact-head hosted CI and independent review remain pending. Item 4.10 closeout evidence from PRs #90 and #91 remains retained.",
+          "reviewer": "Codex (Stage 04 item 4.08 dev synchronization audit)",
+          "sha256": "fe1a17797d2028f9274f09cc356dca1f49a5e0a5621a4c9851a8d2690a0d9e32"
+        },
+        {
+          "observations": "Reviewed Stage 04 item 4.09 synchronization evidence and its explicit partial disposition. Local full check passed; local Chromium run was blocked by PostgreSQL authentication before browser execution. No completion is claimed.",
+          "evidence": "Stacked branch codex/stage04-item409-profile-sync; Node 24.22.1 npm run check passed (378 passed, 0 failed, 3 skipped); local Chromium acceptance failed at setup with PostgreSQL 28P01. Exact-head CI and independent review pending.",
+          "reviewer": "Codex (Stage 04 item 4.09 documentation review)",
+          "sha256": "c8381ae3f7fc876e23cac12554ddc32cf134f1d28a32678dc32de05af339652a"
         }
       ]
     },
@@ -6951,10 +7061,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the Stage 04 item 4.09 candidate-controlled resume synchronization change. The candidate chooses a parsed version and individual fields, sees saved values, and saves through the revision-guarded profile API. No continuous sync or automatic conflict merge is claimed.",
-      "evidence": "Stacked branch codex/stage04-item409-profile-sync based on reviewed item 4.08 head 9e48e057ce471e48ea4a97bb395f311a4112a975. Local validation is pending; exact-head CI and independent review are not yet available. Hash pins this reviewed file content.",
-      "reviewer": "Codex (Stage 04 item 4.09 source review)",
-      "sha256": "8c7911482244ba832af699b0997fe0f91e1039db249052dfe5b26bd0a49e2988",
+      "observations": "Reviewed merged item 4.10 confirmation-dismissal coverage and the current 4.08/4.09 UI journey structure. PR #83 exact head passed its browser suite; PR #89 new stacked head still needs hosted browser acceptance.",
+      "evidence": "PR #83 head b98d88a5c0ec789265ae8a918e362ee2d54b4b0e; run 43357944430 passed all required jobs. PR #89 synchronized head CI pending.",
+      "reviewer": "Codex (Stage 04 item 4.09 dev synchronization review)",
+      "sha256": "f7054f77924907bde6a4f8fd96fc9b486bc82c2e877d52cb20895eb242e9e9e8",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7041,6 +7151,30 @@
           "evidence": "Stacked branch codex/stage04-item409-profile-sync based on reviewed item 4.08 head 9e48e057ce471e48ea4a97bb395f311a4112a975. Local validation is pending; exact-head CI and independent review are not yet available. Hash pins this reviewed file content.",
           "reviewer": "Codex (Stage 04 item 4.09 source review)",
           "sha256": "329cfffa1df893a1cf9d1bc1a082e166fc310947b46f2e6eea6ea3abde5d3462"
+        },
+        {
+          "observations": "Reviewed Stage 04 item 4.10 deletion regressions: foreign-owner deletion remains not found; storage failure preserves database rows; successful deletion removes resume and result; cancelling the browser confirmation preserves the version.",
+          "evidence": "Source and test review on the Stage 04 item 4.10 branch. This file audit does not close item 4.10; exact-head hosted CI and independent checklist approval are pending.",
+          "reviewer": "Codex (Stage 04 item 4.10 deletion coverage)",
+          "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
+        },
+        {
+          "observations": "Updated the file audit after Stage 04 item 4.10 deletion test and progress evidence changes; the checklist item remains partial pending hosted integration/browser CI and independent approval.",
+          "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
+          "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
+          "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
+        },
+        {
+          "observations": "Integrated the 4.10 confirmation-dismissal browser assertion with 4.08 manual-correction journeys; exact-head CI is required after this dev synchronization.",
+          "evidence": "Merged dev synchronization for the Stage 04 item 4.08 branch at origin/dev SHA 8d109aec7e25a9f106be07a36feca2f13da357b0; item 4.08 exact-head hosted CI and independent review remain pending. Item 4.10 closeout evidence from PRs #90 and #91 remains retained.",
+          "reviewer": "Codex (Stage 04 item 4.08 dev synchronization audit)",
+          "sha256": "217c44fab43d278d62f06b27229f43907f32ab06cffb806aba3a8eb383cca09c"
+        },
+        {
+          "observations": "Reviewed the Stage 04 item 4.09 candidate-controlled resume synchronization change. The candidate chooses a parsed version and individual fields, sees saved values, and saves through the revision-guarded profile API. No continuous sync or automatic conflict merge is claimed.",
+          "evidence": "Stacked branch codex/stage04-item409-profile-sync based on reviewed item 4.08 head 9e48e057ce471e48ea4a97bb395f311a4112a975. Local validation is pending; exact-head CI and independent review are not yet available. Hash pins this reviewed file content.",
+          "reviewer": "Codex (Stage 04 item 4.09 source review)",
+          "sha256": "8c7911482244ba832af699b0997fe0f91e1039db249052dfe5b26bd0a49e2988"
         }
       ]
     },
@@ -7266,7 +7400,15 @@
       "observations": "Defines a Node-only Vitest project for shared/domain/provider tests with source aliases and v8 coverage restricted to package source. Web tests use node:test as documented. No finding.",
       "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "6040b0afb6dbae5f400cfaeb18fb8595d5644a4bea2f0dccc43797d136d58863"
+      "sha256": "6040b0afb6dbae5f400cfaeb18fb8595d5644a4bea2f0dccc43797d136d58863",
+      "history": [
+        {
+          "observations": "Defines a Node-only Vitest project for shared/domain/provider tests with source aliases and v8 coverage restricted to package source. Web tests use node:test as documented. No finding.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "6040b0afb6dbae5f400cfaeb18fb8595d5644a4bea2f0dccc43797d136d58863"
+        }
+      ]
     },
     {
       "path": "apps/web/src/components/resume-proposal-review.module.css",
