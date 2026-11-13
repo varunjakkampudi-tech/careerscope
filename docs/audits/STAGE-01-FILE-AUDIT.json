@@ -505,10 +505,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "aec5f29e94b09e66076739d9f51b4f40941b3601da29f5ca8dbada0fbdf694f8"
+      "observations": "Reviewed the merged Stage 04 item 4.10 deletion integration regressions: foreign-owner and unknown IDs are non-enumerated, storage failure preserves rows, and successful deletion removes the resume and parse result. Original exact-head evidence is PR #90 and run 43349595125 attempt 2; this synchronization changes the file hash only.",
+      "evidence": "PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8; run 43349595125 attempt 2; merged as f11c50714f1840f43263010257e617b0294ce733.",
+      "reviewer": "Codex (Stage 04 item 4.11 dev synchronization review)",
+      "sha256": "94bfd411da8995a4b5b331d0fdd4f73f91f142847c4bd3a2d931daf5fbd81938",
+      "history": [
+        {
+          "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
+          "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+          "sha256": "aec5f29e94b09e66076739d9f51b4f40941b3601da29f5ca8dbada0fbdf694f8"
+        }
+      ]
     },
     {
       "path": "apps/api/src/session-logout.integration.test.ts",
@@ -1994,10 +2002,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated item 4.11 progress/test/traceability evidence to the final PR head, exact-head CI success and final independent review. Kept currentStatus partial and documented merge/post-merge verification as the remaining gate. Translation and skipped-check limitations remain explicit.",
-      "evidence": "PR #85 exact head 796cbc68e006978c5bbefe15fd8f823f4fd9e296; GitHub Actions run 43305195451 passed all three required jobs, and the independent reviewer gave final approval. Item remains partial pending merge to dev and post-merge verification.",
-      "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
-      "sha256": "e2912c498c43639ab09da0f6a7422b755077c95937f1c04099c7c9a03b72b263",
+      "observations": "Corrected the historical item 4.11 paragraph to distinguish its earlier 41/328 checkpoint from the current 42/328 inventory after item 4.10 closeout; current PR #85 synchronization still needs exact-head validation.",
+      "evidence": "Current dev base 8d109aec7e25a9f106be07a36feca2f13da357b0; item 4.10 merge f11c50714f1840f43263010257e617b0294ce733.",
+      "reviewer": "Codex (Stage 04 item 4.11 dev synchronization review)",
+      "sha256": "95f57f4592d11fb5fc3c6fe240911481d86891a5f6b7f9d67f85b653b79b047f",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2040,6 +2048,18 @@
           "evidence": "Compared the documentation diff against PR #85 SHA 796cbc68e006978c5bbefe15fd8f823f4fd9e296 and hosted run 43305195451. Traceability and complete file-audit checks passed after the update.",
           "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
           "sha256": "9301f0e8d0eb42ea95f663a93d779436f3a16abfa5ca51167a69c689bf83b8a4"
+        },
+        {
+          "observations": "Updated item 4.11 progress/test/traceability evidence to the final PR head, exact-head CI success and final independent review. Kept currentStatus partial and documented merge/post-merge verification as the remaining gate. Translation and skipped-check limitations remain explicit.",
+          "evidence": "PR #85 exact head 796cbc68e006978c5bbefe15fd8f823f4fd9e296; GitHub Actions run 43305195451 passed all three required jobs, and the independent reviewer gave final approval. Item remains partial pending merge to dev and post-merge verification.",
+          "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
+          "sha256": "e2912c498c43639ab09da0f6a7422b755077c95937f1c04099c7c9a03b72b263"
+        },
+        {
+          "observations": "Reconciled Stage 04 progress after PR #90 closeout and PR #85 current-dev synchronization. PR #85 prior CI/review remain tied to their recorded SHAs; current synchronized head needs new exact-head CI/review.",
+          "evidence": "PR #90 post-merge run 43352484181; current dev base 8d109aec7e25a9f106be07a36feca2f13da357b0.",
+          "reviewer": "Codex (Stage 04 item 4.11 dev synchronization review)",
+          "sha256": "6a77fe403b7dc68f893ade079f4b20491bd64a628d9090e632739cb53e5b5dd9"
         }
       ]
     },
@@ -2086,10 +2106,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 4.11 progress/test/traceability evidence to the final PR head, exact-head CI success and final independent review. Kept currentStatus partial and documented merge/post-merge verification as the remaining gate. Translation and skipped-check limitations remain explicit.",
-      "evidence": "PR #85 exact head 796cbc68e006978c5bbefe15fd8f823f4fd9e296; GitHub Actions run 43305195451 passed all three required jobs, and the independent reviewer gave final approval. Item remains partial pending merge to dev and post-merge verification.",
-      "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
-      "sha256": "a0787f7c1df9f969d3949bff79a09ee7e0f1daf7f18176aaad7df8224a2a9ecd",
+      "observations": "Updated Stage 04 rows 4.08 through 4.11 against current PR and dev evidence: 4.08/4.09/4.11 remain partial, and 4.10 remains verified after merge and post-merge checks.",
+      "evidence": "PR #83 head b98d88a5c0ec789265ae8a918e362ee2d54b4b0e CI 43357944430; PR #89 head c190b95402b296edb2b2f3135a1fcfe94276072a; PR #90 merge f11c50714f1840f43263010257e617b0294ce733; PR #85 synchronization base 8d109aec7e25a9f106be07a36feca2f13da357b0.",
+      "reviewer": "Codex (Stage 04 item 4.11 dev synchronization review)",
+      "sha256": "4cf5d27b13ba7ea67f27e345260dbe743f6f92aa4f01e1ee7285683b89c1337d",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2132,6 +2152,12 @@
           "evidence": "Compared the documentation diff against PR #85 SHA 796cbc68e006978c5bbefe15fd8f823f4fd9e296 and hosted run 43305195451. Traceability and complete file-audit checks passed after the update.",
           "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
           "sha256": "b36ac0f35a2de1ddfc6a81224746c9705cd206d05772944d79b030e1798762f8"
+        },
+        {
+          "observations": "Updated item 4.11 progress/test/traceability evidence to the final PR head, exact-head CI success and final independent review. Kept currentStatus partial and documented merge/post-merge verification as the remaining gate. Translation and skipped-check limitations remain explicit.",
+          "evidence": "PR #85 exact head 796cbc68e006978c5bbefe15fd8f823f4fd9e296; GitHub Actions run 43305195451 passed all three required jobs, and the independent reviewer gave final approval. Item remains partial pending merge to dev and post-merge verification.",
+          "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
+          "sha256": "a0787f7c1df9f969d3949bff79a09ee7e0f1daf7f18176aaad7df8224a2a9ecd"
         }
       ]
     },
@@ -2562,10 +2588,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 4.11 progress/test/traceability evidence to the final PR head, exact-head CI success and final independent review. Kept currentStatus partial and documented merge/post-merge verification as the remaining gate. Translation and skipped-check limitations remain explicit.",
-      "evidence": "PR #85 exact head 796cbc68e006978c5bbefe15fd8f823f4fd9e296; GitHub Actions run 43305195451 passed all three required jobs, and the independent reviewer gave final approval. Item remains partial pending merge to dev and post-merge verification.",
-      "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
-      "sha256": "f910e4d3c900405c688afeb163995dca55a9cada40e67fd4b3fda68926f447e4",
+      "observations": "Reviewed item 4.11 evidence and clarified that its synchronized branch still requires exact-head CI and review; currentStatus remains partial.",
+      "evidence": "Current dev base 8d109aec7e25a9f106be07a36feca2f13da357b0; prior exact-head item 4.11 CI run 43305195451.",
+      "reviewer": "Codex (Stage 04 item 4.11 dev synchronization review)",
+      "sha256": "c6633d6877d6b433f036656f03a40cadf93d02cf8285d86d927973856dc109ea",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2608,6 +2634,12 @@
           "evidence": "Compared the documentation diff against PR #85 SHA 796cbc68e006978c5bbefe15fd8f823f4fd9e296 and hosted run 43305195451. Traceability and complete file-audit checks passed after the update.",
           "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
           "sha256": "50141831d488f6a4d0c9954af7c9014577a9769caf48489c60ef646e47967cad"
+        },
+        {
+          "observations": "Updated item 4.11 progress/test/traceability evidence to the final PR head, exact-head CI success and final independent review. Kept currentStatus partial and documented merge/post-merge verification as the remaining gate. Translation and skipped-check limitations remain explicit.",
+          "evidence": "PR #85 exact head 796cbc68e006978c5bbefe15fd8f823f4fd9e296; GitHub Actions run 43305195451 passed all three required jobs, and the independent reviewer gave final approval. Item remains partial pending merge to dev and post-merge verification.",
+          "reviewer": "Codex (Stage 04 item 4.11 final exact-head closeout)",
+          "sha256": "f910e4d3c900405c688afeb163995dca55a9cada40e67fd4b3fda68926f447e4"
         }
       ]
     },
@@ -6781,10 +6813,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the item 4.11 caller delta and final cross-engine behavior: both settlement call sites pass the explicit Next prefetch marker. The shared helper exempts only explicitly tagged earlier-route GET fetches across engines; ordinary requests and current-route requests remain counted.",
-      "evidence": "Final exact-head PR #85 review on 796cbc68e006978c5bbefe15fd8f823f4fd9e296; run 43305195451 passed all required CI jobs. Item 4.11 remains partial until merge and post-merge verification.",
-      "reviewer": "Codex (Stage 04 item 4.11 final exact-head review)",
-      "sha256": "6e4484ffe5a6f2292b71a63391ace42dfccd36145ee8112b2e250cdabe1bf19e",
+      "observations": "Reviewed the merged Stage 04 item 4.10 confirmation-dismissal regression and item 4.11 diagnostics assertions plus explicitly tagged earlier-route prefetch settlement logic. Existing CI evidence predates current synchronized branch, so new exact-head CI remains required.",
+      "evidence": "Item 4.10 exact-head run 43349595125 attempt 2; item 4.11 exact-head run 43305195451; current dev base 8d109aec7e25a9f106be07a36feca2f13da357b0.",
+      "reviewer": "Codex (Stage 04 item 4.11 dev synchronization review)",
+      "sha256": "9231bfe873403e632b8ca7cec09e17878f1960a907a65ce75d276183b55b581f",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -6813,6 +6845,12 @@
         {
           "observations": "Reviewed the item 4.11 caller delta and final cross-engine behavior: both settlement call sites pass the explicit Next prefetch marker. The shared helper exempts only explicitly tagged earlier-route GET fetches across engines; ordinary requests and current-route requests remain counted.",
           "evidence": "Final exact-head PR #85 review on 796cbc68e006978c5bbefe15fd8f823f4fd9e296; run 43305195451 passed all required CI jobs and the independent reviewer gave final approval.",
+          "reviewer": "Codex (Stage 04 item 4.11 final exact-head review)",
+          "sha256": "6e4484ffe5a6f2292b71a63391ace42dfccd36145ee8112b2e250cdabe1bf19e"
+        },
+        {
+          "observations": "Reviewed the item 4.11 caller delta and final cross-engine behavior: both settlement call sites pass the explicit Next prefetch marker. The shared helper exempts only explicitly tagged earlier-route GET fetches across engines; ordinary requests and current-route requests remain counted.",
+          "evidence": "Final exact-head PR #85 review on 796cbc68e006978c5bbefe15fd8f823f4fd9e296; run 43305195451 passed all required CI jobs. Item 4.11 remains partial until merge and post-merge verification.",
           "reviewer": "Codex (Stage 04 item 4.11 final exact-head review)",
           "sha256": "6e4484ffe5a6f2292b71a63391ace42dfccd36145ee8112b2e250cdabe1bf19e"
         }

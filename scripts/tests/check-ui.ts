@@ -2975,6 +2975,9 @@ try {
         const versionRow = page
           .locator('.resume-list li')
           .filter({ hasText: `Software Engineer · Version ${versionNumber}` });
+        page.once('dialog', (dialog) => dialog.dismiss());
+        await versionRow.getByRole('button', { name: 'Delete resume', exact: true }).click();
+        await versionRow.waitFor({ state: 'visible' });
         page.once('dialog', (dialog) => dialog.accept());
         await versionRow.getByRole('button', { name: 'Delete resume', exact: true }).click();
         await versionRow.waitFor({ state: 'detached' });

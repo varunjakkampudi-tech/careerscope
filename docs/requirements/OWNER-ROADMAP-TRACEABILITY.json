@@ -869,7 +869,7 @@
       "externalEvidence": [
         "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
       ],
-      "gap": "Existing implementation and test evidence are present, but item-specific checklist criteria have not yet completed the sequential review and exact-commit approval gate.",
+      "gap": "Existing owner-scoped deletion removes stored objects and parse results transactionally; added regressions assert foreign-owner and random unknown IDs return identical non-enumerating 204 responses, storage failure atomicity, successful database cleanup and confirmation dismissal. Local quality/type/unit checks pass. Exact-head hosted PostgreSQL/Redis integration and browser CI, final item-specific approval, merge and post-merge verification remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1008,7 +1008,7 @@
       "stageTitle": "Resume management and parsing",
       "title": "Resume deletion",
       "sourceStatus": "Partial",
-      "currentStatus": "partial",
+      "currentStatus": "verified",
       "evidence": [
         "apps/api/src/app.ts",
         "packages/core/src/resumes.ts",
@@ -1020,9 +1020,11 @@
         "packages/core/src/resumes.integration.test.ts"
       ],
       "externalEvidence": [
-        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
+        "ChatGPT final exact-SHA approval: https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece",
+        "GitHub Actions run 43349595125 attempt 2 passed Quality gates, Production image build, and Services/integration/browser suites on exact PR head 47977417038eb172dd22a043a8cfca7dbfd6deb8.",
+        "PR #90 merged to dev as f11c50714f1840f43263010257e617b0294ce733; post-merge run 43352484181 passed Quality gates and Services/integration/browser on that exact merge SHA. Production image build was skipped for the dev push."
       ],
-      "gap": "Existing implementation and test evidence are present, but item-specific checklist criteria have not yet completed the sequential review and exact-commit approval gate.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1048,7 +1050,7 @@
         "PR #85 exact head 796cbc68e006978c5bbefe15fd8f823f4fd9e296 to dev at daa9913be87535fb40612092321ed2bb49ebc596; final independent review approved the code delta after exact-head CI.",
         "GitHub Actions run 43305195451 passed Quality gates, PostgreSQL/Redis integration and browser/axe/keyboard/responsive suites, and runtime/proxy production image builds (not published)."
       ],
-      "gap": "The candidate-facing diagnostic report is implemented on codex/stage04-item411-quality-diagnostics. It reports extracted character count and parser detections for skills, work experience and education, states that it cannot verify accuracy or completeness, prompts candidates to inspect and correct extracted text, and assigns no numeric score. Focused parser-report and locale tests passed 12/12 on the implementation revision. Final request-settlement follow-up tests passed 6/6, and test typecheck passed for 97 canonical test files. Exact-head Node 24 GitHub Actions run 43305195451 passed all three required jobs on SHA 796cbc68e006978c5bbefe15fd8f823f4fd9e296: Quality gates; PostgreSQL/Redis integration and browser/axe/keyboard/responsive suites; runtime and proxy production image builds (built, not published). The independent reviewer approved the follow-up code after verifying the exact PR head and CI. Passive notification, performance, soak and recovery checks were skipped and are not claimed as passed. The narrow fix excludes only explicitly tagged earlier-route GET fetch prefetches across engines; active-route requests, writes, documents, and tagged Firefox/WebKit scripts or images remain covered by the settlement barrier. Telugu/Hindi copy is AI-assisted without native-speaker validation; per the owner's standing policy, AI translation review with limitations recorded is acceptable, but linguistic accuracy is not certified. Item 4.11 remains partial pending merge to dev and post-merge verification.",
+      "gap": "The candidate-facing diagnostic report is implemented on codex/stage04-item411-quality-diagnostics. It reports extracted character count and parser detections for skills, work experience and education, states that it cannot verify accuracy or completeness, prompts candidates to inspect and correct extracted text, and assigns no numeric score. Focused parser-report and locale tests passed 12/12 on the implementation revision. Final request-settlement follow-up tests passed 6/6, and test typecheck passed for 97 canonical test files. Exact-head Node 24 GitHub Actions run 43305195451 passed all three required jobs on SHA 796cbc68e006978c5bbefe15fd8f823f4fd9e296: Quality gates; PostgreSQL/Redis integration and browser/axe/keyboard/responsive suites; runtime and proxy production image builds (built, not published). The independent reviewer approved the follow-up code after verifying the exact PR head and CI. Passive notification, performance, soak and recovery checks were skipped and are not claimed as passed. The narrow fix excludes only explicitly tagged earlier-route GET fetch prefetches across engines; active-route requests, writes, documents, and tagged Firefox/WebKit scripts or images remain covered by the settlement barrier. Telugu/Hindi copy is AI-assisted without native-speaker validation; per the owner's standing policy, AI translation review with limitations recorded is acceptable, but linguistic accuracy is not certified. Item 4.11 remains partial pending merge to dev and post-merge verification. The implementation branch is being synchronized to current dev SHA 8d109aec7e25a9f106be07a36feca2f13da357b0; exact-head CI and review for that synchronized SHA remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
