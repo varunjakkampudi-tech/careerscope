@@ -39,6 +39,10 @@ export interface NormalizeOptions {
 /** Turn one provider result into the record the rest of the app uses. */
 export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
   const nowIso = new Date(options.now ?? Date.now()).toISOString();
+  const sourceUrl = normalizeUrl(raw.sourceUrl);
+  if (!sourceUrl) {
+    throw new Error(`Provider ${raw.source} returned a job with an invalid source URL`);
+  }
 
   const title = collapse(raw.title) || 'Untitled role';
   const companyName = collapse(raw.companyName) || 'Unknown company';
@@ -87,8 +91,8 @@ export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
     hasFullDescription: raw.hasFullDescription && descriptionText.length > 0,
     techStack,
     requiredYears: descriptionText ? extractYears(descriptionText) : { min: null, max: null },
-    applyUrl: normalizeUrl(raw.applyUrl) ?? normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
-    sourceUrl: normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
+    applyUrl: normalizeUrl(raw.applyUrl) ?? sourceUrl,
+    sourceUrl,
     sourcePublisher: collapse(raw.sourcePublisher ?? '') || null,
     firstSeenAt: nowIso,
     lastSeenAt: nowIso,

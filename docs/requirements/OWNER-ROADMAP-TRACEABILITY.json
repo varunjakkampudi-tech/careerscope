@@ -1155,11 +1155,20 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Job normalization",
       "sourceStatus": "Existing, expand",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/normalize.ts",
+        "packages/providers/src/normalize.test.ts",
+        "apps/workers/search/src/collect.ts",
+        "apps/workers/search/src/collect.test.ts",
+        "packages/shared/src/schemas.ts"
+      ],
+      "tests": [
+        "packages/providers/src/normalize.test.ts",
+        "apps/workers/search/src/collect.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "The existing normalizer maps provider RawJob records into the canonical Job shape. Unsafe or relative source URLs are rejected, invalid apply URLs fall back only to a validated source URL, and collection continues after skipping malformed rows. Node 24 focused tests passed 66/66 for normalization and 20/20 for search collection; provider/core/search TypeScript build passed. Full `npm run check` also passed: 372 unit tests passed, 0 failed, 3 skipped; 97 canonical test files type-checked; lint had 0 errors and 4 existing warnings; audit, traceability, formatting, privacy and architecture gates passed. Exact-head hosted CI, independent review, merge, and post-merge verification remain pending. Salary/location/experience normalization is tracked separately under 5.10, deduplication under 5.09, and provider permission evidence under 5.01.",
       "scopeDisposition": "in-scope"
     },
     {

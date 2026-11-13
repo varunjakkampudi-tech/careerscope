@@ -1596,10 +1596,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Prior dev audit: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding.\n\nStage 04 PR #72 audit history: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 type/test fixture or assertions for bounded field-level resume extraction evidence; current local domain suite and typecheck pass.\n\nItem 4.05 follow-up test or typed fixture: bounded source evidence coverage for derived skills, titles, experience-years and education is validated; test suite and canonical test typecheck pass.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
-      "evidence": "Prior dev audit: Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "bb3814671498c171107cf6d0662758d1ed4396f2e155eff745566e6b528aa286"
+      "observations": "Reviewed collection regression proving an unsafe provider source URL is skipped while valid rows after it are retained. Node 24 search collection suite passed 20/20.",
+      "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
+      "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
+      "sha256": "0d6ddab26059d52b87899591464f87947768ef4448765ba2b510aadccac8d6e0",
+      "history": [
+        {
+          "observations": "Prior dev audit: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding.\n\nStage 04 PR #72 audit history: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 type/test fixture or assertions for bounded field-level resume extraction evidence; current local domain suite and typecheck pass.\n\nItem 4.05 follow-up test or typed fixture: bounded source evidence coverage for derived skills, titles, experience-years and education is validated; test suite and canonical test typecheck pass.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
+          "evidence": "Prior dev audit: Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "bb3814671498c171107cf6d0662758d1ed4396f2e155eff745566e6b528aa286"
+        }
+      ]
     },
     {
       "path": "apps/workers/search/src/collect.ts",
@@ -1922,10 +1930,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "102ee77f92d7a0abf3d728024ce1dd4e5db91a514737d4d96eaea83a36026322",
+      "observations": "Added Stage 05 item 5.08 evidence with accurate partial status, Node 24 local checks, and separate remaining acceptance gates.",
+      "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
+      "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
+      "sha256": "5bf4bc87ba6847d6336f0b6819f3b299731bc3e18f151e720df96c812f351328",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -1944,6 +1952,24 @@
           "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "163991b76a46b5cee698343d42d736b589374423e8eca95529f55ecce34e073b"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
+          "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
+          "reviewer": "Codex (Stage 04 item 4.07 closeout)",
+          "sha256": "102ee77f92d7a0abf3d728024ce1dd4e5db91a514737d4d96eaea83a36026322"
+        },
+        {
+          "observations": "Added Stage 05 item 5.08 evidence with accurate partial status, Node 24 local checks, and separate remaining acceptance gates.",
+          "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
+          "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
+          "sha256": "85b46c880e2425006d506910492070363b1c4049d99d8c7707cceff8408d24ae"
+        },
+        {
+          "observations": "Added Stage 05 item 5.08 evidence with accurate partial status, Node 24 local checks, and separate remaining acceptance gates.",
+          "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
+          "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
+          "sha256": "5b3729d9fecfbfd2711c21d8a63020fedc19aa78fece8a2a229565d537539910"
         }
       ]
     },
@@ -1990,10 +2016,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "4a83d02f88d60394b7fea55bec23fdeea68c2bbc8a1a9542934867f6642b2894",
+      "observations": "Added Stage 05 item 5.08 implementation, focused tests, local evidence, and remaining exact-head acceptance gates.",
+      "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
+      "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
+      "sha256": "a4584cdc5d89fdf43603d8eefe4af448cc1918a2341560505639a0c2ba3c38be",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2012,6 +2038,24 @@
           "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "3ea4af0af90b41558ec9c0fca9dc522ed0e8941b4d49834566de484b0d631e99"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
+          "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
+          "reviewer": "Codex (Stage 04 item 4.07 closeout)",
+          "sha256": "4a83d02f88d60394b7fea55bec23fdeea68c2bbc8a1a9542934867f6642b2894"
+        },
+        {
+          "observations": "Added Stage 05 item 5.08 implementation, focused tests, local evidence, and remaining exact-head acceptance gates.",
+          "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
+          "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
+          "sha256": "39a346a2da12627950b9e371e600b174ccb8bbb20ab6edf63aad81e6fbbbf4a3"
+        },
+        {
+          "observations": "Added Stage 05 item 5.08 implementation, focused tests, local evidence, and remaining exact-head acceptance gates.",
+          "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
+          "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
+          "sha256": "7e6f602c4ef4290e645ccf18146dd578646dbcf3fafedbd0adc481113ca6d40e"
         }
       ]
     },
@@ -2442,10 +2486,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "32a340ef0445218bb61935754032e5da565380b32ed462b401397b064cf99243",
+      "observations": "Updated item 5.08 from not-started to partial with implementation and tests; preserved the source label and separated 5.09, 5.10 and 5.01 gaps.",
+      "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
+      "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
+      "sha256": "31c1916fb36372ba5b6983b16bf4daedc1ee08338c59abf60fde1d4bfce0adf7",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2464,6 +2508,18 @@
           "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "db3df24cde8f5d4b533b075a352b8ef53fc0ca1a2631f6df264945c55309cfc5"
+        },
+        {
+          "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
+          "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
+          "reviewer": "Codex (Stage 04 item 4.07 closeout)",
+          "sha256": "32a340ef0445218bb61935754032e5da565380b32ed462b401397b064cf99243"
+        },
+        {
+          "observations": "Updated item 5.08 from not-started to partial with implementation and tests; preserved the source label and separated 5.09, 5.10 and 5.01 gaps.",
+          "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
+          "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
+          "sha256": "97b217e7cebf4e160fbcc913e839b7f62fd2033515ee692c332c850d36109595"
         }
       ]
     },
@@ -5146,10 +5202,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete file. Synthetic payload tests cover normalization, salary/date/url parsing, duplicate identity and hostile long strings; no network, file writes or personal data. No finding.",
-      "evidence": "Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "6eac0417f65ad802faf7aae2fba234d02a19cb425fe8875502114e426fc38f60"
+      "observations": "Reviewed complete normalization tests. New cases validate the canonical job schema, reject relative and unsafe source links, and verify unsafe apply links fall back only to the validated source link. Node 24 suite passed 66/66.",
+      "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
+      "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
+      "sha256": "61a0411130087a1855bd0c8c570f3a4aa259a3de232576d522d5d0317818527d",
+      "history": [
+        {
+          "observations": "Read the complete file. Synthetic payload tests cover normalization, salary/date/url parsing, duplicate identity and hostile long strings; no network, file writes or personal data. No finding.",
+          "evidence": "Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "6eac0417f65ad802faf7aae2fba234d02a19cb425fe8875502114e426fc38f60"
+        }
+      ]
     },
     {
       "path": "packages/providers/src/normalize.ts",
@@ -5166,10 +5230,18 @@
           "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
         }
       ],
-      "observations": "Read in full in this and the previous pass. Checked: the normalised job is built only through this module; an absent salary stays null; unparseable dates stay null and future dates are clamped to now; URLs must be http or https and are upgraded, and javascript: links are dropped; fingerprints and the deduplication rule keep distinct reqs from the same source apart; merging backfills the winner from the loser without inventing values. Finding S1-F026 (low): a finite but absurd salary (for example 1e300 an hour) was annualised to a finite, implausible figure. Annual figures above 1e10 or not positive are now left null, and the raw wording is kept. Canonicaliser and location defects were fixed earlier (S1-F024, S1-F025). normalize.test.ts asserts the implausible-figure case and that an ordinary hourly rate still annualises (63 pass).",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "b35ffcb84ad634cd217a1fc8dbf16bb9622830cf6022eabe526b1d29806741a7"
+      "observations": "Reviewed provider-to-canonical-job normalization. It now rejects invalid HTTP(S) source URLs before producing a job and uses the validated URL for apply fallback; no invalid raw URL is returned. Focused normalization tests and provider/core/search TypeScript build passed.",
+      "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
+      "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
+      "sha256": "215afd1bb2851011dba78cf7d51baf6b6fd4050d84f77f6f6b16e56f0ed3f3ec",
+      "history": [
+        {
+          "observations": "Read in full in this and the previous pass. Checked: the normalised job is built only through this module; an absent salary stays null; unparseable dates stay null and future dates are clamped to now; URLs must be http or https and are upgraded, and javascript: links are dropped; fingerprints and the deduplication rule keep distinct reqs from the same source apart; merging backfills the winner from the loser without inventing values. Finding S1-F026 (low): a finite but absurd salary (for example 1e300 an hour) was annualised to a finite, implausible figure. Annual figures above 1e10 or not positive are now left null, and the raw wording is kept. Canonicaliser and location defects were fixed earlier (S1-F024, S1-F025). normalize.test.ts asserts the implausible-figure case and that an ordinary hourly rate still annualises (63 pass).",
+          "evidence": "",
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "b35ffcb84ad634cd217a1fc8dbf16bb9622830cf6022eabe526b1d29806741a7"
+        }
+      ]
     },
     {
       "path": "packages/providers/src/rank.ts",
