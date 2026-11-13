@@ -1948,10 +1948,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated after recording the initial exact-head fixture failure and its correction; item acceptance remains pending. Updated for the conditional exact-SHA review correction; current 204 parity is tested and the old 404 note is explicitly superseded.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "fdc543e9ca5a7e7ebf96e94b13d6e89a223074cb097bb93a2c516048dbfa56bd",
+      "observations": "Recorded owner item 4.10 final exact-SHA review approval, PR #90 merge and successful post-merge verification; inventory is 42/328 with sourceStatus Partial preserved.",
+      "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
+      "reviewer": "Codex (Stage 04 item 4.10 closeout)",
+      "sha256": "dfa5320ed0f63ac9aac51df12296ebe346727dfd567ea57ff1d5d1c90bc08c6f",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -1988,6 +1988,12 @@
           "evidence": "ChatGPT conditional review was tied to 5ed4c58e780cc068e51cd9377fd2dfc7ca25fc44. This documentation/source revision requires CI and review at its own new SHA.",
           "reviewer": "Codex (Stage 04 item 4.10 review correction)",
           "sha256": "fdc543e9ca5a7e7ebf96e94b13d6e89a223074cb097bb93a2c516048dbfa56bd"
+        },
+        {
+          "observations": "Recorded owner item 4.10 final exact-SHA review approval, PR #90 merge and successful post-merge verification; inventory is 42/328 with sourceStatus Partial preserved.",
+          "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
+          "reviewer": "Codex (Stage 04 item 4.10 closeout)",
+          "sha256": "dfa5320ed0f63ac9aac51df12296ebe346727dfd567ea57ff1d5d1c90bc08c6f"
         }
       ]
     },
@@ -2034,10 +2040,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated after recording the initial exact-head fixture failure and its correction; item acceptance remains pending. Updated for the conditional exact-SHA review correction; current 204 parity is tested and the old 404 note is explicitly superseded.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "616d63d84f313fd856fcd480ecf753a2e92c3439eae1d1105b24e9e4e721b4c0",
+      "observations": "Updated item 4.10 with exact-head CI attempt 2, final approval, merge commit and post-merge CI evidence; item scope and skipped push-only image build are stated precisely.",
+      "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
+      "reviewer": "Codex (Stage 04 item 4.10 closeout)",
+      "sha256": "d4565a161c6a4d0dabb3f25b502b789a0dde5f56ec798b9f6362d2267cf041a9",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2074,6 +2080,12 @@
           "evidence": "ChatGPT conditional review was tied to 5ed4c58e780cc068e51cd9377fd2dfc7ca25fc44. This documentation/source revision requires CI and review at its own new SHA.",
           "reviewer": "Codex (Stage 04 item 4.10 review correction)",
           "sha256": "616d63d84f313fd856fcd480ecf753a2e92c3439eae1d1105b24e9e4e721b4c0"
+        },
+        {
+          "observations": "Updated item 4.10 with exact-head CI attempt 2, final approval, merge commit and post-merge CI evidence; item scope and skipped push-only image build are stated precisely.",
+          "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
+          "reviewer": "Codex (Stage 04 item 4.10 closeout)",
+          "sha256": "d4565a161c6a4d0dabb3f25b502b789a0dde5f56ec798b9f6362d2267cf041a9"
         }
       ]
     },
@@ -2504,10 +2516,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated for the conditional exact-SHA review correction; current 204 parity is tested and the old 404 note is explicitly superseded.",
-      "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
-      "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "ce04688de306ee7c08ed339cc90f4d690cee02acb16a56bd0ac279774330080c",
+      "observations": "Marked owner item 4.10 verified after exact-SHA review approval, successful exact-head CI, merge to dev and successful post-merge CI; sourceStatus Partial remains unchanged.",
+      "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
+      "reviewer": "Codex (Stage 04 item 4.10 closeout)",
+      "sha256": "2dd62fad43450f9c3b64011c274c06b4d329149aba8571b6452e8ada0928a083",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2538,6 +2550,12 @@
           "evidence": "ChatGPT conditional review was tied to 5ed4c58e780cc068e51cd9377fd2dfc7ca25fc44. This documentation/source revision requires CI and review at its own new SHA.",
           "reviewer": "Codex (Stage 04 item 4.10 review correction)",
           "sha256": "ce04688de306ee7c08ed339cc90f4d690cee02acb16a56bd0ac279774330080c"
+        },
+        {
+          "observations": "Marked owner item 4.10 verified after exact-SHA review approval, successful exact-head CI, merge to dev and successful post-merge CI; sourceStatus Partial remains unchanged.",
+          "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
+          "reviewer": "Codex (Stage 04 item 4.10 closeout)",
+          "sha256": "2dd62fad43450f9c3b64011c274c06b4d329149aba8571b6452e8ada0928a083"
         }
       ]
     },
