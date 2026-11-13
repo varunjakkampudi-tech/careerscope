@@ -505,10 +505,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
+      "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated after recording the initial exact-head fixture failure and its correction; item acceptance remains pending.",
       "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
       "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "cf693d510f7ad48fa8283d8221339cda8f7b2477e6bb0ae331c3122494cb0571",
+      "sha256": "32f00b48fb9c9f658271647f306c4922318066d729f397cc9300ae47cf79b927",
       "history": [
         {
           "observations": "Reviewed Stage 04 item 4.10 deletion regressions: foreign-owner deletion remains not found; storage failure preserves database rows; successful deletion removes resume and result; cancelling the browser confirmation preserves the version.",
@@ -521,6 +521,12 @@
           "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
           "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
           "sha256": "cf693d510f7ad48fa8283d8221339cda8f7b2477e6bb0ae331c3122494cb0571"
+        },
+        {
+          "observations": "Corrected Stage 04 item 4.10 API fixture after exact-head CI found a foreign-key failure: the parse result now uses the upload row command id rather than a random id. The item remains partial pending corrected hosted CI and independent review.",
+          "evidence": "Failure: hosted run 43346619700 on 185e9cd921977525ef07904f6e98ee2972d07d75 failed F-024 at resume_results command_id foreign key. Corrected fixture locally; npm run check passed 372/0/3 on this worktree. New exact-head hosted CI pending.",
+          "reviewer": "Codex (Stage 04 item 4.10 CI correction)",
+          "sha256": "32f00b48fb9c9f658271647f306c4922318066d729f397cc9300ae47cf79b927"
         }
       ]
     },
@@ -1936,10 +1942,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated after recording the initial exact-head fixture failure and its correction; item acceptance remains pending.",
       "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
       "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "ccc10224cfba14de5b1688e2a4b94eb40f5e7de767a51494211ac509524451cc",
+      "sha256": "622e0969d60a8df8c9337bc22e58425130d5e3205c313e0f4911969aee0e9a03",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -1964,6 +1970,12 @@
           "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
           "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
           "sha256": "ccc10224cfba14de5b1688e2a4b94eb40f5e7de767a51494211ac509524451cc"
+        },
+        {
+          "observations": "Corrected Stage 04 item 4.10 API fixture after exact-head CI found a foreign-key failure: the parse result now uses the upload row command id rather than a random id. The item remains partial pending corrected hosted CI and independent review.",
+          "evidence": "Failure: hosted run 43346619700 on 185e9cd921977525ef07904f6e98ee2972d07d75 failed F-024 at resume_results command_id foreign key. Corrected fixture locally; npm run check passed 372/0/3 on this worktree. New exact-head hosted CI pending.",
+          "reviewer": "Codex (Stage 04 item 4.10 CI correction)",
+          "sha256": "622e0969d60a8df8c9337bc22e58425130d5e3205c313e0f4911969aee0e9a03"
         }
       ]
     },
@@ -2010,10 +2022,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated after recording the initial exact-head fixture failure and its correction; item acceptance remains pending.",
       "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
       "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "dde8245ebff7f1ac6160ecb577ffbe720013e0d71817154734093b85ef9e91cd",
+      "sha256": "d011a48a8c52e3e17bcc1e3d662e0c55a1e729563bd698ff9651522a63110cf7",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2038,6 +2050,12 @@
           "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
           "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
           "sha256": "dde8245ebff7f1ac6160ecb577ffbe720013e0d71817154734093b85ef9e91cd"
+        },
+        {
+          "observations": "Corrected Stage 04 item 4.10 API fixture after exact-head CI found a foreign-key failure: the parse result now uses the upload row command id rather than a random id. The item remains partial pending corrected hosted CI and independent review.",
+          "evidence": "Failure: hosted run 43346619700 on 185e9cd921977525ef07904f6e98ee2972d07d75 failed F-024 at resume_results command_id foreign key. Corrected fixture locally; npm run check passed 372/0/3 on this worktree. New exact-head hosted CI pending.",
+          "reviewer": "Codex (Stage 04 item 4.10 CI correction)",
+          "sha256": "d011a48a8c52e3e17bcc1e3d662e0c55a1e729563bd698ff9651522a63110cf7"
         }
       ]
     },

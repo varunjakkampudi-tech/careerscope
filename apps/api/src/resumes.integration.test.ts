@@ -503,8 +503,9 @@ test(
         await uploads.queueStoredUpload(owner.id, upload.id, 'synthetic-version');
         await database.pool.query(
           `INSERT INTO resume_results (upload_id, owner_id, command_id, status, parsed)
-           VALUES ($1, $2, $3, 'parsed', $4::jsonb)`,
-          [upload.id, owner.id, randomUUID(), JSON.stringify({ name: 'Candidate' })],
+           SELECT id, owner_id, command_id, 'parsed', $2::jsonb
+           FROM resume_uploads WHERE id = $1`,
+          [upload.id, JSON.stringify({ name: 'Candidate' })],
         );
 
         const foreignDelete = await app.inject({
