@@ -45,8 +45,17 @@ const messages = {
     saved: 'Saved',
     resume: 'Resume',
     resumeReviewHeading: 'Review extracted information',
+    resumeReviewButton: 'Review profile draft',
+    resumeSyncButton: 'Review profile sync',
     resumeReviewDescription:
       'Correct each value you want to use and select its checkbox. Unselected fields will not replace your profile information.',
+    resumeSyncDescription:
+      'Choose which values from this resume version should update your saved profile. Your saved values are shown for comparison; nothing changes until you save your profile.',
+    resumeSyncUseField: 'Use this value to update my profile',
+    resumeSyncConflictPolicy:
+      'Your choice applies only to the selected resume version and checked fields. If the profile changed elsewhere, the save is rejected and you can reload before trying again.',
+    resumeSyncCurrentValue: 'Current saved value: {value}',
+    resumeSyncEmptyValue: '(empty)',
     resumeReviewNotice:
       'Resume extraction can be wrong. Work and education details are your claims and are not independently verified. Nothing is saved until you review and save your profile.',
     resumeReviewEmpty: 'No profile fields were extracted from this resume.',
@@ -58,6 +67,7 @@ const messages = {
     resumeReviewSource: 'View source text',
     resumeReviewSelectedSource: 'Selected resume: {value}',
     resumeReviewApply: 'Use selected fields in profile draft',
+    resumeSyncApply: 'Apply selected values to profile',
     resumeReviewCancel: 'Cancel review',
     resumeReviewDiscardConfirm: 'Discard these resume corrections?',
     resumeReviewField_email: 'Email',
@@ -334,8 +344,17 @@ const messages = {
     saved: 'సేవ్ చేసినవి',
     resume: 'రెజ్యూమ్',
     resumeReviewHeading: 'సేకరించిన సమాచారాన్ని సమీక్షించండి',
+    resumeReviewButton: 'ప్రొఫైల్ ముసాయిదాను సమీక్షించండి',
+    resumeSyncButton: 'ప్రొఫైల్ సమకాలీకరణను సమీక్షించండి',
     resumeReviewDescription:
       'ఉపయోగించాలనుకునే ప్రతి విలువను సరిచేసి, దాని చెక్‌బాక్స్‌ను ఎంచుకోండి. ఎంచుకోని వివరాలు మీ ప్రొఫైల్‌ను మార్చవు.',
+    resumeSyncDescription:
+      'ఈ రెజ్యూమ్ వెర్షన్ నుంచి మీ సేవ్ చేసిన ప్రొఫైల్‌లో ఏ విలువలను నవీకరించాలో ఎంచుకోండి. పోల్చడానికి ప్రస్తుతం సేవ్ చేసిన విలువలు చూపబడతాయి; ప్రొఫైల్‌ను సేవ్ చేసే వరకు ఏదీ మారదు.',
+    resumeSyncUseField: 'నా ప్రొఫైల్‌ను నవీకరించడానికి ఈ విలువను ఉపయోగించండి',
+    resumeSyncConflictPolicy:
+      'మీ ఎంపిక ఎంచుకున్న రెజ్యూమ్ వెర్షన్ మరియు గుర్తించిన ఫీల్డ్‌లకే వర్తిస్తుంది. వేరే చోట ప్రొఫైల్ మారితే, సేవ్ తిరస్కరించబడుతుంది; మళ్లీ ప్రయత్నించే ముందు రీలోడ్ చేయండి.',
+    resumeSyncCurrentValue: 'ప్రస్తుతం సేవ్ చేసిన విలువ: {value}',
+    resumeSyncEmptyValue: '(ఖాళీ)',
     resumeReviewNotice:
       'రెజ్యూమ్ నుంచి సేకరించిన సమాచారం తప్పుగా ఉండవచ్చు. ఉద్యోగ మరియు విద్య వివరాలు మీ వాదనలు మాత్రమే; వాటిని స్వతంత్రంగా ధృవీకరించలేదు. ప్రొఫైల్‌ను సమీక్షించి సేవ్ చేసే వరకు ఏదీ సేవ్ కాదు.',
     resumeReviewEmpty: 'ఈ రెజ్యూమ్ నుంచి ప్రొఫైల్ వివరాలు సేకరించబడలేదు.',
@@ -346,6 +365,7 @@ const messages = {
     resumeReviewSource: 'మూల పాఠ్యాన్ని చూడండి',
     resumeReviewSelectedSource: 'ఎంచుకున్న రెజ్యూమ్: {value}',
     resumeReviewApply: 'ఎంచుకున్న వివరాలను ప్రొఫైల్ డ్రాఫ్ట్‌లో ఉపయోగించండి',
+    resumeSyncApply: 'ఎంచుకున్న విలువలను ప్రొఫైల్‌కు వర్తింపజేయండి',
     resumeReviewCancel: 'సమీక్షను రద్దు చేయండి',
     resumeReviewDiscardConfirm: 'ఈ రెజ్యూమ్ సవరణలను తీసివేయాలా?',
     resumeReviewField_fullName: 'పూర్తి పేరు',
@@ -628,8 +648,17 @@ const messages = {
     saved: 'सहेजे गए',
     resume: 'रिज़्यूमे',
     resumeReviewHeading: 'निकाली गई जानकारी की समीक्षा करें',
+    resumeReviewButton: 'प्रोफ़ाइल ड्राफ़्ट की समीक्षा करें',
+    resumeSyncButton: 'प्रोफ़ाइल सिंक की समीक्षा करें',
     resumeReviewDescription:
       'जिस मान का उपयोग करना चाहते हैं उसे सुधारें और उसका चेकबॉक्स चुनें। बिना चुने गए फ़ील्ड आपकी प्रोफ़ाइल को नहीं बदलेंगे।',
+    resumeSyncDescription:
+      'चुनें कि इस रिज़्यूमे संस्करण से कौन-से मान आपकी सहेजी गई प्रोफ़ाइल में अपडेट हों। तुलना के लिए मौजूदा सहेजे गए मान दिखते हैं; प्रोफ़ाइल सहेजने तक कोई बदलाव नहीं होगा।',
+    resumeSyncUseField: 'मेरी प्रोफ़ाइल अपडेट करने के लिए इस मान का उपयोग करें',
+    resumeSyncConflictPolicy:
+      'आपकी पसंद केवल चुने गए रिज़्यूमे संस्करण और चिह्नित फ़ील्ड पर लागू होगी। यदि प्रोफ़ाइल कहीं और बदली है, तो सेव अस्वीकार होगा; दोबारा कोशिश करने से पहले रीलोड करें।',
+    resumeSyncCurrentValue: 'मौजूदा सहेजा गया मान: {value}',
+    resumeSyncEmptyValue: '(खाली)',
     resumeReviewNotice:
       'रिज़्यूमे से निकाली गई जानकारी गलत हो सकती है। काम और शिक्षा का विवरण आपके दावे हैं; इनकी स्वतंत्र पुष्टि नहीं हुई है। प्रोफ़ाइल की समीक्षा करके सहेजने तक कुछ भी सहेजा नहीं जाएगा।',
     resumeReviewEmpty: 'इस रिज़्यूमे से प्रोफ़ाइल फ़ील्ड नहीं निकाले गए।',
@@ -640,6 +669,7 @@ const messages = {
     resumeReviewSource: 'स्रोत पाठ देखें',
     resumeReviewSelectedSource: 'चुना गया रिज़्यूमे: {value}',
     resumeReviewApply: 'चुने गए फ़ील्ड प्रोफ़ाइल ड्राफ़्ट में उपयोग करें',
+    resumeSyncApply: 'चुने गए मान प्रोफ़ाइल पर लागू करें',
     resumeReviewCancel: 'समीक्षा रद्द करें',
     resumeReviewDiscardConfirm: 'इन रिज़्यूमे सुधारों को छोड़ें?',
     resumeReviewField_fullName: 'पूरा नाम',

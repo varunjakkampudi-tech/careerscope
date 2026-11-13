@@ -1009,11 +1009,15 @@
       "stageTitle": "Resume management and parsing",
       "title": "Profile synchronization",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["apps/web/src/components/profile-editor.tsx", "packages/core/src/profile.ts"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/profile-editor.tsx",
+        "apps/web/src/components/resume-panel.tsx",
+        "apps/web/src/components/resume-proposal-review.tsx"
+      ],
+      "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "No explicit profile synchronization action/version/conflict policy exists for parsed resume data; manual profile-form population is not synchronization.",
+      "gap": "Candidate-controlled one-time sync is implemented: the candidate chooses a parsed resume version and fields, compares saved values, and saves against the current profile revision; conflicts require reload and no automatic merge occurs. Local npm run check passed on Node 24.22.1 (378 passed, 0 failed, 3 skipped). Chromium acceptance did not start because PostgreSQL authentication failed (28P01), so exact-head hosted CI and browser acceptance remain pending, as do independent review, merge and post-merge verification. Sync is not continuous. Telugu/Hindi copy is AI-assisted without native-speaker validation; the 4.08 language gate remains separate.",
       "scopeDisposition": "in-scope"
     },
     {
