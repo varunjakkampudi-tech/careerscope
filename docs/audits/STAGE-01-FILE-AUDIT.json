@@ -505,10 +505,24 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends.",
+      "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
       "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
       "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "aec5f29e94b09e66076739d9f51b4f40941b3601da29f5ca8dbada0fbdf694f8"
+      "sha256": "cf693d510f7ad48fa8283d8221339cda8f7b2477e6bb0ae331c3122494cb0571",
+      "history": [
+        {
+          "observations": "Reviewed Stage 04 item 4.10 deletion regressions: foreign-owner deletion remains not found; storage failure preserves database rows; successful deletion removes resume and result; cancelling the browser confirmation preserves the version.",
+          "evidence": "Source and test review on the Stage 04 item 4.10 branch. This file audit does not close item 4.10; exact-head hosted CI and independent checklist approval are pending.",
+          "reviewer": "Codex (Stage 04 item 4.10 deletion coverage)",
+          "sha256": "422d6af634e09083ca6542b802b5559fff89dc20ee0bc8944b5f15de70ed98f8"
+        },
+        {
+          "observations": "Updated the file audit after Stage 04 item 4.10 deletion test and progress evidence changes; the checklist item remains partial pending hosted integration/browser CI and independent approval.",
+          "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
+          "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
+          "sha256": "cf693d510f7ad48fa8283d8221339cda8f7b2477e6bb0ae331c3122494cb0571"
+        }
+      ]
     },
     {
       "path": "apps/api/src/session-logout.integration.test.ts",
@@ -1922,10 +1936,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
       "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
       "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "102ee77f92d7a0abf3d728024ce1dd4e5db91a514737d4d96eaea83a36026322",
+      "sha256": "ccc10224cfba14de5b1688e2a4b94eb40f5e7de767a51494211ac509524451cc",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -1944,6 +1958,12 @@
           "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "163991b76a46b5cee698343d42d736b589374423e8eca95529f55ecce34e073b"
+        },
+        {
+          "observations": "Updated the file audit after Stage 04 item 4.10 deletion test and progress evidence changes; the checklist item remains partial pending hosted integration/browser CI and independent approval.",
+          "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
+          "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
+          "sha256": "ccc10224cfba14de5b1688e2a4b94eb40f5e7de767a51494211ac509524451cc"
         }
       ]
     },
@@ -1990,10 +2010,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
       "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
       "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "4a83d02f88d60394b7fea55bec23fdeea68c2bbc8a1a9542934867f6642b2894",
+      "sha256": "dde8245ebff7f1ac6160ecb577ffbe720013e0d71817154734093b85ef9e91cd",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2012,6 +2032,12 @@
           "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "3ea4af0af90b41558ec9c0fca9dc522ed0e8941b4d49834566de484b0d631e99"
+        },
+        {
+          "observations": "Updated the file audit after Stage 04 item 4.10 deletion test and progress evidence changes; the checklist item remains partial pending hosted integration/browser CI and independent approval.",
+          "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
+          "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
+          "sha256": "dde8245ebff7f1ac6160ecb577ffbe720013e0d71817154734093b85ef9e91cd"
         }
       ]
     },
@@ -2442,10 +2468,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved.",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
       "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
       "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "32a340ef0445218bb61935754032e5da565380b32ed462b401397b064cf99243",
+      "sha256": "ac9e962ff57c003cb35d0c1cfb89065dcdf48a9bdc09f150edaedf07d43112c1",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2464,6 +2490,12 @@
           "evidence": "Exact-head run 43176172908 passed all three required jobs on 07f10cf3933d14139dd7278557808172dc1cf6f4. Performance, soak and recovery were skipped by workflow inputs. Audit history preserves the superseded record.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "db3df24cde8f5d4b533b075a352b8ef53fc0ca1a2631f6df264945c55309cfc5"
+        },
+        {
+          "observations": "Updated the file audit after Stage 04 item 4.10 deletion test and progress evidence changes; the checklist item remains partial pending hosted integration/browser CI and independent approval.",
+          "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
+          "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
+          "sha256": "ac9e962ff57c003cb35d0c1cfb89065dcdf48a9bdc09f150edaedf07d43112c1"
         }
       ]
     },
@@ -6629,16 +6661,28 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification.",
+      "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
       "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
       "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
-      "sha256": "d32dab0fbf925bb7b7a4650421a58f4c93583090ac5d2426e65ab1ec1d921043",
+      "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
           "evidence": "PR #82 exact head 179bc1645052d41235d3bec1e854fab0b29c6a15 exposed the pending-only queue race in run 43061560382. This change fixes the assertion at its durable source; local typecheck passes, and hosted exact-head CI after this commit remains required.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "e040ae1ea4ea64f9707a43d7d7684a542b8fd16625304fd0bc5c73621f56e344"
+        },
+        {
+          "observations": "Reviewed Stage 04 item 4.10 deletion regressions: foreign-owner deletion remains not found; storage failure preserves database rows; successful deletion removes resume and result; cancelling the browser confirmation preserves the version.",
+          "evidence": "Source and test review on the Stage 04 item 4.10 branch. This file audit does not close item 4.10; exact-head hosted CI and independent checklist approval are pending.",
+          "reviewer": "Codex (Stage 04 item 4.10 deletion coverage)",
+          "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
+        },
+        {
+          "observations": "Updated the file audit after Stage 04 item 4.10 deletion test and progress evidence changes; the checklist item remains partial pending hosted integration/browser CI and independent approval.",
+          "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
+          "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
+          "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
         }
       ]
     },
