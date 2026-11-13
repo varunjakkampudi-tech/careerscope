@@ -1048,16 +1048,24 @@
       "sourceStatus": "New",
       "currentStatus": "partial",
       "evidence": [
+        "packages/core/src/resumes.ts",
         "packages/core/src/database.ts",
-        "packages/core/src/profile.ts",
+        "apps/workers/search/src/recompute.ts",
+        "apps/workers/search/src/publisher.ts",
+        "apps/workers/search/src/main.ts",
+        "packages/core/src/jobs.ts",
+        "packages/core/src/leads.ts",
         "tests/integration/database.integration.test.ts"
       ],
       "tests": [
         "tests/integration/database.integration.test.ts",
-        "apps/workers/search/src/collect.test.ts"
+        "apps/workers/search/src/collect.test.ts",
+        "apps/workers/search/src/recompute.test.ts",
+        "packages/core/src/dispatch.test.ts",
+        "packages/core/src/commands.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "New searches snapshot the latest parsed derived profile; existing searches are not invalidated or recomputed on resume changes, and there is no resume-change recomputation event/acceptance flow.",
+      "gap": "Implementation, focused local coverage, exact-head hosted CI and independent review are complete for PR #87 head 0c73714c77037e04325f26d4e177cc804fd6b4fb. PR #87 is synchronized with current dev base 8d109aec7e25a9f106be07a36feca2f13da357b0; synchronized head 48cefb064a1280b08026466798a0f0c7d7f6fcfb passed all required jobs in run 43360547163; independent exact-head review is pending. Item remains partial pending those gates, merge and post-merge verification. Legacy jobs are rescored from stored display fields because the original full normalized provider payload was not retained; compensation, location and recency dimensions are preserved from their prior breakdowns. New full normalized scoring inputs are private and omitted from API projections.",
       "scopeDisposition": "in-scope"
     },
     {

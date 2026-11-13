@@ -60,7 +60,7 @@ import {
   refreshSessionLifetimeSeconds,
   Conflict,
   createSearchSchema,
-  collectedJobSchema,
+  collectedJobReadSchema,
   sourceOutcomesSchema,
   ProfileRepository,
   ProfilePhotoRepository,
@@ -2078,7 +2078,10 @@ export async function createApp(
           ? sourceOutcomesSchema.parse(search.sourceOutcomes)
           : null,
         request: createSearchSchema.parse(search.request),
-        jobs: jobs.rows.map((row) => collectedJobSchema.strip().parse(row.data)),
+        jobs: jobs.rows.map((row) => {
+          const { matchingInput: _privateMatchingInput, ...publicJob } = row.data;
+          return collectedJobReadSchema.parse(publicJob);
+        }),
       });
   });
   app.get('/api/searches/:id/events', async (request, reply) => {
@@ -2235,11 +2238,14 @@ export async function createApp(
       // write-time validation in Database.settle(). A direct write to
       // search_jobs.data or a tightened schema must not reach the client
       // unfiltered here.
-      jobs: jobs.rows.map((row) => ({
-        id: row.id,
-        data: collectedJobSchema.strip().parse(row.data),
-        feedbackReason: row.feedbackReason,
-      })),
+      jobs: jobs.rows.map((row) => {
+        const { matchingInput: _privateMatchingInput, ...publicJob } = row.data;
+        return {
+          id: row.id,
+          data: collectedJobReadSchema.parse(publicJob),
+          feedbackReason: row.feedbackReason,
+        };
+      }),
       events: events.rows,
     };
   });

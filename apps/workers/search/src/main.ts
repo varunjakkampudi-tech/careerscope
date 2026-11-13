@@ -16,6 +16,7 @@ import {
   shutdownSignal,
 } from '@careerscope/core';
 import { searchHandler } from './collect.js';
+import { resumeRecomputeHandler } from './recompute.js';
 
 installProcessFailureHandlers();
 
@@ -33,7 +34,13 @@ try {
       let worker: ReturnType<BullSearchQueue['worker']> | undefined;
       try {
         await queue.initialize();
-        worker = queue.worker(searchHandler(db), shutdown.signal);
+        worker = queue.worker(
+          async (command, fence, signal) =>
+            command.type === 'search.recompute'
+              ? resumeRecomputeHandler(db)(command, fence, signal)
+              : searchHandler(db)(command, fence, signal),
+          shutdown.signal,
+        );
         await worker.waitUntilReady();
         logger.info('BullMQ search worker ready');
         while (!shutdown.signal.aborted) {
@@ -57,8 +64,13 @@ try {
                 db,
                 queue,
                 message,
-                'search.collect',
-                searchHandler(db),
+                message.Body && JSON.parse(message.Body).type === 'search.recompute'
+                  ? 'search.recompute'
+                  : 'search.collect',
+                async (command, fence, signal) =>
+                  command.type === 'search.recompute'
+                    ? resumeRecomputeHandler(db)(command, fence, signal)
+                    : searchHandler(db)(command, fence, signal),
                 shutdown.signal,
               );
           } catch (error) {

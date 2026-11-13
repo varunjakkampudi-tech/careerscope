@@ -3,6 +3,7 @@ import test from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
 import { collect, searchHandler } from './collect.js';
 import {
+  collectedJobSchema,
   matchingProfile,
   writableProfileSchema,
   type Database,
@@ -895,6 +896,13 @@ test('a skill known only from the parsed resume still reaches scoring through co
   };
   const { jobs: results } = await collect(request, signal, provider, undefined, { profile, now });
   const scored = results[0]!;
+  assert.ok(
+    scored.matchingInput,
+    `stored search results retain the normalized score input: ${JSON.stringify(scored)}`,
+  );
+  const { matchingInput: _privateInput, ...apiJob } = scored;
+  const publicJob = collectedJobSchema.omit({ matchingInput: true }).parse(apiJob);
+  assert.equal('matchingInput' in publicJob, false, 'private scoring input is not API output');
   assert.equal(scored.match?.resumeConsidered, true);
   assert.ok(scored.match!.matchedSkills.includes('Kubernetes'));
   assert.deepEqual(scored.match!.resumeSkills, ['Kubernetes']);

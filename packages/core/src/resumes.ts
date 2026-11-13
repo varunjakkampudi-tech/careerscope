@@ -108,6 +108,8 @@ export class ResumeUploadRepository {
     const client = await this.database.pool.connect();
     try {
       await client.query('BEGIN');
+      // Serialize parsed-resume changes with match recomputations for this owner.
+      await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [command.ownerId]);
       const owned = await client.query(
         `UPDATE command_executions SET status = $4
         WHERE id = $1 AND fence = $2 AND status = 'running' AND lease_until > now()
@@ -132,6 +134,22 @@ export class ResumeUploadRepository {
         ],
       );
       if (!inserted.rowCount) throw new Conflict('Upload is not eligible for parse completion');
+      if (parsed.status === 'parsed') {
+        const recompute: Command = {
+          id: randomUUID(),
+          type: 'search.recompute',
+          version: 1,
+          aggregateId: command.aggregateId,
+          ownerId: command.ownerId,
+          occurredAt: new Date().toISOString(),
+          correlationId: command.aggregateId,
+          causationId: command.id,
+        };
+        await client.query('INSERT INTO outbox_events (id, command) VALUES ($1, $2::jsonb)', [
+          recompute.id,
+          JSON.stringify(recompute),
+        ]);
+      }
       await client.query('COMMIT');
       return true;
     } catch (error) {

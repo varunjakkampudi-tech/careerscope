@@ -11,6 +11,7 @@ export const commandSchema = z
     id: z.string().uuid(),
     type: z.enum([
       'search.collect',
+      'search.recompute',
       'job.rank',
       'company.enrich',
       'resume.parse',

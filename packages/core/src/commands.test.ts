@@ -16,6 +16,7 @@ test('commands contain identifiers, not private source text or arbitrary payload
     correlationId: randomUUID(),
   };
   assert.equal(commandSchema.safeParse(command).success, true);
+  assert.equal(commandSchema.safeParse({ ...command, type: 'search.recompute' }).success, true);
   assert.equal(commandSchema.safeParse({ ...command, resume: 'private' }).success, false);
   assert.equal(commandSchema.safeParse({ ...command, type: 'shell.execute' }).success, false);
   assert.equal(commandSchema.safeParse({ ...command, version: 2 }).success, false);

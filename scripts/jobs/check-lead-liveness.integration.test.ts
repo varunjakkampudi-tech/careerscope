@@ -252,6 +252,7 @@ test('LeadRepository: due-for-check ordering, status exclusion, and recording a 
             isRemote: true,
             description: 'x',
             hasFullDescription: true,
+            matchingInput: { descriptionText: 'private synthetic scoring text' },
             source: 'himalayas',
             sourceUrl: 'https://himalayas.app/jobs/' + fingerprint,
             applyUrl,
@@ -269,6 +270,10 @@ test('LeadRepository: due-for-check ordering, status exclusion, and recording a 
     const leadA = (await leads.save(ownerId, { jobId: jobA }))!;
     const leadB = (await leads.save(ownerId, { jobId: jobB }))!;
     const leadC = (await leads.save(ownerId, { jobId: jobC }))!;
+
+    assert.equal('matchingInput' in leadA.data, false);
+    assert.equal('isRemote' in leadA.data, false);
+    assert.equal('hasFullDescription' in leadA.data, false);
 
     // Fresh leads start 'unknown' with no check timestamp, and every
     // non-archived/rejected lead is due, oldest (or never-) checked first.
