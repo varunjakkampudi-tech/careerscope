@@ -1918,7 +1918,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "documentation and traceability review; current docs-sync head CI and independent review pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1930,10 +1930,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Added Stage 05 item 5.08 evidence with accurate partial status, Node 24 local checks, and separate remaining acceptance gates.",
-      "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
-      "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
-      "sha256": "5bf4bc87ba6847d6336f0b6819f3b299731bc3e18f151e720df96c812f351328",
+      "observations": "Recorded exact implementation SHA, successful hosted CI, final independent code approval, skipped optional jobs and distinct source-rights limitations. No provider is enabled.",
+      "evidence": "Implementation SHA 4cdd99cad36f4dafcd7b25b6533d0d39ea507d15 passed run 43339224203 and received exact-SHA final review approval. Current documentation-sync SHA awaits CI and review.",
+      "reviewer": "Codex (Stage 05 item 5.08 documentation sync)",
+      "sha256": "d286047ecb401d46c1e41600858226c5073d7636dfff4ed9bea1302d17e89651",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -1970,6 +1970,18 @@
           "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
           "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
           "sha256": "5b3729d9fecfbfd2711c21d8a63020fedc19aa78fece8a2a229565d537539910"
+        },
+        {
+          "observations": "Added Stage 05 item 5.08 evidence with accurate partial status, Node 24 local checks, and separate remaining acceptance gates.",
+          "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
+          "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
+          "sha256": "5bf4bc87ba6847d6336f0b6819f3b299731bc3e18f151e720df96c812f351328"
+        },
+        {
+          "observations": "Checked Stage 05 item 5.08 implementation CI evidence and preserved separate provider-permission gaps. Documentation sync is scoped to the item record and does not enable a source.",
+          "evidence": "Implementation SHA 4cdd99cad36f4dafcd7b25b6533d0d39ea507d15 passed hosted run 43339224203. New documentation-sync SHA requires its own CI and review.",
+          "reviewer": "Codex (Stage 05 item 5.08 documentation sync)",
+          "sha256": "4a41ce7d0822068010aaddbbae5404ff0fd6d73038e89befe97c2ab1e7fcde81"
         }
       ]
     },
@@ -2012,14 +2024,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "documentation and traceability review; current docs-sync head CI and independent review pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added Stage 05 item 5.08 implementation, focused tests, local evidence, and remaining exact-head acceptance gates.",
-      "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
-      "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
-      "sha256": "a4584cdc5d89fdf43603d8eefe4af448cc1918a2341560505639a0c2ba3c38be",
+      "observations": "Recorded exact implementation SHA, successful hosted CI, final independent code approval, skipped optional jobs and distinct source-rights limitations. No provider is enabled.",
+      "evidence": "Implementation SHA 4cdd99cad36f4dafcd7b25b6533d0d39ea507d15 passed run 43339224203 and received exact-SHA final review approval. Current documentation-sync SHA awaits CI and review.",
+      "reviewer": "Codex (Stage 05 item 5.08 documentation sync)",
+      "sha256": "764ac0b079897c9d56d0d439d7d73185edfdc5fc9676399c8c1ef8b381d52cb2",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2056,6 +2068,18 @@
           "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
           "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
           "sha256": "7e6f602c4ef4290e645ccf18146dd578646dbcf3fafedbd0adc481113ca6d40e"
+        },
+        {
+          "observations": "Added Stage 05 item 5.08 implementation, focused tests, local evidence, and remaining exact-head acceptance gates.",
+          "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
+          "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
+          "sha256": "a4584cdc5d89fdf43603d8eefe4af448cc1918a2341560505639a0c2ba3c38be"
+        },
+        {
+          "observations": "Checked Stage 05 item 5.08 implementation CI evidence and preserved separate provider-permission gaps. Documentation sync is scoped to the item record and does not enable a source.",
+          "evidence": "Implementation SHA 4cdd99cad36f4dafcd7b25b6533d0d39ea507d15 passed hosted run 43339224203. New documentation-sync SHA requires its own CI and review.",
+          "reviewer": "Codex (Stage 05 item 5.08 documentation sync)",
+          "sha256": "cba3d92a70ea744e14609731e6aee8724fb91f6870270bc75a8b5b3a8093a774"
         }
       ]
     },
@@ -2482,14 +2506,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "documentation and traceability review; current docs-sync head CI and independent review pending",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.08 from not-started to partial with implementation and tests; preserved the source label and separated 5.09, 5.10 and 5.01 gaps.",
-      "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
-      "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
-      "sha256": "31c1916fb36372ba5b6983b16bf4daedc1ee08338c59abf60fde1d4bfce0adf7",
+      "observations": "Recorded exact implementation SHA, successful hosted CI, final independent code approval, skipped optional jobs and distinct source-rights limitations. No provider is enabled.",
+      "evidence": "Implementation SHA 4cdd99cad36f4dafcd7b25b6533d0d39ea507d15 passed run 43339224203 and received exact-SHA final review approval. Current documentation-sync SHA awaits CI and review.",
+      "reviewer": "Codex (Stage 05 item 5.08 documentation sync)",
+      "sha256": "4590b313a4d1a3437fd244a00cc9867fcbdaa73b41338413662d21cd6caa731a",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2520,6 +2544,18 @@
           "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
           "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
           "sha256": "97b217e7cebf4e160fbcc913e839b7f62fd2033515ee692c332c850d36109595"
+        },
+        {
+          "observations": "Updated item 5.08 from not-started to partial with implementation and tests; preserved the source label and separated 5.09, 5.10 and 5.01 gaps.",
+          "evidence": "Stage 05 item 5.08 local validation on Node 24.22.1: normalize.test.ts passed 66/66; collect.test.ts passed 20/20; TypeScript build passed for core, providers and search. Exact-head hosted CI, independent review, merge and post-merge verification remain pending.",
+          "reviewer": "Codex (Stage 05 item 5.08 normalization review)",
+          "sha256": "31c1916fb36372ba5b6983b16bf4daedc1ee08338c59abf60fde1d4bfce0adf7"
+        },
+        {
+          "observations": "Checked Stage 05 item 5.08 implementation CI evidence and preserved separate provider-permission gaps. Documentation sync is scoped to the item record and does not enable a source.",
+          "evidence": "Implementation SHA 4cdd99cad36f4dafcd7b25b6533d0d39ea507d15 passed hosted run 43339224203. New documentation-sync SHA requires its own CI and review.",
+          "reviewer": "Codex (Stage 05 item 5.08 documentation sync)",
+          "sha256": "1eec693c2af657b2ae8f553dcf068a5779e901b2b178d208b73399b59a197aed"
         }
       ]
     },
