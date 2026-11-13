@@ -100,6 +100,34 @@ test('account-security controls have distinct translations and preserve interpol
   assert.equal(localizedValue('te', 'versionInParentheses', 'test-1'), ' (వెర్షన్ test-1)');
 });
 
+test('resume quality diagnostics are localized and preserve extracted character counts', () => {
+  const keys = [
+    'resumeQualityHeading',
+    'resumeQualityDescription',
+    'resumeQualitySkills',
+    'resumeQualityExperience',
+    'resumeQualityEducation',
+    'resumeQualityDetected',
+    'resumeQualityNotDetected',
+    'resumeQualityGuidance',
+  ] as const;
+
+  for (const key of keys) {
+    const translated = interfaceLocales.map((locale) => localizedText(locale, key));
+    assert.ok(
+      translated.every((message) => message.trim().length > 0),
+      key,
+    );
+    assert.equal(new Set(translated).size, interfaceLocales.length, key);
+  }
+  assert.equal(
+    localizedValue('en', 'resumeQualityCharacterCount', 120),
+    '120 characters were extracted.',
+  );
+  assert.equal(localizedValue('te', 'resumeQualityCharacterCount', 120).includes('120'), true);
+  assert.equal(localizedValue('hi', 'resumeQualityCharacterCount', 120).includes('120'), true);
+});
+
 test('account-security API error categories are localized with a generic unknown-status fallback', () => {
   for (const locale of interfaceLocales) {
     assert.ok(localizedApiErrorMessage(locale, 429).length > 0);

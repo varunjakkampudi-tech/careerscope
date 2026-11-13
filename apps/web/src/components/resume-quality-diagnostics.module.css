@@ -1,0 +1,39 @@
+.report {
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.report h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.report p {
+  margin: 8px 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.report ul {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.report li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.guidance {
+  font-weight: 600;
+}

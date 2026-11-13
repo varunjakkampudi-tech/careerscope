@@ -42,14 +42,17 @@ export function staleSearchRead(
  * away as soon as the image request starts (about 3 of 4 tries; it is not specific to a cold server).
  * Only that one path is dropped among images.
  *
- * Only a GET fetch or script (or the image optimiser path) from an earlier route is dropped. A
+ * An explicitly tagged Next router fetch prefetch from an earlier route is dropped in every engine:
+ * it is speculative by definition, and Firefox was observed to leave one pending after its source
+ * route had been replaced without reporting finish or failure. Other earlier-route reads remain
+ * measured only in Chromium. There, only a GET fetch or script (or the image optimiser path) from
+ * an earlier route is dropped. A
  * request from the current route, a write, an HTML document or any other image still counts, so a
  * real hang on the current route is still caught. A previous-route search-detail fetch is explicitly
  * included; search-list reads use `staleSearchRead`.
  *
- * The cancelled-fetch behaviour was measured only in Chromium, so the allowance applies to the
- * `chromium` engine alone. Firefox and WebKit report aborted requests as failed, so there nothing
- * is dropped and a request that never settles still fails the barrier.
+ * This does not exempt a prefetch on its current route, any ordinary request in Firefox or WebKit,
+ * or any write/document. It therefore still catches a real hang on the active route.
  */
 export function staleEarlierRouteRead(
   method: string,
@@ -58,14 +61,19 @@ export function staleEarlierRouteRead(
   currentEpoch: number,
   engine: string,
   pathname = '',
+  isRouterPrefetch = false,
 ): boolean {
   return (
-    engine === 'chromium' &&
     method === 'GET' &&
     (resourceType === 'fetch' ||
       resourceType === 'script' ||
       (resourceType === 'image' && pathname === '/_next/image')) &&
-    startedEpoch !== currentEpoch
+    startedEpoch !== currentEpoch &&
+    ((isRouterPrefetch && resourceType === 'fetch') ||
+      (engine === 'chromium' &&
+        (resourceType === 'fetch' ||
+          resourceType === 'script' ||
+          (resourceType === 'image' && pathname === '/_next/image'))))
   );
 }
 

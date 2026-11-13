@@ -1034,10 +1034,23 @@
       "title": "Resume quality diagnostics",
       "sourceStatus": "New",
       "currentStatus": "partial",
-      "evidence": ["packages/resume/src/extract.ts", "apps/web/src/components/resume-panel.tsx"],
-      "tests": ["packages/resume/src/extract.test.ts", "packages/resume/src/derive.test.ts"],
-      "externalEvidence": [],
-      "gap": "Parser reports rejected/corrupt/unsupported/oversized inputs, but no candidate-facing quality diagnostics (missing sections, readability or actionable quality report) is implemented.",
+      "evidence": [
+        "apps/web/src/components/resume-panel.tsx",
+        "apps/web/src/components/resume-quality-diagnostics.tsx",
+        "apps/web/src/components/resume-quality-diagnostics.module.css",
+        "apps/web/src/lib/resume-quality.ts",
+        "apps/web/src/lib/locale.ts"
+      ],
+      "tests": [
+        "apps/web/src/lib/resume-quality.test.ts",
+        "apps/web/src/lib/locale.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
+      "externalEvidence": [
+        "PR #85 exact head 796cbc68e006978c5bbefe15fd8f823f4fd9e296 to dev at daa9913be87535fb40612092321ed2bb49ebc596; final independent review approved the code delta after exact-head CI.",
+        "GitHub Actions run 43305195451 passed Quality gates, PostgreSQL/Redis integration and browser/axe/keyboard/responsive suites, and runtime/proxy production image builds (not published)."
+      ],
+      "gap": "The candidate-facing diagnostic report is implemented on codex/stage04-item411-quality-diagnostics. It reports extracted character count and parser detections for skills, work experience and education, states that it cannot verify accuracy or completeness, prompts candidates to inspect and correct extracted text, and assigns no numeric score. Focused parser-report and locale tests passed 12/12 on the implementation revision. Final request-settlement follow-up tests passed 6/6, and test typecheck passed for 97 canonical test files. Exact-head Node 24 GitHub Actions run 43305195451 passed all three required jobs on SHA 796cbc68e006978c5bbefe15fd8f823f4fd9e296: Quality gates; PostgreSQL/Redis integration and browser/axe/keyboard/responsive suites; runtime and proxy production image builds (built, not published). The independent reviewer approved the follow-up code after verifying the exact PR head and CI. Passive notification, performance, soak and recovery checks were skipped and are not claimed as passed. The narrow fix excludes only explicitly tagged earlier-route GET fetch prefetches across engines; active-route requests, writes, documents, and tagged Firefox/WebKit scripts or images remain covered by the settlement barrier. Telugu/Hindi copy is AI-assisted without native-speaker validation; per the owner's standing policy, AI translation review with limitations recorded is acceptable, but linguistic accuracy is not certified. Item 4.11 remains partial pending merge to dev and post-merge verification. The implementation branch is being synchronized to current dev SHA 8d109aec7e25a9f106be07a36feca2f13da357b0; exact-head CI and review for that synchronized SHA remain pending. Synchronized head 93fd84073d78ce2d95d596024f33151250cfc064 passed CI run 43359979550, but independent review found omitted historical item 4.10 audit entries. The corrected audit revision requires new exact-head CI and review; item remains partial.",
       "scopeDisposition": "in-scope"
     },
     {

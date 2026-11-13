@@ -1429,6 +1429,7 @@ try {
               routeEpoch,
               engine,
               new URL(request.url()).pathname,
+              request.headers()['next-router-prefetch'] === '1',
             ),
         );
       const recentRequestEvents: string[] = [];
@@ -2933,6 +2934,24 @@ try {
           .filter({ hasText: 'Resume ready for review.' })
           .waitFor({ timeout: 45000 });
       }
+      const qualityReport = page.getByRole('region', { name: 'Resume quality check', exact: true });
+      await qualityReport.waitFor();
+      assert.equal(
+        await qualityReport.getByText('Skills', { exact: true }).count(),
+        1,
+        `${engine}: quality report must name the skills check`,
+      );
+      assert.equal(
+        await qualityReport.getByText('Detected by parser', { exact: true }).count(),
+        1,
+        `${engine}: detected skills must be reported from the parser output`,
+      );
+      assert.equal(
+        await qualityReport.getByText('Not detected by parser', { exact: true }).count(),
+        2,
+        `${engine}: missing parser evidence must be reported without claiming the source lacks it`,
+      );
+      assert.match(await qualityReport.innerText(), /characters were extracted\./);
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });
         const resumeOverflow = await page.locator('.resume-section').evaluate((element) => ({
@@ -5492,6 +5511,7 @@ try {
                 routeEpoch,
                 engine,
                 url.pathname,
+                request.headers()['next-router-prefetch'] === '1',
               )
             );
           })
