@@ -1165,6 +1165,7 @@ test('an http apply link is upgraded and one invalid posting does not end the pr
     async *search() {
       yield row('first');
       yield row('plain-http', { applyUrl: 'http://example.test/apply/plain-http' });
+      yield row('unsafe-source-url', { sourceUrl: 'javascript:alert(1)' });
       // Fails collectedJobSchema (description over the 100,000 character limit).
       yield row('oversized', { description: 'x'.repeat(100_001) });
       yield row('last');
@@ -1173,6 +1174,7 @@ test('an http apply link is upgraded and one invalid posting does not end the pr
   const result = await collect(request, signal, provider);
   const ids = result.jobs.map((job) => job.sourceJobId).sort();
   assert.deepEqual(ids, ['first', 'last', 'plain-http']);
+  assert.ok(result.jobs.every((job) => job.sourceUrl.startsWith('https://')));
   const plain = result.jobs.find((job) => job.sourceJobId === 'plain-http');
   assert.equal(plain?.applyUrl, 'https://example.test/apply/plain-http');
   assert.equal(result.outcomes[0]!.accepted, 3);

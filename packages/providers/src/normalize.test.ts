@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { RawJob } from '@careerscope/shared';
+import { jobSchema, type RawJob } from '@careerscope/shared';
 import {
   canonicalCompany,
   canonicalLocation,
@@ -42,6 +42,12 @@ const FULL_JD = [
 ].join('\n');
 
 describe('normalizeJob', () => {
+  it('produces a record that satisfies the canonical job schema', () => {
+    const job = normalizeJob(rawJob({ description: FULL_JD }), { now: NOW });
+
+    expect(jobSchema.parse(job)).toEqual(job);
+  });
+
   it('produces a complete job from a full ATS payload', () => {
     const job = normalizeJob(
       rawJob({
@@ -108,6 +114,21 @@ describe('normalizeJob', () => {
     const job = normalizeJob(rawJob({ applyUrl: '/jobs/4001/apply' }), { now: NOW });
 
     expect(job.applyUrl).toBe('https://boards.greenhouse.io/acme/jobs/4001');
+  });
+
+  it('uses the validated source URL when the apply URL is unsafe', () => {
+    const job = normalizeJob(rawJob({ applyUrl: 'javascript:alert(1)' }), { now: NOW });
+
+    expect(job.sourceUrl).toBe('https://boards.greenhouse.io/acme/jobs/4001');
+    expect(job.applyUrl).toBe(job.sourceUrl);
+  });
+
+  it('rejects provider jobs without an absolute HTTP(S) source URL', () => {
+    for (const sourceUrl of ['/jobs/4001', 'javascript:alert(1)', 'mailto:jobs@example.com', '']) {
+      expect(() => normalizeJob(rawJob({ sourceUrl }), { now: NOW })).toThrow(
+        'Provider greenhouse returned a job with an invalid source URL',
+      );
+    }
   });
 
   it('detects remote from the description when the board does not flag it', () => {
