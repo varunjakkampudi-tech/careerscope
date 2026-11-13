@@ -4,6 +4,12 @@ The Stage 02 rows below retain legacy repository-local numbering and are not can
 
 Each row names the repository behavior, evidence, and remaining gap. Status values: Done (built and tested here), Existing (built earlier and tested), Partial (implemented, with an acceptance gap still open), Gated (disabled by configuration pending required owner or counsel evidence).
 
+## Stage 05: multi-provider job discovery
+
+| Item | Feature                    | Status  | Evidence                                                                                                                                                                                                                                                        | Remaining gap                                                                                                                                                                          |
+| ---- | -------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 5.09 | Cross-source deduplication | Partial | `packages/providers/src/normalize.ts`; `packages/providers/src/normalize.test.ts` cover cross-source merge, deterministic richer-copy selection/backfill, same-source identity, collision disambiguation, stable split IDs, and ambiguous three-way separation. | Two different openings seen only through separate single-result sources can still merge. Broader identity/false-positive acceptance and exact-head CI/review/merge remain outstanding. |
+
 ## Stage 02: authentication, registration and account security
 
 | Item | Feature                                      | Status   | Evidence                                                                                                                                                                                      | Remaining gap                                                                                                                                                                                                           |
