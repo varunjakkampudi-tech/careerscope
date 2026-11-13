@@ -480,6 +480,84 @@ test(
 );
 
 test(
+  'F-024: resume deletion is owner-scoped and keeps database data when object removal fails',
+  { timeout: 60_000 },
+  async () => {
+    await withFixture(async ({ database, uploads, owner, other }) => {
+      let shouldFailRemoval = true;
+      const app = await createApp(database, origin, async () => true, {
+        testAccess: { mode: 'disabled' },
+        resumeStorage: storageStub({
+          delete: async () => {
+            if (shouldFailRemoval) throw new Error('synthetic storage failure');
+          },
+        }),
+      });
+      try {
+        const upload = await uploads.reserve(
+          owner.id,
+          'delete-failure-keeps-data',
+          bucket,
+          metadata,
+        );
+        await uploads.queueStoredUpload(owner.id, upload.id, 'synthetic-version');
+        await database.pool.query(
+          `INSERT INTO resume_results (upload_id, owner_id, command_id, status, parsed)
+           SELECT id, owner_id, command_id, 'parsed', $2::jsonb
+           FROM resume_uploads WHERE id = $1`,
+          [upload.id, JSON.stringify({ name: 'Candidate' })],
+        );
+
+        const foreignDelete = await app.inject({
+          method: 'DELETE',
+          url: `/api/resumes/${upload.id}`,
+          headers: other.headers,
+        });
+        assert.equal(foreignDelete.statusCode, 204);
+        // Foreign and unknown identifiers share a non-enumerating no-op response.
+        const unknownDelete = await app.inject({
+          method: 'DELETE',
+          url: `/api/resumes/${randomUUID()}`,
+          headers: other.headers,
+        });
+        assert.equal(unknownDelete.statusCode, 204);
+        assert.equal(unknownDelete.body, foreignDelete.body);
+        assert.ok(await uploads.get(owner.id, upload.id));
+
+        const failedDelete = await app.inject({
+          method: 'DELETE',
+          url: `/api/resumes/${upload.id}`,
+          headers: owner.headers,
+        });
+        assert.equal(failedDelete.statusCode, 500);
+        assert.ok(await uploads.get(owner.id, upload.id));
+        const retainedResult = await database.pool.query(
+          'SELECT upload_id FROM resume_results WHERE owner_id = $1 AND upload_id = $2',
+          [owner.id, upload.id],
+        );
+        assert.equal(retainedResult.rowCount, 1);
+
+        shouldFailRemoval = false;
+        const successfulDelete = await app.inject({
+          method: 'DELETE',
+          url: `/api/resumes/${upload.id}`,
+          headers: owner.headers,
+        });
+        assert.equal(successfulDelete.statusCode, 204);
+        assert.equal(await uploads.get(owner.id, upload.id), null);
+        const deletedResult = await database.pool.query(
+          'SELECT upload_id FROM resume_results WHERE owner_id = $1 AND upload_id = $2',
+          [owner.id, upload.id],
+        );
+        assert.equal(deletedResult.rowCount, 0);
+      } finally {
+        await app.close();
+      }
+    });
+  },
+);
+
+test(
   'F-023: without the storage cancel capability cancellation is refused and not advertised',
   { timeout: 60_000 },
   async () => {
