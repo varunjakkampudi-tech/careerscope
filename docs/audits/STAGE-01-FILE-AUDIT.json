@@ -505,10 +505,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated after recording the initial exact-head fixture failure and its correction; item acceptance remains pending.",
+      "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated after recording the initial exact-head fixture failure and its correction; item acceptance remains pending. Updated for the conditional exact-SHA review correction; current 204 parity is tested and the old 404 note is explicitly superseded.",
       "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
       "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "529b887725fdf448cbbf4c4ace8afce3b973b8b32781d92c15f43a394a05f5d8",
+      "sha256": "94bfd411da8995a4b5b331d0fdd4f73f91f142847c4bd3a2d931daf5fbd81938",
       "history": [
         {
           "observations": "Reviewed Stage 04 item 4.10 deletion regressions: foreign-owner deletion remains not found; storage failure preserves database rows; successful deletion removes resume and result; cancelling the browser confirmation preserves the version.",
@@ -527,6 +527,12 @@
           "evidence": "Failure: hosted run 43346619700 on 185e9cd921977525ef07904f6e98ee2972d07d75 failed F-024 at resume_results command_id foreign key. Corrected fixture locally; npm run check passed 372/0/3 on this worktree. New exact-head hosted CI pending.",
           "reviewer": "Codex (Stage 04 item 4.10 CI correction)",
           "sha256": "32f00b48fb9c9f658271647f306c4922318066d729f397cc9300ae47cf79b927"
+        },
+        {
+          "observations": "SUPERSEDES the earlier historical note that foreign-owner deletion is not found. The current contract deliberately returns a non-enumerating 204 for both foreign-owner and unknown IDs; regression tests now assert identical response bodies while confirming the owner row remains.",
+          "evidence": "ChatGPT exact-SHA review at 5ed4c58e780cc068e51cd9377fd2dfc7ca25fc44 requested explicit unknown-ID parity. Current implementation adds that assertion. New exact-head CI and final approval pending.",
+          "reviewer": "Codex (Stage 04 item 4.10 review correction)",
+          "sha256": "94bfd411da8995a4b5b331d0fdd4f73f91f142847c4bd3a2d931daf5fbd81938"
         }
       ]
     },
@@ -1942,10 +1948,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated after recording the initial exact-head fixture failure and its correction; item acceptance remains pending.",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated after recording the initial exact-head fixture failure and its correction; item acceptance remains pending. Updated for the conditional exact-SHA review correction; current 204 parity is tested and the old 404 note is explicitly superseded.",
       "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
       "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "b973cd1eafaa1640c58ddcdc4f2ce942407bbb864e857f6d2f631425c0f17323",
+      "sha256": "fdc543e9ca5a7e7ebf96e94b13d6e89a223074cb097bb93a2c516048dbfa56bd",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -1976,6 +1982,12 @@
           "evidence": "Failure: hosted run 43346619700 on 185e9cd921977525ef07904f6e98ee2972d07d75 failed F-024 at resume_results command_id foreign key. Corrected fixture locally; npm run check passed 372/0/3 on this worktree. New exact-head hosted CI pending.",
           "reviewer": "Codex (Stage 04 item 4.10 CI correction)",
           "sha256": "622e0969d60a8df8c9337bc22e58425130d5e3205c313e0f4911969aee0e9a03"
+        },
+        {
+          "observations": "Updated Stage 04 item 4.10 records after conditional exact-SHA review: added explicit random unknown-ID response parity and clarified the superseded historical 404 observation. Item remains partial pending new exact-head CI and final approval.",
+          "evidence": "ChatGPT conditional review was tied to 5ed4c58e780cc068e51cd9377fd2dfc7ca25fc44. This documentation/source revision requires CI and review at its own new SHA.",
+          "reviewer": "Codex (Stage 04 item 4.10 review correction)",
+          "sha256": "fdc543e9ca5a7e7ebf96e94b13d6e89a223074cb097bb93a2c516048dbfa56bd"
         }
       ]
     },
@@ -2022,10 +2034,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated after recording the initial exact-head fixture failure and its correction; item acceptance remains pending.",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated after recording the initial exact-head fixture failure and its correction; item acceptance remains pending. Updated for the conditional exact-SHA review correction; current 204 parity is tested and the old 404 note is explicitly superseded.",
       "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
       "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "671cfcdbc4cbfc911ea22f89cec52a4a7c55002018944ca66c9ca6be2b460780",
+      "sha256": "616d63d84f313fd856fcd480ecf753a2e92c3439eae1d1105b24e9e4e721b4c0",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2056,6 +2068,12 @@
           "evidence": "Failure: hosted run 43346619700 on 185e9cd921977525ef07904f6e98ee2972d07d75 failed F-024 at resume_results command_id foreign key. Corrected fixture locally; npm run check passed 372/0/3 on this worktree. New exact-head hosted CI pending.",
           "reviewer": "Codex (Stage 04 item 4.10 CI correction)",
           "sha256": "d011a48a8c52e3e17bcc1e3d662e0c55a1e729563bd698ff9651522a63110cf7"
+        },
+        {
+          "observations": "Updated Stage 04 item 4.10 records after conditional exact-SHA review: added explicit random unknown-ID response parity and clarified the superseded historical 404 observation. Item remains partial pending new exact-head CI and final approval.",
+          "evidence": "ChatGPT conditional review was tied to 5ed4c58e780cc068e51cd9377fd2dfc7ca25fc44. This documentation/source revision requires CI and review at its own new SHA.",
+          "reviewer": "Codex (Stage 04 item 4.10 review correction)",
+          "sha256": "616d63d84f313fd856fcd480ecf753a2e92c3439eae1d1105b24e9e4e721b4c0"
         }
       ]
     },
@@ -2486,10 +2504,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
+      "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated for the conditional exact-SHA review correction; current 204 parity is tested and the old 404 note is explicitly superseded.",
       "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
       "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "883dfaa604c2fc94b8913b1ec43602e01e9806914a3a963cabc833f2f341acfc",
+      "sha256": "ce04688de306ee7c08ed339cc90f4d690cee02acb16a56bd0ac279774330080c",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2514,6 +2532,12 @@
           "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
           "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
           "sha256": "ac9e962ff57c003cb35d0c1cfb89065dcdf48a9bdc09f150edaedf07d43112c1"
+        },
+        {
+          "observations": "Updated Stage 04 item 4.10 records after conditional exact-SHA review: added explicit random unknown-ID response parity and clarified the superseded historical 404 observation. Item remains partial pending new exact-head CI and final approval.",
+          "evidence": "ChatGPT conditional review was tied to 5ed4c58e780cc068e51cd9377fd2dfc7ca25fc44. This documentation/source revision requires CI and review at its own new SHA.",
+          "reviewer": "Codex (Stage 04 item 4.10 review correction)",
+          "sha256": "ce04688de306ee7c08ed339cc90f4d690cee02acb16a56bd0ac279774330080c"
         }
       ]
     },

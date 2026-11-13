@@ -515,6 +515,13 @@ test(
         });
         assert.equal(foreignDelete.statusCode, 204);
         // Foreign and unknown identifiers share a non-enumerating no-op response.
+        const unknownDelete = await app.inject({
+          method: 'DELETE',
+          url: `/api/resumes/${randomUUID()}`,
+          headers: other.headers,
+        });
+        assert.equal(unknownDelete.statusCode, 204);
+        assert.equal(unknownDelete.body, foreignDelete.body);
         assert.ok(await uploads.get(owner.id, upload.id));
 
         const failedDelete = await app.inject({
