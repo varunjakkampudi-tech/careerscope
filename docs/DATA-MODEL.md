@@ -12,8 +12,11 @@ and parsed status on every save. If a previously linked source is no longer
 available, the API clears its stale source link and field list while preserving
 the candidate's profile values. `resumeImportFields` records the candidate's
 reported selection; it is not a server-verifiable audit record proving that a
-person reviewed each field. These fields are historical import metadata and do
-not claim that later profile edits remain synchronized with that resume.
+person reviewed each field. The candidate chooses a specific parsed resume
+version and the fields to update. The revision-guarded profile save rejects
+stale revisions, so a conflicting change must be reloaded before applying the
+sync. This is a one-time, candidate-controlled update, not continuous
+synchronization after later resume or profile edits.
 
 Candidate application records are stored in `saved_leads`. The optional
 `application_evidence` JSON value records a candidate's own method, reported

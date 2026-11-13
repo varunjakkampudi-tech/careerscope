@@ -38,9 +38,11 @@ function failureText(
 
 export default function ResumePanel({
   csrf,
+  hasSavedProfile,
   onReview,
 }: {
   csrf: string;
+  hasSavedProfile: boolean;
   onReview: (proposal: ResumeProposal, resumeId: string, resumeName: string) => void;
 }) {
   const cache = useQueryClient();
@@ -414,12 +416,18 @@ export default function ResumePanel({
                         const uploadedAt = selectedResume
                           ? new Date(selectedResume.createdAt).toLocaleDateString()
                           : detail.data!.id;
-                        const resumeName = `${uploadedAt} · ${detail.data!.id.slice(0, 8)}`;
+                        const versionName = selectedResume
+                          ? `${selectedResume.targetRole ?? 'Resume'} · Version ${selectedResume.versionNumber}`
+                          : 'Resume';
+                        const resumeName = `${versionName} · ${uploadedAt} · ${detail.data!.id.slice(0, 8)}`;
                         onReview(result.parsed.derived, detail.data!.id, resumeName);
                       }}
                     >
                       <FileText size={17} />
-                      Review profile draft
+                      {localizedText(
+                        locale,
+                        hasSavedProfile ? 'resumeSyncButton' : 'resumeReviewButton',
+                      )}
                     </button>
                     <details>
                       <summary>Extracted text</summary>

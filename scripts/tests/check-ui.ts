@@ -3209,36 +3209,61 @@ try {
         [],
         `${engine}: cancelling an unsaved replacement review must not attribute unrelated fields`,
       );
-      await page.getByRole('button', { name: 'Review profile draft', exact: true }).click();
+      await page.getByRole('button', { name: 'Review profile sync', exact: true }).click();
       await page
         .getByRole('heading', { name: 'Review extracted information', exact: true })
         .waitFor();
+      await page
+        .getByText('Current saved value: Saved Synthetic Candidate', { exact: true })
+        .waitFor();
+      await page.getByText(/Selected resume: Software Engineer · Version 1/).waitFor();
+      await page.getByText(/If the profile changed elsewhere, the save is rejected/).waitFor();
       await page.getByRole('button', { name: 'Cancel review', exact: true }).click();
       assert.equal(
         await page.getByLabel('Full Name', { exact: true }).inputValue(),
         'Saved Synthetic Candidate',
         `${engine}: cancelling a new review must preserve the previously saved profile`,
       );
-      await page.getByRole('button', { name: 'Review profile draft', exact: true }).click();
+      await page.getByRole('button', { name: 'Review profile sync', exact: true }).click();
       await page
         .getByRole('heading', { name: 'Review extracted information', exact: true })
         .waitFor();
+      assert.equal(
+        await page
+          .getByRole('button', { name: 'Apply selected values to profile', exact: true })
+          .isDisabled(),
+        true,
+        `${engine}: resume synchronization must require an explicit field choice`,
+      );
       await page
         .getByLabel('Correct Full Name', { exact: true })
         .fill('Corrected Synthetic Candidate');
-      await page.getByLabel('Use this corrected value in my profile draft').nth(0).check();
+      await page.getByLabel('Use this value to update my profile').nth(0).check();
       await page
         .getByLabel('Correct Skills', { exact: true })
         .fill('React\nTypeScript\nAccessible interfaces');
       const savedProfileSkillsReview = page.getByRole('group', { name: 'Skills', exact: true });
-      await savedProfileSkillsReview
-        .getByLabel('Use this corrected value in my profile draft')
-        .check();
+      await savedProfileSkillsReview.getByLabel('Use this value to update my profile').check();
       await page
-        .getByRole('button', { name: 'Use selected fields in profile draft', exact: true })
+        .getByRole('button', { name: 'Apply selected values to profile', exact: true })
         .click();
       await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
       await page.getByText('Profile saved.', { exact: true }).waitFor();
+      const synchronizedProfile = await new ProfileRepository(database).get(account.rows[0]!.id);
+      assert.equal(
+        synchronizedProfile?.profile.candidate.fullName,
+        'Corrected Synthetic Candidate',
+        `${engine}: selected resume value was not saved to the profile`,
+      );
+      assert.ok(
+        synchronizedProfile?.profile.resumeId,
+        `${engine}: selected resume version was not retained as the sync source`,
+      );
+      assert.deepEqual(
+        synchronizedProfile?.profile.resumeImportFields.sort(),
+        ['fullName', 'techStack'],
+        `${engine}: synchronized field selection was not retained`,
+      );
       await page.goto(`${origin}/dashboard`);
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
       const completenessPanel = page.locator('section[aria-label="Profile completeness"]');

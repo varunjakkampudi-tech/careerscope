@@ -938,6 +938,7 @@ export default function ProfileEditor({
       </div>
       <ResumePanel
         csrf={csrf}
+        hasSavedProfile={profile.data?.profile !== null && profile.data?.profile !== undefined}
         onReview={(derived, resumeId, resumeName) => {
           if (dirty && !window.confirm('Replace unsaved edits with the resume draft?')) return;
           setProposal(undefined);
@@ -966,6 +967,7 @@ export default function ProfileEditor({
           key={generation}
           proposal={proposalForReview}
           sourceName={proposalResumeName}
+          currentProfile={profile.data.profile}
           onApply={(accepted) => {
             if (!proposalResumeId) return;
             setAcceptedResumeImport({

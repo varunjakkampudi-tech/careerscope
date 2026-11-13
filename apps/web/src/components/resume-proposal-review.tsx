@@ -7,13 +7,14 @@ import {
   useInterfaceLocale,
   type InterfaceMessage,
 } from '../lib/locale';
-import type { ResumeProposal } from '../lib/api-schemas';
+import type { ProfileResponse, ResumeProposal } from '../lib/api-schemas';
 import { isValidResumeCorrection } from './resume-proposal-validation';
 import styles from './resume-proposal-review.module.css';
 
 export type AcceptedResumeProposal = Partial<Omit<ResumeProposal, 'experienceClaims'>> & {
   experience?: string[];
 };
+type CurrentProfile = NonNullable<ProfileResponse['profile']>;
 
 type ProposalField = {
   id:
@@ -100,15 +101,39 @@ function proposalFields(proposal: ResumeProposal): ProposalField[] {
   return fields;
 }
 
+function currentProfileValue(profile: CurrentProfile, field: ProposalField['id']): string {
+  switch (field) {
+    case 'fullName':
+    case 'email':
+    case 'phone':
+    case 'location':
+    case 'linkedin':
+    case 'github':
+    case 'portfolio':
+      return profile.candidate[field];
+    case 'techStack':
+    case 'titles':
+      return profile.preferences[field].join('\n');
+    case 'yearsOfExperience':
+      return profile.application.yearsOfExperience?.toString() ?? '';
+    case 'education':
+      return profile.candidate.education.join('\n');
+    case 'experience':
+      return profile.candidate.experience.join('\n');
+  }
+}
+
 export default function ResumeProposalReview({
   proposal,
   sourceName,
+  currentProfile,
   onApply,
   onDirty,
   onCancel,
 }: {
   proposal: ResumeProposal;
   sourceName: string;
+  currentProfile: CurrentProfile | null;
   onApply: (accepted: AcceptedResumeProposal) => void;
   onDirty: () => void;
   onCancel: () => void;
@@ -183,8 +208,14 @@ export default function ResumeProposalReview({
       <p className={styles.source}>
         {localizedValue(locale, 'resumeReviewSelectedSource', sourceName)}
       </p>
-      <p>{localizedText(locale, 'resumeReviewDescription')}</p>
+      <p>
+        {localizedText(
+          locale,
+          currentProfile ? 'resumeSyncDescription' : 'resumeReviewDescription',
+        )}
+      </p>
       <p className={styles.notice}>{localizedText(locale, 'resumeReviewNotice')}</p>
+      {currentProfile && <p role="status">{localizedText(locale, 'resumeSyncConflictPolicy')}</p>}
       {fields.length === 0 ? (
         <p role="status">{localizedText(locale, 'resumeReviewEmpty')}</p>
       ) : (
@@ -197,9 +228,21 @@ export default function ResumeProposalReview({
             const value = values[field.id] ?? '';
             const inputId = `resume-review-${field.id}`;
             const evidence = [...new Set(field.evidence)];
+            const currentValue = currentProfile
+              ? currentProfileValue(currentProfile, field.id)
+              : undefined;
             return (
               <fieldset className={styles.field} key={field.id}>
                 <legend>{label}</legend>
+                {currentValue !== undefined && (
+                  <p className={styles.currentValue}>
+                    {localizedValue(
+                      locale,
+                      'resumeSyncCurrentValue',
+                      currentValue || localizedText(locale, 'resumeSyncEmptyValue'),
+                    )}
+                  </p>
+                )}
                 <label className={styles.accept}>
                   <input
                     type="checkbox"
@@ -213,7 +256,10 @@ export default function ResumeProposalReview({
                       onDirty();
                     }}
                   />
-                  {localizedText(locale, 'resumeReviewUseField')}
+                  {localizedText(
+                    locale,
+                    currentProfile ? 'resumeSyncUseField' : 'resumeReviewUseField',
+                  )}
                 </label>
                 {field.kind === 'list' ? (
                   <textarea
@@ -284,7 +330,7 @@ export default function ResumeProposalReview({
           onClick={apply}
           disabled={selectedCount === 0 || invalidFields.length > 0}
         >
-          {localizedText(locale, 'resumeReviewApply')}
+          {localizedText(locale, currentProfile ? 'resumeSyncApply' : 'resumeReviewApply')}
         </button>
         <button type="button" onClick={onCancel}>
           {localizedText(locale, 'resumeReviewCancel')}

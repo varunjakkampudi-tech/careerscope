@@ -6,7 +6,11 @@
     "sha256": "427aa3fd646d1b27c535d6765411bda924755d1dfc8dae14980d73d03b056045",
     "checklistSha256": "b2fd6bfc97ec7483d7da05e5ffb35ae8c70d42fc2c6548406a9aebd63cc91602"
   },
-  "scopeExclusions": ["Hostinger hosting", "server backups", "production deployment"],
+  "scopeExclusions": [
+    "Hostinger hosting",
+    "server backups",
+    "production deployment"
+  ],
   "itemCount": 328,
   "stageCount": 22,
   "stageItemCounts": {
@@ -41,8 +45,14 @@
       "title": "Complete `dev` branch audit",
       "sourceStatus": "Required",
       "currentStatus": "verified",
-      "evidence": ["docs/audits/STAGE-01-FILE-AUDIT.md", "docs/TRACEABILITY.md"],
-      "tests": ["scripts/ci/check-file-audit.test.mjs", "scripts/ci/check-traceability.test.mjs"],
+      "evidence": [
+        "docs/audits/STAGE-01-FILE-AUDIT.md",
+        "docs/TRACEABILITY.md"
+      ],
+      "tests": [
+        "scripts/ci/check-file-audit.test.mjs",
+        "scripts/ci/check-traceability.test.mjs"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -73,8 +83,13 @@
       "title": "Validate Next.js, Fastify and dependencies",
       "sourceStatus": "Partial",
       "currentStatus": "verified",
-      "evidence": ["docs/operations/TOOLCHAIN.md", "docs/TEST-MATRIX.md"],
-      "tests": ["scripts/ci/check-toolchain.test.mjs"],
+      "evidence": [
+        "docs/operations/TOOLCHAIN.md",
+        "docs/TEST-MATRIX.md"
+      ],
+      "tests": [
+        "scripts/ci/check-toolchain.test.mjs"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -86,8 +101,13 @@
       "title": "Review PostgreSQL/Drizzle architecture",
       "sourceStatus": "Existing, verify",
       "currentStatus": "verified",
-      "evidence": ["docs/architecture/DATABASE-REVIEW.md", "docs/DATA-MODEL.md"],
-      "tests": ["tests/integration/database.integration.test.ts"],
+      "evidence": [
+        "docs/architecture/DATABASE-REVIEW.md",
+        "docs/DATA-MODEL.md"
+      ],
+      "tests": [
+        "tests/integration/database.integration.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -99,8 +119,13 @@
       "title": "Review Redis and workers",
       "sourceStatus": "Existing, verify",
       "currentStatus": "verified",
-      "evidence": ["docs/architecture/REDIS-WORKERS-REVIEW.md", "docs/architecture/OUTBOX.md"],
-      "tests": ["packages/core/src/bull-queue.integration.test.ts"],
+      "evidence": [
+        "docs/architecture/REDIS-WORKERS-REVIEW.md",
+        "docs/architecture/OUTBOX.md"
+      ],
+      "tests": [
+        "packages/core/src/bull-queue.integration.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -112,8 +137,12 @@
       "title": "Transactional outbox verification",
       "sourceStatus": "Existing, verify",
       "currentStatus": "verified",
-      "evidence": ["docs/architecture/OUTBOX.md"],
-      "tests": ["packages/core/src/outbox.integration.test.ts"],
+      "evidence": [
+        "docs/architecture/OUTBOX.md"
+      ],
+      "tests": [
+        "packages/core/src/outbox.integration.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -125,7 +154,10 @@
       "title": "Complete API/OpenAPI contracts",
       "sourceStatus": "Partial",
       "currentStatus": "verified",
-      "evidence": ["docs/architecture/API-OPENAPI-REVIEW.md", "docs/API-SURFACE.md"],
+      "evidence": [
+        "docs/architecture/API-OPENAPI-REVIEW.md",
+        "docs/API-SURFACE.md"
+      ],
       "tests": [
         "apps/api/src/error-handler.test.ts",
         "tests/integration/database.integration.test.ts"
@@ -141,8 +173,12 @@
       "title": "Fix Chromium/browser test failures",
       "sourceStatus": "Required",
       "currentStatus": "verified",
-      "evidence": ["docs/UI-VERIFICATION.md"],
-      "tests": ["scripts/tests/check-ui.ts"],
+      "evidence": [
+        "docs/UI-VERIFICATION.md"
+      ],
+      "tests": [
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -154,8 +190,12 @@
       "title": "Standardize error handling",
       "sourceStatus": "Partial",
       "currentStatus": "verified",
-      "evidence": ["docs/API-SURFACE.md"],
-      "tests": ["apps/api/src/error-handler.test.ts"],
+      "evidence": [
+        "docs/API-SURFACE.md"
+      ],
+      "tests": [
+        "apps/api/src/error-handler.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -167,7 +207,10 @@
       "title": "Eliminate critical technical debt",
       "sourceStatus": "Required",
       "currentStatus": "verified",
-      "evidence": ["docs/architecture/TECHNICAL-DEBT.md", "docs/audits/STAGE-01-FILE-AUDIT.md"],
+      "evidence": [
+        "docs/architecture/TECHNICAL-DEBT.md",
+        "docs/audits/STAGE-01-FILE-AUDIT.md"
+      ],
       "tests": [
         "scripts/ci/check-file-audit.test.mjs",
         "scripts/ci/check-package-scripts.test.mjs"
@@ -183,7 +226,10 @@
       "title": "Enforce engineering standards",
       "sourceStatus": "Partial",
       "currentStatus": "verified",
-      "evidence": ["docs/FOUNDATIONS.md", "docs/TEST-MATRIX.md"],
+      "evidence": [
+        "docs/FOUNDATIONS.md",
+        "docs/TEST-MATRIX.md"
+      ],
       "tests": [
         "scripts/ci/check-file-audit.test.mjs",
         "scripts/ci/check-traceability.test.mjs",
@@ -200,9 +246,16 @@
       "title": "Configure GitHub Actions quality gates",
       "sourceStatus": "Partial",
       "currentStatus": "verified",
-      "evidence": ["docs/FOUNDATIONS.md", "docs/operations/CI-CD.md"],
-      "tests": ["scripts/ci/check-deploy-gate.test.mjs"],
-      "externalEvidence": ["PR #29 exact-SHA CI run 42276531166 passed all three jobs."],
+      "evidence": [
+        "docs/FOUNDATIONS.md",
+        "docs/operations/CI-CD.md"
+      ],
+      "tests": [
+        "scripts/ci/check-deploy-gate.test.mjs"
+      ],
+      "externalEvidence": [
+        "PR #29 exact-SHA CI run 42276531166 passed all three jobs."
+      ],
       "gap": "",
       "scopeDisposition": "in-scope"
     },
@@ -213,7 +266,9 @@
       "title": "Verify `main` ruleset only",
       "sourceStatus": "Required",
       "currentStatus": "verified",
-      "evidence": ["docs/FOUNDATIONS.md"],
+      "evidence": [
+        "docs/FOUNDATIONS.md"
+      ],
       "tests": [],
       "externalEvidence": [
         "Live read-only GitHub rulesets API verification on 2026-11-07; ruleset 26263919."
@@ -264,7 +319,9 @@
         "apps/web/src/components/dashboard-shell.tsx",
         "apps/web/src/components/authenticated-shell.tsx"
       ],
-      "tests": ["scripts/tests/design-system-doc.test.ts"],
+      "tests": [
+        "scripts/tests/design-system-doc.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -276,7 +333,11 @@
       "title": "Resend email OTP",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
       "tests": [
         "packages/core/src/email-otp-delivery.test.ts",
         "apps/api/src/email-otp.integration.test.ts"
@@ -292,8 +353,14 @@
       "title": "Six-digit code",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
-      "tests": ["packages/core/src/email-otp.test.mjs"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/core/src/email-otp.test.mjs"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -305,7 +372,11 @@
       "title": "OTP expiry and single use",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
       "tests": [
         "packages/core/src/email-otp-challenges.clock.test.ts",
         "packages/core/src/otp-challenges.integration.test.ts"
@@ -321,8 +392,15 @@
       "title": "Rate limiting and abuse protection",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
-      "tests": ["apps/api/src/otp-limits.test.ts", "apps/api/src/rate-limit.test.ts"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "apps/api/src/otp-limits.test.ts",
+        "apps/api/src/rate-limit.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -340,7 +418,9 @@
         "docs/PROGRESS.md",
         "docs/AUTHENTICATION.md"
       ],
-      "tests": ["apps/api/src/email-otp.integration.test.ts"],
+      "tests": [
+        "apps/api/src/email-otp.integration.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "Registration remains disabled by default; counsel-approved legal text and public URLs remain a separate gate. Production deployment is excluded.",
       "scopeDisposition": "in-scope"
@@ -375,7 +455,11 @@
       "title": "Session rotation",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
       "tests": [
         "apps/api/src/session-lookup.test.ts",
         "apps/api/src/email-otp.integration.test.ts"
@@ -391,7 +475,11 @@
       "title": "Device/session management",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
       "tests": [
         "apps/api/src/session-lookup.test.ts",
         "apps/api/src/session-logout.integration.test.ts"
@@ -407,8 +495,15 @@
       "title": "Secure email change",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
-      "tests": ["scripts/tests/check-ui.ts", "apps/api/src/email-otp.integration.test.ts"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "scripts/tests/check-ui.ts",
+        "apps/api/src/email-otp.integration.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -420,8 +515,14 @@
       "title": "Account recovery",
       "sourceStatus": "Missing/partial",
       "currentStatus": "partial",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
-      "tests": ["apps/api/src/recovery.integration.test.ts"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "apps/api/src/recovery.integration.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "Native Telugu and Hindi review of recovery copy remains outstanding. The owner selected AI-only review, which did not waive this gap.",
       "scopeDisposition": "in-scope"
@@ -433,7 +534,11 @@
       "title": "Unauthorized access protection",
       "sourceStatus": "Partial",
       "currentStatus": "partial",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
       "tests": [
         "apps/api/src/new-device-alert.integration.test.ts",
         "apps/api/src/otp-limits.test.ts"
@@ -449,8 +554,14 @@
       "title": "Complete authentication UI",
       "sourceStatus": "Partial",
       "currentStatus": "partial",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
-      "tests": ["scripts/tests/check-ui.ts"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
       "gap": "The program stage is recorded complete with this item-level limitation carried forward; see the cited stage evidence.",
       "scopeDisposition": "in-scope"
@@ -462,8 +573,14 @@
       "title": "Production-safe test login restrictions",
       "sourceStatus": "Existing, verify",
       "currentStatus": "verified",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
-      "tests": ["packages/core/src/test-users.test.ts"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/core/src/test-users.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -475,9 +592,17 @@
       "title": "Resend delivery acceptance",
       "sourceStatus": "Unverified",
       "currentStatus": "verified",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
-      "tests": ["packages/core/src/email-otp-delivery.test.ts"],
-      "externalEvidence": ["Live Resend delivery acceptance is recorded in docs/GAP-MATRIX.md."],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/core/src/email-otp-delivery.test.ts"
+      ],
+      "externalEvidence": [
+        "Live Resend delivery acceptance is recorded in docs/GAP-MATRIX.md."
+      ],
       "gap": "",
       "scopeDisposition": "in-scope"
     },
@@ -488,8 +613,13 @@
       "title": "Guided onboarding",
       "sourceStatus": "Partial",
       "currentStatus": "verified",
-      "evidence": ["apps/web/src/components/profile-editor.tsx", "scripts/tests/check-ui.ts"],
-      "tests": ["scripts/tests/check-ui.ts"],
+      "evidence": [
+        "apps/web/src/components/profile-editor.tsx",
+        "scripts/tests/check-ui.ts"
+      ],
+      "tests": [
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [
         "PR #43 merged to dev at merge commit ad7f0f7cf9423f26dda3cdc1e3eb6ce98a171a7e; implementation approved at exact head SHA efb4692fbacc97b90751be0f2f2172516fbe1b94 in the designated ChatGPT review conversation; hosted GitHub Actions run 42346547941 passed all three jobs, including Linux browser and visual checks (0 changed pixels on mobile and desktop)."
       ],
@@ -509,7 +639,10 @@
         "packages/core/src/email-otp-challenges.ts",
         "packages/core/src/auth.ts"
       ],
-      "tests": ["apps/api/src/age-screen.test.ts", "apps/api/src/email-otp.integration.test.ts"],
+      "tests": [
+        "apps/api/src/age-screen.test.ts",
+        "apps/api/src/email-otp.integration.test.ts"
+      ],
       "externalEvidence": [
         "PR #44 hosted run 42348015262 passed Quality gates, Services/integration/browser suites, and Production image build on exact SHA d5e2c724ba12c9454e2db54abd3c3e6cfac31aca; integration coverage verifies under-18 rejection before OTP/account persistence and raw birth-date non-persistence."
       ],
@@ -529,7 +662,9 @@
         "apps/api/src/app.ts",
         "apps/api/src/openapi.ts"
       ],
-      "tests": ["packages/core/src/profile.test.ts"],
+      "tests": [
+        "packages/core/src/profile.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -541,8 +676,13 @@
       "title": "Career stage",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": ["apps/web/src/components/profile-editor.tsx", "packages/core/src/profile.ts"],
-      "tests": ["packages/core/src/profile.test.ts"],
+      "evidence": [
+        "apps/web/src/components/profile-editor.tsx",
+        "packages/core/src/profile.ts"
+      ],
+      "tests": [
+        "packages/core/src/profile.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -554,8 +694,13 @@
       "title": "Education details",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": ["apps/web/src/components/profile-editor.tsx", "packages/core/src/profile.ts"],
-      "tests": ["packages/core/src/profile.test.ts"],
+      "evidence": [
+        "apps/web/src/components/profile-editor.tsx",
+        "packages/core/src/profile.ts"
+      ],
+      "tests": [
+        "packages/core/src/profile.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -765,7 +910,9 @@
       "title": "Candidate verification workflow",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -778,7 +925,9 @@
       "title": "Profile visibility/privacy",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -797,7 +946,10 @@
         "apps/web/src/lib/profile-completeness.ts",
         "apps/web/src/app/(app)/dashboard/page.tsx"
       ],
-      "tests": ["apps/web/src/lib/profile-completeness.test.ts", "scripts/tests/check-ui.ts"],
+      "tests": [
+        "apps/web/src/lib/profile-completeness.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [
         "PR #69 exact head c17ad6dad5e86357d6331d3975edc8339f1921e2 passed hosted CI run 42472764595 on all three jobs; the production image was built but not published.",
         "ChatGPT independently reviewed and approved implementation and tests on exact head c17ad6dad5e86357d6331d3975edc8339f1921e2.",
@@ -861,7 +1013,10 @@
       "title": "PDF processing",
       "sourceStatus": "Existing",
       "currentStatus": "partial",
-      "evidence": ["packages/core/src/resume-parser-child.ts", "packages/resume/src/extract.ts"],
+      "evidence": [
+        "packages/core/src/resume-parser-child.ts",
+        "packages/resume/src/extract.ts"
+      ],
       "tests": [
         "packages/core/src/resumes.integration.test.ts",
         "packages/resume/src/extract.test.ts"
@@ -914,7 +1069,10 @@
         "packages/matching/src/context.test.ts",
         "tests/integration/database.integration.test.ts"
       ],
-      "tests": ["packages/resume/src/derive.test.ts", "packages/shared/src/schemas.test.ts"],
+      "tests": [
+        "packages/resume/src/derive.test.ts",
+        "packages/shared/src/schemas.test.ts"
+      ],
       "externalEvidence": [
         "GitHub Actions run 42581255959 completed successfully on exact PR head 9a1c46fc9060e30eef58475b6f0f5cdf381ecdc3: Quality gates, production image build (not published), and services/integration/browser suites all passed.",
         "GitHub Actions run 42585568281 completed successfully on exact PR head 8734dae78e83470350b45094da9a57ef5176d644: Quality gates, production image build (not published), and services/integration/browser suites all passed. A subsequent review found a technology-evidence provenance issue and the branch was updated; this run does not validate the later correction.",
@@ -939,7 +1097,9 @@
         "apps/web/src/components/resume-panel.tsx",
         "apps/web/src/components/profile-editor.tsx"
       ],
-      "tests": ["scripts/tests/check-ui.ts"],
+      "tests": [
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
       "gap": "Candidates can read extracted text and preview a profile draft, but there is no full document preview, accessible rendered-document navigation, or acceptance test for resume review behavior.",
       "scopeDisposition": "in-scope"
@@ -1000,7 +1160,7 @@
         "apps/web/src/components/resume-proposal-validation.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Candidate-side correction and explicit field selection are implemented on codex/stage04-item408-manual-corrections. Every save validates attached resume ownership and parsed status; unavailable retained sources clear stale source metadata while preserving candidate values. resumeImportFields is candidate-reported selection metadata, not proof of human review. Browser coverage exercises keyboard selection, corrected-field application, cancelling an unsaved replacement review, and cancelling a new review without changing saved profile data; API regression coverage checks retained-valid, unavailable-new, foreign-owner, and stale-retained source branches. The exact 76812b2e3afc914d3a3670e446fee11e5afe2648 hosted run passed quality and image jobs but browser acceptance failed while looking up the correction field. Local investigation confirmed the persisted parser result contains the name; a localized placeholder mismatch caused the missing accessible label, and event handlers reading currentTarget in deferred state updaters caused a React error on checkbox/value changes. The follow-up fixes both, adds a parser-result assertion and localization regressions, and corrects stale browser assertions for parsed-resume status, confirm-dialog handling, and required onboarding fields. Local production build and Chromium browser, axe, keyboard, responsive, and profile persistence checks passed on Node 22.23.2; locale tests passed 9/9; formatting, lint, and typecheck passed (four existing lint warnings). Exact-head hosted CI and independent review remain pending. Telugu/Hindi translations are AI-assisted and native-speaker review is outstanding. Independent review at exact SHA 4be19f2d4d086af3275dd0ac638282c57b570f41 requested fixes for half-year number step validation and destination profile limits. Follow-up now validates against shared candidate, preferences and application field schemas, blocks invalid corrections, and adds localized accessible field errors. Focused validation and locale tests passed 13/13 and typecheck passed locally. The local browser rerun failed PostgreSQL authentication (28P01); hosted exact-head browser acceptance and independent re-review remain pending. Telugu/Hindi native-speaker review is outstanding; item remains partial. Hosted run 43168678740 on a93faa97b1b0d628b6b25bccae568836a59cd6f2 failed Quality gates because the new client validator lacked the required zod-config import before @careerscope/shared; the production image build passed and browser job remained in progress. The setup import is now first; focused config-order/validator tests pass 6/6 and typecheck passes. A new exact-head CI run and independent re-review remain pending. Latest exact-head evidence: SHA d9afd234e7e5da846089a53d7e860b8c785ace38 passed hosted run 43169443046 (Quality gates, production image build, and services/integration/browser); independent ChatGPT engineering review approved the implementation at that exact SHA. Performance, soak, recovery, and passive notification lifecycle checks were skipped; local UI testing hit disposable PostgreSQL authentication failure (28P01). Candidate-selected resumeImportFields does not establish independent verification. Telugu/Hindi copy remains AI-assisted without native-speaker review, so item 4.08 remains partial. Pre-documentation implementation SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d passed automatic run 43270750798 (Quality, production image, Services/integration/browser) and manual run 43270545677 (Quality, PostgreSQL/Redis integration, browser/axe/keyboard/responsive, performance regression, soak and recovery; manual image build skipped); independent review approved that implementation/test delta. Earlier documentation-only revisions fdfa69a81fcecb6f6753722c1a79c34170e1af2f and 14cb770a5d5f6a2f75ba78c534b1c89d00e5125d were superseded after provenance corrections; their exact-head workflows were cancelled. Live documentation closeout CI/review status is tracked on PR #83 (https://github.com/varunjakkampudi-tech/careerscope/pull/83). Status remains partial pending explicit owner acceptance of the AI-only Telugu/Hindi limitation for this item, merge, and post-merge verification; no translation accuracy is certified.",
+      "gap": "Candidate-side correction and explicit field selection are implemented on codex/stage04-item408-manual-corrections. Every save validates attached resume ownership and parsed status; unavailable retained sources clear stale source metadata while preserving candidate values. resumeImportFields is candidate-reported selection metadata, not proof of human review. Browser coverage exercises keyboard selection, corrected-field application, cancelling an unsaved replacement review, and cancelling a new review without changing saved profile data; API regression coverage checks retained-valid, unavailable-new, foreign-owner, and stale-retained source branches. The exact 76812b2e3afc914d3a3670e446fee11e5afe2648 hosted run passed quality and image jobs but browser acceptance failed while looking up the correction field. Local investigation confirmed the persisted parser result contains the name; a localized placeholder mismatch caused the missing accessible label, and event handlers reading currentTarget in deferred state updaters caused a React error on checkbox/value changes. The follow-up fixes both, adds a parser-result assertion and localization regressions, and corrects stale browser assertions for parsed-resume status, confirm-dialog handling, and required onboarding fields. Local production build and Chromium browser, axe, keyboard, responsive, and profile persistence checks passed on Node 22.23.2; locale tests passed 9/9; formatting, lint, and typecheck passed (four existing lint warnings). Exact-head hosted CI and independent review remain pending. Telugu/Hindi translations are AI-assisted and native-speaker review is outstanding. Independent review at exact SHA 4be19f2d4d086af3275dd0ac638282c57b570f41 requested fixes for half-year number step validation and destination profile limits. Follow-up now validates against shared candidate, preferences and application field schemas, blocks invalid corrections, and adds localized accessible field errors. Focused validation and locale tests passed 13/13 and typecheck passed locally. The local browser rerun failed PostgreSQL authentication (28P01); hosted exact-head browser acceptance and independent re-review remain pending. Telugu/Hindi native-speaker review is outstanding; item remains partial. Hosted run 43168678740 on a93faa97b1b0d628b6b25bccae568836a59cd6f2 failed Quality gates because the new client validator lacked the required zod-config import before @careerscope/shared; the production image build passed and browser job remained in progress. The setup import is now first; focused config-order/validator tests pass 6/6 and typecheck passes. A new exact-head CI run and independent re-review remain pending. Latest exact-head evidence: SHA d9afd234e7e5da846089a53d7e860b8c785ace38 passed hosted run 43169443046 (Quality gates, production image build, and services/integration/browser); independent ChatGPT engineering review approved the implementation at that exact SHA. Performance, soak, recovery, and passive notification lifecycle checks were skipped; local UI testing hit disposable PostgreSQL authentication failure (28P01). Candidate-selected resumeImportFields does not establish independent verification. Telugu/Hindi copy remains AI-assisted without native-speaker review, so item 4.08 remains partial. Pre-documentation implementation SHA 76d88673ffce923c30d7924a736f9f3bbc30f11d passed automatic run 43270750798 (Quality, production image, Services/integration/browser) and manual run 43270545677 (Quality, PostgreSQL/Redis integration, browser/axe/keyboard/responsive, performance regression, soak and recovery; manual image build skipped); independent review approved that implementation/test delta. Earlier documentation-only revisions fdfa69a81fcecb6f6753722c1a79c34170e1af2f and 14cb770a5d5f6a2f75ba78c534b1c89d00e5125d were superseded after provenance corrections; their exact-head workflows were cancelled. Live documentation closeout CI/review status is tracked on PR #83 (https://github.com/varunjakkampudi-tech/careerscope/pull/83). Status remains partial pending explicit owner acceptance of the AI-only Telugu/Hindi limitation for this item, merge, and post-merge verification; no translation accuracy is certified. Exact-head CI run 43357944430 passed on PR #83 head b98d88a5c0ec789265ae8a918e362ee2d54b4b0e, and focused exact-SHA engineering review approved the source/test delta. Item remains partial pending owner acceptance of its AI-only Telugu/Hindi review limitation, authorized merge and post-merge verification.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1009,11 +1169,17 @@
       "stageTitle": "Resume management and parsing",
       "title": "Profile synchronization",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["apps/web/src/components/profile-editor.tsx", "packages/core/src/profile.ts"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/profile-editor.tsx",
+        "apps/web/src/components/resume-panel.tsx",
+        "apps/web/src/components/resume-proposal-review.tsx"
+      ],
+      "tests": [
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "No explicit profile synchronization action/version/conflict policy exists for parsed resume data; manual profile-form population is not synchronization.",
+      "gap": "Candidate-controlled one-time sync is implemented: the candidate chooses a parsed resume version and fields, compares saved values, and saves against the current profile revision; conflicts require reload and no automatic merge occurs. Local npm run check passed on Node 24.22.1 (378 passed, 0 failed, 3 skipped). Chromium acceptance did not start because PostgreSQL authentication failed (28P01), so exact-head hosted CI and browser acceptance remain pending, as do independent review, merge and post-merge verification. Sync is not continuous. Telugu/Hindi copy is AI-assisted without native-speaker validation; the 4.08 language gate remains separate. PR #89 is synchronized with the current PR #83 base head b98d88a5c0ec789265ae8a918e362ee2d54b4b0e; exact-head CI and independent review for the synchronized stack remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1048,8 +1214,14 @@
       "title": "Resume quality diagnostics",
       "sourceStatus": "New",
       "currentStatus": "partial",
-      "evidence": ["packages/resume/src/extract.ts", "apps/web/src/components/resume-panel.tsx"],
-      "tests": ["packages/resume/src/extract.test.ts", "packages/resume/src/derive.test.ts"],
+      "evidence": [
+        "packages/resume/src/extract.ts",
+        "apps/web/src/components/resume-panel.tsx"
+      ],
+      "tests": [
+        "packages/resume/src/extract.test.ts",
+        "packages/resume/src/derive.test.ts"
+      ],
       "externalEvidence": [],
       "gap": "Parser reports rejected/corrupt/unsupported/oversized inputs, but no candidate-facing quality diagnostics (missing sections, readability or actionable quality report) is implemented.",
       "scopeDisposition": "in-scope"
@@ -1081,7 +1253,9 @@
       "title": "Existing provider adapters",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1094,7 +1268,9 @@
       "title": "JSearch, where permitted",
       "sourceStatus": "Verify",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1107,7 +1283,9 @@
       "title": "Greenhouse",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1120,7 +1298,9 @@
       "title": "Lever",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1133,7 +1313,9 @@
       "title": "Ashby",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1146,7 +1328,9 @@
       "title": "Workday, where authorized",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1159,7 +1343,9 @@
       "title": "Official company career feeds",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1172,7 +1358,9 @@
       "title": "Job normalization",
       "sourceStatus": "Existing, expand",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1185,7 +1373,9 @@
       "title": "Cross-source deduplication",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1198,7 +1388,9 @@
       "title": "Salary/location/experience normalization",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1211,7 +1403,9 @@
       "title": "Provider provenance",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1224,7 +1418,9 @@
       "title": "Expired-job handling",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1237,7 +1433,9 @@
       "title": "Provider retries and circuit breakers",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1250,7 +1448,9 @@
       "title": "Search pagination",
       "sourceStatus": "New/enhancement",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1263,7 +1463,9 @@
       "title": "Source health monitoring",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1276,7 +1478,9 @@
       "title": "First-seen/last-seen timestamps",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1289,7 +1493,9 @@
       "title": "Repost tracking",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1302,7 +1508,9 @@
       "title": "Employer domain checks",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1315,7 +1523,9 @@
       "title": "Source verification",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1328,7 +1538,9 @@
       "title": "Duplicate listing detection",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1341,7 +1553,9 @@
       "title": "Expired/broken application links",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1354,7 +1568,9 @@
       "title": "Suspicious URL detection",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1367,7 +1583,9 @@
       "title": "Recruitment scam indicators",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1380,7 +1598,9 @@
       "title": "Job-trust evidence",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1393,7 +1613,9 @@
       "title": "Candidate reporting",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1406,7 +1628,9 @@
       "title": "Moderator review",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1419,7 +1643,9 @@
       "title": "False-positive monitoring",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1432,7 +1658,9 @@
       "title": "Job-trust indicators in UI",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1445,7 +1673,9 @@
       "title": "Deterministic scoring",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1458,7 +1688,9 @@
       "title": "Skill matching",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1471,7 +1703,9 @@
       "title": "Experience matching",
       "sourceStatus": "Existing/partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1484,7 +1718,9 @@
       "title": "Education eligibility",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1497,7 +1733,9 @@
       "title": "Location fit",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1510,7 +1748,9 @@
       "title": "Industry/domain fit",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1523,7 +1763,9 @@
       "title": "Compensation fit",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1536,7 +1778,9 @@
       "title": "Required vs preferred skills",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1549,7 +1793,9 @@
       "title": "Missing-skills explanation",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1562,7 +1808,9 @@
       "title": "Match dimension visualization",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1575,7 +1823,9 @@
       "title": "Versioned matching weights",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1588,7 +1838,9 @@
       "title": "Candidate profile change triggers",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1601,7 +1853,9 @@
       "title": "`pgvector` evaluation",
       "sourceStatus": "Conditional",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1614,7 +1868,9 @@
       "title": "Semantic job similarity",
       "sourceStatus": "Conditional",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1627,7 +1883,9 @@
       "title": "Hybrid ranking",
       "sourceStatus": "Conditional",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1640,7 +1898,9 @@
       "title": "Relevance and fairness evaluation",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1653,7 +1913,9 @@
       "title": "Job search UI",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1666,7 +1928,9 @@
       "title": "Advanced filtering",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1679,7 +1943,9 @@
       "title": "Match/trust sorting",
       "sourceStatus": "New/enhancement",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1692,7 +1958,9 @@
       "title": "Saved searches",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1705,7 +1973,9 @@
       "title": "Search history",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1718,7 +1988,9 @@
       "title": "SSE progress streaming",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1731,7 +2003,9 @@
       "title": "Incremental job results",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1744,7 +2018,9 @@
       "title": "Reconnection/replay",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1757,7 +2033,9 @@
       "title": "Search cancellation",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1770,7 +2048,9 @@
       "title": "Partial-provider failure states",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1783,7 +2063,9 @@
       "title": "Mobile job cards",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1796,7 +2078,9 @@
       "title": "Keyboard-first search",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1809,7 +2093,9 @@
       "title": "Saved jobs",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1822,7 +2108,9 @@
       "title": "Notes and archives",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1835,7 +2123,9 @@
       "title": "Official application links",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1848,7 +2138,9 @@
       "title": "Candidate-confirmed applications",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1861,7 +2153,9 @@
       "title": "Application status tracking",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1874,7 +2168,9 @@
       "title": "Evidence/history",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1887,7 +2183,9 @@
       "title": "Withdrawal",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1900,7 +2198,9 @@
       "title": "CSV export",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1913,7 +2213,9 @@
       "title": "Employer acknowledgements",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1926,7 +2228,9 @@
       "title": "Follow-up reminders",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1939,7 +2243,9 @@
       "title": "Interview/offer status",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1952,7 +2258,9 @@
       "title": "Duplicate application warnings",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1965,7 +2273,9 @@
       "title": "Application analytics",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1978,7 +2288,9 @@
       "title": "Mobile application workflow",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -1991,7 +2303,9 @@
       "title": "Resume templates",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2004,7 +2318,9 @@
       "title": "Resume builder",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2017,7 +2333,9 @@
       "title": "Job-specific variants",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2030,7 +2348,9 @@
       "title": "ATS formatting analysis",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2043,7 +2363,9 @@
       "title": "Job/resume keyword comparison",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2056,7 +2378,9 @@
       "title": "Missing-skills view",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2069,7 +2393,9 @@
       "title": "AI bullet rewriting",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2082,7 +2408,9 @@
       "title": "Split-screen editor",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2095,7 +2423,9 @@
       "title": "Before/after comparison",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2108,7 +2438,9 @@
       "title": "Candidate approval",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2121,7 +2453,9 @@
       "title": "Role-specific PDF export",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2134,7 +2468,9 @@
       "title": "Cover letter generation",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2147,7 +2483,9 @@
       "title": "Application-answer assistance",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2160,7 +2498,9 @@
       "title": "AI quotas/cost controls",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2173,7 +2513,9 @@
       "title": "Hallucination prevention/evaluation",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2186,7 +2528,9 @@
       "title": "Interview organizer",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2199,7 +2543,9 @@
       "title": "Interview rounds",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2212,7 +2558,9 @@
       "title": "Contacts and notes",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2225,7 +2573,9 @@
       "title": "Preparation checklists",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2238,7 +2588,9 @@
       "title": "Interview reminders",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2251,7 +2603,9 @@
       "title": "Job-specific questions",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2264,7 +2618,9 @@
       "title": "Technical preparation",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2277,7 +2633,9 @@
       "title": "Behavioral preparation",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2290,7 +2648,9 @@
       "title": "System design exercises",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2303,7 +2663,9 @@
       "title": "AI mock interviews",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2316,7 +2678,9 @@
       "title": "Voice interview coaching",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2329,7 +2693,9 @@
       "title": "Interview feedback",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2342,7 +2708,9 @@
       "title": "Calendar integration",
       "sourceStatus": "Conditional",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2355,7 +2723,9 @@
       "title": "Offer comparison",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2368,7 +2738,9 @@
       "title": "In-app notification foundation",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2381,7 +2753,9 @@
       "title": "Job-match alerts",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2394,7 +2768,9 @@
       "title": "Saved-search alerts",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2407,7 +2783,9 @@
       "title": "Application reminders",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2420,7 +2798,9 @@
       "title": "Interview reminders",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2433,7 +2813,9 @@
       "title": "Recruiter notifications",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2446,7 +2828,9 @@
       "title": "Email notifications",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2459,7 +2843,9 @@
       "title": "Notification preferences",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2472,7 +2858,9 @@
       "title": "Quiet hours/digests",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2485,7 +2873,9 @@
       "title": "Localization",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2498,7 +2888,9 @@
       "title": "Scheduled workflow processing",
       "sourceStatus": "New/enhancement",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2511,7 +2903,9 @@
       "title": "Gmail read-only integration",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2524,7 +2918,9 @@
       "title": "Outlook read-only integration",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2537,7 +2933,9 @@
       "title": "Application email classification",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2550,7 +2948,9 @@
       "title": "Interview/rejection/offer detection",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2563,7 +2963,9 @@
       "title": "Candidate-approved status updates",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2576,7 +2978,9 @@
       "title": "Consent, revocation and deletion",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2589,7 +2993,9 @@
       "title": "Recruiter registration",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2602,7 +3008,9 @@
       "title": "Employer identity verification",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2615,7 +3023,9 @@
       "title": "Company profiles",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2628,7 +3038,9 @@
       "title": "Recruiter dashboard",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2641,7 +3053,9 @@
       "title": "Job creation/drafts",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2654,7 +3068,9 @@
       "title": "Job approval/publishing",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2667,7 +3083,9 @@
       "title": "Edit/pause/expire postings",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2680,7 +3098,9 @@
       "title": "Applicant review",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2693,7 +3113,9 @@
       "title": "Consenting candidate search",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2706,7 +3128,9 @@
       "title": "Candidate matching",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2719,7 +3143,9 @@
       "title": "Invitations and messaging",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2732,7 +3158,9 @@
       "title": "Talent pipeline",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2745,7 +3173,9 @@
       "title": "Interview scheduling",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2758,7 +3188,9 @@
       "title": "Recruiting analytics",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2771,7 +3203,9 @@
       "title": "Team permissions",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2784,7 +3218,9 @@
       "title": "Employer audit history",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2797,7 +3233,9 @@
       "title": "Verified referrer identity",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2810,7 +3248,9 @@
       "title": "Company associations",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2823,7 +3263,9 @@
       "title": "Referral availability",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2836,7 +3278,9 @@
       "title": "Candidate referral requests",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2849,7 +3293,9 @@
       "title": "Consent-based introductions",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2862,7 +3308,9 @@
       "title": "Referral messaging",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2875,7 +3323,9 @@
       "title": "Approval/rejection",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2888,7 +3338,9 @@
       "title": "Abuse protection",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2901,7 +3353,9 @@
       "title": "Referral outcome tracking",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2914,7 +3368,9 @@
       "title": "Revocation and deletion",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2927,7 +3383,9 @@
       "title": "Employer salary ranges",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2940,7 +3398,9 @@
       "title": "Currency normalization",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2953,7 +3413,9 @@
       "title": "Base/bonus/equity breakdown",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2966,7 +3428,9 @@
       "title": "Source attribution",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2979,7 +3443,9 @@
       "title": "Data freshness/confidence",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -2992,7 +3458,9 @@
       "title": "Candidate salary preferences",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3005,7 +3473,9 @@
       "title": "Compensation match dimension",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3018,7 +3488,9 @@
       "title": "Offer comparison",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3031,7 +3503,9 @@
       "title": "Salary benchmarks",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3044,7 +3518,9 @@
       "title": "Negotiation guidance",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3057,7 +3533,9 @@
       "title": "Skill-gap recommendations",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3070,7 +3548,9 @@
       "title": "Career insights dashboard",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3083,7 +3563,9 @@
       "title": "Market trends",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3096,7 +3578,9 @@
       "title": "Admin authentication and MFA",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3109,7 +3593,9 @@
       "title": "Admin/super-admin RBAC",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3122,7 +3608,9 @@
       "title": "Admin dashboard",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3135,7 +3623,9 @@
       "title": "User management",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3148,7 +3638,9 @@
       "title": "Candidate verification",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3161,7 +3653,9 @@
       "title": "Employer verification",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3174,7 +3668,9 @@
       "title": "Job moderation",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3187,7 +3683,9 @@
       "title": "Fraud investigation",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3200,7 +3698,9 @@
       "title": "Complaints and appeals",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3213,7 +3713,9 @@
       "title": "Privacy requests",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3226,7 +3728,9 @@
       "title": "CMS",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3239,7 +3743,9 @@
       "title": "Platform analytics",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3252,7 +3758,9 @@
       "title": "Job provider management",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3265,7 +3773,9 @@
       "title": "Queue/notification health",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3278,7 +3788,9 @@
       "title": "Feature flags",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3291,7 +3803,9 @@
       "title": "Audit logs",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3304,7 +3818,9 @@
       "title": "AI usage/billing management",
       "sourceStatus": "Conditional",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3317,7 +3833,9 @@
       "title": "Release status dashboard",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3330,7 +3848,9 @@
       "title": "Approved CareerScope branding",
       "sourceStatus": "Existing",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3343,7 +3863,9 @@
       "title": "Shared design system",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3356,7 +3878,9 @@
       "title": "Premium light/dark mode",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3369,7 +3893,9 @@
       "title": "Responsive dashboards",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3382,7 +3908,9 @@
       "title": "High-quality job cards",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3395,7 +3923,9 @@
       "title": "Matching visuals",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3408,7 +3938,9 @@
       "title": "`Ctrl/Cmd + K` palette",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3421,7 +3953,9 @@
       "title": "Keyboard shortcuts",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3434,7 +3968,9 @@
       "title": "Split-screen resume workspace",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3447,7 +3983,9 @@
       "title": "Contextual interview drawers",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3460,7 +3998,9 @@
       "title": "Smooth motion",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3473,7 +4013,9 @@
       "title": "Loading/error/empty states",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3486,7 +4028,9 @@
       "title": "English",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3499,7 +4043,9 @@
       "title": "Telugu",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3512,7 +4058,9 @@
       "title": "Hindi",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3525,7 +4073,9 @@
       "title": "Mobile/tablet layouts",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3538,7 +4088,9 @@
       "title": "WCAG 2.2 AA",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3551,7 +4103,9 @@
       "title": "Screen-reader testing",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3564,7 +4118,9 @@
       "title": "Visual screenshot parity",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3577,7 +4133,9 @@
       "title": "Cross-browser compatibility",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3590,7 +4148,9 @@
       "title": "Landing page",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3603,7 +4163,9 @@
       "title": "Features",
       "sourceStatus": "Design available",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3616,7 +4178,9 @@
       "title": "How it works",
       "sourceStatus": "Design available",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3629,7 +4193,9 @@
       "title": "About",
       "sourceStatus": "Design available",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3642,7 +4208,9 @@
       "title": "Contact/feedback",
       "sourceStatus": "Design available",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3655,7 +4223,9 @@
       "title": "Resources/blog",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3668,7 +4238,9 @@
       "title": "Privacy policy",
       "sourceStatus": "Approval needed",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3681,7 +4253,9 @@
       "title": "Terms",
       "sourceStatus": "Approval needed",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3694,7 +4268,9 @@
       "title": "Public rights-cleared job pages",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3707,7 +4283,9 @@
       "title": "SEO metadata",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3720,7 +4298,9 @@
       "title": "Sitemap and canonical URLs",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3733,7 +4313,9 @@
       "title": "Structured job data",
       "sourceStatus": "Gated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3746,7 +4328,9 @@
       "title": "Expired posting handling",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3759,7 +4343,9 @@
       "title": "Grievance processes",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3772,7 +4358,9 @@
       "title": "Data export/deletion",
       "sourceStatus": "Partial",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3785,7 +4373,9 @@
       "title": "TypeScript, ESLint, Prettier",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3798,7 +4388,9 @@
       "title": "Unit and domain tests",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3811,7 +4403,9 @@
       "title": "API/integration tests",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3824,7 +4418,9 @@
       "title": "Database/migration tests",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3837,7 +4433,9 @@
       "title": "Redis/worker/outbox tests",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3850,7 +4448,9 @@
       "title": "API contract tests",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3863,7 +4463,9 @@
       "title": "Security/privacy tests",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3876,7 +4478,9 @@
       "title": "Cross-browser E2E tests",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3889,7 +4493,9 @@
       "title": "Accessibility testing",
       "sourceStatus": "Automated + manual",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3902,7 +4508,9 @@
       "title": "Responsive/device checks",
       "sourceStatus": "Automated + manual",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3915,7 +4523,9 @@
       "title": "SSE/concurrency tests",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3928,7 +4538,9 @@
       "title": "Failure injection",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3941,7 +4553,9 @@
       "title": "Provider mock testing",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3954,7 +4568,9 @@
       "title": "AI output evaluations",
       "sourceStatus": "When enabled",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3967,7 +4583,9 @@
       "title": "Performance/load testing",
       "sourceStatus": "Required",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3980,7 +4598,9 @@
       "title": "Dependency and secret scanning",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -3993,7 +4613,9 @@
       "title": "GitHub Actions CI",
       "sourceStatus": "`dev` and `main`",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4006,7 +4628,9 @@
       "title": "Scheduled regression/security checks",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4019,7 +4643,9 @@
       "title": "Test artifact/report collection",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4032,7 +4658,9 @@
       "title": "Test environment isolation/cleanup",
       "sourceStatus": "Automated",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4045,7 +4673,9 @@
       "title": "Candidate registration → onboarding",
       "sourceStatus": "Pass",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4058,7 +4688,9 @@
       "title": "Resume → parsing → matching",
       "sourceStatus": "Pass",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4071,7 +4703,9 @@
       "title": "Job discovery → trust evaluation",
       "sourceStatus": "Pass",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4084,7 +4718,9 @@
       "title": "Match review → resume tailoring",
       "sourceStatus": "Pass if enabled",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4097,7 +4733,9 @@
       "title": "Application → interview → outcome",
       "sourceStatus": "Pass",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4110,7 +4748,9 @@
       "title": "Notifications and automation",
       "sourceStatus": "Pass",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4123,7 +4763,9 @@
       "title": "Recruiter verification → job posting",
       "sourceStatus": "Pass",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4136,7 +4778,9 @@
       "title": "Candidate interaction → recruitment pipeline",
       "sourceStatus": "Pass",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4149,7 +4793,9 @@
       "title": "Admin verification and moderation",
       "sourceStatus": "Pass",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4162,7 +4808,9 @@
       "title": "Authorization and privacy",
       "sourceStatus": "Pass",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4175,7 +4823,9 @@
       "title": "Browser/device accessibility",
       "sourceStatus": "Pass",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4188,7 +4838,9 @@
       "title": "Error/failure journeys",
       "sourceStatus": "Pass",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4201,7 +4853,9 @@
       "title": "Final regression suite",
       "sourceStatus": "Pass",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4214,7 +4868,9 @@
       "title": "Independent quality review",
       "sourceStatus": "Complete",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4227,7 +4883,9 @@
       "title": "Semantic versioning",
       "sourceStatus": "Required",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4240,7 +4898,9 @@
       "title": "Automated changelog",
       "sourceStatus": "Required",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4253,7 +4913,9 @@
       "title": "Release candidate workflow",
       "sourceStatus": "Required",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4266,7 +4928,9 @@
       "title": "Full release regression",
       "sourceStatus": "Required",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4279,7 +4943,9 @@
       "title": "Build artifacts",
       "sourceStatus": "Required",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4292,7 +4958,9 @@
       "title": "Version/tag validation",
       "sourceStatus": "Required",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4305,7 +4973,9 @@
       "title": "Checksums and artifact manifest",
       "sourceStatus": "Required",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4318,7 +4988,9 @@
       "title": "Dependency inventory/SBOM",
       "sourceStatus": "Required",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4331,7 +5003,9 @@
       "title": "Automated release notes",
       "sourceStatus": "Required",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4344,7 +5018,9 @@
       "title": "Failed-release blocking",
       "sourceStatus": "Required",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4357,7 +5033,9 @@
       "title": "Protected `main` integration",
       "sourceStatus": "Owner approval",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Later stage not started; the owner roadmap requires separate approval or authorization for this item.",
@@ -4370,7 +5048,9 @@
       "title": "GitHub Release publication",
       "sourceStatus": "Owner authorization",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Later stage not started; the owner roadmap requires separate approval or authorization for this item.",
@@ -4383,7 +5063,9 @@
       "title": "Release evidence retention",
       "sourceStatus": "Required",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4396,7 +5078,9 @@
       "title": "Rollback/version compatibility documentation",
       "sourceStatus": "Required",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4409,7 +5093,9 @@
       "title": "Complete feature matrix",
       "sourceStatus": "Yes",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4422,7 +5108,9 @@
       "title": "Requirements-to-code mapping",
       "sourceStatus": "Yes",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4435,7 +5123,9 @@
       "title": "Requirements-to-test mapping",
       "sourceStatus": "Yes",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4448,7 +5138,9 @@
       "title": "Candidate journey report",
       "sourceStatus": "Yes",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4461,7 +5153,9 @@
       "title": "Recruiter journey report",
       "sourceStatus": "Yes",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4474,7 +5168,9 @@
       "title": "Admin journey report",
       "sourceStatus": "Yes",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4487,7 +5183,9 @@
       "title": "Security audit",
       "sourceStatus": "Yes",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4500,7 +5198,9 @@
       "title": "Accessibility report",
       "sourceStatus": "Yes",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4513,7 +5213,9 @@
       "title": "Performance report",
       "sourceStatus": "Yes",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4526,7 +5228,9 @@
       "title": "CI validation evidence",
       "sourceStatus": "Yes",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4539,7 +5243,9 @@
       "title": "Release candidate artifact report",
       "sourceStatus": "Yes",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4552,7 +5258,9 @@
       "title": "Blocker and gated-feature report",
       "sourceStatus": "Yes",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4565,7 +5273,9 @@
       "title": "Final engineering review",
       "sourceStatus": "Yes",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4578,7 +5288,9 @@
       "title": "Completion percentage",
       "sourceStatus": "Evidence-based",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
@@ -4591,7 +5303,9 @@
       "title": "Final release-readiness conclusion",
       "sourceStatus": "Yes",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": [
+        "docs/PROGRESS.md"
+      ],
       "tests": [],
       "externalEvidence": [],
       "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",

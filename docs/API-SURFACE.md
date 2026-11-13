@@ -229,6 +229,10 @@ profile stores `resumeId` and the `resumeImportFields` they explicitly accepted.
 For a newly selected source, the API checks that the upload belongs to the
 authenticated owner and has a parsed result. This records import provenance;
 it does not automatically synchronize later resume changes into the profile.
+For an explicit resume-to-profile sync, the candidate selects a parsed resume
+version and individual values to apply, then saves through this same revisioned
+profile endpoint. A stale revision returns the standard conflict response; no
+automatic merge is attempted.
 
 The candidate profile may include the explicitly selected career segment
 `student`, `fresher`, or `experienced`. It is optional for legacy profiles and
