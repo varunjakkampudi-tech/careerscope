@@ -1171,7 +1171,7 @@
       "title": "Cross-source deduplication",
       "sourceStatus": "Partial",
       "currentStatus": "partial",
-      "evidence": ["packages/providers/src/normalize.ts", "docs/KNOWN-LIMITATIONS.md"],
+      "evidence": ["packages/providers/src/normalize.ts", "docs/GAP-MATRIX.md"],
       "tests": ["packages/providers/src/normalize.test.ts"],
       "externalEvidence": [],
       "gap": "Existing deterministic dedupeJobs behavior groups normalized fingerprints, collapses exact same-source/sourceJobId refetches, merges cross-source copies, preserves distinct requisitions when one source proves multiplicity, assigns stable split identities, and keeps ambiguous three-way cases separate. normalize.test.ts covers these cases. Known limitation: two distinct openings seen only once each through separate sources can still be merged because no source proves multiplicity. This is existing dev behavior; broader identity and false-positive acceptance, exact-head CI/review and merge lifecycle remain outstanding. No live source was queried or provider activated.",

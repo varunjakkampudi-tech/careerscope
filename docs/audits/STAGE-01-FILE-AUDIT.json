@@ -2002,12 +2002,6 @@
           "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
           "reviewer": "Codex (Stage 04 item 4.10 closeout)",
           "sha256": "dfa5320ed0f63ac9aac51df12296ebe346727dfd567ea57ff1d5d1c90bc08c6f"
-        },
-        {
-          "observations": "Recorded owner item 4.10 final exact-SHA review approval, PR #90 merge and successful post-merge verification; inventory is 42/328 with sourceStatus Partial preserved.",
-          "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
-          "reviewer": "Codex (Stage 04 item 4.10 closeout)",
-          "sha256": "dfa5320ed0f63ac9aac51df12296ebe346727dfd567ea57ff1d5d1c90bc08c6f"
         }
       ]
     },
@@ -2094,12 +2088,6 @@
           "evidence": "ChatGPT conditional review was tied to 5ed4c58e780cc068e51cd9377fd2dfc7ca25fc44. This documentation/source revision requires CI and review at its own new SHA.",
           "reviewer": "Codex (Stage 04 item 4.10 review correction)",
           "sha256": "616d63d84f313fd856fcd480ecf753a2e92c3439eae1d1105b24e9e4e721b4c0"
-        },
-        {
-          "observations": "Updated item 4.10 with exact-head CI attempt 2, final approval, merge commit and post-merge CI evidence; item scope and skipped push-only image build are stated precisely.",
-          "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
-          "reviewer": "Codex (Stage 04 item 4.10 closeout)",
-          "sha256": "d4565a161c6a4d0dabb3f25b502b789a0dde5f56ec798b9f6362d2267cf041a9"
         },
         {
           "observations": "Updated item 4.10 with exact-head CI attempt 2, final approval, merge commit and post-merge CI evidence; item scope and skipped push-only image build are stated precisely.",
@@ -2536,10 +2524,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 05 item 5.09 evidence and recorded its verified existing behavior and unresolved false-positive limitation without marking the checklist item complete.",
-      "evidence": "Documentation review on codex/stage05-item509-deduplication; item 5.09 remains partial pending broader identity acceptance and exact-head CI/review/merge.",
-      "reviewer": "Codex (Stage 05 item 5.09 evidence review)",
-      "sha256": "4c48cab69332f8230f285be52b221ac1d2cfe6a5ebedcfef975c3b080997d712",
+      "observations": "Corrected Stage 05 item 5.09 evidence link to the gap matrix, which records the known cross-source false-positive limitation; item remains partial.",
+      "evidence": "Documentation review on codex/stage05-item509-deduplication; this record remains subject to exact-head CI/review and merge.",
+      "reviewer": "Codex (Stage 05 item 5.09 evidence correction)",
+      "sha256": "82d50a6da61a24e18d8a90cba6f068ae805952a2686667bc2d569dd039686fc0",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2578,10 +2566,10 @@
           "sha256": "2dd62fad43450f9c3b64011c274c06b4d329149aba8571b6452e8ada0928a083"
         },
         {
-          "observations": "Marked owner item 4.10 verified after exact-SHA review approval, successful exact-head CI, merge to dev and successful post-merge CI; sourceStatus Partial remains unchanged.",
-          "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
-          "reviewer": "Codex (Stage 04 item 4.10 closeout)",
-          "sha256": "2dd62fad43450f9c3b64011c274c06b4d329149aba8571b6452e8ada0928a083"
+          "observations": "Reviewed the Stage 05 item 5.09 evidence and recorded its verified existing behavior and unresolved false-positive limitation without marking the checklist item complete.",
+          "evidence": "Documentation review on codex/stage05-item509-deduplication; item 5.09 remains partial pending broader identity acceptance and exact-head CI/review/merge.",
+          "reviewer": "Codex (Stage 05 item 5.09 evidence review)",
+          "sha256": "4c48cab69332f8230f285be52b221ac1d2cfe6a5ebedcfef975c3b080997d712"
         }
       ]
     },
