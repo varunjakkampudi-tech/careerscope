@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, ImagePlus, LoaderCircle, RefreshCw, Save, Trash2 } from 'lucide-react';
-import type { ApplicationDetails, WritableProfile } from '@careerscope/shared';
+import type { ApplicationDetails, ResumeImportField, WritableProfile } from '@careerscope/shared';
 import { apiJson, apiParsed, offersDiscardAndReload } from '../lib/api';
 import { parseProfileResponse, type ProfileResponse } from '../lib/api-schemas';
+import { localizedText, useInterfaceLocale } from '../lib/locale';
 import { PROFILE_PHOTO_UPDATED_EVENT } from '../lib/profile-photo';
 import { useOwner, ownerKey } from '../lib/session';
 import styles from './profile-editor.module.css';
 import ResumePanel, { type ResumeProposal } from './resume-panel';
+import ResumeProposalReview, { type AcceptedResumeProposal } from './resume-proposal-review';
 import { ErrorState, LoadingState } from './ui-states';
 
 const maximumProfilePhotoUploadBytes = 5 * 1024 * 1024;
@@ -38,13 +40,17 @@ function ProfileForm({
   record,
   proposal,
   csrf,
+  resumeId,
+  resumeImportFields,
   onSaved,
   onDirty,
   onReload,
 }: {
   record: ProfileResponse;
-  proposal?: ResumeProposal;
+  proposal?: AcceptedResumeProposal;
   csrf: string;
+  resumeId: string | null;
+  resumeImportFields: ResumeImportField[];
   onSaved: (record: ProfileResponse) => void;
   onDirty: () => void;
   onReload: () => void;
@@ -92,23 +98,27 @@ function ProfileForm({
     ...record.profile?.candidate,
     ...(proposal
       ? Object.fromEntries(
-          ['fullName', 'email', 'phone', 'location', 'linkedin', 'github', 'portfolio'].flatMap(
-            (field) => {
-              const value = proposal[field as keyof ResumeProposal];
-              return typeof value === 'string' && value ? [[field, value]] : [];
-            },
-          ),
+          (
+            ['fullName', 'email', 'phone', 'location', 'linkedin', 'github', 'portfolio'] as const
+          ).flatMap((field) => {
+            const value = proposal[field];
+            return Object.hasOwn(proposal, field) && typeof value === 'string'
+              ? [[field, value]]
+              : [];
+          }),
         )
       : {}),
+    ...(proposal?.education !== undefined ? { education: proposal.education } : {}),
+    ...(proposal?.experience !== undefined ? { experience: proposal.experience } : {}),
   };
   const preferences = {
     ...record.profile?.preferences,
-    ...(proposal?.techStack.length ? { techStack: proposal.techStack } : {}),
-    ...(proposal?.titles.length ? { titles: proposal.titles } : {}),
+    ...(proposal?.techStack !== undefined ? { techStack: proposal.techStack } : {}),
+    ...(proposal?.titles !== undefined ? { titles: proposal.titles } : {}),
   };
   const application = {
     ...record.profile?.application,
-    ...(proposal?.yearsOfExperience != null
+    ...(proposal?.yearsOfExperience !== undefined
       ? { yearsOfExperience: proposal.yearsOfExperience }
       : {}),
   };
@@ -287,6 +297,8 @@ function ProfileForm({
       accessibility: {
         reducedMotion: data.has('reducedMotion'),
       },
+      resumeId,
+      resumeImportFields,
     });
   }
   return (
@@ -860,10 +872,18 @@ export default function ProfileEditor({
   const cache = useQueryClient();
   // CS-61: owner-scoped query keys. Present exactly when authenticated.
   const owner = useOwner();
+  const locale = useInterfaceLocale();
   const [dirty, setDirty] = useState(false);
   const [saved, setSaved] = useState(false);
   const [generation, setGeneration] = useState(0);
-  const [proposal, setProposal] = useState<ResumeProposal>();
+  const [proposal, setProposal] = useState<AcceptedResumeProposal>();
+  const [proposalForReview, setProposalForReview] = useState<ResumeProposal>();
+  const [proposalResumeId, setProposalResumeId] = useState<string>();
+  const [proposalResumeName, setProposalResumeName] = useState('');
+  const [acceptedResumeImport, setAcceptedResumeImport] = useState<{
+    resumeId: string;
+    fields: ResumeImportField[];
+  }>();
   useEffect(() => {
     if (!dirty) return;
     const preventUnload = (event: BeforeUnloadEvent) => {
@@ -892,6 +912,10 @@ export default function ProfileEditor({
     const result = await profile.refetch();
     if (result.isSuccess) {
       setProposal(undefined);
+      setProposalForReview(undefined);
+      setProposalResumeId(undefined);
+      setProposalResumeName('');
+      setAcceptedResumeImport(undefined);
       setDirty(false);
       onDirty(false);
       setSaved(false);
@@ -914,12 +938,16 @@ export default function ProfileEditor({
       </div>
       <ResumePanel
         csrf={csrf}
-        onReview={(derived) => {
+        onReview={(derived, resumeId, resumeName) => {
           if (dirty && !window.confirm('Replace unsaved edits with the resume draft?')) return;
-          setProposal(derived);
+          setProposal(undefined);
+          setAcceptedResumeImport(undefined);
+          setProposalForReview(derived);
+          setProposalResumeId(resumeId);
+          setProposalResumeName(resumeName);
           setGeneration((value) => value + 1);
-          setDirty(true);
-          onDirty(true);
+          setDirty(false);
+          onDirty(false);
           setSaved(false);
         }}
       />
@@ -933,12 +961,51 @@ export default function ProfileEditor({
             Retry
           </button>
         </div>
+      ) : proposalForReview ? (
+        <ResumeProposalReview
+          key={generation}
+          proposal={proposalForReview}
+          sourceName={proposalResumeName}
+          onApply={(accepted) => {
+            if (!proposalResumeId) return;
+            setAcceptedResumeImport({
+              resumeId: proposalResumeId,
+              fields: Object.keys(accepted) as ResumeImportField[],
+            });
+            setProposal(accepted);
+            setProposalForReview(undefined);
+            setProposalResumeId(undefined);
+            setGeneration((value) => value + 1);
+            setDirty(true);
+            onDirty(true);
+          }}
+          onDirty={() => {
+            setDirty(true);
+            onDirty(true);
+          }}
+          onCancel={() => {
+            if (dirty && !window.confirm(localizedText(locale, 'resumeReviewDiscardConfirm')))
+              return;
+            setProposalForReview(undefined);
+            setProposalResumeId(undefined);
+            setProposalResumeName('');
+            setProposal(undefined);
+            setAcceptedResumeImport(undefined);
+            setGeneration((value) => value + 1);
+            setDirty(false);
+            onDirty(false);
+          }}
+        />
       ) : (
         <ProfileForm
           key={`${profile.data.revision}:${generation}`}
           record={profile.data}
           proposal={proposal}
           csrf={csrf}
+          resumeId={acceptedResumeImport?.resumeId ?? profile.data.profile?.resumeId ?? null}
+          resumeImportFields={
+            acceptedResumeImport?.fields ?? profile.data.profile?.resumeImportFields ?? []
+          }
           onDirty={() => {
             setDirty(true);
             onDirty(true);
@@ -947,6 +1014,7 @@ export default function ProfileEditor({
           onReload={reload}
           onSaved={(record) => {
             setProposal(undefined);
+            setAcceptedResumeImport(undefined);
             cache.setQueryData(ownerKey(owner, 'profile'), record);
             cache.setQueryData(ownerKey(owner, 'profile-accessibility'), {
               reducedMotion: record.profile?.accessibility?.reducedMotion ?? false,

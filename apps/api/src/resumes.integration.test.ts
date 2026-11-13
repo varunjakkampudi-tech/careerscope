@@ -85,6 +85,130 @@ const storageStub = (overrides: Partial<NonNullable<Storage>> = {}): NonNullable
 });
 
 test(
+  'profile import provenance is owner-scoped, requires a parsed resume, and persists accepted fields',
+  { timeout: 60_000 },
+  async () => {
+    await withFixture(async ({ database, uploads, owner, other }) => {
+      const app = await createApp(database, origin, async () => true, {
+        testAccess: { mode: 'disabled' },
+        resumeStorage: storageStub(),
+      });
+      try {
+        const upload = await uploads.reserve(owner.id, 'profile-import-source', bucket, metadata);
+        await uploads.queueStoredUpload(owner.id, upload.id, 'synthetic-version');
+        await database.pool.query(
+          `INSERT INTO resume_results (upload_id, owner_id, command_id, status, parsed)
+           VALUES ($1, $2, $3, 'parsed', $4::jsonb)`,
+          [
+            upload.id,
+            owner.id,
+            (await uploads.get(owner.id, upload.id))!.commandId,
+            JSON.stringify({
+              format: 'docx',
+              text: 'Example Candidate React Engineer with relevant software experience',
+              derived: { techStack: ['React'], yearsOfExperience: 3 },
+            }),
+          ],
+        );
+        const profile = {
+          candidate: {
+            fullName: 'Example Candidate',
+            email: 'owner@example.test',
+            location: 'Hyderabad',
+          },
+          preferences: { titles: ['React Engineer'], techStack: ['React'] },
+          application: {},
+          resumeId: upload.id,
+          resumeImportFields: ['fullName', 'techStack'],
+        };
+        const accepted = await app.inject({
+          method: 'PUT',
+          url: '/api/profile',
+          headers: owner.headers,
+          payload: { revision: 0, profile },
+        });
+        assert.equal(accepted.statusCode, 200, accepted.body);
+        assert.equal(accepted.json().profile.resumeId, upload.id);
+        assert.deepEqual(accepted.json().profile.resumeImportFields, ['fullName', 'techStack']);
+
+        const retainedEdit = await app.inject({
+          method: 'PUT',
+          url: '/api/profile',
+          headers: owner.headers,
+          payload: {
+            revision: accepted.json().revision,
+            profile: {
+              ...accepted.json().profile,
+              candidate: { ...accepted.json().profile.candidate, location: 'Pune, India' },
+            },
+          },
+        });
+        assert.equal(retainedEdit.statusCode, 200, retainedEdit.body);
+        assert.equal(retainedEdit.json().profile.resumeId, upload.id);
+        assert.deepEqual(retainedEdit.json().profile.resumeImportFields, ['fullName', 'techStack']);
+
+        const newUnavailableSource = await app.inject({
+          method: 'PUT',
+          url: '/api/profile',
+          headers: owner.headers,
+          payload: {
+            revision: retainedEdit.json().revision,
+            profile: { ...retainedEdit.json().profile, resumeId: randomUUID() },
+          },
+        });
+        assert.equal(newUnavailableSource.statusCode, 409);
+        const unchangedAfterRejection = await app.inject({
+          url: '/api/profile',
+          headers: owner.headers,
+        });
+        assert.equal(unchangedAfterRejection.json().revision, retainedEdit.json().revision);
+        assert.equal(unchangedAfterRejection.json().profile.resumeId, upload.id);
+        assert.equal(unchangedAfterRejection.json().profile.candidate.location, 'Pune, India');
+
+        const forged = await app.inject({
+          method: 'PUT',
+          url: '/api/profile',
+          headers: other.headers,
+          payload: { revision: 0, profile },
+        });
+        assert.equal(forged.statusCode, 409);
+        assert.equal(
+          (await app.inject({ url: '/api/profile', headers: other.headers })).json().profile,
+          null,
+        );
+
+        await database.pool.query('DELETE FROM resume_results WHERE upload_id = $1', [upload.id]);
+        const updatedWithoutAvailableSource = await app.inject({
+          method: 'PUT',
+          url: '/api/profile',
+          headers: owner.headers,
+          payload: {
+            revision: retainedEdit.json().revision,
+            profile: {
+              ...retainedEdit.json().profile,
+              candidate: { ...retainedEdit.json().profile.candidate, location: 'Pune, India' },
+            },
+          },
+        });
+        assert.equal(
+          updatedWithoutAvailableSource.statusCode,
+          200,
+          updatedWithoutAvailableSource.body,
+        );
+        assert.equal(
+          updatedWithoutAvailableSource.json().profile.candidate.location,
+          'Pune, India',
+        );
+        assert.equal(updatedWithoutAvailableSource.json().profile.resumeId, null);
+        assert.deepEqual(updatedWithoutAvailableSource.json().profile.resumeImportFields, []);
+      } finally {
+        await app.close();
+      }
+    });
+  },
+);
+
+test(
   'F-021: the authenticated upload endpoint queues bounded PDF and DOCX bytes idempotently and keeps them owner-scoped',
   { timeout: 60_000 },
   async () => {

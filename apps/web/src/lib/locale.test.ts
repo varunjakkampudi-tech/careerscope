@@ -29,6 +29,45 @@ test('shared navigation and reminder messages are present for each supported lan
   assert.notEqual(localizedText('en', 'jobs'), localizedText('hi', 'jobs'));
 });
 
+test('resume correction review copy is localized and names its selected source', () => {
+  const keys = [
+    'resumeReviewHeading',
+    'resumeReviewDescription',
+    'resumeReviewNotice',
+    'resumeReviewUseField',
+    'resumeReviewSource',
+    'resumeReviewApply',
+    'resumeReviewCancel',
+    'resumeReviewInvalidField',
+    'resumeReviewSelectedSource',
+    'resumeReviewField_fullName',
+    'resumeReviewField_techStack',
+    'resumeReviewField_education',
+    'resumeReviewField_experience',
+  ] as const;
+  for (const key of keys) {
+    const translations = interfaceLocales.map((locale) => localizedText(locale, key));
+    assert.ok(
+      translations.every((value) => value.trim().length > 0),
+      key,
+    );
+    assert.equal(new Set(translations).size, interfaceLocales.length, key);
+  }
+  assert.equal(
+    localizedValue('en', 'resumeReviewSelectedSource', 'synthetic.docx'),
+    'Selected resume: synthetic.docx',
+  );
+  assert.equal(localizedValue('en', 'resumeReviewCorrectField', 'Full Name'), 'Correct Full Name');
+  assert.equal(
+    localizedValue('te', 'resumeReviewCorrectField', 'పూర్తి పేరు'),
+    'పూర్తి పేరు సరిచేయండి',
+  );
+  assert.equal(localizedValue('hi', 'resumeReviewCorrectField', 'पूरा नाम'), 'पूरा नाम सुधारें');
+  assert.match(localizedValue('en', 'resumeReviewInvalidField', 'Skills'), /Skills/);
+  assert.match(localizedValue('te', 'resumeReviewInvalidField', 'నైపుణ్యాలు'), /నైపుణ్యాలు/);
+  assert.match(localizedValue('hi', 'resumeReviewInvalidField', 'कौशल'), /कौशल/);
+});
+
 test('privacy notice acknowledgement copy does not imply acceptance in supported languages', () => {
   const label = (locale: (typeof interfaceLocales)[number]) =>
     [
