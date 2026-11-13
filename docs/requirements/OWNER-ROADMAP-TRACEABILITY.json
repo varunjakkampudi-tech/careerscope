@@ -869,7 +869,7 @@
       "externalEvidence": [
         "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
       ],
-      "gap": "Existing implementation and test evidence are present, but item-specific checklist criteria have not yet completed the sequential review and exact-commit approval gate.",
+      "gap": "Existing owner-scoped deletion removes stored objects and parse results transactionally; added regressions assert foreign-owner and random unknown IDs return identical non-enumerating 204 responses, storage failure atomicity, successful database cleanup and confirmation dismissal. Local quality/type/unit checks pass. Exact-head hosted PostgreSQL/Redis integration and browser CI, final item-specific approval, merge and post-merge verification remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1008,7 +1008,7 @@
       "stageTitle": "Resume management and parsing",
       "title": "Resume deletion",
       "sourceStatus": "Partial",
-      "currentStatus": "partial",
+      "currentStatus": "verified",
       "evidence": [
         "apps/api/src/app.ts",
         "packages/core/src/resumes.ts",
@@ -1020,9 +1020,11 @@
         "packages/core/src/resumes.integration.test.ts"
       ],
       "externalEvidence": [
-        "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
+        "ChatGPT final exact-SHA approval: https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece",
+        "GitHub Actions run 43349595125 attempt 2 passed Quality gates, Production image build, and Services/integration/browser suites on exact PR head 47977417038eb172dd22a043a8cfca7dbfd6deb8.",
+        "PR #90 merged to dev as f11c50714f1840f43263010257e617b0294ce733; post-merge run 43352484181 passed Quality gates and Services/integration/browser on that exact merge SHA. Production image build was skipped for the dev push."
       ],
-      "gap": "Existing implementation and test evidence are present, but item-specific checklist criteria have not yet completed the sequential review and exact-commit approval gate.",
+      "gap": "",
       "scopeDisposition": "in-scope"
     },
     {
