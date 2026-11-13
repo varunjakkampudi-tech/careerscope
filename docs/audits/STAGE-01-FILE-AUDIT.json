@@ -508,7 +508,7 @@
       "observations": "Reviewed F-025 lifecycle regressions for rejected, cancelled and deleted versions, owner isolation, idempotency, sequential allocation and concurrent appends. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated after recording the initial exact-head fixture failure and its correction; item acceptance remains pending.",
       "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
       "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "32f00b48fb9c9f658271647f306c4922318066d729f397cc9300ae47cf79b927",
+      "sha256": "529b887725fdf448cbbf4c4ace8afce3b973b8b32781d92c15f43a394a05f5d8",
       "history": [
         {
           "observations": "Reviewed Stage 04 item 4.10 deletion regressions: foreign-owner deletion remains not found; storage failure preserves database rows; successful deletion removes resume and result; cancelling the browser confirmation preserves the version.",
@@ -1945,7 +1945,7 @@
       "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated after recording the initial exact-head fixture failure and its correction; item acceptance remains pending.",
       "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
       "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "622e0969d60a8df8c9337bc22e58425130d5e3205c313e0f4911969aee0e9a03",
+      "sha256": "b973cd1eafaa1640c58ddcdc4f2ce942407bbb864e857f6d2f631425c0f17323",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2025,7 +2025,7 @@
       "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated after recording the initial exact-head fixture failure and its correction; item acceptance remains pending.",
       "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
       "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "d011a48a8c52e3e17bcc1e3d662e0c55a1e729563bd698ff9651522a63110cf7",
+      "sha256": "671cfcdbc4cbfc911ea22f89cec52a4a7c55002018944ca66c9ca6be2b460780",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2489,7 +2489,7 @@
       "observations": "Recorded exact-head approval, merge to dev, and successful post-merge verification for owner item 4.07; currentStatus verified and sourceStatus Partial preserved. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
       "evidence": "ChatGPT approved PR #82 head 8b8d1f0ae3ec57c1a4db9e83233297704d63375d; exact-head run 43246817636 passed all three required jobs. PR merged as 39278d0a88acaa31458c028bca38e1411001b925; post-merge run 43249523028 passed Quality gates and Services/integration/browser, image job skipped on push. Prior record retained in history.",
       "reviewer": "Codex (Stage 04 item 4.07 closeout)",
-      "sha256": "ac9e962ff57c003cb35d0c1cfb89065dcdf48a9bdc09f150edaedf07d43112c1",
+      "sha256": "883dfaa604c2fc94b8913b1ec43602e01e9806914a3a963cabc833f2f341acfc",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",

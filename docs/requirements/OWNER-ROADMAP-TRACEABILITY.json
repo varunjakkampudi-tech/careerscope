@@ -869,7 +869,7 @@
       "externalEvidence": [
         "Hosted `dev` run 42558636661 passed Quality gates and Services/integration/browser suites on exact SHA 8aa281c85a7d7950fa8bbfcd9706686be84a1808; the image build was skipped for the `dev` push."
       ],
-      "gap": "Existing owner-scoped deletion removes stored objects and parse results transactionally; added regressions cover foreign-owner rejection, storage failure atomicity, successful database cleanup and confirmation dismissal. Local quality/type/unit checks pass. Exact-head hosted PostgreSQL/Redis integration and browser CI, independent item-specific approval, merge and post-merge verification remain pending.",
+      "gap": "Existing owner-scoped deletion removes stored objects and parse results transactionally; added regressions cover the non-enumerating foreign-owner no-op, storage failure atomicity, successful database cleanup and confirmation dismissal. Local quality/type/unit checks pass. Exact-head hosted PostgreSQL/Redis integration and browser CI, independent item-specific approval, merge and post-merge verification remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
