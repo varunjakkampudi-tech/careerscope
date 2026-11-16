@@ -7,6 +7,8 @@
  *
  *   - **Retry with backoff**, on the statuses that are genuinely transient and
  *     no others. A 404 is an answer; retrying it just wastes the user's time.
+ *   - **Per-host circuit breaking**, so repeated exhausted transient failures
+ *     pause a failing host and allow one recovery probe after a short cooldown.
  *   - **Per-host pacing.** Requests to the same host are spaced by a minimum
  *     interval, so fanning out over 200 Greenhouse boards does not look like an
  *     attack and does not earn a ban.
@@ -23,7 +25,8 @@
 export type FetchLike = (url: string, init: RequestInit) => Promise<Response>;
 
 /** `http` is a non-2xx status or bad body, `aborted` is caller cancellation, `too-large` is the body cap. */
-export type HttpErrorKind = 'http' | 'network' | 'timeout' | 'aborted' | 'too-large';
+export type HttpErrorKind =
+  'http' | 'network' | 'timeout' | 'aborted' | 'too-large' | 'circuit-open';
 
 /**
  * Every failure out of this module is an `HttpError`, so provider code has one
@@ -93,6 +96,10 @@ export interface HttpClientOptions {
   /** First backoff step; doubles per attempt up to `maxBackoffMs`. */
   baseBackoffMs?: number;
   maxBackoffMs?: number;
+  /** Consecutive exhausted transient request cycles before a host circuit opens. */
+  circuitBreakerThreshold?: number;
+  /** How long a host remains open before one recovery probe is allowed. */
+  circuitBreakerResetMs?: number;
   cacheTtlMs?: number;
   maxCacheEntries?: number;
   maxBytes?: number;
@@ -140,6 +147,8 @@ const DEFAULTS = {
   minIntervalMs: 250,
   baseBackoffMs: 500,
   maxBackoffMs: 15_000,
+  circuitBreakerThreshold: 5,
+  circuitBreakerResetMs: 30_000,
   cacheTtlMs: 10 * 60 * 1000,
   maxCacheEntries: 500,
   maxBytes: 8 * 1024 * 1024,
@@ -156,6 +165,14 @@ const RETRYABLE_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
 interface CacheEntry {
   expiresAt: number;
   response: HttpResponse;
+}
+
+interface CircuitState {
+  generation: number;
+  failureRevision: number;
+  consecutiveFailures: number;
+  openUntil: number | null;
+  probeInFlight: boolean;
 }
 
 /**
@@ -176,6 +193,8 @@ export class HttpClient {
       | 'minIntervalMs'
       | 'baseBackoffMs'
       | 'maxBackoffMs'
+      | 'circuitBreakerThreshold'
+      | 'circuitBreakerResetMs'
       | 'cacheTtlMs'
       | 'maxCacheEntries'
       | 'maxBytes'
@@ -188,6 +207,8 @@ export class HttpClient {
   private readonly inFlight = new Map<string, Promise<HttpResponse>>();
   /** Tail of the pacing chain per host. */
   private readonly hostGate = new Map<string, Promise<void>>();
+  /** Consecutive transient request-cycle failures and recovery state per host. */
+  private readonly circuits = new Map<string, CircuitState>();
 
   constructor(options: HttpClientOptions = {}) {
     this.fetchImpl = options.fetch ?? ((url, init) => fetch(url, init));
@@ -201,6 +222,8 @@ export class HttpClient {
       minIntervalMs: options.minIntervalMs ?? DEFAULTS.minIntervalMs,
       baseBackoffMs: options.baseBackoffMs ?? DEFAULTS.baseBackoffMs,
       maxBackoffMs: options.maxBackoffMs ?? DEFAULTS.maxBackoffMs,
+      circuitBreakerThreshold: options.circuitBreakerThreshold ?? DEFAULTS.circuitBreakerThreshold,
+      circuitBreakerResetMs: options.circuitBreakerResetMs ?? DEFAULTS.circuitBreakerResetMs,
       cacheTtlMs: options.cacheTtlMs ?? DEFAULTS.cacheTtlMs,
       maxCacheEntries: options.maxCacheEntries ?? DEFAULTS.maxCacheEntries,
       maxBytes: options.maxBytes ?? DEFAULTS.maxBytes,
@@ -342,37 +365,135 @@ export class HttpClient {
     body: string | undefined,
     options: RequestOptions,
   ): Promise<HttpResponse> {
+    const host = hostOf(url);
+    const circuitAtAdmission = this.circuits.get(host);
+    const circuitGeneration = circuitAtAdmission?.generation ?? 0;
+    const failureRevision = circuitAtAdmission?.failureRevision ?? 0;
+    const halfOpenProbe = this.enterCircuit(host, url);
     const retries = options.retries ?? this.config.retries;
     let lastError: HttpError | undefined;
+    let completed = false;
 
-    for (let attempt = 0; attempt <= retries; attempt += 1) {
-      if (options.signal?.aborted) throw abortError(url);
+    try {
+      for (let attempt = 0; attempt <= retries; attempt += 1) {
+        if (options.signal?.aborted) throw abortError(url);
 
-      try {
-        return await this.attempt(method, url, body, options);
-      } catch (error) {
-        if (isAbortError(error) && options.signal?.aborted) throw error;
+        try {
+          const response = await this.attempt(method, url, body, options);
+          if (RETRYABLE_STATUSES.has(response.status)) {
+            this.recordCircuitFailure(host, circuitGeneration);
+          } else {
+            this.recordCircuitSuccess(host, circuitGeneration, failureRevision);
+          }
+          completed = true;
+          return response;
+        } catch (error) {
+          if (isAbortError(error) && options.signal?.aborted) throw error;
 
-        const failure =
-          error instanceof HttpError
-            ? error
-            : new HttpError(describe(error), {
-                kind: 'network',
-                url,
-                retryable: true,
-                cause: error,
-              });
+          const failure =
+            error instanceof HttpError
+              ? error
+              : new HttpError(describe(error), {
+                  kind: 'network',
+                  url,
+                  retryable: true,
+                  cause: error,
+                });
 
-        if (!failure.retryable || attempt === retries) throw failure;
-        lastError = failure;
+          if (!failure.retryable || attempt === retries) throw failure;
+          lastError = failure;
 
-        await this.sleep(this.backoffFor(attempt, failure), options.signal);
+          await this.sleep(this.backoffFor(attempt, failure), options.signal);
+        }
       }
-    }
 
-    // Unreachable: the loop either returns or throws. Kept so the signature is
-    // honest to the compiler rather than relying on a non-null assertion.
-    throw lastError ?? new HttpError('request failed', { kind: 'network', url });
+      // Unreachable: the loop either returns or throws. Kept so the signature is
+      // honest to the compiler rather than relying on a non-null assertion.
+      throw lastError ?? new HttpError('request failed', { kind: 'network', url });
+    } catch (error) {
+      const failure =
+        error instanceof HttpError
+          ? error
+          : new HttpError(describe(error), {
+              kind: 'network',
+              url,
+              retryable: true,
+              cause: error,
+            });
+      if (failure.retryable) this.recordCircuitFailure(host, circuitGeneration);
+      else if (failure.kind === 'http' || failure.kind === 'too-large') {
+        this.recordCircuitSuccess(host, circuitGeneration, failureRevision);
+      }
+      throw failure;
+    } finally {
+      if (halfOpenProbe && !completed) this.releaseCircuitProbe(host, circuitGeneration);
+    }
+  }
+
+  private enterCircuit(host: string, url: string): boolean {
+    const state = this.circuits.get(host);
+    if (!state?.openUntil) return false;
+
+    const remaining = state.openUntil - this.now();
+    if (remaining > 0) throw this.circuitOpenError(url, remaining);
+    if (state.probeInFlight) throw this.circuitOpenError(url, 0);
+
+    state.probeInFlight = true;
+    return true;
+  }
+
+  private recordCircuitFailure(host: string, requestGeneration: number): void {
+    const state = this.circuits.get(host) ?? {
+      generation: 0,
+      failureRevision: 0,
+      consecutiveFailures: 0,
+      openUntil: null,
+      probeInFlight: false,
+    };
+    // A request admitted before the circuit opened cannot extend or overwrite
+    // that newer decision when its response arrives late.
+    if (state.generation !== requestGeneration) return;
+
+    state.consecutiveFailures += 1;
+    state.failureRevision += 1;
+    state.probeInFlight = false;
+    const opensCircuit = state.consecutiveFailures >= this.config.circuitBreakerThreshold;
+    state.openUntil = opensCircuit ? this.now() + this.config.circuitBreakerResetMs : null;
+    if (opensCircuit) state.generation += 1;
+    this.circuits.set(host, state);
+  }
+
+  private recordCircuitSuccess(
+    host: string,
+    requestGeneration: number,
+    requestFailureRevision: number,
+  ): void {
+    const state = this.circuits.get(host);
+    if (!state) return;
+    // Reject completions from older lifecycle generations or failure streaks,
+    // including after recovery closes the circuit. Concurrent failures from
+    // one generation can still all contribute to the threshold.
+    if (state.generation !== requestGeneration || state.failureRevision !== requestFailureRevision)
+      return;
+
+    state.consecutiveFailures = 0;
+    state.openUntil = null;
+    state.probeInFlight = false;
+    state.generation += 1;
+  }
+
+  private releaseCircuitProbe(host: string, requestGeneration: number): void {
+    const state = this.circuits.get(host);
+    if (state?.generation === requestGeneration) state.probeInFlight = false;
+  }
+
+  private circuitOpenError(url: string, retryAfterMs: number): HttpError {
+    return new HttpError('host circuit is open', {
+      kind: 'circuit-open',
+      url,
+      retryable: false,
+      retryAfterMs,
+    });
   }
 
   /**

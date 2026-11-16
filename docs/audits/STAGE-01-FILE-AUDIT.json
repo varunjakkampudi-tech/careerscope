@@ -1888,10 +1888,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 05 items 5.08 and 5.09 evidence and gaps; both remain partial and no external source acceptance is claimed.",
-      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
-      "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "da3b553a8b588deb6952f61cd3f2440c5810c59a294fbda85f29215eb4539433",
+      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+      "reviewer": "Codex (CareerScope owner item 5.13 review)",
+      "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2006,6 +2006,12 @@
           "sha256": "7d503f34c9092cc36a0b35a16ee875a1897e3d1e90000b087ecfece377c17e62",
           "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
           "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.09 review)",
+          "sha256": "da3b553a8b588deb6952f61cd3f2440c5810c59a294fbda85f29215eb4539433",
+          "observations": "Reviewed Stage 05 items 5.08 and 5.09 evidence and gaps; both remain partial and no external source acceptance is claimed.",
+          "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
         }
       ]
     },
@@ -2080,10 +2086,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed Stage 05 item 5.08 and 5.09 status, focused test/build evidence, and remaining adapter-mapping and false-merge limitations.",
-      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
-      "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "9dcdfecb8ac4591ecf0fc959813bbd5bb6f74411ddd3c2c0374fc03bd52208b4",
+      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+      "reviewer": "Codex (CareerScope owner item 5.13 review)",
+      "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2216,6 +2222,12 @@
           "sha256": "6b70cf6bc80c4127f817aacfb120000fcc2280b7b9fb44f229ccc78471964647",
           "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
           "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.09 review)",
+          "sha256": "9dcdfecb8ac4591ecf0fc959813bbd5bb6f74411ddd3c2c0374fc03bd52208b4",
+          "observations": "Reviewed Stage 05 item 5.08 and 5.09 status, focused test/build evidence, and remaining adapter-mapping and false-merge limitations.",
+          "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
         }
       ]
     },
@@ -2270,10 +2282,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed item-specific Stage 05 normalization and deduplication test evidence and exact-head gates.",
-      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
-      "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "d08de3ad68f62e21c10744dc048c1e91a6c2f831382d1e8efe31b8ee32ab3b4d",
+      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+      "reviewer": "Codex (CareerScope owner item 5.13 review)",
+      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2394,6 +2406,12 @@
           "sha256": "b77ec0ba4f65ddbc0bd1652351ff60bcd6e1b219bf4a28a3408e51551f13d480",
           "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
           "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.09 review)",
+          "sha256": "d08de3ad68f62e21c10744dc048c1e91a6c2f831382d1e8efe31b8ee32ab3b4d",
+          "observations": "Reviewed item-specific Stage 05 normalization and deduplication test evidence and exact-head gates.",
+          "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
         }
       ]
     },
@@ -2832,10 +2850,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
-      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
-      "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
+      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+      "reviewer": "Codex (CareerScope owner item 5.13 review)",
+      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2938,6 +2956,12 @@
           "sha256": "f5f9ab140398f897114d80c1a6c4368b76e0ee3da08e75aed342c831a56d9af8",
           "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
           "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.09 review)",
+          "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
+          "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
+          "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
         }
       ]
     },
@@ -5634,26 +5658,42 @@
     {
       "path": "packages/providers/src/http.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Covers retries/backoff/Retry-After bounds, cancellation/timeouts, stream byte caps and body cancellation, JSON shape, accepted statuses, cache collapse/LRU/no POST caching, per-host pacing and error surfaces.",
-      "evidence": "",
-      "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "4fc82e75f6339e32280581466f73838a8246bb30747f43230bb906ceeebdb844"
+      "observations": "Added deterministic regressions for pre-recovery stale failure, stale success during a closed-state failure streak, and concurrent failures admitted within one generation.",
+      "evidence": "Node 24 Docker: http.test.ts 56/56. Providers build, targeted ESLint, and formatting passed; fresh exact-head CI and independent review remain pending.",
+      "reviewer": "Codex (CareerScope owner item 5.13 review)",
+      "sha256": "77e5db42b1cdfd5663eaed601a8da83239fb1fbed90905f455b8c4ad4baf57f3",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 01 implementation audit)",
+          "sha256": "4fc82e75f6339e32280581466f73838a8246bb30747f43230bb906ceeebdb844",
+          "observations": "Read in full. Covers retries/backoff/Retry-After bounds, cancellation/timeouts, stream byte caps and body cancellation, JSON shape, accepted statuses, cache collapse/LRU/no POST caching, per-host pacing and error surfaces.",
+          "evidence": ""
+        }
+      ]
     },
     {
       "path": "packages/providers/src/http.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (657 lines). Retries apply only to statuses that are transient; pacing is per host; GETs are cached and in-flight duplicates share one request; every failure is an HttpError with a kind; the body is read under a streamed byte cap. Observation, not a defect: postJson goes through the same retry loop, so a POST that failed after the server acted could be sent again. Every POST in this codebase is an idempotent search, so no change is needed now; the constraint should be kept if a non-idempotent POST is added.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "363c0b99ba6a9327426cbe675367e558d61ed15c82562470b19f9ffcc011f808"
+      "observations": "Circuit generation now guards every lifecycle transition; failure revisions prevent stale success resets while concurrent same-generation failures still count.",
+      "evidence": "Node 24 Docker: http.test.ts 56/56. Providers build, targeted ESLint, and formatting passed; fresh exact-head CI and independent review remain pending.",
+      "reviewer": "Codex (CareerScope owner item 5.13 review)",
+      "sha256": "bc4760056c8bee43470244ed6d345368dcf9a06d46a08c6bf88e65a833a9cba6",
+      "history": [
+        {
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "363c0b99ba6a9327426cbe675367e558d61ed15c82562470b19f9ffcc011f808",
+          "observations": "Read in full (657 lines). Retries apply only to statuses that are transient; pacing is per host; GETs are cached and in-flight duplicates share one request; every failure is an HttpError with a kind; the body is read under a streamed byte cap. Observation, not a defect: postJson goes through the same retry loop, so a POST that failed after the server acted could be sent again. Every POST in this codebase is an idempotent search, so no change is needed now; the constraint should be kept if a non-idempotent POST is added.",
+          "evidence": ""
+        }
+      ]
     },
     {
       "path": "packages/providers/src/index.ts",
