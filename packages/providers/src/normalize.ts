@@ -427,6 +427,12 @@ function resolveFingerprintGroup(jobs: readonly Job[]): Job[] {
   const merged = [...clusters.values()].map((list) => list.reduce(mergeDuplicates));
   if (merged.length === 1) return merged;
 
+  // A title/company/location resemblance is not enough to merge postings when
+  // their explicit role details contradict each other. This check is
+  // intentionally one-way: missing or compatible details do not block a
+  // cross-source merge.
+  if (hasConflictingRoleDetails(merged)) return merged.map(disambiguateFingerprint);
+
   const sourcesSeen = new Set<string>();
   let split = false;
   for (const job of merged) {
@@ -436,6 +442,28 @@ function resolveFingerprintGroup(jobs: readonly Job[]): Job[] {
   if (!split) return [merged.reduce(mergeDuplicates)];
 
   return merged.map(disambiguateFingerprint);
+}
+
+function hasConflictingRoleDetails(jobs: readonly Job[]): boolean {
+  const employmentTypes = new Set(
+    jobs.flatMap((job) => (job.employmentType ? [job.employmentType] : [])),
+  );
+  if (employmentTypes.size > 1) return true;
+
+  // Intervals on a line have a shared intersection unless the greatest lower
+  // bound exceeds the least upper bound. Unknown bounds stay unbounded.
+  let greatestMinimum = Number.NEGATIVE_INFINITY;
+  let leastMaximum = Number.POSITIVE_INFINITY;
+  for (const job of jobs) {
+    if (job.requiredYears.min !== null) {
+      greatestMinimum = Math.max(greatestMinimum, job.requiredYears.min);
+    }
+    if (job.requiredYears.max !== null) {
+      leastMaximum = Math.min(leastMaximum, job.requiredYears.max);
+    }
+    if (greatestMinimum > leastMaximum) return true;
+  }
+  return false;
 }
 
 /**

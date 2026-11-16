@@ -1884,14 +1884,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "7d503f34c9092cc36a0b35a16ee875a1897e3d1e90000b087ecfece377c17e62",
+      "observations": "Reviewed Stage 05 items 5.08 and 5.09 evidence and gaps; both remain partial and no external source acceptance is claimed.",
+      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
+      "reviewer": "Codex (CareerScope owner item 5.09 review)",
+      "sha256": "952683fecfc18b65e43446f59b9fa59cf278489f189c05497f993d405359057b",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2000,20 +2000,34 @@
           "sha256": "83104d45ebde3e05e9d31ce9ad4418943653d181a1246d50147a06aebbd4003d",
           "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
           "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+          "sha256": "7d503f34c9092cc36a0b35a16ee875a1897e3d1e90000b087ecfece377c17e62",
+          "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
+          "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed."
         }
       ]
     },
     {
       "path": "docs/KNOWN-LIMITATIONS.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Lists service/provider/live-environment limitations, CSP style exception, removal of external AI and limits of the admin test identity. Off-host backup/live infrastructure work is explicitly outside the current roadmap scope.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "bce85b972952a14231f83a364e905b6c723b19b799c21f57f957698d9cf08ace"
+      "observations": "Reviewed the documented residual false-merge risk when cross-source postings lack contradictory structured details.",
+      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
+      "reviewer": "Codex (CareerScope owner item 5.09 review)",
+      "sha256": "bee66ee3b01a5abf032f3c148d54a7a8f25bcdb0bfefa26bb764d351592f162e",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "bce85b972952a14231f83a364e905b6c723b19b799c21f57f957698d9cf08ace",
+          "observations": "Read in full. Lists service/provider/live-environment limitations, CSP style exception, removal of external AI and limits of the admin test identity. Off-host backup/live infrastructure work is explicitly outside the current roadmap scope.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit."
+        }
+      ]
     },
     {
       "path": "docs/PRIVACY.md",
@@ -2054,7 +2068,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2066,10 +2080,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "6b70cf6bc80c4127f817aacfb120000fcc2280b7b9fb44f229ccc78471964647",
+      "observations": "Reviewed Stage 05 item 5.08 and 5.09 status, focused test/build evidence, and remaining adapter-mapping and false-merge limitations.",
+      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
+      "reviewer": "Codex (CareerScope owner item 5.09 review)",
+      "sha256": "58f43c5b1f26db5906e6a69ea7516dc0a1698844768eec31f10e3dbdd8e52255",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2196,6 +2210,12 @@
           "sha256": "6ed313128de4f8e2e0a01f23420b80767a709d67c874a9f20685005bd875b11e",
           "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
           "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+          "sha256": "6b70cf6bc80c4127f817aacfb120000fcc2280b7b9fb44f229ccc78471964647",
+          "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
+          "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed."
         }
       ]
     },
@@ -2246,14 +2266,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "b77ec0ba4f65ddbc0bd1652351ff60bcd6e1b219bf4a28a3408e51551f13d480",
+      "observations": "Reviewed item-specific Stage 05 normalization and deduplication test evidence and exact-head gates.",
+      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
+      "reviewer": "Codex (CareerScope owner item 5.09 review)",
+      "sha256": "f3a517b65c923f2c1f3b918225356beabc28242a50f34add3e965a2630179998",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2368,6 +2388,12 @@
           "sha256": "0ca33a8a176816fa4f370d0833fdf13e84a11d6ec1efcf818ba2b8885c646513",
           "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
           "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+          "sha256": "b77ec0ba4f65ddbc0bd1652351ff60bcd6e1b219bf4a28a3408e51551f13d480",
+          "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
+          "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed."
         }
       ]
     },
@@ -2526,14 +2552,22 @@
     {
       "path": "docs/audits/STAGE-01-FILE-AUDIT.md",
       "category": "self-referential-audit-record",
-      "reviewMethod": "classification-only",
-      "state": "not-applicable-source",
+      "reviewMethod": "focused-content-review",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Self-referential human summary of this audit. Its figures are taken from the JSON record at each revision; it is not reviewed as source.",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "observations": "Reviewed the Stage 01 audit summary and current Stage 05 item 5.09 audit note.",
+      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
+      "reviewer": "Codex (CareerScope owner item 5.09 review)",
+      "sha256": "673a9385b2ce5ecc533855754448d25aa28befb60f7f510b85eb9929195e00c3",
+      "history": [
+        {
+          "reviewer": "",
+          "sha256": "",
+          "observations": "Self-referential human summary of this audit. Its figures are taken from the JSON record at each revision; it is not reviewed as source.",
+          "evidence": ""
+        }
+      ]
     },
     {
       "path": "docs/decisions/CSP-STRICT-SCRIPT-SRC.md",
@@ -2802,14 +2836,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "f5f9ab140398f897114d80c1a6c4368b76e0ee3da08e75aed342c831a56d9af8",
+      "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
+      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
+      "reviewer": "Codex (CareerScope owner item 5.09 review)",
+      "sha256": "5e3ff79ef12b7ff1d3318da28e045e3080bde9d745b280749523277e2460dcc0",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2906,6 +2940,12 @@
           "sha256": "e30c23d877d68b800084b10a2353699892c746e8ddb27f91015ab454ef689084",
           "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
           "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+          "sha256": "f5f9ab140398f897114d80c1a6c4368b76e0ee3da08e75aed342c831a56d9af8",
+          "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
+          "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed."
         }
       ]
     },
@@ -5722,14 +5762,14 @@
     {
       "path": "packages/providers/src/normalize.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
-      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
-      "sha256": "1a9a3360e70dc01ba4a48be6789df8a7496343a87718711c13a60344231a8928",
+      "observations": "Reviewed 73 focused normalization tests, including conflicts in explicit employment type and disjoint experience ranges plus compatible and unknown-detail merges.",
+      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
+      "reviewer": "Codex (CareerScope owner item 5.09 review)",
+      "sha256": "59c00f540c8939282a1063c07483b07f0eddf29402bccacbe3c4225a0badd04c",
       "history": [
         {
           "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
@@ -5742,13 +5782,19 @@
           "evidence": "Reviewed current content on codex/stage05-item510-salary-location-normalization; earlier CI evidence is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
           "sha256": "d58b22c1922cd21ad03b64283d42d3fdde9ba73544f3d62910763298c891744b"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "1a9a3360e70dc01ba4a48be6789df8a7496343a87718711c13a60344231a8928",
+          "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+          "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only."
         }
       ]
     },
     {
       "path": "packages/providers/src/normalize.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -5760,10 +5806,10 @@
           "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
         }
       ],
-      "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
-      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
-      "sha256": "d8f9f2c09168e1cb460cb9c8ff190601b0a5986e01d9025583e1b767a96c4192",
+      "observations": "Reviewed the new conservative cross-source conflict guard and its interactions with existing source-ID grouping, split identities, and merge behavior.",
+      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
+      "reviewer": "Codex (CareerScope owner item 5.09 review)",
+      "sha256": "aaaa844e6bbecf0ec19a82cced2a0b2c5781423312651990d58ec7626bdf7ecc",
       "history": [
         {
           "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
@@ -5776,6 +5822,12 @@
           "evidence": "Content reviewed for owner item 5.10 on codex/stage05-item510-salary-location-normalization; behavior and remaining acceptance gaps recorded in docs/PROGRESS.md and docs/GAP-MATRIX.md.",
           "reviewer": "Codex (CareerScope owner item 5.10)",
           "sha256": "bc14848b4114ee1b919bf0a9b68a5c0df7f08a43e9a8e086a250cbc9992d9d4c"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "d8f9f2c09168e1cb460cb9c8ff190601b0a5986e01d9025583e1b767a96c4192",
+          "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+          "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only."
         }
       ]
     },

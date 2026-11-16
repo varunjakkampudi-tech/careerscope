@@ -592,6 +592,68 @@ describe('dedupeJobs', () => {
     // above: greenhouse + naukri here contribute one id each.
     expect(dedupeJobs([atsFull, scrapedThin])).toHaveLength(1);
   });
+
+  it('keeps same-fingerprint jobs apart when their explicit employment types conflict', () => {
+    const fullTime = normalizeJob(
+      rawJob({ source: 'greenhouse', sourceJobId: 'fulltime-1', employmentType: 'fulltime' }),
+      { now: NOW },
+    );
+    const contract = normalizeJob(
+      rawJob({ source: 'naukri', sourceJobId: 'contract-1', employmentType: 'contract' }),
+      { now: NOW },
+    );
+
+    const result = dedupeJobs([fullTime, contract]);
+
+    expect(result).toHaveLength(2);
+    expect(new Set(result.map((job) => job.fingerprint)).size).toBe(2);
+  });
+
+  it('keeps same-fingerprint jobs apart when their explicit experience ranges do not overlap', () => {
+    const earlyCareer = normalizeJob(
+      rawJob({
+        source: 'greenhouse',
+        sourceJobId: 'early-1',
+        description: 'Requirements: 2-4 years of relevant experience.',
+      }),
+      { now: NOW },
+    );
+    const experienced = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'experienced-1',
+        description: 'Requirements: 8+ years of relevant experience.',
+      }),
+      { now: NOW },
+    );
+
+    const result = dedupeJobs([earlyCareer, experienced]);
+
+    expect(result).toHaveLength(2);
+    expect(new Set(result.map((job) => job.fingerprint)).size).toBe(2);
+  });
+
+  it('still merges compatible details and treats missing details as unknown', () => {
+    const fivePlus = normalizeJob(
+      rawJob({
+        source: 'greenhouse',
+        sourceJobId: 'five-plus-1',
+        description: 'Requires 5+ years.',
+      }),
+      { now: NOW },
+    );
+    const sixPlus = normalizeJob(
+      rawJob({ source: 'naukri', sourceJobId: 'six-plus-1', description: 'Requires 6+ years.' }),
+      { now: NOW },
+    );
+    const unknown = normalizeJob(
+      rawJob({ source: 'lever', sourceJobId: 'unknown-years-1', description: 'Apply today.' }),
+      { now: NOW },
+    );
+
+    expect(dedupeJobs([fivePlus, sixPlus])).toHaveLength(1);
+    expect(dedupeJobs([fivePlus, unknown])).toHaveLength(1);
+  });
 });
 
 describe('mergeDuplicates', () => {

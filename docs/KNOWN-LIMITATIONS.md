@@ -15,3 +15,5 @@
 - Matching and preparation are deterministic. External AI execution is currently removed.
 - The admin test identity is isolated from candidate data; it does not enable
   a privileged admin control plane. Hosted test mode is not a public authentication system.
+
+- Cross-source job deduplication uses title, company and location fingerprints. Explicitly conflicting employment types or non-overlapping experience ranges are kept separate, but distinct requisitions with identical or missing normalized details may still merge when each source contributes one listing. No universal cross-source requisition identifier or live-quality measurement exists yet.

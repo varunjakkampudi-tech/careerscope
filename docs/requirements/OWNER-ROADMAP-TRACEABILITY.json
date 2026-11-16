@@ -1239,11 +1239,17 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Job normalization",
       "sourceStatus": "Existing, expand",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "partial",
+      "evidence": ["packages/providers/src/normalize.ts", "docs/PROGRESS.md", "docs/GAP-MATRIX.md"],
+      "tests": [
+        "packages/providers/src/normalize.test.ts",
+        "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/remote/feeds.test.ts"
+      ],
+      "externalEvidence": [
+        "PR #101 exact-head Node 24 quality, integration and browser checks passed on implementation SHA 4b321d74dc298842e3ecafbf1908715c4e875cbd and merge SHA 061d1ad48b1e7688c089ece6407b7ff211229abf."
+      ],
+      "gap": "The canonical RawJob-to-Job normalization and focused tests exist, but item-specific acceptance of every provider adapter mapping has not been completed. Salary/location/experience behavior is separately tracked in verified item 5.10.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1252,11 +1258,16 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Cross-source deduplication",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/normalize.ts",
+        "docs/KNOWN-LIMITATIONS.md",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md"
+      ],
+      "tests": ["packages/providers/src/normalize.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Fingerprint duplicates are collapsed and explicit employment-type conflicts and disjoint experience ranges are preserved as separate jobs. Distinct postings with no contradictory normalized details may still share a fingerprint and merge when each source contributes only one listing; no universal cross-source requisition identifier or measured quality gate exists. Exact-head CI and independent review for this change are pending.",
       "scopeDisposition": "in-scope"
     },
     {
