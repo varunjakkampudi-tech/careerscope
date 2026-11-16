@@ -1880,10 +1880,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 05 gap evidence for owner items 5.02–5.04; merged verification for #97/#98 is recorded and Lever remains partial. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes. Formatted with repository Prettier settings and refreshed current content hash.",
-      "evidence": "Prettier 3.9.9 formatted this file; SHA-256 is calculated from the final LF bytes.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.04 formatting correction)",
-      "sha256": "7e04253e56e0acc656b9ed4d4653fd997413d767bbc1a511fdf7e4fe93c0495d",
+      "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
+      "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+      "sha256": "83104d45ebde3e05e9d31ce9ad4418943653d181a1246d50147a06aebbd4003d",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -1962,6 +1962,30 @@
           "sha256": "b57f9d20a3415ecda803093274d998aae647a7ccc82ee5fbcadb01d13ba1d0ad",
           "observations": "Updated Stage 05 gap evidence for owner items 5.02–5.04; merged verification for #97/#98 is recorded and Lever remains partial. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes.",
           "evidence": "The prior CI run rejected CRLF worktree hashes against LF Git content; SHA-256 now matches the committed file bytes."
+        },
+        {
+          "observations": "Updated Stage 05 gap evidence for owner items 5.02–5.04; merged verification for #97/#98 is recorded and Lever remains partial. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes. Formatted with repository Prettier settings and refreshed current content hash.",
+          "evidence": "Prettier 3.9.9 formatted this file; SHA-256 is calculated from the final LF bytes.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 formatting correction)",
+          "sha256": "7e04253e56e0acc656b9ed4d4653fd997413d767bbc1a511fdf7e4fe93c0495d"
+        },
+        {
+          "observations": "Updated and reviewed for owner item 5.05 Ashby; recorded current item evidence and remaining source-permission gates.",
+          "evidence": "Focused Node 24 Docker run passed 68/68 adapter, registry and job-source policy tests. Current status remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "c555e805c6924e8d17c0ac261e48887fa9d15126b105c0a63dabded5e4a04462"
+        },
+        {
+          "observations": "Updated and reviewed for owner item 5.05 Ashby; evidence and current source-permission gaps are recorded.",
+          "evidence": "Focused Node 24 Docker run passed 68/68 adapter, registry and job-source policy tests. Current status remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "633eb111f3a892962d1e7152a563e2dc9ceb408b3317041dc02b4be7a91952fe"
+        },
+        {
+          "observations": "Reviewed for owner item 5.05 Ashby; recorded evidence and remaining external permission gaps.",
+          "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; item remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "83104d45ebde3e05e9d31ce9ad4418943653d181a1246d50147a06aebbd4003d"
         }
       ]
     },
@@ -2028,10 +2052,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 inventory totals and post-merge evidence for items 5.02 and 5.03; recorded Lever item 5.04 as partial. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes.",
-      "evidence": "The prior CI run rejected CRLF worktree hashes against LF Git content; SHA-256 now matches the committed file bytes.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.04 LF hash correction)",
-      "sha256": "8fdaf5fcffc2b3eedea6fbcfbae26f64f31be280f5facd60dcb66ad74f1b9a2b",
+      "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
+      "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+      "sha256": "6ed313128de4f8e2e0a01f23420b80767a709d67c874a9f20685005bd875b11e",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2134,6 +2158,24 @@
           "sha256": "77b4e68e97df62504eb7bf86d9e2cadb066eaa6a3bfe81998b473a6a32bbb7ff",
           "observations": "Updated Stage 05 inventory totals and post-merge evidence for items 5.02 and 5.03; recorded Lever item 5.04 as partial.",
           "evidence": "Provider source rights and current live schema remain external gaps; no provider activation occurred."
+        },
+        {
+          "observations": "Updated Stage 05 inventory totals and post-merge evidence for items 5.02 and 5.03; recorded Lever item 5.04 as partial. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes.",
+          "evidence": "The prior CI run rejected CRLF worktree hashes against LF Git content; SHA-256 now matches the committed file bytes.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 LF hash correction)",
+          "sha256": "8fdaf5fcffc2b3eedea6fbcfbae26f64f31be280f5facd60dcb66ad74f1b9a2b"
+        },
+        {
+          "observations": "Updated and reviewed for owner item 5.05 Ashby; recorded current item evidence and remaining source-permission gates.",
+          "evidence": "Focused Node 24 Docker run passed 68/68 adapter, registry and job-source policy tests. Current status remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "d12479447c731406ab11d14ec4a87d96a64629cf7034261e4353a46efe271f10"
+        },
+        {
+          "observations": "Reviewed for owner item 5.05 Ashby; recorded evidence and remaining external permission gaps.",
+          "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; item remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "6ed313128de4f8e2e0a01f23420b80767a709d67c874a9f20685005bd875b11e"
         }
       ]
     },
@@ -2188,10 +2230,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated exact CI/review/merge evidence for items 5.02 and 5.03 and added Lever evidence for item 5.04. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes. Formatted with repository Prettier settings and refreshed current content hash.",
-      "evidence": "Prettier 3.9.9 formatted this file; SHA-256 is calculated from the final LF bytes.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.04 formatting correction)",
-      "sha256": "c7e41d73a15804eb5f79aa7c641a414afef5d91b1e1ea105a2532af8ac1282a6",
+      "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
+      "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+      "sha256": "0ca33a8a176816fa4f370d0833fdf13e84a11d6ec1efcf818ba2b8885c646513",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2276,6 +2318,30 @@
           "sha256": "85bf3653bac6e617a61d8e00cb14270e5b623d5e30022d46cf7f69ef7a6278da",
           "observations": "Updated exact CI/review/merge evidence for items 5.02 and 5.03 and added Lever evidence for item 5.04. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes.",
           "evidence": "The prior CI run rejected CRLF worktree hashes against LF Git content; SHA-256 now matches the committed file bytes."
+        },
+        {
+          "observations": "Updated exact CI/review/merge evidence for items 5.02 and 5.03 and added Lever evidence for item 5.04. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes. Formatted with repository Prettier settings and refreshed current content hash.",
+          "evidence": "Prettier 3.9.9 formatted this file; SHA-256 is calculated from the final LF bytes.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 formatting correction)",
+          "sha256": "c7e41d73a15804eb5f79aa7c641a414afef5d91b1e1ea105a2532af8ac1282a6"
+        },
+        {
+          "observations": "Updated and reviewed for owner item 5.05 Ashby; recorded current item evidence and remaining source-permission gates.",
+          "evidence": "Focused Node 24 Docker run passed 68/68 adapter, registry and job-source policy tests. Current status remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "bce9f0d491231075db00644d481b14067473797e6bcf6c4ee3e61199215188e2"
+        },
+        {
+          "observations": "Updated and reviewed for owner item 5.05 Ashby; evidence and current source-permission gaps are recorded.",
+          "evidence": "Focused Node 24 Docker run passed 68/68 adapter, registry and job-source policy tests. Current status remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "30d167140717ce9848135060e8e83938d1797e056dbfa2a01f1ce37e1fad6d2b"
+        },
+        {
+          "observations": "Reviewed for owner item 5.05 Ashby; recorded evidence and remaining external permission gaps.",
+          "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; item remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "0ca33a8a176816fa4f370d0833fdf13e84a11d6ec1efcf818ba2b8885c646513"
         }
       ]
     },
@@ -2706,10 +2772,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded final CI/review/merge evidence for items 5.02 and 5.03 and detailed item 5.04 Lever evidence.",
-      "evidence": "Inventory totals are 328 items: 43 verified, 16 partial, 1 gated, 268 not started; provider rights remain unverified.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
-      "sha256": "ba7e4f177746b3649378e9bcd704b31f72880cb8d5245874ca0a71d1c5f7e371",
+      "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
+      "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+      "sha256": "e30c23d877d68b800084b10a2353699892c746e8ddb27f91015ab454ef689084",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2782,6 +2848,24 @@
           "sha256": "ba7e4f177746b3649378e9bcd704b31f72880cb8d5245874ca0a71d1c5f7e371",
           "observations": "Updated exact current evidence for items 5.02 and 5.03 and retained item 5.04 partial with cited Lever implementation/tests.",
           "evidence": "Inventory has 328 items; 43 verified, 16 partial, 1 gated, and 268 not started. No live provider permission is claimed."
+        },
+        {
+          "observations": "Recorded final CI/review/merge evidence for items 5.02 and 5.03 and detailed item 5.04 Lever evidence.",
+          "evidence": "Inventory totals are 328 items: 43 verified, 16 partial, 1 gated, 268 not started; provider rights remain unverified.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
+          "sha256": "ba7e4f177746b3649378e9bcd704b31f72880cb8d5245874ca0a71d1c5f7e371"
+        },
+        {
+          "observations": "Updated and reviewed for owner item 5.05 Ashby; recorded current item evidence and remaining source-permission gates.",
+          "evidence": "Focused Node 24 Docker run passed 68/68 adapter, registry and job-source policy tests. Current status remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "2aa2ff3e0abc6d60b8c8027d8e77f7fa4400b2a8a4eb72303666c71815b29025"
+        },
+        {
+          "observations": "Reviewed for owner item 5.05 Ashby; recorded evidence and remaining external permission gaps.",
+          "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; item remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "e30c23d877d68b800084b10a2353699892c746e8ddb27f91015ab454ef689084"
         }
       ]
     },
@@ -5114,10 +5198,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Greenhouse synthetic fixtures for listing mapping, description decoding, and detail handling.",
-      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
-      "sha256": "78e2d50ffe7f31ed0f29d2cfd0b8acef3d447dd21e11b42dbc8b9482bde9508d",
+      "observations": "Reviewed for owner item 5.05 Ashby; workplace classification and zero-valued salary regressions added.",
+      "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+      "sha256": "a380d4282509c11686c848dc892a1891190215a1a196da85c398539a580afa75",
       "history": [
         {
           "reviewer": "Codex (Stage 01 item 1.01)",
@@ -5130,6 +5214,24 @@
           "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
           "sha256": "78e2d50ffe7f31ed0f29d2cfd0b8acef3d447dd21e11b42dbc8b9482bde9508d"
+        },
+        {
+          "observations": "Reviewed Greenhouse synthetic fixtures for listing mapping, description decoding, and detail handling.",
+          "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+          "sha256": "78e2d50ffe7f31ed0f29d2cfd0b8acef3d447dd21e11b42dbc8b9482bde9508d"
+        },
+        {
+          "observations": "Updated and reviewed for owner item 5.05 Ashby; regression distinguishes fully remote from hybrid workplace type.",
+          "evidence": "Focused Node 24 Docker run passed 68/68 adapter, registry and job-source policy tests. Current status remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "1b685df88332118b799d21874129f10e2829c2bb730f4ed76a5c3461f69a7dce"
+        },
+        {
+          "observations": "Reviewed for owner item 5.05 Ashby; added precise workplace and salary mapping regressions.",
+          "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; item remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "a380d4282509c11686c848dc892a1891190215a1a196da85c398539a580afa75"
         }
       ]
     },
@@ -5140,10 +5242,30 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "20e0bcaacbbd56978a9de684bd4282e6ad10d8befafb0b7c758712fbc32ac15b"
+      "observations": "Reviewed for owner item 5.05 Ashby; workplace classification and zero-valued salary regressions added.",
+      "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+      "sha256": "339f35dda9bc67a5b344b5a3e49bd5156efc1035fe85fd7493705cc59577324d",
+      "history": [
+        {
+          "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
+          "evidence": "",
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "20e0bcaacbbd56978a9de684bd4282e6ad10d8befafb0b7c758712fbc32ac15b"
+        },
+        {
+          "observations": "Updated and reviewed for owner item 5.05 Ashby; regression distinguishes fully remote from hybrid workplace type.",
+          "evidence": "Focused Node 24 Docker run passed 68/68 adapter, registry and job-source policy tests. Current status remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "b164227c0ef72df21a38ec42f474ffbe667e6a5d52d423266d802f6751c2becb"
+        },
+        {
+          "observations": "Reviewed for owner item 5.05 Ashby; added precise workplace and salary mapping regressions.",
+          "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; item remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "339f35dda9bc67a5b344b5a3e49bd5156efc1035fe85fd7493705cc59577324d"
+        }
+      ]
     },
     {
       "path": "packages/providers/src/ats/base.test.ts",
