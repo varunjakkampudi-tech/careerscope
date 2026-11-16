@@ -1267,7 +1267,7 @@
       ],
       "tests": ["packages/providers/src/normalize.test.ts"],
       "externalEvidence": [],
-      "gap": "Cross-source fingerprints are partitioned to preserve compatible subsets while separating explicit employment-type conflicts and disjoint experience ranges. Ambiguous postings with no contradictory details may still merge when each source contributes one listing. Fingerprints can change when later source coverage reveals a conflict; saved leads and market sightings are not automatically reconciled. No universal cross-source requisition identifier or measured quality gate exists. Exact-head CI and independent review for this change are pending.",
+      "gap": "Cross-source fingerprints are partitioned to preserve compatible subsets while separating explicit employment-type conflicts and disjoint experience ranges. Exact-head CI run 43943303626 passed and independent review approved head 8897f6eae21a921c6e785159ac1494acf2f88a11 against base 061d1ad48b1e7688c089ece6407b7ff211229abf; PR #102 merged as 4c6397f784f5e39331bf8c0e901058030e5c336c, and post-merge run 43945483574 passed Quality and Services/integration/browser. Ambiguous postings with no contradictory details may still merge when each source contributes one listing. Fingerprints can change when later source coverage reveals a conflict; saved leads and market sightings are not automatically reconciled. No universal cross-source requisition identifier or measured quality gate exists; item remains partial.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1342,11 +1342,11 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Provider retries and circuit breakers",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": ["packages/providers/src/http.ts", "docs/PROGRESS.md", "docs/GAP-MATRIX.md"],
+      "tests": ["packages/providers/src/http.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "The shared HTTP client has bounded transient retries, capped Retry-After handling, and a per-host circuit breaker that opens after five exhausted transient request cycles by default and allows one recovery probe after 30 seconds. Circuit health is host-scoped rather than provider-source policy/telemetry. Live behavior, source-specific tuning, and independent exact-head acceptance remain outstanding; no provider is activated.",
       "scopeDisposition": "in-scope"
     },
     {

@@ -266,6 +266,82 @@ describe('HttpClient — retry', () => {
 });
 
 /* -------------------------------------------------------------------------- */
+/* Circuit breaker                                                           */
+/* -------------------------------------------------------------------------- */
+
+describe('HttpClient — circuit breaker', () => {
+  it('opens after consecutive exhausted failures and resets after one recovery probe', async () => {
+    const { impl, calls } = fakeFetch([
+      text('busy', { status: 503 }),
+      text('busy', { status: 503 }),
+      json({ ok: true }),
+      json({ ok: true }),
+      json({ ok: true }),
+    ]);
+    const clock = fakeClock();
+    const http = client(impl, {
+      now: clock.now,
+      retries: 0,
+      cacheTtlMs: 0,
+      circuitBreakerThreshold: 2,
+      circuitBreakerResetMs: 100,
+    });
+
+    await expect(http.get('https://a.test/first')).rejects.toMatchObject({ kind: 'http' });
+    await expect(http.get('https://a.test/second')).rejects.toMatchObject({ kind: 'http' });
+    await expect(http.get('https://a.test/blocked')).rejects.toMatchObject({
+      kind: 'circuit-open',
+      retryable: false,
+      retryAfterMs: 100,
+    });
+    await http.get('https://b.test/independent');
+    expect(calls).toHaveLength(3);
+
+    clock.advance(100);
+    await http.get('https://a.test/recovery-probe');
+    await http.get('https://a.test/after-recovery');
+    expect(calls).toHaveLength(5);
+  });
+
+  it('allows only one half-open probe per host at a time', async () => {
+    const clock = fakeClock();
+    const calls: string[] = [];
+    let releaseProbe: ((response: Response) => void) | undefined;
+    const impl: FetchLike = async (url) => {
+      calls.push(url);
+      if (url.endsWith('/initial')) return new Response('busy', { status: 503 });
+      if (url.endsWith('/probe')) {
+        return new Promise<Response>((resolve) => {
+          releaseProbe = resolve;
+        });
+      }
+      return new Response('ok', { status: 200 });
+    };
+    const http = client(impl, {
+      now: clock.now,
+      retries: 0,
+      cacheTtlMs: 0,
+      circuitBreakerThreshold: 1,
+      circuitBreakerResetMs: 100,
+    });
+
+    await expect(http.get('https://a.test/initial')).rejects.toMatchObject({ kind: 'http' });
+    clock.advance(100);
+    const probe = http.get('https://a.test/probe');
+    await nextTick(undefined);
+
+    await expect(http.get('https://a.test/other')).rejects.toMatchObject({
+      kind: 'circuit-open',
+    });
+    expect(calls).toHaveLength(2);
+    releaseProbe?.(new Response('ok', { status: 200 }));
+    await probe;
+    await http.get('https://a.test/after-probe');
+    expect(calls).toHaveLength(3);
+  });
+});
+
+/* -------------------------------------------------------------------------- */
 /* Cancellation and limits                                                    */
 /* -------------------------------------------------------------------------- */
 
