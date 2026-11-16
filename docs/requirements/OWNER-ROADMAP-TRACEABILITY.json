@@ -1378,7 +1378,7 @@
       ],
       "tests": ["apps/web/src/lib/source-health.test.ts"],
       "externalEvidence": [],
-      "gap": "Owner-visible recorded outcomes summarize the latest 50 search runs and are explicitly not live availability. API/browser acceptance, freshness/latency signals, operational source-level monitoring and automated suspension remain unimplemented; no source is activated.",
+      "gap": "Owner-visible recorded outcomes summarize the latest 50 search runs and are explicitly not live availability. Exact-head API/integration/browser acceptance passed in CI run 43970259059 at f9e6aebb2d7beca3044dae5301f2ca28400c27c2. Freshness/latency signals, operational source-level monitoring and automated suspension remain unimplemented; no source is activated.",
       "scopeDisposition": "in-scope"
     },
     {

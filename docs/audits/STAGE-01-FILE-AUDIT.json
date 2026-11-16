@@ -265,8 +265,8 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Exact-head CI remains pending.",
-      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests and hosted exact-head gates remain distinct evidence.",
+      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Implementation-head CI run 43970259059 passed at f9e6aebb2d7beca3044dae5301f2ca28400c27c2; the documentation-only follow-up still needs exact-head CI.",
+      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests passed 2/2; implementation-head run 43970259059 passed; exact-head CI for this documentation follow-up remains pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
       "sha256": "09ec7efd0fdf91ccc27ee37f72beb0cfea1f574059a8118115ac68cfcc100935"
     },
@@ -1103,8 +1103,8 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Exact-head CI remains pending.",
-      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests and hosted exact-head gates remain distinct evidence.",
+      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Implementation-head CI run 43970259059 passed at f9e6aebb2d7beca3044dae5301f2ca28400c27c2; the documentation-only follow-up still needs exact-head CI.",
+      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests passed 2/2; implementation-head run 43970259059 passed; exact-head CI for this documentation follow-up remains pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
       "sha256": "7f732af737c18e170344a3fdd8bec0b80b95a040238e10188b461e03d15096f3"
     },
@@ -1115,8 +1115,8 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Exact-head CI remains pending.",
-      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests and hosted exact-head gates remain distinct evidence.",
+      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Implementation-head CI run 43970259059 passed at f9e6aebb2d7beca3044dae5301f2ca28400c27c2; the documentation-only follow-up still needs exact-head CI.",
+      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests passed 2/2; implementation-head run 43970259059 passed; exact-head CI for this documentation follow-up remains pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
       "sha256": "24bab794a68efacdead46e6f2b79839eec197d71ed8da9f851215e89c7ccb8b9"
     },
@@ -1342,8 +1342,8 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Exact-head CI remains pending.",
-      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests and hosted exact-head gates remain distinct evidence.",
+      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Implementation-head CI run 43970259059 passed at f9e6aebb2d7beca3044dae5301f2ca28400c27c2; the documentation-only follow-up still needs exact-head CI.",
+      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests passed 2/2; implementation-head run 43970259059 passed; exact-head CI for this documentation follow-up remains pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
       "sha256": "e00225fe684bd628b38f7dc8220a237b724ef8f9459c3710293e214780e2e075"
     },
@@ -1414,8 +1414,8 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Exact-head CI remains pending.",
-      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests and hosted exact-head gates remain distinct evidence.",
+      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Implementation-head CI run 43970259059 passed at f9e6aebb2d7beca3044dae5301f2ca28400c27c2; the documentation-only follow-up still needs exact-head CI.",
+      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests passed 2/2; implementation-head run 43970259059 passed; exact-head CI for this documentation follow-up remains pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
       "sha256": "ae72fa6a4f0a420ca9351665fe3bbb993ff0bb3f3f2f2b572338d1ea9508fa91"
     },
@@ -1912,10 +1912,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Exact-head CI remains pending.",
-      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests and hosted exact-head gates remain distinct evidence.",
+      "observations": "Re-reviewed the item 5.15 evidence update against exact implementation head f9e6aebb2d7beca3044dae5301f2ca28400c27c2 and hosted run 43970259059. The implementation CI passed; source-level freshness/latency monitoring, operational monitoring and automated suspension remain gaps. This documentation-only follow-up requires its own exact-head CI.",
+      "evidence": "Updated the source-health progress, gap, test matrix and owner traceability records; implementation-head run 43970259059 passed. This doc-only commit's CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "74f5eadd77f98767c7d5d7ce9d1f1fec7ead56f37bcc7a18df4931668b15e00d",
+      "sha256": "0686a66e5e65c0ba07234e789bf13cd921f2bd61c38c45604326bfe6e4c1043f",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2110,10 +2110,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Exact-head CI remains pending.",
-      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests and hosted exact-head gates remain distinct evidence.",
+      "observations": "Re-reviewed the item 5.15 evidence update against exact implementation head f9e6aebb2d7beca3044dae5301f2ca28400c27c2 and hosted run 43970259059. The implementation CI passed; source-level freshness/latency monitoring, operational monitoring and automated suspension remain gaps. This documentation-only follow-up requires its own exact-head CI.",
+      "evidence": "Updated the source-health progress, gap, test matrix and owner traceability records; implementation-head run 43970259059 passed. This doc-only commit's CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "49b7ed5109f3b989bb0277e9afe342114b5ee22002af2c195cf3fbe2c6f04589",
+      "sha256": "ae0b703d2cd0bab72ebdf61cea081f73ecc6a3d019b2b34410ed88fe814cdba7",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2306,10 +2306,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Exact-head CI remains pending.",
-      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests and hosted exact-head gates remain distinct evidence.",
+      "observations": "Re-reviewed the item 5.15 evidence update against exact implementation head f9e6aebb2d7beca3044dae5301f2ca28400c27c2 and hosted run 43970259059. The implementation CI passed; source-level freshness/latency monitoring, operational monitoring and automated suspension remain gaps. This documentation-only follow-up requires its own exact-head CI.",
+      "evidence": "Updated the source-health progress, gap, test matrix and owner traceability records; implementation-head run 43970259059 passed. This doc-only commit's CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "42cf8af1cf7eb17599bdd86dde244fffa12d9ebb1b2abfb6036de4a9ccebbb3d",
+      "sha256": "6da7770472ffc0f31c472f4aab21261a1edb3ece6a7eb29130da110cfb18f81f",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2874,10 +2874,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Exact-head CI remains pending.",
-      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests and hosted exact-head gates remain distinct evidence.",
+      "observations": "Re-reviewed the item 5.15 evidence update against exact implementation head f9e6aebb2d7beca3044dae5301f2ca28400c27c2 and hosted run 43970259059. The implementation CI passed; source-level freshness/latency monitoring, operational monitoring and automated suspension remain gaps. This documentation-only follow-up requires its own exact-head CI.",
+      "evidence": "Updated the source-health progress, gap, test matrix and owner traceability records; implementation-head run 43970259059 passed. This doc-only commit's CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "95632a3719e47d0030a3a5ae7306b667c4ea2cd8965b91a59b8e775490967046",
+      "sha256": "75930beceea544f3cfb73277495eb85f9f428ccdf8b7e70d1b86df239efb8bb2",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -4164,8 +4164,8 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Exact-head CI remains pending.",
-      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests and hosted exact-head gates remain distinct evidence.",
+      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Implementation-head CI run 43970259059 passed at f9e6aebb2d7beca3044dae5301f2ca28400c27c2; the documentation-only follow-up still needs exact-head CI.",
+      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests passed 2/2; implementation-head run 43970259059 passed; exact-head CI for this documentation follow-up remains pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
       "sha256": "b6e1fc51a6737fbd70cdc6798ada315e3c4c336ccb2abc446c621f2e2cc0bce4",
       "history": [
@@ -7439,8 +7439,8 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Exact-head CI remains pending.",
-      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests and hosted exact-head gates remain distinct evidence.",
+      "observations": "Reviewed the complete change set for CareerScope owner item 5.15. Re-reviewed the modified behavior and diff; the unchanged remainder retains the prior full-file review. The search-history API remains owner-scoped and validates stored outcomes; the UI labels recent recorded outcomes and explicitly disclaims live availability. Implementation-head CI run 43970259059 passed at f9e6aebb2d7beca3044dae5301f2ca28400c27c2; the documentation-only follow-up still needs exact-head CI.",
+      "evidence": "CareerScope item 5.15 change review on codex/stage05-item515-source-health; prior full-file review covers unchanged content. Focused tests passed 2/2; implementation-head run 43970259059 passed; exact-head CI for this documentation follow-up remains pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
       "sha256": "ae161188e1c2d2a0f121622eb6edd0aa48fd7972a72c9da0e793a807ab3d4c08",
       "history": [
