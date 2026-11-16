@@ -7416,9 +7416,9 @@
         }
       ],
       "observations": "Reviewed synthetic 45-result browser fixture and first/second/previous page assertions; test continues into filter and responsive checks.",
-      "evidence": "Prettier formatting passed; TypeScript, lint and exact-head browser execution are pending.",
+      "evidence": "Prettier formatting passed; typecheck passed; exact-head browser execution exposed a hard-coded fixture title, now corrected and pending rerun.",
       "reviewer": "Codex (CareerScope owner item 5.14 implementation and evidence update)",
-      "sha256": "5a9e2a63bdb0155e2f1479c75570501280a633cc042df49325392bdce6f7b3af",
+      "sha256": "cae9be6cc062212502e9cde53f66c6ba2774a47e6e313944aeff75f27aaf0435",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",

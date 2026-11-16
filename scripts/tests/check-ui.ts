@@ -3548,6 +3548,7 @@ try {
         job.data.title = `${job.data.title} Pagination fixture ${index + 1}`;
         return job;
       });
+      const paginationTitlePrefix = resultBody.jobs[0].data.title;
       await page.route(`**/api/searches/${search.id}`, (route) =>
         route.fulfill({
           status: 200,
@@ -3558,20 +3559,24 @@ try {
       await page.reload();
       await page.getByText('Page 1 of 3', { exact: true }).waitFor();
       assert.equal(await page.locator('details.job').count(), 20);
-      await page.getByText('Senior React Engineer Pagination fixture 1', { exact: true }).waitFor();
+      await page
+        .getByText(`${paginationTitlePrefix} Pagination fixture 1`, { exact: true })
+        .waitFor();
       assert.equal(
         await page
-          .getByText('Senior React Engineer Pagination fixture 21', { exact: true })
+          .getByText(`${paginationTitlePrefix} Pagination fixture 21`, { exact: true })
           .count(),
         0,
       );
       await page.getByRole('button', { name: 'Next page', exact: true }).click();
       await page.getByText('Page 2 of 3', { exact: true }).waitFor();
       await page
-        .getByText('Senior React Engineer Pagination fixture 21', { exact: true })
+        .getByText(`${paginationTitlePrefix} Pagination fixture 21`, { exact: true })
         .waitFor();
       assert.equal(
-        await page.getByText('Senior React Engineer Pagination fixture 1', { exact: true }).count(),
+        await page
+          .getByText(`${paginationTitlePrefix} Pagination fixture 1`, { exact: true })
+          .count(),
         0,
       );
       await page.getByRole('button', { name: 'Previous page', exact: true }).click();
