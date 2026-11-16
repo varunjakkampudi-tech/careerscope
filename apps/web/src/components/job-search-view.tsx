@@ -397,6 +397,9 @@ function JobSearchWorkspace() {
                           ` · ${summary.permissionPending} ${t('sourceHealthPermissionPending')}`}
                       </span>
                       <span>
+                        {t('sourceHealthAccepted')}: {summary.accepted}
+                      </span>
+                      <span>
                         {t('sourceHealthLastObserved')}:{' '}
                         {new Date(summary.latestObservedAt).toLocaleDateString(
                           locale === 'en' ? 'en-IN' : locale === 'te' ? 'te-IN' : 'hi-IN',

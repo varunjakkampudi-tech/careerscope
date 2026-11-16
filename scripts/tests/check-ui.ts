@@ -4987,11 +4987,24 @@ try {
         await database.completeCollection(
           fourCommand,
           fourFence,
-          [],
+          [
+            {
+              fingerprint: 'source-health-accepted-fixture',
+              sourceJobId: 'source-health-accepted-fixture',
+              title: 'Source Health Fixture Engineer',
+              company: 'Example Health Fixture',
+              location: 'Remote',
+              description: 'Synthetic browser fixture for accepted source outcome display.',
+              source: 'greenhouse',
+              sourceUrl: 'https://boards.greenhouse.io/example/jobs/accepted-fixture',
+              applyUrl: 'https://boards.greenhouse.io/example/jobs/accepted-fixture/apply',
+              postedAt: null,
+            },
+          ],
           fourRun!.request.sources.map((source) => ({
             source,
             status: 'completed',
-            accepted: 0,
+            accepted: source === 'greenhouse' ? 1 : 0,
             limited: false,
             errorCode: null,
           })),
@@ -5028,6 +5041,7 @@ try {
         .waitFor();
       for (const source of ['Greenhouse', 'Lever', 'Ashby', 'Workable'])
         await sourceHealthPanel.getByText(source, { exact: true }).waitFor();
+      await sourceHealthPanel.getByText('Accepted: 1', { exact: true }).waitFor();
       // ---------------------------------------------------------------
       // Forensic audit F-3: a link to a discovery run must open THAT run.
       // Several real runs exist for this owner by now, so "most recent" and
