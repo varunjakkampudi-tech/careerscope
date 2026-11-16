@@ -1880,10 +1880,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded item 5.02 partial status; JSearch fixtures pass locally, but live schema and permitted-use acceptance remain open.",
-      "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
-      "sha256": "55c50e8134cc0efc10b4d24b256723dee82e1d5fd7e3a7b5b8ef99538effc35f",
+      "observations": "Recorded Greenhouse adapter evidence and current permission/review gaps.",
+      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+      "sha256": "e8cfc89c6fe6dfd38759ae458b979c0755022d041761937b5977d3bd53e5c485",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -1932,6 +1932,12 @@
           "evidence": "PR #94 exact head 3d2c0159cd96e7913b607b7f4469ca2aca1fa9a1 passed run 43847246428 and merged as ed6fef64e4051bf83b02a5bb1816ea8682b43ea7; post-merge run 43849480366 passed Quality and Services/integration/browser.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.10 closeout)",
           "sha256": "49632a817458571dfad25d4df007599681490983ff35a6a6c957d5ead00962dd"
+        },
+        {
+          "observations": "Recorded item 5.02 partial status; JSearch fixtures pass locally, but live schema and permitted-use acceptance remain open.",
+          "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
+          "sha256": "55c50e8134cc0efc10b4d24b256723dee82e1d5fd7e3a7b5b8ef99538effc35f"
         }
       ]
     },
@@ -1998,10 +2004,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded owner item 5.02 evidence and external restrictions; no verified status or provider activation is claimed.",
-      "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
-      "sha256": "ea89568d506e713b2f83d15fadf61d3289e4c26d37f8ff5d89fecd9e006525e0",
+      "observations": "Recorded owner item 5.03 as partial and preserved the permitted-use gate.",
+      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+      "sha256": "faf2e300c58763f5221b6fb892cab650dac266d555735491b3fbcac767bfd338",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2080,6 +2086,12 @@
           "evidence": "PR #86 head 8286568cc22d0dd996f8cdfdaf1a9890c75300e2 passed all three required jobs in run 43365717442. Focused fixtures passed 162/162 locally on Node 22.23.2; no live provider calls or rights verification occurred. Item remains partial pending independent exact-head review and source-specific permitted-use evidence.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.01 evidence update)",
           "sha256": "dd9d857a51fa6d0a24c9f97fb1213536fe8e019103dc8b1f49513ef84a734bd9"
+        },
+        {
+          "observations": "Recorded owner item 5.02 evidence and external restrictions; no verified status or provider activation is claimed.",
+          "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
+          "sha256": "ea89568d506e713b2f83d15fadf61d3289e4c26d37f8ff5d89fecd9e006525e0"
         }
       ]
     },
@@ -2090,10 +2102,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Separates implemented adapters, request identifiers and permitted launch candidates; states current rights profiles are empty and gates fail closed. No live rights or provider call is claimed.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "a1e58339cdbb9c4caf21495fd49480c0f550811f11990da5a1aea5e20bc73cf3"
+      "observations": "Reviewed candidate-source allowlist and empty production permission profile; no live source use is claimed.",
+      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+      "sha256": "a1e58339cdbb9c4caf21495fd49480c0f550811f11990da5a1aea5e20bc73cf3",
+      "history": [
+        {
+          "observations": "Read in full. Separates implemented adapters, request identifiers and permitted launch candidates; states current rights profiles are empty and gates fail closed. No live rights or provider call is claimed.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "a1e58339cdbb9c4caf21495fd49480c0f550811f11990da5a1aea5e20bc73cf3"
+        }
+      ]
     },
     {
       "path": "docs/README.md",
@@ -2126,10 +2146,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded 81/81 synthetic JSearch, registry and source-policy test results on Node 22.23.2 and explicitly noted no live call.",
-      "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
-      "sha256": "4b102019e05ba5bc0291b08da6946a50befbe2ddc844c602c35897b3efe9349e",
+      "observations": "Recorded focused Greenhouse synthetic test counts, local Node version, and no-live-call limitation.",
+      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+      "sha256": "fd7a79821a2ae9752edf4351b52926ad45020b5b101e8d21f0361e6400edf942",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2184,6 +2204,12 @@
           "evidence": "PR #86 head 8286568cc22d0dd996f8cdfdaf1a9890c75300e2 passed all three required jobs in run 43365717442. Focused fixtures passed 162/162 locally on Node 22.23.2; no live provider calls or rights verification occurred. Item remains partial pending independent exact-head review and source-specific permitted-use evidence.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.01 evidence update)",
           "sha256": "1f56cc957f50340c0364e3a8880a4032d912f9a21b2c5f5c1243be2537c1d703"
+        },
+        {
+          "observations": "Recorded 81/81 synthetic JSearch, registry and source-policy test results on Node 22.23.2 and explicitly noted no live call.",
+          "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
+          "sha256": "4b102019e05ba5bc0291b08da6946a50befbe2ddc844c602c35897b3efe9349e"
         }
       ]
     },
@@ -2614,10 +2640,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded owner item 5.02 as partial with fixture evidence, no live schema verification, and permitted-use gap.",
-      "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
-      "sha256": "86476629a27fa159c7e85952ed739b810d995e9ee24b8be05af872c12ec3cb37",
+      "observations": "Recorded item 5.03 partial status with adapter, fixture, registry, and source-policy evidence.",
+      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+      "sha256": "1dcc4f1c2f6987c31ad91ca1339f8b8e3f66942ceeaa72c2aee0a09139e5e050",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2672,6 +2698,12 @@
           "evidence": "PR #86 head 8286568cc22d0dd996f8cdfdaf1a9890c75300e2 passed all three required jobs in run 43365717442. Focused fixtures passed 162/162 locally on Node 22.23.2; no live provider calls or rights verification occurred. Item remains partial pending independent exact-head review and source-specific permitted-use evidence.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.01 evidence update)",
           "sha256": "3a24672238402a3a4a7990375cdd2ea666e8a0a2e6aa516dc2e1649fe064f68c"
+        },
+        {
+          "observations": "Recorded owner item 5.02 as partial with fixture evidence, no live schema verification, and permitted-use gap.",
+          "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
+          "sha256": "86476629a27fa159c7e85952ed739b810d995e9ee24b8be05af872c12ec3cb37"
         }
       ]
     },
@@ -5004,9 +5036,9 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
-      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+      "observations": "Reviewed Greenhouse synthetic fixtures for listing mapping, description decoding, and detail handling.",
+      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
       "sha256": "78e2d50ffe7f31ed0f29d2cfd0b8acef3d447dd21e11b42dbc8b9482bde9508d",
       "history": [
         {
@@ -5014,6 +5046,12 @@
           "sha256": "e82c9200037bfaca7a7de3848ea6c0d243ae1bfd3e71e43c57878a3bf92b4b99",
           "observations": "Read the complete file. ATS adapter tests use routed fake responses and synthetic posting payloads; outbound URL construction, pagination, mapping, contact filtering, and page ceilings are asserted. No finding.",
           "evidence": "Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes."
+        },
+        {
+          "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+          "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "78e2d50ffe7f31ed0f29d2cfd0b8acef3d447dd21e11b42dbc8b9482bde9508d"
         }
       ]
     },
@@ -5060,10 +5098,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "bc1e8c7983d3e9402aa93f1526278593ad69cb72b66ffec223477de18d5902f7"
+      "observations": "Reviewed existing Greenhouse board mapping and detail-fetch behavior; no live call or production permission change was made.",
+      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+      "sha256": "bc1e8c7983d3e9402aa93f1526278593ad69cb72b66ffec223477de18d5902f7",
+      "history": [
+        {
+          "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
+          "evidence": "",
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "bc1e8c7983d3e9402aa93f1526278593ad69cb72b66ffec223477de18d5902f7"
+        }
+      ]
     },
     {
       "path": "packages/providers/src/ats/lever.ts",
@@ -5456,10 +5502,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Checks credential-gated availability, source registration completeness, scraper opt-in, result order, source grouping, no ambient env reads and no credential echo.",
-      "evidence": "",
-      "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "910e230b1cb47eb767a6d4061f1125cdf663348e16f6722af9ba7708696d8aeb"
+      "observations": "Reviewed registry test evidence for Greenhouse availability and credential/policy behavior.",
+      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+      "sha256": "910e230b1cb47eb767a6d4061f1125cdf663348e16f6722af9ba7708696d8aeb",
+      "history": [
+        {
+          "observations": "Read in full. Checks credential-gated availability, source registration completeness, scraper opt-in, result order, source grouping, no ambient env reads and no credential echo.",
+          "evidence": "",
+          "reviewer": "Codex (Stage 01 implementation audit)",
+          "sha256": "910e230b1cb47eb767a6d4061f1125cdf663348e16f6722af9ba7708696d8aeb"
+        }
+      ]
     },
     {
       "path": "packages/providers/src/registry.ts",
@@ -5468,10 +5522,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (194 lines). Every source is listed with its availability and reason, and resolution keeps only runnable providers. The scrapers are off unless explicitly enabled, which is recorded as a deliberate choice. Option plumbing adds no property when a value is absent, so no explicit undefined reaches an adapter. The completeness rule (foundit and cutshort have no provider) is asserted in its test. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "05e607e8e6e5bfaa988479e5918ffbfe3912203bd5156d024df639deb89fb977"
+      "observations": "Reviewed provider registry wiring; existing Greenhouse registration is not production authorization.",
+      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+      "sha256": "05e607e8e6e5bfaa988479e5918ffbfe3912203bd5156d024df639deb89fb977",
+      "history": [
+        {
+          "observations": "Read in full (194 lines). Every source is listed with its availability and reason, and resolution keeps only runnable providers. The scrapers are off unless explicitly enabled, which is recorded as a deliberate choice. Option plumbing adds no property when a value is absent, so no explicit undefined reaches an adapter. The completeness rule (foundit and cutshort have no provider) is asserted in its test. No finding.",
+          "evidence": "",
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "05e607e8e6e5bfaa988479e5918ffbfe3912203bd5156d024df639deb89fb977"
+        }
+      ]
     },
     {
       "path": "packages/providers/src/remote/base.ts",
@@ -6124,10 +6186,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete source-permission tests. They assert no sources are enabled by default, restrict launch candidates, enforce current approval/review dates and required private-discovery rights, and keep AI/public/redistribution rights separate.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "8c5cfd79d1749a6d2638e490f386856c5360f056e662bb22d90acfea97c0f8f4"
+      "observations": "Reviewed synthetic permission-policy tests; they do not establish external permitted-use rights.",
+      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+      "sha256": "8c5cfd79d1749a6d2638e490f386856c5360f056e662bb22d90acfea97c0f8f4",
+      "history": [
+        {
+          "observations": "Read the complete source-permission tests. They assert no sources are enabled by default, restrict launch candidates, enforce current approval/review dates and required private-discovery rights, and keep AI/public/redistribution rights separate.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "8c5cfd79d1749a6d2638e490f386856c5360f056e662bb22d90acfea97c0f8f4"
+        }
+      ]
     },
     {
       "path": "packages/shared/src/job-source-policy.ts",
@@ -6136,10 +6206,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (102 lines). Discovery is closed by default: no approved profile exists, and a source needs a current profile with collection, storage, transformation and candidate-display rights. Expired and not-yet-approved profiles fail closed; the review date must come after approval; credentials are refused by the schema. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "1eb832cc63d1e97965258d1ed5f7fb4378ce06848dd315a844ca69c6accd4e3c"
+      "observations": "Reviewed fail-closed source permission policy; no approved production source profile is present.",
+      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+      "sha256": "1eb832cc63d1e97965258d1ed5f7fb4378ce06848dd315a844ca69c6accd4e3c",
+      "history": [
+        {
+          "observations": "Read in full (102 lines). Discovery is closed by default: no approved profile exists, and a source needs a current profile with collection, storage, transformation and candidate-display rights. Expired and not-yet-approved profiles fail closed; the review date must come after approval; credentials are refused by the schema. No finding.",
+          "evidence": "",
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "1eb832cc63d1e97965258d1ed5f7fb4378ce06848dd315a844ca69c6accd4e3c"
+        }
+      ]
     },
     {
       "path": "packages/shared/src/keywords.test.ts",
