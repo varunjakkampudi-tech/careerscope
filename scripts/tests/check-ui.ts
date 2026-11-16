@@ -5041,7 +5041,10 @@ try {
         .waitFor();
       for (const source of ['Greenhouse', 'Lever', 'Ashby', 'Workable'])
         await sourceHealthPanel.getByText(source, { exact: true }).waitFor();
-      await sourceHealthPanel.getByText('Accepted: 1', { exact: true }).waitFor();
+      const acceptedGreenhouseSource = sourceHealthPanel
+        .getByRole('listitem')
+        .filter({ hasText: 'Greenhouse' });
+      await acceptedGreenhouseSource.getByText('Accepted: 1', { exact: true }).waitFor();
       // ---------------------------------------------------------------
       // Forensic audit F-3: a link to a discovery run must open THAT run.
       // Several real runs exist for this owner by now, so "most recent" and

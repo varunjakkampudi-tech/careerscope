@@ -266,7 +266,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
-      "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. The new accepted-count and audit-history corrections require exact-head CI.",
+      "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. Run 43978471041 exposed an ambiguous accepted-count locator; the test now scopes that assertion to Greenhouse. Corrected exact-head CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
       "sha256": "09ec7efd0fdf91ccc27ee37f72beb0cfea1f574059a8118115ac68cfcc100935",
       "history": [
@@ -1112,7 +1112,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
-      "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. The new accepted-count and audit-history corrections require exact-head CI.",
+      "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. Run 43978471041 exposed an ambiguous accepted-count locator; the test now scopes that assertion to Greenhouse. Corrected exact-head CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
       "sha256": "7f732af737c18e170344a3fdd8bec0b80b95a040238e10188b461e03d15096f3",
       "history": [
@@ -1132,7 +1132,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
-      "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. The new accepted-count and audit-history corrections require exact-head CI.",
+      "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. Run 43978471041 exposed an ambiguous accepted-count locator; the test now scopes that assertion to Greenhouse. Corrected exact-head CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
       "sha256": "3adc9583e1286b252f0530dd57836308a8202fc96a60ad960d930f42046fbe98",
       "history": [
@@ -1953,9 +1953,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
-      "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. The new accepted-count and audit-history corrections require exact-head CI.",
+      "evidence": "Run 43978471041 found an ambiguous accepted-count locator. Current matrix/progress wording records that failure and the row-scoped correction; exact-head CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "b413a1769999693c2906ab9ef2aa9440fce669183a401c52df7dcb3bec95147b",
+      "sha256": "00e35eb009a82b89219e6028e5d33c05bb8b22beff1da80b55d8f6c865dedd71",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2157,9 +2157,9 @@
         }
       ],
       "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
-      "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. The new accepted-count and audit-history corrections require exact-head CI.",
+      "evidence": "Run 43978471041 found an ambiguous accepted-count locator. Current matrix/progress wording records that failure and the row-scoped correction; exact-head CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "1aed7c1dc4aeadd811ce49a54f5597c8edb7f4851efa5cad4123871c4c731340",
+      "sha256": "6ffe2157c237668384ed7ff5310b5294bc0724eb7a5228d743151573ca4fe2ac",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2359,9 +2359,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
-      "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. The new accepted-count and audit-history corrections require exact-head CI.",
+      "evidence": "Run 43978471041 found an ambiguous accepted-count locator. Current matrix/progress wording records that failure and the row-scoped correction; exact-head CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "8f06bbdeed89dff312e42387ed6095826bac4a63a97b7f58d9f3d8463d525c48",
+      "sha256": "94fe1fe2971c35b43aef9056b85af27b518b813ab7c34ac367ca06214ede9e29",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2933,9 +2933,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
-      "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. The new accepted-count and audit-history corrections require exact-head CI.",
+      "evidence": "Run 43978471041 found an ambiguous accepted-count locator. Current matrix/progress wording records that failure and the row-scoped correction; exact-head CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "ddbe23cb16f4f02ccdb100e8f72cf1a768a4632eec241e7484fdd76f46468042",
+      "sha256": "4a2329b19aac6497b0b7cb67da9da953beca67c541c3b8bd3c9ab5f1f52e15fc",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -7510,9 +7510,9 @@
         }
       ],
       "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
-      "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. The new accepted-count and audit-history corrections require exact-head CI.",
+      "evidence": "Run 43978471041 found an ambiguous accepted-count locator; this exact-count assertion is now scoped to the Greenhouse list row. Exact-head CI for the correction is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "dc763dde53fff03c241290828d964bfc6fcc75d7adb6f27b695ccfe14e760e7e",
+      "sha256": "cfe0e42b83787a916650553dabcd3b28c6bf28240bd057c8fddd8cfec8fdd7b2",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
