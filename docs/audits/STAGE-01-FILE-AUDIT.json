@@ -1880,10 +1880,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
-      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
-      "sha256": "f282723ec65a4a811e7da06e7f1b5c0ab216fdfb3cc8c3761a41e68b469214db",
+      "observations": "Updated owner item 5.10 record to reflect the final exact-head CI and independent review results while retaining partial status until merge.",
+      "evidence": "Hosted CI run 43845065922 passed on 0a943ccbd06074dc2e43522eed0b63df6c4fdc18; independent exact-SHA review approved that head.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 documentation sync)",
+      "sha256": "c9179a8dafebc369d4ff847d5424b7dda59ea9fa09f04aab9b1c90ba456e8a9a",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -1914,6 +1914,12 @@
           "evidence": "Reviewed current content on codex/stage05-item510-salary-location-normalization; earlier CI evidence is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
           "sha256": "c79c206659fac91f4a0a313571d305f71c09f89f49178fc1cec872bccac76ce1"
+        },
+        {
+          "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+          "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "f282723ec65a4a811e7da06e7f1b5c0ab216fdfb3cc8c3761a41e68b469214db"
         }
       ]
     },
@@ -1980,10 +1986,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
-      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
-      "sha256": "180ac9747b99c6edbb6e62e11ba634eb32d669edf55380343703f4f191e43095",
+      "observations": "Updated owner item 5.10 record to reflect the final exact-head CI and independent review results while retaining partial status until merge.",
+      "evidence": "Hosted CI run 43845065922 passed on 0a943ccbd06074dc2e43522eed0b63df6c4fdc18; independent exact-SHA review approved that head.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 documentation sync)",
+      "sha256": "4aee605b5f54ee1a14b9392eb8bdaadb42b59b66964a631b08b9a0763064abe0",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2038,6 +2044,12 @@
           "evidence": "Reviewed current content on codex/stage05-item510-salary-location-normalization; earlier CI evidence is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
           "sha256": "99b9d839d8a4bd9f2357313f895fb2886d1d54520d34e96a28006c9d5cee4de2"
+        },
+        {
+          "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+          "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "180ac9747b99c6edbb6e62e11ba634eb32d669edf55380343703f4f191e43095"
         }
       ]
     },
