@@ -3600,6 +3600,10 @@ try {
             fullPage: true,
           });
       }
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.unroute(`**/api/searches/${search.id}`);
+      await page.reload();
+      await page.getByRole('heading', { name: 'Senior React Engineer' }).waitFor();
       await page.getByLabel('Filter results').fill('NoSuchCompany');
       // CS-13's shared EmptyState renders its title as a styled <p>, not a
       // heading (it is embedded at varying heading depths), so this checks

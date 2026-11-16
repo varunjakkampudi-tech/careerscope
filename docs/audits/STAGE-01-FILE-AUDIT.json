@@ -7415,10 +7415,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the synthetic 45-result pagination browser fixture, including equal-score deterministic data, first/second/previous-page assertions, filter reset and responsive checks.",
-      "evidence": "The current exact-head browser run found the fixture could cycle different match scores and invalidate its assumed order; the fixture now clones one result consistently. Audit hash refreshed for exact-head rerun.",
+      "observations": "Reviewed the synthetic 45-result pagination fixture, cross-page assertions, responsive checks and handler cleanup that restores the original two-job fixture for subsequent UI scenarios.",
+      "evidence": "Exact-head CI exposed test-fixture route leakage into later saved-job workflows. The test now removes the route and reloads original data before continuing; exact-head rerun pending.",
       "reviewer": "Codex (CareerScope owner item 5.14 implementation and evidence update)",
-      "sha256": "8fcfae447e8cce5f5660366176859e69e2a1426532e7a154b407afadcaaca625",
+      "sha256": "62a358a417acb0d06d2d7389d82d4a6cdcfc95988a0eff3a788d1fbf40f5c2f8",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
