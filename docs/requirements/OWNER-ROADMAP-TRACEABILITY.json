@@ -1209,11 +1209,15 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Expired-job handling",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/core/src/market.ts",
+        "packages/core/src/market.integration.test.ts",
+        "apps/workers/search/src/collect.ts"
+      ],
+      "tests": ["packages/core/src/market.integration.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Current behavior identifies stale or persistent listings from dates and repeated sightings; it cannot confirm employer closure without a verifiable permitted source signal.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1222,11 +1226,11 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Provider retries and circuit breakers",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": ["packages/providers/src/http.ts", "packages/providers/src/http.test.ts"],
+      "tests": ["packages/providers/src/http.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Bounded retries, jittered backoff and Retry-After handling are implemented and tested; provider-scoped circuit-breaker states and recovery tests are absent.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1235,11 +1239,21 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Search pagination",
       "sourceStatus": "New/enhancement",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/ats/base.ts",
+        "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/remote/base.ts",
+        "packages/providers/src/keyed/aggregators.test.ts",
+        "apps/workers/search/src/collect.test.ts"
+      ],
+      "tests": [
+        "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/keyed/aggregators.test.ts",
+        "apps/workers/search/src/collect.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Adapters implement bounded pagination with ceilings and token-progress checks; item-specific exact-head acceptance across launch-permitted sources remains pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1248,11 +1262,19 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Source health monitoring",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/core/src/jobs.ts",
+        "apps/workers/search/src/collect.ts",
+        "packages/core/src/database.ts",
+        "docs/requirements/V12-RECONCILIATION.md"
+      ],
+      "tests": [
+        "apps/workers/search/src/collect.test.ts",
+        "packages/core/src/bull-queue.integration.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Search outcomes and consecutive-empty warnings are recorded; there is no source-health surface or automatic suspension. V12 reconciliation also records this as a known gap.",
       "scopeDisposition": "in-scope"
     },
     {
