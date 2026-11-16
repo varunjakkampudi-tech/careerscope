@@ -1882,10 +1882,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 05 gap evidence for owner items 5.02–5.04; merged verification for #97/#98 is recorded and Lever remains partial.",
-      "evidence": "Source permission, live schema/rights evidence, and production activation are not claimed for Lever.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
-      "sha256": "95ea168cb67e690a6e3a26e2ab3e5e95c12cb6ea96bd59f1ae0c2cec241799d0",
+      "observations": "Updated Stage 05 gap evidence for owner items 5.02–5.04; merged verification for #97/#98 is recorded and Lever remains partial. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes.",
+      "evidence": "The prior CI run rejected CRLF worktree hashes against LF Git content; SHA-256 now matches the committed file bytes.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.04 LF hash correction)",
+      "sha256": "b57f9d20a3415ecda803093274d998aae647a7ccc82ee5fbcadb01d13ba1d0ad",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -1952,6 +1952,12 @@
           "sha256": "95ea168cb67e690a6e3a26e2ab3e5e95c12cb6ea96bd59f1ae0c2cec241799d0",
           "observations": "Updated current Stage 05 evidence for items 5.02, 5.03, and 5.04; records merged PR #97/#98 evidence and retains provider permission gaps.",
           "evidence": "Lever remains partial pending source-specific production permission and current live-schema/rights evidence."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
+          "sha256": "95ea168cb67e690a6e3a26e2ab3e5e95c12cb6ea96bd59f1ae0c2cec241799d0",
+          "observations": "Updated Stage 05 gap evidence for owner items 5.02–5.04; merged verification for #97/#98 is recorded and Lever remains partial.",
+          "evidence": "Source permission, live schema/rights evidence, and production activation are not claimed for Lever."
         }
       ]
     },
@@ -2018,10 +2024,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 inventory totals and post-merge evidence for items 5.02 and 5.03; recorded Lever item 5.04 as partial.",
-      "evidence": "Provider source rights and current live schema remain external gaps; no provider activation occurred.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
-      "sha256": "77b4e68e97df62504eb7bf86d9e2cadb066eaa6a3bfe81998b473a6a32bbb7ff",
+      "observations": "Updated Stage 05 inventory totals and post-merge evidence for items 5.02 and 5.03; recorded Lever item 5.04 as partial. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes.",
+      "evidence": "The prior CI run rejected CRLF worktree hashes against LF Git content; SHA-256 now matches the committed file bytes.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.04 LF hash correction)",
+      "sha256": "8fdaf5fcffc2b3eedea6fbcfbae26f64f31be280f5facd60dcb66ad74f1b9a2b",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2118,6 +2124,12 @@
           "sha256": "77b4e68e97df62504eb7bf86d9e2cadb066eaa6a3bfe81998b473a6a32bbb7ff",
           "observations": "Updated Stage 05 progress, exact CI/review/merge evidence for items 5.02 and 5.03, and accurate 328-item status totals.",
           "evidence": "Item 5.04 remains partial; source rights and local Node/dependency limitations are explicit."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
+          "sha256": "77b4e68e97df62504eb7bf86d9e2cadb066eaa6a3bfe81998b473a6a32bbb7ff",
+          "observations": "Updated Stage 05 inventory totals and post-merge evidence for items 5.02 and 5.03; recorded Lever item 5.04 as partial.",
+          "evidence": "Provider source rights and current live schema remain external gaps; no provider activation occurred."
         }
       ]
     },
@@ -2172,10 +2184,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated exact CI/review/merge evidence for items 5.02 and 5.03 and added Lever evidence for item 5.04.",
-      "evidence": "Local Lever rerun could not start because dependencies are absent and Node 22 is below the required Node 24; item 5.04 exact-head gates remain pending.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
-      "sha256": "6a12d22959c55d78895632d8a24a31fb06cbec5fcd7dcba2dbede72ea1186819",
+      "observations": "Updated exact CI/review/merge evidence for items 5.02 and 5.03 and added Lever evidence for item 5.04. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes.",
+      "evidence": "The prior CI run rejected CRLF worktree hashes against LF Git content; SHA-256 now matches the committed file bytes.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.04 LF hash correction)",
+      "sha256": "85bf3653bac6e617a61d8e00cb14270e5b623d5e30022d46cf7f69ef7a6278da",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2248,6 +2260,12 @@
           "sha256": "6a12d22959c55d78895632d8a24a31fb06cbec5fcd7dcba2dbede72ea1186819",
           "observations": "Updated Stage 05 test and exact-SHA results for JSearch and Greenhouse; added Lever coverage with local execution limitations.",
           "evidence": "PR #97 and #98 required checks and final independent approvals are recorded; no provider live call is claimed."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
+          "sha256": "6a12d22959c55d78895632d8a24a31fb06cbec5fcd7dcba2dbede72ea1186819",
+          "observations": "Updated exact CI/review/merge evidence for items 5.02 and 5.03 and added Lever evidence for item 5.04.",
+          "evidence": "Local Lever rerun could not start because dependencies are absent and Node 22 is below the required Node 24; item 5.04 exact-head gates remain pending."
         }
       ]
     },
