@@ -1844,10 +1844,18 @@
           "remediation": "Clarified that item 1.01 is complete; at that checkpoint other items and closing acceptance remained, and the final Stage 01 closeout is now recorded with exact hosted evidence."
         }
       ],
-      "observations": "Reviewed the Stage 01 closeout crosswalk, all fifteen verified checklist items, accepted low-severity risk and exact hosted closeout evidence.",
-      "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 closeout)",
-      "sha256": "2fe705eac637977c93ffa34c55c1d8d891208333b58d644f1094a601c99bf90c"
+      "observations": "Reviewed the updated v12 reconciliation counts after recording the Stage 05 item 5.07 JobPosting markup reader as partial.",
+      "evidence": "The canonical v12 inventory checker and traceability checker pass with current clause counts.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+      "sha256": "923547fe8652e40aa1fb567a45b1f1ca326792ce4f1912738e81284c80760a85",
+      "history": [
+        {
+          "reviewer": "Prior recorded file audit",
+          "sha256": "2fe705eac637977c93ffa34c55c1d8d891208333b58d644f1094a601c99bf90c",
+          "observations": "Prior reviewed revision before the Stage 05 item 5.07 reconciliation count update.",
+          "evidence": "Previous tracked revision; current content has a separate review record."
+        }
+      ]
     },
     {
       "path": "docs/FRONTEND-ARCHITECTURE.md",
@@ -1880,10 +1888,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
-      "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
-      "sha256": "83104d45ebde3e05e9d31ce9ad4418943653d181a1246d50147a06aebbd4003d",
+      "observations": "Reviewed current content for CareerScope item 5.07 documentation reconciliation and/or bounded offline JobPosting JSON-LD extraction; no production permission, crawling, or coverage claim is made.",
+      "evidence": "Node 24 Docker focused tests passed 3/3; provider package build passed. Current bytes are recorded by SHA-256.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+      "sha256": "7d503f34c9092cc36a0b35a16ee875a1897e3d1e90000b087ecfece377c17e62",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -1986,6 +1994,12 @@
           "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; item remains partial pending live-response and source-rights/owner-permission evidence.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
           "sha256": "83104d45ebde3e05e9d31ce9ad4418943653d181a1246d50147a06aebbd4003d"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "83104d45ebde3e05e9d31ce9ad4418943653d181a1246d50147a06aebbd4003d",
+          "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
+          "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence."
         }
       ]
     },
@@ -2052,10 +2066,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
-      "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
-      "sha256": "6ed313128de4f8e2e0a01f23420b80767a709d67c874a9f20685005bd875b11e",
+      "observations": "Reviewed current content for CareerScope item 5.07 documentation reconciliation and/or bounded offline JobPosting JSON-LD extraction; no production permission, crawling, or coverage claim is made.",
+      "evidence": "Node 24 Docker focused tests passed 3/3; provider package build passed. Current bytes are recorded by SHA-256.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+      "sha256": "44d73b3588fa44ea764649f6f9f6cf70e75cadabe79de9e0582bb8f0c7090e96",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2176,6 +2190,12 @@
           "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; item remains partial pending live-response and source-rights/owner-permission evidence.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
           "sha256": "6ed313128de4f8e2e0a01f23420b80767a709d67c874a9f20685005bd875b11e"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "6ed313128de4f8e2e0a01f23420b80767a709d67c874a9f20685005bd875b11e",
+          "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
+          "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence."
         }
       ]
     },
@@ -2230,10 +2250,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
-      "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
-      "sha256": "0ca33a8a176816fa4f370d0833fdf13e84a11d6ec1efcf818ba2b8885c646513",
+      "observations": "Reviewed current content for CareerScope item 5.07 documentation reconciliation and/or bounded offline JobPosting JSON-LD extraction; no production permission, crawling, or coverage claim is made.",
+      "evidence": "Node 24 Docker focused tests passed 3/3; provider package build passed. Current bytes are recorded by SHA-256.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+      "sha256": "78bd6c3662a95d58c03bd3f1bf83b3b411b73f0a2936d640495d23255d4a6f55",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2342,6 +2362,12 @@
           "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; item remains partial pending live-response and source-rights/owner-permission evidence.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
           "sha256": "0ca33a8a176816fa4f370d0833fdf13e84a11d6ec1efcf818ba2b8885c646513"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "0ca33a8a176816fa4f370d0833fdf13e84a11d6ec1efcf818ba2b8885c646513",
+          "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
+          "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence."
         }
       ]
     },
@@ -2360,14 +2386,22 @@
     {
       "path": "docs/TRACEABILITY.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed requirement-to-test mapping for resume versioning.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "e86830a96ec8a5b58cae326a3d4bb30730cd596336baafaae70cd58d48abb5c4"
+      "observations": "Reviewed the updated v12 reconciliation counts after recording the Stage 05 item 5.07 JobPosting markup reader as partial.",
+      "evidence": "The canonical v12 inventory checker and traceability checker pass with current clause counts.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+      "sha256": "801d8e5468fb585d8147825f646930bc2513c7f071dd71eb1bcc1b6f1a39e613",
+      "history": [
+        {
+          "reviewer": "Prior recorded file audit",
+          "sha256": "e86830a96ec8a5b58cae326a3d4bb30730cd596336baafaae70cd58d48abb5c4",
+          "observations": "Prior reviewed revision before the Stage 05 item 5.07 reconciliation count update.",
+          "evidence": "Previous tracked revision; current content has a separate review record."
+        }
+      ]
     },
     {
       "path": "docs/UI-VERIFICATION.md",
@@ -2492,14 +2526,22 @@
     {
       "path": "docs/audits/STAGE-01-FILE-AUDIT.md",
       "category": "self-referential-audit-record",
-      "reviewMethod": "classification-only",
-      "state": "not-applicable-source",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Self-referential human summary of this audit. Its figures are taken from the JSON record at each revision; it is not reviewed as source.",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": "3a415414d399550ba267bdff0c2fa9f27d735d15dd5d8bc0aef37ad08ba8143a"
+      "observations": "Reviewed updated candidate coverage counts, findings and Stage 05 item 5.07 audit evidence.",
+      "evidence": "Counts match current machine-readable Stage 01 audit manifest.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+      "sha256": "05ea6ddb953de560a9440d91395c7af333f7f401f56cf7ea22b9c1e1cea1e8f5",
+      "history": [
+        {
+          "reviewer": "Prior recorded file audit",
+          "sha256": "e02c396a17099c136342e727e1f392c088e6c5a6467b269331c9d2b99f28308a",
+          "observations": "Prior audit summary before updating candidate file counts for Stage 05 item 5.07.",
+          "evidence": "Current manifest summary refreshed and current bytes reviewed."
+        }
+      ]
     },
     {
       "path": "docs/decisions/CSP-STRICT-SCRIPT-SRC.md",
@@ -2772,10 +2814,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
-      "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
-      "sha256": "e30c23d877d68b800084b10a2353699892c746e8ddb27f91015ab454ef689084",
+      "observations": "Reviewed current content for CareerScope item 5.07 documentation reconciliation and/or bounded offline JobPosting JSON-LD extraction; no production permission, crawling, or coverage claim is made.",
+      "evidence": "Node 24 Docker focused tests passed 3/3; provider package build passed. Current bytes are recorded by SHA-256.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+      "sha256": "f5f9ab140398f897114d80c1a6c4368b76e0ee3da08e75aed342c831a56d9af8",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2866,6 +2908,12 @@
           "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; item remains partial pending live-response and source-rights/owner-permission evidence.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
           "sha256": "e30c23d877d68b800084b10a2353699892c746e8ddb27f91015ab454ef689084"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "e30c23d877d68b800084b10a2353699892c746e8ddb27f91015ab454ef689084",
+          "observations": "Reviewed for owner item 5.05 Ashby; item evidence and remaining source-permission gaps recorded.",
+          "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence."
         }
       ]
     },
@@ -2884,10 +2932,18 @@
           "remediation": "Item 1.02 records Hostinger, server backup and restore-only clauses as OUT_OF_SCOPE_OWNER under the owner-revised checklist, and the inventory checker enforces the non-blocking scope disposition."
         }
       ],
-      "observations": "Reviewed the regenerated report against the updated inventory. It records 319 clauses, 11 owner-scoped Hostinger/backup/restore exclusions, 153 in-scope launch-blocking gaps, and preserves release-engineering requirements. Generated-summary validation passes.",
-      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
-      "reviewer": "Codex (Stage 01 item 1.02)",
-      "sha256": "e0d50641930a3ec732b9d784cbb76ef90e39046fadafeb817d0add061b020c9b"
+      "observations": "Reviewed current content for CareerScope item 5.07 documentation reconciliation and/or bounded offline JobPosting JSON-LD extraction; no production permission, crawling, or coverage claim is made.",
+      "evidence": "Node 24 Docker focused tests passed 3/3; provider package build passed. Current bytes are recorded by SHA-256.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+      "sha256": "e1cbcfc6915a04f151d2cd8ad7d00cff6daa157f306e1d70b3c18ab06fd5eefd",
+      "history": [
+        {
+          "reviewer": "Prior recorded file audit",
+          "sha256": "e0d50641930a3ec732b9d784cbb76ef90e39046fadafeb817d0add061b020c9b",
+          "observations": "Prior reviewed revision before the Stage 05 item 5.07 update.",
+          "evidence": "Previous tracked revision; current content has a separate review record."
+        }
+      ]
     },
     {
       "path": "docs/requirements/V12-REQUIREMENT-INVENTORY.json",
@@ -2896,10 +2952,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-read the 319-clause inventory and checked all 11 owner-scoped exclusions plus mixed clauses retained in scope. Owner-scoped records are non-blocking with a rationale; backup portions of mixed clauses are excluded while other gaps remain. The pinned source digest and clause correspondence still pass. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
-      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "a13d7491ea60cefc4ca785aa5985f05fc8de8409dde6af6f67471ca5225d10b9"
+      "observations": "Reviewed current content for CareerScope item 5.07 documentation reconciliation and/or bounded offline JobPosting JSON-LD extraction; no production permission, crawling, or coverage claim is made.",
+      "evidence": "Node 24 Docker focused tests passed 3/3; provider package build passed. Current bytes are recorded by SHA-256.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+      "sha256": "9dadebe8adc2049084505928f8856a70e6f4ee4bbaaf71534c33735c482539c2",
+      "history": [
+        {
+          "reviewer": "Prior recorded file audit",
+          "sha256": "a13d7491ea60cefc4ca785aa5985f05fc8de8409dde6af6f67471ca5225d10b9",
+          "observations": "Prior reviewed revision before the Stage 05 item 5.07 update.",
+          "evidence": "Previous tracked revision; current content has a separate review record."
+        }
+      ]
     },
     {
       "path": "docs/security/DATA-CLASSIFICATION.md",
@@ -4028,10 +4092,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the root test command delta: it registers the profile completeness node:test file in the explicit unit suite. No dependency or runtime command changed.",
-      "evidence": "npm test passed 371 tests with 3 skips and no failures on the Stage 03 item 3.16 revision.",
-      "reviewer": "Codex (Stage 03 item 3.16)",
-      "sha256": "6b71db79c2e0c943a5e51833a4703d66d01d1deae90b10101e9327b8efd8a373"
+      "observations": "Reviewed current content for CareerScope item 5.07 documentation reconciliation and/or bounded offline JobPosting JSON-LD extraction; no production permission, crawling, or coverage claim is made.",
+      "evidence": "Node 24 Docker focused tests passed 3/3; provider package build passed. Current bytes are recorded by SHA-256.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+      "sha256": "7e588f96ae3e7b89fe8894a4dcc982e1f9ff9a8e33608140caf93e05a4f38dfa",
+      "history": [
+        {
+          "reviewer": "Prior recorded file audit",
+          "sha256": "6b71db79c2e0c943a5e51833a4703d66d01d1deae90b10101e9327b8efd8a373",
+          "observations": "Prior reviewed revision before the Stage 05 item 5.07 update.",
+          "evidence": "Previous tracked revision; current content has a separate review record."
+        }
+      ]
     },
     {
       "path": "packages/core/package.json",
@@ -5384,6 +5456,30 @@
       "sha256": "934675d2e7f29027c966c4cc9de41504e4c6b7f3d2351ac4dde2d751eeb596a6"
     },
     {
+      "path": "packages/providers/src/career-markup.test.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed current content for CareerScope item 5.07 documentation reconciliation and/or bounded offline JobPosting JSON-LD extraction; no production permission, crawling, or coverage claim is made.",
+      "evidence": "Node 24 Docker focused tests passed 3/3; provider package build passed. Current bytes are recorded by SHA-256.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+      "sha256": "a675f2d9f892638b565ce5e5d36486b0ef379efd9cbae363ce2af861c4882250"
+    },
+    {
+      "path": "packages/providers/src/career-markup.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed current content for CareerScope item 5.07 documentation reconciliation and/or bounded offline JobPosting JSON-LD extraction; no production permission, crawling, or coverage claim is made.",
+      "evidence": "Node 24 Docker focused tests passed 3/3; provider package build passed. Current bytes are recorded by SHA-256.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+      "sha256": "8f6a68d490684cc047a201b6880271cb3720c18403c6578566e165dac7ae1a0b"
+    },
+    {
       "path": "packages/providers/src/email/gmail.test.ts",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
@@ -5542,10 +5638,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Exports the registry and normalized provider contracts, then adapter factories; comments distinguish public entry points from worker/script/test internals and document browser shutdown responsibility.",
-      "evidence": "",
-      "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "d8dd8a8bf1772a25032e15205c909c1c4e589384a6524eee25f75613507657dc"
+      "observations": "Reviewed current content for CareerScope item 5.07 documentation reconciliation and/or bounded offline JobPosting JSON-LD extraction; no production permission, crawling, or coverage claim is made.",
+      "evidence": "Node 24 Docker focused tests passed 3/3; provider package build passed. Current bytes are recorded by SHA-256.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+      "sha256": "dcb0fc62584be4c368106baadc65d48427adc659f5e6fe7694da16507017018c",
+      "history": [
+        {
+          "reviewer": "Prior recorded file audit",
+          "sha256": "d8dd8a8bf1772a25032e15205c909c1c4e589384a6524eee25f75613507657dc",
+          "observations": "Prior reviewed revision before the Stage 05 item 5.07 update.",
+          "evidence": "Previous tracked revision; current content has a separate review record."
+        }
+      ]
     },
     {
       "path": "packages/providers/src/keyed/adzuna.ts",
@@ -6718,10 +6822,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-read the inventory validator and its summary generation. OUT_OF_SCOPE_OWNER requires a rationale and launchBlocking=false, and cannot retain gap/evidence fields; its count appears in the generated status and section tables. Requirements and traceability checks pass.",
-      "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed.",
-      "reviewer": "Codex (Stage 01 item 1.02)",
-      "sha256": "6452730277d1b97e26a177d556e55847c8329106e015fd0e16b6bb5ef5468a2e"
+      "observations": "Reviewed current content for CareerScope item 5.07 documentation reconciliation and/or bounded offline JobPosting JSON-LD extraction; no production permission, crawling, or coverage claim is made.",
+      "evidence": "Node 24 Docker focused tests passed 3/3; provider package build passed. Current bytes are recorded by SHA-256.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+      "sha256": "07365885eb0c9027e15c3c4cdb29eddf8909342c71f0c3171f4177065bcc6e71",
+      "history": [
+        {
+          "reviewer": "Prior recorded file audit",
+          "sha256": "6452730277d1b97e26a177d556e55847c8329106e015fd0e16b6bb5ef5468a2e",
+          "observations": "Prior reviewed revision before the Stage 05 item 5.07 update.",
+          "evidence": "Previous tracked revision; current content has a separate review record."
+        }
+      ]
     },
     {
       "path": "scripts/ci/check-requirements-inventory.test.mjs",
