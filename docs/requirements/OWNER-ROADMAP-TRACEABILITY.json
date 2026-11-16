@@ -1365,7 +1365,11 @@
         "docs/PROGRESS.md",
         "docs/GAP-MATRIX.md"
       ],
-      "tests": ["apps/web/src/lib/search-pagination.test.ts", "apps/web/src/lib/locale.test.ts"],
+      "tests": [
+        "apps/web/src/lib/search-pagination.test.ts",
+        "apps/web/src/lib/locale.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
       "gap": "The search UI paginates the currently collected result set in accessible 20-item pages. Collection remains bounded by existing per-source caps; fetching additional provider pages on demand or server-side continuation is not implemented. The source checklist gives only the title 'Search pagination', so full acceptance criteria remain unspecified.",
       "scopeDisposition": "in-scope"

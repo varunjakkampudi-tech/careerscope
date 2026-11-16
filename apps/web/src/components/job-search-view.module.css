@@ -67,7 +67,7 @@
 }
 
 .resultPagination > span {
-  color: var(--muted-ink, #566174);
+  color: var(--muted);
   font-size: 0.9rem;
 }
 

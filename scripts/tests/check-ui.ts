@@ -3542,6 +3542,40 @@ try {
           .getAttribute('href'),
         'https://example.test/apply',
       );
+      const paginatedJobs = Array.from({ length: 45 }, (_, index) => {
+        const job = structuredClone(resultBody.jobs[index % resultBody.jobs.length]);
+        job.id = randomUUID();
+        job.data.title = `${job.data.title} Pagination fixture ${index + 1}`;
+        return job;
+      });
+      await page.route(`**/api/searches/${search.id}`, (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ ...resultBody, jobs: paginatedJobs }),
+        }),
+      );
+      await page.reload();
+      await page.getByText('Page 1 of 3', { exact: true }).waitFor();
+      assert.equal(await page.locator('details.job').count(), 20);
+      await page.getByText('Senior React Engineer Pagination fixture 1', { exact: true }).waitFor();
+      assert.equal(
+        await page
+          .getByText('Senior React Engineer Pagination fixture 21', { exact: true })
+          .count(),
+        0,
+      );
+      await page.getByRole('button', { name: 'Next page', exact: true }).click();
+      await page.getByText('Page 2 of 3', { exact: true }).waitFor();
+      await page
+        .getByText('Senior React Engineer Pagination fixture 21', { exact: true })
+        .waitFor();
+      assert.equal(
+        await page.getByText('Senior React Engineer Pagination fixture 1', { exact: true }).count(),
+        0,
+      );
+      await page.getByRole('button', { name: 'Previous page', exact: true }).click();
+      await page.getByText('Page 1 of 3', { exact: true }).waitFor();
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });
         assert.equal(
