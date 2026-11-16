@@ -409,6 +409,7 @@ describe('dedupeJobs', () => {
       description: 'Senior Backend Engineer at Acme.',
       salaryRaw: '28-42 LPA',
       sourceUrl: 'https://naukri.com/job/77',
+      applyUrl: 'https://boards.greenhouse.io/acme/jobs/4001?utm_source=listing#apply',
     }),
     { now: NOW },
   );
@@ -431,13 +432,226 @@ describe('dedupeJobs', () => {
   });
 
   it('keeps genuinely different jobs apart', () => {
-    const other = normalizeJob(rawJob({ title: 'Frontend Engineer' }), { now: NOW });
+    const other = normalizeJob(
+      rawJob({
+        sourceJobId: '4002',
+        title: 'Frontend Engineer',
+        sourceUrl: 'https://boards.greenhouse.io/acme/jobs/4002',
+      }),
+      { now: NOW },
+    );
 
     expect(dedupeJobs([atsFull, other])).toHaveLength(2);
   });
 
   it('returns an empty array for no input', () => {
     expect(dedupeJobs([])).toEqual([]);
+  });
+
+  it('canonicalizes campaign parameters and fragments before matching posting URLs', () => {
+    const first = normalizeJob(rawJob(), { now: NOW });
+    const second = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'n-77',
+        title: 'Principal Backend Engineer',
+        location: 'Hyderabad',
+        sourceUrl: 'https://naukri.com/job/77',
+        applyUrl: 'https://www.boards.greenhouse.io/acme/jobs/4001/?utm_campaign=spring#apply',
+      }),
+      { now: NOW },
+    );
+
+    expect(dedupeJobs([first, second])).toHaveLength(1);
+  });
+
+  it('does not treat a shared jobs index URL as a posting identity', () => {
+    const first = normalizeJob(rawJob({ sourceUrl: 'https://boards.greenhouse.io/acme/jobs' }), {
+      now: NOW,
+    });
+    const second = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'n-77',
+        sourceUrl: 'https://naukri.com/job/77',
+        applyUrl: 'https://boards.greenhouse.io/acme/jobs',
+      }),
+      { now: NOW },
+    );
+
+    expect(dedupeJobs([first, second])).toHaveLength(2);
+  });
+  it('preserves source-like URL parameters that may be part of posting identity', () => {
+    const first = normalizeJob(
+      rawJob({ applyUrl: 'https://boards.greenhouse.io/acme/jobs/4001?sourceid=role-a' }),
+      { now: NOW },
+    );
+    const second = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'n-77',
+        sourceUrl: 'https://naukri.com/job/77',
+        applyUrl: 'https://boards.greenhouse.io/acme/jobs/4001?sourceid=role-b',
+      }),
+      { now: NOW },
+    );
+
+    expect(dedupeJobs([first, second])).toHaveLength(2);
+  });
+  it('uses employer-scoped ATS requisition IDs when the posting links differ', () => {
+    const first = normalizeJob(
+      rawJob({
+        sourceJobId: 'acme:4001',
+        companyWebsite: 'https://www.acme.example',
+        sourceUrl: 'https://boards.greenhouse.io/acme/jobs/4001',
+      }),
+      { now: NOW },
+    );
+    const second = normalizeJob(
+      rawJob({
+        source: 'lever',
+        sourceJobId: '4001',
+        title: 'Principal Backend Engineer',
+        location: 'Hyderabad',
+        companyWebsite: 'https://acme.example',
+        sourceUrl: 'https://jobs.lever.co/acme/4001',
+        applyUrl: 'https://jobs.lever.co/acme/4001/apply',
+      }),
+      { now: NOW },
+    );
+
+    expect(dedupeJobs([first, second])).toHaveLength(1);
+  });
+
+  it('does not let matching title and description override conflicting ATS requisition IDs', () => {
+    const first = normalizeJob(
+      rawJob({
+        sourceJobId: 'acme:4001',
+        companyWebsite: 'https://acme.example',
+        postedAt: '2026-02-28T00:00:00Z',
+        description: FULL_JD,
+      }),
+      { now: NOW },
+    );
+    const second = normalizeJob(
+      rawJob({
+        source: 'lever',
+        sourceJobId: '4002',
+        companyWebsite: 'https://acme.example',
+        postedAt: '2026-03-01T00:00:00Z',
+        description: FULL_JD,
+        sourceUrl: 'https://jobs.lever.co/acme/4002',
+      }),
+      { now: NOW },
+    );
+
+    expect(dedupeJobs([first, second])).toHaveLength(2);
+  });
+  it('merges cross-source results only when employer and description evidence are strong', () => {
+    const first = normalizeJob(
+      rawJob({
+        companyWebsite: 'https://acme.example',
+        postedAt: '2026-02-28T00:00:00Z',
+        description: FULL_JD,
+      }),
+      { now: NOW },
+    );
+    const second = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'n-77',
+        companyWebsite: 'https://www.acme.example',
+        postedAt: '2026-03-01T00:00:00Z',
+        description: `${FULL_JD}\nApply through the official careers page.`,
+        sourceUrl: 'https://naukri.com/job/77',
+        applyUrl: 'https://naukri.com/job/77/apply',
+      }),
+      { now: NOW },
+    );
+
+    expect(dedupeJobs([first, second])).toHaveLength(1);
+  });
+
+  it('keeps same-fingerprint openings separate when source identity and content disagree', () => {
+    const first = normalizeJob(
+      rawJob({
+        companyWebsite: 'https://acme.example',
+        postedAt: '2026-02-01T00:00:00Z',
+        description:
+          'Payments role: own global settlement APIs. Requires Kotlin and payment network experience. Build resilient settlement systems.',
+      }),
+      { now: NOW },
+    );
+    const second = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'n-77',
+        companyWebsite: 'https://acme.example',
+        postedAt: '2026-03-01T00:00:00Z',
+        description:
+          'Fraud role: detect account takeover and card abuse. Requires Python and anomaly detection experience. Build fraud prevention systems.',
+        sourceUrl: 'https://naukri.com/job/77',
+        applyUrl: 'https://naukri.com/job/77/apply',
+      }),
+      { now: NOW },
+    );
+
+    const result = dedupeJobs([first, second]);
+    expect(result).toHaveLength(2);
+    expect(result[0]?.fingerprint).not.toBe(result[1]?.fingerprint);
+  });
+
+  it('keeps larger ambiguous groups split until explicit identity evidence links them', () => {
+    const jobs = [
+      normalizeJob(
+        rawJob({
+          sourceJobId: 'acme:4001',
+          companyWebsite: 'https://acme.example',
+          postedAt: '2026-03-01T00:00:00Z',
+          description: FULL_JD,
+        }),
+        { now: NOW },
+      ),
+      normalizeJob(
+        rawJob({
+          source: 'naukri',
+          sourceJobId: 'n-77',
+          companyWebsite: 'https://acme.example',
+          postedAt: '2026-03-01T00:00:00Z',
+          description: FULL_JD,
+          sourceUrl: 'https://naukri.com/job/77',
+        }),
+        { now: NOW },
+      ),
+      normalizeJob(
+        rawJob({
+          source: 'remoteok',
+          sourceJobId: 'r-88',
+          companyWebsite: 'https://acme.example',
+          postedAt: '2026-03-01T00:00:00Z',
+          description: FULL_JD,
+          sourceUrl: 'https://remoteok.com/job/88',
+        }),
+        { now: NOW },
+      ),
+    ];
+
+    expect(dedupeJobs(jobs)).toHaveLength(3);
+  });
+  it('does not use title/company/location alone as cross-source identity', () => {
+    const first = normalizeJob(rawJob({ description: FULL_JD }), { now: NOW });
+    const second = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'n-77',
+        description: FULL_JD,
+        sourceUrl: 'https://naukri.com/job/77',
+        applyUrl: 'https://naukri.com/job/77/apply',
+      }),
+      { now: NOW },
+    );
+
+    expect(dedupeJobs([first, second])).toHaveLength(2);
   });
 
   it('keeps two distinct reqs from the same source apart, even with an identical title, company and city', () => {

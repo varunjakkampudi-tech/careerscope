@@ -1174,7 +1174,7 @@
       "evidence": ["packages/providers/src/normalize.ts", "docs/GAP-MATRIX.md"],
       "tests": ["packages/providers/src/normalize.test.ts"],
       "externalEvidence": [],
-      "gap": "Existing deterministic dedupeJobs behavior groups normalized fingerprints, collapses exact same-source/sourceJobId refetches, merges cross-source copies, preserves distinct requisitions when one source proves multiplicity, assigns stable split identities, and keeps ambiguous three-way cases separate. normalize.test.ts covers these cases. Known limitation: two distinct openings seen only once each through separate sources can still be merged because no source proves multiplicity. This is existing dev behavior; broader identity and false-positive acceptance, exact-head CI/review and merge lifecycle remain outstanding. No live source was queried or provider activated.",
+      "gap": "PR #92 on codex/stage05-item509-deduplication adds canonical posting URL matching, employer-scoped ATS requisition matching, and a conservative confidence policy for exactly two cross-source candidates; larger ambiguous groups remain separate without explicit identity. New normalize.test.ts cases cover URL matching across title/location drift, shared-index rejection, tracking and meaningful query parameters, board-scoped ATS IDs, conflicting IDs, high-confidence descriptions, and distinct or ambiguous postings. Item remains partial after 946 domain tests across 33 files, provider build and formatting passed locally under Node 22.23.2 (below required Node 24). Exact-head Node 24 CI, golden-set precision review and independent approval remain pending; branch is not merged to dev. No live source was queried or provider activated.",
       "scopeDisposition": "in-scope"
     },
     {
