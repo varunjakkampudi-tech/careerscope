@@ -1880,10 +1880,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Mapped canonical owner item 2.10 account recovery to legacy local row 2.17. Follow-up item 2.05 review: inspected legacy registration row 2.09 mapping to canonical owner item 2.05; registration remains disabled pending counsel-approved legal text and public HTTPS URLs.",
-      "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes. Additional focused item 2.05 documentation review; SHA-256 records current bytes.",
-      "reviewer": "Codex (owner Stage 02 item 2.10)",
-      "sha256": "7cb5b4797fae177590482712f5f705c5fec54594e4d940f4b1a56566c538a0c2"
+      "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
+      "evidence": "Content reviewed for owner item 5.10 on codex/stage05-item510-salary-location-normalization; behavior and remaining acceptance gaps recorded in docs/PROGRESS.md and docs/GAP-MATRIX.md.",
+      "reviewer": "Codex (CareerScope owner item 5.10)",
+      "sha256": "665a8db8359188cc7c6ebad395cc1f1d9d97b385292f4f07a16bacd6cd3ef898"
     },
     {
       "path": "docs/KNOWN-LIMITATIONS.md",
@@ -1936,7 +1936,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1948,10 +1948,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded owner item 4.10 final exact-SHA review approval, PR #90 merge and successful post-merge verification; inventory is 42/328 with sourceStatus Partial preserved.",
-      "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
-      "reviewer": "Codex (Stage 04 item 4.10 closeout)",
-      "sha256": "dfa5320ed0f63ac9aac51df12296ebe346727dfd567ea57ff1d5d1c90bc08c6f",
+      "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
+      "evidence": "Content reviewed for owner item 5.10 on codex/stage05-item510-salary-location-normalization; behavior and remaining acceptance gaps recorded in docs/PROGRESS.md and docs/GAP-MATRIX.md.",
+      "reviewer": "Codex (CareerScope owner item 5.10)",
+      "sha256": "9ac2e642dc3121e30b8dcf59d6fe4a6d28d84defc9f7d5ac189e3b595ed16af0",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2036,14 +2036,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 4.10 with exact-head CI attempt 2, final approval, merge commit and post-merge CI evidence; item scope and skipped push-only image build are stated precisely.",
-      "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
-      "reviewer": "Codex (Stage 04 item 4.10 closeout)",
-      "sha256": "d4565a161c6a4d0dabb3f25b502b789a0dde5f56ec798b9f6362d2267cf041a9",
+      "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
+      "evidence": "Content reviewed for owner item 5.10 on codex/stage05-item510-salary-location-normalization; behavior and remaining acceptance gaps recorded in docs/PROGRESS.md and docs/GAP-MATRIX.md.",
+      "reviewer": "Codex (CareerScope owner item 5.10)",
+      "sha256": "e12426d62118295569f2aacc658c72cc48f805d725d05b1e4686cfe9f865b07e",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2512,14 +2512,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Marked owner item 4.10 verified after exact-SHA review approval, successful exact-head CI, merge to dev and successful post-merge CI; sourceStatus Partial remains unchanged.",
-      "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
-      "reviewer": "Codex (Stage 04 item 4.10 closeout)",
-      "sha256": "2dd62fad43450f9c3b64011c274c06b4d329149aba8571b6452e8ada0928a083",
+      "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
+      "evidence": "Content reviewed for owner item 5.10 on codex/stage05-item510-salary-location-normalization; behavior and remaining acceptance gaps recorded in docs/PROGRESS.md and docs/GAP-MATRIX.md.",
+      "reviewer": "Codex (CareerScope owner item 5.10)",
+      "sha256": "db7b49089d7602f1fd2520db3a12ebad97d4335e5f4b82d33ec576cb503a9b08",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -5238,10 +5238,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete file. Synthetic payload tests cover normalization, salary/date/url parsing, duplicate identity and hostile long strings; no network, file writes or personal data. No finding.",
-      "evidence": "Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "6eac0417f65ad802faf7aae2fba234d02a19cb425fe8875502114e426fc38f60"
+      "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
+      "evidence": "Content reviewed for owner item 5.10 on codex/stage05-item510-salary-location-normalization; behavior and remaining acceptance gaps recorded in docs/PROGRESS.md and docs/GAP-MATRIX.md.",
+      "reviewer": "Codex (CareerScope owner item 5.10)",
+      "sha256": "e4673e510295a88ad471f9e8b6b78d79b5696abaf889992159bca60848b8beb4"
     },
     {
       "path": "packages/providers/src/normalize.ts",
@@ -5258,10 +5258,10 @@
           "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
         }
       ],
-      "observations": "Read in full in this and the previous pass. Checked: the normalised job is built only through this module; an absent salary stays null; unparseable dates stay null and future dates are clamped to now; URLs must be http or https and are upgraded, and javascript: links are dropped; fingerprints and the deduplication rule keep distinct reqs from the same source apart; merging backfills the winner from the loser without inventing values. Finding S1-F026 (low): a finite but absurd salary (for example 1e300 an hour) was annualised to a finite, implausible figure. Annual figures above 1e10 or not positive are now left null, and the raw wording is kept. Canonicaliser and location defects were fixed earlier (S1-F024, S1-F025). normalize.test.ts asserts the implausible-figure case and that an ordinary hourly rate still annualises (63 pass).",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "b35ffcb84ad634cd217a1fc8dbf16bb9622830cf6022eabe526b1d29806741a7"
+      "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
+      "evidence": "Content reviewed for owner item 5.10 on codex/stage05-item510-salary-location-normalization; behavior and remaining acceptance gaps recorded in docs/PROGRESS.md and docs/GAP-MATRIX.md.",
+      "reviewer": "Codex (CareerScope owner item 5.10)",
+      "sha256": "bc14848b4114ee1b919bf0a9b68a5c0df7f08a43e9a8e086a250cbc9992d9d4c"
     },
     {
       "path": "packages/providers/src/rank.ts",

@@ -1,5 +1,11 @@
 # Gap matrix
 
+## Stage 05: multi-provider job discovery
+
+| Item | Feature                                  | Status  | Evidence                                                                                                                                                                              | Remaining gap                                                                                                                                                                        |
+| ---- | ---------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 5.10 | Salary/location/experience normalization | Partial | `packages/providers/src/normalize.ts`; focused provider normalization and matching tests (99/99), provider build, full domain suite (942 tests across 33 files) on local Node 22.23.2 | Representative provider-output coverage and exact-head Node 24 hosted CI plus independent acceptance remain pending. No FX conversion is performed; unknown values are not inferred. |
+
 The Stage 02 rows below retain legacy repository-local numbering and are not canonical owner-roadmap IDs. Use `docs/requirements/OWNER-ROADMAP-TRACEABILITY.json` for canonical IDs; for example, owner item 2.05 is new-account registration (local row 2.09), owner item 2.06 is Terms/privacy acceptance (local row 2.11), owner item 2.07 is session rotation (local row 2.14), owner item 2.08 is device/session management (local row 2.15), owner item 2.09 is secure email change (local row 2.16), and owner item 2.10 is account recovery (local row 2.17).
 
 Each row names the repository behavior, evidence, and remaining gap. Status values: Done (built and tested here), Existing (built earlier and tested), Partial (implemented, with an acceptance gap still open), Gated (disabled by configuration pending required owner or counsel evidence).

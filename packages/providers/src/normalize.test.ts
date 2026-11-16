@@ -126,6 +126,31 @@ describe('normalizeJob', () => {
     expect(job.location).toBe('Location not stated');
   });
 
+  it('uses a title experience requirement when the description omits one', () => {
+    const job = normalizeJob(
+      rawJob({
+        title: 'Senior Backend Engineer — 6+ years of experience',
+        description: '',
+        hasFullDescription: false,
+      }),
+      { now: NOW },
+    );
+
+    expect(job.requiredYears).toEqual({ min: 6, max: null });
+  });
+
+  it('prefers the description experience requirement over title decoration', () => {
+    const job = normalizeJob(
+      rawJob({
+        title: 'Senior Backend Engineer — 6+ years of experience',
+        description: 'Requirements: 3-5 years of relevant experience.',
+      }),
+      { now: NOW },
+    );
+
+    expect(job.requiredYears).toEqual({ min: 3, max: 5 });
+  });
+
   it('infers the employment type from the text when unset', () => {
     const job = normalizeJob(
       rawJob({ employmentType: undefined, description: 'This is a 6 month contract engagement.' }),
@@ -287,6 +312,44 @@ describe('normalizeSalary', () => {
     expect(salary.raw).toBe('Competitive, $120k-$150k plus equity');
   });
 
+  it('uses raw salary wording for missing structured currency and period metadata', () => {
+    const salary = normalizeSalary(
+      rawJob({
+        salaryMin: 80_000,
+        salaryMax: 100_000,
+        salaryRaw: '$80,000-$100,000 per month',
+      }),
+    );
+
+    expect(salary).toMatchObject({
+      min: 80_000,
+      max: 100_000,
+      currency: 'USD',
+      period: 'month',
+      annualMin: 960_000,
+      annualMax: 1_200_000,
+    });
+  });
+
+  it('normalizes structured currency codes and keeps structured metadata authoritative', () => {
+    const salary = normalizeSalary(
+      rawJob({
+        salaryMin: 80_000,
+        salaryMax: 100_000,
+        salaryCurrency: ' eur ',
+        salaryPeriod: 'year',
+        salaryRaw: '$80,000-$100,000 per month',
+      }),
+    );
+
+    expect(salary).toMatchObject({
+      currency: 'EUR',
+      period: 'year',
+      annualMin: 80_000,
+      annualMax: 100_000,
+    });
+  });
+
   it('annualises a monthly figure', () => {
     const salary = normalizeSalary(
       rawJob({ salaryMin: 100_000, salaryCurrency: 'INR', salaryPeriod: 'month' }),
@@ -336,6 +399,12 @@ describe('normalizeLocation', () => {
 
   it('leaves a correctly cased location alone, including state codes', () => {
     expect(normalizeLocation('Bengaluru, KA', false)).toBe('Bengaluru, KA');
+  });
+
+  it('canonicalizes spaced hyphen, en dash, and em dash work-arrangement suffixes', () => {
+    expect(canonicalLocation('Pune - Hybrid')).toBe('pune');
+    expect(canonicalLocation('Pune – Hybrid')).toBe('pune');
+    expect(canonicalLocation('Pune — Hybrid')).toBe('pune');
   });
 });
 

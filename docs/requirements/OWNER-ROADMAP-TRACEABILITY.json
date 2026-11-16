@@ -1183,11 +1183,20 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Salary/location/experience normalization",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/normalize.ts",
+        "packages/matching/src/demands.ts",
+        "packages/shared/src/format.ts",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md"
+      ],
+      "tests": [
+        "packages/providers/src/normalize.test.ts",
+        "packages/matching/src/demands.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Representative provider-output coverage and exact-head hosted CI plus independent acceptance remain pending; local validation used Node 22.23.2 rather than the required Node 24.",
       "scopeDisposition": "in-scope"
     },
     {
