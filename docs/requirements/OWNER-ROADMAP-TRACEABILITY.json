@@ -1193,10 +1193,11 @@
       ],
       "tests": [
         "packages/providers/src/normalize.test.ts",
+        "packages/providers/src/ats/adapters.test.ts",
         "packages/matching/src/demands.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Representative provider-output coverage and exact-head hosted CI plus independent acceptance remain pending; local validation used Node 22.23.2 rather than the required Node 24.",
+      "gap": "Exact-head hosted CI and independent acceptance remain pending; local validation used Node 22.23.2 rather than the required Node 24.",
       "scopeDisposition": "in-scope"
     },
     {

@@ -1880,10 +1880,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current item statuses, evidence paths and explicit remaining gaps. Items 5.10, 5.11 and 5.12 are recorded partial; no verification is claimed without item-specific exact-head acceptance.",
-      "evidence": "Content reviewed for CareerScope owner items 5.10 to 5.12 on codex/stage05-item510-salary-location-normalization.",
-      "reviewer": "Codex (CareerScope Stage 05 evidence update)",
-      "sha256": "d57b866e8431940f49ce2a0027f87d22624825c8970cd073433dd7eba5c5c566"
+      "observations": "Reviewed the updated owner item 5.10 evidence and remaining gates; the item remains partial pending exact-head hosted CI and independent acceptance.",
+      "evidence": "Current content diff reviewed for CareerScope owner item 5.10 on codex/stage05-item510-salary-location-normalization.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+      "sha256": "d2875440f071477969971d130f8f8bd8570ab5d784c0a82fe8f0a193d69e5fc2"
     },
     {
       "path": "docs/KNOWN-LIMITATIONS.md",
@@ -1951,7 +1951,7 @@
       "observations": "Reviewed current item statuses, evidence paths and explicit remaining gaps. Items 5.10, 5.11 and 5.12 are recorded partial; no verification is claimed without item-specific exact-head acceptance.",
       "evidence": "Content reviewed for CareerScope owner items 5.10 to 5.12 on codex/stage05-item510-salary-location-normalization.",
       "reviewer": "Codex (CareerScope Stage 05 evidence update)",
-      "sha256": "1d8a55d82b29b875914cb64510dda404d9c78d19b2ba25cc326929cf7c7b57b4",
+      "sha256": "c6125041714ccd38eb411d566238f2194074d27046e9f000c31c87109cb0c42a",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2040,10 +2040,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current item statuses, evidence paths and explicit remaining gaps. Items 5.10, 5.11 and 5.12 are recorded partial; no verification is claimed without item-specific exact-head acceptance.",
-      "evidence": "Content reviewed for CareerScope owner items 5.10 to 5.12 on codex/stage05-item510-salary-location-normalization.",
-      "reviewer": "Codex (CareerScope Stage 05 evidence update)",
-      "sha256": "5915da9b59e694d99095cd01508eef769a6c4cad1d90f2060dcf21526e1330bf",
+      "observations": "Reviewed the updated owner item 5.10 test evidence and remaining gates; the item remains partial pending exact-head hosted CI and independent acceptance.",
+      "evidence": "Current content diff reviewed for CareerScope owner item 5.10 on codex/stage05-item510-salary-location-normalization.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+      "sha256": "c58d56069e3a8fa60269e585131fb1d44b8d33f95fd326f1619249cdf94b271e",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2516,10 +2516,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current item statuses, evidence paths and explicit remaining gaps. Items 5.10, 5.11 and 5.12 are recorded partial; no verification is claimed without item-specific exact-head acceptance.",
-      "evidence": "Content reviewed for CareerScope owner items 5.10 to 5.12 on codex/stage05-item510-salary-location-normalization.",
-      "reviewer": "Codex (CareerScope Stage 05 evidence update)",
-      "sha256": "31d3245ee9a4d691760078a3dfafe6bd3a21689b37d822c0e95ffdf3856b65d5",
+      "observations": "Reviewed the updated canonical item 5.10 evidence and remaining gates; the item remains partial pending exact-head hosted CI and independent acceptance.",
+      "evidence": "Current content diff reviewed for CareerScope owner item 5.10 on codex/stage05-item510-salary-location-normalization.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+      "sha256": "bd9a5e4fca79b16265ad4b9151c122ba59c78ce2ac8cd870251035f916518d91",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -4866,10 +4866,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete file. ATS adapter tests use routed fake responses and synthetic posting payloads; outbound URL construction, pagination, mapping, contact filtering, and page ceilings are asserted. No finding.",
-      "evidence": "Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "e82c9200037bfaca7a7de3848ea6c0d243ae1bfd3e71e43c57878a3bf92b4b99"
+      "observations": "Reviewed the changed Lever integration regression in the ATS adapter suite; it verifies provider output through shared normalization for experience, salary and canonical location.",
+      "evidence": "Current content diff and all 44 ATS adapter tests reviewed on codex/stage05-item510-salary-location-normalization.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+      "sha256": "78e2d50ffe7f31ed0f29d2cfd0b8acef3d447dd21e11b42dbc8b9482bde9508d"
     },
     {
       "path": "packages/providers/src/ats/ashby.ts",

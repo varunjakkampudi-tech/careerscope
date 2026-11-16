@@ -18,6 +18,7 @@ import { recruiteeAdapter } from './recruitee.js';
 import { smartRecruitersAdapter } from './smartrecruiters.js';
 import { createWorkableAdapter } from './workable.js';
 import { context, query, routedFetch } from '../harness.fixtures.js';
+import { canonicalLocation, normalizeJob } from '../normalize.js';
 
 const ref = (source: BoardRef['source'], slug: string, company: string): BoardRef => ({
   source,
@@ -142,6 +143,32 @@ describe('lever', () => {
       salaryCurrency: 'USD',
       salaryPeriod: 'year',
     });
+  });
+
+  it('normalizes a representative provider posting across experience, salary, and location', () => {
+    const raw = leverAdapter.toRawJob(
+      {
+        ...posting,
+        text: 'Senior Backend Engineer — 6+ years of experience',
+        description: '<p>Build reliable payment services.</p>',
+        categories: { ...posting.categories, location: 'New York — Hybrid' },
+      },
+      board,
+    );
+    expect(raw).not.toBeNull();
+
+    const job = normalizeJob(raw!, { now: Date.parse('2026-09-05T12:00:00Z') });
+
+    expect(job.requiredYears).toEqual({ min: 6, max: null });
+    expect(job.salary).toMatchObject({
+      min: 150000,
+      max: 180000,
+      currency: 'USD',
+      period: 'year',
+      annualMin: 150000,
+      annualMax: 180000,
+    });
+    expect(canonicalLocation(job.location)).toBe('new york');
   });
 
   it('omits salary fields entirely when the board states no range', () => {
