@@ -1888,10 +1888,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed item 5.13 local evidence and host-scoped breaker limitations; item remains partial pending live/source-specific acceptance.",
-      "evidence": "Node 24 Docker: http.test.ts 53/53; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review of the corrections remain pending.",
+      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "5dd1c4c10c5ad7060e3ab351f532ae40a2bda99c92433507fcca148c14adddfe",
+      "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2086,10 +2086,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed Stage 05 item 5.13 implementation, local checks, and remaining source-specific behavior/tuning gaps.",
-      "evidence": "Node 24 Docker: http.test.ts 53/53; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review of the corrections remain pending.",
+      "observations": "Updated Stage 05 item 5.13 progress with exact CI job state, 56/56 focused tests, reviewer finding and fresh-review gate.",
+      "evidence": "Updated Stage 05 item 5.13 progress with exact CI job state, 56/56 focused tests, reviewer finding and fresh-review gate.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "e63fd70e2275997ec53b713f0f59916add999270056a361d40dbd86e430a117a",
+      "sha256": "f3dc61d734986152803beb3696a2e43515451ec0690f97f28bf8575e06f56d82",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2282,10 +2282,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed 5.13 focused HTTP tests, build/lint/format results, and outstanding live behavior limits.",
-      "evidence": "Node 24 Docker: http.test.ts 53/53; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review of the corrections remain pending.",
+      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "f6b55d0bd3a87f6a1ec868296c19e921ec9bd44739aa30d713b820ab90af23ab",
+      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2850,10 +2850,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed canonical 5.13 partial status, evidence paths, focused test path and remaining acceptance gaps.",
-      "evidence": "Node 24 Docker: http.test.ts 53/53; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review of the corrections remain pending.",
+      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "42258505b88c49f689efde896278a2683397a675c519400c6f76f971546e4a22",
+      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -5662,10 +5662,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed 53 HTTP client tests, including circuit threshold, open rejection, host isolation, recovery reset, one half-open probe, accepted transient status, and stale completion guard.",
-      "evidence": "Node 24 Docker: http.test.ts 53/53; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review of the corrections remain pending.",
+      "observations": "Added deterministic regressions for pre-recovery stale failure, stale success during a closed-state failure streak, and concurrent failures admitted within one generation.",
+      "evidence": "Node 24 Docker: http.test.ts 56/56. Providers build, targeted ESLint, and formatting passed; fresh exact-head CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "a16fd7be20288972053b4c38cde14b8aa56f653670b0bb6f39d8ebae934cd673",
+      "sha256": "77e5db42b1cdfd5663eaed601a8da83239fb1fbed90905f455b8c4ad4baf57f3",
       "history": [
         {
           "reviewer": "Codex (Stage 01 implementation audit)",
@@ -5682,10 +5682,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed per-host breaker keying, generation-protected transitions, accepted transient status handling, five-failure default threshold, cooldown and single-probe behavior alongside retry handling; no source activation was introduced.",
-      "evidence": "Node 24 Docker: http.test.ts 53/53; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review of the corrections remain pending.",
+      "observations": "Circuit generation now guards every lifecycle transition; failure revisions prevent stale success resets while concurrent same-generation failures still count.",
+      "evidence": "Node 24 Docker: http.test.ts 56/56. Providers build, targeted ESLint, and formatting passed; fresh exact-head CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "c114ce2c890ccfd444b97a4fb7af2a543ac770acff72e4e11daef7548def6b59",
+      "sha256": "bc4760056c8bee43470244ed6d345368dcf9a06d46a08c6bf88e65a833a9cba6",
       "history": [
         {
           "reviewer": "Claude (Stage 01 implementation agent, self-validation)",

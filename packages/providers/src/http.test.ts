@@ -397,6 +397,103 @@ describe('HttpClient — circuit breaker', () => {
     });
     expect(calls).toHaveLength(2);
   });
+
+  it('ignores a pre-recovery failure that completes after a successful probe', async () => {
+    let releaseSlowFailure: ((response: Response) => void) | undefined;
+    const calls: string[] = [];
+    const impl: FetchLike = async (url) => {
+      calls.push(url);
+      if (url.endsWith('/slow-failure')) {
+        return new Promise<Response>((resolve) => {
+          releaseSlowFailure = resolve;
+        });
+      }
+      if (url.endsWith('/open')) return new Response('busy', { status: 503 });
+      return new Response('ok', { status: 200 });
+    };
+    const clock = fakeClock();
+    const http = client(impl, {
+      now: clock.now,
+      retries: 0,
+      cacheTtlMs: 0,
+      circuitBreakerThreshold: 1,
+      circuitBreakerResetMs: 100,
+    });
+
+    const slowFailure = http.get('https://a.test/slow-failure');
+    await nextTick(undefined);
+    await expect(http.get('https://a.test/open')).rejects.toMatchObject({ kind: 'http' });
+    clock.advance(100);
+    await http.get('https://a.test/recovery');
+    releaseSlowFailure?.(new Response('busy', { status: 503 }));
+    await expect(slowFailure).rejects.toMatchObject({ kind: 'http' });
+
+    await expect(http.get('https://a.test/after-recovery')).resolves.toMatchObject({
+      status: 200,
+    });
+    expect(calls).toHaveLength(4);
+  });
+
+  it('does not let a stale success clear a newer closed-state failure streak', async () => {
+    let releaseSlowSuccess: ((response: Response) => void) | undefined;
+    const calls: string[] = [];
+    const impl: FetchLike = async (url) => {
+      calls.push(url);
+      if (url.endsWith('/slow-success')) {
+        return new Promise<Response>((resolve) => {
+          releaseSlowSuccess = resolve;
+        });
+      }
+      if (url.endsWith('/failure-one') || url.endsWith('/failure-two')) {
+        return new Response('busy', { status: 503 });
+      }
+      return new Response('ok', { status: 200 });
+    };
+    const http = client(impl, {
+      retries: 0,
+      cacheTtlMs: 0,
+      circuitBreakerThreshold: 2,
+      circuitBreakerResetMs: 100,
+    });
+
+    const slowSuccess = http.get('https://a.test/slow-success');
+    await nextTick(undefined);
+    await expect(http.get('https://a.test/failure-one')).rejects.toMatchObject({ kind: 'http' });
+    releaseSlowSuccess?.(new Response('ok', { status: 200 }));
+    await slowSuccess;
+    await expect(http.get('https://a.test/failure-two')).rejects.toMatchObject({ kind: 'http' });
+
+    await expect(http.get('https://a.test/blocked')).rejects.toMatchObject({
+      kind: 'circuit-open',
+    });
+    expect(calls).toHaveLength(3);
+  });
+
+  it('counts concurrent failures admitted within the same generation', async () => {
+    const pending: Array<(response: Response) => void> = [];
+    const impl: FetchLike = async () =>
+      new Promise<Response>((resolve) => {
+        pending.push(resolve);
+      });
+    const http = client(impl, {
+      retries: 0,
+      cacheTtlMs: 0,
+      circuitBreakerThreshold: 2,
+      circuitBreakerResetMs: 100,
+    });
+
+    const first = http.get('https://a.test/concurrent-one');
+    const second = http.get('https://a.test/concurrent-two');
+    await nextTick(undefined);
+    pending[0]?.(new Response('busy', { status: 503 }));
+    await expect(first).rejects.toMatchObject({ kind: 'http' });
+    pending[1]?.(new Response('busy', { status: 503 }));
+    await expect(second).rejects.toMatchObject({ kind: 'http' });
+    await expect(http.get('https://a.test/blocked')).rejects.toMatchObject({
+      kind: 'circuit-open',
+    });
+    expect(pending).toHaveLength(2);
+  });
 });
 
 /* -------------------------------------------------------------------------- */
