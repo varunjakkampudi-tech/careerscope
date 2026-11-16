@@ -1345,8 +1345,11 @@
       "currentStatus": "partial",
       "evidence": ["packages/providers/src/http.ts", "docs/PROGRESS.md", "docs/GAP-MATRIX.md"],
       "tests": ["packages/providers/src/http.test.ts"],
-      "externalEvidence": [],
-      "gap": "The shared HTTP client has bounded transient retries, capped Retry-After handling, and a per-host circuit breaker that opens after five exhausted transient request cycles by default and allows one recovery probe after 30 seconds. Generation and failure-revision guards reject stale completions across open, recovery, and closed failure streaks while retaining concurrent failure counting. Fresh exact-head CI and independent review of the latest correction remain outstanding. Circuit health is host-scoped rather than provider-source policy/telemetry. Live behavior and source-specific tuning remain outstanding; no provider is activated.",
+      "externalEvidence": [
+        "PR #103 exact head 9a8e2d0744a720113df02f480603e1efc693d5e1 received final independent approval; required Quality gates, Services/integration/browser suites, and Production image build passed in run 43954024665.",
+        "PR #103 merged to dev as fad57ea3253024983f29183acefaee59328d0d01. Post-merge dev run 43957299898 passed Quality gates and Services/integration/browser suites; the production image and optional performance, soak, recovery, and passive lifecycle steps were skipped for the push event."
+      ],
+      "gap": "The shared HTTP client has bounded transient retries, capped Retry-After handling, and a per-host circuit breaker that opens after five exhausted transient request cycles by default and allows one recovery probe after 30 seconds. Generation and failure-revision guards reject stale completions across open, recovery, and closed failure streaks while retaining concurrent failure counting. Circuit health is host-scoped rather than provider-source policy/telemetry. Live behavior and source-specific tuning remain outstanding; no provider is activated. Optional resilience checks were skipped and the post-merge image was not built. No deployment occurred.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1355,11 +1358,16 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Search pagination",
       "sourceStatus": "New/enhancement",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/job-search-view.tsx",
+        "apps/web/src/lib/search-pagination.ts",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md"
+      ],
+      "tests": ["apps/web/src/lib/search-pagination.test.ts", "apps/web/src/lib/locale.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "The search UI paginates the currently collected result set in accessible 20-item pages. Collection remains bounded by existing per-source caps; fetching additional provider pages on demand or server-side continuation is not implemented. The source checklist gives only the title 'Search pagination', so full acceptance criteria remain unspecified.",
       "scopeDisposition": "in-scope"
     },
     {

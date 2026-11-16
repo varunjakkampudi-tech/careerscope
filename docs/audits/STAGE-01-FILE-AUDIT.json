@@ -1103,10 +1103,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete job-search source/discovery styles. Source options use responsive columns, unavailable states retain readable contrast, and selection controls have visible focus and touch sizing.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "5a9f7c73f40453672c10f23b6a71e82963a9a027522bf75f9f6b4c96231402f2"
+      "observations": "Reviewed accessible pagination styling and focus outlines scoped to search pagination controls.",
+      "evidence": "Updated for owner item 5.14; paired UI implementation and focused tests reviewed.",
+      "reviewer": "Codex (CareerScope owner item 5.14 implementation and evidence update)",
+      "sha256": "fa0ec1c86287aa91376c34b49ac9f6ec4a78c22f1e5f2eb92dcf081db1854872"
     },
     {
       "path": "apps/web/src/components/job-search-view.tsx",
@@ -1115,10 +1115,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete search workspace component. Owner-scoped queries remain disabled until the authenticated session resolves; mutations include CSRF and idempotency headers; run IDs are URL-addressable; event streams close on settle/unmount and trigger centralized expiry handling. Result links open in a new tab with noopener protections. No additional finding from this file review.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "1599695e8eab6aaaf54b5efd0e54f88d5849a1b4b6e2d6f66689082402e361a9"
+      "observations": "Reviewed search state ownership, selected-run isolation, filtering, result slicing, accessible controls, and page bounds.",
+      "evidence": "Updated for owner item 5.14; full lint and web typecheck passed. Browser multi-page acceptance remains pending.",
+      "reviewer": "Codex (CareerScope owner item 5.14 implementation and evidence update)",
+      "sha256": "da16cf58e10f3a4f838e96cb9cabeb058e8e91e4accb465517c9f980e99fbd27"
     },
     {
       "path": "apps/web/src/components/legal-acceptance.module.css",
@@ -1414,10 +1414,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
-      "evidence": "Locale implementation and representative message groups inspected on codex/stage01-item-101-audit; structural parity is enforced by the full typecheck. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "75e45067aee7990decb4433d3c5e5a4499274933e5b65a938e2fb8eaae91ffcc"
+      "observations": "Reviewed English, Telugu, and Hindi pagination landmark, previous/next controls, and page labels.",
+      "evidence": "Updated for owner item 5.14; locale parity tests passed. Native-speaker review was not performed.",
+      "reviewer": "Codex (CareerScope owner item 5.14 implementation and evidence update)",
+      "sha256": "ad4f8972e673f661b4bf323edf8d20cf0a2f62d7fd73fe16dde9c9ccbe619692"
     },
     {
       "path": "apps/web/src/lib/next-proxy-headers.test.ts",
@@ -1888,10 +1888,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+      "observations": "Updated Stage 05 items 5.13 and 5.14 with exact merge/CI evidence and explicit remaining gaps; 5.14 remains partial.",
+      "evidence": "Node 24 Prettier check and owner roadmap traceability check passed.",
+      "reviewer": "Codex (CareerScope owner item 5.14 implementation and evidence update)",
+      "sha256": "4ada67c84fcac1bed8083aaf0110fd738fe2787e23bd3f40f6408dc88a7c8b0f",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2086,10 +2086,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
+      "observations": "Recorded final approved and merged evidence for 5.13 and bounded client-pagination evidence and gaps for 5.14.",
+      "evidence": "Node 24 Prettier check and owner roadmap traceability check passed.",
+      "reviewer": "Codex (CareerScope owner item 5.14 implementation and evidence update)",
+      "sha256": "158ef2282e633c7fc522a1a659f6905b73a76755485f43e1b9095a914029e8f1",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2282,10 +2282,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+      "observations": "Recorded pagination/locale test results, typecheck/lint/build, and exact 5.13 CI results; 5.14 exact-head/browser pagination acceptance remains pending.",
+      "evidence": "Node 24 focused tests passed 11/11; web typecheck, full lint and core build passed.",
+      "reviewer": "Codex (CareerScope owner item 5.14 implementation and evidence update)",
+      "sha256": "8573aabd2f49cd49d7480d2218a66be61de5e4eea08ee074d2ead8bf580128d0",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2850,10 +2850,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+      "observations": "Updated canonical 5.13/5.14 evidence, tests and gaps, preserving both as partial.",
+      "evidence": "Node 24 Prettier check and 328-item roadmap traceability check passed.",
+      "reviewer": "Codex (CareerScope owner item 5.14 implementation and evidence update)",
+      "sha256": "08ff486bfc410acb29a81581535e40989d0232da06ac5eb2407a0a358264cd30",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -4140,10 +4140,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "7e588f96ae3e7b89fe8894a4dcc982e1f9ff9a8e33608140caf93e05a4f38dfa",
+      "observations": "Added the search-pagination regression test to the repository unit test command without dependency changes.",
+      "evidence": "Node 24 focused pagination and locale tests passed 11/11.",
+      "reviewer": "Codex (CareerScope owner item 5.14 implementation and evidence update)",
+      "sha256": "4e145331cf615c5774937f1c88bf1e016ac51a01f89f35d11327ce4e3cae7b2c",
       "history": [
         {
           "reviewer": "Codex (Stage 03 item 3.16)",
@@ -7663,6 +7663,30 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "6040b0afb6dbae5f400cfaeb18fb8595d5644a4bea2f0dccc43797d136d58863"
+    },
+    {
+      "path": "apps/web/src/lib/search-pagination.test.ts",
+      "category": "tests",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed page-window, range-boundary, empty-set, out-of-range, and invalid-size regression cases.",
+      "evidence": "Node 24 focused pagination and locale tests passed 11/11.",
+      "reviewer": "Codex (CareerScope owner item 5.14 implementation and evidence update)",
+      "sha256": "81046684f4c66b5cfada05022ec1867bd771e573dc9bd1b4c6b088a566a5d94e"
+    },
+    {
+      "path": "apps/web/src/lib/search-pagination.ts",
+      "category": "frontend",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed the generic page helper; validates positive integer page size and returns a clamped page with bounded items and stable range metadata.",
+      "evidence": "Node 24 focused pagination tests passed; web TypeScript check passed.",
+      "reviewer": "Codex (CareerScope owner item 5.14 implementation and evidence update)",
+      "sha256": "4c2877b55fa3146e698ed3e03b79bd02d9f433047fd52743047fd68ac58f2edf"
     }
   ]
 }
