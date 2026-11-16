@@ -64,6 +64,22 @@ describe('readJobPostingMarkup', () => {
     ]);
   });
 
+  it('finds script tag ends outside quoted attribute values', () => {
+    const posting = JSON.stringify({
+      '@type': 'JobPosting',
+      title: 'Engineer',
+      hiringOrganization: 'Acme',
+    });
+    const html =
+      `<script data-note=">" type="application/ld+json">${posting}</script>` +
+      `<script data-note='>' type='application/ld+json'>${posting}</script>`;
+
+    expect(readJobPostingMarkup(html, pageUrl)).toEqual([
+      { title: 'Engineer', companyName: 'Acme', sourceUrl: pageUrl },
+      { title: 'Engineer', companyName: 'Acme', sourceUrl: pageUrl },
+    ]);
+  });
+
   it('skips malformed scripts, oversized content, and non-http page URLs', () => {
     expect(
       readJobPostingMarkup('<script type="application/ld+json">{bad}</script>', pageUrl),

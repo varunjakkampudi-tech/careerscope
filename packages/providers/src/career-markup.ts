@@ -59,7 +59,7 @@ function* jsonLdScripts(html: string): Generator<string> {
       cursor = nameEnd;
       continue;
     }
-    const openEnd = html.indexOf('>', nameEnd);
+    const openEnd = findTagEnd(html, nameEnd);
     if (openEnd < 0) return;
     let closeStart = lower.indexOf('</script', openEnd + 1);
     while (
@@ -75,6 +75,21 @@ function* jsonLdScripts(html: string): Generator<string> {
     if (JSON_LD_TYPE.test(html.slice(nameEnd, openEnd))) yield html.slice(openEnd + 1, closeStart);
     cursor = closeEnd + 1;
   }
+}
+
+/** Finds a tag terminator while respecting quoted attribute values. */
+function findTagEnd(html: string, start: number): number {
+  let quote = '';
+  for (let index = start; index < html.length; index += 1) {
+    const character = html[index];
+    if (quote) {
+      if (character === quote) quote = '';
+      continue;
+    }
+    if (character === '"' || character === "'") quote = character;
+    else if (character === '>') return index;
+  }
+  return -1;
 }
 
 function validHttpUrl(value: string): boolean {
