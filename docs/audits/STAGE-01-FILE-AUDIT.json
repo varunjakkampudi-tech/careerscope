@@ -1516,9 +1516,7 @@
       "category": "frontend",
       "reviewMethod": "content-read",
       "state": "reviewed",
-      "concerns": [
-        "localStorage access may throw in restricted browser contexts"
-      ],
+      "concerns": ["localStorage access may throw in restricted browser contexts"],
       "findings": [
         {
           "id": "S1-F057",
@@ -1882,10 +1880,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 05 gap evidence for owner items 5.02–5.04; merged verification for #97/#98 is recorded and Lever remains partial. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes.",
-      "evidence": "The prior CI run rejected CRLF worktree hashes against LF Git content; SHA-256 now matches the committed file bytes.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.04 LF hash correction)",
-      "sha256": "b57f9d20a3415ecda803093274d998aae647a7ccc82ee5fbcadb01d13ba1d0ad",
+      "observations": "Updated Stage 05 gap evidence for owner items 5.02–5.04; merged verification for #97/#98 is recorded and Lever remains partial. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes. Formatted with repository Prettier settings and refreshed current content hash.",
+      "evidence": "Prettier 3.9.9 formatted this file; SHA-256 is calculated from the final LF bytes.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.04 formatting correction)",
+      "sha256": "7e04253e56e0acc656b9ed4d4653fd997413d767bbc1a511fdf7e4fe93c0495d",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -1958,6 +1956,12 @@
           "sha256": "95ea168cb67e690a6e3a26e2ab3e5e95c12cb6ea96bd59f1ae0c2cec241799d0",
           "observations": "Updated Stage 05 gap evidence for owner items 5.02–5.04; merged verification for #97/#98 is recorded and Lever remains partial.",
           "evidence": "Source permission, live schema/rights evidence, and production activation are not claimed for Lever."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 LF hash correction)",
+          "sha256": "b57f9d20a3415ecda803093274d998aae647a7ccc82ee5fbcadb01d13ba1d0ad",
+          "observations": "Updated Stage 05 gap evidence for owner items 5.02–5.04; merged verification for #97/#98 is recorded and Lever remains partial. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes.",
+          "evidence": "The prior CI run rejected CRLF worktree hashes against LF Git content; SHA-256 now matches the committed file bytes."
         }
       ]
     },
@@ -2184,10 +2188,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated exact CI/review/merge evidence for items 5.02 and 5.03 and added Lever evidence for item 5.04. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes.",
-      "evidence": "The prior CI run rejected CRLF worktree hashes against LF Git content; SHA-256 now matches the committed file bytes.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.04 LF hash correction)",
-      "sha256": "85bf3653bac6e617a61d8e00cb14270e5b623d5e30022d46cf7f69ef7a6278da",
+      "observations": "Updated exact CI/review/merge evidence for items 5.02 and 5.03 and added Lever evidence for item 5.04. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes. Formatted with repository Prettier settings and refreshed current content hash.",
+      "evidence": "Prettier 3.9.9 formatted this file; SHA-256 is calculated from the final LF bytes.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.04 formatting correction)",
+      "sha256": "c7e41d73a15804eb5f79aa7c641a414afef5d91b1e1ea105a2532af8ac1282a6",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2266,6 +2270,12 @@
           "sha256": "6a12d22959c55d78895632d8a24a31fb06cbec5fcd7dcba2dbede72ea1186819",
           "observations": "Updated exact CI/review/merge evidence for items 5.02 and 5.03 and added Lever evidence for item 5.04.",
           "evidence": "Local Lever rerun could not start because dependencies are absent and Node 22 is below the required Node 24; item 5.04 exact-head gates remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 LF hash correction)",
+          "sha256": "85bf3653bac6e617a61d8e00cb14270e5b623d5e30022d46cf7f69ef7a6278da",
+          "observations": "Updated exact CI/review/merge evidence for items 5.02 and 5.03 and added Lever evidence for item 5.04. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes.",
+          "evidence": "The prior CI run rejected CRLF worktree hashes against LF Git content; SHA-256 now matches the committed file bytes."
         }
       ]
     },
