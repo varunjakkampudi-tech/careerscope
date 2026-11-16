@@ -1880,10 +1880,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded Greenhouse adapter evidence and current permission/review gaps.",
-      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
-      "sha256": "e8cfc89c6fe6dfd38759ae458b979c0755022d041761937b5977d3bd53e5c485",
+      "observations": "Updated Stage 05 gap evidence for owner items 5.02–5.04; merged verification for #97/#98 is recorded and Lever remains partial. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes. Formatted with repository Prettier settings and refreshed current content hash.",
+      "evidence": "Prettier 3.9.9 formatted this file; SHA-256 is calculated from the final LF bytes.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.04 formatting correction)",
+      "sha256": "7e04253e56e0acc656b9ed4d4653fd997413d767bbc1a511fdf7e4fe93c0495d",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -1938,6 +1938,30 @@
           "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
           "sha256": "55c50e8134cc0efc10b4d24b256723dee82e1d5fd7e3a7b5b8ef99538effc35f"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+          "sha256": "e8cfc89c6fe6dfd38759ae458b979c0755022d041761937b5977d3bd53e5c485",
+          "observations": "Recorded Greenhouse adapter evidence and current permission/review gaps.",
+          "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
+          "sha256": "95ea168cb67e690a6e3a26e2ab3e5e95c12cb6ea96bd59f1ae0c2cec241799d0",
+          "observations": "Updated current Stage 05 evidence for items 5.02, 5.03, and 5.04; records merged PR #97/#98 evidence and retains provider permission gaps.",
+          "evidence": "Lever remains partial pending source-specific production permission and current live-schema/rights evidence."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
+          "sha256": "95ea168cb67e690a6e3a26e2ab3e5e95c12cb6ea96bd59f1ae0c2cec241799d0",
+          "observations": "Updated Stage 05 gap evidence for owner items 5.02–5.04; merged verification for #97/#98 is recorded and Lever remains partial.",
+          "evidence": "Source permission, live schema/rights evidence, and production activation are not claimed for Lever."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 LF hash correction)",
+          "sha256": "b57f9d20a3415ecda803093274d998aae647a7ccc82ee5fbcadb01d13ba1d0ad",
+          "observations": "Updated Stage 05 gap evidence for owner items 5.02–5.04; merged verification for #97/#98 is recorded and Lever remains partial. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes.",
+          "evidence": "The prior CI run rejected CRLF worktree hashes against LF Git content; SHA-256 now matches the committed file bytes."
         }
       ]
     },
@@ -2004,10 +2028,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded owner item 5.03 as partial and preserved the permitted-use gate.",
-      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
-      "sha256": "faf2e300c58763f5221b6fb892cab650dac266d555735491b3fbcac767bfd338",
+      "observations": "Updated Stage 05 inventory totals and post-merge evidence for items 5.02 and 5.03; recorded Lever item 5.04 as partial. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes.",
+      "evidence": "The prior CI run rejected CRLF worktree hashes against LF Git content; SHA-256 now matches the committed file bytes.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.04 LF hash correction)",
+      "sha256": "8fdaf5fcffc2b3eedea6fbcfbae26f64f31be280f5facd60dcb66ad74f1b9a2b",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2092,6 +2116,24 @@
           "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
           "sha256": "ea89568d506e713b2f83d15fadf61d3289e4c26d37f8ff5d89fecd9e006525e0"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+          "sha256": "faf2e300c58763f5221b6fb892cab650dac266d555735491b3fbcac767bfd338",
+          "observations": "Recorded owner item 5.03 as partial and preserved the permitted-use gate.",
+          "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
+          "sha256": "77b4e68e97df62504eb7bf86d9e2cadb066eaa6a3bfe81998b473a6a32bbb7ff",
+          "observations": "Updated Stage 05 progress, exact CI/review/merge evidence for items 5.02 and 5.03, and accurate 328-item status totals.",
+          "evidence": "Item 5.04 remains partial; source rights and local Node/dependency limitations are explicit."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
+          "sha256": "77b4e68e97df62504eb7bf86d9e2cadb066eaa6a3bfe81998b473a6a32bbb7ff",
+          "observations": "Updated Stage 05 inventory totals and post-merge evidence for items 5.02 and 5.03; recorded Lever item 5.04 as partial.",
+          "evidence": "Provider source rights and current live schema remain external gaps; no provider activation occurred."
         }
       ]
     },
@@ -2146,10 +2188,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded focused Greenhouse synthetic test counts, local Node version, and no-live-call limitation.",
-      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
-      "sha256": "fd7a79821a2ae9752edf4351b52926ad45020b5b101e8d21f0361e6400edf942",
+      "observations": "Updated exact CI/review/merge evidence for items 5.02 and 5.03 and added Lever evidence for item 5.04. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes. Formatted with repository Prettier settings and refreshed current content hash.",
+      "evidence": "Prettier 3.9.9 formatted this file; SHA-256 is calculated from the final LF bytes.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.04 formatting correction)",
+      "sha256": "c7e41d73a15804eb5f79aa7c641a414afef5d91b1e1ea105a2532af8ac1282a6",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2210,6 +2252,30 @@
           "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
           "sha256": "4b102019e05ba5bc0291b08da6946a50befbe2ddc844c602c35897b3efe9349e"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+          "sha256": "fd7a79821a2ae9752edf4351b52926ad45020b5b101e8d21f0361e6400edf942",
+          "observations": "Recorded focused Greenhouse synthetic test counts, local Node version, and no-live-call limitation.",
+          "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
+          "sha256": "6a12d22959c55d78895632d8a24a31fb06cbec5fcd7dcba2dbede72ea1186819",
+          "observations": "Updated Stage 05 test and exact-SHA results for JSearch and Greenhouse; added Lever coverage with local execution limitations.",
+          "evidence": "PR #97 and #98 required checks and final independent approvals are recorded; no provider live call is claimed."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
+          "sha256": "6a12d22959c55d78895632d8a24a31fb06cbec5fcd7dcba2dbede72ea1186819",
+          "observations": "Updated exact CI/review/merge evidence for items 5.02 and 5.03 and added Lever evidence for item 5.04.",
+          "evidence": "Local Lever rerun could not start because dependencies are absent and Node 22 is below the required Node 24; item 5.04 exact-head gates remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 LF hash correction)",
+          "sha256": "85bf3653bac6e617a61d8e00cb14270e5b623d5e30022d46cf7f69ef7a6278da",
+          "observations": "Updated exact CI/review/merge evidence for items 5.02 and 5.03 and added Lever evidence for item 5.04. Normalized Markdown line endings to LF and refreshed the content hash to match Git bytes.",
+          "evidence": "The prior CI run rejected CRLF worktree hashes against LF Git content; SHA-256 now matches the committed file bytes."
         }
       ]
     },
@@ -2640,10 +2706,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded item 5.03 partial status with adapter, fixture, registry, and source-policy evidence.",
-      "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
-      "sha256": "1dcc4f1c2f6987c31ad91ca1339f8b8e3f66942ceeaa72c2aee0a09139e5e050",
+      "observations": "Recorded final CI/review/merge evidence for items 5.02 and 5.03 and detailed item 5.04 Lever evidence.",
+      "evidence": "Inventory totals are 328 items: 43 verified, 16 partial, 1 gated, 268 not started; provider rights remain unverified.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
+      "sha256": "ba7e4f177746b3649378e9bcd704b31f72880cb8d5245874ca0a71d1c5f7e371",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2704,6 +2770,18 @@
           "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
           "sha256": "86476629a27fa159c7e85952ed739b810d995e9ee24b8be05af872c12ec3cb37"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.03 evidence review)",
+          "sha256": "1dcc4f1c2f6987c31ad91ca1339f8b8e3f66942ceeaa72c2aee0a09139e5e050",
+          "observations": "Recorded item 5.03 partial status with adapter, fixture, registry, and source-policy evidence.",
+          "evidence": "Focused adapter, registry, and source-policy suites passed 66/66 on local Node 22.23.2; repository requires Node 24 and exact-head hosted CI is pending. Tests use synthetic fixtures. No live Greenhouse request, permitted-use verification, owner approval, or production activation was performed."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.04 evidence update)",
+          "sha256": "ba7e4f177746b3649378e9bcd704b31f72880cb8d5245874ca0a71d1c5f7e371",
+          "observations": "Updated exact current evidence for items 5.02 and 5.03 and retained item 5.04 partial with cited Lever implementation/tests.",
+          "evidence": "Inventory has 328 items; 43 verified, 16 partial, 1 gated, and 268 not started. No live provider permission is claimed."
         }
       ]
     },
