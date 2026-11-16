@@ -1205,11 +1205,23 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Provider provenance",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/normalize.ts",
+        "apps/workers/search/src/collect.ts",
+        "packages/core/src/jobs.ts",
+        "packages/core/src/database.ts",
+        "packages/shared/src/types.ts",
+        "apps/web/src/components/job-search-view.tsx",
+        "apps/web/src/components/saved-leads.tsx"
+      ],
+      "tests": [
+        "apps/workers/search/src/collect.test.ts",
+        "packages/providers/src/normalize.test.ts",
+        "packages/core/src/market.integration.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Source and contributing source links are preserved and displayed; end-to-end acceptance for every launch-eligible provider and stable provenance when provider coverage changes have not been completed.",
       "scopeDisposition": "in-scope"
     },
     {
