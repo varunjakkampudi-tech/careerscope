@@ -5014,6 +5014,20 @@ try {
         await page.getByRole('list', { name: 'Source outcomes' }).getByRole('listitem').count(),
         4,
       );
+      const sourceHealthHeading = page.getByRole('heading', {
+        name: 'Recent source outcomes',
+        exact: true,
+      });
+      await sourceHealthHeading.waitFor();
+      const sourceHealthPanel = sourceHealthHeading.locator('xpath=..');
+      await sourceHealthPanel
+        .getByText(
+          'Based on your last 50 searches; this does not show live provider availability.',
+          { exact: true },
+        )
+        .waitFor();
+      for (const source of ['Greenhouse', 'Lever', 'Ashby', 'Workable'])
+        await sourceHealthPanel.getByText(source, { exact: true }).waitFor();
       // ---------------------------------------------------------------
       // Forensic audit F-3: a link to a discovery run must open THAT run.
       // Several real runs exist for this owner by now, so "most recent" and

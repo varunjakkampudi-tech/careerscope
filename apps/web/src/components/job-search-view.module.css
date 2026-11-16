@@ -12,6 +12,45 @@
   padding: 0;
 }
 
+.sourceHealth {
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+  padding-top: 16px;
+}
+
+.sourceHealth h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.sourceHealth p {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.sourceHealth ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sourceHealth li {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  overflow-wrap: anywhere;
+}
+
+.sourceHealth li > span {
+  color: var(--muted);
+  font-size: 0.825rem;
+}
+
 .sourceOptions legend {
   grid-column: 1 / -1;
   margin-bottom: 2px;

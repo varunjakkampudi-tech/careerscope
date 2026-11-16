@@ -66,3 +66,5 @@ Each row names the repository behavior, evidence, and remaining gap. Status valu
   not replace counsel approval of the effective legal text and public HTTPS URLs (see
   [AUTHENTICATION](AUTHENTICATION.md)). Owner checklist item 2.05 remains gated until that evidence
   is documented. Deployment is outside the current roadmap scope.
+
+Owner item 5.15 (Source health monitoring) is partial. Search history returns recorded per-source outcomes across the owner's latest 50 searches, and the UI summarizes completion, no-result, failure, permission-pending counts, latest observation and date in English, Telugu and Hindi. The UI explicitly distinguishes these recorded observations from live provider availability. Aggregation has focused unit coverage. API/browser regression coverage and operational freshness/latency signals, source-level monitoring and automated suspension remain outstanding; no live telemetry or provider activation is claimed.

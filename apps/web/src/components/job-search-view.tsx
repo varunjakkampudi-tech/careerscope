@@ -32,6 +32,7 @@ import {
   type SearchDetail,
 } from '@/lib/api-schemas';
 import { localizedText, useInterfaceLocale } from '@/lib/locale';
+import { summarizeRecentSourceHealth } from '@/lib/source-health';
 import { ownerKey, useSession } from '@/lib/session';
 import { SaveJob } from '@/components/saved-leads';
 import MatchEvidence from '@/components/match-evidence';
@@ -179,6 +180,7 @@ function JobSearchWorkspace() {
     refetchInterval: 5000,
     retry: 1,
   });
+  const recentSourceHealth = summarizeRecentSourceHealth(runs.data?.items ?? []);
   // The run being viewed is addressable (CS forensic audit F-3): a link to a
   // specific discovery run must open THAT run, not whichever one happens to be
   // newest. The URL wins when it carries `?run=`, so back/forward and a shared
@@ -364,6 +366,49 @@ function JobSearchWorkspace() {
             </button>
           ))}
         </nav>
+        {runs.data && runs.data.items.length > 0 && (
+          <section className={styles.sourceHealth} aria-labelledby="source-health-heading">
+            <h3 id="source-health-heading">{t('sourceHealthHeading')}</h3>
+            <p>{t('sourceHealthScope')}</p>
+            {recentSourceHealth.length === 0 ? (
+              <p>{t('sourceHealthNone')}</p>
+            ) : (
+              <ul>
+                {recentSourceHealth.map((summary) => {
+                  const latest =
+                    summary.latestStatus === 'completed'
+                      ? t('sourceHealthCompleted')
+                      : summary.latestStatus === 'empty'
+                        ? t('sourceHealthEmpty')
+                        : summary.latestErrorCode === 'source_permission_pending'
+                          ? t('sourceHealthPermissionPending')
+                          : t('sourceHealthFailed');
+                  return (
+                    <li key={summary.source}>
+                      <strong>{sourceNames[summary.source]}</strong>
+                      <span>
+                        {t('sourceHealthLatest')}: {latest} · {summary.observations}{' '}
+                        {t('sourceHealthObservations')}
+                      </span>
+                      <span>
+                        {summary.completed} {t('sourceHealthCompleted')} · {summary.empty}{' '}
+                        {t('sourceHealthEmpty')} · {summary.failed} {t('sourceHealthFailed')}
+                        {summary.permissionPending > 0 &&
+                          ` · ${summary.permissionPending} ${t('sourceHealthPermissionPending')}`}
+                      </span>
+                      <span>
+                        {t('sourceHealthLastObserved')}:{' '}
+                        {new Date(summary.latestObservedAt).toLocaleDateString(
+                          locale === 'en' ? 'en-IN' : locale === 'te' ? 'te-IN' : 'hi-IN',
+                        )}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </section>
+        )}
       </aside>
       <section className="results">
         <div className="section-heading" lang={locale}>

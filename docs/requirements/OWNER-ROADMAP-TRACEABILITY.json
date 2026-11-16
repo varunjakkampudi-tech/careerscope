@@ -1368,11 +1368,17 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Source health monitoring",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/api/src/app.ts",
+        "apps/web/src/lib/source-health.ts",
+        "apps/web/src/components/job-search-view.tsx",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md"
+      ],
+      "tests": ["apps/web/src/lib/source-health.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Owner-visible recorded outcomes summarize the latest 50 search runs and are explicitly not live availability. API/browser acceptance, freshness/latency signals, operational source-level monitoring and automated suspension remain unimplemented; no source is activated.",
       "scopeDisposition": "in-scope"
     },
     {
