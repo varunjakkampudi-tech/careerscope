@@ -1953,9 +1953,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
-      "evidence": "Run 43978471041 found an ambiguous accepted-count locator. Current matrix/progress wording records that failure and the row-scoped correction; exact-head CI is pending.",
+      "evidence": "Run 43978471041 failed on an ambiguous accepted-count locator; run 43980466911 showed the hard-coded Greenhouse count assumption was unsupported by fixture history. The browser now derives the count from owner-scoped API history and verifies the Greenhouse row. Exact-head CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "00e35eb009a82b89219e6028e5d33c05bb8b22beff1da80b55d8f6c865dedd71",
+      "sha256": "01baa3f6cf019b0495fba90998566040409e4ebdd061c0c53c7e200f99657db3",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2157,9 +2157,9 @@
         }
       ],
       "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
-      "evidence": "Run 43978471041 found an ambiguous accepted-count locator. Current matrix/progress wording records that failure and the row-scoped correction; exact-head CI is pending.",
+      "evidence": "Run 43978471041 failed on an ambiguous accepted-count locator; run 43980466911 showed the hard-coded Greenhouse count assumption was unsupported by fixture history. The browser now derives the count from owner-scoped API history and verifies the Greenhouse row. Exact-head CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "6ffe2157c237668384ed7ff5310b5294bc0724eb7a5228d743151573ca4fe2ac",
+      "sha256": "239683376b280bd5e63d1a2008b96fec604bdcb5baedfeca11f92eb447a795eb",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2359,9 +2359,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
-      "evidence": "Run 43978471041 found an ambiguous accepted-count locator. Current matrix/progress wording records that failure and the row-scoped correction; exact-head CI is pending.",
+      "evidence": "Run 43978471041 failed on an ambiguous accepted-count locator; run 43980466911 showed the hard-coded Greenhouse count assumption was unsupported by fixture history. The browser now derives the count from owner-scoped API history and verifies the Greenhouse row. Exact-head CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "94fe1fe2971c35b43aef9056b85af27b518b813ab7c34ac367ca06214ede9e29",
+      "sha256": "4a01757a121629b746b31c215c74ab348a5920ad4f6c13282ef0c091dc6f5c8f",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2933,9 +2933,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
-      "evidence": "Run 43978471041 found an ambiguous accepted-count locator. Current matrix/progress wording records that failure and the row-scoped correction; exact-head CI is pending.",
+      "evidence": "Run 43978471041 failed on an ambiguous accepted-count locator; run 43980466911 showed the hard-coded Greenhouse count assumption was unsupported by fixture history. The browser now derives the count from owner-scoped API history and verifies the Greenhouse row. Exact-head CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "4a2329b19aac6497b0b7cb67da9da953beca67c541c3b8bd3c9ab5f1f52e15fc",
+      "sha256": "4efa8af49678613db1c7eadc457ec676423a7cc72bcfdd4898cb0aa820915e5f",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -7510,9 +7510,9 @@
         }
       ],
       "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
-      "evidence": "Run 43978471041 found an ambiguous accepted-count locator; this exact-count assertion is now scoped to the Greenhouse list row. Exact-head CI for the correction is pending.",
+      "evidence": "Run 43980466911 failed on the hard-coded accepted-count assumption. The browser now asserts the fixture is present in owner history, confirms its greenhouse outcome, derives the aggregate expected count from API history, and checks the Greenhouse row. Corrected exact-head CI is pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "cfe0e42b83787a916650553dabcd3b28c6bf28240bd057c8fddd8cfec8fdd7b2",
+      "sha256": "38e6fc32ab082b2c74830b6e897e70c0bb027120f55c8c2fc8b8196fcf8bc06f",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",

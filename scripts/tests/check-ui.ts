@@ -5041,10 +5041,33 @@ try {
         .waitFor();
       for (const source of ['Greenhouse', 'Lever', 'Ashby', 'Workable'])
         await sourceHealthPanel.getByText(source, { exact: true }).waitFor();
+      const sourceHealthResponse = await page.request.get(`${origin}/api/searches`);
+      assert.equal(sourceHealthResponse.status(), 200);
+      const sourceHealthRuns = (await sourceHealthResponse.json()).items as Array<{
+        id: string;
+        sourceOutcomes?: Array<{ source: string; accepted: number }> | null;
+      }>;
+      const sourceHealthFixture = sourceHealthRuns.find((run) => run.id === fourId);
+      assert.ok(sourceHealthFixture, 'the newest source-health fixture is in owner search history');
+      assert.equal(
+        sourceHealthFixture.sourceOutcomes?.find((outcome) => outcome.source === 'greenhouse')
+          ?.accepted,
+        1,
+      );
+      const expectedGreenhouseAccepted = sourceHealthRuns.reduce(
+        (total, run) =>
+          total +
+          (run.sourceOutcomes ?? [])
+            .filter((outcome) => outcome.source === 'greenhouse')
+            .reduce((accepted, outcome) => accepted + outcome.accepted, 0),
+        0,
+      );
       const acceptedGreenhouseSource = sourceHealthPanel
         .getByRole('listitem')
-        .filter({ hasText: 'Greenhouse' });
-      await acceptedGreenhouseSource.getByText('Accepted: 1', { exact: true }).waitFor();
+        .filter({ hasText: /^Greenhouse\b/ });
+      await acceptedGreenhouseSource
+        .getByText(`Accepted: ${expectedGreenhouseAccepted}`, { exact: true })
+        .waitFor();
       // ---------------------------------------------------------------
       // Forensic audit F-3: a link to a discovery run must open THAT run.
       // Several real runs exist for this owner by now, so "most recent" and
