@@ -6,6 +6,7 @@
 import {
   normalizeSkillList,
   parseCompensation,
+  toAnnual,
   type CandidateContext,
   type MatchableProfile,
 } from '@careerscope/shared';
@@ -63,8 +64,10 @@ export function buildCandidateContext(
  * happily take as a shortfall.
  */
 function annualFloor(ctc: string): number | null {
+  // Candidate expected CTC follows the product's annual expectation convention.
   const parsed = parseCompensation(ctc);
-  return parsed.annualMin ?? parsed.annualMax;
+  const minimum = parsed.min ?? parsed.max;
+  return minimum === null ? null : toAnnual(minimum, parsed.period ?? 'year');
 }
 
 /** An explicit candidate value (including zero) wins; the resume fills unknowns. */

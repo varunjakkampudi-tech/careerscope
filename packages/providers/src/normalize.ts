@@ -43,6 +43,10 @@ export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
   const title = collapse(raw.title) || 'Untitled role';
   const companyName = collapse(raw.companyName) || 'Unknown company';
   const descriptionText = descriptionToText(raw.description, raw.descriptionIsHtml);
+  const describedYears = extractYears(descriptionText);
+  const titledYears = extractYears(title);
+  const requiredYears =
+    describedYears.min !== null || describedYears.max !== null ? describedYears : titledYears;
 
   // Skills are read from the title too: "Senior React Native Engineer" names a
   // stack that the body of a thin listing may never repeat.
@@ -86,7 +90,7 @@ export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
     // wrong; the flag follows the text, not the claim.
     hasFullDescription: raw.hasFullDescription && descriptionText.length > 0,
     techStack,
-    requiredYears: descriptionText ? extractYears(descriptionText) : { min: null, max: null },
+    requiredYears,
     applyUrl: normalizeUrl(raw.applyUrl) ?? normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
     sourceUrl: normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
     sourcePublisher: collapse(raw.sourcePublisher ?? '') || null,
@@ -175,11 +179,12 @@ export function canonicalCompany(company: string): string {
  * only the leading city token is reliably comparable.
  */
 export function canonicalLocation(location: string): string {
-  // Whitespace is collapsed first, so the dash separator is a fixed ' - ' and cannot backtrack over a run of spaces (S1-F025).
+  // Whitespace is collapsed first, so spaced hyphens and Unicode dashes are
+  // fixed delimiters and cannot backtrack over long whitespace runs (S1-F025).
   const first = location
     .toLowerCase()
     .replace(/\s+/g, ' ')
-    .split(/[,/|;·]| - /)[0]
+    .split(/[,/|;·]|\s+[-–—]\s+/)[0]
     ?.replace(/\b(?:hybrid|on-?site|in-?office|remote|wfh)\b/g, ' ');
   const city = collapse((first ?? '').replace(/[^a-z0-9\s]/g, ' '));
   return CITY_ALIASES[city] ?? city;
@@ -226,12 +231,16 @@ export function companySlug(name: string): string {
  */
 export function normalizeSalary(raw: RawJob): Salary {
   const rawText = raw.salaryRaw?.trim() || null;
+  const parsed = parseCompensation(rawText);
   const hasNumbers = isFiniteNumber(raw.salaryMin) || isFiniteNumber(raw.salaryMax);
 
   if (hasNumbers) {
     const min = isFiniteNumber(raw.salaryMin) ? raw.salaryMin : null;
     const max = isFiniteNumber(raw.salaryMax) ? raw.salaryMax : null;
-    const period = raw.salaryPeriod ?? 'year';
+    // Structured bounds remain authoritative, while the source wording can
+    // supply missing currency/period metadata (for example `80,000/month`).
+    const period = raw.salaryPeriod ?? parsed.period;
+    const currency = normalizeCurrency(raw.salaryCurrency) ?? parsed.currency;
     // Some boards send min and max the wrong way round.
     const lo = min !== null && max !== null ? Math.min(min, max) : min;
     const hi = min !== null && max !== null ? Math.max(min, max) : max;
@@ -239,23 +248,28 @@ export function normalizeSalary(raw: RawJob): Salary {
       raw: rawText,
       min: lo,
       max: hi,
-      currency: raw.salaryCurrency ?? null,
+      currency,
       period,
       annualMin: plausibleAnnual(lo, period),
       annualMax: plausibleAnnual(hi, period),
     };
   }
 
-  const parsed = parseCompensation(rawText);
   return {
     raw: rawText,
     min: parsed.min,
     max: parsed.max,
-    currency: raw.salaryCurrency ?? parsed.currency,
+    currency: normalizeCurrency(raw.salaryCurrency) ?? parsed.currency,
     period: parsed.period,
-    annualMin: parsed.annualMin,
-    annualMax: parsed.annualMax,
+    annualMin: parsed.period === null ? null : parsed.annualMin,
+    annualMax: parsed.period === null ? null : parsed.annualMax,
   };
+}
+
+/** Normalize source currency codes before strict matching compares them. */
+function normalizeCurrency(value: string | undefined): string | null {
+  const code = value?.trim().toUpperCase();
+  return code && /^[A-Z]{3}$/.test(code) ? code : null;
 }
 
 /** Above this a yearly figure is a board error (a figure in the wrong unit or a corrupted number), not pay. */
@@ -266,7 +280,7 @@ const MAX_PLAUSIBLE_ANNUAL = 1e10;
  * finite but absurd annual figure, so it is left unknown (S1-F026), in keeping with "never invent".
  */
 function plausibleAnnual(amount: number | null, period: Salary['period']): number | null {
-  if (amount === null) return null;
+  if (amount === null || period === null) return null;
   const annual = toAnnual(amount, period);
   return Number.isFinite(annual) && annual > 0 && annual <= MAX_PLAUSIBLE_ANNUAL ? annual : null;
 }
