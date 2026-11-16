@@ -2086,10 +2086,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with exact CI job state, 56/56 focused tests, reviewer finding and fresh-review gate.",
-      "evidence": "Updated Stage 05 item 5.13 progress with exact CI job state, 56/56 focused tests, reviewer finding and fresh-review gate.",
+      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "f3dc61d734986152803beb3696a2e43515451ec0690f97f28bf8575e06f56d82",
+      "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
