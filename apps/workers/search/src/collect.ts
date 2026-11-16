@@ -25,9 +25,8 @@ import {
   createGreenhouseProvider,
   createLeverProvider,
   createWorkableProvider,
-  dedupeJobs,
+  dedupeJobsWithProvenance,
   HttpClient,
-  jobFingerprint,
   normalizeJob,
   type JobProvider,
 } from '@careerscope/providers';
@@ -164,22 +163,12 @@ export async function collect(
             match: null,
           });
           normalizedJobs.push(normalized);
-          // Recorded under both keys because dedup can later decide this
-          // fingerprint is ambiguous (two different reqs, not two sources for
-          // one role) and give the posting its own identity — at that point
-          // only the per-(source, id) bucket is still the right one to read
-          // back, since the shared-fingerprint bucket also holds a sibling
-          // posting's links.
           const link = { source: normalized.source, url: normalized.sourceUrl };
           const linkKey = `${normalized.source}:${normalized.sourceUrl}`;
-          for (const bucketKey of [
-            normalized.fingerprint,
-            `${normalized.source}:${normalized.sourceJobId}`,
-          ]) {
-            const links = sourceLinks.get(bucketKey) ?? new Map();
-            links.set(linkKey, link);
-            sourceLinks.set(bucketKey, links);
-          }
+          const postingKey = `${normalized.source}:${normalized.sourceJobId}`;
+          const links = sourceLinks.get(postingKey) ?? new Map();
+          links.set(linkKey, link);
+          sourceLinks.set(postingKey, links);
           collected += 1;
         } catch (error) {
           // One unusable posting must not end the provider's loop and discard the
@@ -220,26 +209,14 @@ export async function collect(
       }),
     );
   }
-  for (const normalized of dedupeJobs(normalizedJobs)) {
+  for (const { job: normalized, sourcePostings } of dedupeJobsWithProvenance(normalizedJobs)) {
     const match = candidate ? scoreJob(normalized, candidate, { now, windowDays: 30 }) : null;
     // Hard-eligibility results are advice, not discovery filters: keep the
     // posting visible with its zero score and exact explanation.
     //
-    // A fingerprint that no longer matches this job's own title/company/city
-    // was reassigned by dedup because the fingerprint was ambiguous; read the
-    // links back from the narrower per-(source, id) bucket in that case, not
-    // the shared one, which may also hold a sibling posting's links.
-    const wasDisambiguated =
-      normalized.fingerprint !==
-      jobFingerprint(
-        normalized.title,
-        normalized.company.name,
-        normalized.location,
-        normalized.isRemote,
-      );
-    const linkBucketKey = wasDisambiguated
-      ? `${normalized.source}:${normalized.sourceJobId}`
-      : normalized.fingerprint;
+    const links = sourcePostings.flatMap(({ source, sourceJobId }) => [
+      ...(sourceLinks.get(`${source}:${sourceJobId}`)?.values() ?? []),
+    ]);
     jobs.push(
       collectedJobSchema.parse({
         fingerprint: normalized.fingerprint,
@@ -250,7 +227,7 @@ export async function collect(
         description: normalized.descriptionText,
         source: normalized.source,
         sourceUrl: normalized.sourceUrl,
-        sourceLinks: [...(sourceLinks.get(linkBucketKey)?.values() ?? [])],
+        sourceLinks: links,
         applyUrl: normalized.applyUrl,
         postedAt: normalized.postedAt,
         match,

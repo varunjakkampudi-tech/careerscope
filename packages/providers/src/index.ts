@@ -33,6 +33,7 @@ export {
   canonicalTitle,
   companySlug,
   dedupeJobs,
+  dedupeJobsWithProvenance,
   describeJob,
   employmentTypeFrom,
   jobFingerprint,
@@ -43,6 +44,7 @@ export {
   normalizeSalary,
   normalizeUrl,
   periodFrom,
+  type DedupedJobWithProvenance,
   type NormalizeOptions,
 } from './normalize.js';
 

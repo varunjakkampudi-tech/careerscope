@@ -357,13 +357,11 @@ export type Salary = z.infer<typeof salarySchema>;
 export const jobSchema = z.object({
   id: z.string(),
   /**
-   * Stable identity for this posting. Normally a hash of normalised
-   * title+company+location, so the same role posted to several boards
-   * dedupes to one row. When a source itself reports more than one distinct
-   * posting under that same title+company+location — two real reqs, not a
-   * repost — this becomes a hash that also includes the source and its own
-   * job id, so the two openings do not collapse into one. See
-   * `resolveFingerprintGroup` in `@careerscope/providers`.
+   * Stable identity for this posting. The normalized title/company/location
+   * hash is a candidate grouping key; `@careerscope/providers` merges records
+   * only when canonical URL, employer-scoped ATS requisition ID, or
+   * cross-source confidence evidence supports identity. Ambiguous postings get
+   * stable source-and-job-specific hashes so separate openings do not collapse.
    */
   fingerprint: z.string(),
   source: z.enum(ALL_SOURCES),

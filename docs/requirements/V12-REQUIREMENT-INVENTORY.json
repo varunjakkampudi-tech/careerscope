@@ -1889,15 +1889,18 @@
       "text": "- Deduplication: canonical URL, employer identifier, ATS requisition ID, then cross-source confidence",
       "assessment": "PARTIAL",
       "verification": "UNIT_TESTS_PASSED",
-      "gap": "Dedupe uses a title, company and location fingerprint with fingerprint-group resolution. Canonical URL, employer identifier and ATS requisition id are not used.",
+      "gap": "PR #92 implements canonical URL and employer-scoped ATS requisition identity across fingerprint changes, plus conservative two-source confidence matching. Local 946-test domain suite, provider build and formatting passed on Node 22.23.2 (below required Node 24); exact-head Node 24 CI, independent review and golden-set precision evaluation remain pending. The change is not merged to dev.",
       "launchBlocking": true,
       "evidence": {
         "implementation": [
-          "packages/providers/src/normalize.ts:119",
-          "packages/providers/src/normalize.ts:322",
-          "packages/core/src/schema.ts:360"
+          "packages/providers/src/normalize.ts:362",
+          "packages/providers/src/normalize.ts:387",
+          "packages/providers/src/normalize.ts:674",
+          "packages/providers/src/normalize.ts:698",
+          "packages/providers/src/normalize.ts:716",
+          "packages/providers/src/normalize.ts:725"
         ],
-        "tests": ["packages/providers/src/normalize.test.ts:1"]
+        "tests": ["packages/providers/src/normalize.test.ts:451"]
       }
     },
     {
