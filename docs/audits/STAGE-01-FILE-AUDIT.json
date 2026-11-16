@@ -1880,10 +1880,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 5.10 record to reflect the final exact-head CI and independent review results while retaining partial status until merge.",
-      "evidence": "Hosted CI run 43845065922 passed on 0a943ccbd06074dc2e43522eed0b63df6c4fdc18; independent exact-SHA review approved that head.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.10 documentation sync)",
-      "sha256": "c9179a8dafebc369d4ff847d5424b7dda59ea9fa09f04aab9b1c90ba456e8a9a",
+      "observations": "Reviewed the post-merge closeout evidence for owner item 5.10; verified implementation CI, independent exact-SHA reviews and dev integration, with deployment exclusions preserved.",
+      "evidence": "PR #94 exact head 3d2c0159cd96e7913b607b7f4469ca2aca1fa9a1 passed run 43847246428 and merged as ed6fef64e4051bf83b02a5bb1816ea8682b43ea7; post-merge run 43849480366 passed Quality and Services/integration/browser.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 closeout)",
+      "sha256": "49632a817458571dfad25d4df007599681490983ff35a6a6c957d5ead00962dd",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -1920,6 +1920,12 @@
           "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
           "sha256": "f282723ec65a4a811e7da06e7f1b5c0ab216fdfb3cc8c3761a41e68b469214db"
+        },
+        {
+          "observations": "Updated owner item 5.10 record to reflect the final exact-head CI and independent review results while retaining partial status until merge.",
+          "evidence": "Hosted CI run 43845065922 passed on 0a943ccbd06074dc2e43522eed0b63df6c4fdc18; independent exact-SHA review approved that head.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 documentation sync)",
+          "sha256": "c9179a8dafebc369d4ff847d5424b7dda59ea9fa09f04aab9b1c90ba456e8a9a"
         }
       ]
     },
@@ -1986,10 +1992,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated owner item 5.10 record to reflect the final exact-head CI and independent review results while retaining partial status until merge.",
-      "evidence": "Hosted CI run 43845065922 passed on 0a943ccbd06074dc2e43522eed0b63df6c4fdc18; independent exact-SHA review approved that head.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.10 documentation sync)",
-      "sha256": "4aee605b5f54ee1a14b9392eb8bdaadb42b59b66964a631b08b9a0763064abe0",
+      "observations": "Reviewed the post-merge closeout evidence for owner item 5.10; verified implementation CI, independent exact-SHA reviews and dev integration, with deployment exclusions preserved.",
+      "evidence": "PR #94 exact head 3d2c0159cd96e7913b607b7f4469ca2aca1fa9a1 passed run 43847246428 and merged as ed6fef64e4051bf83b02a5bb1816ea8682b43ea7; post-merge run 43849480366 passed Quality and Services/integration/browser.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 closeout)",
+      "sha256": "98f75aed062e5e2d05491694b6aa319e71aacfbf66ca230f6c333561c332eda9",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2050,6 +2056,12 @@
           "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
           "sha256": "180ac9747b99c6edbb6e62e11ba634eb32d669edf55380343703f4f191e43095"
+        },
+        {
+          "observations": "Updated owner item 5.10 record to reflect the final exact-head CI and independent review results while retaining partial status until merge.",
+          "evidence": "Hosted CI run 43845065922 passed on 0a943ccbd06074dc2e43522eed0b63df6c4fdc18; independent exact-SHA review approved that head.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 documentation sync)",
+          "sha256": "4aee605b5f54ee1a14b9392eb8bdaadb42b59b66964a631b08b9a0763064abe0"
         }
       ]
     },
@@ -2572,10 +2584,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the updated canonical item 5.10 evidence and remaining gates; the item remains partial pending exact-head hosted CI and independent acceptance.",
-      "evidence": "Current content diff reviewed for CareerScope owner item 5.10 on codex/stage05-item510-salary-location-normalization.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
-      "sha256": "44202e23dcc06122ed82fd41c8956e055c3118f8b1e4f13f42321c7b49f23014",
+      "observations": "Reviewed the post-merge closeout evidence for owner item 5.10; verified implementation CI, independent exact-SHA reviews and dev integration, with deployment exclusions preserved.",
+      "evidence": "PR #94 exact head 3d2c0159cd96e7913b607b7f4469ca2aca1fa9a1 passed run 43847246428 and merged as ed6fef64e4051bf83b02a5bb1816ea8682b43ea7; post-merge run 43849480366 passed Quality and Services/integration/browser.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 closeout)",
+      "sha256": "c6ac3602ca9d36101455c690733d3a7cb76fcb6c8a75bbbeb4d9e6ca141705cc",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2612,6 +2624,12 @@
           "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
           "reviewer": "Codex (Stage 04 item 4.10 closeout)",
           "sha256": "2dd62fad43450f9c3b64011c274c06b4d329149aba8571b6452e8ada0928a083"
+        },
+        {
+          "observations": "Reviewed the updated canonical item 5.10 evidence and remaining gates; the item remains partial pending exact-head hosted CI and independent acceptance.",
+          "evidence": "Current content diff reviewed for CareerScope owner item 5.10 on codex/stage05-item510-salary-location-normalization.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "44202e23dcc06122ed82fd41c8956e055c3118f8b1e4f13f42321c7b49f23014"
         }
       ]
     },

@@ -1183,7 +1183,7 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Salary/location/experience normalization",
       "sourceStatus": "Partial",
-      "currentStatus": "partial",
+      "currentStatus": "verified",
       "evidence": [
         "packages/providers/src/normalize.ts",
         "packages/matching/src/demands.ts",
@@ -1197,9 +1197,13 @@
         "packages/providers/src/remote/feeds.test.ts",
         "packages/matching/src/demands.test.ts"
       ],
-      "externalEvidence": [],
-      "gap": "Exact-head hosted CI and independent acceptance remain pending; local validation used Node 22.23.2 rather than the required Node 24.",
-      "scopeDisposition": "in-scope"
+      "externalEvidence": [
+        "Implementation PR #94 head 3d2c0159cd96e7913b607b7f4469ca2aca1fa9a1 passed all three required Node 24 jobs in run 43847246428; independent review approved implementation at 0a943ccbd06074dc2e43522eed0b63df6c4fdc18 and documentation at 3d2c0159cd96e7913b607b7f4469ca2aca1fa9a1.",
+        "Merged to dev as ed6fef64e4051bf83b02a5bb1816ea8682b43ea7; post-merge run 43849480366 passed Quality gates and Services/integration/browser; production image job was skipped for the dev push."
+      ],
+      "gap": "",
+      "scopeDisposition": "in-scope",
+      "reviewer": "ChatGPT exact-SHA review on PR #94 implementation and closeout revisions"
     },
     {
       "id": "5.11",
