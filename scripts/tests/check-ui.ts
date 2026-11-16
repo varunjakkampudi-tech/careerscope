@@ -3543,7 +3543,7 @@ try {
         'https://example.test/apply',
       );
       const paginatedJobs = Array.from({ length: 45 }, (_, index) => {
-        const job = structuredClone(resultBody.jobs[index % resultBody.jobs.length]);
+        const job = structuredClone(resultBody.jobs[0]);
         job.id = randomUUID();
         job.data.title = `${job.data.title} Pagination fixture ${index + 1}`;
         return job;
