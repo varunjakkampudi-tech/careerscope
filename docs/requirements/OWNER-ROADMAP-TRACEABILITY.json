@@ -1267,7 +1267,7 @@
       ],
       "tests": ["packages/providers/src/normalize.test.ts"],
       "externalEvidence": [],
-      "gap": "Fingerprint duplicates are collapsed and explicit employment-type conflicts and disjoint experience ranges are preserved as separate jobs. Distinct postings with no contradictory normalized details may still share a fingerprint and merge when each source contributes only one listing; no universal cross-source requisition identifier or measured quality gate exists. Exact-head CI and independent review for this change are pending.",
+      "gap": "Cross-source fingerprints are partitioned to preserve compatible subsets while separating explicit employment-type conflicts and disjoint experience ranges. Ambiguous postings with no contradictory details may still merge when each source contributes one listing. Fingerprints can change when later source coverage reveals a conflict; saved leads and market sightings are not automatically reconciled. No universal cross-source requisition identifier or measured quality gate exists. Exact-head CI and independent review for this change are pending.",
       "scopeDisposition": "in-scope"
     },
     {

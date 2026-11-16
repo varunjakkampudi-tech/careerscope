@@ -633,6 +633,35 @@ describe('dedupeJobs', () => {
     expect(new Set(result.map((job) => job.fingerprint)).size).toBe(2);
   });
 
+  it('merges compatible members of a conflicting three-source group deterministically', () => {
+    const greenhouse = normalizeJob(
+      rawJob({ source: 'greenhouse', sourceJobId: 'greenhouse-1', employmentType: 'fulltime' }),
+      { now: NOW },
+    );
+    const lever = normalizeJob(
+      rawJob({ source: 'lever', sourceJobId: 'lever-1', employmentType: 'fulltime' }),
+      { now: NOW },
+    );
+    const naukri = normalizeJob(
+      rawJob({ source: 'naukri', sourceJobId: 'naukri-1', employmentType: 'contract' }),
+      { now: NOW },
+    );
+
+    const forward = dedupeJobs([greenhouse, lever, naukri]);
+    const reversed = dedupeJobs([naukri, lever, greenhouse]);
+
+    expect(forward).toHaveLength(2);
+    expect(forward.find((job) => job.employmentType === 'fulltime')?.fingerprint).toBe(
+      greenhouse.fingerprint,
+    );
+    expect(forward.find((job) => job.employmentType === 'contract')?.fingerprint).not.toBe(
+      naukri.fingerprint,
+    );
+    expect(forward.map((job) => [job.employmentType, job.fingerprint]).sort()).toEqual(
+      reversed.map((job) => [job.employmentType, job.fingerprint]).sort(),
+    );
+  });
+
   it('still merges compatible details and treats missing details as unknown', () => {
     const fivePlus = normalizeJob(
       rawJob({

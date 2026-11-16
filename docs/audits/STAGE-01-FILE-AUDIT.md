@@ -24,5 +24,3 @@ S1-F014 records that PostgreSQL does not enforce lowercase storage for `users.em
 - The initial item 1.01 approval is tied to PR #18 and exact SHA `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`. The 2026-11-08 refresh pins all current review bytes and extends the complete-coverage check into the CI command; the new candidate still requires exact-head CI and independent review. Later item-specific architecture reviews and CI evidence remain recorded in their respective documents and PRs.
 - The file audit is not a substitute for Stage 01 feature checks, cross-browser acceptance, production load validation, or the owner’s later-stage release gates.
 - Hostinger, server backups, and production deployment are excluded from the owner-approved roadmap scope.
-
-- Revalidated during Stage 05 item 5.09: the focused deduplication guard and regressions, item evidence, limitation record, and test evidence were reviewed. Existing audited files remain fully accounted for; exact-head CI and independent review are separate pending gates.

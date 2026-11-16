@@ -1891,7 +1891,7 @@
       "observations": "Reviewed Stage 05 items 5.08 and 5.09 evidence and gaps; both remain partial and no external source acceptance is claimed.",
       "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "952683fecfc18b65e43446f59b9fa59cf278489f189c05497f993d405359057b",
+      "sha256": "da3b553a8b588deb6952f61cd3f2440c5810c59a294fbda85f29215eb4539433",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2019,7 +2019,7 @@
       "observations": "Reviewed the documented residual false-merge risk when cross-source postings lack contradictory structured details.",
       "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "bee66ee3b01a5abf032f3c148d54a7a8f25bcdb0bfefa26bb764d351592f162e",
+      "sha256": "18d6f8efa972fb7ba9cad4ff5066c93973c2424ff554ea6bdb16df2c522f3e6f",
       "history": [
         {
           "reviewer": "Codex (Stage 01 item 1.01)",
@@ -2083,7 +2083,7 @@
       "observations": "Reviewed Stage 05 item 5.08 and 5.09 status, focused test/build evidence, and remaining adapter-mapping and false-merge limitations.",
       "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "58f43c5b1f26db5906e6a69ea7516dc0a1698844768eec31f10e3dbdd8e52255",
+      "sha256": "9dcdfecb8ac4591ecf0fc959813bbd5bb6f74411ddd3c2c0374fc03bd52208b4",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2273,7 +2273,7 @@
       "observations": "Reviewed item-specific Stage 05 normalization and deduplication test evidence and exact-head gates.",
       "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "f3a517b65c923f2c1f3b918225356beabc28242a50f34add3e965a2630179998",
+      "sha256": "d08de3ad68f62e21c10744dc048c1e91a6c2f831382d1e8efe31b8ee32ab3b4d",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2552,22 +2552,14 @@
     {
       "path": "docs/audits/STAGE-01-FILE-AUDIT.md",
       "category": "self-referential-audit-record",
-      "reviewMethod": "focused-content-review",
-      "state": "reviewed",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 01 audit summary and current Stage 05 item 5.09 audit note.",
-      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
-      "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "673a9385b2ce5ecc533855754448d25aa28befb60f7f510b85eb9929195e00c3",
-      "history": [
-        {
-          "reviewer": "",
-          "sha256": "",
-          "observations": "Self-referential human summary of this audit. Its figures are taken from the JSON record at each revision; it is not reviewed as source.",
-          "evidence": ""
-        }
-      ]
+      "observations": "Self-referential human summary of this audit. Its figures are taken from the JSON record at each revision; it is not reviewed as source.",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
     },
     {
       "path": "docs/decisions/CSP-STRICT-SCRIPT-SRC.md",
@@ -2843,7 +2835,7 @@
       "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
       "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "5e3ff79ef12b7ff1d3318da28e045e3080bde9d745b280749523277e2460dcc0",
+      "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -5766,10 +5758,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed 73 focused normalization tests, including conflicts in explicit employment type and disjoint experience ranges plus compatible and unknown-detail merges.",
-      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
+      "observations": "Reviewed 74 focused normalization tests, including explicit employment-type and disjoint-experience conflicts, compatible-subset preservation, and input-order determinism.",
+      "evidence": "Node 24 Docker: normalize.test.ts 74/74; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "59c00f540c8939282a1063c07483b07f0eddf29402bccacbe3c4225a0badd04c",
+      "sha256": "ddd5e3fd8db3029ee6b826b3bc30e56f5475355108e041fef4628a8680b0d1f8",
       "history": [
         {
           "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
@@ -5806,10 +5798,10 @@
           "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
         }
       ],
-      "observations": "Reviewed the new conservative cross-source conflict guard and its interactions with existing source-ID grouping, split identities, and merge behavior.",
-      "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
+      "observations": "Reviewed deterministic compatible-subset partitioning, preserving compatible merges while splitting explicit employment-type and disjoint-experience conflicts; source-ID collision behavior remains conservative.",
+      "evidence": "Node 24 Docker: normalize.test.ts 74/74; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "aaaa844e6bbecf0ec19a82cced2a0b2c5781423312651990d58ec7626bdf7ecc",
+      "sha256": "e84b8e7c94e3565746c5d6afa767a575a0713e639427298c383e1c2d53433d1a",
       "history": [
         {
           "reviewer": "Claude (Stage 01 implementation agent, self-validation)",

@@ -424,14 +424,10 @@ function resolveFingerprintGroup(jobs: readonly Job[]): Job[] {
     if (list) list.push(job);
     else clusters.set(key, [job]);
   }
-  const merged = [...clusters.values()].map((list) => list.reduce(mergeDuplicates));
+  const merged = [...clusters.entries()]
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([, list]) => list.reduce(mergeDuplicates));
   if (merged.length === 1) return merged;
-
-  // A title/company/location resemblance is not enough to merge postings when
-  // their explicit role details contradict each other. This check is
-  // intentionally one-way: missing or compatible details do not block a
-  // cross-source merge.
-  if (hasConflictingRoleDetails(merged)) return merged.map(disambiguateFingerprint);
 
   const sourcesSeen = new Set<string>();
   let split = false;
@@ -439,9 +435,24 @@ function resolveFingerprintGroup(jobs: readonly Job[]): Job[] {
     if (sourcesSeen.has(job.source)) split = true;
     sourcesSeen.add(job.source);
   }
-  if (!split) return [merged.reduce(mergeDuplicates)];
+  if (split) return merged.map(disambiguateFingerprint);
 
-  return merged.map(disambiguateFingerprint);
+  // A title/company/location resemblance is not enough to merge postings when
+  // their explicit role details contradict each other. This check is
+  // intentionally one-way: missing or compatible details do not block a
+  // cross-source merge. Partitioning prevents one conflicting pair from
+  // forcing compatible listings in the same fingerprint group apart.
+  if (hasConflictingRoleDetails(merged)) {
+    const compatibleGroups = partitionCompatibleJobs(merged);
+    return compatibleGroups.map((group, index) => {
+      const combined = group.reduce(mergeDuplicates);
+      // The first compatible group is chosen deterministically from sorted
+      // source ids; other groups need distinct stable fingerprints.
+      return index === 0 ? combined : disambiguateFingerprint(combined);
+    });
+  }
+
+  return [merged.reduce(mergeDuplicates)];
 }
 
 function hasConflictingRoleDetails(jobs: readonly Job[]): boolean {
@@ -464,6 +475,48 @@ function hasConflictingRoleDetails(jobs: readonly Job[]): boolean {
     if (greatestMinimum > leastMaximum) return true;
   }
   return false;
+}
+
+function partitionCompatibleJobs(jobs: readonly Job[]): Job[][] {
+  const ordered = [...jobs].sort((left, right) =>
+    `${left.source}:${left.sourceJobId}`.localeCompare(`${right.source}:${right.sourceJobId}`),
+  );
+  const groups: Array<{
+    jobs: Job[];
+    employmentType: Job['employmentType'];
+    greatestMinimum: number;
+    leastMaximum: number;
+  }> = [];
+
+  for (const job of ordered) {
+    const minimum = job.requiredYears.min ?? Number.NEGATIVE_INFINITY;
+    const maximum = job.requiredYears.max ?? Number.POSITIVE_INFINITY;
+    const group = groups.find((candidate) => {
+      const typeCompatible =
+        !candidate.employmentType ||
+        !job.employmentType ||
+        candidate.employmentType === job.employmentType;
+      return (
+        typeCompatible &&
+        Math.max(candidate.greatestMinimum, minimum) <= Math.min(candidate.leastMaximum, maximum)
+      );
+    });
+
+    if (group) {
+      group.jobs.push(job);
+      group.employmentType ??= job.employmentType;
+      group.greatestMinimum = Math.max(group.greatestMinimum, minimum);
+      group.leastMaximum = Math.min(group.leastMaximum, maximum);
+    } else {
+      groups.push({
+        jobs: [job],
+        employmentType: job.employmentType,
+        greatestMinimum: minimum,
+        leastMaximum: maximum,
+      });
+    }
+  }
+  return groups.map((group) => group.jobs);
 }
 
 /**
