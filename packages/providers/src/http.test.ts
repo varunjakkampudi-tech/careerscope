@@ -339,6 +339,64 @@ describe('HttpClient — circuit breaker', () => {
     await http.get('https://a.test/after-probe');
     expect(calls).toHaveLength(3);
   });
+
+  it('keeps the circuit open when probe accepts a transient HTTP status', async () => {
+    const { impl, calls } = fakeFetch([
+      text('busy', { status: 503 }),
+      text('still busy', { status: 503 }),
+    ]);
+    const clock = fakeClock();
+    const http = client(impl, {
+      now: clock.now,
+      retries: 0,
+      cacheTtlMs: 0,
+      circuitBreakerThreshold: 1,
+      circuitBreakerResetMs: 100,
+    });
+
+    await expect(http.get('https://a.test/initial')).rejects.toMatchObject({ kind: 'http' });
+    clock.advance(100);
+    await expect(http.probe('https://a.test/recovery')).resolves.toMatchObject({
+      ok: false,
+      status: 503,
+    });
+    await expect(http.get('https://a.test/blocked')).rejects.toMatchObject({
+      kind: 'circuit-open',
+      retryAfterMs: 100,
+    });
+    expect(calls).toHaveLength(2);
+  });
+
+  it('does not let a pre-open in-flight success clear the newer open circuit', async () => {
+    let releaseSlowSuccess: ((response: Response) => void) | undefined;
+    const calls: string[] = [];
+    const impl: FetchLike = async (url) => {
+      calls.push(url);
+      if (url.endsWith('/slow-success')) {
+        return new Promise<Response>((resolve) => {
+          releaseSlowSuccess = resolve;
+        });
+      }
+      return new Response('busy', { status: 503 });
+    };
+    const http = client(impl, {
+      retries: 0,
+      cacheTtlMs: 0,
+      circuitBreakerThreshold: 1,
+      circuitBreakerResetMs: 100,
+    });
+
+    const slowSuccess = http.get('https://a.test/slow-success');
+    await nextTick(undefined);
+    await expect(http.get('https://a.test/open')).rejects.toMatchObject({ kind: 'http' });
+    releaseSlowSuccess?.(new Response('ok', { status: 200 }));
+    await slowSuccess;
+
+    await expect(http.get('https://a.test/blocked')).rejects.toMatchObject({
+      kind: 'circuit-open',
+    });
+    expect(calls).toHaveLength(2);
+  });
 });
 
 /* -------------------------------------------------------------------------- */

@@ -1889,9 +1889,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed item 5.13 local evidence and host-scoped breaker limitations; item remains partial pending live/source-specific acceptance.",
-      "evidence": "Node 24 Docker: http.test.ts 51/51; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review for this change remain pending.",
+      "evidence": "Node 24 Docker: http.test.ts 53/53; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review of the corrections remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "e5c110471c04408f828f65dcad469ef96b956894ffe51fa7c856e8212dd280fd",
+      "sha256": "5dd1c4c10c5ad7060e3ab351f532ae40a2bda99c92433507fcca148c14adddfe",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2087,9 +2087,9 @@
         }
       ],
       "observations": "Reviewed Stage 05 item 5.13 implementation, local checks, and remaining source-specific behavior/tuning gaps.",
-      "evidence": "Node 24 Docker: http.test.ts 51/51; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review for this change remain pending.",
+      "evidence": "Node 24 Docker: http.test.ts 53/53; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review of the corrections remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "3fcfa4599e7d2ee96fb672efa0be4f07e878a68427e99dcd0119adf639b480aa",
+      "sha256": "e63fd70e2275997ec53b713f0f59916add999270056a361d40dbd86e430a117a",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2283,9 +2283,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed 5.13 focused HTTP tests, build/lint/format results, and outstanding live behavior limits.",
-      "evidence": "Node 24 Docker: http.test.ts 51/51; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review for this change remain pending.",
+      "evidence": "Node 24 Docker: http.test.ts 53/53; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review of the corrections remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "669eaf4d009296140167ccbb3c5e820913a241a5532c019e1daea3ee8f1733b7",
+      "sha256": "f6b55d0bd3a87f6a1ec868296c19e921ec9bd44739aa30d713b820ab90af23ab",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2851,7 +2851,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed canonical 5.13 partial status, evidence paths, focused test path and remaining acceptance gaps.",
-      "evidence": "Node 24 Docker: http.test.ts 51/51; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review for this change remain pending.",
+      "evidence": "Node 24 Docker: http.test.ts 53/53; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review of the corrections remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
       "sha256": "42258505b88c49f689efde896278a2683397a675c519400c6f76f971546e4a22",
       "history": [
@@ -5662,10 +5662,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed 51 HTTP client tests, including circuit threshold, open rejection, host isolation, recovery reset and one half-open probe.",
-      "evidence": "Node 24 Docker: http.test.ts 51/51; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review for this change remain pending.",
+      "observations": "Reviewed 53 HTTP client tests, including circuit threshold, open rejection, host isolation, recovery reset, one half-open probe, accepted transient status, and stale completion guard.",
+      "evidence": "Node 24 Docker: http.test.ts 53/53; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review of the corrections remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "f723123b9807aef4f69b82511522c2e15eb234f523b56b1a4857008d93d626b1",
+      "sha256": "a16fd7be20288972053b4c38cde14b8aa56f653670b0bb6f39d8ebae934cd673",
       "history": [
         {
           "reviewer": "Codex (Stage 01 implementation audit)",
@@ -5682,10 +5682,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed per-host breaker keying, five-failure default threshold, cooldown and single-probe behavior alongside retry handling; no source activation was introduced.",
-      "evidence": "Node 24 Docker: http.test.ts 51/51; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review for this change remain pending.",
+      "observations": "Reviewed per-host breaker keying, generation-protected transitions, accepted transient status handling, five-failure default threshold, cooldown and single-probe behavior alongside retry handling; no source activation was introduced.",
+      "evidence": "Node 24 Docker: http.test.ts 53/53; providers TypeScript build, targeted ESLint, and Prettier checks passed. Exact-head hosted CI and independent review of the corrections remain pending.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "a0fa39f9c553539b78289bc34e1d464d839a45f6e13960c6d091bfa027bdb6d0",
+      "sha256": "c114ce2c890ccfd444b97a4fb7af2a543ac770acff72e4e11daef7548def6b59",
       "history": [
         {
           "reviewer": "Claude (Stage 01 implementation agent, self-validation)",

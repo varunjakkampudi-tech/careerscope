@@ -168,6 +168,7 @@ interface CacheEntry {
 }
 
 interface CircuitState {
+  generation: number;
   consecutiveFailures: number;
   openUntil: number | null;
   probeInFlight: boolean;
@@ -364,6 +365,7 @@ export class HttpClient {
     options: RequestOptions,
   ): Promise<HttpResponse> {
     const host = hostOf(url);
+    const circuitGeneration = this.circuits.get(host)?.generation ?? 0;
     const halfOpenProbe = this.enterCircuit(host, url);
     const retries = options.retries ?? this.config.retries;
     let lastError: HttpError | undefined;
@@ -375,7 +377,11 @@ export class HttpClient {
 
         try {
           const response = await this.attempt(method, url, body, options);
-          this.circuits.delete(host);
+          if (RETRYABLE_STATUSES.has(response.status)) {
+            this.recordCircuitFailure(host, circuitGeneration);
+          } else {
+            this.recordCircuitSuccess(host, circuitGeneration);
+          }
           completed = true;
           return response;
         } catch (error) {
@@ -411,11 +417,13 @@ export class HttpClient {
               retryable: true,
               cause: error,
             });
-      if (failure.retryable) this.recordCircuitFailure(host);
-      else if (failure.kind === 'http' || failure.kind === 'too-large') this.circuits.delete(host);
+      if (failure.retryable) this.recordCircuitFailure(host, circuitGeneration);
+      else if (failure.kind === 'http' || failure.kind === 'too-large') {
+        this.recordCircuitSuccess(host, circuitGeneration);
+      }
       throw failure;
     } finally {
-      if (halfOpenProbe && !completed) this.releaseCircuitProbe(host);
+      if (halfOpenProbe && !completed) this.releaseCircuitProbe(host, circuitGeneration);
     }
   }
 
@@ -431,13 +439,19 @@ export class HttpClient {
     return true;
   }
 
-  private recordCircuitFailure(host: string): void {
+  private recordCircuitFailure(host: string, requestGeneration: number): void {
     const state = this.circuits.get(host) ?? {
+      generation: 0,
       consecutiveFailures: 0,
       openUntil: null,
       probeInFlight: false,
     };
+    // A request admitted before the circuit opened cannot extend or overwrite
+    // that newer decision when its response arrives late.
+    if (state.openUntil !== null && state.generation !== requestGeneration) return;
+
     state.consecutiveFailures += 1;
+    state.generation += 1;
     state.probeInFlight = false;
     state.openUntil =
       state.consecutiveFailures >= this.config.circuitBreakerThreshold
@@ -446,9 +460,23 @@ export class HttpClient {
     this.circuits.set(host, state);
   }
 
-  private releaseCircuitProbe(host: string): void {
+  private recordCircuitSuccess(host: string, requestGeneration: number): void {
     const state = this.circuits.get(host);
-    if (state) state.probeInFlight = false;
+    if (!state) return;
+    // Only a request admitted in the current open generation can close it.
+    if (state.openUntil !== null && state.generation !== requestGeneration) return;
+
+    state.consecutiveFailures = 0;
+    state.openUntil = null;
+    state.probeInFlight = false;
+    // Keep a generation marker so late completions cannot match a future open
+    // state after a success reset.
+    state.generation += 1;
+  }
+
+  private releaseCircuitProbe(host: string, requestGeneration: number): void {
+    const state = this.circuits.get(host);
+    if (state?.generation === requestGeneration) state.probeInFlight = false;
   }
 
   private circuitOpenError(url: string, retryAfterMs: number): HttpError {
