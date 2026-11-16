@@ -1096,11 +1096,25 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "JSearch, where permitted",
       "sourceStatus": "Verify",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/keyed/jsearch.ts",
+        "packages/providers/src/keyed/aggregators.test.ts",
+        "packages/providers/src/registry.ts",
+        "packages/providers/src/registry.test.ts",
+        "packages/shared/src/job-source-policy.test.ts",
+        "docs/PROVIDERS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/providers/src/keyed/aggregators.test.ts",
+        "packages/providers/src/registry.test.ts",
+        "packages/shared/src/job-source-policy.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "The JSearch adapter is covered by synthetic fixture tests, but its live response schema has not been verified. JSearch is not a launch candidate and the production permission profile is empty; no live provider request or source-specific permitted-use rights were verified. Exact-head CI and independent item review remain pending.",
       "scopeDisposition": "in-scope"
     },
     {

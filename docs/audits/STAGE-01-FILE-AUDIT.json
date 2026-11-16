@@ -1880,10 +1880,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the post-merge closeout evidence for owner item 5.10; verified implementation CI, independent exact-SHA reviews and dev integration, with deployment exclusions preserved.",
-      "evidence": "PR #94 exact head 3d2c0159cd96e7913b607b7f4469ca2aca1fa9a1 passed run 43847246428 and merged as ed6fef64e4051bf83b02a5bb1816ea8682b43ea7; post-merge run 43849480366 passed Quality and Services/integration/browser.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.10 closeout)",
-      "sha256": "49632a817458571dfad25d4df007599681490983ff35a6a6c957d5ead00962dd",
+      "observations": "Recorded item 5.02 partial status; JSearch fixtures pass locally, but live schema and permitted-use acceptance remain open.",
+      "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
+      "sha256": "55c50e8134cc0efc10b4d24b256723dee82e1d5fd7e3a7b5b8ef99538effc35f",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -1926,6 +1926,12 @@
           "evidence": "Hosted CI run 43845065922 passed on 0a943ccbd06074dc2e43522eed0b63df6c4fdc18; independent exact-SHA review approved that head.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.10 documentation sync)",
           "sha256": "c9179a8dafebc369d4ff847d5424b7dda59ea9fa09f04aab9b1c90ba456e8a9a"
+        },
+        {
+          "observations": "Reviewed the post-merge closeout evidence for owner item 5.10; verified implementation CI, independent exact-SHA reviews and dev integration, with deployment exclusions preserved.",
+          "evidence": "PR #94 exact head 3d2c0159cd96e7913b607b7f4469ca2aca1fa9a1 passed run 43847246428 and merged as ed6fef64e4051bf83b02a5bb1816ea8682b43ea7; post-merge run 43849480366 passed Quality and Services/integration/browser.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 closeout)",
+          "sha256": "49632a817458571dfad25d4df007599681490983ff35a6a6c957d5ead00962dd"
         }
       ]
     },
@@ -1992,10 +1998,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Recorded Stage 05 item 5.01 adapter evidence and current verified count after PR #94; external permitted-use review remains open.",
-      "evidence": "PR #86 head 8286568cc22d0dd996f8cdfdaf1a9890c75300e2 passed all three required jobs in run 43365717442. Focused fixtures passed 162/162 locally on Node 22.23.2; no live provider calls or rights verification occurred. Item remains partial pending independent exact-head review and source-specific permitted-use evidence.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.01 evidence update)",
-      "sha256": "dd9d857a51fa6d0a24c9f97fb1213536fe8e019103dc8b1f49513ef84a734bd9",
+      "observations": "Recorded owner item 5.02 evidence and external restrictions; no verified status or provider activation is claimed.",
+      "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
+      "sha256": "ea89568d506e713b2f83d15fadf61d3289e4c26d37f8ff5d89fecd9e006525e0",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2068,6 +2074,12 @@
           "evidence": "PR #94 exact head 3d2c0159cd96e7913b607b7f4469ca2aca1fa9a1 passed run 43847246428 and merged as ed6fef64e4051bf83b02a5bb1816ea8682b43ea7; post-merge run 43849480366 passed Quality and Services/integration/browser.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.10 closeout)",
           "sha256": "98f75aed062e5e2d05491694b6aa319e71aacfbf66ca230f6c333561c332eda9"
+        },
+        {
+          "observations": "Recorded Stage 05 item 5.01 adapter evidence and current verified count after PR #94; external permitted-use review remains open.",
+          "evidence": "PR #86 head 8286568cc22d0dd996f8cdfdaf1a9890c75300e2 passed all three required jobs in run 43365717442. Focused fixtures passed 162/162 locally on Node 22.23.2; no live provider calls or rights verification occurred. Item remains partial pending independent exact-head review and source-specific permitted-use evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.01 evidence update)",
+          "sha256": "dd9d857a51fa6d0a24c9f97fb1213536fe8e019103dc8b1f49513ef84a734bd9"
         }
       ]
     },
@@ -2114,10 +2126,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded item 5.01 fixture coverage, local Node version limitation, exact-head CI, and pending owner permitted-use evidence.",
-      "evidence": "PR #86 head 8286568cc22d0dd996f8cdfdaf1a9890c75300e2 passed all three required jobs in run 43365717442. Focused fixtures passed 162/162 locally on Node 22.23.2; no live provider calls or rights verification occurred. Item remains partial pending independent exact-head review and source-specific permitted-use evidence.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.01 evidence update)",
-      "sha256": "1f56cc957f50340c0364e3a8880a4032d912f9a21b2c5f5c1243be2537c1d703",
+      "observations": "Recorded 81/81 synthetic JSearch, registry and source-policy test results on Node 22.23.2 and explicitly noted no live call.",
+      "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
+      "sha256": "4b102019e05ba5bc0291b08da6946a50befbe2ddc844c602c35897b3efe9349e",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2166,6 +2178,12 @@
           "evidence": "Current content diff reviewed for CareerScope owner item 5.10 on codex/stage05-item510-salary-location-normalization.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
           "sha256": "b3c8bdf06151f2da2a8eb4b6709e9240a73dfd6358c778e6537a07640330c8e2"
+        },
+        {
+          "observations": "Recorded item 5.01 fixture coverage, local Node version limitation, exact-head CI, and pending owner permitted-use evidence.",
+          "evidence": "PR #86 head 8286568cc22d0dd996f8cdfdaf1a9890c75300e2 passed all three required jobs in run 43365717442. Focused fixtures passed 162/162 locally on Node 22.23.2; no live provider calls or rights verification occurred. Item remains partial pending independent exact-head review and source-specific permitted-use evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.01 evidence update)",
+          "sha256": "1f56cc957f50340c0364e3a8880a4032d912f9a21b2c5f5c1243be2537c1d703"
         }
       ]
     },
@@ -2596,10 +2614,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded owner item 5.01 as partial with fixture evidence, production sources disabled, and permitted-use evidence pending.",
-      "evidence": "PR #86 head 8286568cc22d0dd996f8cdfdaf1a9890c75300e2 passed all three required jobs in run 43365717442. Focused fixtures passed 162/162 locally on Node 22.23.2; no live provider calls or rights verification occurred. Item remains partial pending independent exact-head review and source-specific permitted-use evidence.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.01 evidence update)",
-      "sha256": "3a24672238402a3a4a7990375cdd2ea666e8a0a2e6aa516dc2e1649fe064f68c",
+      "observations": "Recorded owner item 5.02 as partial with fixture evidence, no live schema verification, and permitted-use gap.",
+      "evidence": "Local Node 22.23.2 synthetic suites for JSearch adapters, registry and source policy passed 81/81. The repository requires Node 24; hosted exact-head CI is pending. No live provider request or permitted-use verification was performed.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.02 evidence review)",
+      "sha256": "86476629a27fa159c7e85952ed739b810d995e9ee24b8be05af872c12ec3cb37",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2648,6 +2666,12 @@
           "evidence": "PR #94 exact head 3d2c0159cd96e7913b607b7f4469ca2aca1fa9a1 passed run 43847246428 and merged as ed6fef64e4051bf83b02a5bb1816ea8682b43ea7; post-merge run 43849480366 passed Quality and Services/integration/browser.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.10 closeout)",
           "sha256": "c6ac3602ca9d36101455c690733d3a7cb76fcb6c8a75bbbeb4d9e6ca141705cc"
+        },
+        {
+          "observations": "Recorded owner item 5.01 as partial with fixture evidence, production sources disabled, and permitted-use evidence pending.",
+          "evidence": "PR #86 head 8286568cc22d0dd996f8cdfdaf1a9890c75300e2 passed all three required jobs in run 43365717442. Focused fixtures passed 162/162 locally on Node 22.23.2; no live provider calls or rights verification occurred. Item remains partial pending independent exact-head review and source-specific permitted-use evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.01 evidence update)",
+          "sha256": "3a24672238402a3a4a7990375cdd2ea666e8a0a2e6aa516dc2e1649fe064f68c"
         }
       ]
     },
