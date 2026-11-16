@@ -356,17 +356,33 @@ export function normalizeUrl(input: string | undefined | null): string | null {
  *
  * A shared fingerprint only says two postings *might* be the same opening —
  * title, company and city are not an identity, they are a resemblance. See
- * `resolveFingerprintGroup` for the canonical URL, employer/requisition and
- * cross-source confidence evidence required before copies are merged.
+ * `resolveFingerprintGroup` for the canonical URL and conservative cross-source
+ * content evidence required before copies are merged.
  */
 export function dedupeJobs(jobs: readonly Job[]): Job[] {
+  return dedupeJobsWithProvenance(jobs).map((candidate) => candidate.job);
+}
+
+export interface DedupedJobWithProvenance {
+  job: Job;
+  sourcePostings: ReadonlyArray<{ source: string; sourceJobId: string }>;
+}
+
+interface DedupeCandidate {
+  job: Job;
+  sourcePostings: Map<string, string>;
+  canonicalUrls: Set<string>;
+}
+
+/** Return merged jobs together with every source posting that contributed to them. */
+export function dedupeJobsWithProvenance(jobs: readonly Job[]): DedupedJobWithProvenance[] {
   const groups = new Map<string, Job[]>();
   for (const job of jobs) {
     const list = groups.get(job.fingerprint);
     if (list) list.push(job);
     else groups.set(job.fingerprint, [job]);
   }
-  const result: Job[] = [];
+  const result: DedupeCandidate[] = [];
   const blockedSourcePostings = new Set<string>();
   for (const group of groups.values()) {
     const idsBySource = new Map<string, Set<string>>();
@@ -383,38 +399,33 @@ export function dedupeJobs(jobs: readonly Job[]): Job[] {
   return mergeExplicitIdentityGroups(result, blockedSourcePostings);
 }
 
-/** Match explicit source and employer identifiers even if normalized titles or locations drift. */
+/** Match exact source postings and canonical posting URLs across fingerprint drift. */
 function mergeExplicitIdentityGroups(
-  jobs: readonly Job[],
+  candidates: readonly DedupeCandidate[],
   blockedSourcePostings: ReadonlySet<string>,
-): Job[] {
+): DedupedJobWithProvenance[] {
+  const jobs = candidates.map((candidate) => candidate.job);
   const eligible = jobs.map(
-    (job) => !blockedSourcePostings.has(`${job.source}:${job.sourceJobId}`),
+    (_, index) =>
+      ![...candidates[index]!.sourcePostings].some(([source, sourceJobId]) =>
+        blockedSourcePostings.has(`${source}:${sourceJobId}`),
+      ),
   );
   const parent = jobs.map((_, index) => index);
   const members = jobs.map((_, index) => new Set([index]));
   const evidence = jobs.map(() => new Set<string>());
+  const sourcePostings = candidates.map((candidate) => new Map(candidate.sourcePostings));
+  const canonicalUrls = candidates.map((candidate) => new Set(candidate.canonicalUrls));
   const find = (index: number): number => {
     if (parent[index] !== index) parent[index] = find(parent[index]!);
     return parent[index]!;
   };
   const canJoin = (leftRoot: number, rightRoot: number): boolean => {
     for (const leftIndex of members[leftRoot]!) {
-      const left = jobs[leftIndex]!;
       for (const rightIndex of members[rightRoot]!) {
-        const right = jobs[rightIndex]!;
-        if (left.source === right.source && left.sourceJobId !== right.sourceJobId) return false;
-        const leftEmployer = employerIdentifier(left);
-        const rightEmployer = employerIdentifier(right);
-        if (
-          leftEmployer &&
-          leftEmployer === rightEmployer &&
-          isAtsSource(left.source) &&
-          isAtsSource(right.source)
-        ) {
-          const leftReq = canonicalRequisitionId(left.source, left.sourceJobId);
-          const rightReq = canonicalRequisitionId(right.source, right.sourceJobId);
-          if (leftReq && rightReq && leftReq !== rightReq) return false;
+        for (const [leftSource, leftId] of sourcePostings[leftIndex]!) {
+          const rightId = sourcePostings[rightIndex]!.get(leftSource);
+          if (rightId !== undefined && rightId !== leftId) return false;
         }
       }
     }
@@ -433,6 +444,11 @@ function mergeExplicitIdentityGroups(
     parent[child] = root;
     for (const index of members[child]!) members[root]!.add(index);
     members[child]!.clear();
+    for (const [source, sourceJobId] of sourcePostings[child]!)
+      sourcePostings[root]!.set(source, sourceJobId);
+    sourcePostings[child]!.clear();
+    for (const url of canonicalUrls[child]!) canonicalUrls[root]!.add(url);
+    canonicalUrls[child]!.clear();
     for (const value of evidence[child]!) evidence[root]!.add(value);
     evidence[child]!.clear();
     evidence[root]!.add(identity);
@@ -442,10 +458,11 @@ function mergeExplicitIdentityGroups(
       const seenSourceIds = new Map<string, string>();
       let conflict = false;
       for (const index of indexes) {
-        const job = jobs[index]!;
-        const previousId = seenSourceIds.get(job.source);
-        if (previousId !== undefined && previousId !== job.sourceJobId) conflict = true;
-        seenSourceIds.set(job.source, job.sourceJobId);
+        for (const [source, sourceJobId] of sourcePostings[index]!) {
+          const previousId = seenSourceIds.get(source);
+          if (previousId !== undefined && previousId !== sourceJobId) conflict = true;
+          seenSourceIds.set(source, sourceJobId);
+        }
       }
       if (conflict) continue;
       for (let index = 1; index < indexes.length; index++) {
@@ -454,36 +471,31 @@ function mergeExplicitIdentityGroups(
     }
   };
 
-  const bySourcePosting = new Map<string, number[]>();
   const byUrl = new Map<string, number[]>();
-  const byEmployerRequisition = new Map<string, number[]>();
   for (let index = 0; index < jobs.length; index++) {
-    const job = jobs[index]!;
     if (!eligible[index]) continue;
-    const sourceKey = `${job.source}:${job.sourceJobId}`;
-    bySourcePosting.set(sourceKey, [...(bySourcePosting.get(sourceKey) ?? []), index]);
-    for (const url of canonicalJobUrls(job)) {
+    for (const [source, sourceJobId] of sourcePostings[index]!) {
+      const sourceKey = `${source}:${sourceJobId}`;
+      const indexes = byUrl.get(`source:${sourceKey}`) ?? [];
+      indexes.push(index);
+      byUrl.set(`source:${sourceKey}`, indexes);
+    }
+    for (const url of canonicalUrls[index]!) {
       byUrl.set(url, [...(byUrl.get(url) ?? []), index]);
     }
-    const employer = employerIdentifier(job);
-    const requisition = canonicalRequisitionId(job.source, job.sourceJobId);
-    if (employer && requisition && isAtsSource(job.source)) {
-      const key = `${employer}:${requisition}`;
-      byEmployerRequisition.set(key, [...(byEmployerRequisition.get(key) ?? []), index]);
-    }
   }
-  connectIdentityGroups(bySourcePosting);
   connectIdentityGroups(new Map([...byUrl].map(([key, indexes]) => [`url:${key}`, indexes])));
-  connectIdentityGroups(
-    new Map([...byEmployerRequisition].map(([key, indexes]) => [`req:${key}`, indexes])),
-  );
 
-  const output: Job[] = [];
+  const output: DedupedJobWithProvenance[] = [];
   const emitted = new Set<number>();
   for (let index = 0; index < jobs.length; index++) {
     const root = find(index);
     if (emitted.has(root) || !members[root]!.has(index)) continue;
     emitted.add(root);
+    const provenance = [...sourcePostings[root]!].map(([source, sourceJobId]) => ({
+      source,
+      sourceJobId,
+    }));
     const group = [...members[root]!]
       .map((member) => jobs[member]!)
       .sort((a, b) =>
@@ -492,17 +504,21 @@ function mergeExplicitIdentityGroups(
         ),
       );
     if (group.length === 1) {
-      output.push(group[0]!);
+      output.push({ job: group[0]!, sourcePostings: provenance });
       continue;
     }
     const identity = [...evidence[root]!].sort((a, b) => {
-      const priority = (value: string): number =>
-        value.startsWith('url:') ? 0 : value.startsWith('req:') ? 1 : 2;
+      const priority = (value: string): number => (value.startsWith('url:https:') ? 0 : 1);
       return priority(a) - priority(b) || a.localeCompare(b);
     })[0]!;
     const id = createHash('sha1').update(`dedupe:${identity}`).digest('hex').slice(0, 16);
     const merged = group.reduce(mergeDuplicates);
-    output.push({ ...merged, id, fingerprint: id });
+    const fingerprints = new Set(group.map((job) => job.fingerprint));
+    const fingerprint = fingerprints.size === 1 ? group[0]!.fingerprint : id;
+    output.push({
+      job: { ...merged, id: fingerprint, fingerprint },
+      sourcePostings: provenance,
+    });
   }
   return output;
 }
@@ -510,8 +526,8 @@ function mergeExplicitIdentityGroups(
 /**
  * A board's own id is authoritative for what *that board* considers one
  * posting. First collapse exact re-fetches of the same (source, sourceJobId),
- * then resolve cross-source candidates using explicit URL/employer requisition
- * identity or a conservative confidence score. A fingerprint alone never
+ * then resolve cross-source candidates using explicit canonical URLs or
+ * conservative content evidence. A fingerprint alone never
  * proves identity:
  *
  *  - If every contributing source appears at most once, it is only a candidate
@@ -531,12 +547,12 @@ function mergeExplicitIdentityGroups(
  * of the two the third belongs with, so all three stay apart rather than risk
  * merging the wrong pair (see docs/KNOWN-LIMITATIONS.md).
  *
- * Equal-confidence alternatives remain separate. In groups with more than two
- * otherwise ambiguous postings, only explicit URL or employer-scoped
- * requisition identity is used; the implementation does not guess a transitive
- * relationship from a shared title/company/location fingerprint.
+ * A larger group can merge one uniquely strong pair while preserving weaker
+ * candidates separately. Competing strong pairs remain ambiguous and require
+ * explicit canonical URL evidence; the implementation does not guess a
+ * transitive relationship from a shared title/company/location fingerprint.
  */
-function resolveFingerprintGroup(jobs: readonly Job[]): Job[] {
+function resolveFingerprintGroup(jobs: readonly Job[]): DedupeCandidate[] {
   const clusters = new Map<string, Job[]>();
   for (const job of jobs) {
     const key = `${job.source}:${job.sourceJobId}`;
@@ -544,24 +560,66 @@ function resolveFingerprintGroup(jobs: readonly Job[]): Job[] {
     if (list) list.push(job);
     else clusters.set(key, [job]);
   }
-  const merged = [...clusters.values()].map((list) => list.reduce(mergeDuplicates));
+  const merged = [...clusters.values()].map((list) => candidateFromJobs(list));
   if (merged.length === 1) return merged;
 
   const sourcesSeen = new Set<string>();
   let split = false;
-  for (const job of merged) {
-    if (sourcesSeen.has(job.source)) split = true;
-    sourcesSeen.add(job.source);
+  for (const candidate of merged) {
+    for (const source of candidate.sourcePostings.keys()) {
+      if (sourcesSeen.has(source)) split = true;
+      sourcesSeen.add(source);
+    }
   }
-  if (split) return merged.map(disambiguateFingerprint);
+  if (split)
+    return merged.map((candidate) => ({
+      ...candidate,
+      job: disambiguateFingerprint(candidate.job),
+    }));
 
-  // Confidence matching is only a safe heuristic for a single pair. Explicit
-  // URL and employer/requisition identity are checked globally after this step.
-  if (merged.length === 2 && crossSourceConfidence(merged[0]!, merged[1]!) >= 90) {
-    return [mergeDuplicates(merged[0]!, merged[1]!)];
+  // Merge a sole strong pair even when other weak candidates share the
+  // fingerprint. Competing strong pairs remain ambiguous and are kept apart.
+  let confidentPair: [number, number] | null = null;
+  let competingPairs = false;
+  for (let left = 0; left < merged.length; left++) {
+    for (let right = left + 1; right < merged.length; right++) {
+      if (crossSourceConfidence(merged[left]!.job, merged[right]!.job) < 90) continue;
+      if (confidentPair) competingPairs = true;
+      else confidentPair = [left, right];
+    }
   }
-  return merged.map(disambiguateFingerprint);
+  if (confidentPair && !competingPairs) {
+    const [left, right] = confidentPair;
+    return merged.flatMap((candidate, index) => {
+      if (index === left) return [mergeCandidates(merged[left]!, merged[right]!)];
+      if (index === right) return [];
+      return [{ ...candidate, job: disambiguateFingerprint(candidate.job) }];
+    });
+  }
+  return merged.map((candidate) => ({
+    ...candidate,
+    job: disambiguateFingerprint(candidate.job),
+  }));
 }
+
+function candidateFromJobs(jobs: readonly Job[]): DedupeCandidate {
+  const sourcePostings = new Map<string, string>();
+  const canonicalUrls = new Set<string>();
+  for (const job of jobs) {
+    sourcePostings.set(job.source, job.sourceJobId);
+    for (const url of canonicalJobUrls(job)) canonicalUrls.add(url);
+  }
+  return { job: jobs.reduce(mergeDuplicates), sourcePostings, canonicalUrls };
+}
+
+function mergeCandidates(left: DedupeCandidate, right: DedupeCandidate): DedupeCandidate {
+  return {
+    job: mergeDuplicates(left.job, right.job),
+    sourcePostings: new Map([...left.sourcePostings, ...right.sourcePostings]),
+    canonicalUrls: new Set([...left.canonicalUrls, ...right.canonicalUrls]),
+  };
+}
+const TRACKING_PARAMETER = /^(?:utm_.+|gclid|dclid|fbclid|msclkid|referrer|trk|trackingid)$/i;
 const ATS_SOURCES = new Set([
   'greenhouse',
   'lever',
@@ -570,8 +628,18 @@ const ATS_SOURCES = new Set([
   'smartrecruiters',
   'recruitee',
 ]);
-const BOARD_SCOPED_ATS_SOURCES = new Set(['greenhouse', 'workable', 'smartrecruiters']);
-const TRACKING_PARAMETER = /^(?:utm_.+|gclid|dclid|fbclid|msclkid|referrer|trk|trackingid)$/i;
+const GENERIC_JOB_PATH_SEGMENTS = new Set([
+  'apply',
+  'application',
+  'career',
+  'careers',
+  'job',
+  'jobs',
+  'opening',
+  'openings',
+  'position',
+  'positions',
+]);
 const DESCRIPTION_STOP_WORDS = new Set([
   'about',
   'and',
@@ -609,9 +677,12 @@ function canonicalJobUrls(job: Job): Set<string> {
         pathSegments.pop();
         url.pathname = pathSegments.length ? `/${pathSegments.join('/')}` : '/';
       }
+      const canonicalSegments = url.pathname.split('/').filter(Boolean);
+      const canonicalLast = canonicalSegments.at(-1)?.toLowerCase();
       if (
-        !pathSegments.length ||
-        ['jobs', 'careers', 'career', 'openings', 'positions'].includes(lastSegment ?? '')
+        canonicalSegments.length < 2 ||
+        GENERIC_JOB_PATH_SEGMENTS.has(canonicalLast ?? '') ||
+        ['apply', 'application'].includes(canonicalSegments[0]!.toLowerCase())
       )
         continue;
       urls.add(url.toString());
@@ -638,21 +709,13 @@ function employerIdentifier(job: Job): string | null {
   return null;
 }
 
-function isAtsSource(source: string): boolean {
-  return ATS_SOURCES.has(source);
-}
-
-function canonicalRequisitionId(source: string, value: string): string {
-  // These ATS providers carry a board slug as a prefix; the declared employer
-  // identity already scopes the requisition key.
-  const separator = BOARD_SCOPED_ATS_SOURCES.has(source) ? value.indexOf(':') : -1;
-  const id = separator >= 0 ? value.slice(separator + 1) : value;
-  return id.toLowerCase().replace(/[^a-z0-9]/g, '');
-}
-
 /** Conservative cross-source score. A shared fingerprint alone contributes no identity evidence. */
 function crossSourceConfidence(a: Job, b: Job): number {
   if (a.source === b.source || employerIdentifier(a) !== employerIdentifier(b)) return 0;
+  // Different ATS vendors allocate requisition IDs independently. Even a
+  // matching employer, title and description is insufficient to equate two
+  // ATS postings without a shared canonical posting URL.
+  if (ATS_SOURCES.has(a.source) && ATS_SOURCES.has(b.source)) return 0;
   const employer = employerIdentifier(a);
   if (!employer) return 0;
 
@@ -660,28 +723,7 @@ function crossSourceConfidence(a: Job, b: Job): number {
   const sameLocation = canonicalLocation(a.location) === canonicalLocation(b.location);
   if (!sameTitle || !sameLocation) return 0;
 
-  const bothAts = isAtsSource(a.source) && isAtsSource(b.source);
-  const requisitionA = canonicalRequisitionId(a.source, a.sourceJobId);
-  const requisitionB = canonicalRequisitionId(b.source, b.sourceJobId);
-  if (bothAts && requisitionA && requisitionB && requisitionA !== requisitionB) return 0;
-
-  let score = 25; // exact declared employer website host
-  score += 25; // exact canonical title
-  score += 15; // exact canonical location
-  if (bothAts && requisitionA && requisitionA === requisitionB) score += 40;
-
-  const similarity = descriptionSimilarity(a.descriptionText, b.descriptionText);
-  if (similarity >= 0.82) score += 35;
-  else if (similarity >= 0.65) score += 20;
-
-  if (
-    a.postedAt &&
-    b.postedAt &&
-    Math.abs(Date.parse(a.postedAt) - Date.parse(b.postedAt)) <= 7 * 86_400_000
-  )
-    score += 10;
-  if (a.employmentType && a.employmentType === b.employmentType) score += 5;
-  return score;
+  return descriptionSimilarity(a.descriptionText, b.descriptionText) >= 0.82 ? 100 : 0;
 }
 
 function descriptionSimilarity(left: string, right: string): number {

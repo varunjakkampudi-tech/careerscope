@@ -182,12 +182,15 @@ test('multi-source collection retains validated partial results and preserves ca
   };
   const { jobs: result, status } = await collect(multiRequest, signal, [remote, himalayas]);
   assert.equal(status, 'completed');
-  assert.equal(result.length, 2);
-  assert.equal(result.find((job) => job.company === 'Example')?.source, 'himalayas');
-  assert.deepEqual(result.find((job) => job.company === 'Example')?.sourceLinks, [
-    { source: 'remoteok', url: raw.sourceUrl },
-    { source: 'himalayas', url: 'https://himalayas.app/jobs/multi' },
-  ]);
+  assert.equal(result.length, 3);
+  assert.deepEqual(
+    result
+      .filter((job) => job.company === 'Example')
+      .map((job) => job.source)
+      .sort(),
+    ['himalayas', 'remoteok'],
+  );
+  assert.equal(result.find((job) => job.company === 'Another Example')?.source, 'himalayas');
   const failing = {
     ...himalayas,
     async *search() {
@@ -578,8 +581,14 @@ test('five-source discovery isolates ATS failure and caps detail requests', asyn
     'source_failed',
   );
   assert.equal(result.outcomes.find((outcome) => outcome.source === 'workable')?.accepted, 25);
-  assert.equal(result.jobs.length, 25);
-  assert.ok(result.jobs.every((job) => job.sourceLinks?.length === 4));
+  assert.equal(result.jobs.length, 100);
+  assert.ok(result.jobs.every((job) => job.sourceLinks?.length === 1));
+  assert.deepEqual([...new Set(result.jobs.map((job) => job.source))].sort(), [
+    'greenhouse',
+    'himalayas',
+    'remoteok',
+    'workable',
+  ]);
   assert.ok(result.jobs.some((job) => job.description.length > 100));
 });
 

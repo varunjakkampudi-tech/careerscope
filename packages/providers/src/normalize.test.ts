@@ -6,6 +6,7 @@ import {
   canonicalTitle,
   companySlug,
   dedupeJobs,
+  dedupeJobsWithProvenance,
   jobFingerprint,
   mergeDuplicates,
   normalizeDate,
@@ -481,6 +482,49 @@ describe('dedupeJobs', () => {
 
     expect(dedupeJobs([first, second])).toHaveLength(2);
   });
+  it('rejects generic application endpoints after removing apply suffixes', () => {
+    const posting = normalizeJob(
+      rawJob({ sourceUrl: 'https://boards.greenhouse.io/acme/jobs/4001' }),
+      { now: NOW },
+    );
+    const jobsApply = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'n-jobs-apply',
+        sourceUrl: 'https://naukri.com/job/2',
+        applyUrl: 'https://boards.greenhouse.io/acme/jobs/apply',
+      }),
+      { now: NOW },
+    );
+    const sharedGateway = normalizeJob(
+      rawJob({
+        source: 'remoteok',
+        sourceJobId: 'r-application',
+        sourceUrl: 'https://remoteok.com/job/3',
+        applyUrl: 'https://boards.greenhouse.io/apply/acme',
+      }),
+      { now: NOW },
+    );
+
+    expect(dedupeJobs([posting, jobsApply, sharedGateway])).toHaveLength(3);
+  });
+  it('accepts a posting-specific apply suffix after canonicalizing it to the posting URL', () => {
+    const posting = normalizeJob(
+      rawJob({ sourceUrl: 'https://boards.greenhouse.io/acme/jobs/4001' }),
+      { now: NOW },
+    );
+    const syndicated = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'n-4001',
+        sourceUrl: 'https://naukri.com/job/4001',
+        applyUrl: 'https://boards.greenhouse.io/acme/jobs/4001/apply',
+      }),
+      { now: NOW },
+    );
+
+    expect(dedupeJobs([posting, syndicated])).toHaveLength(1);
+  });
   it('preserves source-like URL parameters that may be part of posting identity', () => {
     const first = normalizeJob(
       rawJob({ applyUrl: 'https://boards.greenhouse.io/acme/jobs/4001?sourceid=role-a' }),
@@ -498,7 +542,7 @@ describe('dedupeJobs', () => {
 
     expect(dedupeJobs([first, second])).toHaveLength(2);
   });
-  it('uses employer-scoped ATS requisition IDs when the posting links differ', () => {
+  it('does not equate numeric requisition IDs from different ATS providers', () => {
     const first = normalizeJob(
       rawJob({
         sourceJobId: 'acme:4001',
@@ -520,7 +564,55 @@ describe('dedupeJobs', () => {
       { now: NOW },
     );
 
-    expect(dedupeJobs([first, second])).toHaveLength(1);
+    expect(dedupeJobs([first, second])).toHaveLength(2);
+  });
+
+  it('preserves URL evidence through an earlier confidence merge and is permutation stable', () => {
+    const greenhouse = normalizeJob(
+      rawJob({
+        source: 'greenhouse',
+        sourceJobId: 'acme:9001',
+        companyWebsite: 'https://acme.example',
+        description: FULL_JD,
+        sourceUrl: 'https://boards.greenhouse.io/acme/jobs/9001',
+      }),
+      { now: NOW },
+    );
+    const naukri = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'naukri-9001',
+        companyWebsite: 'https://acme.example',
+        description: `${FULL_JD}\nApply through the official careers page.`,
+        sourceUrl: 'https://jobs.acme.example/roles/9001',
+      }),
+      { now: NOW },
+    );
+    const remoteok = normalizeJob(
+      rawJob({
+        source: 'remoteok',
+        sourceJobId: 'remote-9001',
+        title: 'Principal Platform Engineer',
+        location: 'Hyderabad',
+        companyWebsite: 'https://acme.example',
+        sourceUrl: 'https://remoteok.com/jobs/9001',
+        applyUrl: 'https://jobs.acme.example/roles/9001',
+      }),
+      { now: NOW },
+    );
+
+    const first = dedupeJobsWithProvenance([greenhouse, naukri, remoteok]);
+    const second = dedupeJobsWithProvenance([remoteok, naukri, greenhouse]);
+    const repeated = dedupeJobsWithProvenance([greenhouse, naukri, remoteok, naukri]);
+
+    expect(first).toHaveLength(1);
+    expect(second[0]?.job.id).toBe(first[0]?.job.id);
+    expect(repeated[0]?.job.id).toBe(first[0]?.job.id);
+    expect(first[0]?.sourcePostings.map((posting) => posting.source).sort()).toEqual([
+      'greenhouse',
+      'naukri',
+      'remoteok',
+    ]);
   });
 
   it('does not let matching title and description override conflicting ATS requisition IDs', () => {
@@ -547,6 +639,30 @@ describe('dedupeJobs', () => {
 
     expect(dedupeJobs([first, second])).toHaveLength(2);
   });
+  it('does not equate the same numeric ATS id across providers for different roles', () => {
+    const greenhouse = normalizeJob(
+      rawJob({
+        sourceJobId: 'acme:4001',
+        title: 'Platform Engineer',
+        companyWebsite: 'https://acme.example',
+        sourceUrl: 'https://boards.greenhouse.io/acme/jobs/4001',
+      }),
+      { now: NOW },
+    );
+    const lever = normalizeJob(
+      rawJob({
+        source: 'lever',
+        sourceJobId: '4001',
+        title: 'Finance Director',
+        location: 'New York',
+        companyWebsite: 'https://acme.example',
+        sourceUrl: 'https://jobs.lever.co/acme/4001',
+      }),
+      { now: NOW },
+    );
+
+    expect(dedupeJobs([greenhouse, lever])).toHaveLength(2);
+  });
   it('merges cross-source results only when employer and description evidence are strong', () => {
     const first = normalizeJob(
       rawJob({
@@ -570,6 +686,49 @@ describe('dedupeJobs', () => {
     );
 
     expect(dedupeJobs([first, second])).toHaveLength(1);
+  });
+
+  it('keeps a unique strong pair stable when another weak candidate is added', () => {
+    const first = normalizeJob(
+      rawJob({
+        companyWebsite: 'https://acme.example',
+        description: FULL_JD,
+        sourceUrl: 'https://boards.greenhouse.io/acme/jobs/5001',
+      }),
+      { now: NOW },
+    );
+    const second = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'n-5001',
+        companyWebsite: 'https://acme.example',
+        description: FULL_JD,
+        sourceUrl: 'https://naukri.com/job/5001',
+      }),
+      { now: NOW },
+    );
+    const weak = normalizeJob(
+      rawJob({
+        source: 'remoteok',
+        sourceJobId: 'r-5002',
+        companyWebsite: 'https://acme.example',
+        description: 'A different team with a different technical focus and responsibilities.',
+        sourceUrl: 'https://remoteok.com/jobs/5002',
+      }),
+      { now: NOW },
+    );
+
+    const pair = dedupeJobsWithProvenance([first, second]);
+    const withWeakCandidate = dedupeJobsWithProvenance([weak, second, first]);
+
+    expect(pair).toHaveLength(1);
+    expect(withWeakCandidate).toHaveLength(2);
+    const preserved = withWeakCandidate.find((candidate) => candidate.sourcePostings.length === 2);
+    expect(preserved?.job.id).toBe(pair[0]?.job.id);
+    expect(preserved?.sourcePostings.map((posting) => posting.source).sort()).toEqual([
+      'greenhouse',
+      'naukri',
+    ]);
   });
 
   it('keeps same-fingerprint openings separate when source identity and content disagree', () => {
