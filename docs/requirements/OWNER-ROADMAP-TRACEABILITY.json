@@ -1114,7 +1114,7 @@
         "packages/shared/src/job-source-policy.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "The JSearch adapter is covered by synthetic fixture tests, but its live response schema has not been verified. JSearch is not a launch candidate and the production permission profile is empty; no live provider request or source-specific permitted-use rights were verified. Exact-head CI and independent item review remain pending.",
+      "gap": "PR #97 exact head 179b396d6301dc79142ac7c86f6c4c3b8aaf0207 passed all three required CI jobs in run 43859362745, received final independent approval, and merged to dev as e6ce13897be73436c56cff45331c5b48eb5d2d55; post-merge run 43861025732 passed Quality and Services/integration/browser, with image build skipped on push. JSearch remains partial because its response shape has not been validated against a live response. It is not a D14 launch candidate, and no source-specific permitted-use evidence or owner approval exists. No live call or production activation is claimed.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1142,7 +1142,7 @@
         "packages/shared/src/job-source-policy.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "The existing Greenhouse adapter is covered by synthetic mapping and detail-fetch fixtures. Greenhouse is a D14 launch candidate, but no source-specific production permission profile is approved; no live request or permitted-use rights were verified. Exact-head CI and independent review remain pending.",
+      "gap": "The existing Greenhouse adapter is covered by synthetic mapping and detail-fetch fixtures. PR #98 exact head 132cc91b9d77e829b795b337be30357f3f17218d passed all three required CI jobs in run 43861515890, received final independent approval, and merged to dev as bbb9f77725683af50134374ce86039142660d2a7. Greenhouse remains partial because source-specific permitted-use evidence, explicit owner approval, and an approved production permission profile are absent; no live request or rights verification was performed.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1151,11 +1151,26 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Lever",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/ats/lever.ts",
+        "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/registry.ts",
+        "packages/providers/src/registry.test.ts",
+        "packages/shared/src/job-source-policy.ts",
+        "packages/shared/src/job-source-policy.test.ts",
+        "docs/PROVIDERS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/registry.test.ts",
+        "packages/shared/src/job-source-policy.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Existing synthetic tests cover Lever pagination, mapping, description sections, registry, permission policy, and provider-to-normalizer fields. The local test rerun could not start because dependencies are absent and the available Node 22.23.2 is below the required Node 24. Lever remains disabled by the empty production permission profile; no current live schema or permitted-use rights were verified. Exact-head hosted CI and independent review remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
