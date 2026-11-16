@@ -217,6 +217,7 @@ describe('ashby', () => {
     location: 'San Francisco',
     secondaryLocations: [{ location: 'Remote' }],
     isRemote: false,
+    workplaceType: 'OnSite',
     isListed: true,
     employmentType: 'FullTime',
     publishedAt: '2026-08-15T00:00:00Z',
@@ -261,6 +262,28 @@ describe('ashby', () => {
     );
   });
 
+  it('preserves an explicit zero salary bound', () => {
+    const job = ashbyAdapter.toRawJob(
+      {
+        ...posting,
+        compensation: {
+          summaryComponents: [
+            {
+              compensationType: 'Salary',
+              interval: '1 YEAR',
+              currencyCode: 'USD',
+              minValue: 0,
+              maxValue: null,
+            },
+          ],
+        },
+      },
+      board,
+    );
+    expect(job).toMatchObject({ salaryMin: 0, salaryCurrency: 'USD', salaryPeriod: 'year' });
+    expect(job?.salaryMax).toBeUndefined();
+  });
+
   it('prefers HTML over the plain-text duplicate', () => {
     const job = ashbyAdapter.toRawJob(posting, board)!;
     expect(job.description).toBe('<p>Do research.</p>');
@@ -275,6 +298,26 @@ describe('ashby', () => {
 
   it('normalises the CamelCase employment type', () => {
     expect(ashbyAdapter.toRawJob(posting, board)?.employmentType).toBe('fulltime');
+  });
+
+  it('distinguishes remote from hybrid using workplaceType', () => {
+    expect(
+      ashbyAdapter.toRawJob({ ...posting, isRemote: true, workplaceType: 'Remote' }, board)
+        ?.isRemote,
+    ).toBe(true);
+    expect(
+      ashbyAdapter.toRawJob({ ...posting, isRemote: true, workplaceType: 'Hybrid' }, board)
+        ?.isRemote,
+    ).toBeUndefined();
+    expect(
+      ashbyAdapter.toRawJob({ ...posting, isRemote: true, workplaceType: 'OnSite' }, board)
+        ?.isRemote,
+    ).toBeUndefined();
+  });
+
+  it('uses isRemote only when workplaceType is absent', () => {
+    const { workplaceType: _workplaceType, ...legacyPosting } = posting;
+    expect(ashbyAdapter.toRawJob({ ...legacyPosting, isRemote: true }, board)?.isRemote).toBe(true);
   });
 
   it('drops postings the company has unlisted', async () => {

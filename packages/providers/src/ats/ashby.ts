@@ -44,6 +44,7 @@ interface AshbyJob {
   location?: string;
   secondaryLocations?: Array<{ location?: string }>;
   isRemote?: boolean;
+  workplaceType?: string;
   isListed?: boolean;
   employmentType?: string;
   publishedAt?: string;
@@ -87,6 +88,13 @@ const adapter: BoardAdapter<AshbyJob> = {
     const salary = (item.compensation?.summaryComponents ?? []).find(
       (component) => component.compensationType === 'Salary',
     );
+    // Ashby defines isRemote as true for both Remote and Hybrid. Prefer the
+    // more precise workplaceType so hybrid postings are not presented or
+    // matched as fully remote. Keep the boolean as a fallback for older
+    // payloads that do not include workplaceType.
+    const isRemote = item.workplaceType
+      ? item.workplaceType.toLowerCase() === 'remote'
+      : item.isRemote === true;
 
     return {
       source: 'ashby',
@@ -94,12 +102,12 @@ const adapter: BoardAdapter<AshbyJob> = {
       title: item.title,
       companyName: board.company,
       location: item.location ?? item.secondaryLocations?.[0]?.location,
-      ...(item.isRemote === true ? { isRemote: true } : {}),
+      ...(isRemote ? { isRemote: true } : {}),
       employmentType: employmentTypeFrom(item.employmentType),
       description,
       descriptionIsHtml: html.length > 0,
       hasFullDescription: description.length > 0,
-      ...(salary?.minValue || salary?.maxValue
+      ...(salary && (salary.minValue != null || salary.maxValue != null)
         ? {
             salaryMin: salary.minValue ?? undefined,
             salaryMax: salary.maxValue ?? undefined,
