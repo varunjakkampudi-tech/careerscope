@@ -5065,9 +5065,11 @@ try {
       const acceptedGreenhouseSource = sourceHealthPanel
         .getByRole('listitem')
         .filter({ hasText: /^Greenhouse\b/ });
-      await acceptedGreenhouseSource
-        .getByText(`Accepted: ${expectedGreenhouseAccepted}`, { exact: true })
-        .waitFor();
+      const acceptedGreenhouseText = await acceptedGreenhouseSource.innerText();
+      assert.ok(
+        acceptedGreenhouseText.includes(`Accepted: ${expectedGreenhouseAccepted}`),
+        `${engine}: expected Greenhouse accepted total ${expectedGreenhouseAccepted}; rendered row: ${acceptedGreenhouseText}`,
+      );
       // ---------------------------------------------------------------
       // Forensic audit F-3: a link to a discovery run must open THAT run.
       // Several real runs exist for this owner by now, so "most recent" and

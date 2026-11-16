@@ -7510,9 +7510,9 @@
         }
       ],
       "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
-      "evidence": "Run 43980466911 failed on the hard-coded accepted-count assumption. The browser now asserts the fixture is present in owner history, confirms its greenhouse outcome, derives the aggregate expected count from API history, and checks the Greenhouse row. Corrected exact-head CI is pending.",
+      "evidence": "Run 43980466911 failed with a hard-coded accepted-count assumption. Run 43982429916 still failed at the Greenhouse count check despite the API-derived expectation; this revision reports the actual rendered row text in the assertion message to expose the discrepancy. Exact-head CI remains pending.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
-      "sha256": "38e6fc32ab082b2c74830b6e897e70c0bb027120f55c8c2fc8b8196fcf8bc06f",
+      "sha256": "e8861ac13b0577e5a3d1d0ac7a4a41ad7e49ad5f76b88444e63610fe1d93f3de",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
