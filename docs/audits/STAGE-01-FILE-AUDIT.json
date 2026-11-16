@@ -1516,7 +1516,9 @@
       "category": "frontend",
       "reviewMethod": "content-read",
       "state": "reviewed",
-      "concerns": ["localStorage access may throw in restricted browser contexts"],
+      "concerns": [
+        "localStorage access may throw in restricted browser contexts"
+      ],
       "findings": [
         {
           "id": "S1-F057",
@@ -7415,10 +7417,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed synthetic 45-result browser fixture and first/second/previous page assertions; test continues into filter and responsive checks.",
-      "evidence": "Prettier formatting passed; typecheck passed; exact-head browser execution exposed a hard-coded fixture title, now corrected and pending rerun.",
+      "observations": "Reviewed the synthetic 45-result pagination browser fixture, including equal-score deterministic data, first/second/previous-page assertions, filter reset and responsive checks.",
+      "evidence": "The current exact-head browser run found the fixture could cycle different match scores and invalidate its assumed order; the fixture now clones one result consistently. Audit hash refreshed for exact-head rerun.",
       "reviewer": "Codex (CareerScope owner item 5.14 implementation and evidence update)",
-      "sha256": "cae9be6cc062212502e9cde53f66c6ba2774a47e6e313944aeff75f27aaf0435",
+      "sha256": "8fcfae447e8cce5f5660366176859e69e2a1426532e7a154b407afadcaaca625",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
