@@ -16,6 +16,7 @@
       "OUT_OF_SCOPE_OWNER": "Excluded by the owner-revised checklist scope; ownerScopeRationale records the decision and these clauses do not block checklist completion."
     },
     "verificationValues": {
+      "FOCUSED_TESTS_PASSED": "The specifically cited focused test file passed in the recorded local verification; this does not imply the full suite or hosted CI passed.",
       "UNIT_TESTS_PASSED": "Every cited test file is in test:unit or test:domain, which passed on 2026-10-31 (245 node tests, 843 vitest tests).",
       "STATIC_REVIEW_TESTS_NOT_RERUN": "Code and CI-run tests were read. Tests need PostgreSQL, Redis or a browser and were not run in this reconciliation.",
       "OWNER_EVIDENCE_PENDING": "Evidence has not been supplied.",
@@ -1760,13 +1761,13 @@
       "kind": "CLAUSE",
       "context": "Added only after terms and coverage checks:",
       "text": "5. Company career pages with JobPosting markup, within permissions",
-      "assessment": "NOT_IMPLEMENTED",
-      "verification": "NOT_APPLICABLE",
-      "gap": "No career-page crawler and no JobPosting markup reader.",
+      "assessment": "PARTIAL",
+      "verification": "FOCUSED_TESTS_PASSED",
+      "gap": "An offline reader parses bounded JobPosting JSON-LD snapshots, but there is no URL discovery or crawler, no verified career-page URL set, no source-specific permission profiles, and no measured coverage/quality gate.",
       "launchBlocking": false,
       "evidence": {
-        "implementation": [],
-        "tests": [],
+        "implementation": ["packages/providers/src/career-markup.ts"],
+        "tests": ["packages/providers/src/career-markup.test.ts"],
         "note": "Added only after terms and coverage checks."
       }
     },

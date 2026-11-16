@@ -1198,7 +1198,7 @@
         "packages/shared/src/job-source-policy.test.ts"
       ],
       "externalEvidence": ["https://developers.ashbyhq.com/docs/public-job-posting-api"],
-      "gap": "Existing synthetic fixtures cover Ashby listing and compensation mapping, descriptions, employment type, unlisted-post filtering, and compensation opt-in. Added regressions use workplaceType to distinguish Remote from Hybrid because the official API contract says isRemote is true for both, and preserve a zero salary bound. Focused Node 24 Docker tests passed 69/69 across adapter, registry and policy suites. Published documentation is not live-response verification. Ashby remains disabled by the empty production permission profile; current live schema, source-specific permitted-use rights, explicit owner approval, and an approved production profile are still required.",
+      "gap": "Existing synthetic fixtures cover Ashby listing and compensation mapping, descriptions, employment type, unlisted-post filtering, and compensation opt-in. Added regressions use workplaceType to distinguish Remote from Hybrid because the official API contract says isRemote is true for both, and preserve a zero salary bound. Focused Node 24 Docker tests passed 69/69 across adapter, registry and policy suites. PR #100 exact head 50840ed664011c628faafcbd484cf6e695a70c66 passed exact-head CI run 43925291040 attempt 2 and independent review; it merged as 5adc5b6cb0e46f46590e74f98b975fda281cc881 and post-merge run 43928997965 passed the required push jobs. Published documentation is not live-response verification. Ashby remains disabled by the empty production permission profile; current live schema, source-specific permitted-use rights, explicit owner approval, and an approved production profile are still required.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1220,11 +1220,17 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Official company career feeds",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/career-markup.ts",
+        "packages/providers/src/index.ts",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/requirements/V12-REQUIREMENT-INVENTORY.json"
+      ],
+      "tests": ["packages/providers/src/career-markup.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "An offline, bounded reader extracts JobPosting JSON-LD snapshots and focused tests cover graph/array forms, required fields, URL safety, malformed input and size limits. No URL discovery, crawling, verified career-page set, permission profiles or coverage/quality measurements exist; do not enable collection or display until terms and coverage checks pass.",
       "scopeDisposition": "in-scope"
     },
     {

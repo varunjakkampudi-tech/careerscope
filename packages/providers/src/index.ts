@@ -90,6 +90,7 @@ export { describeFailure, postedTime, rankByRelevance } from './rank.js';
 
 /* Individual factories, for a caller that wants one board and not the set. */
 export { createAshbyProvider } from './ats/ashby.js';
+export { readJobPostingMarkup, type CareerMarkupJob } from './career-markup.js';
 export { createGreenhouseProvider } from './ats/greenhouse.js';
 export { createLeverProvider } from './ats/lever.js';
 export { createRecruiteeProvider } from './ats/recruitee.js';
