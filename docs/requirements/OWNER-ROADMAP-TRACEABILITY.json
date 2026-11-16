@@ -1194,6 +1194,7 @@
       "tests": [
         "packages/providers/src/normalize.test.ts",
         "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/remote/feeds.test.ts",
         "packages/matching/src/demands.test.ts"
       ],
       "externalEvidence": [],

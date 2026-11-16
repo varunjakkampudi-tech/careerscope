@@ -18,6 +18,7 @@ import {
 import { createHimalayasProvider, himalayasAdapter, type HimalayasJob } from './himalayas.js';
 import { createRemoteOkProvider, remoteOkAdapter, type RemoteOkJob } from './remoteok.js';
 import { createRemotiveProvider, remotiveAdapter, type RemotiveJob } from './remotive.js';
+import { canonicalLocation, normalizeJob } from '../normalize.js';
 
 /** A fixed instant so recency and expiry assertions do not drift. */
 const NOW = Date.parse('2026-09-05T12:00:00Z');
@@ -299,6 +300,34 @@ describe('remotive adapter', () => {
     expect(job?.description).toBe(
       '<p>Build and ship the API.</p>\n<p>Keywords: Software Development, python, django, postgres</p>',
     );
+  });
+
+  it('normalizes a representative remote-feed output without inventing a pay period', () => {
+    const raw = remotiveAdapter.toRawJob(
+      {
+        ...REMOTIVE_JOB,
+        title: 'Senior Backend Engineer',
+        description: '<p>Requirements: 5+ years of experience.</p>',
+        salary: '$20,000 - $35,000',
+        candidate_required_location: 'USA - Remote',
+      },
+      NOW,
+    );
+    expect(raw).not.toBeNull();
+
+    const job = normalizeJob(raw!, { now: NOW });
+
+    expect(job.requiredYears).toEqual({ min: 5, max: null });
+    expect(job.salary).toMatchObject({
+      min: 20_000,
+      max: 35_000,
+      currency: 'USD',
+      period: null,
+      annualMin: 20_000,
+      annualMax: 35_000,
+    });
+    expect(job.location).toBe('USA - Remote');
+    expect(canonicalLocation(job.location)).toBe('usa');
   });
 
   it('marks a posting with no description as low confidence', () => {

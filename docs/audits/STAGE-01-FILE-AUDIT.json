@@ -1883,7 +1883,7 @@
       "observations": "Reviewed the updated owner item 5.10 evidence and remaining gates; the item remains partial pending exact-head hosted CI and independent acceptance.",
       "evidence": "Current content diff reviewed for CareerScope owner item 5.10 on codex/stage05-item510-salary-location-normalization.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
-      "sha256": "d2875440f071477969971d130f8f8bd8570ab5d784c0a82fe8f0a193d69e5fc2"
+      "sha256": "0ee04f55633e5f11252039df0f7ba642cf340f8ce527a1f33e9206350ca47dd7"
     },
     {
       "path": "docs/KNOWN-LIMITATIONS.md",
@@ -1951,7 +1951,7 @@
       "observations": "Reviewed current item statuses, evidence paths and explicit remaining gaps. Items 5.10, 5.11 and 5.12 are recorded partial; no verification is claimed without item-specific exact-head acceptance.",
       "evidence": "Content reviewed for CareerScope owner items 5.10 to 5.12 on codex/stage05-item510-salary-location-normalization.",
       "reviewer": "Codex (CareerScope Stage 05 evidence update)",
-      "sha256": "c6125041714ccd38eb411d566238f2194074d27046e9f000c31c87109cb0c42a",
+      "sha256": "b17aa1934fa51d3961280e8b6e0957577f497ddef6e712cc25d5972100feacc7",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2043,7 +2043,7 @@
       "observations": "Reviewed the updated owner item 5.10 test evidence and remaining gates; the item remains partial pending exact-head hosted CI and independent acceptance.",
       "evidence": "Current content diff reviewed for CareerScope owner item 5.10 on codex/stage05-item510-salary-location-normalization.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
-      "sha256": "c58d56069e3a8fa60269e585131fb1d44b8d33f95fd326f1619249cdf94b271e",
+      "sha256": "b3c8bdf06151f2da2a8eb4b6709e9240a73dfd6358c778e6537a07640330c8e2",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2519,7 +2519,7 @@
       "observations": "Reviewed the updated canonical item 5.10 evidence and remaining gates; the item remains partial pending exact-head hosted CI and independent acceptance.",
       "evidence": "Current content diff reviewed for CareerScope owner item 5.10 on codex/stage05-item510-salary-location-normalization.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
-      "sha256": "bd9a5e4fca79b16265ad4b9151c122ba59c78ce2ac8cd870251035f916518d91",
+      "sha256": "44202e23dcc06122ed82fd41c8956e055c3118f8b1e4f13f42321c7b49f23014",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -5318,10 +5318,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete file. Adapter tests document fixture provenance, attribution and feed-specific legal notice; all HTTP calls are stubbed, and source attribution is asserted. No new finding.",
-      "evidence": "Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "0d251a9413fe4a98736b1d61263de154fd5970b227ea2c551d1a515bcf607760"
+      "observations": "Reviewed the changed Remotive adapter-to-normalizer regression and its salary, description, and candidate-location fixture fields. The feed suite passes with source mapping isolated from network calls.",
+      "evidence": "Current content diff and all 44 remote-feed tests reviewed on codex/stage05-item510-salary-location-normalization.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+      "sha256": "374d01026a27a536daafce364e5544e6681df3f8854ab8176f918c7aaf8b3f35"
     },
     {
       "path": "packages/providers/src/remote/himalayas.ts",
