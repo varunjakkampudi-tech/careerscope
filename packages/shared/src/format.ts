@@ -25,7 +25,7 @@ export function toAnnual(amount: number, period: Salary['period']): number {
 }
 
 /**
- * Parse a free-text compensation string into an annual amount.
+ * Parse free-text compensation while preserving an unknown pay period.
  *
  * Handles the formats these boards actually emit, including the Indian units
  * that plain number parsing gets wrong by two orders of magnitude:
@@ -99,8 +99,8 @@ export function parseCompensation(input: string | null | undefined): {
     max,
     currency,
     period,
-    annualMin: min === null ? null : toAnnual(min, period),
-    annualMax: max === null ? null : toAnnual(max, period),
+    annualMin: min === null || period === null ? null : toAnnual(min, period),
+    annualMax: max === null || period === null ? null : toAnnual(max, period),
   };
 }
 
@@ -173,7 +173,22 @@ export function formatAnnual(amount: number | null, currency: string | null): st
  */
 export function formatSalary(salary: Salary): string {
   const { annualMin, annualMax, currency, raw } = salary;
-  if (annualMin === null && annualMax === null) return raw?.trim() || 'Not disclosed';
+  if (annualMin === null && annualMax === null) {
+    const wording = raw?.trim();
+    if (wording)
+      return salary.period === null && (salary.min !== null || salary.max !== null)
+        ? `${wording} (pay period not stated)`
+        : wording;
+    if (salary.period === null && (salary.min !== null || salary.max !== null)) {
+      const amount = [salary.min, salary.max].filter((value): value is number => value !== null);
+      const bounds =
+        amount.length === 2 && amount[0] !== amount[1]
+          ? `${amount[0]}–${amount[1]}`
+          : String(amount[0]);
+      return `${currency ? `${currency} ` : ''}${bounds} (pay period not stated)`;
+    }
+    return 'Not disclosed';
+  }
   if (annualMin !== null && annualMax !== null && annualMin !== annualMax) {
     return `${formatAnnual(annualMin, currency)} – ${formatAnnual(annualMax, currency)}`;
   }

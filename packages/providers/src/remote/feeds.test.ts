@@ -8,6 +8,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
+import { formatSalary } from '@careerscope/shared';
 import { collect, context, query, routedFetch } from '../harness.fixtures.js';
 import {
   createFeedProvider,
@@ -323,9 +324,10 @@ describe('remotive adapter', () => {
       max: 35_000,
       currency: 'USD',
       period: null,
-      annualMin: 20_000,
-      annualMax: 35_000,
+      annualMin: null,
+      annualMax: null,
     });
+    expect(formatSalary(job.salary)).toBe('$20,000 - $35,000 (pay period not stated)');
     expect(job.location).toBe('USA - Remote');
     expect(canonicalLocation(job.location)).toBe('usa');
   });

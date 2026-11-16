@@ -1880,10 +1880,42 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the updated owner item 5.10 evidence and remaining gates; the item remains partial pending exact-head hosted CI and independent acceptance.",
-      "evidence": "Current content diff reviewed for CareerScope owner item 5.10 on codex/stage05-item510-salary-location-normalization.",
+      "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
-      "sha256": "0ee04f55633e5f11252039df0f7ba642cf340f8ce527a1f33e9206350ca47dd7"
+      "sha256": "f282723ec65a4a811e7da06e7f1b5c0ab216fdfb3cc8c3761a41e68b469214db",
+      "history": [
+        {
+          "reviewer": "Codex (owner Stage 02 item 2.10)",
+          "sha256": "7cb5b4797fae177590482712f5f705c5fec54594e4d940f4b1a56566c538a0c2",
+          "observations": "Mapped canonical owner item 2.10 account recovery to legacy local row 2.17. Follow-up item 2.05 review: inspected legacy registration row 2.09 mapping to canonical owner item 2.05; registration remains disabled pending counsel-approved legal text and public HTTPS URLs.",
+          "evidence": "Reviewed and updated for owner roadmap item 2.10 on codex/stage02-item-210-account-recovery; SHA-256 records current bytes. Additional focused item 2.05 documentation review; SHA-256 records current bytes."
+        },
+        {
+          "observations": "Reviewed current item statuses, evidence paths and explicit remaining gaps. Items 5.10, 5.11 and 5.12 are recorded partial; no verification is claimed without item-specific exact-head acceptance.",
+          "evidence": "Content reviewed for CareerScope owner items 5.10 to 5.12 on codex/stage05-item510-salary-location-normalization.",
+          "reviewer": "Codex (CareerScope Stage 05 evidence update)",
+          "sha256": "d57b866e8431940f49ce2a0027f87d22624825c8970cd073433dd7eba5c5c566"
+        },
+        {
+          "observations": "Reviewed the updated owner item 5.10 evidence and remaining gates; the item remains partial pending exact-head hosted CI and independent acceptance.",
+          "evidence": "Current content diff reviewed for CareerScope owner item 5.10 on codex/stage05-item510-salary-location-normalization.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "0ee04f55633e5f11252039df0f7ba642cf340f8ce527a1f33e9206350ca47dd7"
+        },
+        {
+          "observations": "Reviewed the Stage 05 item 5.10 change: unknown salary periods remain non-annual; tests and docs record the behavior and remaining exact-head gates.",
+          "evidence": "Reviewed current content on codex/stage05-item510-salary-location-normalization; earlier CI evidence is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "ed14027500c5756c08a5939e9fb71b738f4a491619343a7c2fee4ce3050b0d21"
+        },
+        {
+          "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+          "evidence": "Reviewed current content on codex/stage05-item510-salary-location-normalization; earlier CI evidence is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "c79c206659fac91f4a0a313571d305f71c09f89f49178fc1cec872bccac76ce1"
+        }
+      ]
     },
     {
       "path": "docs/KNOWN-LIMITATIONS.md",
@@ -1948,10 +1980,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed current item statuses, evidence paths and explicit remaining gaps. Items 5.10, 5.11 and 5.12 are recorded partial; no verification is claimed without item-specific exact-head acceptance.",
-      "evidence": "Content reviewed for CareerScope owner items 5.10 to 5.12 on codex/stage05-item510-salary-location-normalization.",
-      "reviewer": "Codex (CareerScope Stage 05 evidence update)",
-      "sha256": "b17aa1934fa51d3961280e8b6e0957577f497ddef6e712cc25d5972100feacc7",
+      "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+      "sha256": "180ac9747b99c6edbb6e62e11ba634eb32d669edf55380343703f4f191e43095",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -1994,6 +2026,18 @@
           "evidence": "ChatGPT final approval at https://chatgpt.com/c/6af66e5b-8e44-83ee-ad9c-5ddae68b3ece; PR #90 exact head 47977417038eb172dd22a043a8cfca7dbfd6deb8 passed run 43349595125 attempt 2; merge commit f11c50714f1840f43263010257e617b0294ce733 passed post-merge run 43352484181. Production image was skipped on push.",
           "reviewer": "Codex (Stage 04 item 4.10 closeout)",
           "sha256": "dfa5320ed0f63ac9aac51df12296ebe346727dfd567ea57ff1d5d1c90bc08c6f"
+        },
+        {
+          "observations": "Reviewed current item statuses, evidence paths and explicit remaining gaps. Items 5.10, 5.11 and 5.12 are recorded partial; no verification is claimed without item-specific exact-head acceptance.",
+          "evidence": "Content reviewed for CareerScope owner items 5.10 to 5.12 on codex/stage05-item510-salary-location-normalization.",
+          "reviewer": "Codex (CareerScope Stage 05 evidence update)",
+          "sha256": "b17aa1934fa51d3961280e8b6e0957577f497ddef6e712cc25d5972100feacc7"
+        },
+        {
+          "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+          "evidence": "Reviewed current content on codex/stage05-item510-salary-location-normalization; earlier CI evidence is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "99b9d839d8a4bd9f2357313f895fb2886d1d54520d34e96a28006c9d5cee4de2"
         }
       ]
     },
@@ -4683,9 +4727,18 @@
       "concerns": [],
       "findings": [],
       "observations": "Prior dev audit: Added candidate-context coverage proving the structured salary floor and its currency reach matching when free-text expected compensation is blank; retained range/currency parsing tests. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Added candidate-context coverage proving the structured salary floor and its currency reach matching when free-text expected compensation is blank; retained range/currency parsing tests. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 type/test fixture or assertions for bounded field-level resume extraction evidence; current local domain suite and typecheck pass.\n\nItem 4.05 follow-up test or typed fixture: bounded source evidence coverage for derived skills, titles, experience-years and education is validated; test suite and canonical test typecheck pass.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
-      "evidence": "Prior dev audit: Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
+      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
       "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "a335bd518f4b541a6b53f8618acf4eefd51d5e5e39a5034bd7e31626f16b7dd9"
+      "sha256": "61081ac2d4e809e1e98adf149b0f4615aed78ed398bce84d6cbbb20217c8df2c",
+      "history": [
+        null,
+        {
+          "observations": "Prior dev audit: Added candidate-context coverage proving the structured salary floor and its currency reach matching when free-text expected compensation is blank; retained range/currency parsing tests. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Added candidate-context coverage proving the structured salary floor and its currency reach matching when free-text expected compensation is blank; retained range/currency parsing tests. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 type/test fixture or assertions for bounded field-level resume extraction evidence; current local domain suite and typecheck pass.\n\nItem 4.05 follow-up test or typed fixture: bounded source evidence coverage for derived skills, titles, experience-years and education is validated; test suite and canonical test typecheck pass.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
+          "evidence": "Prior dev audit: Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
+          "reviewer": "Codex (Stage 03 item 3.12)",
+          "sha256": "a335bd518f4b541a6b53f8618acf4eefd51d5e5e39a5034bd7e31626f16b7dd9"
+        }
+      ]
     },
     {
       "path": "packages/matching/src/context.ts",
@@ -4694,10 +4747,25 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added minSalaryCurrency propagation to candidate context. Existing free-text expected compensation still takes precedence and continues to determine its parsed annual floor and currency.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "046eca2e031605a72a4b8c8270d43f1bdf84dd672eee7e5cf748c53344439e46"
+      "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+      "sha256": "c11e5c10ecde836d0e84465ab373937723e82441e58a26ee2bb25e15d568372e",
+      "history": [
+        null,
+        {
+          "observations": "Added minSalaryCurrency propagation to candidate context. Existing free-text expected compensation still takes precedence and continues to determine its parsed annual floor and currency.",
+          "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 03 item 3.11)",
+          "sha256": "046eca2e031605a72a4b8c8270d43f1bdf84dd672eee7e5cf748c53344439e46"
+        },
+        {
+          "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+          "evidence": "Reviewed current content on codex/stage05-item510-salary-location-normalization; earlier CI evidence is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "5e4dd8b9fdb6bce2eaa4209100f0c29c75c572ab20e041ed934e2f23c114b458"
+        }
+      ]
     },
     {
       "path": "packages/matching/src/demands.test.ts",
@@ -4866,10 +4934,24 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the changed Lever integration regression in the ATS adapter suite; it verifies provider output through shared normalization for experience, salary and canonical location.",
-      "evidence": "Current content diff and all 44 ATS adapter tests reviewed on codex/stage05-item510-salary-location-normalization.",
+      "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
-      "sha256": "78e2d50ffe7f31ed0f29d2cfd0b8acef3d447dd21e11b42dbc8b9482bde9508d"
+      "sha256": "78e2d50ffe7f31ed0f29d2cfd0b8acef3d447dd21e11b42dbc8b9482bde9508d",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "e82c9200037bfaca7a7de3848ea6c0d243ae1bfd3e71e43c57878a3bf92b4b99",
+          "observations": "Read the complete file. ATS adapter tests use routed fake responses and synthetic posting payloads; outbound URL construction, pagination, mapping, contact filtering, and page ceilings are asserted. No finding.",
+          "evidence": "Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes."
+        },
+        {
+          "observations": "Read the complete file. ATS adapter tests use routed fake responses and synthetic posting payloads; outbound URL construction, pagination, mapping, contact filtering, and page ceilings are asserted. No finding.",
+          "evidence": "Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "e82c9200037bfaca7a7de3848ea6c0d243ae1bfd3e71e43c57878a3bf92b4b99"
+        }
+      ]
     },
     {
       "path": "packages/providers/src/ats/ashby.ts",
@@ -5238,10 +5320,25 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
-      "evidence": "Content reviewed for owner item 5.10 on codex/stage05-item510-salary-location-normalization; behavior and remaining acceptance gaps recorded in docs/PROGRESS.md and docs/GAP-MATRIX.md.",
-      "reviewer": "Codex (CareerScope owner item 5.10)",
-      "sha256": "e4673e510295a88ad471f9e8b6b78d79b5696abaf889992159bca60848b8beb4"
+      "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+      "sha256": "1a9a3360e70dc01ba4a48be6789df8a7496343a87718711c13a60344231a8928",
+      "history": [
+        null,
+        {
+          "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
+          "evidence": "Content reviewed for owner item 5.10 on codex/stage05-item510-salary-location-normalization; behavior and remaining acceptance gaps recorded in docs/PROGRESS.md and docs/GAP-MATRIX.md.",
+          "reviewer": "Codex (CareerScope owner item 5.10)",
+          "sha256": "e4673e510295a88ad471f9e8b6b78d79b5696abaf889992159bca60848b8beb4"
+        },
+        {
+          "observations": "Reviewed the Stage 05 item 5.10 change: unknown salary periods remain non-annual; tests and docs record the behavior and remaining exact-head gates.",
+          "evidence": "Reviewed current content on codex/stage05-item510-salary-location-normalization; earlier CI evidence is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "d58b22c1922cd21ad03b64283d42d3fdde9ba73544f3d62910763298c891744b"
+        }
+      ]
     },
     {
       "path": "packages/providers/src/normalize.ts",
@@ -5258,10 +5355,31 @@
           "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
         }
       ],
-      "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
-      "evidence": "Content reviewed for owner item 5.10 on codex/stage05-item510-salary-location-normalization; behavior and remaining acceptance gaps recorded in docs/PROGRESS.md and docs/GAP-MATRIX.md.",
-      "reviewer": "Codex (CareerScope owner item 5.10)",
-      "sha256": "bc14848b4114ee1b919bf0a9b68a5c0df7f08a43e9a8e086a250cbc9992d9d4c"
+      "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+      "sha256": "d8f9f2c09168e1cb460cb9c8ff190601b0a5986e01d9025583e1b767a96c4192",
+      "history": [
+        {
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "b35ffcb84ad634cd217a1fc8dbf16bb9622830cf6022eabe526b1d29806741a7",
+          "observations": "Read in full in this and the previous pass. Checked: the normalised job is built only through this module; an absent salary stays null; unparseable dates stay null and future dates are clamped to now; URLs must be http or https and are upgraded, and javascript: links are dropped; fingerprints and the deduplication rule keep distinct reqs from the same source apart; merging backfills the winner from the loser without inventing values. Finding S1-F026 (low): a finite but absurd salary (for example 1e300 an hour) was annualised to a finite, implausible figure. Annual figures above 1e10 or not positive are now left null, and the raw wording is kept. Canonicaliser and location defects were fixed earlier (S1-F024, S1-F025). normalize.test.ts asserts the implausible-figure case and that an ordinary hourly rate still annualises (63 pass).",
+          "evidence": ""
+        },
+        null,
+        {
+          "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
+          "evidence": "Content reviewed for owner item 5.10 on codex/stage05-item510-salary-location-normalization; behavior and remaining acceptance gaps recorded in docs/PROGRESS.md and docs/GAP-MATRIX.md.",
+          "reviewer": "Codex (CareerScope owner item 5.10)",
+          "sha256": "bc14848b4114ee1b919bf0a9b68a5c0df7f08a43e9a8e086a250cbc9992d9d4c"
+        },
+        {
+          "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
+          "evidence": "Content reviewed for owner item 5.10 on codex/stage05-item510-salary-location-normalization; behavior and remaining acceptance gaps recorded in docs/PROGRESS.md and docs/GAP-MATRIX.md.",
+          "reviewer": "Codex (CareerScope owner item 5.10)",
+          "sha256": "bc14848b4114ee1b919bf0a9b68a5c0df7f08a43e9a8e086a250cbc9992d9d4c"
+        }
+      ]
     },
     {
       "path": "packages/providers/src/rank.ts",
@@ -5318,10 +5436,30 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the changed Remotive adapter-to-normalizer regression and its salary, description, and candidate-location fixture fields. The feed suite passes with source mapping isolated from network calls.",
-      "evidence": "Current content diff and all 44 remote-feed tests reviewed on codex/stage05-item510-salary-location-normalization.",
+      "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
       "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
-      "sha256": "374d01026a27a536daafce364e5544e6681df3f8854ab8176f918c7aaf8b3f35"
+      "sha256": "7f4f56f354247d044106ee6b820c84592f7a9e1c1c3e27806f5461bd76b0ed30",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "0d251a9413fe4a98736b1d61263de154fd5970b227ea2c551d1a515bcf607760",
+          "observations": "Read the complete file. Adapter tests document fixture provenance, attribution and feed-specific legal notice; all HTTP calls are stubbed, and source attribution is asserted. No new finding.",
+          "evidence": "Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes."
+        },
+        {
+          "observations": "Read the complete file. Adapter tests document fixture provenance, attribution and feed-specific legal notice; all HTTP calls are stubbed, and source attribution is asserted. No new finding.",
+          "evidence": "Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "0d251a9413fe4a98736b1d61263de154fd5970b227ea2c551d1a515bcf607760"
+        },
+        {
+          "observations": "Reviewed the changed Remotive adapter-to-normalizer regression and its salary, description, and candidate-location fixture fields. The feed suite passes with source mapping isolated from network calls.",
+          "evidence": "Current content diff and all 44 remote-feed tests reviewed on codex/stage05-item510-salary-location-normalization.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "374d01026a27a536daafce364e5544e6681df3f8854ab8176f918c7aaf8b3f35"
+        }
+      ]
     },
     {
       "path": "packages/providers/src/remote/himalayas.ts",
@@ -5848,10 +5986,31 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete formatting tests. They exercise Indian and western salary formats, annualization, boundary handling, unknown compensation semantics, salary formatting, and date recency/invalid values.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "6bbaccc00371bb29029caa269780561da6e55ee502c9c1c6e217c16f5866f769"
+      "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+      "sha256": "6ba8694b43cbbcab704f82aae32e9ba37d38808b1ae03eecbf4819ad4dc01448",
+      "history": [
+        null,
+        {
+          "observations": "Read the complete formatting tests. They exercise Indian and western salary formats, annualization, boundary handling, unknown compensation semantics, salary formatting, and date recency/invalid values.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "6bbaccc00371bb29029caa269780561da6e55ee502c9c1c6e217c16f5866f769"
+        },
+        {
+          "observations": "Reviewed the Stage 05 item 5.10 change: unknown salary periods remain non-annual; tests and docs record the behavior and remaining exact-head gates.",
+          "evidence": "Reviewed current content on codex/stage05-item510-salary-location-normalization; earlier CI evidence is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "01d023cb9dd4147ccc1b91c43a0393da78ec2421a723ea594f151285ac23d973"
+        },
+        {
+          "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+          "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "9390db2a5dad16c9301bdd041ad348bf7ca385aee83b6017e5f16408420683a8"
+        }
+      ]
     },
     {
       "path": "packages/shared/src/format.ts",
@@ -5860,10 +6019,31 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (217 lines). The compensation parser handles lakh, crore, currency symbols and period words, rejects duration phrases such as '2 years', returns null for undisclosed pay, and the annualisation constants are documented. A bare number without a currency or period is annualised as given. This is a documented ambiguity, not a defect. Formatting helpers are display-only. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "a633967834970eee81aafaababd6629835abd00c27dc41db71b1bc54af8b2fd1"
+      "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+      "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+      "sha256": "cc7539cbe49da01ce2829d33a444ad0ee72a36718cc79aefb3233037eb169d38",
+      "history": [
+        null,
+        {
+          "observations": "Read in full (217 lines). The compensation parser handles lakh, crore, currency symbols and period words, rejects duration phrases such as '2 years', returns null for undisclosed pay, and the annualisation constants are documented. A bare number without a currency or period is annualised as given. This is a documented ambiguity, not a defect. Formatting helpers are display-only. No finding.",
+          "evidence": "",
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "a633967834970eee81aafaababd6629835abd00c27dc41db71b1bc54af8b2fd1"
+        },
+        {
+          "observations": "Reviewed the Stage 05 item 5.10 change: unknown salary periods remain non-annual; tests and docs record the behavior and remaining exact-head gates.",
+          "evidence": "Reviewed current content on codex/stage05-item510-salary-location-normalization; earlier CI evidence is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "38318dc8272d0d60ea1dacf225eb62f1f35fac6b95629fe18a593de19e596a83"
+        },
+        {
+          "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
+          "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.10 review)",
+          "sha256": "405a954c7de977911152639fe021bb3eddc08af8ac9032d5aca9e36bd7239d97"
+        }
+      ]
     },
     {
       "path": "packages/shared/src/index.ts",

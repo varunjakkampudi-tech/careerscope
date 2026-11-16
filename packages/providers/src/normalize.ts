@@ -239,7 +239,7 @@ export function normalizeSalary(raw: RawJob): Salary {
     const max = isFiniteNumber(raw.salaryMax) ? raw.salaryMax : null;
     // Structured bounds remain authoritative, while the source wording can
     // supply missing currency/period metadata (for example `80,000/month`).
-    const period = raw.salaryPeriod ?? parsed.period ?? 'year';
+    const period = raw.salaryPeriod ?? parsed.period;
     const currency = normalizeCurrency(raw.salaryCurrency) ?? parsed.currency;
     // Some boards send min and max the wrong way round.
     const lo = min !== null && max !== null ? Math.min(min, max) : min;
@@ -261,8 +261,8 @@ export function normalizeSalary(raw: RawJob): Salary {
     max: parsed.max,
     currency: normalizeCurrency(raw.salaryCurrency) ?? parsed.currency,
     period: parsed.period,
-    annualMin: parsed.annualMin,
-    annualMax: parsed.annualMax,
+    annualMin: parsed.period === null ? null : parsed.annualMin,
+    annualMax: parsed.period === null ? null : parsed.annualMax,
   };
 }
 
@@ -280,7 +280,7 @@ const MAX_PLAUSIBLE_ANNUAL = 1e10;
  * finite but absurd annual figure, so it is left unknown (S1-F026), in keeping with "never invent".
  */
 function plausibleAnnual(amount: number | null, period: Salary['period']): number | null {
-  if (amount === null) return null;
+  if (amount === null || period === null) return null;
   const annual = toAnnual(amount, period);
   return Number.isFinite(annual) && annual > 0 && annual <= MAX_PLAUSIBLE_ANNUAL ? annual : null;
 }

@@ -34,7 +34,8 @@ describe('parseCompensation', () => {
   it('handles crore', () => {
     expect(parseCompensation('1.2 Cr')).toMatchObject({
       currency: 'INR',
-      annualMin: 12_000_000,
+      min: 12_000_000,
+      annualMin: null,
     });
   });
 
@@ -46,8 +47,9 @@ describe('parseCompensation', () => {
   it('reads western formats', () => {
     expect(parseCompensation('$120k - $150k')).toMatchObject({
       currency: 'USD',
-      annualMin: 120_000,
-      annualMax: 150_000,
+      period: null,
+      annualMin: null,
+      annualMax: null,
     });
     expect(parseCompensation('$95,000 - $120,000 a year')).toMatchObject({
       currency: 'USD',
@@ -67,7 +69,7 @@ describe('parseCompensation', () => {
     });
     expect(parseCompensation('$120k for 2 years')).toMatchObject({
       currency: 'USD',
-      annualMin: 120_000,
+      annualMin: null,
     });
     expect(parseCompensation('120000 based in europe').currency).toBeNull();
     expect(parseCompensation('90000 eur').currency).toBe('EUR');
@@ -76,7 +78,8 @@ describe('parseCompensation', () => {
   it('reads Indian rupee spellings', () => {
     expect(parseCompensation('Rs. 12,00,000')).toMatchObject({
       currency: 'INR',
-      annualMin: 1_200_000,
+      min: 1_200_000,
+      annualMin: null,
     });
     expect(parseCompensation('₹18 LPA')).toMatchObject({
       currency: 'INR',
@@ -92,8 +95,8 @@ describe('parseCompensation', () => {
       annualMin: 104_000,
       annualMax: 104_000,
     });
-    expect(parseCompensation('$2m')).toMatchObject({ annualMin: 2_000_000 });
-    expect(parseCompensation('$2 million')).toMatchObject({ annualMin: 2_000_000 });
+    expect(parseCompensation('$2m')).toMatchObject({ min: 2_000_000, annualMin: null });
+    expect(parseCompensation('$2 million')).toMatchObject({ min: 2_000_000, annualMin: null });
     expect(parseCompensation('6 months').annualMin).toBeNull();
   });
 
@@ -101,6 +104,10 @@ describe('parseCompensation', () => {
     for (const text of ['', null, undefined, 'Not disclosed', 'Competitive', 'Negotiable']) {
       expect(parseCompensation(text).annualMin).toBeNull();
     }
+  });
+
+  it('does not infer an annual period from a bare amount', () => {
+    expect(parseCompensation('$120k').annualMin).toBeNull();
   });
 });
 
@@ -122,6 +129,20 @@ describe('formatSalary', () => {
         annualMax: null,
       }),
     ).toBe('Depends on experience');
+  });
+
+  it('labels a known amount whose pay period was not supplied', () => {
+    expect(
+      formatSalary({
+        raw: '$80,000 - $100,000',
+        min: 80_000,
+        max: 100_000,
+        currency: 'USD',
+        period: null,
+        annualMin: null,
+        annualMax: null,
+      }),
+    ).toBe('$80,000 - $100,000 (pay period not stated)');
   });
 
   it('says "Not disclosed" when there is nothing at all', () => {

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { RawJob } from '@careerscope/shared';
+import { formatSalary } from '@careerscope/shared';
 import {
   canonicalCompany,
   canonicalLocation,
@@ -329,6 +330,32 @@ describe('normalizeSalary', () => {
       annualMin: 960_000,
       annualMax: 1_200_000,
     });
+  });
+
+  it('does not annualise structured amounts when the pay period is unknown', () => {
+    const salary = normalizeSalary(
+      rawJob({
+        salaryMin: 80_000,
+        salaryMax: 100_000,
+        salaryCurrency: 'USD',
+      }),
+    );
+
+    expect(salary).toMatchObject({ period: null, annualMin: null, annualMax: null });
+    expect(formatSalary(salary)).toBe('USD 80000–100000 (pay period not stated)');
+  });
+
+  it('keeps unstructured amounts without an explicit pay period out of annual values', () => {
+    const salary = normalizeSalary(rawJob({ salaryRaw: '$80,000 - $100,000' }));
+
+    expect(salary).toMatchObject({
+      period: null,
+      min: 80_000,
+      max: 100_000,
+      annualMin: null,
+      annualMax: null,
+    });
+    expect(formatSalary(salary)).toBe('$80,000 - $100,000 (pay period not stated)');
   });
 
   it('normalizes structured currency codes and keeps structured metadata authoritative', () => {
