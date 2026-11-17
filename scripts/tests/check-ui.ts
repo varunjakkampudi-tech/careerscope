@@ -3615,7 +3615,7 @@ try {
       );
       await nextPageButton.press('Enter');
       await page.getByText('Page 3 of 3', { exact: true }).waitFor();
-      await page.getByLabel('Filter results').fill('Pagination fixture 45');
+      await page.getByLabel('Filter results').fill('No matching pagination fixture');
       await page.getByText('No matching jobs', { exact: true }).waitFor();
       assert.equal(await page.locator('details.job').count(), 0);
       assert.equal(await page.getByText('Page 3 of 3', { exact: true }).count(), 0);
