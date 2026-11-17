@@ -5064,7 +5064,7 @@ try {
       );
       const acceptedGreenhouseSource = sourceHealthPanel
         .getByRole('listitem')
-        .filter({ hasText: /^Greenhouse\b/ });
+        .filter({ hasText: 'Greenhouse' });
       const acceptedGreenhouseText = await acceptedGreenhouseSource.innerText();
       assert.ok(
         acceptedGreenhouseText.includes(`Accepted: ${expectedGreenhouseAccepted}`),
