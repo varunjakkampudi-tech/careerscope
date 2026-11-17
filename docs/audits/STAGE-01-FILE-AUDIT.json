@@ -1420,8 +1420,16 @@
       "findings": [],
       "observations": "Reviewed locale parity and distinctness for pagination landmarks, previous/next controls, and page labels in English, Telugu, and Hindi.",
       "evidence": "Node 24 focused pagination and locale tests passed 13/13. Native-speaker translation quality was not independently validated.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "00496e70886e5e96ec7a2028d5467b4000556c89418d2e48199e056516ba8aed"
+      "reviewer": "Codex (CareerScope owner item 5.14 implementation and evidence update)",
+      "sha256": "00496e70886e5e96ec7a2028d5467b4000556c89418d2e48199e056516ba8aed",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "observations": "Read the complete localization tests. They verify the supported locale allowlist, translation presence and distinctness for navigation, notifications, security, sign-in, search, and error categories, plus interpolation values. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
+          "sha256": "ba73e4345193290fe609021a58372b7a02875da4264b972c0f233fd9e4d7db60"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/locale.ts",
