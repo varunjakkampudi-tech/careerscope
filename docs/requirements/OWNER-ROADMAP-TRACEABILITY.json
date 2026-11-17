@@ -1371,7 +1371,7 @@
         "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "The search UI paginates the currently collected result set in accessible 20-item pages. Collection remains bounded by existing per-source caps; fetching additional provider pages on demand or server-side continuation is not implemented. The source checklist gives only the title 'Search pagination', so full acceptance criteria remain unspecified.",
+      "gap": "Accessible client-side pagination covers the currently collected result set in bounded 20-item pages, with per-run state, filter reset, and clamping when result counts shrink. Node 24 focused tests pass 13/13; full typecheck, lint, file-audit integrity, and 328-item/22-stage traceability checks pass. The local full unit suite completed with five subprocess startup timeouts in packages/core/src/process-failure.test.ts under Docker. Expanded browser coverage and exact-head hosted CI remain pending. Additional provider-page fetching is not implemented, and the source checklist title does not specify full acceptance criteria.",
       "scopeDisposition": "in-scope"
     },
     {

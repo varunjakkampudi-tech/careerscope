@@ -135,6 +135,25 @@ test('job-search controls, empty states, and feedback labels have locale-specifi
   }
 });
 
+test('search pagination controls have distinct translations in every supported language', () => {
+  const keys = [
+    'searchResultPages',
+    'searchPreviousPage',
+    'searchNextPage',
+    'searchPageLabel',
+    'searchPageOf',
+  ] as const;
+
+  for (const key of keys) {
+    const values = interfaceLocales.map((locale) => localizedText(locale, key));
+    assert.ok(
+      values.every((value) => value.trim().length > 0),
+      key,
+    );
+    assert.equal(new Set(values).size, interfaceLocales.length, key);
+  }
+});
+
 test('sign-in and one-time-code messages have parity and distinct translations across languages', () => {
   const keys = [
     'noticeRateLimited',

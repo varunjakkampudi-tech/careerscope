@@ -19,7 +19,8 @@ export function paginateSearchResults<T>(
   }
 
   const pageCount = Math.max(1, Math.ceil(items.length / pageSize));
-  const page = Math.min(Math.max(1, Math.trunc(requestedPage) || 1), pageCount);
+  const normalizedPage = Number.isFinite(requestedPage) ? Math.trunc(requestedPage) : 1;
+  const page = Math.min(Math.max(1, normalizedPage), pageCount);
   const start = (page - 1) * pageSize;
   const pageItems = items.slice(start, start + pageSize);
 

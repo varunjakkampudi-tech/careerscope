@@ -50,3 +50,15 @@ test('invalid page sizes are rejected', () => {
   assert.throws(() => paginateSearchResults([1], 1, 0), RangeError);
   assert.throws(() => paginateSearchResults([1], 1, 1.5), RangeError);
 });
+
+test('non-finite requested pages safely fall back to the first page', () => {
+  for (const requestedPage of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+    assert.deepEqual(paginateSearchResults([1, 2, 3], requestedPage), {
+      items: [1, 2, 3],
+      page: 1,
+      pageCount: 1,
+      firstItem: 1,
+      lastItem: 3,
+    });
+  }
+});

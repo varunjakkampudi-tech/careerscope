@@ -3568,8 +3568,25 @@ try {
           .count(),
         0,
       );
-      await page.getByRole('button', { name: 'Next page', exact: true }).click();
+      const pageNavigation = page.getByRole('navigation', {
+        name: 'Search result pages',
+        exact: true,
+      });
+      const nextPageButton = pageNavigation.getByRole('button', {
+        name: 'Next page',
+        exact: true,
+      });
+      await nextPageButton.click();
       await page.getByText('Page 2 of 3', { exact: true }).waitFor();
+      assert.equal(
+        await pageNavigation.getByText('Page 2 of 3', { exact: true }).getAttribute('aria-live'),
+        'polite',
+      );
+      assert.equal(
+        await nextPageButton.evaluate((element) => document.activeElement === element),
+        true,
+        `${engine}: keyboard focus remains on Next after paging`,
+      );
       await page
         .getByText(`${paginationTitlePrefix} Pagination fixture 21`, { exact: true })
         .waitFor();
@@ -3579,8 +3596,117 @@ try {
           .count(),
         0,
       );
-      await page.getByRole('button', { name: 'Previous page', exact: true }).click();
+      await nextPageButton.press('Enter');
+      await page.getByText('Page 3 of 3', { exact: true }).waitFor();
+      assert.equal(await page.locator('details.job').count(), 5);
+      await page
+        .getByText(`${paginationTitlePrefix} Pagination fixture 45`, { exact: true })
+        .waitFor();
+      const previousPageButton = pageNavigation.getByRole('button', {
+        name: 'Previous page',
+        exact: true,
+      });
+      await previousPageButton.press('Enter');
+      await page.getByText('Page 2 of 3', { exact: true }).waitFor();
+      assert.equal(
+        await previousPageButton.evaluate((element) => document.activeElement === element),
+        true,
+        `${engine}: keyboard focus remains on Previous after paging`,
+      );
+      await nextPageButton.press('Enter');
+      await page.getByText('Page 3 of 3', { exact: true }).waitFor();
+      await page.getByLabel('Filter results').fill('Pagination fixture 45');
+      await page.getByText('No matching jobs', { exact: true }).waitFor();
+      assert.equal(await page.locator('details.job').count(), 0);
+      assert.equal(await page.getByText('Page 3 of 3', { exact: true }).count(), 0);
+      await page.getByLabel('Filter results').fill('');
       await page.getByText('Page 1 of 3', { exact: true }).waitFor();
+      assert.equal(await page.locator('details.job').count(), 20);
+
+      // A second run must start with its own page state rather than inheriting
+      // page 3 from the first run. Returning to the first run restores only its
+      // own state and results.
+      await nextPageButton.click();
+      await page.getByText('Page 2 of 3', { exact: true }).waitFor();
+      await nextPageButton.click();
+      await page.getByText('Page 3 of 3', { exact: true }).waitFor();
+      const historyResponse = await page.request.get(`${origin}/api/searches`);
+      assert.equal(historyResponse.status(), 200);
+      const historyBody = await historyResponse.json();
+      const isolatedRunId = randomUUID();
+      const isolatedRun = {
+        ...historyBody.items[0],
+        id: isolatedRunId,
+        request: { ...historyBody.items[0].request, query: 'Pagination state isolation' },
+        createdAt: new Date(Date.now() + 1000).toISOString(),
+      };
+      const isolatedJobs = paginatedJobs.map((job, index) => {
+        const isolatedJob = structuredClone(job);
+        isolatedJob.id = randomUUID();
+        isolatedJob.data.title = `${paginationTitlePrefix} Isolated run ${index + 1}`;
+        return isolatedJob;
+      });
+      await page.route('**/api/searches', (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ items: [isolatedRun, ...historyBody.items] }),
+        }),
+      );
+      await page.route(`**/api/searches/${isolatedRunId}`, (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            ...resultBody,
+            id: isolatedRunId,
+            request: { ...resultBody.request, query: 'Pagination state isolation' },
+            jobs: isolatedJobs,
+          }),
+        }),
+      );
+      await page.reload();
+      await page.getByText('Page 1 of 3', { exact: true }).waitFor();
+      const historyNavigation = page.getByRole('navigation', {
+        name: 'Search history',
+        exact: true,
+      });
+      const isolatedRunButton = historyNavigation.getByRole('button', {
+        name: /Pagination state isolation/,
+      });
+      await isolatedRunButton.waitFor();
+      await nextPageButton.click();
+      await nextPageButton.click();
+      await page.getByText('Page 3 of 3', { exact: true }).waitFor();
+      await isolatedRunButton.click();
+      await page.getByText('Page 1 of 3', { exact: true }).waitFor();
+      assert.equal(await page.locator('details.job').count(), 20);
+      await page.getByText(`${paginationTitlePrefix} Isolated run 1`, { exact: true }).waitFor();
+      await nextPageButton.click();
+      await page.getByText('Page 2 of 3', { exact: true }).waitFor();
+      await historyNavigation.getByRole('button', { name: /React.*partial/s }).click();
+      await page.getByText('Page 3 of 3', { exact: true }).waitFor();
+      assert.equal(await page.locator('details.job').count(), 5);
+      await page
+        .getByText(`${paginationTitlePrefix} Pagination fixture 45`, { exact: true })
+        .waitFor();
+
+      await page.evaluate(() => localStorage.setItem('careerscope:interface-language', 'te'));
+      await page.reload();
+      await page.getByRole('navigation', { name: 'శోధన ఫలితాల పేజీలు', exact: true }).waitFor();
+      await page.getByText('పేజీ 1 లో 3', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'తదుపరి పేజీ', exact: true }).press('Enter');
+      await page.getByText('పేజీ 2 లో 3', { exact: true }).waitFor();
+      await page.evaluate(() => localStorage.setItem('careerscope:interface-language', 'hi'));
+      await page.reload();
+      await page.getByRole('navigation', { name: 'खोज परिणाम पृष्ठ', exact: true }).waitFor();
+      await page.getByText('पृष्ठ 1 में से 3', { exact: true }).waitFor();
+      await page.evaluate(() => localStorage.setItem('careerscope:interface-language', 'en'));
+      await page.unroute('**/api/searches');
+      await page.unroute(`**/api/searches/${isolatedRunId}`);
+      await page.unroute(`**/api/searches/${search.id}`);
+      await page.reload();
+      await page.getByRole('heading', { name: 'Senior React Engineer' }).waitFor();
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });
         assert.equal(
