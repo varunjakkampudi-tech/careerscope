@@ -1378,7 +1378,7 @@
       ],
       "tests": ["apps/web/src/lib/source-health.test.ts", "scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Owner-visible recorded outcomes summarize the latest 50 search runs, including accepted counts, and are explicitly not live availability. Implementation-head run 43970259059 passed at f9e6aebb2d7beca3044dae5301f2ca28400c27c2; documentation follow-up run 43975092546 passed at 2fc990b8dda4fb6aeb03f14a5e86e27606a09737. Run 43978471041 exposed an ambiguous browser locator; run 43980466911 exposed a hard-coded Greenhouse count assumption unsupported by fixture history. The updated browser test derives the expected aggregate from the owner-scoped API history and checks the Greenhouse row; corrected exact-head CI is pending. Freshness/latency signals, operational source-level monitoring and automated suspension remain unimplemented; no source is activated.",
+      "gap": "Owner-visible recorded outcomes summarize the latest 50 search runs, including accepted counts, and are explicitly not live availability. Implementation-head run 43970259059 passed at f9e6aebb2d7beca3044dae5301f2ca28400c27c2; documentation follow-up run 43975092546 passed at 2fc990b8dda4fb6aeb03f14a5e86e27606a09737. Runs 43978471041, 43980466911, 43982429916 and 43983664244 exposed successive browser locator and fixture assumption failures. Corrected exact head 56981cb0f7053d6147ce5f8318ef2a6dd9ec4900 passed all required jobs in run 43984937809. Independent exact-SHA review remains pending. Freshness/latency signals, operational source-level monitoring and automated suspension remain unimplemented; no source is activated.",
       "scopeDisposition": "in-scope"
     },
     {
