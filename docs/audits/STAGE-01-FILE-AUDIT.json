@@ -2082,6 +2082,12 @@
           "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
           "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
           "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d"
+        },
+        {
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Runs 43978471041, 43980466911, 43982429916 and 43983664244 exposed browser assertion/selector issues. This file records the observed failure and the current source-text-filter correction; exact-head CI remains pending.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "sha256": "a84cf17b99f48d9ffaa862022fcd9a9fe0fd4f49bfd6c5e95ada0c288ea5fc61"
         }
       ]
     },
@@ -2304,6 +2310,12 @@
           "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
           "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
           "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd"
+        },
+        {
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Runs 43978471041, 43980466911, 43982429916 and 43983664244 exposed browser assertion/selector issues. This file records the observed failure and the current source-text-filter correction; exact-head CI remains pending.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "sha256": "30c594037fe981d8441bdb0cf978e8ebc6a26de36c854d39a5f52357d6b3823c"
         }
       ]
     },
@@ -2494,6 +2506,12 @@
           "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
           "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
           "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4"
+        },
+        {
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Runs 43978471041, 43980466911, 43982429916 and 43983664244 exposed browser assertion/selector issues. Current docs record those failures and the source-text-filter correction; exact-head CI remains pending.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "sha256": "4a01757a121629b746b31c215c74ab348a5920ad4f6c13282ef0c091dc6f5c8f"
         }
       ]
     },
@@ -3050,6 +3068,12 @@
           "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
           "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
           "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90"
+        },
+        {
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Runs 43978471041, 43980466911, 43982429916 and 43983664244 exposed browser assertion/selector issues. Current docs record those failures and the source-text-filter correction; exact-head CI remains pending.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "sha256": "4efa8af49678613db1c7eadc457ec676423a7cc72bcfdd4898cb0aa820915e5f"
         }
       ]
     },
