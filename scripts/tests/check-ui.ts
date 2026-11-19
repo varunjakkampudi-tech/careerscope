@@ -3623,9 +3623,8 @@ try {
       await page.getByText('Page 1 of 3', { exact: true }).waitFor();
       assert.equal(await page.locator('details.job').count(), 20);
 
-      // A second run must start with its own page state rather than inheriting
-      // page 3 from the first run. Returning to the first run restores only its
-      // own state and results.
+      // A second run must start on page 1 rather than inheriting page 3 from
+      // the first run. Switching back also starts the original run at page 1.
       await nextPageButton.click();
       await page.getByText('Page 2 of 3', { exact: true }).waitFor();
       await nextPageButton.click();
@@ -3699,11 +3698,15 @@ try {
       await nextPageButton.click();
       await page.getByText('Page 2 of 3', { exact: true }).waitFor();
       await historyNavigation.getByRole('button', { name: /Original pagination run/ }).click();
-      await page.getByText('Page 3 of 3', { exact: true }).waitFor();
-      assert.equal(await page.locator('details.job').count(), 5);
+      await page.getByText('Page 1 of 3', { exact: true }).waitFor();
+      assert.equal(await page.locator('details.job').count(), 20);
       await page
-        .getByText(`${paginationTitlePrefix} Pagination fixture 45`, { exact: true })
+        .getByText(`${paginationTitlePrefix} Pagination fixture 1`, { exact: true })
         .waitFor();
+      assert.equal(
+        await page.getByText(`${paginationTitlePrefix} Isolated run 1`, { exact: true }).count(),
+        0,
+      );
 
       await page.evaluate(() => localStorage.setItem('careerscope:interface-language', 'te'));
       await page.reload();
