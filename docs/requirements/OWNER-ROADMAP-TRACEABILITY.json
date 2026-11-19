@@ -1408,7 +1408,7 @@
         "tests/integration/database.integration.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Reposts are counted once per owner-scoped fingerprint per distinct search run and only when a later run carries a strictly newer non-null provider-claimed posted date. Duplicate fingerprints within one run count once; equal, older and missing dates do not increase repost_count, and last_posted_at retains the greatest observed date. The collection transaction and backfill replay share this rule. Replay unit tests and the PostgreSQL completeCollection regression pass locally. Provider dates remain unverified claims and do not prove employer intent. Exact-head CI, independent review, merge and post-merge verification remain outstanding; currentStatus stays partial.",
+      "gap": "Reposts are counted once per owner-scoped fingerprint per distinct search run and only when a later run carries a strictly newer non-null provider-claimed posted date. Duplicate fingerprints within one run count once; equal, older and missing dates do not increase repost_count, and last_posted_at retains the greatest observed date. The collection transaction and backfill replay share this rule. Replay unit tests, the PostgreSQL backfill rebuild regression, and the completeCollection regression pass locally. Provider dates remain unverified claims and do not prove employer intent. Exact-head CI, independent review, merge and post-merge verification remain outstanding; currentStatus stays partial.",
       "scopeDisposition": "in-scope"
     },
     {
