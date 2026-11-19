@@ -23,14 +23,20 @@ remain visible as follow-up work.
 
 ## Verification
 
-- Stage 01 file audit: 502 tracked files accounted for, no open findings.
-- Source TODO/FIXME scan: no open markers in product code.
-- `npm audit --omit=dev` and full `npm audit`: zero vulnerabilities on 2026-11-06.
-- Local checks: unit, domain, PostgreSQL/Redis integration, lint, typecheck, security, architecture,
-  traceability, complete file audit, and Prettier over all tracked files passed. The full local
-  `npm run check` command also scans the user's preserved untracked Playwright YAML and stopped at
-  that file's formatting; it was left untouched. Local Node is 22.23.2, below the repository's
-  Node 24 requirement, so hosted Node 24 CI on the item PR is authoritative.
+- The current Stage 01 file audit accounts for 520 tracked files: 451 reviewed and 69 classified
+  as not applicable source. It reports zero open findings; the accepted S1-F014 low-severity risk
+  remains documented above.
+- A source scan at the current `dev` revision found no product TODO, FIXME, XXX or HACK markers.
+  Its only text match was the `XXXX` magic-value test fixture in `file-storage.test.ts`, not a
+  debt marker.
+- GitHub Actions run `43957299898` passed on exact current `dev` SHA
+  `fad57ea3253024983f29183acefaee59328d0d01`. Quality gates passed `npm run check`, the production
+  and full dependency advisory audits, and the remaining static and domain checks. The Services,
+  integration, and browser job also passed. The production image build was skipped on this `dev`
+  push and is not counted as a pass.
+- Local verification recorded on 2026-11-06 used Node 22.23.2, below the repository's Node 24
+  minimum; the exact-current hosted Node 24 run above is the authoritative current evidence.
 
-The approval and hosted CI evidence for the exact item PR SHA remain in the pull request and are
-not inferred from local checks. Hostinger, server backups, and deployment are outside this review.
+These checks establish the registered critical/high technical-debt acceptance scope. They do not
+claim that the two low-priority items or accepted S1-F014 risk have been removed. Hostinger, server
+backups, and deployment remain outside this review.
