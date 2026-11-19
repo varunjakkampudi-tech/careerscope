@@ -306,13 +306,16 @@ const messages = {
     recoveryRemove: 'రికవరీ చిరునామాను తీసివేయండి',
     recoveryConfigured: 'రికవరీ చిరునామా నిర్ధారించబడింది.',
     recoveryNotConfigured: 'రికవరీ చిరునామా సెట్ చేయబడలేదు.',
-    recoveryCooldown: 'రికవరీ సైన్-ఇన్ ఇంకా అందుబాటులో లేదు. నిర్ధారణ తర్వాత 72 గంటలకు తెరుచుకుంటుంది.',
+    recoveryCooldown:
+      'రికవరీ సైన్-ఇన్ ఇంకా అందుబాటులో లేదు. నిర్ధారణ తర్వాత 72 గంటలకు తెరుచుకుంటుంది.',
     recoverySent: 'చిరునామా ఉపయోగించదగినదైతే, కోడ్ కోసం దాని ఇన్‌బాక్స్‌ను తనిఖీ చేయండి.',
     recoveryFindTitle: 'ఖాతాను తిరిగి పొందండి',
-    recoveryFindIntro: 'మీకు మీ సైన్-ఇన్ ఇమెయిల్ యాక్సెస్ లేకపోతే, మీరు నిర్ధారించిన రికవరీ చిరునామాతో సైన్ ఇన్ చేయండి.',
+    recoveryFindIntro:
+      'మీకు మీ సైన్-ఇన్ ఇమెయిల్ యాక్సెస్ లేకపోతే, మీరు నిర్ధారించిన రికవరీ చిరునామాతో సైన్ ఇన్ చేయండి.',
     recoveryFindStart: 'మీ ఇమెయిల్ యాక్సెస్ చేయలేరా?',
     recoverySignInButton: 'రికవరీ కోడ్ పంపండి',
-    recoveryRequestNote: 'ఈ ఖాతాకు రికవరీ అందుబాటులో ఉంటే, దాని రికవరీ చిరునామాలో కోడ్ కోసం తనిఖీ చేయండి.',
+    recoveryRequestNote:
+      'ఈ ఖాతాకు రికవరీ అందుబాటులో ఉంటే, దాని రికవరీ చిరునామాలో కోడ్ కోసం తనిఖీ చేయండి.',
     dashboard: 'డాష్‌బోర్డ్',
     jobs: 'ఉద్యోగాలు',
     applications: 'దరఖాస్తులు',
@@ -348,7 +351,8 @@ const messages = {
     openApplication: 'దరఖాస్తును తెరవండి',
     markRead: 'చదివినట్లు గుర్తించండి',
     notificationPreferencesHeading: 'నోటిఫికేషన్ ప్రాధాన్యతలు',
-    notificationPreferencesDescription: 'రాబోయే ఇంటర్వ్యూ రిమైండర్‌లు మీ యాప్‌లోని నోటిఫికేషన్‌లలో కనిపించాలా ఎంచుకోండి.',
+    notificationPreferencesDescription:
+      'రాబోయే ఇంటర్వ్యూ రిమైండర్‌లు మీ యాప్‌లోని నోటిఫికేషన్‌లలో కనిపించాలా ఎంచుకోండి.',
     notificationPreferencesLoading: 'ప్రాధాన్యతలు లోడ్ అవుతున్నాయి…',
     notificationPreferencesLoadError: 'నోటిఫికేషన్ ప్రాధాన్యతలను లోడ్ చేయలేకపోయాం',
     notificationPreferencesUnconfirmed:
@@ -398,7 +402,8 @@ const messages = {
     findYourNextRole: 'మీ తదుపరి పాత్రను కనుగొనండి',
     searchSourcesLegend: 'మూలాలు',
     checkingApprovedSources: 'ఆమోదించిన ఉద్యోగ మూలాలను తనిఖీ చేస్తోంది…',
-    sourceAvailabilityError: 'ఉద్యోగ మూలాల లభ్యతను తనిఖీ చేయలేకపోయాం. కనెక్షన్ పునరుద్ధరించిన తర్వాత మళ్లీ ప్రయత్నించండి.',
+    sourceAvailabilityError:
+      'ఉద్యోగ మూలాల లభ్యతను తనిఖీ చేయలేకపోయాం. కనెక్షన్ పునరుద్ధరించిన తర్వాత మళ్లీ ప్రయత్నించండి.',
     sourcePermissionPending: 'ఉద్యోగ మూలాల అనుమతి సమీక్ష పెండింగ్‌లో ఉంది.',
     noApprovedSources: 'ప్రస్తుతం ఉద్యోగ మూలాలు అందుబాటులో లేవు.',
     jobSourcesErrorTitle: 'ఉద్యోగ మూలాలను లోడ్ చేయలేకపోయాం.',
@@ -432,7 +437,8 @@ const messages = {
     updateFeedback: 'అభిప్రాయాన్ని నవీకరించండి',
     sendFeedback: 'అభిప్రాయాన్ని పంపండి',
     feedbackSaveError: 'అభిప్రాయాన్ని సేవ్ చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.',
-    feedbackRecorded: 'మీ అభిప్రాయం నమోదు అయింది. ఇది ఉద్యోగ ప్రకటనను లేదా దరఖాస్తు స్థితిని మార్చదు.',
+    feedbackRecorded:
+      'మీ అభిప్రాయం నమోదు అయింది. ఇది ఉద్యోగ ప్రకటనను లేదా దరఖాస్తు స్థితిని మార్చదు.',
     accountSecurity: 'ఖాతా భద్రత',
     backToSearch: 'శోధనకు తిరిగి వెళ్ళండి',
     emailVerifiedOn: `${'{value}'}న ఇమెయిల్ ధృవీకరించబడింది.`,
@@ -443,7 +449,8 @@ const messages = {
     newEmailAddress: 'కొత్త ఇమెయిల్ చిరునామా',
     sendingVerificationCodes: 'ధృవీకరణ కోడ్‌లను పంపుతోంది…',
     sendVerificationCodes: 'ధృవీకరణ కోడ్‌లను పంపండి',
-    enterBothEmailCodes: 'ఆరు అంకెల రెండు కోడ్‌లను నమోదు చేయండి. మార్పు అమలుకు రెండు చిరునామాలూ ధృవీకరించాలి.',
+    enterBothEmailCodes:
+      'ఆరు అంకెల రెండు కోడ్‌లను నమోదు చేయండి. మార్పు అమలుకు రెండు చిరునామాలూ ధృవీకరించాలి.',
     codeSentToCurrentEmail: 'ప్రస్తుత ఇమెయిల్‌కు పంపిన కోడ్',
     currentEmailVerified: 'ప్రస్తుత ఇమెయిల్ ధృవీకరించబడింది',
     verifyCurrentEmail: 'ప్రస్తుత ఇమెయిల్ ధృవీకరించండి',
@@ -451,10 +458,13 @@ const messages = {
     newEmailVerified: 'కొత్త ఇమెయిల్ ధృవీకరించబడింది',
     verifyNewEmail: 'కొత్త ఇమెయిల్ ధృవీకరించండి',
     emailChangeCodesSent: 'మీ ప్రస్తుత మరియు కొత్త ఇమెయిల్ చిరునామాలకు కోడ్‌లు పంపబడ్డాయి.',
-    emailAddressUpdated: 'ఇమెయిల్ చిరునామా నవీకరించబడింది. పాత చిరునామాకు ధృవీకరణ సమాచారం పంపబడింది.',
-    currentAddressVerified: 'ప్రస్తుత చిరునామా ధృవీకరించబడింది. ఇప్పుడు కొత్త చిరునామాను ధృవీకరించండి.',
+    emailAddressUpdated:
+      'ఇమెయిల్ చిరునామా నవీకరించబడింది. పాత చిరునామాకు ధృవీకరణ సమాచారం పంపబడింది.',
+    currentAddressVerified:
+      'ప్రస్తుత చిరునామా ధృవీకరించబడింది. ఇప్పుడు కొత్త చిరునామాను ధృవీకరించండి.',
     newAddressVerified: 'కొత్త చిరునామా ధృవీకరించబడింది. ఇప్పుడు ప్రస్తుత చిరునామాను ధృవీకరించండి.',
-    sessionSignOutAllConfirm: 'ఇతర అన్ని సెషన్‌ల నుంచి సైన్ అవుట్ చేయాలా? ఈ సెషన్‌లో మీరు సైన్ ఇన్‌లోనే ఉంటారు.',
+    sessionSignOutAllConfirm:
+      'ఇతర అన్ని సెషన్‌ల నుంచి సైన్ అవుట్ చేయాలా? ఈ సెషన్‌లో మీరు సైన్ ఇన్‌లోనే ఉంటారు.',
     otherSessionsSignedOut: 'ఇతర సెషన్‌ల నుంచి సైన్ అవుట్ అయ్యారు. ఈ సెషన్ కొనసాగుతుంది.',
     signOutDeviceConfirm: '{value} నుంచి సైన్ అవుట్ చేయాలా? ఆ పరికరం మళ్లీ సైన్ ఇన్ చేయాలి.',
     signOutDeviceLabel: '{value} నుంచి సైన్ అవుట్ చేయండి',
@@ -469,18 +479,22 @@ const messages = {
     apiError413: 'సమర్పించిన సమాచారం చాలా పెద్దది.',
     apiError429: 'చాలా ప్రయత్నాలు జరిగాయి. కొద్దిసేపటి తర్వాత మళ్లీ ప్రయత్నించండి.',
     apiError503: 'సేవ తాత్కాలికంగా అందుబాటులో లేదు. కొద్దిసేపటి తర్వాత మళ్లీ ప్రయత్నించండి.',
-    apiError507: 'రెజ్యూమ్ నిల్వ నిండింది. అనవసరమైన పూర్తయిన రెజ్యూమ్‌ను తొలగించండి లేదా తర్వాత మళ్లీ ప్రయత్నించండి.',
+    apiError507:
+      'రెజ్యూమ్ నిల్వ నిండింది. అనవసరమైన పూర్తయిన రెజ్యూమ్‌ను తొలగించండి లేదా తర్వాత మళ్లీ ప్రయత్నించండి.',
     apiErrorDefault: 'అభ్యర్థనను పూర్తి చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.',
     // Machine-drafted: requires native-speaker review before release.
-    resumeUploadChanged: 'సేవ్ అవుతున్నప్పుడు ఈ అప్‌లోడ్ మారింది. మీ రెజ్యూమ్ జాబితాను చూసి, అవసరమైతే మళ్లీ అప్‌లోడ్ చేయండి.',
+    resumeUploadChanged:
+      'సేవ్ అవుతున్నప్పుడు ఈ అప్‌లోడ్ మారింది. మీ రెజ్యూమ్ జాబితాను చూసి, అవసరమైతే మళ్లీ అప్‌లోడ్ చేయండి.',
     // Machine-drafted: requires native-speaker review before release.
-    resumeCancelUnavailable: 'ఈ అప్‌లోడ్‌ను ఇకపై రద్దు చేయలేరు. ప్రస్తుత స్థితిని చూడటానికి రిఫ్రెష్ చేయండి.',
+    resumeCancelUnavailable:
+      'ఈ అప్‌లోడ్‌ను ఇకపై రద్దు చేయలేరు. ప్రస్తుత స్థితిని చూడటానికి రిఫ్రెష్ చేయండి.',
     accountSecurityBack: 'శోధనకు తిరిగి వెళ్ళండి',
     emailVerificationUnrecorded: 'ఇమెయిల్ ధృవీకరణ నమోదు కాలేదు.',
     emailChangeUnavailable: 'సైన్-ఇన్ ఇమెయిల్ మార్చండి',
     emailCodesSending: 'ధృవీకరణ కోడ్‌లను పంపుతోంది…',
     emailCodesSend: 'ధృవీకరణ కోడ్‌లను పంపండి',
-    sessionSignOutOthersConfirm: 'ఇతర అన్ని సెషన్‌ల నుంచి సైన్ అవుట్ చేయాలా? ఈ సెషన్‌లో మీరు సైన్ ఇన్‌లోనే ఉంటారు.',
+    sessionSignOutOthersConfirm:
+      'ఇతర అన్ని సెషన్‌ల నుంచి సైన్ అవుట్ చేయాలా? ఈ సెషన్‌లో మీరు సైన్ ఇన్‌లోనే ఉంటారు.',
     signOutOthersLoading: 'ఇతర సెషన్‌ల నుంచి సైన్ అవుట్ చేస్తోంది',
     signOutOthers: 'ఇతర సెషన్‌ల నుంచి సైన్ అవుట్ చేయండి',
     activeSessions: 'క్రియాశీల సెషన్‌లు',
@@ -507,18 +521,21 @@ const messages = {
     withdrawMarketingConsent: 'మార్కెటింగ్ అంగీకారాన్ని ఉపసంహరించండి',
     optInProductUpdates: 'ఉత్పత్తి నవీకరణలకు అంగీకరించండి',
     // Machine-drafted: requires native-speaker review before release.
-    noticeRateLimited: 'చాలా ఎక్కువ సైన్-ఇన్ ప్రయత్నాలు జరిగాయి. కాసేపటి తర్వాత మళ్లీ ప్రయత్నించండి.',
+    noticeRateLimited:
+      'చాలా ఎక్కువ సైన్-ఇన్ ప్రయత్నాలు జరిగాయి. కాసేపటి తర్వాత మళ్లీ ప్రయత్నించండి.',
     testModeBrandVersion: 'పరీక్ష విధానం — కొనసాగడానికి పాత్రను ఎంచుకోండి',
     secureEmailSignIn: 'సురక్షిత ఇమెయిల్ సైన్-ఇన్',
     signInUnavailable: 'సైన్-ఇన్ అందుబాటులో లేదు',
     couldNotRequestCode: 'కోడ్‌ను అభ్యర్థించలేకపోయాం. మళ్లీ ప్రయత్నించండి.',
     couldNotVerifyCode: 'కోడ్‌ను ధృవీకరించలేకపోయాం. మళ్లీ ప్రయత్నించండి.',
     selectTestAccount: 'పరీక్ష ఖాతాను ఎంచుకోండి',
-    chooseRoleToEnter: 'వర్క్‌స్పేస్‌లోకి ప్రవేశించడానికి పాత్రను ఎంచుకోండి. పాస్‌వర్డ్ అవసరం లేదు.',
+    chooseRoleToEnter:
+      'వర్క్‌స్పేస్‌లోకి ప్రవేశించడానికి పాత్రను ఎంచుకోండి. పాస్‌వర్డ్ అవసరం లేదు.',
     sessionExpiredUnsaved: 'మీ సెషన్ ముగిసింది. సేవ్ చేయని మార్పులు ఏవీ సేవ్ కాలేదు.',
     roleAdmin: 'నిర్వాహకుడు',
     roleCandidate: 'అభ్యర్థి',
-    adminWorkspaceDescription: 'వేరు చేయబడిన అడ్మిన్ పరీక్ష వర్క్‌స్పేస్; ప్రత్యేక అధికార పరిపాలన ప్రారంభించబడలేదు',
+    adminWorkspaceDescription:
+      'వేరు చేయబడిన అడ్మిన్ పరీక్ష వర్క్‌స్పేస్; ప్రత్యేక అధికార పరిపాలన ప్రారంభించబడలేదు',
     candidateWorkspaceDescription: 'ఉద్యోగాలను వెతకండి మరియు మీ స్వంత దరఖాస్తులను ట్రాక్ చేయండి',
     createCareerScopeAccount: 'మీ CareerScope ఖాతాను సృష్టించండి',
     signInToCareerScope: 'CareerScope‌లోకి సైన్ ఇన్ చేయండి',
@@ -559,7 +576,8 @@ const messages = {
     legalUpdatedBody: 'वर्तमान शर्तें और गोपनीयता सूचना देखें, फिर जारी रखने के लिए स्वीकार करें।',
     legalTermsLink: 'सेवा की शर्तें',
     legalPrivacyLink: 'गोपनीयता सूचना',
-    legalAcceptCheckbox: 'मैंने वर्तमान शर्तें और गोपनीयता सूचना पढ़ ली हैं और उन्हें स्वीकार करता/करती हूँ।',
+    legalAcceptCheckbox:
+      'मैंने वर्तमान शर्तें और गोपनीयता सूचना पढ़ ली हैं और उन्हें स्वीकार करता/करती हूँ।',
     legalAcceptButton: 'स्वीकार करें और जारी रखें',
     recoverySetupTitle: 'रिकवरी पता',
     recoverySetupIntro:
@@ -605,7 +623,8 @@ const messages = {
     skipContent: 'मुख्य सामग्री पर जाएँ',
     notifications: 'सूचनाएँ',
     unreadNotifications: (count: number) => `${count} अपठित सूचनाएँ`,
-    reminderPrivacy: 'इंटरव्यू रिमाइंडर यहाँ दिखाई देते हैं। सूचना में इंटरव्यू का विवरण शामिल नहीं होता।',
+    reminderPrivacy:
+      'इंटरव्यू रिमाइंडर यहाँ दिखाई देते हैं। सूचना में इंटरव्यू का विवरण शामिल नहीं होता।',
     loadingNotifications: 'सूचनाएँ लोड हो रही हैं…',
     notificationsError: 'सूचनाएँ लोड नहीं हो सकीं।',
     retry: 'फिर कोशिश करें',
@@ -614,7 +633,8 @@ const messages = {
     openApplication: 'आवेदन खोलें',
     markRead: 'पढ़ा हुआ चिह्नित करें',
     notificationPreferencesHeading: 'सूचना प्राथमिकताएँ',
-    notificationPreferencesDescription: 'चुनें कि आने वाले इंटरव्यू रिमाइंडर ऐप की सूचनाओं में दिखाई दें या नहीं।',
+    notificationPreferencesDescription:
+      'चुनें कि आने वाले इंटरव्यू रिमाइंडर ऐप की सूचनाओं में दिखाई दें या नहीं।',
     notificationPreferencesLoading: 'प्राथमिकताएँ लोड हो रही हैं…',
     notificationPreferencesLoadError: 'सूचना प्राथमिकताएँ लोड नहीं हो सकीं',
     notificationPreferencesUnconfirmed:
@@ -710,7 +730,8 @@ const messages = {
     newEmailAddress: 'नया ईमेल पता',
     sendingVerificationCodes: 'सत्यापन कोड भेजे जा रहे हैं…',
     sendVerificationCodes: 'सत्यापन कोड भेजें',
-    enterBothEmailCodes: 'दोनों छह-अंकीय कोड दर्ज करें। बदलाव लागू होने से पहले दोनों पतों का सत्यापन आवश्यक है।',
+    enterBothEmailCodes:
+      'दोनों छह-अंकीय कोड दर्ज करें। बदलाव लागू होने से पहले दोनों पतों का सत्यापन आवश्यक है।',
     codeSentToCurrentEmail: 'वर्तमान ईमेल पर भेजा गया कोड',
     currentEmailVerified: 'वर्तमान ईमेल सत्यापित',
     verifyCurrentEmail: 'वर्तमान ईमेल सत्यापित करें',
@@ -736,12 +757,15 @@ const messages = {
     apiError413: 'दी गई जानकारी बहुत बड़ी है।',
     apiError429: 'बहुत अधिक प्रयास हुए। थोड़ी देर बाद फिर कोशिश करें।',
     apiError503: 'सेवा अस्थायी रूप से उपलब्ध नहीं है। थोड़ी देर बाद फिर कोशिश करें।',
-    apiError507: 'रिज़्यूमे स्टोरेज भर गया है। कोई अनावश्यक पूरा रिज़्यूमे हटाएँ या बाद में कोशिश करें।',
+    apiError507:
+      'रिज़्यूमे स्टोरेज भर गया है। कोई अनावश्यक पूरा रिज़्यूमे हटाएँ या बाद में कोशिश करें।',
     apiErrorDefault: 'अनुरोध पूरा नहीं हो सका। फिर कोशिश करें।',
     // Machine-drafted: requires native-speaker review before release.
-    resumeUploadChanged: 'सहेजते समय यह अपलोड बदल गया। अपनी रिज़्यूमे सूची देखें और ज़रूरत हो तो फिर अपलोड करें।',
+    resumeUploadChanged:
+      'सहेजते समय यह अपलोड बदल गया। अपनी रिज़्यूमे सूची देखें और ज़रूरत हो तो फिर अपलोड करें।',
     // Machine-drafted: requires native-speaker review before release.
-    resumeCancelUnavailable: 'इस अपलोड को अब रद्द नहीं किया जा सकता। मौजूदा स्थिति देखने के लिए रीफ़्रेश करें।',
+    resumeCancelUnavailable:
+      'इस अपलोड को अब रद्द नहीं किया जा सकता। मौजूदा स्थिति देखने के लिए रीफ़्रेश करें।',
     accountSecurityBack: 'खोज पर वापस जाएँ',
     emailVerificationUnrecorded: 'ईमेल सत्यापन दर्ज नहीं है।',
     emailChangeUnavailable: 'साइन-इन ईमेल बदलें',
@@ -781,11 +805,13 @@ const messages = {
     couldNotRequestCode: 'कोड का अनुरोध नहीं किया जा सका। फिर कोशिश करें।',
     couldNotVerifyCode: 'कोड सत्यापित नहीं किया जा सका। फिर कोशिश करें।',
     selectTestAccount: 'परीक्षण खाता चुनें',
-    chooseRoleToEnter: 'कार्यक्षेत्र में प्रवेश के लिए एक भूमिका चुनें। पासवर्ड की आवश्यकता नहीं है।',
+    chooseRoleToEnter:
+      'कार्यक्षेत्र में प्रवेश के लिए एक भूमिका चुनें। पासवर्ड की आवश्यकता नहीं है।',
     sessionExpiredUnsaved: 'आपका सत्र समाप्त हो गया है। सहेजे नहीं गए बदलाव सहेजे नहीं गए।',
     roleAdmin: 'व्यवस्थापक',
     roleCandidate: 'उम्मीदवार',
-    adminWorkspaceDescription: 'पृथक व्यवस्थापक परीक्षण कार्यक्षेत्र; विशेषाधिकार प्राप्त प्रशासन सक्षम नहीं है',
+    adminWorkspaceDescription:
+      'पृथक व्यवस्थापक परीक्षण कार्यक्षेत्र; विशेषाधिकार प्राप्त प्रशासन सक्षम नहीं है',
     candidateWorkspaceDescription: 'नौकरियाँ खोजें और अपने आवेदनों को ट्रैक करें',
     createCareerScopeAccount: 'अपना CareerScope खाता बनाएँ',
     signInToCareerScope: 'CareerScope में साइन इन करें',

@@ -1472,10 +1472,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed all three locale labels for average/latest elapsed duration and latest search-run time; retained formatted translations without implying a live health signal.",
-      "evidence": "Hosted run 44490187735 exposed stale manifest hashes after the commit formatter rewrote this file; updated active hashes preserve prior records. Updated-head CI pending.",
+      "observations": "Reviewed current source duration change and regression assertion; prior audit history is preserved.",
+      "evidence": "Exact-head run 44490477511: quality gate failed formatting under locked Prettier 3.9.9 after local formatter-version drift; services suite found partial search outcome assertion missing the additive durationMs field. Corrected with locked formatter and regression assertion; new exact-head CI pending.",
       "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
-      "sha256": "1661f213d5e3017f94fcaf2a64523d36ad82e1487a7d9a39ad5589e5841789c3",
+      "sha256": "c173879b0903b50eca6f215f7ad5841ac6944aaf9f99dd312c320c735fde402d",
       "history": [
         {
           "reviewer": "Codex (Stage 01 item 1.01)",
@@ -1500,6 +1500,12 @@
           "observations": "Reviewed source-health localization/tests for elapsed durations and accurate search-run timestamp wording.",
           "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
           "sha256": "c173879b0903b50eca6f215f7ad5841ac6944aaf9f99dd312c320c735fde402d"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed all three locale labels for average/latest elapsed duration and latest search-run time; retained formatted translations without implying a live health signal.",
+          "evidence": "Hosted run 44490187735 exposed stale manifest hashes after the commit formatter rewrote this file; updated active hashes preserve prior records. Updated-head CI pending.",
+          "sha256": "1661f213d5e3017f94fcaf2a64523d36ad82e1487a7d9a39ad5589e5841789c3"
         }
       ]
     },
@@ -2040,10 +2046,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed documentation stating source collection elapsed time and latest search-run timestamp while preserving partial status and pending gates.",
-      "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+      "observations": "Reviewed Stage 05 item 5.15 evidence, exact-hosted-run failures, corrections and remaining partial acceptance gates.",
+      "evidence": "Current exact-head hosted CI run 44490477511: production image build passed; quality failed due local formatter-version drift, and integration suite found a partial-search assertion that omitted durationMs. Corrections and exact-SHA rerun are pending.",
       "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
-      "sha256": "d2753011c138834257d6a47b3090f61ea918490074c3d9484eb56313efa8c63b",
+      "sha256": "14ebb3f013976740179ff340a23a999639fa36fe46b6fd33f8b3b65b030ef41d",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2188,6 +2194,12 @@
           "observations": "Reviewed exact partial status and distinction between per-owner history, operational monitoring, alerting, and automated suspension.",
           "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
           "sha256": "618424b8045147a80df4d1a94f13507924b3c69b04397a5092ac35b8002056bb"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed documentation stating source collection elapsed time and latest search-run timestamp while preserving partial status and pending gates.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "d2753011c138834257d6a47b3090f61ea918490074c3d9484eb56313efa8c63b"
         }
       ]
     },
@@ -2262,10 +2274,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed documentation stating source collection elapsed time and latest search-run timestamp while preserving partial status and pending gates.",
-      "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+      "observations": "Reviewed Stage 05 item 5.15 evidence, exact-hosted-run failures, corrections and remaining partial acceptance gates.",
+      "evidence": "Current exact-head hosted CI run 44490477511: production image build passed; quality failed due local formatter-version drift, and integration suite found a partial-search assertion that omitted durationMs. Corrections and exact-SHA rerun are pending.",
       "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
-      "sha256": "a0830f50508f101719a6e32bebd7449dcdcdcf13545f784bb544baa952e9a44f",
+      "sha256": "527d7df750d60efdbe529f61d7b8cda6e7203b7de0e5406cea385fc0b9bcfa57",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2428,6 +2440,12 @@
           "observations": "Reviewed exact local verification evidence and pending exact-head hosted CI/review status.",
           "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
           "sha256": "dbeb2bb5caafc745e88178a0f78a2fc04987eefebe47bceea98ce05daf2ed590"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed documentation stating source collection elapsed time and latest search-run timestamp while preserving partial status and pending gates.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "a0830f50508f101719a6e32bebd7449dcdcdcf13545f784bb544baa952e9a44f"
         }
       ]
     },
@@ -2482,10 +2500,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed documentation stating source collection elapsed time and latest search-run timestamp while preserving partial status and pending gates.",
-      "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+      "observations": "Reviewed Stage 05 item 5.15 evidence, exact-hosted-run failures, corrections and remaining partial acceptance gates.",
+      "evidence": "Current exact-head hosted CI run 44490477511: production image build passed; quality failed due local formatter-version drift, and integration suite found a partial-search assertion that omitted durationMs. Corrections and exact-SHA rerun are pending.",
       "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
-      "sha256": "8e8414938b7db4e0b4f3c584c0c201d17e43a134a2d4047db8ddaf3192506bbc",
+      "sha256": "26e03f2a7d91341aedaa65b07bda0de0d0ac749e5edcd5f480018705ab9742e1",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2634,6 +2652,12 @@
         {
           "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
           "observations": "Reviewed changed files, local test/build/typecheck evidence, and remaining verification gates.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "8e8414938b7db4e0b4f3c584c0c201d17e43a134a2d4047db8ddaf3192506bbc"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed documentation stating source collection elapsed time and latest search-run timestamp while preserving partial status and pending gates.",
           "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
           "sha256": "8e8414938b7db4e0b4f3c584c0c201d17e43a134a2d4047db8ddaf3192506bbc"
         }
@@ -7689,10 +7713,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed browser source-health fixture assertions for accepted count, per-source elapsed duration from the API, and displayed search-run timestamp.",
-      "evidence": "Hosted run 44490187735 exposed stale manifest hashes after the commit formatter rewrote this file; updated active hashes preserve prior records. Updated-head CI pending.",
+      "observations": "Reviewed current source duration change and regression assertion; prior audit history is preserved.",
+      "evidence": "Exact-head run 44490477511: quality gate failed formatting under locked Prettier 3.9.9 after local formatter-version drift; services suite found partial search outcome assertion missing the additive durationMs field. Corrected with locked formatter and regression assertion; new exact-head CI pending.",
       "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
-      "sha256": "8ccae3a31c6040b88db0895e68daca857736351f911ba804e18ad0e36245bd6d",
+      "sha256": "2da60f9ff98c50c8301d73a2fb0550ade1da9648f17b678a7c5d8f26fcfe24e5",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7735,6 +7759,12 @@
           "observations": "Reviewed browser fixture assertions for measured duration and search-run timestamp rendered from owner search history.",
           "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
           "sha256": "2da60f9ff98c50c8301d73a2fb0550ade1da9648f17b678a7c5d8f26fcfe24e5"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed browser source-health fixture assertions for accepted count, per-source elapsed duration from the API, and displayed search-run timestamp.",
+          "evidence": "Hosted run 44490187735 exposed stale manifest hashes after the commit formatter rewrote this file; updated active hashes preserve prior records. Updated-head CI pending.",
+          "sha256": "8ccae3a31c6040b88db0895e68daca857736351f911ba804e18ad0e36245bd6d"
         }
       ]
     },
@@ -7873,10 +7903,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed migration fixture and persistence assertions for resume version metadata.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "b0edc933184e36519e769294c25b3e43ab0972ef123cc797f0c653d0fdb0656f"
+      "observations": "Reviewed current source duration change and regression assertion; prior audit history is preserved.",
+      "evidence": "Exact-head run 44490477511: quality gate failed formatting under locked Prettier 3.9.9 after local formatter-version drift; services suite found partial search outcome assertion missing the additive durationMs field. Corrected with locked formatter and regression assertion; new exact-head CI pending.",
+      "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+      "sha256": "542932a1f3987014d2b08503fdfd39bfa03a96e2fe382abb7c16a671f165d678",
+      "history": [
+        {
+          "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+          "observations": "Reviewed migration fixture and persistence assertions for resume version metadata.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+          "sha256": "b0edc933184e36519e769294c25b3e43ab0972ef123cc797f0c653d0fdb0656f"
+        }
+      ]
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",

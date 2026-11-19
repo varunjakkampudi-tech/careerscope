@@ -2421,7 +2421,20 @@ test('partial search outcomes are atomic, owner-scoped, terminal and usable thro
         }
         const result = await database.getSearch(ownerId, queued.id);
         assert.equal(result?.status, allFailed ? 'failed' : 'partial');
-        assert.deepEqual(result?.sourceOutcomes, allFailed ? failedOutcomes : outcomes);
+        const recordedOutcomes = result?.sourceOutcomes;
+        assert.ok(recordedOutcomes);
+        assert.deepEqual(
+          recordedOutcomes.map(({ durationMs: _durationMs, ...outcome }) => outcome),
+          allFailed ? failedOutcomes : outcomes,
+        );
+        assert.ok(
+          recordedOutcomes.every(
+            (outcome) =>
+              typeof outcome.durationMs === 'number' &&
+              Number.isFinite(outcome.durationMs) &&
+              outcome.durationMs >= 0,
+          ),
+        );
         assert.equal(await database.executionStatus(queuedCommand.id), 'completed');
         assert.equal(
           await executeBullCommand(database, queuedCommand, execute, new AbortController().signal),

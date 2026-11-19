@@ -2520,7 +2520,9 @@ try {
         .waitFor();
       await sidebarNav.getByRole('link', { name: 'ఉద్యోగాలు', exact: true }).click();
       await page.waitForURL('**/jobs');
-      await page.getByRole('heading', { name: 'మీ తదుపరి పాత్రను కనుగొనండి', exact: true }).waitFor();
+      await page
+        .getByRole('heading', { name: 'మీ తదుపరి పాత్రను కనుగొనండి', exact: true })
+        .waitFor();
       assert.equal(await page.locator('aside.history').getAttribute('lang'), 'te');
       assert.equal(
         await page.locator('fieldset[aria-describedby="source-availability"]').getAttribute('lang'),
