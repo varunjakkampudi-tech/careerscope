@@ -2544,7 +2544,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "focused content update and current-status reconciliation",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2556,10 +2556,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ad5b2c4c36decbd93ba49723452d5f189353c61d14877eadd28d1dc60a206872",
+      "observations": "Reconciled item 4.08 current head, CI limitations, translation gate, and the current 43/328 verified inventory count.",
+      "evidence": "Reviewed the changed item 4.08 content against PR #83 exact head 4ef4b1bd8997b658eba733992864e792b7ca4f49, the current dev traceability inventory, and the independent exact-SHA review findings. Checklist status remains partial.",
+      "reviewer": "Codex (Stage 04 item 4.08 documentation correction)",
+      "sha256": "276f2f5ea04d4090f7b09f773be9824f597f203656c58e8e9fe074b9fe1b8bc9",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2786,6 +2786,26 @@
           "evidence": "Merged dev synchronization for the Stage 04 item 4.08 branch at origin/dev SHA 8d109aec7e25a9f106be07a36feca2f13da357b0; item 4.08 exact-head hosted CI and independent review remain pending. Item 4.10 closeout evidence from PRs #90 and #91 remains retained.",
           "reviewer": "Codex (Stage 04 item 4.08 dev synchronization audit)",
           "sha256": "273cf326852a1593453a213e5652dbd4b75535ac18b5a96f7e6d27a6da5f5b5e"
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F045",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The progress page published stale Stage 01 audit counts (19/481 reviewed and 7 partial) while the current manifest contained 160/498 reviewed at the audit start.",
+              "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
+            }
+          ],
+          "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+          "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "ad5b2c4c36decbd93ba49723452d5f189353c61d14877eadd28d1dc60a206872"
         }
       ]
     },
@@ -2850,14 +2870,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused merge-conflict reconciliation and traceability review",
+      "reviewMethod": "focused content update and current-status reconciliation",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Merged the current dev Stage 04/05 matrix with the retained PR #83 item 4.08 follow-up evidence. The item 4.08 section remains partial; Stage 05 evidence and gaps are preserved.",
-      "evidence": "Three-way reconciliation of the item 4.08 branch with current origin/dev. Item 4.08 old exact-head evidence remains historical; this matrix records no new CI or independent approval.",
-      "reviewer": "Codex (Stage 04 item 4.08 current-dev reconciliation)",
-      "sha256": "02769172d1978436a56b163a641bc55a90145723599ca862342cf9305a7d2a01",
+      "observations": "Updated the owner item 4.08 row after independent review found stale acceptance text; retained current Stage 05 rows and accurately recorded the still-running exact-head CI and need for a new run.",
+      "evidence": "Reviewed the changed item 4.08 content against PR #83 exact head 4ef4b1bd8997b658eba733992864e792b7ca4f49, the current dev traceability inventory, and the independent exact-SHA review findings. Checklist status remains partial.",
+      "reviewer": "Codex (Stage 04 item 4.08 documentation correction)",
+      "sha256": "a00d7d66abb34615e0aa61e5615d3ebeb9111a7f5b32d8f74c5f3fc312ebab31",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -3057,6 +3077,18 @@
           "evidence": "Merged dev synchronization for the Stage 04 item 4.08 branch at origin/dev SHA 8d109aec7e25a9f106be07a36feca2f13da357b0; item 4.08 exact-head hosted CI and independent review remain pending. Item 4.10 closeout evidence from PRs #90 and #91 remains retained.",
           "reviewer": "Codex (Stage 04 item 4.08 dev synchronization audit)",
           "sha256": "676355d9fb5d3cf5464c97c21cafdd5468ea4a45d22811ca4703149fcc7e2643"
+        },
+        {
+          "path": "docs/TEST-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused merge-conflict reconciliation and traceability review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Merged the current dev Stage 04/05 matrix with the retained PR #83 item 4.08 follow-up evidence. The item 4.08 section remains partial; Stage 05 evidence and gaps are preserved.",
+          "evidence": "Three-way reconciliation of the item 4.08 branch with current origin/dev. Item 4.08 old exact-head evidence remains historical; this matrix records no new CI or independent approval.",
+          "reviewer": "Codex (Stage 04 item 4.08 current-dev reconciliation)",
+          "sha256": "02769172d1978436a56b163a641bc55a90145723599ca862342cf9305a7d2a01"
         }
       ]
     },
@@ -3567,14 +3599,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "focused content update and current-status reconciliation",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "0ec57afbe5a7f42e4da76f1779efe9e2f92c59f16d858632947394b74480bc99",
+      "observations": "Updated item 4.08 evidence to identify the synchronized head, running CI jobs, follow-up exact-head requirement, and unresolved translation acceptance.",
+      "evidence": "Reviewed the changed item 4.08 content against PR #83 exact head 4ef4b1bd8997b658eba733992864e792b7ca4f49, the current dev traceability inventory, and the independent exact-SHA review findings. Checklist status remains partial.",
+      "reviewer": "Codex (Stage 04 item 4.08 documentation correction)",
+      "sha256": "92a62702536eb6259a12e142dc2f5639043f1e9841ebde0bd509a0ffaaf4df0d",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3744,6 +3776,18 @@
           "evidence": "Merged dev synchronization for the Stage 04 item 4.08 branch at origin/dev SHA 8d109aec7e25a9f106be07a36feca2f13da357b0; item 4.08 exact-head hosted CI and independent review remain pending. Item 4.10 closeout evidence from PRs #90 and #91 remains retained.",
           "reviewer": "Codex (Stage 04 item 4.08 dev synchronization audit)",
           "sha256": "fe1a17797d2028f9274f09cc356dca1f49a5e0a5621a4c9851a8d2690a0d9e32"
+        },
+        {
+          "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "0ec57afbe5a7f42e4da76f1779efe9e2f92c59f16d858632947394b74480bc99"
         }
       ]
     },
