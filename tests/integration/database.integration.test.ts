@@ -120,6 +120,20 @@ test('repeat collection preserves first-seen and advances last-seen timestamps',
     const afterRepeat = await readSighting();
     assert.equal(afterRepeat.firstSeenAt.toISOString(), beforeRepeat.firstSeenAt.toISOString());
     assert.ok(afterRepeat.lastSeenAt > beforeRepeat.lastSeenAt);
+
+    // Model a later transaction timestamp that committed first. A delayed transaction must not
+    // replace that observation with its earlier transaction-start time.
+    const laterObservation = await database.pool.query<{ lastSeenAt: Date }>(
+      `UPDATE job_sightings SET last_seen_at = now() + interval '1 day'
+       WHERE owner_id = $1 AND fingerprint = $2
+       RETURNING last_seen_at AS "lastSeenAt"`,
+      [ownerId, job.fingerprint],
+    );
+    const laterSeenAt = laterObservation.rows[0]!.lastSeenAt;
+    await collect('out-of-order-sighting');
+    const afterOutOfOrder = await readSighting();
+    assert.equal(afterOutOfOrder.firstSeenAt.toISOString(), initial.firstSeenAt.toISOString());
+    assert.equal(afterOutOfOrder.lastSeenAt.toISOString(), laterSeenAt.toISOString());
   } finally {
     await database.pool.end();
     await root.pool.query(`DROP DATABASE IF EXISTS "${name}"`);
