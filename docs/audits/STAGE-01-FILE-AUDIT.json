@@ -1306,10 +1306,18 @@
           "remediation": "Expose the Applied transition from saved leads and permit tags when the record is saved or archived before the transition; retain the restriction on tag edits after entering application statuses."
         }
       ],
-      "observations": "Read the complete saved-lead editor and save controls. Lead and history queries are owner-scoped; API mutations use CSRF and revision numbers; external links use safe target attributes; application evidence is explicitly candidate-reported. Found and fixed a data-loss path where status changes or evidence recording could omit unsaved tag edits; these mutations now include changed tags and confirmations disclose saving tags. Typecheck and package-scoped ESLint pass. Added a UI regression assertion for preserving tags when setting application evidence; the UI file now type-checks with the project test suite. Fixed S1-F072: the saved lead editor now offers Applied, and the core update policy keys tag-edit permission to the current saved/archived status. Full Chromium, Firefox, and WebKit UI acceptance passed.",
-      "evidence": "Full scripts/tests/check-ui.ts production acceptance on 2026-11-06 passed under Chromium, Firefox, and WebKit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "40fd54243516b2d64a2265fb7ee2e19e83052960ef5680fe0476c9402b935650"
+      "observations": "Disabled speculative Next.js route prefetch for the empty Saved Jobs action; the other dashboard job links use the same policy.",
+      "evidence": "Stage 01 item 1.04 exact-head CI follow-up on 2026-11-19; Firefox CI exposed a pending /jobs RSC prefetch across route changes.",
+      "reviewer": "Codex (Stage 01 item 1.04 CI follow-up)",
+      "sha256": "343ed69ab39a19024b66b341ae0887216703b97b858bfe104b928bed19113ec0",
+      "history": [
+        {
+          "observations": "Read the complete saved-lead editor and save controls. Lead and history queries are owner-scoped; API mutations use CSRF and revision numbers; external links use safe target attributes; application evidence is explicitly candidate-reported. Found and fixed a data-loss path where status changes or evidence recording could omit unsaved tag edits; these mutations now include changed tags and confirmations disclose saving tags. Typecheck and package-scoped ESLint pass. Added a UI regression assertion for preserving tags when setting application evidence; the UI file now type-checks with the project test suite. Fixed S1-F072: the saved lead editor now offers Applied, and the core update policy keys tag-edit permission to the current saved/archived status. Full Chromium, Firefox, and WebKit UI acceptance passed.",
+          "evidence": "Full scripts/tests/check-ui.ts production acceptance on 2026-11-06 passed under Chromium, Firefox, and WebKit.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "40fd54243516b2d64a2265fb7ee2e19e83052960ef5680fe0476c9402b935650"
+        }
+      ]
     },
     {
       "path": "apps/web/src/components/ui-states.module.css",
@@ -1516,7 +1524,9 @@
       "category": "frontend",
       "reviewMethod": "content-read",
       "state": "reviewed",
-      "concerns": ["localStorage access may throw in restricted browser contexts"],
+      "concerns": [
+        "localStorage access may throw in restricted browser contexts"
+      ],
       "findings": [
         {
           "id": "S1-F057",
@@ -7428,10 +7438,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
-      "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
-      "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd",
+      "observations": "Added a browser assertion that the empty Saved Jobs action does not leave a speculative route prefetch open.",
+      "evidence": "Stage 01 item 1.04 exact-head CI follow-up on 2026-11-19; regression coverage runs in all supported browser engines and responsive widths.",
+      "reviewer": "Codex (Stage 01 item 1.04 CI follow-up)",
+      "sha256": "3c44cd9ce2032e02454eb7d86e7ab10f74af44625f8b3921507a7f04d06f7624",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7449,6 +7459,12 @@
           "observations": "Updated the file audit after Stage 04 item 4.10 deletion test and progress evidence changes; the checklist item remains partial pending hosted integration/browser CI and independent approval.",
           "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
           "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
+          "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
+        },
+        {
+          "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
+          "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
         }
       ]
