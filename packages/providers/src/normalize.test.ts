@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { RawJob } from '@careerscope/shared';
+import { formatSalary } from '@careerscope/shared';
 import {
   canonicalCompany,
   canonicalLocation,
@@ -124,6 +125,31 @@ describe('normalizeJob', () => {
     const job = normalizeJob(rawJob({ location: undefined, description: FULL_JD }), { now: NOW });
 
     expect(job.location).toBe('Location not stated');
+  });
+
+  it('uses a title experience requirement when the description omits one', () => {
+    const job = normalizeJob(
+      rawJob({
+        title: 'Senior Backend Engineer — 6+ years of experience',
+        description: '',
+        hasFullDescription: false,
+      }),
+      { now: NOW },
+    );
+
+    expect(job.requiredYears).toEqual({ min: 6, max: null });
+  });
+
+  it('prefers the description experience requirement over title decoration', () => {
+    const job = normalizeJob(
+      rawJob({
+        title: 'Senior Backend Engineer — 6+ years of experience',
+        description: 'Requirements: 3-5 years of relevant experience.',
+      }),
+      { now: NOW },
+    );
+
+    expect(job.requiredYears).toEqual({ min: 3, max: 5 });
   });
 
   it('infers the employment type from the text when unset', () => {
@@ -287,6 +313,70 @@ describe('normalizeSalary', () => {
     expect(salary.raw).toBe('Competitive, $120k-$150k plus equity');
   });
 
+  it('uses raw salary wording for missing structured currency and period metadata', () => {
+    const salary = normalizeSalary(
+      rawJob({
+        salaryMin: 80_000,
+        salaryMax: 100_000,
+        salaryRaw: '$80,000-$100,000 per month',
+      }),
+    );
+
+    expect(salary).toMatchObject({
+      min: 80_000,
+      max: 100_000,
+      currency: 'USD',
+      period: 'month',
+      annualMin: 960_000,
+      annualMax: 1_200_000,
+    });
+  });
+
+  it('does not annualise structured amounts when the pay period is unknown', () => {
+    const salary = normalizeSalary(
+      rawJob({
+        salaryMin: 80_000,
+        salaryMax: 100_000,
+        salaryCurrency: 'USD',
+      }),
+    );
+
+    expect(salary).toMatchObject({ period: null, annualMin: null, annualMax: null });
+    expect(formatSalary(salary)).toBe('USD 80000–100000 (pay period not stated)');
+  });
+
+  it('keeps unstructured amounts without an explicit pay period out of annual values', () => {
+    const salary = normalizeSalary(rawJob({ salaryRaw: '$80,000 - $100,000' }));
+
+    expect(salary).toMatchObject({
+      period: null,
+      min: 80_000,
+      max: 100_000,
+      annualMin: null,
+      annualMax: null,
+    });
+    expect(formatSalary(salary)).toBe('$80,000 - $100,000 (pay period not stated)');
+  });
+
+  it('normalizes structured currency codes and keeps structured metadata authoritative', () => {
+    const salary = normalizeSalary(
+      rawJob({
+        salaryMin: 80_000,
+        salaryMax: 100_000,
+        salaryCurrency: ' eur ',
+        salaryPeriod: 'year',
+        salaryRaw: '$80,000-$100,000 per month',
+      }),
+    );
+
+    expect(salary).toMatchObject({
+      currency: 'EUR',
+      period: 'year',
+      annualMin: 80_000,
+      annualMax: 100_000,
+    });
+  });
+
   it('annualises a monthly figure', () => {
     const salary = normalizeSalary(
       rawJob({ salaryMin: 100_000, salaryCurrency: 'INR', salaryPeriod: 'month' }),
@@ -336,6 +426,12 @@ describe('normalizeLocation', () => {
 
   it('leaves a correctly cased location alone, including state codes', () => {
     expect(normalizeLocation('Bengaluru, KA', false)).toBe('Bengaluru, KA');
+  });
+
+  it('canonicalizes spaced hyphen, en dash, and em dash work-arrangement suffixes', () => {
+    expect(canonicalLocation('Pune - Hybrid')).toBe('pune');
+    expect(canonicalLocation('Pune – Hybrid')).toBe('pune');
+    expect(canonicalLocation('Pune — Hybrid')).toBe('pune');
   });
 });
 
@@ -495,6 +591,97 @@ describe('dedupeJobs', () => {
     // Confirms the split logic did not regress the ordinary multi-board case
     // above: greenhouse + naukri here contribute one id each.
     expect(dedupeJobs([atsFull, scrapedThin])).toHaveLength(1);
+  });
+
+  it('keeps same-fingerprint jobs apart when their explicit employment types conflict', () => {
+    const fullTime = normalizeJob(
+      rawJob({ source: 'greenhouse', sourceJobId: 'fulltime-1', employmentType: 'fulltime' }),
+      { now: NOW },
+    );
+    const contract = normalizeJob(
+      rawJob({ source: 'naukri', sourceJobId: 'contract-1', employmentType: 'contract' }),
+      { now: NOW },
+    );
+
+    const result = dedupeJobs([fullTime, contract]);
+
+    expect(result).toHaveLength(2);
+    expect(new Set(result.map((job) => job.fingerprint)).size).toBe(2);
+  });
+
+  it('keeps same-fingerprint jobs apart when their explicit experience ranges do not overlap', () => {
+    const earlyCareer = normalizeJob(
+      rawJob({
+        source: 'greenhouse',
+        sourceJobId: 'early-1',
+        description: 'Requirements: 2-4 years of relevant experience.',
+      }),
+      { now: NOW },
+    );
+    const experienced = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'experienced-1',
+        description: 'Requirements: 8+ years of relevant experience.',
+      }),
+      { now: NOW },
+    );
+
+    const result = dedupeJobs([earlyCareer, experienced]);
+
+    expect(result).toHaveLength(2);
+    expect(new Set(result.map((job) => job.fingerprint)).size).toBe(2);
+  });
+
+  it('merges compatible members of a conflicting three-source group deterministically', () => {
+    const greenhouse = normalizeJob(
+      rawJob({ source: 'greenhouse', sourceJobId: 'greenhouse-1', employmentType: 'fulltime' }),
+      { now: NOW },
+    );
+    const lever = normalizeJob(
+      rawJob({ source: 'lever', sourceJobId: 'lever-1', employmentType: 'fulltime' }),
+      { now: NOW },
+    );
+    const naukri = normalizeJob(
+      rawJob({ source: 'naukri', sourceJobId: 'naukri-1', employmentType: 'contract' }),
+      { now: NOW },
+    );
+
+    const forward = dedupeJobs([greenhouse, lever, naukri]);
+    const reversed = dedupeJobs([naukri, lever, greenhouse]);
+
+    expect(forward).toHaveLength(2);
+    expect(forward.find((job) => job.employmentType === 'fulltime')?.fingerprint).toBe(
+      greenhouse.fingerprint,
+    );
+    expect(forward.find((job) => job.employmentType === 'contract')?.fingerprint).not.toBe(
+      naukri.fingerprint,
+    );
+    expect(forward.map((job) => [job.employmentType, job.fingerprint]).sort()).toEqual(
+      reversed.map((job) => [job.employmentType, job.fingerprint]).sort(),
+    );
+  });
+
+  it('still merges compatible details and treats missing details as unknown', () => {
+    const fivePlus = normalizeJob(
+      rawJob({
+        source: 'greenhouse',
+        sourceJobId: 'five-plus-1',
+        description: 'Requires 5+ years.',
+      }),
+      { now: NOW },
+    );
+    const sixPlus = normalizeJob(
+      rawJob({ source: 'naukri', sourceJobId: 'six-plus-1', description: 'Requires 6+ years.' }),
+      { now: NOW },
+    );
+    const unknown = normalizeJob(
+      rawJob({ source: 'lever', sourceJobId: 'unknown-years-1', description: 'Apply today.' }),
+      { now: NOW },
+    );
+
+    expect(dedupeJobs([fivePlus, sixPlus])).toHaveLength(1);
+    expect(dedupeJobs([fivePlus, unknown])).toHaveLength(1);
   });
 });
 

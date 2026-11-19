@@ -18,6 +18,7 @@ import { recruiteeAdapter } from './recruitee.js';
 import { smartRecruitersAdapter } from './smartrecruiters.js';
 import { createWorkableAdapter } from './workable.js';
 import { context, query, routedFetch } from '../harness.fixtures.js';
+import { canonicalLocation, normalizeJob } from '../normalize.js';
 
 const ref = (source: BoardRef['source'], slug: string, company: string): BoardRef => ({
   source,
@@ -144,6 +145,32 @@ describe('lever', () => {
     });
   });
 
+  it('normalizes a representative provider posting across experience, salary, and location', () => {
+    const raw = leverAdapter.toRawJob(
+      {
+        ...posting,
+        text: 'Senior Backend Engineer — 6+ years of experience',
+        description: '<p>Build reliable payment services.</p>',
+        categories: { ...posting.categories, location: 'New York — Hybrid' },
+      },
+      board,
+    );
+    expect(raw).not.toBeNull();
+
+    const job = normalizeJob(raw!, { now: Date.parse('2026-09-05T12:00:00Z') });
+
+    expect(job.requiredYears).toEqual({ min: 6, max: null });
+    expect(job.salary).toMatchObject({
+      min: 150000,
+      max: 180000,
+      currency: 'USD',
+      period: 'year',
+      annualMin: 150000,
+      annualMax: 180000,
+    });
+    expect(canonicalLocation(job.location)).toBe('new york');
+  });
+
   it('omits salary fields entirely when the board states no range', () => {
     const job = leverAdapter.toRawJob({ ...posting, salaryRange: undefined }, board)!;
     expect(job.salaryMin).toBeUndefined();
@@ -190,6 +217,7 @@ describe('ashby', () => {
     location: 'San Francisco',
     secondaryLocations: [{ location: 'Remote' }],
     isRemote: false,
+    workplaceType: 'OnSite',
     isListed: true,
     employmentType: 'FullTime',
     publishedAt: '2026-08-15T00:00:00Z',
@@ -234,6 +262,28 @@ describe('ashby', () => {
     );
   });
 
+  it('preserves an explicit zero salary bound', () => {
+    const job = ashbyAdapter.toRawJob(
+      {
+        ...posting,
+        compensation: {
+          summaryComponents: [
+            {
+              compensationType: 'Salary',
+              interval: '1 YEAR',
+              currencyCode: 'USD',
+              minValue: 0,
+              maxValue: null,
+            },
+          ],
+        },
+      },
+      board,
+    );
+    expect(job).toMatchObject({ salaryMin: 0, salaryCurrency: 'USD', salaryPeriod: 'year' });
+    expect(job?.salaryMax).toBeUndefined();
+  });
+
   it('prefers HTML over the plain-text duplicate', () => {
     const job = ashbyAdapter.toRawJob(posting, board)!;
     expect(job.description).toBe('<p>Do research.</p>');
@@ -248,6 +298,26 @@ describe('ashby', () => {
 
   it('normalises the CamelCase employment type', () => {
     expect(ashbyAdapter.toRawJob(posting, board)?.employmentType).toBe('fulltime');
+  });
+
+  it('distinguishes remote from hybrid using workplaceType', () => {
+    expect(
+      ashbyAdapter.toRawJob({ ...posting, isRemote: true, workplaceType: 'Remote' }, board)
+        ?.isRemote,
+    ).toBe(true);
+    expect(
+      ashbyAdapter.toRawJob({ ...posting, isRemote: true, workplaceType: 'Hybrid' }, board)
+        ?.isRemote,
+    ).toBeUndefined();
+    expect(
+      ashbyAdapter.toRawJob({ ...posting, isRemote: true, workplaceType: 'OnSite' }, board)
+        ?.isRemote,
+    ).toBeUndefined();
+  });
+
+  it('uses isRemote only when workplaceType is absent', () => {
+    const { workplaceType: _workplaceType, ...legacyPosting } = posting;
+    expect(ashbyAdapter.toRawJob({ ...legacyPosting, isRemote: true }, board)?.isRemote).toBe(true);
   });
 
   it('drops postings the company has unlisted', async () => {

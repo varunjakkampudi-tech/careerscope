@@ -147,6 +147,10 @@ describe('buildCandidateContext — expected salary', () => {
     expect(expected('₹24,00,000')).toBe(2_400_000);
   });
 
+  it('uses the candidate expected-CTC annual convention for a bare number', () => {
+    expect(expected('150000')).toBe(150_000);
+  });
+
   it('is null when the user left it blank', () => {
     expect(expected('')).toBeNull();
     expect(expected('negotiable')).toBeNull();

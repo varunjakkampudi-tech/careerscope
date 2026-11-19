@@ -1080,11 +1080,28 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Existing provider adapters",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/registry.ts",
+        "packages/providers/src/ats/greenhouse.ts",
+        "packages/providers/src/ats/lever.ts",
+        "packages/providers/src/ats/ashby.ts",
+        "packages/providers/src/ats/workable.ts",
+        "packages/providers/src/remote/remoteok.ts",
+        "packages/providers/src/remote/himalayas.ts",
+        "packages/providers/src/keyed/adzuna.ts",
+        "packages/providers/src/keyed/jooble.ts",
+        "packages/providers/src/keyed/jsearch.ts",
+        "docs/PROVIDERS.md"
+      ],
+      "tests": [
+        "packages/providers/src/registry.test.ts",
+        "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/remote/feeds.test.ts",
+        "packages/providers/src/keyed/aggregators.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Existing ATS, remote-feed and credentialed-aggregator adapters are registered and focused fixture suites pass 162/162 tests across four files on local Node 22.23.2 (repository requires Node 24). No live provider requests or permitted-use rights were verified. docs/PROVIDERS.md records an empty production permission profile and disables all sources for production discovery. Item remains partial pending exact-head Node 24 CI and source-specific owner-approved permitted-use evidence.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1093,11 +1110,25 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "JSearch, where permitted",
       "sourceStatus": "Verify",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/keyed/jsearch.ts",
+        "packages/providers/src/keyed/aggregators.test.ts",
+        "packages/providers/src/registry.ts",
+        "packages/providers/src/registry.test.ts",
+        "packages/shared/src/job-source-policy.test.ts",
+        "docs/PROVIDERS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/providers/src/keyed/aggregators.test.ts",
+        "packages/providers/src/registry.test.ts",
+        "packages/shared/src/job-source-policy.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "PR #97 exact head 179b396d6301dc79142ac7c86f6c4c3b8aaf0207 passed all three required CI jobs in run 43859362745, received final independent approval, and merged to dev as e6ce13897be73436c56cff45331c5b48eb5d2d55; post-merge run 43861025732 passed Quality and Services/integration/browser, with image build skipped on push. JSearch remains partial because its response shape has not been validated against a live response. It is not a D14 launch candidate, and no source-specific permitted-use evidence or owner approval exists. No live call or production activation is claimed.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1106,11 +1137,26 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Greenhouse",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/ats/greenhouse.ts",
+        "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/registry.ts",
+        "packages/providers/src/registry.test.ts",
+        "packages/shared/src/job-source-policy.ts",
+        "packages/shared/src/job-source-policy.test.ts",
+        "docs/PROVIDERS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/registry.test.ts",
+        "packages/shared/src/job-source-policy.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "The existing Greenhouse adapter is covered by synthetic mapping and detail-fetch fixtures. PR #98 exact head 132cc91b9d77e829b795b337be30357f3f17218d passed all three required CI jobs in run 43861515890, received final independent approval, and merged to dev as bbb9f77725683af50134374ce86039142660d2a7. Greenhouse remains partial because source-specific permitted-use evidence, explicit owner approval, and an approved production permission profile are absent; no live request or rights verification was performed.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1119,11 +1165,26 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Lever",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/ats/lever.ts",
+        "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/registry.ts",
+        "packages/providers/src/registry.test.ts",
+        "packages/shared/src/job-source-policy.ts",
+        "packages/shared/src/job-source-policy.test.ts",
+        "docs/PROVIDERS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/registry.test.ts",
+        "packages/shared/src/job-source-policy.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Existing synthetic tests cover Lever pagination, mapping, description sections, registry, permission policy, and provider-to-normalizer fields. The local test rerun could not start because dependencies are absent and the available Node 22.23.2 is below the required Node 24. Lever remains disabled by the empty production permission profile; no current live schema or permitted-use rights were verified. Exact-head hosted CI and independent review remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1132,11 +1193,26 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Ashby",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/ats/ashby.ts",
+        "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/registry.ts",
+        "packages/providers/src/registry.test.ts",
+        "packages/shared/src/job-source-policy.ts",
+        "packages/shared/src/job-source-policy.test.ts",
+        "docs/PROVIDERS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/registry.test.ts",
+        "packages/shared/src/job-source-policy.test.ts"
+      ],
+      "externalEvidence": ["https://developers.ashbyhq.com/docs/public-job-posting-api"],
+      "gap": "Existing synthetic fixtures cover Ashby listing and compensation mapping, descriptions, employment type, unlisted-post filtering, and compensation opt-in. Added regressions use workplaceType to distinguish Remote from Hybrid because the official API contract says isRemote is true for both, and preserve a zero salary bound. Focused Node 24 Docker tests passed 69/69 across adapter, registry and policy suites. PR #100 exact head 50840ed664011c628faafcbd484cf6e695a70c66 passed exact-head CI run 43925291040 attempt 2 and independent review; it merged as 5adc5b6cb0e46f46590e74f98b975fda281cc881 and post-merge run 43928997965 passed the required push jobs. Published documentation is not live-response verification. Ashby remains disabled by the empty production permission profile; current live schema, source-specific permitted-use rights, explicit owner approval, and an approved production profile are still required.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1158,11 +1234,17 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Official company career feeds",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/career-markup.ts",
+        "packages/providers/src/index.ts",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/requirements/V12-REQUIREMENT-INVENTORY.json"
+      ],
+      "tests": ["packages/providers/src/career-markup.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "An offline, bounded reader extracts JobPosting JSON-LD snapshots and focused tests cover graph/array forms, required fields, URL safety, malformed input and size limits. No URL discovery, crawling, verified career-page set, permission profiles or coverage/quality measurements exist; do not enable collection or display until terms and coverage checks pass.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1171,11 +1253,17 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Job normalization",
       "sourceStatus": "Existing, expand",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "partial",
+      "evidence": ["packages/providers/src/normalize.ts", "docs/PROGRESS.md", "docs/GAP-MATRIX.md"],
+      "tests": [
+        "packages/providers/src/normalize.test.ts",
+        "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/remote/feeds.test.ts"
+      ],
+      "externalEvidence": [
+        "PR #101 exact-head Node 24 quality, integration and browser checks passed on implementation SHA 4b321d74dc298842e3ecafbf1908715c4e875cbd and merge SHA 061d1ad48b1e7688c089ece6407b7ff211229abf."
+      ],
+      "gap": "The canonical RawJob-to-Job normalization and focused tests exist, but item-specific acceptance of every provider adapter mapping has not been completed. Salary/location/experience behavior is separately tracked in verified item 5.10.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1184,11 +1272,16 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Cross-source deduplication",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/normalize.ts",
+        "docs/KNOWN-LIMITATIONS.md",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md"
+      ],
+      "tests": ["packages/providers/src/normalize.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Cross-source fingerprints are partitioned to preserve compatible subsets while separating explicit employment-type conflicts and disjoint experience ranges. Exact-head CI run 43943303626 passed and independent review approved head 8897f6eae21a921c6e785159ac1494acf2f88a11 against base 061d1ad48b1e7688c089ece6407b7ff211229abf; PR #102 merged as 4c6397f784f5e39331bf8c0e901058030e5c336c, and post-merge run 43945483574 passed Quality and Services/integration/browser. Ambiguous postings with no contradictory details may still merge when each source contributes one listing. Fingerprints can change when later source coverage reveals a conflict; saved leads and market sightings are not automatically reconciled. No universal cross-source requisition identifier or measured quality gate exists; item remains partial.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1197,12 +1290,27 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Salary/location/experience normalization",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
-      "scopeDisposition": "in-scope"
+      "currentStatus": "verified",
+      "evidence": [
+        "packages/providers/src/normalize.ts",
+        "packages/matching/src/demands.ts",
+        "packages/shared/src/format.ts",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md"
+      ],
+      "tests": [
+        "packages/providers/src/normalize.test.ts",
+        "packages/providers/src/ats/adapters.test.ts",
+        "packages/providers/src/remote/feeds.test.ts",
+        "packages/matching/src/demands.test.ts"
+      ],
+      "externalEvidence": [
+        "Implementation PR #94 head 3d2c0159cd96e7913b607b7f4469ca2aca1fa9a1 passed all three required Node 24 jobs in run 43847246428; independent review approved implementation at 0a943ccbd06074dc2e43522eed0b63df6c4fdc18 and documentation at 3d2c0159cd96e7913b607b7f4469ca2aca1fa9a1.",
+        "Merged to dev as ed6fef64e4051bf83b02a5bb1816ea8682b43ea7; post-merge run 43849480366 passed Quality gates and Services/integration/browser; production image job was skipped for the dev push."
+      ],
+      "gap": "",
+      "scopeDisposition": "in-scope",
+      "reviewer": "ChatGPT exact-SHA review on PR #94 implementation and closeout revisions"
     },
     {
       "id": "5.11",
@@ -1210,11 +1318,23 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Provider provenance",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/normalize.ts",
+        "apps/workers/search/src/collect.ts",
+        "packages/core/src/jobs.ts",
+        "packages/core/src/database.ts",
+        "packages/shared/src/types.ts",
+        "apps/web/src/components/job-search-view.tsx",
+        "apps/web/src/components/saved-leads.tsx"
+      ],
+      "tests": [
+        "apps/workers/search/src/collect.test.ts",
+        "packages/providers/src/normalize.test.ts",
+        "packages/core/src/market.integration.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Source and contributing source links are preserved and displayed; end-to-end acceptance for every launch-eligible provider and stable provenance when provider coverage changes have not been completed.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1236,11 +1356,11 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Provider retries and circuit breakers",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": ["packages/providers/src/http.ts", "docs/PROGRESS.md", "docs/GAP-MATRIX.md"],
+      "tests": ["packages/providers/src/http.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "The shared HTTP client has bounded transient retries, capped Retry-After handling, and a per-host circuit breaker that opens after five exhausted transient request cycles by default and allows one recovery probe after 30 seconds. Generation and failure-revision guards reject stale completions across open, recovery, and closed failure streaks while retaining concurrent failure counting. Fresh exact-head CI and independent review of the latest correction remain outstanding. Circuit health is host-scoped rather than provider-source policy/telemetry. Live behavior and source-specific tuning remain outstanding; no provider is activated.",
       "scopeDisposition": "in-scope"
     },
     {
