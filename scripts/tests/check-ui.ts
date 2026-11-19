@@ -1012,6 +1012,14 @@ try {
       await signupPage.getByRole('button', { name: 'Can’t access your email?', exact: true }).click();
       await signupPage.getByRole('heading', { level: 2, name: 'Recover access' }).waitFor();
       await accessible(signupPage, engine, 'recovery sign-in request form', 'Sign in to CareerScope');
+      for (const width of responsiveWidthsEndingAt(1440)) {
+        await signupPage.setViewportSize({ width, height: 900 });
+        assert.equal(
+          await signupPage.evaluate(() => document.documentElement.scrollWidth > innerWidth),
+          false,
+          `${engine} recovery sign-in form overflows at ${width}px`,
+        );
+      }
       await signupPage.getByRole('button', { name: 'Back to sign in', exact: true }).click();
       await signupPage.getByRole('button', { name: 'Can’t access your email?', exact: true }).waitFor();
       await signupPage.getByRole('button', { name: 'Can’t access your email?', exact: true }).click();
