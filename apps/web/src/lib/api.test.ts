@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { ApiError, apiJson, apiParsed, isNotFound, offersDiscardAndReload } from './api';
+import {
+  ApiError,
+  apiJson,
+  apiParsed,
+  isNotFound,
+  offersDiscardAndReload,
+  SESSION_EXPIRED_EVENT,
+} from './api';
 import { parseAccountSessions, parseMarketingConsent, parseSession } from './api-schemas';
 
 /**
@@ -300,6 +307,49 @@ test('concurrent expired requests share one refresh operation', async () => {
     ]);
     assert.deepEqual([first.ok, second.ok], [true, true]);
     assert.equal(refreshCalls, 1);
+  } finally {
+    globalThis.fetch = async () => Response.json({ authenticated: false });
+    await apiJson('/session');
+    globalThis.fetch = originalFetch;
+    if (originalWindow) Object.defineProperty(globalThis, 'window', originalWindow);
+    else Reflect.deleteProperty(globalThis, 'window');
+  }
+});
+
+test('an invalid recovery sign-in code does not trigger session refresh or expiry handling', async () => {
+  const originalFetch = globalThis.fetch;
+  const originalWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  let sessionExpiredEvents = 0;
+  Object.defineProperty(globalThis, 'window', {
+    configurable: true,
+    value: {
+      dispatchEvent: (event: Event) => {
+        if (event.type === SESSION_EXPIRED_EVENT) sessionExpiredEvents += 1;
+        return true;
+      },
+    },
+  });
+  let refreshCalls = 0;
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    if (url === '/api/session/refresh') refreshCalls += 1;
+    if (url === '/api/recovery/verify')
+      return Response.json(
+        { error: 'Invalid or expired recovery code', requestId: 'r-recovery' },
+        { status: 401 },
+      );
+    return Response.json({ error: 'unexpected request' }, { status: 500 });
+  };
+  try {
+    await assert.rejects(
+      apiJson('/recovery/verify', { method: 'POST', body: '{}' }),
+      (error: unknown) =>
+        error instanceof ApiError &&
+        error.status === 401 &&
+        error.message === 'The code is invalid or expired. Request a new code and try again.',
+    );
+    assert.equal(refreshCalls, 0);
+    assert.equal(sessionExpiredEvents, 0);
   } finally {
     globalThis.fetch = async () => Response.json({ authenticated: false });
     await apiJson('/session');

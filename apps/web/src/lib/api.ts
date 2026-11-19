@@ -189,7 +189,14 @@ async function request(path: string, options: RequestInit, mayRefresh: boolean):
     response.status === 401 &&
     mayRefresh &&
     typeof window !== 'undefined' &&
-    !['/session', '/session/refresh', '/login', '/otp/request', '/otp/verify'].includes(path) &&
+    ![
+      '/session',
+      '/session/refresh',
+      '/login',
+      '/otp/request',
+      '/otp/verify',
+      '/recovery/verify',
+    ].includes(path) &&
     !(typeof ReadableStream !== 'undefined' && options.body instanceof ReadableStream)
   ) {
     await response.body?.cancel();
@@ -220,7 +227,7 @@ async function request(path: string, options: RequestInit, mayRefresh: boolean):
     const messages: Record<number, string> = {
       400: 'Check the fields and try again.',
       401:
-        path === '/otp/verify'
+        path === '/otp/verify' || path === '/recovery/verify'
           ? 'The code is invalid or expired. Request a new code and try again.'
           : path === '/login'
             ? 'Invalid email or password.'
@@ -235,6 +242,7 @@ async function request(path: string, options: RequestInit, mayRefresh: boolean):
       response.status === 401 &&
       path !== '/login' &&
       path !== '/otp/verify' &&
+      path !== '/recovery/verify' &&
       typeof window !== 'undefined'
     ) {
       window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));

@@ -450,9 +450,9 @@
       "sourceStatus": "Partial",
       "currentStatus": "partial",
       "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
-      "tests": ["scripts/tests/check-ui.ts"],
+      "tests": ["apps/web/src/lib/api.test.ts", "scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "The program stage is recorded complete with this item-level limitation carried forward; see the cited stage evidence.",
+      "gap": "Owner source marks this item Partial without item-level acceptance criteria. Lost-email recovery sign-in browser coverage is implemented and passed exact-head hosted run 44593154165; final independent review and clarification of the remaining owner acceptance gate are pending.",
       "scopeDisposition": "in-scope"
     },
     {
