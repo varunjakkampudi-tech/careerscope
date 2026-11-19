@@ -1370,8 +1370,11 @@
         "apps/web/src/lib/locale.test.ts",
         "scripts/tests/check-ui.ts"
       ],
-      "externalEvidence": [],
-      "gap": "Accessible client-side pagination covers the currently collected result set in bounded 20-item pages. Filtering and search-run changes reset the displayed page to 1; shrinking results clamp the page. Node 24 focused tests pass 13/13 and full typecheck passes for 98 canonical test files. Hosted run 44480476991 passed Quality gates, integration tests, and production image builds but browser acceptance failed because the test expected page 3 to persist across a run switch. The browser fixture now checks the implemented reset behavior; exact-head CI remains pending. The local full unit suite had five subprocess startup timeouts under Docker. Additional provider-page fetching is not implemented, and the checklist title does not specify full acceptance criteria.",
+      "externalEvidence": [
+        "GitHub Actions run 44481976858 passed Quality gates, PostgreSQL/Redis integration, browser/accessibility/keyboard/responsive checks, and production image build on exact SHA 522092825650da7aefa42e655b9d1f04e7f23c41.",
+        "Independent exact-SHA review approved PR #104 at 522092825650da7aefa42e655b9d1f04e7f23c41 against base fad57ea3253024983f29183acefaee59328d0d01."
+      ],
+      "gap": "Accessible client-side pagination covers the currently collected result set in bounded 20-item pages. Filtering and search-run changes reset the displayed page to 1; returning to a prior run also starts at page 1 rather than restoring its prior page. Shrinking results clamps the page. Node 24 focused pagination/locale tests passed 13/13; full typecheck passed for 98 canonical test files. Exact-head run 44481976858 passed all three jobs on SHA 522092825650da7aefa42e655b9d1f04e7f23c41, and independent exact-SHA review accepted the engineering implementation. The local full unit suite had five subprocess startup timeouts under Docker. Pagination does not fetch additional provider pages, and the source checklist title does not define whether provider-page continuation is required; item remains partial pending scope clarification and acceptance.",
       "scopeDisposition": "in-scope"
     },
     {

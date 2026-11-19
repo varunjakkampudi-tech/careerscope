@@ -1920,10 +1920,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.14 evidence to describe run-change pagination reset and the latest hosted browser result. Status remains partial pending passing exact-head browser CI and owner scope confirmation.",
-      "evidence": "Node 24 focused pagination/locale tests passed 13/13; full typecheck passed for 98 canonical test files; run 44480476991 passed Quality, integration and image jobs but browser coverage failed on an incorrect page-retention expectation. Corrected behavior and tests are pending CI.",
-      "reviewer": "Codex (CareerScope owner item 5.14 evidence update)",
-      "sha256": "306e6c6e89c81d308ef444636f0ab1c0274b66471532110e94f2443316eb39c2",
+      "observations": "Updated item 5.14 evidence to describe run-change pagination reset and the latest hosted browser result. Status remains partial pending passing exact-head browser CI and owner scope confirmation. Updated after exact-head review and CI for Stage 05 item 5.14; item remains partial because provider-page continuation scope is unspecified and unimplemented.",
+      "evidence": "Documentation updated after successful exact-head run 44481976858 on SHA 522092825650da7aefa42e655b9d1f04e7f23c41 and independent approval. Pagination remains limited to collected results; no provider-page fetching is claimed.",
+      "reviewer": "Codex (Stage 05 item 5.14 CI closeout)",
+      "sha256": "66b8ce3990f9c0e416de415c949925375cf757d06665904a9270a2fb01f6438a",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2068,6 +2068,12 @@
           "observations": "Updated item 5.14 evidence after reviewing the exact-head hosted CI failure and deterministic test correction. Status remains partial pending a passing hosted browser run and scope confirmation.",
           "evidence": "Node 24 focused pagination/locale tests passed 13/13; full typecheck passed with 98 canonical test files; prior run 43995234077 passed Quality, integration and image jobs but failed browser coverage at run selection. Corrected exact-run fixture is pending hosted CI.",
           "sha256": "34553a98780c43b1e005bbf5ade7d2155e3eda4f9fb0a594ebe4ce8d0a3ffcf1"
+        },
+        {
+          "observations": "Updated item 5.14 evidence to describe run-change pagination reset and the latest hosted browser result. Status remains partial pending passing exact-head browser CI and owner scope confirmation.",
+          "evidence": "Node 24 focused pagination/locale tests passed 13/13; full typecheck passed for 98 canonical test files; run 44480476991 passed Quality, integration and image jobs but browser coverage failed on an incorrect page-retention expectation. Corrected behavior and tests are pending CI.",
+          "reviewer": "Codex (CareerScope owner item 5.14 evidence update)",
+          "sha256": "306e6c6e89c81d308ef444636f0ab1c0274b66471532110e94f2443316eb39c2"
         }
       ]
     },
@@ -2142,10 +2148,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated item 5.14 evidence to describe run-change pagination reset and the latest hosted browser result. Status remains partial pending passing exact-head browser CI and owner scope confirmation.",
-      "evidence": "Node 24 focused pagination/locale tests passed 13/13; full typecheck passed for 98 canonical test files; run 44480476991 passed Quality, integration and image jobs but browser coverage failed on an incorrect page-retention expectation. Corrected behavior and tests are pending CI.",
-      "reviewer": "Codex (CareerScope owner item 5.14 evidence update)",
-      "sha256": "34396ad1bad2e747ecc5eb48f4b0748da382114215cfb7d64876e9125ff1e9b9",
+      "observations": "Updated item 5.14 evidence to describe run-change pagination reset and the latest hosted browser result. Status remains partial pending passing exact-head browser CI and owner scope confirmation. Updated after exact-head review and CI for Stage 05 item 5.14; item remains partial because provider-page continuation scope is unspecified and unimplemented.",
+      "evidence": "Documentation updated after successful exact-head run 44481976858 on SHA 522092825650da7aefa42e655b9d1f04e7f23c41 and independent approval. Pagination remains limited to collected results; no provider-page fetching is claimed.",
+      "reviewer": "Codex (Stage 05 item 5.14 CI closeout)",
+      "sha256": "3d51b0d80866038c4c678d8768e6131f82d89feeab7ce0408c4c3970cf74593b",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2308,6 +2314,12 @@
           "observations": "Updated item 5.14 evidence after reviewing the exact-head hosted CI failure and deterministic test correction. Status remains partial pending a passing hosted browser run and scope confirmation.",
           "evidence": "Node 24 focused pagination/locale tests passed 13/13; full typecheck passed with 98 canonical test files; prior run 43995234077 passed Quality, integration and image jobs but failed browser coverage at run selection. Corrected exact-run fixture is pending hosted CI.",
           "sha256": "53ede32e0254bfe7075bcdc38059885e38c669b99ea328756b4e3abe5e9a4495"
+        },
+        {
+          "observations": "Updated item 5.14 evidence to describe run-change pagination reset and the latest hosted browser result. Status remains partial pending passing exact-head browser CI and owner scope confirmation.",
+          "evidence": "Node 24 focused pagination/locale tests passed 13/13; full typecheck passed for 98 canonical test files; run 44480476991 passed Quality, integration and image jobs but browser coverage failed on an incorrect page-retention expectation. Corrected behavior and tests are pending CI.",
+          "reviewer": "Codex (CareerScope owner item 5.14 evidence update)",
+          "sha256": "34396ad1bad2e747ecc5eb48f4b0748da382114215cfb7d64876e9125ff1e9b9"
         }
       ]
     },
@@ -2362,10 +2374,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.14 evidence to describe run-change pagination reset and the latest hosted browser result. Status remains partial pending passing exact-head browser CI and owner scope confirmation.",
-      "evidence": "Node 24 focused pagination/locale tests passed 13/13; full typecheck passed for 98 canonical test files; run 44480476991 passed Quality, integration and image jobs but browser coverage failed on an incorrect page-retention expectation. Corrected behavior and tests are pending CI.",
-      "reviewer": "Codex (CareerScope owner item 5.14 evidence update)",
-      "sha256": "0f28d81c1d130437da9d7a130a1d2eb1c592639112774302d1192f0bc4a503c0",
+      "observations": "Updated item 5.14 evidence to describe run-change pagination reset and the latest hosted browser result. Status remains partial pending passing exact-head browser CI and owner scope confirmation. Updated after exact-head review and CI for Stage 05 item 5.14; item remains partial because provider-page continuation scope is unspecified and unimplemented.",
+      "evidence": "Documentation updated after successful exact-head run 44481976858 on SHA 522092825650da7aefa42e655b9d1f04e7f23c41 and independent approval. Pagination remains limited to collected results; no provider-page fetching is claimed.",
+      "reviewer": "Codex (Stage 05 item 5.14 CI closeout)",
+      "sha256": "2eb6b4fc2649f4061b2e5643c4be2353f13708f5a9d6b9c3db75f0a404256f24",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2516,6 +2528,12 @@
           "observations": "Updated item 5.14 evidence after reviewing the exact-head hosted CI failure and deterministic test correction. Status remains partial pending a passing hosted browser run and scope confirmation.",
           "evidence": "Node 24 focused pagination/locale tests passed 13/13; full typecheck passed with 98 canonical test files; prior run 43995234077 passed Quality, integration and image jobs but failed browser coverage at run selection. Corrected exact-run fixture is pending hosted CI.",
           "sha256": "32700769477d95d10582ddb4847593960f44eb156f901b421576c83dd34dd93a"
+        },
+        {
+          "observations": "Updated item 5.14 evidence to describe run-change pagination reset and the latest hosted browser result. Status remains partial pending passing exact-head browser CI and owner scope confirmation.",
+          "evidence": "Node 24 focused pagination/locale tests passed 13/13; full typecheck passed for 98 canonical test files; run 44480476991 passed Quality, integration and image jobs but browser coverage failed on an incorrect page-retention expectation. Corrected behavior and tests are pending CI.",
+          "reviewer": "Codex (CareerScope owner item 5.14 evidence update)",
+          "sha256": "0f28d81c1d130437da9d7a130a1d2eb1c592639112774302d1192f0bc4a503c0"
         }
       ]
     },
@@ -2955,10 +2973,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.14 evidence to describe run-change pagination reset and the latest hosted browser result. Status remains partial pending passing exact-head browser CI and owner scope confirmation.",
-      "evidence": "Node 24 focused pagination/locale tests passed 13/13; full typecheck passed for 98 canonical test files; run 44480476991 passed Quality, integration and image jobs but browser coverage failed on an incorrect page-retention expectation. Corrected behavior and tests are pending CI.",
-      "reviewer": "Codex (CareerScope owner item 5.14 evidence update)",
-      "sha256": "9305c64ba0d403b23fb6561e8ef5578cff98f244aebeb099ec08b3fee316f1b2",
+      "observations": "Updated item 5.14 evidence to describe run-change pagination reset and the latest hosted browser result. Status remains partial pending passing exact-head browser CI and owner scope confirmation. Updated after exact-head review and CI for Stage 05 item 5.14; item remains partial because provider-page continuation scope is unspecified and unimplemented.",
+      "evidence": "Documentation updated after successful exact-head run 44481976858 on SHA 522092825650da7aefa42e655b9d1f04e7f23c41 and independent approval. Pagination remains limited to collected results; no provider-page fetching is claimed.",
+      "reviewer": "Codex (Stage 05 item 5.14 CI closeout)",
+      "sha256": "508d861766da8ba728f2b3c9a796ac31d51464c9359b04bce63f46ef28e358fc",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3091,6 +3109,12 @@
           "observations": "Updated item 5.14 evidence after reviewing the exact-head hosted CI failure and deterministic test correction. Status remains partial pending a passing hosted browser run and scope confirmation.",
           "evidence": "Node 24 focused pagination/locale tests passed 13/13; full typecheck passed with 98 canonical test files; prior run 43995234077 passed Quality, integration and image jobs but failed browser coverage at run selection. Corrected exact-run fixture is pending hosted CI.",
           "sha256": "a562727f2ce714c0abf338abf1d191837ee4afd39aff293a7a5c8771d2513fb2"
+        },
+        {
+          "observations": "Updated item 5.14 evidence to describe run-change pagination reset and the latest hosted browser result. Status remains partial pending passing exact-head browser CI and owner scope confirmation.",
+          "evidence": "Node 24 focused pagination/locale tests passed 13/13; full typecheck passed for 98 canonical test files; run 44480476991 passed Quality, integration and image jobs but browser coverage failed on an incorrect page-retention expectation. Corrected behavior and tests are pending CI.",
+          "reviewer": "Codex (CareerScope owner item 5.14 evidence update)",
+          "sha256": "9305c64ba0d403b23fb6561e8ef5578cff98f244aebeb099ec08b3fee316f1b2"
         }
       ]
     },
