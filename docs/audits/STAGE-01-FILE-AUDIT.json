@@ -2550,10 +2550,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the accepted low-priority follow-ups and S1-F014 risk; current text distinguishes these from completed Stage 01 gates.",
-      "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 closeout)",
-      "sha256": "1733c894b0444d460a59cae2e9e5f8b97f95b080c4f566bc12732d5a11acb728"
+      "observations": "Current exact-dev evidence records the 520-file audit, zero open findings, the single test-fixture marker false positive, exact-SHA dependency audits and passing quality/services jobs. The two low-priority items and accepted S1-F014 risk remain explicit.",
+      "evidence": "Owner item 1.10, exact dev SHA fad57ea3253024983f29183acefaee59328d0d01, GitHub Actions run 43957299898; SHA-256 records current reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.10 evidence refresh)",
+      "sha256": "5802c5f46aaa939c99bee7f2e77a5dde55c1ef961891950974f2ecd4d5b0b026",
+      "history": [
+        {
+          "observations": "Reviewed the accepted low-priority follow-ups and S1-F014 risk; current text distinguishes these from completed Stage 01 gates.",
+          "evidence": "Content reviewed and aligned to Stage 01 closeout on codex/stage01-closeout-acceptance.",
+          "reviewer": "Codex (Stage 01 closeout)",
+          "sha256": "1733c894b0444d460a59cae2e9e5f8b97f95b080c4f566bc12732d5a11acb728"
+        }
+      ]
     },
     {
       "path": "docs/audits/STAGE-01-FILE-AUDIT.json",
