@@ -1034,7 +1034,10 @@ try {
       assert.deepEqual(recoveryRequestBody, { email: recoveryEmail });
       await signupPage.getByLabel('Six-digit code').fill('000000');
       await signupPage.getByRole('button', { name: 'Sign in with recovery code' }).click();
-      await signupPage.getByRole('alert').filter({ hasText: 'Invalid or expired recovery code' }).waitFor();
+      await signupPage
+        .getByRole('alert')
+        .filter({ hasText: 'The code is invalid or expired. Request a new code and try again.' })
+        .waitFor();
       assert.equal(await signupPage.getByLabel('Six-digit code').inputValue(), '');
       await signupPage.getByLabel('Six-digit code').fill('654321');
       await signupPage.getByRole('button', { name: 'Sign in with recovery code' }).click();
