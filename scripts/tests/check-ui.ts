@@ -390,8 +390,16 @@ try {
         source: 'himalayas',
         sourceUrl: 'https://himalayas.app/jobs/synthetic',
         sourceLinks: [
-          { source: 'himalayas', url: 'https://himalayas.app/jobs/synthetic' },
-          { source: 'remoteok', url: 'https://remoteok.com/remote-jobs/synthetic' },
+          {
+            source: 'remoteok',
+            url: 'https://remoteok.com/remote-jobs/synthetic',
+            verification: { status: 'configured_host_match', reason: 'host_match' },
+          },
+          {
+            source: 'himalayas',
+            url: 'https://himalayas.app/jobs/synthetic',
+            verification: { status: 'unverified', reason: 'legacy_record' },
+          },
         ],
         applyUrl: 'https://example.test/apply',
         postedAt: null,
@@ -3443,6 +3451,35 @@ try {
       );
       assert.equal(resultBody.jobs[0].data.title, 'Scored React Engineer');
       assert.equal(resultBody.jobs[1].data.match, null);
+      const verificationFixture = resultBody.jobs.find(
+        (job: { data: { title?: string } }) => job.data.title === 'Senior React Engineer',
+      );
+      assert.deepEqual(
+        verificationFixture?.data.sourceLinks?.map(
+          (link: {
+            source: string;
+            url: string;
+            verification?: { status: string; reason: string };
+          }) => ({
+            source: link.source,
+            url: link.url,
+            verification: link.verification,
+          }),
+        ),
+        [
+          {
+            source: 'remoteok',
+            url: 'https://remoteok.com/remote-jobs/synthetic',
+            verification: { status: 'configured_host_match', reason: 'host_match' },
+          },
+          {
+            source: 'himalayas',
+            url: 'https://himalayas.app/jobs/synthetic',
+            verification: { status: 'unverified', reason: 'legacy_record' },
+          },
+        ],
+        'the API preserves each source URL verification result',
+      );
       await page.getByText('Not scored', { exact: true }).waitFor();
       await page.getByRole('heading', { name: 'Scored React Engineer', exact: true }).click();
       await page.getByRole('region', { name: 'Match evidence' }).waitFor();
@@ -3518,19 +3555,30 @@ try {
         1,
         'changing feedback updates the existing owner/job row instead of creating a duplicate',
       );
-      await page.getByText('Senior React Engineer', { exact: true }).click();
+      const verificationCard = page.locator('details.job').filter({
+        hasText: 'Senior React Engineer',
+      });
+      await verificationCard.getByText('Senior React Engineer', { exact: true }).click();
+      const remoteOkLink = verificationCard.locator(
+        'a[href="https://remoteok.com/remote-jobs/synthetic"]',
+      );
       assert.equal(
-        await page
-          .locator('details.job')
-          .filter({ hasText: 'Senior React Engineer' })
-          .getByRole('link', { name: /Remote OK.*Host matches source configuration/ })
-          .getAttribute('href'),
+        await remoteOkLink.getByText('Host matches source configuration', { exact: true }).count(),
+        1,
+      );
+      const himalayasLink = verificationCard.locator(
+        'a[href="https://himalayas.app/jobs/synthetic"]',
+      );
+      assert.equal(
+        await himalayasLink.getByText('Source URL unverified', { exact: true }).count(),
+        1,
+      );
+      assert.equal(
+        await remoteOkLink.getAttribute('href'),
         'https://remoteok.com/remote-jobs/synthetic',
       );
       assert.equal(
-        await page
-          .getByRole('link', { name: /Himalayas.*Host matches source configuration/ })
-          .getAttribute('href'),
+        await himalayasLink.getAttribute('href'),
         'https://himalayas.app/jobs/synthetic',
       );
       await page

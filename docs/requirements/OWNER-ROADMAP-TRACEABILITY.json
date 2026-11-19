@@ -1435,12 +1435,13 @@
       ],
       "tests": [
         "packages/providers/src/source-verification.test.ts",
+        "packages/providers/src/normalize.test.ts",
         "apps/workers/search/src/collect.test.ts",
         "packages/core/src/leads.test.ts",
         "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "Configured host checks record whether each source URL agrees with the adapter that returned it; unknown third-party destinations and legacy links remain unverified. This does not establish employer identity, listing liveness, provider permission, or content accuracy. Exact-worktree Node 24 typecheck passed (99 canonical test files), domain tests passed 975/975 across 35 files including eight source-verification tests, production-mode build/CSP passed (14/14 hashes), lint passed with four existing warnings, formatting and roadmap traceability passed. Full unit suite exited nonzero because five existing process-startup subprocess tests timed out at their 10–15 second limits in the Windows Docker bind-mounted environment. Exact-head hosted CI and independent review remain pending.",
+      "gap": "Configured host checks record whether each original source URL agrees with the adapter that returned it; unknown third-party destinations and legacy links remain unverified. This does not establish employer identity, listing liveness, provider permission, or content accuracy. Independent review identified and prompted fixes for a nonstandard-port normalization bypass and saved-lead source/result mismatch. Exact-worktree Node 24 typecheck passed (99 canonical test files), domain tests passed 976/976 across 35 files including the regression, production build/CSP passed (14/14 hashes), formatting and roadmap traceability passed, and lint passed with four existing warnings. The browser fixture asserts API preservation and UI display for positive and legacy-unverified links; local browser execution did not start because `.env` is absent. Final file audit, exact-head hosted CI and follow-up independent review remain pending.",
       "scopeDisposition": "in-scope"
     },
     {

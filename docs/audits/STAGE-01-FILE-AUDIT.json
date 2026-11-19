@@ -1476,10 +1476,10 @@
           "remediation": "Expose the Applied transition from saved leads and permit tags when the record is saved or archived before the transition; retain the restriction on tag edits after entering application statuses."
         }
       ],
-      "observations": "Reviewed the current item 6.04 implementation or documentation diff; prior file-level audit record is retained in history where applicable. Exact-worktree Node 24 typecheck, domain suite, production-mode build, lint, formatting and roadmap traceability results are recorded; full unit suite has five existing subprocess timeout failures.",
-      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 975/975 across 35 files including eight source-verification tests; production-mode build/CSP passed (14/14 hashes); lint passed with four existing warnings; formatting and roadmap traceability passed. Full unit suite exited nonzero on five existing process-startup subprocess ETIMEDOUT failures.",
+      "observations": "Reviewed the current source or documentation diff for item 6.04. Corrections verify original URLs before normalization, keep saved-lead source labels paired with the matching source URL result, and assert API plus UI verification display for configured and legacy links. Full browser acceptance remains pending.",
+      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope item 6.04 scoped review)",
-      "sha256": "bc865ad840d9c5aec0c6fc9ea8de9ae9bb039eb4eeec320be17f02cad57eaa62",
+      "sha256": "67593fccea06aaf0870ee96b01bdfeed6f001101c9afd2e7128215862db9a6ea",
       "history": [
         {
           "category": "frontend",
@@ -2302,10 +2302,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current item 6.04 implementation or documentation diff; prior file-level audit record is retained in history where applicable. Exact-worktree Node 24 typecheck, domain suite, production-mode build, lint, formatting and roadmap traceability results are recorded; full unit suite has five existing subprocess timeout failures.",
-      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 975/975 across 35 files including eight source-verification tests; production-mode build/CSP passed (14/14 hashes); lint passed with four existing warnings; formatting and roadmap traceability passed. Full unit suite exited nonzero on five existing process-startup subprocess ETIMEDOUT failures.",
+      "observations": "Reviewed the current source or documentation diff for item 6.04. Corrections verify original URLs before normalization, keep saved-lead source labels paired with the matching source URL result, and assert API plus UI verification display for configured and legacy links. Full browser acceptance remains pending.",
+      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope item 6.04 scoped review)",
-      "sha256": "d573ce024668071b4509ea4e16293ce58db974f2c8e7e05f2d0a55b36bc5e8f9",
+      "sha256": "3099c1dacad34bcc1c00ce3f4ad4e09d2fc7b1b55b381967fc96961514e23dfa",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2544,10 +2544,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the current item 6.04 implementation or documentation diff; prior file-level audit record is retained in history where applicable. Exact-worktree Node 24 typecheck, domain suite, production-mode build, lint, formatting and roadmap traceability results are recorded; full unit suite has five existing subprocess timeout failures.",
-      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 975/975 across 35 files including eight source-verification tests; production-mode build/CSP passed (14/14 hashes); lint passed with four existing warnings; formatting and roadmap traceability passed. Full unit suite exited nonzero on five existing process-startup subprocess ETIMEDOUT failures.",
+      "observations": "Reviewed the current source or documentation diff for item 6.04. Corrections verify original URLs before normalization, keep saved-lead source labels paired with the matching source URL result, and assert API plus UI verification display for configured and legacy links. Full browser acceptance remains pending.",
+      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope item 6.04 scoped review)",
-      "sha256": "c659587925f0466aebafd72125483f6d6c4366000df3789f47d7b35deb557e7a",
+      "sha256": "1121d490d581354538b6de4b4b516105228c821c20236940f96a688ee8d82710",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2860,10 +2860,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current item 6.04 implementation or documentation diff; prior file-level audit record is retained in history where applicable. Exact-worktree Node 24 typecheck, domain suite, production-mode build, lint, formatting and roadmap traceability results are recorded; full unit suite has five existing subprocess timeout failures.",
-      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 975/975 across 35 files including eight source-verification tests; production-mode build/CSP passed (14/14 hashes); lint passed with four existing warnings; formatting and roadmap traceability passed. Full unit suite exited nonzero on five existing process-startup subprocess ETIMEDOUT failures.",
+      "observations": "Reviewed the current source or documentation diff for item 6.04. Corrections verify original URLs before normalization, keep saved-lead source labels paired with the matching source URL result, and assert API plus UI verification display for configured and legacy links. Full browser acceptance remains pending.",
+      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope item 6.04 scoped review)",
-      "sha256": "f427f4047db89c1cf4093470bc8b8e7fb09a21d4edc636a65b154acbf72598f8",
+      "sha256": "8d6c28d0ad8db468b8b2db7ae90de822631ee64934dfed563c7e1cf4d7faa9a2",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -3472,10 +3472,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current item 6.04 implementation or documentation diff; prior file-level audit record is retained in history where applicable. Exact-worktree Node 24 typecheck, domain suite, production-mode build, lint, formatting and roadmap traceability results are recorded; full unit suite has five existing subprocess timeout failures.",
-      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 975/975 across 35 files including eight source-verification tests; production-mode build/CSP passed (14/14 hashes); lint passed with four existing warnings; formatting and roadmap traceability passed. Full unit suite exited nonzero on five existing process-startup subprocess ETIMEDOUT failures.",
+      "observations": "Reviewed the current source or documentation diff for item 6.04. Corrections verify original URLs before normalization, keep saved-lead source labels paired with the matching source URL result, and assert API plus UI verification display for configured and legacy links. Full browser acceptance remains pending.",
+      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope item 6.04 scoped review)",
-      "sha256": "3051d9f2185dcb6644de93b02c5ea956a4d0310fee35c62b1263906392215ca5",
+      "sha256": "a1f1bfdf11f6d9e50684b41022a2062eb42f2c4c36e3e8156ee8e776576e5ff7",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -6674,14 +6674,14 @@
     {
       "path": "packages/providers/src/normalize.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "focused item 6.04 source and diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed 74 focused normalization tests, including explicit employment-type and disjoint-experience conflicts, compatible-subset preservation, and input-order determinism.",
-      "evidence": "Node 24 Docker: normalize.test.ts 74/74; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
-      "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "ddd5e3fd8db3029ee6b826b3bc30e56f5475355108e041fef4628a8680b0d1f8",
+      "observations": "Reviewed the current source or documentation diff for item 6.04. Corrections verify original URLs before normalization, keep saved-lead source labels paired with the matching source URL result, and assert API plus UI verification display for configured and legacy links. Full browser acceptance remains pending.",
+      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
+      "reviewer": "Codex (CareerScope item 6.04 scoped review)",
+      "sha256": "693b6f3a67b7a1be1e4ca68e46a6cd6fdada3abdad628a824b6de90765876894",
       "history": [
         {
           "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
@@ -6718,10 +6718,10 @@
           "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
         }
       ],
-      "observations": "Reviewed the current item 6.04 implementation or documentation diff; prior file-level audit record is retained in history where applicable. Exact-worktree Node 24 typecheck, domain suite, production-mode build, lint, formatting and roadmap traceability results are recorded; full unit suite has five existing subprocess timeout failures.",
-      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 975/975 across 35 files including eight source-verification tests; production-mode build/CSP passed (14/14 hashes); lint passed with four existing warnings; formatting and roadmap traceability passed. Full unit suite exited nonzero on five existing process-startup subprocess ETIMEDOUT failures.",
+      "observations": "Reviewed the current source or documentation diff for item 6.04. Corrections verify original URLs before normalization, keep saved-lead source labels paired with the matching source URL result, and assert API plus UI verification display for configured and legacy links. Full browser acceptance remains pending.",
+      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope item 6.04 scoped review)",
-      "sha256": "cb8832c9baacd2962a6f469ecc693810009106c6ce7be12b45ea4aab0d413153",
+      "sha256": "3c2b78fca8bf46260c11be6f1a18298fe532d25f1a69354086dd9afa4df755b1",
       "history": [
         {
           "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
@@ -8589,10 +8589,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the current item 6.04 implementation or documentation diff; prior file-level audit record is retained in history where applicable. Exact-worktree Node 24 typecheck, domain suite, production-mode build, lint, formatting and roadmap traceability results are recorded; full unit suite has five existing subprocess timeout failures.",
-      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 975/975 across 35 files including eight source-verification tests; production-mode build/CSP passed (14/14 hashes); lint passed with four existing warnings; formatting and roadmap traceability passed. Full unit suite exited nonzero on five existing process-startup subprocess ETIMEDOUT failures.",
+      "observations": "Reviewed the current source or documentation diff for item 6.04. Corrections verify original URLs before normalization, keep saved-lead source labels paired with the matching source URL result, and assert API plus UI verification display for configured and legacy links. Full browser acceptance remains pending.",
+      "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope item 6.04 scoped review)",
-      "sha256": "cafae66362ca79e37eb5a383537caf6590b95d091c252c20714f308153349637",
+      "sha256": "bb887ca0c2a155ac5e4ac674e294919bf8b660f38c58386b37d0b99e7764f4df",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",

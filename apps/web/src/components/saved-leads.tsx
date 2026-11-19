@@ -325,7 +325,10 @@ function LeadEditor({
   const links = record.data.sourceLinks?.length
     ? record.data.sourceLinks
     : [{ source: record.data.source, url: record.data.sourceUrl }];
-  const postingHref = links[0]?.url ?? record.data.applyUrl;
+  const displayedSourceLink = links.find(
+    (link) => link.source === record.data.source && link.url === record.data.sourceUrl,
+  ) ?? { source: record.data.source, url: record.data.sourceUrl, verification: undefined };
+  const postingHref = displayedSourceLink.url || record.data.applyUrl;
   return (
     <article aria-label="Lead details">
       <header className={styles.header}>
@@ -389,16 +392,16 @@ function LeadEditor({
             <dd>{record.data.postedAt ? absoluteDate(record.data.postedAt) : 'Not provided'}</dd>
             <dt>Source</dt>
             <dd>
-              {SOURCE_NAMES[record.data.source] ?? record.data.source}
+              {SOURCE_NAMES[displayedSourceLink.source] ?? displayedSourceLink.source}
               <span
                 className="source-url-verification"
                 title={
-                  links[0]?.verification?.status === 'configured_host_match'
+                  displayedSourceLink.verification?.status === 'configured_host_match'
                     ? 'Only the URL host is checked; employer identity, listing status, and source rights are not verified.'
                     : 'The URL host is not verified against this source configuration.'
                 }
               >
-                {links[0]?.verification?.status === 'configured_host_match'
+                {displayedSourceLink.verification?.status === 'configured_host_match'
                   ? 'Host matches source configuration'
                   : 'Source URL unverified'}
               </span>
