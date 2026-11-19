@@ -409,14 +409,22 @@
     {
       "path": "apps/api/src/new-device-alert.integration.test.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete loopback-PostgreSQL integration test. Verifies missing account, first sign-in, same device, different device, and unknown-label behavior against synthetic sessions; isolated database cleanup runs in finally.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "c13dcc140809fbca9f5868fc85ad4336eacbeae1837b1a9e92b6dba595a69077"
+      "observations": "Reviewed the complete integration test and the new HTTP OTP route flow. It asserts no notice for the first sign-in, one code-free notice for an unfamiliar device, and no duplicate notice on repeat sign-in. The newly added PostgreSQL-backed route assertions have not yet run locally.",
+      "evidence": "Focused source review; Node 24 policy, roadmap traceability, and Prettier checks passed before local dependency restoration failed. Exact-head PostgreSQL integration CI is pending.",
+      "reviewer": "Codex (CareerScope Stage 02 item 2.11 audit refresh)",
+      "sha256": "b3b8042990d4f5a7c0548c81bb719659be740d267774f582c889b763e59305d0",
+      "history": [
+        {
+          "observations": "Reviewed complete loopback-PostgreSQL integration test. Verifies missing account, first sign-in, same device, different device, and unknown-label behavior against synthetic sessions; isolated database cleanup runs in finally.",
+          "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "c13dcc140809fbca9f5868fc85ad4336eacbeae1837b1a9e92b6dba595a69077"
+        }
+      ]
     },
     {
       "path": "apps/api/src/openapi.ts",
@@ -2086,10 +2094,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
+      "observations": "Reviewed the owner item 2.11 progress paragraph. It records existing evidence, preserves partial status, and explicitly identifies the missing owner acceptance criteria.",
+      "evidence": "Focused documentation review for owner item 2.11; exact-head hosted CI and independent review remain pending.",
+      "reviewer": "Codex (CareerScope Stage 02 item 2.11 audit refresh)",
+      "sha256": "6b95f231c487dc57309f332f5d57a766289bb38aee720da84a878f465fe9c71c",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2228,6 +2236,12 @@
           "sha256": "9dcdfecb8ac4591ecf0fc959813bbd5bb6f74411ddd3c2c0374fc03bd52208b4",
           "observations": "Reviewed Stage 05 item 5.08 and 5.09 status, focused test/build evidence, and remaining adapter-mapping and false-merge limitations.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+          "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd"
         }
       ]
     },
@@ -2282,10 +2296,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+      "observations": "Reviewed the canonical Owner 2.11 test-matrix row and preserved the current dev rows for other owner items while adding the new route regression reference.",
+      "evidence": "Focused table review; the new PostgreSQL integration assertions are awaiting exact-head CI.",
+      "reviewer": "Codex (CareerScope Stage 02 item 2.11 audit refresh)",
+      "sha256": "f82f47b82643bc5ef69f440d3c5e5c0b559105424f88a16a3301d73e352f23c7",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2412,6 +2426,12 @@
           "sha256": "d08de3ad68f62e21c10744dc048c1e91a6c2f831382d1e8efe31b8ee32ab3b4d",
           "observations": "Reviewed item-specific Stage 05 normalization and deduplication test evidence and exact-head gates.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+          "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4"
         }
       ]
     },
@@ -2850,10 +2870,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+      "observations": "Reviewed the canonical owner item 2.11 record, its evidence/test paths, partial status, and explicit acceptance-criteria gap; the rest of the inventory was parsed and preserved.",
+      "evidence": "JSON structure validation and roadmap traceability passed before dependency restoration failed; item 2.11 stays partial.",
+      "reviewer": "Codex (CareerScope Stage 02 item 2.11 audit refresh)",
+      "sha256": "ce6a12a9f73de01358fea6b66dba613569c61ef4e0eb84e5a56f4159a0a11458",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2962,6 +2982,12 @@
           "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
           "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90"
         }
       ]
     },
