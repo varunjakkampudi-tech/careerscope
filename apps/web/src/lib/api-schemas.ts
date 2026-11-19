@@ -18,6 +18,7 @@ import {
   derivedResumeSchema,
   jobFeedbackReasonSchema,
   matchBreakdownSchema,
+  resumeImportFieldsSchema,
 } from '@careerscope/shared';
 
 /** Message for a response that parsed as JSON but not as the expected shape. Fixed, so no server content reaches the screen. */
@@ -188,6 +189,8 @@ const profileDataSchema = z.object({
         application.availabilityStatus ??
         (application.noticePeriodDays === 0 ? 'immediate' : 'notice_period'),
     })),
+  resumeId: z.string().nullable().default(null),
+  resumeImportFields: resumeImportFieldsSchema.default([]),
   accessibility: z.object({ reducedMotion: z.boolean().default(false) }).optional(),
 });
 

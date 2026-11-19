@@ -41,7 +41,7 @@ export default function ResumePanel({
   onReview,
 }: {
   csrf: string;
-  onReview: (proposal: ResumeProposal) => void;
+  onReview: (proposal: ResumeProposal, resumeId: string, resumeName: string) => void;
 }) {
   const cache = useQueryClient();
   const locale = useInterfaceLocale();
@@ -405,7 +405,19 @@ export default function ResumePanel({
                 {result?.status === 'parsed' && (
                   <>
                     <p role="status">Resume ready for review.</p>
-                    <button type="button" onClick={() => onReview(result.parsed.derived)}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const selectedResume = resumes.data?.items.find(
+                          (item) => item.id === detail.data!.id,
+                        );
+                        const uploadedAt = selectedResume
+                          ? new Date(selectedResume.createdAt).toLocaleDateString()
+                          : detail.data!.id;
+                        const resumeName = `${uploadedAt} · ${detail.data!.id.slice(0, 8)}`;
+                        onReview(result.parsed.derived, detail.data!.id, resumeName);
+                      }}
+                    >
                       <FileText size={17} />
                       Review profile draft
                     </button>

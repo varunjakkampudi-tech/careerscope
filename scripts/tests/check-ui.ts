@@ -24,6 +24,7 @@ import {
   writableProfileSchema,
   PrivateFileResumeStorage,
   LocalQueue,
+  publishPending,
   publishDueInterviewReminders,
 } from '@careerscope/core';
 import { createApp } from '../../apps/api/src/app.js';
@@ -2745,7 +2746,7 @@ try {
       );
       archive.file(
         'word/document.xml',
-        '<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Synthetic Candidate, React and TypeScript developer with experience building accessible web applications.</w:t></w:r></w:p></w:body></w:document>',
+        '<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Synthetic Candidate</w:t></w:r></w:p><w:p><w:r><w:t>TECHNICAL SKILLS</w:t></w:r></w:p><w:p><w:r><w:t>React, TypeScript, Accessible interfaces</w:t></w:r></w:p></w:body></w:document>',
       );
       await page.getByLabel('Target role (optional)', { exact: true }).fill('Software Engineer');
       await page.getByLabel('Resume file (PDF or DOCX, up to 5 MiB)').setInputFiles({
@@ -2831,6 +2832,11 @@ try {
         recoveryGate.resolve();
       }
       assert.equal((await recoveredUpload).status(), 200);
+      await publishPending(database, { 'resume.parse': filesQueue });
+      await page
+        .getByRole('status')
+        .filter({ hasText: 'Resume ready for review.' })
+        .waitFor({ timeout: 45000 });
       const markBrowserResumeParsed = async (id: string) => {
         await database.pool.query(
           `INSERT INTO resume_results (upload_id, owner_id, command_id, status, parsed)
@@ -2840,7 +2846,11 @@ try {
             JSON.stringify({
               format: 'docx',
               text: 'Synthetic candidate resume with React and TypeScript experience.',
-              derived: { techStack: ['React'], yearsOfExperience: null },
+              derived: {
+                fullName: 'Synthetic Candidate',
+                techStack: ['React'],
+                yearsOfExperience: null,
+              },
             }),
           ],
         );
@@ -2851,7 +2861,6 @@ try {
           item.targetRole === 'Software Engineer' && item.versionNumber === 1,
       );
       assert.ok(firstVersion, `${engine}: first role-labelled resume version was not listed`);
-      await markBrowserResumeParsed(firstVersion.id);
       const parsedResumeList = await (await page.request.get(`${origin}/api/resumes`)).json();
       const parsedFirstVersion = parsedResumeList.items.find(
         (item: { id: string }) => item.id === firstVersion.id,
@@ -2933,6 +2942,21 @@ try {
           .filter({ hasText: 'Resume ready for review.' })
           .waitFor({ timeout: 45000 });
       }
+      const parserResult = await database.pool.query<{
+        parsed: { derived?: { fullName?: string } };
+      }>(
+        `SELECT result.parsed FROM resume_results result
+         JOIN resume_uploads upload ON upload.id = result.upload_id
+         JOIN users ON users.id = upload.owner_id
+         WHERE upload.id = $1 AND result.status = 'parsed'
+         LIMIT 1`,
+        [firstVersion.id],
+      );
+      assert.equal(
+        parserResult.rows[0]?.parsed.derived?.fullName,
+        'Synthetic Candidate',
+        `${engine}: isolated parser did not persist the synthetic candidate name`,
+      );
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });
         const resumeOverflow = await page.locator('.resume-section').evaluate((element) => ({
@@ -2951,7 +2975,10 @@ try {
           });
       }
       await page.getByRole('button', { name: 'Review profile draft', exact: true }).click();
-      assert.match(await page.locator('textarea[name="techStack"]').inputValue(), /React/);
+      await page
+        .getByRole('heading', { name: 'Review extracted information', exact: true })
+        .waitFor();
+      assert.match(await page.getByLabel('Correct Skills', { exact: true }).inputValue(), /React/);
       for (const versionNumber of [2]) {
         const versionRow = page
           .locator('.resume-list li')
@@ -3006,12 +3033,96 @@ try {
       page.once('dialog', (dialog) => dialog.accept());
       await thirdVersionRow.getByRole('button', { name: 'Delete resume', exact: true }).click();
       await thirdVersionRow.waitFor({ state: 'detached' });
+      await page
+        .getByRole('heading', { name: 'Review extracted information', exact: true })
+        .waitFor();
+      for (const width of [320, 375, 480, 768, 1280]) {
+        await page.setViewportSize({ width, height: 900 });
+        assert.equal(
+          await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+          true,
+          `${engine}: resume correction review overflows at ${width}px`,
+        );
+      }
+      await page.setViewportSize({ width: 320, height: 900 });
+      const applyResumeFields = page.getByRole('button', {
+        name: 'Use selected fields in profile draft',
+        exact: true,
+      });
+      assert.equal(
+        await applyResumeFields.isDisabled(),
+        true,
+        `${engine}: fields were accepted implicitly`,
+      );
+      await page
+        .getByLabel('Correct Full Name', { exact: true })
+        .fill('Corrected Synthetic Candidate');
+      const acceptedName = page
+        .getByRole('group', { name: 'Full Name', exact: true })
+        .getByRole('checkbox');
+      await acceptedName.focus();
+      await page.keyboard.press('Space');
+      assert.equal(
+        await acceptedName.isChecked(),
+        true,
+        `${engine}: correction checkbox is not keyboard operable`,
+      );
+      await page.getByLabel('Correct Skills', { exact: true }).fill(`x`.repeat(121));
+      const skillsReview = page.getByRole('group', { name: 'Skills', exact: true });
+      await skillsReview.getByLabel('Use this corrected value in my profile draft').check();
+      await page
+        .getByText('Check the value or entries for Skills and correct the highlighted limits.')
+        .waitFor();
+      assert.equal(
+        await applyResumeFields.isDisabled(),
+        true,
+        `${engine}: invalid skill correction was allowed to apply`,
+      );
+      await page
+        .getByLabel('Correct Skills', { exact: true })
+        .fill('React\nTypeScript\nAccessible interfaces');
+      await applyResumeFields.focus();
+      await page.keyboard.press('Enter');
+      assert.equal(
+        await page.getByLabel('Full Name', { exact: true }).inputValue(),
+        'Corrected Synthetic Candidate',
+        `${engine}: corrected resume field did not populate the profile draft`,
+      );
+      assert.match(
+        await page.locator('textarea[name="techStack"]').inputValue(),
+        /Accessible interfaces/,
+      );
+      await page.getByRole('button', { name: /Software Engineer · Version 1/ }).click();
+      await page
+        .getByRole('status')
+        .filter({ hasText: 'Resume ready for review.' })
+        .waitFor({ timeout: 45000 });
+      const replaceDraftPrompt = page.waitForEvent('dialog');
+      const replaceDraftClick = page
+        .getByRole('button', { name: 'Review profile draft', exact: true })
+        .click();
+      const replaceDraftDialog = await replaceDraftPrompt;
+      assert.equal(replaceDraftDialog.message(), 'Replace unsaved edits with the resume draft?');
+      await replaceDraftDialog.accept();
+      await replaceDraftClick;
+      await page
+        .getByRole('heading', { name: 'Review extracted information', exact: true })
+        .waitFor();
+      await page.getByRole('button', { name: 'Cancel review', exact: true }).click();
+      await page.getByLabel('Full Name', { exact: true }).waitFor();
       const account = await database.pool.query<{ id: string }>(
         'SELECT id FROM users WHERE email = $1',
         [accountEmail],
       );
+      const parsedResume = await database.pool.query<{ id: string }>(
+        `SELECT upload.id FROM resume_uploads upload
+         JOIN resume_results result ON result.upload_id = upload.id
+         WHERE upload.owner_id = $1 AND result.status = 'parsed'
+         ORDER BY upload.created_at DESC LIMIT 1`,
+        [account.rows[0]!.id],
+      );
+      assert.ok(parsedResume.rows[0]?.id, `${engine}: parsed resume fixture is missing`);
       assert.equal(await new ProfileRepository(database).get(account.rows[0]!.id), null);
-      await page.getByLabel('Full Name', { exact: true }).fill('Synthetic Candidate');
       // First-time profile creation uses guided onboarding. Verify step
       // validation focus, back-navigation preservation, and the actual final
       // submit control before checking the persisted profile.
@@ -3030,9 +3141,10 @@ try {
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
       assert.equal(
         await page.evaluate(() => (document.activeElement as HTMLInputElement | null)?.name),
-        'email',
+        'fullName',
         `${engine}: invalid contact step did not focus its first missing field`,
       );
+      await page.getByLabel('Full Name', { exact: true }).fill('Saved Synthetic Candidate');
       await page.getByLabel('Email', { exact: true }).fill(accountEmail);
       await page.getByLabel('Location', { exact: true }).fill('Hyderabad');
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
@@ -3060,7 +3172,7 @@ try {
         `${engine}: invalid job-preferences step did not focus its first missing field`,
       );
       await page.locator('textarea[name="titles"]').fill('React Engineer');
-      await page.locator('textarea[name="techStack"]').fill('React, TypeScript');
+      await page.locator('textarea[name="techStack"]').fill('React');
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
       await page.getByText('Step 4 of 5: Application details', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
@@ -3087,6 +3199,46 @@ try {
         ['Frontend Engineer at Example Co'],
         `${engine}: saved onboarding profile must retain the background used by completeness`,
       );
+      assert.equal(
+        persistedOnboardingProfile?.profile.resumeId,
+        null,
+        `${engine}: cancelling an unsaved replacement review must clear pending resume provenance`,
+      );
+      assert.deepEqual(
+        persistedOnboardingProfile?.profile.resumeImportFields,
+        [],
+        `${engine}: cancelling an unsaved replacement review must not attribute unrelated fields`,
+      );
+      await page.getByRole('button', { name: 'Review profile draft', exact: true }).click();
+      await page
+        .getByRole('heading', { name: 'Review extracted information', exact: true })
+        .waitFor();
+      await page.getByRole('button', { name: 'Cancel review', exact: true }).click();
+      assert.equal(
+        await page.getByLabel('Full Name', { exact: true }).inputValue(),
+        'Saved Synthetic Candidate',
+        `${engine}: cancelling a new review must preserve the previously saved profile`,
+      );
+      await page.getByRole('button', { name: 'Review profile draft', exact: true }).click();
+      await page
+        .getByRole('heading', { name: 'Review extracted information', exact: true })
+        .waitFor();
+      await page
+        .getByLabel('Correct Full Name', { exact: true })
+        .fill('Corrected Synthetic Candidate');
+      await page.getByLabel('Use this corrected value in my profile draft').nth(0).check();
+      await page
+        .getByLabel('Correct Skills', { exact: true })
+        .fill('React\nTypeScript\nAccessible interfaces');
+      const savedProfileSkillsReview = page.getByRole('group', { name: 'Skills', exact: true });
+      await savedProfileSkillsReview
+        .getByLabel('Use this corrected value in my profile draft')
+        .check();
+      await page
+        .getByRole('button', { name: 'Use selected fields in profile draft', exact: true })
+        .click();
+      await page.getByRole('button', { name: 'Save Profile', exact: true }).click();
+      await page.getByText('Profile saved.', { exact: true }).waitFor();
       await page.goto(`${origin}/dashboard`);
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
       const completenessPanel = page.locator('section[aria-label="Profile completeness"]');
@@ -3165,6 +3317,14 @@ try {
         'the reviewed profile must exist before the preparation screen is driven',
       );
       assert.ok(reviewed?.profile.preferences.techStack.includes('React'));
+      assert.ok(reviewed?.profile.preferences.techStack.includes('Accessible interfaces'));
+      assert.equal(reviewed?.profile.candidate.fullName, 'Corrected Synthetic Candidate');
+      assert.equal(reviewed?.profile.resumeId, parsedResume.rows[0]!.id);
+      assert.deepEqual(
+        reviewed?.profile.resumeImportFields.slice().sort(),
+        ['fullName', 'techStack'].sort(),
+        `${engine}: saved import provenance does not match individually accepted fields`,
+      );
       assert.equal(reviewed?.profile.candidate.segment, 'experienced');
       // The sidebar is hidden below 768px and the screenshot loop above left
       // the viewport at 320px, so widen before navigating through it.

@@ -224,6 +224,12 @@ takes `{ enabled }` and returns `{ scheduledDiscoveryEnabled }`.
 `PUT /api/profile` carries a revision. A stale revision is a 409, not a
 last-write-wins overwrite.
 
+When a candidate applies corrections from a parsed resume, the revisioned
+profile stores `resumeId` and the `resumeImportFields` they explicitly accepted.
+For a newly selected source, the API checks that the upload belongs to the
+authenticated owner and has a parsed result. This records import provenance;
+it does not automatically synchronize later resume changes into the profile.
+
 The candidate profile may include the explicitly selected career segment
 `student`, `fresher`, or `experienced`. It is optional for legacy profiles and
 is not inferred from age or experience; it does not independently establish
