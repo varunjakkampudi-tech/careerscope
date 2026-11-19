@@ -1808,12 +1808,19 @@
           "status": "fixed",
           "summary": "The data model described migration numbers 0020-0026 that are absent from the active Drizzle journal.",
           "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
+        },
+        {
+          "id": "S1-F076",
+          "severity": "low",
+          "status": "fixed",
+          "summary": "The data model stated six active migrations while listing seven journal entries.",
+          "remediation": "Corrected the active migration count to seven and verified it against the Drizzle journal and SQL files."
         }
       ],
-      "observations": "Reviewed group counter table, counter backfill, latest-parsed continuation and no-reuse semantics.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "63294de61a5fafe40af7f3a6f8667d1750c70a9df636bf1fe7c3c2e7e0b163db"
+      "observations": "Read the complete data-model document. Confirmed the active journal and SQL directory each contain seven migrations, corrected the stated count, and found no other mismatch in the migration summary.",
+      "evidence": "Reviewed on codex/stage01-item104-drizzle-doc-count; cross-checked migrations/meta/_journal.json and all seven migration SQL files. Stage 01 item 1.04 documentation follow-up.",
+      "reviewer": "Codex (Stage 01 item 1.04 follow-up)",
+      "sha256": "f65e1e94d62fb64d0ade80be8cbe02cf01e1fb320ba8d89acceb8c95abb51c7e"
     },
     {
       "path": "docs/FOUNDATIONS.md",
