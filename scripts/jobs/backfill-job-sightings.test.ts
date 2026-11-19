@@ -50,17 +50,27 @@ test('replay accumulates sightings and repost_count in run order, matching the l
       runId: 'run-3',
       runCreatedAt: '2026-01-19T00:00:00.000Z',
     },
+    {
+      ownerId: owner,
+      fingerprint: 'fp-1',
+      title: 'Backend Engineer',
+      company: 'Acme',
+      // A lagging provider response after the refresh must not move the tracked maximum back.
+      postedAt: '2026-01-15T00:00:00.000Z',
+      runId: 'run-4',
+      runCreatedAt: '2026-01-21T00:00:00.000Z',
+    },
   ]);
 
   const row = result.get(`${owner}:fp-1`);
   assert.ok(row);
-  assert.equal(row.sightings, 3);
+  assert.equal(row.sightings, 4);
   assert.equal(row.repostCount, 1);
   assert.equal(row.firstSeenAt, '2026-01-05T00:00:00.000Z');
-  assert.equal(row.lastSeenAt, '2026-01-19T00:00:00.000Z');
+  assert.equal(row.lastSeenAt, '2026-01-21T00:00:00.000Z');
   assert.equal(row.firstPostedAt, '2026-01-01T00:00:00.000Z');
   assert.equal(row.lastPostedAt, '2026-01-20T00:00:00.000Z');
-  assert.equal(row.lastRunId, 'run-3');
+  assert.equal(row.lastRunId, 'run-4');
 });
 
 test('a run with a null postedAt keeps the previous claimed date rather than clearing it', () => {
@@ -192,9 +202,12 @@ test('returns an empty map for no history', () => {
 // the relevant regression: rebuildJobSightings must re-derive job_sightings from search_jobs,
 // not trust whatever job_sightings currently holds — proving the "market
 // evidence" recompute the ticket calls for is real, not a no-op.
-test('rebuildJobSightings replaces drifted job_sightings state with a fresh replay of search_jobs', async () => {
+test('rebuildJobSightings replaces drifted job_sightings state with a fresh replay of search_jobs', async (context) => {
   const configured = process.env.DATABASE_URL;
-  assert.ok(configured, 'Integration tests require the isolated CareerScope DATABASE_URL');
+  if (!configured) {
+    context.skip('requires an isolated local CareerScope DATABASE_URL');
+    return;
+  }
   const base = new URL(configured);
   assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname), 'Tests require local PostgreSQL');
   const admin = new Database(configured);

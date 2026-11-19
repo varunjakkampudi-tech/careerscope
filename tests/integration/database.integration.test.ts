@@ -2439,6 +2439,121 @@ test('partial search outcomes are atomic, owner-scoped, terminal and usable thro
   }
 });
 
+test('repost tracking counts distinct runs and keeps the newest observed posting date', async () => {
+  const configured = process.env.DATABASE_URL;
+  assert.ok(configured);
+  const base = new URL(configured);
+  assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname));
+  const admin = new Database(configured);
+  const name = `test_${randomUUID().replaceAll('-', '')}`;
+  await admin.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
+  base.pathname = `/${name}`;
+  const database = new Database(base.href);
+  try {
+    await migrate(database.db, {
+      migrationsFolder: fileURLToPath(new URL('../../migrations', import.meta.url)),
+    });
+    const ownerId = randomUUID();
+    await database.pool.query('INSERT INTO users (id, email, password_hash) VALUES ($1, $2, $3)', [
+      ownerId,
+      `${ownerId}@example.test`,
+      'synthetic-not-a-login',
+    ]);
+
+    const fingerprint = 'stable-repost';
+    const sourceUrl = 'https://remoteok.com/remote-jobs/repost-role-1';
+    const collect = async (key: string, postedAt: string | null, copies = 1) => {
+      const search = await database.createSearch(ownerId, `repost-${key}`, {
+        query: 'Backend Engineer',
+        sources: ['remoteok'],
+      });
+      const command = (await database.unpublished()).find(
+        (entry) => entry.command.aggregateId === search.id,
+      )!.command;
+      const fence = await database.claim(command.id);
+      assert.ok(fence);
+      const job = {
+        fingerprint,
+        sourceJobId: 'repost-role-1',
+        title: 'Backend Engineer',
+        company: 'Synthetic Acme',
+        location: 'Remote',
+        description: 'Synthetic posting used to verify repost history.',
+        source: 'remoteok' as const,
+        sourceUrl,
+        applyUrl: sourceUrl,
+        postedAt,
+      };
+      const jobs = Array.from({ length: copies }, () => job);
+      assert.equal(
+        await database.completeCollection(command, fence, jobs, [
+          {
+            source: 'remoteok',
+            status: 'completed',
+            accepted: copies,
+            limited: false,
+            errorCode: null,
+          },
+        ]),
+        true,
+      );
+    };
+    const evidence = async () => {
+      const result = await database.pool.query<{
+        sightings: number;
+        repostCount: number;
+        firstPostedAt: Date | null;
+        lastPostedAt: Date | null;
+      }>(
+        `SELECT sightings, repost_count AS "repostCount",
+                first_posted_at AS "firstPostedAt", last_posted_at AS "lastPostedAt"
+         FROM job_sightings WHERE owner_id = $1 AND fingerprint = $2`,
+        [ownerId, fingerprint],
+      );
+      assert.equal(result.rowCount, 1);
+      return result.rows[0]!;
+    };
+
+    await collect('initial', '2026-01-10T00:00:00.000Z');
+    let row = await evidence();
+    assert.equal(row.sightings, 1);
+    assert.equal(row.repostCount, 0);
+    assert.equal(row.firstPostedAt?.toISOString(), '2026-01-10T00:00:00.000Z');
+    assert.equal(row.lastPostedAt?.toISOString(), '2026-01-10T00:00:00.000Z');
+
+    await collect('same-date', '2026-01-10T00:00:00.000Z');
+    await collect('older-date', '2026-01-09T00:00:00.000Z');
+    row = await evidence();
+    assert.equal(row.sightings, 3);
+    assert.equal(row.repostCount, 0, 'equal or older source dates are not repost evidence');
+    assert.equal(row.lastPostedAt?.toISOString(), '2026-01-10T00:00:00.000Z');
+
+    await collect('newer-date', '2026-01-20T00:00:00.000Z');
+    await collect('stale-provider-date', '2026-01-15T00:00:00.000Z');
+    row = await evidence();
+    assert.equal(row.sightings, 5);
+    assert.equal(row.repostCount, 1);
+    assert.equal(row.firstPostedAt?.toISOString(), '2026-01-10T00:00:00.000Z');
+    assert.equal(row.lastPostedAt?.toISOString(), '2026-01-20T00:00:00.000Z');
+
+    await collect('duplicate-within-run', '2026-01-25T00:00:00.000Z', 2);
+    row = await evidence();
+    assert.equal(row.sightings, 6, 'duplicate fingerprints in one run count as one sighting');
+    assert.equal(row.repostCount, 2, 'one run contributes at most one repost');
+    assert.equal(row.lastPostedAt?.toISOString(), '2026-01-25T00:00:00.000Z');
+
+    await collect('missing-date', null);
+    row = await evidence();
+    assert.equal(row.sightings, 7);
+    assert.equal(row.repostCount, 2, 'missing source dates do not change repost evidence');
+    assert.equal(row.lastPostedAt?.toISOString(), '2026-01-25T00:00:00.000Z');
+  } finally {
+    await database.pool.end();
+    await admin.pool.query(`DROP DATABASE IF EXISTS "${name}"`);
+    await admin.pool.end();
+  }
+});
+
 test('PostgreSQL atomic outbox, owner isolation and stale-worker fencing', async () => {
   const configured = process.env.DATABASE_URL;
   assert.ok(configured, 'Integration tests require the isolated v2 DATABASE_URL');

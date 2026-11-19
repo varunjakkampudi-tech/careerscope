@@ -1394,11 +1394,21 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Repost tracking",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/core/src/database.ts",
+        "packages/core/src/schema.ts",
+        "scripts/jobs/backfill-job-sightings.ts",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md",
+        "package.json"
+      ],
+      "tests": [
+        "scripts/jobs/backfill-job-sightings.test.ts",
+        "tests/integration/database.integration.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Reposts are counted once per owner-scoped fingerprint per distinct search run and only when a later run carries a strictly newer non-null provider-claimed posted date. Duplicate fingerprints within one run count once; equal, older and missing dates do not increase repost_count, and last_posted_at retains the greatest observed date. The collection transaction and backfill replay share this rule. Replay unit tests and the PostgreSQL completeCollection regression pass locally. Provider dates remain unverified claims and do not prove employer intent. Exact-head CI, independent review, merge and post-merge verification remain outstanding; currentStatus stays partial.",
       "scopeDisposition": "in-scope"
     },
     {

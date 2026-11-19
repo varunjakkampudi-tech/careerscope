@@ -122,7 +122,13 @@ export function replay(rows: readonly HistoryRow[]): Map<string, Aggregate> {
     ) {
       existing.repostCount += 1;
     }
-    existing.lastPostedAt = row.postedAt ?? existing.lastPostedAt;
+    if (
+      row.postedAt !== null &&
+      (existing.lastPostedAt === null ||
+        Date.parse(row.postedAt) > Date.parse(existing.lastPostedAt))
+    ) {
+      existing.lastPostedAt = row.postedAt;
+    }
   }
   return rebuilt;
 }

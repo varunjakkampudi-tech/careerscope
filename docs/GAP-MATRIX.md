@@ -66,3 +66,5 @@ Each row names the repository behavior, evidence, and remaining gap. Status valu
   not replace counsel approval of the effective legal text and public HTTPS URLs (see
   [AUTHENTICATION](AUTHENTICATION.md)). Owner checklist item 2.05 remains gated until that evidence
   is documented. Deployment is outside the current roadmap scope.
+
+Owner item 6.02 (Repost tracking) is partial. The collection transaction counts a sighting once per owner, posting fingerprint, and search run, and increments `repost_count` only when a later run reports a strictly newer non-null provider-claimed posted date than the greatest date already observed. Equal, older, missing-date, and duplicate-within-run observations do not inflate repost evidence. The backfill replay follows the same monotonic date rule. PostgreSQL integration and replay tests cover these cases. Provider dates remain unverified source claims and do not prove employer intent; exact-head CI and independent review remain pending.

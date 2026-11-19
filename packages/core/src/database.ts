@@ -552,9 +552,11 @@ export class Database {
       );
       if (!updated.rowCount) throw new Conflict('Search is not eligible for completion');
       for (const job of validated) {
-        await client.query(
+        const inserted = await client.query(
           `INSERT INTO search_jobs (id, run_id, owner_id, fingerprint, data)
-          VALUES ($1, $2, $3, $4, $5::jsonb) ON CONFLICT (run_id, fingerprint) DO NOTHING`,
+          VALUES ($1, $2, $3, $4, $5::jsonb)
+          ON CONFLICT (run_id, fingerprint) DO NOTHING
+          RETURNING fingerprint`,
           [
             randomUUID(),
             command.aggregateId,
@@ -566,8 +568,9 @@ export class Database {
         // In the same transaction as the job itself: a sighting that could be
         // committed without its posting would be evidence of something that
         // never happened.
-        await client.query(
-          `INSERT INTO job_sightings
+        if (inserted.rowCount)
+          await client.query(
+            `INSERT INTO job_sightings
              (owner_id, fingerprint, title, company, first_posted_at, last_posted_at, last_run_id)
            VALUES ($1, $2, $3, $4, $5, $5, $6)
            ON CONFLICT (owner_id, fingerprint) DO UPDATE SET
@@ -575,7 +578,7 @@ export class Database {
              sightings = job_sightings.sightings + 1,
              title = EXCLUDED.title,
              company = EXCLUDED.company,
-             last_posted_at = COALESCE(EXCLUDED.last_posted_at, job_sightings.last_posted_at),
+             last_posted_at = GREATEST(EXCLUDED.last_posted_at, job_sightings.last_posted_at),
              -- A posting that comes back claiming a newer date is the same role
              -- refreshed, not a new one. That is the signal worth counting.
              repost_count = job_sightings.repost_count + CASE
@@ -584,15 +587,15 @@ export class Database {
                 AND EXCLUDED.last_posted_at > job_sightings.last_posted_at
                THEN 1 ELSE 0 END,
              last_run_id = EXCLUDED.last_run_id`,
-          [
-            command.ownerId,
-            job.fingerprint,
-            job.title,
-            job.company,
-            job.postedAt,
-            command.aggregateId,
-          ],
-        );
+            [
+              command.ownerId,
+              job.fingerprint,
+              job.title,
+              job.company,
+              job.postedAt,
+              command.aggregateId,
+            ],
+          );
       }
       await client.query(
         `INSERT INTO run_events (id, run_id, owner_id, type) VALUES ($1, $2, $3, $4)`,
