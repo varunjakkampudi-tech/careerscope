@@ -2526,10 +2526,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Corrects transport/test index and records owner prompt item 1.06 verification, test coverage, CI evidence and Node-version limitation.",
-      "evidence": "Owner roadmap Stage 01 item 1.06 review on dev merge d74a7fb994f9ff65e551c82c260fb0a956969e22; manifest SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.06)",
-      "sha256": "70abaee0b92140d0ae1b92bb0c93503cf9c2eab79837d3819c2093923a8dfcee"
+      "observations": "Documents transactional outbox guarantees and item 1.06 verification. Current dev evidence distinguishes the historical Node 22 local review from exact-current Node 24 hosted Quality and Services/integration/browser CI; the dev push skipped the production image build. No production load, deployment, or backup behavior is claimed.",
+      "evidence": "Historical item 1.06 review on dev merge d74a7fb994f9ff65e551c82c260fb0a956969e22; current dev SHA fad57ea3253024983f29183acefaee59328d0d01, Actions run 43957299898. Manifest SHA-256 records current reviewed bytes.",
+      "reviewer": "Codex (owner Stage 01 item 1.06 evidence refresh)",
+      "sha256": "78630c3fc75883ceaa602cd26b521dc326e37953883dec6370908e96b25c08b8",
+      "history": [
+        {
+          "observations": "Corrects transport/test index and records owner prompt item 1.06 verification, test coverage, CI evidence and Node-version limitation.",
+          "evidence": "Owner roadmap Stage 01 item 1.06 review on dev merge d74a7fb994f9ff65e551c82c260fb0a956969e22.",
+          "reviewer": "Codex (owner Stage 01 item 1.06)",
+          "sha256": "70abaee0b92140d0ae1b92bb0c93503cf9c2eab79837d3819c2093923a8dfcee"
+        }
+      ]
     },
     {
       "path": "docs/architecture/REDIS-WORKERS-REVIEW.md",
