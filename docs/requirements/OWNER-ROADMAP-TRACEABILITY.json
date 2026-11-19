@@ -1392,7 +1392,7 @@
       ],
       "tests": ["tests/integration/database.integration.test.ts"],
       "externalEvidence": [],
-      "gap": "Schema, migration, API projection and collection persistence exist in the dev base. The new database integration regression exercises repeat collection through completeCollection, asserting first_seen_at remains unchanged and last_seen_at advances. Exact-head hosted CI and independent review remain pending.",
+      "gap": "Schema, migration, API projection and collection persistence exist. The database integration regression exercises repeat collection through completeCollection, asserting first_seen_at remains unchanged and last_seen_at advances. PR #107 exact head e8a74da99917360e6d8897b6dadb35a6f33f1ff1 passed all three required jobs in run 44528068955 and received independent exact-SHA engineering approval. Reviewer noted fingerprint-based CDP correlation as a harness limitation. PR remains open; merge and post-merge verification remain outstanding, so currentStatus stays partial.",
       "scopeDisposition": "in-scope"
     },
     {

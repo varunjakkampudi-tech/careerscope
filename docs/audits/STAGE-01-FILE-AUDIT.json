@@ -1516,7 +1516,9 @@
       "category": "frontend",
       "reviewMethod": "content-read",
       "state": "reviewed",
-      "concerns": ["localStorage access may throw in restricted browser contexts"],
+      "concerns": [
+        "localStorage access may throw in restricted browser contexts"
+      ],
       "findings": [
         {
           "id": "S1-F057",
@@ -1888,10 +1890,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 06 item 6.01 first/last-seen source persistence, the real collection regression assertion and Stage 06 traceability updates.",
-      "evidence": "Node 24 focused PostgreSQL integration test passed 1/1 through repeat completeCollection calls. Traceability, formatting, and file-audit checks pass; exact-head CI and independent review remain pending.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
-      "sha256": "9f8fe60ec0d80ae8166ee2a458947e6b50e88040ec8862941cc66cc4326c2d72",
+      "observations": "Reconciled Stage 06 item 6.01 evidence after exact-head CI and independent review; the item remains partial pending merge and post-merge verification.",
+      "evidence": "PR #107 exact head e8a74da99917360e6d8897b6dadb35a6f33f1ff1 passed all three required jobs in run 44528068955 and received independent exact-SHA engineering approval. Reviewer noted fingerprint-based CDP correlation as a harness limitation. PR remains open; item status remains partial.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence closeout)",
+      "sha256": "931891d1052e963f6715d54f0f0da96b55fe094d75362fa2105a5ce5e5ccab80",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2018,6 +2020,12 @@
           "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
           "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
           "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d"
+        },
+        {
+          "observations": "Reviewed Stage 06 item 6.01 first/last-seen source persistence, the real collection regression assertion and Stage 06 traceability updates.",
+          "evidence": "Node 24 focused PostgreSQL integration test passed 1/1 through repeat completeCollection calls. Traceability, formatting, and file-audit checks pass; exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+          "sha256": "9f8fe60ec0d80ae8166ee2a458947e6b50e88040ec8862941cc66cc4326c2d72"
         }
       ]
     },
@@ -2092,10 +2100,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed Stage 06 item 6.01 first/last-seen source persistence, the real collection regression assertion and Stage 06 traceability updates.",
-      "evidence": "Node 24 focused PostgreSQL integration test passed 1/1 through repeat completeCollection calls. Traceability, formatting, and file-audit checks pass; exact-head CI and independent review remain pending.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
-      "sha256": "fa5f12f370ec37ab3c41e4632643601f29385b32de7200019004d3ac8756c658",
+      "observations": "Reconciled Stage 06 item 6.01 evidence after exact-head CI and independent review; the item remains partial pending merge and post-merge verification.",
+      "evidence": "PR #107 exact head e8a74da99917360e6d8897b6dadb35a6f33f1ff1 passed all three required jobs in run 44528068955 and received independent exact-SHA engineering approval. Reviewer noted fingerprint-based CDP correlation as a harness limitation. PR remains open; item status remains partial.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence closeout)",
+      "sha256": "90fc46e2a136e8da09f56c270621a9a97e00367b9b8cab349dfa32783bd1aac8",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2240,6 +2248,12 @@
           "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
           "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
           "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd"
+        },
+        {
+          "observations": "Reviewed Stage 06 item 6.01 first/last-seen source persistence, the real collection regression assertion and Stage 06 traceability updates.",
+          "evidence": "Node 24 focused PostgreSQL integration test passed 1/1 through repeat completeCollection calls. Traceability, formatting, and file-audit checks pass; exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+          "sha256": "fa5f12f370ec37ab3c41e4632643601f29385b32de7200019004d3ac8756c658"
         }
       ]
     },
@@ -2294,10 +2308,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 06 item 6.01 first/last-seen source persistence, the real collection regression assertion and Stage 06 traceability updates.",
-      "evidence": "Node 24 focused PostgreSQL integration test passed 1/1 through repeat completeCollection calls. Traceability, formatting, and file-audit checks pass; exact-head CI and independent review remain pending.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
-      "sha256": "c4eb18bbfb28982a085f2473815eea2704470a9272c9a513571ce465c0b34902",
+      "observations": "Reconciled Stage 06 item 6.01 evidence after exact-head CI and independent review; the item remains partial pending merge and post-merge verification.",
+      "evidence": "PR #107 exact head e8a74da99917360e6d8897b6dadb35a6f33f1ff1 passed all three required jobs in run 44528068955 and received independent exact-SHA engineering approval. Reviewer noted fingerprint-based CDP correlation as a harness limitation. PR remains open; item status remains partial.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence closeout)",
+      "sha256": "a0f3162e9d55d1dd64109a576801e4325b6fcc198ade6a1ae32c361c366cb58b",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2430,6 +2444,12 @@
           "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
           "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
           "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4"
+        },
+        {
+          "observations": "Reviewed Stage 06 item 6.01 first/last-seen source persistence, the real collection regression assertion and Stage 06 traceability updates.",
+          "evidence": "Node 24 focused PostgreSQL integration test passed 1/1 through repeat completeCollection calls. Traceability, formatting, and file-audit checks pass; exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+          "sha256": "c4eb18bbfb28982a085f2473815eea2704470a9272c9a513571ce465c0b34902"
         }
       ]
     },
@@ -2868,10 +2888,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 06 item 6.01 first/last-seen source persistence, the real collection regression assertion and Stage 06 traceability updates.",
-      "evidence": "Node 24 focused PostgreSQL integration test passed 1/1 through repeat completeCollection calls. Traceability, formatting, and file-audit checks pass; exact-head CI and independent review remain pending.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
-      "sha256": "8b08eec8a627aad5d841b4c7f0acc755eca191ea23f2c21942261a627f08d569",
+      "observations": "Reconciled Stage 06 item 6.01 evidence after exact-head CI and independent review; the item remains partial pending merge and post-merge verification.",
+      "evidence": "PR #107 exact head e8a74da99917360e6d8897b6dadb35a6f33f1ff1 passed all three required jobs in run 44528068955 and received independent exact-SHA engineering approval. Reviewer noted fingerprint-based CDP correlation as a harness limitation. PR remains open; item status remains partial.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence closeout)",
+      "sha256": "1948d87bfa6388a6353a05712fbadfd259c64e66b07c398d19d3a8d44025267e",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2986,6 +3006,12 @@
           "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
           "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
           "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90"
+        },
+        {
+          "observations": "Reviewed Stage 06 item 6.01 first/last-seen source persistence, the real collection regression assertion and Stage 06 traceability updates.",
+          "evidence": "Node 24 focused PostgreSQL integration test passed 1/1 through repeat completeCollection calls. Traceability, formatting, and file-audit checks pass; exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+          "sha256": "8b08eec8a627aad5d841b4c7f0acc755eca191ea23f2c21942261a627f08d569"
         }
       ]
     },
