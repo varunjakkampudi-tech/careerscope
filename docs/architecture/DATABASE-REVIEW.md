@@ -23,3 +23,7 @@ The integration test proves migration/schema consistency and selected persistenc
 ## Disposition
 
 Checklist item 1.04 is verified for the documented architecture and automated migration-integrity scope. Keep applied migration files immutable. Generate a new migration for future schema changes, then run `npm run migrations:check` and the isolated PostgreSQL integration tests.
+
+## Current journal follow-up (2026-11-19)
+
+The review above records the architecture and migration state at its 2026-11-06 baseline. The active Drizzle journal now contains seven migrations, `0000` through `0006`; migrations `0004` through `0006` add profile photos, resume versions, and persistent resume-version group counters. The journal and SQL directory each contain the same seven entries. See [DATA-MODEL](../DATA-MODEL.md) for the current migration summary. Migration integrity is exercised by `tests/integration/migrations.integration.test.ts` and the `migrations:check` CI gate. This follow-up does not change the historical review baseline or imply production database verification.

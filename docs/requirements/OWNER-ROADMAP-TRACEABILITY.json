@@ -87,7 +87,7 @@
       "sourceStatus": "Existing, verify",
       "currentStatus": "verified",
       "evidence": ["docs/architecture/DATABASE-REVIEW.md", "docs/DATA-MODEL.md"],
-      "tests": ["tests/integration/database.integration.test.ts"],
+      "tests": ["tests/integration/migrations.integration.test.ts"],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"

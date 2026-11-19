@@ -2497,10 +2497,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Records PostgreSQL/Drizzle architecture scope, verified constraints and migration guarantees, test evidence, review limits, and disposition.",
-      "evidence": "Owner Stage 01 checklist item 1.04 review, based on dev 3aabf663; manifest SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.04)",
-      "sha256": "a9c29205e7444d3dde8b28733adfb8fdf3cc55eeba292f96146422175a879834"
+      "observations": "Reviewed the historical architecture assessment and added a dated current-journal follow-up. Confirmed active migrations 0000-0006 and matched the journal to SQL files.",
+      "evidence": "Stage 01 item 1.04 follow-up on 2026-11-19; current journal and SQL directory each contain seven migrations; migration tests and CI gate are identified in the review.",
+      "reviewer": "Codex (Stage 01 item 1.04 follow-up)",
+      "sha256": "46a5bec69ff012635b639f0f16738ddc970383019bc4850e9b2143ffc4c40ae0"
     },
     {
       "path": "docs/architecture/DESIGN-SYSTEM.md",
@@ -2857,10 +2857,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+      "observations": "Corrected Stage 01 item 1.04 migration-test evidence to reference the migration integrity integration test.",
+      "evidence": "Stage 01 item 1.04 follow-up on 2026-11-19; linked tests/integration/migrations.integration.test.ts, which validates journal application and schema integrity.",
+      "reviewer": "Codex (Stage 01 item 1.04 follow-up)",
+      "sha256": "8dfa6c2267e35d47bf80359143cab86602f82cdfb0c212e4d70479ee3f6f5521",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2969,6 +2969,12 @@
           "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
           "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90"
         }
       ]
     },
