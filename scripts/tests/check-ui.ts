@@ -3523,12 +3523,14 @@ try {
         await page
           .locator('details.job')
           .filter({ hasText: 'Senior React Engineer' })
-          .getByRole('link', { name: 'Remote OK', exact: true })
+          .getByRole('link', { name: /Remote OK.*Host matches source configuration/ })
           .getAttribute('href'),
         'https://remoteok.com/remote-jobs/synthetic',
       );
       assert.equal(
-        await page.getByRole('link', { name: 'Himalayas', exact: true }).getAttribute('href'),
+        await page
+          .getByRole('link', { name: /Himalayas.*Host matches source configuration/ })
+          .getAttribute('href'),
         'https://himalayas.app/jobs/synthetic',
       );
       await page
@@ -3888,6 +3890,7 @@ try {
       // wrong-source one. The loss of the per-source links is an application
       // finding, reported rather than quietly dropped from this suite.
       const leadDetails = page.getByRole('article', { name: 'Lead details' });
+      await leadDetails.getByText('Source URL unverified', { exact: true }).waitFor();
       const postingHrefs = await leadDetails
         .getByRole('link', { name: 'Open job posting' })
         .evaluateAll((elements) => elements.map((element) => element.getAttribute('href')));

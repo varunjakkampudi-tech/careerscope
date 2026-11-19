@@ -19,6 +19,29 @@ test('collected job schema keeps legacy missing match values normalized to null'
   assert.equal(job.match, null);
 });
 
+test('legacy source links default to unverified instead of inheriting a positive status', () => {
+  const job = collectedJobSchema.parse({
+    fingerprint: 'legacy-source-link',
+    title: 'Synthetic engineer',
+    company: 'Synthetic company',
+    location: 'Remote',
+    description: 'Synthetic description',
+    source: 'remoteok',
+    sourceUrl: 'https://remoteok.com/remote-jobs/123',
+    sourceLinks: [{ source: 'remoteok', url: 'https://remoteok.com/remote-jobs/123' }],
+    applyUrl: 'https://remoteok.com/remote-jobs/123',
+    postedAt: null,
+  });
+
+  assert.deepEqual(job.sourceLinks, [
+    {
+      source: 'remoteok',
+      url: 'https://remoteok.com/remote-jobs/123',
+      verification: { status: 'unverified', reason: 'legacy_record' },
+    },
+  ]);
+});
+
 test('lead tags are trimmed, bounded and case-insensitively unique', () => {
   assert.deepEqual(leadTagsSchema.parse(['  Frontend  ', 'Remote']), ['Frontend', 'Remote']);
   assert.equal(leadTagsSchema.safeParse(['Frontend', ' frontend ']).success, false);

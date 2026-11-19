@@ -388,7 +388,21 @@ function LeadEditor({
             <dt>Posted</dt>
             <dd>{record.data.postedAt ? absoluteDate(record.data.postedAt) : 'Not provided'}</dd>
             <dt>Source</dt>
-            <dd>{SOURCE_NAMES[record.data.source] ?? record.data.source}</dd>
+            <dd>
+              {SOURCE_NAMES[record.data.source] ?? record.data.source}
+              <span
+                className="source-url-verification"
+                title={
+                  links[0]?.verification?.status === 'configured_host_match'
+                    ? 'Only the URL host is checked; employer identity, listing status, and source rights are not verified.'
+                    : 'The URL host is not verified against this source configuration.'
+                }
+              >
+                {links[0]?.verification?.status === 'configured_host_match'
+                  ? 'Host matches source configuration'
+                  : 'Source URL unverified'}
+              </span>
+            </dd>
           </dl>
         </section>
 

@@ -170,7 +170,11 @@ export async function collect(
           // only the per-(source, id) bucket is still the right one to read
           // back, since the shared-fingerprint bucket also holds a sibling
           // posting's links.
-          const link = { source: normalized.source, url: normalized.sourceUrl };
+          const link = {
+            source: normalized.source,
+            url: normalized.sourceUrl,
+            verification: normalized.sourceUrlVerification,
+          };
           const linkKey = `${normalized.source}:${normalized.sourceUrl}`;
           for (const bucketKey of [
             normalized.fingerprint,

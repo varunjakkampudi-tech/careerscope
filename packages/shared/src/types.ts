@@ -12,6 +12,7 @@ import type {
   MatchBreakdown,
   Preferences,
   Salary,
+  SourceUrlVerification,
 } from './schemas.js';
 
 /* -------------------------------------------------------------------------- */
@@ -218,7 +219,8 @@ export type CollectedJob = {
   description: string;
   source: SearchSourceName;
   sourceUrl: string;
-  sourceLinks?: { source: SearchSourceName; url: string }[] | undefined;
+  sourceLinks?:
+    { source: SearchSourceName; url: string; verification: SourceUrlVerification }[] | undefined;
   applyUrl: string;
   postedAt: string | null;
   match: MatchBreakdown | null;

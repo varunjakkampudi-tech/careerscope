@@ -55,6 +55,16 @@ historical or imported records; this does not enable their adapters.
 
 ## Evidence and release boundary
 
+Collection records whether each posting's source URL hostname matches the
+configured host rule for the adapter that returned it. This local comparison
+does not fetch or follow the URL. A host match verifies only adapter/hostname
+consistency; it does not verify employer identity, posting contents or
+availability, source permission, or the destination reached after redirects.
+Unknown, third-party, malformed, credential-bearing, and historical links stay
+unverified. The rules are maintained in
+packages/providers/src/source-verification.ts and are not live provider
+verification or a production permission profile.
+
 The fail-closed behavior is covered by `packages/shared/src/job-source-policy.test.ts`,
 `tests/integration/database.integration.test.ts`, `apps/workers/search/src/collect.test.ts`,
 `scripts/jobs/scheduled-discovery.integration.test.ts`, and the browser assertions in

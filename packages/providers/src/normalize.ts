@@ -30,6 +30,7 @@ import {
   type Salary,
 } from '@careerscope/shared';
 import { descriptionToText, snippet } from './html.js';
+import { verifySourceUrl } from './source-verification.js';
 
 export interface NormalizeOptions {
   /** Injected for deterministic tests. */
@@ -93,6 +94,10 @@ export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
     requiredYears,
     applyUrl: normalizeUrl(raw.applyUrl) ?? normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
     sourceUrl: normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
+    sourceUrlVerification: verifySourceUrl(
+      raw.source,
+      normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
+    ),
     sourcePublisher: collapse(raw.sourcePublisher ?? '') || null,
     firstSeenAt: nowIso,
     lastSeenAt: nowIso,

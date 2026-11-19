@@ -115,6 +115,7 @@ export function job(overrides: Partial<Job> = {}): Job {
     requiredYears: { min: null, max: null },
     applyUrl: 'https://boards.greenhouse.io/acme/jobs/1',
     sourceUrl: 'https://boards.greenhouse.io/acme/jobs/1',
+    sourceUrlVerification: { status: 'configured_host_match', reason: 'host_match' },
     // Greenhouse is the origin, not a re-publisher. Only the aggregators fill
     // this in.
     sourcePublisher: null,

@@ -185,8 +185,16 @@ test('multi-source collection retains validated partial results and preserves ca
   assert.equal(result.length, 2);
   assert.equal(result.find((job) => job.company === 'Example')?.source, 'himalayas');
   assert.deepEqual(result.find((job) => job.company === 'Example')?.sourceLinks, [
-    { source: 'remoteok', url: raw.sourceUrl },
-    { source: 'himalayas', url: 'https://himalayas.app/jobs/multi' },
+    {
+      source: 'remoteok',
+      url: raw.sourceUrl,
+      verification: { status: 'configured_host_match', reason: 'host_match' },
+    },
+    {
+      source: 'himalayas',
+      url: 'https://himalayas.app/jobs/multi',
+      verification: { status: 'configured_host_match', reason: 'host_match' },
+    },
   ]);
   const failing = {
     ...himalayas,
@@ -263,7 +271,13 @@ test('two distinct reqs from one source with the same title, company and city st
   for (const job of jobs) {
     assert.deepEqual(
       job.sourceLinks,
-      [{ source: 'remoteok', url: job.sourceUrl }],
+      [
+        {
+          source: 'remoteok',
+          url: job.sourceUrl,
+          verification: { status: 'configured_host_match', reason: 'host_match' },
+        },
+      ],
       `sourceLinks for ${job.description} must contain only its own posting`,
     );
   }
@@ -327,7 +341,13 @@ test('a three-way ambiguous split keeps every posting apart with only its own so
   for (const job of jobs) {
     assert.deepEqual(
       job.sourceLinks,
-      [{ source: job.source, url: job.sourceUrl }],
+      [
+        {
+          source: job.source,
+          url: job.sourceUrl,
+          verification: { status: 'configured_host_match', reason: 'host_match' },
+        },
+      ],
       `sourceLinks for ${job.description} must contain only its own posting, never a sibling's`,
     );
   }
@@ -359,6 +379,33 @@ test('search uses the established provider normalization and attribution', async
   assert.equal(results[0]!.match, null);
   assert.equal(results[0]!.description, 'Build accessible React interfaces.');
   assert.equal(results[0]!.sourceUrl, 'https://remoteok.com/remote-jobs/fixture-1');
+});
+
+test('collection never gives a positive source-host result to a mismatched URL', async () => {
+  const provider = {
+    ...createRemoteOkProvider(),
+    async *search() {
+      yield {
+        source: 'remoteok' as const,
+        sourceJobId: 'mismatched-host',
+        title: 'React Engineer',
+        companyName: 'Synthetic Company',
+        location: 'Remote',
+        hasFullDescription: false,
+        sourceUrl: 'https://jobs.lever.co/synthetic/123',
+        applyUrl: 'https://example.test/apply/123',
+      };
+    },
+  };
+  const result = await collect(request, signal, provider);
+  assert.equal(result.jobs.length, 1);
+  assert.deepEqual(result.jobs[0]?.sourceLinks, [
+    {
+      source: 'remoteok',
+      url: 'https://jobs.lever.co/synthetic/123',
+      verification: { status: 'unverified', reason: 'host_mismatch' },
+    },
+  ]);
 });
 
 test('selected Himalayas adapter follows bounded pages and preserves source links', async () => {
