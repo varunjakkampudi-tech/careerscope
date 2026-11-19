@@ -2012,6 +2012,12 @@
           "sha256": "da3b553a8b588deb6952f61cd3f2440c5810c59a294fbda85f29215eb4539433",
           "observations": "Reviewed Stage 05 items 5.08 and 5.09 evidence and gaps; both remain partial and no external source acceptance is claimed.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+          "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+          "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review."
         }
       ]
     },
@@ -2228,6 +2234,12 @@
           "sha256": "9dcdfecb8ac4591ecf0fc959813bbd5bb6f74411ddd3c2c0374fc03bd52208b4",
           "observations": "Reviewed Stage 05 item 5.08 and 5.09 status, focused test/build evidence, and remaining adapter-mapping and false-merge limitations.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
+          "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+          "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review."
         }
       ]
     },
@@ -2412,6 +2424,12 @@
           "sha256": "d08de3ad68f62e21c10744dc048c1e91a6c2f831382d1e8efe31b8ee32ab3b4d",
           "observations": "Reviewed item-specific Stage 05 normalization and deduplication test evidence and exact-head gates.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+          "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+          "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases."
         }
       ]
     },
@@ -2962,6 +2980,12 @@
           "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
           "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+          "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap."
         }
       ]
     },
@@ -4275,7 +4299,15 @@
       "observations": "Read in full (624 lines, in ranges 1 to 135 and 136 to 625). Checked: pool limits and timeouts; error listener; createSearch idempotency with a canonical request hash, a snapshot of profile and latest derived resume, and the command enqueued in the same transaction; cancelSearch fences the execution so a stale worker cannot settle; outbox selection with a two-minute republish rule that excludes finished or leased work; claim takes a lease with fence increment only on an expired lease; renew and release are fence-checked; settle checks fence, lease and the stored command in one transaction, derives run status from outcomes and refuses results for a different source set; job sightings are written with the job. Earlier finding S1-F002 fixed. No further finding.\n\nStage 06 item 6.05 review: Reviewed settlement insertion and sighting update path. Sightings now increment only when the unique run/fingerprint search_jobs row was newly inserted, keeping duplicate source rows from inflating market evidence. Node 24 disposable-Postgres market integration passed 2/2.",
       "evidence": "Node 24 disposable-Postgres packages/core/src/market.integration.test.ts: 2 passed, 0 failed; npm run typecheck:tests passed all 98 canonical files; npm run format:check passed.",
       "reviewer": "Codex implementation self-review; independent exact-SHA review pending",
-      "sha256": "12901c63460889092b5a8ff22ce49c4ddc52205b0f22cc5c9d1163f92cf3a524"
+      "sha256": "12901c63460889092b5a8ff22ce49c4ddc52205b0f22cc5c9d1163f92cf3a524",
+      "history": [
+        {
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "6abe50eada2abc65c4734ed5e42f84ce861ed051255f31078cff0949c8f98929",
+          "observations": "Read in full (624 lines, in ranges 1 to 135 and 136 to 625). Checked: pool limits and timeouts; error listener; createSearch idempotency with a canonical request hash, a snapshot of profile and latest derived resume, and the command enqueued in the same transaction; cancelSearch fences the execution so a stale worker cannot settle; outbox selection with a two-minute republish rule that excludes finished or leased work; claim takes a lease with fence increment only on an expired lease; renew and release are fence-checked; settle checks fence, lease and the stored command in one transaction, derives run status from outcomes and refuses results for a different source set; job sightings are written with the job. Earlier finding S1-F002 fixed. No further finding.",
+          "evidence": "Stage 01 file audit session, read on the working tree at the hash above."
+        }
+      ]
     },
     {
       "path": "packages/core/src/dispatch.test.ts",
@@ -4599,7 +4631,15 @@
       "observations": "Read in full. Creates only UUID-named databases; covers per-owner posting sightings/reposts, staleness and pipeline states, with cleanup in finally. Finding S1-F064 (medium, fixed): the second test lacked the loopback-host guard present in the first, so DATABASE_URL could target a remote database before CREATE/DROP DATABASE. Added the same localhost/127.0.0.1 check before connecting.\n\nStage 06 item 6.05 review: Replaced a copied SQL fixture with production Database.createSearch, command claim/start, and completeCollection lifecycle. Covers one sighting for repeated same-run fingerprints and rejects replay of a completed command, while retaining repost, missing-date, persistence and owner-isolation assertions.",
       "evidence": "Node 24 disposable-Postgres packages/core/src/market.integration.test.ts: 2 passed, 0 failed; npm run typecheck:tests passed all 98 canonical files; npm run format:check passed.",
       "reviewer": "Codex implementation self-review; independent exact-SHA review pending",
-      "sha256": "a92dc171d640ef584b0f3c9f2e7f436e8312065ca8b532582a0cbd6bf0c2e8aa"
+      "sha256": "a92dc171d640ef584b0f3c9f2e7f436e8312065ca8b532582a0cbd6bf0c2e8aa",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 01 implementation audit)",
+          "sha256": "e82450256eba66ae0d2c31663d126a640a43c859823bfc7e1fceb937fe2fd4e5",
+          "observations": "Read in full. Creates only UUID-named databases; covers per-owner posting sightings/reposts, staleness and pipeline states, with cleanup in finally. Finding S1-F064 (medium, fixed): the second test lacked the loopback-host guard present in the first, so DATABASE_URL could target a remote database before CREATE/DROP DATABASE. Added the same localhost/127.0.0.1 check before connecting.",
+          "evidence": ""
+        }
+      ]
     },
     {
       "path": "packages/core/src/market.ts",
