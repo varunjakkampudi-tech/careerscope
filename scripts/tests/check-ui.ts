@@ -3632,12 +3632,26 @@ try {
       await page.getByText('Page 3 of 3', { exact: true }).waitFor();
       const historyResponse = await page.request.get(`${origin}/api/searches`);
       assert.equal(historyResponse.status(), 200);
-      const historyBody = await historyResponse.json();
+      const historyBody = (await historyResponse.json()) as {
+        items: Array<{
+          id: string;
+          status: string;
+          createdAt: string;
+          request: { query: string };
+        }>;
+      };
+      assert.ok(Array.isArray(historyBody.items));
+      const originalRun = historyBody.items.find((item) => item.id === search.id);
+      assert.ok(originalRun, 'the original pagination search is present in history');
+      const originalRunForHistory = {
+        ...originalRun,
+        request: { ...originalRun.request, query: 'Original pagination run' },
+      };
       const isolatedRunId = randomUUID();
       const isolatedRun = {
-        ...historyBody.items[0],
+        ...originalRun,
         id: isolatedRunId,
-        request: { ...historyBody.items[0].request, query: 'Pagination state isolation' },
+        request: { ...originalRun.request, query: 'Pagination state isolation' },
         createdAt: new Date(Date.now() + 1000).toISOString(),
       };
       const isolatedJobs = paginatedJobs.map((job, index) => {
@@ -3650,7 +3664,7 @@ try {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({ items: [isolatedRun, ...historyBody.items] }),
+          body: JSON.stringify({ items: [isolatedRun, originalRunForHistory] }),
         }),
       );
       await page.route(`**/api/searches/${isolatedRunId}`, (route) =>
@@ -3684,7 +3698,7 @@ try {
       await page.getByText(`${paginationTitlePrefix} Isolated run 1`, { exact: true }).waitFor();
       await nextPageButton.click();
       await page.getByText('Page 2 of 3', { exact: true }).waitFor();
-      await historyNavigation.getByRole('button', { name: /React.*partial/s }).click();
+      await historyNavigation.getByRole('button', { name: /Original pagination run/ }).click();
       await page.getByText('Page 3 of 3', { exact: true }).waitFor();
       assert.equal(await page.locator('details.job').count(), 5);
       await page

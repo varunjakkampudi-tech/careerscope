@@ -1371,7 +1371,7 @@
         "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "Accessible client-side pagination covers the currently collected result set in bounded 20-item pages, with per-run state, filter reset, and clamping when result counts shrink. Node 24 focused tests pass 13/13; full typecheck, lint, file-audit integrity, and 328-item/22-stage traceability checks pass. The local full unit suite completed with five subprocess startup timeouts in packages/core/src/process-failure.test.ts under Docker. Expanded browser coverage and exact-head hosted CI remain pending. Additional provider-page fetching is not implemented, and the source checklist title does not specify full acceptance criteria.",
+      "gap": "Accessible client-side pagination covers the currently collected result set in bounded 20-item pages, with per-run state, filter reset, and clamping when results shrink. Node 24 focused tests pass 13/13 and full typecheck passes for 98 canonical test files. Hosted run 43995234077 passed Quality gates, integration tests, and production image builds but failed browser acceptance at a non-deterministic history-run selector. The fixture now asserts and selects the exact original search ID; exact-head browser CI remains pending. The local full unit suite had five subprocess startup timeouts under Docker. Additional provider-page fetching is not implemented, and the checklist title does not specify full acceptance criteria.",
       "scopeDisposition": "in-scope"
     },
     {
