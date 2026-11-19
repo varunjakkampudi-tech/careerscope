@@ -2086,10 +2086,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nStage 02 item 2.12 evidence update: added documented recovery sign-in browser coverage; item acceptance remains partial pending exact-head browser CI and clarification of owner acceptance criteria.\nStage 02 item 2.12 recovery sign-in follow-up: the API client now treats recovery verification 401 as an invalid code rather than expired session; unit/browser regression assertions and roadmap evidence are updated. Item remains partial pending exact-head CI and owner acceptance.",
-      "evidence": "Updated Stage 02 item 2.12 recovery sign-in behavior and evidence. Focused API tests passed 14/14; exact-head browser CI and owner acceptance remain pending.",
-      "reviewer": "Codex (Stage 02 item 2.12 recovery sign-in follow-up)",
-      "sha256": "67c0be003775eade62c20c44a0f19d8d08506669b7ad2448363c577f3512789e",
+      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nStage 02 item 2.12 evidence update: added documented recovery sign-in browser coverage; item acceptance remains partial pending exact-head browser CI and clarification of owner acceptance criteria.\nStage 02 item 2.12 recovery sign-in follow-up: the API client now treats recovery verification 401 as an invalid code rather than expired session; unit/browser regression assertions and roadmap evidence are updated. Item remains partial pending exact-head CI and owner acceptance. Exact-head run 44593154165 passed all required jobs on SHA e421b325ba6936dca97794f906b7986503353994; optional lifecycle, performance, soak and recovery checks were skipped. Owner item 2.12 remains partial pending final independent review and acceptance clarification.",
+      "evidence": "Exact-head hosted run 44593154165 passed all required jobs on e421b325ba6936dca97794f906b7986503353994; item 2.12 remains partial pending final independent review and owner acceptance criteria.",
+      "reviewer": "Codex (Stage 02 item 2.12 evidence update)",
+      "sha256": "699f5492f17e1148060e0f7d73b34c3d7ca1d7288a7aa043422dfc05b49db03d",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2282,10 +2282,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nStage 02 item 2.12 evidence update: added documented recovery sign-in browser coverage; item acceptance remains partial pending exact-head browser CI and clarification of owner acceptance criteria.\nStage 02 item 2.12 recovery sign-in follow-up: the API client now treats recovery verification 401 as an invalid code rather than expired session; unit/browser regression assertions and roadmap evidence are updated. Item remains partial pending exact-head CI and owner acceptance.",
-      "evidence": "Updated Stage 02 item 2.12 recovery sign-in behavior and evidence. Focused API tests passed 14/14; exact-head browser CI and owner acceptance remain pending.",
-      "reviewer": "Codex (Stage 02 item 2.12 recovery sign-in follow-up)",
-      "sha256": "cc71f6efc371b2bc1244c4a7339f3daf8470b209da389b416ef87914fc984f03",
+      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nStage 02 item 2.12 evidence update: added documented recovery sign-in browser coverage; item acceptance remains partial pending exact-head browser CI and clarification of owner acceptance criteria.\nStage 02 item 2.12 recovery sign-in follow-up: the API client now treats recovery verification 401 as an invalid code rather than expired session; unit/browser regression assertions and roadmap evidence are updated. Item remains partial pending exact-head CI and owner acceptance. Exact-head run 44593154165 passed all required jobs on SHA e421b325ba6936dca97794f906b7986503353994; optional lifecycle, performance, soak and recovery checks were skipped. Owner item 2.12 remains partial pending final independent review and acceptance clarification.",
+      "evidence": "Exact-head hosted run 44593154165 passed all required jobs on e421b325ba6936dca97794f906b7986503353994; item 2.12 remains partial pending final independent review and owner acceptance criteria.",
+      "reviewer": "Codex (Stage 02 item 2.12 evidence update)",
+      "sha256": "0ddc3ec5ad4561e4fbe09ff96f8b8a2e6b9e9063717af71d7af9372aa6172a50",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2850,10 +2850,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nStage 02 item 2.12 evidence update: added documented recovery sign-in browser coverage; item acceptance remains partial pending exact-head browser CI and clarification of owner acceptance criteria.\nStage 02 item 2.12 recovery sign-in follow-up: the API client now treats recovery verification 401 as an invalid code rather than expired session; unit/browser regression assertions and roadmap evidence are updated. Item remains partial pending exact-head CI and owner acceptance.",
-      "evidence": "Updated Stage 02 item 2.12 recovery sign-in behavior and evidence. Focused API tests passed 14/14; exact-head browser CI and owner acceptance remain pending.",
-      "reviewer": "Codex (Stage 02 item 2.12 recovery sign-in follow-up)",
-      "sha256": "e86b66a056a913f0ea8c03c36aee472fea22c98dc0a7c79c9e8abd626f2d8e09",
+      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nStage 02 item 2.12 evidence update: added documented recovery sign-in browser coverage; item acceptance remains partial pending exact-head browser CI and clarification of owner acceptance criteria.\nStage 02 item 2.12 recovery sign-in follow-up: the API client now treats recovery verification 401 as an invalid code rather than expired session; unit/browser regression assertions and roadmap evidence are updated. Item remains partial pending exact-head CI and owner acceptance. Exact-head run 44593154165 passed all required jobs on SHA e421b325ba6936dca97794f906b7986503353994; optional lifecycle, performance, soak and recovery checks were skipped. Owner item 2.12 remains partial pending final independent review and acceptance clarification.",
+      "evidence": "Exact-head hosted run 44593154165 passed all required jobs on e421b325ba6936dca97794f906b7986503353994; item 2.12 remains partial pending final independent review and owner acceptance criteria.",
+      "reviewer": "Codex (Stage 02 item 2.12 evidence update)",
+      "sha256": "3b048f4509239cab98847a9668365dd604b084164dbc93044151cd1a60a0aa6e",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
