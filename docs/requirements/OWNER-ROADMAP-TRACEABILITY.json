@@ -1345,8 +1345,11 @@
       "currentStatus": "partial",
       "evidence": ["packages/providers/src/http.ts", "docs/PROGRESS.md", "docs/GAP-MATRIX.md"],
       "tests": ["packages/providers/src/http.test.ts"],
-      "externalEvidence": [],
-      "gap": "The shared HTTP client has bounded transient retries, capped Retry-After handling, and a per-host circuit breaker that opens after five exhausted transient request cycles by default and allows one recovery probe after 30 seconds. Generation and failure-revision guards reject stale completions across open, recovery, and closed failure streaks while retaining concurrent failure counting. Fresh exact-head CI and independent review of the latest correction remain outstanding. Circuit health is host-scoped rather than provider-source policy/telemetry. Live behavior and source-specific tuning remain outstanding; no provider is activated.",
+      "externalEvidence": [
+        "PR #103 exact head 9a8e2d0744a720113df02f480603e1efc693d5e1 received final independent approval; required Quality gates, Services/integration/browser suites, and Production image build passed in run 43954024665.",
+        "PR #103 merged to dev as fad57ea3253024983f29183acefaee59328d0d01. Post-merge dev run 43957299898 passed Quality gates and Services/integration/browser suites; the production image and optional performance, soak, recovery, and passive lifecycle steps were skipped for the push event."
+      ],
+      "gap": "The shared HTTP client has bounded transient retries, capped Retry-After handling, and a per-host circuit breaker that opens after five exhausted transient request cycles by default and allows one recovery probe after 30 seconds. Generation and failure-revision guards reject stale completions across open, recovery, and closed failure streaks while retaining concurrent failure counting. Circuit health is host-scoped rather than provider-source policy/telemetry. Live behavior and source-specific tuning remain outstanding; no provider is activated. Optional resilience checks were skipped and the post-merge image was not built. No deployment occurred.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1355,11 +1358,23 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Search pagination",
       "sourceStatus": "New/enhancement",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/job-search-view.tsx",
+        "apps/web/src/lib/search-pagination.ts",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md"
+      ],
+      "tests": [
+        "apps/web/src/lib/search-pagination.test.ts",
+        "apps/web/src/lib/locale.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
+      "externalEvidence": [
+        "GitHub Actions run 44481976858 passed Quality gates, PostgreSQL/Redis integration, browser/accessibility/keyboard/responsive checks, and production image build on exact SHA 522092825650da7aefa42e655b9d1f04e7f23c41.",
+        "Independent exact-SHA review approved PR #104 at 522092825650da7aefa42e655b9d1f04e7f23c41 against base fad57ea3253024983f29183acefaee59328d0d01."
+      ],
+      "gap": "Accessible client-side pagination covers the currently collected result set in bounded 20-item pages. Filtering and search-run changes reset the displayed page to 1; returning to a prior run also starts at page 1 rather than restoring its prior page. Shrinking results clamps the page. Node 24 focused pagination/locale tests passed 13/13; full typecheck passed for 98 canonical test files. Exact-head run 44481976858 passed all three jobs on SHA 522092825650da7aefa42e655b9d1f04e7f23c41, and independent exact-SHA review accepted the engineering implementation. The local full unit suite had five subprocess startup timeouts under Docker. Pagination does not fetch additional provider pages, and the source checklist title does not define whether provider-page continuation is required; item remains partial pending scope clarification and acceptance.",
       "scopeDisposition": "in-scope"
     },
     {

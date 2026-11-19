@@ -3542,6 +3542,188 @@ try {
           .getAttribute('href'),
         'https://example.test/apply',
       );
+      const paginatedJobs = Array.from({ length: 45 }, (_, index) => {
+        const job = structuredClone(resultBody.jobs[0]);
+        job.id = randomUUID();
+        job.data.title = `${job.data.title} Pagination fixture ${index + 1}`;
+        return job;
+      });
+      const paginationTitlePrefix = resultBody.jobs[0].data.title;
+      await page.route(`**/api/searches/${search.id}`, (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ ...resultBody, jobs: paginatedJobs }),
+        }),
+      );
+      await page.reload();
+      await page.getByText('Page 1 of 3', { exact: true }).waitFor();
+      assert.equal(await page.locator('details.job').count(), 20);
+      await page
+        .getByText(`${paginationTitlePrefix} Pagination fixture 1`, { exact: true })
+        .waitFor();
+      assert.equal(
+        await page
+          .getByText(`${paginationTitlePrefix} Pagination fixture 21`, { exact: true })
+          .count(),
+        0,
+      );
+      const pageNavigation = page.getByRole('navigation', {
+        name: 'Search result pages',
+        exact: true,
+      });
+      const nextPageButton = pageNavigation.getByRole('button', {
+        name: 'Next page',
+        exact: true,
+      });
+      await nextPageButton.click();
+      await page.getByText('Page 2 of 3', { exact: true }).waitFor();
+      assert.equal(
+        await pageNavigation.getByText('Page 2 of 3', { exact: true }).getAttribute('aria-live'),
+        'polite',
+      );
+      assert.equal(
+        await nextPageButton.evaluate((element) => document.activeElement === element),
+        true,
+        `${engine}: keyboard focus remains on Next after paging`,
+      );
+      await page
+        .getByText(`${paginationTitlePrefix} Pagination fixture 21`, { exact: true })
+        .waitFor();
+      assert.equal(
+        await page
+          .getByText(`${paginationTitlePrefix} Pagination fixture 1`, { exact: true })
+          .count(),
+        0,
+      );
+      await nextPageButton.press('Enter');
+      await page.getByText('Page 3 of 3', { exact: true }).waitFor();
+      assert.equal(await page.locator('details.job').count(), 5);
+      await page
+        .getByText(`${paginationTitlePrefix} Pagination fixture 45`, { exact: true })
+        .waitFor();
+      const previousPageButton = pageNavigation.getByRole('button', {
+        name: 'Previous page',
+        exact: true,
+      });
+      await previousPageButton.press('Enter');
+      await page.getByText('Page 2 of 3', { exact: true }).waitFor();
+      assert.equal(
+        await previousPageButton.evaluate((element) => document.activeElement === element),
+        true,
+        `${engine}: keyboard focus remains on Previous after paging`,
+      );
+      await nextPageButton.press('Enter');
+      await page.getByText('Page 3 of 3', { exact: true }).waitFor();
+      await page.getByLabel('Filter results').fill('No matching pagination fixture');
+      await page.getByText('No matching jobs', { exact: true }).waitFor();
+      assert.equal(await page.locator('details.job').count(), 0);
+      assert.equal(await page.getByText('Page 3 of 3', { exact: true }).count(), 0);
+      await page.getByLabel('Filter results').fill('');
+      await page.getByText('Page 1 of 3', { exact: true }).waitFor();
+      assert.equal(await page.locator('details.job').count(), 20);
+
+      // A second run must start on page 1 rather than inheriting page 3 from
+      // the first run. Switching back also starts the original run at page 1.
+      await nextPageButton.click();
+      await page.getByText('Page 2 of 3', { exact: true }).waitFor();
+      await nextPageButton.click();
+      await page.getByText('Page 3 of 3', { exact: true }).waitFor();
+      const historyResponse = await page.request.get(`${origin}/api/searches`);
+      assert.equal(historyResponse.status(), 200);
+      const historyBody = (await historyResponse.json()) as {
+        items: Array<{
+          id: string;
+          status: string;
+          createdAt: string;
+          request: { query: string };
+        }>;
+      };
+      assert.ok(Array.isArray(historyBody.items));
+      const originalRun = historyBody.items.find((item) => item.id === search.id);
+      assert.ok(originalRun, 'the original pagination search is present in history');
+      const originalRunForHistory = {
+        ...originalRun,
+        request: { ...originalRun.request, query: 'Original pagination run' },
+      };
+      const isolatedRunId = randomUUID();
+      const isolatedRun = {
+        ...originalRun,
+        id: isolatedRunId,
+        request: { ...originalRun.request, query: 'Pagination state isolation' },
+        createdAt: new Date(Date.now() + 1000).toISOString(),
+      };
+      const isolatedJobs = paginatedJobs.map((job, index) => {
+        const isolatedJob = structuredClone(job);
+        isolatedJob.id = randomUUID();
+        isolatedJob.data.title = `${paginationTitlePrefix} Isolated run ${index + 1}`;
+        return isolatedJob;
+      });
+      await page.route('**/api/searches', (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ items: [isolatedRun, originalRunForHistory] }),
+        }),
+      );
+      await page.route(`**/api/searches/${isolatedRunId}`, (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            ...resultBody,
+            id: isolatedRunId,
+            request: { ...resultBody.request, query: 'Pagination state isolation' },
+            jobs: isolatedJobs,
+          }),
+        }),
+      );
+      await page.reload();
+      await page.getByText('Page 1 of 3', { exact: true }).waitFor();
+      const historyNavigation = page.getByRole('navigation', {
+        name: 'Search history',
+        exact: true,
+      });
+      const isolatedRunButton = historyNavigation.getByRole('button', {
+        name: /Pagination state isolation/,
+      });
+      await isolatedRunButton.waitFor();
+      await nextPageButton.click();
+      await nextPageButton.click();
+      await page.getByText('Page 3 of 3', { exact: true }).waitFor();
+      await isolatedRunButton.click();
+      await page.getByText('Page 1 of 3', { exact: true }).waitFor();
+      assert.equal(await page.locator('details.job').count(), 20);
+      await page.getByText(`${paginationTitlePrefix} Isolated run 1`, { exact: true }).waitFor();
+      await nextPageButton.click();
+      await page.getByText('Page 2 of 3', { exact: true }).waitFor();
+      await historyNavigation.getByRole('button', { name: /Original pagination run/ }).click();
+      await page.getByText('Page 1 of 3', { exact: true }).waitFor();
+      assert.equal(await page.locator('details.job').count(), 20);
+      await page
+        .getByText(`${paginationTitlePrefix} Pagination fixture 1`, { exact: true })
+        .waitFor();
+      assert.equal(
+        await page.getByText(`${paginationTitlePrefix} Isolated run 1`, { exact: true }).count(),
+        0,
+      );
+
+      await page.evaluate(() => localStorage.setItem('careerscope:interface-language', 'te'));
+      await page.reload();
+      await page.getByRole('navigation', { name: 'శోధన ఫలితాల పేజీలు', exact: true }).waitFor();
+      await page.getByText('పేజీ 1 లో 3', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'తదుపరి పేజీ', exact: true }).press('Enter');
+      await page.getByText('పేజీ 2 లో 3', { exact: true }).waitFor();
+      await page.evaluate(() => localStorage.setItem('careerscope:interface-language', 'hi'));
+      await page.reload();
+      await page.getByRole('navigation', { name: 'खोज परिणाम पृष्ठ', exact: true }).waitFor();
+      await page.getByText('पृष्ठ 1 में से 3', { exact: true }).waitFor();
+      await page.evaluate(() => localStorage.setItem('careerscope:interface-language', 'en'));
+      await page.unroute('**/api/searches');
+      await page.unroute(`**/api/searches/${isolatedRunId}`);
+      await page.unroute(`**/api/searches/${search.id}`);
+      await page.reload();
+      await page.getByRole('heading', { name: 'Senior React Engineer' }).waitFor();
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });
         assert.equal(
@@ -3561,6 +3743,10 @@ try {
             fullPage: true,
           });
       }
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.unroute(`**/api/searches/${search.id}`);
+      await page.reload();
+      await page.getByRole('heading', { name: 'Senior React Engineer' }).waitFor();
       await page.getByLabel('Filter results').fill('NoSuchCompany');
       // CS-13's shared EmptyState renders its title as a styled <p>, not a
       // heading (it is embedded at varying heading depths), so this checks

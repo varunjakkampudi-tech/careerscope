@@ -6,6 +6,8 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Download,
   ExternalLink,
   LoaderCircle,
@@ -32,6 +34,7 @@ import {
   type SearchDetail,
 } from '@/lib/api-schemas';
 import { localizedText, useInterfaceLocale } from '@/lib/locale';
+import { paginateSearchResults } from '@/lib/search-pagination';
 import { ownerKey, useSession } from '@/lib/session';
 import { SaveJob } from '@/components/saved-leads';
 import MatchEvidence from '@/components/match-evidence';
@@ -158,7 +161,14 @@ function JobSearchWorkspace() {
   // CS-61: present exactly when authenticated.
   const owner = session.data?.owner;
   const [selected, setSelected] = useState<string | null>(null);
-  const [filter, setFilter] = useState('');
+  const [filterState, setFilterState] = useState<{ runId: string | undefined; value: string }>({
+    runId: undefined,
+    value: '',
+  });
+  const [resultPageState, setResultPageState] = useState<{
+    runId: string | undefined;
+    page: number;
+  }>({ runId: undefined, page: 1 });
   const [sourceSelection, setSourceSelection] = useState<CreateSearch['sources'] | null>(null);
   const [useProfileTitles, setUseProfileTitles] = useState(false);
 
@@ -189,6 +199,8 @@ function JobSearchWorkspace() {
   // it is never trusted client-side.
   const runParam = params.get('run');
   const selectedId = runParam ?? selected ?? runs.data?.items[0]?.id;
+  const filter = filterState.runId === selectedId ? filterState.value : '';
+  const resultPage = resultPageState.runId === selectedId ? resultPageState.page : 1;
   // Keeps the address bar in step with the selection so the view stays
   // linkable. `push` for a deliberate pick (back returns to the previous run),
   // `replace` for a run this view just created on the owner's behalf — that
@@ -223,7 +235,6 @@ function JobSearchWorkspace() {
       }),
     onSuccess: (result) => {
       showRun(result.runId, 'replace');
-      setFilter('');
       exportSearch.reset();
       void cache.invalidateQueries({ queryKey: ['searches'] });
     },
@@ -319,6 +330,7 @@ function JobSearchWorkspace() {
       `${data.title} ${data.company} ${data.location}`.toLowerCase().includes(filtered),
     ) ?? []
   ).sort((a, b) => (b.data.match?.score ?? -1) - (a.data.match?.score ?? -1));
+  const resultPageWindow = paginateSearchResults(jobs, resultPage);
 
   return (
     <div className="workspace">
@@ -349,7 +361,6 @@ function JobSearchWorkspace() {
               aria-current={selectedId === run.id ? 'true' : undefined}
               onClick={() => {
                 showRun(run.id);
-                setFilter('');
                 cancel.reset();
                 exportSearch.reset();
               }}
@@ -651,7 +662,10 @@ function JobSearchWorkspace() {
                   <input
                     placeholder="Filter results"
                     value={filter}
-                    onChange={(event) => setFilter(event.target.value)}
+                    onChange={(event) => {
+                      setFilterState({ runId: selectedId, value: event.target.value });
+                      setResultPageState({ runId: selectedId, page: 1 });
+                    }}
                   />
                 </label>
               )}
@@ -671,14 +685,20 @@ function JobSearchWorkspace() {
                     }
                     action={
                       detail.data.jobs.length > 0 && filter
-                        ? { label: t('clearSearchFilter'), onClick: () => setFilter('') }
+                        ? {
+                            label: t('clearSearchFilter'),
+                            onClick: () => {
+                              setFilterState({ runId: selectedId, value: '' });
+                              setResultPageState({ runId: selectedId, page: 1 });
+                            },
+                          }
                         : undefined
                     }
                   />
                 </div>
               )}
               <div className="job-list">
-                {jobs.map(({ id, data, feedbackReason }) => (
+                {resultPageWindow.items.map(({ id, data, feedbackReason }) => (
                   <details className="job" key={id}>
                     <summary>
                       <div>
@@ -771,6 +791,36 @@ function JobSearchWorkspace() {
                   </details>
                 ))}
               </div>
+              {resultPageWindow.pageCount > 1 && (
+                <nav className={styles.resultPagination} aria-label={t('searchResultPages')}>
+                  <button
+                    type="button"
+                    className="secondary"
+                    disabled={resultPageWindow.page === 1}
+                    onClick={() =>
+                      setResultPageState({ runId: selectedId, page: resultPageWindow.page - 1 })
+                    }
+                  >
+                    <ChevronLeft size={16} aria-hidden="true" />
+                    {t('searchPreviousPage')}
+                  </button>
+                  <span aria-live="polite">
+                    {t('searchPageLabel')} {resultPageWindow.page} {t('searchPageOf')}{' '}
+                    {resultPageWindow.pageCount}
+                  </span>
+                  <button
+                    type="button"
+                    className="secondary"
+                    disabled={resultPageWindow.page === resultPageWindow.pageCount}
+                    onClick={() =>
+                      setResultPageState({ runId: selectedId, page: resultPageWindow.page + 1 })
+                    }
+                  >
+                    {t('searchNextPage')}
+                    <ChevronRight size={16} aria-hidden="true" />
+                  </button>
+                </nav>
+              )}
             </>
           )
         )}

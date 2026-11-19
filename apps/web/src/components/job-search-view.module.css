@@ -57,6 +57,33 @@
   outline-offset: 3px;
 }
 
+.resultPagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 16px 0 24px;
+}
+
+.resultPagination > span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.resultPagination > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+}
+
+.resultPagination > button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
 @media (min-width: 600px) {
   .sourceOptions {
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
