@@ -552,7 +552,7 @@ export class Database {
       );
       if (!updated.rowCount) throw new Conflict('Search is not eligible for completion');
       for (const job of validated) {
-        await client.query(
+        const inserted = await client.query(
           `INSERT INTO search_jobs (id, run_id, owner_id, fingerprint, data)
           VALUES ($1, $2, $3, $4, $5::jsonb) ON CONFLICT (run_id, fingerprint) DO NOTHING`,
           [
@@ -566,6 +566,10 @@ export class Database {
         // In the same transaction as the job itself: a sighting that could be
         // committed without its posting would be evidence of something that
         // never happened.
+        // A search can contain duplicate fingerprints (for example, repeated
+        // source rows). Count one sighting only when this run actually inserted
+        // the run/fingerprint record above.
+        if (inserted.rowCount !== 1) continue;
         await client.query(
           `INSERT INTO job_sightings
              (owner_id, fingerprint, title, company, first_posted_at, last_posted_at, last_run_id)
