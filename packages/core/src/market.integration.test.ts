@@ -5,10 +5,11 @@ import { fileURLToPath } from 'node:url';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { Database } from './database.js';
 import { MarketRepository } from './market.js';
+import type { CollectedJobInput, SourceOutcome } from './jobs.js';
 
-// Proves the evidence is real: sightings accumulate across runs, a refreshed
-// posting is recognised as the same role rather than a new one, and nothing is
-// visible across owners.
+// Proves the evidence is written by the production search settlement path:
+// sightings accumulate once per run, refreshed postings are recorded, and
+// nothing is visible across owners.
 test('posting evidence accumulates across searches and detects a refreshed listing', async () => {
   const configured = process.env.DATABASE_URL;
   assert.ok(configured);
@@ -32,34 +33,73 @@ test('posting evidence accumulates across searches and detects a refreshed listi
       );
     }
 
-    // Mirrors exactly what completeSearch writes, so the test exercises the real
-    // upsert rather than a convenient reimplementation of it.
-    const sight = (ownerId: string, fingerprint: string, postedAt: string | null, seenAgo = 0) =>
-      database.pool.query(
-        `INSERT INTO job_sightings
-           (owner_id, fingerprint, title, company, first_posted_at, last_posted_at,
-            first_seen_at, last_seen_at)
-         VALUES ($1, $2, 'Backend Engineer', 'Acme', $3, $3,
-                 now() - ($4 || ' days')::interval, now() - ($4 || ' days')::interval)
-         ON CONFLICT (owner_id, fingerprint) DO UPDATE SET
-           last_seen_at = now(),
-           sightings = job_sightings.sightings + 1,
-           last_posted_at = COALESCE(EXCLUDED.last_posted_at, job_sightings.last_posted_at),
-           repost_count = job_sightings.repost_count + CASE
-             WHEN EXCLUDED.last_posted_at IS NOT NULL
-              AND job_sightings.last_posted_at IS NOT NULL
-              AND EXCLUDED.last_posted_at > job_sightings.last_posted_at
-             THEN 1 ELSE 0 END`,
-        [ownerId, fingerprint, postedAt, seenAgo],
+    const outcomesFor = (accepted: number): SourceOutcome[] => [
+      { source: 'remoteok', status: 'completed', accepted, limited: false, errorCode: null },
+    ];
+    const job = (fingerprint: string, postedAt: string | null): CollectedJobInput => ({
+      fingerprint,
+      title: 'Backend Engineer',
+      company: 'Acme',
+      location: 'Remote',
+      description: 'Synthetic integration fixture',
+      source: 'remoteok',
+      sourceUrl: `https://remoteok.com/jobs/${fingerprint}`,
+      applyUrl: `https://remoteok.com/jobs/${fingerprint}`,
+      postedAt,
+      match: null,
+    });
+    let runSequence = 0;
+    const observe = async (
+      ownerId: string,
+      jobs: CollectedJobInput[],
+      outcomes = outcomesFor(jobs.length),
+      duplicateInRun = false,
+    ) => {
+      runSequence += 1;
+      const run = await database.createSearch(ownerId, `market-evidence-${runSequence}`, {
+        query: 'Backend Engineer',
+        sources: ['remoteok'],
+      });
+      const { rows } = await database.pool.query<{ id: string }>(
+        "SELECT id FROM outbox_events WHERE command->>'aggregateId' = $1",
+        [run.id],
       );
+      assert.equal(rows.length, 1);
+      const command = await database.command(rows[0]!.id);
+      assert.ok(command);
+      const fence = await database.claim(command.id);
+      assert.ok(fence);
+      assert.equal(await database.startSearch(command, fence), true);
+      assert.equal(await database.completeCollection(command, fence, jobs, outcomes), true);
+      if (duplicateInRun) {
+        assert.equal(await database.completeCollection(command, fence, jobs, outcomes), false);
+      }
+      return run;
+    };
 
     const market = new MarketRepository(database.pool);
     const ninetyDaysAgo = new Date(Date.now() - 90 * 86_400_000).toISOString();
     const yesterday = new Date(Date.now() - 86_400_000).toISOString();
 
     // Seen in four searches over five weeks, still claiming the same old date.
-    await sight(owner, 'long-open', ninetyDaysAgo, 35);
-    for (let i = 0; i < 3; i += 1) await sight(owner, 'long-open', ninetyDaysAgo);
+    await database.pool.query(
+      `INSERT INTO job_sightings
+         (owner_id, fingerprint, title, company, first_posted_at, last_posted_at,
+          first_seen_at, last_seen_at)
+       VALUES ($1, 'long-open', 'Backend Engineer', 'Acme', $2, $2,
+               now() - interval '35 days', now() - interval '35 days')`,
+      [owner, ninetyDaysAgo],
+    );
+    // One provider may emit the same fingerprint twice in a run. It is one
+    // posting sighting for that run, even though both source rows are retained
+    // in the worker result before persistence de-duplication.
+    await observe(
+      owner,
+      [job('long-open', ninetyDaysAgo), job('long-open', ninetyDaysAgo)],
+      outcomesFor(2),
+      true,
+    );
+    for (let i = 0; i < 2; i += 1) await observe(owner, [job('long-open', ninetyDaysAgo)]);
 
     const longOpen = await market.posting(owner, 'long-open');
     assert.ok(longOpen);
@@ -75,21 +115,21 @@ test('posting evidence accumulates across searches and detects a refreshed listi
 
     // The same posting returns claiming a newer date. That is a refresh of an
     // old role, and it is the signal a job board will never surface.
-    await sight(owner, 'long-open', yesterday);
+    await observe(owner, [job('long-open', yesterday)]);
     const refreshed = await market.posting(owner, 'long-open');
     assert.ok(refreshed);
     assert.equal(refreshed.repostCount, 1, 'a newer claimed date must count as a repost');
     assert.ok(refreshed.signals.includes('reposted'));
 
     // A genuinely new posting must not be tarred with the same brush.
-    await sight(owner, 'fresh', yesterday);
+    await observe(owner, [job('fresh', yesterday)]);
     const fresh = await market.posting(owner, 'fresh');
     assert.ok(fresh);
     assert.deepEqual(fresh.signals.sort(), ['first_sighting', 'recently_posted']);
     assert.equal(fresh.repostCount, 0);
 
     // A posting with no date at all must not be guessed at.
-    await sight(owner, 'undated', null);
+    await observe(owner, [job('undated', null)]);
     const undated = await market.posting(owner, 'undated');
     assert.ok(undated);
     assert.equal(undated.daysOpen, null, 'a missing posting date must stay null, not be invented');
@@ -97,7 +137,7 @@ test('posting evidence accumulates across searches and detects a refreshed listi
 
     // Owner isolation: the stranger's identical fingerprint is a separate row
     // and never appears in the owner's evidence.
-    await sight(stranger, 'long-open', ninetyDaysAgo);
+    await observe(stranger, [job('long-open', ninetyDaysAgo)]);
     const strangerView = await market.posting(stranger, 'long-open');
     assert.equal(strangerView?.sightings, 1, "another owner's history must not be shared");
     assert.equal(await market.posting(owner, 'not-a-real-fingerprint'), null);

@@ -1433,11 +1433,22 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Duplicate listing detection",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/normalize.ts",
+        "apps/workers/search/src/collect.ts",
+        "packages/core/src/database.ts",
+        "packages/core/src/schema.ts",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md"
+      ],
+      "tests": [
+        "packages/providers/src/normalize.test.ts",
+        "packages/core/src/market.integration.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Deterministic fingerprints collapse supported cross-source duplicates while keeping ambiguous same-source requisitions distinct. Persistence stores each fingerprint once per run, and settlement now increments sightings only for newly inserted run/fingerprint rows. Node 24 PostgreSQL integration passed 2/2; all 98 canonical test files type-check on this dev base and formatting passes. Remains partial pending exact-head hosted CI and independent review; no representative labeled duplicate dataset, precision/recall measurement, or candidate-facing duplicate explanation is recorded.",
       "scopeDisposition": "in-scope"
     },
     {
