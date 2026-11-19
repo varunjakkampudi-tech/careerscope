@@ -1425,9 +1425,10 @@
       ],
       "externalEvidence": [
         "GitHub Actions run 44575222679 passed all three required jobs on implementation SHA 1f28aa1c76df6900912749e89fffbe69d0f8edf5; the services job executed tests/integration/database.integration.test.ts.",
-        "On the follow-up correction, Node 24 Docker validation passed packages/providers/src/normalize.test.ts (83/83) and apps/workers/search/src/collect.test.ts plus packages/core/src/jobs.test.ts (23/23). Exact-head hosted CI and independent review are pending for the corrected commit."
+        "Follow-up correction SHA 4f3e725c39ac88078cac15090daa464835ce7e2f passed all three required GitHub Actions jobs in run 44601971499 and received independent exact-SHA approval. Node 24 Docker validation also passed packages/providers/src/normalize.test.ts (83/83) and apps/workers/search/src/collect.test.ts plus packages/core/src/jobs.test.ts (23/23).",
+        "The current documentation-only closeout retains partial status; its exact-head CI and independent review are pending."
       ],
-      "gap": "The signal compares source-reported URL hosts only and now leaves the check unknown when only a provider listing URL is available. Employer ownership, TLS, redirects, and source accuracy are not independently verified; the host-level comparison can flag legitimate subdomains or unlisted ATS providers. Candidate-facing display and calibrated false-positive evidence remain open. Exact-head CI and independent review for the follow-up correction are pending.",
+      "gap": "The signal compares source-reported URL hosts only and now leaves the check unknown when only a provider listing URL is available. Employer ownership, TLS, redirects, and source accuracy are not independently verified; the host-level comparison can flag legitimate subdomains or unlisted ATS providers. Candidate-facing display, calibrated false-positive evidence, owner acceptance, merge authorization and post-merge verification remain open. Exact-head CI and independent review for the current documentation-only closeout are pending.",
       "scopeDisposition": "in-scope"
     },
     {
