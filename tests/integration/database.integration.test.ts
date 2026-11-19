@@ -45,6 +45,87 @@ import {
 import JSZip from 'jszip';
 import { createApp as createApiApp } from '../../apps/api/src/app.js';
 import type { SourceOutcome } from '../../packages/core/src/jobs.js';
+
+test('repeat collection preserves first-seen and advances last-seen timestamps', async () => {
+  const configured = process.env.DATABASE_URL;
+  assert.ok(configured);
+  const base = new URL(configured);
+  assert.ok(['127.0.0.1', 'localhost'].includes(base.hostname));
+  const root = new Database(configured);
+  const name = `test_${randomUUID().replaceAll('-', '')}`;
+  await root.pool.query(`CREATE DATABASE "${name}" TEMPLATE template0`);
+  base.pathname = `/${name}`;
+  const database = new Database(base.href);
+  try {
+    await migrate(database.db, {
+      migrationsFolder: fileURLToPath(new URL('../../migrations', import.meta.url)),
+    });
+    const ownerId = randomUUID();
+    await database.pool.query('INSERT INTO users (id, email, password_hash) VALUES ($1, $2, $3)', [
+      ownerId,
+      `${ownerId}@example.test`,
+      'synthetic-not-a-login',
+    ]);
+    const job = {
+      fingerprint: 'first-last-seen-test',
+      sourceJobId: 'first-last-seen-test',
+      title: 'React Engineer',
+      company: 'Synthetic',
+      location: 'Remote',
+      description: 'Synthetic fixture',
+      source: 'remoteok' as const,
+      sourceUrl: 'https://remoteok.com/remote-jobs/synthetic',
+      applyUrl: 'https://example.test/apply',
+      postedAt: null,
+    };
+    const request = { query: 'React', sources: ['remoteok'] as ['remoteok'] };
+    const outcomes: SourceOutcome[] = [
+      { source: 'remoteok', status: 'completed', accepted: 1, limited: false, errorCode: null },
+    ];
+    const collect = async (key: string) => {
+      const search = await database.createSearch(ownerId, key, request);
+      const command = (await database.unpublished()).find(
+        (entry) => entry.command.aggregateId === search.id,
+      )!.command;
+      const fence = await database.claim(command.id);
+      assert.ok(fence);
+      assert.equal(await database.startSearch(command, fence), true);
+      assert.equal(await database.completeCollection(command, fence, [job], outcomes), true);
+    };
+    const readSighting = async () => {
+      const result = await database.pool.query<{
+        firstSeenAt: Date;
+        lastSeenAt: Date;
+      }>(
+        `SELECT first_seen_at AS "firstSeenAt", last_seen_at AS "lastSeenAt"
+         FROM job_sightings WHERE owner_id = $1 AND fingerprint = $2`,
+        [ownerId, job.fingerprint],
+      );
+      assert.equal(result.rowCount, 1);
+      return result.rows[0]!;
+    };
+
+    await collect('first-sighting');
+    const initial = await readSighting();
+    await database.pool.query(
+      `UPDATE job_sightings SET last_seen_at = now() - interval '1 day'
+       WHERE owner_id = $1 AND fingerprint = $2`,
+      [ownerId, job.fingerprint],
+    );
+    const beforeRepeat = await readSighting();
+    assert.equal(beforeRepeat.firstSeenAt.toISOString(), initial.firstSeenAt.toISOString());
+    assert.ok(beforeRepeat.lastSeenAt < initial.lastSeenAt);
+
+    await collect('repeat-sighting');
+    const afterRepeat = await readSighting();
+    assert.equal(afterRepeat.firstSeenAt.toISOString(), beforeRepeat.firstSeenAt.toISOString());
+    assert.ok(afterRepeat.lastSeenAt > beforeRepeat.lastSeenAt);
+  } finally {
+    await database.pool.end();
+    await root.pool.query(`DROP DATABASE IF EXISTS "${name}"`);
+    await root.pool.end();
+  }
+});
 import { searchHandler } from '../../apps/workers/search/src/collect.js';
 import { createRemoteOkProvider, createHimalayasProvider } from '@careerscope/providers';
 import { createSearchSchema } from '../../packages/core/src/commands.js';
@@ -2044,6 +2125,7 @@ test('partial search outcomes are atomic, owner-scoped, terminal and usable thro
     assert.equal(await database.completeCollection(command, fence, [job], outcomes), true);
     assert.equal(await database.executionStatus(command.id), 'completed');
     assert.deepEqual((await database.getSearch(ownerId, search.id))?.sourceOutcomes, outcomes);
+
     for (const count of [3, 4, 5]) {
       const sources = (['remoteok', 'himalayas', 'greenhouse', 'lever', 'workable'] as const).slice(
         0,

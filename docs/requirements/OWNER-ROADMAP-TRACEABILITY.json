@@ -1381,11 +1381,18 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "First-seen/last-seen timestamps",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/core/src/schema.ts",
+        "packages/core/src/database.ts",
+        "packages/core/src/market.ts",
+        "migrations/0000_initial_schema.sql",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md"
+      ],
+      "tests": ["tests/integration/database.integration.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Schema, migration, API projection and collection persistence exist in the dev base. The new database integration regression exercises repeat collection through completeCollection, asserting first_seen_at remains unchanged and last_seen_at advances. Exact-head hosted CI and independent review remain pending.",
       "scopeDisposition": "in-scope"
     },
     {

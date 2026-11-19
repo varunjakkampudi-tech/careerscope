@@ -66,3 +66,5 @@ Each row names the repository behavior, evidence, and remaining gap. Status valu
   not replace counsel approval of the effective legal text and public HTTPS URLs (see
   [AUTHENTICATION](AUTHENTICATION.md)). Owner checklist item 2.05 remains gated until that evidence
   is documented. Deployment is outside the current roadmap scope.
+
+Owner item 6.01 (First-seen/last-seen timestamps) is partial. The owner-scoped `job_sightings` table records both timestamps; the production collection transaction leaves the first timestamp unchanged on conflicts and updates the last timestamp. A new PostgreSQL integration assertion exercises repeat collection through `completeCollection`. Exact-head CI and independent review remain pending; later Stage 06 items are not started.
