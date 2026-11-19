@@ -433,13 +433,21 @@
       "title": "Unauthorized access protection",
       "sourceStatus": "Partial",
       "currentStatus": "partial",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md",
+        "apps/api/src/app.ts",
+        "packages/core/src/auth.ts"
+      ],
       "tests": [
         "apps/api/src/new-device-alert.integration.test.ts",
-        "apps/api/src/otp-limits.test.ts"
+        "apps/api/src/otp-limits.test.ts",
+        "apps/api/src/session-logout.integration.test.ts",
+        "packages/core/src/email-otp-delivery.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "The program stage is recorded complete with this item-level limitation carried forward; see the cited stage evidence.",
+      "gap": "The owner attachment specifies only the title and Partial status, without item-level acceptance criteria. Current evidence covers email-OTP sign-in, OTP failure throttling, session revocation/logout, and best-effort new-device alerts. Legacy local row 2.18 covers suspicious-activity protection and states that threshold step-up is not built because every sign-in already requires email OTP, but the source does not explicitly map that row to owner item 2.11. Keep partial until the owner confirms the intended acceptance scope or supplies the missing criteria.",
       "scopeDisposition": "in-scope"
     },
     {
