@@ -5,7 +5,11 @@
 
 import { z } from 'zod';
 import { searchSourceSchema } from './commands.js';
-import { matchBreakdownSchema } from '@careerscope/shared';
+import {
+  matchBreakdownSchema,
+  employerDomainCheckSchema,
+  unknownEmployerDomainCheck,
+} from '@careerscope/shared';
 
 // Accepts null/undefined as "not scored"; anything else must be a valid, strict match breakdown.
 const match = z
@@ -53,12 +57,16 @@ export const collectedJobSchema = z
       .max(500)
       .optional(),
     applyUrl: publicLink,
+    employerDomainCheck: employerDomainCheckSchema.default(unknownEmployerDomainCheck),
     postedAt: z.string().datetime().nullable(),
     match,
   })
   .strict();
 
-export type CollectedJob = z.infer<typeof collectedJobSchema>;
+/** Stored type accepts historical records that predate optional enrichment fields. */
+export type CollectedJob = Omit<z.infer<typeof collectedJobSchema>, 'employerDomainCheck'> & {
+  employerDomainCheck?: z.infer<typeof employerDomainCheckSchema> | undefined;
+};
 export type CollectedJobInput = z.input<typeof collectedJobSchema>;
 /** At most 100 jobs per collection call. */
 export const collectedJobsSchema = z.array(collectedJobSchema).max(100);

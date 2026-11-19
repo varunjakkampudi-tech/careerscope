@@ -14,6 +14,7 @@ This is the single index of CareerScope documentation. Every document under
 - [API-SURFACE](API-SURFACE.md) - HTTP contracts
 - [DATA-MODEL](DATA-MODEL.md) - persistence and ownership rules
 - [DATABASE-REVIEW](architecture/DATABASE-REVIEW.md) - PostgreSQL and Drizzle architecture review
+- [EMPLOYER-DOMAIN-CHECKS](architecture/EMPLOYER-DOMAIN-CHECKS.md) - conservative employer/application host comparison and its limits
 - [TECHNICAL-DEBT](architecture/TECHNICAL-DEBT.md) - prioritized Stage 01 technical-debt findings and dispositions
 - [KNOWN-LIMITATIONS](KNOWN-LIMITATIONS.md) - explicit current limitations
 - [TRACEABILITY](TRACEABILITY.md) - requirement to code and test matrix

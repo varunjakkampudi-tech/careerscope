@@ -1407,11 +1407,23 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Employer domain checks",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/architecture/EMPLOYER-DOMAIN-CHECKS.md",
+        "packages/providers/src/employer-domain.ts",
+        "packages/providers/src/normalize.ts",
+        "packages/core/src/jobs.ts"
+      ],
+      "tests": [
+        "packages/providers/src/normalize.test.ts",
+        "apps/workers/search/src/collect.test.ts",
+        "packages/core/src/jobs.test.ts",
+        "tests/integration/database.integration.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "The signal compares source-reported URL hosts only. Employer ownership, TLS, redirects, and source accuracy are not independently verified; the host-level comparison can flag legitimate subdomains or unlisted ATS providers. Candidate-facing display and calibrated false-positive evidence remain open.",
       "scopeDisposition": "in-scope"
     },
     {

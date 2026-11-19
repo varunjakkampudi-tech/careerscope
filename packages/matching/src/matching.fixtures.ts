@@ -96,6 +96,11 @@ export function job(overrides: Partial<Job> = {}): Job {
       careersEmail: null,
       emailConfidence: 'unverified',
     },
+    employerDomainCheck: {
+      status: 'ats-hosted',
+      companyHost: 'acme.example',
+      applyHost: 'boards.greenhouse.io',
+    },
     location: 'Hyderabad, India',
     isRemote: false,
     employmentType: 'fulltime',

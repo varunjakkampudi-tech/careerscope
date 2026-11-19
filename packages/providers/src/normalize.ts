@@ -30,6 +30,7 @@ import {
   type Salary,
 } from '@careerscope/shared';
 import { descriptionToText, snippet } from './html.js';
+import { checkEmployerDomain } from './employer-domain.js';
 
 export interface NormalizeOptions {
   /** Injected for deterministic tests. */
@@ -92,6 +93,10 @@ export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
     techStack,
     requiredYears,
     applyUrl: normalizeUrl(raw.applyUrl) ?? normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
+    employerDomainCheck: checkEmployerDomain(
+      normalizeUrl(raw.companyWebsite),
+      normalizeUrl(raw.applyUrl) ?? normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
+    ),
     sourceUrl: normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
     sourcePublisher: collapse(raw.sourcePublisher ?? '') || null,
     firstSeenAt: nowIso,
@@ -572,6 +577,10 @@ export function mergeDuplicates(a: Job, b: Job): Job {
       atsPortalUrl: winner.company.atsPortalUrl ?? other.company.atsPortalUrl,
       careersEmail: winner.company.careersEmail ?? other.company.careersEmail,
     },
+    employerDomainCheck: checkEmployerDomain(
+      winner.company.website ?? other.company.website,
+      winner.applyUrl,
+    ),
     salary: hasSalary(winner.salary) ? winner.salary : other.salary,
     postedAt: winner.postedAt ?? other.postedAt,
     sourcePublisher: winner.sourcePublisher ?? other.sourcePublisher,

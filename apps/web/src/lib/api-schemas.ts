@@ -16,6 +16,7 @@ import {
   EMPLOYMENT_TYPES,
   LAUNCH_JOB_SOURCE_CANDIDATES,
   derivedResumeSchema,
+  employerDomainCheckSchema,
   jobFeedbackReasonSchema,
   matchBreakdownSchema,
 } from '@careerscope/shared';
@@ -319,6 +320,7 @@ const collectedJobSchema = z.object({
   sourceUrl: z.string(),
   sourceLinks: z.array(z.object({ source: searchSourceSchema, url: z.string() })).optional(),
   applyUrl: z.string(),
+  employerDomainCheck: employerDomainCheckSchema.optional(),
   postedAt: z.string().nullable(),
   match: matchBreakdownSchema.nullable(),
 });

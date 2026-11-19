@@ -8,7 +8,8 @@
   },
   "reviewers": {
     "stage-01-implementation": "Claude (Stage 01 implementation agent, self-validation)",
-    "stage-01-item-1.01-refresh": "Codex (Stage 01 item 1.01 audit refresh)"
+    "stage-01-item-1.01-refresh": "Codex (Stage 01 item 1.01 audit refresh)",
+    "stage-06-item-6.03": "Codex (CareerScope Stage 06 item 6.03 implementation review)"
   },
   "repositoryScans": [
     "2026-11-08 origin/dev source scan: no code any assertions, @ts-ignore or @ts-expect-error; one eslint-disable-next-line require-yield in provider test with an explicit reason.",
@@ -421,7 +422,7 @@
     {
       "path": "apps/api/src/openapi.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -433,10 +434,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Reviewed OpenAPI upload and listing contract additions for target role and version lineage.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "214ffecd324c7f6ef0c95bd73118fe978281575bbe70d8a9abe90335183a30b8"
+      "observations": "Reviewed OpenAPI upload and listing contract additions for target role and version lineage. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "5d2f055e7daa0e80c24233b6a0ee3d0746045c586e3967e7f6ee373c2b3c57dd"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -1338,14 +1339,14 @@
     {
       "path": "apps/web/src/lib/api-schemas.ts",
       "category": "frontend",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed response validation for resume role, group and version fields.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "b70601872ca1f347f8a1b4a141c8f59ed184d2d357683aa947ed09197f6115b5"
+      "observations": "Reviewed response validation for resume role, group and version fields. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "8fd0dfc91650aed688ccab243f001418468712a776c888aaa7aded4285bd680e"
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
@@ -1618,26 +1619,26 @@
     {
       "path": "apps/workers/search/src/collect.test.ts",
       "category": "background-workers",
-      "reviewMethod": "content-read",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Prior dev audit: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding.\n\nStage 04 PR #72 audit history: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 type/test fixture or assertions for bounded field-level resume extraction evidence; current local domain suite and typecheck pass.\n\nItem 4.05 follow-up test or typed fixture: bounded source evidence coverage for derived skills, titles, experience-years and education is validated; test suite and canonical test typecheck pass.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
-      "evidence": "Prior dev audit: Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "bb3814671498c171107cf6d0662758d1ed4396f2e155eff745566e6b528aa286"
+      "observations": "Prior dev audit: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding.\n\nStage 04 PR #72 audit history: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 type/test fixture or assertions for bounded field-level resume extraction evidence; current local domain suite and typecheck pass.\n\nItem 4.05 follow-up test or typed fixture: bounded source evidence coverage for derived skills, titles, experience-years and education is validated; test suite and canonical test typecheck pass.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "f6d2eb1f31bb135324a7c280cea0a8e2f7b95eb99af150d9e2215e6d46802300"
     },
     {
       "path": "apps/workers/search/src/collect.ts",
       "category": "background-workers",
-      "reviewMethod": "content-read",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (380 lines). Checked: exact source attribution; per-source and whole-run timeouts; at most 20 detail fetches; per-posting validation that skips a malformed posting without losing the rest of the results and records only field paths; outcome statuses that distinguish empty from failed; deduplication with disambiguated link buckets; fenced start and settle; permission-pending outcomes for sources without a current permission profile; empty-streak diagnostics that cannot fail a completed search. No defect found. Scoring read uses the snapshot taken at search creation.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "607a72b745e695635f3c85f95eaa527b6b47c93811df5ea53efdbf31ccf6cb9b"
+      "observations": "Read in full (380 lines). Checked: exact source attribution; per-source and whole-run timeouts; at most 20 detail fetches; per-posting validation that skips a malformed posting without losing the rest of the results and records only field paths; outcome statuses that distinguish empty from failed; deduplication with disambiguated link buckets; fenced start and settle; permission-pending outcomes for sources without a current permission profile; empty-streak diagnostics that cannot fail a completed search. No defect found. Scoring read uses the snapshot taken at search creation. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "91de4ddd14c507a71a8c45e676edc298af1911ffe787c371f62da4e35fe6fd1c"
     },
     {
       "path": "apps/workers/search/src/files.ts",
@@ -1884,14 +1885,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "ceff64eb5460c5ae60612198b98b967dbbea6a360bc7a4332dfa02b0f77acd99",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2074,7 +2075,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2086,10 +2087,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
+      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "ab6dd72f9bdcc17c220748604cae396f17131d1082d9b02b7c8c2a9b3438323e",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2254,14 +2255,14 @@
     {
       "path": "docs/README.md",
       "category": "documentation",
-      "reviewMethod": "source review plus current item 1.01 change review",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the audit index: it accurately links the human-readable and machine-readable Stage 01 file audit and now states that npm run audit:stage01 enforces full coverage.",
-      "evidence": "Current audit refresh commit candidate based on origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; exact candidate SHA-256 recorded; new exact-head CI/review pending.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "d2e34505b004259829698be7adb5ac06224f377971ef6da3c367c05e8b72f1b1"
+      "observations": "Re-reviewed the audit index: it accurately links the human-readable and machine-readable Stage 01 file audit and now states that npm run audit:stage01 enforces full coverage. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "6ad50539feaef37d9f7a784c03ca17582a8b192e2d87a2c44be9969867b3f557"
     },
     {
       "path": "docs/SECURITY.md",
@@ -2278,14 +2279,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "e1ade4b390126bb4d838585afe90fcc8a2c41a906e81eb1e5fa2a5d04ab93e39",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2518,6 +2519,18 @@
       "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "0d6043a01af557a643839b572d293dd2d0b80f7068523a530238a51089fe24c2"
+    },
+    {
+      "path": "docs/architecture/EMPLOYER-DOMAIN-CHECKS.md",
+      "category": "documentation",
+      "reviewMethod": "content-read + focused checks",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read the complete item-specific contract and limitations. It defines an informational hostname consistency signal, documented ATS exceptions, and explicit limits; no ownership, fraud, redirect, or TLS claim is made.",
+      "evidence": "Reviewed for owner roadmap item 6.03; focused Node 24 checks are recorded in docs/TEST-MATRIX.md. Exact-head hosted CI and independent acceptance remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "3cdec4fbf35975e1e43d30692a8cf12f57eea8da10ef3d8cef1a969885f8a978"
     },
     {
       "path": "docs/architecture/OUTBOX.md",
@@ -2846,14 +2859,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "a20f44a477186eb78a80698a98dc976876dbdff6dbda24b7d15939c17f4f7bb8",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -4136,14 +4149,14 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "content-read",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "7e588f96ae3e7b89fe8894a4dcc982e1f9ff9a8e33608140caf93e05a4f38dfa",
+      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "cfdcbed4b8a4096c857ea0c8ec91c416dd8ee373b29c896604b70d4ff1a448c8",
       "history": [
         {
           "reviewer": "Codex (Stage 03 item 3.16)",
@@ -4526,16 +4539,28 @@
       "sha256": "5b6aa904e77bd27349075844567d2d350aad378ae23f6e1436c1d50e77aee368"
     },
     {
-      "path": "packages/core/src/jobs.ts",
+      "path": "packages/core/src/jobs.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read + focused checks",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (102 lines). Checked: strict collected-job schema; HTTPS-only public links without embedded credentials; match breakdown validated and strict; per-source outcome refinements tie failed to an error code and empty to zero accepted jobs; at most six sources with no repeats; collection status rule. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "26044b3168e00eff840fd500e61081bf0951107b987373542526e09316e8bcce"
+      "observations": "Read the complete tests. They verify legacy records receive the unknown default and strict validation rejects unknown fields; both tests pass under Node 24.",
+      "evidence": "Reviewed for owner roadmap item 6.03; focused Node 24 checks are recorded in docs/TEST-MATRIX.md. Exact-head hosted CI and independent acceptance remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "383149662554e6d12f85e118be22fc9febbd633592f15706b371e464a4a79398"
+    },
+    {
+      "path": "packages/core/src/jobs.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "prior content review + item-specific diff review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read in full (102 lines). Checked: strict collected-job schema; HTTPS-only public links without embedded credentials; match breakdown validated and strict; per-source outcome refinements tie failed to an error code and empty to zero accepted jobs; at most six sources with no repeats; collection status rule. No finding. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "622aceca1a734b62a6440c0b76f8aafd83a6a532301eca434a72b071b976eff3"
     },
     {
       "path": "packages/core/src/leads.test.ts",
@@ -5222,7 +5247,7 @@
     {
       "path": "packages/matching/src/matching.fixtures.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -5234,10 +5259,10 @@
           "remediation": "Removed the name and personal-resume provenance claim; fixture is documented as synthetic."
         }
       ],
-      "observations": "Made the synthetic matching candidate explicit about its absent structured-floor currency so fixtures conform to the expanded CandidateContext contract.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "b611bb892e174943944bfdc2d6bf17d2609682501586aba7451031e2d2af1b87"
+      "observations": "Made the synthetic matching candidate explicit about its absent structured-floor currency so fixtures conform to the expanded CandidateContext contract. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "886d46b4d23a32d7d74a9ac991bb15b2231655c5f8a7ec9f13ea4ee70718de90"
     },
     {
       "path": "packages/matching/src/score.test.ts",
@@ -5576,6 +5601,18 @@
       "sha256": "705b9ef694da66c4d575767bfdd08f141e56df60f21d46a7bad173560d699456"
     },
     {
+      "path": "packages/providers/src/employer-domain.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "content-read + focused checks",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read the complete pure classifier. It accepts only HTTP(S) hostnames, treats supported ATS hosts separately even without employer website data, strips only leading www for equality, and does not perform network checks. Focused normalizer tests pass under Node 24.",
+      "evidence": "Reviewed for owner roadmap item 6.03; focused Node 24 checks are recorded in docs/TEST-MATRIX.md. Exact-head hosted CI and independent acceptance remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "ad67f71afb99d3dcc8c97e2ed161f41d1a97e73ca9cea3e7015ad5c06defce18"
+    },
+    {
       "path": "packages/providers/src/filter.test.ts",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
@@ -5698,14 +5735,14 @@
     {
       "path": "packages/providers/src/index.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "dcb0fc62584be4c368106baadc65d48427adc659f5e6fe7694da16507017018c",
+      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "b60ed2fd50d33386b35c92939c5d9b401c582ddcb6f6a9d873e02f26ec79bd5b",
       "history": [
         {
           "reviewer": "Codex (Stage 01 implementation audit)",
@@ -5794,14 +5831,14 @@
     {
       "path": "packages/providers/src/normalize.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed 74 focused normalization tests, including explicit employment-type and disjoint-experience conflicts, compatible-subset preservation, and input-order determinism.",
-      "evidence": "Node 24 Docker: normalize.test.ts 74/74; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
-      "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "ddd5e3fd8db3029ee6b826b3bc30e56f5475355108e041fef4628a8680b0d1f8",
+      "observations": "Reviewed 74 focused normalization tests, including explicit employment-type and disjoint-experience conflicts, compatible-subset preservation, and input-order determinism. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "451a8e6cdec522c9decc1ea8c5af35731d65e03a0a8f46864023f53d5429d358",
       "history": [
         {
           "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
@@ -5826,7 +5863,7 @@
     {
       "path": "packages/providers/src/normalize.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -5838,10 +5875,10 @@
           "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
         }
       ],
-      "observations": "Reviewed deterministic compatible-subset partitioning, preserving compatible merges while splitting explicit employment-type and disjoint-experience conflicts; source-ID collision behavior remains conservative.",
-      "evidence": "Node 24 Docker: normalize.test.ts 74/74; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
-      "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "e84b8e7c94e3565746c5d6afa767a575a0713e639427298c383e1c2d53433d1a",
+      "observations": "Reviewed deterministic compatible-subset partitioning, preserving compatible merges while splitting explicit employment-type and disjoint-experience conflicts; source-ID collision behavior remains conservative. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "70320e6773eccab62e829ffe396a77fb5381c92d3f5c055813ce518a50248083",
       "history": [
         {
           "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
@@ -6650,7 +6687,7 @@
     {
       "path": "packages/shared/src/schemas.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6662,10 +6699,10 @@
           "remediation": "apiErrorSchema corrected to the flat envelope and tested against errorEnvelope output. Unused exports are recorded as technical debt to remove in the next cleanup pass."
         }
       ],
-      "observations": "Prior dev audit: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nReviewed item 4.05 schema follow-up: evidence entries are strict, bounded and backward-compatible through empty-array defaults; education credential status is fixed to unverified.\n\nItem 4.05 schema follow-up reviewed: strict evidence schema is bounded and backward-compatible; education status cannot be represented as verified.\n\nItem 4.05 review follow-up: fallback ChatGPT review in CareerScope Engineering Continuation at head 162a53e identified false institution attribution, reversed structured years, unsupported direct experience-duration evidence and substring source matching. The designated review thread returned Unknown error. This follow-up adds marker-constrained institutions, omits reversed structured years, labels date ranges as supporting sources, uses token-boundary evidence matching with an explicit .js alias, and documents extraction confidence separately from credential authenticity. Focused review/tests updated; new exact-head CI and designated-thread review remain pending.\nLatest correction also restricts inferred employment duration to valid ranges in the explicitly labeled experience section; education dates alone do not produce work duration.\nInstitution extraction follow-up: capture stops at the first comma, semicolon or parenthesis so trailing employment text cannot be folded into an institution even when a recognized institution marker appears.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
-      "evidence": "Prior dev audit: Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nFocused tests: resume derivation/schema suites 93 passed; full domain suite 927 tests across 33 files passed; typecheck passed including 97 canonical test files. Local Node was v22, below the Node 24 project requirement; hosted exact-head CI remains pending.\nFinal local follow-up: domain suite passed 928 tests across 33 files; full typecheck passed, including 97 canonical test files. Runtime Node was v22.23.2, below required Node 24; hosted exact-head CI is required.\nLatest domain run passed 929 tests across 33 files after adding the institution-phrase boundary regression.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "d2702301693ee15e895119944183d7cc8391ee780393984031a5899fae403984"
+      "observations": "Prior dev audit: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nReviewed item 4.05 schema follow-up: evidence entries are strict, bounded and backward-compatible through empty-array defaults; education credential status is fixed to unverified.\n\nItem 4.05 schema follow-up reviewed: strict evidence schema is bounded and backward-compatible; education status cannot be represented as verified.\n\nItem 4.05 review follow-up: fallback ChatGPT review in CareerScope Engineering Continuation at head 162a53e identified false institution attribution, reversed structured years, unsupported direct experience-duration evidence and substring source matching. The designated review thread returned Unknown error. This follow-up adds marker-constrained institutions, omits reversed structured years, labels date ranges as supporting sources, uses token-boundary evidence matching with an explicit .js alias, and documents extraction confidence separately from credential authenticity. Focused review/tests updated; new exact-head CI and designated-thread review remain pending.\nLatest correction also restricts inferred employment duration to valid ranges in the explicitly labeled experience section; education dates alone do not produce work duration.\nInstitution extraction follow-up: capture stops at the first comma, semicolon or parenthesis so trailing employment text cannot be folded into an institution even when a recognized institution marker appears.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "1aea312a0aef7bdcdec06a9fdb74a3c708e214734358370657f9ad412a08e495"
     },
     {
       "path": "packages/shared/src/skills.test.ts",
@@ -6702,14 +6739,14 @@
     {
       "path": "packages/shared/src/types.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Documented the nullable minSalaryCurrency field on matching candidate context, including null semantics for older or unspecified profiles.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "80fd31b4c76b2717de5ff615997f8471e64a7ed00db3ec8774433c998c7b4392"
+      "observations": "Documented the nullable minSalaryCurrency field on matching candidate context, including null semantics for older or unspecified profiles. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "46d65c2ecde7b6f505e2a50b71d55e7ea15c3eddaa4b4a63baa1b8f1555c261d"
     },
     {
       "path": "packages/shared/tsconfig.json",
@@ -7571,14 +7608,14 @@
     {
       "path": "tests/integration/database.integration.test.ts",
       "category": "tests",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "prior content review + item-specific diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed migration fixture and persistence assertions for resume version metadata.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "b0edc933184e36519e769294c25b3e43ab0972ef123cc797f0c653d0fdb0656f"
+      "observations": "Reviewed migration fixture and persistence assertions for resume version metadata. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
+      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
+      "sha256": "20594d8fb785c76a44b2bcf75be97c39899bed04de6dcc33e6a393ebcebf868f"
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",
