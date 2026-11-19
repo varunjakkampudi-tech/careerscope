@@ -13,10 +13,13 @@ export interface SourceHealthSummary {
   failed: number;
   permissionPending: number;
   accepted: number;
+  latencyObservations: number;
+  averageDurationMs: number | null;
+  latestDurationMs: number | null;
   latestStatus: SearchSourceOutcome['status'];
   latestErrorCode: SearchSourceOutcome['errorCode'];
   latestLimited: boolean;
-  latestObservedAt: string;
+  latestRunAt: string;
 }
 
 /** Summarize only owner-visible source outcomes, ordered newest source observation first. */
@@ -37,16 +40,25 @@ export function summarizeRecentSourceHealth(
           failed: 0,
           permissionPending: 0,
           accepted: 0,
+          latencyObservations: 0,
+          averageDurationMs: null,
+          latestDurationMs: outcome.durationMs ?? null,
           latestStatus: outcome.status,
           latestErrorCode: outcome.errorCode,
           latestLimited: outcome.limited,
-          latestObservedAt: run.createdAt,
+          latestRunAt: run.createdAt,
         };
         summaries.set(outcome.source, summary);
       }
 
       summary.observations += 1;
       summary.accepted += outcome.accepted;
+      if (outcome.durationMs !== null && outcome.durationMs !== undefined) {
+        summary.averageDurationMs =
+          ((summary.averageDurationMs ?? 0) * summary.latencyObservations + outcome.durationMs) /
+          (summary.latencyObservations + 1);
+        summary.latencyObservations += 1;
+      }
       if (outcome.status === 'completed') summary.completed += 1;
       else if (outcome.status === 'empty') summary.empty += 1;
       else {
@@ -58,7 +70,6 @@ export function summarizeRecentSourceHealth(
 
   return [...summaries.values()].sort(
     (left, right) =>
-      right.latestObservedAt.localeCompare(left.latestObservedAt) ||
-      left.source.localeCompare(right.source),
+      right.latestRunAt.localeCompare(left.latestRunAt) || left.source.localeCompare(right.source),
   );
 }

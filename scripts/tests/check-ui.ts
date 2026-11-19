@@ -2520,9 +2520,7 @@ try {
         .waitFor();
       await sidebarNav.getByRole('link', { name: 'ఉద్యోగాలు', exact: true }).click();
       await page.waitForURL('**/jobs');
-      await page
-        .getByRole('heading', { name: 'మీ తదుపరి పాత్రను కనుగొనండి', exact: true })
-        .waitFor();
+      await page.getByRole('heading', { name: 'మీ తదుపరి పాత్రను కనుగొనండి', exact: true }).waitFor();
       assert.equal(await page.locator('aside.history').getAttribute('lang'), 'te');
       assert.equal(
         await page.locator('fieldset[aria-describedby="source-availability"]').getAttribute('lang'),
@@ -5006,6 +5004,7 @@ try {
             status: 'completed',
             accepted: source === 'greenhouse' ? 1 : 0,
             limited: false,
+            durationMs: source === 'greenhouse' ? 120 : 45,
             errorCode: null,
           })),
         ),
@@ -5041,11 +5040,17 @@ try {
         .waitFor();
       for (const source of ['Greenhouse', 'Lever', 'Ashby', 'Workable'])
         await sourceHealthPanel.getByText(source, { exact: true }).waitFor();
+      await sourceHealthPanel.getByText('Latest elapsed time: 120 ms', { exact: true }).waitFor();
+      await sourceHealthPanel.getByText(/Search run time:.*2026/).waitFor();
       const sourceHealthResponse = await page.request.get(`${origin}/api/searches`);
       assert.equal(sourceHealthResponse.status(), 200);
       const sourceHealthRuns = (await sourceHealthResponse.json()).items as Array<{
         id: string;
-        sourceOutcomes?: Array<{ source: string; accepted: number }> | null;
+        sourceOutcomes?: Array<{
+          source: string;
+          accepted: number;
+          durationMs?: number | null;
+        }> | null;
       }>;
       const sourceHealthFixture = sourceHealthRuns.find((run) => run.id === fourId);
       assert.ok(sourceHealthFixture, 'the newest source-health fixture is in owner search history');
@@ -5053,6 +5058,11 @@ try {
         sourceHealthFixture.sourceOutcomes?.find((outcome) => outcome.source === 'greenhouse')
           ?.accepted,
         1,
+      );
+      assert.equal(
+        sourceHealthFixture.sourceOutcomes?.find((outcome) => outcome.source === 'greenhouse')
+          ?.durationMs,
+        120,
       );
       const expectedGreenhouseAccepted = sourceHealthRuns.reduce(
         (total, run) =>

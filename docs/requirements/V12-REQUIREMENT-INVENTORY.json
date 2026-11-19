@@ -1952,12 +1952,15 @@
       "text": "- Source health and automated suspension on terms change or repeated errors",
       "assessment": "PARTIAL",
       "verification": "UNIT_TESTS_PASSED",
-      "gap": "Consecutive empty runs per source are logged as a warning and expired permission profiles fail closed. No automated suspension on terms change or repeated errors, and no source health surface.",
+      "gap": "Per-owner history now summarizes recent source outcomes and elapsed collection duration when measured, while explicitly avoiding claims of live provider availability. Cross-user operational health telemetry, alerting, and automated suspension on terms changes or repeated errors remain unimplemented.",
       "launchBlocking": true,
       "evidence": {
         "implementation": [
           "apps/workers/search/src/collect.ts:358",
-          "packages/shared/src/job-source-policy.ts:66"
+          "packages/shared/src/job-source-policy.ts:66",
+          "apps/workers/search/src/collect.ts",
+          "apps/web/src/lib/source-health.ts",
+          "apps/web/src/components/job-search-view.tsx"
         ],
         "tests": [
           "apps/workers/search/src/collect.test.ts:1",

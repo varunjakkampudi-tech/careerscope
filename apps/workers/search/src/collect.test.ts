@@ -7,6 +7,7 @@ import {
   writableProfileSchema,
   type Database,
   type Command,
+  type SourceOutcome,
 } from '@careerscope/core';
 import { LOW_CONFIDENCE_SCORE_CEILING } from '@careerscope/shared';
 import {
@@ -20,6 +21,7 @@ import {
 
 const request = { query: 'React', sources: ['remoteok'] as ['remoteok'] };
 const signal = new AbortController().signal;
+const withoutDuration = ({ durationMs: _durationMs, ...outcome }: SourceOutcome) => outcome;
 
 test('profile discovery uses bounded saved roles without sending candidate identity', async () => {
   const profile = matchingProfile(
@@ -980,13 +982,14 @@ test('malformed source rows are excluded while successful empty sources are mark
   // CS-23: a provider that ran without error but yielded nothing is 'empty',
   // never 'completed' - that silence is exactly what a job board's markup
   // breaking looks like, and must not be reported as an ordinary success.
-  assert.deepEqual(result.outcomes[1], {
+  assert.deepEqual(withoutDuration(result.outcomes[1]!), {
     source: 'himalayas',
     status: 'empty',
     accepted: 0,
     limited: false,
     errorCode: null,
   });
+  assert.ok(Number.isInteger(result.outcomes[1]!.durationMs));
   const successfulEmpty = await collect({ ...request, sources: ['himalayas'] }, signal, empty);
   // Every source in this run was empty, not completed - the run as a whole
   // must not read as an unqualified success either.
@@ -1044,18 +1047,17 @@ test('search worker does not start or call a provider without a current source p
   );
   assert.equal(providerCalls, 0);
   assert.equal(startCalls, 0);
-  assert.deepEqual(settled, {
-    jobs: [],
-    outcomes: [
-      {
-        source: 'remoteok',
-        status: 'failed',
-        accepted: 0,
-        limited: false,
-        errorCode: 'source_permission_pending',
-      },
-    ],
-  });
+  const deniedOutcomes = (settled as { outcomes: SourceOutcome[] }).outcomes;
+  assert.deepEqual(deniedOutcomes.map(withoutDuration), [
+    {
+      source: 'remoteok',
+      status: 'failed',
+      accepted: 0,
+      limited: false,
+      errorCode: 'source_permission_pending',
+    },
+  ]);
+  assert.equal(deniedOutcomes[0]!.durationMs, null);
 });
 
 test('search worker collects currently permitted sources and records only denied sources as pending', async () => {
@@ -1122,25 +1124,25 @@ test('search worker collects currently permitted sources and records only denied
   );
   assert.equal(startCalls, 1);
   assert.deepEqual(providerCalls, { greenhouse: 1, lever: 0 });
-  assert.deepEqual(settled, {
-    jobs: [],
-    outcomes: [
-      {
-        source: 'greenhouse',
-        status: 'empty',
-        accepted: 0,
-        limited: false,
-        errorCode: null,
-      },
-      {
-        source: 'lever',
-        status: 'failed',
-        accepted: 0,
-        limited: false,
-        errorCode: 'source_permission_pending',
-      },
-    ],
-  });
+  const sourceOutcomes = (settled as { outcomes: SourceOutcome[] }).outcomes;
+  assert.deepEqual(sourceOutcomes.map(withoutDuration), [
+    {
+      source: 'greenhouse',
+      status: 'empty',
+      accepted: 0,
+      limited: false,
+      errorCode: null,
+    },
+    {
+      source: 'lever',
+      status: 'failed',
+      accepted: 0,
+      limited: false,
+      errorCode: 'source_permission_pending',
+    },
+  ]);
+  assert.ok(Number.isInteger(sourceOutcomes[0]!.durationMs));
+  assert.equal(sourceOutcomes[1]!.durationMs, null);
 });
 
 test('an http apply link is upgraded and one invalid posting does not end the provider loop', async () => {

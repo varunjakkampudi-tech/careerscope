@@ -328,6 +328,7 @@ const searchSourceOutcomeSchema = z.object({
   status: z.enum(['completed', 'empty', 'failed']),
   accepted: z.number(),
   limited: z.boolean(),
+  durationMs: z.number().int().min(0).max(120_000).nullable().optional(),
   errorCode: z
     .enum(['source_failed', 'source_timeout', 'invalid_response', 'source_permission_pending'])
     .nullable(),

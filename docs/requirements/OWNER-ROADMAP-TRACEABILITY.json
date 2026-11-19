@@ -1374,11 +1374,20 @@
         "apps/web/src/lib/source-health.ts",
         "apps/web/src/components/job-search-view.tsx",
         "docs/PROGRESS.md",
-        "docs/GAP-MATRIX.md"
+        "docs/GAP-MATRIX.md",
+        "apps/workers/search/src/collect.ts",
+        "packages/core/src/jobs.ts",
+        "apps/api/src/openapi.ts",
+        "apps/web/src/lib/api-schemas.ts",
+        "apps/web/src/lib/locale.ts"
       ],
-      "tests": ["apps/web/src/lib/source-health.test.ts", "scripts/tests/check-ui.ts"],
+      "tests": [
+        "apps/web/src/lib/source-health.test.ts",
+        "scripts/tests/check-ui.ts",
+        "apps/workers/search/src/collect.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Owner-visible recorded outcomes summarize the latest 50 search runs, including accepted counts, and are explicitly not live availability. Implementation-head run 43970259059 passed at f9e6aebb2d7beca3044dae5301f2ca28400c27c2; documentation follow-up run 43975092546 passed at 2fc990b8dda4fb6aeb03f14a5e86e27606a09737. Runs 43978471041, 43980466911, 43982429916 and 43983664244 exposed successive browser locator and fixture assumption failures. Corrected exact head 56981cb0f7053d6147ce5f8318ef2a6dd9ec4900 passed all required jobs in run 43984937809. Independent exact-SHA review remains pending. Freshness/latency signals, operational source-level monitoring and automated suspension remain unimplemented; no source is activated.",
+      "gap": "Owner-scoped recent outcomes include accepted counts, latest search-run timestamp, and average/latest elapsed source-collection durations when a source call was attempted; permission-blocked calls have no duration. The UI explicitly distinguishes recorded user search history from live provider availability. PR #105 exact head 74b773f6829ba59f70ad42af36d017e889961722 passed all required hosted jobs in run 43988712370 and received exact-SHA technical approval. Current duration instrumentation and browser assertions pass local production build, full typecheck, and focused tests, but exact-head hosted CI and independent review are pending. Cross-user operational telemetry, alerting, and automated suspension remain unimplemented; no provider is activated.",
       "scopeDisposition": "in-scope"
     },
     {

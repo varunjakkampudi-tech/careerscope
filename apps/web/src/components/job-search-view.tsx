@@ -400,8 +400,20 @@ function JobSearchWorkspace() {
                         {t('sourceHealthAccepted')}: {summary.accepted}
                       </span>
                       <span>
-                        {t('sourceHealthLastObserved')}:{' '}
-                        {new Date(summary.latestObservedAt).toLocaleDateString(
+                        {t('sourceHealthAverageDuration')}:{' '}
+                        {summary.averageDurationMs === null
+                          ? t('sourceHealthDurationUnavailable')
+                          : `${Math.round(summary.averageDurationMs)} ms`}
+                      </span>
+                      <span>
+                        {t('sourceHealthLatestDuration')}:{' '}
+                        {summary.latestDurationMs === null
+                          ? t('sourceHealthDurationUnavailable')
+                          : `${summary.latestDurationMs} ms`}
+                      </span>
+                      <span>
+                        {t('sourceHealthLatestRun')}:{' '}
+                        {new Date(summary.latestRunAt).toLocaleString(
                           locale === 'en' ? 'en-IN' : locale === 'te' ? 'te-IN' : 'hi-IN',
                         )}
                       </span>

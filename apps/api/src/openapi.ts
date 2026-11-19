@@ -161,22 +161,26 @@ const searchInput = object(
 );
 const sourceOutcomes = nullable(
   array(
-    object({
-      source: text({ enum: sources }),
-      status: text({ enum: ['completed', 'empty', 'failed'] }),
-      accepted: integer({ minimum: 0, maximum: 100 }),
-      limited: bool,
-      errorCode: nullable(
-        text({
-          enum: [
-            'source_failed',
-            'source_timeout',
-            'invalid_response',
-            'source_permission_pending',
-          ],
-        }),
-      ),
-    }),
+    object(
+      {
+        source: text({ enum: sources }),
+        status: text({ enum: ['completed', 'empty', 'failed'] }),
+        accepted: integer({ minimum: 0, maximum: 100 }),
+        limited: bool,
+        durationMs: nullable(integer({ minimum: 0, maximum: 120_000 })),
+        errorCode: nullable(
+          text({
+            enum: [
+              'source_failed',
+              'source_timeout',
+              'invalid_response',
+              'source_permission_pending',
+            ],
+          }),
+        ),
+      },
+      ['source', 'status', 'accepted', 'limited', 'errorCode'],
+    ),
   ),
 );
 const job = object(
