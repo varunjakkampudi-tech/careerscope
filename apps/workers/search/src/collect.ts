@@ -103,6 +103,7 @@ export async function collect(
   const outcomes: SourceOutcome[] = [];
   for (const provider of selected) {
     combined.throwIfAborted();
+    const sourceStartedAt = performance.now();
     let collected = 0;
     let detailed = 0;
     let limited = false;
@@ -216,6 +217,7 @@ export async function collect(
         status: errorCode ? 'failed' : collected === 0 ? 'empty' : 'completed',
         accepted: collected,
         limited: limited || collected >= 100,
+        durationMs: Math.min(120_000, Math.max(0, Math.round(performance.now() - sourceStartedAt))),
         errorCode,
       }),
     );
@@ -300,6 +302,7 @@ export function searchHandler(
         status: 'failed' as const,
         accepted: 0,
         limited: false,
+        durationMs: null,
         errorCode: 'source_permission_pending' as const,
       }));
       logger.warn(
@@ -323,6 +326,7 @@ export function searchHandler(
         status: 'failed',
         accepted: 0,
         limited: false,
+        durationMs: null,
         errorCode: 'source_permission_pending',
       });
     const outcomes = [

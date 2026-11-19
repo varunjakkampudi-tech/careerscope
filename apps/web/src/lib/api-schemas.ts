@@ -323,11 +323,24 @@ const collectedJobSchema = z.object({
   match: matchBreakdownSchema.nullable(),
 });
 /** One job as stored for a run or lead. */
+const searchSourceOutcomeSchema = z.object({
+  source: searchSourceSchema,
+  status: z.enum(['completed', 'empty', 'failed']),
+  accepted: z.number(),
+  limited: z.boolean(),
+  durationMs: z.number().int().min(0).max(120_000).nullable().optional(),
+  errorCode: z
+    .enum(['source_failed', 'source_timeout', 'invalid_response', 'source_permission_pending'])
+    .nullable(),
+});
+export type SearchSourceOutcome = z.infer<typeof searchSourceOutcomeSchema>;
+
 const searchRunSchema = z.object({
   id: z.string(),
   status: z.string(),
   createdAt: z.string(),
   request: z.object({ query: z.string() }),
+  sourceOutcomes: z.array(searchSourceOutcomeSchema).nullable().optional(),
 });
 export const parseSearchRuns = parser(z.object({ items: z.array(searchRunSchema) }));
 
@@ -351,24 +364,7 @@ const searchDetailSchema = z.object({
     sources: z.array(searchSourceSchema),
     useProfileTitles: z.boolean().optional(),
   }),
-  sourceOutcomes: z
-    .array(
-      z.object({
-        source: searchSourceSchema,
-        status: z.enum(['completed', 'empty', 'failed']),
-        accepted: z.number(),
-        limited: z.boolean(),
-        errorCode: z
-          .enum([
-            'source_failed',
-            'source_timeout',
-            'invalid_response',
-            'source_permission_pending',
-          ])
-          .nullable(),
-      }),
-    )
-    .nullable(),
+  sourceOutcomes: z.array(searchSourceOutcomeSchema).nullable(),
   jobs: z.array(
     z.object({
       id: z.string(),

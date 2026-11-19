@@ -1368,11 +1368,26 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Source health monitoring",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/api/src/app.ts",
+        "apps/web/src/lib/source-health.ts",
+        "apps/web/src/components/job-search-view.tsx",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md",
+        "apps/workers/search/src/collect.ts",
+        "packages/core/src/jobs.ts",
+        "apps/api/src/openapi.ts",
+        "apps/web/src/lib/api-schemas.ts",
+        "apps/web/src/lib/locale.ts"
+      ],
+      "tests": [
+        "apps/web/src/lib/source-health.test.ts",
+        "scripts/tests/check-ui.ts",
+        "apps/workers/search/src/collect.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Owner-scoped recent outcomes include accepted counts, latest search-run timestamp, and average/latest elapsed source-collection durations when a source call was attempted; permission-blocked calls have no duration. The UI explicitly distinguishes recorded user search history from live provider availability. PR #105 exact head 74b773f6829ba59f70ad42af36d017e889961722 passed all required hosted jobs in run 43988712370 and received exact-SHA technical approval. Current duration instrumentation and browser assertions pass local production build, full typecheck, and focused tests, but exact-head hosted CI and independent review are pending. Cross-user operational telemetry, alerting, and automated suspension remain unimplemented; no provider is activated.",
       "scopeDisposition": "in-scope"
     },
     {
