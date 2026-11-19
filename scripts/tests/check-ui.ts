@@ -36,6 +36,7 @@ import {
   browserWarningPaths,
   sameOriginBrowserPath,
   staleEarlierRouteRead,
+  staleOrphanedChromiumLeadUpdate,
   staleSavedRead,
   staleSearchRead,
 } from './ui-requests.js';
@@ -1429,6 +1430,21 @@ try {
               routeEpoch,
               engine,
               new URL(request.url()).pathname,
+            ) &&
+            !staleOrphanedChromiumLeadUpdate(
+              request.method(),
+              new URL(request.url()).pathname,
+              epoch,
+              routeEpoch,
+              engine,
+              [...cdpRequestDetails.values()].some(
+                (details) =>
+                  details.method === request.method() &&
+                  details.path === new URL(request.url()).pathname &&
+                  details.fingerprint === safeRequestFingerprint(request.method(), request.url()),
+              ),
+              request.timing().responseEnd,
+              request.failure() !== null,
             ),
         );
       const recentRequestEvents: string[] = [];
