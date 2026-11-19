@@ -5201,10 +5201,17 @@ try {
         // AC3, "nothing yet": no status on this screen holds anything, so the
         // message must not claim another status does, and must name the one
         // action that populates the list.
+        sharedRoutePrefetches.length = 0;
         await page.route(leadListRequest, emptyLeadList);
         await page.goto(`${origin}/saved`);
         await page.getByRole('heading', { name: 'Saved Leads', exact: true }).waitFor();
         await page.getByText(cs13NothingYet, { exact: true }).waitFor();
+        await settled(`${engine} ${width}px saved empty-state actions`);
+        assert.deepEqual(
+          sharedRoutePrefetches,
+          [],
+          `${engine} ${width}px: the empty Saved Jobs action must not leave a speculative jobs prefetch open`,
+        );
         assert.equal(
           await page.getByText(cs13FilteredEmpty, { exact: true }).count(),
           0,

@@ -34,7 +34,7 @@ requests. If that timer runs as configured, an abandoned address is removed by
 the next weekly sweep after its five-minute challenge expiry. Live timer
 operation and the legal retention policy remain unverified.
 
-The active Drizzle journal contains six migrations. `0000_initial_schema.sql`
+The active Drizzle journal contains seven migrations. `0000_initial_schema.sql`
 establishes the baseline, including the OTP/session/consent/email-change and
 application-evidence tables. `0001_recovery_email_and_intents.sql` adds recovery
 email fields and recovery OTP intents; `0002_admin_role_and_totp.sql` adds the

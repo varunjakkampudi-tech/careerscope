@@ -1053,7 +1053,7 @@ export default function SavedLeads({
             />
           )}
           {scope === 'saved' && leads.data?.pages[0]?.items.length === 0 && !populatedSibling && (
-            <Link className={styles.btnSecondary} href="/jobs">
+            <Link className={styles.btnSecondary} href="/jobs" prefetch={false}>
               Find jobs
             </Link>
           )}
