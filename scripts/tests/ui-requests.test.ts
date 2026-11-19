@@ -73,6 +73,23 @@ test('settlement drops only fetch and script reads belonging to an earlier route
   }
 });
 
+test('settlement drops only speculative Next router prefetches from an earlier route in every engine', () => {
+  for (const engine of ['chromium', 'firefox', 'webkit']) {
+    assert.equal(staleEarlierRouteRead('GET', 'fetch', 1, 2, engine, '/jobs', true), true, engine);
+    assert.equal(staleEarlierRouteRead('GET', 'fetch', 2, 2, engine, '/jobs', true), false, engine);
+    assert.equal(
+      staleEarlierRouteRead('GET', 'fetch', 1, 2, engine, '/jobs', false),
+      engine === 'chromium',
+      engine,
+    );
+    assert.equal(
+      staleEarlierRouteRead('POST', 'fetch', 1, 2, engine, '/jobs', true),
+      false,
+      engine,
+    );
+  }
+});
+
 test('the image allowance needs the optimiser pathname, so a caller that drops it fails', () => {
   // An omitted, empty or undefined pathname must not turn an image into a droppable request.
   assert.equal(staleEarlierRouteRead('GET', 'image', 1, 2, 'chromium'), false);

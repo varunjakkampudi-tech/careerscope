@@ -1405,10 +1405,11 @@
       ],
       "tests": [
         "scripts/jobs/backfill-job-sightings.test.ts",
-        "tests/integration/database.integration.test.ts"
+        "tests/integration/database.integration.test.ts",
+        "scripts/tests/ui-requests.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Reposts are counted once per owner-scoped fingerprint per distinct search run and only when a later run carries a strictly newer non-null provider-claimed posted date. Duplicate fingerprints within one run count once; equal, older and missing dates do not increase repost_count, and last_posted_at retains the greatest observed date. Replay unit tests passed 6/6; the PostgreSQL backfill rebuild and completeCollection regressions each passed 1/1 on disposable containers. Implementation head a3955ab1540436892e7454004957b5a370d26b62 passed exact-head CI run 44543723677 and received independent exact-SHA approval for merge consideration. This documentation closeout candidate requires new exact-head CI and independent review. Backfill creation-time order may differ from commit order, historical false merges cannot be reconstructed, and provider dates are not verified; see docs/KNOWN-LIMITATIONS.md. Owner-authorized merge and post-merge verification remain pending, so currentStatus stays partial.",
+      "gap": "Reposts are counted once per owner-scoped fingerprint per distinct search run and only when a later run carries a strictly newer non-null provider-claimed posted date. Replay unit tests passed 6/6; PostgreSQL backfill rebuild and completeCollection regressions each passed 1/1 on disposable containers. Implementation head a3955ab1540436892e7454004957b5a370d26b62 passed exact-head CI run 44543723677 and independent review. Docs head b09abeee5617eb0295efca04dc4263795ccca69 failed its browser job on an unsettled Firefox Next router prefetch from an earlier route; the current candidate narrows the settlement exception to stale prior-route prefetch GETs, with policy regressions 7/7 and full typecheck passing. Current exact-head CI/review, owner-authorized merge and post-merge verification remain open; currentStatus stays partial. Backfill ordering may differ from commit order, historical false merges cannot be reconstructed, and provider dates are unverified; see docs/KNOWN-LIMITATIONS.md.",
       "scopeDisposition": "in-scope"
     },
     {
