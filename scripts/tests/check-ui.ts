@@ -920,6 +920,10 @@ try {
       let signupVerificationCount = 0;
       let signupRequestBody: Record<string, unknown> | undefined;
       let signupVerificationBody: Record<string, unknown> | undefined;
+      let recoveryRequestCount = 0;
+      let recoveryVerificationCount = 0;
+      let recoveryRequestBody: Record<string, unknown> | undefined;
+      let recoveryVerificationBody: Record<string, unknown> | undefined;
       await signupPage.route('**/api/**', (route) =>
         route.fulfill({
           status: 404,
@@ -963,6 +967,27 @@ try {
               },
         }),
       );
+      await signupPage.route('**/api/recovery/request', (route) => {
+        recoveryRequestCount += 1;
+        recoveryRequestBody = route.request().postDataJSON() as Record<string, unknown>;
+        return route.fulfill({
+          status: 202,
+          contentType: 'application/json',
+          json: { message: 'If recovery is available for this account, check its recovery address for a code.' },
+        });
+      });
+      await signupPage.route('**/api/recovery/verify', (route) => {
+        recoveryVerificationCount += 1;
+        recoveryVerificationBody = route.request().postDataJSON() as Record<string, unknown>;
+        if (recoveryVerificationBody.code !== '654321')
+          return route.fulfill({
+            status: 401,
+            contentType: 'application/json',
+            json: { error: 'Invalid or expired recovery code', requestId: randomUUID() },
+          });
+        signupAuthenticated = true;
+        return route.fulfill({ contentType: 'application/json', json: { authenticated: true } });
+      });
       await signupPage.route('**/api/otp/request', (route) => {
         signupRequestCount += 1;
         signupRequestBody = route.request().postDataJSON() as Record<string, unknown>;
@@ -982,6 +1007,34 @@ try {
         signupAuthenticated = true;
         return route.fulfill({ contentType: 'application/json', json: { authenticated: true } });
       });
+      await signupPage.goto(origin);
+      await signupPage.getByRole('heading', { level: 1, name: 'Sign in to CareerScope' }).waitFor();
+      await signupPage.getByRole('button', { name: 'Can’t access your email?', exact: true }).click();
+      await signupPage.getByRole('heading', { level: 2, name: 'Recover access' }).waitFor();
+      await accessible(signupPage, engine, 'recovery sign-in request form', 'Sign in to CareerScope');
+      await signupPage.getByRole('button', { name: 'Back to sign in', exact: true }).click();
+      await signupPage.getByRole('button', { name: 'Can’t access your email?', exact: true }).waitFor();
+      await signupPage.getByRole('button', { name: 'Can’t access your email?', exact: true }).click();
+      const recoveryEmail = `recovery-${engine}@example.test`;
+      await signupPage.getByLabel('Recovery email address').fill(recoveryEmail);
+      await signupPage.getByRole('button', { name: 'Send recovery code', exact: true }).click();
+      await signupPage
+        .getByRole('status')
+        .getByText('If recovery is available for this account, check its recovery address for a code.')
+        .waitFor();
+      assert.equal(recoveryRequestCount, 1);
+      assert.deepEqual(recoveryRequestBody, { email: recoveryEmail });
+      await signupPage.getByLabel('Six-digit code').fill('000000');
+      await signupPage.getByRole('button', { name: 'Sign in with recovery code' }).click();
+      await signupPage.getByRole('alert').filter({ hasText: 'Invalid or expired recovery code' }).waitFor();
+      assert.equal(await signupPage.getByLabel('Six-digit code').inputValue(), '');
+      await signupPage.getByLabel('Six-digit code').fill('654321');
+      await signupPage.getByRole('button', { name: 'Sign in with recovery code' }).click();
+      await signupPage.waitForURL((url) => url.pathname === '/dashboard');
+      assert.equal(recoveryVerificationCount, 2);
+      assert.deepEqual(recoveryVerificationBody, { email: recoveryEmail, code: '654321' });
+      assert.deepEqual(await unhandledRejections(signupPage), [], `${engine} recovery UI produced an unhandled promise rejection`);
+      signupAuthenticated = false;
       await signupPage.goto(origin);
       await signupPage.getByRole('button', { name: 'Create an account', exact: true }).click();
       await accessible(

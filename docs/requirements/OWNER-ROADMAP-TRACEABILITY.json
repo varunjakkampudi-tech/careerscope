@@ -452,7 +452,7 @@
       "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "The program stage is recorded complete with this item-level limitation carried forward; see the cited stage evidence.",
+      "gap": "Owner source marks this item Partial without item-level acceptance criteria. Lost-email recovery sign-in browser coverage is being added; exact-head browser CI and clarification of the remaining completion gate are pending.",
       "scopeDisposition": "in-scope"
     },
     {
