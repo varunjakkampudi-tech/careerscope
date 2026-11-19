@@ -1424,9 +1424,10 @@
         "tests/integration/database.integration.test.ts"
       ],
       "externalEvidence": [
-        "GitHub Actions run 44575222679 passed all three required jobs on implementation SHA 1f28aa1c76df6900912749e89fffbe69d0f8edf5; the services job executed tests/integration/database.integration.test.ts."
+        "GitHub Actions run 44575222679 passed all three required jobs on implementation SHA 1f28aa1c76df6900912749e89fffbe69d0f8edf5; the services job executed tests/integration/database.integration.test.ts.",
+        "On the follow-up correction, Node 24 Docker validation passed packages/providers/src/normalize.test.ts (83/83) and apps/workers/search/src/collect.test.ts plus packages/core/src/jobs.test.ts (23/23). Exact-head hosted CI and independent review are pending for the corrected commit."
       ],
-      "gap": "The signal compares source-reported URL hosts only. Employer ownership, TLS, redirects, and source accuracy are not independently verified; the host-level comparison can flag legitimate subdomains or unlisted ATS providers. Candidate-facing display and calibrated false-positive evidence remain open.",
+      "gap": "The signal compares source-reported URL hosts only and now leaves the check unknown when only a provider listing URL is available. Employer ownership, TLS, redirects, and source accuracy are not independently verified; the host-level comparison can flag legitimate subdomains or unlisted ATS providers. Candidate-facing display and calibrated false-positive evidence remain open. Exact-head CI and independent review for the follow-up correction are pending.",
       "scopeDisposition": "in-scope"
     },
     {

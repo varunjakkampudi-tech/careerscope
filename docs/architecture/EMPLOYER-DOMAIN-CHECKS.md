@@ -5,6 +5,11 @@ and application URL use the same host, a different host, or a known ATS host.
 The check runs locally during normalization; it makes no network or DNS
 requests.
 
+When a provider supplies only a listing URL, that URL remains the navigation
+fallback for `applyUrl`, but it is not treated as an application destination
+for this check. The result is `unknown` until an actual application URL is
+provided.
+
 ## Statuses
 
 - `same-host`: the normalized hostnames match after removing a leading `www.`.

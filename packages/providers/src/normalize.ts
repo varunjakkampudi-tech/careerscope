@@ -95,7 +95,7 @@ export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
     applyUrl: normalizeUrl(raw.applyUrl) ?? normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
     employerDomainCheck: checkEmployerDomain(
       normalizeUrl(raw.companyWebsite),
-      normalizeUrl(raw.applyUrl) ?? normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
+      normalizeUrl(raw.applyUrl),
     ),
     sourceUrl: normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
     sourcePublisher: collapse(raw.sourcePublisher ?? '') || null,
@@ -579,7 +579,9 @@ export function mergeDuplicates(a: Job, b: Job): Job {
     },
     employerDomainCheck: checkEmployerDomain(
       winner.company.website ?? other.company.website,
-      winner.applyUrl,
+      winner.employerDomainCheck.applyHost
+        ? `https://${winner.employerDomainCheck.applyHost}`
+        : null,
     ),
     salary: hasSalary(winner.salary) ? winner.salary : other.salary,
     postedAt: winner.postedAt ?? other.postedAt,

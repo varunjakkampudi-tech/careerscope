@@ -297,7 +297,24 @@ describe('employer domain checks', () => {
     expect(invalid.employerDomainCheck).toEqual({
       status: 'unknown',
       companyHost: null,
-      applyHost: 'jobs.example',
+      applyHost: null,
+    });
+  });
+
+  it('does not treat a provider listing URL as the application destination', () => {
+    const job = normalizeJob(
+      rawJob({
+        companyWebsite: 'https://acme.example',
+        sourceUrl: 'https://boards.greenhouse.io/acme/jobs/4001',
+      }),
+      { now: NOW },
+    );
+
+    expect(job.applyUrl).toBe('https://boards.greenhouse.io/acme/jobs/4001');
+    expect(job.employerDomainCheck).toEqual({
+      status: 'unknown',
+      companyHost: 'acme.example',
+      applyHost: null,
     });
   });
 
@@ -826,6 +843,33 @@ describe('mergeDuplicates', () => {
       status: 'same-host',
       companyHost: 'acme.example',
       applyHost: 'acme.example',
+    });
+  });
+
+  it('keeps the application host unknown when the selected listing had no apply URL', () => {
+    const withoutApplyUrl = normalizeJob(
+      rawJob({
+        source: 'greenhouse',
+        sourceJobId: 'no-apply-1',
+        companyWebsite: 'https://acme.example',
+      }),
+      { now: NOW },
+    );
+    const withWebsite = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'website-1',
+        companyWebsite: 'https://acme.example',
+      }),
+      { now: NOW },
+    );
+
+    const merged = mergeDuplicates(withoutApplyUrl, withWebsite);
+
+    expect(merged.employerDomainCheck).toEqual({
+      status: 'unknown',
+      companyHost: 'acme.example',
+      applyHost: null,
     });
   });
 

@@ -10,7 +10,8 @@
     "stage-01-implementation": "Claude (Stage 01 implementation agent, self-validation)",
     "stage-01-item-1.01-refresh": "Codex (Stage 01 item 1.01 audit refresh)",
     "stage-06-item-6.03": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
-    "stage-06-item-6.03-ci-closeout": "Codex (CareerScope Stage 06 item 6.03 CI evidence closeout)"
+    "stage-06-item-6.03-ci-closeout": "Codex (CareerScope Stage 06 item 6.03 CI evidence closeout)",
+    "stage-06-item-6.03-application-url-correction": "Codex (CareerScope Stage 06 item 6.03 application URL evidence correction)"
   },
   "repositoryScans": [
     "2026-11-08 origin/dev source scan: no code any assertions, @ts-ignore or @ts-expect-error; one eslint-disable-next-line require-yield in provider test with an explicit reason.",
@@ -1890,10 +1891,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified. Updated for Stage 06 item 6.03: records required CI run 44575222679 on implementation SHA 1f28aa1c76df6900912749e89fffbe69d0f8edf5, including PostgreSQL JSONB and browser/accessibility checks; item remains partial pending independent review and post-merge gates.",
-      "evidence": "Re-reviewed the item-specific evidence closeout; content hash records the current bytes. Exact current-head CI will run after the documentation follow-up commit.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.03 CI evidence closeout)",
-      "sha256": "da11c2f8bb722f9947866031c3017261c05bb467958851664ff07682e5c3777a",
+      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified. Updated for Stage 06 item 6.03: records required CI run 44575222679 on implementation SHA 1f28aa1c76df6900912749e89fffbe69d0f8edf5, including PostgreSQL JSONB and browser/accessibility checks; item remains partial pending independent review and post-merge gates.\nReviewed the follow-up correction: domain evidence uses only a valid provider-supplied application URL; the source listing URL remains a navigation fallback and cannot create a false host mismatch. Duplicate enrichment preserves the recorded application host.",
+      "evidence": "Node 24 Docker validation: normalization 83/83 and collection/core 23/23. Exact-head hosted CI and independent review for the corrective SHA remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 application URL evidence correction)",
+      "sha256": "43b8bb57727c92ba397784485090b682b3f6c495dc1afba437e49ccb433e89ae",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2088,10 +2089,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified. Updated for Stage 06 item 6.03: records required CI run 44575222679 on implementation SHA 1f28aa1c76df6900912749e89fffbe69d0f8edf5, including PostgreSQL JSONB and browser/accessibility checks; item remains partial pending independent review and post-merge gates.",
-      "evidence": "Re-reviewed the item-specific evidence closeout; content hash records the current bytes. Exact current-head CI will run after the documentation follow-up commit.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.03 CI evidence closeout)",
-      "sha256": "38dcf310ffdefd2640b52a6d0df48907348b6f502d527c77e5dd57b1c6b86a6f",
+      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified. Updated for Stage 06 item 6.03: records required CI run 44575222679 on implementation SHA 1f28aa1c76df6900912749e89fffbe69d0f8edf5, including PostgreSQL JSONB and browser/accessibility checks; item remains partial pending independent review and post-merge gates.\nReviewed the follow-up correction: domain evidence uses only a valid provider-supplied application URL; the source listing URL remains a navigation fallback and cannot create a false host mismatch. Duplicate enrichment preserves the recorded application host.",
+      "evidence": "Node 24 Docker validation: normalization 83/83 and collection/core 23/23. Exact-head hosted CI and independent review for the corrective SHA remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 application URL evidence correction)",
+      "sha256": "10b79bfb09ca67e3a579c3714f09de21a147deee0640b9c5cb56038a4e5c6617",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2284,10 +2285,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified. Updated for Stage 06 item 6.03: records required CI run 44575222679 on implementation SHA 1f28aa1c76df6900912749e89fffbe69d0f8edf5, including PostgreSQL JSONB and browser/accessibility checks; item remains partial pending independent review and post-merge gates.",
-      "evidence": "Re-reviewed the item-specific evidence closeout; content hash records the current bytes. Exact current-head CI will run after the documentation follow-up commit.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.03 CI evidence closeout)",
-      "sha256": "1e0874d7c4acdfdf3c5b8efb4ec9e5f0e93c0d80d015ca02662282c74275737e",
+      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified. Updated for Stage 06 item 6.03: records required CI run 44575222679 on implementation SHA 1f28aa1c76df6900912749e89fffbe69d0f8edf5, including PostgreSQL JSONB and browser/accessibility checks; item remains partial pending independent review and post-merge gates.\nReviewed the follow-up correction: domain evidence uses only a valid provider-supplied application URL; the source listing URL remains a navigation fallback and cannot create a false host mismatch. Duplicate enrichment preserves the recorded application host.",
+      "evidence": "Node 24 Docker validation: normalization 83/83 and collection/core 23/23. Exact-head hosted CI and independent review for the corrective SHA remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 application URL evidence correction)",
+      "sha256": "325c5bc254fee3c5b603535e7197f4c7f645f48b5fee2ac3d9e5ecf349a15bdc",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2528,10 +2529,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete item-specific contract and limitations. It defines an informational hostname consistency signal, documented ATS exceptions, and explicit limits; no ownership, fraud, redirect, or TLS claim is made.",
-      "evidence": "Reviewed for owner roadmap item 6.03; focused Node 24 checks are recorded in docs/TEST-MATRIX.md. Exact-head hosted CI and independent acceptance remain pending.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
-      "sha256": "3cdec4fbf35975e1e43d30692a8cf12f57eea8da10ef3d8cef1a969885f8a978"
+      "observations": "Read the complete item-specific contract and limitations. It defines an informational hostname consistency signal, documented ATS exceptions, and explicit limits; no ownership, fraud, redirect, or TLS claim is made.\nReviewed the follow-up correction: domain evidence uses only a valid provider-supplied application URL; the source listing URL remains a navigation fallback and cannot create a false host mismatch. Duplicate enrichment preserves the recorded application host.",
+      "evidence": "Node 24 Docker validation: normalization 83/83 and collection/core 23/23. Exact-head hosted CI and independent review for the corrective SHA remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 application URL evidence correction)",
+      "sha256": "4d207947b2dc0ce5a183eccbebb411197443479bc398892252ec4f846a5df86b"
     },
     {
       "path": "docs/architecture/OUTBOX.md",
@@ -2864,10 +2865,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified. Updated for Stage 06 item 6.03: records required CI run 44575222679 on implementation SHA 1f28aa1c76df6900912749e89fffbe69d0f8edf5, including PostgreSQL JSONB and browser/accessibility checks; item remains partial pending independent review and post-merge gates.",
-      "evidence": "Re-reviewed the item-specific evidence closeout; content hash records the current bytes. Exact current-head CI will run after the documentation follow-up commit.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.03 CI evidence closeout)",
-      "sha256": "cddf0db238183d63a45bc1a6fedc85dacd88657f787d51a52aa3f9ddda867b93",
+      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified. Updated for Stage 06 item 6.03: records required CI run 44575222679 on implementation SHA 1f28aa1c76df6900912749e89fffbe69d0f8edf5, including PostgreSQL JSONB and browser/accessibility checks; item remains partial pending independent review and post-merge gates.\nReviewed the follow-up correction: domain evidence uses only a valid provider-supplied application URL; the source listing URL remains a navigation fallback and cannot create a false host mismatch. Duplicate enrichment preserves the recorded application host.",
+      "evidence": "Node 24 Docker validation: normalization 83/83 and collection/core 23/23. Exact-head hosted CI and independent review for the corrective SHA remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 application URL evidence correction)",
+      "sha256": "c5fc6e3b58eb17e8969e3909d1232610521462b4997dd65042210e964ffe7b7d",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -5836,10 +5837,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed 74 focused normalization tests, including explicit employment-type and disjoint-experience conflicts, compatible-subset preservation, and input-order determinism. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
-      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
-      "sha256": "451a8e6cdec522c9decc1ea8c5af35731d65e03a0a8f46864023f53d5429d358",
+      "observations": "Reviewed 74 focused normalization tests, including explicit employment-type and disjoint-experience conflicts, compatible-subset preservation, and input-order determinism. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.\nReviewed the follow-up correction: domain evidence uses only a valid provider-supplied application URL; the source listing URL remains a navigation fallback and cannot create a false host mismatch. Duplicate enrichment preserves the recorded application host.",
+      "evidence": "Node 24 Docker validation: normalization 83/83 and collection/core 23/23. Exact-head hosted CI and independent review for the corrective SHA remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 application URL evidence correction)",
+      "sha256": "0fcd11d5523875a87442f45ac1cb07017fe382a59fa293b089b9acfae279db55",
       "history": [
         {
           "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
@@ -5876,10 +5877,10 @@
           "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
         }
       ],
-      "observations": "Reviewed deterministic compatible-subset partitioning, preserving compatible merges while splitting explicit employment-type and disjoint-experience conflicts; source-ID collision behavior remains conservative. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.",
-      "evidence": "Content hash refreshed after item 6.03 review; local validation and outstanding gates are recorded in docs/TEST-MATRIX.md.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.03 implementation review)",
-      "sha256": "70320e6773eccab62e829ffe396a77fb5381c92d3f5c055813ce518a50248083",
+      "observations": "Reviewed deterministic compatible-subset partitioning, preserving compatible merges while splitting explicit employment-type and disjoint-experience conflicts; source-ID collision behavior remains conservative. Stage 06 item 6.03 changes reviewed against the item scope; focused local evidence is in docs/TEST-MATRIX.md. PostgreSQL round-trip execution and exact-head hosted CI remain unverified.\nReviewed the follow-up correction: domain evidence uses only a valid provider-supplied application URL; the source listing URL remains a navigation fallback and cannot create a false host mismatch. Duplicate enrichment preserves the recorded application host.",
+      "evidence": "Node 24 Docker validation: normalization 83/83 and collection/core 23/23. Exact-head hosted CI and independent review for the corrective SHA remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 application URL evidence correction)",
+      "sha256": "ccbe7a322d4df4e2f8529161d632a0bb2f236602d06b8a84cdaf5833b8f3963d",
       "history": [
         {
           "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
