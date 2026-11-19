@@ -1885,14 +1885,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-diff-and-focused-validation",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the focused item 6.02 diff: count each fingerprint once per collection run; preserve the greatest observed provider posting date in live writes and deterministic backfill; increment repost_count only for a strictly newer non-null date. Database and replay regressions added. Item remains partial pending exact-head CI, independent acceptance, merge, and post-merge verification.",
-      "evidence": "Node 24: full typecheck passed; replay unit suite passed 6 tests, with its database-only rebuild test skipped in no-database mode. Separately, the PostgreSQL backfill rebuild test passed 1/1 and disposable PostgreSQL completeCollection regression passed 1/1. Targeted ESLint exited successfully; Prettier, file-audit integrity, requirement traceability, and 22-stage/328-item roadmap checks passed.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.02 implementation review)",
-      "sha256": "f43b9cf8fdb0bf9a14e4e0fbfb22f2ba317538c83b31dc5639d3fc6b7315c591",
+      "observations": "Reviewed Stage 06 item 6.02 implementation, local evidence and exact-SHA disposition. The implementation head a3955ab1540436892e7454004957b5a370d26b62 passed CI run 44543723677 and received independent approval for merge consideration. This documentation closeout records that evidence but remains partial pending its own exact-head CI/review, owner-authorized merge and post-merge verification.",
+      "evidence": "Node 24 typecheck and targeted lint passed; six replay unit tests passed, and both PostgreSQL-only backfill rebuild and completeCollection regressions passed 1/1 on fresh disposable containers. Exact CI run 44543723677 passed all three required jobs and ChatGPT approved implementation SHA a3955ab. The new docs-only candidate SHA requires fresh CI/review.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.02 evidence closeout)",
+      "sha256": "750150f08885539ee1ccaef4d31f264528e81cf75deaf7c11e3ff8e482af2f15",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2019,6 +2019,12 @@
           "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
           "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
           "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.02 implementation review)",
+          "sha256": "f43b9cf8fdb0bf9a14e4e0fbfb22f2ba317538c83b31dc5639d3fc6b7315c591",
+          "observations": "Reviewed the focused item 6.02 diff: count each fingerprint once per collection run; preserve the greatest observed provider posting date in live writes and deterministic backfill; increment repost_count only for a strictly newer non-null date. Database and replay regressions added. Item remains partial pending exact-head CI, independent acceptance, merge, and post-merge verification.",
+          "evidence": "Node 24: full typecheck passed; replay unit suite passed 6 tests, with its database-only rebuild test skipped in no-database mode. Separately, the PostgreSQL backfill rebuild test passed 1/1 and disposable PostgreSQL completeCollection regression passed 1/1. Targeted ESLint exited successfully; Prettier, file-audit integrity, requirement traceability, and 22-stage/328-item roadmap checks passed."
         }
       ]
     },
@@ -2081,7 +2087,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "content-diff-and-focused-validation",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2093,10 +2099,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the focused item 6.02 diff: count each fingerprint once per collection run; preserve the greatest observed provider posting date in live writes and deterministic backfill; increment repost_count only for a strictly newer non-null date. Database and replay regressions added. Item remains partial pending exact-head CI, independent acceptance, merge, and post-merge verification.",
-      "evidence": "Node 24: full typecheck passed; replay unit suite passed 6 tests, with its database-only rebuild test skipped in no-database mode. Separately, the PostgreSQL backfill rebuild test passed 1/1 and disposable PostgreSQL completeCollection regression passed 1/1. Targeted ESLint exited successfully; Prettier, file-audit integrity, requirement traceability, and 22-stage/328-item roadmap checks passed.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.02 implementation review)",
-      "sha256": "201c9682474d12c7da401b2137d3056d7c4f22871d0f38fea8b59bfdba14b865",
+      "observations": "Reviewed Stage 06 item 6.02 implementation, local evidence and exact-SHA disposition. The implementation head a3955ab1540436892e7454004957b5a370d26b62 passed CI run 44543723677 and received independent approval for merge consideration. This documentation closeout records that evidence but remains partial pending its own exact-head CI/review, owner-authorized merge and post-merge verification.",
+      "evidence": "Node 24 typecheck and targeted lint passed; six replay unit tests passed, and both PostgreSQL-only backfill rebuild and completeCollection regressions passed 1/1 on fresh disposable containers. Exact CI run 44543723677 passed all three required jobs and ChatGPT approved implementation SHA a3955ab. The new docs-only candidate SHA requires fresh CI/review.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.02 evidence closeout)",
+      "sha256": "52fd0c3affc21a48de02807eac8f7f8d6910f854525144d3fbe44121c6502905",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2241,6 +2247,12 @@
           "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
           "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
           "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.02 implementation review)",
+          "sha256": "201c9682474d12c7da401b2137d3056d7c4f22871d0f38fea8b59bfdba14b865",
+          "observations": "Reviewed the focused item 6.02 diff: count each fingerprint once per collection run; preserve the greatest observed provider posting date in live writes and deterministic backfill; increment repost_count only for a strictly newer non-null date. Database and replay regressions added. Item remains partial pending exact-head CI, independent acceptance, merge, and post-merge verification.",
+          "evidence": "Node 24: full typecheck passed; replay unit suite passed 6 tests, with its database-only rebuild test skipped in no-database mode. Separately, the PostgreSQL backfill rebuild test passed 1/1 and disposable PostgreSQL completeCollection regression passed 1/1. Targeted ESLint exited successfully; Prettier, file-audit integrity, requirement traceability, and 22-stage/328-item roadmap checks passed."
         }
       ]
     },
@@ -2291,14 +2303,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-diff-and-focused-validation",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the focused item 6.02 diff: count each fingerprint once per collection run; preserve the greatest observed provider posting date in live writes and deterministic backfill; increment repost_count only for a strictly newer non-null date. Database and replay regressions added. Item remains partial pending exact-head CI, independent acceptance, merge, and post-merge verification.",
-      "evidence": "Node 24: full typecheck passed; replay unit suite passed 6 tests, with its database-only rebuild test skipped in no-database mode. Separately, the PostgreSQL backfill rebuild test passed 1/1 and disposable PostgreSQL completeCollection regression passed 1/1. Targeted ESLint exited successfully; Prettier, file-audit integrity, requirement traceability, and 22-stage/328-item roadmap checks passed.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.02 implementation review)",
-      "sha256": "d55767d5ce7daa7c781d30869c1adb9f94503972e761469524f9b18522e52d27",
+      "observations": "Reviewed Stage 06 item 6.02 implementation, local evidence and exact-SHA disposition. The implementation head a3955ab1540436892e7454004957b5a370d26b62 passed CI run 44543723677 and received independent approval for merge consideration. This documentation closeout records that evidence but remains partial pending its own exact-head CI/review, owner-authorized merge and post-merge verification.",
+      "evidence": "Node 24 typecheck and targeted lint passed; six replay unit tests passed, and both PostgreSQL-only backfill rebuild and completeCollection regressions passed 1/1 on fresh disposable containers. Exact CI run 44543723677 passed all three required jobs and ChatGPT approved implementation SHA a3955ab. The new docs-only candidate SHA requires fresh CI/review.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.02 evidence closeout)",
+      "sha256": "8beaf2a4c1fed4026d5239c438a299853c69eea369099bf854a7b8deef09cc0c",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2431,6 +2443,12 @@
           "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
           "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
           "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.02 implementation review)",
+          "sha256": "d55767d5ce7daa7c781d30869c1adb9f94503972e761469524f9b18522e52d27",
+          "observations": "Reviewed the focused item 6.02 diff: count each fingerprint once per collection run; preserve the greatest observed provider posting date in live writes and deterministic backfill; increment repost_count only for a strictly newer non-null date. Database and replay regressions added. Item remains partial pending exact-head CI, independent acceptance, merge, and post-merge verification.",
+          "evidence": "Node 24: full typecheck passed; replay unit suite passed 6 tests, with its database-only rebuild test skipped in no-database mode. Separately, the PostgreSQL backfill rebuild test passed 1/1 and disposable PostgreSQL completeCollection regression passed 1/1. Targeted ESLint exited successfully; Prettier, file-audit integrity, requirement traceability, and 22-stage/328-item roadmap checks passed."
         }
       ]
     },
@@ -2871,14 +2889,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "content-diff-and-focused-validation",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the focused item 6.02 diff: count each fingerprint once per collection run; preserve the greatest observed provider posting date in live writes and deterministic backfill; increment repost_count only for a strictly newer non-null date. Database and replay regressions added. Item remains partial pending exact-head CI, independent acceptance, merge, and post-merge verification.",
-      "evidence": "Node 24: full typecheck passed; replay unit suite passed 6 tests, with its database-only rebuild test skipped in no-database mode. Separately, the PostgreSQL backfill rebuild test passed 1/1 and disposable PostgreSQL completeCollection regression passed 1/1. Targeted ESLint exited successfully; Prettier, file-audit integrity, requirement traceability, and 22-stage/328-item roadmap checks passed.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.02 implementation review)",
-      "sha256": "5d58fb4ebb85aa2c1d17cdd2e1342b18f67445e7479df6e7a1e7d38d8645f462",
+      "observations": "Reviewed Stage 06 item 6.02 implementation, local evidence and exact-SHA disposition. The implementation head a3955ab1540436892e7454004957b5a370d26b62 passed CI run 44543723677 and received independent approval for merge consideration. This documentation closeout records that evidence but remains partial pending its own exact-head CI/review, owner-authorized merge and post-merge verification.",
+      "evidence": "Node 24 typecheck and targeted lint passed; six replay unit tests passed, and both PostgreSQL-only backfill rebuild and completeCollection regressions passed 1/1 on fresh disposable containers. Exact CI run 44543723677 passed all three required jobs and ChatGPT approved implementation SHA a3955ab. The new docs-only candidate SHA requires fresh CI/review.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.02 evidence closeout)",
+      "sha256": "c4a85c6a6c9afc67eb68ead593ab0352ef26b1acdd96cb906d4641f16181255c",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2993,6 +3011,12 @@
           "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
           "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
           "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.02 implementation review)",
+          "sha256": "5d58fb4ebb85aa2c1d17cdd2e1342b18f67445e7479df6e7a1e7d38d8645f462",
+          "observations": "Reviewed the focused item 6.02 diff: count each fingerprint once per collection run; preserve the greatest observed provider posting date in live writes and deterministic backfill; increment repost_count only for a strictly newer non-null date. Database and replay regressions added. Item remains partial pending exact-head CI, independent acceptance, merge, and post-merge verification.",
+          "evidence": "Node 24: full typecheck passed; replay unit suite passed 6 tests, with its database-only rebuild test skipped in no-database mode. Separately, the PostgreSQL backfill rebuild test passed 1/1 and disposable PostgreSQL completeCollection regression passed 1/1. Targeted ESLint exited successfully; Prettier, file-audit integrity, requirement traceability, and 22-stage/328-item roadmap checks passed."
         }
       ]
     },
