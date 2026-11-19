@@ -1414,7 +1414,8 @@
         "docs/architecture/EMPLOYER-DOMAIN-CHECKS.md",
         "packages/providers/src/employer-domain.ts",
         "packages/providers/src/normalize.ts",
-        "packages/core/src/jobs.ts"
+        "packages/core/src/jobs.ts",
+        "docs/TEST-MATRIX.md"
       ],
       "tests": [
         "packages/providers/src/normalize.test.ts",
@@ -1422,7 +1423,9 @@
         "packages/core/src/jobs.test.ts",
         "tests/integration/database.integration.test.ts"
       ],
-      "externalEvidence": [],
+      "externalEvidence": [
+        "GitHub Actions run 44575222679 passed all three required jobs on implementation SHA 1f28aa1c76df6900912749e89fffbe69d0f8edf5; the services job executed tests/integration/database.integration.test.ts."
+      ],
       "gap": "The signal compares source-reported URL hosts only. Employer ownership, TLS, redirects, and source accuracy are not independently verified; the host-level comparison can flag legitimate subdomains or unlisted ATS providers. Candidate-facing display and calibrated false-positive evidence remain open.",
       "scopeDisposition": "in-scope"
     },
