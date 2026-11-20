@@ -4596,10 +4596,10 @@
           "remediation": "Added a loopback hostname assertion before the test opens its database connection."
         }
       ],
-      "observations": "Reviewed the complete integration test and revised it to create, claim, start and complete synthetic searches through Database, then read owner-scoped MarketRepository evidence. Covers first-seen preservation, last-seen ordering, repeated sightings, unchanged dates, repost increments, missing dates and owner isolation. Checklist items remain subject to exact-head CI and independent acceptance.",
-      "evidence": "Node 24.21.0 with PostgreSQL 17.6: packages/core/src/market.integration.test.ts passed 2/2; focused Prettier check passed. Exact-head hosted CI and independent checklist review pending.",
+      "observations": "Reviewed the complete integration test and revised it to create, claim, start and complete synthetic searches through Database, then read owner-scoped MarketRepository evidence. Covers first-seen preservation, explicit last-seen advancement after a later completed search, repeated sightings, unchanged dates, repost increments, missing dates and owner isolation. Checklist items remain subject to exact-head CI and independent acceptance.",
+      "evidence": "Node 24.22.1 with isolated PostgreSQL 17.6: packages/core/src/market.integration.test.ts passed 2/2; focused Prettier check and git diff --check passed. Exact-head hosted CI and independent checklist review pending.",
       "reviewer": "Codex (CareerScope Stage 06.01-06.02 integration evidence)",
-      "sha256": "09df527b9b66156018b482f4c7484f3f02166a5a59a15ddc9884ac965a0efcd8",
+      "sha256": "d1b6ace2b09095fa3c4d9801c7c12749a325ce0ea402380c349aae5f6e81a2a8",
       "history": [
         {
           "path": "packages/core/src/market.integration.test.ts",

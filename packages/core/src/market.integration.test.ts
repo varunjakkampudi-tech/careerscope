@@ -86,9 +86,19 @@ test('posting evidence accumulates across searches and detects a refreshed listi
     assert.equal(seededFirstSeen.rowCount, 1);
     for (let i = 0; i < 3; i += 1) await sight(owner, 'long-open', ninetyDaysAgo);
 
+    const longOpenBeforeAdvance = await market.posting(owner, 'long-open');
+    assert.ok(longOpenBeforeAdvance);
+    const priorLastSeen = new Date(longOpenBeforeAdvance.lastSeenAt).valueOf();
+    await new Promise((resolve) => setTimeout(resolve, 25));
+    await sight(owner, 'long-open', ninetyDaysAgo);
+
     const longOpen = await market.posting(owner, 'long-open');
     assert.ok(longOpen);
-    assert.equal(longOpen.sightings, 4);
+    assert.ok(
+      new Date(longOpen.lastSeenAt).valueOf() > priorLastSeen,
+      'a later completed search must advance persisted last-seen time',
+    );
+    assert.equal(longOpen.sightings, 5);
     assert.equal(longOpen.repostCount, 0);
     assert.ok(
       longOpen.daysOpen !== null && longOpen.daysOpen >= 89,
