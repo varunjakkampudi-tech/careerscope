@@ -1473,7 +1473,7 @@
         "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "Deterministic URL signals are surfaced as review warnings, but there is no labeled corpus or measured precision/recall, no provider-specific link validation, and no proof of listing legitimacy. Exact-head CI and independent review remain pending.",
+      "gap": "Deterministic URL signals are surfaced as review warnings. Exact-head hosted CI run 44660704855 passed and independent review approved exact head 2476cf8213294f311937ee081f34a1a5f2f05392 subject to CI; PR 117 remains open. There is no representative labeled corpus or measured precision/recall, provider-specific link validation, or proof of listing legitimacy.",
       "scopeDisposition": "in-scope"
     },
     {
