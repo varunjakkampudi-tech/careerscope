@@ -1888,10 +1888,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.",
-      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.",
+      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.",
+      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780.",
       "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review)",
-      "sha256": "0d1669a5e785295e29a84346a6fdf5b0854e1c4c4f3fed44a2e23fbd2eaf8351",
+      "sha256": "ebfac7426bb0cc8ea8a06351e8cfa179c996698f53c164fccca436389e57100f",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2086,10 +2086,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.",
-      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.",
+      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.",
+      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780.",
       "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review)",
-      "sha256": "371bc4f85b1b512d0b96badd2e275d8499a4af1f1f95b7f05a7ce699b6d27f2a",
+      "sha256": "898c4799489e5db35445c3f20f9a24d1cf474087f09ec5643656c0049990b8fe",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2282,10 +2282,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.",
-      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.",
+      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.",
+      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780.",
       "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review)",
-      "sha256": "0fe4bd4b63ef3db7b2c6509a21204c192a0e016715da4c45d51d77937aeb0dc7",
+      "sha256": "a9e808d66b54c1ba45bc25d0c7b8a83229ec5e0847d4411514e57a740f55b161",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2850,10 +2850,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.",
+      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.",
+      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780.",
       "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review)",
-      "sha256": "c43cb4f83967014e9aa0f433a49ae5678515720f32113088d5c803bb733d121a",
+      "sha256": "2e96b87250a1c6acb1643103428d57c9532c3bca34744a8d9718d8640d975041",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
