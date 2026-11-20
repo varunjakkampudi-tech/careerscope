@@ -6,11 +6,14 @@ type SourceLink = { source: SourceId; url: string };
  * Build factual evidence from a normalized listing. Provider statements stay
  * labeled as reported, observed values are limited to the URLs CareerScope
  * received, and missing fields stay explicit. This function performs no
- * network, DNS, ownership, or fraud checks.
+ * network, DNS, ownership, or fraud checks. Application destinations must be
+ * passed separately so a normalized navigation fallback is never treated as
+ * an observed destination.
  */
 export function buildJobTrustEvidence(
   job: Job,
   sourceLinks: readonly SourceLink[] = [],
+  applicationDestinations: readonly SourceLink[] = [],
 ): JobTrustEvidence[] {
   const listingLinks = new Map<string, SourceLink>();
   for (const link of [{ source: job.source, url: job.sourceUrl }, ...sourceLinks]) {
@@ -43,14 +46,38 @@ export function buildJobTrustEvidence(
   addClaim('employer_website_claim', host(job.company.website), job.sourceUrl);
   addClaim('careers_website_claim', host(job.company.careersUrl), job.sourceUrl);
 
-  const applicationHost = new URL(job.applyUrl).host.toLowerCase();
-  entries.push({
-    kind: 'application_destination',
-    status: 'observed',
-    source: job.source,
-    referenceUrl: job.applyUrl,
-    value: applicationHost,
-  });
+  const destinationsBySource = new Map<SourceId, Map<string, SourceLink>>();
+  for (const destination of applicationDestinations) {
+    const destinations = destinationsBySource.get(destination.source) ?? new Map();
+    destinations.set(destination.url, destination);
+    destinationsBySource.set(destination.source, destinations);
+  }
+  for (const { source, url: listingUrl } of [...listingLinks.values()].sort((left, right) =>
+    left.source.localeCompare(right.source),
+  )) {
+    const destinations = [...(destinationsBySource.get(source)?.values() ?? [])].sort(
+      (left, right) => left.url.localeCompare(right.url),
+    );
+    if (destinations.length === 0) {
+      entries.push({
+        kind: 'application_destination',
+        status: 'not_provided',
+        source,
+        referenceUrl: listingUrl,
+        value: null,
+      });
+      continue;
+    }
+    for (const { url } of destinations) {
+      entries.push({
+        kind: 'application_destination',
+        status: 'observed',
+        source,
+        referenceUrl: url,
+        value: new URL(url).host.toLowerCase(),
+      });
+    }
+  }
 
   addClaim('posted_date_claim', job.postedAt, job.sourceUrl);
 

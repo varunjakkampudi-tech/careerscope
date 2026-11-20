@@ -241,6 +241,46 @@ test('multi-source collection retains validated partial results and preserves ca
   assert.equal(secondCalled, false);
 });
 
+test('missing or invalid application links are not labeled as observed destinations', async () => {
+  const row = (sourceJobId: string, applyUrl: string | undefined) => ({
+    source: 'remoteok' as const,
+    sourceJobId,
+    title: `React Engineer ${sourceJobId}`,
+    companyName: 'Example',
+    location: 'Remote',
+    isRemote: true,
+    description: 'React role',
+    hasFullDescription: false,
+    sourceUrl: `https://remoteok.com/remote-jobs/${sourceJobId}`,
+    applyUrl,
+  });
+  const provider = {
+    ...createRemoteOkProvider(),
+    async *search() {
+      yield row('listing-only', undefined);
+      yield row('invalid-apply', 'javascript:alert(1)');
+    },
+  };
+  const result = await collect(request, signal, provider);
+  assert.equal(result.jobs.length, 2);
+  for (const id of ['listing-only', 'invalid-apply']) {
+    const job = result.jobs.find((entry) => entry.sourceJobId === id);
+    assert.equal(job?.applyUrl, `https://remoteok.com/remote-jobs/${id}`);
+    assert.equal(
+      job?.trustEvidence.some(
+        (entry) => entry.kind === 'application_destination' && entry.status === 'observed',
+      ),
+      false,
+    );
+    assert.equal(
+      job?.trustEvidence.some(
+        (entry) => entry.kind === 'application_destination' && entry.status === 'not_provided',
+      ),
+      true,
+    );
+  }
+});
+
 test('two distinct reqs from one source with the same title, company and city stay two leads', async () => {
   const base = {
     source: 'remoteok' as const,

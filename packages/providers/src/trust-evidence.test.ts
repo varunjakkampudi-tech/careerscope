@@ -28,10 +28,14 @@ function job(overrides: Partial<RawJob> = {}) {
 
 describe('buildJobTrustEvidence', () => {
   it('records source-linked observations and keeps provider claims labeled as reported', () => {
-    const evidence = buildJobTrustEvidence(job(), [
-      { source: 'lever', url: 'https://jobs.example/roles/123' },
-      { source: 'remoteok', url: 'https://remoteok.com/remote-jobs/123' },
-    ]);
+    const evidence = buildJobTrustEvidence(
+      job(),
+      [
+        { source: 'lever', url: 'https://jobs.example/roles/123' },
+        { source: 'remoteok', url: 'https://remoteok.com/remote-jobs/123' },
+      ],
+      [{ source: 'greenhouse', url: 'https://apply.example/jobs/123' }],
+    );
 
     expect(evidence.filter((entry) => entry.kind === 'source_listing')).toEqual([
       {
@@ -67,6 +71,15 @@ describe('buildJobTrustEvidence', () => {
       referenceUrl: 'https://apply.example/jobs/123',
       value: 'apply.example',
     });
+    expect(
+      evidence.find(
+        (entry) => entry.kind === 'application_destination' && entry.source === 'lever',
+      ),
+    ).toMatchObject({
+      status: 'not_provided',
+      referenceUrl: 'https://jobs.example/roles/123',
+      value: null,
+    });
     expect(evidence.map((entry) => entry.kind)).not.toContain('fraud_verdict');
   });
 
@@ -96,6 +109,11 @@ describe('buildJobTrustEvidence', () => {
     expect(evidence.find((entry) => entry.kind === 'description_availability')).toMatchObject({
       status: 'observed',
       value: 'partial',
+    });
+    expect(evidence.find((entry) => entry.kind === 'application_destination')).toMatchObject({
+      status: 'not_provided',
+      referenceUrl: sourceUrl,
+      value: null,
     });
   });
 

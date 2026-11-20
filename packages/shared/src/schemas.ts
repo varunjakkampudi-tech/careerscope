@@ -397,9 +397,11 @@ export const jobTrustEvidenceSchema = z
     }
     if (
       entry.kind === 'application_destination' &&
-      (entry.status !== 'observed' || entry.value === null)
+      ((entry.status === 'observed' && entry.value === null) ||
+        (entry.status === 'not_provided' && entry.value !== null) ||
+        entry.status === 'provider_reported')
     ) {
-      invalid('An application destination must identify an observed host');
+      invalid('An application destination must distinguish an observed host from a missing link');
     }
     if (
       entry.kind === 'description_availability' &&
