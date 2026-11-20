@@ -67,7 +67,9 @@ function relativeTime(iso: string | null, locale: 'en' | 'te' | 'hi'): string | 
     if (days < 30) return `${days} days ago`;
   } else {
     const languageTag = locale === 'te' ? 'te-IN' : 'hi-IN';
-    const formatter = new Intl.RelativeTimeFormat(languageTag, { numeric: 'auto' });
+    const formatter = new Intl.RelativeTimeFormat(languageTag, {
+      numeric: 'auto',
+    });
     if (days <= 0) return formatter.format(0, 'day');
     if (days < 30) return formatter.format(-days, 'day');
   }
@@ -93,21 +95,27 @@ function JobFeedback({
   const locale = useInterfaceLocale();
   const t = (key: Parameters<typeof localizedText>[1]) => localizedText(locale, key);
   const [reason, setReason] = useState<JobFeedbackReason | ''>(initialReason ?? '');
+  const [details, setDetails] = useState('');
   const feedback = useMutation({
-    mutationFn: (nextReason: JobFeedbackReason) =>
+    mutationFn: (submission: { reason: JobFeedbackReason; details: string }) =>
       apiParsed(`/search-jobs/${jobId}/feedback`, parseJobFeedback, {
         method: 'PUT',
         headers: { 'x-csrf-token': csrf },
-        body: JSON.stringify({ reason: nextReason }),
+        body: JSON.stringify({
+          reason: submission.reason,
+          ...(submission.details.trim() ? { details: submission.details } : {}),
+        }),
       }),
     onSuccess: (result) => {
       onSaved(result.reason);
+      setDetails('');
     },
   });
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (reason) feedback.mutate(reason);
+    if (reason && (reason !== initialReason || details.trim()))
+      feedback.mutate({ reason, details });
   }
 
   return (
@@ -127,7 +135,21 @@ function JobFeedback({
           ))}
         </select>
       </label>
-      <button type="submit" disabled={!reason || feedback.isPending || reason === initialReason}>
+      <label>
+        <span>{t('feedbackDetailsLabel')}</span>
+        <textarea
+          value={details}
+          maxLength={1000}
+          rows={3}
+          onChange={(event) => setDetails(event.target.value)}
+          disabled={feedback.isPending}
+        />
+      </label>
+      <p>{t('feedbackDetailsPrivacy')}</p>
+      <button
+        type="submit"
+        disabled={!reason || feedback.isPending || (reason === initialReason && !details.trim())}
+      >
         {feedback.isPending
           ? t('savingFeedback')
           : initialReason
@@ -242,7 +264,9 @@ function JobSearchWorkspace() {
     mutationFn: async (runId: string) => {
       const result = await apiJson(`/searches/${runId}/export`);
       const url = URL.createObjectURL(
-        new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' }),
+        new Blob([JSON.stringify(result, null, 2)], {
+          type: 'application/json',
+        }),
       );
       const link = document.createElement('a');
       try {
@@ -671,7 +695,10 @@ function JobSearchWorkspace() {
                     }
                     action={
                       detail.data.jobs.length > 0 && filter
-                        ? { label: t('clearSearchFilter'), onClick: () => setFilter('') }
+                        ? {
+                            label: t('clearSearchFilter'),
+                            onClick: () => setFilter(''),
+                          }
                         : undefined
                     }
                   />

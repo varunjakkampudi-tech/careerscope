@@ -127,6 +127,18 @@ test(
         0,
         'invalid feedback has no persistence side effect',
       );
+      const oversizedDetails = await app.inject({
+        method: 'PUT',
+        url: endpoint,
+        headers: { origin, cookie: ownerCookie, 'x-csrf-token': ownerSession.csrf },
+        payload: { reason: 'suspicious', details: 'x'.repeat(1001) },
+      });
+      assert.equal(oversizedDetails.statusCode, 400);
+      assert.equal(
+        (await database.pool.query('SELECT id FROM job_feedback_submissions')).rowCount,
+        0,
+        'oversized report details are rejected without persistence',
+      );
 
       const listBefore = await app.inject({
         url: `/api/searches/${ownerSearch.id}`,
@@ -145,15 +157,19 @@ test(
       );
 
       const headers = { origin, cookie: ownerCookie, 'x-csrf-token': ownerSession.csrf };
-      for (const reason of ['irrelevant', 'duplicate'] as const) {
+      const submissions = [
+        { reason: 'irrelevant', details: ' Listing does not identify the employer. ' },
+        { reason: 'duplicate' },
+      ] as const;
+      for (const submission of submissions) {
         const saved: LightMyRequestResponse = await app.inject({
           method: 'PUT',
           url: endpoint,
           headers,
-          payload: { reason },
+          payload: submission,
         });
         assert.equal(saved.statusCode, 200, saved.body);
-        assert.deepEqual(saved.json(), { reason });
+        assert.deepEqual(saved.json(), { reason: submission.reason });
       }
       const row = await database.pool.query(
         'SELECT owner_id, job_id, reason FROM job_feedback WHERE owner_id = $1 AND job_id = $2',
@@ -161,6 +177,20 @@ test(
       );
       assert.deepEqual(row.rows, [{ owner_id: ownerId, job_id: ownerJobId, reason: 'duplicate' }]);
       assert.equal((await database.pool.query('SELECT id FROM job_feedback')).rowCount, 1);
+      const submissionsAfterUpdates = await database.pool.query(
+        `SELECT reason, details FROM job_feedback_submissions
+         WHERE owner_id = $1 AND job_id = $2 ORDER BY created_at, id`,
+        [ownerId, ownerJobId],
+      );
+      assert.equal(submissionsAfterUpdates.rowCount, 2);
+      assert.deepEqual(
+        submissionsAfterUpdates.rows.map((submission) => submission.reason),
+        ['irrelevant', 'duplicate'],
+      );
+      assert.deepEqual(
+        submissionsAfterUpdates.rows.map((submission) => submission.details),
+        ['Listing does not identify the employer.', null],
+      );
 
       const detailAfter = await app.inject({
         url: `/api/searches/${ownerSearch.id}`,
@@ -233,6 +263,15 @@ test(
           .rowCount,
         0,
         'feedback is deleted with its retained search result',
+      );
+      assert.equal(
+        (
+          await database.pool.query('SELECT id FROM job_feedback_submissions WHERE job_id = $1', [
+            ownerJobId,
+          ])
+        ).rowCount,
+        0,
+        'submission history and candidate details are deleted with the retained search result',
       );
     } finally {
       await app?.close();

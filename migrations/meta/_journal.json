@@ -50,6 +50,13 @@
       "when": 1794414192236,
       "tag": "0006_resume_version_group_counters",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1795184560746,
+      "tag": "0007_typical_red_wolf",
+      "breakpoints": true
     }
   ]
 }

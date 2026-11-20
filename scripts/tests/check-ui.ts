@@ -3457,10 +3457,19 @@ try {
         .locator('details.job')
         .filter({ has: page.getByRole('heading', { name: 'Scored React Engineer', exact: true }) });
       const feedbackReason = scoredJobCard.getByLabel('Report a posting issue');
+      const feedbackDetails = scoredJobCard.getByLabel('Additional details (optional)');
       const priorFeedbackReason = resultBody.jobs[0].feedbackReason;
+      const priorSubmissionCount = (
+        await database.pool.query(
+          `SELECT count(*)::int AS count FROM job_feedback_submissions
+           WHERE owner_id = $1 AND job_id = $2`,
+          [ownerId, resultBody.jobs[0].id],
+        )
+      ).rows[0]!.count;
       const firstFeedbackReason =
         priorFeedbackReason === 'suspicious' ? 'irrelevant' : 'suspicious';
       await feedbackReason.selectOption(firstFeedbackReason);
+      await feedbackDetails.fill('The listing does not identify the employer.');
       const firstFeedbackResponse = page.waitForResponse(
         (response) =>
           response.url().includes(`/api/search-jobs/${resultBody.jobs[0].id}/feedback`) &&
@@ -3476,6 +3485,7 @@ try {
       assert.equal(firstFeedbackResult.status(), 200);
       assert.deepEqual(firstFeedbackResult.request().postDataJSON(), {
         reason: firstFeedbackReason,
+        details: 'The listing does not identify the employer.',
       });
       await scoredJobCard
         .getByRole('status')
@@ -3488,6 +3498,21 @@ try {
       assert.deepEqual(feedbackRows.rows, [
         { owner_id: ownerId, job_id: resultBody.jobs[0].id, reason: firstFeedbackReason },
       ]);
+      const firstSubmission = await database.pool.query(
+        `SELECT reason, details FROM job_feedback_submissions
+         WHERE owner_id = $1 AND job_id = $2 ORDER BY created_at DESC, id DESC LIMIT 1`,
+        [ownerId, resultBody.jobs[0].id],
+      );
+      assert.deepEqual(firstSubmission.rows[0], {
+        reason: firstFeedbackReason,
+        details: 'The listing does not identify the employer.',
+      });
+      const submissionCountAfterFirst = await database.pool.query(
+        `SELECT count(*)::int AS count FROM job_feedback_submissions
+         WHERE owner_id = $1 AND job_id = $2`,
+        [ownerId, resultBody.jobs[0].id],
+      );
+      assert.equal(submissionCountAfterFirst.rows[0]!.count, priorSubmissionCount + 1);
       const secondFeedbackReason = firstFeedbackReason === 'suspicious' ? 'incorrect' : 'duplicate';
       await feedbackReason.selectOption(secondFeedbackReason);
       const secondFeedbackResponse = page.waitForResponse(
@@ -3518,6 +3543,24 @@ try {
         1,
         'changing feedback updates the existing owner/job row instead of creating a duplicate',
       );
+      const submissionsAfterUpdate = await database.pool.query(
+        `SELECT reason, details FROM job_feedback_submissions
+         WHERE owner_id = $1 AND job_id = $2 ORDER BY created_at DESC, id DESC LIMIT 2`,
+        [ownerId, resultBody.jobs[0].id],
+      );
+      const submissionCountAfterUpdate = await database.pool.query(
+        `SELECT count(*)::int AS count FROM job_feedback_submissions
+         WHERE owner_id = $1 AND job_id = $2`,
+        [ownerId, resultBody.jobs[0].id],
+      );
+      assert.equal(submissionCountAfterUpdate.rows[0]!.count, priorSubmissionCount + 2);
+      assert.deepEqual(submissionsAfterUpdate.rows.reverse(), [
+        {
+          reason: firstFeedbackReason,
+          details: 'The listing does not identify the employer.',
+        },
+        { reason: secondFeedbackReason, details: null },
+      ]);
       await page.getByText('Senior React Engineer', { exact: true }).click();
       assert.equal(
         await page

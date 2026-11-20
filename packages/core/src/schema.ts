@@ -399,6 +399,35 @@ export const jobFeedback = pgTable(
   ],
 );
 
+/** Append-only candidate submissions; removed with the retained search result. */
+export const jobFeedbackSubmissions = pgTable(
+  'job_feedback_submissions',
+  {
+    id: uuid('id').primaryKey(),
+    ownerId: uuid('owner_id').notNull(),
+    jobId: uuid('job_id').notNull(),
+    reason: text('reason').notNull(),
+    details: text('details'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.ownerId, table.jobId],
+      foreignColumns: [jobs.ownerId, jobs.id],
+    }).onDelete('cascade'),
+    index('job_feedback_submissions_job_created').on(table.ownerId, table.jobId, table.createdAt),
+    index('job_feedback_submissions_created').on(table.createdAt),
+    check(
+      'job_feedback_submissions_reason_valid',
+      sql`${table.reason} IN ('irrelevant', 'duplicate', 'incorrect', 'unavailable', 'suspicious')`,
+    ),
+    check(
+      'job_feedback_submissions_details_bounded',
+      sql`${table.details} IS NULL OR (char_length(${table.details}) BETWEEN 1 AND 1000 AND ${table.details} = btrim(${table.details}))`,
+    ),
+  ],
+);
+
 /** Saved leads: a user's pipeline entries, unique per fingerprint, with revision, tags and application evidence. */
 export const leads = pgTable(
   'saved_leads',

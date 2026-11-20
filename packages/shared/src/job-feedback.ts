@@ -16,3 +16,7 @@ export const jobFeedbackReasons = [
 
 export const jobFeedbackReasonSchema = z.enum(jobFeedbackReasons);
 export type JobFeedbackReason = z.infer<typeof jobFeedbackReasonSchema>;
+
+/** Optional bounded candidate explanation; never used as a public posting field. */
+export const jobFeedbackDetailsSchema = z.string().trim().max(1000);
+export type JobFeedbackDetails = z.infer<typeof jobFeedbackDetailsSchema>;

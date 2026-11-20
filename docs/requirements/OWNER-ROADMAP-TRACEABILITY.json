@@ -1498,11 +1498,25 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Candidate reporting",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/job-search-view.tsx",
+        "apps/api/src/app.ts",
+        "apps/api/src/openapi.ts",
+        "packages/core/src/schema.ts",
+        "packages/shared/src/job-feedback.ts",
+        "migrations/0007_typical_red_wolf.sql",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md"
+      ],
+      "tests": [
+        "apps/api/src/job-feedback.integration.test.ts",
+        "scripts/tests/check-ui.ts",
+        "apps/web/src/lib/locale.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Candidates can submit and update a structured posting-issue reason per search job, including suspicious. PR #120 adds optional explanation capped at 1000 characters and append-only per-submission history while preserving the current reason summary. Updated integration and browser assertions cover validation, history and cascade deletion; exact-head CI and independent review remain pending. Telugu and Hindi helper copy awaits native-speaker review. Moderator workflow is tracked separately in item 6.11.",
       "scopeDisposition": "in-scope"
     },
     {
