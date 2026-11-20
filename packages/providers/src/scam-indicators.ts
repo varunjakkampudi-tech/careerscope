@@ -7,6 +7,7 @@ const NEGATED_ACTION =
   /\b(?:no|not|never|without|don't|do not|doesn't|does not)\b(?!\s+(?:only|just)\b)[^,.!?;]{0,48}\b(?:pay|paid|send|submit|provide|deposit|cash|return|refund|transfer|forward|receive|move|process|earn|post|use)\b/i;
 const ACTION =
   /\b(?:pay|paid|send|submit|provide|deposit|cash|return|refund|transfer|forward|receive|move|process|earn|post|use)\b/gi;
+const CLAUSE_BOUNDARY = /[,;.!?]|\b(?:but|however|yet|though|although)\b/gi;
 const NEGATED_FEE_REQUIREMENT =
   /\b(?:no|not|never|without|don't|do not|doesn't|does not)\b[^,.!?;]{0,48}\b(?:application|registration|training|security|equipment)\s+fee\b|\b(?:application|registration|training|security|equipment)\s+fee\b[^,.!?;]{0,20}\b(?:is\s+|are\s+|was\s+|were\s+)?not\s+(?:required|necessary|needed)\b/i;
 
@@ -54,12 +55,15 @@ export function detectRecruitmentScamIndicators(listingText: string): Recruitmen
     if (
       passages.some((passage) => {
         const globalPattern = new RegExp(pattern.source, `${pattern.flags}g`);
+        const clauseEnds = [...passage.matchAll(CLAUSE_BOUNDARY)].flatMap((boundary) =>
+          boundary.index === undefined ? [] : [boundary.index + boundary[0].length],
+        );
         for (const match of passage.matchAll(globalPattern)) {
           if (match.index === undefined) continue;
           const actions = [...match[0].matchAll(ACTION)];
           if (actions.length === 0) {
             const context = passage.slice(
-              Math.max(0, match.index - 48),
+              clauseStartAt(clauseEnds, match.index),
               match.index + match[0].length,
             );
             if (!NEGATED_FEE_REQUIREMENT.test(context)) return true;
@@ -71,7 +75,7 @@ export function detectRecruitmentScamIndicators(listingText: string): Recruitmen
               if (action.index === undefined) return false;
               const actionIndex = match.index + action.index;
               const context = passage.slice(
-                Math.max(0, actionIndex - 48),
+                clauseStartAt(clauseEnds, actionIndex),
                 actionIndex + action[0].length,
               );
               return !NEGATED_ACTION.test(context);
@@ -88,4 +92,16 @@ export function detectRecruitmentScamIndicators(listingText: string): Recruitmen
   }
 
   return RECRUITMENT_SCAM_INDICATORS.filter((code) => found.has(code));
+}
+
+function clauseStartAt(clauseEnds: readonly number[], index: number): number {
+  let low = 0;
+  let high = clauseEnds.length;
+  while (low < high) {
+    const middle = Math.floor((low + high) / 2);
+    const clauseEnd = clauseEnds[middle];
+    if (clauseEnd !== undefined && clauseEnd <= index) low = middle + 1;
+    else high = middle;
+  }
+  return low === 0 ? 0 : (clauseEnds[low - 1] ?? 0);
 }

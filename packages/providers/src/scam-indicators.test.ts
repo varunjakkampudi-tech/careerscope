@@ -52,6 +52,18 @@ describe('detectRecruitmentScamIndicators', () => {
     ).toEqual(['candidate_upfront_payment']);
   });
 
+  it('scopes negation to a punctuation or contrastive-conjunction clause', () => {
+    expect(
+      detectRecruitmentScamIndicators('Do not pay fees, but pay a registration fee to apply.'),
+    ).toEqual(['candidate_upfront_payment']);
+    expect(
+      detectRecruitmentScamIndicators('Do not pay fees but pay a registration fee to apply.'),
+    ).toEqual(['candidate_upfront_payment']);
+    expect(
+      detectRecruitmentScamIndicators('Pay a registration fee to apply, but do not pay fees.'),
+    ).toEqual(['candidate_upfront_payment']);
+  });
+
   it('does not treat “not only” as a negation of the fee requirement', () => {
     expect(
       detectRecruitmentScamIndicators(

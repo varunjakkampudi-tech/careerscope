@@ -1888,10 +1888,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 06.08 evidence for per-match negation and its regressions. Item remains partial; exact-head CI and independent review of the current fix remain pending.",
-      "evidence": "Node 24 domain suite passed 981/981; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
+      "observations": "Updated Stage 06.08 evidence for clause-bounded negation and regression coverage. Item remains partial; exact-head CI and independent review for the latest fix remain pending.",
+      "evidence": "Node 24 focused detector suite passed 14/14; domain suite passed 982/982; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity and roadmap traceability passed. Exact-head CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
-      "sha256": "277ddfee6aa1d5959f954e901a9485868854aaa06e399791f3b89f0443081978",
+      "sha256": "3ddf2510b6aeebffbf1cd67eae26646e05850bed7b2e9e943f8f31950eac9f4d",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2030,6 +2030,12 @@
           "evidence": "Node 24 domain suite passed 979/979; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
           "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
           "sha256": "277ddfee6aa1d5959f954e901a9485868854aaa06e399791f3b89f0443081978"
+        },
+        {
+          "observations": "Updated Stage 06.08 evidence for per-match negation and its regressions. Item remains partial; exact-head CI and independent review of the current fix remain pending.",
+          "evidence": "Node 24 domain suite passed 981/981; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
+          "sha256": "277ddfee6aa1d5959f954e901a9485868854aaa06e399791f3b89f0443081978"
         }
       ]
     },
@@ -2104,10 +2110,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 06.08 evidence for per-match negation and its regressions. Item remains partial; exact-head CI and independent review of the current fix remain pending.",
-      "evidence": "Node 24 domain suite passed 981/981; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
+      "observations": "Updated Stage 06.08 evidence for clause-bounded negation and regression coverage. Item remains partial; exact-head CI and independent review for the latest fix remain pending.",
+      "evidence": "Node 24 focused detector suite passed 14/14; domain suite passed 982/982; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity and roadmap traceability passed. Exact-head CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
-      "sha256": "fec619b67d3efe0d92a864bed74ec1084f6486379465a6e9221b29298edc43ca",
+      "sha256": "7c30f42c5a3a395c4f177e55f51dd02414cd7d57e1fc9b6a995a13a12cc6a7a9",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2264,6 +2270,12 @@
           "evidence": "Node 24 domain suite passed 979/979; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
           "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
           "sha256": "1000c44cc738ca2a27d79396d29ecf27d087b79d317fe738b5a79e0b612eb04c"
+        },
+        {
+          "observations": "Updated Stage 06.08 evidence for per-match negation and its regressions. Item remains partial; exact-head CI and independent review of the current fix remain pending.",
+          "evidence": "Node 24 domain suite passed 981/981; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
+          "sha256": "fec619b67d3efe0d92a864bed74ec1084f6486379465a6e9221b29298edc43ca"
         }
       ]
     },
@@ -2318,10 +2330,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 06.08 evidence for per-match negation and its regressions. Item remains partial; exact-head CI and independent review of the current fix remain pending.",
-      "evidence": "Node 24 domain suite passed 981/981; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
+      "observations": "Updated Stage 06.08 evidence for clause-bounded negation and regression coverage. Item remains partial; exact-head CI and independent review for the latest fix remain pending.",
+      "evidence": "Node 24 focused detector suite passed 14/14; domain suite passed 982/982; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity and roadmap traceability passed. Exact-head CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
-      "sha256": "40f3795d946c3a955b745a5eb10f9cfdb0fb9a5d353af6957fcf3994e7122cb9",
+      "sha256": "33f893c941a17a792f1ae6fcbf62551cfc0aadc9907f87886ef8df8f75a3d02c",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2466,6 +2478,12 @@
           "evidence": "Node 24 domain suite passed 979/979; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
           "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
           "sha256": "ad1e05173c3968473b368e632d0d8d453d8321ba8f2c9f37df49f68768dc5bf4"
+        },
+        {
+          "observations": "Updated Stage 06.08 evidence for per-match negation and its regressions. Item remains partial; exact-head CI and independent review of the current fix remain pending.",
+          "evidence": "Node 24 domain suite passed 981/981; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
+          "sha256": "40f3795d946c3a955b745a5eb10f9cfdb0fb9a5d353af6957fcf3994e7122cb9"
         }
       ]
     },
@@ -7723,10 +7741,10 @@
       "category": "shared-domain-package",
       "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
-      "observations": "Reviewed Stage 06.08 negation handling: all candidate matches are checked independently against negation at each action; tests cover both orderings of negated/affirmative fee statements, direct no-fee wording, and “not only” affirmative wording. No fraud verdict or external reputation lookup is introduced.",
-      "evidence": "Node 24 domain suite passed 981/981; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
+      "observations": "Reviewed Stage 06.08 negation correction: negation is bounded to punctuation- or contrast-conjunction-delimited clauses; each candidate signal action is evaluated independently. Regressions cover both orderings of negated and affirmative demands, with and without punctuation. No fraud verdict or external reputation lookup is introduced.",
+      "evidence": "Node 24 focused detector suite passed 14/14; domain suite passed 982/982; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity and roadmap traceability passed. Exact-head CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
-      "sha256": "96358ed163ce960a7d975d8bb68b4d675c1f71092fa7eebf12ec043663e58752",
+      "sha256": "75e3d71b908195c385d720199762666e68a6ee8cddf13bd8ab00147856dad069",
       "concerns": [],
       "findings": [],
       "history": [
@@ -7747,6 +7765,12 @@
           "evidence": "Node 24 domain suite passed 979/979; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
           "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
           "sha256": "1cb1a494b184d0e86bc34a31d44e8902c42296118009ee616e3e2be878e4c72a"
+        },
+        {
+          "observations": "Reviewed Stage 06.08 negation handling: all candidate matches are checked independently against negation at each action; tests cover both orderings of negated/affirmative fee statements, direct no-fee wording, and “not only” affirmative wording. No fraud verdict or external reputation lookup is introduced.",
+          "evidence": "Node 24 domain suite passed 981/981; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
+          "sha256": "96358ed163ce960a7d975d8bb68b4d675c1f71092fa7eebf12ec043663e58752"
         }
       ]
     },
@@ -7755,10 +7779,10 @@
       "category": "shared-domain-package",
       "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
-      "observations": "Reviewed Stage 06.08 negation handling: all candidate matches are checked independently against negation at each action; tests cover both orderings of negated/affirmative fee statements, direct no-fee wording, and “not only” affirmative wording. No fraud verdict or external reputation lookup is introduced.",
-      "evidence": "Node 24 domain suite passed 981/981; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
+      "observations": "Reviewed Stage 06.08 negation correction: negation is bounded to punctuation- or contrast-conjunction-delimited clauses; each candidate signal action is evaluated independently. Regressions cover both orderings of negated and affirmative demands, with and without punctuation. No fraud verdict or external reputation lookup is introduced.",
+      "evidence": "Node 24 focused detector suite passed 14/14; domain suite passed 982/982; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity and roadmap traceability passed. Exact-head CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
-      "sha256": "f390b1c19f8caffb1473110ea1e7e3646a464e0e955f4e29dae6e4ff4f7b3f21",
+      "sha256": "a04c03b5f098799777f3dabc203bb1650598d36ecb93e259ae12492239d2ec86",
       "concerns": [],
       "findings": [],
       "history": [
@@ -7779,6 +7803,12 @@
           "evidence": "Node 24 domain suite passed 979/979; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
           "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
           "sha256": "ddd58cd2d05d904ab5b20d17e4f5c9b327da64ebd055cd7ee9fd30293fb5c81c"
+        },
+        {
+          "observations": "Reviewed Stage 06.08 negation handling: all candidate matches are checked independently against negation at each action; tests cover both orderings of negated/affirmative fee statements, direct no-fee wording, and “not only” affirmative wording. No fraud verdict or external reputation lookup is introduced.",
+          "evidence": "Node 24 domain suite passed 981/981; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
+          "sha256": "f390b1c19f8caffb1473110ea1e7e3646a464e0e955f4e29dae6e4ff4f7b3f21"
         }
       ]
     }
