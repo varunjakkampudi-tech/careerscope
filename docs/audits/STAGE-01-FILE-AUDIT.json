@@ -2333,7 +2333,7 @@
       "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
       "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
       "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
-      "sha256": "f41929b641dbd576c1418e96731c2273192b2453ea44f12b88a5b554365657cb",
+      "sha256": "dc24295a0442ad3271e63b9ebe8456548fd46a0a4054fbdf78bc38619030e0c7",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2484,6 +2484,12 @@
           "sha256": "f3fa0e09014f2a951b495611ea582c8bcb29a3fb7e3f7ae2993cc321980d0739",
           "observations": "Updated Stage 06 item 6.01 validation and remaining gates after extending the timestamp regression to cover out-of-order writes. Item remains partial pending fresh exact-head CI/review, merge and post-merge verification.",
           "evidence": "The focused disposable-PostgreSQL timestamp regression passed 1/1 after rebuilding core. Earlier PR head eede25f09b423046ec784a36a921f766b64bb8f8 passed run 44531475777; current code commit 770855143ef61d0fa8e3d4e67dd3d023aaf40aa0 had a stale-file-audit-hash failure in run 44558533869. This record reflects the corrected candidate and keeps its new exact-head checks pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
+          "sha256": "f41929b641dbd576c1418e96731c2273192b2453ea44f12b88a5b554365657cb",
+          "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
+          "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending."
         }
       ]
     },
