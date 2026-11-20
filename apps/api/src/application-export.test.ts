@@ -14,6 +14,7 @@ test('application CSV exports candidate claims and escapes spreadsheet formulas'
       description: 'Private source description is not exported',
       source: 'greenhouse',
       sourceUrl: 'https://jobs.example.test/role',
+      trustEvidence: [],
       applyUrl: 'https://jobs.example.test/apply',
       postedAt: null,
       match: null,

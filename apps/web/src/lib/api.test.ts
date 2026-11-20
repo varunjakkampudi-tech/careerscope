@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { ApiError, apiJson, apiParsed, isNotFound, offersDiscardAndReload } from './api';
-import { parseAccountSessions, parseMarketingConsent, parseSession } from './api-schemas';
+import {
+  parseAccountSessions,
+  parseMarketingConsent,
+  parseSearchDetail,
+  parseSession,
+} from './api-schemas';
 
 /**
  * CS-35 AC3, client half: every supported conflict code, an unknown code and a
@@ -17,6 +22,36 @@ const GENERIC_CONFLICT = 'This record changed in another session. Your edits hav
 // Deliberately shaped like something an internal error could leak: if any of
 // these tests ever sees this string, the client is echoing server text.
 const SERVER_DETAIL = 'relation "searches" does not exist at character 42';
+
+test('search detail accepts legacy jobs and defaults trust evidence to an empty list', () => {
+  const response = parseSearchDetail({
+    runId: 'run-1',
+    status: 'completed',
+    request: { query: 'engineer', sources: ['greenhouse'] },
+    sourceOutcomes: null,
+    jobs: [
+      {
+        id: 'job-1',
+        feedbackReason: null,
+        data: {
+          fingerprint: 'job-1',
+          title: 'Engineer',
+          company: 'Example',
+          location: 'Remote',
+          description: 'Role details',
+          source: 'greenhouse',
+          sourceUrl: 'https://jobs.example/role',
+          applyUrl: 'https://jobs.example/apply',
+          postedAt: null,
+          match: null,
+        },
+      },
+    ],
+    events: [],
+  });
+
+  assert.deepEqual(response.jobs[0]?.data.trustEvidence, []);
+});
 
 function parseRevision(body: unknown): { revision: number } {
   if (

@@ -29,6 +29,8 @@ import {
   HttpClient,
   jobFingerprint,
   normalizeJob,
+  normalizeUrl,
+  buildJobTrustEvidence,
   type JobProvider,
 } from '@careerscope/providers';
 import { buildCandidateContext, scoreJob } from '@careerscope/matching';
@@ -72,7 +74,8 @@ export async function collect(
   const combined = AbortSignal.any([signal, AbortSignal.timeout(60_000)]);
   const jobs: CollectedJob[] = [];
   const normalizedJobs: ReturnType<typeof normalizeJob>[] = [];
-  const sourceLinks = new Map<string, Map<string, { source: string; url: string }>>();
+  const sourceLinks = new Map<string, Map<string, { source: SourceId; url: string }>>();
+  const applicationLinks = new Map<string, Map<string, { source: SourceId; url: string }>>();
   const now = options.now ?? Date.now();
   const profile = options.profile;
   const titles = request.useProfileTitles
@@ -172,6 +175,9 @@ export async function collect(
           // posting's links.
           const link = { source: normalized.source, url: normalized.sourceUrl };
           const linkKey = `${normalized.source}:${normalized.sourceUrl}`;
+          // A navigation fallback is useful to candidates, but it is not proof
+          // that the provider supplied an application destination.
+          const applicationUrl = normalizeUrl(enriched.applyUrl);
           for (const bucketKey of [
             normalized.fingerprint,
             `${normalized.source}:${normalized.sourceJobId}`,
@@ -179,6 +185,15 @@ export async function collect(
             const links = sourceLinks.get(bucketKey) ?? new Map();
             links.set(linkKey, link);
             sourceLinks.set(bucketKey, links);
+
+            if (applicationUrl) {
+              const destinations = applicationLinks.get(bucketKey) ?? new Map();
+              destinations.set(`${normalized.source}:${applicationUrl}`, {
+                source: normalized.source,
+                url: applicationUrl,
+              });
+              applicationLinks.set(bucketKey, destinations);
+            }
           }
           collected += 1;
         } catch (error) {
@@ -251,6 +266,11 @@ export async function collect(
         source: normalized.source,
         sourceUrl: normalized.sourceUrl,
         sourceLinks: [...(sourceLinks.get(linkBucketKey)?.values() ?? [])],
+        trustEvidence: buildJobTrustEvidence(
+          normalized,
+          [...(sourceLinks.get(linkBucketKey)?.values() ?? [])],
+          [...(applicationLinks.get(linkBucketKey)?.values() ?? [])],
+        ),
         applyUrl: normalized.applyUrl,
         postedAt: normalized.postedAt,
         match,

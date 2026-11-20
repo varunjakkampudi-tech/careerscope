@@ -190,6 +190,25 @@ const job = object(
     sourceUrl: text({ format: 'uri' }),
     applyUrl: text({ format: 'uri' }),
     sourceLinks: array(object({ source: text({ enum: sources }), url: text({ format: 'uri' }) })),
+    trustEvidence: array(
+      object({
+        kind: text({
+          enum: [
+            'source_listing',
+            'publisher_attribution',
+            'employer_website_claim',
+            'careers_website_claim',
+            'application_destination',
+            'posted_date_claim',
+            'description_availability',
+          ],
+        }),
+        status: text({ enum: ['observed', 'provider_reported', 'not_provided'] }),
+        source: text({ enum: sources }),
+        referenceUrl: text({ format: 'uri', maxLength: 4096 }),
+        value: nullable(text({ maxLength: 4096 })),
+      }),
+    ),
     postedAt: nullable(timestamp),
     match: {
       type: 'object',
@@ -217,6 +236,7 @@ const job = object(
     'description',
     'source',
     'sourceUrl',
+    'trustEvidence',
     'applyUrl',
     'postedAt',
     'match',

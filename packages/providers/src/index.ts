@@ -45,6 +45,7 @@ export {
   periodFrom,
   type NormalizeOptions,
 } from './normalize.js';
+export { buildJobTrustEvidence } from './trust-evidence.js';
 
 /* HTTP, shared by every provider. */
 export {

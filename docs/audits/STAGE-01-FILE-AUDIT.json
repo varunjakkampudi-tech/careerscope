@@ -273,14 +273,22 @@
     {
       "path": "apps/api/src/application-export.test.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete unit tests. Covers formula injection escaping, CSV quoting/newlines, candidate-reported evidence labels, omission of private/internal fields, stable header, and CRLF termination. No source finding identified.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "bdce3d5bfd8a6ba211ea568074c7ddfaab176d2969cc4d85bd791ce5014478b7"
+      "observations": "Reviewed complete unit tests. Covers formula injection escaping, CSV quoting/newlines, candidate-reported evidence labels, omission of private/internal fields, stable header, and CRLF termination. No source finding identified.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.\nCurrent item 6.09 local validation and docs/PROGRESS.md",
+      "reviewer": "Codex (Stage 01 item 1.01); Codex (CareerScope item 6.09 implementation review)",
+      "sha256": "efc7cea2870019159e2a6bd41df3a30f1f96423cda859ab2d3100b4a9f769267",
+      "history": [
+        {
+          "sha256": "bdce3d5bfd8a6ba211ea568074c7ddfaab176d2969cc4d85bd791ce5014478b7",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "observations": "Reviewed complete unit tests. Covers formula injection escaping, CSV quoting/newlines, candidate-reported evidence labels, omission of private/internal fields, stable header, and CRLF termination. No source finding identified.",
+          "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes."
+        }
+      ]
     },
     {
       "path": "apps/api/src/application-export.ts",
@@ -433,10 +441,18 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Reviewed OpenAPI upload and listing contract additions for target role and version lineage.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "214ffecd324c7f6ef0c95bd73118fe978281575bbe70d8a9abe90335183a30b8"
+      "observations": "Reviewed OpenAPI upload and listing contract additions for target role and version lineage.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.\nCurrent item 6.09 local validation and docs/PROGRESS.md",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit); Codex (CareerScope item 6.09 implementation review)",
+      "sha256": "6d26bf0fe4e67ed4eebdb9a3a05685420847fec8be3b4c7d0eda4fe47246e516",
+      "history": [
+        {
+          "sha256": "214ffecd324c7f6ef0c95bd73118fe978281575bbe70d8a9abe90335183a30b8",
+          "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+          "observations": "Reviewed OpenAPI upload and listing contract additions for target role and version lineage.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report."
+        }
+      ]
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -1342,22 +1358,38 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed response validation for resume role, group and version fields.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "b70601872ca1f347f8a1b4a141c8f59ed184d2d357683aa947ed09197f6115b5"
+      "observations": "Reviewed response validation for resume role, group and version fields.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.\nCurrent item 6.09 local validation and docs/PROGRESS.md",
+      "reviewer": "Codex (CareerScope item 4.07 implementation audit); Codex (CareerScope item 6.09 implementation review)",
+      "sha256": "378f9e70287bd49d15b5f510fc19251ddffd94de6436716788115df0e8e0a209",
+      "history": [
+        {
+          "sha256": "b70601872ca1f347f8a1b4a141c8f59ed184d2d357683aa947ed09197f6115b5",
+          "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+          "observations": "Reviewed response validation for resume role, group and version fields.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report."
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete API client test suite. It exercises supported and malformed conflicts, safe fixed messages, retry eligibility, 404 handling, OTP outages, one-time and concurrent session refresh, unread response cancellation, schema rejection and both session branches. Fetch/window globals are restored in test cleanup.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "467fee2057ab44d897fc1f5a278a661b7769352a1faf0c574366f449a8c939ee"
+      "observations": "Read the complete API client test suite. It exercises supported and malformed conflicts, safe fixed messages, retry eligibility, 404 handling, OTP outages, one-time and concurrent session refresh, unread response cancellation, schema rejection and both session branches. Fetch/window globals are restored in test cleanup.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.\nCurrent item 6.09 local validation and docs/PROGRESS.md",
+      "reviewer": "Codex (Stage 01 item 1.01); Codex (CareerScope item 6.09 implementation review)",
+      "sha256": "9ff15d85079b4af999910184e7744096e3de26176b19012719b793eb81909569",
+      "history": [
+        {
+          "sha256": "467fee2057ab44d897fc1f5a278a661b7769352a1faf0c574366f449a8c939ee",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "observations": "Read the complete API client test suite. It exercises supported and malformed conflicts, safe fixed messages, retry eligibility, 404 handling, OTP outages, one-time and concurrent session refresh, unread response cancellation, schema rejection and both session branches. Fetch/window globals are restored in test cleanup.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes."
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/api.ts",
@@ -1618,26 +1650,54 @@
     {
       "path": "apps/workers/search/src/collect.test.ts",
       "category": "background-workers",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Prior dev audit: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding.\n\nStage 04 PR #72 audit history: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 type/test fixture or assertions for bounded field-level resume extraction evidence; current local domain suite and typecheck pass.\n\nItem 4.05 follow-up test or typed fixture: bounded source evidence coverage for derived skills, titles, experience-years and education is validated; test suite and canonical test typecheck pass.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
-      "evidence": "Prior dev audit: Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "bb3814671498c171107cf6d0662758d1ed4396f2e155eff745566e6b528aa286"
+      "observations": "Prior dev audit: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding.\n\nStage 04 PR #72 audit history: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 type/test fixture or assertions for bounded field-level resume extraction evidence; current local domain suite and typecheck pass.\n\nItem 4.05 follow-up test or typed fixture: bounded source evidence coverage for derived skills, titles, experience-years and education is validated; test suite and canonical test typecheck pass.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.",
+      "evidence": "Prior dev audit: Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending.",
+      "reviewer": "Codex (Stage 01 item 1.01); Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review)",
+      "sha256": "7ad09fb2b1be5f966e0791cbf319b6514c5a7e20f09a146c107bcd3bab91f732",
+      "history": [
+        {
+          "sha256": "bb3814671498c171107cf6d0662758d1ed4396f2e155eff745566e6b528aa286",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "observations": "Prior dev audit: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding.\n\nStage 04 PR #72 audit history: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 type/test fixture or assertions for bounded field-level resume extraction evidence; current local domain suite and typecheck pass.\n\nItem 4.05 follow-up test or typed fixture: bounded source evidence coverage for derived skills, titles, experience-years and education is validated; test suite and canonical test typecheck pass.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
+          "evidence": "Prior dev audit: Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05."
+        },
+        {
+          "sha256": "50407b37aec7eb8db2797e5ded2f5c07b4f3bd089c40dfb294c972ad40beeef7",
+          "reviewer": "Codex (Stage 01 item 1.01); Codex (CareerScope item 6.09 implementation review)",
+          "observations": "Prior dev audit: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding.\n\nStage 04 PR #72 audit history: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 type/test fixture or assertions for bounded field-level resume extraction evidence; current local domain suite and typecheck pass.\n\nItem 4.05 follow-up test or typed fixture: bounded source evidence coverage for derived skills, titles, experience-years and education is validated; test suite and canonical test typecheck pass.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+          "evidence": "Prior dev audit: Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.\nCurrent item 6.09 local validation and docs/PROGRESS.md"
+        }
+      ]
     },
     {
       "path": "apps/workers/search/src/collect.ts",
       "category": "background-workers",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (380 lines). Checked: exact source attribution; per-source and whole-run timeouts; at most 20 detail fetches; per-posting validation that skips a malformed posting without losing the rest of the results and records only field paths; outcome statuses that distinguish empty from failed; deduplication with disambiguated link buckets; fenced start and settle; permission-pending outcomes for sources without a current permission profile; empty-streak diagnostics that cannot fail a completed search. No defect found. Scoring read uses the snapshot taken at search creation.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "607a72b745e695635f3c85f95eaa527b6b47c93811df5ea53efdbf31ccf6cb9b"
+      "observations": "Read in full (380 lines). Checked: exact source attribution; per-source and whole-run timeouts; at most 20 detail fetches; per-posting validation that skips a malformed posting without losing the rest of the results and records only field paths; outcome statuses that distinguish empty from failed; deduplication with disambiguated link buckets; fenced start and settle; permission-pending outcomes for sources without a current permission profile; empty-streak diagnostics that cannot fail a completed search. No defect found. Scoring read uses the snapshot taken at search creation.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.",
+      "evidence": "Current item 6.09 local validation and docs/PROGRESS.md\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending.",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation); Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review)",
+      "sha256": "253431953cb4065e9796673a2b6ba7f0438dc08a21c4b7f8482d43a3eb484f6f",
+      "history": [
+        {
+          "sha256": "607a72b745e695635f3c85f95eaa527b6b47c93811df5ea53efdbf31ccf6cb9b",
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "observations": "Read in full (380 lines). Checked: exact source attribution; per-source and whole-run timeouts; at most 20 detail fetches; per-posting validation that skips a malformed posting without losing the rest of the results and records only field paths; outcome statuses that distinguish empty from failed; deduplication with disambiguated link buckets; fenced start and settle; permission-pending outcomes for sources without a current permission profile; empty-streak diagnostics that cannot fail a completed search. No defect found. Scoring read uses the snapshot taken at search creation.",
+          "evidence": ""
+        },
+        {
+          "sha256": "b866405b71e1c2ac9552336d6b27226a8a09259e717fbf32dc432121ac68e53f",
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation); Codex (CareerScope item 6.09 implementation review)",
+          "observations": "Read in full (380 lines). Checked: exact source attribution; per-source and whole-run timeouts; at most 20 detail fetches; per-posting validation that skips a malformed posting without losing the rest of the results and records only field paths; outcome statuses that distinguish empty from failed; deduplication with disambiguated link buckets; fenced start and settle; permission-pending outcomes for sources without a current permission profile; empty-streak diagnostics that cannot fail a completed search. No defect found. Scoring read uses the snapshot taken at search creation.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+          "evidence": "Current item 6.09 local validation and docs/PROGRESS.md"
+        }
+      ]
     },
     {
       "path": "apps/workers/search/src/files.ts",
@@ -1810,10 +1870,18 @@
           "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
         }
       ],
-      "observations": "Reviewed group counter table, counter backfill, latest-parsed continuation and no-reuse semantics.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "63294de61a5fafe40af7f3a6f8667d1750c70a9df636bf1fe7c3c2e7e0b163db"
+      "observations": "Reviewed group counter table, counter backfill, latest-parsed continuation and no-reuse semantics.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.\nCurrent item 6.09 local validation and docs/PROGRESS.md",
+      "reviewer": "Codex (CareerScope item 4.07 follow-up audit); Codex (CareerScope item 6.09 implementation review)",
+      "sha256": "b4fb85044b7472a0248ed7f650cc4519332b3f3340ca2700289d79eb163a550f",
+      "history": [
+        {
+          "sha256": "63294de61a5fafe40af7f3a6f8667d1750c70a9df636bf1fe7c3c2e7e0b163db",
+          "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
+          "observations": "Reviewed group counter table, counter backfill, latest-parsed continuation and no-reuse semantics.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally."
+        }
+      ]
     },
     {
       "path": "docs/FOUNDATIONS.md",
@@ -1884,14 +1952,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.",
+      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780.\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review)",
+      "sha256": "41b7e3b27b87d914cdf041e65149a97a38f0f4856585b82a9f06cc057df70761",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2012,6 +2080,18 @@
           "sha256": "da3b553a8b588deb6952f61cd3f2440c5810c59a294fbda85f29215eb4539433",
           "observations": "Reviewed Stage 05 items 5.08 and 5.09 evidence and gaps; both remain partial and no external source acceptance is claimed.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+          "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review."
+        },
+        {
+          "sha256": "ebfac7426bb0cc8ea8a06351e8cfa179c996698f53c164fccca436389e57100f",
+          "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review)",
+          "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.",
+          "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780."
         }
       ]
     },
@@ -2074,7 +2154,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2086,10 +2166,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
+      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.\nUpdated item 6.09 exact-head CI/re-review status and recorded the Firefox prior-route settlement finding and focused correction; full rerun pending.\nItem 6.09 exact-head CI follow-up and Firefox prior-route settlement correction reviewed; focused helper tests pass 6/6 and current exact-head CI remains pending.",
+      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780.\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending.\nNode 24 focused ui-requests.test.ts passed 6/6; exact-head CI run 44746764098 recorded Quality and image build success with Firefox browser failure; correction CI and review pending.\nNode 24 ui-requests.test.ts passed 6/6; CI run 44746764098 passed Quality and image build but failed Firefox browser settlement on a stale previous-route resume detail fetch; corrected CI pending.",
+      "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review); Codex (CareerScope item 6.09 review correction); Codex (CareerScope item 6.09 Firefox settlement correction)",
+      "sha256": "e5a01ff19ab37ea225368a62462ebb9e37a89dab3c5322c3a6a21bb79839cfd9",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2228,6 +2308,30 @@
           "sha256": "9dcdfecb8ac4591ecf0fc959813bbd5bb6f74411ddd3c2c0374fc03bd52208b4",
           "observations": "Reviewed Stage 05 item 5.08 and 5.09 status, focused test/build evidence, and remaining adapter-mapping and false-merge limitations.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+          "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review."
+        },
+        {
+          "sha256": "898c4799489e5db35445c3f20f9a24d1cf474087f09ec5643656c0049990b8fe",
+          "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review)",
+          "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.",
+          "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780."
+        },
+        {
+          "sha256": "08cc90079d93c3a4ea3a8522846d58845d3b428faf930d0f353bc882b931c4ab",
+          "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review)",
+          "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.",
+          "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780.\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending."
+        },
+        {
+          "sha256": "2a6bcdf70a8fbfb30d009f89e93a049e61ff2ba523c47d26fbebd44c0ce56f66",
+          "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review); Codex (CareerScope item 6.09 review correction)",
+          "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.\nUpdated item 6.09 exact-head CI/re-review status and recorded the Firefox prior-route settlement finding and focused correction; full rerun pending.",
+          "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780.\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending.\nNode 24 focused ui-requests.test.ts passed 6/6; exact-head CI run 44746764098 recorded Quality and image build success with Firefox browser failure; correction CI and review pending."
         }
       ]
     },
@@ -2278,14 +2382,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.\nUpdated item 6.09 exact-head CI/re-review status and recorded the Firefox prior-route settlement finding and focused correction; full rerun pending.\nItem 6.09 exact-head CI follow-up and Firefox prior-route settlement correction reviewed; focused helper tests pass 6/6 and current exact-head CI remains pending.",
+      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780.\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending.\nNode 24 focused ui-requests.test.ts passed 6/6; exact-head CI run 44746764098 recorded Quality and image build success with Firefox browser failure; correction CI and review pending.\nNode 24 ui-requests.test.ts passed 6/6; CI run 44746764098 passed Quality and image build but failed Firefox browser settlement on a stale previous-route resume detail fetch; corrected CI pending.",
+      "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review); Codex (CareerScope item 6.09 review correction); Codex (CareerScope item 6.09 Firefox settlement correction)",
+      "sha256": "f50ff300d3d7314aa4e75b6e4c4ec877e36b18fa63301bb246ff22442e338b97",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2412,6 +2516,30 @@
           "sha256": "d08de3ad68f62e21c10744dc048c1e91a6c2f831382d1e8efe31b8ee32ab3b4d",
           "observations": "Reviewed item-specific Stage 05 normalization and deduplication test evidence and exact-head gates.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+          "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases."
+        },
+        {
+          "sha256": "a9e808d66b54c1ba45bc25d0c7b8a83229ec5e0847d4411514e57a740f55b161",
+          "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review)",
+          "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.",
+          "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780."
+        },
+        {
+          "sha256": "663f2c52a41d025b97f3728e38bc094de021d1ae7ffac9ab327019e5ec3a4f16",
+          "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review)",
+          "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.",
+          "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780.\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending."
+        },
+        {
+          "sha256": "19330230d3396196894c4285e3ce3b0c1eb722e686e45d0c817ab0be3ba12803",
+          "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review); Codex (CareerScope item 6.09 review correction)",
+          "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.\nUpdated item 6.09 exact-head CI/re-review status and recorded the Firefox prior-route settlement finding and focused correction; full rerun pending.",
+          "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780.\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending.\nNode 24 focused ui-requests.test.ts passed 6/6; exact-head CI run 44746764098 recorded Quality and image build success with Firefox browser failure; correction CI and review pending."
         }
       ]
     },
@@ -2846,14 +2974,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.\nUpdated item 6.09 exact-head CI/re-review status and recorded the Firefox prior-route settlement finding and focused correction; full rerun pending.\nItem 6.09 exact-head CI follow-up and Firefox prior-route settlement correction reviewed; focused helper tests pass 6/6 and current exact-head CI remains pending.",
+      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780.\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending.\nNode 24 focused ui-requests.test.ts passed 6/6; exact-head CI run 44746764098 recorded Quality and image build success with Firefox browser failure; correction CI and review pending.\nNode 24 ui-requests.test.ts passed 6/6; CI run 44746764098 passed Quality and image build but failed Firefox browser settlement on a stale previous-route resume detail fetch; corrected CI pending.",
+      "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review); Codex (CareerScope item 6.09 review correction); Codex (CareerScope item 6.09 Firefox settlement correction)",
+      "sha256": "568954626ef4a2f56ac177b02fa1cb8f3a15abbca2cddda41d16e1ff23185845",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2962,6 +3090,30 @@
           "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
           "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap."
+        },
+        {
+          "sha256": "2e96b87250a1c6acb1643103428d57c9532c3bca34744a8d9718d8640d975041",
+          "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review)",
+          "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.",
+          "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780."
+        },
+        {
+          "sha256": "98d7a9a102e6937b1f8f585071eef513dddb9e83455005714440e6d22ab87eae",
+          "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review)",
+          "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.",
+          "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780.\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending."
+        },
+        {
+          "sha256": "4659eb59e3614ff097a7ee337a53e8bbd1070155bdc757e3ac4694aca94a5c5f",
+          "reviewer": "Codex (CareerScope owner item 5.13 review); Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review); Codex (CareerScope item 6.09 review correction)",
+          "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 documentation synchronization: exact head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763; independent review remains pending and checklist status remains partial.\nItem 6.09 final evidence sync: exact head 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3 passed all required CI jobs in run 44683794780 and received independent approval; checklist remains partial.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.\nUpdated item 6.09 exact-head CI/re-review status and recorded the Firefox prior-route settlement finding and focused correction; full rerun pending.",
+          "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nExact-head CI evidence: run 44682300763 for 016d4d8f9858c49a5a756555327ffd4008ea52f5.\nIndependent review and exact-head CI evidence: 16dbcab39e0cda3326336a8ea5f2da87db5c0cb3, run 44683794780.\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending.\nNode 24 focused ui-requests.test.ts passed 6/6; exact-head CI run 44746764098 recorded Quality and image build success with Firefox browser failure; correction CI and review pending."
         }
       ]
     },
@@ -4136,20 +4288,26 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "7e588f96ae3e7b89fe8894a4dcc982e1f9ff9a8e33608140caf93e05a4f38dfa",
+      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.\nCurrent item 6.09 local validation and docs/PROGRESS.md",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review); Codex (CareerScope item 6.09 implementation review)",
+      "sha256": "49269c7d39a1c509a9db3d30ea28f44d2a2d903f383a47cb1012b8a1ffd909a2",
       "history": [
         {
           "reviewer": "Codex (Stage 03 item 3.16)",
           "sha256": "6b71db79c2e0c943a5e51833a4703d66d01d1deae90b10101e9327b8efd8a373",
           "observations": "Reviewed the root test command delta: it registers the profile completeness node:test file in the explicit unit suite. No dependency or runtime command changed.",
           "evidence": "npm test passed 371 tests with 3 skips and no failures on the Stage 03 item 3.16 revision."
+        },
+        {
+          "sha256": "7e588f96ae3e7b89fe8894a4dcc982e1f9ff9a8e33608140caf93e05a4f38dfa",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+          "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
+          "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed."
         }
       ]
     },
@@ -4528,26 +4686,42 @@
     {
       "path": "packages/core/src/jobs.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (102 lines). Checked: strict collected-job schema; HTTPS-only public links without embedded credentials; match breakdown validated and strict; per-source outcome refinements tie failed to an error code and empty to zero accepted jobs; at most six sources with no repeats; collection status rule. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "26044b3168e00eff840fd500e61081bf0951107b987373542526e09316e8bcce"
+      "observations": "Read in full (102 lines). Checked: strict collected-job schema; HTTPS-only public links without embedded credentials; match breakdown validated and strict; per-source outcome refinements tie failed to an error code and empty to zero accepted jobs; at most six sources with no repeats; collection status rule. No finding.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+      "evidence": "Current item 6.09 local validation and docs/PROGRESS.md",
+      "reviewer": "Claude (Stage 01 implementation agent, self-validation); Codex (CareerScope item 6.09 implementation review)",
+      "sha256": "360115c03d905dfa110be6e88c4ca13ebfa5e4572da9820000247a9059b55a05",
+      "history": [
+        {
+          "sha256": "26044b3168e00eff840fd500e61081bf0951107b987373542526e09316e8bcce",
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "observations": "Read in full (102 lines). Checked: strict collected-job schema; HTTPS-only public links without embedded credentials; match breakdown validated and strict; per-source outcome refinements tie failed to an error code and empty to zero accepted jobs; at most six sources with no repeats; collection status rule. No finding.",
+          "evidence": ""
+        }
+      ]
     },
     {
       "path": "packages/core/src/leads.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Verifies legacy match normalization, bounded/trimmed/case-unique tags, rejected control characters, and that client updates cannot set owner identity or bypass optimistic revision.",
-      "evidence": "",
-      "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "77b5f518d6b5b44fbd5b9d4ea240f005bb182d0b9794fad38435735051e90d9c"
+      "observations": "Read in full. Verifies legacy match normalization, bounded/trimmed/case-unique tags, rejected control characters, and that client updates cannot set owner identity or bypass optimistic revision.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+      "evidence": "Current item 6.09 local validation and docs/PROGRESS.md",
+      "reviewer": "Codex (Stage 01 implementation audit); Codex (CareerScope item 6.09 implementation review)",
+      "sha256": "fc8152112662fafab3aa107e2e9395150311efea0fcce26e6caab9d67ca3c856",
+      "history": [
+        {
+          "sha256": "77b5f518d6b5b44fbd5b9d4ea240f005bb182d0b9794fad38435735051e90d9c",
+          "reviewer": "Codex (Stage 01 implementation audit)",
+          "observations": "Read in full. Verifies legacy match normalization, bounded/trimmed/case-unique tags, rejected control characters, and that client updates cannot set owner identity or bypass optimistic revision.",
+          "evidence": ""
+        }
+      ]
     },
     {
       "path": "packages/core/src/leads.ts",
@@ -5698,20 +5872,26 @@
     {
       "path": "packages/providers/src/index.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "dcb0fc62584be4c368106baadc65d48427adc659f5e6fe7694da16507017018c",
+      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.\nCurrent item 6.09 local validation and docs/PROGRESS.md",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review); Codex (CareerScope item 6.09 implementation review)",
+      "sha256": "73c63113ae87ccb56d563e31fb35995e57243b1252fc4d871fd4fe05557c32fe",
       "history": [
         {
           "reviewer": "Codex (Stage 01 implementation audit)",
           "sha256": "d8dd8a8bf1772a25032e15205c909c1c4e589384a6524eee25f75613507657dc",
           "observations": "Read in full. Exports the registry and normalized provider contracts, then adapter factories; comments distinguish public entry points from worker/script/test internals and document browser shutdown responsibility.",
           "evidence": ""
+        },
+        {
+          "sha256": "dcb0fc62584be4c368106baadc65d48427adc659f5e6fe7694da16507017018c",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+          "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
+          "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed."
         }
       ]
     },
@@ -6252,6 +6432,46 @@
       "sha256": "2fd35bbd64c463565cb476b857c391838b84fcbbc2721635df1a547b423224b6"
     },
     {
+      "path": "packages/providers/src/trust-evidence.test.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Item 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.",
+      "evidence": "Current item 6.09 local validation and docs/PROGRESS.md\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review)",
+      "sha256": "3777526e63b5c1157353d95a2768f219b1519b4c327a40df5823b472a537520e",
+      "history": [
+        {
+          "sha256": "5b915a369fb562cccff101b1f5e033c01b0ef2bd14013dd8c3bebe3b65655e17",
+          "reviewer": "Codex (CareerScope item 6.09 implementation review)",
+          "observations": "Item 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+          "evidence": "Current item 6.09 local validation and docs/PROGRESS.md"
+        }
+      ]
+    },
+    {
+      "path": "packages/providers/src/trust-evidence.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Item 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.",
+      "evidence": "Current item 6.09 local validation and docs/PROGRESS.md\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review)",
+      "sha256": "720377abe02c0f933c2efd47c34fde655cfd7031cc14bc90237a1fc7552b7a4c",
+      "history": [
+        {
+          "sha256": "d7c0d475d374a07ac357636ba884653d4f69ec890b37448eb6e00ce5d21d0de6",
+          "reviewer": "Codex (CareerScope item 6.09 implementation review)",
+          "observations": "Item 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+          "evidence": "Current item 6.09 local validation and docs/PROGRESS.md"
+        }
+      ]
+    },
+    {
       "path": "packages/providers/src/types.ts",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
@@ -6650,7 +6870,7 @@
     {
       "path": "packages/shared/src/schemas.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6662,10 +6882,24 @@
           "remediation": "apiErrorSchema corrected to the flat envelope and tested against errorEnvelope output. Unused exports are recorded as technical debt to remove in the next cleanup pass."
         }
       ],
-      "observations": "Prior dev audit: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nReviewed item 4.05 schema follow-up: evidence entries are strict, bounded and backward-compatible through empty-array defaults; education credential status is fixed to unverified.\n\nItem 4.05 schema follow-up reviewed: strict evidence schema is bounded and backward-compatible; education status cannot be represented as verified.\n\nItem 4.05 review follow-up: fallback ChatGPT review in CareerScope Engineering Continuation at head 162a53e identified false institution attribution, reversed structured years, unsupported direct experience-duration evidence and substring source matching. The designated review thread returned Unknown error. This follow-up adds marker-constrained institutions, omits reversed structured years, labels date ranges as supporting sources, uses token-boundary evidence matching with an explicit .js alias, and documents extraction confidence separately from credential authenticity. Focused review/tests updated; new exact-head CI and designated-thread review remain pending.\nLatest correction also restricts inferred employment duration to valid ranges in the explicitly labeled experience section; education dates alone do not produce work duration.\nInstitution extraction follow-up: capture stops at the first comma, semicolon or parenthesis so trailing employment text cannot be folded into an institution even when a recognized institution marker appears.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
-      "evidence": "Prior dev audit: Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nFocused tests: resume derivation/schema suites 93 passed; full domain suite 927 tests across 33 files passed; typecheck passed including 97 canonical test files. Local Node was v22, below the Node 24 project requirement; hosted exact-head CI remains pending.\nFinal local follow-up: domain suite passed 928 tests across 33 files; full typecheck passed, including 97 canonical test files. Runtime Node was v22.23.2, below required Node 24; hosted exact-head CI is required.\nLatest domain run passed 929 tests across 33 files after adding the institution-phrase boundary regression.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "d2702301693ee15e895119944183d7cc8391ee780393984031a5899fae403984"
+      "observations": "Prior dev audit: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nReviewed item 4.05 schema follow-up: evidence entries are strict, bounded and backward-compatible through empty-array defaults; education credential status is fixed to unverified.\n\nItem 4.05 schema follow-up reviewed: strict evidence schema is bounded and backward-compatible; education status cannot be represented as verified.\n\nItem 4.05 review follow-up: fallback ChatGPT review in CareerScope Engineering Continuation at head 162a53e identified false institution attribution, reversed structured years, unsupported direct experience-duration evidence and substring source matching. The designated review thread returned Unknown error. This follow-up adds marker-constrained institutions, omits reversed structured years, labels date ranges as supporting sources, uses token-boundary evidence matching with an explicit .js alias, and documents extraction confidence separately from credential authenticity. Focused review/tests updated; new exact-head CI and designated-thread review remain pending.\nLatest correction also restricts inferred employment duration to valid ranges in the explicitly labeled experience section; education dates alone do not produce work duration.\nInstitution extraction follow-up: capture stops at the first comma, semicolon or parenthesis so trailing employment text cannot be folded into an institution even when a recognized institution marker appears.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.\nItem 6.09 correction: reviewed the current full file and diff. Provider-supplied application destinations are distinguished from navigation fallback; missing/invalid destinations remain not_provided. Review correction CI pending.",
+      "evidence": "Prior dev audit: Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nFocused tests: resume derivation/schema suites 93 passed; full domain suite 927 tests across 33 files passed; typecheck passed including 97 canonical test files. Local Node was v22, below the Node 24 project requirement; hosted exact-head CI remains pending.\nFinal local follow-up: domain suite passed 928 tests across 33 files; full typecheck passed, including 97 canonical test files. Runtime Node was v22.23.2, below required Node 24; hosted exact-head CI is required.\nLatest domain run passed 929 tests across 33 files after adding the institution-phrase boundary regression.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.\nCurrent item 6.09 local validation and docs/PROGRESS.md\nNode 24 local validation: domain 971/971, typecheck passed including 99 canonical test files, core build passed, worker collection 21/21. Exact-head CI and independent re-review pending.",
+      "reviewer": "Codex (Stage 03 item 3.12); Codex (CareerScope item 6.09 implementation review); Codex (CareerScope item 6.09 correction review)",
+      "sha256": "988ca7abe023fa4257305cbc85088ca8535ab7ce181be6977d70fa297d31e7ba",
+      "history": [
+        {
+          "sha256": "d2702301693ee15e895119944183d7cc8391ee780393984031a5899fae403984",
+          "reviewer": "Codex (Stage 03 item 3.12)",
+          "observations": "Prior dev audit: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nReviewed item 4.05 schema follow-up: evidence entries are strict, bounded and backward-compatible through empty-array defaults; education credential status is fixed to unverified.\n\nItem 4.05 schema follow-up reviewed: strict evidence schema is bounded and backward-compatible; education status cannot be represented as verified.\n\nItem 4.05 review follow-up: fallback ChatGPT review in CareerScope Engineering Continuation at head 162a53e identified false institution attribution, reversed structured years, unsupported direct experience-duration evidence and substring source matching. The designated review thread returned Unknown error. This follow-up adds marker-constrained institutions, omits reversed structured years, labels date ranges as supporting sources, uses token-boundary evidence matching with an explicit .js alias, and documents extraction confidence separately from credential authenticity. Focused review/tests updated; new exact-head CI and designated-thread review remain pending.\nLatest correction also restricts inferred employment duration to valid ranges in the explicitly labeled experience section; education dates alone do not produce work duration.\nInstitution extraction follow-up: capture stops at the first comma, semicolon or parenthesis so trailing employment text cannot be folded into an institution even when a recognized institution marker appears.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
+          "evidence": "Prior dev audit: Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nFocused tests: resume derivation/schema suites 93 passed; full domain suite 927 tests across 33 files passed; typecheck passed including 97 canonical test files. Local Node was v22, below the Node 24 project requirement; hosted exact-head CI remains pending.\nFinal local follow-up: domain suite passed 928 tests across 33 files; full typecheck passed, including 97 canonical test files. Runtime Node was v22.23.2, below required Node 24; hosted exact-head CI is required.\nLatest domain run passed 929 tests across 33 files after adding the institution-phrase boundary regression.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05."
+        },
+        {
+          "sha256": "098994ece2735fd57a62213175142918969a3cc25fba1bd2a20727e3d54d7fff",
+          "reviewer": "Codex (Stage 03 item 3.12); Codex (CareerScope item 6.09 implementation review)",
+          "observations": "Prior dev audit: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nReviewed item 4.05 schema follow-up: evidence entries are strict, bounded and backward-compatible through empty-array defaults; education credential status is fixed to unverified.\n\nItem 4.05 schema follow-up reviewed: strict evidence schema is bounded and backward-compatible; education status cannot be represented as verified.\n\nItem 4.05 review follow-up: fallback ChatGPT review in CareerScope Engineering Continuation at head 162a53e identified false institution attribution, reversed structured years, unsupported direct experience-duration evidence and substring source matching. The designated review thread returned Unknown error. This follow-up adds marker-constrained institutions, omits reversed structured years, labels date ranges as supporting sources, uses token-boundary evidence matching with an explicit .js alias, and documents extraction confidence separately from credential authenticity. Focused review/tests updated; new exact-head CI and designated-thread review remain pending.\nLatest correction also restricts inferred employment duration to valid ranges in the explicitly labeled experience section; education dates alone do not produce work duration.\nInstitution extraction follow-up: capture stops at the first comma, semicolon or parenthesis so trailing employment text cannot be folded into an institution even when a recognized institution marker appears.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+          "evidence": "Prior dev audit: Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nFocused tests: resume derivation/schema suites 93 passed; full domain suite 927 tests across 33 files passed; typecheck passed including 97 canonical test files. Local Node was v22, below the Node 24 project requirement; hosted exact-head CI remains pending.\nFinal local follow-up: domain suite passed 928 tests across 33 files; full typecheck passed, including 97 canonical test files. Runtime Node was v22.23.2, below required Node 24; hosted exact-head CI is required.\nLatest domain run passed 929 tests across 33 files after adding the institution-phrase boundary regression.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.\nCurrent item 6.09 local validation and docs/PROGRESS.md"
+        }
+      ]
     },
     {
       "path": "packages/shared/src/skills.test.ts",
@@ -6702,14 +6936,22 @@
     {
       "path": "packages/shared/src/types.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Documented the nullable minSalaryCurrency field on matching candidate context, including null semantics for older or unspecified profiles.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "80fd31b4c76b2717de5ff615997f8471e64a7ed00db3ec8774433c998c7b4392"
+      "observations": "Documented the nullable minSalaryCurrency field on matching candidate context, including null semantics for older or unspecified profiles.\nItem 6.09 review: current full file and diff checked for bounded factual trust-evidence fields, source attribution, legacy parsing, and explicit limits; no ownership, destination-safety, or fraud verdict is inferred.",
+      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.\nCurrent item 6.09 local validation and docs/PROGRESS.md",
+      "reviewer": "Codex (Stage 03 item 3.11); Codex (CareerScope item 6.09 implementation review)",
+      "sha256": "f909ca747f45d7a43609836a3daa2a597f88d8c59cc10548acebfc1d2eb22461",
+      "history": [
+        {
+          "sha256": "80fd31b4c76b2717de5ff615997f8471e64a7ed00db3ec8774433c998c7b4392",
+          "reviewer": "Codex (Stage 03 item 3.11)",
+          "observations": "Documented the nullable minSalaryCurrency field on matching candidate context, including null semantics for older or unspecified profiles.",
+          "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending."
+        }
+      ]
     },
     {
       "path": "packages/shared/tsconfig.json",
@@ -7503,10 +7745,18 @@
           "remediation": "Replaced the path fixture with the synthetic candidate@example.test identity."
         }
       ],
-      "observations": "Re-reviewed complete tests after Stage 03 item 3.13 regression update. Cover route epochs, method/resource/engine/path allowlists, including prior-route Chromium search detail reads while current-route and non-Chromium requests remain strict; same-origin path normalization, dynamic/query redaction and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed.",
-      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "cb3ce3fd9bf8c860e4bb28a0598cf6dd28ae7ff6212fda6851f60f43896c61ed"
+      "observations": "Re-reviewed complete tests after Stage 03 item 3.13 regression update. Cover route epochs, method/resource/engine/path allowlists, including prior-route Chromium search detail reads while current-route and non-Chromium requests remain strict; same-origin path normalization, dynamic/query redaction and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed.\nCI 44746764098 exposed an unresolved Firefox GET to /api/resumes/:id from a previous route epoch. The helper now ignores only that prior-route Firefox fetch; current-route reads, writes, other paths and browser engines remain covered by the settlement barrier. Focused helper tests pass 6/6.",
+      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.\nNode 24 focused ui-requests.test.ts passed 6/6; exact-head CI run 44746764098 recorded Quality and image build success with Firefox browser failure; correction CI and review pending.",
+      "reviewer": "Codex (Stage 01 item 1.01); Codex (CareerScope item 6.09 Firefox settlement correction)",
+      "sha256": "116d47f93ad792847b019bf520e2e107ab5b02246da65c8bafcec2e2e1b6013a",
+      "history": [
+        {
+          "sha256": "cb3ce3fd9bf8c860e4bb28a0598cf6dd28ae7ff6212fda6851f60f43896c61ed",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "observations": "Re-reviewed complete tests after Stage 03 item 3.13 regression update. Cover route epochs, method/resource/engine/path allowlists, including prior-route Chromium search detail reads while current-route and non-Chromium requests remain strict; same-origin path normalization, dynamic/query redaction and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed.",
+          "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes."
+        }
+      ]
     },
     {
       "path": "scripts/tests/ui-requests.ts",
@@ -7515,10 +7765,24 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.",
-      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "4d95c21eb0bbe1ca0139c7b3c262fbaa13ebad23d02b81d80a258271a1580e84"
+      "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.\nCI 44746764098 exposed an unresolved Firefox GET to /api/resumes/:id from a previous route epoch. The helper now ignores only that prior-route Firefox fetch; current-route reads, writes, other paths and browser engines remain covered by the settlement barrier. Focused helper tests pass 6/6.\nClarified the precise Chromium-wide versus Firefox resume-detail-only prior-route settlement exceptions; focused helper tests pass 6/6.",
+      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.\nNode 24 focused ui-requests.test.ts passed 6/6; exact-head CI run 44746764098 recorded Quality and image build success with Firefox browser failure; correction CI and review pending.\nNode 24 ui-requests.test.ts passed 6/6; exact-head browser CI correction is pending.",
+      "reviewer": "Codex (Stage 01 item 1.01); Codex (CareerScope item 6.09 Firefox settlement correction); Codex (CareerScope item 6.09 Firefox settlement correction)",
+      "sha256": "dc961180fc2c0252579fd25e7d5917eeeaa51f8163df33e1e617760f1950b7ab",
+      "history": [
+        {
+          "sha256": "4d95c21eb0bbe1ca0139c7b3c262fbaa13ebad23d02b81d80a258271a1580e84",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.",
+          "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes."
+        },
+        {
+          "sha256": "eb43d9e230f3838a720b07cd7840dae7a30e794b82bceb6a23d0d416ec1bc419",
+          "reviewer": "Codex (Stage 01 item 1.01); Codex (CareerScope item 6.09 Firefox settlement correction)",
+          "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.\nCI 44746764098 exposed an unresolved Firefox GET to /api/resumes/:id from a previous route epoch. The helper now ignores only that prior-route Firefox fetch; current-route reads, writes, other paths and browser engines remain covered by the settlement barrier. Focused helper tests pass 6/6.",
+          "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.\nNode 24 focused ui-requests.test.ts passed 6/6; exact-head CI run 44746764098 recorded Quality and image build success with Firefox browser failure; correction CI and review pending."
+        }
+      ]
     },
     {
       "path": "scripts/tests/visual-baselines/sign-in-desktop.png",

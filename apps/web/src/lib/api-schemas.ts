@@ -17,6 +17,7 @@ import {
   LAUNCH_JOB_SOURCE_CANDIDATES,
   derivedResumeSchema,
   jobFeedbackReasonSchema,
+  jobTrustEvidenceSchema,
   matchBreakdownSchema,
 } from '@careerscope/shared';
 
@@ -318,6 +319,7 @@ const collectedJobSchema = z.object({
   source: searchSourceSchema,
   sourceUrl: z.string(),
   sourceLinks: z.array(z.object({ source: searchSourceSchema, url: z.string() })).optional(),
+  trustEvidence: z.array(jobTrustEvidenceSchema).optional().default([]),
   applyUrl: z.string(),
   postedAt: z.string().nullable(),
   match: matchBreakdownSchema.nullable(),

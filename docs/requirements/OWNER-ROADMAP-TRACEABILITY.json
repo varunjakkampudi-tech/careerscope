@@ -1485,11 +1485,26 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Job-trust evidence",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/trust-evidence.ts",
+        "packages/core/src/jobs.ts",
+        "apps/workers/search/src/collect.ts",
+        "apps/api/src/openapi.ts",
+        "apps/web/src/lib/api-schemas.ts",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/DATA-MODEL.md"
+      ],
+      "tests": [
+        "packages/providers/src/trust-evidence.test.ts",
+        "packages/core/src/leads.test.ts",
+        "apps/workers/search/src/collect.test.ts",
+        "apps/web/src/lib/api.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Records bounded source-linked factual observations and provider-reported claims with explicit missing values; it does not verify employer/source ownership, application destination safety, or fraud and produces no score or verdict. Independent review of earlier head 3b5c352971743bd35d68f4e967b5fa9dd27f6725 found a navigation fallback mislabeled as an observed application destination and 17 missing base audit snapshots. The correction uses only valid provider-supplied URLs as observed destinations, represents missing/invalid URLs as not_provided, adds regression coverage, and restores all 17 exact snapshots. Node 24 domain suite passed 971/971 and collection suite passed 21/21. New exact-head CI and re-review are pending. Stage 06.08 indicators are not integrated on this branch; user-facing trust-evidence presentation and measured trust-quality evaluation remain outstanding. Exact head e9604497c45df894628112dd92eb401378319a9e passed quality and image-build CI but Firefox browser CI found a stale prior-route resume-detail fetch. A narrow prior-route Firefox exception and focused tests are added; fresh exact-head CI and re-review remain pending.",
       "scopeDisposition": "in-scope"
     },
     {

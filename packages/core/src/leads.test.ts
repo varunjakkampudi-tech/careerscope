@@ -17,6 +17,67 @@ test('collected job schema keeps legacy missing match values normalized to null'
   });
 
   assert.equal(job.match, null);
+  assert.deepEqual(job.trustEvidence, []);
+});
+
+test('collected job trust evidence requires secure source-linked references', () => {
+  const base = {
+    fingerprint: 'synthetic-job',
+    title: 'Synthetic engineer',
+    company: 'Synthetic company',
+    location: 'Remote',
+    description: 'Synthetic description',
+    source: 'remoteok' as const,
+    sourceUrl: 'https://jobs.example.test/source',
+    applyUrl: 'https://jobs.example.test/apply',
+    postedAt: null,
+  };
+
+  assert.equal(
+    collectedJobSchema.safeParse({
+      ...base,
+      trustEvidence: [
+        {
+          kind: 'source_listing',
+          status: 'observed',
+          source: 'remoteok',
+          referenceUrl: 'http://jobs.example.test/source',
+          value: null,
+        },
+      ],
+    }).success,
+    false,
+  );
+  assert.equal(
+    collectedJobSchema.safeParse({
+      ...base,
+      trustEvidence: [
+        {
+          kind: 'source_listing',
+          status: 'observed',
+          source: 'remoteok',
+          referenceUrl: 'https://user:secret@jobs.example.test/source',
+          value: null,
+        },
+      ],
+    }).success,
+    false,
+  );
+  assert.equal(
+    collectedJobSchema.safeParse({
+      ...base,
+      trustEvidence: [
+        {
+          kind: 'publisher_attribution',
+          status: 'observed',
+          source: 'remoteok',
+          referenceUrl: 'https://jobs.example.test/source',
+          value: 'LinkedIn',
+        },
+      ],
+    }).success,
+    false,
+  );
 });
 
 test('lead tags are trimmed, bounded and case-insensitively unique', () => {
