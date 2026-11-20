@@ -7541,10 +7541,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed candidate reporting changes for bounded optional explanations, append-only owner-scoped submission history, retention cascade, API contract, and accurate partial-status documentation. Exact-head integration, browser CI, and independent review remain pending.",
-      "evidence": "Current item 6.10 candidate diff reviewed on codex/stage06-item610-candidate-reporting; Drizzle migration integrity check passed locally. Exact-head CI and review are pending.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.10 implementation review)",
-      "sha256": "5c5c6cee32af13155ba21c77931bbeee27c1f3966cf2654c10a3f79eaa36e76f",
+      "observations": "Updated candidate feedback browser coverage to tolerate reports from earlier browser engines on the shared synthetic search result while asserting each new report and count delta.",
+      "evidence": "Exact-head CI run 44757980116 passed all PostgreSQL/Redis integration tests but browser acceptance failed because prior engine submissions were present in the same fixture. The assertion now measures the baseline count and newest one/two submissions; final exact-head browser CI is pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.10 browser-test correction)",
+      "sha256": "a37ddd5c7ef8dfaff34dcc0726f3bdf099b27715a54c51301be4b85d21ba4719",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7569,6 +7569,12 @@
           "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
           "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
+        },
+        {
+          "observations": "Reviewed candidate reporting changes for bounded optional explanations, append-only owner-scoped submission history, retention cascade, API contract, and accurate partial-status documentation. Exact-head integration, browser CI, and independent review remain pending.",
+          "evidence": "Current item 6.10 candidate diff reviewed on codex/stage06-item610-candidate-reporting; Drizzle migration integrity check passed locally. Exact-head CI and review are pending.",
+          "reviewer": "Codex (CareerScope Stage 06 item 6.10 implementation review)",
+          "sha256": "5c5c6cee32af13155ba21c77931bbeee27c1f3966cf2654c10a3f79eaa36e76f"
         }
       ]
     },
