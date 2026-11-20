@@ -88,6 +88,20 @@ export const EMPLOYMENT_TYPES = [
 ] as const;
 export type EmploymentType = (typeof EMPLOYMENT_TYPES)[number];
 
+/** Explainable link-risk signals; none of these alone means a posting is fraudulent. */
+export const URL_RISK_INDICATORS = [
+  'invalid_url',
+  'unsupported_scheme',
+  'http_transport',
+  'embedded_credentials',
+  'nonstandard_port',
+  'ip_literal_host',
+  'punycode_host',
+  'url_shortener',
+  'external_redirect_parameter',
+] as const;
+export type UrlRiskIndicator = (typeof URL_RISK_INDICATORS)[number];
+
 /**
  * Seniority ladder. Used both to read a level out of a job title and to compare
  * it against the candidate's target level.

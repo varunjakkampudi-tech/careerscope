@@ -5,7 +5,7 @@
 
 import { z } from 'zod';
 import { searchSourceSchema } from './commands.js';
-import { matchBreakdownSchema } from '@careerscope/shared';
+import { matchBreakdownSchema, urlRiskIndicatorSchema } from '@careerscope/shared';
 
 // Accepts null/undefined as "not scored"; anything else must be a valid, strict match breakdown.
 const match = z
@@ -53,6 +53,7 @@ export const collectedJobSchema = z
       .max(500)
       .optional(),
     applyUrl: publicLink,
+    urlRiskIndicators: z.array(urlRiskIndicatorSchema).max(9).optional(),
     postedAt: z.string().datetime().nullable(),
     match,
   })

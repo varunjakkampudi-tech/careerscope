@@ -1447,10 +1447,10 @@
       "title": "Expired/broken application links",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "evidence": ["docs/PROGRESS.md", "docs/GAP-MATRIX.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "No destination-probing implementation or tests exist. Work remains deferred until redirect following, DNS/IP rebinding protection, and SSRF safeguards are implemented and reviewed.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1459,11 +1459,21 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Suspicious URL detection",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/url-risk.ts",
+        "apps/web/src/components/job-search-view.tsx",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md"
+      ],
+      "tests": [
+        "packages/providers/src/url-risk.test.ts",
+        "packages/providers/src/normalize.test.ts",
+        "packages/core/src/leads.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Deterministic URL signals are surfaced as review warnings. Exact-head hosted CI run 44660704855 passed and independent review approved exact head 2476cf8213294f311937ee081f34a1a5f2f05392 subject to CI; PR 117 remains open. There is no representative labeled corpus or measured precision/recall, provider-specific link validation, or proof of listing legitimacy.",
       "scopeDisposition": "in-scope"
     },
     {

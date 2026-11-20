@@ -46,6 +46,9 @@ export {
   type NormalizeOptions,
 } from './normalize.js';
 
+/* Deterministic untrusted-link indicators; this never performs network I/O. */
+export { detectUrlRiskIndicators } from './url-risk.js';
+
 /* HTTP, shared by every provider. */
 export {
   HttpClient,

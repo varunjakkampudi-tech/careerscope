@@ -252,6 +252,7 @@ export async function collect(
         sourceUrl: normalized.sourceUrl,
         sourceLinks: [...(sourceLinks.get(linkBucketKey)?.values() ?? [])],
         applyUrl: normalized.applyUrl,
+        urlRiskIndicators: normalized.urlRiskIndicators ?? [],
         postedAt: normalized.postedAt,
         match,
       }),

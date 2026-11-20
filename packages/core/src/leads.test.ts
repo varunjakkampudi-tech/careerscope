@@ -13,10 +13,12 @@ test('collected job schema keeps legacy missing match values normalized to null'
     source: 'remoteok',
     sourceUrl: 'https://jobs.example.test/source',
     applyUrl: 'https://jobs.example.test/apply',
+    urlRiskIndicators: ['url_shortener'],
     postedAt: null,
   });
 
   assert.equal(job.match, null);
+  assert.deepEqual(job.urlRiskIndicators, ['url_shortener']);
 });
 
 test('lead tags are trimmed, bounded and case-insensitively unique', () => {

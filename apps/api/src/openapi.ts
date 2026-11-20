@@ -7,7 +7,7 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import type { FastifyInstance, FastifySchema } from 'fastify';
 import { leadStatusSchema, maximumResumeBytes, sessionCookie } from '@careerscope/core';
-import { jobFeedbackReasons } from '@careerscope/shared';
+import { jobFeedbackReasons, URL_RISK_INDICATORS } from '@careerscope/shared';
 import { profilePhotoContentTypes } from './profile-photo.js';
 
 /** JSON Schema fragment. The builders below (`text`, `integer`, `array`, `object`, `nullable`) produce these. */
@@ -191,6 +191,12 @@ const job = object(
     applyUrl: text({ format: 'uri' }),
     sourceLinks: array(object({ source: text({ enum: sources }), url: text({ format: 'uri' }) })),
     postedAt: nullable(timestamp),
+    urlRiskIndicators: array(text({ enum: URL_RISK_INDICATORS }), {
+      maxItems: URL_RISK_INDICATORS.length,
+      uniqueItems: true,
+      description:
+        'Deterministic link-review signals; these do not establish that a job is fraudulent.',
+    }),
     match: {
       type: 'object',
       nullable: true,
