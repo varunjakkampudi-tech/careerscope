@@ -7,7 +7,7 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import type { FastifyInstance, FastifySchema } from 'fastify';
 import { leadStatusSchema, maximumResumeBytes, sessionCookie } from '@careerscope/core';
-import { jobFeedbackReasons } from '@careerscope/shared';
+import { jobFeedbackReasons, RECRUITMENT_SCAM_INDICATORS } from '@careerscope/shared';
 import { profilePhotoContentTypes } from './profile-photo.js';
 
 /** JSON Schema fragment. The builders below (`text`, `integer`, `array`, `object`, `nullable`) produce these. */
@@ -186,6 +186,7 @@ const job = object(
     company: text({ maxLength: 500 }),
     location: text({ maxLength: 500 }),
     description: text({ maxLength: 100000 }),
+    scamIndicators: array(text({ enum: RECRUITMENT_SCAM_INDICATORS })),
     source: text({ enum: sources }),
     sourceUrl: text({ format: 'uri' }),
     applyUrl: text({ format: 'uri' }),
@@ -215,6 +216,7 @@ const job = object(
     'company',
     'location',
     'description',
+    'scamIndicators',
     'source',
     'sourceUrl',
     'applyUrl',

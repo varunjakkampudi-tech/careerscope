@@ -332,7 +332,8 @@ try {
           companyName: 'Flagged Technology',
           location: 'Remote',
           isRemote: true,
-          description: 'Build React and TypeScript interfaces.',
+          description:
+            'Build React and TypeScript interfaces. Pay a registration fee to be considered for this role.',
           hasFullDescription: false,
           sourceUrl: 'https://remoteok.com/remote-jobs/scored',
           applyUrl: 'https://example.test/scored',
@@ -3442,9 +3443,19 @@ try {
         0,
       );
       assert.equal(resultBody.jobs[0].data.title, 'Scored React Engineer');
+      assert.deepEqual(resultBody.jobs[0].data.scamIndicators, ['candidate_upfront_payment']);
       assert.equal(resultBody.jobs[1].data.match, null);
       await page.getByText('Not scored', { exact: true }).waitFor();
       await page.getByRole('heading', { name: 'Scored React Engineer', exact: true }).click();
+      const scamJobCard = page
+        .locator('details.job')
+        .filter({ has: page.getByRole('heading', { name: 'Scored React Engineer', exact: true }) });
+      await scamJobCard.getByText('Potential recruitment-scam signals', { exact: true }).waitFor();
+      await scamJobCard
+        .getByText('These automated text signals are clues to review, not proof of fraud.', {
+          exact: false,
+        })
+        .waitFor();
       await page.getByRole('region', { name: 'Match evidence' }).waitFor();
       // CS-18 copy: the low-confidence flag now explains itself instead of
       // reading "Limited Description" (match-evidence.tsx) — the assertion

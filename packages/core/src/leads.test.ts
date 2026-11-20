@@ -17,6 +17,24 @@ test('collected job schema keeps legacy missing match values normalized to null'
   });
 
   assert.equal(job.match, null);
+  assert.deepEqual(job.scamIndicators, []);
+});
+
+test('collected job schema rejects unsupported scam indicators', () => {
+  const parsed = collectedJobSchema.safeParse({
+    fingerprint: 'synthetic-job',
+    title: 'Synthetic engineer',
+    company: 'Synthetic company',
+    location: 'Remote',
+    description: 'Synthetic description',
+    scamIndicators: ['fraudulent'],
+    source: 'remoteok',
+    sourceUrl: 'https://jobs.example.test/source',
+    applyUrl: 'https://jobs.example.test/apply',
+    postedAt: null,
+  });
+
+  assert.equal(parsed.success, false);
 });
 
 test('lead tags are trimmed, bounded and case-insensitively unique', () => {

@@ -110,6 +110,7 @@ export function job(overrides: Partial<Job> = {}): Job {
     },
     postedAt: new Date(NOW - 2 * 86_400_000).toISOString(),
     descriptionText: '',
+    scamIndicators: [],
     hasFullDescription: true,
     techStack: [],
     requiredYears: { min: null, max: null },

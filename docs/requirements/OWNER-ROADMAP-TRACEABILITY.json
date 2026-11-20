@@ -1472,11 +1472,29 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Recruitment scam indicators",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "currentStatus": "partial",
+      "evidence": [
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "packages/providers/src/scam-indicators.ts",
+        "packages/providers/src/normalize.ts",
+        "packages/core/src/jobs.ts",
+        "apps/workers/search/src/collect.ts",
+        "apps/web/src/components/job-search-view.tsx"
+      ],
+      "tests": [
+        "packages/providers/src/scam-indicators.test.ts",
+        "packages/providers/src/normalize.test.ts",
+        "packages/core/src/leads.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
+      "externalEvidence": [
+        "FTC employment scam guidance: https://www.ftc.gov/business-guidance/blog/2023/01/taking-ploy-out-employment-scams",
+        "FBI money mule advisory: https://www.fbi.gov/news/stories/money-muling-is-illegal-120419",
+        "FTC task scam advisory: https://consumer.ftc.gov/consumer-alerts/2026/04/job-offer-text-probably-scam"
+      ],
+      "gap": "English-only deterministic heuristics have no representative labeled corpus, measured precision/recall, or provider-specific false-positive evaluation. Telugu/Hindi UI copy has not received native-speaker review. These indicators are not a fraud verdict.",
       "scopeDisposition": "in-scope"
     },
     {

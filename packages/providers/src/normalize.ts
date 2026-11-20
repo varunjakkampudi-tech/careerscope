@@ -30,6 +30,7 @@ import {
   type Salary,
 } from '@careerscope/shared';
 import { descriptionToText, snippet } from './html.js';
+import { detectRecruitmentScamIndicators } from './scam-indicators.js';
 
 export interface NormalizeOptions {
   /** Injected for deterministic tests. */
@@ -86,6 +87,7 @@ export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
     salary: normalizeSalary(raw),
     postedAt: normalizeDate(raw.postedAt, options.now),
     descriptionText,
+    scamIndicators: detectRecruitmentScamIndicators(`${title}\n${descriptionText}`),
     // A board claiming a full description while sending nothing is claiming
     // wrong; the flag follows the text, not the claim.
     hasFullDescription: raw.hasFullDescription && descriptionText.length > 0,

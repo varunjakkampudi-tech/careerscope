@@ -13,6 +13,7 @@ import {
   DEFAULT_MAX_RESULTS,
   DEFAULT_SEARCH_DAYS,
   MATCH_WEIGHTS,
+  RECRUITMENT_SCAM_INDICATORS,
   type MatchDimension,
 } from './constants.js';
 
@@ -383,6 +384,8 @@ export const jobSchema = z.object({
   postedAt: z.string().nullable(),
   /** Full job description in plain text. Empty when only a snippet was available. */
   descriptionText: z.string(),
+  /** Deterministic text signals for candidate review; an empty list is not a trust guarantee. */
+  scamIndicators: z.array(z.enum(RECRUITMENT_SCAM_INDICATORS)).max(4).default([]),
   /**
    * False when the source only gave a teaser. The matching engine caps such
    * listings at LOW_CONFIDENCE_SCORE_CEILING, so crossing the user's threshold

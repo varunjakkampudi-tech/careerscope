@@ -21,6 +21,7 @@ import {
   jobFeedbackReasons,
   type CreateSearch,
   type JobFeedbackReason,
+  type RecruitmentScamIndicator,
 } from '@careerscope/shared';
 import { ApiError, apiJson, apiParsed, SESSION_EXPIRED_EVENT } from '@/lib/api';
 import {
@@ -54,6 +55,12 @@ const feedbackLabelKeys = {
   unavailable: 'feedbackUnavailable',
   suspicious: 'feedbackSuspicious',
 } as const satisfies Record<JobFeedbackReason, Parameters<typeof localizedText>[1]>;
+const scamIndicatorLabelKeys = {
+  candidate_upfront_payment: 'scamIndicatorUpfrontPayment',
+  fake_check_return: 'scamIndicatorFakeCheck',
+  personal_account_money_transfer: 'scamIndicatorPersonalAccount',
+  paid_positive_reviews: 'scamIndicatorPaidReviews',
+} as const satisfies Record<RecruitmentScamIndicator, Parameters<typeof localizedText>[1]>;
 
 function relativeTime(iso: string | null, locale: 'en' | 'te' | 'hi'): string | null {
   if (!iso) return null;
@@ -725,6 +732,21 @@ function JobSearchWorkspace() {
                           }
                         />
                         {data.match && <MatchEvidence match={data.match} />}
+                        {data.scamIndicators.length > 0 && (
+                          <aside
+                            className="job-scam-warning"
+                            aria-labelledby={`scam-${id}`}
+                            lang={locale}
+                          >
+                            <h4 id={`scam-${id}`}>{t('scamIndicatorsHeading')}</h4>
+                            <ul>
+                              {data.scamIndicators.map((indicator) => (
+                                <li key={indicator}>{t(scamIndicatorLabelKeys[indicator])}</li>
+                              ))}
+                            </ul>
+                            <p>{t('scamIndicatorsDisclaimer')}</p>
+                          </aside>
+                        )}
                       </div>
                       <div className="job-links">
                         {(data.sourceLinks?.length

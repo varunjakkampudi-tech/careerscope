@@ -88,6 +88,15 @@ export const EMPLOYMENT_TYPES = [
 ] as const;
 export type EmploymentType = (typeof EMPLOYMENT_TYPES)[number];
 
+/** Explainable recruitment-scam signals; these are review prompts, never a fraud verdict. */
+export const RECRUITMENT_SCAM_INDICATORS = [
+  'candidate_upfront_payment',
+  'fake_check_return',
+  'personal_account_money_transfer',
+  'paid_positive_reviews',
+] as const;
+export type RecruitmentScamIndicator = (typeof RECRUITMENT_SCAM_INDICATORS)[number];
+
 /**
  * Seniority ladder. Used both to read a level out of a job title and to compare
  * it against the candidate's target level.
