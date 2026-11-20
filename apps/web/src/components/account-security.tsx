@@ -8,6 +8,9 @@ import {
   parseAccountSessions,
   parseEmailChangeVerification,
   parseMarketingConsent,
+  parseTotpConfirmation,
+  parseTotpSetup,
+  parseTotpStatus,
   type AccountSession,
 } from '../lib/api-schemas';
 import { NO_OWNER, useSession } from '../lib/session';
@@ -56,12 +59,21 @@ export default function AccountSecurity({
     queryFn: () => apiParsed('/account/marketing-consent', parseMarketingConsent),
     enabled: session.data?.authenticated === true && !!session.data.owner,
   });
+  const totpQuery = useQuery({
+    queryKey: ['totpStatus', session.data?.owner ?? NO_OWNER],
+    queryFn: () => apiParsed('/account/totp/status', parseTotpStatus),
+    enabled: session.data?.authenticated === true && !!session.data.owner,
+  });
   const [revoking, setRevoking] = useState(false);
   const [revokingSessionId, setRevokingSessionId] = useState<string | null>(null);
   const [sessionError, setSessionError] = useState('');
   const [notice, setNotice] = useState('');
   const [marketingPending, setMarketingPending] = useState(false);
   const [marketingError, setMarketingError] = useState('');
+  const [totpSetup, setTotpSetup] = useState<{ secret: string } | null>(null);
+  const [totpCode, setTotpCode] = useState('');
+  const [totpPending, setTotpPending] = useState(false);
+  const [totpError, setTotpError] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [emailChangeRequested, setEmailChangeRequested] = useState(false);
   const [currentEmailCode, setCurrentEmailCode] = useState('');
@@ -212,6 +224,46 @@ export default function AccountSecurity({
     }
   }
 
+  async function startTotpSetup() {
+    if (totpPending) return;
+    setTotpPending(true);
+    setTotpError('');
+    try {
+      const result = await apiParsed('/account/totp/setup', parseTotpSetup, {
+        method: 'POST',
+        headers: { 'x-csrf-token': csrf },
+        body: JSON.stringify({}),
+      });
+      setTotpSetup({ secret: result.secret });
+      setTotpCode('');
+    } catch {
+      setTotpError(t('adminAuthenticatorSetupError'));
+    } finally {
+      setTotpPending(false);
+    }
+  }
+
+  async function confirmTotpSetup(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (totpPending || totpCode.length !== 6) return;
+    setTotpPending(true);
+    setTotpError('');
+    try {
+      await apiParsed('/account/totp/confirm', parseTotpConfirmation, {
+        method: 'POST',
+        headers: { 'x-csrf-token': csrf },
+        body: JSON.stringify({ code: totpCode }),
+      });
+      setTotpSetup(null);
+      setTotpCode('');
+      await queryClient.invalidateQueries({ queryKey: ['totpStatus'] });
+    } catch {
+      setTotpError(t('adminAuthenticatorConfirmError'));
+    } finally {
+      setTotpPending(false);
+    }
+  }
+
   return (
     <section className={styles.panel} aria-labelledby="security-heading" lang={locale}>
       <h2 id="security-heading">{t('accountSecurity')}</h2>
@@ -301,6 +353,58 @@ export default function AccountSecurity({
           )}
           {emailChangeError && <p role="alert">{emailChangeError}</p>}
           {emailChangeNotice && <p role="status">{emailChangeNotice}</p>}
+        </section>
+      )}
+      {!testMode && session.data?.emailOtpEnabled && (
+        <section aria-labelledby="admin-authenticator-heading">
+          <h2 id="admin-authenticator-heading">{t('adminAuthenticatorHeading')}</h2>
+          <p>{t('adminAuthenticatorIntro')}</p>
+          {totpQuery.isPending ? (
+            <p role="status">{t('adminAuthenticatorSetupLoading')}</p>
+          ) : totpQuery.isError ? (
+            <>
+              <ErrorState
+                variant="inline"
+                what={t('adminAuthenticatorStatusError')}
+                detail={t('tryConnectionAgain')}
+              />
+              <button
+                type="button"
+                onClick={() => void totpQuery.refetch()}
+                disabled={totpQuery.isFetching}
+              >
+                {totpQuery.isFetching ? t('retrying') : t('adminAuthenticatorRetry')}
+              </button>
+            </>
+          ) : totpQuery.data.enabled ? (
+            <p role="status">{t('adminAuthenticatorEnabled')}</p>
+          ) : totpSetup ? (
+            <form onSubmit={confirmTotpSetup} aria-busy={totpPending}>
+              <p>{t('adminAuthenticatorSecret')}</p>
+              <code className={styles.secret}>{totpSetup.secret}</code>
+              <label htmlFor="admin-totp-confirm-code">{t('adminAuthenticatorConfirmCode')}</label>
+              <input
+                id="admin-totp-confirm-code"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="[0-9]{6}"
+                maxLength={6}
+                required
+                value={totpCode}
+                onChange={(event) => setTotpCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
+                disabled={totpPending}
+              />
+              <button type="submit" disabled={totpPending || totpCode.length !== 6}>
+                {totpPending ? t('savingPreference') : t('adminAuthenticatorConfirm')}
+              </button>
+            </form>
+          ) : (
+            <button type="button" onClick={() => void startTotpSetup()} disabled={totpPending}>
+              {totpPending ? t('adminAuthenticatorSetupLoading') : t('adminAuthenticatorStart')}
+            </button>
+          )}
+          {totpError && <p role="alert">{totpError}</p>}
         </section>
       )}
       <button type="button" onClick={revokeOthers} disabled={busy}>

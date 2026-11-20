@@ -703,6 +703,7 @@ try {
         }),
       );
       let otpInterviewRemindersEnabled = true;
+      let otpTotpEnabled = false;
       let loseNextPreferenceResponse = false;
       let failNextPreferenceRead = false;
       await otpPage.route('**/api/notifications/preferences', (route) => {
@@ -746,8 +747,12 @@ try {
         });
       });
       await otpPage.route('**/api/otp/verify', async (route) => {
-        const body = route.request().postDataJSON() as { email: string; code: string };
-        if (body.email !== otpEmail || body.code !== '123456')
+        const body = route.request().postDataJSON() as {
+          email: string;
+          code: string;
+          totpCode?: string;
+        };
+        if (body.email !== otpEmail || body.code !== '123456' || body.totpCode !== '654321')
           return route.fulfill({
             status: 401,
             contentType: 'application/json',
@@ -755,6 +760,19 @@ try {
           });
         otpVerified = true;
         return route.fulfill({ contentType: 'application/json', json: { authenticated: true } });
+      });
+      await otpPage.route('**/api/account/totp/status', (route) =>
+        route.fulfill({ contentType: 'application/json', json: { enabled: otpTotpEnabled } }),
+      );
+      await otpPage.route('**/api/account/totp/setup', (route) =>
+        route.fulfill({
+          contentType: 'application/json',
+          json: { secret: 'JBSWY3DPEHPK3PXP', otpauthUri: 'otpauth://totp/CareerScope:test' },
+        }),
+      );
+      await otpPage.route('**/api/account/totp/confirm', (route) => {
+        otpTotpEnabled = true;
+        return route.fulfill({ contentType: 'application/json', json: { enrolled: true } });
       });
       await otpPage.route('**/api/account/email-change/request', async (route) => {
         emailChangeRequestCount += 1;
@@ -806,6 +824,19 @@ try {
       await otpPage.getByRole('alert').filter({ hasText: 'invalid or expired' }).waitFor();
       assert.equal(await otpPage.getByLabel('Six-digit verification code').inputValue(), '');
       await otpPage.getByLabel('Six-digit verification code').fill('123456');
+      const missingTotpRejected = otpPage.waitForResponse(
+        (response) =>
+          response.url().endsWith('/api/otp/verify') &&
+          response.status() === 401 &&
+          (response.request().postDataJSON() as { totpCode?: string }).totpCode === undefined,
+      );
+      await otpPage.getByRole('button', { name: 'Verify and sign in' }).click();
+      await missingTotpRejected;
+      await otpPage.waitForFunction(
+        () => (document.querySelector('#otp-code') as HTMLInputElement | null)?.value === '',
+      );
+      await otpPage.getByLabel('Six-digit verification code').fill('123456');
+      await otpPage.getByLabel('Authenticator code (if requested)').fill('654321');
       await otpPage.getByRole('button', { name: 'Verify and sign in' }).click();
       await otpPage.waitForURL((url) => url.pathname === '/dashboard');
       await settleOtpRequests('dashboard after OTP sign-in');
@@ -819,6 +850,12 @@ try {
       );
       await otpPage.goto(`${origin}/settings`);
       await otpPage.getByRole('heading', { name: 'Account security', exact: true }).waitFor();
+      await otpPage.getByRole('heading', { name: 'Admin authenticator' }).waitFor();
+      await otpPage.getByRole('button', { name: 'Set up authenticator' }).click();
+      await otpPage.getByText('JBSWY3DPEHPK3PXP').waitFor();
+      await otpPage.getByLabel('Six-digit code from your authenticator app').fill('111111');
+      await otpPage.getByRole('button', { name: 'Confirm authenticator' }).click();
+      await otpPage.getByRole('status').getByText('Authenticator confirmed for this account.').waitFor();
       const otpReminderPreference = otpPage.getByRole('checkbox', {
         name: 'Show upcoming interview reminders in CareerScope',
       });

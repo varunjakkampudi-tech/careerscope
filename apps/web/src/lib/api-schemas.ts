@@ -94,6 +94,9 @@ export const parseAccountSessions = parser(z.object({ sessions: z.array(accountS
 
 const marketingConsentSchema = z.object({ optedIn: z.boolean(), version: z.string().nullable() });
 export const parseMarketingConsent = parser(marketingConsentSchema);
+export const parseTotpStatus = parser(z.object({ enabled: z.boolean() }));
+export const parseTotpSetup = parser(z.object({ secret: z.string(), otpauthUri: z.string() }));
+export const parseTotpConfirmation = parser(z.object({ enrolled: z.literal(true) }));
 
 export const parseEmailChangeVerification = parser(
   z.object({ verified: z.enum(['current', 'new']), emailChanged: z.boolean() }),

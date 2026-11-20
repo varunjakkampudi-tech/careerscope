@@ -64,6 +64,21 @@ test(
       ).json().csrf as string;
       const authed = { origin, cookie, 'x-csrf-token': csrf };
 
+      const initialStatus = await app.inject({
+        method: 'GET',
+        url: '/api/account/totp/status',
+        headers: authed,
+      });
+      assert.equal(initialStatus.statusCode, 200);
+      assert.deepEqual(initialStatus.json(), { enabled: false });
+      const apiDocs = await app.inject({
+        method: 'GET',
+        url: '/api/docs/json',
+        headers: { origin, cookie },
+      });
+      assert.equal(apiDocs.statusCode, 200);
+      assert.ok(apiDocs.json().paths['/api/account/totp/status']?.get);
+
       // Setup returns the secret once, and a wrong confirmation code is refused.
       const setup = await app.inject({
         method: 'POST',
@@ -71,6 +86,7 @@ test(
         headers: authed,
       });
       assert.equal(setup.statusCode, 200);
+      assert.equal(setup.headers['cache-control'], 'no-store');
       const secretText = setup.json().secret as string;
       assert.match(setup.json().otpauthUri, /^otpauth:\/\/totp\/CareerScope/);
       const authenticatorSecret = decodeBase32(secretText);
@@ -91,6 +107,12 @@ test(
         payload: { code: hotp(authenticatorSecret, confirmStep) },
       });
       assert.equal(confirmed.statusCode, 200, confirmed.body);
+      const enrolledStatus = await app.inject({
+        method: 'GET',
+        url: '/api/account/totp/status',
+        headers: authed,
+      });
+      assert.deepEqual(enrolledStatus.json(), { enabled: true });
       const again = await app.inject({
         method: 'POST',
         url: '/api/account/totp/setup',

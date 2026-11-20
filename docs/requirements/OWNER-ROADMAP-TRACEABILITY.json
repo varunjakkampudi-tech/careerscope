@@ -449,10 +449,20 @@
       "title": "Complete authentication UI",
       "sourceStatus": "Partial",
       "currentStatus": "partial",
-      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
-      "tests": ["scripts/tests/check-ui.ts"],
+      "evidence": [
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/PROGRESS.md",
+        "apps/web/src/components/account-form.tsx",
+        "apps/web/src/components/account-security.tsx"
+      ],
+      "tests": [
+        "apps/api/src/admin-second-factor.integration.test.ts",
+        "scripts/tests/check-ui.ts",
+        "apps/web/src/lib/locale.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "The program stage is recorded complete with this item-level limitation carried forward; see the cited stage evidence.",
+      "gap": "The admin authenticator enrollment and sign-in UI is implemented in this change. Exact-head browser/integration CI, independent review, merge, and post-merge verification remain pending; super-admin is not a product role.",
       "scopeDisposition": "in-scope"
     },
     {

@@ -938,7 +938,7 @@ export async function createApp(
   // Authenticator setup for admin sign-in (V12-4.1-012). Setup starts with a secret shown once; the account
   // is not protected until a code from that secret is confirmed.
   const totpCodeSchema = z.object({ code: z.string().regex(/^\d{6}$/) }).strict();
-  app.post('/api/account/totp/setup', async (request) => {
+  app.post('/api/account/totp/setup', async (request, reply) => {
     if (!options.emailOtp) throw new HttpError(404, 'Authenticator setup is unavailable');
     const email = await primaryEmailOf(request.ownerId!);
     if (!email) throw new HttpError(409, 'Authenticator setup is unavailable for this account');
@@ -950,7 +950,16 @@ export async function createApp(
     );
     if (result === 'already-enrolled')
       throw new HttpError(409, 'An authenticator is already set up');
+    reply.header('cache-control', 'no-store');
     return { secret: result.secret, otpauthUri: result.uri };
+  });
+  app.get('/api/account/totp/status', async (request) => {
+    const result = await database.pool.query<{ enabled: boolean }>(
+      'SELECT totp_enabled_at IS NOT NULL AS enabled FROM users WHERE id = $1',
+      [request.ownerId!],
+    );
+    if (!result.rows[0]) throw new HttpError(404, 'Account not found');
+    return { enabled: result.rows[0].enabled };
   });
   app.post('/api/account/totp/confirm', async (request) => {
     if (!options.emailOtp) throw new HttpError(404, 'Authenticator setup is unavailable');

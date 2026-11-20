@@ -40,6 +40,7 @@ export default function AccountForm({
   const [error, setError] = useState('');
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
+  const [totpCode, setTotpCode] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [codeSent, setCodeSent] = useState(false);
   const [recovering, setRecovering] = useState(false);
@@ -114,6 +115,7 @@ export default function AccountForm({
       setResendAt(requestedAt + result.resendAfterSeconds * 1000);
       setCodeSent(true);
       setCode('');
+      setTotpCode('');
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : t('couldNotRequestCode'));
     } finally {
@@ -131,13 +133,19 @@ export default function AccountForm({
       await endPreviousSession();
       await apiJson('/otp/verify', {
         method: 'POST',
-        body: JSON.stringify({ email, code, ...(intent === 'sign-up' ? { intent } : {}) }),
+        body: JSON.stringify({
+          email,
+          code,
+          ...(intent === 'sign-up' ? { intent } : totpCode ? { totpCode } : {}),
+        }),
       });
       setCode('');
+      setTotpCode('');
       await onAuthenticated();
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : t('couldNotVerifyCode'));
       setCode('');
+      setTotpCode('');
     } finally {
       setPending(null);
     }
@@ -147,6 +155,7 @@ export default function AccountForm({
     if (pending) return;
     setCodeSent(false);
     setCode('');
+    setTotpCode('');
     setError('');
   }
 
@@ -230,6 +239,25 @@ export default function AccountForm({
                 aria-describedby="otp-code-help"
               />
               <small id="otp-code-help">{t('enterCodeHelp')}</small>
+              {intent === 'sign-in' && (
+                <>
+                  <label htmlFor="totp-code">{t('adminAuthenticatorCode')}</label>
+                  <input
+                    id="totp-code"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    pattern="[0-9]{6}"
+                    maxLength={6}
+                    value={totpCode}
+                    onChange={(event) =>
+                      setTotpCode(event.target.value.replace(/[^0-9]/g, '').slice(0, 6))
+                    }
+                    aria-describedby="totp-code-help"
+                  />
+                  <small id="totp-code-help">{t('adminAuthenticatorLoginHelp')}</small>
+                </>
+              )}
               <button
                 className="primary"
                 type="submit"
