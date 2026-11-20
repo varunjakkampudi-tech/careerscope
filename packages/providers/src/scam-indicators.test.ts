@@ -25,12 +25,29 @@ describe('detectRecruitmentScamIndicators', () => {
     expect(
       detectRecruitmentScamIndicators('You do not need to pay a registration fee to apply.'),
     ).toEqual([]);
+    expect(detectRecruitmentScamIndicators('An application fee is not required.')).toEqual([]);
   });
 
   it('does not let a separate no-fee clause hide an affirmative fee demand', () => {
     expect(
       detectRecruitmentScamIndicators(
         'We do not charge applicants an application fee, but applicants must pay a registration fee to apply.',
+      ),
+    ).toEqual(['candidate_upfront_payment']);
+  });
+
+  it('finds an affirmative fee demand after a negated fee statement in the same passage', () => {
+    expect(
+      detectRecruitmentScamIndicators(
+        'You do not need to pay a registration fee to apply, but applicants must pay a registration fee to apply.',
+      ),
+    ).toEqual(['candidate_upfront_payment']);
+  });
+
+  it('keeps an affirmative fee demand when a negated statement follows it', () => {
+    expect(
+      detectRecruitmentScamIndicators(
+        'Applicants must pay a registration fee to apply, but you do not need to pay a registration fee to apply.',
       ),
     ).toEqual(['candidate_upfront_payment']);
   });

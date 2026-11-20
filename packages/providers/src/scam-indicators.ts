@@ -4,7 +4,11 @@ const MAX_DESCRIPTION_LENGTH = 100_000;
 // Keep negation tied to an action in the same clause. This also handles rules
 // whose match begins with a subject, such as "You do not need to pay a fee".
 const NEGATED_ACTION =
-  /\b(?:no|not|never|without|don't|do not|doesn't|does not)\b(?!\s+(?:only|just)\b)[^,.!?;]{0,48}\b(?:pay|send|submit|provide|deposit|cash|return|refund|transfer|forward|receive|move|process|earn|post|use)\b/i;
+  /\b(?:no|not|never|without|don't|do not|doesn't|does not)\b(?!\s+(?:only|just)\b)[^,.!?;]{0,48}\b(?:pay|paid|send|submit|provide|deposit|cash|return|refund|transfer|forward|receive|move|process|earn|post|use)\b/i;
+const ACTION =
+  /\b(?:pay|paid|send|submit|provide|deposit|cash|return|refund|transfer|forward|receive|move|process|earn|post|use)\b/gi;
+const NEGATED_FEE_REQUIREMENT =
+  /\b(?:no|not|never|without|don't|do not|doesn't|does not)\b[^,.!?;]{0,48}\b(?:application|registration|training|security|equipment)\s+fee\b|\b(?:application|registration|training|security|equipment)\s+fee\b[^,.!?;]{0,20}\b(?:is\s+|are\s+|was\s+|were\s+)?not\s+(?:required|necessary|needed)\b/i;
 
 type Rule = {
   code: RecruitmentScamIndicator;
@@ -49,10 +53,34 @@ export function detectRecruitmentScamIndicators(listingText: string): Recruitmen
   for (const { code, pattern } of RULES) {
     if (
       passages.some((passage) => {
-        const match = pattern.exec(passage);
-        if (!match || match.index === undefined) return false;
-        const context = passage.slice(Math.max(0, match.index - 48), match.index + match[0].length);
-        return !NEGATED_ACTION.test(context);
+        const globalPattern = new RegExp(pattern.source, `${pattern.flags}g`);
+        for (const match of passage.matchAll(globalPattern)) {
+          if (match.index === undefined) continue;
+          const actions = [...match[0].matchAll(ACTION)];
+          if (actions.length === 0) {
+            const context = passage.slice(
+              Math.max(0, match.index - 48),
+              match.index + match[0].length,
+            );
+            if (!NEGATED_FEE_REQUIREMENT.test(context)) return true;
+            continue;
+          }
+
+          if (
+            actions.some((action) => {
+              if (action.index === undefined) return false;
+              const actionIndex = match.index + action.index;
+              const context = passage.slice(
+                Math.max(0, actionIndex - 48),
+                actionIndex + action[0].length,
+              );
+              return !NEGATED_ACTION.test(context);
+            })
+          ) {
+            return true;
+          }
+        }
+        return false;
       })
     ) {
       found.add(code);
