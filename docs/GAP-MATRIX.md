@@ -1,5 +1,9 @@
 # Gap matrix
 
+## Stage 06
+
+- **Expired/broken application links (6.06):** provider-declared Himalayas expiry dates are honored by excluding expired postings. Existing URL normalization and collection validation reject unsafe or malformed destinations, but do not prove application-link availability. No generic link probe or candidate-facing availability status is implemented; source-authorized targets, SSRF-safe probing, and acceptance criteria remain open. Provider permissions remain disabled.
+
 ## Stage 05: multi-provider job discovery
 
 | Item | Feature                                  | Status  | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Remaining gap                                                                                                                                                                                                                                                                                                    |
