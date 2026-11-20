@@ -62,7 +62,11 @@ starts a separate OTP-enabled app for the live TOTP journey. Second run `4470639
 `e9050910154a958639878e1b94ee16c84c6f4259` passed quality, image, and PostgreSQL/Redis integration,
 but the browser timed out waiting for the delayed setup response during the account-transition case;
 the response listener now starts immediately before releasing that response. A fresh exact-head run
-is required.
+is required. Third run `44707745430` on `4e5fb46ad1d441bc358c893d03d69323539026ee` passed Quality,
+image, and PostgreSQL/Redis integration, but the account-switch assertion waited for a transient
+email-change notice that the intentional owner-keyed remount clears. The assertion now waits for the
+new account's displayed email instead. The later live-API browser journey has not yet been reached;
+fresh exact-head browser CI and independent review remain pending.
 Item 2.12 remains partial, and no merge or post-merge verification is claimed. Owner item 2.11 still has the
 separate unusual-pattern step-up gap recorded in the v12 reconciliation; items 2.06 and 2.10 retain
 their native-language review gaps.

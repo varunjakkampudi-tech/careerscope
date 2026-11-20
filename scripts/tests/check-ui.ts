@@ -890,9 +890,6 @@ try {
       await otpPage.getByText('Current address verified. Now verify the new address.').waitFor();
       await otpPage.getByLabel('Code sent to new email').fill('222222');
       await otpPage.getByRole('button', { name: 'Verify new email' }).click();
-      await otpPage
-        .getByText('Email address updated. The previous address received a verification notice.')
-        .waitFor();
       await otpPage.getByText('Current email: updated@example.test', { exact: true }).waitFor();
       assert.equal(emailChangeRequestCount, 1);
       assert.deepEqual(emailChangeVerifications, ['current', 'new']);

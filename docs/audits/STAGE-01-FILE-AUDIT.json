@@ -2118,10 +2118,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed Stage 02 item 2.12 correction history: the prior implementation review required changes; run 44704814878 passed quality, image, and integration but failed browser harness startup; run 44706391474 passed those jobs but timed out in the delayed owner-transition response case. Latest patch moves the response listener immediately before releasing that delayed response. Fresh exact-head CI and independent review remain pending; item stays partial.",
-      "evidence": "Reviewed the current item 2.12 follow-up diff. Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL second-factor integration passed 1/1; run 44706391474 passed Quality gates, Production image build and PostgreSQL/Redis integration but failed in the browser delayed-response case. The latest listener-timing correction is committed for a fresh exact-head run; independent review remains pending.",
+      "observations": "Reviewed correction evidence for CareerScope item 2.12: runs 44704814878 and 44706391474 exposed two browser-harness issues; run 44707745430 passed Quality, image, and PostgreSQL/Redis integration but browser failed because the synthetic owner-keyed remount cleared a transient email-change success notice. The regression now waits for the updated displayed email; the later live API browser journey has not yet run successfully.",
+      "evidence": "Reviewed the current item 2.12 follow-up diff. Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL second-factor integration passed 1/1; run 44707745430 passed Quality gates, Production image build and PostgreSQL/Redis integration, but browser failed at the synthetic owner-transition notice assertion. Latest test waits for updated owner email; the live API browser journey remains unverified until fresh CI.",
       "reviewer": "Codex (CareerScope item 2.12 correction review)",
-      "sha256": "08404b2b2a5dabf89e97426b5068e61762b9dfc31aa8746e50f62babf3759f59",
+      "sha256": "1f2c24c946b6ef6b316ac8a6c316faaa552d6cc6ae03400d8fa6b8d88aface2b",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2278,6 +2278,12 @@
           "evidence": "Current item 2.12 correction diff reviewed. Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL second-factor integration passed 1/1; exact correction CI run 44704814878 passed Quality gates, Production image build, and PostgreSQL/Redis integration, but browser harness initialization failed before browser tests. A separated OTP app harness is committed for fresh exact-head CI; independent review remains pending.",
           "reviewer": "Codex (CareerScope item 2.12 correction review)",
           "sha256": "260bc1ba01b4f188ef32876a49816d516c54af1e18bc9d272d1b73b3e1a8a481"
+        },
+        {
+          "observations": "Reviewed Stage 02 item 2.12 correction history: the prior implementation review required changes; run 44704814878 passed quality, image, and integration but failed browser harness startup; run 44706391474 passed those jobs but timed out in the delayed owner-transition response case. Latest patch moves the response listener immediately before releasing that delayed response. Fresh exact-head CI and independent review remain pending; item stays partial.",
+          "evidence": "Reviewed the current item 2.12 follow-up diff. Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL second-factor integration passed 1/1; run 44706391474 passed Quality gates, Production image build and PostgreSQL/Redis integration but failed in the browser delayed-response case. The latest listener-timing correction is committed for a fresh exact-head run; independent review remains pending.",
+          "reviewer": "Codex (CareerScope item 2.12 correction review)",
+          "sha256": "08404b2b2a5dabf89e97426b5068e61762b9dfc31aa8746e50f62babf3759f59"
         }
       ]
     },
@@ -2908,10 +2914,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed canonical item 2.12 evidence and retained partial status. Both corrected-head runs and their distinct browser failures are recorded accurately; latest response-listener timing correction awaits exact-head CI and independent review. Traceability check passes 328 items across 22 stages.",
-      "evidence": "Reviewed the current item 2.12 follow-up diff. Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL second-factor integration passed 1/1; run 44706391474 passed Quality gates, Production image build and PostgreSQL/Redis integration but failed in the browser delayed-response case. The latest listener-timing correction is committed for a fresh exact-head run; independent review remains pending.",
+      "observations": "Reviewed canonical item 2.12 status and evidence. Item remains partial; the three corrected-head CI outcomes and distinct browser failures are recorded. Latest test waits for updated owner email after the remount. Fresh exact-head CI and independent review remain pending; roadmap checker passes 328 items across 22 stages.",
+      "evidence": "Reviewed the current item 2.12 follow-up diff. Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL second-factor integration passed 1/1; run 44707745430 passed Quality gates, Production image build and PostgreSQL/Redis integration, but browser failed at the synthetic owner-transition notice assertion. Latest test waits for updated owner email; the live API browser journey remains unverified until fresh CI.",
       "reviewer": "Codex (CareerScope item 2.12 correction review)",
-      "sha256": "c68041f121de3bfffeec4f062b9e91459f7d39975517a0f20e6abfa976592547",
+      "sha256": "8941d14f24b5aed4814679403153c25a67a19660e5c731403387ffd31c38d116",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3038,6 +3044,12 @@
           "evidence": "Current item 2.12 correction diff reviewed. Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL second-factor integration passed 1/1; exact correction CI run 44704814878 passed Quality gates, Production image build, and PostgreSQL/Redis integration, but browser harness initialization failed before browser tests. A separated OTP app harness is committed for fresh exact-head CI; independent review remains pending.",
           "reviewer": "Codex (CareerScope item 2.12 correction review)",
           "sha256": "3d75a207038b785a766edac0667923d6b47958284390e6fa64c6da590013b72d"
+        },
+        {
+          "observations": "Reviewed canonical item 2.12 evidence and retained partial status. Both corrected-head runs and their distinct browser failures are recorded accurately; latest response-listener timing correction awaits exact-head CI and independent review. Traceability check passes 328 items across 22 stages.",
+          "evidence": "Reviewed the current item 2.12 follow-up diff. Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL second-factor integration passed 1/1; run 44706391474 passed Quality gates, Production image build and PostgreSQL/Redis integration but failed in the browser delayed-response case. The latest listener-timing correction is committed for a fresh exact-head run; independent review remains pending.",
+          "reviewer": "Codex (CareerScope item 2.12 correction review)",
+          "sha256": "c68041f121de3bfffeec4f062b9e91459f7d39975517a0f20e6abfa976592547"
         }
       ]
     },
@@ -7511,10 +7523,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the delayed owner-transition browser scenario and separated OTP-enabled app. The exact-head CI passed build, quality, and integration but timed out waiting for the delayed setup response; the Playwright response listener now starts after the long owner-transition steps and just before releasing the response. Fresh browser CI is pending.",
-      "evidence": "Reviewed the current item 2.12 follow-up diff. Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL second-factor integration passed 1/1; run 44706391474 passed Quality gates, Production image build and PostgreSQL/Redis integration but failed in the browser delayed-response case. The latest listener-timing correction is committed for a fresh exact-head run; independent review remains pending.",
+      "observations": "Reviewed the owner-transition browser correction. AccountSecurity intentionally remounts on owner key change and clears transient component notices, so the test now waits for the updated email as evidence of the new owner state. Run 44707745430 exposed the incorrect transient-notice assertion before the separate live-API browser journey; fresh CI is pending.",
+      "evidence": "Reviewed the current item 2.12 follow-up diff. Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL second-factor integration passed 1/1; run 44707745430 passed Quality gates, Production image build and PostgreSQL/Redis integration, but browser failed at the synthetic owner-transition notice assertion. Latest test waits for updated owner email; the live API browser journey remains unverified until fresh CI.",
       "reviewer": "Codex (CareerScope item 2.12 correction review)",
-      "sha256": "f693b9c9eced644b921afd9345bd8b19dffb0b3610873664c723f27a26945e37",
+      "sha256": "e3a48cb9c163745f61d787c8c8161b6d7731e89a3f770ba97af9ec030e80aecd",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7551,6 +7563,12 @@
           "evidence": "Current item 2.12 correction diff reviewed. Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL second-factor integration passed 1/1; exact correction CI run 44704814878 passed Quality gates, Production image build, and PostgreSQL/Redis integration, but browser harness initialization failed before browser tests. A separated OTP app harness is committed for fresh exact-head CI; independent review remains pending.",
           "reviewer": "Codex (CareerScope item 2.12 correction review)",
           "sha256": "d1324bd04cd9dd6191e3b6f3aea999c1558460ce7645b19ddd1dedbc9f85f2f6"
+        },
+        {
+          "observations": "Reviewed the delayed owner-transition browser scenario and separated OTP-enabled app. The exact-head CI passed build, quality, and integration but timed out waiting for the delayed setup response; the Playwright response listener now starts after the long owner-transition steps and just before releasing the response. Fresh browser CI is pending.",
+          "evidence": "Reviewed the current item 2.12 follow-up diff. Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL second-factor integration passed 1/1; run 44706391474 passed Quality gates, Production image build and PostgreSQL/Redis integration but failed in the browser delayed-response case. The latest listener-timing correction is committed for a fresh exact-head run; independent review remains pending.",
+          "reviewer": "Codex (CareerScope item 2.12 correction review)",
+          "sha256": "f693b9c9eced644b921afd9345bd8b19dffb0b3610873664c723f27a26945e37"
         }
       ]
     },
