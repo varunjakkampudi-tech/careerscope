@@ -213,14 +213,14 @@
     {
       "path": "apps/api/src/admin-second-factor.integration.test.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed after a mechanical change: the test database is now created from template0 (TEMPLATE template0), which skips copying template1 and is about 2.5 times faster on this database. The test body is unchanged. Migrations use only SQL functions, so template0 has what they need.",
-      "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "95355a5222c3b6129b87f17b935903462ff95919ba6039d21e8a550e25a24c40"
+      "observations": "Reviewed the item 2.12 diff: verifies owner-authenticated enrollment status before/after confirmation, no-store setup response, OpenAPI exposure, and existing admin TOTP sign-in/replay behavior.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "898866f2b1dac274807baf4b8aeb4a1070e4edc3ac471aa726edd626d50355f1"
     },
     {
       "path": "apps/api/src/age-screen.test.ts",
@@ -261,14 +261,14 @@
     {
       "path": "apps/api/src/app.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed route schemas and wiring for candidate resume target-role and version-group metadata; validation, listing and upload coordination are consistent.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "608697156e7369b604bd0c7c9a9b05f72b4473f08f0e1e414c51fb80b9b32260"
+      "observations": "Reviewed the item 2.12 diff: adds owner-scoped TOTP status and prevents caching of the one-time setup-secret response; existing authenticated route protections remain in force.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "2feecd8f41cbf4b803b88eb983a401081d5c9475f85fcc6431bb4acaad5a7a75"
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -421,7 +421,7 @@
     {
       "path": "apps/api/src/openapi.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -433,10 +433,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Reviewed OpenAPI upload and listing contract additions for target role and version lineage.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "214ffecd324c7f6ef0c95bd73118fe978281575bbe70d8a9abe90335183a30b8"
+      "observations": "Reviewed the item 2.12 diff: documents the status response as boolean-only and confirms no secret is returned.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "43b8007a337ff51c83c25fa20d674d250c119ce4dbf267cd2c04587190eb2c86"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -935,31 +935,31 @@
     {
       "path": "apps/web/src/components/account-form.tsx",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete sign-in and registration form. Test-user and OTP modes are separated, code inputs enforce six digits, date-of-birth state is cleared after signup submission, legal acknowledgements are explicit, and errors/status changes are announced. Account-provided legal links open in a new tab with noreferrer. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "10a1372a9fc7498149d4e606132107bca3a58603ee0da10e95673cc728be6750"
+      "observations": "Reviewed the item 2.12 diff: optional sign-in TOTP is sent only when entered, limited to six digits, cleared after attempts, and not persisted.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "d10c1bfa57ad68be87646822289f88d12476807a1e34a28bd3934887ad9da310"
     },
     {
       "path": "apps/web/src/components/account-security.module.css",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete account security styles. The panel is bounded and centered, mobile padding adapts, and buttons retain 44px minimum height.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "2e0bcdccea8b3e31455e7acfe8963fece84d44738801f17591bf6d66fb0a0fe7"
+      "observations": "Reviewed the item 2.12 diff: setup key wraps on narrow layouts and is selectable for manual entry without adding external dependencies.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "6955c4df2cb91c3e99d8adef8016341e656aa089ba9093964d0b84ef42c4d7eb"
     },
     {
       "path": "apps/web/src/components/account-security.tsx",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -971,10 +971,10 @@
           "remediation": "Invalidate the active-session query after bulk revocation settles and report single-device revocation as busy to the page navigation guard."
         }
       ],
-      "observations": "Read the complete account security interface. Queries are owner-scoped and enabled only for authenticated users; mutations use CSRF; OTP email changes require separate verification for both addresses; sessions, marketing consent and recovery email are explicit. Fixed session list staleness after revoke-others and kept navigation guarded during individual session revocation. Package ESLint and full typecheck pass.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "5b5522ff7c9c34fcd5e62e24fedae99f198add78b6c1d491d682d1da0ab1bdd0"
+      "observations": "Reviewed the item 2.12 diff: loads owner-scoped enrollment status, shows the one-time key only during setup, confirms via CSRF-protected API, clears the key, and refreshes status.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "1b159d08f7c7648341dfe133c39ca6d8e82da200498d6510e5adeb732c9f6149"
     },
     {
       "path": "apps/web/src/components/authenticated-shell.tsx",
@@ -1338,14 +1338,14 @@
     {
       "path": "apps/web/src/lib/api-schemas.ts",
       "category": "frontend",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed response validation for resume role, group and version fields.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "b70601872ca1f347f8a1b4a141c8f59ed184d2d357683aa947ed09197f6115b5"
+      "observations": "Reviewed the item 2.12 diff: validates the TOTP status, setup, and confirmation responses at the API boundary.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "0f57bdfcdd7a8ca0c835105f22ecc18c0d6e974ff707bb13fbbe420965b81390"
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
@@ -1398,26 +1398,26 @@
     {
       "path": "apps/web/src/lib/locale.test.ts",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete localization tests. They verify the supported locale allowlist, translation presence and distinctness for navigation, notifications, security, sign-in, search, and error categories, plus interpolation values. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "ba73e4345193290fe609021a58372b7a02875da4264b972c0f233fd9e4d7db60"
+      "observations": "Reviewed the item 2.12 diff: asserts authenticator labels and error/status text have distinct translations for English, Telugu, and Hindi.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "48b16728932a0c2902c9cc76be83dc0b519d78a96be4ad1f0d3fd58c64a02940"
     },
     {
       "path": "apps/web/src/lib/locale.ts",
       "category": "frontend",
-      "reviewMethod": "content-and-structural-review",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
-      "evidence": "Locale implementation and representative message groups inspected on codex/stage01-item-101-audit; structural parity is enforced by the full typecheck. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "75e45067aee7990decb4433d3c5e5a4499274933e5b65a938e2fb8eaae91ffcc"
+      "observations": "Reviewed the item 2.12 diff: adds the authenticator enrollment and sign-in labels in English, Telugu, and Hindi.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "489af78c6361249efc852f1d1ce9ec5fae66c0d0aad9e473a18258fe4577bd24"
     },
     {
       "path": "apps/web/src/lib/next-proxy-headers.test.ts",
@@ -2074,7 +2074,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2086,10 +2086,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
+      "observations": "Reviewed the item 2.12 diff: records the former UI gap, implementation evidence, pending exact-head gates, and separate Stage 02 limitations without marking completion.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "eea3343e204477f0afa8e08e3b7fac4638c2503d004c7459efdf8c3c541536fc",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2278,14 +2278,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+      "observations": "Reviewed the item 2.12 diff: maps API, browser, and locale tests to the canonical owner item; existing rows are preserved.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "337ce6a65096318a0f83f3a1b44e560caaa161fb6543b6804cf419e8af0a6cb0",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2846,14 +2846,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+      "observations": "Reviewed the item 2.12 diff: adds source/test evidence and retains partial status pending exact-head CI, independent review, merge, and post-merge verification.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "f830dad8299383118179515baf300c1fef72e819a0dbc2a4f3493d99aa8e4f18",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2968,7 +2968,7 @@
     {
       "path": "docs/requirements/V12-RECONCILIATION.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2980,10 +2980,10 @@
           "remediation": "Item 1.02 records Hostinger, server backup and restore-only clauses as OUT_OF_SCOPE_OWNER under the owner-revised checklist, and the inventory checker enforces the non-blocking scope disposition."
         }
       ],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "e1cbcfc6915a04f151d2cd8ad7d00cff6daa157f306e1d70b3c18ab06fd5eefd",
+      "observations": "Reviewed the item 2.12 generated diff: reflects the updated v12 clause evidence while retaining PARTIAL pending hosted verification and the owner decision about super-admin.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "9edc1463a6846a85d77b9b370d076d469581b68c925a3d0c5b0fdd3936968cbf",
       "history": [
         {
           "reviewer": "Codex (Stage 01 item 1.02)",
@@ -2996,14 +2996,14 @@
     {
       "path": "docs/requirements/V12-REQUIREMENT-INVENTORY.json",
       "category": "documentation",
-      "reviewMethod": "content-read",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "9dadebe8adc2049084505928f8856a70e6f4ee4bbaaf71534c33735c482539c2",
+      "observations": "Reviewed the item 2.12 diff: records concrete API/UI/test paths and explicitly retains PARTIAL status for pending exact-head verification and absent super-admin role.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "75880cf07fe3e5c5e5df9184e39915627624ff1838f6bb53b247bf6b9b176ef9",
       "history": [
         {
           "reviewer": "Codex (Stage 03 item 3.12)",
@@ -7389,7 +7389,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "current exact-diff and durable outbox assertion review",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -7415,10 +7415,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
-      "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
-      "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd",
+      "observations": "Reviewed the item 2.12 diff: exercises missing-TOTP rejection, successful admin TOTP sign-in, setup-key display, confirmation, and status refresh with deterministic routes.",
+      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "fe96314899c5fee4adff55a6cfc5d634d526cc390fa4e8713a1428bc62bc0486",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
