@@ -3,6 +3,12 @@
 Records which test proves each stage item. Only tests that a CI script runs count. The traceability
 gate enforces this for the foundations register in [FOUNDATIONS](FOUNDATIONS.md).
 
+## Owner roadmap: Stage 06
+
+| Item | Implementation                                                                                                                                                              | Evidence and remaining gap                                                                                                                                                                                                                                                                      | Tests                                                                                                                                                         |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 6.09 | `packages/providers/src/trust-evidence.ts`, `packages/core/src/jobs.ts`, `apps/workers/search/src/collect.ts`, `apps/api/src/openapi.ts`, `apps/web/src/lib/api-schemas.ts` | Locally verified bounded source-linked facts, provider-reported claims, explicit missing values, public HTTPS references, deterministic deduplication, and legacy-safe parsing. No employer ownership, destination safety, or fraud verification. Exact-head CI and independent review pending. | `packages/providers/src/trust-evidence.test.ts`; `packages/core/src/leads.test.ts`; `apps/workers/search/src/collect.test.ts`; `apps/web/src/lib/api.test.ts` |
+
 ## Stage 01: repository foundations register
 
 The item numbers in this section are the repository's 13-item foundations register, not the

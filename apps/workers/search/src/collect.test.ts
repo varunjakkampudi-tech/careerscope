@@ -188,6 +188,21 @@ test('multi-source collection retains validated partial results and preserves ca
     { source: 'remoteok', url: raw.sourceUrl },
     { source: 'himalayas', url: 'https://himalayas.app/jobs/multi' },
   ]);
+  assert.deepEqual(
+    result
+      .find((job) => job.company === 'Example')
+      ?.trustEvidence.filter((entry) => entry.kind === 'source_listing')
+      .map((entry) => entry.source),
+    ['himalayas', 'remoteok'],
+  );
+  assert.equal(
+    result
+      .find((job) => job.company === 'Example')
+      ?.trustEvidence.some(
+        (entry) => entry.kind === 'application_destination' && entry.value === 'example.test',
+      ),
+    true,
+  );
   const failing = {
     ...himalayas,
     async *search() {

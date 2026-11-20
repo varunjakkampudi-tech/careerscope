@@ -5,6 +5,14 @@ includes owner-scoped profiles/preferences, encrypted resume metadata and
 processing state, provider jobs/provenance, saved jobs, searches, and explicit
 application lifecycle/history records.
 
+The `search_jobs.data` and `saved_leads.data` JSON values may contain
+`trustEvidence`, a bounded list of source-linked factual observations and
+provider-reported claims. Legacy records without the field are read as an empty
+list. Missing provider fields are represented explicitly; provider claims are
+not independently verified. This data does not establish employer ownership,
+application-destination safety, or fraud, and does not produce a trust score or
+verdict. No database migration is required.
+
 Candidate application records are stored in `saved_leads`. The optional
 `application_evidence` JSON value records a candidate's own method, reported
 timestamp, confirmation, source and confidence; it is not an employer/ATS

@@ -12,6 +12,7 @@ import type {
   MatchBreakdown,
   Preferences,
   Salary,
+  JobTrustEvidence,
 } from './schemas.js';
 
 /* -------------------------------------------------------------------------- */
@@ -219,6 +220,8 @@ export type CollectedJob = {
   source: SearchSourceName;
   sourceUrl: string;
   sourceLinks?: { source: SearchSourceName; url: string }[] | undefined;
+  /** Factual trust evidence with provenance; never a fraud verdict. */
+  trustEvidence: JobTrustEvidence[];
   applyUrl: string;
   postedAt: string | null;
   match: MatchBreakdown | null;

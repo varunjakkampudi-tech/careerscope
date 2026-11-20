@@ -353,6 +353,65 @@ export const salarySchema = z.object({
 });
 export type Salary = z.infer<typeof salarySchema>;
 
+/**
+ * Factual, source-linked job-trust evidence. These records describe what a
+ * provider returned or what CareerScope observed; they are not a fraud verdict.
+ */
+export const jobTrustEvidenceSchema = z
+  .object({
+    kind: z.enum([
+      'source_listing',
+      'publisher_attribution',
+      'employer_website_claim',
+      'careers_website_claim',
+      'application_destination',
+      'posted_date_claim',
+      'description_availability',
+    ]),
+    status: z.enum(['observed', 'provider_reported', 'not_provided']),
+    source: z.enum(ALL_SOURCES),
+    /** URL to the listing or destination that supports this record. */
+    referenceUrl: z.string().url().max(4096),
+    /** A bounded fact value, never an inferred trust score. */
+    value: z.string().max(4096).nullable(),
+  })
+  .strict()
+  .superRefine((entry, context) => {
+    const invalid = (message: string) =>
+      context.addIssue({ code: 'custom', path: ['status'], message });
+    if (entry.kind === 'source_listing' && (entry.status !== 'observed' || entry.value !== null)) {
+      invalid('A source listing is an observed reference without a claim value');
+    }
+    if (
+      [
+        'publisher_attribution',
+        'employer_website_claim',
+        'careers_website_claim',
+        'posted_date_claim',
+      ].includes(entry.kind) &&
+      ((entry.status === 'provider_reported' && entry.value === null) ||
+        (entry.status === 'not_provided' && entry.value !== null) ||
+        entry.status === 'observed')
+    ) {
+      invalid('Provider claims must distinguish reported values from missing values');
+    }
+    if (
+      entry.kind === 'application_destination' &&
+      (entry.status !== 'observed' || entry.value === null)
+    ) {
+      invalid('An application destination must identify an observed host');
+    }
+    if (
+      entry.kind === 'description_availability' &&
+      (entry.status !== 'observed' ||
+        entry.value === null ||
+        !['full', 'partial', 'missing'].includes(entry.value))
+    ) {
+      invalid('Description availability must state what was observed');
+    }
+  });
+export type JobTrustEvidence = z.infer<typeof jobTrustEvidenceSchema>;
+
 /** A normalised posting produced by `@careerscope/providers` and scored by `matching`. */
 export const jobSchema = z.object({
   id: z.string(),

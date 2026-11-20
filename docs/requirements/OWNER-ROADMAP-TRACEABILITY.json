@@ -1485,11 +1485,26 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Job-trust evidence",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/trust-evidence.ts",
+        "packages/core/src/jobs.ts",
+        "apps/workers/search/src/collect.ts",
+        "apps/api/src/openapi.ts",
+        "apps/web/src/lib/api-schemas.ts",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md",
+        "docs/DATA-MODEL.md"
+      ],
+      "tests": [
+        "packages/providers/src/trust-evidence.test.ts",
+        "packages/core/src/leads.test.ts",
+        "apps/workers/search/src/collect.test.ts",
+        "apps/web/src/lib/api.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Records bounded source-linked factual observations and provider-reported claims with explicit missing values; it does not verify employer/source ownership, application destination safety, or fraud and produces no score or verdict. Stage 06.08 indicators are not integrated on this branch, UI presentation is tracked under 6.13, and exact-head CI and independent review remain pending.",
       "scopeDisposition": "in-scope"
     },
     {

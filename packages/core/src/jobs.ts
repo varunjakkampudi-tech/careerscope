@@ -5,7 +5,7 @@
 
 import { z } from 'zod';
 import { searchSourceSchema } from './commands.js';
-import { matchBreakdownSchema } from '@careerscope/shared';
+import { jobTrustEvidenceSchema, matchBreakdownSchema } from '@careerscope/shared';
 
 // Accepts null/undefined as "not scored"; anything else must be a valid, strict match breakdown.
 const match = z
@@ -52,6 +52,17 @@ export const collectedJobSchema = z
       .array(z.object({ source: searchSourceSchema, url: publicLink }).strict())
       .max(500)
       .optional(),
+    trustEvidence: z
+      .array(jobTrustEvidenceSchema)
+      .max(32)
+      .refine((items) =>
+        items.every(
+          (item) =>
+            searchSourceSchema.safeParse(item.source).success &&
+            publicLink.safeParse(item.referenceUrl).success,
+        ),
+      )
+      .default([]),
     applyUrl: publicLink,
     postedAt: z.string().datetime().nullable(),
     match,

@@ -29,6 +29,7 @@ import {
   HttpClient,
   jobFingerprint,
   normalizeJob,
+  buildJobTrustEvidence,
   type JobProvider,
 } from '@careerscope/providers';
 import { buildCandidateContext, scoreJob } from '@careerscope/matching';
@@ -72,7 +73,7 @@ export async function collect(
   const combined = AbortSignal.any([signal, AbortSignal.timeout(60_000)]);
   const jobs: CollectedJob[] = [];
   const normalizedJobs: ReturnType<typeof normalizeJob>[] = [];
-  const sourceLinks = new Map<string, Map<string, { source: string; url: string }>>();
+  const sourceLinks = new Map<string, Map<string, { source: SourceId; url: string }>>();
   const now = options.now ?? Date.now();
   const profile = options.profile;
   const titles = request.useProfileTitles
@@ -251,6 +252,9 @@ export async function collect(
         source: normalized.source,
         sourceUrl: normalized.sourceUrl,
         sourceLinks: [...(sourceLinks.get(linkBucketKey)?.values() ?? [])],
+        trustEvidence: buildJobTrustEvidence(normalized, [
+          ...(sourceLinks.get(linkBucketKey)?.values() ?? []),
+        ]),
         applyUrl: normalized.applyUrl,
         postedAt: normalized.postedAt,
         match,
