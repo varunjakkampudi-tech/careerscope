@@ -1888,10 +1888,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.\nItem 6.10 evidence review: existing candidate issue-report UI and owner-scoped API behavior documented as partial; exact-head hosted CI and independent item acceptance remain pending.",
+      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.\nNode 24 isolated PostgreSQL/Redis run passed apps/api/src/job-feedback.integration.test.ts on dev base fad57ea3253024983f29183acefaee59328d0d01.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+      "sha256": "271c7049591c5c1382839124b3ec57f04d8d3b2e75b7fdabe0907037775a9ad7",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2086,10 +2086,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nItem 6.10 evidence review: existing candidate issue-report UI and owner-scoped API behavior documented as partial; exact-head hosted CI and independent item acceptance remain pending.",
+      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.\nNode 24 isolated PostgreSQL/Redis run passed apps/api/src/job-feedback.integration.test.ts on dev base fad57ea3253024983f29183acefaee59328d0d01.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
+      "sha256": "dd8fab3a244b4c5d37f2d98f8a6ec0a6554fd07ea8c880b220159babb23725ef",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2282,10 +2282,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nItem 6.10 evidence review: existing candidate issue-report UI and owner-scoped API behavior documented as partial; exact-head hosted CI and independent item acceptance remain pending.",
+      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.\nNode 24 isolated PostgreSQL/Redis run passed apps/api/src/job-feedback.integration.test.ts on dev base fad57ea3253024983f29183acefaee59328d0d01.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+      "sha256": "dac72a988be3ae502165b4bf982ebfabe5aa72df3d4479d727ec861911487164",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2850,10 +2850,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nItem 6.10 evidence review: existing candidate issue-report UI and owner-scoped API behavior documented as partial; exact-head hosted CI and independent item acceptance remain pending.",
+      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.\nNode 24 isolated PostgreSQL/Redis run passed apps/api/src/job-feedback.integration.test.ts on dev base fad57ea3253024983f29183acefaee59328d0d01.",
       "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+      "sha256": "27e4a68cb7a2116570ea8c0d1638e7185685d2728b2f9c2710286b177d1d7b19",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
