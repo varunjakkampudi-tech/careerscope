@@ -137,6 +137,17 @@ const messages = {
     clearSearchFilter: 'Clear filter',
     sourceUnavailable: 'This source is not currently available.',
     jobDescriptionUnavailable: 'Description not available.',
+    scamIndicatorsHeading: 'Potential recruitment-scam signals',
+    scamIndicatorsDisclaimer:
+      'These automated text signals are clues to review, not proof of fraud. Verify the employer and role independently before sending money or sensitive information.',
+    scamIndicatorUpfrontPayment:
+      'The description appears to ask applicants to pay a fee or deposit to apply, get hired, or receive training or equipment.',
+    scamIndicatorFakeCheck:
+      'The description appears to ask applicants to deposit a check and send money back or forward funds.',
+    scamIndicatorPersonalAccount:
+      'The description appears to ask applicants to move company or client funds through a personal bank account.',
+    scamIndicatorPaidReviews:
+      'The description appears to offer money for posting positive reviews or ratings.',
     reportPostingIssue: 'Report a posting issue',
     chooseFeedbackReason: 'Choose a reason',
     feedbackIrrelevant: 'Not relevant to me',
@@ -397,6 +408,17 @@ const messages = {
     clearSearchFilter: 'ఫిల్టర్ తొలగించండి',
     sourceUnavailable: 'ఈ మూలం ప్రస్తుతం అందుబాటులో లేదు.',
     jobDescriptionUnavailable: 'వివరణ అందుబాటులో లేదు.',
+    scamIndicatorsHeading: 'ఉద్యోగ మోసానికి సంబంధించిన సూచనలు ఉండవచ్చు',
+    scamIndicatorsDisclaimer:
+      'ఈ ఆటోమేటిక్ టెక్స్ట్ సూచనలు పరిశీలించాల్సిన సంకేతాలు మాత్రమే; మోసానికి రుజువు కావు. డబ్బు లేదా సున్నితమైన సమాచారాన్ని పంపే ముందు యజమాని మరియు ఉద్యోగాన్ని స్వతంత్రంగా నిర్ధారించండి.',
+    scamIndicatorUpfrontPayment:
+      'దరఖాస్తు చేయడానికి, ఉద్యోగం పొందడానికి లేదా శిక్షణ లేదా పరికరాల కోసం అభ్యర్థులు ఫీజు లేదా డిపాజిట్ చెల్లించాలని వివరణ కోరుతున్నట్లు ఉంది.',
+    scamIndicatorFakeCheck:
+      'చెక్ జమ చేసి, డబ్బులో కొంత తిరిగి పంపాలని లేదా మరొకరికి బదిలీ చేయాలని వివరణ కోరుతున్నట్లు ఉంది.',
+    scamIndicatorPersonalAccount:
+      'కంపెనీ లేదా క్లయింట్ డబ్బును వ్యక్తిగత బ్యాంక్ ఖాతా ద్వారా బదిలీ చేయాలని వివరణ కోరుతున్నట్లు ఉంది.',
+    scamIndicatorPaidReviews:
+      'అనుకూల సమీక్షలు లేదా రేటింగ్‌లు పోస్ట్ చేయడానికి డబ్బు ఇస్తామని వివరణ చెబుతున్నట్లు ఉంది.',
     reportPostingIssue: 'ఉద్యోగ ప్రకటన సమస్యను నివేదించండి',
     chooseFeedbackReason: 'కారణాన్ని ఎంచుకోండి',
     feedbackIrrelevant: 'నాకు సంబంధం లేదు',
@@ -665,6 +687,17 @@ const messages = {
     clearSearchFilter: 'फ़िल्टर हटाएँ',
     sourceUnavailable: 'यह स्रोत अभी उपलब्ध नहीं है।',
     jobDescriptionUnavailable: 'विवरण उपलब्ध नहीं है।',
+    scamIndicatorsHeading: 'नौकरी भर्ती धोखाधड़ी के संभावित संकेत',
+    scamIndicatorsDisclaimer:
+      'ये स्वचालित पाठ संकेत जाँच के लिए सुराग हैं, धोखाधड़ी का प्रमाण नहीं। पैसे या संवेदनशील जानकारी भेजने से पहले नियोक्ता और नौकरी की स्वतंत्र रूप से पुष्टि करें।',
+    scamIndicatorUpfrontPayment:
+      'विवरण में आवेदन करने, नौकरी पाने, प्रशिक्षण या उपकरण के लिए उम्मीदवारों से शुल्क या जमा राशि माँगी गई प्रतीत होती है।',
+    scamIndicatorFakeCheck:
+      'विवरण में उम्मीदवारों से चेक जमा करके पैसे वापस भेजने या आगे भेजने को कहा गया प्रतीत होता है।',
+    scamIndicatorPersonalAccount:
+      'विवरण में कंपनी या ग्राहक के पैसे को निजी बैंक खाते से भेजने को कहा गया प्रतीत होता है।',
+    scamIndicatorPaidReviews:
+      'विवरण में सकारात्मक समीक्षाएँ या रेटिंग पोस्ट करने के लिए पैसे देने की पेशकश प्रतीत होती है।',
     reportPostingIssue: 'नौकरी पोस्ट की समस्या बताएँ',
     chooseFeedbackReason: 'कारण चुनें',
     feedbackIrrelevant: 'मेरे लिए प्रासंगिक नहीं',

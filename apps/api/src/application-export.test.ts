@@ -12,6 +12,7 @@ test('application CSV exports candidate claims and escapes spreadsheet formulas'
       company: 'Acme, "Research"',
       location: 'Bengaluru\nIndia',
       description: 'Private source description is not exported',
+      scamIndicators: [],
       source: 'greenhouse',
       sourceUrl: 'https://jobs.example.test/role',
       applyUrl: 'https://jobs.example.test/apply',

@@ -18,6 +18,7 @@ import {
   derivedResumeSchema,
   jobFeedbackReasonSchema,
   matchBreakdownSchema,
+  RECRUITMENT_SCAM_INDICATORS,
 } from '@careerscope/shared';
 
 /** Message for a response that parsed as JSON but not as the expected shape. Fixed, so no server content reaches the screen. */
@@ -315,6 +316,7 @@ const collectedJobSchema = z.object({
   company: z.string(),
   location: z.string(),
   description: z.string(),
+  scamIndicators: z.array(z.enum(RECRUITMENT_SCAM_INDICATORS)).default([]),
   source: searchSourceSchema,
   sourceUrl: z.string(),
   sourceLinks: z.array(z.object({ source: searchSourceSchema, url: z.string() })).optional(),

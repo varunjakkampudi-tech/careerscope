@@ -5,7 +5,7 @@
 
 import { z } from 'zod';
 import { searchSourceSchema } from './commands.js';
-import { matchBreakdownSchema } from '@careerscope/shared';
+import { matchBreakdownSchema, RECRUITMENT_SCAM_INDICATORS } from '@careerscope/shared';
 
 // Accepts null/undefined as "not scored"; anything else must be a valid, strict match breakdown.
 const match = z
@@ -46,6 +46,8 @@ export const collectedJobSchema = z
     company: z.string().min(1).max(500),
     location: z.string().max(500),
     description: z.string().max(100_000),
+    /** Explainable description signals; defaults preserve reads of older JSONB records. */
+    scamIndicators: z.array(z.enum(RECRUITMENT_SCAM_INDICATORS)).max(4).default([]),
     source: searchSourceSchema,
     sourceUrl: publicLink,
     sourceLinks: z

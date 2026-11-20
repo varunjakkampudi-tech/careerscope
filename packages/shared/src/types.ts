@@ -4,7 +4,12 @@
  * helpers used by both the API and the web client.
  */
 
-import type { EmploymentType, SeniorityLabel, SourceId } from './constants.js';
+import type {
+  EmploymentType,
+  RecruitmentScamIndicator,
+  SeniorityLabel,
+  SourceId,
+} from './constants.js';
 import type {
   ApplicationDetails,
   Candidate,
@@ -216,6 +221,7 @@ export type CollectedJob = {
   company: string;
   location: string;
   description: string;
+  scamIndicators: RecruitmentScamIndicator[];
   source: SearchSourceName;
   sourceUrl: string;
   sourceLinks?: { source: SearchSourceName; url: string }[] | undefined;

@@ -733,6 +733,29 @@ h3 {
   border-top: 1px solid var(--border);
   padding: 18px 22px;
 }
+.job-scam-warning {
+  margin: 16px 0;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-inline-start: 4px solid var(--accent);
+  border-radius: 8px;
+  background: var(--surface-subtle, rgba(99, 102, 241, 0.08));
+  overflow-wrap: anywhere;
+}
+.job-scam-warning h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+.job-scam-warning ul {
+  margin: 0;
+  padding-inline-start: 20px;
+}
+.job-scam-warning p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
 .job-links {
   display: flex;
   gap: 22px;

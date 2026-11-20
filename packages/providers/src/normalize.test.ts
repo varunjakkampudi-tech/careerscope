@@ -43,6 +43,25 @@ const FULL_JD = [
 ].join('\n');
 
 describe('normalizeJob', () => {
+  it('derives explicit, explainable recruitment-scam signals from description text', () => {
+    const flagged = normalizeJob(
+      rawJob({ description: 'Pay a registration fee before you can get hired.' }),
+      { now: NOW },
+    );
+    const ordinary = normalizeJob(
+      rawJob({ description: 'Employees receive salary payments by direct deposit.' }),
+      { now: NOW },
+    );
+    const titleOnly = normalizeJob(
+      rawJob({ title: 'Pay a fee to apply — Remote Assistant', description: '' }),
+      { now: NOW },
+    );
+
+    expect(flagged.scamIndicators).toEqual(['candidate_upfront_payment']);
+    expect(ordinary.scamIndicators).toEqual([]);
+    expect(titleOnly.scamIndicators).toEqual(['candidate_upfront_payment']);
+  });
+
   it('produces a complete job from a full ATS payload', () => {
     const job = normalizeJob(
       rawJob({

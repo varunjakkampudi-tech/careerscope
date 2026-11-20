@@ -46,6 +46,9 @@ export {
   type NormalizeOptions,
 } from './normalize.js';
 
+/* Explicit, offline recruitment-scam text signals. */
+export { detectRecruitmentScamIndicators } from './scam-indicators.js';
+
 /* HTTP, shared by every provider. */
 export {
   HttpClient,
