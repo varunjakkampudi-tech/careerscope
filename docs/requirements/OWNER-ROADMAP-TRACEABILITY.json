@@ -1381,11 +1381,18 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "First-seen/last-seen timestamps",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/core/src/schema.ts",
+        "packages/core/src/database.ts",
+        "packages/core/src/market.ts",
+        "migrations/0000_initial_schema.sql",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md"
+      ],
+      "tests": ["tests/integration/database.integration.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Owner item 6.01 (First-seen/last-seen timestamps) remains partial. The owner-scoped job_sightings record initializes first_seen_at once and advances last_seen_at monotonically, preventing delayed observations from moving it backward. The disposable-PostgreSQL regression exercises initial, repeat, and deliberately out-of-order writes through completeCollection. PR #107 exact head 67e6af237fb6975ea4759a6b1856d5039fd61c23 passed all three required CI jobs in run 44650007202, and independent exact-SHA review approved the code, regression, Chromium test-harness adjustment, and audit provenance. The review confirmed all nine displaced base audit snapshots are preserved. PR #107 remains open and unmerged; item 6.01 stays partial pending merge and post-merge verification.",
       "scopeDisposition": "in-scope"
     },
     {

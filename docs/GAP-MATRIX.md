@@ -66,3 +66,5 @@ Each row names the repository behavior, evidence, and remaining gap. Status valu
   not replace counsel approval of the effective legal text and public HTTPS URLs (see
   [AUTHENTICATION](AUTHENTICATION.md)). Owner checklist item 2.05 remains gated until that evidence
   is documented. Deployment is outside the current roadmap scope.
+
+Owner item 6.01 (First-seen/last-seen timestamps) remains partial. The owner-scoped job_sightings record initializes first_seen_at once and advances last_seen_at monotonically, preventing delayed observations from moving it backward. The disposable-PostgreSQL regression exercises initial, repeat, and deliberately out-of-order writes through completeCollection. PR #107 exact head `67e6af237fb6975ea4759a6b1856d5039fd61c23` passed all three required CI jobs in run `44650007202`, and independent exact-SHA review approved the code, regression, Chromium test-harness adjustment, and audit provenance. The review confirmed all nine displaced base audit snapshots are preserved. PR #107 remains open and unmerged; item 6.01 stays partial pending merge and post-merge verification.

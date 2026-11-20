@@ -6,6 +6,7 @@ import {
   browserWarningCategory,
   sameOriginBrowserPath,
   staleEarlierRouteRead,
+  staleOrphanedChromiumLeadUpdate,
   staleSavedRead,
   staleSearchRead,
 } from './ui-requests.js';
@@ -71,6 +72,116 @@ test('settlement drops only fetch and script reads belonging to an earlier route
     assert.equal(staleEarlierRouteRead('GET', 'fetch', 1, 2, engine), false, engine);
     assert.equal(staleEarlierRouteRead('GET', 'script', 1, 2, engine), false, engine);
   }
+});
+
+test('settlement drops only an unobserved orphaned Chromium lead update from an earlier route', () => {
+  const orphan = {
+    method: 'PUT',
+    pathname: '/api/leads/synthetic-lead-id',
+    startedEpoch: 4,
+    currentEpoch: 5,
+    engine: 'chromium',
+    hasCdpObservation: false,
+    responseEnd: -1,
+    hasFailure: false,
+  } as const;
+  assert.equal(
+    staleOrphanedChromiumLeadUpdate(
+      orphan.method,
+      orphan.pathname,
+      orphan.startedEpoch,
+      orphan.currentEpoch,
+      orphan.engine,
+      orphan.hasCdpObservation,
+      orphan.responseEnd,
+      orphan.hasFailure,
+    ),
+    true,
+  );
+  assert.equal(
+    staleOrphanedChromiumLeadUpdate(
+      orphan.method,
+      orphan.pathname,
+      orphan.currentEpoch,
+      orphan.currentEpoch,
+      orphan.engine,
+      orphan.hasCdpObservation,
+      orphan.responseEnd,
+      orphan.hasFailure,
+    ),
+    false,
+    'a current-route write stays in the settlement barrier',
+  );
+  assert.equal(
+    staleOrphanedChromiumLeadUpdate(
+      orphan.method,
+      orphan.pathname,
+      orphan.startedEpoch,
+      orphan.currentEpoch,
+      orphan.engine,
+      true,
+      orphan.responseEnd,
+      orphan.hasFailure,
+    ),
+    false,
+    'a write observed by Chromium stays in the settlement barrier',
+  );
+  assert.equal(
+    staleOrphanedChromiumLeadUpdate(
+      orphan.method,
+      orphan.pathname,
+      orphan.startedEpoch,
+      orphan.currentEpoch,
+      orphan.engine,
+      orphan.hasCdpObservation,
+      12,
+      orphan.hasFailure,
+    ),
+    false,
+    'a write with a response stays in the settlement barrier',
+  );
+  assert.equal(
+    staleOrphanedChromiumLeadUpdate(
+      orphan.method,
+      orphan.pathname,
+      orphan.startedEpoch,
+      orphan.currentEpoch,
+      orphan.engine,
+      orphan.hasCdpObservation,
+      orphan.responseEnd,
+      true,
+    ),
+    false,
+    'a failed request remains observable',
+  );
+  assert.equal(
+    staleOrphanedChromiumLeadUpdate(
+      orphan.method,
+      '/api/profile',
+      orphan.startedEpoch,
+      orphan.currentEpoch,
+      orphan.engine,
+      orphan.hasCdpObservation,
+      orphan.responseEnd,
+      orphan.hasFailure,
+    ),
+    false,
+    'unrelated endpoint writes stay in the settlement barrier',
+  );
+  assert.equal(
+    staleOrphanedChromiumLeadUpdate(
+      orphan.method,
+      orphan.pathname,
+      orphan.startedEpoch,
+      orphan.currentEpoch,
+      'firefox',
+      orphan.hasCdpObservation,
+      orphan.responseEnd,
+      orphan.hasFailure,
+    ),
+    false,
+    'the allowance is Chromium-specific',
+  );
 });
 
 test('the image allowance needs the optimiser pathname, so a caller that drops it fails', () => {

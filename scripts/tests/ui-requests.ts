@@ -69,6 +69,33 @@ export function staleEarlierRouteRead(
   );
 }
 
+/**
+ * Chromium can retain a Playwright request object after its document is replaced
+ * even though the request never entered the browser network stack. Ignore only
+ * an earlier-route lead update with no CDP event, response, or failure; real
+ * network activity and writes on the current route remain subject to settlement.
+ */
+export function staleOrphanedChromiumLeadUpdate(
+  method: string,
+  pathname: string,
+  startedEpoch: number,
+  currentEpoch: number,
+  engine: string,
+  hasCdpObservation: boolean,
+  responseEnd: number,
+  hasFailure: boolean,
+): boolean {
+  return (
+    engine === 'chromium' &&
+    method === 'PUT' &&
+    /^\/api\/leads\/[^/]+$/.test(pathname) &&
+    startedEpoch !== currentEpoch &&
+    !hasCdpObservation &&
+    responseEnd === -1 &&
+    !hasFailure
+  );
+}
+
 /** Return a same-origin pathname only; never retain query strings or foreign URLs. */
 export function sameOriginBrowserPath(value: string, origin: string): string | null {
   try {

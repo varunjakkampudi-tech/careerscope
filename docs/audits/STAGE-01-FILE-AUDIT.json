@@ -1888,10 +1888,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+      "observations": "Corrected stale item 6.01 verification wording to match the independently reviewed exact PR head and completed CI run. Status remains partial pending merge and post-merge verification.",
+      "evidence": "PR #107 exact head 67e6af237fb6975ea4759a6b1856d5039fd61c23 passed run 44650007202 and received independent exact-SHA approval; no merge or checklist promotion is claimed.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence correction)",
+      "sha256": "b0c2627bd733dd12f95b647d34d85c448226301f424cdbb917302a48699babd1",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2012,6 +2012,36 @@
           "sha256": "da3b553a8b588deb6952f61cd3f2440c5810c59a294fbda85f29215eb4539433",
           "observations": "Reviewed Stage 05 items 5.08 and 5.09 evidence and gaps; both remain partial and no external source acceptance is claimed.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+          "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+          "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d"
+        },
+        {
+          "observations": "Reviewed Stage 06 item 6.01 first/last-seen source persistence, the real collection regression assertion and Stage 06 traceability updates.",
+          "evidence": "Node 24 focused PostgreSQL integration test passed 1/1 through repeat completeCollection calls. Traceability, formatting, and file-audit checks pass; exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+          "sha256": "9f8fe60ec0d80ae8166ee2a458947e6b50e88040ec8862941cc66cc4326c2d72"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence closeout)",
+          "sha256": "931891d1052e963f6715d54f0f0da96b55fe094d75362fa2105a5ce5e5ccab80",
+          "observations": "Reconciled Stage 06 item 6.01 evidence after exact-head CI and independent review; the item remains partial pending merge and post-merge verification.",
+          "evidence": "PR #107 exact head e8a74da99917360e6d8897b6dadb35a6f33f1ff1 passed all three required jobs in run 44528068955 and received independent exact-SHA engineering approval. Reviewer noted fingerprint-based CDP correlation as a harness limitation. PR remains open; item status remains partial."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 timestamp correction)",
+          "sha256": "86d5e5c511a2ca8972b9330ece3f2b705d4ebe7ffeea1370523d6adf858a0216",
+          "observations": "Updated Stage 06 item 6.01 evidence for the monotonic last-seen correction. Historical first-seen evidence is preserved; the latest-seen value is defined as the greatest saved transaction timestamp. Item remains partial pending fresh exact-head CI/review, merge and post-merge verification.",
+          "evidence": "Earlier head eede25f09b423046ec784a36a921f766b64bb8f8 passed run 44531475777; current code commit 770855143ef61d0fa8e3d4e67dd3d023aaf40aa0 passed the focused disposable-PostgreSQL regression 1/1. Run 44558533869 failed Quality on stale hashes for the changed database and integration-test files; this record refreshes the affected audit entries. Fresh exact-head CI and review remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
+          "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
+          "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
+          "sha256": "b23b6510591a1fd9a3080818c26b08b175345e459a385951a7b0c033df0345bf"
         }
       ]
     },
@@ -2086,10 +2116,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
+      "observations": "Corrected stale item 6.01 verification wording to match the independently reviewed exact PR head and completed CI run. Status remains partial pending merge and post-merge verification.",
+      "evidence": "PR #107 exact head 67e6af237fb6975ea4759a6b1856d5039fd61c23 passed run 44650007202 and received independent exact-SHA approval; no merge or checklist promotion is claimed.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence correction)",
+      "sha256": "338ad578592e7287decec2defcc682f65d3d1e4b78c5ed8c333856d9a44e3bbe",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2228,6 +2258,36 @@
           "sha256": "9dcdfecb8ac4591ecf0fc959813bbd5bb6f74411ddd3c2c0374fc03bd52208b4",
           "observations": "Reviewed Stage 05 item 5.08 and 5.09 status, focused test/build evidence, and remaining adapter-mapping and false-merge limitations.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+          "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+          "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd"
+        },
+        {
+          "observations": "Reviewed Stage 06 item 6.01 first/last-seen source persistence, the real collection regression assertion and Stage 06 traceability updates.",
+          "evidence": "Node 24 focused PostgreSQL integration test passed 1/1 through repeat completeCollection calls. Traceability, formatting, and file-audit checks pass; exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+          "sha256": "fa5f12f370ec37ab3c41e4632643601f29385b32de7200019004d3ac8756c658"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence closeout)",
+          "sha256": "90fc46e2a136e8da09f56c270621a9a97e00367b9b8cab349dfa32783bd1aac8",
+          "observations": "Reconciled Stage 06 item 6.01 evidence after exact-head CI and independent review; the item remains partial pending merge and post-merge verification.",
+          "evidence": "PR #107 exact head e8a74da99917360e6d8897b6dadb35a6f33f1ff1 passed all three required jobs in run 44528068955 and received independent exact-SHA engineering approval. Reviewer noted fingerprint-based CDP correlation as a harness limitation. PR remains open; item status remains partial."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 timestamp correction)",
+          "sha256": "659d4f0103a231be08ace3b8d332bbc289a2c346b68de7c1e4916120d676d599",
+          "observations": "Updated Stage 06 item 6.01 progress with current timestamp monotonicity evidence and the exact stale-hash CI failure. Item remains partial pending fresh exact-head CI/review, merge and post-merge verification.",
+          "evidence": "Earlier head eede25f09b423046ec784a36a921f766b64bb8f8 passed run 44531475777. Current code commit 770855143ef61d0fa8e3d4e67dd3d023aaf40aa0 passed the focused disposable-PostgreSQL regression 1/1; run 44558533869 identified stale audit hashes for its changed source/test files. This closeout updates the hashes; fresh exact-head CI and review remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
+          "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
+          "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
+          "sha256": "c6244e4be1b4ed0a91bb135bb6c529c1e96f728f6ba8f60215bed7f68d8797cc"
         }
       ]
     },
@@ -2282,10 +2342,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+      "observations": "Corrected stale item 6.01 verification wording to match the independently reviewed exact PR head and completed CI run. Status remains partial pending merge and post-merge verification.",
+      "evidence": "PR #107 exact head 67e6af237fb6975ea4759a6b1856d5039fd61c23 passed run 44650007202 and received independent exact-SHA approval; no merge or checklist promotion is claimed.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence correction)",
+      "sha256": "87921d6220eed40bd4e3cce4e295698ec5946e160a543e011a14f4336afa9ba2",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2412,6 +2472,42 @@
           "sha256": "d08de3ad68f62e21c10744dc048c1e91a6c2f831382d1e8efe31b8ee32ab3b4d",
           "observations": "Reviewed item-specific Stage 05 normalization and deduplication test evidence and exact-head gates.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+          "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+          "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4"
+        },
+        {
+          "observations": "Reviewed Stage 06 item 6.01 first/last-seen source persistence, the real collection regression assertion and Stage 06 traceability updates.",
+          "evidence": "Node 24 focused PostgreSQL integration test passed 1/1 through repeat completeCollection calls. Traceability, formatting, and file-audit checks pass; exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+          "sha256": "c4eb18bbfb28982a085f2473815eea2704470a9272c9a513571ce465c0b34902"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence closeout)",
+          "sha256": "a0f3162e9d55d1dd64109a576801e4325b6fcc198ade6a1ae32c361c366cb58b",
+          "observations": "Reconciled Stage 06 item 6.01 evidence after exact-head CI and independent review; the item remains partial pending merge and post-merge verification.",
+          "evidence": "PR #107 exact head e8a74da99917360e6d8897b6dadb35a6f33f1ff1 passed all three required jobs in run 44528068955 and received independent exact-SHA engineering approval. Reviewer noted fingerprint-based CDP correlation as a harness limitation. PR remains open; item status remains partial."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 timestamp correction)",
+          "sha256": "f3fa0e09014f2a951b495611ea582c8bcb29a3fb7e3f7ae2993cc321980d0739",
+          "observations": "Updated Stage 06 item 6.01 validation and remaining gates after extending the timestamp regression to cover out-of-order writes. Item remains partial pending fresh exact-head CI/review, merge and post-merge verification.",
+          "evidence": "The focused disposable-PostgreSQL timestamp regression passed 1/1 after rebuilding core. Earlier PR head eede25f09b423046ec784a36a921f766b64bb8f8 passed run 44531475777; current code commit 770855143ef61d0fa8e3d4e67dd3d023aaf40aa0 had a stale-file-audit-hash failure in run 44558533869. This record reflects the corrected candidate and keeps its new exact-head checks pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
+          "sha256": "f41929b641dbd576c1418e96731c2273192b2453ea44f12b88a5b554365657cb",
+          "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
+          "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
+          "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
+          "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
+          "sha256": "dc24295a0442ad3271e63b9ebe8456548fd46a0a4054fbdf78bc38619030e0c7"
         }
       ]
     },
@@ -2850,10 +2946,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+      "observations": "Corrected stale item 6.01 verification wording to match the independently reviewed exact PR head and completed CI run. Status remains partial pending merge and post-merge verification.",
+      "evidence": "PR #107 exact head 67e6af237fb6975ea4759a6b1856d5039fd61c23 passed run 44650007202 and received independent exact-SHA approval; no merge or checklist promotion is claimed.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence correction)",
+      "sha256": "7e0e5ca19695efe6ba66a96e78771f026e55a387ae8c0f8724f6dd6f4c69ba47",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2962,6 +3058,36 @@
           "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
           "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90"
+        },
+        {
+          "observations": "Reviewed Stage 06 item 6.01 first/last-seen source persistence, the real collection regression assertion and Stage 06 traceability updates.",
+          "evidence": "Node 24 focused PostgreSQL integration test passed 1/1 through repeat completeCollection calls. Traceability, formatting, and file-audit checks pass; exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+          "sha256": "8b08eec8a627aad5d841b4c7f0acc755eca191ea23f2c21942261a627f08d569"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence closeout)",
+          "sha256": "1948d87bfa6388a6353a05712fbadfd259c64e66b07c398d19d3a8d44025267e",
+          "observations": "Reconciled Stage 06 item 6.01 evidence after exact-head CI and independent review; the item remains partial pending merge and post-merge verification.",
+          "evidence": "PR #107 exact head e8a74da99917360e6d8897b6dadb35a6f33f1ff1 passed all three required jobs in run 44528068955 and received independent exact-SHA engineering approval. Reviewer noted fingerprint-based CDP correlation as a harness limitation. PR remains open; item status remains partial."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 timestamp correction)",
+          "sha256": "6aaa040934650e1febd532c35b540bc5a0671dfae98fa49e3e659f86d818c121",
+          "observations": "Updated the canonical item 6.01 record to state the monotonic timestamp rule, out-of-order regression evidence, and remaining exact-head gates; completion status remains partial.",
+          "evidence": "Schema, API projection and migration already exist on dev. The disposable-PostgreSQL integration test passed 1/1 after rebuilding core. Run 44558533869 exposed stale hashes for changed source/test records; the candidate refreshes those hashes. Fresh exact-head CI/review and merge/post-merge verification remain open."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
+          "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
+          "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
+          "sha256": "c0979317443e2e00157a313211541995b829747dc934ac7c57ca6fdde6490abb"
         }
       ]
     },
@@ -4272,10 +4398,24 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (624 lines, in ranges 1 to 135 and 136 to 625). Checked: pool limits and timeouts; error listener; createSearch idempotency with a canonical request hash, a snapshot of profile and latest derived resume, and the command enqueued in the same transaction; cancelSearch fences the execution so a stale worker cannot settle; outbox selection with a two-minute republish rule that excludes finished or leased work; claim takes a lease with fence increment only on an expired lease; renew and release are fence-checked; settle checks fence, lease and the stored command in one transaction, derives run status from outcomes and refuses results for a different source set; job sightings are written with the job. Earlier finding S1-F002 fixed. No further finding.",
-      "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "6abe50eada2abc65c4734ed5e42f84ce861ed051255f31078cff0949c8f98929"
+      "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
+      "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
+      "sha256": "1eff3ff3c903e9babab0c24c4d65fdb8922762c9a5f8c0821641021247f0bfae",
+      "history": [
+        {
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "6abe50eada2abc65c4734ed5e42f84ce861ed051255f31078cff0949c8f98929",
+          "observations": "Read in full (624 lines, in ranges 1 to 135 and 136 to 625). Checked: pool limits and timeouts; error listener; createSearch idempotency with a canonical request hash, a snapshot of profile and latest derived resume, and the command enqueued in the same transaction; cancelSearch fences the execution so a stale worker cannot settle; outbox selection with a two-minute republish rule that excludes finished or leased work; claim takes a lease with fence increment only on an expired lease; renew and release are fence-checked; settle checks fence, lease and the stored command in one transaction, derives run status from outcomes and refuses results for a different source set; job sightings are written with the job. Earlier finding S1-F002 fixed. No further finding.",
+          "evidence": "Stage 01 file audit session, read on the working tree at the hash above."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 timestamp correction)",
+          "sha256": "1eff3ff3c903e9babab0c24c4d65fdb8922762c9a5f8c0821641021247f0bfae",
+          "observations": "Reviewed the Stage 06 sighting upsert change: first_seen_at is not updated on conflict, and last_seen_at uses GREATEST(existing value, now()) so delayed transaction timestamps cannot regress it. Existing transaction, lease, outbox, and owner-scoping behavior remains unchanged in this focused diff.",
+          "evidence": "Focused disposable-PostgreSQL repeat-collection regression passed 1/1 after building core; exact code hash recorded below. Full exact-head CI remains pending after the manifest refresh."
+        }
+      ]
     },
     {
       "path": "packages/core/src/dispatch.test.ts",
@@ -7415,10 +7555,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
-      "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
-      "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd",
+      "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending. Updated for the Stage 06 item 6.01 CI follow-up: narrowly classify a prior-route Chromium lead update as orphaned only when no CDP event, response, or failure exists; active writes remain strict.",
+      "evidence": "Reviewed exact diff e437994b9edd2b9d69ab0e20d1f5fb5864b4de5f; focused route-observer tests passed 7/7 and formatting passed. The updated file hash records the exact reviewed bytes; exact-head hosted CI is rerunning after the audit refresh.",
+      "reviewer": "Codex (Stage 06 item 6.01 CI follow-up)",
+      "sha256": "5503f9b0c8ba0efd75ecb9aaabb6600b94c8155e2f7cbb1df947c003338fed12",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7436,6 +7576,12 @@
           "observations": "Updated the file audit after Stage 04 item 4.10 deletion test and progress evidence changes; the checklist item remains partial pending hosted integration/browser CI and independent approval.",
           "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
           "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
+          "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
+        },
+        {
+          "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
+          "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
         }
       ]
@@ -7503,10 +7649,18 @@
           "remediation": "Replaced the path fixture with the synthetic candidate@example.test identity."
         }
       ],
-      "observations": "Re-reviewed complete tests after Stage 03 item 3.13 regression update. Cover route epochs, method/resource/engine/path allowlists, including prior-route Chromium search detail reads while current-route and non-Chromium requests remain strict; same-origin path normalization, dynamic/query redaction and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed.",
-      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "cb3ce3fd9bf8c860e4bb28a0598cf6dd28ae7ff6212fda6851f60f43896c61ed"
+      "observations": "Re-reviewed complete tests after Stage 03 item 3.13 regression update. Cover route epochs, method/resource/engine/path allowlists, including prior-route Chromium search detail reads while current-route and non-Chromium requests remain strict; same-origin path normalization, dynamic/query redaction and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed. Updated for the Stage 06 item 6.01 CI follow-up: narrowly classify a prior-route Chromium lead update as orphaned only when no CDP event, response, or failure exists; active writes remain strict.",
+      "evidence": "Reviewed exact diff e437994b9edd2b9d69ab0e20d1f5fb5864b4de5f; focused route-observer tests passed 7/7 and formatting passed. The updated file hash records the exact reviewed bytes; exact-head hosted CI is rerunning after the audit refresh.",
+      "reviewer": "Codex (Stage 06 item 6.01 CI follow-up)",
+      "sha256": "11601f46437c186c006d9a07cf0fc2dfe68d64ff89e3e3fb93a313802af35035",
+      "history": [
+        {
+          "observations": "Re-reviewed complete tests after Stage 03 item 3.13 regression update. Cover route epochs, method/resource/engine/path allowlists, including prior-route Chromium search detail reads while current-route and non-Chromium requests remain strict; same-origin path normalization, dynamic/query redaction and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed.",
+          "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "cb3ce3fd9bf8c860e4bb28a0598cf6dd28ae7ff6212fda6851f60f43896c61ed"
+        }
+      ]
     },
     {
       "path": "scripts/tests/ui-requests.ts",
@@ -7515,10 +7669,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.",
-      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "4d95c21eb0bbe1ca0139c7b3c262fbaa13ebad23d02b81d80a258271a1580e84"
+      "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding. Updated for the Stage 06 item 6.01 CI follow-up: narrowly classify a prior-route Chromium lead update as orphaned only when no CDP event, response, or failure exists; active writes remain strict.",
+      "evidence": "Reviewed exact diff e437994b9edd2b9d69ab0e20d1f5fb5864b4de5f; focused route-observer tests passed 7/7 and formatting passed. The updated file hash records the exact reviewed bytes; exact-head hosted CI is rerunning after the audit refresh.",
+      "reviewer": "Codex (Stage 06 item 6.01 CI follow-up)",
+      "sha256": "f9056f6ee6568d20a8a471915ba04f1b85b0561d5da184d7129360de65d67b44",
+      "history": [
+        {
+          "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.",
+          "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "4d95c21eb0bbe1ca0139c7b3c262fbaa13ebad23d02b81d80a258271a1580e84"
+        }
+      ]
     },
     {
       "path": "scripts/tests/visual-baselines/sign-in-desktop.png",
@@ -7575,10 +7737,36 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed migration fixture and persistence assertions for resume version metadata.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "b0edc933184e36519e769294c25b3e43ab0972ef123cc797f0c653d0fdb0656f"
+      "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
+      "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
+      "sha256": "2aba206d4895edf5cb94c605c338a6c044342e206a51ee2eeb1f706f5e29a211",
+      "history": [
+        {
+          "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+          "observations": "Reviewed migration fixture and persistence assertions for resume version metadata.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+          "sha256": "b0edc933184e36519e769294c25b3e43ab0972ef123cc797f0c653d0fdb0656f"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+          "observations": "Reviewed Stage 06 item 6.01 first/last-seen source persistence, the real collection regression assertion and Stage 06 traceability updates.",
+          "evidence": "Local audit hash and roadmap traceability checks pass; exact-head PostgreSQL/Redis CI and independent review are pending.",
+          "sha256": "4b45bf3a802c47ac292e674ec3308b414f8cc3d2f056550d2208b0a4057595cd"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+          "sha256": "8b7e294cd444610138b0e8282bfd2679af29a1134828bbca0676aed344cfc4e3",
+          "observations": "Reviewed Stage 06 item 6.01 first/last-seen source persistence, the real collection regression assertion and Stage 06 traceability updates.",
+          "evidence": "Node 24 focused PostgreSQL integration test passed 1/1 through repeat completeCollection calls. Traceability, formatting, and file-audit checks pass; exact-head CI and independent review remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 timestamp correction)",
+          "sha256": "2aba206d4895edf5cb94c605c338a6c044342e206a51ee2eeb1f706f5e29a211",
+          "observations": "Reviewed the Stage 06 item 6.01 PostgreSQL regression: first-seen remains unchanged; ordinary repeat collection advances last-seen; a later recorded timestamp is retained when a subsequent collection attempts an out-of-order update.",
+          "evidence": "Node 24 disposable-PostgreSQL regression passed 1/1 after building core. The first exact-head CI attempt found stale file-audit hashes for the changed source/test files; this candidate refreshes them, and its own exact-head CI/review remain pending."
+        }
+      ]
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",

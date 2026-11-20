@@ -571,7 +571,7 @@ export class Database {
              (owner_id, fingerprint, title, company, first_posted_at, last_posted_at, last_run_id)
            VALUES ($1, $2, $3, $4, $5, $5, $6)
            ON CONFLICT (owner_id, fingerprint) DO UPDATE SET
-             last_seen_at = now(),
+             last_seen_at = GREATEST(job_sightings.last_seen_at, now()),
              sightings = job_sightings.sightings + 1,
              title = EXCLUDED.title,
              company = EXCLUDED.company,
