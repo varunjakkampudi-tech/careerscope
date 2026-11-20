@@ -1446,11 +1446,20 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Expired/broken application links",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/remote/himalayas.ts",
+        "packages/providers/src/normalize.ts",
+        "packages/core/src/jobs.ts",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md"
+      ],
+      "tests": [
+        "packages/providers/src/remote/feeds.test.ts",
+        "packages/providers/src/normalize.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Owner item 6.06 remains partial. The Himalayas adapter excludes a posting only when the provider supplies an expiryDate that has passed; its fixture test covers this provider-declared expiry. URL normalization rejects relative and non-HTTP(S) destinations, falls back to the source URL, and collected-job validation requires HTTPS without credentials. These controls do not establish that an application link is reachable or still accepts applications. No generic outbound link probe or candidate-facing availability status exists. Link checks remain unimplemented pending a source-authorized target policy and SSRF-safe request design; provider permissions are currently disabled.",
       "scopeDisposition": "in-scope"
     },
     {
