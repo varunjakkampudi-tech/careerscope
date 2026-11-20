@@ -1446,11 +1446,11 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Expired/broken application links",
       "sourceStatus": "New",
-      "currentStatus": "partial",
+      "currentStatus": "not-started",
       "evidence": ["docs/PROGRESS.md", "docs/GAP-MATRIX.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Automated destination probing is deferred because redirect following and DNS/IP rebinding protections are not implemented or reviewed. Current code does not establish destination liveness.",
+      "gap": "No destination-probing implementation or tests exist. Work remains deferred until redirect following, DNS/IP rebinding protection, and SSRF safeguards are implemented and reviewed.",
       "scopeDisposition": "in-scope"
     },
     {
