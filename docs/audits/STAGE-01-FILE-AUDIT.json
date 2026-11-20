@@ -1118,7 +1118,7 @@
       "observations": "Reviewed candidate reporting changes for bounded optional explanations, append-only owner-scoped submission history, retention cascade, API contract, and accurate partial-status documentation. Exact-head integration, browser CI, and independent review remain pending.",
       "evidence": "Current item 6.10 candidate diff reviewed on codex/stage06-item610-candidate-reporting; Drizzle migration integrity check passed locally. Exact-head CI and review are pending.",
       "reviewer": "Codex (CareerScope Stage 06 item 6.10 implementation review)",
-      "sha256": "ef0f96276e945acf57f7a7013c2b07d1cd73312ca2648d4bddc476fd7765fc34"
+      "sha256": "7b2eb556b35610976452ea8315575fdc64c3ac02af3fc4fefa7bda9b6548a9f9"
     },
     {
       "path": "apps/web/src/components/legal-acceptance.module.css",
@@ -1893,7 +1893,7 @@
       "observations": "Reviewed candidate reporting changes for bounded optional explanations, append-only owner-scoped submission history, retention cascade, API contract, and accurate partial-status documentation. Exact-head integration, browser CI, and independent review remain pending.",
       "evidence": "Current item 6.10 candidate diff reviewed on codex/stage06-item610-candidate-reporting; Drizzle migration integrity check passed locally. Exact-head CI and review are pending.",
       "reviewer": "Codex (CareerScope Stage 06 item 6.10 implementation review)",
-      "sha256": "e6e25a34b9b18811e537f8677c363ff05684a4a74abf61501d0b8e4ac0d1121e",
+      "sha256": "1427d20881c07e3182746d2aac2edbfb0b01e9219cf19b131449bddf133f07de",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2287,7 +2287,7 @@
       "observations": "Reviewed candidate reporting changes for bounded optional explanations, append-only owner-scoped submission history, retention cascade, API contract, and accurate partial-status documentation. Exact-head integration, browser CI, and independent review remain pending.",
       "evidence": "Current item 6.10 candidate diff reviewed on codex/stage06-item610-candidate-reporting; Drizzle migration integrity check passed locally. Exact-head CI and review are pending.",
       "reviewer": "Codex (CareerScope Stage 06 item 6.10 implementation review)",
-      "sha256": "0c52dfb033c3f049e3c7e5f427d6e1012a00a0b416495c9d17b19c3e6e2e497a",
+      "sha256": "34399337a63fb941cf041d58ac7c32b11177a7fe8cfa6db9b3e5875a0af6c188",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2855,7 +2855,7 @@
       "observations": "Reviewed candidate reporting changes for bounded optional explanations, append-only owner-scoped submission history, retention cascade, API contract, and accurate partial-status documentation. Exact-head integration, browser CI, and independent review remain pending.",
       "evidence": "Current item 6.10 candidate diff reviewed on codex/stage06-item610-candidate-reporting; Drizzle migration integrity check passed locally. Exact-head CI and review are pending.",
       "reviewer": "Codex (CareerScope Stage 06 item 6.10 implementation review)",
-      "sha256": "204c49f60016c75740b161280866cdbd76556db8c6a70ed035c642776dbc86b1",
+      "sha256": "28686fed4724ec08e1ebe2a22eb5fc9d5384f5efbf90536a85b55729966708fc",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
