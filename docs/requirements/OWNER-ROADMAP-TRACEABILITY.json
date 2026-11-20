@@ -1554,7 +1554,7 @@
       "evidence": ["packages/matching/src/score.ts", "docs/PROGRESS.md"],
       "tests": ["packages/matching/src/score.test.ts"],
       "externalEvidence": [],
-      "gap": "The pure scorer versions its rules, combines seven weighted dimensions deterministically for fixed inputs, and has score-band, breakdown, and repeatability tests. This item remains partial pending exact-head CI and independent acceptance; no representative relevance or fairness evaluation is claimed (tracked separately in 7.16).",
+      "gap": "The pure scorer versions its rules, combines seven weighted dimensions deterministically for fixed inputs, and has score-band, breakdown, and repeatability tests. The evidence update is approved at exact head but remains on open, unmerged PR #124; item status stays partial pending authorized merge and post-merge verification. No representative relevance or fairness evaluation is claimed (tracked separately in 7.16).",
       "scopeDisposition": "in-scope"
     },
     {
