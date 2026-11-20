@@ -225,7 +225,8 @@ export default function AccountSecurity({
   }
 
   async function startTotpSetup() {
-    if (totpPending) return;
+    const requestOwner = session.data?.owner;
+    if (totpPending || !requestOwner) return;
     setTotpPending(true);
     setTotpError('');
     try {
@@ -234,18 +235,22 @@ export default function AccountSecurity({
         headers: { 'x-csrf-token': csrf },
         body: JSON.stringify({}),
       });
+      if (queryClient.getQueryData<{ owner?: string }>(['session'])?.owner !== requestOwner) return;
       setTotpSetup({ secret: result.secret });
       setTotpCode('');
     } catch {
-      setTotpError(t('adminAuthenticatorSetupError'));
+      if (queryClient.getQueryData<{ owner?: string }>(['session'])?.owner === requestOwner)
+        setTotpError(t('adminAuthenticatorSetupError'));
     } finally {
-      setTotpPending(false);
+      if (queryClient.getQueryData<{ owner?: string }>(['session'])?.owner === requestOwner)
+        setTotpPending(false);
     }
   }
 
   async function confirmTotpSetup(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (totpPending || totpCode.length !== 6) return;
+    const requestOwner = session.data?.owner;
+    if (totpPending || !requestOwner || totpCode.length !== 6) return;
     setTotpPending(true);
     setTotpError('');
     try {
@@ -254,13 +259,16 @@ export default function AccountSecurity({
         headers: { 'x-csrf-token': csrf },
         body: JSON.stringify({ code: totpCode }),
       });
+      if (queryClient.getQueryData<{ owner?: string }>(['session'])?.owner !== requestOwner) return;
       setTotpSetup(null);
       setTotpCode('');
       await queryClient.invalidateQueries({ queryKey: ['totpStatus'] });
     } catch {
-      setTotpError(t('adminAuthenticatorConfirmError'));
+      if (queryClient.getQueryData<{ owner?: string }>(['session'])?.owner === requestOwner)
+        setTotpError(t('adminAuthenticatorConfirmError'));
     } finally {
-      setTotpPending(false);
+      if (queryClient.getQueryData<{ owner?: string }>(['session'])?.owner === requestOwner)
+        setTotpPending(false);
     }
   }
 

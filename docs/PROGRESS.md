@@ -49,8 +49,13 @@ Owner item 2.12 identified an unusable admin authenticator flow: the API enforce
 application had neither an enrollment path nor a sign-in code field. The current change adds
 owner-scoped enrollment status, a no-store one-time setup-secret response, authenticator confirmation
 in Account Security, an optional authenticator code on sign-in, and English/Telugu/Hindi copy.
-Integration and browser assertions cover those journeys. Item 2.12 remains partial until exact-head
-CI, independent review, merge, and post-merge verification pass. Owner item 2.11 still has the
+The previous implementation SHA `b359af5778632b5978b943c6d59a27b3dcb21576` passed all three required
+CI jobs in run `44696172107`, but independent review of that exact SHA required changes: TOTP was
+claimed before the email code was validated, setup state could outlive an account-owner transition,
+and browser enrollment used mocked endpoints. The current correction validates both sign-in factors
+in one transaction, adds real PostgreSQL-backed enrollment browser coverage and negative/cross-owner
+API checks, and guards account transitions. Corrected-head CI and independent re-review are pending;
+item 2.12 remains partial, and no merge or post-merge verification is claimed. Owner item 2.11 still has the
 separate unusual-pattern step-up gap recorded in the v12 reconciliation; items 2.06 and 2.10 retain
 their native-language review gaps.
 

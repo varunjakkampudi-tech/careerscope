@@ -982,7 +982,7 @@
       "text": "- Admin and super admin: two-factor required",
       "assessment": "PARTIAL",
       "verification": "STATIC_REVIEW_TESTS_NOT_RERUN",
-      "gap": "The admin authenticator setup and sign-in UI is implemented with owner-scoped enrollment status, a one-time no-store setup secret, confirmation, and an optional sign-in code. Exact-head browser/integration verification is pending. Super-admin does not exist, by owner decision.",
+      "gap": "Old SHA b359af5778632b5978b943c6d59a27b3dcb21576 passed run 44696172107 (three jobs); exact-SHA review required factor-ordering, owner-transition, live-browser, and negative/cross-owner test fixes. Corrections are in progress; new CI/review remain pending. No super-admin role per owner decision.",
       "launchBlocking": true,
       "evidence": {
         "implementation": [

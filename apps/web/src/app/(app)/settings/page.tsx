@@ -2,7 +2,7 @@
 
 import { lazy, Suspense, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from '@/lib/session';
+import { NO_OWNER, useSession } from '@/lib/session';
 import { LoadingState } from '@/components/ui-states';
 import InterfaceLanguagePreference from '@/components/interface-language-preference';
 import { ArrowLeft } from 'lucide-react';
@@ -29,7 +29,11 @@ export default function SettingsPage() {
       </header>
       <InterfaceLanguagePreference />
       <Suspense fallback={<LoadingState message="Loading account security…" />}>
-        <AccountSecurity csrf={session.data?.csrf ?? ''} onBusyChange={setSigningOut} />
+        <AccountSecurity
+          key={session.data?.owner ?? NO_OWNER}
+          csrf={session.data?.csrf ?? ''}
+          onBusyChange={setSigningOut}
+        />
       </Suspense>
       <Suspense fallback={<LoadingState message="Loading notification preferences…" />}>
         <NotificationPreferences />

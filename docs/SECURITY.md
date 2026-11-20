@@ -29,6 +29,12 @@ The consolidated local implementation includes refresh-token family/reuse checks
 session listing/revocation and dual-address email-change verification; these do
 not constitute production or live provider acceptance.
 
+Admin authenticator secrets are encrypted at rest with AES-256-GCM. Their key is
+derived from `EMAIL_OTP_SECRET`; rotating that secret without first re-encrypting
+the stored authenticator secrets or requiring affected admins to enroll again
+will make those secrets unreadable. Secret rotation therefore requires a planned
+migration or coordinated re-enrollment and is not a routine key replacement.
+
 `GET /api/health` checks PostgreSQL
 and the mandatory shared Redis limiter and returns only a generic status
 or generic 503, not dependency details. No live proxy topology, firewall or

@@ -10,6 +10,7 @@ import {
   decodeBase32,
   hashOtpEmail,
   hotp,
+  claimAdminCode,
   setAccountRole,
   timeStep,
   type EmailOtpDeliveryMessage,
@@ -63,6 +64,70 @@ test(
         await app.inject({ method: 'GET', url: '/api/session', headers: { origin, cookie } })
       ).json().csrf as string;
       const authed = { origin, cookie, 'x-csrf-token': csrf };
+
+      const anonymousStatus = await app.inject({
+        method: 'GET',
+        url: '/api/account/totp/status',
+        headers: { origin },
+      });
+      assert.equal(anonymousStatus.statusCode, 401);
+      const anonymousSetup = await app.inject({
+        method: 'POST',
+        url: '/api/account/totp/setup',
+        headers: { origin },
+      });
+      assert.equal(anonymousSetup.statusCode, 401);
+
+      // A second signed-in owner can inspect and configure only their own authenticator state.
+      const otherEmail = 'other-owner@example.test';
+      await database.pool.query('INSERT INTO users (id, email) VALUES ($1, $2)', [
+        randomUUID(),
+        otherEmail,
+      ]);
+      const otherCredentials = await auth.loginWithVerifiedEmail(otherEmail);
+      assert.ok(otherCredentials);
+      const otherCookie = `${sessionCookie}=${otherCredentials.accessToken}; ${refreshCookie}=${otherCredentials.refreshToken}`;
+      const otherCsrf = (
+        await app.inject({
+          method: 'GET',
+          url: '/api/session',
+          headers: { origin, cookie: otherCookie },
+        })
+      ).json().csrf as string;
+      const otherAuthed = { origin, cookie: otherCookie, 'x-csrf-token': otherCsrf };
+      const otherInitialStatus = await app.inject({
+        method: 'GET',
+        url: '/api/account/totp/status',
+        headers: otherAuthed,
+      });
+      assert.deepEqual(otherInitialStatus.json(), { enabled: false });
+      const otherSetup = await app.inject({
+        method: 'POST',
+        url: '/api/account/totp/setup',
+        headers: otherAuthed,
+      });
+      assert.equal(otherSetup.statusCode, 200);
+      assert.notEqual(otherSetup.json().secret, undefined);
+      const otherSecret = decodeBase32(otherSetup.json().secret as string);
+      const otherConfirmed = await app.inject({
+        method: 'POST',
+        url: '/api/account/totp/confirm',
+        headers: otherAuthed,
+        payload: { code: hotp(otherSecret, timeStep(Date.now())) },
+      });
+      assert.equal(otherConfirmed.statusCode, 200);
+      assert.deepEqual(
+        (
+          await app.inject({ method: 'GET', url: '/api/account/totp/status', headers: otherAuthed })
+        ).json(),
+        { enabled: true },
+      );
+      assert.deepEqual(
+        (
+          await app.inject({ method: 'GET', url: '/api/account/totp/status', headers: authed })
+        ).json(),
+        { enabled: false },
+      );
 
       const initialStatus = await app.inject({
         method: 'GET',
@@ -170,12 +235,28 @@ test(
 
       // The next time step is inside the drift window and newer than the confirmed step, so it is fresh.
       const freshCode = hotp(authenticatorSecret, confirmStep + 1);
-      const emailCodeOk = await requestCode();
+      const emailCodeAfterWrongEmail = await requestCode();
+      const validTotp = hotp(authenticatorSecret, confirmStep + 1);
+      const invalidEmailCode = emailCodeAfterWrongEmail === '000000' ? '000001' : '000000';
+      const wrongEmailWithValidTotp = await app.inject({
+        method: 'POST',
+        url: '/api/otp/verify',
+        headers: { origin },
+        payload: { email, code: invalidEmailCode, totpCode: validTotp },
+      });
+      assert.equal(wrongEmailWithValidTotp.statusCode, 401);
+      const counterAfterWrongEmail = await database.pool.query<{ totp_last_counter: number }>(
+        'SELECT totp_last_counter FROM users WHERE id = $1',
+        [ownerId],
+      );
+      assert.equal(Number(counterAfterWrongEmail.rows[0]?.totp_last_counter), confirmStep);
+
+      // The same authenticator step remains usable when the email challenge is corrected.
       const accepted = await app.inject({
         method: 'POST',
         url: '/api/otp/verify',
         headers: { origin },
-        payload: { email, code: emailCodeOk, totpCode: freshCode },
+        payload: { email, code: emailCodeAfterWrongEmail, totpCode: validTotp },
       });
       assert.equal(accepted.statusCode, 200);
       assert.ok(String(accepted.headers['set-cookie']).includes(sessionCookie));
@@ -199,6 +280,32 @@ test(
         payload: { email, code: emailCodeOld, totpCode: hotp(authenticatorSecret, confirmStep) },
       });
       assert.equal(older.statusCode, 401);
+
+      // Two independent PostgreSQL transactions cannot claim the same current TOTP counter.
+      const concurrentStep = timeStep(Date.now());
+      const concurrentCode = hotp(authenticatorSecret, concurrentStep);
+      await database.pool.query('UPDATE users SET totp_last_counter = $2 WHERE id = $1', [
+        ownerId,
+        concurrentStep - 1,
+      ]);
+      const firstClient = await database.pool.connect();
+      const secondClient = await database.pool.connect();
+      try {
+        await firstClient.query('BEGIN');
+        await secondClient.query('BEGIN');
+        assert.equal(await claimAdminCode(firstClient, email, concurrentCode, secret), 'claimed');
+        const secondClaim = claimAdminCode(secondClient, email, concurrentCode, secret);
+        await firstClient.query('COMMIT');
+        assert.equal(await secondClaim, 'invalid');
+        await secondClient.query('COMMIT');
+      } catch (error) {
+        await firstClient.query('ROLLBACK').catch(() => undefined);
+        await secondClient.query('ROLLBACK').catch(() => undefined);
+        throw error;
+      } finally {
+        firstClient.release();
+        secondClient.release();
+      }
     } finally {
       if (app) await app.close();
       await database.close();

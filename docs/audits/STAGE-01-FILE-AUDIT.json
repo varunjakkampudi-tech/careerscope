@@ -217,10 +217,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the item 2.12 diff: verifies owner-authenticated enrollment status before/after confirmation, no-store setup response, OpenAPI exposure, and existing admin TOTP sign-in/replay behavior.",
-      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
-      "reviewer": "Codex (CareerScope owner item 2.12 review)",
-      "sha256": "898866f2b1dac274807baf4b8aeb4a1070e4edc3ac471aa726edd626d50355f1"
+      "observations": "Reviewed the correction diff and PostgreSQL regressions: anonymous status/setup rejection, separate-owner setup/status isolation, invalid email with valid TOTP preserving the counter, retry with the same TOTP, and concurrent replay prevention. Item 2.12 remains partial pending corrected-head CI and independent review.",
+      "evidence": "Reviewed the current item 2.12 correction diff. Local evidence: Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL admin-second-factor integration passed 1/1; formatting, lint, requirements, and traceability checks passed. Exact corrected-head hosted browser CI and independent review are pending; no merge or deployment is claimed.",
+      "reviewer": "Codex (CareerScope item 2.12 correction review)",
+      "sha256": "247e42b6c0d74b67bd4d8dbfe1173ea3ecc0486e1fa3f86133dc5c3fd8e60f51",
+      "history": [
+        {
+          "observations": "Reviewed the item 2.12 diff: verifies owner-authenticated enrollment status before/after confirmation, no-store setup response, OpenAPI exposure, and existing admin TOTP sign-in/replay behavior.",
+          "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+          "reviewer": "Codex (CareerScope owner item 2.12 review)",
+          "sha256": "898866f2b1dac274807baf4b8aeb4a1070e4edc3ac471aa726edd626d50355f1"
+        }
+      ]
     },
     {
       "path": "apps/api/src/age-screen.test.ts",
@@ -265,10 +273,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the item 2.12 diff: adds owner-scoped TOTP status and prevents caching of the one-time setup-secret response; existing authenticated route protections remain in force.",
-      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
-      "reviewer": "Codex (CareerScope owner item 2.12 review)",
-      "sha256": "2feecd8f41cbf4b803b88eb983a401081d5c9475f85fcc6431bb4acaad5a7a75"
+      "observations": "Reviewed the correction diff: email OTP challenge validation and TOTP counter claim now run in one transaction, so invalid email does not consume TOTP and invalid TOTP rolls back email challenge acceptance. Node 24 typecheck and isolated PostgreSQL integration passed; corrected-head CI and independent review remain pending.",
+      "evidence": "Reviewed the current item 2.12 correction diff. Local evidence: Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL admin-second-factor integration passed 1/1; formatting, lint, requirements, and traceability checks passed. Exact corrected-head hosted browser CI and independent review are pending; no merge or deployment is claimed.",
+      "reviewer": "Codex (CareerScope item 2.12 correction review)",
+      "sha256": "447022c5db0f4233b08f9cda028dc89e3bb42d69a1eb3b94a50a4c849a7a8c09",
+      "history": [
+        {
+          "observations": "Reviewed the item 2.12 diff: adds owner-scoped TOTP status and prevents caching of the one-time setup-secret response; existing authenticated route protections remain in force.",
+          "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+          "reviewer": "Codex (CareerScope owner item 2.12 review)",
+          "sha256": "2feecd8f41cbf4b803b88eb983a401081d5c9475f85fcc6431bb4acaad5a7a75"
+        }
+      ]
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -855,10 +871,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete settings route. Security and notification panels load lazily; navigation is disabled while sign-out is pending.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "2e89d5143111358ec69f6789c83d256b1b86aef95689de49b4a1d940a856b025"
+      "observations": "Reviewed the owner-keyed AccountSecurity remount added for account transitions. Node 24 typecheck passed; the browser regression and corrected-head CI remain pending.",
+      "evidence": "Reviewed the current item 2.12 correction diff. Local evidence: Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL admin-second-factor integration passed 1/1; formatting, lint, requirements, and traceability checks passed. Exact corrected-head hosted browser CI and independent review are pending; no merge or deployment is claimed.",
+      "reviewer": "Codex (CareerScope item 2.12 correction review)",
+      "sha256": "9f00f2631ebee09a3fec4c0746657296c94a5cc02dad569b688222577f6d3dc2",
+      "history": [
+        {
+          "observations": "Read the complete settings route. Security and notification panels load lazily; navigation is disabled while sign-out is pending.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "2e89d5143111358ec69f6789c83d256b1b86aef95689de49b4a1d940a856b025"
+        }
+      ]
     },
     {
       "path": "apps/web/src/app/globals.css",
@@ -971,10 +995,18 @@
           "remediation": "Invalidate the active-session query after bulk revocation settles and report single-device revocation as busy to the page navigation guard."
         }
       ],
-      "observations": "Reviewed the item 2.12 diff: loads owner-scoped enrollment status, shows the one-time key only during setup, confirms via CSRF-protected API, clears the key, and refreshes status.",
-      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
-      "reviewer": "Codex (CareerScope owner item 2.12 review)",
-      "sha256": "1b159d08f7c7648341dfe133c39ca6d8e82da200498d6510e5adeb732c9f6149"
+      "observations": "Reviewed stale async setup/confirm guards against the current session owner and owner-scoped query state. Node 24 typecheck passed; browser CI and independent review remain pending.",
+      "evidence": "Reviewed the current item 2.12 correction diff. Local evidence: Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL admin-second-factor integration passed 1/1; formatting, lint, requirements, and traceability checks passed. Exact corrected-head hosted browser CI and independent review are pending; no merge or deployment is claimed.",
+      "reviewer": "Codex (CareerScope item 2.12 correction review)",
+      "sha256": "8e0fe3fc48161722f5297ccc9a1766b1514d2c3e9efeafb77a101e6b5c6fd351",
+      "history": [
+        {
+          "observations": "Reviewed the item 2.12 diff: loads owner-scoped enrollment status, shows the one-time key only during setup, confirms via CSRF-protected API, clears the key, and refreshes status.",
+          "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+          "reviewer": "Codex (CareerScope owner item 2.12 review)",
+          "sha256": "1b159d08f7c7648341dfe133c39ca6d8e82da200498d6510e5adeb732c9f6149"
+        }
+      ]
     },
     {
       "path": "apps/web/src/components/authenticated-shell.tsx",
@@ -2086,10 +2118,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the item 2.12 diff: records the former UI gap, implementation evidence, pending exact-head gates, and separate Stage 02 limitations without marking completion.",
-      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
-      "reviewer": "Codex (CareerScope owner item 2.12 review)",
-      "sha256": "eea3343e204477f0afa8e08e3b7fac4638c2503d004c7459efdf8c3c541536fc",
+      "observations": "Reviewed the refreshed Stage 02 evidence: prior SHA and CI run are historical, the exact-head review required changes, and corrected-head CI, independent review, merge, and post-merge evidence remain pending. Item 2.12 stays partial.",
+      "evidence": "Reviewed the current item 2.12 correction diff. Local evidence: Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL admin-second-factor integration passed 1/1; formatting, lint, requirements, and traceability checks passed. Exact corrected-head hosted browser CI and independent review are pending; no merge or deployment is claimed.",
+      "reviewer": "Codex (CareerScope item 2.12 correction review)",
+      "sha256": "36d95fe281474168307a86d38db2e47293107acc61c89efc5eb87e4f5d6c194d",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2228,6 +2260,12 @@
           "sha256": "9dcdfecb8ac4591ecf0fc959813bbd5bb6f74411ddd3c2c0374fc03bd52208b4",
           "observations": "Reviewed Stage 05 item 5.08 and 5.09 status, focused test/build evidence, and remaining adapter-mapping and false-merge limitations.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "observations": "Reviewed the item 2.12 diff: records the former UI gap, implementation evidence, pending exact-head gates, and separate Stage 02 limitations without marking completion.",
+          "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+          "reviewer": "Codex (CareerScope owner item 2.12 review)",
+          "sha256": "eea3343e204477f0afa8e08e3b7fac4638c2503d004c7459efdf8c3c541536fc"
         }
       ]
     },
@@ -2270,10 +2308,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current security guidance; records zero current npm audit findings and explains the closed minimatch classification using the publisher affected range.",
-      "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (owner Stage 01 item 1.10)",
-      "sha256": "75b6fc256d37e88dbb3be0f2fbc4f4e3b6bb9a7e6d12dcfe7a8091f79967b858"
+      "observations": "Reviewed the operational note that TOTP encryption key derivation depends on EMAIL_OTP_SECRET and that rotation requires migration or coordinated re-enrollment. No production key rotation was performed.",
+      "evidence": "Reviewed the current item 2.12 correction diff. Local evidence: Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL admin-second-factor integration passed 1/1; formatting, lint, requirements, and traceability checks passed. Exact corrected-head hosted browser CI and independent review are pending; no merge or deployment is claimed.",
+      "reviewer": "Codex (CareerScope item 2.12 correction review)",
+      "sha256": "884e47240e4cb87167799d609f9145fa42046f0e4dbc76c6a4629dd7c35e3dc5",
+      "history": [
+        {
+          "observations": "Reviewed current security guidance; records zero current npm audit findings and explains the closed minimatch classification using the publisher affected range.",
+          "evidence": "Current content inspected and updated for owner Stage 01 item 1.10 on codex/stage01-item-110-critical-debt; SHA-256 records the reviewed bytes.",
+          "reviewer": "Codex (owner Stage 01 item 1.10)",
+          "sha256": "75b6fc256d37e88dbb3be0f2fbc4f4e3b6bb9a7e6d12dcfe7a8091f79967b858"
+        }
+      ]
     },
     {
       "path": "docs/TEST-MATRIX.md",
@@ -2850,10 +2896,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the item 2.12 diff: the canonical item cites the API-surface contract for the TOTP status endpoint and remains partial pending final gates.",
-      "evidence": "Reviewed the changed PR diff at the item 2.12 review revision; unrelated existing file content was not re-audited.",
-      "reviewer": "Codex (CareerScope owner item 2.12 review)",
-      "sha256": "3a2e4e29a4a9af0d9f257eb020133d45f090b3b102731622282d4d34ef89bac4",
+      "observations": "Reviewed the canonical item 2.12 gap update. Status remains partial; prior CI is historical and corrected-head CI/review remain open. Roadmap traceability validation passed for 328 items across 22 stages.",
+      "evidence": "Reviewed the current item 2.12 correction diff. Local evidence: Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL admin-second-factor integration passed 1/1; formatting, lint, requirements, and traceability checks passed. Exact corrected-head hosted browser CI and independent review are pending; no merge or deployment is claimed.",
+      "reviewer": "Codex (CareerScope item 2.12 correction review)",
+      "sha256": "535bad64c3aff52c6a45ee8551e1b72b9bfa47eee70c4e1dd5b3879117c4e55e",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2962,6 +3008,12 @@
           "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
           "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "observations": "Reviewed the item 2.12 diff: the canonical item cites the API-surface contract for the TOTP status endpoint and remains partial pending final gates.",
+          "evidence": "Reviewed the changed PR diff at the item 2.12 review revision; unrelated existing file content was not re-audited.",
+          "reviewer": "Codex (CareerScope owner item 2.12 review)",
+          "sha256": "3a2e4e29a4a9af0d9f257eb020133d45f090b3b102731622282d4d34ef89bac4"
         }
       ]
     },
@@ -2980,16 +3032,22 @@
           "remediation": "Item 1.02 records Hostinger, server backup and restore-only clauses as OUT_OF_SCOPE_OWNER under the owner-revised checklist, and the inventory checker enforces the non-blocking scope disposition."
         }
       ],
-      "observations": "Reviewed the item 2.12 generated diff: reflects the updated v12 clause evidence while retaining PARTIAL pending hosted verification and the owner decision about super-admin.",
-      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
-      "reviewer": "Codex (CareerScope owner item 2.12 review)",
-      "sha256": "9edc1463a6846a85d77b9b370d076d469581b68c925a3d0c5b0fdd3936968cbf",
+      "observations": "Reviewed generated V12 clause V12-4.1-012 after synchronizing from the canonical inventory. The clause remains PARTIAL and corrected-head CI/review are pending.",
+      "evidence": "Reviewed the current item 2.12 correction diff. Local evidence: Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL admin-second-factor integration passed 1/1; formatting, lint, requirements, and traceability checks passed. Exact corrected-head hosted browser CI and independent review are pending; no merge or deployment is claimed.",
+      "reviewer": "Codex (CareerScope item 2.12 correction review)",
+      "sha256": "845b0eefcadbd349579941f4550eb80bcf56c680956ad0d312e8690ea518d0d5",
       "history": [
         {
           "reviewer": "Codex (Stage 01 item 1.02)",
           "sha256": "e0d50641930a3ec732b9d784cbb76ef90e39046fadafeb817d0add061b020c9b",
           "observations": "Reviewed the regenerated report against the updated inventory. It records 319 clauses, 11 owner-scoped Hostinger/backup/restore exclusions, 153 in-scope launch-blocking gaps, and preserves release-engineering requirements. Generated-summary validation passes.",
           "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed."
+        },
+        {
+          "observations": "Reviewed the item 2.12 generated diff: reflects the updated v12 clause evidence while retaining PARTIAL pending hosted verification and the owner decision about super-admin.",
+          "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+          "reviewer": "Codex (CareerScope owner item 2.12 review)",
+          "sha256": "9edc1463a6846a85d77b9b370d076d469581b68c925a3d0c5b0fdd3936968cbf"
         }
       ]
     },
@@ -3000,16 +3058,22 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the item 2.12 diff: records concrete API/UI/test paths and explicitly retains PARTIAL status for pending exact-head verification and absent super-admin role.",
-      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
-      "reviewer": "Codex (CareerScope owner item 2.12 review)",
-      "sha256": "75880cf07fe3e5c5e5df9184e39915627624ff1838f6bb53b247bf6b9b176ef9",
+      "observations": "Reviewed the canonical V12-4.1-012 gap update. Requirement inventory validation passed with 319 clauses; item remains partial pending corrected-head CI and review.",
+      "evidence": "Reviewed the current item 2.12 correction diff. Local evidence: Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL admin-second-factor integration passed 1/1; formatting, lint, requirements, and traceability checks passed. Exact corrected-head hosted browser CI and independent review are pending; no merge or deployment is claimed.",
+      "reviewer": "Codex (CareerScope item 2.12 correction review)",
+      "sha256": "84fae16b877643ba9d3c2da8895f9c0159b3cdbeb57cfa7ed33debc594ceb096",
       "history": [
         {
           "reviewer": "Codex (Stage 03 item 3.12)",
           "sha256": "a13d7491ea60cefc4ca785aa5985f05fc8de8409dde6af6f67471ca5225d10b9",
           "observations": "Re-read the 319-clause inventory and checked all 11 owner-scoped exclusions plus mixed clauses retained in scope. Owner-scoped records are non-blocking with a rationale; backup portions of mixed clauses are excluded while other gaps remain. The pinned source digest and clause correspondence still pass. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
           "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed."
+        },
+        {
+          "observations": "Reviewed the item 2.12 diff: records concrete API/UI/test paths and explicitly retains PARTIAL status for pending exact-head verification and absent super-admin role.",
+          "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+          "reviewer": "Codex (CareerScope owner item 2.12 review)",
+          "sha256": "75880cf07fe3e5c5e5df9184e39915627624ff1838f6bb53b247bf6b9b176ef9"
         }
       ]
     },
@@ -4180,10 +4244,18 @@
           "remediation": "Single conditional UPDATE; rowCount 0 returns already-enrolled."
         }
       ],
-      "observations": "Read in full. Enrolment, confirmation, admin code claim and role assignment were checked. Replay protection uses a conditional UPDATE on totp_last_counter. Enrolment start had a check-then-write race (S1-F001), now a single conditional write. Admin role remains guarded by the database check constraint users_admin_requires_totp (covered by admin-second-factor.integration.test.ts).",
-      "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "5f5ee7617be1c7783a9c7fb54d99233a57d9b67956b7f865c14ff136a85db7df"
+      "observations": "Reviewed the transaction-scoped admin TOTP claim implementation and row-lock/replay guard. Node 24 typecheck and PostgreSQL invalid-email and concurrency regressions passed; independent exact-head review remains pending.",
+      "evidence": "Reviewed the current item 2.12 correction diff. Local evidence: Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL admin-second-factor integration passed 1/1; formatting, lint, requirements, and traceability checks passed. Exact corrected-head hosted browser CI and independent review are pending; no merge or deployment is claimed.",
+      "reviewer": "Codex (CareerScope item 2.12 correction review)",
+      "sha256": "c3e7edd91cd7c0f3a815a5c03c835e152698b1f2b835a6a8b69921b34280e982",
+      "history": [
+        {
+          "observations": "Read in full. Enrolment, confirmation, admin code claim and role assignment were checked. Replay protection uses a conditional UPDATE on totp_last_counter. Enrolment start had a check-then-write race (S1-F001), now a single conditional write. Admin role remains guarded by the database check constraint users_admin_requires_totp (covered by admin-second-factor.integration.test.ts).",
+          "evidence": "Stage 01 file audit session, read on the working tree at the hash above.",
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "5f5ee7617be1c7783a9c7fb54d99233a57d9b67956b7f865c14ff136a85db7df"
+        }
+      ]
     },
     {
       "path": "packages/core/src/auth.ts",
@@ -7415,10 +7487,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the item 2.12 diff: exercises missing-TOTP rejection, successful admin TOTP sign-in, setup-key display, confirmation, and status refresh with deterministic routes.",
-      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
-      "reviewer": "Codex (CareerScope owner item 2.12 review)",
-      "sha256": "fe96314899c5fee4adff55a6cfc5d634d526cc390fa4e8713a1428bc62bc0486",
+      "observations": "Reviewed the browser coverage changes: a delayed mocked setup response must not expose owner A secret after a synthetic owner transition, and a separate browser journey exercises real PostgreSQL-backed setup/confirm/status endpoints. Browser execution on the corrected head remains pending.",
+      "evidence": "Reviewed the current item 2.12 correction diff. Local evidence: Node 24 typecheck passed for 98 canonical test files; isolated PostgreSQL admin-second-factor integration passed 1/1; formatting, lint, requirements, and traceability checks passed. Exact corrected-head hosted browser CI and independent review are pending; no merge or deployment is claimed.",
+      "reviewer": "Codex (CareerScope item 2.12 correction review)",
+      "sha256": "fd7e93dc87edd16d6c63450ef4560b9ba459510a5d012d72ab0228de30c85ada",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7437,6 +7509,12 @@
           "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
           "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
           "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
+        },
+        {
+          "observations": "Reviewed the item 2.12 diff: exercises missing-TOTP rejection, successful admin TOTP sign-in, setup-key display, confirmation, and status refresh with deterministic routes.",
+          "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+          "reviewer": "Codex (CareerScope owner item 2.12 review)",
+          "sha256": "fe96314899c5fee4adff55a6cfc5d634d526cc390fa4e8713a1428bc62bc0486"
         }
       ]
     },

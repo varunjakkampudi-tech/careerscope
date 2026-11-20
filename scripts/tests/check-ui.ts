@@ -16,6 +16,9 @@ import {
   testUsers,
   Database,
   passwordHash,
+  decodeBase32,
+  hotp,
+  timeStep,
   users,
   ProfileRepository,
   ProfilePhotoRepository,
@@ -216,6 +219,10 @@ const app = await createApp(database, origin, async () => true, {
     privacyVersion: 'test-privacy-1',
     privacyUrl: 'https://careerscope.test/privacy',
     marketingVersion: 'test-marketing-1',
+  },
+  emailOtp: {
+    secret: randomBytes(32),
+    provider: { async send() {} },
   },
   // The browser fixture uses only synthetic source data; production does not
   // inject this approval bypass and remains bound to recorded profiles.
@@ -613,9 +620,19 @@ try {
       let otpRequestCount = 0;
       let otpVerified = false;
       let otpCurrentEmail = otpEmail;
+      let otpSessionOwner = 'a'.repeat(64);
       let otpEmailVerificationTimestamp: string | null = '2026-10-20T12:00:00.000Z';
       let emailChangeRequestCount = 0;
       const emailChangeVerifications: string[] = [];
+      let delayNextTotpSetupResponse = false;
+      let startDelayedTotpSetup: (() => void) | undefined;
+      let releaseDelayedTotpSetup: (() => void) | undefined;
+      const delayedTotpSetupStarted = new Promise<void>((resolve) => {
+        startDelayedTotpSetup = resolve;
+      });
+      const delayedTotpSetupReleased = new Promise<void>((resolve) => {
+        releaseDelayedTotpSetup = resolve;
+      });
       const otpPageErrors: string[] = [];
       const otpConsoleErrors: string[] = [];
       const otpInflight = new Set<import('playwright').Request>();
@@ -683,7 +700,7 @@ try {
                 csrf: 'synthetic-csrf-token',
                 email: otpCurrentEmail,
                 emailVerifiedAt: otpEmailVerificationTimestamp,
-                owner: 'a'.repeat(64),
+                owner: otpSessionOwner,
                 aiEnabled: false,
                 emailOtpEnabled: true,
               }
@@ -764,12 +781,21 @@ try {
       await otpPage.route('**/api/account/totp/status', (route) =>
         route.fulfill({ contentType: 'application/json', json: { enabled: otpTotpEnabled } }),
       );
-      await otpPage.route('**/api/account/totp/setup', (route) =>
-        route.fulfill({
+      await otpPage.route('**/api/account/totp/setup', async (route) => {
+        const requestOwner = otpSessionOwner;
+        if (delayNextTotpSetupResponse) {
+          delayNextTotpSetupResponse = false;
+          startDelayedTotpSetup?.();
+          await delayedTotpSetupReleased;
+        }
+        return route.fulfill({
           contentType: 'application/json',
-          json: { secret: 'JBSWY3DPEHPK3PXP', otpauthUri: 'otpauth://totp/CareerScope:test' },
-        }),
-      );
+          json: {
+            secret: requestOwner === 'a'.repeat(64) ? 'JBSWY3DPEHPK3PXP' : 'MFRGGZDFMZTWQ2LK',
+            otpauthUri: 'otpauth://totp/CareerScope:test',
+          },
+        });
+      });
       await otpPage.route('**/api/account/totp/confirm', (route) => {
         otpTotpEnabled = true;
         return route.fulfill({ contentType: 'application/json', json: { enrolled: true } });
@@ -788,7 +814,10 @@ try {
         const body = route.request().postDataJSON() as { address: string; code: string };
         emailChangeVerifications.push(body.address);
         const emailChanged = emailChangeVerifications.length === 2;
-        if (emailChanged) otpCurrentEmail = 'updated@example.test';
+        if (emailChanged) {
+          otpCurrentEmail = 'updated@example.test';
+          otpSessionOwner = 'b'.repeat(64);
+        }
         return route.fulfill({
           contentType: 'application/json',
           json: { verified: body.address, emailChanged },
@@ -851,8 +880,35 @@ try {
       await otpPage.goto(`${origin}/settings`);
       await otpPage.getByRole('heading', { name: 'Account security', exact: true }).waitFor();
       await otpPage.getByRole('heading', { name: 'Admin authenticator' }).waitFor();
+      delayNextTotpSetupResponse = true;
       await otpPage.getByRole('button', { name: 'Set up authenticator' }).click();
-      await otpPage.getByText('JBSWY3DPEHPK3PXP').waitFor();
+      await delayedTotpSetupStarted;
+      const staleTotpSetupResponse = otpPage.waitForResponse((response) =>
+        response.url().endsWith('/api/account/totp/setup'),
+      );
+
+      // Simulate an owner transition while the first owner's setup request is still in flight.
+      // The fixture changes owner on session refresh; the delayed response must not leak its secret.
+      await otpPage.getByLabel('New email address').fill('updated@example.test');
+      await otpPage.getByRole('button', { name: 'Send verification codes' }).click();
+      await otpPage.getByLabel('Code sent to current email').waitFor();
+      await otpPage.getByLabel('Code sent to current email').fill('111111');
+      await otpPage.getByRole('button', { name: 'Verify current email' }).click();
+      await otpPage.getByText('Current address verified. Now verify the new address.').waitFor();
+      await otpPage.getByLabel('Code sent to new email').fill('222222');
+      await otpPage.getByRole('button', { name: 'Verify new email' }).click();
+      await otpPage
+        .getByText('Email address updated. The previous address received a verification notice.')
+        .waitFor();
+      await otpPage.getByText('Current email: updated@example.test', { exact: true }).waitFor();
+      assert.equal(emailChangeRequestCount, 1);
+      assert.deepEqual(emailChangeVerifications, ['current', 'new']);
+      releaseDelayedTotpSetup?.();
+      assert.equal((await staleTotpSetupResponse).status(), 200);
+      await otpPage.waitForFunction(() => !document.body.innerText.includes('JBSWY3DPEHPK3PXP'));
+
+      await otpPage.getByRole('button', { name: 'Set up authenticator' }).click();
+      await otpPage.getByText('MFRGGZDFMZTWQ2LK').waitFor();
       await otpPage.getByLabel('Six-digit code from your authenticator app').fill('111111');
       await otpPage.getByRole('button', { name: 'Confirm authenticator' }).click();
       await otpPage.getByRole('status').getByText('Authenticator confirmed for this account.').waitFor();
@@ -913,20 +969,6 @@ try {
         .filter({ hasText: /^Email verified on / })
         .waitFor();
       await settleOtpRequests('account security restored verification status');
-      await otpPage.getByLabel('New email address').fill('updated@example.test');
-      await otpPage.getByRole('button', { name: 'Send verification codes' }).click();
-      await otpPage.getByLabel('Code sent to current email').waitFor();
-      await otpPage.getByLabel('Code sent to current email').fill('111111');
-      await otpPage.getByRole('button', { name: 'Verify current email' }).click();
-      await otpPage.getByText('Current address verified. Now verify the new address.').waitFor();
-      await otpPage.getByLabel('Code sent to new email').fill('222222');
-      await otpPage.getByRole('button', { name: 'Verify new email' }).click();
-      await otpPage
-        .getByText('Email address updated. The previous address received a verification notice.')
-        .waitFor();
-      await otpPage.getByText('Current email: updated@example.test', { exact: true }).waitFor();
-      assert.equal(emailChangeRequestCount, 1);
-      assert.deepEqual(emailChangeVerifications, ['current', 'new']);
       for (const width of responsiveWidthsEndingAt(1440)) {
         await otpPage.setViewportSize({ width, height: 900 });
         assert.equal(
@@ -949,6 +991,63 @@ try {
         `${engine} email OTP UI produced an unhandled promise rejection`,
       );
       await otpPage.close();
+
+      // Unlike the deterministic contract flow above, this browser journey uses the real
+      // PostgreSQL-backed authenticator endpoints and verifies the rendered setup code against
+      // the actual secret returned by the API.
+      const totpApiPage = await browser.newPage();
+      await installUnhandledRejectionGuard(totpApiPage);
+      const realCredentials = await new Auth(database).loginWithVerifiedEmail(otpEmail);
+      assert.ok(realCredentials);
+      await totpApiPage.context().addCookies([
+        {
+          name: 'careerscope_v2_session',
+          value: realCredentials.accessToken,
+          url: origin,
+          httpOnly: true,
+          sameSite: 'Lax',
+        },
+        {
+          name: 'careerscope_v2_refresh',
+          value: realCredentials.refreshToken,
+          url: origin,
+          httpOnly: true,
+          sameSite: 'Lax',
+        },
+      ]);
+      const realTotpPageErrors: string[] = [];
+      totpApiPage.on('pageerror', (error) => realTotpPageErrors.push(error.message));
+      await totpApiPage.goto(`${origin}/settings`);
+      await totpApiPage.getByRole('heading', { name: 'Account security', exact: true }).waitFor();
+      await totpApiPage.getByRole('heading', { name: 'Admin authenticator' }).waitFor();
+      const realSetupResponse = totpApiPage.waitForResponse(
+        (response) => response.url().endsWith('/api/account/totp/setup'),
+      );
+      await totpApiPage.getByRole('button', { name: 'Set up authenticator' }).click();
+      const setupResponse = await realSetupResponse;
+      assert.equal(setupResponse.status(), 200);
+      const setupPayload = (await setupResponse.json()) as { secret: string; otpauthUri: string };
+      await totpApiPage.getByText(setupPayload.secret, { exact: true }).waitFor();
+      assert.match(setupPayload.otpauthUri, /^otpauth:\/\/totp\/CareerScope/);
+      const realConfirmCode = hotp(decodeBase32(setupPayload.secret), timeStep(Date.now()));
+      await totpApiPage
+        .getByLabel('Six-digit code from your authenticator app')
+        .fill(realConfirmCode);
+      const realConfirmResponse = totpApiPage.waitForResponse(
+        (response) => response.url().endsWith('/api/account/totp/confirm'),
+      );
+      await totpApiPage.getByRole('button', { name: 'Confirm authenticator' }).click();
+      assert.equal((await realConfirmResponse).status(), 200);
+      await totpApiPage.getByRole('status').getByText('Authenticator confirmed for this account.').waitFor();
+      const realStatusResponse = await totpApiPage.evaluate(async () => {
+        const response = await fetch('/api/account/totp/status');
+        return { status: response.status, body: await response.json() };
+      });
+      assert.equal(realStatusResponse.status, 200);
+      assert.deepEqual(realStatusResponse.body, { enabled: true });
+      assert.deepEqual(realTotpPageErrors, [], `${engine} live TOTP API browser journey errored`);
+      await accessible(totpApiPage, engine, 'live authenticator enrollment', 'Settings');
+      await totpApiPage.close();
 
       const signupPage = await browser.newPage();
       await installUnhandledRejectionGuard(signupPage);

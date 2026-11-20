@@ -40,7 +40,6 @@ import {
   EmailChangeRequests,
   EmailOtpChallenges,
   emailOtpLifetimeMs,
-  accountSecondFactor,
   beginTotpEnrolment,
   claimAdminCode,
   confirmTotpEnrolment,
@@ -83,6 +82,7 @@ import {
 // for the address. A fixed 24 hour window that starts at the first failure. Keying by client as
 // well means one caller cannot exhaust a victim's verification budget by knowing only the email.
 const otpFailureBudget = 20;
+class InvalidAdminAuthenticatorCode extends Error {}
 const otpFailureKey = (emailHash: string, clientHash: string) =>
   `otp:verify:failed-day:${emailHash}:${clientHash}`;
 // Per-address failure count across every client. It only throttles sending new codes and is never
@@ -793,36 +793,6 @@ export async function createApp(
     }
     if (!allowed) throw new HttpError(429, 'Too many attempts. Request a new code later.');
 
-    if (intent === 'sign-in') {
-      // An admin also needs a current authenticator code (V12-4.1-012). A missing or wrong code gets the
-      // same response as a wrong email code, so a caller cannot tell which accounts are admins.
-      const factor = await accountSecondFactor(database, email).catch(() => {
-        throw new HttpError(503, 'Sign-in is temporarily unavailable');
-      });
-      if (factor?.role === 'admin') {
-        const accepted =
-          totpCode !== undefined &&
-          (await claimAdminCode(database, email, totpCode, options.emailOtp.secret).catch(
-            () => false,
-          ));
-        if (!accepted) {
-          await consumeRateLimit(
-            request,
-            otpFailureKey(emailHash, ipHash),
-            otpFailureBudget,
-            86400,
-          );
-          await consumeRateLimit(
-            request,
-            otpSendThrottleKey(emailHash),
-            otpSendThrottleBudget,
-            86400,
-          );
-          throw new HttpError(401, 'Invalid or expired verification code');
-        }
-      }
-    }
-
     let challengeId: string | null;
     try {
       challengeId = await emailOtpChallenges.activeId(email, options.emailOtp.secret);
@@ -890,11 +860,22 @@ export async function createApp(
           code,
           secret: options.emailOtp.secret,
           expectedIntent: 'sign-in',
+          onAccepted: async (client) => {
+            // Validate and lock the email challenge first. Claiming the authenticator counter in
+            // this same transaction means an invalid email code cannot burn a valid TOTP code.
+            const claim = await claimAdminCode(client, email, totpCode, options.emailOtp!.secret);
+            if (claim === 'invalid') throw new InvalidAdminAuthenticatorCode();
+          },
         });
       }
-    } catch {
-      request.log.error({ requestId: request.id }, 'OTP challenge verification unavailable');
-      throw new HttpError(503, 'Sign-in is temporarily unavailable');
+    } catch (error) {
+      // A rejected TOTP rolls back the email challenge and is reported like any invalid code.
+      if (error instanceof InvalidAdminAuthenticatorCode) {
+        verification = 'invalid';
+      } else {
+        request.log.error({ requestId: request.id }, 'OTP challenge verification unavailable');
+        throw new HttpError(503, 'Sign-in is temporarily unavailable');
+      }
     }
     if (verification !== 'accepted') {
       // Every non-accepted outcome counts, including "no active code", so a known address and an
