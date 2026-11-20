@@ -1550,11 +1550,11 @@
       "stageTitle": "Advanced matching and eligibility",
       "title": "Deterministic scoring",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": ["packages/matching/src/score.ts", "docs/PROGRESS.md"],
+      "tests": ["packages/matching/src/score.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "The pure scorer versions its rules, combines seven weighted dimensions deterministically for fixed inputs, and has score-band, breakdown, and repeatability tests. The evidence update is approved at exact head but remains on open, unmerged PR #124; item status stays partial pending authorized merge and post-merge verification. No representative relevance or fairness evaluation is claimed (tracked separately in 7.16).",
       "scopeDisposition": "in-scope"
     },
     {
