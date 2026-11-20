@@ -4596,10 +4596,32 @@
           "remediation": "Added a loopback hostname assertion before the test opens its database connection."
         }
       ],
-      "observations": "Read in full. Creates only UUID-named databases; covers per-owner posting sightings/reposts, staleness and pipeline states, with cleanup in finally. Finding S1-F064 (medium, fixed): the second test lacked the loopback-host guard present in the first, so DATABASE_URL could target a remote database before CREATE/DROP DATABASE. Added the same localhost/127.0.0.1 check before connecting.",
-      "evidence": "",
-      "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "e82450256eba66ae0d2c31663d126a640a43c859823bfc7e1fceb937fe2fd4e5"
+      "observations": "Reviewed the complete integration test and revised it to create, claim, start and complete synthetic searches through Database, then read owner-scoped MarketRepository evidence. Covers first-seen preservation, last-seen ordering, repeated sightings, unchanged dates, repost increments, missing dates and owner isolation. Checklist items remain subject to exact-head CI and independent acceptance.",
+      "evidence": "Node 24.21.0 with PostgreSQL 17.6: packages/core/src/market.integration.test.ts passed 2/2; focused Prettier check passed. Exact-head hosted CI and independent checklist review pending.",
+      "reviewer": "Codex (CareerScope Stage 06.01-06.02 integration evidence)",
+      "sha256": "09df527b9b66156018b482f4c7484f3f02166a5a59a15ddc9884ac965a0efcd8",
+      "history": [
+        {
+          "path": "packages/core/src/market.integration.test.ts",
+          "category": "shared-domain-package",
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F064",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "A database integration test created and dropped databases without restricting DATABASE_URL to loopback.",
+              "remediation": "Added a loopback hostname assertion before the test opens its database connection."
+            }
+          ],
+          "observations": "Read in full. Creates only UUID-named databases; covers per-owner posting sightings/reposts, staleness and pipeline states, with cleanup in finally. Finding S1-F064 (medium, fixed): the second test lacked the loopback-host guard present in the first, so DATABASE_URL could target a remote database before CREATE/DROP DATABASE. Added the same localhost/127.0.0.1 check before connecting.",
+          "evidence": "",
+          "reviewer": "Codex (Stage 01 implementation audit)",
+          "sha256": "e82450256eba66ae0d2c31663d126a640a43c859823bfc7e1fceb937fe2fd4e5"
+        }
+      ]
     },
     {
       "path": "packages/core/src/market.ts",
