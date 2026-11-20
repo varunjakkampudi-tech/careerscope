@@ -42,14 +42,16 @@ export function staleSearchRead(
  * away as soon as the image request starts (about 3 of 4 tries; it is not specific to a cold server).
  * Only that one path is dropped among images.
  *
- * Only a GET fetch or script (or the image optimiser path) from an earlier route is dropped. A
- * request from the current route, a write, an HTML document or any other image still counts, so a
- * real hang on the current route is still caught. A previous-route search-detail fetch is explicitly
- * included; search-list reads use `staleSearchRead`.
+ * In Chromium, a GET fetch or script (or the image optimiser path) from an earlier route is dropped.
+ * Firefox also left one `/api/resumes/:id` fetch from an earlier route pending across 28 route
+ * changes in CI; that narrow read is ignored only after its route has been replaced. Requests from
+ * the current route, writes, documents and other images still count, so a real current-route hang is
+ * still caught. A previous-route search-detail fetch is explicitly included; search-list reads use
+ * `staleSearchRead`.
  *
- * The cancelled-fetch behaviour was measured only in Chromium, so the allowance applies to the
- * `chromium` engine alone. Firefox and WebKit report aborted requests as failed, so there nothing
- * is dropped and a request that never settles still fails the barrier.
+ * The broad cancelled-fetch allowance applies only to Chromium. The one Firefox resume-detail
+ * exception is limited to a GET fetch from a replaced route. All other Firefox and WebKit requests
+ * remain in the settlement barrier.
  */
 export function staleEarlierRouteRead(
   method: string,
@@ -60,12 +62,15 @@ export function staleEarlierRouteRead(
   pathname = '',
 ): boolean {
   return (
-    engine === 'chromium' &&
     method === 'GET' &&
-    (resourceType === 'fetch' ||
-      resourceType === 'script' ||
-      (resourceType === 'image' && pathname === '/_next/image')) &&
-    startedEpoch !== currentEpoch
+    startedEpoch !== currentEpoch &&
+    ((engine === 'chromium' &&
+      (resourceType === 'fetch' ||
+        resourceType === 'script' ||
+        (resourceType === 'image' && pathname === '/_next/image'))) ||
+      (engine === 'firefox' &&
+        resourceType === 'fetch' &&
+        /^\/api\/resumes\/[^/]+$/.test(pathname)))
   );
 }
 
