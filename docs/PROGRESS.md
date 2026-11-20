@@ -58,7 +58,11 @@ API checks, and guards account transitions. Corrected-head CI and independent re
 the first correction SHA `abf0bf2cc2882829dfe4d1a437ad3862b71851bc` passed Quality gates, production
 image build, and integration tests in run `44704814878`, but the browser step failed before browser
 execution because the test harness combined password-only and email-OTP app modes. The harness now
-starts a separate OTP-enabled app for the live TOTP journey; a fresh exact-head run is required.
+starts a separate OTP-enabled app for the live TOTP journey. Second run `44706391474` on
+`e9050910154a958639878e1b94ee16c84c6f4259` passed quality, image, and PostgreSQL/Redis integration,
+but the browser timed out waiting for the delayed setup response during the account-transition case;
+the response listener now starts immediately before releasing that response. A fresh exact-head run
+is required.
 Item 2.12 remains partial, and no merge or post-merge verification is claimed. Owner item 2.11 still has the
 separate unusual-pattern step-up gap recorded in the v12 reconciliation; items 2.06 and 2.10 retain
 their native-language review gaps.

@@ -879,9 +879,6 @@ try {
       delayNextTotpSetupResponse = true;
       await otpPage.getByRole('button', { name: 'Set up authenticator' }).click();
       await delayedTotpSetupStarted;
-      const staleTotpSetupResponse = otpPage.waitForResponse((response) =>
-        response.url().endsWith('/api/account/totp/setup'),
-      );
 
       // Simulate an owner transition while the first owner's setup request is still in flight.
       // The fixture changes owner on session refresh; the delayed response must not leak its secret.
@@ -899,6 +896,9 @@ try {
       await otpPage.getByText('Current email: updated@example.test', { exact: true }).waitFor();
       assert.equal(emailChangeRequestCount, 1);
       assert.deepEqual(emailChangeVerifications, ['current', 'new']);
+      const staleTotpSetupResponse = otpPage.waitForResponse((response) =>
+        response.url().endsWith('/api/account/totp/setup'),
+      );
       releaseDelayedTotpSetup?.();
       assert.equal((await staleTotpSetupResponse).status(), 200);
       await otpPage.waitForFunction(() => !document.body.innerText.includes('JBSWY3DPEHPK3PXP'));
