@@ -42,14 +42,17 @@ export function staleSearchRead(
  * away as soon as the image request starts (about 3 of 4 tries; it is not specific to a cold server).
  * Only that one path is dropped among images.
  *
- * Only a GET fetch or script (or the image optimiser path) from an earlier route is dropped. A
- * request from the current route, a write, an HTML document or any other image still counts, so a
- * real hang on the current route is still caught. A previous-route search-detail fetch is explicitly
- * included; search-list reads use `staleSearchRead`.
+ * A Next.js router-prefetch GET fetch from an earlier route is also dropped in every engine. A
+ * prefetch is speculative and can remain pending after its source route has been replaced; it is no
+ * longer user-visible work for the current route. A request from the current route, a write, an HTML
+ * document or any other image still counts, so a real hang on the current route is still caught. A
+ * previous-route search-detail fetch is explicitly included; search-list reads use
+ * `staleSearchRead`.
  *
- * The cancelled-fetch behaviour was measured only in Chromium, so the allowance applies to the
- * `chromium` engine alone. Firefox and WebKit report aborted requests as failed, so there nothing
- * is dropped and a request that never settles still fails the barrier.
+ * The broad previous-route cancellation allowance applies only to Chromium because that behavior
+ * was measured there. Firefox and WebKit continue to count ordinary earlier-route reads. The
+ * narrower Next router-prefetch exception applies in every engine because those speculative
+ * requests can remain pending after navigation without representing work for the current route.
  */
 export function staleEarlierRouteRead(
   method: string,
@@ -58,14 +61,16 @@ export function staleEarlierRouteRead(
   currentEpoch: number,
   engine: string,
   pathname = '',
+  isNextRouterPrefetch = false,
 ): boolean {
   return (
-    engine === 'chromium' &&
     method === 'GET' &&
-    (resourceType === 'fetch' ||
-      resourceType === 'script' ||
-      (resourceType === 'image' && pathname === '/_next/image')) &&
-    startedEpoch !== currentEpoch
+    startedEpoch !== currentEpoch &&
+    ((resourceType === 'fetch' && isNextRouterPrefetch) ||
+      (engine === 'chromium' &&
+        (resourceType === 'fetch' ||
+          resourceType === 'script' ||
+          (resourceType === 'image' && pathname === '/_next/image'))))
   );
 }
 

@@ -1394,11 +1394,22 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Repost tracking",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/core/src/database.ts",
+        "packages/core/src/schema.ts",
+        "scripts/jobs/backfill-job-sightings.ts",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md",
+        "package.json"
+      ],
+      "tests": [
+        "scripts/jobs/backfill-job-sightings.test.ts",
+        "tests/integration/database.integration.test.ts",
+        "scripts/tests/ui-requests.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Owner item 6.02 (Repost tracking) remains partial. Live collection counts each owner/fingerprint/search-run once; repost_count advances only when a strictly newer non-null provider date arrives, and last_posted_at remains the greatest claimed date. Backfill replay uses the same date rule, with ordering by run creation time rather than live settlement order. Candidate head 5a446ddf86677d44346482380cb939f9663beba7 passed all three required CI jobs in run 44552260875. Independent review accepted the live transaction logic and replay behavior, but found the PostgreSQL rebuild regression absent from the canonical integration command and the package.json audit provenance incomplete. This follow-up adds that regression to test:integration, loads .env in the dedicated test command, and restores the dev-base and prior active package audit snapshots. Exact-head CI and re-review for this revision remain pending. Item 6.02 remains partial pending owner-authorized merge and post-merge verification; provider dates remain unverified claims and historical false merges cannot be recovered.",
       "scopeDisposition": "in-scope"
     },
     {

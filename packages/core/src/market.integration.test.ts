@@ -44,7 +44,7 @@ test('posting evidence accumulates across searches and detects a refreshed listi
          ON CONFLICT (owner_id, fingerprint) DO UPDATE SET
            last_seen_at = now(),
            sightings = job_sightings.sightings + 1,
-           last_posted_at = COALESCE(EXCLUDED.last_posted_at, job_sightings.last_posted_at),
+           last_posted_at = GREATEST(EXCLUDED.last_posted_at, job_sightings.last_posted_at),
            repost_count = job_sightings.repost_count + CASE
              WHEN EXCLUDED.last_posted_at IS NOT NULL
               AND job_sightings.last_posted_at IS NOT NULL
