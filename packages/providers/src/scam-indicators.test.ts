@@ -21,6 +21,20 @@ describe('detectRecruitmentScamIndicators', () => {
     ).toEqual([]);
   });
 
+  it('does not flag a direct statement that paying a fee is unnecessary', () => {
+    expect(
+      detectRecruitmentScamIndicators('You do not need to pay a registration fee to apply.'),
+    ).toEqual([]);
+  });
+
+  it('does not let a separate no-fee clause hide an affirmative fee demand', () => {
+    expect(
+      detectRecruitmentScamIndicators(
+        'We do not charge applicants an application fee, but applicants must pay a registration fee to apply.',
+      ),
+    ).toEqual(['candidate_upfront_payment']);
+  });
+
   it('flags a check deposit followed by a request to send money back', () => {
     expect(
       detectRecruitmentScamIndicators(

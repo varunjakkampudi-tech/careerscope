@@ -1,7 +1,10 @@
 import { RECRUITMENT_SCAM_INDICATORS, type RecruitmentScamIndicator } from '@careerscope/shared';
 
 const MAX_DESCRIPTION_LENGTH = 100_000;
-const NEGATION = /\b(?:no|not|never|without|don't|do not|doesn't|does not)\b[^.!?;]{0,48}$/i;
+// Keep negation tied to an action in the same clause. This also handles rules
+// whose match begins with a subject, such as "You do not need to pay a fee".
+const NEGATED_ACTION =
+  /\b(?:no|not|never|without|don't|do not|doesn't|does not)\b[^,.!?;]{0,48}\b(?:pay|send|submit|provide|deposit|cash|return|refund|transfer|forward|receive|move|process|earn|post|use)\b/i;
 
 type Rule = {
   code: RecruitmentScamIndicator;
@@ -48,7 +51,8 @@ export function detectRecruitmentScamIndicators(listingText: string): Recruitmen
       passages.some((passage) => {
         const match = pattern.exec(passage);
         if (!match || match.index === undefined) return false;
-        return !NEGATION.test(passage.slice(Math.max(0, match.index - 48), match.index));
+        const context = passage.slice(Math.max(0, match.index - 48), match.index + match[0].length);
+        return !NEGATED_ACTION.test(context);
       })
     ) {
       found.add(code);
