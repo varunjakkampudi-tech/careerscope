@@ -2470,6 +2470,12 @@
           "evidence": "Node 24 typecheck passed including 99 canonical test files; domain suite passed 975/975 across 35 files, including eight source-verification tests. Full unit suite, lint, build, exact-head CI and independent review pending.",
           "reviewer": "Codex (CareerScope item 6.04 scoped review)",
           "sha256": "d18f4c14dbb00c520fd54eb6bb313bb9edd42a9e4dcc1c356ae892c358b24fbd"
+        },
+        {
+          "observations": "Reviewed the current source or documentation diff for item 6.04. Corrections verify original URLs before normalization, keep saved-lead source labels paired with the matching source URL result, and assert API plus UI verification display for configured and legacy links. Full browser acceptance remains pending.",
+          "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope item 6.04 scoped review)",
+          "sha256": "3099c1dacad34bcc1c00ce3f4ad4e09d2fc7b1b55b381967fc96961514e23dfa"
         }
       ]
     },
@@ -2762,6 +2768,12 @@
           "evidence": "Node 24 typecheck passed including 99 canonical test files; domain suite passed 975/975 across 35 files, including eight source-verification tests. Full unit suite, lint, build, exact-head CI and independent review pending.",
           "reviewer": "Codex (CareerScope item 6.04 scoped review)",
           "sha256": "38df1e7360430d62a4bf6dbdc7d4a1ab5e1d5e3cd04d067ff7f036ea6a51fb4b"
+        },
+        {
+          "observations": "Reviewed the current source or documentation diff for item 6.04. Corrections verify original URLs before normalization, keep saved-lead source labels paired with the matching source URL result, and assert API plus UI verification display for configured and legacy links. Full browser acceptance remains pending.",
+          "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope item 6.04 scoped review)",
+          "sha256": "1121d490d581354538b6de4b4b516105228c821c20236940f96a688ee8d82710"
         }
       ]
     },
@@ -3034,6 +3046,12 @@
           "evidence": "Node 24 typecheck passed including 99 canonical test files; domain suite passed 975/975 across 35 files, including eight source-verification tests. Full unit suite, lint, build, exact-head CI and independent review pending.",
           "reviewer": "Codex (CareerScope item 6.04 scoped review)",
           "sha256": "b3bf256f987a9cb309e784b7a08c115a032e0381d10a7f197411835eb61d59cc"
+        },
+        {
+          "observations": "Reviewed the current source or documentation diff for item 6.04. Corrections verify original URLs before normalization, keep saved-lead source labels paired with the matching source URL result, and assert API plus UI verification display for configured and legacy links. Full browser acceptance remains pending.",
+          "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope item 6.04 scoped review)",
+          "sha256": "8d6c28d0ad8db468b8b2db7ae90de822631ee64934dfed563c7e1cf4d7faa9a2"
         }
       ]
     },
@@ -3628,6 +3646,12 @@
           "evidence": "Node 24 typecheck passed including 99 canonical test files; domain suite passed 975/975 across 35 files, including eight source-verification tests. Full unit suite, lint, build, exact-head CI and independent review pending.",
           "reviewer": "Codex (CareerScope item 6.04 scoped review)",
           "sha256": "0a2b7ce201c071b3172048318f728094c3ea412ab40dddf9806b7e88b5b2c091"
+        },
+        {
+          "observations": "Reviewed the current source or documentation diff for item 6.04. Corrections verify original URLs before normalization, keep saved-lead source labels paired with the matching source URL result, and assert API plus UI verification display for configured and legacy links. Full browser acceptance remains pending.",
+          "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope item 6.04 scoped review)",
+          "sha256": "a1f1bfdf11f6d9e50684b41022a2062eb42f2c4c36e3e8156ee8e776576e5ff7"
         }
       ]
     },
