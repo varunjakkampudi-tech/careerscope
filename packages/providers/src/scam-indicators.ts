@@ -5,6 +5,8 @@ const MAX_DESCRIPTION_LENGTH = 100_000;
 // whose match begins with a subject, such as "You do not need to pay a fee".
 const NEGATED_ACTION =
   /\b(?:no|not|never|without|don't|do not|doesn't|does not)\b(?!\s+(?:only|just)\b)[^,.!?;]{0,48}\b(?:pay|paid|send|submit|provide|deposit|cash|return|refund|transfer|forward|receive|move|process|earn|post|use)\b/i;
+const NEGATED_PERSONAL_ACCOUNT_USE =
+  /\b(?:no|not|never|without|don't|do not|doesn't|does not)\b(?!\s+(?:only|just)\b)[^,.!?;]{0,32}\buse\b[^,.!?;]{0,48}\bpersonal\s+(?:bank\s+)?account\b/i;
 const ACTION =
   /\b(?:pay|paid|send|submit|provide|deposit|cash|return|refund|transfer|forward|receive|move|process|earn|post|use)\b/gi;
 const CLAUSE_BOUNDARY = /[,;.!?]|\b(?:but|however|yet|though|although)\b/gi;
@@ -14,6 +16,7 @@ const NEGATED_FEE_REQUIREMENT =
 type Rule = {
   code: RecruitmentScamIndicator;
   pattern: RegExp;
+  actionPolicy?: 'any-affirmative' | 'all-affirmative';
 };
 
 const RULES: readonly Rule[] = [
@@ -24,16 +27,19 @@ const RULES: readonly Rule[] = [
   },
   {
     code: 'fake_check_return',
+    actionPolicy: 'all-affirmative',
     pattern:
       /\b(?:check|cheque)\b[^;]{0,90}\b(?:deposit|cash|mobile deposit)\b[^;]{0,90}\b(?:send|return|refund|transfer|forward)\b|\b(?:deposit|cash)\b[^;]{0,90}\b(?:check|cheque)\b[^;]{0,90}\b(?:send|return|refund|transfer|forward)\b/i,
   },
   {
     code: 'personal_account_money_transfer',
+    actionPolicy: 'all-affirmative',
     pattern:
       /\bpersonal\s+(?:bank\s+)?account\b[^.!?;]{0,90}\b(?:receive|deposit|transfer|move|forward|process|send)\b|\b(?:receive|deposit|transfer|move|forward|process|send)\b[^.!?;]{0,90}\b(?:funds|money|payments?)\b[^.!?;]{0,90}\bpersonal\s+(?:bank\s+)?account\b/i,
   },
   {
     code: 'paid_positive_reviews',
+    actionPolicy: 'all-affirmative',
     pattern:
       /\b(?:pay|paid|earn|payment|commission|money)\b[^.!?;]{0,80}\b(?:positive|five[- ]star|5[- ]star)\s+(?:online\s+)?(?:reviews?|ratings?)\b|\b(?:positive|five[- ]star|5[- ]star)\s+(?:online\s+)?(?:reviews?|ratings?)\b[^.!?;]{0,80}\b(?:pay|paid|earn|payment|commission|money)\b/i,
   },
@@ -51,7 +57,7 @@ export function detectRecruitmentScamIndicators(listingText: string): Recruitmen
   const passages = bounded.split(/\n+/u);
   const found = new Set<RecruitmentScamIndicator>();
 
-  for (const { code, pattern } of RULES) {
+  for (const { code, pattern, actionPolicy = 'any-affirmative' } of RULES) {
     if (
       passages.some((passage) => {
         const globalPattern = new RegExp(pattern.source, `${pattern.flags}g`);
@@ -70,17 +76,35 @@ export function detectRecruitmentScamIndicators(listingText: string): Recruitmen
             continue;
           }
 
+          const clauseStart = clauseStartAt(clauseEnds, match.index);
+          const matchEnd = match.index + match[0].length;
+          const matchContext = passage.slice(clauseStart, matchEnd);
           if (
-            actions.some((action) => {
-              if (action.index === undefined) return false;
-              const actionIndex = match.index + action.index;
-              const context = passage.slice(
-                clauseStartAt(clauseEnds, actionIndex),
-                actionIndex + action[0].length,
-              );
-              return !NEGATED_ACTION.test(context);
-            })
+            code === 'personal_account_money_transfer' &&
+            NEGATED_PERSONAL_ACCOUNT_USE.test(matchContext)
           ) {
+            continue;
+          }
+
+          const affirmativeActions = actions.map((action) => {
+            if (action.index === undefined) return false;
+            const actionIndex = match.index + action.index;
+            const priorAction = [...match[0].slice(0, action.index).matchAll(ACTION)].at(-1);
+            const actionContextStart =
+              priorAction?.index === undefined
+                ? clauseStartAt(clauseEnds, actionIndex)
+                : Math.max(
+                    clauseStartAt(clauseEnds, actionIndex),
+                    match.index + priorAction.index + priorAction[0].length,
+                  );
+            const actionContext = passage.slice(actionContextStart, actionIndex + action[0].length);
+            return !NEGATED_ACTION.test(actionContext);
+          });
+          const hasAffirmativeActions =
+            actionPolicy === 'all-affirmative'
+              ? affirmativeActions.every(Boolean)
+              : affirmativeActions.some(Boolean);
+          if (hasAffirmativeActions) {
             return true;
           }
         }

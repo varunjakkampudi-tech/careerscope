@@ -36,6 +36,14 @@ describe('detectRecruitmentScamIndicators', () => {
     ).toEqual(['candidate_upfront_payment']);
   });
 
+  it('keeps a later affirmative fee instruction after an earlier negated action in one clause', () => {
+    expect(
+      detectRecruitmentScamIndicators(
+        'Do not pay the vendor directly and send a registration fee to apply.',
+      ),
+    ).toEqual(['candidate_upfront_payment']);
+  });
+
   it('finds an affirmative fee demand after a negated fee statement in the same passage', () => {
     expect(
       detectRecruitmentScamIndicators(
@@ -110,6 +118,9 @@ describe('detectRecruitmentScamIndicators', () => {
     ).toEqual(['paid_positive_reviews']);
     expect(
       detectRecruitmentScamIndicators('Review customer feedback and summarize recurring issues.'),
+    ).toEqual([]);
+    expect(
+      detectRecruitmentScamIndicators('Do not earn money by posting positive online reviews.'),
     ).toEqual([]);
   });
 
