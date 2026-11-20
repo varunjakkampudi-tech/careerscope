@@ -45,6 +45,32 @@ do not satisfy the external approval gate. Items 2.06, 2.10, 2.11, and 2.12 rema
 authoritative [owner-roadmap inventory](requirements/OWNER-ROADMAP-TRACEABILITY.json). Stage 02 is
 therefore in progress; none of these item-level gaps is deferred to deployment.
 
+Owner item 2.12 identified an unusable admin authenticator flow: the API enforced TOTP but the web
+application had neither an enrollment path nor a sign-in code field. The current change adds
+owner-scoped enrollment status, a no-store one-time setup-secret response, authenticator confirmation
+in Account Security, an optional authenticator code on sign-in, and English/Telugu/Hindi copy.
+The previous implementation SHA `b359af5778632b5978b943c6d59a27b3dcb21576` passed all three required
+CI jobs in run `44696172107`, but independent review of that exact SHA required changes: TOTP was
+claimed before the email code was validated, setup state could outlive an account-owner transition,
+and browser enrollment used mocked endpoints. The current correction validates both sign-in factors
+in one transaction, adds real PostgreSQL-backed enrollment browser coverage and negative/cross-owner
+API checks, and guards account transitions. Corrected-head CI and independent re-review are pending;
+the first correction SHA `abf0bf2cc2882829dfe4d1a437ad3862b71851bc` passed Quality gates, production
+image build, and integration tests in run `44704814878`, but the browser step failed before browser
+execution because the test harness combined password-only and email-OTP app modes. The harness now
+starts a separate OTP-enabled app for the live TOTP journey. Second run `44706391474` on
+`e9050910154a958639878e1b94ee16c84c6f4259` passed quality, image, and PostgreSQL/Redis integration,
+but the browser timed out waiting for the delayed setup response during the account-transition case;
+the response listener now starts immediately before releasing that response. A fresh exact-head run
+is required. Third run `44707745430` on `4e5fb46ad1d441bc358c893d03d69323539026ee` passed Quality,
+image, and PostgreSQL/Redis integration, but the account-switch assertion waited for a transient
+email-change notice that the intentional owner-keyed remount clears. The assertion now waits for the
+new account's displayed email instead. The later live-API browser journey has not yet been reached;
+fresh exact-head browser CI and independent review remain pending.
+Item 2.12 remains partial, and no merge or post-merge verification is claimed. Owner item 2.11 still has the
+separate unusual-pattern step-up gap recorded in the v12 reconciliation; items 2.06 and 2.10 retain
+their native-language review gaps.
+
 Owner Stage 03 progress: items 3.01–3.12 are verified and merged through PR #55. Item 3.11 Salary expectations was approved at exact SHA `bdade0c6910cd3193717d12cd9de47e669e882c4`; hosted run `42365143652` passed all three jobs and the merge commit is `8515e871337a03349d96736d0f31f6580012662f`. Item 3.12 Availability/notice period was accepted at exact SHA `6aca4d9d8996e0f38bd34cecb4c89c9dee4bc6aa`; hosted run `42368802616` passed all three jobs, including profile save/reload, accessibility, keyboard, and responsive browser checks. ChatGPT issued final acceptance and PR #55 merged as `6d9789cb34d0100ba8a5845b2edfca9ea8fd88d4`. Candidate availability and preferred contact are owner-controlled profile details and are excluded from job matching. Legacy profiles infer availability from saved notice days; recruiter visibility remains under owner item 3.15. See the owner-roadmap inventory and [TEST-MATRIX](TEST-MATRIX.md). Preferred titles are candidate-defined preferences. Projects, work-history and education are candidate-provided claims, not independently verified and excluded from matching inputs. Age screening is a self-reported 18+ eligibility check and does not verify identity. Signup remains disabled pending the separate legal gate for owner item 2.05.
 
 Owner item 3.13 (Profile picture) is verified and merged to `dev` in PR #58 as `6a81241c9d3c1b1fc7ff04fbb7e8fa76aff91845`. The feature stores one private, normalized WebP per account and exposes authenticated owner-scoped read/replace/remove endpoints, with no public or recruiter-facing photo path. PR #57 feature SHA `7d671f731234d535c25c5d0279a8d09af986d285` passed hosted run `42386991607`; the post-merge run `42388956384` exposed a browser request-lifecycle issue. PR #58 shares owner-scoped avatar reads, passes React Query cancellation to fetch, and verifies one photo refresh request serves both avatar slots. Exact accepted head `05fa7a1edcf9178ec3f6e8c49a63810842aab8ea` passed all three jobs in hosted run `42394248888` and received independent final acceptance. The checklist now records 37/328 verified; the prior live `dev` count was 36/328.

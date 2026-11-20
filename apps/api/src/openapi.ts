@@ -582,6 +582,15 @@ function contracts(options: {
           'Requires the authenticated owner session and CSRF token. Returns the secret once, in base32, with an otpauth URI for authenticator apps. Refused once an authenticator is confirmed.',
       },
     ),
+    'GET /api/account/totp/status': operation(
+      'Read authenticator enrollment status',
+      object({ enabled: bool }),
+      {
+        failures: [404],
+        description:
+          'Requires the authenticated owner session. Returns only whether an authenticator is confirmed; never returns the secret.',
+      },
+    ),
     'POST /api/account/totp/confirm': operation(
       'Confirm the authenticator with a code from the app',
       object({ enrolled: { ...bool, enum: [true] } }),

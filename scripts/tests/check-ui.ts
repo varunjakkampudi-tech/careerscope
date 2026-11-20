@@ -16,6 +16,9 @@ import {
   testUsers,
   Database,
   passwordHash,
+  decodeBase32,
+  hotp,
+  timeStep,
   users,
   ProfileRepository,
   ProfilePhotoRepository,
@@ -613,9 +616,19 @@ try {
       let otpRequestCount = 0;
       let otpVerified = false;
       let otpCurrentEmail = otpEmail;
+      let otpSessionOwner = 'a'.repeat(64);
       let otpEmailVerificationTimestamp: string | null = '2026-10-20T12:00:00.000Z';
       let emailChangeRequestCount = 0;
       const emailChangeVerifications: string[] = [];
+      let delayNextTotpSetupResponse = false;
+      let startDelayedTotpSetup: (() => void) | undefined;
+      let releaseDelayedTotpSetup: (() => void) | undefined;
+      const delayedTotpSetupStarted = new Promise<void>((resolve) => {
+        startDelayedTotpSetup = resolve;
+      });
+      const delayedTotpSetupReleased = new Promise<void>((resolve) => {
+        releaseDelayedTotpSetup = resolve;
+      });
       const otpPageErrors: string[] = [];
       const otpConsoleErrors: string[] = [];
       const otpInflight = new Set<import('playwright').Request>();
@@ -683,7 +696,7 @@ try {
                 csrf: 'synthetic-csrf-token',
                 email: otpCurrentEmail,
                 emailVerifiedAt: otpEmailVerificationTimestamp,
-                owner: 'a'.repeat(64),
+                owner: otpSessionOwner,
                 aiEnabled: false,
                 emailOtpEnabled: true,
               }
@@ -703,6 +716,7 @@ try {
         }),
       );
       let otpInterviewRemindersEnabled = true;
+      let otpTotpEnabled = false;
       let loseNextPreferenceResponse = false;
       let failNextPreferenceRead = false;
       await otpPage.route('**/api/notifications/preferences', (route) => {
@@ -746,8 +760,12 @@ try {
         });
       });
       await otpPage.route('**/api/otp/verify', async (route) => {
-        const body = route.request().postDataJSON() as { email: string; code: string };
-        if (body.email !== otpEmail || body.code !== '123456')
+        const body = route.request().postDataJSON() as {
+          email: string;
+          code: string;
+          totpCode?: string;
+        };
+        if (body.email !== otpEmail || body.code !== '123456' || body.totpCode !== '654321')
           return route.fulfill({
             status: 401,
             contentType: 'application/json',
@@ -755,6 +773,28 @@ try {
           });
         otpVerified = true;
         return route.fulfill({ contentType: 'application/json', json: { authenticated: true } });
+      });
+      await otpPage.route('**/api/account/totp/status', (route) =>
+        route.fulfill({ contentType: 'application/json', json: { enabled: otpTotpEnabled } }),
+      );
+      await otpPage.route('**/api/account/totp/setup', async (route) => {
+        const requestOwner = otpSessionOwner;
+        if (delayNextTotpSetupResponse) {
+          delayNextTotpSetupResponse = false;
+          startDelayedTotpSetup?.();
+          await delayedTotpSetupReleased;
+        }
+        return route.fulfill({
+          contentType: 'application/json',
+          json: {
+            secret: requestOwner === 'a'.repeat(64) ? 'JBSWY3DPEHPK3PXP' : 'MFRGGZDFMZTWQ2LK',
+            otpauthUri: 'otpauth://totp/CareerScope:test',
+          },
+        });
+      });
+      await otpPage.route('**/api/account/totp/confirm', (route) => {
+        otpTotpEnabled = true;
+        return route.fulfill({ contentType: 'application/json', json: { enrolled: true } });
       });
       await otpPage.route('**/api/account/email-change/request', async (route) => {
         emailChangeRequestCount += 1;
@@ -770,7 +810,10 @@ try {
         const body = route.request().postDataJSON() as { address: string; code: string };
         emailChangeVerifications.push(body.address);
         const emailChanged = emailChangeVerifications.length === 2;
-        if (emailChanged) otpCurrentEmail = 'updated@example.test';
+        if (emailChanged) {
+          otpCurrentEmail = 'updated@example.test';
+          otpSessionOwner = 'b'.repeat(64);
+        }
         return route.fulfill({
           contentType: 'application/json',
           json: { verified: body.address, emailChanged },
@@ -806,6 +849,19 @@ try {
       await otpPage.getByRole('alert').filter({ hasText: 'invalid or expired' }).waitFor();
       assert.equal(await otpPage.getByLabel('Six-digit verification code').inputValue(), '');
       await otpPage.getByLabel('Six-digit verification code').fill('123456');
+      const missingTotpRejected = otpPage.waitForResponse(
+        (response) =>
+          response.url().endsWith('/api/otp/verify') &&
+          response.status() === 401 &&
+          (response.request().postDataJSON() as { totpCode?: string }).totpCode === undefined,
+      );
+      await otpPage.getByRole('button', { name: 'Verify and sign in' }).click();
+      await missingTotpRejected;
+      await otpPage.waitForFunction(
+        () => (document.querySelector('#otp-code') as HTMLInputElement | null)?.value === '',
+      );
+      await otpPage.getByLabel('Six-digit verification code').fill('123456');
+      await otpPage.getByLabel('Authenticator code (if requested)').fill('654321');
       await otpPage.getByRole('button', { name: 'Verify and sign in' }).click();
       await otpPage.waitForURL((url) => url.pathname === '/dashboard');
       await settleOtpRequests('dashboard after OTP sign-in');
@@ -819,6 +875,36 @@ try {
       );
       await otpPage.goto(`${origin}/settings`);
       await otpPage.getByRole('heading', { name: 'Account security', exact: true }).waitFor();
+      await otpPage.getByRole('heading', { name: 'Admin authenticator' }).waitFor();
+      delayNextTotpSetupResponse = true;
+      await otpPage.getByRole('button', { name: 'Set up authenticator' }).click();
+      await delayedTotpSetupStarted;
+
+      // Simulate an owner transition while the first owner's setup request is still in flight.
+      // The fixture changes owner on session refresh; the delayed response must not leak its secret.
+      await otpPage.getByLabel('New email address').fill('updated@example.test');
+      await otpPage.getByRole('button', { name: 'Send verification codes' }).click();
+      await otpPage.getByLabel('Code sent to current email').waitFor();
+      await otpPage.getByLabel('Code sent to current email').fill('111111');
+      await otpPage.getByRole('button', { name: 'Verify current email' }).click();
+      await otpPage.getByText('Current address verified. Now verify the new address.').waitFor();
+      await otpPage.getByLabel('Code sent to new email').fill('222222');
+      await otpPage.getByRole('button', { name: 'Verify new email' }).click();
+      await otpPage.getByText('Current email: updated@example.test', { exact: true }).waitFor();
+      assert.equal(emailChangeRequestCount, 1);
+      assert.deepEqual(emailChangeVerifications, ['current', 'new']);
+      const staleTotpSetupResponse = otpPage.waitForResponse((response) =>
+        response.url().endsWith('/api/account/totp/setup'),
+      );
+      releaseDelayedTotpSetup?.();
+      assert.equal((await staleTotpSetupResponse).status(), 200);
+      await otpPage.waitForFunction(() => !document.body.innerText.includes('JBSWY3DPEHPK3PXP'));
+
+      await otpPage.getByRole('button', { name: 'Set up authenticator' }).click();
+      await otpPage.getByText('MFRGGZDFMZTWQ2LK').waitFor();
+      await otpPage.getByLabel('Six-digit code from your authenticator app').fill('111111');
+      await otpPage.getByRole('button', { name: 'Confirm authenticator' }).click();
+      await otpPage.getByRole('status').getByText('Authenticator confirmed for this account.').waitFor();
       const otpReminderPreference = otpPage.getByRole('checkbox', {
         name: 'Show upcoming interview reminders in CareerScope',
       });
@@ -876,20 +962,6 @@ try {
         .filter({ hasText: /^Email verified on / })
         .waitFor();
       await settleOtpRequests('account security restored verification status');
-      await otpPage.getByLabel('New email address').fill('updated@example.test');
-      await otpPage.getByRole('button', { name: 'Send verification codes' }).click();
-      await otpPage.getByLabel('Code sent to current email').waitFor();
-      await otpPage.getByLabel('Code sent to current email').fill('111111');
-      await otpPage.getByRole('button', { name: 'Verify current email' }).click();
-      await otpPage.getByText('Current address verified. Now verify the new address.').waitFor();
-      await otpPage.getByLabel('Code sent to new email').fill('222222');
-      await otpPage.getByRole('button', { name: 'Verify new email' }).click();
-      await otpPage
-        .getByText('Email address updated. The previous address received a verification notice.')
-        .waitFor();
-      await otpPage.getByText('Current email: updated@example.test', { exact: true }).waitFor();
-      assert.equal(emailChangeRequestCount, 1);
-      assert.deepEqual(emailChangeVerifications, ['current', 'new']);
       for (const width of responsiveWidthsEndingAt(1440)) {
         await otpPage.setViewportSize({ width, height: 900 });
         assert.equal(
@@ -5755,6 +5827,86 @@ try {
   // Exercise the actual executable test-access contract without the legacy
   // password-fixture routes above. No network responses are replaced here.
   await app.close();
+  // Run the real authenticator API/browser journey on a separately configured app. The
+  // password-only fixture mode intentionally cannot be combined with runtime OTP modes.
+  const totpApp = await createApp(database, origin, async () => true, {
+    testAccess: { mode: 'disabled' },
+    emailOtp: {
+      secret: randomBytes(32),
+      provider: { async send() {} },
+    },
+  });
+  try {
+    await totpApp.listen({ host: '127.0.0.1', port: API_PORT });
+    for (const [engine, browserType] of notificationLifecycleOnly || profilePhotoOnly
+      ? []
+      : uiBrowsers) {
+      const browser = await browserType.launch();
+      try {
+        const page = await browser.newPage();
+        await installUnhandledRejectionGuard(page);
+        const pageErrors: string[] = [];
+        page.on('pageerror', (error) => pageErrors.push(error.message));
+        const credentials = await new Auth(database).loginWithVerifiedEmail(
+          `otp-${engine}@example.test`,
+        );
+        assert.ok(credentials);
+        await page.context().addCookies([
+          {
+            name: 'careerscope_v2_session',
+            value: credentials.accessToken,
+            url: origin,
+            httpOnly: true,
+            sameSite: 'Lax',
+          },
+          {
+            name: 'careerscope_v2_refresh',
+            value: credentials.refreshToken,
+            url: origin,
+            httpOnly: true,
+            sameSite: 'Lax',
+          },
+        ]);
+        await page.goto(`${origin}/settings`);
+        await page.getByRole('heading', { name: 'Account security', exact: true }).waitFor();
+        await page.getByRole('heading', { name: 'Admin authenticator' }).waitFor();
+        const setupResponse = page.waitForResponse((response) =>
+          response.url().endsWith('/api/account/totp/setup'),
+        );
+        await page.getByRole('button', { name: 'Set up authenticator' }).click();
+        const response = await setupResponse;
+        assert.equal(response.status(), 200);
+        const setup = (await response.json()) as { secret: string; otpauthUri: string };
+        await page.getByText(setup.secret, { exact: true }).waitFor();
+        assert.match(setup.otpauthUri, /^otpauth:\/\/totp\/CareerScope/);
+        await page
+          .getByLabel('Six-digit code from your authenticator app')
+          .fill(hotp(decodeBase32(setup.secret), timeStep(Date.now())));
+        const confirmResponse = page.waitForResponse((candidate) =>
+          candidate.url().endsWith('/api/account/totp/confirm'),
+        );
+        await page.getByRole('button', { name: 'Confirm authenticator' }).click();
+        assert.equal((await confirmResponse).status(), 200);
+        await page
+          .getByRole('status')
+          .getByText('Authenticator confirmed for this account.')
+          .waitFor();
+        const status = await page.evaluate(async () => {
+          const result = await fetch('/api/account/totp/status');
+          return { status: result.status, body: await result.json() };
+        });
+        assert.equal(status.status, 200);
+        assert.deepEqual(status.body, { enabled: true });
+        assert.deepEqual(pageErrors, [], `${engine} live TOTP API browser journey errored`);
+        await accessible(page, engine, 'live authenticator enrollment', 'Settings');
+        await page.close();
+      } finally {
+        await browser.close();
+      }
+    }
+  } finally {
+    await totpApp.close();
+  }
   const testApp = await createApp(database, origin, async () => true, {
     testAccess: { mode: 'local' },
   });

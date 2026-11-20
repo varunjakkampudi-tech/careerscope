@@ -5,6 +5,7 @@
  */
 
 import type { Database } from './database.js';
+import type { PoolClient } from 'pg';
 import {
   authenticatorUri,
   decryptTotpSecret,
@@ -82,26 +83,32 @@ export async function accountSecondFactor(
  * concurrent sign-ins with the same code cannot both succeed.
  */
 export async function claimAdminCode(
-  database: Database,
+  client: PoolClient,
   email: string,
-  code: string,
+  code: string | undefined,
   masterSecret: Uint8Array,
   nowMs = Date.now(),
-): Promise<boolean> {
-  const row = await database.pool.query<{ id: string; totp_secret_enc: string | null }>(
-    'SELECT id, totp_secret_enc FROM users WHERE email = $1 AND totp_enabled_at IS NOT NULL',
-    [email],
-  );
+): Promise<'not-admin' | 'invalid' | 'claimed'> {
+  const row = await client.query<{
+    id: string;
+    role: AccountRole;
+    totp_secret_enc: string | null;
+    totp_enabled_at: Date | null;
+  }>('SELECT id, role, totp_secret_enc, totp_enabled_at FROM users WHERE email = $1 FOR UPDATE', [
+    email,
+  ]);
   const account = row.rows[0];
-  if (!account?.totp_secret_enc) return false;
+  if (!account || account.role !== 'admin') return 'not-admin';
+  if (!account.totp_enabled_at || !account.totp_secret_enc || !code) return 'invalid';
   const step = matchingStep(decryptTotpSecret(account.totp_secret_enc, masterSecret), code, nowMs);
-  if (step === null) return false;
-  const claimed = await database.pool.query(
+  if (step === null) return 'invalid';
+  const claimed = await client.query(
     `UPDATE users SET totp_last_counter = $2
-     WHERE id = $1 AND (totp_last_counter IS NULL OR totp_last_counter < $2)`,
+     WHERE id = $1 AND role = 'admin' AND totp_enabled_at IS NOT NULL
+       AND (totp_last_counter IS NULL OR totp_last_counter < $2)`,
     [account.id, step],
   );
-  return (claimed.rowCount ?? 0) === 1;
+  return (claimed.rowCount ?? 0) === 1 ? 'claimed' : 'invalid';
 }
 
 /**
