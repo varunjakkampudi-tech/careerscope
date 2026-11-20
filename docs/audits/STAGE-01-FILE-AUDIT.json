@@ -1118,7 +1118,7 @@
       "observations": "Reviewed candidate reporting changes for bounded optional explanations, append-only owner-scoped submission history, retention cascade, API contract, and accurate partial-status documentation. Exact-head integration, browser CI, and independent review remain pending.",
       "evidence": "Current item 6.10 candidate diff reviewed on codex/stage06-item610-candidate-reporting; Drizzle migration integrity check passed locally. Exact-head CI and review are pending.",
       "reviewer": "Codex (CareerScope Stage 06 item 6.10 implementation review)",
-      "sha256": "7b2eb556b35610976452ea8315575fdc64c3ac02af3fc4fefa7bda9b6548a9f9"
+      "sha256": "cc40e46f56f0b54369a1d6c619d6fe65850b8d45d518957b5c79c7a7b0d860e2"
     },
     {
       "path": "apps/web/src/components/legal-acceptance.module.css",
@@ -1516,9 +1516,7 @@
       "category": "frontend",
       "reviewMethod": "content-read",
       "state": "reviewed",
-      "concerns": [
-        "localStorage access may throw in restricted browser contexts"
-      ],
+      "concerns": ["localStorage access may throw in restricted browser contexts"],
       "findings": [
         {
           "id": "S1-F057",
@@ -2855,7 +2853,7 @@
       "observations": "Reviewed candidate reporting changes for bounded optional explanations, append-only owner-scoped submission history, retention cascade, API contract, and accurate partial-status documentation. Exact-head integration, browser CI, and independent review remain pending.",
       "evidence": "Current item 6.10 candidate diff reviewed on codex/stage06-item610-candidate-reporting; Drizzle migration integrity check passed locally. Exact-head CI and review are pending.",
       "reviewer": "Codex (CareerScope Stage 06 item 6.10 implementation review)",
-      "sha256": "28686fed4724ec08e1ebe2a22eb5fc9d5384f5efbf90536a85b55729966708fc",
+      "sha256": "a8dd490e84ae23b03497a764df5a36027f454d13af8dd44aee8dc4735ef0d006",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",

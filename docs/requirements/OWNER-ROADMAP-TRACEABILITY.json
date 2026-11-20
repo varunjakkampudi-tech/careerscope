@@ -6,11 +6,7 @@
     "sha256": "427aa3fd646d1b27c535d6765411bda924755d1dfc8dae14980d73d03b056045",
     "checklistSha256": "b2fd6bfc97ec7483d7da05e5ffb35ae8c70d42fc2c6548406a9aebd63cc91602"
   },
-  "scopeExclusions": [
-    "Hostinger hosting",
-    "server backups",
-    "production deployment"
-  ],
+  "scopeExclusions": ["Hostinger hosting", "server backups", "production deployment"],
   "itemCount": 328,
   "stageCount": 22,
   "stageItemCounts": {
@@ -45,14 +41,8 @@
       "title": "Complete `dev` branch audit",
       "sourceStatus": "Required",
       "currentStatus": "verified",
-      "evidence": [
-        "docs/audits/STAGE-01-FILE-AUDIT.md",
-        "docs/TRACEABILITY.md"
-      ],
-      "tests": [
-        "scripts/ci/check-file-audit.test.mjs",
-        "scripts/ci/check-traceability.test.mjs"
-      ],
+      "evidence": ["docs/audits/STAGE-01-FILE-AUDIT.md", "docs/TRACEABILITY.md"],
+      "tests": ["scripts/ci/check-file-audit.test.mjs", "scripts/ci/check-traceability.test.mjs"],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -96,10 +86,7 @@
       "title": "Review PostgreSQL/Drizzle architecture",
       "sourceStatus": "Existing, verify",
       "currentStatus": "verified",
-      "evidence": [
-        "docs/architecture/DATABASE-REVIEW.md",
-        "docs/DATA-MODEL.md"
-      ],
+      "evidence": ["docs/architecture/DATABASE-REVIEW.md", "docs/DATA-MODEL.md"],
       "tests": ["tests/integration/database.integration.test.ts"],
       "externalEvidence": [],
       "gap": "",
@@ -112,10 +99,7 @@
       "title": "Review Redis and workers",
       "sourceStatus": "Existing, verify",
       "currentStatus": "verified",
-      "evidence": [
-        "docs/architecture/REDIS-WORKERS-REVIEW.md",
-        "docs/architecture/OUTBOX.md"
-      ],
+      "evidence": ["docs/architecture/REDIS-WORKERS-REVIEW.md", "docs/architecture/OUTBOX.md"],
       "tests": ["packages/core/src/bull-queue.integration.test.ts"],
       "externalEvidence": [],
       "gap": "",
@@ -141,10 +125,7 @@
       "title": "Complete API/OpenAPI contracts",
       "sourceStatus": "Partial",
       "currentStatus": "verified",
-      "evidence": [
-        "docs/architecture/API-OPENAPI-REVIEW.md",
-        "docs/API-SURFACE.md"
-      ],
+      "evidence": ["docs/architecture/API-OPENAPI-REVIEW.md", "docs/API-SURFACE.md"],
       "tests": [
         "apps/api/src/error-handler.test.ts",
         "tests/integration/database.integration.test.ts"
@@ -186,10 +167,7 @@
       "title": "Eliminate critical technical debt",
       "sourceStatus": "Required",
       "currentStatus": "verified",
-      "evidence": [
-        "docs/architecture/TECHNICAL-DEBT.md",
-        "docs/audits/STAGE-01-FILE-AUDIT.md"
-      ],
+      "evidence": ["docs/architecture/TECHNICAL-DEBT.md", "docs/audits/STAGE-01-FILE-AUDIT.md"],
       "tests": [
         "scripts/ci/check-file-audit.test.mjs",
         "scripts/ci/check-package-scripts.test.mjs"
@@ -224,9 +202,7 @@
       "currentStatus": "verified",
       "evidence": ["docs/FOUNDATIONS.md", "docs/operations/CI-CD.md"],
       "tests": ["scripts/ci/check-deploy-gate.test.mjs"],
-      "externalEvidence": [
-        "PR #29 exact-SHA CI run 42276531166 passed all three jobs."
-      ],
+      "externalEvidence": ["PR #29 exact-SHA CI run 42276531166 passed all three jobs."],
       "gap": "",
       "scopeDisposition": "in-scope"
     },
@@ -300,11 +276,7 @@
       "title": "Resend email OTP",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": [
-        "docs/GAP-MATRIX.md",
-        "docs/TEST-MATRIX.md",
-        "docs/PROGRESS.md"
-      ],
+      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": [
         "packages/core/src/email-otp-delivery.test.ts",
         "apps/api/src/email-otp.integration.test.ts"
@@ -320,11 +292,7 @@
       "title": "Six-digit code",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": [
-        "docs/GAP-MATRIX.md",
-        "docs/TEST-MATRIX.md",
-        "docs/PROGRESS.md"
-      ],
+      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": ["packages/core/src/email-otp.test.mjs"],
       "externalEvidence": [],
       "gap": "",
@@ -337,11 +305,7 @@
       "title": "OTP expiry and single use",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": [
-        "docs/GAP-MATRIX.md",
-        "docs/TEST-MATRIX.md",
-        "docs/PROGRESS.md"
-      ],
+      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": [
         "packages/core/src/email-otp-challenges.clock.test.ts",
         "packages/core/src/otp-challenges.integration.test.ts"
@@ -357,15 +321,8 @@
       "title": "Rate limiting and abuse protection",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": [
-        "docs/GAP-MATRIX.md",
-        "docs/TEST-MATRIX.md",
-        "docs/PROGRESS.md"
-      ],
-      "tests": [
-        "apps/api/src/otp-limits.test.ts",
-        "apps/api/src/rate-limit.test.ts"
-      ],
+      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
+      "tests": ["apps/api/src/otp-limits.test.ts", "apps/api/src/rate-limit.test.ts"],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -418,11 +375,7 @@
       "title": "Session rotation",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": [
-        "docs/GAP-MATRIX.md",
-        "docs/TEST-MATRIX.md",
-        "docs/PROGRESS.md"
-      ],
+      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": [
         "apps/api/src/session-lookup.test.ts",
         "apps/api/src/email-otp.integration.test.ts"
@@ -438,11 +391,7 @@
       "title": "Device/session management",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": [
-        "docs/GAP-MATRIX.md",
-        "docs/TEST-MATRIX.md",
-        "docs/PROGRESS.md"
-      ],
+      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": [
         "apps/api/src/session-lookup.test.ts",
         "apps/api/src/session-logout.integration.test.ts"
@@ -458,15 +407,8 @@
       "title": "Secure email change",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": [
-        "docs/GAP-MATRIX.md",
-        "docs/TEST-MATRIX.md",
-        "docs/PROGRESS.md"
-      ],
-      "tests": [
-        "scripts/tests/check-ui.ts",
-        "apps/api/src/email-otp.integration.test.ts"
-      ],
+      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
+      "tests": ["scripts/tests/check-ui.ts", "apps/api/src/email-otp.integration.test.ts"],
       "externalEvidence": [],
       "gap": "",
       "scopeDisposition": "in-scope"
@@ -478,11 +420,7 @@
       "title": "Account recovery",
       "sourceStatus": "Missing/partial",
       "currentStatus": "partial",
-      "evidence": [
-        "docs/GAP-MATRIX.md",
-        "docs/TEST-MATRIX.md",
-        "docs/PROGRESS.md"
-      ],
+      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": ["apps/api/src/recovery.integration.test.ts"],
       "externalEvidence": [],
       "gap": "Native Telugu and Hindi review of recovery copy remains outstanding. The owner selected AI-only review, which did not waive this gap.",
@@ -495,11 +433,7 @@
       "title": "Unauthorized access protection",
       "sourceStatus": "Partial",
       "currentStatus": "partial",
-      "evidence": [
-        "docs/GAP-MATRIX.md",
-        "docs/TEST-MATRIX.md",
-        "docs/PROGRESS.md"
-      ],
+      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": [
         "apps/api/src/new-device-alert.integration.test.ts",
         "apps/api/src/otp-limits.test.ts"
@@ -515,11 +449,7 @@
       "title": "Complete authentication UI",
       "sourceStatus": "Partial",
       "currentStatus": "partial",
-      "evidence": [
-        "docs/GAP-MATRIX.md",
-        "docs/TEST-MATRIX.md",
-        "docs/PROGRESS.md"
-      ],
+      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
       "gap": "The program stage is recorded complete with this item-level limitation carried forward; see the cited stage evidence.",
@@ -532,11 +462,7 @@
       "title": "Production-safe test login restrictions",
       "sourceStatus": "Existing, verify",
       "currentStatus": "verified",
-      "evidence": [
-        "docs/GAP-MATRIX.md",
-        "docs/TEST-MATRIX.md",
-        "docs/PROGRESS.md"
-      ],
+      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": ["packages/core/src/test-users.test.ts"],
       "externalEvidence": [],
       "gap": "",
@@ -549,15 +475,9 @@
       "title": "Resend delivery acceptance",
       "sourceStatus": "Unverified",
       "currentStatus": "verified",
-      "evidence": [
-        "docs/GAP-MATRIX.md",
-        "docs/TEST-MATRIX.md",
-        "docs/PROGRESS.md"
-      ],
+      "evidence": ["docs/GAP-MATRIX.md", "docs/TEST-MATRIX.md", "docs/PROGRESS.md"],
       "tests": ["packages/core/src/email-otp-delivery.test.ts"],
-      "externalEvidence": [
-        "Live Resend delivery acceptance is recorded in docs/GAP-MATRIX.md."
-      ],
+      "externalEvidence": ["Live Resend delivery acceptance is recorded in docs/GAP-MATRIX.md."],
       "gap": "",
       "scopeDisposition": "in-scope"
     },
@@ -568,10 +488,7 @@
       "title": "Guided onboarding",
       "sourceStatus": "Partial",
       "currentStatus": "verified",
-      "evidence": [
-        "apps/web/src/components/profile-editor.tsx",
-        "scripts/tests/check-ui.ts"
-      ],
+      "evidence": ["apps/web/src/components/profile-editor.tsx", "scripts/tests/check-ui.ts"],
       "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [
         "PR #43 merged to dev at merge commit ad7f0f7cf9423f26dda3cdc1e3eb6ce98a171a7e; implementation approved at exact head SHA efb4692fbacc97b90751be0f2f2172516fbe1b94 in the designated ChatGPT review conversation; hosted GitHub Actions run 42346547941 passed all three jobs, including Linux browser and visual checks (0 changed pixels on mobile and desktop)."
@@ -592,10 +509,7 @@
         "packages/core/src/email-otp-challenges.ts",
         "packages/core/src/auth.ts"
       ],
-      "tests": [
-        "apps/api/src/age-screen.test.ts",
-        "apps/api/src/email-otp.integration.test.ts"
-      ],
+      "tests": ["apps/api/src/age-screen.test.ts", "apps/api/src/email-otp.integration.test.ts"],
       "externalEvidence": [
         "PR #44 hosted run 42348015262 passed Quality gates, Services/integration/browser suites, and Production image build on exact SHA d5e2c724ba12c9454e2db54abd3c3e6cfac31aca; integration coverage verifies under-18 rejection before OTP/account persistence and raw birth-date non-persistence."
       ],
@@ -627,10 +541,7 @@
       "title": "Career stage",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": [
-        "apps/web/src/components/profile-editor.tsx",
-        "packages/core/src/profile.ts"
-      ],
+      "evidence": ["apps/web/src/components/profile-editor.tsx", "packages/core/src/profile.ts"],
       "tests": ["packages/core/src/profile.test.ts"],
       "externalEvidence": [],
       "gap": "",
@@ -643,10 +554,7 @@
       "title": "Education details",
       "sourceStatus": "Existing",
       "currentStatus": "verified",
-      "evidence": [
-        "apps/web/src/components/profile-editor.tsx",
-        "packages/core/src/profile.ts"
-      ],
+      "evidence": ["apps/web/src/components/profile-editor.tsx", "packages/core/src/profile.ts"],
       "tests": ["packages/core/src/profile.test.ts"],
       "externalEvidence": [],
       "gap": "",
@@ -889,10 +797,7 @@
         "apps/web/src/lib/profile-completeness.ts",
         "apps/web/src/app/(app)/dashboard/page.tsx"
       ],
-      "tests": [
-        "apps/web/src/lib/profile-completeness.test.ts",
-        "scripts/tests/check-ui.ts"
-      ],
+      "tests": ["apps/web/src/lib/profile-completeness.test.ts", "scripts/tests/check-ui.ts"],
       "externalEvidence": [
         "PR #69 exact head c17ad6dad5e86357d6331d3975edc8339f1921e2 passed hosted CI run 42472764595 on all three jobs; the production image was built but not published.",
         "ChatGPT independently reviewed and approved implementation and tests on exact head c17ad6dad5e86357d6331d3975edc8339f1921e2.",
@@ -956,10 +861,7 @@
       "title": "PDF processing",
       "sourceStatus": "Existing",
       "currentStatus": "partial",
-      "evidence": [
-        "packages/core/src/resume-parser-child.ts",
-        "packages/resume/src/extract.ts"
-      ],
+      "evidence": ["packages/core/src/resume-parser-child.ts", "packages/resume/src/extract.ts"],
       "tests": [
         "packages/core/src/resumes.integration.test.ts",
         "packages/resume/src/extract.test.ts"
@@ -1012,10 +914,7 @@
         "packages/matching/src/context.test.ts",
         "tests/integration/database.integration.test.ts"
       ],
-      "tests": [
-        "packages/resume/src/derive.test.ts",
-        "packages/shared/src/schemas.test.ts"
-      ],
+      "tests": ["packages/resume/src/derive.test.ts", "packages/shared/src/schemas.test.ts"],
       "externalEvidence": [
         "GitHub Actions run 42581255959 completed successfully on exact PR head 9a1c46fc9060e30eef58475b6f0f5cdf381ecdc3: Quality gates, production image build (not published), and services/integration/browser suites all passed.",
         "GitHub Actions run 42585568281 completed successfully on exact PR head 8734dae78e83470350b45094da9a57ef5176d644: Quality gates, production image build (not published), and services/integration/browser suites all passed. A subsequent review found a technology-evidence provenance issue and the branch was updated; this run does not validate the later correction.",
@@ -1097,10 +996,7 @@
       "title": "Profile synchronization",
       "sourceStatus": "New",
       "currentStatus": "not-started",
-      "evidence": [
-        "apps/web/src/components/profile-editor.tsx",
-        "packages/core/src/profile.ts"
-      ],
+      "evidence": ["apps/web/src/components/profile-editor.tsx", "packages/core/src/profile.ts"],
       "tests": [],
       "externalEvidence": [],
       "gap": "No explicit profile synchronization action/version/conflict policy exists for parsed resume data; manual profile-form population is not synchronization.",
@@ -1138,14 +1034,8 @@
       "title": "Resume quality diagnostics",
       "sourceStatus": "New",
       "currentStatus": "partial",
-      "evidence": [
-        "packages/resume/src/extract.ts",
-        "apps/web/src/components/resume-panel.tsx"
-      ],
-      "tests": [
-        "packages/resume/src/extract.test.ts",
-        "packages/resume/src/derive.test.ts"
-      ],
+      "evidence": ["packages/resume/src/extract.ts", "apps/web/src/components/resume-panel.tsx"],
+      "tests": ["packages/resume/src/extract.test.ts", "packages/resume/src/derive.test.ts"],
       "externalEvidence": [],
       "gap": "Parser reports rejected/corrupt/unsupported/oversized inputs, but no candidate-facing quality diagnostics (missing sections, readability or actionable quality report) is implemented.",
       "scopeDisposition": "in-scope"
@@ -1307,9 +1197,7 @@
         "packages/providers/src/registry.test.ts",
         "packages/shared/src/job-source-policy.test.ts"
       ],
-      "externalEvidence": [
-        "https://developers.ashbyhq.com/docs/public-job-posting-api"
-      ],
+      "externalEvidence": ["https://developers.ashbyhq.com/docs/public-job-posting-api"],
       "gap": "Existing synthetic fixtures cover Ashby listing and compensation mapping, descriptions, employment type, unlisted-post filtering, and compensation opt-in. Added regressions use workplaceType to distinguish Remote from Hybrid because the official API contract says isRemote is true for both, and preserve a zero salary bound. Focused Node 24 Docker tests passed 69/69 across adapter, registry and policy suites. PR #100 exact head 50840ed664011c628faafcbd484cf6e695a70c66 passed exact-head CI run 43925291040 attempt 2 and independent review; it merged as 5adc5b6cb0e46f46590e74f98b975fda281cc881 and post-merge run 43928997965 passed the required push jobs. Published documentation is not live-response verification. Ashby remains disabled by the empty production permission profile; current live schema, source-specific permitted-use rights, explicit owner approval, and an approved production profile are still required.",
       "scopeDisposition": "in-scope"
     },
@@ -1352,11 +1240,7 @@
       "title": "Job normalization",
       "sourceStatus": "Existing, expand",
       "currentStatus": "partial",
-      "evidence": [
-        "packages/providers/src/normalize.ts",
-        "docs/PROGRESS.md",
-        "docs/GAP-MATRIX.md"
-      ],
+      "evidence": ["packages/providers/src/normalize.ts", "docs/PROGRESS.md", "docs/GAP-MATRIX.md"],
       "tests": [
         "packages/providers/src/normalize.test.ts",
         "packages/providers/src/ats/adapters.test.ts",
@@ -1459,11 +1343,7 @@
       "title": "Provider retries and circuit breakers",
       "sourceStatus": "Partial",
       "currentStatus": "partial",
-      "evidence": [
-        "packages/providers/src/http.ts",
-        "docs/PROGRESS.md",
-        "docs/GAP-MATRIX.md"
-      ],
+      "evidence": ["packages/providers/src/http.ts", "docs/PROGRESS.md", "docs/GAP-MATRIX.md"],
       "tests": ["packages/providers/src/http.test.ts"],
       "externalEvidence": [],
       "gap": "The shared HTTP client has bounded transient retries, capped Retry-After handling, and a per-host circuit breaker that opens after five exhausted transient request cycles by default and allows one recovery probe after 30 seconds. Generation and failure-revision guards reject stale completions across open, recovery, and closed failure streaks while retaining concurrent failure counting. Fresh exact-head CI and independent review of the latest correction remain outstanding. Circuit health is host-scoped rather than provider-source policy/telemetry. Live behavior and source-specific tuning remain outstanding; no provider is activated.",
