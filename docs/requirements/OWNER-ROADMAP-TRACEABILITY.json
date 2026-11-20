@@ -1576,11 +1576,25 @@
       "stageTitle": "Advanced matching and eligibility",
       "title": "Experience matching",
       "sourceStatus": "Existing/partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/matching/src/demands.ts",
+        "packages/matching/src/context.ts",
+        "packages/matching/src/dimensions.ts",
+        "packages/matching/src/score.ts",
+        "packages/resume/src/derive.ts",
+        "apps/web/src/components/match-evidence.tsx",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/matching/src/demands.test.ts",
+        "packages/matching/src/context.test.ts",
+        "packages/matching/src/dimensions.test.ts",
+        "packages/resume/src/derive.test.ts",
+        "apps/workers/search/src/collect.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "The deterministic rule parser extracts bounded experience ranges; explicit candidate-entered years (including zero) take precedence over resume estimates, while unknown values fall back to parsed resume evidence. Scoring treats unknown/silent ranges neutrally and penalizes shortfalls more than excess. Focused tests pass locally, but exact-head CI and independent review remain pending. No labeled-corpus measurement validates extraction accuracy or score calibration; browser-level display of the experience reason is not item-tested.",
       "scopeDisposition": "in-scope"
     },
     {
