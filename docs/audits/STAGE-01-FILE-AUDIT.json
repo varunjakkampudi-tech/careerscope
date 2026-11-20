@@ -1925,10 +1925,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated to record the exact-SHA Stage 06 item 6.03 review finding and the audit-history correction; checklist remains partial pending new CI and re-review.",
-      "evidence": "Review correction: preserved all 18 displaced base audit snapshots. Docs record the not-approved finding and correction. Audit completeness, 328-item traceability, formatting and diff checks pass; exact-head CI and focused re-review are pending.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.03 audit-history correction)",
-      "sha256": "d080e08d39d1dec29d55bf0f246450785a6660fb2a9e818d1720e4bfbd1e2dca",
+      "observations": "Updated Stage 06 item 6.03 evidence after final exact-SHA review; retained Partial because product and owner gates remain open.",
+      "evidence": "Exact-head GitHub Actions run 44733774254 passed Quality gates, Services/integration/browser, and Production image build on 26cf5e9aef67ecebe6dc521819f79c9dbba2d255. Independent exact-SHA review approved the correction with no remaining review blockers. Item 6.03 remains partial; PR #112 is open and unmerged.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 final evidence update)",
+      "sha256": "8b2d599cfdc1b2b10d37fa4e2982e9f1bf523de9b9f92ce3977fc91a58eb5895",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2067,6 +2067,12 @@
           "evidence": "Review correction: preserved all 18 displaced base audit snapshots. Docs record the not-approved finding and correction. Audit completeness, 328-item traceability, formatting and diff checks pass; exact-head CI and focused re-review are pending.",
           "reviewer": "Codex (CareerScope Stage 06 item 6.03 audit-history correction)",
           "sha256": "5c0bc8ee3ae6f448bb1295e3eeff0142ffa0a3c9a8fce895602f9c4e9c49cd41"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.03 audit-history correction)",
+          "sha256": "d080e08d39d1dec29d55bf0f246450785a6660fb2a9e818d1720e4bfbd1e2dca",
+          "observations": "Updated to record the exact-SHA Stage 06 item 6.03 review finding and the audit-history correction; checklist remains partial pending new CI and re-review.",
+          "evidence": "Review correction: preserved all 18 displaced base audit snapshots. Docs record the not-approved finding and correction. Audit completeness, 328-item traceability, formatting and diff checks pass; exact-head CI and focused re-review are pending."
         }
       ]
     },
@@ -2141,10 +2147,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated to record the exact-SHA Stage 06 item 6.03 review finding and the audit-history correction; checklist remains partial pending new CI and re-review.",
-      "evidence": "Review correction: preserved all 18 displaced base audit snapshots. Docs record the not-approved finding and correction. Audit completeness, 328-item traceability, formatting and diff checks pass; exact-head CI and focused re-review are pending.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.03 audit-history correction)",
-      "sha256": "843715f87c3cc6652d52bfba1d08e2e17f888a674b04cff99f6f1f0541bcde9b",
+      "observations": "Recorded successful exact-head CI run 44733774254 and independent approval of correction head 26cf5e9aef67ecebe6dc521819f79c9dbba2d255; PR remains open and item 6.03 remains partial.",
+      "evidence": "Exact-head GitHub Actions run 44733774254 passed Quality gates, Services/integration/browser, and Production image build on 26cf5e9aef67ecebe6dc521819f79c9dbba2d255. Independent exact-SHA review approved the correction with no remaining review blockers. Item 6.03 remains partial; PR #112 is open and unmerged.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 final evidence update)",
+      "sha256": "1aa8ebb32f6110f0d0f4ba0a2418b7cbfabb535a4d59d2b34f3079ed71615895",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2363,10 +2369,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated to record the exact-SHA Stage 06 item 6.03 review finding and the audit-history correction; checklist remains partial pending new CI and re-review.",
-      "evidence": "Review correction: preserved all 18 displaced base audit snapshots. Docs record the not-approved finding and correction. Audit completeness, 328-item traceability, formatting and diff checks pass; exact-head CI and focused re-review are pending.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.03 audit-history correction)",
-      "sha256": "593c168d51c77675f485e9ea79e98596eb6ee350b5247b50d2731406e8130491",
+      "observations": "Recorded all three required exact-head CI jobs passing on 26cf5e9aef67ecebe6dc521819f79c9dbba2d255 and final independent approval; retained remaining product and owner gaps.",
+      "evidence": "Exact-head GitHub Actions run 44733774254 passed Quality gates, Services/integration/browser, and Production image build on 26cf5e9aef67ecebe6dc521819f79c9dbba2d255. Independent exact-SHA review approved the correction with no remaining review blockers. Item 6.03 remains partial; PR #112 is open and unmerged.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 final evidence update)",
+      "sha256": "7dde6da7f89da6145bb15ba1780268410fa15eae39c48b240a3ece8da2c15abd",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2511,6 +2517,12 @@
           "evidence": "Review correction: preserved all 18 displaced base audit snapshots. Docs record the not-approved finding and correction. Audit completeness, 328-item traceability, formatting and diff checks pass; exact-head CI and focused re-review are pending.",
           "reviewer": "Codex (CareerScope Stage 06 item 6.03 audit-history correction)",
           "sha256": "26540d9b5125979248c24a5d821aa3e35ac5c1aaee4e47bd289c93cce4c9eb45"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.03 audit-history correction)",
+          "sha256": "593c168d51c77675f485e9ea79e98596eb6ee350b5247b50d2731406e8130491",
+          "observations": "Updated to record the exact-SHA Stage 06 item 6.03 review finding and the audit-history correction; checklist remains partial pending new CI and re-review.",
+          "evidence": "Review correction: preserved all 18 displaced base audit snapshots. Docs record the not-approved finding and correction. Audit completeness, 328-item traceability, formatting and diff checks pass; exact-head CI and focused re-review are pending."
         }
       ]
     },
@@ -2961,10 +2973,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated to record the exact-SHA Stage 06 item 6.03 review finding and the audit-history correction; checklist remains partial pending new CI and re-review.",
-      "evidence": "Review correction: preserved all 18 displaced base audit snapshots. Docs record the not-approved finding and correction. Audit completeness, 328-item traceability, formatting and diff checks pass; exact-head CI and focused re-review are pending.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.03 audit-history correction)",
-      "sha256": "e34b360aa9e8e1f0a3a62d712713a893cb5019ceec39c7b99e6223c3fd194cfd",
+      "observations": "Updated canonical item 6.03 evidence for exact-head CI run 44733774254 and final independent approval; item remains partial and PR #112 remains unmerged.",
+      "evidence": "Exact-head GitHub Actions run 44733774254 passed Quality gates, Services/integration/browser, and Production image build on 26cf5e9aef67ecebe6dc521819f79c9dbba2d255. Independent exact-SHA review approved the correction with no remaining review blockers. Item 6.03 remains partial; PR #112 is open and unmerged.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.03 final evidence update)",
+      "sha256": "10d9371c87e61027267a6537f133ddca0371f19c87fb41e23a02fb73bf7dd43c",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3103,6 +3115,12 @@
           "evidence": "Review correction: preserved all 18 displaced base audit snapshots. Docs record the not-approved finding and correction. Audit completeness, 328-item traceability, formatting and diff checks pass; exact-head CI and focused re-review are pending.",
           "reviewer": "Codex (CareerScope Stage 06 item 6.03 audit-history correction)",
           "sha256": "5d3fc93394a104591f255b2047191bb5baeda31f1943b19aa4c6c868e5195104"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.03 audit-history correction)",
+          "sha256": "e34b360aa9e8e1f0a3a62d712713a893cb5019ceec39c7b99e6223c3fd194cfd",
+          "observations": "Updated to record the exact-SHA Stage 06 item 6.03 review finding and the audit-history correction; checklist remains partial pending new CI and re-review.",
+          "evidence": "Review correction: preserved all 18 displaced base audit snapshots. Docs record the not-approved finding and correction. Audit completeness, 328-item traceability, formatting and diff checks pass; exact-head CI and focused re-review are pending."
         }
       ]
     },
