@@ -1441,7 +1441,7 @@
         "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "Configured host checks record whether each original source URL agrees with the adapter that returned it; unknown third-party destinations and legacy links remain unverified. This does not establish employer identity, listing liveness, provider permission, or content accuracy. Independent review approved code head 661ea91. On that head, typecheck passed (99 canonical test files), domain tests passed 976/976 across 35 files, production build/CSP passed (14/14 hashes), formatting, traceability, complete file audit and lint passed (four existing warnings), and exact-head CI run 44640566665 passed all required jobs including integration and browser/accessibility checks. Production image was built, not pushed. This docs-only follow-up head requires fresh exact-head CI and review; item remains partial until those gates pass.",
+      "gap": "Configured host checks record whether each original source URL agrees with the adapter that returned it; unknown third-party destinations and legacy links remain unverified. This does not establish employer identity, listing liveness, provider permission, or content accuracy. Independent review approved implementation head 661ea91, and run 44640566665 passed all three required CI jobs. The Stage 01 audit-history correction at 284617e was independently approved and run 44643254125 passed all three required jobs. PR 116 remains unmerged; owner authorization and post-merge verification are still required, so status remains partial.",
       "scopeDisposition": "in-scope"
     },
     {

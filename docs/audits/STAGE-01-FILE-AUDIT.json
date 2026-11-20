@@ -2298,14 +2298,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused item 6.04 source and diff review",
+      "reviewMethod": "focused item 6.04 source and documentation review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current item 6.04 documentation and traceability diff. It records exact code head 661ea91, independent code review approval, and CI run 44640566665 while retaining partial status for the new documentation-only candidate pending fresh exact-head gates.",
-      "evidence": "On code head 661ea91, Node 24 typecheck passed (99 canonical test files), domain tests passed 976/976, production build/CSP passed (14/14 hashes), formatting, traceability, complete file audit and lint passed; exact-head CI run 44640566665 passed all three required jobs, including integration and browser/accessibility. New documentation-only head requires fresh CI and review.",
+      "observations": "Reviewed the final item 6.04 evidence update. It accurately records implementation and audit-history approvals, successful exact-head CI runs 44640566665 and 44643254125, and keeps the item partial pending owner-authorized merge and post-merge verification.",
+      "evidence": "Implementation head 661ea91 passed independent review and all three required CI jobs in run 44640566665. Audit-history correction 284617e passed independent review and all three required jobs in run 44643254125. Current PR remains unmerged; no deployment or image publication.",
       "reviewer": "Codex (CareerScope item 6.04 scoped review)",
-      "sha256": "dc7271cdf07260f25e4133398391df22f8accf3f6eb90e5557749db22edf5303",
+      "sha256": "5e0a0f6f59b8c34fb4106f2ed03a94cfab696d710678d7105fe20ea7e13117fd",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2476,6 +2476,12 @@
           "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
           "reviewer": "Codex (CareerScope item 6.04 scoped review)",
           "sha256": "3099c1dacad34bcc1c00ce3f4ad4e09d2fc7b1b55b381967fc96961514e23dfa"
+        },
+        {
+          "observations": "Reviewed the current item 6.04 documentation and traceability diff. It records exact code head 661ea91, independent code review approval, and CI run 44640566665 while retaining partial status for the new documentation-only candidate pending fresh exact-head gates.",
+          "evidence": "On code head 661ea91, Node 24 typecheck passed (99 canonical test files), domain tests passed 976/976, production build/CSP passed (14/14 hashes), formatting, traceability, complete file audit and lint passed; exact-head CI run 44640566665 passed all three required jobs, including integration and browser/accessibility. New documentation-only head requires fresh CI and review.",
+          "reviewer": "Codex (CareerScope item 6.04 scoped review)",
+          "sha256": "dc7271cdf07260f25e4133398391df22f8accf3f6eb90e5557749db22edf5303"
         }
       ]
     },
@@ -2538,7 +2544,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "focused item 6.04 source and diff review",
+      "reviewMethod": "focused item 6.04 source and documentation review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2550,10 +2556,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the current item 6.04 documentation and traceability diff. It records exact code head 661ea91, independent code review approval, and CI run 44640566665 while retaining partial status for the new documentation-only candidate pending fresh exact-head gates.",
-      "evidence": "On code head 661ea91, Node 24 typecheck passed (99 canonical test files), domain tests passed 976/976, production build/CSP passed (14/14 hashes), formatting, traceability, complete file audit and lint passed; exact-head CI run 44640566665 passed all three required jobs, including integration and browser/accessibility. New documentation-only head requires fresh CI and review.",
+      "observations": "Reviewed the final item 6.04 evidence update. It accurately records implementation and audit-history approvals, successful exact-head CI runs 44640566665 and 44643254125, and keeps the item partial pending owner-authorized merge and post-merge verification.",
+      "evidence": "Implementation head 661ea91 passed independent review and all three required CI jobs in run 44640566665. Audit-history correction 284617e passed independent review and all three required jobs in run 44643254125. Current PR remains unmerged; no deployment or image publication.",
       "reviewer": "Codex (CareerScope item 6.04 scoped review)",
-      "sha256": "bfbfa2c5e272cc5abf3ad39583f7177e982de0a4d436fea78df753268b702205",
+      "sha256": "c69abe3e9286bea46aea4f7233bf8217a8ad40d90fde17516f6f9cf3defb930f",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2774,6 +2780,12 @@
           "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
           "reviewer": "Codex (CareerScope item 6.04 scoped review)",
           "sha256": "1121d490d581354538b6de4b4b516105228c821c20236940f96a688ee8d82710"
+        },
+        {
+          "observations": "Reviewed the current item 6.04 documentation and traceability diff. It records exact code head 661ea91, independent code review approval, and CI run 44640566665 while retaining partial status for the new documentation-only candidate pending fresh exact-head gates.",
+          "evidence": "On code head 661ea91, Node 24 typecheck passed (99 canonical test files), domain tests passed 976/976, production build/CSP passed (14/14 hashes), formatting, traceability, complete file audit and lint passed; exact-head CI run 44640566665 passed all three required jobs, including integration and browser/accessibility. New documentation-only head requires fresh CI and review.",
+          "reviewer": "Codex (CareerScope item 6.04 scoped review)",
+          "sha256": "bfbfa2c5e272cc5abf3ad39583f7177e982de0a4d436fea78df753268b702205"
         }
       ]
     },
@@ -2868,14 +2880,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused item 6.04 source and diff review",
+      "reviewMethod": "focused item 6.04 source and documentation review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current item 6.04 documentation and traceability diff. It records exact code head 661ea91, independent code review approval, and CI run 44640566665 while retaining partial status for the new documentation-only candidate pending fresh exact-head gates.",
-      "evidence": "On code head 661ea91, Node 24 typecheck passed (99 canonical test files), domain tests passed 976/976, production build/CSP passed (14/14 hashes), formatting, traceability, complete file audit and lint passed; exact-head CI run 44640566665 passed all three required jobs, including integration and browser/accessibility. New documentation-only head requires fresh CI and review.",
+      "observations": "Reviewed the final item 6.04 evidence update. It accurately records implementation and audit-history approvals, successful exact-head CI runs 44640566665 and 44643254125, and keeps the item partial pending owner-authorized merge and post-merge verification.",
+      "evidence": "Implementation head 661ea91 passed independent review and all three required CI jobs in run 44640566665. Audit-history correction 284617e passed independent review and all three required jobs in run 44643254125. Current PR remains unmerged; no deployment or image publication.",
       "reviewer": "Codex (CareerScope item 6.04 scoped review)",
-      "sha256": "1271c8aa46a6b1bf032b7fdd4f7c37e6bd894a465c1dc871069051689f1f8390",
+      "sha256": "9f5c820d675d8af15c3e6afab6ddc29df8185f5863cf80f711c513dad73b373f",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -3052,6 +3064,12 @@
           "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
           "reviewer": "Codex (CareerScope item 6.04 scoped review)",
           "sha256": "8d6c28d0ad8db468b8b2db7ae90de822631ee64934dfed563c7e1cf4d7faa9a2"
+        },
+        {
+          "observations": "Reviewed the current item 6.04 documentation and traceability diff. It records exact code head 661ea91, independent code review approval, and CI run 44640566665 while retaining partial status for the new documentation-only candidate pending fresh exact-head gates.",
+          "evidence": "On code head 661ea91, Node 24 typecheck passed (99 canonical test files), domain tests passed 976/976, production build/CSP passed (14/14 hashes), formatting, traceability, complete file audit and lint passed; exact-head CI run 44640566665 passed all three required jobs, including integration and browser/accessibility. New documentation-only head requires fresh CI and review.",
+          "reviewer": "Codex (CareerScope item 6.04 scoped review)",
+          "sha256": "1271c8aa46a6b1bf032b7fdd4f7c37e6bd894a465c1dc871069051689f1f8390"
         }
       ]
     },
@@ -3486,14 +3504,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "focused item 6.04 source and diff review",
+      "reviewMethod": "focused item 6.04 source and documentation review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current item 6.04 documentation and traceability diff. It records exact code head 661ea91, independent code review approval, and CI run 44640566665 while retaining partial status for the new documentation-only candidate pending fresh exact-head gates.",
-      "evidence": "On code head 661ea91, Node 24 typecheck passed (99 canonical test files), domain tests passed 976/976, production build/CSP passed (14/14 hashes), formatting, traceability, complete file audit and lint passed; exact-head CI run 44640566665 passed all three required jobs, including integration and browser/accessibility. New documentation-only head requires fresh CI and review.",
+      "observations": "Reviewed the final item 6.04 evidence update. It accurately records implementation and audit-history approvals, successful exact-head CI runs 44640566665 and 44643254125, and keeps the item partial pending owner-authorized merge and post-merge verification.",
+      "evidence": "Implementation head 661ea91 passed independent review and all three required CI jobs in run 44640566665. Audit-history correction 284617e passed independent review and all three required jobs in run 44643254125. Current PR remains unmerged; no deployment or image publication.",
       "reviewer": "Codex (CareerScope item 6.04 scoped review)",
-      "sha256": "5661720f4b0b1234ec6d98d29ac799723786ac34ea1a2f773341a29ac5e2a6c7",
+      "sha256": "7759c1d67299f816237533c5407479ab0ebc58dfa65ece285b8b7abf0c650166",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3652,6 +3670,12 @@
           "evidence": "Exact-worktree Node 24 typecheck passed (99 canonical test files); domain suite passed 976/976 across 35 files; production build/CSP passed (14/14 hashes); formatting and roadmap traceability passed; lint passed with four existing warnings. Local UI run did not start because .env is absent; exact-head hosted CI and independent review remain pending.",
           "reviewer": "Codex (CareerScope item 6.04 scoped review)",
           "sha256": "a1f1bfdf11f6d9e50684b41022a2062eb42f2c4c36e3e8156ee8e776576e5ff7"
+        },
+        {
+          "observations": "Reviewed the current item 6.04 documentation and traceability diff. It records exact code head 661ea91, independent code review approval, and CI run 44640566665 while retaining partial status for the new documentation-only candidate pending fresh exact-head gates.",
+          "evidence": "On code head 661ea91, Node 24 typecheck passed (99 canonical test files), domain tests passed 976/976, production build/CSP passed (14/14 hashes), formatting, traceability, complete file audit and lint passed; exact-head CI run 44640566665 passed all three required jobs, including integration and browser/accessibility. New documentation-only head requires fresh CI and review.",
+          "reviewer": "Codex (CareerScope item 6.04 scoped review)",
+          "sha256": "5661720f4b0b1234ec6d98d29ac799723786ac34ea1a2f773341a29ac5e2a6c7"
         }
       ]
     },
