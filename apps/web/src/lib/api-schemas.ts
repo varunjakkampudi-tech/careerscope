@@ -317,7 +317,28 @@ const collectedJobSchema = z.object({
   description: z.string(),
   source: searchSourceSchema,
   sourceUrl: z.string(),
-  sourceLinks: z.array(z.object({ source: searchSourceSchema, url: z.string() })).optional(),
+  sourceLinks: z
+    .array(
+      z.object({
+        source: searchSourceSchema,
+        url: z.string(),
+        verification: z
+          .object({
+            status: z.enum(['configured_host_match', 'unverified']),
+            reason: z.enum([
+              'host_match',
+              'unconfigured_source',
+              'host_mismatch',
+              'host_not_configured',
+              'invalid_url',
+              'credentials_present',
+              'legacy_record',
+            ]),
+          })
+          .optional(),
+      }),
+    )
+    .optional(),
   applyUrl: z.string(),
   postedAt: z.string().nullable(),
   match: matchBreakdownSchema.nullable(),

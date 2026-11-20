@@ -30,6 +30,7 @@ import {
   type Salary,
 } from '@careerscope/shared';
 import { descriptionToText, snippet } from './html.js';
+import { verifySourceUrl } from './source-verification.js';
 
 export interface NormalizeOptions {
   /** Injected for deterministic tests. */
@@ -93,6 +94,9 @@ export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
     requiredYears,
     applyUrl: normalizeUrl(raw.applyUrl) ?? normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
     sourceUrl: normalizeUrl(raw.sourceUrl) ?? raw.sourceUrl,
+    // Verify the provider's original URL before normalizeUrl can rewrite its
+    // scheme and erase an explicit port that was nonstandard for the input.
+    sourceUrlVerification: verifySourceUrl(raw.source, raw.sourceUrl),
     sourcePublisher: collapse(raw.sourcePublisher ?? '') || null,
     firstSeenAt: nowIso,
     lastSeenAt: nowIso,

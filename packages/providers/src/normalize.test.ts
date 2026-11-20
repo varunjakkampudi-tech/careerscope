@@ -105,6 +105,19 @@ describe('normalizeJob', () => {
     expect(job.applyUrl).toBe('https://boards.greenhouse.io/acme/jobs/4001');
   });
 
+  it('verifies the original URL before HTTP normalization can erase a nonstandard port', () => {
+    const job = normalizeJob(
+      rawJob({
+        source: 'remoteok',
+        sourceUrl: 'http://remoteok.com:443/remote-jobs/4001',
+      }),
+      { now: NOW },
+    );
+
+    expect(job.sourceUrl).toBe('https://remoteok.com/remote-jobs/4001');
+    expect(job.sourceUrlVerification).toEqual({ status: 'unverified', reason: 'invalid_url' });
+  });
+
   it('ignores a relative apply url rather than storing a broken link', () => {
     const job = normalizeJob(rawJob({ applyUrl: '/jobs/4001/apply' }), { now: NOW });
 

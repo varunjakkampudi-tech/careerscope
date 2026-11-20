@@ -746,6 +746,10 @@ h3 {
   font-size: 13px;
   min-height: 32px;
 }
+.source-url-verification {
+  color: var(--muted);
+  font-size: 11px;
+}
 .description {
   white-space: pre-wrap;
   overflow-wrap: anywhere;

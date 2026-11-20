@@ -189,7 +189,26 @@ const job = object(
     source: text({ enum: sources }),
     sourceUrl: text({ format: 'uri' }),
     applyUrl: text({ format: 'uri' }),
-    sourceLinks: array(object({ source: text({ enum: sources }), url: text({ format: 'uri' }) })),
+    sourceLinks: array(
+      object({
+        source: text({ enum: sources }),
+        url: text({ format: 'uri' }),
+        verification: object({
+          status: text({ enum: ['configured_host_match', 'unverified'] }),
+          reason: text({
+            enum: [
+              'host_match',
+              'unconfigured_source',
+              'host_mismatch',
+              'host_not_configured',
+              'invalid_url',
+              'credentials_present',
+              'legacy_record',
+            ],
+          }),
+        }),
+      }),
+    ),
     postedAt: nullable(timestamp),
     match: {
       type: 'object',

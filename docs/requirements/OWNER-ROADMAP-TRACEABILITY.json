@@ -1420,11 +1420,28 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Source verification",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/source-verification.ts",
+        "packages/providers/src/normalize.ts",
+        "apps/workers/search/src/collect.ts",
+        "packages/core/src/jobs.ts",
+        "apps/api/src/openapi.ts",
+        "apps/web/src/components/job-search-view.tsx",
+        "apps/web/src/components/saved-leads.tsx",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md"
+      ],
+      "tests": [
+        "packages/providers/src/source-verification.test.ts",
+        "packages/providers/src/normalize.test.ts",
+        "apps/workers/search/src/collect.test.ts",
+        "packages/core/src/leads.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Configured host checks record whether each original source URL agrees with the adapter that returned it; unknown third-party destinations and legacy links remain unverified. This does not establish employer identity, listing liveness, provider permission, or content accuracy. Independent review approved implementation head 661ea91, and run 44640566665 passed all three required CI jobs. The Stage 01 audit-history correction at 284617e was independently approved and run 44643254125 passed all three required jobs. PR 116 remains unmerged; owner authorization and post-merge verification are still required, so status remains partial.",
       "scopeDisposition": "in-scope"
     },
     {

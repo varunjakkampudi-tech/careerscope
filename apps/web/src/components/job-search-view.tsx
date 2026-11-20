@@ -738,6 +738,18 @@ function JobSearchWorkspace() {
                             rel="noopener noreferrer"
                           >
                             {sourceNames[link.source]} <ExternalLink size={14} />
+                            <span
+                              className="source-url-verification"
+                              title={
+                                link.verification?.status === 'configured_host_match'
+                                  ? 'Only the URL host is checked; employer identity, listing status, and source rights are not verified.'
+                                  : 'The URL host is not verified against this source configuration.'
+                              }
+                            >
+                              {link.verification?.status === 'configured_host_match'
+                                ? 'Host matches source configuration'
+                                : 'Source URL unverified'}
+                            </span>
                           </a>
                         ))}
                         <a href={data.applyUrl} target="_blank" rel="noopener noreferrer">

@@ -353,6 +353,25 @@ export const salarySchema = z.object({
 });
 export type Salary = z.infer<typeof salarySchema>;
 
+/**
+ * Evidence that a listing URL's host agrees with the adapter's configured
+ * source host. This does not verify the employer, posting contents, rights, or
+ * whether the listing is still live.
+ */
+export const sourceUrlVerificationSchema = z.object({
+  status: z.enum(['configured_host_match', 'unverified']),
+  reason: z.enum([
+    'host_match',
+    'unconfigured_source',
+    'host_mismatch',
+    'host_not_configured',
+    'invalid_url',
+    'credentials_present',
+    'legacy_record',
+  ]),
+});
+export type SourceUrlVerification = z.infer<typeof sourceUrlVerificationSchema>;
+
 /** A normalised posting produced by `@careerscope/providers` and scored by `matching`. */
 export const jobSchema = z.object({
   id: z.string(),
@@ -397,6 +416,11 @@ export const jobSchema = z.object({
   applyUrl: z.string(),
   /** The listing on the source board. */
   sourceUrl: z.string(),
+  /** Host consistency evidence; never a claim that a job or employer is legitimate. */
+  sourceUrlVerification: sourceUrlVerificationSchema.default({
+    status: 'unverified',
+    reason: 'legacy_record',
+  }),
   /**
    * The board the posting *originally* appeared on, when the source is an
    * aggregator that says so. JSearch reports "LinkedIn", "Indeed", "Glassdoor";
