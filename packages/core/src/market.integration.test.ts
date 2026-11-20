@@ -32,38 +32,73 @@ test('posting evidence accumulates across searches and detects a refreshed listi
       );
     }
 
-    // Mirrors exactly what completeSearch writes, so the test exercises the real
-    // upsert rather than a convenient reimplementation of it.
-    const sight = (ownerId: string, fingerprint: string, postedAt: string | null, seenAgo = 0) =>
-      database.pool.query(
-        `INSERT INTO job_sightings
-           (owner_id, fingerprint, title, company, first_posted_at, last_posted_at,
-            first_seen_at, last_seen_at)
-         VALUES ($1, $2, 'Backend Engineer', 'Acme', $3, $3,
-                 now() - ($4 || ' days')::interval, now() - ($4 || ' days')::interval)
-         ON CONFLICT (owner_id, fingerprint) DO UPDATE SET
-           last_seen_at = now(),
-           sightings = job_sightings.sightings + 1,
-           last_posted_at = COALESCE(EXCLUDED.last_posted_at, job_sightings.last_posted_at),
-           repost_count = job_sightings.repost_count + CASE
-             WHEN EXCLUDED.last_posted_at IS NOT NULL
-              AND job_sightings.last_posted_at IS NOT NULL
-              AND EXCLUDED.last_posted_at > job_sightings.last_posted_at
-             THEN 1 ELSE 0 END`,
-        [ownerId, fingerprint, postedAt, seenAgo],
+    // Use the production search lifecycle so this verifies Database.settle's
+    // transactional sighting upsert, rather than duplicating that SQL here.
+    const sight = async (ownerId: string, fingerprint: string, postedAt: string | null) => {
+      const search = await database.createSearch(ownerId, randomUUID(), {
+        query: 'Backend Engineer',
+        sources: ['remoteok'],
+      });
+      const entry = (await database.unpublished()).find(
+        (candidate) => candidate.command.aggregateId === search.id,
       );
+      assert.ok(entry, 'creating a search must write its collection command');
+      const fence = await database.claim(entry.command.id);
+      assert.ok(fence, 'a worker must claim the collection command');
+      assert.equal(await database.startSearch(entry.command, fence), true);
+      assert.equal(
+        await database.complete(entry.command, fence, [
+          {
+            fingerprint,
+            sourceJobId: fingerprint,
+            title: 'Backend Engineer',
+            company: 'Acme',
+            location: 'Remote',
+            description: 'Synthetic integration fixture',
+            source: 'remoteok',
+            sourceUrl: 'https://remoteok.com/remote-jobs/synthetic',
+            applyUrl: 'https://example.test/apply',
+            postedAt,
+          },
+        ]),
+        true,
+      );
+      return search.id;
+    };
 
     const market = new MarketRepository(database.pool);
     const ninetyDaysAgo = new Date(Date.now() - 90 * 86_400_000).toISOString();
     const yesterday = new Date(Date.now() - 86_400_000).toISOString();
 
-    // Seen in four searches over five weeks, still claiming the same old date.
-    await sight(owner, 'long-open', ninetyDaysAgo, 35);
+    // Seed one old observation, then run three real searches with the same
+    // posting and unchanged posted date. First-seen must survive all upserts.
+    await sight(owner, 'long-open', ninetyDaysAgo);
+    await database.pool.query(
+      `UPDATE job_sightings SET first_seen_at = now() - interval '35 days'
+       WHERE owner_id = $1 AND fingerprint = 'long-open'`,
+      [owner],
+    );
+    const seededFirstSeen = await database.pool.query<{ firstSeenAt: string }>(
+      `SELECT first_seen_at::text AS "firstSeenAt" FROM job_sightings
+       WHERE owner_id = $1 AND fingerprint = 'long-open'`,
+      [owner],
+    );
+    assert.equal(seededFirstSeen.rowCount, 1);
     for (let i = 0; i < 3; i += 1) await sight(owner, 'long-open', ninetyDaysAgo);
+
+    const longOpenBeforeAdvance = await market.posting(owner, 'long-open');
+    assert.ok(longOpenBeforeAdvance);
+    const priorLastSeen = new Date(longOpenBeforeAdvance.lastSeenAt).valueOf();
+    await new Promise((resolve) => setTimeout(resolve, 25));
+    await sight(owner, 'long-open', ninetyDaysAgo);
 
     const longOpen = await market.posting(owner, 'long-open');
     assert.ok(longOpen);
-    assert.equal(longOpen.sightings, 4);
+    assert.ok(
+      new Date(longOpen.lastSeenAt).valueOf() > priorLastSeen,
+      'a later completed search must advance persisted last-seen time',
+    );
+    assert.equal(longOpen.sightings, 5);
     assert.equal(longOpen.repostCount, 0);
     assert.ok(
       longOpen.daysOpen !== null && longOpen.daysOpen >= 89,
@@ -72,6 +107,12 @@ test('posting evidence accumulates across searches and detects a refreshed listi
     assert.ok(longOpen.signals.includes('long_open'));
     assert.ok(longOpen.signals.includes('persistent'));
     assert.ok(!longOpen.signals.includes('recently_posted'));
+    assert.ok(longOpen.lastSeenAt >= longOpen.firstSeenAt);
+    assert.equal(
+      new Date(longOpen.firstSeenAt).toISOString(),
+      new Date(seededFirstSeen.rows[0]!.firstSeenAt).toISOString(),
+      'repeated search completions must preserve the original first-seen timestamp',
+    );
 
     // The same posting returns claiming a newer date. That is a refresh of an
     // old role, and it is the signal a job board will never surface.
