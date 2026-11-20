@@ -7663,8 +7663,7 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "6040b0afb6dbae5f400cfaeb18fb8595d5644a4bea2f0dccc43797d136d58863"
-    }
-,
+    },
     {
       "path": "packages/providers/src/scam-indicators.test.ts",
       "category": "shared-domain-package",
