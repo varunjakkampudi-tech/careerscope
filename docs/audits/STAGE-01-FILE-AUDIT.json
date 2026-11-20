@@ -1888,10 +1888,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
-      "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
-      "sha256": "b23b6510591a1fd9a3080818c26b08b175345e459a385951a7b0c033df0345bf",
+      "observations": "Corrected stale item 6.01 verification wording to match the independently reviewed exact PR head and completed CI run. Status remains partial pending merge and post-merge verification.",
+      "evidence": "PR #107 exact head 67e6af237fb6975ea4759a6b1856d5039fd61c23 passed run 44650007202 and received independent exact-SHA approval; no merge or checklist promotion is claimed.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence correction)",
+      "sha256": "b0c2627bd733dd12f95b647d34d85c448226301f424cdbb917302a48699babd1",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2036,6 +2036,12 @@
           "sha256": "86d5e5c511a2ca8972b9330ece3f2b705d4ebe7ffeea1370523d6adf858a0216",
           "observations": "Updated Stage 06 item 6.01 evidence for the monotonic last-seen correction. Historical first-seen evidence is preserved; the latest-seen value is defined as the greatest saved transaction timestamp. Item remains partial pending fresh exact-head CI/review, merge and post-merge verification.",
           "evidence": "Earlier head eede25f09b423046ec784a36a921f766b64bb8f8 passed run 44531475777; current code commit 770855143ef61d0fa8e3d4e67dd3d023aaf40aa0 passed the focused disposable-PostgreSQL regression 1/1. Run 44558533869 failed Quality on stale hashes for the changed database and integration-test files; this record refreshes the affected audit entries. Fresh exact-head CI and review remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
+          "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
+          "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
+          "sha256": "b23b6510591a1fd9a3080818c26b08b175345e459a385951a7b0c033df0345bf"
         }
       ]
     },
@@ -2110,10 +2116,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
-      "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
-      "sha256": "c6244e4be1b4ed0a91bb135bb6c529c1e96f728f6ba8f60215bed7f68d8797cc",
+      "observations": "Corrected stale item 6.01 verification wording to match the independently reviewed exact PR head and completed CI run. Status remains partial pending merge and post-merge verification.",
+      "evidence": "PR #107 exact head 67e6af237fb6975ea4759a6b1856d5039fd61c23 passed run 44650007202 and received independent exact-SHA approval; no merge or checklist promotion is claimed.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence correction)",
+      "sha256": "338ad578592e7287decec2defcc682f65d3d1e4b78c5ed8c333856d9a44e3bbe",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2276,6 +2282,12 @@
           "sha256": "659d4f0103a231be08ace3b8d332bbc289a2c346b68de7c1e4916120d676d599",
           "observations": "Updated Stage 06 item 6.01 progress with current timestamp monotonicity evidence and the exact stale-hash CI failure. Item remains partial pending fresh exact-head CI/review, merge and post-merge verification.",
           "evidence": "Earlier head eede25f09b423046ec784a36a921f766b64bb8f8 passed run 44531475777. Current code commit 770855143ef61d0fa8e3d4e67dd3d023aaf40aa0 passed the focused disposable-PostgreSQL regression 1/1; run 44558533869 identified stale audit hashes for its changed source/test files. This closeout updates the hashes; fresh exact-head CI and review remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
+          "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
+          "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
+          "sha256": "c6244e4be1b4ed0a91bb135bb6c529c1e96f728f6ba8f60215bed7f68d8797cc"
         }
       ]
     },
@@ -2330,10 +2342,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
-      "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
-      "sha256": "dc24295a0442ad3271e63b9ebe8456548fd46a0a4054fbdf78bc38619030e0c7",
+      "observations": "Corrected stale item 6.01 verification wording to match the independently reviewed exact PR head and completed CI run. Status remains partial pending merge and post-merge verification.",
+      "evidence": "PR #107 exact head 67e6af237fb6975ea4759a6b1856d5039fd61c23 passed run 44650007202 and received independent exact-SHA approval; no merge or checklist promotion is claimed.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence correction)",
+      "sha256": "87921d6220eed40bd4e3cce4e295698ec5946e160a543e011a14f4336afa9ba2",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2490,6 +2502,12 @@
           "sha256": "f41929b641dbd576c1418e96731c2273192b2453ea44f12b88a5b554365657cb",
           "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
           "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
+          "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
+          "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
+          "sha256": "dc24295a0442ad3271e63b9ebe8456548fd46a0a4054fbdf78bc38619030e0c7"
         }
       ]
     },
@@ -2928,10 +2946,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
-      "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
-      "sha256": "c0979317443e2e00157a313211541995b829747dc934ac7c57ca6fdde6490abb",
+      "observations": "Corrected stale item 6.01 verification wording to match the independently reviewed exact PR head and completed CI run. Status remains partial pending merge and post-merge verification.",
+      "evidence": "PR #107 exact head 67e6af237fb6975ea4759a6b1856d5039fd61c23 passed run 44650007202 and received independent exact-SHA approval; no merge or checklist promotion is claimed.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence correction)",
+      "sha256": "7e0e5ca19695efe6ba66a96e78771f026e55a387ae8c0f8724f6dd6f4c69ba47",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3064,6 +3082,12 @@
           "sha256": "6aaa040934650e1febd532c35b540bc5a0671dfae98fa49e3e659f86d818c121",
           "observations": "Updated the canonical item 6.01 record to state the monotonic timestamp rule, out-of-order regression evidence, and remaining exact-head gates; completion status remains partial.",
           "evidence": "Schema, API projection and migration already exist on dev. The disposable-PostgreSQL integration test passed 1/1 after rebuilding core. Run 44558533869 exposed stale hashes for changed source/test records; the candidate refreshes those hashes. Fresh exact-head CI/review and merge/post-merge verification remain open."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01 evidence follow-up)",
+          "observations": "Updated Stage 06 item 6.01 evidence following exact-head CI and independent review. The item remains partial; the six superseded audit snapshots are retained in history.",
+          "evidence": "Candidate head aed1cefb39a4b855a31302a775aadb5d3a6bd370 passed all three required CI jobs in run 44560200385. Independent review confirmed the timestamp behavior and PostgreSQL regression, and identified missing audit history for six displaced records. This revision restores the snapshots. Fresh exact-head CI/review remain pending.",
+          "sha256": "c0979317443e2e00157a313211541995b829747dc934ac7c57ca6fdde6490abb"
         }
       ]
     },
