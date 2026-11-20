@@ -316,6 +316,26 @@ export type Resume = z.infer<typeof resumeSchema>;
 export const confidenceSchema = z.enum(['verified', 'probable', 'unverified']);
 export type Confidence = z.infer<typeof confidenceSchema>;
 
+/**
+ * Source-reported company website and application-link hosts compared without
+ * claiming either site is independently verified. ATS-hosted links are a
+ * separate status because their host commonly differs from the employer site.
+ */
+export const employerDomainCheckSchema = z
+  .object({
+    status: z.enum(['unknown', 'same-host', 'different-host', 'ats-hosted']),
+    companyHost: z.string().min(1).max(253).nullable(),
+    applyHost: z.string().min(1).max(253).nullable(),
+  })
+  .strict();
+export type EmployerDomainCheck = z.infer<typeof employerDomainCheckSchema>;
+
+export const unknownEmployerDomainCheck: EmployerDomainCheck = {
+  status: 'unknown',
+  companyHost: null,
+  applyHost: null,
+};
+
 /** Employer record. Contact fields are observed or null, each with a confidence label. */
 export const companySchema = z.object({
   id: z.string(),
@@ -376,6 +396,7 @@ export const jobSchema = z.object({
     careersEmail: z.string().nullable().default(null),
     emailConfidence: confidenceSchema.default('unverified'),
   }),
+  employerDomainCheck: employerDomainCheckSchema.default(unknownEmployerDomainCheck),
   location: z.string(),
   isRemote: z.boolean().default(false),
   employmentType: z.enum(EMPLOYMENT_TYPES).nullable(),

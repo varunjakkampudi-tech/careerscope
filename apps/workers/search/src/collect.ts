@@ -160,6 +160,7 @@ export async function collect(
             source: normalized.source,
             sourceUrl: normalized.sourceUrl,
             applyUrl: normalized.applyUrl,
+            employerDomainCheck: normalized.employerDomainCheck,
             postedAt: normalized.postedAt,
             match: null,
           });
@@ -252,6 +253,7 @@ export async function collect(
         sourceUrl: normalized.sourceUrl,
         sourceLinks: [...(sourceLinks.get(linkBucketKey)?.values() ?? [])],
         applyUrl: normalized.applyUrl,
+        employerDomainCheck: normalized.employerDomainCheck,
         postedAt: normalized.postedAt,
         match,
       }),

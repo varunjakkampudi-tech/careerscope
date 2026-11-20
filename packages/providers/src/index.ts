@@ -45,6 +45,7 @@ export {
   periodFrom,
   type NormalizeOptions,
 } from './normalize.js';
+export { checkEmployerDomain } from './employer-domain.js';
 
 /* HTTP, shared by every provider. */
 export {

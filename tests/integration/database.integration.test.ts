@@ -1965,6 +1965,11 @@ test('partial search outcomes are atomic, owner-scoped, terminal and usable thro
       source: 'remoteok' as const,
       sourceUrl: 'https://remoteok.com/remote-jobs/synthetic',
       applyUrl: 'https://example.test/apply',
+      employerDomainCheck: {
+        status: 'different-host' as const,
+        companyHost: 'synthetic.example',
+        applyHost: 'example.test',
+      },
       postedAt: null,
     };
     const outcomes: SourceOutcome[] = [
@@ -2044,6 +2049,12 @@ test('partial search outcomes are atomic, owner-scoped, terminal and usable thro
     assert.equal(await database.completeCollection(command, fence, [job], outcomes), true);
     assert.equal(await database.executionStatus(command.id), 'completed');
     assert.deepEqual((await database.getSearch(ownerId, search.id))?.sourceOutcomes, outcomes);
+    const persistedJob = await database.pool.query<{ employerDomainCheck: unknown }>(
+      `SELECT data->'employerDomainCheck' AS "employerDomainCheck"
+       FROM search_jobs WHERE owner_id = $1 AND run_id = $2 AND fingerprint = $3`,
+      [ownerId, search.id, job.fingerprint],
+    );
+    assert.deepEqual(persistedJob.rows[0]?.employerDomainCheck, job.employerDomainCheck);
     for (const count of [3, 4, 5]) {
       const sources = (['remoteok', 'himalayas', 'greenhouse', 'lever', 'workable'] as const).slice(
         0,

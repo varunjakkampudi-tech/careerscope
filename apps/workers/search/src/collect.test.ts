@@ -21,6 +21,32 @@ import {
 const request = { query: 'React', sources: ['remoteok'] as ['remoteok'] };
 const signal = new AbortController().signal;
 
+test('collection carries employer domain consistency evidence into the stored job shape', async () => {
+  const provider = {
+    ...createRemoteOkProvider(),
+    async *search() {
+      yield {
+        source: 'remoteok' as const,
+        sourceJobId: 'domain-check',
+        title: 'Backend Engineer',
+        companyName: 'Acme',
+        hasFullDescription: true,
+        sourceUrl: 'https://remoteok.com/jobs/domain-check',
+        companyWebsite: 'https://acme.example',
+        applyUrl: 'https://apply.example/jobs/domain-check',
+      };
+    },
+  };
+
+  const result = await collect(request, signal, provider);
+  assert.equal(result.jobs.length, 1);
+  assert.deepEqual(result.jobs[0]?.employerDomainCheck, {
+    status: 'different-host',
+    companyHost: 'acme.example',
+    applyHost: 'apply.example',
+  });
+});
+
 test('profile discovery uses bounded saved roles without sending candidate identity', async () => {
   const profile = matchingProfile(
     writableProfileSchema.parse({

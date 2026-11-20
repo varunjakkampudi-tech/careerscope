@@ -189,6 +189,11 @@ const job = object(
     source: text({ enum: sources }),
     sourceUrl: text({ format: 'uri' }),
     applyUrl: text({ format: 'uri' }),
+    employerDomainCheck: object({
+      status: text({ enum: ['unknown', 'same-host', 'different-host', 'ats-hosted'] }),
+      companyHost: nullable(text({ maxLength: 253 })),
+      applyHost: nullable(text({ maxLength: 253 })),
+    }),
     sourceLinks: array(object({ source: text({ enum: sources }), url: text({ format: 'uri' }) })),
     postedAt: nullable(timestamp),
     match: {
@@ -218,6 +223,7 @@ const job = object(
     'source',
     'sourceUrl',
     'applyUrl',
+    'employerDomainCheck',
     'postedAt',
     'match',
   ],

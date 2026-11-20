@@ -68,6 +68,11 @@ describe('normalizeJob', () => {
     expect(job.salary.annualMax).toBe(4_200_000);
     expect(job.postedAt).toBe('2026-02-20T10:00:00.000Z');
     expect(job.applyUrl).toBe('https://boards.greenhouse.io/acme/jobs/4001#app');
+    expect(job.employerDomainCheck).toEqual({
+      status: 'ats-hosted',
+      companyHost: 'acme.example',
+      applyHost: 'boards.greenhouse.io',
+    });
     expect(job.hasFullDescription).toBe(true);
     expect(job.firstSeenAt).toBe('2026-03-01T00:00:00.000Z');
     expect(job.lastSeenAt).toBe('2026-03-01T00:00:00.000Z');
@@ -197,6 +202,132 @@ describe('normalizeJob', () => {
     expect(job.postedAt).toBeNull();
     expect(job.requiredYears).toEqual({ min: null, max: null });
     expect(job.techStack).toEqual([]);
+  });
+});
+
+describe('employer domain checks', () => {
+  it('recognizes the same normalized host, including an optional www prefix', () => {
+    const job = normalizeJob(
+      rawJob({
+        companyWebsite: 'https://www.acme.example/company',
+        applyUrl: 'https://acme.example/jobs/1',
+      }),
+      { now: NOW },
+    );
+
+    expect(job.employerDomainCheck).toEqual({
+      status: 'same-host',
+      companyHost: 'acme.example',
+      applyHost: 'acme.example',
+    });
+  });
+
+  it('records a host difference without labeling the listing fraudulent', () => {
+    const job = normalizeJob(
+      rawJob({
+        companyWebsite: 'https://acme.example',
+        applyUrl: 'https://apply.example/job/1',
+      }),
+      { now: NOW },
+    );
+
+    expect(job.employerDomainCheck).toEqual({
+      status: 'different-host',
+      companyHost: 'acme.example',
+      applyHost: 'apply.example',
+    });
+  });
+
+  it('distinguishes each supported ATS host from an employer host mismatch', () => {
+    for (const applyUrl of [
+      'https://boards.greenhouse.io/acme/1',
+      'https://job-boards.greenhouse.io/acme/1',
+      'https://jobs.lever.co/acme/1',
+      'https://jobs.ashbyhq.com/acme/1',
+      'https://apply.workable.com/acme/1',
+      'https://jobs.smartrecruiters.com/acme/1',
+      'https://jobs.recruitee.com/acme/1',
+    ]) {
+      const job = normalizeJob(rawJob({ companyWebsite: 'https://acme.example', applyUrl }), {
+        now: NOW,
+      });
+      expect(job.employerDomainCheck.status).toBe('ats-hosted');
+    }
+  });
+
+  it('recognizes a supported ATS host when the employer website is missing', () => {
+    const job = normalizeJob(
+      rawJob({
+        companyWebsite: undefined,
+        applyUrl: 'https://jobs.lever.co/acme/role/1',
+      }),
+      { now: NOW },
+    );
+
+    expect(job.employerDomainCheck).toEqual({
+      status: 'ats-hosted',
+      companyHost: null,
+      applyHost: 'jobs.lever.co',
+    });
+  });
+
+  it('returns unknown when either URL is absent or invalid', () => {
+    const missing = normalizeJob(
+      rawJob({
+        sourceUrl: 'https://jobs.example/1',
+        applyUrl: 'https://jobs.example/1',
+        companyWebsite: undefined,
+      }),
+      { now: NOW },
+    );
+    const invalid = normalizeJob(
+      rawJob({
+        sourceUrl: 'https://jobs.example/1',
+        companyWebsite: 'javascript:alert(1)',
+        applyUrl: 'javascript:alert(1)',
+      }),
+      { now: NOW },
+    );
+
+    expect(missing.employerDomainCheck).toEqual({
+      status: 'unknown',
+      companyHost: null,
+      applyHost: 'jobs.example',
+    });
+    expect(invalid.employerDomainCheck).toEqual({
+      status: 'unknown',
+      companyHost: null,
+      applyHost: null,
+    });
+  });
+
+  it('does not treat a provider listing URL as the application destination', () => {
+    const job = normalizeJob(
+      rawJob({
+        companyWebsite: 'https://acme.example',
+        sourceUrl: 'https://boards.greenhouse.io/acme/jobs/4001',
+      }),
+      { now: NOW },
+    );
+
+    expect(job.applyUrl).toBe('https://boards.greenhouse.io/acme/jobs/4001');
+    expect(job.employerDomainCheck).toEqual({
+      status: 'unknown',
+      companyHost: 'acme.example',
+      applyHost: null,
+    });
+  });
+
+  it('does not treat a lookalike child host as a known ATS host', () => {
+    const job = normalizeJob(
+      rawJob({
+        companyWebsite: 'https://acme.example',
+        applyUrl: 'https://boards.greenhouse.io.attacker.example/job/1',
+      }),
+      { now: NOW },
+    );
+
+    expect(job.employerDomainCheck.status).toBe('different-host');
   });
 });
 
@@ -686,6 +817,62 @@ describe('dedupeJobs', () => {
 });
 
 describe('mergeDuplicates', () => {
+  it('recomputes domain consistency after duplicate enrichment supplies the employer website', () => {
+    const ats = normalizeJob(
+      rawJob({
+        source: 'greenhouse',
+        sourceJobId: 'ats-1',
+        applyUrl: 'https://acme.example/apply',
+      }),
+      { now: NOW },
+    );
+    const feed = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'feed-1',
+        companyWebsite: 'https://acme.example',
+        applyUrl: 'https://acme.example/apply',
+      }),
+      { now: NOW },
+    );
+
+    const merged = mergeDuplicates(ats, feed);
+
+    expect(merged.source).toBe('greenhouse');
+    expect(merged.employerDomainCheck).toEqual({
+      status: 'same-host',
+      companyHost: 'acme.example',
+      applyHost: 'acme.example',
+    });
+  });
+
+  it('keeps the application host unknown when the selected listing had no apply URL', () => {
+    const withoutApplyUrl = normalizeJob(
+      rawJob({
+        source: 'greenhouse',
+        sourceJobId: 'no-apply-1',
+        companyWebsite: 'https://acme.example',
+      }),
+      { now: NOW },
+    );
+    const withWebsite = normalizeJob(
+      rawJob({
+        source: 'naukri',
+        sourceJobId: 'website-1',
+        companyWebsite: 'https://acme.example',
+      }),
+      { now: NOW },
+    );
+
+    const merged = mergeDuplicates(withoutApplyUrl, withWebsite);
+
+    expect(merged.employerDomainCheck).toEqual({
+      status: 'unknown',
+      companyHost: 'acme.example',
+      applyHost: null,
+    });
+  });
+
   it('unions tech stacks and widens the seen-at window', () => {
     const a = normalizeJob(rawJob({ description: 'We use Node.js and PostgreSQL.' }), {
       now: Date.parse('2026-02-01T00:00:00Z'),

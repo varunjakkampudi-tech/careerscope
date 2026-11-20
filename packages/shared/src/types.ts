@@ -9,6 +9,7 @@ import type {
   ApplicationDetails,
   Candidate,
   DerivedResume,
+  EmployerDomainCheck,
   MatchBreakdown,
   Preferences,
   Salary,
@@ -220,6 +221,7 @@ export type CollectedJob = {
   sourceUrl: string;
   sourceLinks?: { source: SearchSourceName; url: string }[] | undefined;
   applyUrl: string;
+  employerDomainCheck?: EmployerDomainCheck | undefined;
   postedAt: string | null;
   match: MatchBreakdown | null;
 };
