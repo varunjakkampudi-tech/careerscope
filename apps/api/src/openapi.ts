@@ -920,13 +920,19 @@ function contracts(options: {
       { params: object({ jobId: uuid }), failures: [400, 429] },
     ),
     'PUT /api/search-jobs/:id/feedback': operation(
-      'Record or update the authenticated candidate’s reason-coded feedback for an owned search result',
+      'Submit reason-coded feedback and optional details for an owned search result',
       object({ reason: text({ enum: [...jobFeedbackReasons] }) }),
       {
-        body: object({ reason: text({ enum: [...jobFeedbackReasons] }) }),
+        body: object(
+          {
+            reason: text({ enum: [...jobFeedbackReasons] }),
+            details: text({ maxLength: 1000 }),
+          },
+          ['reason'],
+        ),
         failures: [400, 401, 403, 404, 429, 503],
         description:
-          'Stores only a reason code scoped to the authenticated owner and search result. Repeated updates replace that owner’s prior reason. The action does not change the job posting or application lifecycle.',
+          'Stores an append-only, bounded submission history and updates the owner’s current reason summary. Optional details are limited to 1000 characters; candidates are told not to include personal or contact information. Submissions are deleted when the retained search result is deleted. The action does not change the job posting or application lifecycle.',
       },
     ),
     'GET /api/leads/:id': operation('Read a saved lead', lead, { failures: [400, 404, 429] }),

@@ -1502,7 +1502,10 @@
       "evidence": [
         "apps/web/src/components/job-search-view.tsx",
         "apps/api/src/app.ts",
+        "apps/api/src/openapi.ts",
         "packages/core/src/schema.ts",
+        "packages/shared/src/job-feedback.ts",
+        "migrations/0007_typical_red_wolf.sql",
         "docs/PROGRESS.md",
         "docs/GAP-MATRIX.md",
         "docs/TEST-MATRIX.md"
@@ -1513,7 +1516,7 @@
         "apps/web/src/lib/locale.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Candidates can submit and update one structured posting-issue reason per search job, including suspicious. The API enforces authentication, CSRF, reason validation, owner/job scope, rate limiting and cascade retention. Node 24 isolated PostgreSQL/Redis integration passed; browser acceptance covers submit/update. Reports are a mutable latest reason without narrative or per-submission history; moderator workflow is tracked separately in item 6.11. Item boundary and exact-head CI/review remain pending.",
+        "gap": "Candidates can submit and update a structured posting-issue reason per search job, including suspicious. PR #120 adds optional explanation capped at 1000 characters and append-only per-submission history while preserving the current reason summary. Updated integration and browser assertions cover validation, history and cascade deletion; exact-head CI and independent review remain pending. Telugu and Hindi helper copy awaits native-speaker review. Moderator workflow is tracked separately in item 6.11.",
       "scopeDisposition": "in-scope"
     },
     {

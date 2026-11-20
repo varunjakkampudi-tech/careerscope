@@ -3457,10 +3457,12 @@ try {
         .locator('details.job')
         .filter({ has: page.getByRole('heading', { name: 'Scored React Engineer', exact: true }) });
       const feedbackReason = scoredJobCard.getByLabel('Report a posting issue');
+      const feedbackDetails = scoredJobCard.getByLabel('Additional details (optional)');
       const priorFeedbackReason = resultBody.jobs[0].feedbackReason;
       const firstFeedbackReason =
         priorFeedbackReason === 'suspicious' ? 'irrelevant' : 'suspicious';
       await feedbackReason.selectOption(firstFeedbackReason);
+      await feedbackDetails.fill('The listing does not identify the employer.');
       const firstFeedbackResponse = page.waitForResponse(
         (response) =>
           response.url().includes(`/api/search-jobs/${resultBody.jobs[0].id}/feedback`) &&
@@ -3476,6 +3478,7 @@ try {
       assert.equal(firstFeedbackResult.status(), 200);
       assert.deepEqual(firstFeedbackResult.request().postDataJSON(), {
         reason: firstFeedbackReason,
+        details: 'The listing does not identify the employer.',
       });
       await scoredJobCard
         .getByRole('status')
@@ -3487,6 +3490,17 @@ try {
       );
       assert.deepEqual(feedbackRows.rows, [
         { owner_id: ownerId, job_id: resultBody.jobs[0].id, reason: firstFeedbackReason },
+      ]);
+      const firstSubmission = await database.pool.query(
+        `SELECT reason, details FROM job_feedback_submissions
+         WHERE owner_id = $1 AND job_id = $2`,
+        [ownerId, resultBody.jobs[0].id],
+      );
+      assert.deepEqual(firstSubmission.rows, [
+        {
+          reason: firstFeedbackReason,
+          details: 'The listing does not identify the employer.',
+        },
       ]);
       const secondFeedbackReason = firstFeedbackReason === 'suspicious' ? 'incorrect' : 'duplicate';
       await feedbackReason.selectOption(secondFeedbackReason);
@@ -3517,6 +3531,16 @@ try {
           .rowCount,
         1,
         'changing feedback updates the existing owner/job row instead of creating a duplicate',
+      );
+      assert.equal(
+        (
+          await database.pool.query(
+            'SELECT id FROM job_feedback_submissions WHERE owner_id = $1 AND job_id = $2',
+            [ownerId, resultBody.jobs[0].id],
+          )
+        ).rowCount,
+        2,
+        'changing the reason preserves both accepted candidate submissions',
       );
       await page.getByText('Senior React Engineer', { exact: true }).click();
       assert.equal(

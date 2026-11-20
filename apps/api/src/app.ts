@@ -19,6 +19,7 @@ import {
   SOURCE_LABELS,
   isJobSourcePermittedForCandidateDiscovery,
   jobFeedbackReasonSchema,
+  jobFeedbackDetailsSchema,
   type SourceId,
 } from '@careerscope/shared';
 import { registerOpenApi } from './openapi.js';
@@ -170,7 +171,9 @@ const emailChangeRequestSchema = z
 const emailChangeVerifySchema = z
   .object({ address: z.enum(['current', 'new']), code: z.string().regex(/^\d{6}$/) })
   .strict();
-const jobFeedbackSchema = z.object({ reason: jobFeedbackReasonSchema }).strict();
+const jobFeedbackSchema = z
+  .object({ reason: jobFeedbackReasonSchema, details: jobFeedbackDetailsSchema.optional() })
+  .strict();
 const notificationPreferencesUpdateSchema = z
   .object({ interviewRemindersInAppEnabled: z.boolean() })
   .strict();
@@ -2034,17 +2037,32 @@ export async function createApp(
     if (!(await consumeRateLimit(request, `job-feedback:${request.ownerId!}`, 20, 3600)))
       throw new HttpError(429, 'Too many feedback updates');
     const { id } = identifier.parse(request.params);
-    const { reason } = jobFeedbackSchema.parse(request.body);
-    const result = await database.pool.query<{ id: string; reason: string; updatedAt: Date }>(
-      `INSERT INTO job_feedback (id, owner_id, job_id, reason)
-       SELECT $1, owner_id, id, $3 FROM search_jobs WHERE owner_id = $2 AND id = $4
-       ON CONFLICT (owner_id, job_id) DO UPDATE
-       SET reason = EXCLUDED.reason, updated_at = now()
-       RETURNING id, reason, updated_at AS "updatedAt"`,
-      [randomUUID(), request.ownerId, reason, id],
-    );
-    if (!result.rowCount) throw new HttpError(404, 'Job not found');
-    return reply.code(200).send({ reason: result.rows[0]!.reason });
+    const { reason, details } = jobFeedbackSchema.parse(request.body);
+    const client = await database.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const current = await client.query<{ reason: string }>(
+        `INSERT INTO job_feedback (id, owner_id, job_id, reason)
+         SELECT $1, owner_id, id, $3 FROM search_jobs WHERE owner_id = $2 AND id = $4
+         ON CONFLICT (owner_id, job_id) DO UPDATE
+         SET reason = EXCLUDED.reason, updated_at = now()
+         RETURNING reason`,
+        [randomUUID(), request.ownerId, reason, id],
+      );
+      if (!current.rowCount) throw new HttpError(404, 'Job not found');
+      await client.query(
+        `INSERT INTO job_feedback_submissions (id, owner_id, job_id, reason, details)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [randomUUID(), request.ownerId, id, reason, details?.trim() || null],
+      );
+      await client.query('COMMIT');
+      return reply.code(200).send({ reason: current.rows[0]!.reason });
+    } catch (error) {
+      await rollback(client);
+      throw error;
+    } finally {
+      client.release();
+    }
   });
   app.post('/api/searches/:id/cancel', async (request) => {
     const { id } = identifier.parse(request.params);

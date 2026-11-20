@@ -771,6 +771,18 @@ h3 {
 .job-feedback button {
   min-height: 40px;
 }
+.job-feedback label:last-of-type {
+  flex-basis: 100%;
+}
+.job-feedback textarea {
+  width: min(100%, 520px);
+  min-height: 80px;
+  resize: vertical;
+}
+.job-feedback > p {
+  flex-basis: 100%;
+  margin: -4px 0 0;
+}
 .job-feedback [role='status'],
 .job-feedback [role='alert'] {
   flex-basis: 100%;

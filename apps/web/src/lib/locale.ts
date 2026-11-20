@@ -144,6 +144,8 @@ const messages = {
     feedbackIncorrect: 'Posting details are incorrect',
     feedbackUnavailable: 'Posting is no longer available',
     feedbackSuspicious: 'Posting seems suspicious',
+    feedbackDetailsLabel: 'Additional details (optional)',
+    feedbackDetailsPrivacy: 'Do not include personal information or contact details.',
     savingFeedback: 'Saving…',
     updateFeedback: 'Update feedback',
     sendFeedback: 'Send feedback',
@@ -404,6 +406,9 @@ const messages = {
     feedbackIncorrect: 'ఉద్యోగ వివరాలు తప్పుగా ఉన్నాయి',
     feedbackUnavailable: 'ఉద్యోగ ప్రకటన ఇక అందుబాటులో లేదు',
     feedbackSuspicious: 'ఉద్యోగ ప్రకటన అనుమానాస్పదంగా ఉంది',
+    // Machine-drafted: requires native-speaker review before release.
+    feedbackDetailsLabel: 'అదనపు వివరాలు (ఐచ్ఛికం)',
+    feedbackDetailsPrivacy: 'వ్యక్తిగత సమాచారం లేదా సంప్రదింపు వివరాలను చేర్చవద్దు.',
     savingFeedback: 'సేవ్ చేస్తోంది…',
     updateFeedback: 'అభిప్రాయాన్ని నవీకరించండి',
     sendFeedback: 'అభిప్రాయాన్ని పంపండి',
@@ -672,6 +677,9 @@ const messages = {
     feedbackIncorrect: 'पोस्ट की जानकारी गलत है',
     feedbackUnavailable: 'पोस्ट अब उपलब्ध नहीं है',
     feedbackSuspicious: 'पोस्ट संदिग्ध लगती है',
+    // Machine-drafted: requires native-speaker review before release.
+    feedbackDetailsLabel: 'अतिरिक्त विवरण (वैकल्पिक)',
+    feedbackDetailsPrivacy: 'व्यक्तिगत जानकारी या संपर्क विवरण शामिल न करें।',
     savingFeedback: 'सहेजा जा रहा है…',
     updateFeedback: 'फ़ीडबैक अपडेट करें',
     sendFeedback: 'फ़ीडबैक भेजें',
