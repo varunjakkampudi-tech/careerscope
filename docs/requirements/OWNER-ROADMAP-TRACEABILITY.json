@@ -1446,11 +1446,11 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Expired/broken application links",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "currentStatus": "partial",
+      "evidence": ["docs/PROGRESS.md", "docs/GAP-MATRIX.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Automated destination probing is deferred because redirect following and DNS/IP rebinding protections are not implemented or reviewed. Current code does not establish destination liveness.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1459,11 +1459,21 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Suspicious URL detection",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/url-risk.ts",
+        "apps/web/src/components/job-search-view.tsx",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md"
+      ],
+      "tests": [
+        "packages/providers/src/url-risk.test.ts",
+        "packages/providers/src/normalize.test.ts",
+        "packages/core/src/leads.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Deterministic URL signals are surfaced as review warnings, but there is no labeled corpus or measured precision/recall, no provider-specific link validation, and no proof of listing legitimacy. Exact-head CI and independent review remain pending.",
       "scopeDisposition": "in-scope"
     },
     {

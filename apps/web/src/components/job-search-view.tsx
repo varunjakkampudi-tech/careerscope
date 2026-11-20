@@ -47,6 +47,20 @@ const sourceNames = {
   workable: 'Workable',
 };
 type LaunchSource = (typeof LAUNCH_JOB_SOURCE_CANDIDATES)[number];
+const urlRiskMessageKeys = {
+  invalid_url: 'urlRiskInvalidUrl',
+  unsupported_scheme: 'urlRiskUnsupportedScheme',
+  http_transport: 'urlRiskHttpTransport',
+  embedded_credentials: 'urlRiskEmbeddedCredentials',
+  nonstandard_port: 'urlRiskNonstandardPort',
+  ip_literal_host: 'urlRiskIpLiteralHost',
+  punycode_host: 'urlRiskPunycodeHost',
+  url_shortener: 'urlRiskShortener',
+  external_redirect_parameter: 'urlRiskExternalRedirect',
+} as const satisfies Record<
+  NonNullable<SearchDetail['jobs'][number]['data']['urlRiskIndicators']>[number],
+  Parameters<typeof localizedText>[1]
+>;
 const feedbackLabelKeys = {
   irrelevant: 'feedbackIrrelevant',
   duplicate: 'feedbackDuplicate',
@@ -744,6 +758,16 @@ function JobSearchWorkspace() {
                           Open Posting <ExternalLink size={14} />
                         </a>
                       </div>
+                      {data.urlRiskIndicators && data.urlRiskIndicators.length > 0 && (
+                        <aside className="notice" role="note" aria-label={t('urlRiskWarning')}>
+                          <strong>{t('urlRiskWarning')}</strong>
+                          <ul>
+                            {data.urlRiskIndicators.map((indicator) => (
+                              <li key={indicator}>{t(urlRiskMessageKeys[indicator])}</li>
+                            ))}
+                          </ul>
+                        </aside>
+                      )}
                       <p className="description" lang={data.description ? 'und' : locale}>
                         {data.description || t('jobDescriptionUnavailable')}
                       </p>

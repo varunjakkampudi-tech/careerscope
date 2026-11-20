@@ -68,9 +68,19 @@ describe('normalizeJob', () => {
     expect(job.salary.annualMax).toBe(4_200_000);
     expect(job.postedAt).toBe('2026-02-20T10:00:00.000Z');
     expect(job.applyUrl).toBe('https://boards.greenhouse.io/acme/jobs/4001#app');
+    expect(job.urlRiskIndicators).toEqual([]);
     expect(job.hasFullDescription).toBe(true);
     expect(job.firstSeenAt).toBe('2026-03-01T00:00:00.000Z');
     expect(job.lastSeenAt).toBe('2026-03-01T00:00:00.000Z');
+  });
+
+  it('records the original insecure scheme before the public link is upgraded to HTTPS', () => {
+    const job = normalizeJob(rawJob({ applyUrl: 'http://apply.example.test/jobs/4001' }), {
+      now: NOW,
+    });
+
+    expect(job.applyUrl).toBe('https://apply.example.test/jobs/4001');
+    expect(job.urlRiskIndicators).toEqual(['http_transport']);
   });
 
   it('reads skills out of the title as well as the body', () => {

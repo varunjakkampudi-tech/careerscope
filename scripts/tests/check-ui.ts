@@ -393,7 +393,8 @@ try {
           { source: 'himalayas', url: 'https://himalayas.app/jobs/synthetic' },
           { source: 'remoteok', url: 'https://remoteok.com/remote-jobs/synthetic' },
         ],
-        applyUrl: 'https://example.test/apply',
+        applyUrl: 'https://bit.ly/synthetic-application',
+        urlRiskIndicators: ['url_shortener'],
         postedAt: null,
       },
       ...scored.jobs,
@@ -3540,8 +3541,16 @@ try {
           .filter({ hasText: 'Senior React Engineer' })
           .getByRole('link', { name: 'Open Posting' })
           .getAttribute('href'),
-        'https://example.test/apply',
+        'https://bit.ly/synthetic-application',
       );
+      await page
+        .getByRole('note', {
+          name: 'Review this link before opening. These URL signals do not prove a job is fraudulent.',
+        })
+        .getByText('The link uses a URL-shortening service, which hides its destination.', {
+          exact: true,
+        })
+        .waitFor();
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });
         assert.equal(

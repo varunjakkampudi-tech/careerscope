@@ -18,6 +18,7 @@ import {
   derivedResumeSchema,
   jobFeedbackReasonSchema,
   matchBreakdownSchema,
+  urlRiskIndicatorSchema,
 } from '@careerscope/shared';
 
 /** Message for a response that parsed as JSON but not as the expected shape. Fixed, so no server content reaches the screen. */
@@ -319,6 +320,7 @@ const collectedJobSchema = z.object({
   sourceUrl: z.string(),
   sourceLinks: z.array(z.object({ source: searchSourceSchema, url: z.string() })).optional(),
   applyUrl: z.string(),
+  urlRiskIndicators: z.array(urlRiskIndicatorSchema).optional(),
   postedAt: z.string().nullable(),
   match: matchBreakdownSchema.nullable(),
 });

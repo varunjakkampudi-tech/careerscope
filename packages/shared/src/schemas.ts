@@ -7,6 +7,7 @@ import { z } from 'zod';
 import {
   ALL_SOURCES,
   EMPLOYMENT_TYPES,
+  URL_RISK_INDICATORS,
   LEAD_STATUSES,
   RUN_STATUSES,
   DEFAULT_MATCH_THRESHOLD,
@@ -354,6 +355,8 @@ export const salarySchema = z.object({
 export type Salary = z.infer<typeof salarySchema>;
 
 /** A normalised posting produced by `@careerscope/providers` and scored by `matching`. */
+export const urlRiskIndicatorSchema = z.enum(URL_RISK_INDICATORS);
+
 export const jobSchema = z.object({
   id: z.string(),
   /**
@@ -395,6 +398,8 @@ export const jobSchema = z.object({
   requiredYears: z.object({ min: z.number().nullable(), max: z.number().nullable() }),
   /** Where to apply — the direct posting or ATS form. */
   applyUrl: z.string(),
+  /** Explainable URL concerns; an empty list is not a safety or legitimacy guarantee. */
+  urlRiskIndicators: z.array(urlRiskIndicatorSchema).max(URL_RISK_INDICATORS.length).optional(),
   /** The listing on the source board. */
   sourceUrl: z.string(),
   /**
