@@ -7672,7 +7672,7 @@
       "observations": "Reviewed the Stage 06.08 diff and its surrounding contract for backward compatibility, signal wording, localization, persistence, and regression coverage. No proof-of-fraud verdict or external reputation lookup is introduced.",
       "evidence": "Focused Stage 06.08 tests and Node 24 typecheck; domain suite passed 976 tests on this branch.",
       "reviewer": "Codex (CareerScope Stage 06.08 implementation)",
-      "sha256": "af7746c88247bc50665d844b7e06d0f6be00224e665e32e00b5cdd60f09a3ce0",
+      "sha256": "45e0f517dcb67d31d1077a661c7f0658912f6ed807d36caba727ac7525fbc30f",
       "concerns": [],
       "findings": []
     },
@@ -7684,7 +7684,7 @@
       "observations": "Reviewed the Stage 06.08 diff and its surrounding contract for backward compatibility, signal wording, localization, persistence, and regression coverage. No proof-of-fraud verdict or external reputation lookup is introduced.",
       "evidence": "Focused Stage 06.08 tests and Node 24 typecheck; domain suite passed 976 tests on this branch.",
       "reviewer": "Codex (CareerScope Stage 06.08 implementation)",
-      "sha256": "653eaebc0a1d42a36d9fcd15135f219cea1561a4dd0780c6475a902430eca834",
+      "sha256": "c2c8c0d19684def3b4333e164342c5e32b814a5d8e30e4fe129c10f495d8a176",
       "concerns": [],
       "findings": []
     }

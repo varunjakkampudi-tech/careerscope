@@ -8,6 +8,9 @@ describe('detectRecruitmentScamIndicators', () => {
         'Pay a registration fee before you can be considered for this position.',
       ),
     ).toEqual(['candidate_upfront_payment']);
+    expect(
+      detectRecruitmentScamIndicators('Pay a registration fee to be considered for this role.'),
+    ).toEqual(['candidate_upfront_payment']);
   });
 
   it('does not flag clear no-fee disclaimers or ordinary payroll language', () => {

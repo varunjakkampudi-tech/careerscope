@@ -12,7 +12,7 @@ const RULES: readonly Rule[] = [
   {
     code: 'candidate_upfront_payment',
     pattern:
-      /\b(?:pay|send|submit|provide)\b[^.!?;]{0,50}\b(?:fee|deposit|payment)\b[^.!?;]{0,70}\b(?:to\s+(?:apply|get hired|secure|start|receive)|before\s+(?:you can|your job|the\s+(?:job|position|role|interview|training|onboarding))|as a condition of employment)\b|\b(?:you|applicants?|candidates?)\b[^.!?;]{0,60}\b(?:must|need to|have to|are required to)\b[^.!?;]{0,40}\b(?:pay|send|submit|provide)\b[^.!?;]{0,40}\b(?:fee|deposit|payment)\b|\b(?:application|registration|training|security|equipment)\s+fee\b[^.!?;]{0,20}\b(?:required|must be paid)\b/i,
+      /\b(?:pay|send|submit|provide)\b[^.!?;]{0,50}\b(?:fee|deposit|payment)\b[^.!?;]{0,70}\b(?:to\s+(?:apply|get hired|secure|start|receive|be considered)|before\s+(?:you can|your job|the\s+(?:job|position|role|interview|training|onboarding))|as a condition of employment)\b|\b(?:you|applicants?|candidates?)\b[^.!?;]{0,60}\b(?:must|need to|have to|are required to)\b[^.!?;]{0,40}\b(?:pay|send|submit|provide)\b[^.!?;]{0,40}\b(?:fee|deposit|payment)\b|\b(?:application|registration|training|security|equipment)\s+fee\b[^.!?;]{0,20}\b(?:required|must be paid)\b/i,
   },
   {
     code: 'fake_check_return',
