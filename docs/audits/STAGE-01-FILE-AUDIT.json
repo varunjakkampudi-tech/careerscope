@@ -1722,7 +1722,7 @@
     {
       "path": "docs/API-SURFACE.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1734,10 +1734,10 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Reviewed documented resume-version eligibility and persistent allocation behavior against the implementation.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "0368522c5ecd80a87ce647f7e0f3859464308bb204fc73cfc1f4339f82a9343f"
+      "observations": "Reviewed the item 2.12 diff: the authenticated TOTP status route is listed with its boolean-only response and no-secret guarantee.",
+      "evidence": "Reviewed the changed PR diff at the item 2.12 review revision; unrelated existing file content was not re-audited.",
+      "reviewer": "Codex (CareerScope owner item 2.12 review)",
+      "sha256": "97763becb01ddd17f21c6ae54573dc9607343265778d856d9f6bfa8801dcd907"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -2850,10 +2850,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the item 2.12 diff: adds source/test evidence and retains partial status pending exact-head CI, independent review, merge, and post-merge verification.",
-      "evidence": "Reviewed the changed PR diff at 4bdbbd474763d3f41e83c8c436a1c40d562c4076; unrelated existing file content was not re-audited.",
+      "observations": "Reviewed the item 2.12 diff: the canonical item cites the API-surface contract for the TOTP status endpoint and remains partial pending final gates.",
+      "evidence": "Reviewed the changed PR diff at the item 2.12 review revision; unrelated existing file content was not re-audited.",
       "reviewer": "Codex (CareerScope owner item 2.12 review)",
-      "sha256": "f830dad8299383118179515baf300c1fef72e819a0dbc2a4f3493d99aa8e4f18",
+      "sha256": "3a2e4e29a4a9af0d9f257eb020133d45f090b3b102731622282d4d34ef89bac4",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",

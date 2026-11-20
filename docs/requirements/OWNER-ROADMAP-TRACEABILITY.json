@@ -451,6 +451,7 @@
       "currentStatus": "partial",
       "evidence": [
         "docs/GAP-MATRIX.md",
+        "docs/API-SURFACE.md",
         "docs/TEST-MATRIX.md",
         "docs/PROGRESS.md",
         "apps/web/src/components/account-form.tsx",
