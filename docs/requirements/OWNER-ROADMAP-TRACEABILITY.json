@@ -1504,7 +1504,7 @@
         "apps/web/src/lib/api.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Records bounded source-linked factual observations and provider-reported claims with explicit missing values; it does not verify employer/source ownership, application destination safety, or fraud and produces no score or verdict. Stage 06.08 indicators are not integrated on this branch, UI presentation is tracked under 6.13, and exact-head CI and independent review remain pending.",
+      "gap": "Records bounded source-linked factual observations and provider-reported claims with explicit missing values; it does not verify employer/source ownership, application destination safety, or fraud and produces no score or verdict. Exact PR head 016d4d8f9858c49a5a756555327ffd4008ea52f5 passed hosted CI run 44682300763 for Quality gates, PostgreSQL/Redis integration, browser/accessibility/keyboard/responsive checks, and production image build (not published). Stage 06.08 indicators are not integrated on this branch, UI presentation is tracked under 6.13, and independent exact-head review remains pending.",
       "scopeDisposition": "in-scope"
     },
     {
