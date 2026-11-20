@@ -1889,10 +1889,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed item 6.02 implementation, exact-SHA acceptance evidence, and the browser test-harness follow-up. Implementation SHA a3955ab passed run 44543723677 and received independent approval; docs-only SHA b09abee passed Quality and image jobs but failed Services/browser on a pending Firefox Next router prefetch from an earlier route. Current change ignores only stale prior-route Next prefetch GET requests. Item remains partial pending current-head CI/review, owner-authorized merge and post-merge verification.",
-      "evidence": "Node 24: full typecheck passed; ui-requests policy regression suite passed 7/7; focused ESLint exited successfully; item 6.02 replay unit suite passed 6 and both separate disposable-PostgreSQL regressions passed 1/1. Current browser-pipeline correction has not yet received hosted CI or independent acceptance.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.02 CI correction)",
-      "sha256": "7da1b0581c3966d5edf2877a8f1fd8b253da9649450d6f712b9fcf8a0df6012f",
+      "observations": "Updated Stage 06 item 6.02 evidence after exact-head review; the checklist item remains partial and the provider-date and historical-recovery limitations remain explicit.",
+      "evidence": "Candidate head 5a446ddf86677d44346482380cb939f9663beba7 passed all three required CI jobs in run 44552260875. Independent review accepted the transaction and replay logic, and identified that the PostgreSQL rebuild regression was absent from the canonical integration suite and the package.json audit snapshot had lost its prior provenance. This follow-up registers the regression in test:integration, loads .env in the dedicated command, and preserves the original dev-base and previous active package snapshots. Fresh exact-head CI/re-review remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.02 review follow-up)",
+      "sha256": "cbc7b97493be35463e22f61e20ef51e96e4e198e2558456bc57f9d5b6b8e008f",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2031,6 +2031,12 @@
           "sha256": "750150f08885539ee1ccaef4d31f264528e81cf75deaf7c11e3ff8e482af2f15",
           "observations": "Reviewed Stage 06 item 6.02 implementation, local evidence and exact-SHA disposition. The implementation head a3955ab1540436892e7454004957b5a370d26b62 passed CI run 44543723677 and received independent approval for merge consideration. This documentation closeout records that evidence but remains partial pending its own exact-head CI/review, owner-authorized merge and post-merge verification.",
           "evidence": "Node 24 typecheck and targeted lint passed; six replay unit tests passed, and both PostgreSQL-only backfill rebuild and completeCollection regressions passed 1/1 on fresh disposable containers. Exact CI run 44543723677 passed all three required jobs and ChatGPT approved implementation SHA a3955ab. The new docs-only candidate SHA requires fresh CI/review."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.02 CI correction)",
+          "sha256": "7da1b0581c3966d5edf2877a8f1fd8b253da9649450d6f712b9fcf8a0df6012f",
+          "observations": "Reviewed item 6.02 implementation, exact-SHA acceptance evidence, and the browser test-harness follow-up. Implementation SHA a3955ab passed run 44543723677 and received independent approval; docs-only SHA b09abee passed Quality and image jobs but failed Services/browser on a pending Firefox Next router prefetch from an earlier route. Current change ignores only stale prior-route Next prefetch GET requests. Item remains partial pending current-head CI/review, owner-authorized merge and post-merge verification.",
+          "evidence": "Node 24: full typecheck passed; ui-requests policy regression suite passed 7/7; focused ESLint exited successfully; item 6.02 replay unit suite passed 6 and both separate disposable-PostgreSQL regressions passed 1/1. Current browser-pipeline correction has not yet received hosted CI or independent acceptance."
         }
       ]
     },
@@ -2105,10 +2111,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed item 6.02 implementation, exact-SHA acceptance evidence, and the browser test-harness follow-up. Implementation SHA a3955ab passed run 44543723677 and received independent approval; docs-only SHA b09abee passed Quality and image jobs but failed Services/browser on a pending Firefox Next router prefetch from an earlier route. Current change ignores only stale prior-route Next prefetch GET requests. Item remains partial pending current-head CI/review, owner-authorized merge and post-merge verification.",
-      "evidence": "Node 24: full typecheck passed; ui-requests policy regression suite passed 7/7; focused ESLint exited successfully; item 6.02 replay unit suite passed 6 and both separate disposable-PostgreSQL regressions passed 1/1. Current browser-pipeline correction has not yet received hosted CI or independent acceptance.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.02 CI correction)",
-      "sha256": "49701d61f6d9e2fb157d00b886ad776c38692dea529f374aa948bf84fd97e1e6",
+      "observations": "Updated Stage 06 item 6.02 evidence after exact-head review; the checklist item remains partial and the provider-date and historical-recovery limitations remain explicit.",
+      "evidence": "Candidate head 5a446ddf86677d44346482380cb939f9663beba7 passed all three required CI jobs in run 44552260875. Independent review accepted the transaction and replay logic, and identified that the PostgreSQL rebuild regression was absent from the canonical integration suite and the package.json audit snapshot had lost its prior provenance. This follow-up registers the regression in test:integration, loads .env in the dedicated command, and preserves the original dev-base and previous active package snapshots. Fresh exact-head CI/re-review remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.02 review follow-up)",
+      "sha256": "a86f0d029c3a829d3e792fde52531bb6642921a1b7cc39b5c5d0cea6cd5390df",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2265,6 +2271,12 @@
           "sha256": "52fd0c3affc21a48de02807eac8f7f8d6910f854525144d3fbe44121c6502905",
           "observations": "Reviewed Stage 06 item 6.02 implementation, local evidence and exact-SHA disposition. The implementation head a3955ab1540436892e7454004957b5a370d26b62 passed CI run 44543723677 and received independent approval for merge consideration. This documentation closeout records that evidence but remains partial pending its own exact-head CI/review, owner-authorized merge and post-merge verification.",
           "evidence": "Node 24 typecheck and targeted lint passed; six replay unit tests passed, and both PostgreSQL-only backfill rebuild and completeCollection regressions passed 1/1 on fresh disposable containers. Exact CI run 44543723677 passed all three required jobs and ChatGPT approved implementation SHA a3955ab. The new docs-only candidate SHA requires fresh CI/review."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.02 CI correction)",
+          "sha256": "49701d61f6d9e2fb157d00b886ad776c38692dea529f374aa948bf84fd97e1e6",
+          "observations": "Reviewed item 6.02 implementation, exact-SHA acceptance evidence, and the browser test-harness follow-up. Implementation SHA a3955ab passed run 44543723677 and received independent approval; docs-only SHA b09abee passed Quality and image jobs but failed Services/browser on a pending Firefox Next router prefetch from an earlier route. Current change ignores only stale prior-route Next prefetch GET requests. Item remains partial pending current-head CI/review, owner-authorized merge and post-merge verification.",
+          "evidence": "Node 24: full typecheck passed; ui-requests policy regression suite passed 7/7; focused ESLint exited successfully; item 6.02 replay unit suite passed 6 and both separate disposable-PostgreSQL regressions passed 1/1. Current browser-pipeline correction has not yet received hosted CI or independent acceptance."
         }
       ]
     },
@@ -2319,10 +2331,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed item 6.02 implementation, exact-SHA acceptance evidence, and the browser test-harness follow-up. Implementation SHA a3955ab passed run 44543723677 and received independent approval; docs-only SHA b09abee passed Quality and image jobs but failed Services/browser on a pending Firefox Next router prefetch from an earlier route. Current change ignores only stale prior-route Next prefetch GET requests. Item remains partial pending current-head CI/review, owner-authorized merge and post-merge verification.",
-      "evidence": "Node 24: full typecheck passed; ui-requests policy regression suite passed 7/7; focused ESLint exited successfully; item 6.02 replay unit suite passed 6 and both separate disposable-PostgreSQL regressions passed 1/1. Current browser-pipeline correction has not yet received hosted CI or independent acceptance.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.02 CI correction)",
-      "sha256": "45614109a0191d45d794023f0f4280ea2c974dfa375a6b5fb184a2fbea52aea2",
+      "observations": "Updated Stage 06 item 6.02 evidence after exact-head review; the checklist item remains partial and the provider-date and historical-recovery limitations remain explicit.",
+      "evidence": "Candidate head 5a446ddf86677d44346482380cb939f9663beba7 passed all three required CI jobs in run 44552260875. Independent review accepted the transaction and replay logic, and identified that the PostgreSQL rebuild regression was absent from the canonical integration suite and the package.json audit snapshot had lost its prior provenance. This follow-up registers the regression in test:integration, loads .env in the dedicated command, and preserves the original dev-base and previous active package snapshots. Fresh exact-head CI/re-review remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.02 review follow-up)",
+      "sha256": "b7291508c1ea3deb591f17f947b1a45803537f8c148ce935813a329c3718fe29",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2467,6 +2479,18 @@
           "sha256": "8beaf2a4c1fed4026d5239c438a299853c69eea369099bf854a7b8deef09cc0c",
           "observations": "Reviewed Stage 06 item 6.02 implementation, local evidence and exact-SHA disposition. The implementation head a3955ab1540436892e7454004957b5a370d26b62 passed CI run 44543723677 and received independent approval for merge consideration. This documentation closeout records that evidence but remains partial pending its own exact-head CI/review, owner-authorized merge and post-merge verification.",
           "evidence": "Node 24 typecheck and targeted lint passed; six replay unit tests passed, and both PostgreSQL-only backfill rebuild and completeCollection regressions passed 1/1 on fresh disposable containers. Exact CI run 44543723677 passed all three required jobs and ChatGPT approved implementation SHA a3955ab. The new docs-only candidate SHA requires fresh CI/review."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.02 CI correction)",
+          "sha256": "45614109a0191d45d794023f0f4280ea2c974dfa375a6b5fb184a2fbea52aea2",
+          "observations": "Reviewed item 6.02 implementation, exact-SHA acceptance evidence, and the browser test-harness follow-up. Implementation SHA a3955ab passed run 44543723677 and received independent approval; docs-only SHA b09abee passed Quality and image jobs but failed Services/browser on a pending Firefox Next router prefetch from an earlier route. Current change ignores only stale prior-route Next prefetch GET requests. Item remains partial pending current-head CI/review, owner-authorized merge and post-merge verification.",
+          "evidence": "Node 24: full typecheck passed; ui-requests policy regression suite passed 7/7; focused ESLint exited successfully; item 6.02 replay unit suite passed 6 and both separate disposable-PostgreSQL regressions passed 1/1. Current browser-pipeline correction has not yet received hosted CI or independent acceptance."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.02 review follow-up)",
+          "sha256": "7517ae48a874e73899b70b04da8db84b339fea8a33ea809463d950354cb12630",
+          "observations": "Updated Stage 06 item 6.02 evidence after exact-head review; the checklist item remains partial and the provider-date and historical-recovery limitations remain explicit.",
+          "evidence": "Candidate head 5a446ddf86677d44346482380cb939f9663beba7 passed all three required CI jobs in run 44552260875. Independent review accepted the transaction and replay logic, and identified that the PostgreSQL rebuild regression was absent from the canonical integration suite and the package.json audit snapshot had lost its prior provenance. This follow-up registers the regression in test:integration, loads .env in the dedicated command, and preserves the original dev-base and previous active package snapshots. Fresh exact-head CI/re-review remain pending."
         }
       ]
     },
@@ -2911,10 +2935,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed item 6.02 implementation, exact-SHA acceptance evidence, and the browser test-harness follow-up. Implementation SHA a3955ab passed run 44543723677 and received independent approval; docs-only SHA b09abee passed Quality and image jobs but failed Services/browser on a pending Firefox Next router prefetch from an earlier route. Current change ignores only stale prior-route Next prefetch GET requests. Item remains partial pending current-head CI/review, owner-authorized merge and post-merge verification.",
-      "evidence": "Node 24: full typecheck passed; ui-requests policy regression suite passed 7/7; focused ESLint exited successfully; item 6.02 replay unit suite passed 6 and both separate disposable-PostgreSQL regressions passed 1/1. Current browser-pipeline correction has not yet received hosted CI or independent acceptance.",
-      "reviewer": "Codex (CareerScope Stage 06 item 6.02 CI correction)",
-      "sha256": "59a63e2f7a96845da29e653845b924c4a0d772fd69ad547a92bba2f38fe62886",
+      "observations": "Updated Stage 06 item 6.02 evidence after exact-head review; the checklist item remains partial and the provider-date and historical-recovery limitations remain explicit.",
+      "evidence": "Candidate head 5a446ddf86677d44346482380cb939f9663beba7 passed all three required CI jobs in run 44552260875. Independent review accepted the transaction and replay logic, and identified that the PostgreSQL rebuild regression was absent from the canonical integration suite and the package.json audit snapshot had lost its prior provenance. This follow-up registers the regression in test:integration, loads .env in the dedicated command, and preserves the original dev-base and previous active package snapshots. Fresh exact-head CI/re-review remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.02 review follow-up)",
+      "sha256": "b84390ac10fa0f210c0bcee168295b33b65719650b9160a5522936d0c03bba47",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3041,6 +3065,12 @@
           "sha256": "c4a85c6a6c9afc67eb68ead593ab0352ef26b1acdd96cb906d4641f16181255c",
           "observations": "Reviewed Stage 06 item 6.02 implementation, local evidence and exact-SHA disposition. The implementation head a3955ab1540436892e7454004957b5a370d26b62 passed CI run 44543723677 and received independent approval for merge consideration. This documentation closeout records that evidence but remains partial pending its own exact-head CI/review, owner-authorized merge and post-merge verification.",
           "evidence": "Node 24 typecheck and targeted lint passed; six replay unit tests passed, and both PostgreSQL-only backfill rebuild and completeCollection regressions passed 1/1 on fresh disposable containers. Exact CI run 44543723677 passed all three required jobs and ChatGPT approved implementation SHA a3955ab. The new docs-only candidate SHA requires fresh CI/review."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 06 item 6.02 CI correction)",
+          "sha256": "59a63e2f7a96845da29e653845b924c4a0d772fd69ad547a92bba2f38fe62886",
+          "observations": "Reviewed item 6.02 implementation, exact-SHA acceptance evidence, and the browser test-harness follow-up. Implementation SHA a3955ab passed run 44543723677 and received independent approval; docs-only SHA b09abee passed Quality and image jobs but failed Services/browser on a pending Firefox Next router prefetch from an earlier route. Current change ignores only stale prior-route Next prefetch GET requests. Item remains partial pending current-head CI/review, owner-authorized merge and post-merge verification.",
+          "evidence": "Node 24: full typecheck passed; ui-requests policy regression suite passed 7/7; focused ESLint exited successfully; item 6.02 replay unit suite passed 6 and both separate disposable-PostgreSQL regressions passed 1/1. Current browser-pipeline correction has not yet received hosted CI or independent acceptance."
         }
       ]
     },
@@ -4219,16 +4249,28 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "cdcec1a601358127b33ab01c56f7e393dd4b8597cd264bf06468b294aed90bfd",
+      "observations": "Updated Stage 06 item 6.02 evidence after exact-head review; the checklist item remains partial and the provider-date and historical-recovery limitations remain explicit.",
+      "evidence": "Candidate head 5a446ddf86677d44346482380cb939f9663beba7 passed all three required CI jobs in run 44552260875. Independent review accepted the transaction and replay logic, and identified that the PostgreSQL rebuild regression was absent from the canonical integration suite and the package.json audit snapshot had lost its prior provenance. This follow-up registers the regression in test:integration, loads .env in the dedicated command, and preserves the original dev-base and previous active package snapshots. Fresh exact-head CI/re-review remain pending.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.02 review follow-up)",
+      "sha256": "094d1531f452ad5e577a3c8f43c0a03b7857513f0431ec975b66c16e546f9d96",
       "history": [
         {
           "reviewer": "Codex (Stage 03 item 3.16)",
           "sha256": "6b71db79c2e0c943a5e51833a4703d66d01d1deae90b10101e9327b8efd8a373",
           "observations": "Reviewed the root test command delta: it registers the profile completeness node:test file in the explicit unit suite. No dependency or runtime command changed.",
           "evidence": "npm test passed 371 tests with 3 skips and no failures on the Stage 03 item 3.16 revision."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+          "sha256": "cdcec1a601358127b33ab01c56f7e393dd4b8597cd264bf06468b294aed90bfd",
+          "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
+          "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+          "sha256": "7e588f96ae3e7b89fe8894a4dcc982e1f9ff9a8e33608140caf93e05a4f38dfa",
+          "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
+          "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed."
         }
       ]
     },
