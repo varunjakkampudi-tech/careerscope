@@ -1888,10 +1888,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 06.08 evidence for clause-bounded negation and regression coverage. Item remains partial; exact-head CI and independent review for the latest fix remain pending.",
-      "evidence": "Node 24 focused detector suite passed 14/14; domain suite passed 982/982; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity and roadmap traceability passed. Exact-head CI and independent review remain pending.",
-      "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
-      "sha256": "3ddf2510b6aeebffbf1cd67eae26646e05850bed7b2e9e943f8f31950eac9f4d",
+      "observations": "Recorded final exact-head CI and independent review evidence for CareerScope item 6.08; the item remains partial because evaluation and native-language acceptance gaps remain.",
+      "evidence": "Exact head e94893aa67adaa997f8d6825a53e04d3b7c71c01 passed GitHub Actions run 44676480510 (all three required jobs); independent review approved that exact SHA against base fad57ea3253024983f29183acefaee59328d0d01. Node 24 focused detector tests passed 14/14, domain suite passed 982/982, and typecheck passed for 99 canonical test files.",
+      "reviewer": "Codex (CareerScope Stage 06.08 final evidence sync)",
+      "sha256": "a799572baa08f539cb2880ae8b27bca0cb8a593d0fb7eec482944ef7432954ac",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2036,6 +2036,12 @@
           "evidence": "Node 24 domain suite passed 981/981; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
           "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
           "sha256": "277ddfee6aa1d5959f954e901a9485868854aaa06e399791f3b89f0443081978"
+        },
+        {
+          "observations": "Updated Stage 06.08 evidence for clause-bounded negation and regression coverage. Item remains partial; exact-head CI and independent review for the latest fix remain pending.",
+          "evidence": "Node 24 focused detector suite passed 14/14; domain suite passed 982/982; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity and roadmap traceability passed. Exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
+          "sha256": "3ddf2510b6aeebffbf1cd67eae26646e05850bed7b2e9e943f8f31950eac9f4d"
         }
       ]
     },
@@ -2110,10 +2116,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 06.08 evidence for clause-bounded negation and regression coverage. Item remains partial; exact-head CI and independent review for the latest fix remain pending.",
-      "evidence": "Node 24 focused detector suite passed 14/14; domain suite passed 982/982; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity and roadmap traceability passed. Exact-head CI and independent review remain pending.",
-      "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
-      "sha256": "7c30f42c5a3a395c4f177e55f51dd02414cd7d57e1fc9b6a995a13a12cc6a7a9",
+      "observations": "Recorded final exact-head CI and independent review evidence for CareerScope item 6.08; the item remains partial because evaluation and native-language acceptance gaps remain.",
+      "evidence": "Exact head e94893aa67adaa997f8d6825a53e04d3b7c71c01 passed GitHub Actions run 44676480510 (all three required jobs); independent review approved that exact SHA against base fad57ea3253024983f29183acefaee59328d0d01. Node 24 focused detector tests passed 14/14, domain suite passed 982/982, and typecheck passed for 99 canonical test files.",
+      "reviewer": "Codex (CareerScope Stage 06.08 final evidence sync)",
+      "sha256": "4ce39bfc6769c2cf68d99f6b48518220417cf647db1682c0dc1d02781d1b89bf",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2276,6 +2282,12 @@
           "evidence": "Node 24 domain suite passed 981/981; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
           "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
           "sha256": "fec619b67d3efe0d92a864bed74ec1084f6486379465a6e9221b29298edc43ca"
+        },
+        {
+          "observations": "Updated Stage 06.08 evidence for clause-bounded negation and regression coverage. Item remains partial; exact-head CI and independent review for the latest fix remain pending.",
+          "evidence": "Node 24 focused detector suite passed 14/14; domain suite passed 982/982; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity and roadmap traceability passed. Exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
+          "sha256": "7c30f42c5a3a395c4f177e55f51dd02414cd7d57e1fc9b6a995a13a12cc6a7a9"
         }
       ]
     },
@@ -2330,10 +2342,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 06.08 evidence for clause-bounded negation and regression coverage. Item remains partial; exact-head CI and independent review for the latest fix remain pending.",
-      "evidence": "Node 24 focused detector suite passed 14/14; domain suite passed 982/982; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity and roadmap traceability passed. Exact-head CI and independent review remain pending.",
-      "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
-      "sha256": "33f893c941a17a792f1ae6fcbf62551cfc0aadc9907f87886ef8df8f75a3d02c",
+      "observations": "Recorded final exact-head CI and independent review evidence for CareerScope item 6.08; the item remains partial because evaluation and native-language acceptance gaps remain.",
+      "evidence": "Exact head e94893aa67adaa997f8d6825a53e04d3b7c71c01 passed GitHub Actions run 44676480510 (all three required jobs); independent review approved that exact SHA against base fad57ea3253024983f29183acefaee59328d0d01. Node 24 focused detector tests passed 14/14, domain suite passed 982/982, and typecheck passed for 99 canonical test files.",
+      "reviewer": "Codex (CareerScope Stage 06.08 final evidence sync)",
+      "sha256": "28e05ec04eaadcdb3205f6e27afe81b8d2cc0392a18b922fba0af2b677ebb78f",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2484,6 +2496,12 @@
           "evidence": "Node 24 domain suite passed 981/981; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
           "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
           "sha256": "40f3795d946c3a955b745a5eb10f9cfdb0fb9a5d353af6957fcf3994e7122cb9"
+        },
+        {
+          "observations": "Updated Stage 06.08 evidence for clause-bounded negation and regression coverage. Item remains partial; exact-head CI and independent review for the latest fix remain pending.",
+          "evidence": "Node 24 focused detector suite passed 14/14; domain suite passed 982/982; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity and roadmap traceability passed. Exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
+          "sha256": "33f893c941a17a792f1ae6fcbf62551cfc0aadc9907f87886ef8df8f75a3d02c"
         }
       ]
     },
