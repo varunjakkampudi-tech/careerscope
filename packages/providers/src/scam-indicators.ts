@@ -4,7 +4,7 @@ const MAX_DESCRIPTION_LENGTH = 100_000;
 // Keep negation tied to an action in the same clause. This also handles rules
 // whose match begins with a subject, such as "You do not need to pay a fee".
 const NEGATED_ACTION =
-  /\b(?:no|not|never|without|don't|do not|doesn't|does not)\b[^,.!?;]{0,48}\b(?:pay|send|submit|provide|deposit|cash|return|refund|transfer|forward|receive|move|process|earn|post|use)\b/i;
+  /\b(?:no|not|never|without|don't|do not|doesn't|does not)\b(?!\s+(?:only|just)\b)[^,.!?;]{0,48}\b(?:pay|send|submit|provide|deposit|cash|return|refund|transfer|forward|receive|move|process|earn|post|use)\b/i;
 
 type Rule = {
   code: RecruitmentScamIndicator;

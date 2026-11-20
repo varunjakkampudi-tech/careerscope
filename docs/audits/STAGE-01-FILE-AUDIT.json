@@ -1888,8 +1888,8 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 06.08 documentation to describe clause-scoped negation, the two regression cases, local validation, and the outstanding acceptance gaps. Item remains partial.",
-      "evidence": "Node 24 domain suite passed 978/978; typecheck passed for 99 canonical test files; Prettier and git diff --check passed. Exact-head CI and independent review for the latest commit remain pending.",
+      "observations": "Updated Stage 06.08 documentation to describe clause-scoped negation and its three regression cases. Item remains partial; hosted CI and independent review for the latest source change remain pending.",
+      "evidence": "Node 24 domain suite passed 979/979; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
       "sha256": "277ddfee6aa1d5959f954e901a9485868854aaa06e399791f3b89f0443081978",
       "history": [
@@ -2018,6 +2018,12 @@
           "evidence": "Focused Stage 06.08 tests and Node 24 typecheck; domain suite passed 976 tests on this branch.",
           "reviewer": "Codex (CareerScope Stage 06.08 implementation)",
           "sha256": "232fe2debd17b64dd870873e020c80c91463ca04f86f4fb3549546c69c892392"
+        },
+        {
+          "observations": "Updated Stage 06.08 documentation to describe clause-scoped negation, the two regression cases, local validation, and the outstanding acceptance gaps. Item remains partial.",
+          "evidence": "Node 24 domain suite passed 978/978; typecheck passed for 99 canonical test files; Prettier and git diff --check passed. Exact-head CI and independent review for the latest commit remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
+          "sha256": "277ddfee6aa1d5959f954e901a9485868854aaa06e399791f3b89f0443081978"
         }
       ]
     },
@@ -2092,10 +2098,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 06.08 documentation to describe clause-scoped negation, the two regression cases, local validation, and the outstanding acceptance gaps. Item remains partial.",
-      "evidence": "Node 24 domain suite passed 978/978; typecheck passed for 99 canonical test files; Prettier and git diff --check passed. Exact-head CI and independent review for the latest commit remain pending.",
+      "observations": "Updated Stage 06.08 documentation to describe clause-scoped negation and its three regression cases. Item remains partial; hosted CI and independent review for the latest source change remain pending.",
+      "evidence": "Node 24 domain suite passed 979/979; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
-      "sha256": "554608c692cf80eedab02a9fe043d9030f24f377a12a21d083180ad3abf71dbb",
+      "sha256": "1000c44cc738ca2a27d79396d29ecf27d087b79d317fe738b5a79e0b612eb04c",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2240,6 +2246,12 @@
           "evidence": "Focused Stage 06.08 tests and Node 24 typecheck; domain suite passed 976 tests on this branch.",
           "reviewer": "Codex (CareerScope Stage 06.08 implementation)",
           "sha256": "c34aae310ecc41c6538ff0b57cd773b26290d5baf5eee42b66f21502bfdfcf26"
+        },
+        {
+          "observations": "Updated Stage 06.08 documentation to describe clause-scoped negation, the two regression cases, local validation, and the outstanding acceptance gaps. Item remains partial.",
+          "evidence": "Node 24 domain suite passed 978/978; typecheck passed for 99 canonical test files; Prettier and git diff --check passed. Exact-head CI and independent review for the latest commit remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
+          "sha256": "554608c692cf80eedab02a9fe043d9030f24f377a12a21d083180ad3abf71dbb"
         }
       ]
     },
@@ -2294,10 +2306,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 06.08 documentation to describe clause-scoped negation, the two regression cases, local validation, and the outstanding acceptance gaps. Item remains partial.",
-      "evidence": "Node 24 domain suite passed 978/978; typecheck passed for 99 canonical test files; Prettier and git diff --check passed. Exact-head CI and independent review for the latest commit remain pending.",
+      "observations": "Updated Stage 06.08 documentation to describe clause-scoped negation and its three regression cases. Item remains partial; hosted CI and independent review for the latest source change remain pending.",
+      "evidence": "Node 24 domain suite passed 979/979; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
-      "sha256": "d2925f717bf629f586e52df0494f10e08d95637e80ec7f2bde1e9ccf9a19917a",
+      "sha256": "ad1e05173c3968473b368e632d0d8d453d8321ba8f2c9f37df49f68768dc5bf4",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2430,6 +2442,12 @@
           "evidence": "Focused Stage 06.08 tests and Node 24 typecheck; domain suite passed 976 tests on this branch.",
           "reviewer": "Codex (CareerScope Stage 06.08 implementation)",
           "sha256": "e7a805cd1054f06954c433949fd1408530d61343d1c31df6688207512c85b233"
+        },
+        {
+          "observations": "Updated Stage 06.08 documentation to describe clause-scoped negation, the two regression cases, local validation, and the outstanding acceptance gaps. Item remains partial.",
+          "evidence": "Node 24 domain suite passed 978/978; typecheck passed for 99 canonical test files; Prettier and git diff --check passed. Exact-head CI and independent review for the latest commit remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
+          "sha256": "d2925f717bf629f586e52df0494f10e08d95637e80ec7f2bde1e9ccf9a19917a"
         }
       ]
     },
@@ -7687,10 +7705,10 @@
       "category": "shared-domain-package",
       "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
-      "observations": "Reviewed the Stage 06.08 negation correction: match context now checks for a negated indicator action within the same punctuation-bounded clause, and regressions cover a direct no-fee statement plus an independent affirmative demand after a disclaimer. No fraud verdict or external reputation lookup is introduced.",
-      "evidence": "Node 24 domain suite passed 978/978; typecheck passed for 99 canonical test files; Prettier and git diff --check passed. Exact-head CI and independent review for the latest commit remain pending.",
+      "observations": "Reviewed Stage 06.08 negation handling: the same-clause action check recognizes direct negation, isolates comma-separated disclaimers, and does not mistake “not only” for a denial. Regression tests cover each case. No fraud verdict or external reputation lookup is introduced.",
+      "evidence": "Node 24 domain suite passed 979/979; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
-      "sha256": "d4b2930b4a631923ce81c335da18a24e28925cc13eb717bc8d55edfccd2d92e3",
+      "sha256": "1cb1a494b184d0e86bc34a31d44e8902c42296118009ee616e3e2be878e4c72a",
       "concerns": [],
       "findings": [],
       "history": [
@@ -7699,6 +7717,12 @@
           "evidence": "Focused Stage 06.08 tests and Node 24 typecheck; domain suite passed 976 tests on this branch.",
           "reviewer": "Codex (CareerScope Stage 06.08 implementation)",
           "sha256": "45e0f517dcb67d31d1077a661c7f0658912f6ed807d36caba727ac7525fbc30f"
+        },
+        {
+          "observations": "Reviewed the Stage 06.08 negation correction: match context now checks for a negated indicator action within the same punctuation-bounded clause, and regressions cover a direct no-fee statement plus an independent affirmative demand after a disclaimer. No fraud verdict or external reputation lookup is introduced.",
+          "evidence": "Node 24 domain suite passed 978/978; typecheck passed for 99 canonical test files; Prettier and git diff --check passed. Exact-head CI and independent review for the latest commit remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
+          "sha256": "d4b2930b4a631923ce81c335da18a24e28925cc13eb717bc8d55edfccd2d92e3"
         }
       ]
     },
@@ -7707,10 +7731,10 @@
       "category": "shared-domain-package",
       "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
-      "observations": "Reviewed the Stage 06.08 negation correction: match context now checks for a negated indicator action within the same punctuation-bounded clause, and regressions cover a direct no-fee statement plus an independent affirmative demand after a disclaimer. No fraud verdict or external reputation lookup is introduced.",
-      "evidence": "Node 24 domain suite passed 978/978; typecheck passed for 99 canonical test files; Prettier and git diff --check passed. Exact-head CI and independent review for the latest commit remain pending.",
+      "observations": "Reviewed Stage 06.08 negation handling: the same-clause action check recognizes direct negation, isolates comma-separated disclaimers, and does not mistake “not only” for a denial. Regression tests cover each case. No fraud verdict or external reputation lookup is introduced.",
+      "evidence": "Node 24 domain suite passed 979/979; typecheck passed for 99 canonical test files; Stage 01 file-audit integrity, roadmap traceability, Prettier, and git diff --check passed. Hosted exact-head CI and independent review remain pending.",
       "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
-      "sha256": "0d3d83be4cd8695c45cf1b8aa0f93f263aee761e96fc5dcc781a729cc2b726d5",
+      "sha256": "ddd58cd2d05d904ab5b20d17e4f5c9b327da64ebd055cd7ee9fd30293fb5c81c",
       "concerns": [],
       "findings": [],
       "history": [
@@ -7719,6 +7743,12 @@
           "evidence": "Focused Stage 06.08 tests and Node 24 typecheck; domain suite passed 976 tests on this branch.",
           "reviewer": "Codex (CareerScope Stage 06.08 implementation)",
           "sha256": "c2c8c0d19684def3b4333e164342c5e32b814a5d8e30e4fe129c10f495d8a176"
+        },
+        {
+          "observations": "Reviewed the Stage 06.08 negation correction: match context now checks for a negated indicator action within the same punctuation-bounded clause, and regressions cover a direct no-fee statement plus an independent affirmative demand after a disclaimer. No fraud verdict or external reputation lookup is introduced.",
+          "evidence": "Node 24 domain suite passed 978/978; typecheck passed for 99 canonical test files; Prettier and git diff --check passed. Exact-head CI and independent review for the latest commit remain pending.",
+          "reviewer": "Codex (CareerScope Stage 06.08 follow-up audit)",
+          "sha256": "0d3d83be4cd8695c45cf1b8aa0f93f263aee761e96fc5dcc781a729cc2b726d5"
         }
       ]
     }

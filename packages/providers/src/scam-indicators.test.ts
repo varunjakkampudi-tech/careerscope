@@ -35,6 +35,14 @@ describe('detectRecruitmentScamIndicators', () => {
     ).toEqual(['candidate_upfront_payment']);
   });
 
+  it('does not treat “not only” as a negation of the fee requirement', () => {
+    expect(
+      detectRecruitmentScamIndicators(
+        'Not only must applicants pay a registration fee to apply, they must also submit a resume.',
+      ),
+    ).toEqual(['candidate_upfront_payment']);
+  });
+
   it('flags a check deposit followed by a request to send money back', () => {
     expect(
       detectRecruitmentScamIndicators(
