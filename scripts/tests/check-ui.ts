@@ -220,10 +220,6 @@ const app = await createApp(database, origin, async () => true, {
     privacyUrl: 'https://careerscope.test/privacy',
     marketingVersion: 'test-marketing-1',
   },
-  emailOtp: {
-    secret: randomBytes(32),
-    provider: { async send() {} },
-  },
   // The browser fixture uses only synthetic source data; production does not
   // inject this approval bypass and remains bound to recorded profiles.
   sourcePermitted: (source) => syntheticPermittedSources.has(source),
@@ -991,63 +987,6 @@ try {
         `${engine} email OTP UI produced an unhandled promise rejection`,
       );
       await otpPage.close();
-
-      // Unlike the deterministic contract flow above, this browser journey uses the real
-      // PostgreSQL-backed authenticator endpoints and verifies the rendered setup code against
-      // the actual secret returned by the API.
-      const totpApiPage = await browser.newPage();
-      await installUnhandledRejectionGuard(totpApiPage);
-      const realCredentials = await new Auth(database).loginWithVerifiedEmail(otpEmail);
-      assert.ok(realCredentials);
-      await totpApiPage.context().addCookies([
-        {
-          name: 'careerscope_v2_session',
-          value: realCredentials.accessToken,
-          url: origin,
-          httpOnly: true,
-          sameSite: 'Lax',
-        },
-        {
-          name: 'careerscope_v2_refresh',
-          value: realCredentials.refreshToken,
-          url: origin,
-          httpOnly: true,
-          sameSite: 'Lax',
-        },
-      ]);
-      const realTotpPageErrors: string[] = [];
-      totpApiPage.on('pageerror', (error) => realTotpPageErrors.push(error.message));
-      await totpApiPage.goto(`${origin}/settings`);
-      await totpApiPage.getByRole('heading', { name: 'Account security', exact: true }).waitFor();
-      await totpApiPage.getByRole('heading', { name: 'Admin authenticator' }).waitFor();
-      const realSetupResponse = totpApiPage.waitForResponse(
-        (response) => response.url().endsWith('/api/account/totp/setup'),
-      );
-      await totpApiPage.getByRole('button', { name: 'Set up authenticator' }).click();
-      const setupResponse = await realSetupResponse;
-      assert.equal(setupResponse.status(), 200);
-      const setupPayload = (await setupResponse.json()) as { secret: string; otpauthUri: string };
-      await totpApiPage.getByText(setupPayload.secret, { exact: true }).waitFor();
-      assert.match(setupPayload.otpauthUri, /^otpauth:\/\/totp\/CareerScope/);
-      const realConfirmCode = hotp(decodeBase32(setupPayload.secret), timeStep(Date.now()));
-      await totpApiPage
-        .getByLabel('Six-digit code from your authenticator app')
-        .fill(realConfirmCode);
-      const realConfirmResponse = totpApiPage.waitForResponse(
-        (response) => response.url().endsWith('/api/account/totp/confirm'),
-      );
-      await totpApiPage.getByRole('button', { name: 'Confirm authenticator' }).click();
-      assert.equal((await realConfirmResponse).status(), 200);
-      await totpApiPage.getByRole('status').getByText('Authenticator confirmed for this account.').waitFor();
-      const realStatusResponse = await totpApiPage.evaluate(async () => {
-        const response = await fetch('/api/account/totp/status');
-        return { status: response.status, body: await response.json() };
-      });
-      assert.equal(realStatusResponse.status, 200);
-      assert.deepEqual(realStatusResponse.body, { enabled: true });
-      assert.deepEqual(realTotpPageErrors, [], `${engine} live TOTP API browser journey errored`);
-      await accessible(totpApiPage, engine, 'live authenticator enrollment', 'Settings');
-      await totpApiPage.close();
 
       const signupPage = await browser.newPage();
       await installUnhandledRejectionGuard(signupPage);
@@ -5891,6 +5830,86 @@ try {
   // Exercise the actual executable test-access contract without the legacy
   // password-fixture routes above. No network responses are replaced here.
   await app.close();
+  // Run the real authenticator API/browser journey on a separately configured app. The
+  // password-only fixture mode intentionally cannot be combined with runtime OTP modes.
+  const totpApp = await createApp(database, origin, async () => true, {
+    testAccess: { mode: 'disabled' },
+    emailOtp: {
+      secret: randomBytes(32),
+      provider: { async send() {} },
+    },
+  });
+  try {
+    await totpApp.listen({ host: '127.0.0.1', port: API_PORT });
+    for (const [engine, browserType] of notificationLifecycleOnly || profilePhotoOnly
+      ? []
+      : uiBrowsers) {
+      const browser = await browserType.launch();
+      try {
+        const page = await browser.newPage();
+        await installUnhandledRejectionGuard(page);
+        const pageErrors: string[] = [];
+        page.on('pageerror', (error) => pageErrors.push(error.message));
+        const credentials = await new Auth(database).loginWithVerifiedEmail(
+          `otp-${engine}@example.test`,
+        );
+        assert.ok(credentials);
+        await page.context().addCookies([
+          {
+            name: 'careerscope_v2_session',
+            value: credentials.accessToken,
+            url: origin,
+            httpOnly: true,
+            sameSite: 'Lax',
+          },
+          {
+            name: 'careerscope_v2_refresh',
+            value: credentials.refreshToken,
+            url: origin,
+            httpOnly: true,
+            sameSite: 'Lax',
+          },
+        ]);
+        await page.goto(`${origin}/settings`);
+        await page.getByRole('heading', { name: 'Account security', exact: true }).waitFor();
+        await page.getByRole('heading', { name: 'Admin authenticator' }).waitFor();
+        const setupResponse = page.waitForResponse((response) =>
+          response.url().endsWith('/api/account/totp/setup'),
+        );
+        await page.getByRole('button', { name: 'Set up authenticator' }).click();
+        const response = await setupResponse;
+        assert.equal(response.status(), 200);
+        const setup = (await response.json()) as { secret: string; otpauthUri: string };
+        await page.getByText(setup.secret, { exact: true }).waitFor();
+        assert.match(setup.otpauthUri, /^otpauth:\/\/totp\/CareerScope/);
+        await page
+          .getByLabel('Six-digit code from your authenticator app')
+          .fill(hotp(decodeBase32(setup.secret), timeStep(Date.now())));
+        const confirmResponse = page.waitForResponse((candidate) =>
+          candidate.url().endsWith('/api/account/totp/confirm'),
+        );
+        await page.getByRole('button', { name: 'Confirm authenticator' }).click();
+        assert.equal((await confirmResponse).status(), 200);
+        await page
+          .getByRole('status')
+          .getByText('Authenticator confirmed for this account.')
+          .waitFor();
+        const status = await page.evaluate(async () => {
+          const result = await fetch('/api/account/totp/status');
+          return { status: result.status, body: await result.json() };
+        });
+        assert.equal(status.status, 200);
+        assert.deepEqual(status.body, { enabled: true });
+        assert.deepEqual(pageErrors, [], `${engine} live TOTP API browser journey errored`);
+        await accessible(page, engine, 'live authenticator enrollment', 'Settings');
+        await page.close();
+      } finally {
+        await browser.close();
+      }
+    }
+  } finally {
+    await totpApp.close();
+  }
   const testApp = await createApp(database, origin, async () => true, {
     testAccess: { mode: 'local' },
   });

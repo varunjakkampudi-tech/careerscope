@@ -55,7 +55,11 @@ claimed before the email code was validated, setup state could outlive an accoun
 and browser enrollment used mocked endpoints. The current correction validates both sign-in factors
 in one transaction, adds real PostgreSQL-backed enrollment browser coverage and negative/cross-owner
 API checks, and guards account transitions. Corrected-head CI and independent re-review are pending;
-item 2.12 remains partial, and no merge or post-merge verification is claimed. Owner item 2.11 still has the
+the first correction SHA `abf0bf2cc2882829dfe4d1a437ad3862b71851bc` passed Quality gates, production
+image build, and integration tests in run `44704814878`, but the browser step failed before browser
+execution because the test harness combined password-only and email-OTP app modes. The harness now
+starts a separate OTP-enabled app for the live TOTP journey; a fresh exact-head run is required.
+Item 2.12 remains partial, and no merge or post-merge verification is claimed. Owner item 2.11 still has the
 separate unusual-pattern step-up gap recorded in the v12 reconciliation; items 2.06 and 2.10 retain
 their native-language review gaps.
 

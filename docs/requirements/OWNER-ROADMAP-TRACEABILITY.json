@@ -463,7 +463,7 @@
         "apps/web/src/lib/locale.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "The prior implementation SHA b359af5778632b5978b943c6d59a27b3dcb21576 passed all three required CI jobs in run 44696172107, but exact-head independent review required changes: validate email OTP before claiming TOTP, clear stale setup state on owner transition, add live API browser enrollment coverage, and add negative/cross-account tests. Corrections and regressions are in progress; corrected-head CI and independent re-review remain pending. Super-admin is not a product role.",
+      "gap": "The prior implementation SHA b359af5778632b5978b943c6d59a27b3dcb21576 passed all three required CI jobs in run 44696172107, but exact-head independent review required changes: validate email OTP before claiming TOTP, clear stale setup state on owner transition, add live API browser enrollment coverage, and add negative/cross-account tests. First correction SHA abf0bf2cc2882829dfe4d1a437ad3862b71851bc passed quality, image and integration jobs but browser setup failed before execution because the harness mixed auth modes; the harness is corrected and fresh CI/review remain pending. Super-admin is not a product role.",
       "scopeDisposition": "in-scope"
     },
     {
