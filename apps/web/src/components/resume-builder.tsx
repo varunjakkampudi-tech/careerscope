@@ -126,13 +126,12 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
   });
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [fields, setFields] = useState<DraftFields>(blankDraft);
-  const [baseline, setBaseline] = useState('');
+  const [baseline, setBaseline] = useState(() => serializeDraft(blankDraft));
   const [isNew, setIsNew] = useState(false);
   const [jobDescription, setJobDescription] = useState('');
   const [showBefore, setShowBefore] = useState(false);
   const selected = drafts.data?.items.find((item) => item.id === selectedId) ?? null;
-  const firstDraft = drafts.data?.items[0];
-  const activeDraft = selected ?? (!isNew ? firstDraft : null);
+  const activeDraft = selected;
   const dirty = isNew || serializeDraft(fields) !== baseline;
 
   function loadDraft(draft: ResumeDraft) {
@@ -211,7 +210,7 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
       );
       setSelectedId(null);
       setFields(blankDraft);
-      setBaseline('');
+      setBaseline(serializeDraft(blankDraft));
       void cache.invalidateQueries({ queryKey: ownerKey(owner, 'resume-drafts') });
     },
   });
@@ -326,6 +325,9 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
                 </button>
               ))}
             </nav>
+          )}
+          {!selected && !isNew && drafts.data.items.length > 0 && (
+            <p role="status">Select a resume draft to edit.</p>
           )}
           {(activeDraft || isNew) && (
             <div className={styles.workspace}>

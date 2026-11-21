@@ -1279,10 +1279,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "observations": "Reviewed the persisted-draft reload and clean initial editor state: blank fields start clean, saved drafts require explicit selection, and mutation controls use only the selected owner-scoped record.",
       "evidence": "",
       "reviewer": "Codex",
-      "sha256": "e2f35479e1030943e7e75d60442eddf2769a0393f52818aacf96f8467893b6d1"
+      "sha256": "e2975f0ab09b3579f610ab29d3a88bbfc638f0446ef9519c5307505e369444b5"
     },
     {
       "path": "apps/web/src/components/resume-panel.module.css",
@@ -7523,10 +7523,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "observations": "Reviewed the changed browser journeys, including the persisted resume draft reload and explicit revision selection; earlier search-flow review history remains preserved on this record.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
       "reviewer": "Codex",
-      "sha256": "192257a2f473a5a1611179808eeb45966d948d53a39534d7ef7f2a3d7174d146",
+      "sha256": "7b31323b18c1cf36f756b4d3689099761dfa42cd654bbe97af53b82cf66f8af7",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",

@@ -1781,6 +1781,18 @@ try {
           await builder.getByRole('button', { name: 'Approve this version', exact: true }).count(),
           1,
         );
+        await page.reload();
+        await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
+        const reloadedBuilder = page.getByRole('region', { name: 'Resume Builder' });
+        await reloadedBuilder
+          .getByRole('button', {
+            name: 'Synthetic Role Resume · Frontend Engineer · v2',
+            exact: true,
+          })
+          .click();
+        const reloadedSummary = reloadedBuilder.getByLabel('Professional summary');
+        await reloadedSummary.waitFor();
+        assert.equal(await reloadedSummary.inputValue(), 'Builds accessible React interfaces.');
         await page.getByLabel('Full Name', { exact: true }).waitFor();
         const uploadInput = page.getByLabel('Upload picture');
         await uploadInput.focus();
