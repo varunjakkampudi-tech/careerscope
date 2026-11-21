@@ -7418,10 +7418,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed Stage 07.04 education scoring browser coverage, low-confidence fixture, and dimension selector. The synthetic short description triggers low-confidence behavior; browser acceptance selects matcher output position five, asserts the label is education, and requires a nonempty explanation. Domain tests cover degree/field score semantics and unverified claims.",
-      "evidence": "Run 44888630801 on b73ef3d526220ed4221aa5ea10cadd3c11f01807 passed quality gates and image builds, but browser acceptance still timed out locating the education row by text. Selector now uses stable matcher output order with an explicit label check and explanation assertion; rerun exact-head CI.",
+      "observations": "Reviewed Stage 07.04 education scoring browser coverage, low-confidence fixture, and semantic education dimension selector. Browser acceptance discovers the rendered education label, requires the matching explanation and unverified-claims disclosure; domain tests cover exact degree/field behavior.",
+      "evidence": "Run 44889266102 on 2f07ee22c98433947c5bcd9cd62019de623dc30e passed all three required CI jobs, but independent review found the browser assertion accepted any nonempty education explanation. Strengthened it to require the matching reason and unverified-claims disclosure; all required exact-head CI must rerun.",
       "reviewer": "Codex (CareerScope Stage 07.04 implementation self-review)",
-      "sha256": "71a0ff7dbe56bdc27aed1262c65c6039d729695034f0f4853c7d35f148b02b9a",
+      "sha256": "f151e75da655cf18e0cd820f94cfc7061a25e8faf5be353eb5ccf12c83465462",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",

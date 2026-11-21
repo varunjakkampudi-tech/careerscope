@@ -3461,17 +3461,17 @@ try {
       const scoredJobCard = page
         .locator('details.job')
         .filter({ has: page.getByRole('heading', { name: 'Scored React Engineer', exact: true }) });
-      const educationDimension = scoredJobCard
+      const matchDimensions = scoredJobCard
         .getByRole('region', { name: 'Match evidence' })
-        .locator('dl.match-dimensions > div')
-        .nth(4);
-      assert.ok(
-        (await educationDimension.locator('dt').innerText())
-          .trim()
-          .toLowerCase()
-          .startsWith('education'),
+        .locator('dl.match-dimensions > div');
+      const dimensionLabels = await matchDimensions.locator('dt').allTextContents();
+      const educationIndex = dimensionLabels.findIndex((label) =>
+        label.trim().toLowerCase().startsWith('education'),
       );
-      assert.ok((await educationDimension.locator('dd').innerText()).trim().length > 0);
+      assert.notEqual(educationIndex, -1, 'education dimension is present');
+      const educationReason = await matchDimensions.nth(educationIndex).locator('dd').innerText();
+      assert.match(educationReason, /Education text matches the stated posting ask/i);
+      assert.match(educationReason, /profile and resume claims are unverified/i);
       const feedbackReason = scoredJobCard.getByLabel('Report a posting issue');
       const priorFeedbackReason = resultBody.jobs[0].feedbackReason;
       const firstFeedbackReason =
