@@ -14,6 +14,7 @@ import {
   normalizeLocation,
   normalizeSalary,
   normalizeUrl,
+  workplaceTypeFrom,
 } from './normalize.js';
 
 const NOW = Date.parse('2026-03-01T00:00:00.000Z');
@@ -43,6 +44,36 @@ const FULL_JD = [
 ].join('\n');
 
 describe('normalizeJob', () => {
+  it('maps workplace labels conservatively', () => {
+    expect(workplaceTypeFrom('Hybrid')).toBe('hybrid');
+    expect(workplaceTypeFrom('On-site')).toBe('onsite');
+    expect(workplaceTypeFrom('Flexible')).toBe('unknown');
+    expect(workplaceTypeFrom(undefined, true)).toBe('remote');
+  });
+
+  it('preserves structured annual salary and explicit workplace type', () => {
+    const job = normalizeJob(
+      rawJob({
+        salaryMin: 120_000,
+        salaryMax: 150_000,
+        salaryCurrency: 'USD',
+        salaryPeriod: 'year',
+        workplaceType: 'hybrid',
+        isRemote: true,
+      }),
+      { now: NOW },
+    );
+
+    expect(job.salary).toMatchObject({ currency: 'USD', annualMin: 120_000, annualMax: 150_000 });
+    expect(job.workplaceType).toBe('hybrid');
+    expect(job.isRemote).toBe(false);
+  });
+
+  it('keeps missing workplace evidence unknown and derives remote only from the legacy flag', () => {
+    expect(normalizeJob(rawJob(), { now: NOW }).workplaceType).toBe('unknown');
+    expect(normalizeJob(rawJob({ isRemote: true }), { now: NOW }).workplaceType).toBe('remote');
+  });
+
   it('produces a complete job from a full ATS payload', () => {
     const job = normalizeJob(
       rawJob({
@@ -633,6 +664,51 @@ describe('dedupeJobs', () => {
     expect(new Set(result.map((job) => job.fingerprint)).size).toBe(2);
   });
 
+  it('marks cross-source jobs with conflicting hybrid and on-site evidence as unknown', () => {
+    const hybrid = normalizeJob(
+      rawJob({ source: 'greenhouse', sourceJobId: 'hybrid-1', workplaceType: 'hybrid' }),
+      { now: NOW },
+    );
+    const onsite = normalizeJob(
+      rawJob({ source: 'lever', sourceJobId: 'onsite-1', workplaceType: 'onsite' }),
+      { now: NOW },
+    );
+
+    const [merged] = dedupeJobs([hybrid, onsite]);
+
+    expect(merged?.workplaceType).toBe('unknown');
+    expect(merged?.isRemote).toBe(false);
+  });
+
+  it('preserves workplace conflicts across three-source merge orderings', () => {
+    const hybrid = normalizeJob(
+      rawJob({ source: 'greenhouse', sourceJobId: 'hybrid-1', workplaceType: 'hybrid' }),
+      { now: NOW },
+    );
+    const onsite = normalizeJob(
+      rawJob({ source: 'lever', sourceJobId: 'onsite-1', workplaceType: 'onsite' }),
+      { now: NOW },
+    );
+    const secondHybrid = normalizeJob(
+      rawJob({ source: 'workable', sourceJobId: 'hybrid-2', workplaceType: 'hybrid' }),
+      { now: NOW },
+    );
+    const orders = [
+      [hybrid, onsite, secondHybrid],
+      [hybrid, secondHybrid, onsite],
+      [onsite, hybrid, secondHybrid],
+      [onsite, secondHybrid, hybrid],
+      [secondHybrid, hybrid, onsite],
+      [secondHybrid, onsite, hybrid],
+    ];
+
+    for (const order of orders) {
+      const [merged] = dedupeJobs(order);
+      expect(merged?.workplaceType).toBe('unknown');
+      expect(merged?.isRemote).toBe(false);
+    }
+  });
+
   it('merges compatible members of a conflicting three-source group deterministically', () => {
     const greenhouse = normalizeJob(
       rawJob({ source: 'greenhouse', sourceJobId: 'greenhouse-1', employmentType: 'fulltime' }),
@@ -702,14 +778,27 @@ describe('mergeDuplicates', () => {
     expect(merged.lastSeenAt).toBe('2026-03-01T00:00:00.000Z');
   });
 
-  it('treats a role as remote if either copy said so', () => {
-    const onsite = normalizeJob(rawJob({ description: FULL_JD }), { now: NOW });
-    const remote = normalizeJob(
-      rawJob({ source: 'remotive', description: `${FULL_JD}\nFully remote.` }),
-      { now: NOW },
-    );
+  it('keeps conflicting explicit workplace arrangements unknown', () => {
+    const make = (sourceJobId: string, workplaceType: 'hybrid' | 'onsite' | 'remote' | 'unknown') =>
+      normalizeJob(rawJob({ sourceJobId, workplaceType, description: FULL_JD }), { now: NOW });
 
-    expect(mergeDuplicates(onsite, remote).isRemote).toBe(true);
+    for (const [left, right] of [
+      ['hybrid', 'remote'],
+      ['onsite', 'remote'],
+      ['hybrid', 'onsite'],
+    ] as const) {
+      const merged = mergeDuplicates(make('a', left), make('b', right));
+      expect(merged.workplaceType).toBe('unknown');
+      expect(merged.isRemote).toBe(false);
+    }
+
+    const unknownAndRemote = mergeDuplicates(make('a', 'unknown'), make('b', 'remote'));
+    expect(unknownAndRemote.workplaceType).toBe('remote');
+    expect(unknownAndRemote.isRemote).toBe(true);
+
+    const same = mergeDuplicates(make('a', 'hybrid'), make('b', 'hybrid'));
+    expect(same.workplaceType).toBe('hybrid');
+    expect(same.isRemote).toBe(false);
   });
 
   it('prefers an ATS copy over an aggregator copy of equal richness', () => {

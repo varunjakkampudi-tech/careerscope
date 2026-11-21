@@ -330,8 +330,12 @@ try {
           sourceJobId: 'scored-fixture',
           title: 'Scored React Engineer',
           companyName: 'Flagged Technology',
-          location: 'Remote',
-          isRemote: true,
+          location: 'Bengaluru, India',
+          salaryMin: 90_000,
+          salaryMax: 110_000,
+          salaryCurrency: 'USD',
+          salaryPeriod: 'year',
+          workplaceType: 'hybrid',
           description: 'Build React and TypeScript interfaces.',
           hasFullDescription: false,
           sourceUrl: 'https://remoteok.com/remote-jobs/scored',
@@ -386,6 +390,16 @@ try {
         title: 'Senior React Engineer',
         company: 'Example Technology',
         location: 'Remote',
+        salary: {
+          raw: '$120,000-$150,000 per year',
+          min: 120_000,
+          max: 150_000,
+          currency: 'USD',
+          period: 'year',
+          annualMin: 120_000,
+          annualMax: 150_000,
+        },
+        workplaceType: 'remote',
         description: 'Build accessible interfaces using React and TypeScript.',
         source: 'himalayas',
         sourceUrl: 'https://himalayas.app/jobs/synthetic',
@@ -3518,6 +3532,110 @@ try {
         1,
         'changing feedback updates the existing owner/job row instead of creating a duplicate',
       );
+      const sourceFilter = page.getByRole('combobox', { name: 'Source', exact: true });
+      const waitForJobCount = (count: number) =>
+        page.waitForFunction(
+          (expected) => document.querySelectorAll('details.job').length === expected,
+          count,
+        );
+      await waitForJobCount(2);
+      assert.equal(
+        await page.locator('details.job').count(),
+        2,
+        'default shows scored and unscored jobs',
+      );
+      await sourceFilter.selectOption('remoteok');
+      await waitForJobCount(1);
+      assert.equal(await page.locator('details.job').count(), 1, 'source filter narrows results');
+      await sourceFilter.selectOption('all');
+      const minimumMatch = page.getByRole('combobox', { name: 'Minimum match', exact: true });
+      const workplaceFilter = page.getByRole('combobox', { name: 'Workplace', exact: true });
+      const salaryCurrency = page.getByRole('combobox', { name: 'Salary currency', exact: true });
+      const minimumAnnualSalary = page.getByRole('spinbutton', {
+        name: 'Minimum annual salary',
+        exact: true,
+      });
+      await workplaceFilter.selectOption('hybrid');
+      await waitForJobCount(1);
+      assert.equal(
+        await page.locator('details.job').count(),
+        1,
+        'workplace filter uses the explicit hybrid type',
+      );
+      await workplaceFilter.selectOption('remote');
+      await waitForJobCount(1);
+      assert.equal(
+        await page.locator('details.job').count(),
+        1,
+        'workplace filter distinguishes remote from hybrid',
+      );
+      await workplaceFilter.selectOption('all');
+      await salaryCurrency.selectOption('USD');
+      await minimumAnnualSalary.fill('100000');
+      await waitForJobCount(1);
+      assert.equal(
+        await page.locator('details.job').count(),
+        1,
+        'salary filter excludes the lower annual range and retains the qualifying range',
+      );
+      await minimumAnnualSalary.fill('130000');
+      await waitForJobCount(0);
+      assert.equal(
+        await page.locator('details.job').count(),
+        0,
+        'salary filter does not use the upper bound as the minimum salary evidence',
+      );
+      await page.getByRole('button', { name: 'Clear filter', exact: true }).click();
+      await waitForJobCount(2);
+      assert.equal(await workplaceFilter.inputValue(), 'all');
+      assert.equal(await salaryCurrency.inputValue(), 'all');
+      assert.equal(await minimumAnnualSalary.inputValue(), '');
+      await salaryCurrency.selectOption('USD');
+      await minimumAnnualSalary.fill('130000');
+      await waitForJobCount(0);
+      await salaryCurrency.selectOption('all');
+      await waitForJobCount(2);
+      assert.equal(
+        await minimumAnnualSalary.inputValue(),
+        '',
+        'choosing all currencies clears the disabled salary threshold',
+      );
+      const resultTextFilter = page.getByRole('textbox', { name: 'Filter results', exact: true });
+      await resultTextFilter.fill('Senior React');
+      await sourceFilter.selectOption('himalayas');
+      await waitForJobCount(1);
+      assert.equal(await page.locator('details.job').count(), 1, 'text and source filters compose');
+      await minimumMatch.selectOption('60');
+      await waitForJobCount(0);
+      assert.equal(
+        await page.locator('details.job').count(),
+        0,
+        'a nonzero threshold excludes the matching unscored job',
+      );
+      await page.getByRole('button', { name: 'Clear filter', exact: true }).click();
+      await waitForJobCount(2);
+      assert.equal(
+        await page.locator('details.job').count(),
+        2,
+        'clear restores scored and unscored jobs',
+      );
+      assert.equal(await resultTextFilter.inputValue(), '');
+      assert.equal(await sourceFilter.inputValue(), 'all');
+      assert.equal(await minimumMatch.inputValue(), '0');
+      await minimumMatch.selectOption('80');
+      await waitForJobCount(0);
+      assert.equal(
+        await page.locator('details.job').count(),
+        0,
+        'minimum score excludes low and unscored jobs',
+      );
+      await page.getByRole('button', { name: 'Clear filter', exact: true }).click();
+      await waitForJobCount(2);
+      assert.equal(
+        await page.locator('details.job').count(),
+        2,
+        'clear action resets active filters',
+      );
       await page.getByText('Senior React Engineer', { exact: true }).click();
       assert.equal(
         await page
@@ -3688,6 +3806,33 @@ try {
       );
       await page.getByRole('checkbox', { name: 'Greenhouse', exact: true }).check();
       await page.getByRole('checkbox', { name: 'Lever', exact: true }).check();
+      await page.getByLabel('Filter results').fill('Senior React');
+      await page.getByRole('combobox', { name: 'Source', exact: true }).selectOption('himalayas');
+      await page.getByRole('combobox', { name: 'Minimum match', exact: true }).selectOption('70');
+      await workplaceFilter.selectOption('hybrid');
+      await salaryCurrency.selectOption('USD');
+      await minimumAnnualSalary.fill('100000');
+      let releaseSearchResponse!: () => void;
+      const searchResponseGate = new Promise<void>((resolve) => {
+        releaseSearchResponse = resolve;
+      });
+      let announceSearchCreation!: (result: { status: number; runId: string }) => void;
+      const searchCreationReady = new Promise<{ status: number; runId: string }>((resolve) => {
+        announceSearchCreation = resolve;
+      });
+      let searchResponseHeld = false;
+      await page.route('**/api/searches', async (route) => {
+        if (route.request().method() !== 'POST' || searchResponseHeld) {
+          await route.continue();
+          return;
+        }
+        searchResponseHeld = true;
+        const response = await route.fetch();
+        const body = (await response.json()) as { runId: string };
+        announceSearchCreation({ status: response.status(), runId: body.runId });
+        await searchResponseGate;
+        await route.fulfill({ response, json: body });
+      });
       const submitted = page.waitForResponse(
         (response) =>
           response.url().endsWith('/api/searches') && response.request().method() === 'POST',
@@ -3697,9 +3842,75 @@ try {
           response.url().includes('/api/searches/') && response.url().endsWith('/events'),
       );
       await page.getByRole('button', { name: 'Search', exact: true }).click();
+      const createdSearch = await searchCreationReady;
+      try {
+        assert.equal(createdSearch.status, 202);
+        assert.equal(await page.getByLabel('Filter results').inputValue(), '');
+        assert.equal(
+          await page.getByRole('combobox', { name: 'Source', exact: true }).inputValue(),
+          'all',
+        );
+        assert.equal(
+          await page.getByRole('combobox', { name: 'Minimum match', exact: true }).inputValue(),
+          '0',
+        );
+        assert.equal(await workplaceFilter.inputValue(), 'all');
+        assert.equal(await salaryCurrency.inputValue(), 'all');
+        assert.equal(await minimumAnnualSalary.inputValue(), '');
+      } finally {
+        releaseSearchResponse();
+      }
       const submission = await submitted;
       assert.equal(submission.status(), 202);
       const submittedId = (await submission.json()).runId;
+      assert.equal(createdSearch.runId, submittedId);
+      await page
+        .getByRole('navigation', { name: 'Search history' })
+        .getByRole('button', { name: /^React.*partial/s })
+        .click();
+      await page.getByRole('textbox', { name: 'Filter results', exact: true }).waitFor();
+      assert.equal(await page.getByLabel('Filter results').inputValue(), '');
+      assert.equal(
+        await page.getByRole('combobox', { name: 'Source', exact: true }).inputValue(),
+        'all',
+      );
+      assert.equal(
+        await page.getByRole('combobox', { name: 'Minimum match', exact: true }).inputValue(),
+        '0',
+      );
+      assert.equal(await workplaceFilter.inputValue(), 'all');
+      assert.equal(await salaryCurrency.inputValue(), 'all');
+      assert.equal(await minimumAnnualSalary.inputValue(), '');
+      const newRunButton = page
+        .getByRole('navigation', { name: 'Search history' })
+        .getByRole('button', { name: /^TypeScript queued/ });
+      await page.getByLabel('Filter results').fill('Senior React');
+      await page.getByRole('combobox', { name: 'Source', exact: true }).selectOption('himalayas');
+      await page.getByRole('combobox', { name: 'Minimum match', exact: true }).selectOption('70');
+      await workplaceFilter.selectOption('onsite');
+      await salaryCurrency.selectOption('USD');
+      await minimumAnnualSalary.fill('90000');
+      await newRunButton.click();
+      await page.getByText('Search in progress', { exact: true }).waitFor();
+      await page
+        .getByRole('navigation', { name: 'Search history' })
+        .getByRole('button', { name: /^React.*partial/s })
+        .click();
+      await page.getByRole('textbox', { name: 'Filter results', exact: true }).waitFor();
+      assert.equal(await page.getByLabel('Filter results').inputValue(), '');
+      assert.equal(
+        await page.getByRole('combobox', { name: 'Source', exact: true }).inputValue(),
+        'all',
+      );
+      assert.equal(
+        await page.getByRole('combobox', { name: 'Minimum match', exact: true }).inputValue(),
+        '0',
+      );
+      assert.equal(await workplaceFilter.inputValue(), 'all');
+      assert.equal(await salaryCurrency.inputValue(), 'all');
+      assert.equal(await minimumAnnualSalary.inputValue(), '');
+      await newRunButton.click();
+      await page.getByText('Search in progress', { exact: true }).waitFor();
       assert.deepEqual((await database.getSearch(ownerId, submittedId))?.request.sources, [
         'greenhouse',
         'lever',

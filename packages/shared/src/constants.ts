@@ -88,6 +88,10 @@ export const EMPLOYMENT_TYPES = [
 ] as const;
 export type EmploymentType = (typeof EMPLOYMENT_TYPES)[number];
 
+/** Reported work location arrangement; unknown stays distinct from on-site. */
+export const WORKPLACE_TYPES = ['remote', 'hybrid', 'onsite', 'unknown'] as const;
+export type WorkplaceType = (typeof WORKPLACE_TYPES)[number];
+
 /**
  * Seniority ladder. Used both to read a level out of a job title and to compare
  * it against the candidate's target level.

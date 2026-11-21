@@ -5,7 +5,7 @@
 
 import { z } from 'zod';
 import { searchSourceSchema } from './commands.js';
-import { matchBreakdownSchema } from '@careerscope/shared';
+import { matchBreakdownSchema, salarySchema, workplaceTypeSchema } from '@careerscope/shared';
 
 // Accepts null/undefined as "not scored"; anything else must be a valid, strict match breakdown.
 const match = z
@@ -45,6 +45,16 @@ export const collectedJobSchema = z
     title: z.string().min(1).max(500),
     company: z.string().min(1).max(500),
     location: z.string().max(500),
+    salary: salarySchema.default({
+      raw: null,
+      min: null,
+      max: null,
+      currency: null,
+      period: null,
+      annualMin: null,
+      annualMax: null,
+    }),
+    workplaceType: workplaceTypeSchema.default('unknown'),
     description: z.string().max(100_000),
     source: searchSourceSchema,
     sourceUrl: publicLink,

@@ -247,6 +247,8 @@ export async function collect(
         title: normalized.title,
         company: normalized.company.name,
         location: normalized.location,
+        salary: normalized.salary,
+        workplaceType: normalized.workplaceType,
         description: normalized.descriptionText,
         source: normalized.source,
         sourceUrl: normalized.sourceUrl,

@@ -1771,11 +1771,26 @@
       "stageTitle": "Real-time job search and discovery",
       "title": "Advanced filtering",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/job-search-view.tsx",
+        "packages/providers/src/normalize.ts",
+        "apps/workers/search/src/collect.ts",
+        "packages/core/src/jobs.ts",
+        "apps/api/src/openapi.ts",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md"
+      ],
+      "tests": [
+        "scripts/tests/check-ui.ts",
+        "packages/providers/src/normalize.test.ts",
+        "packages/providers/src/ats/adapters.test.ts",
+        "apps/web/src/lib/api.test.ts",
+        "packages/core/src/leads.test.ts",
+        "apps/api/src/application-export.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "The reviewer findings on conflicting workplace labels and browser filter resets were corrected. A further correction preserves workplace conflict state across sequential merges of three or more records. Node 24 package builds, 127/127 focused provider tests, full application/test typecheck including 98 canonical test files, formatting, file-audit integrity, and roadmap traceability passed. Latest exact-head hosted CI, independent re-review, and owner acceptance remain pending. Telugu and Hindi filter labels are AI-drafted; native-speaker review is not claimed.",
       "scopeDisposition": "in-scope"
     },
     {

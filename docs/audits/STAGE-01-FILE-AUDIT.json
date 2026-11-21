@@ -273,14 +273,36 @@
     {
       "path": "apps/api/src/application-export.test.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed complete unit tests. Covers formula injection escaping, CSV quoting/newlines, candidate-reported evidence labels, omission of private/internal fields, stable header, and CRLF termination. No source finding identified.",
-      "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "bdce3d5bfd8a6ba211ea568074c7ddfaab176d2969cc4d85bd791ce5014478b7"
+      "observations": "Reviewed the current apps/api/src/application-export.test.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "9de3e89bdf02b5975245754ff3eb46073491e021d5db43c4dcc41a857708b9c0",
+      "history": [
+        {
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed complete unit tests. Covers formula injection escaping, CSV quoting/newlines, candidate-reported evidence labels, omission of private/internal fields, stable header, and CRLF termination. No source finding identified.",
+          "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "bdce3d5bfd8a6ba211ea568074c7ddfaab176d2969cc4d85bd791ce5014478b7"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current apps/api/src/application-export.test.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "9de3e89bdf02b5975245754ff3eb46073491e021d5db43c4dcc41a857708b9c0"
+        }
+      ]
     },
     {
       "path": "apps/api/src/application-export.ts",
@@ -421,7 +443,7 @@
     {
       "path": "apps/api/src/openapi.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -433,10 +455,48 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Reviewed OpenAPI upload and listing contract additions for target role and version lineage.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "214ffecd324c7f6ef0c95bd73118fe978281575bbe70d8a9abe90335183a30b8"
+      "observations": "Reviewed the current apps/api/src/openapi.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "92785237b6ea86fceca4898a62f8b3da040d580ec05839bcab438adea707fe16",
+      "history": [
+        {
+          "reviewMethod": "content-read-and-diff-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F052",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The OpenAPI document left the jobId path parameter unconstrained even though the handler requires a UUID.",
+              "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
+            }
+          ],
+          "observations": "Reviewed OpenAPI upload and listing contract additions for target role and version lineage.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+          "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+          "sha256": "214ffecd324c7f6ef0c95bd73118fe978281575bbe70d8a9abe90335183a30b8"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F052",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The OpenAPI document left the jobId path parameter unconstrained even though the handler requires a UUID.",
+              "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
+            }
+          ],
+          "observations": "Reviewed the current apps/api/src/openapi.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "92785237b6ea86fceca4898a62f8b3da040d580ec05839bcab438adea707fe16"
+        }
+      ]
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -1099,26 +1159,94 @@
     {
       "path": "apps/web/src/components/job-search-view.module.css",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete job-search source/discovery styles. Source options use responsive columns, unavailable states retain readable contrast, and selection controls have visible focus and touch sizing.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "5a9f7c73f40453672c10f23b6a71e82963a9a027522bf75f9f6b4c96231402f2"
+      "observations": "Reviewed the Stage 08.02 result-control styles: wrapping layout, 44px controls, contrast-compatible surface colors, and visible keyboard focus.",
+      "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
+      "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
+      "sha256": "88188e8987dd38ba98fcc510889ed110983b2f6f7609282a49ce910f7626906a",
+      "history": [
+        {
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Read the complete job-search source/discovery styles. Source options use responsive columns, unavailable states retain readable contrast, and selection controls have visible focus and touch sizing.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "5a9f7c73f40453672c10f23b6a71e82963a9a027522bf75f9f6b4c96231402f2"
+        }
+      ]
     },
     {
       "path": "apps/web/src/components/job-search-view.tsx",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete search workspace component. Owner-scoped queries remain disabled until the authenticated session resolves; mutations include CSRF and idempotency headers; run IDs are URL-addressable; event streams close on settle/unmount and trigger centralized expiry handling. Result links open in a new tab with noopener protections. No additional finding from this file review.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "1599695e8eab6aaaf54b5efd0e54f88d5849a1b4b6e2d6f66689082402e361a9"
+      "observations": "Reviewed the current apps/web/src/components/job-search-view.tsx changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "786e7d306b6e7e1e19db7645cf75d031b54e5f14d1a4d7d4ad917aff7f660db9",
+      "history": [
+        {
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Read the complete search workspace component. Owner-scoped queries remain disabled until the authenticated session resolves; mutations include CSRF and idempotency headers; run IDs are URL-addressable; event streams close on settle/unmount and trigger centralized expiry handling. Result links open in a new tab with noopener protections. No additional finding from this file review.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "1599695e8eab6aaaf54b5efd0e54f88d5849a1b4b6e2d6f66689082402e361a9"
+        },
+        {
+          "path": "apps/web/src/components/job-search-view.tsx",
+          "category": "frontend",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the Stage 08.02 result filtering diff: text, source and minimum-score predicates compose; unscored results are excluded for nonzero thresholds; filters reset on run changes and clear from the empty state.",
+          "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
+          "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
+          "sha256": "cd97bfa1b8c03af22eab79a0e5361b1439e48d04e1bf46b51df077ade8971ceb"
+        },
+        {
+          "path": "apps/web/src/components/job-search-view.tsx",
+          "category": "frontend",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed Stage 08.02 correction and acceptance evidence. The default minimum score now preserves unscored jobs; nonzero thresholds still exclude them.",
+          "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 found the default unscored-job regression and required broader browser assertions. Corrected in the current worktree; local Node 24 checks and a new exact-head CI run are pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "e36f4a5d6a54da07344b6ed08eab3f4e86754ec3d63a0bf233be0a662043f097"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed Stage 08.02 default-score behavior, reset on search submission and success, selected-run reset, and expanded browser assertions.",
+          "evidence": "Follow-up review of exact head 804f4540a2c2824f45a43f8bd49b810cd2a0bcc0 found that the new-search reset assertion was indirect. Current worktree explicitly holds the successful create response to assert reset before selection, then checks run switching separately. New exact-head validation remains pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "586825602bae0a04625805ae196078eb67ecd1a1ef25cf0ba64a901ba291c465"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current apps/web/src/components/job-search-view.tsx changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "19cf9d88bafada659f5fc9c2b35fbd0f09df6dd8a006ff143b4b2e0274df67dd"
+        }
+      ]
     },
     {
       "path": "apps/web/src/components/legal-acceptance.module.css",
@@ -1338,26 +1466,70 @@
     {
       "path": "apps/web/src/lib/api-schemas.ts",
       "category": "frontend",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed response validation for resume role, group and version fields.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "b70601872ca1f347f8a1b4a141c8f59ed184d2d357683aa947ed09197f6115b5"
+      "observations": "Reviewed the current apps/web/src/lib/api-schemas.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "68aacfda5348afbc6a992482d87f8c4eb863d8b187452ed49051ea52ebce4153",
+      "history": [
+        {
+          "reviewMethod": "content-read-and-diff-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed response validation for resume role, group and version fields.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+          "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+          "sha256": "b70601872ca1f347f8a1b4a141c8f59ed184d2d357683aa947ed09197f6115b5"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current apps/web/src/lib/api-schemas.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "68aacfda5348afbc6a992482d87f8c4eb863d8b187452ed49051ea52ebce4153"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete API client test suite. It exercises supported and malformed conflicts, safe fixed messages, retry eligibility, 404 handling, OTP outages, one-time and concurrent session refresh, unread response cancellation, schema rejection and both session branches. Fetch/window globals are restored in test cleanup.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "467fee2057ab44d897fc1f5a278a661b7769352a1faf0c574366f449a8c939ee"
+      "observations": "Reviewed the current apps/web/src/lib/api.test.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "0fdb8ef914364c519480a57654db2412ff2f1c41c94ad0da762e5fbb259fdec4",
+      "history": [
+        {
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Read the complete API client test suite. It exercises supported and malformed conflicts, safe fixed messages, retry eligibility, 404 handling, OTP outages, one-time and concurrent session refresh, unread response cancellation, schema rejection and both session branches. Fetch/window globals are restored in test cleanup.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "467fee2057ab44d897fc1f5a278a661b7769352a1faf0c574366f449a8c939ee"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current apps/web/src/lib/api.test.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "0fdb8ef914364c519480a57654db2412ff2f1c41c94ad0da762e5fbb259fdec4"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/api.ts",
@@ -1410,14 +1582,46 @@
     {
       "path": "apps/web/src/lib/locale.ts",
       "category": "frontend",
-      "reviewMethod": "content-and-structural-review",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
-      "evidence": "Locale implementation and representative message groups inspected on codex/stage01-item-101-audit; structural parity is enforced by the full typecheck. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "75e45067aee7990decb4433d3c5e5a4499274933e5b65a938e2fb8eaae91ffcc"
+      "observations": "Reviewed the current apps/web/src/lib/locale.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "31efb91ee151dfc09fafdc000c0f9a0ff0d87fbdb9bf2ef8bb749387a6fcbd7b",
+      "history": [
+        {
+          "reviewMethod": "content-and-structural-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
+          "evidence": "Locale implementation and representative message groups inspected on codex/stage01-item-101-audit; structural parity is enforced by the full typecheck. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "75e45067aee7990decb4433d3c5e5a4499274933e5b65a938e2fb8eaae91ffcc"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the Stage 08.02 English, Telugu and Hindi labels for text/source/minimum-score controls. Telugu and Hindi wording is machine-drafted and still needs owner/native-speaker review.",
+          "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
+          "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
+          "sha256": "2742c168b7a1e09d5bcf1aa6d4a08406d94a4e56b2f0627245fc9e60c83ddb6f"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current apps/web/src/lib/locale.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "31efb91ee151dfc09fafdc000c0f9a0ff0d87fbdb9bf2ef8bb749387a6fcbd7b"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/next-proxy-headers.test.ts",
@@ -1630,14 +1834,36 @@
     {
       "path": "apps/workers/search/src/collect.ts",
       "category": "background-workers",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (380 lines). Checked: exact source attribution; per-source and whole-run timeouts; at most 20 detail fetches; per-posting validation that skips a malformed posting without losing the rest of the results and records only field paths; outcome statuses that distinguish empty from failed; deduplication with disambiguated link buckets; fenced start and settle; permission-pending outcomes for sources without a current permission profile; empty-streak diagnostics that cannot fail a completed search. No defect found. Scoring read uses the snapshot taken at search creation.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "607a72b745e695635f3c85f95eaa527b6b47c93811df5ea53efdbf31ccf6cb9b"
+      "observations": "Reviewed the current apps/workers/search/src/collect.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "605a47094daf817212ea6e4abf74fe355251ce9272da36d07d927063af0647fa",
+      "history": [
+        {
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Read in full (380 lines). Checked: exact source attribution; per-source and whole-run timeouts; at most 20 detail fetches; per-posting validation that skips a malformed posting without losing the rest of the results and records only field paths; outcome statuses that distinguish empty from failed; deduplication with disambiguated link buckets; fenced start and settle; permission-pending outcomes for sources without a current permission profile; empty-streak diagnostics that cannot fail a completed search. No defect found. Scoring read uses the snapshot taken at search creation.",
+          "evidence": "",
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "607a72b745e695635f3c85f95eaa527b6b47c93811df5ea53efdbf31ccf6cb9b"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current apps/workers/search/src/collect.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "605a47094daf817212ea6e4abf74fe355251ce9272da36d07d927063af0647fa"
+        }
+      ]
     },
     {
       "path": "apps/workers/search/src/files.ts",
@@ -1888,10 +2114,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+      "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 127/127, including conflict-preserving three-source merge permutations. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+      "sha256": "9a764ceeb8a9c15cfc2f86b7cc7533771b1dd3296bdadda3896cf128dbd80d8a",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2012,6 +2238,130 @@
           "sha256": "da3b553a8b588deb6952f61cd3f2440c5810c59a294fbda85f29215eb4539433",
           "observations": "Reviewed Stage 05 items 5.08 and 5.09 evidence and gaps; both remain partial and no external source acceptance is claimed.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+          "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d"
+        },
+        {
+          "path": "docs/GAP-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Recorded Stage 08.02 as partial, including unavailable persisted salary/workplace attributes and pending exact-head CI and owner acceptance.",
+          "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
+          "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
+          "sha256": "b4ac77a45e1804255d4b3bc69ce339c863b9183ee19e22348999a6b871a29a0c"
+        },
+        {
+          "path": "docs/GAP-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed Stage 08.02 correction and acceptance evidence. Updated for the item 8.02 regression correction and expanded browser coverage.",
+          "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 found the default unscored-job regression and required broader browser assertions. Corrected in the current worktree; local Node 24 checks and a new exact-head CI run are pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "3eb916b8f7a782d9067b118458ea7ebcb02a76cfc76ae286e6d4c348fdd41870"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the Stage 08.02 default unscored-job correction, broadened browser regressions, and partial checklist disposition after formatting.",
+          "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 requested fixes. Corrected in follow-up commit 804f4540a2c2824f45a43f8bd49b810cd2a0bcc0; formatting applied. Exact-head CI and re-review remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "24772e8d606680d6379dd56c0921aa0f7f32b5621f88c67e1636be29c6e7218e"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current docs/GAP-MATRIX.md changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "066ff562571a4c756dcb2869c75e5bf486e7a5ea63c19b343d0de1fd4f5006a1"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current docs/GAP-MATRIX.md updates for CareerScope owner roadmap item 8.02. The record states the implementation evidence and outstanding exact-head review/CI/owner-acceptance gates without marking the item complete.",
+          "evidence": "Current documentation and roadmap inventory reviewed against the working implementation and local validation. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 documentation review)",
+          "sha256": "b5b1a43e7adadb980d1158cf1272d12c03e943d30ac547a0aa93c44890d58460"
+        },
+        {
+          "path": "docs/GAP-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current docs/GAP-MATRIX.md changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+          "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "82af37e7a03b4d390e71c6225ee493de3a4ec9740330709c0b9b20c7954f368e"
+        },
+        {
+          "path": "docs/GAP-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "4ec5e748ce8a7395cdc16a7d0c46c13e866e8d8755c9167a4139efa0545fb160"
+        },
+        {
+          "path": "docs/GAP-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "4ec5e748ce8a7395cdc16a7d0c46c13e866e8d8755c9167a4139efa0545fb160"
+        },
+        {
+          "path": "docs/GAP-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "3d470d5253b00a764205c6daf0e1781f4196cc94e2ccafbda56c5408043a93d3"
+        },
+        {
+          "path": "docs/GAP-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "50c2ff4bd6ec33a2d69569039d0df82bfd22b42ee81fc562506592a18568c459"
         }
       ]
     },
@@ -2086,10 +2436,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
+      "observations": "Reviewed the current docs/PROGRESS.md changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "0f89afba540d759c0052e46a249ecc77eddbdffe3bcaff39a5e99055c595dedf",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2228,6 +2578,60 @@
           "sha256": "9dcdfecb8ac4591ecf0fc959813bbd5bb6f74411ddd3c2c0374fc03bd52208b4",
           "observations": "Reviewed Stage 05 item 5.08 and 5.09 status, focused test/build evidence, and remaining adapter-mapping and false-merge limitations.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F045",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The progress page published stale Stage 01 audit counts (19/481 reviewed and 7 partial) while the current manifest contained 160/498 reviewed at the audit start.",
+              "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
+            }
+          ],
+          "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+          "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F045",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The progress page published stale Stage 01 audit counts (19/481 reviewed and 7 partial) while the current manifest contained 160/498 reviewed at the audit start.",
+              "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
+            }
+          ],
+          "observations": "Reviewed the current docs/PROGRESS.md changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "a835c966d23d55b509ee96298786c7afc83b4fc743d1d5f171351b4788a5dca0"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F045",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The progress page published stale Stage 01 audit counts (19/481 reviewed and 7 partial) while the current manifest contained 160/498 reviewed at the audit start.",
+              "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
+            }
+          ],
+          "observations": "Reviewed the current docs/PROGRESS.md updates for CareerScope owner roadmap item 8.02. The record states the implementation evidence and outstanding exact-head review/CI/owner-acceptance gates without marking the item complete.",
+          "evidence": "Current documentation and roadmap inventory reviewed against the working implementation and local validation. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 documentation review)",
+          "sha256": "0f89afba540d759c0052e46a249ecc77eddbdffe3bcaff39a5e99055c595dedf"
         }
       ]
     },
@@ -2282,10 +2686,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+      "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 127/127, including conflict-preserving three-source merge permutations. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+      "sha256": "297fd4b3ed261c0d67c99ae4376a309b08b20f11a959e5f788630fea802be4f8",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2412,6 +2816,130 @@
           "sha256": "d08de3ad68f62e21c10744dc048c1e91a6c2f831382d1e8efe31b8ee32ab3b4d",
           "observations": "Reviewed item-specific Stage 05 normalization and deduplication test evidence and exact-head gates.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+          "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4"
+        },
+        {
+          "path": "docs/TEST-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Recorded Stage 08.02 browser assertions for source filtering, minimum-score exclusion and clearing filters; browser execution remains pending exact-head CI.",
+          "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
+          "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
+          "sha256": "020fc8925109f82d3c164ca19ab14c293674714f3fe3554fbfbc642ba71ec5bd"
+        },
+        {
+          "path": "docs/TEST-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed Stage 08.02 correction and acceptance evidence. Updated for the item 8.02 regression correction and expanded browser coverage.",
+          "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 found the default unscored-job regression and required broader browser assertions. Corrected in the current worktree; local Node 24 checks and a new exact-head CI run are pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "391411942e5b02c521384a702075953179bfa6060f400d5de07eccc2a0c3a6e3"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the Stage 08.02 default unscored-job correction, broadened browser regressions, and partial checklist disposition after formatting.",
+          "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 requested fixes. Corrected in follow-up commit 804f4540a2c2824f45a43f8bd49b810cd2a0bcc0; formatting applied. Exact-head CI and re-review remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "d8960fff5c7f11a2e2ccfea618d3ac745725ae98a02f6b1a9bd3431d3aaf6a26"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current docs/TEST-MATRIX.md changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "88600acb3d05f403450a7898c7f2c687e3720739c60a2241f9a304034a9d424a"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current docs/TEST-MATRIX.md updates for CareerScope owner roadmap item 8.02. The record states the implementation evidence and outstanding exact-head review/CI/owner-acceptance gates without marking the item complete.",
+          "evidence": "Current documentation and roadmap inventory reviewed against the working implementation and local validation. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 documentation review)",
+          "sha256": "00c2ecffe16bca6bd506f0ae86e8e0c9f15083a788613513e2cd105827a4612b"
+        },
+        {
+          "path": "docs/TEST-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current docs/TEST-MATRIX.md changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+          "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "121f86e90fc9f0ab4c8cc4db281f94cdfad9938eb44e07d52436181c66a73842"
+        },
+        {
+          "path": "docs/TEST-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "f83078065628ec7d8bc7312482ca22dee66511279aa8f1533e41591974ccdc30"
+        },
+        {
+          "path": "docs/TEST-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "f83078065628ec7d8bc7312482ca22dee66511279aa8f1533e41591974ccdc30"
+        },
+        {
+          "path": "docs/TEST-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "0ec807535c9ffd71d0893de0a5f123ec63723ca8e8a62eeefb2307c1f2a69b09"
+        },
+        {
+          "path": "docs/TEST-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "929064672f02adac3b9b8e006291b5d3fe6acaa152bb21d0d7b279bffe1afd24"
         }
       ]
     },
@@ -2850,10 +3378,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+      "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 127/127, including conflict-preserving three-source merge permutations. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+      "sha256": "60f1c879438f1b2d9576630f9246feca0ff13f0de8def20d4d20cce49c4fc064",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2962,6 +3490,118 @@
           "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
           "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90"
+        },
+        {
+          "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Updated canonical item 8.02 evidence and retained partial status pending exact-head CI and owner acceptance; 8.03 was left not-started for sequential review.",
+          "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
+          "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
+          "sha256": "cca4bdd499a4d9028ca1b16c6cee9b6350bb72a90cd61583fab5747a9a51fa7f"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed Stage 08.02 correction and acceptance evidence. Updated for the item 8.02 regression correction and expanded browser coverage.",
+          "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 found the default unscored-job regression and required broader browser assertions. Corrected in the current worktree; local Node 24 checks and a new exact-head CI run are pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "aefb2754542008d53d301455a3a6c0ed727bd370d326c66a332056cf21636fdf"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current docs/requirements/OWNER-ROADMAP-TRACEABILITY.json changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "98352476c5bf85e3690d5fb927c37e66a7f0921ca998a27e9908f38a7edbd30a"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current docs/requirements/OWNER-ROADMAP-TRACEABILITY.json updates for CareerScope owner roadmap item 8.02. The record states the implementation evidence and outstanding exact-head review/CI/owner-acceptance gates without marking the item complete.",
+          "evidence": "Current documentation and roadmap inventory reviewed against the working implementation and local validation. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 documentation review)",
+          "sha256": "aea940307f98845ae83ccc1a3468870c6ded62cb63e6f1d8e0b6d3533ed1ace7"
+        },
+        {
+          "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current docs/requirements/OWNER-ROADMAP-TRACEABILITY.json changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+          "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "aea940307f98845ae83ccc1a3468870c6ded62cb63e6f1d8e0b6d3533ed1ace7"
+        },
+        {
+          "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "39ede8737efcc5aa5afe8a32de8be974a7e1d7f865b641f34cd9b1114e8f64f7"
+        },
+        {
+          "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "39ede8737efcc5aa5afe8a32de8be974a7e1d7f865b641f34cd9b1114e8f64f7"
+        },
+        {
+          "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "39ede8737efcc5aa5afe8a32de8be974a7e1d7f865b641f34cd9b1114e8f64f7"
+        },
+        {
+          "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "5b36023cb1bf65e9f43922c803c17732e8937f910d4b6c0c2cefcba97ab64913"
         }
       ]
     },
@@ -4528,26 +5168,70 @@
     {
       "path": "packages/core/src/jobs.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (102 lines). Checked: strict collected-job schema; HTTPS-only public links without embedded credentials; match breakdown validated and strict; per-source outcome refinements tie failed to an error code and empty to zero accepted jobs; at most six sources with no repeats; collection status rule. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "26044b3168e00eff840fd500e61081bf0951107b987373542526e09316e8bcce"
+      "observations": "Reviewed the current packages/core/src/jobs.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "43d7d0629db9b89d468c76eacf58266cba8b370e4deffdee59f24ff64e552562",
+      "history": [
+        {
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Read in full (102 lines). Checked: strict collected-job schema; HTTPS-only public links without embedded credentials; match breakdown validated and strict; per-source outcome refinements tie failed to an error code and empty to zero accepted jobs; at most six sources with no repeats; collection status rule. No finding.",
+          "evidence": "",
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "26044b3168e00eff840fd500e61081bf0951107b987373542526e09316e8bcce"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current packages/core/src/jobs.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "43d7d0629db9b89d468c76eacf58266cba8b370e4deffdee59f24ff64e552562"
+        }
+      ]
     },
     {
       "path": "packages/core/src/leads.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full. Verifies legacy match normalization, bounded/trimmed/case-unique tags, rejected control characters, and that client updates cannot set owner identity or bypass optimistic revision.",
-      "evidence": "",
-      "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "77b5f518d6b5b44fbd5b9d4ea240f005bb182d0b9794fad38435735051e90d9c"
+      "observations": "Reviewed the current packages/core/src/leads.test.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "09a2e8e1aa48c770cdde0b3ee0aa7945ef3a76b317eea186a5157466565d472a",
+      "history": [
+        {
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Read in full. Verifies legacy match normalization, bounded/trimmed/case-unique tags, rejected control characters, and that client updates cannot set owner identity or bypass optimistic revision.",
+          "evidence": "",
+          "reviewer": "Codex (Stage 01 implementation audit)",
+          "sha256": "77b5f518d6b5b44fbd5b9d4ea240f005bb182d0b9794fad38435735051e90d9c"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current packages/core/src/leads.test.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "09a2e8e1aa48c770cdde0b3ee0aa7945ef3a76b317eea186a5157466565d472a"
+        }
+      ]
     },
     {
       "path": "packages/core/src/leads.ts",
@@ -5222,7 +5906,7 @@
     {
       "path": "packages/matching/src/matching.fixtures.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -5234,10 +5918,48 @@
           "remediation": "Removed the name and personal-resume provenance claim; fixture is documented as synthetic."
         }
       ],
-      "observations": "Made the synthetic matching candidate explicit about its absent structured-floor currency so fixtures conform to the expanded CandidateContext contract.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "b611bb892e174943944bfdc2d6bf17d2609682501586aba7451031e2d2af1b87"
+      "observations": "Reviewed the current packages/matching/src/matching.fixtures.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "0ffb5e1908bb1e7c7b088c7ec3dccdf97964480b1632ca87e0bd219d3327a38b",
+      "history": [
+        {
+          "reviewMethod": "Focused source review and implementation validation",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F061",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "A matching test fixture identified a person and claimed to be modeled on a personal resume in ignored data.",
+              "remediation": "Removed the name and personal-resume provenance claim; fixture is documented as synthetic."
+            }
+          ],
+          "observations": "Made the synthetic matching candidate explicit about its absent structured-floor currency so fixtures conform to the expanded CandidateContext contract.",
+          "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 03 item 3.11)",
+          "sha256": "b611bb892e174943944bfdc2d6bf17d2609682501586aba7451031e2d2af1b87"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F061",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "A matching test fixture identified a person and claimed to be modeled on a personal resume in ignored data.",
+              "remediation": "Removed the name and personal-resume provenance claim; fixture is documented as synthetic."
+            }
+          ],
+          "observations": "Reviewed the current packages/matching/src/matching.fixtures.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "0ffb5e1908bb1e7c7b088c7ec3dccdf97964480b1632ca87e0bd219d3327a38b"
+        }
+      ]
     },
     {
       "path": "packages/matching/src/score.test.ts",
@@ -5314,14 +6036,14 @@
     {
       "path": "packages/providers/src/ats/adapters.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for owner item 5.05 Ashby; workplace classification and zero-valued salary regressions added.",
-      "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
-      "sha256": "a380d4282509c11686c848dc892a1891190215a1a196da85c398539a580afa75",
+      "observations": "Reviewed the current packages/providers/src/ats/adapters.test.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "5d75e534df47b3496ba81118f60c7aff389aa896b197eb2487ac1cb5e417f1fd",
       "history": [
         {
           "reviewer": "Codex (Stage 01 item 1.01)",
@@ -5352,20 +6074,40 @@
           "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; item remains partial pending live-response and source-rights/owner-permission evidence.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
           "sha256": "a380d4282509c11686c848dc892a1891190215a1a196da85c398539a580afa75"
+        },
+        {
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed for owner item 5.05 Ashby; workplace classification and zero-valued salary regressions added.",
+          "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "a380d4282509c11686c848dc892a1891190215a1a196da85c398539a580afa75"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current packages/providers/src/ats/adapters.test.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "5d75e534df47b3496ba81118f60c7aff389aa896b197eb2487ac1cb5e417f1fd"
         }
       ]
     },
     {
       "path": "packages/providers/src/ats/ashby.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for owner item 5.05 Ashby; workplace classification and zero-valued salary regressions added.",
-      "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
-      "sha256": "339f35dda9bc67a5b344b5a3e49bd5156efc1035fe85fd7493705cc59577324d",
+      "observations": "Reviewed the current packages/providers/src/ats/ashby.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "f3d2e56627232165a42d80c2d495d1284806308b520b0153187f46d6e9f7c069",
       "history": [
         {
           "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
@@ -5384,6 +6126,26 @@
           "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; item remains partial pending live-response and source-rights/owner-permission evidence.",
           "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
           "sha256": "339f35dda9bc67a5b344b5a3e49bd5156efc1035fe85fd7493705cc59577324d"
+        },
+        {
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed for owner item 5.05 Ashby; workplace classification and zero-valued salary regressions added.",
+          "evidence": "Focused Node 24 Docker run passed 69/69 adapter, registry and job-source policy tests; provider type build and ESLint passed; item remains partial pending live-response and source-rights/owner-permission evidence.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.05 Ashby)",
+          "sha256": "339f35dda9bc67a5b344b5a3e49bd5156efc1035fe85fd7493705cc59577324d"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current packages/providers/src/ats/ashby.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "f3d2e56627232165a42d80c2d495d1284806308b520b0153187f46d6e9f7c069"
         }
       ]
     },
@@ -5434,14 +6196,36 @@
     {
       "path": "packages/providers/src/ats/lever.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "3ffb39a17ae1d98e0f66f33f23e7055048e555cb0bb54e8bc91845385a1263fe"
+      "observations": "Reviewed the current packages/providers/src/ats/lever.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "2ce63d02321bf957d044af75577262fa865df0d675bab6a38b6e12dd1e1b12a2",
+      "history": [
+        {
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Re-reviewed after one change: the unused re-export of this file’s job type was removed, as knip reported it imported nowhere. The type is still used inside the module, and the adapter behaviour is unchanged; the earlier review of the mapping, pagination and date handling still stands.",
+          "evidence": "",
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "3ffb39a17ae1d98e0f66f33f23e7055048e555cb0bb54e8bc91845385a1263fe"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current packages/providers/src/ats/lever.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "2ce63d02321bf957d044af75577262fa865df0d675bab6a38b6e12dd1e1b12a2"
+        }
+      ]
     },
     {
       "path": "packages/providers/src/ats/recruitee.ts",
@@ -5698,20 +6482,40 @@
     {
       "path": "packages/providers/src/index.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "dcb0fc62584be4c368106baadc65d48427adc659f5e6fe7694da16507017018c",
+      "observations": "Reviewed the current packages/providers/src/index.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "c31887d3148b5c6839543322c733629c533b362e10f5daea535afc367d4715e9",
       "history": [
         {
           "reviewer": "Codex (Stage 01 implementation audit)",
           "sha256": "d8dd8a8bf1772a25032e15205c909c1c4e589384a6524eee25f75613507657dc",
           "observations": "Read in full. Exports the registry and normalized provider contracts, then adapter factories; comments distinguish public entry points from worker/script/test internals and document browser shutdown responsibility.",
           "evidence": ""
+        },
+        {
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
+          "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+          "sha256": "dcb0fc62584be4c368106baadc65d48427adc659f5e6fe7694da16507017018c"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current packages/providers/src/index.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "c31887d3148b5c6839543322c733629c533b362e10f5daea535afc367d4715e9"
         }
       ]
     },
@@ -5798,10 +6602,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed 74 focused normalization tests, including explicit employment-type and disjoint-experience conflicts, compatible-subset preservation, and input-order determinism.",
-      "evidence": "Node 24 Docker: normalize.test.ts 74/74; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
-      "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "ddd5e3fd8db3029ee6b826b3bc30e56f5475355108e041fef4628a8680b0d1f8",
+      "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 127/127, including conflict-preserving three-source merge permutations. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+      "sha256": "6f49847901b05abe8d595889861be4fe47b3ef7c20018be55f6fb8ddbfeca586",
       "history": [
         {
           "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
@@ -5820,6 +6624,86 @@
           "sha256": "1a9a3360e70dc01ba4a48be6789df8a7496343a87718711c13a60344231a8928",
           "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
           "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only."
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed 74 focused normalization tests, including explicit employment-type and disjoint-experience conflicts, compatible-subset preservation, and input-order determinism.",
+          "evidence": "Node 24 Docker: normalize.test.ts 74/74; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
+          "reviewer": "Codex (CareerScope owner item 5.09 review)",
+          "sha256": "ddd5e3fd8db3029ee6b826b3bc30e56f5475355108e041fef4628a8680b0d1f8"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current packages/providers/src/normalize.test.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "d090d6aaeea3dad910c83ce2638232cf53abb92d1b3f241a91a5c23f2b2744cc"
+        },
+        {
+          "path": "packages/providers/src/normalize.test.ts",
+          "category": "shared-domain-package",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current packages/providers/src/normalize.test.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+          "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "cabe67c84e7e09ee8d652f744177cd097e9091bc421110824e4fb813ceb346ab"
+        },
+        {
+          "path": "packages/providers/src/normalize.test.ts",
+          "category": "shared-domain-package",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "6a5b1f50badb79ca65cebf5ee356e16d33c00ff595497eacff6f7f4bcabfc8b8"
+        },
+        {
+          "path": "packages/providers/src/normalize.test.ts",
+          "category": "shared-domain-package",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "80b72e0b51ea848714774ed5164ce0b72d166f58122e93db58b0496060007514"
+        },
+        {
+          "path": "packages/providers/src/normalize.test.ts",
+          "category": "shared-domain-package",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "0bfa65c2c73191d100d2c7b7c7dacbc623039b790abc6f8aae65f4c21a9e0bbf"
+        },
+        {
+          "path": "packages/providers/src/normalize.test.ts",
+          "category": "shared-domain-package",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "0bfa65c2c73191d100d2c7b7c7dacbc623039b790abc6f8aae65f4c21a9e0bbf"
         }
       ]
     },
@@ -5838,10 +6722,10 @@
           "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
         }
       ],
-      "observations": "Reviewed deterministic compatible-subset partitioning, preserving compatible merges while splitting explicit employment-type and disjoint-experience conflicts; source-ID collision behavior remains conservative.",
-      "evidence": "Node 24 Docker: normalize.test.ts 74/74; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
-      "reviewer": "Codex (CareerScope owner item 5.09 review)",
-      "sha256": "e84b8e7c94e3565746c5d6afa767a575a0713e639427298c383e1c2d53433d1a",
+      "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 127/127, including conflict-preserving three-source merge permutations. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+      "sha256": "5f701aa8955a5c368deeeaa2520cb239ceec1a2788926636f4ac4171234fc72e",
       "history": [
         {
           "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
@@ -5860,6 +6744,142 @@
           "sha256": "d8f9f2c09168e1cb460cb9c8ff190601b0a5986e01d9025583e1b767a96c4192",
           "observations": "Reviewed the Stage 05 item 5.10 change: job salaries without explicit periods remain non-annual; focused regressions and docs record the behavior and remaining exact-head gates.",
           "evidence": "Current content reviewed on codex/stage05-item510-salary-location-normalization; prior CI is pinned to SHA 80d7ddd06a8c2b6e2c31c138163de7e2b27bdee5 and run 43838979099 only."
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F026",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "A finite but absurd salary figure was annualised to an implausible value that could be shown to the user as pay.",
+              "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
+            }
+          ],
+          "observations": "Reviewed deterministic compatible-subset partitioning, preserving compatible merges while splitting explicit employment-type and disjoint-experience conflicts; source-ID collision behavior remains conservative.",
+          "evidence": "Node 24 Docker: normalize.test.ts 74/74; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending.",
+          "reviewer": "Codex (CareerScope owner item 5.09 review)",
+          "sha256": "e84b8e7c94e3565746c5d6afa767a575a0713e639427298c383e1c2d53433d1a"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F026",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "A finite but absurd salary figure was annualised to an implausible value that could be shown to the user as pay.",
+              "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
+            }
+          ],
+          "observations": "Reviewed the current packages/providers/src/normalize.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "2a262e33d7605d898eb883862af82748fa6d130064fb0da9f97bb7943bcbc7e5"
+        },
+        {
+          "path": "packages/providers/src/normalize.ts",
+          "category": "shared-domain-package",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F026",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "A finite but absurd salary figure was annualised to an implausible value that could be shown to the user as pay.",
+              "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
+            }
+          ],
+          "observations": "Reviewed the current packages/providers/src/normalize.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+          "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "2a262e33d7605d898eb883862af82748fa6d130064fb0da9f97bb7943bcbc7e5"
+        },
+        {
+          "path": "packages/providers/src/normalize.ts",
+          "category": "shared-domain-package",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F026",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "A finite but absurd salary figure was annualised to an implausible value that could be shown to the user as pay.",
+              "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
+            }
+          ],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "792b750a0428b915632a3fb69091010c7340de328594e0e07c7a78e57c4ba4a6"
+        },
+        {
+          "path": "packages/providers/src/normalize.ts",
+          "category": "shared-domain-package",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F026",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "A finite but absurd salary figure was annualised to an implausible value that could be shown to the user as pay.",
+              "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
+            }
+          ],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "792b750a0428b915632a3fb69091010c7340de328594e0e07c7a78e57c4ba4a6"
+        },
+        {
+          "path": "packages/providers/src/normalize.ts",
+          "category": "shared-domain-package",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F026",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "A finite but absurd salary figure was annualised to an implausible value that could be shown to the user as pay.",
+              "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
+            }
+          ],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "792b750a0428b915632a3fb69091010c7340de328594e0e07c7a78e57c4ba4a6"
+        },
+        {
+          "path": "packages/providers/src/normalize.ts",
+          "category": "shared-domain-package",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F026",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "A finite but absurd salary figure was annualised to an implausible value that could be shown to the user as pay.",
+              "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
+            }
+          ],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "792b750a0428b915632a3fb69091010c7340de328594e0e07c7a78e57c4ba4a6"
         }
       ]
     },
@@ -6422,7 +7442,7 @@
     {
       "path": "packages/shared/src/constants.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6434,10 +7454,48 @@
           "remediation": "Constant removed; the authoritative limit remains in packages/core/src/storage.ts."
         }
       ],
-      "observations": "Read in full (about 170 lines). Source groups, the lead and run status lists, employment types, seniority ladder, match weights (they sum to 1), the low-confidence ceiling and default thresholds were checked. Finding S1-F020 (low): MAX_RESUME_BYTES (10 MiB) and ALLOWED_RESUME_MIME had no consumer and contradicted the server limit of 5 MiB in core/storage.ts. Removed; the authoritative definition is in core. Recorded for the shared contract cleanup: the LEAD_STATUSES list (new, dismissed) does not match the core lead status set, and its only consumer is an unused shared schema.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "59ad036abc9b5da22e144d145415e7f4929f4a815425be65a1d567dbc1f48c8b"
+      "observations": "Reviewed the current packages/shared/src/constants.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "61a541dbb57a69dc808ad09a0125cafffa79738fc25fdba24704b541ee306bdf",
+      "history": [
+        {
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F020",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "A shared resume size constant (10 MiB) disagreed with the server's 5 MiB limit and had no consumer.",
+              "remediation": "Constant removed; the authoritative limit remains in packages/core/src/storage.ts."
+            }
+          ],
+          "observations": "Read in full (about 170 lines). Source groups, the lead and run status lists, employment types, seniority ladder, match weights (they sum to 1), the low-confidence ceiling and default thresholds were checked. Finding S1-F020 (low): MAX_RESUME_BYTES (10 MiB) and ALLOWED_RESUME_MIME had no consumer and contradicted the server limit of 5 MiB in core/storage.ts. Removed; the authoritative definition is in core. Recorded for the shared contract cleanup: the LEAD_STATUSES list (new, dismissed) does not match the core lead status set, and its only consumer is an unused shared schema.",
+          "evidence": "",
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "sha256": "59ad036abc9b5da22e144d145415e7f4929f4a815425be65a1d567dbc1f48c8b"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F020",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "A shared resume size constant (10 MiB) disagreed with the server's 5 MiB limit and had no consumer.",
+              "remediation": "Constant removed; the authoritative limit remains in packages/core/src/storage.ts."
+            }
+          ],
+          "observations": "Reviewed the current packages/shared/src/constants.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "61a541dbb57a69dc808ad09a0125cafffa79738fc25fdba24704b541ee306bdf"
+        }
+      ]
     },
     {
       "path": "packages/shared/src/evidence-text.test.ts",
@@ -6650,7 +7708,7 @@
     {
       "path": "packages/shared/src/schemas.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -6662,10 +7720,48 @@
           "remediation": "apiErrorSchema corrected to the flat envelope and tested against errorEnvelope output. Unused exports are recorded as technical debt to remove in the next cleanup pass."
         }
       ],
-      "observations": "Prior dev audit: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nReviewed item 4.05 schema follow-up: evidence entries are strict, bounded and backward-compatible through empty-array defaults; education credential status is fixed to unverified.\n\nItem 4.05 schema follow-up reviewed: strict evidence schema is bounded and backward-compatible; education status cannot be represented as verified.\n\nItem 4.05 review follow-up: fallback ChatGPT review in CareerScope Engineering Continuation at head 162a53e identified false institution attribution, reversed structured years, unsupported direct experience-duration evidence and substring source matching. The designated review thread returned Unknown error. This follow-up adds marker-constrained institutions, omits reversed structured years, labels date ranges as supporting sources, uses token-boundary evidence matching with an explicit .js alias, and documents extraction confidence separately from credential authenticity. Focused review/tests updated; new exact-head CI and designated-thread review remain pending.\nLatest correction also restricts inferred employment duration to valid ranges in the explicitly labeled experience section; education dates alone do not produce work duration.\nInstitution extraction follow-up: capture stops at the first comma, semicolon or parenthesis so trailing employment text cannot be folded into an institution even when a recognized institution marker appears.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
-      "evidence": "Prior dev audit: Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nFocused tests: resume derivation/schema suites 93 passed; full domain suite 927 tests across 33 files passed; typecheck passed including 97 canonical test files. Local Node was v22, below the Node 24 project requirement; hosted exact-head CI remains pending.\nFinal local follow-up: domain suite passed 928 tests across 33 files; full typecheck passed, including 97 canonical test files. Runtime Node was v22.23.2, below required Node 24; hosted exact-head CI is required.\nLatest domain run passed 929 tests across 33 files after adding the institution-phrase boundary regression.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
-      "reviewer": "Codex (Stage 03 item 3.12)",
-      "sha256": "d2702301693ee15e895119944183d7cc8391ee780393984031a5899fae403984"
+      "observations": "Reviewed the current packages/shared/src/schemas.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "748ce0e7942e5513c0e36f75ea1f2d0153a4d904255fe0a19eca79d127e78b90",
+      "history": [
+        {
+          "reviewMethod": "Focused source review and implementation validation",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F019",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The shared API error schema described a nested body the API never writes. Separately, about twenty exported schemas have no consumer.",
+              "remediation": "apiErrorSchema corrected to the flat envelope and tested against errorEnvelope output. Unused exports are recorded as technical debt to remove in the next cleanup pass."
+            }
+          ],
+          "observations": "Prior dev audit: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Added a nullable defaulted ISO-style three-letter currency code for structured minimum salary, canonicalized to uppercase; older profile data remains valid. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nReviewed item 4.05 schema follow-up: evidence entries are strict, bounded and backward-compatible through empty-array defaults; education credential status is fixed to unverified.\n\nItem 4.05 schema follow-up reviewed: strict evidence schema is bounded and backward-compatible; education status cannot be represented as verified.\n\nItem 4.05 review follow-up: fallback ChatGPT review in CareerScope Engineering Continuation at head 162a53e identified false institution attribution, reversed structured years, unsupported direct experience-duration evidence and substring source matching. The designated review thread returned Unknown error. This follow-up adds marker-constrained institutions, omits reversed structured years, labels date ranges as supporting sources, uses token-boundary evidence matching with an explicit .js alias, and documents extraction confidence separately from credential authenticity. Focused review/tests updated; new exact-head CI and designated-thread review remain pending.\nLatest correction also restricts inferred employment duration to valid ranges in the explicitly labeled experience section; education dates alone do not produce work duration.\nInstitution extraction follow-up: capture stops at the first comma, semicolon or parenthesis so trailing employment text cannot be folded into an institution even when a recognized institution marker appears.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
+          "evidence": "Prior dev audit: Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nFocused tests: resume derivation/schema suites 93 passed; full domain suite 927 tests across 33 files passed; typecheck passed including 97 canonical test files. Local Node was v22, below the Node 24 project requirement; hosted exact-head CI remains pending.\nFinal local follow-up: domain suite passed 928 tests across 33 files; full typecheck passed, including 97 canonical test files. Runtime Node was v22.23.2, below required Node 24; hosted exact-head CI is required.\nLatest domain run passed 929 tests across 33 files after adding the institution-phrase boundary regression.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
+          "reviewer": "Codex (Stage 03 item 3.12)",
+          "sha256": "d2702301693ee15e895119944183d7cc8391ee780393984031a5899fae403984"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F019",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The shared API error schema described a nested body the API never writes. Separately, about twenty exported schemas have no consumer.",
+              "remediation": "apiErrorSchema corrected to the flat envelope and tested against errorEnvelope output. Unused exports are recorded as technical debt to remove in the next cleanup pass."
+            }
+          ],
+          "observations": "Reviewed the current packages/shared/src/schemas.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "748ce0e7942e5513c0e36f75ea1f2d0153a4d904255fe0a19eca79d127e78b90"
+        }
+      ]
     },
     {
       "path": "packages/shared/src/skills.test.ts",
@@ -6702,14 +7798,36 @@
     {
       "path": "packages/shared/src/types.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Documented the nullable minSalaryCurrency field on matching candidate context, including null semantics for older or unspecified profiles.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "80fd31b4c76b2717de5ff615997f8471e64a7ed00db3ec8774433c998c7b4392"
+      "observations": "Reviewed the current packages/shared/src/types.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+      "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+      "sha256": "ae9d29f221644ed7080dcc4189bfce050f327f9e4e5d8c843891a07e6a0710b9",
+      "history": [
+        {
+          "reviewMethod": "Focused source review and implementation validation",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Documented the nullable minSalaryCurrency field on matching candidate context, including null semantics for older or unspecified profiles.",
+          "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 03 item 3.11)",
+          "sha256": "80fd31b4c76b2717de5ff615997f8471e64a7ed00db3ec8774433c998c7b4392"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the current packages/shared/src/types.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "ae9d29f221644ed7080dcc4189bfce050f327f9e4e5d8c843891a07e6a0710b9"
+        }
+      ]
     },
     {
       "path": "packages/shared/tsconfig.json",
@@ -7389,7 +8507,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "current exact-diff and durable outbox assertion review",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -7415,10 +8533,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
-      "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
-      "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd",
+      "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+      "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+      "sha256": "f13f11b597674f8048754aa5f2be3a7f27cefae9e3613e7db89f0781ef6e51c3",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7437,6 +8555,340 @@
           "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
           "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
           "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
+        },
+        {
+          "reviewMethod": "current exact-diff and durable outbox assertion review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F049",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The browser suite did not enforce the implemented CSP promise: it only required script-src to exist and allowed unsafe-inline or missing inline-script hashes to pass.",
+              "remediation": "Added strict directive and inline-body hash assertions to the browser suite; validated test typing, production hash convergence, the served response, and a real Playwright page load. Full application E2E remains separate."
+            },
+            {
+              "id": "S1-F071",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
+              "remediation": "Write screenshots to a unique per-run directory under test-results."
+            },
+            {
+              "id": "S1-F072",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+              "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
+            }
+          ],
+          "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
+          "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
+          "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
+        },
+        {
+          "path": "scripts/tests/check-ui.ts",
+          "category": "tooling-and-tests",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F049",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The browser suite did not enforce the implemented CSP promise: it only required script-src to exist and allowed unsafe-inline or missing inline-script hashes to pass.",
+              "remediation": "Added strict directive and inline-body hash assertions to the browser suite; validated test typing, production hash convergence, the served response, and a real Playwright page load. Full application E2E remains separate."
+            },
+            {
+              "id": "S1-F071",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
+              "remediation": "Write screenshots to a unique per-run directory under test-results."
+            },
+            {
+              "id": "S1-F072",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+              "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
+            }
+          ],
+          "observations": "Reviewed Stage 08.02 browser assertions for source narrowing, exclusion of low and unscored results at an 80% threshold, and restoration after clearing. Exact-head browser execution remains pending.",
+          "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
+          "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
+          "sha256": "b53e40c9d992dcba9a402eafd4d291c8bd9c7e32c8c72c2314bb8c77d5642bd0"
+        },
+        {
+          "path": "scripts/tests/check-ui.ts",
+          "category": "tooling-and-tests",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F049",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The browser suite did not enforce the implemented CSP promise: it only required script-src to exist and allowed unsafe-inline or missing inline-script hashes to pass.",
+              "remediation": "Added strict directive and inline-body hash assertions to the browser suite; validated test typing, production hash convergence, the served response, and a real Playwright page load. Full application E2E remains separate."
+            },
+            {
+              "id": "S1-F071",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
+              "remediation": "Write screenshots to a unique per-run directory under test-results."
+            },
+            {
+              "id": "S1-F072",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+              "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
+            }
+          ],
+          "observations": "Reviewed Stage 08.02 correction and acceptance evidence. Updated for the item 8.02 regression correction and expanded browser coverage.",
+          "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 found the default unscored-job regression and required broader browser assertions. Corrected in the current worktree; local Node 24 checks and a new exact-head CI run are pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "e8a27082bc0c90bb960ca32c1dfe71a23cf2b940954d4ac64a279cbc16116929"
+        },
+        {
+          "path": "scripts/tests/check-ui.ts",
+          "category": "tooling-and-tests",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F049",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The browser suite did not enforce the implemented CSP promise: it only required script-src to exist and allowed unsafe-inline or missing inline-script hashes to pass.",
+              "remediation": "Added strict directive and inline-body hash assertions to the browser suite; validated test typing, production hash convergence, the served response, and a real Playwright page load. Full application E2E remains separate."
+            },
+            {
+              "id": "S1-F071",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
+              "remediation": "Write screenshots to a unique per-run directory under test-results."
+            },
+            {
+              "id": "S1-F072",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+              "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
+            }
+          ],
+          "observations": "Reviewed the Stage 08.02 default unscored-job correction, broadened browser regressions, and partial checklist disposition after formatting.",
+          "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 requested fixes. Corrected in follow-up commit 804f4540a2c2824f45a43f8bd49b810cd2a0bcc0; formatting applied. Exact-head CI and re-review remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "0a24ba29bb928f25727f743355cc92432f21a4cbee2fa4af7c1efd45380e7247"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F049",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The browser suite did not enforce the implemented CSP promise: it only required script-src to exist and allowed unsafe-inline or missing inline-script hashes to pass.",
+              "remediation": "Added strict directive and inline-body hash assertions to the browser suite; validated test typing, production hash convergence, the served response, and a real Playwright page load. Full application E2E remains separate."
+            },
+            {
+              "id": "S1-F071",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
+              "remediation": "Write screenshots to a unique per-run directory under test-results."
+            },
+            {
+              "id": "S1-F072",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+              "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
+            }
+          ],
+          "observations": "Reviewed Stage 08.02 default-score behavior, reset on search submission and success, selected-run reset, and expanded browser assertions.",
+          "evidence": "Follow-up review of exact head 804f4540a2c2824f45a43f8bd49b810cd2a0bcc0 found that the new-search reset assertion was indirect. Current worktree explicitly holds the successful create response to assert reset before selection, then checks run switching separately. New exact-head validation remains pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "f0e1067759396a54711990cfda5ed373f1b1033d7ca6a4cbae1ee6ce680f8bc1"
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F049",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The browser suite did not enforce the implemented CSP promise: it only required script-src to exist and allowed unsafe-inline or missing inline-script hashes to pass.",
+              "remediation": "Added strict directive and inline-body hash assertions to the browser suite; validated test typing, production hash convergence, the served response, and a real Playwright page load. Full application E2E remains separate."
+            },
+            {
+              "id": "S1-F071",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
+              "remediation": "Write screenshots to a unique per-run directory under test-results."
+            },
+            {
+              "id": "S1-F072",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+              "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
+            }
+          ],
+          "observations": "Reviewed the current scripts/tests/check-ui.ts changes for owner roadmap item 8.02. The review covers the salary/workplace result-filter path, backward-compatible unknown defaults, source evidence normalization, API contract fields, localized labels, and synthetic browser assertions as applicable to this file. No unresolved source-level defect was identified in this pass.",
+          "evidence": "Current diff and affected file content inspected in the Stage 08.02 worktree. Focused Node 24 provider, API compatibility, and export tests passed; TypeScript build and 98-file canonical test-type check passed. Full exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "9a35da14f318999698a5178de4b87776afcb0d5a45b5e455848d4612e3a7d07c"
+        },
+        {
+          "path": "scripts/tests/check-ui.ts",
+          "category": "tooling-and-tests",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F049",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The browser suite did not enforce the implemented CSP promise: it only required script-src to exist and allowed unsafe-inline or missing inline-script hashes to pass.",
+              "remediation": "Added strict directive and inline-body hash assertions to the browser suite; validated test typing, production hash convergence, the served response, and a real Playwright page load. Full application E2E remains separate."
+            },
+            {
+              "id": "S1-F071",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
+              "remediation": "Write screenshots to a unique per-run directory under test-results."
+            },
+            {
+              "id": "S1-F072",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+              "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
+            }
+          ],
+          "observations": "Reviewed the current scripts/tests/check-ui.ts changes for owner roadmap item 8.02. The review checks evidence-preserving salary and workplace filters, legacy defaults, exact filter reset behavior, synthetic tests, and partial status claims as applicable to this file.",
+          "evidence": "Current file and diff inspected. Node 24 build, web application type check, and 98-file test type check passed. Focused provider suites passed 125/125; API/storage compatibility and export tests passed 19/19; web ESLint and repository formatting passed. Exact-head hosted CI, independent review, and owner acceptance remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 implementation review)",
+          "sha256": "718764eb1aed34d2fea6966a0623a83d9f14a710c44b22d1e13d7364268dd323"
+        },
+        {
+          "path": "scripts/tests/check-ui.ts",
+          "category": "tooling-and-tests",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F049",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The browser suite did not enforce the implemented CSP promise: it only required script-src to exist and allowed unsafe-inline or missing inline-script hashes to pass.",
+              "remediation": "Added strict directive and inline-body hash assertions to the browser suite; validated test typing, production hash convergence, the served response, and a real Playwright page load. Full application E2E remains separate."
+            },
+            {
+              "id": "S1-F071",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
+              "remediation": "Write screenshots to a unique per-run directory under test-results."
+            },
+            {
+              "id": "S1-F072",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+              "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
+            }
+          ],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "f4550b26bf5d1d3b45c80e5b306acf179f169225497d036ffadde90f5fd3b80d"
+        },
+        {
+          "path": "scripts/tests/check-ui.ts",
+          "category": "tooling-and-tests",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F049",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The browser suite did not enforce the implemented CSP promise: it only required script-src to exist and allowed unsafe-inline or missing inline-script hashes to pass.",
+              "remediation": "Added strict directive and inline-body hash assertions to the browser suite; validated test typing, production hash convergence, the served response, and a real Playwright page load. Full application E2E remains separate."
+            },
+            {
+              "id": "S1-F071",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
+              "remediation": "Write screenshots to a unique per-run directory under test-results."
+            },
+            {
+              "id": "S1-F072",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+              "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
+            }
+          ],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "f4550b26bf5d1d3b45c80e5b306acf179f169225497d036ffadde90f5fd3b80d"
+        },
+        {
+          "path": "scripts/tests/check-ui.ts",
+          "category": "tooling-and-tests",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F049",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The browser suite did not enforce the implemented CSP promise: it only required script-src to exist and allowed unsafe-inline or missing inline-script hashes to pass.",
+              "remediation": "Added strict directive and inline-body hash assertions to the browser suite; validated test typing, production hash convergence, the served response, and a real Playwright page load. Full application E2E remains separate."
+            },
+            {
+              "id": "S1-F071",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
+              "remediation": "Write screenshots to a unique per-run directory under test-results."
+            },
+            {
+              "id": "S1-F072",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+              "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
+            }
+          ],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "f4550b26bf5d1d3b45c80e5b306acf179f169225497d036ffadde90f5fd3b80d"
         }
       ]
     },

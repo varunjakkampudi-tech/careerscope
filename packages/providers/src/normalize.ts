@@ -28,6 +28,7 @@ import {
   type Job,
   type RawJob,
   type Salary,
+  type WorkplaceType,
 } from '@careerscope/shared';
 import { descriptionToText, snippet } from './html.js';
 
@@ -53,11 +54,18 @@ export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
   const techStack = extractSkills(`${title}\n${descriptionText}`);
 
   const searchable = `${title}\n${descriptionText}`;
-  const isRemote = detectRemote(
+  const detectedRemote = detectRemote(
     `${searchable}\n${raw.location ?? ''}`,
     raw.isRemote === true,
     `${title}\n${raw.location ?? ''}`,
   );
+  const workplaceType =
+    raw.workplaceType && raw.workplaceType !== 'unknown'
+      ? raw.workplaceType
+      : detectedRemote
+        ? 'remote'
+        : 'unknown';
+  const isRemote = workplaceType === 'remote';
   const location = normalizeLocation(raw.location, isRemote);
 
   const employmentType: EmploymentType | null =
@@ -82,6 +90,7 @@ export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
     },
     location,
     isRemote,
+    workplaceType,
     employmentType,
     salary: normalizeSalary(raw),
     postedAt: normalizeDate(raw.postedAt, options.now),
@@ -559,11 +568,28 @@ const SOURCE_RANK: Record<string, number> = {
  * scraped duplicate often carries the salary the ATS payload omitted, and there
  * is no reason to throw that away just because its description was thinner.
  */
+// Internal, per-deduplication conflict history. It prevents a later duplicate
+// from treating an unknown result caused by disagreement as missing evidence.
+const workplaceConflicts = new WeakSet<Job>();
+
 export function mergeDuplicates(a: Job, b: Job): Job {
   const winner = richness(b) > richness(a) ? b : a;
   const other = winner === a ? b : a;
+  const workplaceConflict =
+    workplaceConflicts.has(a) ||
+    workplaceConflicts.has(b) ||
+    (a.workplaceType !== 'unknown' &&
+      b.workplaceType !== 'unknown' &&
+      a.workplaceType !== b.workplaceType);
+  // Conflicting explicit work arrangements are uncertain. Keep the merged
+  // posting out of both remote and on-site/hybrid filters until evidence agrees.
+  const workplaceType = workplaceConflict
+    ? 'unknown'
+    : winner.workplaceType === 'unknown'
+      ? other.workplaceType
+      : winner.workplaceType;
 
-  return {
+  const merged: Job = {
     ...winner,
     company: {
       ...winner.company,
@@ -576,7 +602,8 @@ export function mergeDuplicates(a: Job, b: Job): Job {
     postedAt: winner.postedAt ?? other.postedAt,
     sourcePublisher: winner.sourcePublisher ?? other.sourcePublisher,
     employmentType: winner.employmentType ?? other.employmentType,
-    isRemote: winner.isRemote || other.isRemote,
+    workplaceType,
+    isRemote: workplaceType === 'remote',
     techStack: [...new Set([...winner.techStack, ...other.techStack])],
     requiredYears: {
       min: winner.requiredYears.min ?? other.requiredYears.min,
@@ -585,6 +612,8 @@ export function mergeDuplicates(a: Job, b: Job): Job {
     firstSeenAt: earlier(winner.firstSeenAt, other.firstSeenAt),
     lastSeenAt: later(winner.lastSeenAt, other.lastSeenAt),
   };
+  if (workplaceConflict) workplaceConflicts.add(merged);
+  return merged;
 }
 
 /** Ranking used to pick the winner of two duplicates; each term has a fixed weight, with full description dominating. */
@@ -658,6 +687,19 @@ export function employmentTypeFrom(raw: string | null | undefined): EmploymentTy
     .replace(/\b(full|part)\s*time\b/gi, '$1-time')
     .trim();
   return detectEmploymentType(spaced);
+}
+
+/** Map only explicit source labels; an unrecognized or missing value stays unknown. */
+export function workplaceTypeFrom(raw: string | null | undefined, isRemote = false): WorkplaceType {
+  const value =
+    raw
+      ?.toLowerCase()
+      .replace(/[\s_-]+/g, ' ')
+      .trim() ?? '';
+  if (/\bhybrid\b|\bpartly remote\b/.test(value)) return 'hybrid';
+  if (/\bonsite\b|\bon site\b|\bin person\b|\boffice based\b/.test(value)) return 'onsite';
+  if (/\bremote\b|\bwork from home\b/.test(value)) return 'remote';
+  return isRemote ? 'remote' : 'unknown';
 }
 
 /**

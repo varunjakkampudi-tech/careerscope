@@ -16,7 +16,7 @@
 
 import type { RawJob } from '@careerscope/shared';
 import type { JobProvider } from '../types.js';
-import { employmentTypeFrom, periodFrom } from '../normalize.js';
+import { employmentTypeFrom, periodFrom, workplaceTypeFrom } from '../normalize.js';
 import {
   boardJson,
   createBoardProvider,
@@ -114,6 +114,7 @@ const adapter: BoardAdapter<LeverPosting> = {
       companyName: board.company,
       location: item.categories?.location ?? item.categories?.allLocations?.[0] ?? item.country,
       ...(workplace === 'remote' ? { isRemote: true } : {}),
+      workplaceType: workplaceTypeFrom(item.workplaceType),
       employmentType: employmentTypeFrom(item.categories?.commitment),
       description: sections.join('\n'),
       descriptionIsHtml: true,

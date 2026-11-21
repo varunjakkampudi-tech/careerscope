@@ -4,7 +4,7 @@
  * helpers used by both the API and the web client.
  */
 
-import type { EmploymentType, SeniorityLabel, SourceId } from './constants.js';
+import type { EmploymentType, SeniorityLabel, SourceId, WorkplaceType } from './constants.js';
 import type {
   ApplicationDetails,
   Candidate,
@@ -31,6 +31,7 @@ export interface RawJob {
   companyName: string;
   location?: string;
   isRemote?: boolean;
+  workplaceType?: WorkplaceType;
   employmentType?: EmploymentType | null;
   /** Raw description — HTML or plain text; normalisation strips tags. */
   description?: string;
@@ -215,6 +216,8 @@ export type CollectedJob = {
   title: string;
   company: string;
   location: string;
+  salary: Salary;
+  workplaceType: WorkplaceType;
   description: string;
   source: SearchSourceName;
   sourceUrl: string;

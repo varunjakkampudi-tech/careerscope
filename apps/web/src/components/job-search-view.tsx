@@ -159,6 +159,11 @@ function JobSearchWorkspace() {
   const owner = session.data?.owner;
   const [selected, setSelected] = useState<string | null>(null);
   const [filter, setFilter] = useState('');
+  const [resultSource, setResultSource] = useState('all');
+  const [minimumMatch, setMinimumMatch] = useState(0);
+  const [workplaceFilter, setWorkplaceFilter] = useState('all');
+  const [salaryCurrency, setSalaryCurrency] = useState('all');
+  const [minimumAnnualSalary, setMinimumAnnualSalary] = useState('');
   const [sourceSelection, setSourceSelection] = useState<CreateSearch['sources'] | null>(null);
   const [useProfileTitles, setUseProfileTitles] = useState(false);
 
@@ -223,7 +228,7 @@ function JobSearchWorkspace() {
       }),
     onSuccess: (result) => {
       showRun(result.runId, 'replace');
-      setFilter('');
+      resetResultFilters();
       exportSearch.reset();
       void cache.invalidateQueries({ queryKey: ['searches'] });
     },
@@ -294,13 +299,24 @@ function JobSearchWorkspace() {
   function startSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    if (sources.length)
+    if (sources.length) {
+      resetResultFilters();
       search.mutate({
         query: useProfileTitles ? 'Saved target roles' : String(data.get('query')),
         sources,
         origin: 'manual',
         ...(useProfileTitles ? { useProfileTitles: true } : {}),
       });
+    }
+  }
+
+  function resetResultFilters() {
+    setFilter('');
+    setResultSource('all');
+    setMinimumMatch(0);
+    setWorkplaceFilter('all');
+    setSalaryCurrency('all');
+    setMinimumAnnualSalary('');
   }
 
   const filtered = filter.toLowerCase();
@@ -314,11 +330,37 @@ function JobSearchWorkspace() {
   const hasAvailableSelection = sources.some((source) =>
     availableSources.has(source as LaunchSource),
   );
+  const availableSalaryCurrencies = [
+    ...new Set(
+      detail.data?.jobs
+        .map(({ data }) => data.salary.currency)
+        .filter((currency): currency is string => currency !== null),
+    ),
+  ].sort();
+  const salaryFloor = minimumAnnualSalary === '' ? null : Number(minimumAnnualSalary);
   const jobs = (
-    detail.data?.jobs.filter(({ data }) =>
-      `${data.title} ${data.company} ${data.location}`.toLowerCase().includes(filtered),
-    ) ?? []
+    detail.data?.jobs.filter(({ data }) => {
+      const matchesText = `${data.title} ${data.company} ${data.location}`
+        .toLowerCase()
+        .includes(filtered);
+      const matchesSource = resultSource === 'all' || data.source === resultSource;
+      const matchesScore =
+        minimumMatch === 0 || (data.match?.score != null && data.match.score >= minimumMatch);
+      const matchesWorkplace = workplaceFilter === 'all' || data.workplaceType === workplaceFilter;
+      const salaryEvidence = data.salary.annualMin;
+      const matchesSalary =
+        salaryCurrency === 'all' ||
+        (data.salary.currency === salaryCurrency &&
+          (salaryFloor === null || (salaryEvidence !== null && salaryEvidence >= salaryFloor)));
+      return matchesText && matchesSource && matchesScore && matchesWorkplace && matchesSalary;
+    }) ?? []
   ).sort((a, b) => (b.data.match?.score ?? -1) - (a.data.match?.score ?? -1));
+  const hasResultFilters =
+    !!filter ||
+    resultSource !== 'all' ||
+    minimumMatch > 0 ||
+    workplaceFilter !== 'all' ||
+    salaryCurrency !== 'all';
 
   return (
     <div className="workspace">
@@ -349,7 +391,7 @@ function JobSearchWorkspace() {
               aria-current={selectedId === run.id ? 'true' : undefined}
               onClick={() => {
                 showRun(run.id);
-                setFilter('');
+                resetResultFilters();
                 cancel.reset();
                 exportSearch.reset();
               }}
@@ -646,14 +688,94 @@ function JobSearchWorkspace() {
                 </button>
               )}
               {detail.data.jobs.length > 0 && (
-                <label className="filter">
-                  <span className="sr-only">Filter results</span>
-                  <input
-                    placeholder="Filter results"
-                    value={filter}
-                    onChange={(event) => setFilter(event.target.value)}
-                  />
-                </label>
+                <div className={styles.resultControls}>
+                  <label className="filter">
+                    <span>{t('filterResults')}</span>
+                    <input
+                      aria-label={t('filterResults')}
+                      placeholder={t('filterResults')}
+                      value={filter}
+                      onChange={(event) => setFilter(event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    <span>{t('filterBySource')}</span>
+                    <select
+                      aria-label={t('filterBySource')}
+                      value={resultSource}
+                      onChange={(event) => setResultSource(event.target.value)}
+                    >
+                      <option value="all">{t('allSources')}</option>
+                      {detail.data.jobs
+                        .map(({ data }) => data.source)
+                        .filter((source, index, all) => all.indexOf(source) === index)
+                        .map((source) => (
+                          <option key={source} value={source}>
+                            {sourceNames[source as keyof typeof sourceNames] ??
+                              SOURCE_LABELS[source as keyof typeof SOURCE_LABELS]}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                  <label>
+                    <span>{t('minimumMatch')}</span>
+                    <select
+                      aria-label={t('minimumMatch')}
+                      value={minimumMatch}
+                      onChange={(event) => setMinimumMatch(Number(event.target.value))}
+                    >
+                      <option value={0}>{t('anyMatch')}</option>
+                      <option value={60}>60%</option>
+                      <option value={70}>70%</option>
+                      <option value={80}>80%</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>{t('workplaceFilter')}</span>
+                    <select
+                      aria-label={t('workplaceFilter')}
+                      value={workplaceFilter}
+                      onChange={(event) => setWorkplaceFilter(event.target.value)}
+                    >
+                      <option value="all">{t('allWorkplaces')}</option>
+                      <option value="remote">{t('remoteWorkplace')}</option>
+                      <option value="hybrid">{t('hybridWorkplace')}</option>
+                      <option value="onsite">{t('onsiteWorkplace')}</option>
+                      <option value="unknown">{t('unspecifiedWorkplace')}</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>{t('salaryCurrency')}</span>
+                    <select
+                      aria-label={t('salaryCurrency')}
+                      value={salaryCurrency}
+                      onChange={(event) => {
+                        const currency = event.target.value;
+                        setSalaryCurrency(currency);
+                        if (currency === 'all') setMinimumAnnualSalary('');
+                      }}
+                    >
+                      <option value="all">{t('allCurrencies')}</option>
+                      {availableSalaryCurrencies.map((currency) => (
+                        <option key={currency} value={currency}>
+                          {currency}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    <span>{t('minimumAnnualSalary')}</span>
+                    <input
+                      aria-label={t('minimumAnnualSalary')}
+                      type="number"
+                      min="0"
+                      step="1000"
+                      value={minimumAnnualSalary}
+                      disabled={salaryCurrency === 'all'}
+                      onChange={(event) => setMinimumAnnualSalary(event.target.value)}
+                    />
+                  </label>
+                </div>
               )}
               {jobs.length === 0 && ['completed', 'partial'].includes(detail.data.status) && (
                 <div lang={locale}>
@@ -670,8 +792,11 @@ function JobSearchWorkspace() {
                         : t('noResultsMatchFilter')
                     }
                     action={
-                      detail.data.jobs.length > 0 && filter
-                        ? { label: t('clearSearchFilter'), onClick: () => setFilter('') }
+                      detail.data.jobs.length > 0 && hasResultFilters
+                        ? {
+                            label: t('clearSearchFilter'),
+                            onClick: resetResultFilters,
+                          }
                         : undefined
                     }
                   />

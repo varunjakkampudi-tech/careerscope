@@ -43,6 +43,7 @@ export {
   normalizeSalary,
   normalizeUrl,
   periodFrom,
+  workplaceTypeFrom,
   type NormalizeOptions,
 } from './normalize.js';
 

@@ -18,6 +18,8 @@ import {
   derivedResumeSchema,
   jobFeedbackReasonSchema,
   matchBreakdownSchema,
+  salarySchema,
+  workplaceTypeSchema,
 } from '@careerscope/shared';
 
 /** Message for a response that parsed as JSON but not as the expected shape. Fixed, so no server content reaches the screen. */
@@ -314,6 +316,16 @@ const collectedJobSchema = z.object({
   title: z.string(),
   company: z.string(),
   location: z.string(),
+  salary: salarySchema.default({
+    raw: null,
+    min: null,
+    max: null,
+    currency: null,
+    period: null,
+    annualMin: null,
+    annualMax: null,
+  }),
+  workplaceType: workplaceTypeSchema.default('unknown'),
   description: z.string(),
   source: searchSourceSchema,
   sourceUrl: z.string(),
