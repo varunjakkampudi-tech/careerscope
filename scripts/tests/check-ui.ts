@@ -329,7 +329,7 @@ try {
           source: 'remoteok' as const,
           sourceJobId: 'scored-fixture',
           title: 'Scored React Engineer',
-          companyName: 'Example Technology',
+          companyName: 'Flagged Technology',
           location: 'Remote',
           isRemote: true,
           description: 'Build React and TypeScript interfaces.',
@@ -368,7 +368,7 @@ try {
           preferences: {
             titles: ['React Engineer'],
             techStack: ['React', 'TypeScript'],
-            excludeCompanies: [],
+            excludeCompanies: ['Flagged Technology'],
           },
           application: {},
         }),
