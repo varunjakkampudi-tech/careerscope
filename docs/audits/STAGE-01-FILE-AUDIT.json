@@ -7418,10 +7418,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed and updated during CareerScope item 7.04 implementation. Changes are bounded to education-demand extraction, candidate education signal flow, versioned soft scoring, relevant tests, and item traceability; no finding remains from this scoped review.",
-      "evidence": "Reviewed current file content and local validation on codex/stage07-item704-education-eligibility; exact-head CI and independent review are pending.",
+      "observations": "Reviewed Stage 07.04 education scoring browser coverage and the low-confidence description fixture. The fixture has a deliberately short description while repeating the explicit degree ask, asserting both education evidence and confidence ceiling copy; hosted exact-head CI is pending.",
+      "evidence": "Run 44884850332 on c748a1641c7e4d728e117b8ed4c5abe0fc5f5795 passed quality gates, PostgreSQL/Redis integration, and image build, but browser acceptance failed because the education fixture incorrectly declared a long readable description. This correction restores a short description and keeps the stated degree ask; rerun exact-head browser and all required CI.",
       "reviewer": "Codex (CareerScope Stage 07.04 implementation self-review)",
-      "sha256": "799b5ff3a6e3366a735df583ca1cc38c3e0942f501e9553f787aa4158f7d98cf",
+      "sha256": "750360d092691b631b424d91ade5e620cb0483aeeb4c6ce6a2f279e409564a2e",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",

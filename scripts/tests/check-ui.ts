@@ -333,10 +333,10 @@ try {
           location: 'Remote',
           isRemote: true,
           description:
-            'Requirements:\n- Bachelor degree in Computer Science\nBuild React and TypeScript interfaces. '.repeat(
-              12,
-            ),
-          hasFullDescription: true,
+            'Requirements:\n- Bachelor degree in Computer Science\n' +
+            '- Bachelor degree in Computer Science\n'.repeat(7) +
+            'Build React and TypeScript interfaces.',
+          hasFullDescription: false,
           sourceUrl: 'https://remoteok.com/remote-jobs/scored',
           applyUrl: 'https://example.test/scored',
         };
