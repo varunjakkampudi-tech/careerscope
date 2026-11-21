@@ -1381,11 +1381,21 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "First-seen/last-seen timestamps",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/providers/src/normalize.ts",
+        "packages/core/src/database.ts",
+        "packages/core/src/market.ts",
+        "docs/GAP-MATRIX.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/providers/src/normalize.test.ts",
+        "tests/integration/database.integration.test.ts",
+        "packages/core/src/market.integration.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Exact-head integration CI and independent review are pending, followed by owner verification.",
       "scopeDisposition": "in-scope"
     },
     {
