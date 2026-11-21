@@ -2115,9 +2115,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
-      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 127/127, including conflict-preserving three-source merge permutations. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
       "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
-      "sha256": "50c2ff4bd6ec33a2d69569039d0df82bfd22b42ee81fc562506592a18568c459",
+      "sha256": "9a764ceeb8a9c15cfc2f86b7cc7533771b1dd3296bdadda3896cf128dbd80d8a",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2350,6 +2350,18 @@
           "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
           "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
           "sha256": "3d470d5253b00a764205c6daf0e1781f4196cc94e2ccafbda56c5408043a93d3"
+        },
+        {
+          "path": "docs/GAP-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "50c2ff4bd6ec33a2d69569039d0df82bfd22b42ee81fc562506592a18568c459"
         }
       ]
     },
@@ -2675,9 +2687,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
-      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 127/127, including conflict-preserving three-source merge permutations. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
       "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
-      "sha256": "929064672f02adac3b9b8e006291b5d3fe6acaa152bb21d0d7b279bffe1afd24",
+      "sha256": "297fd4b3ed261c0d67c99ae4376a309b08b20f11a959e5f788630fea802be4f8",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2916,6 +2928,18 @@
           "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
           "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
           "sha256": "0ec807535c9ffd71d0893de0a5f123ec63723ca8e8a62eeefb2307c1f2a69b09"
+        },
+        {
+          "path": "docs/TEST-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "929064672f02adac3b9b8e006291b5d3fe6acaa152bb21d0d7b279bffe1afd24"
         }
       ]
     },
@@ -3355,9 +3379,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
-      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 127/127, including conflict-preserving three-source merge permutations. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
       "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
-      "sha256": "5b36023cb1bf65e9f43922c803c17732e8937f910d4b6c0c2cefcba97ab64913",
+      "sha256": "60f1c879438f1b2d9576630f9246feca0ff13f0de8def20d4d20cce49c4fc064",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3566,6 +3590,18 @@
           "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
           "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
           "sha256": "39ede8737efcc5aa5afe8a32de8be974a7e1d7f865b641f34cd9b1114e8f64f7"
+        },
+        {
+          "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "5b36023cb1bf65e9f43922c803c17732e8937f910d4b6c0c2cefcba97ab64913"
         }
       ]
     },
@@ -6567,9 +6603,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
-      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 127/127, including conflict-preserving three-source merge permutations. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
       "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
-      "sha256": "0bfa65c2c73191d100d2c7b7c7dacbc623039b790abc6f8aae65f4c21a9e0bbf",
+      "sha256": "6f49847901b05abe8d595889861be4fe47b3ef7c20018be55f6fb8ddbfeca586",
       "history": [
         {
           "observations": "Reviewed current file content for salary, location and experience normalization scope. No unrelated checklist item was marked verified; owner item 5.10 remains partial pending representative provider-output coverage, exact-head Node 24 CI and independent acceptance.",
@@ -6656,6 +6692,18 @@
           "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
           "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
           "sha256": "0bfa65c2c73191d100d2c7b7c7dacbc623039b790abc6f8aae65f4c21a9e0bbf"
+        },
+        {
+          "path": "packages/providers/src/normalize.test.ts",
+          "category": "shared-domain-package",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "0bfa65c2c73191d100d2c7b7c7dacbc623039b790abc6f8aae65f4c21a9e0bbf"
         }
       ]
     },
@@ -6675,9 +6723,9 @@
         }
       ],
       "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
-      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
+      "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 127/127, including conflict-preserving three-source merge permutations. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
       "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
-      "sha256": "792b750a0428b915632a3fb69091010c7340de328594e0e07c7a78e57c4ba4a6",
+      "sha256": "5f701aa8955a5c368deeeaa2520cb239ceec1a2788926636f4ac4171234fc72e",
       "history": [
         {
           "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
@@ -6810,6 +6858,26 @@
           ],
           "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending focused validation, exact-head CI, independent re-review, and owner acceptance.",
           "evidence": "Current file and diff inspected. Reviewer corrections address conservative duplicate workplace classification and explicit browser assertions for workplace and salary filter resets. Validation of the corrected revision is pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "792b750a0428b915632a3fb69091010c7340de328594e0e07c7a78e57c4ba4a6"
+        },
+        {
+          "path": "packages/providers/src/normalize.ts",
+          "category": "shared-domain-package",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F026",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "A finite but absurd salary figure was annualised to an implausible value that could be shown to the user as pay.",
+              "remediation": "Annual figures outside (0, 1e10] are left null (plausibleAnnual); normalize.test.ts regression tests."
+            }
+          ],
+          "observations": "Reviewed current Stage 08 item 8.02 changes after independent reviewer corrections; item remains partial pending exact-head CI, independent re-review, and owner acceptance.",
+          "evidence": "Node 24 package builds and full application/test typecheck passed, including 98 canonical test files. Focused provider normalization and ATS adapter tests passed 126/126. Formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI and independent re-review remain pending.",
           "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
           "sha256": "792b750a0428b915632a3fb69091010c7340de328594e0e07c7a78e57c4ba4a6"
         }

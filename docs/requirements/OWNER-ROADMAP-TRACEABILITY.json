@@ -1790,7 +1790,7 @@
         "apps/api/src/application-export.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "The reviewer findings on conflicting workplace labels and browser filter resets were corrected. Node 24 package builds, 126/126 focused provider tests, full application/test typecheck including 98 canonical test files, formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI, independent re-review, and owner acceptance remain pending. Telugu and Hindi filter labels are AI-drafted; native-speaker review is not claimed.",
+      "gap": "The reviewer findings on conflicting workplace labels and browser filter resets were corrected. A further correction preserves workplace conflict state across sequential merges of three or more records. Node 24 package builds, 127/127 focused provider tests, full application/test typecheck including 98 canonical test files, formatting, file-audit integrity, and roadmap traceability passed. Latest exact-head hosted CI, independent re-review, and owner acceptance remain pending. Telugu and Hindi filter labels are AI-drafted; native-speaker review is not claimed.",
       "scopeDisposition": "in-scope"
     },
     {

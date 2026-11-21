@@ -680,6 +680,35 @@ describe('dedupeJobs', () => {
     expect(merged?.isRemote).toBe(false);
   });
 
+  it('preserves workplace conflicts across three-source merge orderings', () => {
+    const hybrid = normalizeJob(
+      rawJob({ source: 'greenhouse', sourceJobId: 'hybrid-1', workplaceType: 'hybrid' }),
+      { now: NOW },
+    );
+    const onsite = normalizeJob(
+      rawJob({ source: 'lever', sourceJobId: 'onsite-1', workplaceType: 'onsite' }),
+      { now: NOW },
+    );
+    const secondHybrid = normalizeJob(
+      rawJob({ source: 'workable', sourceJobId: 'hybrid-2', workplaceType: 'hybrid' }),
+      { now: NOW },
+    );
+    const orders = [
+      [hybrid, onsite, secondHybrid],
+      [hybrid, secondHybrid, onsite],
+      [onsite, hybrid, secondHybrid],
+      [onsite, secondHybrid, hybrid],
+      [secondHybrid, hybrid, onsite],
+      [secondHybrid, onsite, hybrid],
+    ];
+
+    for (const order of orders) {
+      const [merged] = dedupeJobs(order);
+      expect(merged?.workplaceType).toBe('unknown');
+      expect(merged?.isRemote).toBe(false);
+    }
+  });
+
   it('merges compatible members of a conflicting three-source group deterministically', () => {
     const greenhouse = normalizeJob(
       rawJob({ source: 'greenhouse', sourceJobId: 'greenhouse-1', employmentType: 'fulltime' }),

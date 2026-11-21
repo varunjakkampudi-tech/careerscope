@@ -568,21 +568,28 @@ const SOURCE_RANK: Record<string, number> = {
  * scraped duplicate often carries the salary the ATS payload omitted, and there
  * is no reason to throw that away just because its description was thinner.
  */
+// Internal, per-deduplication conflict history. It prevents a later duplicate
+// from treating an unknown result caused by disagreement as missing evidence.
+const workplaceConflicts = new WeakSet<Job>();
+
 export function mergeDuplicates(a: Job, b: Job): Job {
   const winner = richness(b) > richness(a) ? b : a;
   const other = winner === a ? b : a;
+  const workplaceConflict =
+    workplaceConflicts.has(a) ||
+    workplaceConflicts.has(b) ||
+    (a.workplaceType !== 'unknown' &&
+      b.workplaceType !== 'unknown' &&
+      a.workplaceType !== b.workplaceType);
   // Conflicting explicit work arrangements are uncertain. Keep the merged
   // posting out of both remote and on-site/hybrid filters until evidence agrees.
-  const workplaceType =
-    winner.workplaceType === other.workplaceType
-      ? winner.workplaceType
-      : winner.workplaceType === 'unknown'
-        ? other.workplaceType
-        : other.workplaceType === 'unknown'
-          ? winner.workplaceType
-          : 'unknown';
+  const workplaceType = workplaceConflict
+    ? 'unknown'
+    : winner.workplaceType === 'unknown'
+      ? other.workplaceType
+      : winner.workplaceType;
 
-  return {
+  const merged: Job = {
     ...winner,
     company: {
       ...winner.company,
@@ -605,6 +612,8 @@ export function mergeDuplicates(a: Job, b: Job): Job {
     firstSeenAt: earlier(winner.firstSeenAt, other.firstSeenAt),
     lastSeenAt: later(winner.lastSeenAt, other.lastSeenAt),
   };
+  if (workplaceConflict) workplaceConflicts.add(merged);
+  return merged;
 }
 
 /** Ranking used to pick the winner of two duplicates; each term has a fixed weight, with full description dominating. */
