@@ -142,6 +142,35 @@ describe('scoreJob — breakdown', () => {
       weight: 0,
       reason: 'Not recorded for this scoring version',
     });
+
+    for (const legacyVersion of [null, undefined]) {
+      const withoutVersion = { ...legacy, scoringVersion: legacyVersion };
+      const parsedWithoutVersion = matchBreakdownSchema.parse(withoutVersion);
+      expect(parsedWithoutVersion.scoringVersion).toBeNull();
+      expect(parsedWithoutVersion.score).toBe(current.score);
+      expect(parsedWithoutVersion.dimensions.education.weight).toBe(0);
+    }
+  });
+
+  it('rejects unknown dimensions and mismatched legacy version shapes', () => {
+    const current = scoreJob(job({ descriptionText: NEAR_EXACT_JD }), candidate(), opts);
+    const { education: _education, ...legacyDimensions } = current.dimensions;
+    const sevenDimensions = { ...current, dimensions: legacyDimensions };
+    expect(
+      matchBreakdownSchema.safeParse({ ...sevenDimensions, scoringVersion: 'deterministic-v3' })
+        .success,
+    ).toBe(false);
+    expect(
+      matchBreakdownSchema.safeParse({
+        ...sevenDimensions,
+        dimensions: { ...legacyDimensions, extra: { score: 0, weight: 0, reason: 'extra' } },
+      }).success,
+    ).toBe(false);
+    const v2WithCurrentDimensions = {
+      ...current,
+      scoringVersion: 'deterministic-v2',
+    };
+    expect(matchBreakdownSchema.safeParse(v2WithCurrentDimensions).success).toBe(false);
   });
 
   it('returns all eight dimensions with their weights and reasons', () => {

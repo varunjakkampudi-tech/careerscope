@@ -459,22 +459,29 @@ const matchBreakdownFields = {
 };
 
 /** The stored explanation of a job's score, with per-dimension evidence and confidence. */
-const matchBreakdownBaseSchema = z.object(matchBreakdownFields);
-const currentMatchBreakdownSchema = matchBreakdownBaseSchema.extend({
-  dimensions: matchDimensionsSchema,
-});
+const currentMatchBreakdownSchema = z
+  .object({
+    ...matchBreakdownFields,
+    scoringVersion: z.string().min(1).nullable().default(null),
+    dimensions: matchDimensionsSchema,
+  })
+  .refine((breakdown) => breakdown.scoringVersion !== 'deterministic-v2')
+  .strict();
 
 const legacyDimensionShape = Object.fromEntries(
   (Object.keys(MATCH_WEIGHTS) as MatchDimension[])
     .filter((dimension) => dimension !== 'education')
     .map((dimension) => [dimension, matchDimensionScoreSchema]),
 ) as Record<Exclude<MatchDimension, 'education'>, typeof matchDimensionScoreSchema>;
-const legacyDimensionsSchema = z.object(legacyDimensionShape);
-const legacyMatchBreakdownSchema = matchBreakdownBaseSchema
-  .extend({
+const legacyDimensionsSchema = z.object(legacyDimensionShape).strict();
+const legacyMatchBreakdownSchema = z
+  .object({
+    ...matchBreakdownFields,
     scoringVersion: z.enum(['deterministic-v2']).nullable().default(null),
     dimensions: legacyDimensionsSchema,
   })
+  .strict()
+  .refine((breakdown) => !('education' in breakdown.dimensions))
   .transform(({ dimensions, ...breakdown }) => ({
     ...breakdown,
     dimensions: {
