@@ -4550,7 +4550,7 @@
       "observations": "Read in full. Verifies legacy match normalization, bounded/trimmed/case-unique tags, rejected control characters, and that client updates cannot set owner identity or bypass optimistic revision.",
       "evidence": "",
       "reviewer": "Codex (Stage 01 implementation audit)",
-      "sha256": "e607b7cdb48e94e7812ab52eb2d8a47c0e36dacff7d51e357b8a4648fb01dcc2"
+      "sha256": "41cac929b2d04a8799d7f29d7f3a1903548bdca182218715d05c6e12c048ba8e"
     },
     {
       "path": "packages/core/src/leads.ts",
