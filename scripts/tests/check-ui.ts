@@ -334,6 +334,7 @@ try {
           isRemote: true,
           description: 'Build React and TypeScript interfaces.',
           hasFullDescription: false,
+          postedAt: '2026-01-01T00:00:00.000Z',
           sourceUrl: 'https://remoteok.com/remote-jobs/scored',
           applyUrl: 'https://example.test/scored',
         };
@@ -345,8 +346,11 @@ try {
           location: 'Remote',
           isRemote: true,
           description:
-            'Build accessible interfaces using React and TypeScript. Collaborate with product and design teams to deliver reliable experiences.',
+            'Build accessible interfaces using React and TypeScript. Collaborate with product and design teams to deliver reliable experiences. '.repeat(
+              6,
+            ),
           hasFullDescription: true,
+          postedAt: '2026-02-01T00:00:00.000Z',
           sourceUrl: 'https://remoteok.com/remote-jobs/full-description',
           applyUrl: 'https://example.test/full-description',
         };
@@ -3431,9 +3435,15 @@ try {
         await page.getByRole('button', { name: 'Retry failed sources', exact: true }).count(),
         0,
       );
-      assert.equal(resultBody.jobs[0].data.title, 'Scored React Engineer');
-      assert.equal(resultBody.jobs[1].data.match, null);
-      await page.getByText('Not scored', { exact: true }).waitFor();
+      const matchFirstTitle = resultBody.jobs[0].data.title;
+      assert.deepEqual(
+        resultBody.jobs
+          .map(
+            (job: { data: { match: { confidence: string } | null } }) => job.data.match?.confidence,
+          )
+          .sort(),
+        ['high', 'low'],
+      );
       const resultSort = page.getByLabel('Sort results');
       await resultSort.selectOption('evidence');
       await page
@@ -3447,10 +3457,16 @@ try {
         'Senior React Engineer',
         `${engine} description-confidence sorting should put the full-description result first`,
       );
+      await resultSort.selectOption('newest');
+      assert.equal(
+        await page.locator('details.job h3').first().innerText(),
+        'Senior React Engineer',
+        `${engine} newest sorting should put the later posting first`,
+      );
       await resultSort.selectOption('match');
       assert.equal(
         await page.locator('details.job h3').first().innerText(),
-        'Scored React Engineer',
+        matchFirstTitle,
         `${engine} match sorting should put the highest match score first`,
       );
       await page.getByRole('heading', { name: 'Scored React Engineer', exact: true }).click();
