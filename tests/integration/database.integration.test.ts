@@ -3468,7 +3468,10 @@ test('PostgreSQL atomic outbox, owner isolation and stale-worker fencing', async
       );
       assert.equal(snapshot?.profileRevision, 2);
       assert.equal(snapshot?.matchingProfile?.application.yearsOfExperience, 5);
-      assert.deepEqual(Object.keys(snapshot!.matchingProfile!.candidate), ['location']);
+      assert.deepEqual(Object.keys(snapshot!.matchingProfile!.candidate).sort(), [
+        'education',
+        'location',
+      ]);
       const profileRequest = { ...request, useProfileTitles: true };
       const profileDiscovery = await database.createSearch(
         ownerId,

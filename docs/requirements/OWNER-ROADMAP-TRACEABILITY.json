@@ -1605,7 +1605,8 @@
         "packages/matching/src/dimensions.test.ts",
         "packages/matching/src/score.test.ts",
         "packages/core/src/profile.test.ts",
-        "scripts/tests/check-ui.ts"
+        "scripts/tests/check-ui.ts",
+        "tests/integration/database.integration.test.ts"
       ],
       "externalEvidence": [],
       "gap": "Implementation adds deterministic explicit degree and field extraction and a soft education-fit dimension using unverified candidate profile/resume text. Local validation, exact-head CI, independent review, item-specific browser evidence, representative labeled-corpus accuracy/calibration, and international qualification equivalence remain outstanding. Education mismatch never blocks a listing.",

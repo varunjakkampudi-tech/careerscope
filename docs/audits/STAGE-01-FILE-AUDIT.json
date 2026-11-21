@@ -17,7 +17,8 @@
     "2026-11-08 origin/dev marker scan: no TODO, FIXME, XXX or HACK markers in apps/ or packages/.",
     "2026-11-08 Node 24.22.1/npm 11.19.0 locked install audit: npm ci reported zero vulnerabilities; CI run 42396419372 passed quality gates and services/browser checks.",
     "2026-11-21 Stage 07.04 source review: explicit education fit is a 5% non-gating signal from bounded candidate-entered and parsed resume claims; claims remain unverified. Focused matching and core profile tests, full TypeScript, roadmap/document traceability, and targeted formatting passed locally on Node 22.23.2; exact-head Node 24 CI and independent review are pending.",
-    "2026-11-21 Stage 07.04 source review: explicit education fit is a 5% non-gating signal from bounded candidate-entered and parsed resume claims; claims remain unverified. Focused matching tests passed 146/146, core profile tests passed 15/15, full TypeScript, roadmap/document traceability, targeted formatting, and audit validation passed locally on Node 22.23.2; a synthetic browser education-reason assertion is added, with exact-head Node 24 CI and independent review pending."
+    "2026-11-21 Stage 07.04 source review: explicit education fit is a 5% non-gating signal from bounded candidate-entered and parsed resume claims; claims remain unverified. Focused matching tests passed 146/146, core profile tests passed 15/15, full TypeScript, roadmap/document traceability, targeted formatting, and audit validation passed locally on Node 22.23.2; a synthetic browser education-reason assertion is added, with exact-head Node 24 CI and independent review pending.",
+    "2026-11-21 Stage 07.04 CI correction: first exact-head run 44880614295 passed Quality and non-publishing image build; integration job failed a stale candidate snapshot key assertion, fixed to expect education plus location. Browser step did not run; exact-head rerun pending."
   ],
   "files": [
     {
@@ -1890,10 +1891,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed and updated during CareerScope item 7.04 implementation. Changes are bounded to education-demand extraction, candidate education signal flow, versioned soft scoring, relevant tests, and item traceability; no finding remains from this scoped review.",
-      "evidence": "Reviewed current file content and local validation on codex/stage07-item704-education-eligibility; exact-head CI and independent review are pending.",
+      "observations": "Reviewed and updated during CareerScope item 7.04 implementation and CI correction. Changes cover education matching, the candidate snapshot contract assertion, and item traceability; exact-head CI rerun remains pending.",
+      "evidence": "Reviewed current file content and local validation on codex/stage07-item704-education-eligibility; first exact CI exposed a stale assertion, corrected before rerun.",
       "reviewer": "Codex (CareerScope Stage 07.04 implementation self-review)",
-      "sha256": "213701a5cd990a255c049636ad80f9d319b60df78591126a1714ff72e5432a67",
+      "sha256": "d1d47bf318c817dabca0f7fda6c6e23ce74a3eed0a6bfd38366ae4abe1e34eeb",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2284,10 +2285,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed and updated during CareerScope item 7.04 implementation. Changes are bounded to education-demand extraction, candidate education signal flow, versioned soft scoring, relevant tests, and item traceability; no finding remains from this scoped review.",
-      "evidence": "Reviewed current file content and local validation on codex/stage07-item704-education-eligibility; exact-head CI and independent review are pending.",
+      "observations": "Reviewed and updated during CareerScope item 7.04 implementation and CI correction. Changes cover education matching, the candidate snapshot contract assertion, and item traceability; exact-head CI rerun remains pending.",
+      "evidence": "Reviewed current file content and local validation on codex/stage07-item704-education-eligibility; first exact CI exposed a stale assertion, corrected before rerun.",
       "reviewer": "Codex (CareerScope Stage 07.04 implementation self-review)",
-      "sha256": "97b051028c4c9aaf7d735d992fc9f3add9c3aed64437a2a3d2b5e72cf92803fe",
+      "sha256": "1d0242e7f5709f4a893395a97facc0c8f681aa69d557367bedcf2caa573d725b",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2576,10 +2577,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed and updated during CareerScope item 7.04 implementation. Changes are bounded to education-demand extraction, candidate education signal flow, versioned soft scoring, relevant tests, and item traceability; no finding remains from this scoped review.",
-      "evidence": "Reviewed current file content and local validation on codex/stage07-item704-education-eligibility; exact-head CI and independent review are pending.",
+      "observations": "Reviewed and updated during CareerScope item 7.04 implementation and CI correction. Changes cover education matching, the candidate snapshot contract assertion, and item traceability; exact-head CI rerun remains pending.",
+      "evidence": "Reviewed current file content and local validation on codex/stage07-item704-education-eligibility; first exact CI exposed a stale assertion, corrected before rerun.",
       "reviewer": "Codex (CareerScope Stage 07.04 implementation self-review)",
-      "sha256": "a9bf4f21485dcfbc5c641a90411a700db6a12974c9989394970fd00105b763dd"
+      "sha256": "260846abef10e18748dcf5a834f54079fbaed8d17eec38bda7e902273dc2faf0"
     },
     {
       "path": "docs/decisions/CSP-STRICT-SCRIPT-SRC.md",
@@ -2852,10 +2853,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed and updated during CareerScope item 7.04 implementation. Changes are bounded to education-demand extraction, candidate education signal flow, versioned soft scoring, relevant tests, and item traceability; no finding remains from this scoped review.",
-      "evidence": "Reviewed current file content and local validation on codex/stage07-item704-education-eligibility; exact-head CI and independent review are pending.",
+      "observations": "Reviewed and updated during CareerScope item 7.04 implementation and CI correction. Changes cover education matching, the candidate snapshot contract assertion, and item traceability; exact-head CI rerun remains pending.",
+      "evidence": "Reviewed current file content and local validation on codex/stage07-item704-education-eligibility; first exact CI exposed a stale assertion, corrected before rerun.",
       "reviewer": "Codex (CareerScope Stage 07.04 implementation self-review)",
-      "sha256": "d8ebde13ef8a5057d331560f8f2deaaf4621b00df4971b02b614c12673bdeeaa",
+      "sha256": "883a05d95eb54fbcdbe5d6768ea5404479096e8b0c03ca6084255c38b2e337ae",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -7573,14 +7574,14 @@
     {
       "path": "tests/integration/database.integration.test.ts",
       "category": "tests",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed migration fixture and persistence assertions for resume version metadata.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "b0edc933184e36519e769294c25b3e43ab0972ef123cc797f0c653d0fdb0656f"
+      "observations": "Reviewed and updated during CareerScope item 7.04 implementation and CI correction. Changes cover education matching, the candidate snapshot contract assertion, and item traceability; exact-head CI rerun remains pending.",
+      "evidence": "Reviewed current file content and local validation on codex/stage07-item704-education-eligibility; first exact CI exposed a stale assertion, corrected before rerun.",
+      "reviewer": "Codex (CareerScope Stage 07.04 implementation self-review)",
+      "sha256": "1d99a36b2c4271c5584ebd247cf7e99cfa11e313bf07ab2d607961c08949ee33"
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",
