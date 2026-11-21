@@ -3464,7 +3464,7 @@ try {
       const educationDimension = scoredJobCard
         .getByRole('region', { name: 'Match evidence' })
         .locator('dl.match-dimensions > div')
-        .filter({ has: page.getByText('education', { exact: true }) });
+        .filter({ has: page.locator('dt').filter({ hasText: /^education\b/i }) });
       await educationDimension
         .getByText(/education text matches the stated posting ask/i)
         .waitFor();
