@@ -3960,6 +3960,51 @@ try {
       assert.equal(applicationRecord.applicationEvidence.method, 'Employer website');
       assert.equal(applicationRecord.applicationEvidence.source, 'Synthetic candidate report');
       assert.deepEqual(applicationRecord.tags, ['audit', 'preserve']);
+      const acknowledgementCard = openedLead.getByRole('region', {
+        name: 'Employer acknowledgement record',
+      });
+      await acknowledgementCard
+        .getByText('Candidate-reported information only.', { exact: false })
+        .waitFor();
+      await acknowledgementCard
+        .getByRole('button', { name: 'Record acknowledgement', exact: true })
+        .click();
+      await acknowledgementCard
+        .getByLabel('Source', { exact: true })
+        .fill('Synthetic employer email');
+      await acknowledgementCard
+        .getByLabel('Non-sensitive reference (optional)', { exact: true })
+        .fill('synthetic-reference');
+      const acknowledgementRecorded = page.waitForResponse(
+        (response) =>
+          response.url().endsWith(`/api/leads/${leadId}/employer-acknowledgements`) &&
+          response.request().method() === 'POST',
+      );
+      await acknowledgementCard
+        .getByRole('button', { name: 'Save acknowledgement', exact: true })
+        .click();
+      const acknowledgementResponse = await acknowledgementRecorded;
+      assert.equal(acknowledgementResponse.status(), 200);
+      const acknowledgementRecord = await acknowledgementResponse.json();
+      assert.equal(acknowledgementRecord.status, 'applied');
+      assert.equal(acknowledgementRecord.revision, applicationRecord.revision);
+      assert.equal(acknowledgementRecord.employerAcknowledgement.reference, 'synthetic-reference');
+      const followUpCard = openedLead.getByRole('region', {
+        name: 'Application follow-up reminder',
+      });
+      await followUpCard.getByLabel('Follow up at').fill('2030-05-11T10:00');
+      const followUpSaved = page.waitForResponse(
+        (response) =>
+          response.url().endsWith(`/api/leads/${leadId}`) && response.request().method() === 'PUT',
+      );
+      await followUpCard.getByRole('button', { name: 'Save reminder' }).click();
+      const followUpResponse = await followUpSaved;
+      assert.equal(followUpResponse.status(), 200);
+      const followUpRecord = await followUpResponse.json();
+      assert.equal(followUpRecord.status, 'applied');
+      assert.equal(followUpRecord.revision, applicationRecord.revision + 1);
+      assert.ok(Number.isFinite(Date.parse(followUpRecord.followUpAt)));
+      assert.match((await followUpCard.textContent()) ?? '', /Scheduled for/);
       await page.goto(`${origin}/applications`);
       await page.waitForURL(`${origin}/applications`);
       await page.getByRole('heading', { name: 'Applications', exact: true }).waitFor();

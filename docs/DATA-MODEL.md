@@ -14,6 +14,17 @@ actions rather than treated as proof or deleted by those organizational
 changes. New application lifecycle changes require a candidate-entered report;
 legacy status records without evidence remain readable.
 
+`employer_application_acknowledgements` stores append-only candidate-reported
+receipt time, source, and optional reference separately from application
+evidence. The API exposes only the latest acknowledgement on a lead. This is
+not independent verification of an employer communication; references should
+not contain sensitive data.
+
+`saved_leads.follow_up_at` stores a candidate-selected follow-up date. Changes
+are revisioned and copied into `lead_history`, including when a reminder is
+cleared. The current product displays the date when the candidate opens that
+application; it does not proactively notify the candidate.
+
 OTP authentication uses `email_otp_challenges` with a unique HMAC-derived email
 key, HMAC code digest, expiry, attempt count and consumed timestamp. It does not
 store the OTP or raw email in the challenge row. New-account acceptance is

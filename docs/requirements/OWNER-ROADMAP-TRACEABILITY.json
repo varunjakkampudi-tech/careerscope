@@ -2018,11 +2018,22 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Employer acknowledgements",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/core/src/leads.ts",
+        "apps/api/src/app.ts",
+        "apps/api/src/openapi.ts",
+        "apps/web/src/components/saved-leads.tsx",
+        "docs/API-SURFACE.md",
+        "docs/DATA-MODEL.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "apps/api/src/applications-export.integration.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "A candidate can append an owner-scoped employer acknowledgement with receipt time, source, and an optional non-sensitive reference. The event is stored separately from candidate application evidence and does not change application status or revision. CareerScope does not verify the employer communication. Exact-head CI, independent review, and owner checklist verification remain required.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2031,11 +2042,24 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Follow-up reminders",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/core/src/leads.ts",
+        "packages/core/src/schema.ts",
+        "migrations/0007_lead_follow_up_reminders.sql",
+        "migrations/0008_lead_follow_up_history.sql",
+        "apps/api/src/openapi.ts",
+        "apps/web/src/components/saved-leads.tsx",
+        "docs/DATA-MODEL.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/core/src/leads.test.ts",
+        "apps/api/src/applications-export.integration.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Candidates can schedule or clear owner-scoped follow-up dates, and updates are revisioned and recorded in history. The date is displayed only when the candidate opens the application; proactive notifications are not implemented. Exact-head CI, independent review, and owner verification remain required.",
       "scopeDisposition": "in-scope"
     },
     {

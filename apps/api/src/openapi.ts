@@ -39,6 +39,11 @@ const applicationEvidence = object({
   source: text({ maxLength: 160 }),
   confidence: text({ enum: ['unknown', 'low', 'medium', 'high'] }),
 });
+const employerAcknowledgement = object({
+  receivedAt: timestamp,
+  source: text({ minLength: 1, maxLength: 160 }),
+  reference: nullable(text({ maxLength: 240 })),
+});
 const leadTags = array(
   text({
     minLength: 1,
@@ -229,6 +234,8 @@ const lead = object({
   tags: leadTags,
   status,
   applicationEvidence: nullable(applicationEvidence),
+  followUpAt: nullable(timestamp),
+  employerAcknowledgement: nullable(employerAcknowledgement),
   livenessStatus: text({ enum: ['unknown', 'live', 'stale'] }),
   livenessCheckedAt: nullable(timestamp),
   revision,
@@ -935,8 +942,18 @@ function contracts(options: {
       { content: { 'text/csv': { schema: text() } } },
       { failures: [401, 403, 429] },
     ),
+    'POST /api/leads/:id/employer-acknowledgements': operation(
+      'Append a candidate-reported employer acknowledgement to an existing application record',
+      lead,
+      {
+        body: employerAcknowledgement,
+        failures: [400, 401, 403, 404, 429],
+        description:
+          'Stores the candidate-provided receipt time and source as an immutable event. CareerScope does not independently verify employer receipt.',
+      },
+    ),
     'PUT /api/leads/:id': operation(
-      'Update candidate-owned notes, tags, stage, and candidate-reported application evidence using optimistic concurrency',
+      'Update candidate-owned notes, tags, stage, application evidence, and follow-up reminder using optimistic concurrency',
       lead,
       {
         body: object(
@@ -945,6 +962,7 @@ function contracts(options: {
             notes: text({ maxLength: 10000 }),
             status,
             applicationEvidence,
+            followUpAt: nullable(timestamp),
             tags: leadTags,
           },
           ['revision', 'notes', 'status'],
@@ -965,6 +983,8 @@ function contracts(options: {
             applicationEvidence: nullable(applicationEvidence),
             tagsChanged: bool,
             tags: leadTags,
+            followUpChanged: bool,
+            followUpAt: nullable(timestamp),
             createdAt: timestamp,
           }),
         ),

@@ -1,0 +1,1 @@
+ALTER TABLE "saved_leads" ADD COLUMN "follow_up_at" timestamp with time zone;

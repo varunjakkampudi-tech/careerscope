@@ -1916,6 +1916,14 @@ export async function createApp(
       .type('text/csv; charset=utf-8')
       .send(applicationsCsv(applications));
   });
+  app.post('/api/leads/:id/employer-acknowledgements', async (request) => {
+    const { id } = identifier.parse(request.params);
+    if (!(await consumeRateLimit(request, `leads:${request.ownerId!}`, 60, 60)))
+      throw new HttpError(429, 'Too many lead updates');
+    const lead = await leads.recordEmployerAcknowledgement(request.ownerId!, id, request.body);
+    if (!lead) throw new HttpError(404, 'Application not found');
+    return lead;
+  });
   app.get('/api/leads/:id/history', async (request) => {
     await readBudget(request, 'leads-read', 240);
     const { id } = identifier.parse(request.params);

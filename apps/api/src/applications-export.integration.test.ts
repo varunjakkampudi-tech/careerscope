@@ -141,6 +141,131 @@ test(
       assert.equal(candidateOnlyClaim.statusCode, 200, candidateOnlyClaim.body);
       assert.equal(candidateOnlyClaim.json().applicationEvidence.confirmation, 'received');
       assert.equal(candidateOnlyClaim.json().employerAcknowledgement, null);
+      const cannotScheduleSavedLead = await app.inject({
+        method: 'PUT',
+        url: `/api/leads/${savedLeadId}`,
+        headers: { origin, cookie, 'x-csrf-token': session.csrf },
+        payload: {
+          revision: 1,
+          notes: '',
+          status: 'saved',
+          followUpAt: '2026-11-22T10:00:00.000Z',
+        },
+      });
+      assert.equal(cannotScheduleSavedLead.statusCode, 400);
+      const scheduledFollowUp = await app.inject({
+        method: 'PUT',
+        url: `/api/leads/${candidateOnlyApplicationId}`,
+        headers: { origin, cookie, 'x-csrf-token': session.csrf },
+        payload: {
+          revision: candidateOnlyClaim.json().revision,
+          notes: candidateOnlyClaim.json().notes,
+          status: 'applied',
+          followUpAt: '2026-11-22T10:00:00.000Z',
+        },
+      });
+      assert.equal(scheduledFollowUp.statusCode, 200, scheduledFollowUp.body);
+      assert.equal(scheduledFollowUp.json().status, 'applied');
+      assert.equal(scheduledFollowUp.json().followUpAt, '2026-11-22T10:00:00.000Z');
+      assert.equal(scheduledFollowUp.json().revision, candidateOnlyClaim.json().revision + 1);
+      const followUpHistory = await app.inject({
+        url: `/api/leads/${candidateOnlyApplicationId}/history`,
+        headers: { cookie },
+      });
+      assert.equal(followUpHistory.statusCode, 200);
+      assert.equal(followUpHistory.json().items[0].followUpChanged, true);
+      assert.equal(followUpHistory.json().items[0].followUpAt, '2026-11-22T10:00:00.000Z');
+      const clearedFollowUp = await app.inject({
+        method: 'PUT',
+        url: `/api/leads/${candidateOnlyApplicationId}`,
+        headers: { origin, cookie, 'x-csrf-token': session.csrf },
+        payload: {
+          revision: scheduledFollowUp.json().revision,
+          notes: scheduledFollowUp.json().notes,
+          status: 'applied',
+          followUpAt: null,
+        },
+      });
+      assert.equal(clearedFollowUp.statusCode, 200, clearedFollowUp.body);
+      assert.equal(clearedFollowUp.json().followUpAt, null);
+      const clearedHistory = await app.inject({
+        url: `/api/leads/${candidateOnlyApplicationId}/history`,
+        headers: { cookie },
+      });
+      assert.equal(clearedHistory.json().items[0].followUpChanged, true);
+      assert.equal(clearedHistory.json().items[0].followUpAt, null);
+      const acknowledgementBody = {
+        receivedAt: '2026-10-22T10:00:00.000Z',
+        source: 'Employer confirmation email',
+        reference: 'synthetic-ref-2',
+      };
+      const unauthenticatedAcknowledgement = await app.inject({
+        method: 'POST',
+        url: `/api/leads/${candidateOnlyApplicationId}/employer-acknowledgements`,
+        headers: { origin },
+        payload: acknowledgementBody,
+      });
+      assert.equal(unauthenticatedAcknowledgement.statusCode, 401);
+      const acknowledgement = await app.inject({
+        method: 'POST',
+        url: `/api/leads/${candidateOnlyApplicationId}/employer-acknowledgements`,
+        headers: { origin, cookie, 'x-csrf-token': session.csrf },
+        payload: acknowledgementBody,
+      });
+      assert.equal(acknowledgement.statusCode, 200, acknowledgement.body);
+      assert.equal(acknowledgement.json().status, 'applied');
+      assert.equal(acknowledgement.json().revision, clearedFollowUp.json().revision);
+      assert.equal(acknowledgement.json().employerAcknowledgement.reference, 'synthetic-ref-2');
+      const refreshedCandidateClaim = await app.inject({
+        url: `/api/leads/${candidateOnlyApplicationId}`,
+        headers: { cookie },
+      });
+      assert.equal(
+        refreshedCandidateClaim.json().employerAcknowledgement.reference,
+        'synthetic-ref-2',
+      );
+      const secondAcknowledgement = await app.inject({
+        method: 'POST',
+        url: `/api/leads/${candidateOnlyApplicationId}/employer-acknowledgements`,
+        headers: { origin, cookie, 'x-csrf-token': session.csrf },
+        payload: {
+          ...acknowledgementBody,
+          receivedAt: '2026-10-23T10:00:00.000Z',
+          source: 'Application portal',
+          reference: null,
+        },
+      });
+      assert.equal(secondAcknowledgement.statusCode, 200, secondAcknowledgement.body);
+      assert.equal(
+        secondAcknowledgement.json().employerAcknowledgement.source,
+        'Application portal',
+      );
+      const cannotAcknowledgeSavedOnlyLead = await app.inject({
+        method: 'POST',
+        url: `/api/leads/${savedLeadId}/employer-acknowledgements`,
+        headers: { origin, cookie, 'x-csrf-token': session.csrf },
+        payload: acknowledgementBody,
+      });
+      assert.equal(cannotAcknowledgeSavedOnlyLead.statusCode, 400);
+      const futureAcknowledgement = await app.inject({
+        method: 'POST',
+        url: `/api/leads/${candidateOnlyApplicationId}/employer-acknowledgements`,
+        headers: { origin, cookie, 'x-csrf-token': session.csrf },
+        payload: { ...acknowledgementBody, receivedAt: '2999-10-22T10:00:00.000Z' },
+      });
+      assert.equal(futureAcknowledgement.statusCode, 400);
+      const foreignAcknowledgement = await app.inject({
+        method: 'POST',
+        url: `/api/leads/${applicationId}/employer-acknowledgements`,
+        headers: { origin, cookie: otherCookie, 'x-csrf-token': otherSession.csrf },
+        payload: acknowledgementBody,
+      });
+      assert.equal(foreignAcknowledgement.statusCode, 404);
+      const acknowledgementCount = await database.pool.query(
+        'SELECT id FROM employer_application_acknowledgements WHERE owner_id = $1 AND lead_id = $2',
+        [ownerId, candidateOnlyApplicationId],
+      );
+      assert.equal(acknowledgementCount.rowCount, 2, 'acknowledgements append as separate events');
       const foreignLead = await app.inject({
         url: `/api/leads/${applicationId}`,
         headers: { cookie: otherCookie },
@@ -173,6 +298,8 @@ test(
         docs.json().paths['/api/applications/export']?.get?.responses?.['200']?.content,
         { 'text/csv': { schema: { type: 'string' } } },
       );
+      assert.ok(docs.json().paths['/api/leads/{id}/employer-acknowledgements']?.post);
+      assert.ok(docs.json().paths['/api/leads/{id}/history']?.get);
     } finally {
       await app?.close();
       await database.close();

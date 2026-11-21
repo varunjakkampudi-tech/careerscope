@@ -292,14 +292,15 @@ supplies both when private resume storage is configured.
 
 ### Leads
 
-| Method | Path                       | Auth | CSRF |
-| ------ | -------------------------- | ---- | ---- |
-| GET    | `/api/leads`               | yes  | no   |
-| POST   | `/api/leads`               | yes  | yes  |
-| GET    | `/api/leads/by-job/:jobId` | yes  | no   |
-| GET    | `/api/leads/:id`           | yes  | no   |
-| GET    | `/api/leads/:id/history`   | yes  | no   |
-| PUT    | `/api/leads/:id`           | yes  | yes  |
+| Method | Path                                       | Auth | CSRF |
+| ------ | ------------------------------------------ | ---- | ---- |
+| GET    | `/api/leads`                               | yes  | no   |
+| POST   | `/api/leads`                               | yes  | yes  |
+| GET    | `/api/leads/by-job/:jobId`                 | yes  | no   |
+| GET    | `/api/leads/:id`                           | yes  | no   |
+| POST   | `/api/leads/:id/employer-acknowledgements` | yes  | yes  |
+| GET    | `/api/leads/:id/history`                   | yes  | no   |
+| PUT    | `/api/leads/:id`                           | yes  | yes  |
 
 Leads are revisioned like profiles; `PUT` with a stale revision is a 409.
 `lead_history` records every revision.
@@ -310,6 +311,14 @@ Entering an application lifecycle stage requires a report; existing legacy rows
 remain readable. Archive/restore preserves evidence, and history exposes the
 previous status and whether notes/evidence changed. Evidence is the candidate's
 claim, not an ATS event. Opening the application URL never mutates the status.
+Candidate-owned follow-up dates are optional, revision-guarded, and included in
+history. They are displayed in CareerScope when the candidate opens the
+application; no email or employer contact is sent.
+
+The acknowledgement endpoint appends a candidate-reported receipt time, source
+and optional reference to `employer_application_acknowledgements`. It requires
+an application record, does not change status or revision, and does not verify
+that the employer sent or received a message. Keep references non-sensitive.
 
 ### Interviews, notifications, feedback and sources
 

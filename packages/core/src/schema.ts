@@ -433,6 +433,7 @@ export const leads = pgTable(
       .default('unknown'),
     livenessCheckedAt: timestamp('liveness_checked_at', { withTimezone: true }),
     applicationEvidence: jsonb('application_evidence').$type<ApplicationEvidence | null>(),
+    followUpAt: timestamp('follow_up_at', { withTimezone: true }),
     // Candidate-owned organization metadata, separate from the source posting.
     tags: text('tags')
       .array()
@@ -529,6 +530,8 @@ export const leadHistory = pgTable(
       .array()
       .notNull()
       .default(sql`ARRAY[]::text[]`),
+    followUpChanged: boolean('follow_up_changed').notNull().default(false),
+    followUpAt: timestamp('follow_up_at', { withTimezone: true }),
   },
   (table) => [
     foreignKey({
