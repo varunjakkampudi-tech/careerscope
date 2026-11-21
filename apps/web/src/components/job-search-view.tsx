@@ -324,7 +324,8 @@ function JobSearchWorkspace() {
         .toLowerCase()
         .includes(filtered);
       const matchesSource = resultSource === 'all' || data.source === resultSource;
-      const matchesScore = (data.match?.score ?? -1) >= minimumMatch;
+      const matchesScore =
+        minimumMatch === 0 || (data.match?.score != null && data.match.score >= minimumMatch);
       return matchesText && matchesSource && matchesScore;
     }) ?? []
   ).sort((a, b) => (b.data.match?.score ?? -1) - (a.data.match?.score ?? -1));

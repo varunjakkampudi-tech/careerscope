@@ -1779,7 +1779,7 @@
       ],
       "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Exact-head browser CI and owner acceptance remain pending. Salary and workplace filters require persisted job attributes that are not currently available.",
+      "gap": "A prior exact-head browser run found that the default score threshold hid unscored jobs. The implementation and browser coverage are corrected; new exact-head CI and owner acceptance remain pending. Salary and workplace filters require persisted job attributes that are not currently available.",
       "scopeDisposition": "in-scope"
     },
     {

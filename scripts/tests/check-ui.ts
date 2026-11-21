@@ -3519,17 +3519,45 @@ try {
         'changing feedback updates the existing owner/job row instead of creating a duplicate',
       );
       const sourceFilter = page.getByRole('combobox', { name: 'Source', exact: true });
+      const waitForJobCount = (count: number) =>
+        page.waitForFunction(
+          (expected) => document.querySelectorAll('details.job').length === expected,
+          count,
+        );
+      await waitForJobCount(2);
+      assert.equal(await page.locator('details.job').count(), 2, 'default shows scored and unscored jobs');
       await sourceFilter.selectOption('remoteok');
+      await waitForJobCount(1);
       assert.equal(await page.locator('details.job').count(), 1, 'source filter narrows results');
       await sourceFilter.selectOption('all');
       const minimumMatch = page.getByRole('combobox', { name: 'Minimum match', exact: true });
+      const resultTextFilter = page.getByRole('textbox', { name: 'Filter results', exact: true });
+      await resultTextFilter.fill('Senior React');
+      await sourceFilter.selectOption('himalayas');
+      await waitForJobCount(1);
+      assert.equal(await page.locator('details.job').count(), 1, 'text and source filters compose');
+      await minimumMatch.selectOption('60');
+      await waitForJobCount(0);
+      assert.equal(
+        await page.locator('details.job').count(),
+        0,
+        'a nonzero threshold excludes the matching unscored job',
+      );
+      await page.getByRole('button', { name: 'Clear filter', exact: true }).click();
+      await waitForJobCount(2);
+      assert.equal(await page.locator('details.job').count(), 2, 'clear restores scored and unscored jobs');
+      assert.equal(await resultTextFilter.inputValue(), '');
+      assert.equal(await sourceFilter.inputValue(), 'all');
+      assert.equal(await minimumMatch.inputValue(), '0');
       await minimumMatch.selectOption('80');
+      await waitForJobCount(0);
       assert.equal(
         await page.locator('details.job').count(),
         0,
         'minimum score excludes low and unscored jobs',
       );
       await page.getByRole('button', { name: 'Clear filter', exact: true }).click();
+      await waitForJobCount(2);
       assert.equal(
         await page.locator('details.job').count(),
         2,
@@ -3705,6 +3733,9 @@ try {
       );
       await page.getByRole('checkbox', { name: 'Greenhouse', exact: true }).check();
       await page.getByRole('checkbox', { name: 'Lever', exact: true }).check();
+      await page.getByLabel('Filter results').fill('Senior React');
+      await page.getByRole('combobox', { name: 'Source', exact: true }).selectOption('himalayas');
+      await page.getByRole('combobox', { name: 'Minimum match', exact: true }).selectOption('70');
       const submitted = page.waitForResponse(
         (response) =>
           response.url().endsWith('/api/searches') && response.request().method() === 'POST',
@@ -3717,6 +3748,19 @@ try {
       const submission = await submitted;
       assert.equal(submission.status(), 202);
       const submittedId = (await submission.json()).runId;
+      await page
+        .getByRole('navigation', { name: 'Search history' })
+        .getByRole('button', { name: /^React.*partial/s })
+        .click();
+      await page.getByRole('textbox', { name: 'Filter results', exact: true }).waitFor();
+      assert.equal(await page.getByLabel('Filter results').inputValue(), '');
+      assert.equal(await page.getByRole('combobox', { name: 'Source', exact: true }).inputValue(), 'all');
+      assert.equal(await page.getByRole('combobox', { name: 'Minimum match', exact: true }).inputValue(), '0');
+      const newRunButton = page
+        .getByRole('navigation', { name: 'Search history' })
+        .getByRole('button', { name: /^TypeScript/ });
+      await newRunButton.click();
+      await page.getByText('Search in progress', { exact: true }).waitFor();
       assert.deepEqual((await database.getSearch(ownerId, submittedId))?.request.sources, [
         'greenhouse',
         'lever',
