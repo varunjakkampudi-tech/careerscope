@@ -7575,7 +7575,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -7601,10 +7601,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
+      "observations": "Reviewed the current Stage 09 browser assertion change: it locates the labelled acknowledgement section directly and asserts there is exactly one matching section before checking its candidate-report disclosure.",
       "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
-      "reviewer": "Codex (Stage 09 items 9.09-9.10)",
-      "sha256": "3ed34be4f7b5c8e2861aec158dde3e5553b98c26781072751c7de29d4a49b5de",
+      "reviewer": "Codex",
+      "sha256": "72ad96fe04ff80a6e2dcd35f62aa08769e41efd0393151e853c81670d04af3f8",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
