@@ -52,6 +52,30 @@ describe('sortSearchJobs', () => {
     );
   });
 
+  it('keeps invalid dates last and deterministically sorts multiple undated and unscored results', () => {
+    const invalidAndUnknown: SortableSearchJob[] = [
+      { id: 'missing-z', data: { title: 'Zulu', postedAt: null, match: null } },
+      {
+        id: 'invalid-date',
+        data: {
+          title: 'Invalid',
+          postedAt: 'not-a-date',
+          match: { score: 0.2, confidence: 'low' },
+        },
+      },
+      { id: 'missing-a', data: { title: 'Alpha', postedAt: null, match: null } },
+    ];
+
+    assert.deepEqual(
+      sortSearchJobs(invalidAndUnknown, 'newest').map(({ id }) => id),
+      ['invalid-date', 'missing-a', 'missing-z'],
+    );
+    assert.deepEqual(
+      sortSearchJobs(invalidAndUnknown, 'match').map(({ id }) => id),
+      ['invalid-date', 'missing-a', 'missing-z'],
+    );
+  });
+
   it('does not mutate the cached source array', () => {
     const original = [...entries];
     sortSearchJobs(entries, 'newest');

@@ -1789,11 +1789,15 @@
       "stageTitle": "Real-time job search and discovery",
       "title": "Match/trust sorting",
       "sourceStatus": "New/enhancement",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/lib/job-search-sort.ts",
+        "apps/web/src/components/job-search-view.tsx",
+        "docs/PROGRESS.md"
+      ],
+      "tests": ["apps/web/src/lib/job-search-sort.test.ts", "scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Sorting by match score, description confidence, and posting date is implemented with localized controls, an explicit limitation disclosure, deterministic tie breaks, and unit/browser assertions. Employer/source trust evidence is not part of the result contract, so this is not trust or reputation ranking. Exact-head CI, independent review, and owner checklist verification remain required.",
       "scopeDisposition": "in-scope"
     },
     {

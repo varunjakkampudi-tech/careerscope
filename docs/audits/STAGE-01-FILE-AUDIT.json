@@ -1405,7 +1405,7 @@
       "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
       "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
       "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "87f158db1123e6c19109e9d57abecca35072b72cbc94dee242970fce91da622b"
+      "sha256": "d645beeee40f951a2a0ebedf927ea9bb910eaf59bbe7150831166c7651153e9a"
     },
     {
       "path": "apps/web/src/lib/job-search-sort.ts",
@@ -2113,7 +2113,7 @@
       "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
       "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
       "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "e0a91529b78b3bae299856a20fee1f52d7126fade0a2fcf9f3b542f0a5bacc00",
+      "sha256": "128f6c6d3835cdab6480eef46b0f16fb47b926a9f0c3243ed21ee688f0e22946",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2309,7 +2309,7 @@
       "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
       "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
       "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "a43eaec5b0c82c09b8acd89c1c5c3e829155e56853e2e4ff2ff79a4e117fa23b",
+      "sha256": "12f0b4c533828c6878c1ea49b6d21f97a2319cd0fd3a9f4ab7fcc567fe72ffa9",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2877,7 +2877,7 @@
       "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
       "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
       "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "2b5df7d3e93dc717391a9952c738f0a78131d368d16a08ef7d96897ae8c2e162",
+      "sha256": "1ffa4ce71e535c11fba24e018ffefff8e1566d3430db9cf0ebcbd176c72c96d3",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
