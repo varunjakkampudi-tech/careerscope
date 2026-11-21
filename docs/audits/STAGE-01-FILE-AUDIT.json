@@ -7421,7 +7421,7 @@
       "observations": "Reviewed and updated during CareerScope item 7.04 implementation. Changes are bounded to education-demand extraction, candidate education signal flow, versioned soft scoring, relevant tests, and item traceability; no finding remains from this scoped review.",
       "evidence": "Reviewed current file content and local validation on codex/stage07-item704-education-eligibility; exact-head CI and independent review are pending.",
       "reviewer": "Codex (CareerScope Stage 07.04 implementation self-review)",
-      "sha256": "b1f47fd2493d30ff65a7c7a46f7ece83fbfaf09e95f370b023af9e493f0b597a",
+      "sha256": "799b5ff3a6e3366a735df583ca1cc38c3e0942f501e9553f787aa4158f7d98cf",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
