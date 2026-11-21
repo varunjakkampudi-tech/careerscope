@@ -1,6 +1,6 @@
 /**
- * The seven per-dimension scorers (skills, title, seniority, experience, location, compensation,
- * recency). Called by `score.ts`; uses `demands.ts`, `seniority.ts` and `@careerscope/shared`.
+ * The eight per-dimension scorers (skills, title, seniority, experience, education, location,
+ * compensation, recency). Called by `score.ts`; uses `demands.ts`, `seniority.ts` and `@careerscope/shared`.
  */
 
 import {
@@ -371,6 +371,51 @@ export function scoreExperience(
   );
 }
 
+/** Soft fit against explicit education asks. Profile and resume statements remain unverified claims. */
+export function scoreEducation(
+  demands: JobDemands,
+  candidate: CandidateContext,
+): MatchDimensionScore {
+  if (demands.education.length === 0)
+    return dim('education', 0.7, 'Posting does not state an education requirement');
+  if (candidate.education.length === 0)
+    return dim('education', 0.7, 'Your education is unknown; no mismatch is applied');
+
+  const evidence = candidate.education.join(' ').toLowerCase();
+  let weightedFit = 0;
+  let totalWeight = 0;
+  for (const demand of demands.education) {
+    totalWeight += demand.weight;
+    const matches =
+      demand.kind === 'degree'
+        ? degreeRank(evidence) >= degreeRank(demand.value)
+        : evidence.includes(demand.value.toLowerCase());
+    weightedFit += (matches ? 1 : 0.25) * demand.weight;
+  }
+  const score = totalWeight ? weightedFit / totalWeight : 0.7;
+  return dim(
+    'education',
+    score,
+    `Education text ${score >= 0.75 ? 'matches' : 'does not clearly match'} the stated posting ask; profile and resume claims are unverified`,
+  );
+}
+
+function degreeRank(value: string): number {
+  const normalized = value.toLowerCase();
+  const hasToken = (pattern: RegExp) => pattern.test(normalized);
+  if (hasToken(/\b(?:ph\.?\s*d\.?|doctorate|doctoral)\b/)) return 4;
+  if (hasToken(/\b(?:master(?:'s)?|mba|mca|mtech|m\.?\s*tech|m\.?\s*sc\.?|m\.?\s*a\.?)\b/))
+    return 3;
+  if (
+    hasToken(
+      /\b(?:bachelor(?:'s)?|btech|b\.?\s*tech|bca|beng|b\.?\s*eng|b\.?\s*sc\.?|b\.?\s*a\.?)\b/,
+    )
+  )
+    return 2;
+  if (hasToken(/\bassociate(?:'s)?\b/)) return 1;
+  return 0;
+}
+
 /** Wording for the experience reason; the caller appends " ask". */
 function describeBand(demands: JobDemands): string {
   if (demands.minYears !== null && demands.maxYears !== null) {
@@ -494,7 +539,7 @@ export function scoreCompensation(job: Job, candidate: CandidateContext): MatchD
 /**
  * How fresh the posting is. Old listings are often filled but never taken down,
  * so freshness is a weak positive signal — hence the smallest weight of the
- * seven.
+ * eight.
  */
 export function scoreRecency(job: Job, windowDays: number, now = Date.now()): MatchDimensionScore {
   if (!job.postedAt) {

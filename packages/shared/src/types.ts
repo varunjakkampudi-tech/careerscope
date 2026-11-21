@@ -104,6 +104,8 @@ export interface CandidateContext {
   titles: string[];
   /** Null means the candidate has not supplied usable experience evidence. */
   yearsOfExperience: number | null;
+  /** Candidate-entered education, unverified. */
+  education: string[];
   locations: string[];
   homeLocation: string;
   remoteOnly: boolean;
@@ -147,9 +149,17 @@ export interface JobDemands {
   skills: DemandedSkill[];
   minYears: number | null;
   maxYears: number | null;
+  education: EducationDemand[];
   seniority: SeniorityLabel | null;
   isRemote: boolean;
   employmentType: EmploymentType | null;
+}
+
+/** An explicitly stated degree or field preference/requirement, never proof of hiring eligibility. */
+export interface EducationDemand {
+  kind: 'degree' | 'field';
+  value: string;
+  weight: number;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -168,10 +178,11 @@ export interface Paginated<T> {
  * Profile fields the matching engine actually consumes. `Profile` satisfies this
  * structurally, so the API can pass a stored profile straight through.
  *
- * The consumer declares its own minimum. `application` is narrowed to the three
- * fields `packages/matching/src/context.ts` reads. The `MatchingProfile`
- * snapshot in `packages/core/src/profile.ts` carries exactly those three
- * (data minimisation). If `context.ts` ever reads a fourth field, this type
+ * The consumer declares its own minimum. Candidate education/location and the
+ * application fields are narrowed to what `packages/matching/src/context.ts`
+ * reads. The `MatchingProfile` snapshot in `packages/core/src/profile.ts`
+ * carries only those fields (data minimisation). If `context.ts` ever reads an
+ * additional field, this type
  * makes that a compile error where it is read, instead of a silent `undefined`
  * inside scoring.
  *
@@ -179,7 +190,7 @@ export interface Paginated<T> {
  * this structurally.
  */
 export type MatchableProfile = {
-  candidate: Pick<Candidate, 'location'>;
+  candidate: Pick<Candidate, 'location' | 'education'>;
   preferences: Preferences;
   application: Pick<ApplicationDetails, 'expectedCtc' | 'yearsOfExperience' | 'willingToRelocate'>;
   derived: DerivedResume | null;

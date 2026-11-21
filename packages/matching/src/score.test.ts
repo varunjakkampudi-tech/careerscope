@@ -121,14 +121,65 @@ describe('scoreJob — breakdown', () => {
     expect(current.scoringVersion).toBe(MATCH_SCORING_VERSION);
 
     const { scoringVersion: _scoringVersion, ...legacy } = current;
-    expect(matchBreakdownSchema.strict().parse(legacy).scoringVersion).toBeNull();
+    expect(matchBreakdownSchema.parse(legacy).scoringVersion).toBeNull();
   });
 
-  it('returns all seven dimensions with their weights and reasons', () => {
+  it('reads historical seven-dimension records without changing their score or claiming education evidence', () => {
+    const current = scoreJob(job({ descriptionText: NEAR_EXACT_JD }), candidate(), opts);
+    const { education: _education, ...legacyDimensions } = current.dimensions;
+    const legacy = {
+      ...current,
+      scoringVersion: 'deterministic-v2',
+      dimensions: legacyDimensions,
+    };
+    const parsed = matchBreakdownSchema.parse(legacy);
+    expect(parsed.scoringVersion).toBe('deterministic-v2');
+    expect(parsed.score).toBe(current.score);
+    expect(parsed.heuristicScore).toBe(current.heuristicScore);
+    expect(parsed.dimensions.skills).toEqual(current.dimensions.skills);
+    expect(parsed.dimensions.education).toEqual({
+      score: 0,
+      weight: 0,
+      reason: 'Not recorded for this scoring version',
+    });
+
+    for (const legacyVersion of [null, undefined]) {
+      const withoutVersion = { ...legacy, scoringVersion: legacyVersion };
+      const parsedWithoutVersion = matchBreakdownSchema.parse(withoutVersion);
+      expect(parsedWithoutVersion.scoringVersion).toBeNull();
+      expect(parsedWithoutVersion.score).toBe(current.score);
+      expect(parsedWithoutVersion.dimensions.education.weight).toBe(0);
+    }
+  });
+
+  it('rejects unknown dimensions and mismatched legacy version shapes', () => {
+    const current = scoreJob(job({ descriptionText: NEAR_EXACT_JD }), candidate(), opts);
+    const { education: _education, ...legacyDimensions } = current.dimensions;
+    const sevenDimensions = { ...current, dimensions: legacyDimensions };
+    expect(
+      matchBreakdownSchema.safeParse({ ...sevenDimensions, scoringVersion: 'deterministic-v3' })
+        .success,
+    ).toBe(false);
+    expect(
+      matchBreakdownSchema.safeParse({
+        ...sevenDimensions,
+        dimensions: { ...legacyDimensions, extra: { score: 0, weight: 0, reason: 'extra' } },
+      }).success,
+    ).toBe(false);
+    const v2WithCurrentDimensions = {
+      ...current,
+      scoringVersion: 'deterministic-v2',
+    };
+    expect(matchBreakdownSchema.safeParse(v2WithCurrentDimensions).success).toBe(false);
+    expect(matchBreakdownSchema.safeParse({ ...current, surprise: true }).success).toBe(false);
+  });
+
+  it('returns all eight dimensions with their weights and reasons', () => {
     const breakdown = scoreJob(job({ descriptionText: NEAR_EXACT_JD }), candidate(), opts);
     const keys = Object.keys(breakdown.dimensions).sort();
     expect(keys).toEqual([
       'compensation',
+      'education',
       'experience',
       'location',
       'recency',
@@ -260,7 +311,7 @@ describe('scoreJob — excluded listings', () => {
     expect(breakdown.excludedReason).toMatch(/Backend/);
     expect(breakdown.matchedSkills).toEqual([]);
     // The drawer still renders — every dimension is present, just not scored.
-    expect(Object.keys(breakdown.dimensions)).toHaveLength(7);
+    expect(Object.keys(breakdown.dimensions)).toHaveLength(8);
   });
 
   // A hard gate must not swallow whether a resume was on file - an excluded

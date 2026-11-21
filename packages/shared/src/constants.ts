@@ -108,10 +108,11 @@ export type SeniorityLabel = keyof typeof SENIORITY_LEVELS;
  * engine used rather than duplicating the numbers.
  */
 export const MATCH_WEIGHTS = {
-  skills: 0.4,
+  skills: 0.35,
   title: 0.15,
   seniority: 0.12,
   experience: 0.1,
+  education: 0.05,
   location: 0.1,
   compensation: 0.08,
   recency: 0.05,
@@ -125,6 +126,7 @@ export const MATCH_DIMENSION_LABELS: Record<MatchDimension, string> = {
   title: 'Role title',
   seniority: 'Seniority',
   experience: 'Experience',
+  education: 'Education fit',
   location: 'Location',
   compensation: 'Compensation',
   recency: 'Freshness',

@@ -332,7 +332,10 @@ try {
           companyName: 'Flagged Technology',
           location: 'Remote',
           isRemote: true,
-          description: 'Build React and TypeScript interfaces.',
+          description:
+            'Requirements:\n- Bachelor degree in Computer Science\n' +
+            '- Bachelor degree in Computer Science\n'.repeat(7) +
+            'Build React and TypeScript interfaces.',
           hasFullDescription: false,
           sourceUrl: 'https://remoteok.com/remote-jobs/scored',
           applyUrl: 'https://example.test/scored',
@@ -347,6 +350,7 @@ try {
             fullName: 'Synthetic Candidate',
             email: 'synthetic@example.test',
             location: 'Hyderabad',
+            education: ['B.Tech Computer Science'],
           },
           preferences: {
             titles: ['React Engineer'],
@@ -1938,10 +1942,11 @@ try {
           }),
         ),
         [
-          'Skills:40%',
+          'Skills:35%',
           'Role title:15%',
           'Seniority:12%',
           'Experience:10%',
+          'Education fit:5%',
           'Location:10%',
           'Compensation:8%',
           'Freshness:5%',
@@ -3456,6 +3461,17 @@ try {
       const scoredJobCard = page
         .locator('details.job')
         .filter({ has: page.getByRole('heading', { name: 'Scored React Engineer', exact: true }) });
+      const matchDimensions = scoredJobCard
+        .getByRole('region', { name: 'Match evidence' })
+        .locator('dl.match-dimensions > div');
+      const dimensionLabels = await matchDimensions.locator('dt').allTextContents();
+      const educationIndex = dimensionLabels.findIndex((label) =>
+        label.trim().toLowerCase().startsWith('education'),
+      );
+      assert.notEqual(educationIndex, -1, 'education dimension is present');
+      const educationReason = await matchDimensions.nth(educationIndex).locator('dd').innerText();
+      assert.match(educationReason, /Education text matches the stated posting ask/i);
+      assert.match(educationReason, /profile and resume claims are unverified/i);
       const feedbackReason = scoredJobCard.getByLabel('Report a posting issue');
       const priorFeedbackReason = resultBody.jobs[0].feedbackReason;
       const firstFeedbackReason =

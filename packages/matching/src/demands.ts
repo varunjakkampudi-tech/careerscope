@@ -249,6 +249,52 @@ export interface DemandSource {
   location?: string;
 }
 
+const DEGREE_PATTERNS: Array<[string, RegExp]> = [
+  ['PhD', /\b(?:ph\.?\s*d\.?|doctorate|doctoral degree)\b/i],
+  ['master', /\b(?:master'?s?|m\.?\s*s\.?|m\.?\s*a\.?|mba|mca|mtech|m\.\s*tech)\b/i],
+  ['bachelor', /\b(?:bachelor'?s?|b\.?\s*s\.?|b\.?\s*a\.?|btech|b\.?\s*tech|bca|beng)\b/i],
+  ['associate', /\b(?:associate'?s? degree|associate degree)\b/i],
+];
+
+/** Explicit degree and field asks; generic degree wording is intentionally not inferred. */
+export function extractEducationDemands(text: string): JobDemands['education'] {
+  const demands: JobDemands['education'] = [];
+  const indexes = new Map<string, number>();
+  const add = (kind: 'degree' | 'field', value: string, weight: number) => {
+    const key = `${kind}:${value.toLowerCase()}`;
+    const index = indexes.get(key);
+    if (index === undefined) {
+      indexes.set(key, demands.length);
+      demands.push({ kind, value, weight });
+    } else {
+      const current = demands[index];
+      if (current) current.weight = Math.max(current.weight, weight);
+    }
+  };
+  for (const { emphasis, body } of blocksByEmphasis(text)) {
+    for (const line of body.split('\n')) {
+      if (
+        !/\b(?:degree|bachelor|master|ph\.?\s*d|doctorate|diploma|major|field of study)\b/i.test(
+          line,
+        )
+      )
+        continue;
+      const weight = emphasis === 'preferred' || INLINE_PREFERRED.test(line) ? 0.5 : 1;
+      const degree = DEGREE_PATTERNS.find(([, pattern]) => pattern.test(line))?.[0];
+      if (degree) add('degree', degree, weight);
+      const field =
+        /\b(?:in|major(?:ing)? in|field of study[: ]+)\s+([a-z][a-z &/-]{2,48}?)(?=[,.;\n]|\s+(?:or|with|and a |from an? )|$)/i
+          .exec(line)?.[1]
+          ?.trim();
+      if (field && !/^(related|relevant|any)$/i.test(field)) {
+        const value = field.replace(/\s+/g, ' ').toLowerCase();
+        add('field', value, weight);
+      }
+    }
+  }
+  return demands;
+}
+
 /** Everything the engine needs to read out of a posting, in one pass. */
 export function extractDemands(job: DemandSource): JobDemands {
   const text = `${job.title}\n${job.descriptionText}`;
@@ -257,6 +303,7 @@ export function extractDemands(job: DemandSource): JobDemands {
     skills: extractDemandedSkills(job.descriptionText, job.title),
     minYears: years.min,
     maxYears: years.max,
+    education: extractEducationDemands(job.descriptionText),
     seniority: seniorityOf(job.title) ?? seniorityOf(job.descriptionText.slice(0, 600)),
     isRemote: detectRemote(text, job.isRemote, `${job.title}\n${job.location ?? ''}`),
     employmentType: job.employmentType ?? detectEmploymentType(text),

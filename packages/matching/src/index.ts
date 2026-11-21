@@ -19,6 +19,7 @@ export {
   clamp01,
   scoreCompensation,
   scoreExperience,
+  scoreEducation,
   scoreLocation,
   scoreRecency,
   scoreSeniority,

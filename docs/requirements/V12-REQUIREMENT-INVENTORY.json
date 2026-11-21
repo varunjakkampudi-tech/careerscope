@@ -2056,7 +2056,7 @@
           "packages/matching/src/score.ts:90"
         ],
         "tests": ["packages/matching/src/score.test.ts:121"],
-        "note": "scoringVersion deterministic-v2 is recorded on every breakdown; legacy breakdowns parse as null."
+        "note": "scoringVersion deterministic-v3 is recorded on every breakdown after adding education fit; legacy breakdowns parse as null."
       }
     },
     {

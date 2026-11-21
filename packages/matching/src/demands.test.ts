@@ -219,6 +219,32 @@ describe('extractDemands', () => {
     );
   });
 
+  it('extracts explicit education asks and keeps preferred asks soft', () => {
+    const demands = extractDemands({
+      title: 'Engineer',
+      descriptionText:
+        'Requirements:\n- Bachelor degree in Computer Science\nPreferred qualifications:\n- Master degree in Data Science',
+    });
+    expect(demands.education).toEqual([
+      { kind: 'degree', value: 'bachelor', weight: 1 },
+      { kind: 'field', value: 'computer science', weight: 1 },
+      { kind: 'degree', value: 'master', weight: 0.5 },
+      { kind: 'field', value: 'data science', weight: 0.5 },
+    ]);
+  });
+
+  it('keeps the strongest emphasis when an education ask appears in multiple sections', () => {
+    const demands = extractDemands({
+      title: 'Engineer',
+      descriptionText:
+        'Preferred qualifications:\n- Bachelor degree in Computer Science\nRequirements:\n- Bachelor degree in Computer Science',
+    });
+    expect(demands.education).toEqual([
+      { kind: 'degree', value: 'bachelor', weight: 1 },
+      { kind: 'field', value: 'computer science', weight: 1 },
+    ]);
+  });
+
   it('prefers the provider-supplied employment type over the text', () => {
     const demands = extractDemands({
       title: 'Software Engineer',

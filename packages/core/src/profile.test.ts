@@ -177,7 +177,7 @@ test('saved accessibility preferences are owner profile data, validated and excl
   });
   assert.deepEqual(parsed.accessibility, { reducedMotion: true });
   assert.deepEqual(matchingProfile(parsed), {
-    candidate: { location: 'Hyderabad' },
+    candidate: { location: 'Hyderabad', education: [] },
     preferences: parsed.preferences,
     application: {
       expectedCtc: '',
@@ -220,7 +220,7 @@ test('candidate segment is owner-declared, bounded to the approved options and n
   );
 });
 
-test('education, work experience, graduation year, and projects are bounded candidate claims and never matching inputs', () => {
+test('education is matching evidence while work experience, graduation year, and projects stay outside the snapshot', () => {
   const profile = writableProfileSchema.parse({
     ...syntheticProfile,
     candidate: {
@@ -238,7 +238,7 @@ test('education, work experience, graduation year, and projects are bounded cand
   assert.equal(profile.candidate.graduationYear, 2024);
   assert.deepEqual(profile.candidate.projects, ['Accessible job search prototype']);
   assert.deepEqual(matchingProfile(profile), {
-    candidate: { location: 'Hyderabad' },
+    candidate: { location: 'Hyderabad', education: ['B.Tech, Computer Science'] },
     preferences: profile.preferences,
     application: {
       expectedCtc: '',
@@ -279,7 +279,7 @@ test('project summaries accept 20 bounded entries and stay out of the matching s
   });
 
   assert.deepEqual(profile.candidate.projects, projects);
-  assert.deepEqual(matchingProfile(profile).candidate, { location: 'Hyderabad' });
+  assert.deepEqual(matchingProfile(profile).candidate, { location: 'Hyderabad', education: [] });
   assert.equal(
     writableProfileSchema.safeParse({
       ...syntheticProfile,
@@ -339,7 +339,7 @@ test('home location and work-mode preferences remain in the matching profile', (
     },
   });
 
-  assert.deepEqual(matchingProfile(profile).candidate, { location: 'Pune, India' });
+  assert.deepEqual(matchingProfile(profile).candidate, { location: 'Pune, India', education: [] });
   assert.deepEqual(matchingProfile(profile).preferences.locations, ['Pune', 'Remote']);
   assert.equal(matchingProfile(profile).preferences.remoteOnly, true);
 });

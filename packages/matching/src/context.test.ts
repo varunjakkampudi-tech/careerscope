@@ -25,7 +25,7 @@ function profile(
   } = {},
 ): MatchableProfile {
   return {
-    candidate: { location: 'Hyderabad, India', ...overrides.candidate },
+    candidate: { location: 'Hyderabad, India', education: [], ...overrides.candidate },
     preferences: {
       titles: ['Full Stack Software Engineer'],
       techStack: ['React', 'Node.js'],
@@ -65,6 +65,29 @@ describe('buildCandidateContext', () => {
     expect(ctx.yearsOfExperience).toBe(4);
     expect(ctx.resumeConsidered).toBe(false);
     expect(ctx.resumeSkills).toEqual([]);
+  });
+
+  it('passes bounded, deduped candidate and parsed resume education claims into matching', () => {
+    const ctx = buildCandidateContext(
+      profile({
+        candidate: { education: ['BSc Computer Science', '  '] },
+        derived: derived({
+          education: ['MSc Data Science'],
+          educationClaims: [
+            {
+              normalizedText: 'MSc Data Science',
+              sourceText: 'MSc Data Science',
+              sourceSection: 'education',
+              extractionConfidence: 'probable',
+              credentialStatus: 'unverified',
+              degree: 'MSc',
+              fieldOfStudy: 'Data Science',
+            },
+          ],
+        }),
+      }),
+    );
+    expect(ctx.education).toEqual(['BSc Computer Science', 'MSc Data Science']);
   });
 
   // The exact edge case CS-22's third acceptance criterion is written around:
@@ -227,7 +250,7 @@ describe('buildCandidateContext — home location', () => {
   // exactly as the API does, which is the shape that actually ships.
   it('accepts a stored profile carrying fields the engine does not consume', () => {
     const stored = {
-      candidate: { location: 'Hyderabad, India' },
+      candidate: { location: 'Hyderabad, India', education: [] },
       preferences: {
         titles: ['Full Stack Software Engineer'],
         techStack: ['React'],
