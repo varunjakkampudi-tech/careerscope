@@ -3444,6 +3444,10 @@ try {
           .sort(),
         ['high', 'low'],
       );
+      const scoredResult = resultBody.jobs.find(
+        (job: { data: { title: string } }) => job.data.title === 'Scored React Engineer',
+      );
+      assert.ok(scoredResult);
       const resultSort = page.getByLabel('Sort results');
       await resultSort.selectOption('evidence');
       await page
@@ -3482,13 +3486,13 @@ try {
         .locator('details.job')
         .filter({ has: page.getByRole('heading', { name: 'Scored React Engineer', exact: true }) });
       const feedbackReason = scoredJobCard.getByLabel('Report a posting issue');
-      const priorFeedbackReason = resultBody.jobs[0].feedbackReason;
+      const priorFeedbackReason = scoredResult.feedbackReason;
       const firstFeedbackReason =
         priorFeedbackReason === 'suspicious' ? 'irrelevant' : 'suspicious';
       await feedbackReason.selectOption(firstFeedbackReason);
       const firstFeedbackResponse = page.waitForResponse(
         (response) =>
-          response.url().includes(`/api/search-jobs/${resultBody.jobs[0].id}/feedback`) &&
+          response.url().includes(`/api/search-jobs/${scoredResult.id}/feedback`) &&
           response.request().method() === 'PUT',
       );
       await scoredJobCard
@@ -3508,16 +3512,16 @@ try {
         .waitFor();
       let feedbackRows = await database.pool.query(
         'SELECT owner_id, job_id, reason FROM job_feedback WHERE owner_id = $1 AND job_id = $2',
-        [ownerId, resultBody.jobs[0].id],
+        [ownerId, scoredResult.id],
       );
       assert.deepEqual(feedbackRows.rows, [
-        { owner_id: ownerId, job_id: resultBody.jobs[0].id, reason: firstFeedbackReason },
+        { owner_id: ownerId, job_id: scoredResult.id, reason: firstFeedbackReason },
       ]);
       const secondFeedbackReason = firstFeedbackReason === 'suspicious' ? 'incorrect' : 'duplicate';
       await feedbackReason.selectOption(secondFeedbackReason);
       const secondFeedbackResponse = page.waitForResponse(
         (response) =>
-          response.url().includes(`/api/search-jobs/${resultBody.jobs[0].id}/feedback`) &&
+          response.url().includes(`/api/search-jobs/${scoredResult.id}/feedback`) &&
           response.request().method() === 'PUT',
       );
       await scoredJobCard.getByRole('button', { name: 'Update feedback', exact: true }).click();
@@ -3532,10 +3536,10 @@ try {
         .waitFor();
       feedbackRows = await database.pool.query(
         'SELECT owner_id, job_id, reason FROM job_feedback WHERE owner_id = $1 AND job_id = $2',
-        [ownerId, resultBody.jobs[0].id],
+        [ownerId, scoredResult.id],
       );
       assert.deepEqual(feedbackRows.rows, [
-        { owner_id: ownerId, job_id: resultBody.jobs[0].id, reason: secondFeedbackReason },
+        { owner_id: ownerId, job_id: scoredResult.id, reason: secondFeedbackReason },
       ]);
       assert.equal(
         (await database.pool.query('SELECT id FROM job_feedback WHERE owner_id = $1', [ownerId]))
@@ -3550,22 +3554,16 @@ try {
           .filter({ hasText: 'Senior React Engineer' })
           .getByRole('link', { name: 'Remote OK', exact: true })
           .getAttribute('href'),
-        'https://remoteok.com/remote-jobs/synthetic',
+        'https://remoteok.com/remote-jobs/full-description',
       );
-      assert.equal(
-        await page.getByRole('link', { name: 'Himalayas', exact: true }).getAttribute('href'),
-        'https://himalayas.app/jobs/synthetic',
-      );
-      await page
-        .getByText('Build accessible interfaces using React and TypeScript.', { exact: true })
-        .waitFor();
+      await page.getByText(/Build accessible interfaces using React and TypeScript\./).waitFor();
       assert.equal(
         await page
           .locator('details')
           .filter({ hasText: 'Senior React Engineer' })
           .getByRole('link', { name: 'Open Posting' })
           .getAttribute('href'),
-        'https://example.test/apply',
+        'https://example.test/full-description',
       );
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });

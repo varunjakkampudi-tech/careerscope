@@ -7442,7 +7442,7 @@
       "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
       "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
       "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "bcd66d971d0de4752e068e3c80728ad3b06d1d509d34c040bf4e4bdd78ef8834",
+      "sha256": "0f68a8c3dac1dffe392d3a4c018666b56e4c687ad3846724c7173a7b7d3532b1",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
