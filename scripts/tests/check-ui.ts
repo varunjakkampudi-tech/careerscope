@@ -329,13 +329,26 @@ try {
           source: 'remoteok' as const,
           sourceJobId: 'scored-fixture',
           title: 'Scored React Engineer',
-          companyName: 'Flagged Technology',
+          companyName: 'Example Technology',
           location: 'Remote',
           isRemote: true,
           description: 'Build React and TypeScript interfaces.',
           hasFullDescription: false,
           sourceUrl: 'https://remoteok.com/remote-jobs/scored',
           applyUrl: 'https://example.test/scored',
+        };
+        yield {
+          source: 'remoteok' as const,
+          sourceJobId: 'full-description-fixture',
+          title: 'Senior React Engineer',
+          companyName: 'Example Technology',
+          location: 'Remote',
+          isRemote: true,
+          description:
+            'Build accessible interfaces using React and TypeScript. Collaborate with product and design teams to deliver reliable experiences.',
+          hasFullDescription: true,
+          sourceUrl: 'https://remoteok.com/remote-jobs/full-description',
+          applyUrl: 'https://example.test/full-description',
         };
       },
     },
@@ -351,7 +364,7 @@ try {
           preferences: {
             titles: ['React Engineer'],
             techStack: ['React', 'TypeScript'],
-            excludeCompanies: ['Flagged Technology'],
+            excludeCompanies: [],
           },
           application: {},
         }),
@@ -359,12 +372,12 @@ try {
       now: Date.parse('2026-09-13T12:00:00Z'),
     },
   );
-  assert.equal(scored.jobs.length, 1);
+  assert.equal(scored.jobs.length, 2);
   const sourceOutcomes = [
     {
       source: 'remoteok' as const,
       status: 'completed' as const,
-      accepted: 1,
+      accepted: 2,
       limited: false,
       errorCode: null,
     },
@@ -376,30 +389,7 @@ try {
       errorCode: 'source_permission_pending' as const,
     },
   ];
-  await database.completeCollection(
-    command,
-    fence,
-    [
-      {
-        fingerprint: 'browser-fixture',
-        sourceJobId: 'browser-fixture',
-        title: 'Senior React Engineer',
-        company: 'Example Technology',
-        location: 'Remote',
-        description: 'Build accessible interfaces using React and TypeScript.',
-        source: 'himalayas',
-        sourceUrl: 'https://himalayas.app/jobs/synthetic',
-        sourceLinks: [
-          { source: 'himalayas', url: 'https://himalayas.app/jobs/synthetic' },
-          { source: 'remoteok', url: 'https://remoteok.com/remote-jobs/synthetic' },
-        ],
-        applyUrl: 'https://example.test/apply',
-        postedAt: null,
-      },
-      ...scored.jobs,
-    ],
-    sourceOutcomes,
-  );
+  await database.completeCollection(command, fence, scored.jobs, sourceOutcomes);
   // A separate approved-source failure keeps the retry control covered without
   // making the historical Himalayas fixture look retryable before rights are
   // recorded. Both the account and provider data are synthetic.
