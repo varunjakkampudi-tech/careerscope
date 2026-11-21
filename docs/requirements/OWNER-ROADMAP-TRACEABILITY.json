@@ -1619,11 +1619,15 @@
       "stageTitle": "Advanced matching and eligibility",
       "title": "Industry/domain fit",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/shared/src/types.ts",
+        "packages/matching/src/context.ts",
+        "docs/GAP-MATRIX.md"
+      ],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "The candidate matching contract contains skills, titles, experience, location, compensation and employment preferences but no structured industry/domain history or preference. No industry score is inferred from unrelated profile text. A privacy-reviewed candidate input, job-side taxonomy/normalization and labeled evaluation corpus are prerequisites; owner acceptance is pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1632,11 +1636,14 @@
       "stageTitle": "Advanced matching and eligibility",
       "title": "Compensation fit",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/matching/src/dimensions.ts",
+        "packages/matching/src/dimensions.test.ts"
+      ],
+      "tests": ["packages/matching/src/dimensions.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Deterministic annual-range scoring, undisclosed salary, absent candidate expectations and known currency mismatch behavior are covered. Calibration across salary markets and owner acceptance remain open.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1645,11 +1652,11 @@
       "stageTitle": "Advanced matching and eligibility",
       "title": "Required vs preferred skills",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": ["packages/matching/src/demands.ts", "packages/matching/src/demands.test.ts"],
+      "tests": ["packages/matching/src/demands.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Heading and inline-softener rules distinguish required from preferred skills, but extraction accuracy is not evaluated on a representative labeled corpus and owner acceptance remains open.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1658,11 +1665,15 @@
       "stageTitle": "Advanced matching and eligibility",
       "title": "Missing-skills explanation",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/matching/src/score.ts",
+        "apps/web/src/components/match-evidence.tsx",
+        "packages/matching/src/score.test.ts"
+      ],
+      "tests": ["packages/matching/src/score.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Deterministic missing demanded skills are persisted and shown with match evidence. Extraction and explanation quality remain unvalidated on representative job/resume corpora; owner acceptance remains open.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1671,11 +1682,14 @@
       "stageTitle": "Advanced matching and eligibility",
       "title": "Match dimension visualization",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/match-evidence.tsx",
+        "apps/web/src/app/(app)/matching/page.tsx"
+      ],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Accessible textual per-dimension percentages/reasons and shared weight definitions exist. A dedicated graphical breakdown and owner acceptance are not evidenced.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1684,11 +1698,15 @@
       "stageTitle": "Advanced matching and eligibility",
       "title": "Versioned matching weights",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/shared/src/constants.ts",
+        "packages/matching/src/score.ts",
+        "packages/matching/src/score.test.ts"
+      ],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Shared deterministic weights and scoringVersion are present and tested. Historical score migration/display behavior and owner acceptance of weight policy remain unverified.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1697,11 +1715,11 @@
       "stageTitle": "Advanced matching and eligibility",
       "title": "Candidate profile change triggers",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "currentStatus": "partial",
+      "evidence": ["apps/workers/search/src", "packages/matching/src/score.ts"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Search runs score jobs using the profile context available at search time. Durable recomputation of previously saved matches after profile changes is not evidenced; owner acceptance remains open.",
       "scopeDisposition": "in-scope"
     },
     {

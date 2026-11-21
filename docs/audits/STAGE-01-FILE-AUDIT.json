@@ -1884,14 +1884,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "Focused content and implementation review",
+      "reviewMethod": "Focused owner-roadmap evidence review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for CareerScope owner item 7.05. Metro matching requires complete normalized place-name tokens; regression coverage prevents substring false positives while preserving longer location descriptions. Item remains partial pending representative global calibration and owner acceptance.",
-      "evidence": "CareerScope owner item 7.05 on codex/stage07-item705-location-fit; focused Node 22.23.2 domain suite passed 969/969, lint/typecheck/traceability passed; Node 24 hosted CI and independent review pending.",
-      "reviewer": "Codex (CareerScope owner item 7.05 review)",
-      "sha256": "a37122df7d3317488dde2acfcbc7573f5dc34740728e56e9254da114474016ce",
+      "observations": "Reviewed Stage 07 item evidence and gaps, including location, industry/domain, compensation, required/preferred asks, missing-skill explanations, dimension display, versioning, profile-triggered recomputation and conditional semantic/fairness work.",
+      "evidence": "Current Stage 07 item evidence and gaps; exact-head Node 24 CI and independent review pending.",
+      "reviewer": "Codex (CareerScope Stage 07 evidence review)",
+      "sha256": "cb5e24db8fa916e94d6407c2859e89a1e0aaf6863053cf2591305c866af258f8",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2018,6 +2018,12 @@
           "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
           "observations": "Prior review and evidence retained; focused Stage 7.05 location-fit changes and checks recorded in the active audit entry.",
           "evidence": "Local Node 22.23.2: matching domain suite passed 969/969; lint, typecheck including 98 canonical tests, Prettier, requirement traceability and git diff --check passed. Repository requires Node 24; hosted exact-head CI and independent review pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 07 evidence review)",
+          "sha256": "a37122df7d3317488dde2acfcbc7573f5dc34740728e56e9254da114474016ce",
+          "observations": "Retained prior review history; updated current evidence and open gaps for owner roadmap items 7.06 to 7.16.",
+          "evidence": "Static inventory of deterministic matching contracts/tests and unresolved evaluation data. Node 22 local matching suite previously passed 969/969; exact Node 24 CI on PR #128 is running."
         }
       ]
     },
@@ -2292,14 +2298,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "Focused content and implementation review",
+      "reviewMethod": "Focused owner-roadmap evidence review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for CareerScope owner item 7.05. Metro matching requires complete normalized place-name tokens; regression coverage prevents substring false positives while preserving longer location descriptions. Item remains partial pending representative global calibration and owner acceptance.",
-      "evidence": "CareerScope owner item 7.05 on codex/stage07-item705-location-fit; focused Node 22.23.2 domain suite passed 969/969, lint/typecheck/traceability passed; Node 24 hosted CI and independent review pending.",
-      "reviewer": "Codex (CareerScope owner item 7.05 review)",
-      "sha256": "fe528498376f1859b65969623ab163d8319367ca1498a946b3a8d4535db36e18",
+      "observations": "Reviewed Stage 07 item evidence and gaps, including location, industry/domain, compensation, required/preferred asks, missing-skill explanations, dimension display, versioning, profile-triggered recomputation and conditional semantic/fairness work.",
+      "evidence": "Current Stage 07 item evidence and gaps; exact-head Node 24 CI and independent review pending.",
+      "reviewer": "Codex (CareerScope Stage 07 evidence review)",
+      "sha256": "933d94d3e1c4539019172ece14c667305222d79858163190eb76902b4fcae5a8",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2432,6 +2438,12 @@
           "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
           "observations": "Prior review and evidence retained; focused Stage 7.05 location-fit changes and checks recorded in the active audit entry.",
           "evidence": "Local Node 22.23.2: matching domain suite passed 969/969; lint, typecheck including 98 canonical tests, Prettier, requirement traceability and git diff --check passed. Repository requires Node 24; hosted exact-head CI and independent review pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 07 evidence review)",
+          "sha256": "fe528498376f1859b65969623ab163d8319367ca1498a946b3a8d4535db36e18",
+          "observations": "Retained prior review history; updated current evidence and open gaps for owner roadmap items 7.06 to 7.16.",
+          "evidence": "Static inventory of deterministic matching contracts/tests and unresolved evaluation data. Node 22 local matching suite previously passed 969/969; exact Node 24 CI on PR #128 is running."
         }
       ]
     },
@@ -2880,14 +2892,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "Focused content and implementation review",
+      "reviewMethod": "Focused owner-roadmap evidence review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed for CareerScope owner item 7.05. Metro matching requires complete normalized place-name tokens; regression coverage prevents substring false positives while preserving longer location descriptions. Item remains partial pending representative global calibration and owner acceptance.",
-      "evidence": "CareerScope owner item 7.05 on codex/stage07-item705-location-fit; focused Node 22.23.2 domain suite passed 969/969, lint/typecheck/traceability passed; Node 24 hosted CI and independent review pending.",
-      "reviewer": "Codex (CareerScope owner item 7.05 review)",
-      "sha256": "6719ad14ca6ee79212216b4c04054a5c80007b21e7ccf09c8e69f1f0d6e3feac",
+      "observations": "Reviewed Stage 07 item evidence and gaps, including location, industry/domain, compensation, required/preferred asks, missing-skill explanations, dimension display, versioning, profile-triggered recomputation and conditional semantic/fairness work.",
+      "evidence": "Current Stage 07 item evidence and gaps; exact-head Node 24 CI and independent review pending.",
+      "reviewer": "Codex (CareerScope Stage 07 evidence review)",
+      "sha256": "ef0b861d25ba9bce6847e98465967fc88a0159f010237c72a8b4101edf89bcba",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3002,6 +3014,12 @@
           "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
           "observations": "Prior review and evidence retained; focused Stage 7.05 location-fit changes and checks recorded in the active audit entry.",
           "evidence": "Local Node 22.23.2: matching domain suite passed 969/969; lint, typecheck including 98 canonical tests, Prettier, requirement traceability and git diff --check passed. Repository requires Node 24; hosted exact-head CI and independent review pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 07 evidence review)",
+          "sha256": "6719ad14ca6ee79212216b4c04054a5c80007b21e7ccf09c8e69f1f0d6e3feac",
+          "observations": "Retained prior review history; updated current evidence and open gaps for owner roadmap items 7.06 to 7.16.",
+          "evidence": "Static inventory of deterministic matching contracts/tests and unresolved evaluation data. Node 22 local matching suite previously passed 969/969; exact Node 24 CI on PR #128 is running."
         }
       ]
     },
