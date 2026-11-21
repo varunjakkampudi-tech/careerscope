@@ -331,6 +331,20 @@ const searchRunSchema = z.object({
 });
 export const parseSearchRuns = parser(z.object({ items: z.array(searchRunSchema) }));
 
+const savedSearchSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  request: z.object({
+    query: z.string(),
+    sources: z.array(searchSourceSchema),
+    useProfileTitles: z.boolean().optional(),
+    origin: z.enum(['manual', 'scheduled']).optional(),
+  }),
+  createdAt: z.string(),
+});
+export const parseSavedSearches = parser(z.object({ items: z.array(savedSearchSchema) }));
+export const parseSavedSearch = parser(savedSearchSchema);
+
 const jobSourceCatalogSchema = z.object({
   items: z.array(
     z.object({

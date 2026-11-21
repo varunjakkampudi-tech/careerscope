@@ -5125,6 +5125,50 @@ try {
         );
       }
       await settled('deep link checks');
+      // Stage 08.04: a candidate can persist a validated search configuration,
+      // run it again, and remove it; the API remains the source of truth.
+      await page.goto(`${origin}/jobs?run=${fourId}`);
+      await page.getByRole('heading', { name: 'Find Your Next Role', exact: true }).waitFor();
+      await resultHeading.waitFor();
+      await page.getByLabel('Name this search').fill('Four source saved search');
+      const savedSearchCreate = page.waitForResponse(
+        (response) =>
+          response.url().endsWith('/api/saved-searches') && response.request().method() === 'POST',
+      );
+      await page.getByRole('button', { name: 'Save search', exact: true }).click();
+      const savedSearchResponse = await savedSearchCreate;
+      assert.equal(savedSearchResponse.status(), 201);
+      const savedSearch = await savedSearchResponse.json();
+      assert.equal(savedSearch.request.query, 'Four source acceptance');
+      assert.equal(savedSearch.request.sources.length, 4);
+      await page.getByText('Four source saved search', { exact: true }).waitFor();
+
+      const rerunSavedSearch = page.waitForResponse(
+        (response) =>
+          response.url().endsWith('/api/searches') && response.request().method() === 'POST',
+      );
+      await page.getByRole('button', { name: 'Run: Four source saved search' }).click();
+      const rerunResponse = await rerunSavedSearch;
+      assert.equal(rerunResponse.status(), 202);
+      const rerunPayload = (await rerunResponse.request().postDataJSON()) as {
+        query: string;
+        sources: string[];
+      };
+      assert.equal(rerunPayload.query, 'Four source acceptance');
+      assert.equal(rerunPayload.sources.length, 4);
+
+      const savedSearchDelete = page.waitForResponse(
+        (response) =>
+          response.url().endsWith(`/api/saved-searches/${savedSearch.id}`) &&
+          response.request().method() === 'DELETE',
+      );
+      await page.getByRole('button', { name: 'Delete: Four source saved search' }).click();
+      assert.equal((await savedSearchDelete).status(), 204);
+      assert.equal(
+        (await (await page.request.get(`${origin}/api/saved-searches`)).json()).items.length,
+        0,
+      );
+
       await page.goto(`${origin}/dashboard`);
       await page.getByRole('heading', { name: /^Good (morning|afternoon|evening)!$/ }).waitFor();
       // Dashboard "Recent Discovery" names the run it renders (F-3's other

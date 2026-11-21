@@ -340,12 +340,20 @@ missing from the tables in this file.
 | POST   | `/api/searches/:id/cancel` | yes  | yes  |
 | GET    | `/api/searches/:id/export` | yes  | no   |
 | GET    | `/api/searches/:id/events` | yes  | no   |
+| GET    | `/api/saved-searches`      | yes  | no   |
+| POST   | `/api/saved-searches`      | yes  | yes  |
+| DELETE | `/api/saved-searches/:id`  | yes  | yes  |
 
 `POST /api/searches` is idempotent per owner on `idempotencyKey`, enforced by the
 `search_owner_key` unique index rather than by a read-then-write check.
 
 `GET /api/searches/:id/events` is the SSE stream. See
 [SSE](#server-sent-events).
+
+Saved search configurations are candidate-owned and capped at 25 per account. Names are unique
+case-insensitively per owner; the validated query and source selection are stored separately from
+immutable search-run snapshots. Running one creates a new search and rechecks current source
+availability and permissions.
 
 ---
 
