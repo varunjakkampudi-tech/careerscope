@@ -2113,7 +2113,7 @@
       "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
       "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
       "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "128f6c6d3835cdab6480eef46b0f16fb47b926a9f0c3243ed21ee688f0e22946",
+      "sha256": "53e19b52955f3c4c673dfa63306f193ca45ac0c01ef6274015a62caef8218948",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2309,7 +2309,7 @@
       "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
       "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
       "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "12f0b4c533828c6878c1ea49b6d21f97a2319cd0fd3a9f4ab7fcc567fe72ffa9",
+      "sha256": "8746884893125cc07f6523f159c1cf06b7f311627cf79bba5cb77f6dc4dd479d",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
