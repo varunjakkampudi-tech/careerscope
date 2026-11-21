@@ -3518,6 +3518,23 @@ try {
         1,
         'changing feedback updates the existing owner/job row instead of creating a duplicate',
       );
+      const sourceFilter = page.getByRole('combobox', { name: 'Source', exact: true });
+      await sourceFilter.selectOption('remoteok');
+      assert.equal(await page.locator('details.job').count(), 1, 'source filter narrows results');
+      await sourceFilter.selectOption('all');
+      const minimumMatch = page.getByRole('combobox', { name: 'Minimum match', exact: true });
+      await minimumMatch.selectOption('80');
+      assert.equal(
+        await page.locator('details.job').count(),
+        0,
+        'minimum score excludes low and unscored jobs',
+      );
+      await page.getByRole('button', { name: 'Clear filter', exact: true }).click();
+      assert.equal(
+        await page.locator('details.job').count(),
+        2,
+        'clear action resets active filters',
+      );
       await page.getByText('Senior React Engineer', { exact: true }).click();
       assert.equal(
         await page

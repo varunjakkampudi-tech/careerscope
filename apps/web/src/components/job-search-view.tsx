@@ -159,6 +159,8 @@ function JobSearchWorkspace() {
   const owner = session.data?.owner;
   const [selected, setSelected] = useState<string | null>(null);
   const [filter, setFilter] = useState('');
+  const [resultSource, setResultSource] = useState('all');
+  const [minimumMatch, setMinimumMatch] = useState(0);
   const [sourceSelection, setSourceSelection] = useState<CreateSearch['sources'] | null>(null);
   const [useProfileTitles, setUseProfileTitles] = useState(false);
 
@@ -224,6 +226,8 @@ function JobSearchWorkspace() {
     onSuccess: (result) => {
       showRun(result.runId, 'replace');
       setFilter('');
+      setResultSource('all');
+      setMinimumMatch(0);
       exportSearch.reset();
       void cache.invalidateQueries({ queryKey: ['searches'] });
     },
@@ -315,10 +319,16 @@ function JobSearchWorkspace() {
     availableSources.has(source as LaunchSource),
   );
   const jobs = (
-    detail.data?.jobs.filter(({ data }) =>
-      `${data.title} ${data.company} ${data.location}`.toLowerCase().includes(filtered),
-    ) ?? []
+    detail.data?.jobs.filter(({ data }) => {
+      const matchesText = `${data.title} ${data.company} ${data.location}`
+        .toLowerCase()
+        .includes(filtered);
+      const matchesSource = resultSource === 'all' || data.source === resultSource;
+      const matchesScore = (data.match?.score ?? -1) >= minimumMatch;
+      return matchesText && matchesSource && matchesScore;
+    }) ?? []
   ).sort((a, b) => (b.data.match?.score ?? -1) - (a.data.match?.score ?? -1));
+  const hasResultFilters = !!filter || resultSource !== 'all' || minimumMatch > 0;
 
   return (
     <div className="workspace">
@@ -350,6 +360,8 @@ function JobSearchWorkspace() {
               onClick={() => {
                 showRun(run.id);
                 setFilter('');
+                setResultSource('all');
+                setMinimumMatch(0);
                 cancel.reset();
                 exportSearch.reset();
               }}
@@ -646,14 +658,49 @@ function JobSearchWorkspace() {
                 </button>
               )}
               {detail.data.jobs.length > 0 && (
-                <label className="filter">
-                  <span className="sr-only">Filter results</span>
-                  <input
-                    placeholder="Filter results"
-                    value={filter}
-                    onChange={(event) => setFilter(event.target.value)}
-                  />
-                </label>
+                <div className={styles.resultControls}>
+                  <label className="filter">
+                    <span>{t('filterResults')}</span>
+                    <input
+                      aria-label={t('filterResults')}
+                      placeholder={t('filterResults')}
+                      value={filter}
+                      onChange={(event) => setFilter(event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    <span>{t('filterBySource')}</span>
+                    <select
+                      aria-label={t('filterBySource')}
+                      value={resultSource}
+                      onChange={(event) => setResultSource(event.target.value)}
+                    >
+                      <option value="all">{t('allSources')}</option>
+                      {detail.data.jobs
+                        .map(({ data }) => data.source)
+                        .filter((source, index, all) => all.indexOf(source) === index)
+                        .map((source) => (
+                          <option key={source} value={source}>
+                            {sourceNames[source as keyof typeof sourceNames] ??
+                              SOURCE_LABELS[source as keyof typeof SOURCE_LABELS]}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                  <label>
+                    <span>{t('minimumMatch')}</span>
+                    <select
+                      aria-label={t('minimumMatch')}
+                      value={minimumMatch}
+                      onChange={(event) => setMinimumMatch(Number(event.target.value))}
+                    >
+                      <option value={0}>{t('anyMatch')}</option>
+                      <option value={60}>60%</option>
+                      <option value={70}>70%</option>
+                      <option value={80}>80%</option>
+                    </select>
+                  </label>
+                </div>
               )}
               {jobs.length === 0 && ['completed', 'partial'].includes(detail.data.status) && (
                 <div lang={locale}>
@@ -670,8 +717,15 @@ function JobSearchWorkspace() {
                         : t('noResultsMatchFilter')
                     }
                     action={
-                      detail.data.jobs.length > 0 && filter
-                        ? { label: t('clearSearchFilter'), onClick: () => setFilter('') }
+                      detail.data.jobs.length > 0 && hasResultFilters
+                        ? {
+                            label: t('clearSearchFilter'),
+                            onClick: () => {
+                              setFilter('');
+                              setResultSource('all');
+                              setMinimumMatch(0);
+                            },
+                          }
                         : undefined
                     }
                   />

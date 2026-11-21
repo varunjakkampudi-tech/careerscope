@@ -1,5 +1,11 @@
 # Gap matrix
 
+## Owner roadmap: Stage 08 — real-time job search and discovery
+
+| Item | Feature            | Status  | Evidence                                                                                                                                                                 | Remaining gap                                                                                                                                                             |
+| ---- | ------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 8.02 | Advanced filtering | Partial | Search results provide text, source, and minimum match-score filters; browser coverage asserts source narrowing, score threshold exclusion, and clearing active filters. | Rich filters for salary and workplace are unavailable because these attributes are not present on persisted collected results; owner acceptance and exact-head CI remain. |
+
 ## Stage 05: multi-provider job discovery
 
 | Item | Feature                                  | Status  | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Remaining gap                                                                                                                                                                                                                                                                                                    |

@@ -52,6 +52,36 @@
   background: var(--surface);
 }
 
+.resultControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  margin-block: 12px;
+}
+
+.resultControls label {
+  display: grid;
+  gap: 4px;
+  min-width: min(100%, 180px);
+}
+
+.resultControls select,
+.resultControls input {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--dash-control-border, #7c879f);
+  border-radius: 5px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.resultControls :is(select, input):focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .discoverySelect:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 3px;

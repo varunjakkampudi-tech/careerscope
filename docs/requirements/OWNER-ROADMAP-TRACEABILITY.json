@@ -1771,11 +1771,15 @@
       "stageTitle": "Real-time job search and discovery",
       "title": "Advanced filtering",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/job-search-view.tsx",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md"
+      ],
+      "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Exact-head browser CI and owner acceptance remain pending. Salary and workplace filters require persisted job attributes that are not currently available.",
       "scopeDisposition": "in-scope"
     },
     {
