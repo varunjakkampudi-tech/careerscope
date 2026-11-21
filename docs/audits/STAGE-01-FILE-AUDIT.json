@@ -261,13 +261,13 @@
     {
       "path": "apps/api/src/app.ts",
       "category": "backend-api",
-      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
-      "state": "partially-reviewed",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex (current checklist implementation)",
+      "reviewer": "Codex",
       "sha256": "5a6c8d9b24c7235bdddaa2006d7cd09166a9222b411df94383fbbeda05c1dea3"
     },
     {
@@ -421,8 +421,8 @@
     {
       "path": "apps/api/src/openapi.ts",
       "category": "backend-api",
-      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
-      "state": "partially-reviewed",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [
         {
@@ -433,9 +433,9 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex (current checklist implementation)",
+      "reviewer": "Codex",
       "sha256": "22440d756dbf9f598809513f1f5ab93d62ad51aaa617dfa7cb989ca3f420e0a3"
     },
     {
@@ -497,6 +497,18 @@
       "evidence": "Complete tracked file read on codex/stage01-item-101-audit; SHA-256 records reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "2037f7f0e8149e08feb35f18b23dd1d275f65e193753608e18408563e3e4e8de"
+    },
+    {
+      "path": "apps/api/src/resume-drafts.integration.test.ts",
+      "category": "backend-api",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "evidence": "",
+      "reviewer": "Codex",
+      "sha256": "097879c437a8df1a56034fadaff34cb73178d9cda8f9a22145288120a6b5c165"
     },
     {
       "path": "apps/api/src/resumes.integration.test.ts",
@@ -1207,8 +1219,8 @@
     {
       "path": "apps/web/src/components/profile-editor.tsx",
       "category": "frontend",
-      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
-      "state": "partially-reviewed",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [
         {
@@ -1219,9 +1231,9 @@
           "remediation": "Prevent the Continue click default and key the Continue and Save and finish buttons as distinct nodes; browser acceptance verifies no pre-final submission and clicks the final control."
         }
       ],
-      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex (current checklist implementation)",
+      "reviewer": "Codex",
       "sha256": "cc6ad8cc5c767f2185dafc1e701b5603db970a93fe6f0bc52509cfac7e0f08b8"
     },
     {
@@ -1247,6 +1259,30 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "fec3ec66c4b31f5a584a1553857f93727ef7dcbaeb62631c6515380df71abd51"
+    },
+    {
+      "path": "apps/web/src/components/resume-builder.module.css",
+      "category": "frontend",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "evidence": "",
+      "reviewer": "Codex",
+      "sha256": "cadae6e5300192505fb197b3acb53a6a506a76946066ac9be4f7056507501c2e"
+    },
+    {
+      "path": "apps/web/src/components/resume-builder.tsx",
+      "category": "frontend",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "evidence": "",
+      "reviewer": "Codex",
+      "sha256": "e2f35479e1030943e7e75d60442eddf2769a0393f52818aacf96f8467893b6d1"
     },
     {
       "path": "apps/web/src/components/resume-panel.module.css",
@@ -1338,13 +1374,13 @@
     {
       "path": "apps/web/src/lib/api-schemas.ts",
       "category": "frontend",
-      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
-      "state": "partially-reviewed",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex (current checklist implementation)",
+      "reviewer": "Codex",
       "sha256": "3c387c47dd54581c16937c252aba002de71234cb03c6b29571b7c3dd0aa573a9"
     },
     {
@@ -1746,8 +1782,8 @@
     {
       "path": "docs/API-SURFACE.md",
       "category": "documentation",
-      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
-      "state": "partially-reviewed",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [
         {
@@ -1758,9 +1794,9 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex (current checklist implementation)",
+      "reviewer": "Codex",
       "sha256": "d4e156b04dc8d21ea8b7474846524b245533a63c8376a3207f5623ff86279346"
     },
     {
@@ -1822,8 +1858,8 @@
     {
       "path": "docs/DATA-MODEL.md",
       "category": "documentation",
-      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
-      "state": "partially-reviewed",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [
         {
@@ -1834,9 +1870,9 @@
           "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
         }
       ],
-      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex (current checklist implementation)",
+      "reviewer": "Codex",
       "sha256": "7767b756df2429df11e8df389a25574dfdf4bfca0f1ebba5952586868f0bfeb8"
     },
     {
@@ -2870,13 +2906,13 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
-      "state": "partially-reviewed",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex (current checklist implementation)",
+      "reviewer": "Codex",
       "sha256": "f12b8bc10a2de59aaa79701f6c20364879836b0af7008db2f7ecace787a114fa",
       "history": [
         {
@@ -4054,6 +4090,18 @@
       "sha256": "d35552c187eb6dc3a885ee028bc960803ac1fbf015a1de240f8871b8fa03d216"
     },
     {
+      "path": "migrations/0007_resume_drafts.sql",
+      "category": "database-migration",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "evidence": "",
+      "reviewer": "Codex",
+      "sha256": "087b7704c08b28eacba5b5db883d809ae6b8db13f40fa8115e1bbd52a94ce2bf"
+    },
+    {
       "path": "migrations/meta/0000_snapshot.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
@@ -4134,16 +4182,28 @@
       "evidence": ""
     },
     {
+      "path": "migrations/meta/0007_snapshot.json",
+      "category": "generated-lockfile-or-snapshot",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
+    },
+    {
       "path": "migrations/meta/_journal.json",
       "category": "generated-lockfile-or-snapshot",
-      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
-      "state": "partially-reviewed",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex (current checklist implementation)",
-      "sha256": "0bdff225a72481f7bb40df2cb8b16ce10eb7a1a9285a37e1fad4b07429b36ef5"
+      "reviewer": "Codex",
+      "sha256": "83d1ee598e918d68b542f3622a7574859ef3562ea88ad8bc6367119618b28006"
     },
     {
       "path": "package-lock.json",
@@ -4160,13 +4220,13 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
-      "state": "partially-reviewed",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex (current checklist implementation)",
+      "reviewer": "Codex",
       "sha256": "b3b26916562f5c8dabd8e568654394d84096248e4f1b5df1c8f2f9ca2ed24e23",
       "history": [
         {
@@ -4528,13 +4588,13 @@
     {
       "path": "packages/core/src/index.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
-      "state": "partially-reviewed",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex (current checklist implementation)",
+      "reviewer": "Codex",
       "sha256": "08df4d599d27010670591cfeafc26969adac4c3e51f7b10d77177732f5815ae5"
     },
     {
@@ -4826,6 +4886,30 @@
       "sha256": "2c7ad236e361def9e4f0427e400c89dae4fbef55f13cf576ddfd603802d59601"
     },
     {
+      "path": "packages/core/src/resume-drafts.test.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "evidence": "",
+      "reviewer": "Codex",
+      "sha256": "d2c74f15b2097c7e716c637ff38c094cd7cc5f9b78e42071f74de12981e7518f"
+    },
+    {
+      "path": "packages/core/src/resume-drafts.ts",
+      "category": "shared-domain-package",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "evidence": "",
+      "reviewer": "Codex",
+      "sha256": "f2911552dc146ed096bc63593aafc0e5cccde4644c56646c831e6de9fb3e6d30"
+    },
+    {
       "path": "packages/core/src/resume-parser-child.ts",
       "category": "shared-domain-package",
       "reviewMethod": "content-read",
@@ -4972,8 +5056,8 @@
     {
       "path": "packages/core/src/schema.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
-      "state": "partially-reviewed",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [
         {
@@ -4984,9 +5068,9 @@
           "remediation": "Add a lower-case check in a migration after verifying existing data. Recorded for the next migration window; no migration is added in Stage 01 to avoid rewriting applied data."
         }
       ],
-      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex (current checklist implementation)",
+      "reviewer": "Codex",
       "sha256": "d19448eb49ebdc6363b4dba4b1040b12c78e3df2001ae20a2fb3ff8c4cc4a4a0"
     },
     {
@@ -7413,8 +7497,8 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
-      "state": "partially-reviewed",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [
         {
@@ -7439,9 +7523,9 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex (current checklist implementation)",
+      "reviewer": "Codex",
       "sha256": "192257a2f473a5a1611179808eeb45966d948d53a39534d7ef7f2a3d7174d146",
       "history": [
         {
