@@ -1540,9 +1540,7 @@
       "category": "frontend",
       "reviewMethod": "content-read",
       "state": "reviewed",
-      "concerns": [
-        "localStorage access may throw in restricted browser contexts"
-      ],
+      "concerns": ["localStorage access may throw in restricted browser contexts"],
       "findings": [
         {
           "id": "S1-F057",
@@ -2311,7 +2309,7 @@
       "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
       "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
       "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "8a1ec95f5320c8c45eeab9d30330472f2c47c47cd3e1ec52ccfde1fecf804c5a",
+      "sha256": "a43eaec5b0c82c09b8acd89c1c5c3e829155e56853e2e4ff2ff79a4e117fa23b",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
