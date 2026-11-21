@@ -20,6 +20,7 @@ import {
   users,
   LeadRepository,
   ProfileRepository,
+  MarketRepository,
   sessionCookie,
   writableProfileSchema,
   logger,
@@ -2044,6 +2045,24 @@ test('partial search outcomes are atomic, owner-scoped, terminal and usable thro
     assert.equal(await database.completeCollection(command, fence, [job], outcomes), true);
     assert.equal(await database.executionStatus(command.id), 'completed');
     assert.deepEqual((await database.getSearch(ownerId, search.id))?.sourceOutcomes, outcomes);
+    const market = new MarketRepository(database.pool);
+    const firstSighting = await database.pool.query<{
+      firstSeenAt: Date;
+      lastSeenAt: Date;
+      sightings: number;
+    }>(
+      `SELECT first_seen_at AS "firstSeenAt", last_seen_at AS "lastSeenAt", sightings
+       FROM job_sightings WHERE owner_id = $1 AND fingerprint = $2`,
+      [ownerId, job.fingerprint],
+    );
+    assert.equal(firstSighting.rows.length, 1);
+    assert.equal(firstSighting.rows[0]!.sightings, 1);
+    const firstSeenAt = firstSighting.rows[0]!.firstSeenAt.getTime();
+    const firstLastSeenAt = firstSighting.rows[0]!.lastSeenAt.getTime();
+    const marketFirstSighting = await market.posting(ownerId, job.fingerprint);
+    assert.ok(marketFirstSighting);
+    assert.equal(new Date(marketFirstSighting.firstSeenAt).getTime(), firstSeenAt);
+    assert.equal(new Date(marketFirstSighting.lastSeenAt).getTime(), firstLastSeenAt);
     for (const count of [3, 4, 5]) {
       const sources = (['remoteok', 'himalayas', 'greenhouse', 'lever', 'workable'] as const).slice(
         0,
@@ -2065,10 +2084,29 @@ test('partial search outcomes are atomic, owner-scoped, terminal and usable thro
         limited: false,
         errorCode: null,
       }));
+      if (count === 3) await delay(20);
       assert.equal(
         await database.completeCollection(expandedCommand, expandedFence, [job], expandedOutcomes),
         true,
       );
+      if (count === 3) {
+        const updatedSighting = await database.pool.query<{
+          firstSeenAt: Date;
+          lastSeenAt: Date;
+          sightings: number;
+        }>(
+          `SELECT first_seen_at AS "firstSeenAt", last_seen_at AS "lastSeenAt", sightings
+           FROM job_sightings WHERE owner_id = $1 AND fingerprint = $2`,
+          [ownerId, job.fingerprint],
+        );
+        assert.equal(updatedSighting.rows[0]!.sightings, 2);
+        assert.equal(updatedSighting.rows[0]!.firstSeenAt.getTime(), firstSeenAt);
+        assert.ok(updatedSighting.rows[0]!.lastSeenAt.getTime() > firstLastSeenAt);
+        const marketUpdatedSighting = await market.posting(ownerId, job.fingerprint);
+        assert.ok(marketUpdatedSighting);
+        assert.equal(new Date(marketUpdatedSighting.firstSeenAt).getTime(), firstSeenAt);
+        assert.ok(new Date(marketUpdatedSighting.lastSeenAt).getTime() > firstLastSeenAt);
+      }
       assert.deepEqual(
         (await database.getSearch(ownerId, expanded.id))?.sourceOutcomes,
         expandedOutcomes,

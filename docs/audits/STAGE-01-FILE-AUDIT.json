@@ -1888,10 +1888,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+      "observations": "Reviewed the Stage 06 item 6.01 change and its traceability. Stage 06 evidence and remaining acceptance gates are recorded without claiming item completion.",
+      "evidence": "Current Stage 06 implementation branch codex/stage06-item601-seen-timestamps; prior active audit snapshot is retained with its original reviewer attribution in history.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+      "sha256": "27986b0627adef794cf223b922dfee1ea541567aff6c851e450ed47c2ecc9fc2",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2012,6 +2012,13 @@
           "sha256": "da3b553a8b588deb6952f61cd3f2440c5810c59a294fbda85f29215eb4539433",
           "observations": "Reviewed Stage 05 items 5.08 and 5.09 evidence and gaps; both remain partial and no external source acceptance is claimed.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewedOn": "2026-11-21",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+          "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+          "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review."
         }
       ]
     },
@@ -2086,10 +2093,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
+      "observations": "Reviewed the Stage 06 item 6.01 change and its traceability. Stage 06 evidence and remaining acceptance gates are recorded without claiming item completion.",
+      "evidence": "Current Stage 06 implementation branch codex/stage06-item601-seen-timestamps; prior active audit snapshot is retained with its original reviewer attribution in history.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+      "sha256": "72f35e183f8dd8320954367ee76568654b051fb928db0910652b8213c84422c8",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2228,6 +2235,20 @@
           "sha256": "9dcdfecb8ac4591ecf0fc959813bbd5bb6f74411ddd3c2c0374fc03bd52208b4",
           "observations": "Reviewed Stage 05 item 5.08 and 5.09 status, focused test/build evidence, and remaining adapter-mapping and false-merge limitations.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewedOn": "2026-11-21",
+          "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+          "sha256": "eb4ab6e0867f69ffec7aa7737279c13644f0ae741369aaafa4a9eaa84894b423",
+          "observations": "Updated or reviewed for Stage 06 item 6.01 traceability and exact implementation evidence; historical entry retained.",
+          "evidence": "Stage 06 item 6.01 implementation branch codex/stage06-item601-seen-timestamps."
+        },
+        {
+          "reviewedOn": "2026-11-21",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
+          "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+          "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review."
         }
       ]
     },
@@ -2282,10 +2303,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+      "observations": "Reviewed the Stage 06 item 6.01 change and its traceability. Stage 06 evidence and remaining acceptance gates are recorded without claiming item completion.",
+      "evidence": "Current Stage 06 implementation branch codex/stage06-item601-seen-timestamps; prior active audit snapshot is retained with its original reviewer attribution in history.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+      "sha256": "f2f2a893807b89e6f3c9769ce690567156c20702e1d7cdacdf4dcf64522b548a",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2412,6 +2433,13 @@
           "sha256": "d08de3ad68f62e21c10744dc048c1e91a6c2f831382d1e8efe31b8ee32ab3b4d",
           "observations": "Reviewed item-specific Stage 05 normalization and deduplication test evidence and exact-head gates.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewedOn": "2026-11-21",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+          "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+          "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases."
         }
       ]
     },
@@ -2565,7 +2593,7 @@
       "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
       "evidence": "",
       "reviewer": "",
-      "sha256": ""
+      "sha256": "10d287b666e6375c4f0f4b79c8b404808220396cbbde60723bcc9e9f0e13d27b"
     },
     {
       "path": "docs/audits/STAGE-01-FILE-AUDIT.md",
@@ -2850,10 +2878,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+      "observations": "Reviewed the Stage 06 item 6.01 change and its traceability. Stage 06 evidence and remaining acceptance gates are recorded without claiming item completion.",
+      "evidence": "Current Stage 06 implementation branch codex/stage06-item601-seen-timestamps; prior active audit snapshot is retained with its original reviewer attribution in history.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+      "sha256": "99abc94a9e5fabaa7ddabeb67eae8440ff2902930f9942b0686ccc60bb5da00a",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2962,6 +2990,13 @@
           "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
           "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewedOn": "2026-11-21",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+          "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap."
         }
       ]
     },
@@ -7575,10 +7610,19 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed migration fixture and persistence assertions for resume version metadata.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "b0edc933184e36519e769294c25b3e43ab0972ef123cc797f0c653d0fdb0656f"
+      "observations": "Reviewed the Stage 06 item 6.01 change and its traceability. Regression follows the real collection persistence path and checks first/last timestamps, repeat sightings, and the market read model using Date-compatible millisecond comparisons.",
+      "evidence": "Current Stage 06 implementation branch codex/stage06-item601-seen-timestamps; prior active audit snapshot is retained with its original reviewer attribution in history.",
+      "reviewer": "Codex (CareerScope Stage 06 item 6.01)",
+      "sha256": "02b5c3453b5b2950f50bd5048b4696c774735447ed61f5015cf3959719f320f2",
+      "history": [
+        {
+          "reviewedOn": "2026-11-21",
+          "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+          "sha256": "b0edc933184e36519e769294c25b3e43ab0972ef123cc797f0c653d0fdb0656f",
+          "observations": "Reviewed migration fixture and persistence assertions for resume version metadata.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report."
+        }
+      ]
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",
