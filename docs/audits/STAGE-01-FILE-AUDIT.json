@@ -1884,14 +1884,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "Focused owner-roadmap evidence review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+      "observations": "Reviewed Stage 07 item evidence and gaps, including location, industry/domain, compensation, required/preferred asks, missing-skill explanations, dimension display, versioning, profile-triggered recomputation and conditional semantic/fairness work.",
+      "evidence": "Current Stage 07 item evidence and gaps; exact-head Node 24 CI and independent review pending.",
+      "reviewer": "Codex (CareerScope Stage 07 evidence review)",
+      "sha256": "cb5e24db8fa916e94d6407c2859e89a1e0aaf6863053cf2591305c866af258f8",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2012,6 +2012,18 @@
           "sha256": "da3b553a8b588deb6952f61cd3f2440c5810c59a294fbda85f29215eb4539433",
           "observations": "Reviewed Stage 05 items 5.08 and 5.09 evidence and gaps; both remain partial and no external source acceptance is claimed.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 7.05 evidence update)",
+          "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+          "observations": "Prior review and evidence retained; focused Stage 7.05 location-fit changes and checks recorded in the active audit entry.",
+          "evidence": "Local Node 22.23.2: matching domain suite passed 969/969; lint, typecheck including 98 canonical tests, Prettier, requirement traceability and git diff --check passed. Repository requires Node 24; hosted exact-head CI and independent review pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 07 evidence review)",
+          "sha256": "a37122df7d3317488dde2acfcbc7573f5dc34740728e56e9254da114474016ce",
+          "observations": "Retained prior review history; updated current evidence and open gaps for owner roadmap items 7.06 to 7.16.",
+          "evidence": "Static inventory of deterministic matching contracts/tests and unresolved evaluation data. Node 22 local matching suite previously passed 969/969; exact Node 24 CI on PR #128 is running."
         }
       ]
     },
@@ -2254,14 +2266,22 @@
     {
       "path": "docs/README.md",
       "category": "documentation",
-      "reviewMethod": "source review plus current item 1.01 change review",
+      "reviewMethod": "Focused content and implementation review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed the audit index: it accurately links the human-readable and machine-readable Stage 01 file audit and now states that npm run audit:stage01 enforces full coverage.",
-      "evidence": "Current audit refresh commit candidate based on origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; exact candidate SHA-256 recorded; new exact-head CI/review pending.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "d2e34505b004259829698be7adb5ac06224f377971ef6da3c367c05e8b72f1b1"
+      "observations": "Reviewed for CareerScope owner item 7.05. Metro matching requires complete normalized place-name tokens; regression coverage prevents substring false positives while preserving longer location descriptions. Item remains partial pending representative global calibration and owner acceptance.",
+      "evidence": "CareerScope owner item 7.05 on codex/stage07-item705-location-fit; focused Node 22.23.2 domain suite passed 969/969, lint/typecheck/traceability passed; Node 24 hosted CI and independent review pending.",
+      "reviewer": "Codex (CareerScope owner item 7.05 review)",
+      "sha256": "eb296d647d1cbe29f2b981e2ba4f2901de31411ed5783459135f0ab4bf79aa5a",
+      "history": [
+        {
+          "reviewer": "Codex (CareerScope owner item 7.05 evidence update)",
+          "sha256": "d2e34505b004259829698be7adb5ac06224f377971ef6da3c367c05e8b72f1b1",
+          "observations": "Prior review and evidence retained; focused Stage 7.05 location-fit changes and checks recorded in the active audit entry.",
+          "evidence": "Local Node 22.23.2: matching domain suite passed 969/969; lint, typecheck including 98 canonical tests, Prettier, requirement traceability and git diff --check passed. Repository requires Node 24; hosted exact-head CI and independent review pending."
+        }
+      ]
     },
     {
       "path": "docs/SECURITY.md",
@@ -2278,14 +2298,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "Focused owner-roadmap evidence review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+      "observations": "Reviewed Stage 07 item evidence and gaps, including location, industry/domain, compensation, required/preferred asks, missing-skill explanations, dimension display, versioning, profile-triggered recomputation and conditional semantic/fairness work.",
+      "evidence": "Current Stage 07 item evidence and gaps; exact-head Node 24 CI and independent review pending.",
+      "reviewer": "Codex (CareerScope Stage 07 evidence review)",
+      "sha256": "933d94d3e1c4539019172ece14c667305222d79858163190eb76902b4fcae5a8",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2412,6 +2432,18 @@
           "sha256": "d08de3ad68f62e21c10744dc048c1e91a6c2f831382d1e8efe31b8ee32ab3b4d",
           "observations": "Reviewed item-specific Stage 05 normalization and deduplication test evidence and exact-head gates.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 7.05 evidence update)",
+          "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+          "observations": "Prior review and evidence retained; focused Stage 7.05 location-fit changes and checks recorded in the active audit entry.",
+          "evidence": "Local Node 22.23.2: matching domain suite passed 969/969; lint, typecheck including 98 canonical tests, Prettier, requirement traceability and git diff --check passed. Repository requires Node 24; hosted exact-head CI and independent review pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 07 evidence review)",
+          "sha256": "fe528498376f1859b65969623ab163d8319367ca1498a946b3a8d4535db36e18",
+          "observations": "Retained prior review history; updated current evidence and open gaps for owner roadmap items 7.06 to 7.16.",
+          "evidence": "Static inventory of deterministic matching contracts/tests and unresolved evaluation data. Node 22 local matching suite previously passed 969/969; exact Node 24 CI on PR #128 is running."
         }
       ]
     },
@@ -2565,7 +2597,21 @@
       "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
       "evidence": "",
       "reviewer": "",
-      "sha256": ""
+      "sha256": "c66f753327fa9892b6a4ca2158a594c59b7dce0d57443821e3200bcd7a68d70f",
+      "history": [
+        {
+          "reviewer": "Codex (CareerScope owner item 7.05 evidence update)",
+          "sha256": "",
+          "observations": "Audit entries were updated and formatted to preserve prior file-review history and reflect current item 7.05 evidence.",
+          "evidence": "npm run audit:stage01 passed before formatting; item 7.05 implementation checks and hosted CI remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 7.05 evidence update)",
+          "sha256": "12d4eed6e11b43cd2bbc56714e44609a395d3c5240ff95eaa81858d46af57acd",
+          "observations": "Recorded formatted audit manifest digest after preserving previous file history.",
+          "evidence": "File audit passed; independent review and hosted Node 24 CI are pending."
+        }
+      ]
     },
     {
       "path": "docs/audits/STAGE-01-FILE-AUDIT.md",
@@ -2846,14 +2892,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "Focused owner-roadmap evidence review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+      "observations": "Reviewed Stage 07 item evidence and gaps, including location, industry/domain, compensation, required/preferred asks, missing-skill explanations, dimension display, versioning, profile-triggered recomputation and conditional semantic/fairness work.",
+      "evidence": "Current Stage 07 item evidence and gaps; exact-head Node 24 CI and independent review pending.",
+      "reviewer": "Codex (CareerScope Stage 07 evidence review)",
+      "sha256": "ef0b861d25ba9bce6847e98465967fc88a0159f010237c72a8b4101edf89bcba",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2962,6 +3008,18 @@
           "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
           "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 7.05 evidence update)",
+          "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+          "observations": "Prior review and evidence retained; focused Stage 7.05 location-fit changes and checks recorded in the active audit entry.",
+          "evidence": "Local Node 22.23.2: matching domain suite passed 969/969; lint, typecheck including 98 canonical tests, Prettier, requirement traceability and git diff --check passed. Repository requires Node 24; hosted exact-head CI and independent review pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 07 evidence review)",
+          "sha256": "6719ad14ca6ee79212216b4c04054a5c80007b21e7ccf09c8e69f1f0d6e3feac",
+          "observations": "Retained prior review history; updated current evidence and open gaps for owner roadmap items 7.06 to 7.16.",
+          "evidence": "Static inventory of deterministic matching contracts/tests and unresolved evaluation data. Node 22 local matching suite previously passed 969/969; exact Node 24 CI on PR #128 is running."
         }
       ]
     },
@@ -5178,19 +5236,27 @@
     {
       "path": "packages/matching/src/dimensions.test.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "Focused content and implementation review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added compensation-scoring cases for a currency mismatch and same-currency structured salary floor; existing unknown salary and parsed expected salary behavior remains covered.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "f711663bbccd11793d4c55ec18607c9dc9c1afff0e9929cd511e3e3633665554"
+      "observations": "Reviewed for CareerScope owner item 7.05. Metro matching requires complete normalized place-name tokens; regression coverage prevents substring false positives while preserving longer location descriptions. Item remains partial pending representative global calibration and owner acceptance.",
+      "evidence": "CareerScope owner item 7.05 on codex/stage07-item705-location-fit; focused Node 22.23.2 domain suite passed 969/969, lint/typecheck/traceability passed; Node 24 hosted CI and independent review pending.",
+      "reviewer": "Codex (CareerScope owner item 7.05 review)",
+      "sha256": "7ea21b22762b0a390ffb2851348f2b64523f3a82118ba36b3c1fd2b87dbb3b14",
+      "history": [
+        {
+          "reviewer": "Codex (CareerScope owner item 7.05 evidence update)",
+          "sha256": "f711663bbccd11793d4c55ec18607c9dc9c1afff0e9929cd511e3e3633665554",
+          "observations": "Prior review and evidence retained; focused Stage 7.05 location-fit changes and checks recorded in the active audit entry.",
+          "evidence": "Local Node 22.23.2: matching domain suite passed 969/969; lint, typecheck including 98 canonical tests, Prettier, requirement traceability and git diff --check passed. Repository requires Node 24; hosted exact-head CI and independent review pending."
+        }
+      ]
     },
     {
       "path": "packages/matching/src/dimensions.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "Focused source review and implementation validation",
+      "reviewMethod": "Focused content and implementation review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -5202,10 +5268,18 @@
           "remediation": "Blank places are filtered before comparison in scoreLocation; regression test in dimensions.test.ts."
         }
       ],
-      "observations": "Compensation scoring now selects the currency belonging to the expectation that supplied the target amount and returns a neutral score for known currency mismatches. Legacy unqualified floors keep their existing comparison behavior.",
-      "evidence": "Focused review on codex/stage03-item-311-salary-expectations. Shared schema, matching context/dimensions and core profile tests passed; full typecheck including 96 canonical test files and owner-roadmap traceability check passed. Hosted exact-SHA CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 03 item 3.11)",
-      "sha256": "61d71be4d3f6c1291682d47dd0c6b3cfe1305853b87bd9531549a6ef2537789b"
+      "observations": "Reviewed for CareerScope owner item 7.05. Metro matching requires complete normalized place-name tokens; regression coverage prevents substring false positives while preserving longer location descriptions. Item remains partial pending representative global calibration and owner acceptance.",
+      "evidence": "CareerScope owner item 7.05 on codex/stage07-item705-location-fit; focused Node 22.23.2 domain suite passed 969/969, lint/typecheck/traceability passed; Node 24 hosted CI and independent review pending.",
+      "reviewer": "Codex (CareerScope owner item 7.05 review)",
+      "sha256": "72949b2bdd82be0d194de02fc2281956df2cd9ad3ff40260c6c76c2cf4b3693a",
+      "history": [
+        {
+          "reviewer": "Codex (CareerScope owner item 7.05 evidence update)",
+          "sha256": "61d71be4d3f6c1291682d47dd0c6b3cfe1305853b87bd9531549a6ef2537789b",
+          "observations": "Prior review and evidence retained; focused Stage 7.05 location-fit changes and checks recorded in the active audit entry.",
+          "evidence": "Local Node 22.23.2: matching domain suite passed 969/969; lint, typecheck including 98 canonical tests, Prettier, requirement traceability and git diff --check passed. Repository requires Node 24; hosted exact-head CI and independent review pending."
+        }
+      ]
     },
     {
       "path": "packages/matching/src/index.ts",

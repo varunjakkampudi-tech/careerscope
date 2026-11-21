@@ -384,10 +384,21 @@ function describeBand(demands: JobDemands): string {
 /* Location                                                                   */
 /* -------------------------------------------------------------------------- */
 
-/** The metro group containing `place`, or null. Substring match, so "Whitefield, Bengaluru" resolves. */
+/** The metro group containing `place`, or null, using complete normalized place-name tokens. */
 function metroOf(place: string): readonly string[] | null {
-  const value = lower(place);
-  return METROS.find((metro) => metro.some((city) => value.includes(city))) ?? null;
+  // Match complete place-name tokens: substring matching makes unrelated
+  // locations such as "Puneet Nagar" inherit Pune's metro score.
+  const value = lower(place)
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+  return (
+    METROS.find((metro) =>
+      metro.some((city) => {
+        const name = city.replace(/[^a-z0-9]+/g, ' ').trim();
+        return ` ${value} `.includes(` ${name} `);
+      }),
+    ) ?? null
+  );
 }
 
 /**

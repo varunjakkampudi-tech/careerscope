@@ -20,6 +20,7 @@ This is the single index of CareerScope documentation. Every document under
 - [FOUNDATIONS](FOUNDATIONS.md) - status, evidence, gate and verification command for Foundation items 1.01 to 1.13
 - [PROGRESS](PROGRESS.md) - stage-by-stage status for the full roadmap
 - [GAP-MATRIX](GAP-MATRIX.md) - per-item gaps and evidence for the current stage
+- [GAP-MATRIX](GAP-MATRIX.md) - per-item gaps and evidence for the current stage
 - [TEST-MATRIX](TEST-MATRIX.md) - which test proves each item
 - [BLOCKERS](BLOCKERS.md) - what needs owner action before a stage can close
 - [BOUNDARIES](architecture/BOUNDARIES.md), [OUTBOX](architecture/OUTBOX.md), [REDIS-WORKERS-REVIEW](architecture/REDIS-WORKERS-REVIEW.md), and [API-OPENAPI-REVIEW](architecture/API-OPENAPI-REVIEW.md) - allowed workspace dependencies, outbox and queue guarantees, and Stage 01 API contract verification

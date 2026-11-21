@@ -3,6 +3,24 @@
 Records which test proves each stage item. Only tests that a CI script runs count. The traceability
 gate enforces this for the foundations register in [FOUNDATIONS](FOUNDATIONS.md).
 
+## Owner roadmap item 7.05: location fit
+
+`packages/matching/src/dimensions.test.ts` is included in `npm run test:domain`. Its `scoreLocation`
+cases cover blank preferences, remote roles, exact listed cities, nearby metro aliases, relocation,
+unwanted locations, remote-only candidates, and complete-token metro matching. Hosted exact-head CI
+is the authoritative validation for this change; local results on Node 22 are supplemental because
+the repository requires Node 24.
+
+## Owner roadmap items 7.07 to 7.11: deterministic match evidence
+
+`packages/matching/src/dimensions.test.ts` covers compensation ranges, missing salary,
+missing expectations, and currency behavior. `packages/matching/src/demands.test.ts` covers
+required/preferred skill extraction. `packages/matching/src/score.test.ts` covers persisted
+missing skills and scoring-version determinism. The web surface renders textual dimension
+scores and reasons in `apps/web/src/components/match-evidence.tsx`; the weights page uses shared
+definitions in `apps/web/src/app/(app)/matching/page.tsx`. These tests establish deterministic
+behavior, not corpus accuracy, fairness, or owner acceptance.
+
 ## Stage 01: repository foundations register
 
 The item numbers in this section are the repository's 13-item foundations register, not the
