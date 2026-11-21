@@ -57,6 +57,42 @@
   outline-offset: 3px;
 }
 
+.resultControls {
+  display: grid;
+  gap: 8px;
+  margin-block: 12px;
+}
+
+.sortControl {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+
+.sortControl select {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--dash-control-border, #7c879f);
+  border-radius: 5px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.sortControl select:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.sortNote {
+  margin: 0;
+  color: var(--muted, #4b5563);
+  font-size: 0.875rem;
+}
+
 @media (min-width: 600px) {
   .sourceOptions {
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));

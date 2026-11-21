@@ -66,3 +66,9 @@ Each row names the repository behavior, evidence, and remaining gap. Status valu
   not replace counsel approval of the effective legal text and public HTTPS URLs (see
   [AUTHENTICATION](AUTHENTICATION.md)). Owner checklist item 2.05 remains gated until that evidence
   is documented. Deployment is outside the current roadmap scope.
+
+## Stage 08: real-time job search and discovery
+
+| Item | Feature | Status | Evidence | Remaining gap |
+| ---- | ------- | ------ | -------- | ------------- |
+| 8.03 | Match/trust sorting | Partial | `apps/web/src/components/job-search-view.tsx` offers match-score, description-confidence, and newest-posting order. `apps/web/src/lib/job-search-sort.ts` uses deterministic secondary ordering and keeps undated/unscored rows last. The description-confidence option discloses that it does not verify an employer or posting. | Employer/source trust evidence is not part of the search-result contract, so this is not a trust or reputation ranking. Exact-head CI, independent review, and owner acceptance remain pending. |

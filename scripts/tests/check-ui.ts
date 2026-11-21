@@ -3444,6 +3444,23 @@ try {
       assert.equal(resultBody.jobs[0].data.title, 'Scored React Engineer');
       assert.equal(resultBody.jobs[1].data.match, null);
       await page.getByText('Not scored', { exact: true }).waitFor();
+      const resultSort = page.getByLabel('Sort results');
+      await resultSort.selectOption('evidence');
+      await page.getByText(
+        'Description confidence reflects available text only. It does not verify the employer or posting.',
+        { exact: true },
+      ).waitFor();
+      assert.equal(
+        await page.locator('details.job h3').first().innerText(),
+        'Senior React Engineer',
+        `${engine} description-confidence sorting should put the full-description result first`,
+      );
+      await resultSort.selectOption('match');
+      assert.equal(
+        await page.locator('details.job h3').first().innerText(),
+        'Scored React Engineer',
+        `${engine} match sorting should put the highest match score first`,
+      );
       await page.getByRole('heading', { name: 'Scored React Engineer', exact: true }).click();
       await page.getByRole('region', { name: 'Match evidence' }).waitFor();
       // CS-18 copy: the low-confidence flag now explains itself instead of
