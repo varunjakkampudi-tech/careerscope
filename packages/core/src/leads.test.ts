@@ -57,6 +57,38 @@ test('collected job schema reads historical seven-dimension match records withou
     weight: 0,
     reason: 'Not recorded for this scoring version',
   });
+
+  for (const invalidMatch of [
+    { ...historical, unexpected: true },
+    {
+      ...historical,
+      dimensions: { ...historical.dimensions, unexpected: { score: 0, weight: 0, reason: '' } },
+    },
+    {
+      ...historical,
+      scoringVersion: null,
+      dimensions: {
+        ...historical.dimensions,
+        education: { score: 0.7, weight: 0.05, reason: 'claimed' },
+      },
+    },
+  ]) {
+    assert.equal(
+      collectedJobSchema.safeParse({
+        fingerprint: 'invalid-historical-job',
+        title: 'Historical engineer',
+        company: 'Synthetic company',
+        location: 'Remote',
+        description: 'Historical description',
+        source: 'remoteok',
+        sourceUrl: 'https://jobs.example.test/source',
+        applyUrl: 'https://jobs.example.test/apply',
+        postedAt: null,
+        match: invalidMatch,
+      }).success,
+      false,
+    );
+  }
 });
 
 test('lead tags are trimmed, bounded and case-insensitively unique', () => {

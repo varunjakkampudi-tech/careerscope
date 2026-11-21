@@ -171,6 +171,7 @@ describe('scoreJob — breakdown', () => {
       scoringVersion: 'deterministic-v2',
     };
     expect(matchBreakdownSchema.safeParse(v2WithCurrentDimensions).success).toBe(false);
+    expect(matchBreakdownSchema.safeParse({ ...current, surprise: true }).success).toBe(false);
   });
 
   it('returns all eight dimensions with their weights and reasons', () => {

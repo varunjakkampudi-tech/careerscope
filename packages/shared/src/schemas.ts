@@ -462,11 +462,11 @@ const matchBreakdownFields = {
 const currentMatchBreakdownSchema = z
   .object({
     ...matchBreakdownFields,
-    scoringVersion: z.string().min(1).nullable().default(null),
-    dimensions: matchDimensionsSchema,
+    scoringVersion: z.enum(['deterministic-v3']).nullable().default(null),
+    dimensions: matchDimensionsSchema.strict(),
   })
-  .refine((breakdown) => breakdown.scoringVersion !== 'deterministic-v2')
-  .strict();
+  .strict()
+  .refine((breakdown) => breakdown.scoringVersion !== null || 'education' in breakdown.dimensions);
 
 const legacyDimensionShape = Object.fromEntries(
   (Object.keys(MATCH_WEIGHTS) as MatchDimension[])
@@ -481,7 +481,6 @@ const legacyMatchBreakdownSchema = z
     dimensions: legacyDimensionsSchema,
   })
   .strict()
-  .refine((breakdown) => !('education' in breakdown.dimensions))
   .transform(({ dimensions, ...breakdown }) => ({
     ...breakdown,
     dimensions: {
