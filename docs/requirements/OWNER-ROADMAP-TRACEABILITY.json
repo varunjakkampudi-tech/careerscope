@@ -1362,10 +1362,7 @@
         "docs/PROGRESS.md",
         "docs/GAP-MATRIX.md"
       ],
-      "tests": [
-        "apps/web/src/lib/job-search-sort.test.ts",
-        "scripts/tests/check-ui.ts"
-      ],
+      "tests": ["apps/web/src/lib/job-search-sort.test.ts", "scripts/tests/check-ui.ts"],
       "externalEvidence": [],
       "gap": "Candidate implementation adds match-score, description-confidence, and newest-posting ordering with deterministic tie breaks. Description confidence does not verify the employer or posting. Employer/source trust evidence is not yet part of the search-result contract. Exact-head CI, independent review, and owner acceptance remain pending.",
       "scopeDisposition": "in-scope"

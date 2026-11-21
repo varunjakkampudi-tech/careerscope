@@ -19,7 +19,8 @@ export function sortSearchJobs<T extends SortableSearchJob>(
 ): T[] {
   return [...jobs].sort((a, b) => {
     if (mode === 'evidence') {
-      const confidence = Number(b.data.match?.confidence === 'high') - Number(a.data.match?.confidence === 'high');
+      const confidence =
+        Number(b.data.match?.confidence === 'high') - Number(a.data.match?.confidence === 'high');
       if (confidence) return confidence;
     }
 

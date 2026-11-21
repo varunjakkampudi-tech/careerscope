@@ -3446,10 +3446,12 @@ try {
       await page.getByText('Not scored', { exact: true }).waitFor();
       const resultSort = page.getByLabel('Sort results');
       await resultSort.selectOption('evidence');
-      await page.getByText(
-        'Description confidence reflects available text only. It does not verify the employer or posting.',
-        { exact: true },
-      ).waitFor();
+      await page
+        .getByText(
+          'Description confidence reflects available text only. It does not verify the employer or posting.',
+          { exact: true },
+        )
+        .waitFor();
       assert.equal(
         await page.locator('details.job h3').first().innerText(),
         'Senior React Engineer',

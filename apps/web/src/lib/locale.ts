@@ -139,7 +139,8 @@ const messages = {
     sortBestMatch: 'Best match',
     sortEvidenceQuality: 'Description confidence',
     sortNewest: 'Newest posting',
-    sortEvidenceLimit: 'Description confidence reflects available text only. It does not verify the employer or posting.',
+    sortEvidenceLimit:
+      'Description confidence reflects available text only. It does not verify the employer or posting.',
     sourceUnavailable: 'This source is not currently available.',
     jobDescriptionUnavailable: 'Description not available.',
     reportPostingIssue: 'Report a posting issue',
@@ -404,7 +405,8 @@ const messages = {
     sortBestMatch: 'ఉత్తమ సరిపోలిక',
     sortEvidenceQuality: 'వివరణ నమ్మక స్థాయి',
     sortNewest: 'కొత్త ప్రకటనలు',
-    sortEvidenceLimit: 'వివరణ నమ్మక స్థాయి అందుబాటులో ఉన్న పాఠ్యాన్ని మాత్రమే సూచిస్తుంది. ఇది యజమాని లేదా ప్రకటనను ధృవీకరించదు.',
+    sortEvidenceLimit:
+      'వివరణ నమ్మక స్థాయి అందుబాటులో ఉన్న పాఠ్యాన్ని మాత్రమే సూచిస్తుంది. ఇది యజమాని లేదా ప్రకటనను ధృవీకరించదు.',
     sourceUnavailable: 'ఈ మూలం ప్రస్తుతం అందుబాటులో లేదు.',
     jobDescriptionUnavailable: 'వివరణ అందుబాటులో లేదు.',
     reportPostingIssue: 'ఉద్యోగ ప్రకటన సమస్యను నివేదించండి',
@@ -677,7 +679,8 @@ const messages = {
     sortBestMatch: 'सबसे अच्छा मेल',
     sortEvidenceQuality: 'विवरण की विश्वसनीयता',
     sortNewest: 'नई पोस्टिंग',
-    sortEvidenceLimit: 'विवरण की विश्वसनीयता केवल उपलब्ध पाठ को दर्शाती है। यह नियोक्ता या पोस्टिंग की पुष्टि नहीं करती।',
+    sortEvidenceLimit:
+      'विवरण की विश्वसनीयता केवल उपलब्ध पाठ को दर्शाती है। यह नियोक्ता या पोस्टिंग की पुष्टि नहीं करती।',
     sourceUnavailable: 'यह स्रोत अभी उपलब्ध नहीं है।',
     jobDescriptionUnavailable: 'विवरण उपलब्ध नहीं है।',
     reportPostingIssue: 'नौकरी पोस्ट की समस्या बताएँ',
