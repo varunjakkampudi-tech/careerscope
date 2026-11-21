@@ -1099,26 +1099,50 @@
     {
       "path": "apps/web/src/components/job-search-view.module.css",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete job-search source/discovery styles. Source options use responsive columns, unavailable states retain readable contrast, and selection controls have visible focus and touch sizing.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "5a9f7c73f40453672c10f23b6a71e82963a9a027522bf75f9f6b4c96231402f2"
+      "observations": "Reviewed the Stage 08.02 result-control styles: wrapping layout, 44px controls, contrast-compatible surface colors, and visible keyboard focus.",
+      "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
+      "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
+      "sha256": "88188e8987dd38ba98fcc510889ed110983b2f6f7609282a49ce910f7626906a",
+      "history": [
+        {
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Read the complete job-search source/discovery styles. Source options use responsive columns, unavailable states retain readable contrast, and selection controls have visible focus and touch sizing.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "5a9f7c73f40453672c10f23b6a71e82963a9a027522bf75f9f6b4c96231402f2"
+        }
+      ]
     },
     {
       "path": "apps/web/src/components/job-search-view.tsx",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete search workspace component. Owner-scoped queries remain disabled until the authenticated session resolves; mutations include CSRF and idempotency headers; run IDs are URL-addressable; event streams close on settle/unmount and trigger centralized expiry handling. Result links open in a new tab with noopener protections. No additional finding from this file review.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "1599695e8eab6aaaf54b5efd0e54f88d5849a1b4b6e2d6f66689082402e361a9"
+      "observations": "Reviewed the Stage 08.02 result filtering diff: text, source and minimum-score predicates compose; unscored results are excluded for nonzero thresholds; filters reset on run changes and clear from the empty state.",
+      "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
+      "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
+      "sha256": "cd97bfa1b8c03af22eab79a0e5361b1439e48d04e1bf46b51df077ade8971ceb",
+      "history": [
+        {
+          "reviewMethod": "content-read",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Read the complete search workspace component. Owner-scoped queries remain disabled until the authenticated session resolves; mutations include CSRF and idempotency headers; run IDs are URL-addressable; event streams close on settle/unmount and trigger centralized expiry handling. Result links open in a new tab with noopener protections. No additional finding from this file review.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "1599695e8eab6aaaf54b5efd0e54f88d5849a1b4b6e2d6f66689082402e361a9"
+        }
+      ]
     },
     {
       "path": "apps/web/src/components/legal-acceptance.module.css",
@@ -1410,14 +1434,26 @@
     {
       "path": "apps/web/src/lib/locale.ts",
       "category": "frontend",
-      "reviewMethod": "content-and-structural-review",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
-      "evidence": "Locale implementation and representative message groups inspected on codex/stage01-item-101-audit; structural parity is enforced by the full typecheck. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "75e45067aee7990decb4433d3c5e5a4499274933e5b65a938e2fb8eaae91ffcc"
+      "observations": "Reviewed the Stage 08.02 English, Telugu and Hindi labels for text/source/minimum-score controls. Telugu and Hindi wording is machine-drafted and still needs owner/native-speaker review.",
+      "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
+      "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
+      "sha256": "2742c168b7a1e09d5bcf1aa6d4a08406d94a4e56b2f0627245fc9e60c83ddb6f",
+      "history": [
+        {
+          "reviewMethod": "content-and-structural-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
+          "evidence": "Locale implementation and representative message groups inspected on codex/stage01-item-101-audit; structural parity is enforced by the full typecheck. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "75e45067aee7990decb4433d3c5e5a4499274933e5b65a938e2fb8eaae91ffcc"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/next-proxy-headers.test.ts",
@@ -1888,10 +1924,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+      "observations": "Recorded Stage 08.02 as partial, including unavailable persisted salary/workplace attributes and pending exact-head CI and owner acceptance.",
+      "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
+      "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
+      "sha256": "b4ac77a45e1804255d4b3bc69ce339c863b9183ee19e22348999a6b871a29a0c",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2012,6 +2048,16 @@
           "sha256": "da3b553a8b588deb6952f61cd3f2440c5810c59a294fbda85f29215eb4539433",
           "observations": "Reviewed Stage 05 items 5.08 and 5.09 evidence and gaps; both remain partial and no external source acceptance is claimed.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+          "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d"
         }
       ]
     },
@@ -2282,10 +2328,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+      "observations": "Recorded Stage 08.02 browser assertions for source filtering, minimum-score exclusion and clearing filters; browser execution remains pending exact-head CI.",
+      "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
+      "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
+      "sha256": "020fc8925109f82d3c164ca19ab14c293674714f3fe3554fbfbc642ba71ec5bd",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2412,6 +2458,16 @@
           "sha256": "d08de3ad68f62e21c10744dc048c1e91a6c2f831382d1e8efe31b8ee32ab3b4d",
           "observations": "Reviewed item-specific Stage 05 normalization and deduplication test evidence and exact-head gates.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+          "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4"
         }
       ]
     },
@@ -2850,10 +2906,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+      "observations": "Updated canonical item 8.02 evidence and retained partial status pending exact-head CI and owner acceptance; 8.03 was left not-started for sequential review.",
+      "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
+      "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
+      "sha256": "cca4bdd499a4d9028ca1b16c6cee9b6350bb72a90cd61583fab5747a9a51fa7f",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2962,6 +3018,16 @@
           "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
           "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90"
         }
       ]
     },
@@ -7389,7 +7455,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "current exact-diff and durable outbox assertion review",
+      "reviewMethod": "focused-content-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -7415,10 +7481,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
-      "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
-      "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd",
+      "observations": "Reviewed Stage 08.02 browser assertions for source narrowing, exclusion of low and unscored results at an 80% threshold, and restoration after clearing. Exact-head browser execution remains pending.",
+      "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
+      "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
+      "sha256": "b53e40c9d992dcba9a402eafd4d291c8bd9c7e32c8c72c2314bb8c77d5642bd0",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7436,6 +7502,38 @@
           "observations": "Updated the file audit after Stage 04 item 4.10 deletion test and progress evidence changes; the checklist item remains partial pending hosted integration/browser CI and independent approval.",
           "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
           "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
+          "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
+        },
+        {
+          "reviewMethod": "current exact-diff and durable outbox assertion review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F049",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The browser suite did not enforce the implemented CSP promise: it only required script-src to exist and allowed unsafe-inline or missing inline-script hashes to pass.",
+              "remediation": "Added strict directive and inline-body hash assertions to the browser suite; validated test typing, production hash convergence, the served response, and a real Playwright page load. Full application E2E remains separate."
+            },
+            {
+              "id": "S1-F071",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
+              "remediation": "Write screenshots to a unique per-run directory under test-results."
+            },
+            {
+              "id": "S1-F072",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+              "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
+            }
+          ],
+          "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
+          "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
           "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
         }
       ]
