@@ -1797,11 +1797,17 @@
       "stageTitle": "Real-time job search and discovery",
       "title": "Saved searches",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "migrations/0007_saved_searches.sql",
+        "packages/core/src/schema.ts",
+        "apps/api/src/app.ts",
+        "apps/web/src/components/job-search-view.tsx",
+        "docs/GAP-MATRIX.md"
+      ],
+      "tests": ["apps/api/src/saved-searches.integration.test.ts", "scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Owner-scoped named searches can be saved, listed, rerun and deleted; request shape is validated, duplicate names are rejected case-insensitively, and a concurrency-safe cap of 25 is enforced. Local exact-head checks, hosted Node 24 CI, independent review, and owner acceptance remain pending. Saved searches do not imply scheduled execution or alerts.",
       "scopeDisposition": "in-scope"
     },
     {

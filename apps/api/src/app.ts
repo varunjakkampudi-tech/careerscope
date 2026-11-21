@@ -2030,6 +2030,66 @@ export async function createApp(
     );
     return { items: result.rows };
   });
+  const savedSearchRequestSchema = z
+    .object({
+      name: z.string().trim().min(1).max(80),
+      request: createSearchSchema,
+    })
+    .strict();
+  app.get('/api/saved-searches', async (request) => {
+    await readBudget(request, 'saved-searches-read', 120);
+    const result = await database.pool.query(
+      `SELECT id, name, request, created_at AS "createdAt"
+       FROM saved_searches WHERE owner_id = $1 ORDER BY created_at DESC, id DESC LIMIT 25`,
+      [request.ownerId],
+    );
+    return { items: result.rows };
+  });
+  app.post('/api/saved-searches', async (request, reply) => {
+    if (!(await consumeRateLimit(request, `saved-searches:${request.ownerId!}`, 30, 60)))
+      throw new HttpError(429, 'Too many saved search updates');
+    const input = savedSearchRequestSchema.parse(request.body);
+    const client = await database.pool.connect();
+    try {
+      await client.query('BEGIN');
+      // Serialize this owner's inserts so concurrent requests cannot exceed the limit.
+      await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [
+        request.ownerId,
+      ]);
+      const count = await client.query<{ count: string }>(
+        'SELECT count(*)::text AS count FROM saved_searches WHERE owner_id = $1',
+        [request.ownerId],
+      );
+      if (Number(count.rows[0]?.count ?? 0) >= 25)
+        throw new HttpError(409, 'Saved search limit reached');
+      const inserted = await client.query(
+        `INSERT INTO saved_searches (id, owner_id, name, request)
+         VALUES ($1, $2, $3, $4::jsonb)
+         RETURNING id, name, request, created_at AS "createdAt"`,
+        [randomUUID(), request.ownerId, input.name, JSON.stringify(input.request)],
+      );
+      await client.query('COMMIT');
+      return reply.code(201).send(inserted.rows[0]);
+    } catch (error) {
+      await client.query('ROLLBACK');
+      if (typeof error === 'object' && error !== null && 'code' in error && error.code === '23505')
+        throw new HttpError(409, 'A saved search already uses that name');
+      throw error;
+    } finally {
+      client.release();
+    }
+  });
+  app.delete('/api/saved-searches/:id', async (request, reply) => {
+    const { id } = identifier.parse(request.params);
+    if (!(await consumeRateLimit(request, `saved-searches:${request.ownerId!}`, 30, 60)))
+      throw new HttpError(429, 'Too many saved search updates');
+    const deleted = await database.pool.query(
+      'DELETE FROM saved_searches WHERE owner_id = $1 AND id = $2',
+      [request.ownerId, id],
+    );
+    if (!deleted.rowCount) throw new HttpError(404, 'Saved search not found');
+    return reply.code(204).send();
+  });
   app.put('/api/search-jobs/:id/feedback', async (request, reply) => {
     if (!(await consumeRateLimit(request, `job-feedback:${request.ownerId!}`, 20, 3600)))
       throw new HttpError(429, 'Too many feedback updates');

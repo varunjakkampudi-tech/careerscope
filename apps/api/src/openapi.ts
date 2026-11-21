@@ -1049,6 +1049,39 @@ function contracts(options: {
       }),
       { failures: [429] },
     ),
+    'GET /api/saved-searches': operation(
+      'List up to 25 owner-scoped saved search configurations',
+      object({
+        items: array(
+          object({
+            id: uuid,
+            name: text({ minLength: 1, maxLength: 80 }),
+            request: searchInput,
+            createdAt: timestamp,
+          }),
+        ),
+      }),
+      { failures: [429] },
+    ),
+    'POST /api/saved-searches': operation(
+      'Save a validated owner-scoped search configuration',
+      object({
+        id: uuid,
+        name: text({ minLength: 1, maxLength: 80 }),
+        request: searchInput,
+        createdAt: timestamp,
+      }),
+      {
+        code: 201,
+        body: object({ name: text({ minLength: 1, maxLength: 80 }), request: searchInput }),
+        failures: [400, 409, 429],
+      },
+    ),
+    'DELETE /api/saved-searches/:id': operation('Delete an owned saved search', object({}), {
+      code: 204,
+      params: object({ id: uuid }),
+      failures: [400, 404, 429],
+    }),
     'GET /api/searches/:id': operation(
       'Read a search, up to 100 ranked jobs and 100 events',
       object({

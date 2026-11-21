@@ -294,6 +294,32 @@ export const searches = pgTable(
   ],
 );
 
+/** Candidate-owned search configurations, separate from immutable search-run snapshots. */
+export const savedSearches = pgTable(
+  'saved_searches',
+  {
+    id: uuid('id').primaryKey(),
+    ownerId: uuid('owner_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    request: jsonb('request').$type<CreateSearch>().notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('saved_searches_owner_created').on(table.ownerId, table.createdAt, table.id),
+    uniqueIndex('saved_searches_owner_name').on(table.ownerId, sql`lower(${table.name})`),
+    check(
+      'saved_searches_name_valid',
+      sql`length(btrim(${table.name})) BETWEEN 1 AND 80 AND ${table.name} = btrim(${table.name})`,
+    ),
+    check(
+      'saved_searches_request_bounded',
+      sql`jsonb_typeof(${table.request}) = 'object' AND octet_length(${table.request}::text) <= 8192`,
+    ),
+  ],
+);
+
 /** Transactional outbox: commands written in the same transaction as the state change, then published to the queue. */
 export const outbox = pgTable(
   'outbox_events',
