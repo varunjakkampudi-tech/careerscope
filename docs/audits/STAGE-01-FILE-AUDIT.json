@@ -4169,7 +4169,7 @@
       "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
       "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
       "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "65525d1304f029b7e948678e95b5f8698cc9b08c55291fdce27fea40886b92a6",
+      "sha256": "3e3de22033eb63a1cb476d424379b33c22a7670eb577bcde7029d22129d4b2e8",
       "history": [
         {
           "reviewer": "Codex (Stage 03 item 3.16)",
