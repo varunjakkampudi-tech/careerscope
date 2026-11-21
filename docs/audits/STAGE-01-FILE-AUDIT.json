@@ -1888,10 +1888,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 07 item 7.02 evidence and remaining gaps against source, tests and current PR-stage status.",
-      "evidence": "Reviewed in the Stage 07.02 item branch; this audit record does not mark roadmap item 7.02 complete.",
-      "reviewer": "Codex (CareerScope Stage 07.02 evidence update)",
-      "sha256": "ac9a2cf950fb7517b4967ec7cb8eb691bc6d815090b5444d6462d8d27cf08a1f",
+      "observations": "Formatted the Stage 07.02 gap record after the exact-SHA review correction.",
+      "evidence": "PR 125 prior head 5acf5f3337d00da25ed486d46ede6d541a3bc826 passed all required CI jobs. Reviewer requested restoring historical Stage 01 baseline versions; the corrected head requires fresh CI and review.",
+      "reviewer": "Codex (CareerScope Stage 07.02 review correction)",
+      "sha256": "5ef670279dd80d1b03e679582cc53039a2f2cad74161ec8047ea1c74223ed4fb",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2018,6 +2018,18 @@
           "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
           "reviewer": "Codex (CareerScope owner item 5.13 review)",
           "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d"
+        },
+        {
+          "observations": "Reviewed Stage 07 item 7.02 evidence and remaining gaps against source, tests and current PR-stage status.",
+          "evidence": "Reviewed in the Stage 07.02 item branch; this audit record does not mark roadmap item 7.02 complete.",
+          "reviewer": "Codex (CareerScope Stage 07.02 evidence update)",
+          "sha256": "ac9a2cf950fb7517b4967ec7cb8eb691bc6d815090b5444d6462d8d27cf08a1f"
+        },
+        {
+          "observations": "Updated Stage 07.02 evidence with successful prior-head CI and the exact review correction required.",
+          "evidence": "PR 125 head 5acf5f3337d00da25ed486d46ede6d541a3bc826 passed all three required CI jobs. Reviewer requested restoration of unrelated Stage 01 baseline versions; this correction still needs new CI and review.",
+          "reviewer": "Codex (CareerScope Stage 07.02 review correction)",
+          "sha256": "7f16d3f5c8564c3f0de8a05c8d75ae4023af4699ecac1a12ea3f535c254c1cda"
         }
       ]
     },
@@ -2092,10 +2104,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed Stage 07.02 status and test statements against recorded local command results; no hosted or merged acceptance is claimed.",
-      "evidence": "Reviewed in the Stage 07.02 item branch; this audit record does not mark roadmap item 7.02 complete.",
-      "reviewer": "Codex (CareerScope Stage 07.02 evidence update)",
-      "sha256": "2d8d2c4675ade9c8c151c8d25734989015edaddd9ee02d80f7918ee6537bb89e",
+      "observations": "Restored the historical Stage 01 baseline version and refreshed Stage 07.02 CI/review state.",
+      "evidence": "The original dev baseline remains Node 24.22.1. Prior Stage 07.02 PR head passed exact-head CI; reviewer requested the historical-value correction, so new CI and review remain pending. Item 7.02 stays partial.",
+      "reviewer": "Codex (CareerScope Stage 07.02 review correction)",
+      "sha256": "7f929654a8dd0b59bb6933a5fdb83c2d4722164b756c16854b4db7bd6cd38184",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2240,6 +2252,12 @@
           "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
           "reviewer": "Codex (CareerScope owner item 5.13 review)",
           "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd"
+        },
+        {
+          "observations": "Reviewed Stage 07.02 status and test statements against recorded local command results; no hosted or merged acceptance is claimed.",
+          "evidence": "Reviewed in the Stage 07.02 item branch; this audit record does not mark roadmap item 7.02 complete.",
+          "reviewer": "Codex (CareerScope Stage 07.02 evidence update)",
+          "sha256": "2d8d2c4675ade9c8c151c8d25734989015edaddd9ee02d80f7918ee6537bb89e"
         }
       ]
     },
@@ -2294,10 +2312,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 07 item 7.02 test paths and local outcomes; browser and exact-head hosted acceptance remain pending.",
-      "evidence": "Reviewed in the Stage 07.02 item branch; this audit record does not mark roadmap item 7.02 complete.",
-      "reviewer": "Codex (CareerScope Stage 07.02 evidence update)",
-      "sha256": "7fcc864ec80f26935825a7ae4bbeb4f7d4393ddd917875ce91be4f398d7f2456",
+      "observations": "Formatted Stage 07.02 test evidence and restored the Stage 01 historical Node version.",
+      "evidence": "Historical baseline at 8cc4b178e8878ad8ca8c984af9ef4ffcdebd1258 uses Node 24.22.1. Prior PR 125 head 5acf5f3337d00da25ed486d46ede6d541a3bc826 passed run 44793696661; corrected exact-head CI and independent review are pending.",
+      "reviewer": "Codex (CareerScope Stage 07.02 review correction)",
+      "sha256": "eaab050ff83abf9e7b7a79cb08fa9533b67b66ee53252b30790f745f954ab42d",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2430,6 +2448,18 @@
           "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
           "reviewer": "Codex (CareerScope owner item 5.13 review)",
           "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4"
+        },
+        {
+          "observations": "Reviewed Stage 07 item 7.02 test paths and local outcomes; browser and exact-head hosted acceptance remain pending.",
+          "evidence": "Reviewed in the Stage 07.02 item branch; this audit record does not mark roadmap item 7.02 complete.",
+          "reviewer": "Codex (CareerScope Stage 07.02 evidence update)",
+          "sha256": "7fcc864ec80f26935825a7ae4bbeb4f7d4393ddd917875ce91be4f398d7f2456"
+        },
+        {
+          "observations": "Restored the Stage 01 historical Node version and recorded the Stage 07.02 prior-head CI plus required correction.",
+          "evidence": "Historical baseline at 8cc4b178e8878ad8ca8c984af9ef4ffcdebd1258 uses Node 24.22.1. PR 125 prior head 5acf5f3337d00da25ed486d46ede6d541a3bc826 passed run 44793696661; revised exact-head CI and review are pending.",
+          "reviewer": "Codex (CareerScope Stage 07.02 review correction)",
+          "sha256": "0f2f9504ebfbbb620fd31bbf05e751fd5ad2fa03968f74d19bfb3622e25b4c71"
         }
       ]
     },
@@ -2868,10 +2898,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed canonical owner item 7.02 identifiers, evidence/test paths, partial status and explicit acceptance gaps against implementation and local test output.",
-      "evidence": "Reviewed in the Stage 07.02 item branch; this audit record does not mark roadmap item 7.02 complete.",
-      "reviewer": "Codex (CareerScope Stage 07.02 evidence update)",
-      "sha256": "4973f5e76298d2ff41d1e24c510845d4d38767c9d2c41e60c3942dbc418f011c",
+      "observations": "Formatted canonical Stage 07.02 traceability after recording the prior-head CI result and review correction.",
+      "evidence": "PR 125 prior head 5acf5f3337d00da25ed486d46ede6d541a3bc826 passed CI; corrected head requires fresh CI and review. Item remains partial.",
+      "reviewer": "Codex (CareerScope Stage 07.02 review correction)",
+      "sha256": "06a17a51fc4671327299d4b000a22c1699d82814e8fb08856b33aa1b49ab171c",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2986,6 +3016,18 @@
           "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
           "reviewer": "Codex (CareerScope owner item 5.13 review)",
           "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90"
+        },
+        {
+          "observations": "Reviewed canonical owner item 7.02 identifiers, evidence/test paths, partial status and explicit acceptance gaps against implementation and local test output.",
+          "evidence": "Reviewed in the Stage 07.02 item branch; this audit record does not mark roadmap item 7.02 complete.",
+          "reviewer": "Codex (CareerScope Stage 07.02 evidence update)",
+          "sha256": "4973f5e76298d2ff41d1e24c510845d4d38767c9d2c41e60c3942dbc418f011c"
+        },
+        {
+          "observations": "Recorded Stage 07.02 prior-head CI and review correction while preserving partial status.",
+          "evidence": "PR 125 prior head 5acf5f3337d00da25ed486d46ede6d541a3bc826 passed CI; corrected head requires fresh CI and review. Item remains partial.",
+          "reviewer": "Codex (CareerScope Stage 07.02 review correction)",
+          "sha256": "804ffbaec6344a702ba5d7808a761ac52b7fab2c3101906bcead04959319ae16"
         }
       ]
     },
