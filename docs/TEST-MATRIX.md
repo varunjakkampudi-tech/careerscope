@@ -3,6 +3,14 @@
 Records which test proves each stage item. Only tests that a CI script runs count. The traceability
 gate enforces this for the foundations register in [FOUNDATIONS](FOUNDATIONS.md).
 
+## Owner roadmap item 7.05: location fit
+
+`packages/matching/src/dimensions.test.ts` is included in `npm run test:domain`. Its `scoreLocation`
+cases cover blank preferences, remote roles, exact listed cities, nearby metro aliases, relocation,
+unwanted locations, remote-only candidates, and complete-token metro matching. Hosted exact-head CI
+is the authoritative validation for this change; local results on Node 22 are supplemental because
+the repository requires Node 24.
+
 ## Stage 01: repository foundations register
 
 The item numbers in this section are the repository's 13-item foundations register, not the

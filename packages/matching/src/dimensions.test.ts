@@ -237,6 +237,24 @@ describe('scoreLocation', () => {
     expect(scoreLocation(job({ location: 'Gachibowli' }), candidate()).score).toBe(0.85);
   });
 
+  it('does not treat a city-name substring inside an unrelated place as the same metro', () => {
+    const result = scoreLocation(
+      job({ location: 'Puneet Nagar' }),
+      candidate({ homeLocation: 'Mumbai, India', locations: [], willingToRelocate: false }),
+    );
+    expect(result.score).toBe(0.2);
+    expect(result.reason).toBe('Puneet Nagar is outside your preferred locations');
+  });
+
+  it('still matches a city name within a larger location description', () => {
+    expect(
+      scoreLocation(
+        job({ location: 'Whitefield, Bengaluru, Karnataka' }),
+        candidate({ homeLocation: 'Bangalore, India', locations: [] }),
+      ).score,
+    ).toBe(0.85);
+  });
+
   it('gives partial credit when the candidate can relocate', () => {
     expect(scoreLocation(job({ location: 'Pune, India' }), candidate()).score).toBe(0.6);
   });
