@@ -3918,11 +3918,14 @@ try {
         postingHrefs.length > 0,
         `${engine} saved lead details exposes no posting link at all`,
       );
-      assert.deepEqual([...new Set(postingHrefs)], ['https://himalayas.app/jobs/synthetic']);
+      assert.deepEqual(
+        [...new Set(postingHrefs)],
+        ['https://remoteok.com/remote-jobs/full-description'],
+      );
       const leadRepository = new LeadRepository(database);
       const linkedLead = await leadRepository.get(ownerId, leadId);
       assert.equal(linkedLead?.status, 'saved');
-      const postingUrl = 'https://himalayas.app/jobs/synthetic';
+      const postingUrl = 'https://remoteok.com/remote-jobs/full-description';
       const interceptPosting = (route: import('playwright').Route) =>
         route.fulfill({
           status: 200,
