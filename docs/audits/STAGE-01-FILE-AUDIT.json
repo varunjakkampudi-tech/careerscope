@@ -7421,7 +7421,7 @@
       "observations": "Reviewed Stage 07.04 education scoring browser coverage and the low-confidence description fixture. The fixture has a deliberately short description while repeating the explicit degree ask, asserting both education evidence and confidence ceiling copy; hosted exact-head CI is pending.",
       "evidence": "Run 44884850332 on c748a1641c7e4d728e117b8ed4c5abe0fc5f5795 passed quality gates, PostgreSQL/Redis integration, and image build, but browser acceptance failed because the education fixture incorrectly declared a long readable description. This correction restores a short description and keeps the stated degree ask; rerun exact-head browser and all required CI.",
       "reviewer": "Codex (CareerScope Stage 07.04 implementation self-review)",
-      "sha256": "750360d092691b631b424d91ade5e620cb0483aeeb4c6ce6a2f279e409564a2e",
+      "sha256": "318d04881c4c8fe8f6364ff16c085fb34a8a6798753e2053e740f46e582d1813",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",

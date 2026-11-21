@@ -350,7 +350,7 @@ try {
             fullName: 'Synthetic Candidate',
             email: 'synthetic@example.test',
             location: 'Hyderabad',
-            education: ['BSc Computer Science'],
+            education: ['B.Tech Computer Science'],
           },
           preferences: {
             titles: ['React Engineer'],
