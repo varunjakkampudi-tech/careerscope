@@ -571,6 +571,16 @@ const SOURCE_RANK: Record<string, number> = {
 export function mergeDuplicates(a: Job, b: Job): Job {
   const winner = richness(b) > richness(a) ? b : a;
   const other = winner === a ? b : a;
+  // Conflicting explicit work arrangements are uncertain. Keep the merged
+  // posting out of both remote and on-site/hybrid filters until evidence agrees.
+  const workplaceType =
+    winner.workplaceType === other.workplaceType
+      ? winner.workplaceType
+      : winner.workplaceType === 'unknown'
+        ? other.workplaceType
+        : other.workplaceType === 'unknown'
+          ? winner.workplaceType
+          : 'unknown';
 
   return {
     ...winner,
@@ -585,7 +595,8 @@ export function mergeDuplicates(a: Job, b: Job): Job {
     postedAt: winner.postedAt ?? other.postedAt,
     sourcePublisher: winner.sourcePublisher ?? other.sourcePublisher,
     employmentType: winner.employmentType ?? other.employmentType,
-    isRemote: winner.isRemote || other.isRemote,
+    workplaceType,
+    isRemote: workplaceType === 'remote',
     techStack: [...new Set([...winner.techStack, ...other.techStack])],
     requiredYears: {
       min: winner.requiredYears.min ?? other.requiredYears.min,

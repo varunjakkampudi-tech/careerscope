@@ -664,6 +664,22 @@ describe('dedupeJobs', () => {
     expect(new Set(result.map((job) => job.fingerprint)).size).toBe(2);
   });
 
+  it('marks cross-source jobs with conflicting hybrid and on-site evidence as unknown', () => {
+    const hybrid = normalizeJob(
+      rawJob({ source: 'greenhouse', sourceJobId: 'hybrid-1', workplaceType: 'hybrid' }),
+      { now: NOW },
+    );
+    const onsite = normalizeJob(
+      rawJob({ source: 'lever', sourceJobId: 'onsite-1', workplaceType: 'onsite' }),
+      { now: NOW },
+    );
+
+    const [merged] = dedupeJobs([hybrid, onsite]);
+
+    expect(merged?.workplaceType).toBe('unknown');
+    expect(merged?.isRemote).toBe(false);
+  });
+
   it('merges compatible members of a conflicting three-source group deterministically', () => {
     const greenhouse = normalizeJob(
       rawJob({ source: 'greenhouse', sourceJobId: 'greenhouse-1', employmentType: 'fulltime' }),
@@ -733,14 +749,27 @@ describe('mergeDuplicates', () => {
     expect(merged.lastSeenAt).toBe('2026-03-01T00:00:00.000Z');
   });
 
-  it('treats a role as remote if either copy said so', () => {
-    const onsite = normalizeJob(rawJob({ description: FULL_JD }), { now: NOW });
-    const remote = normalizeJob(
-      rawJob({ source: 'remotive', description: `${FULL_JD}\nFully remote.` }),
-      { now: NOW },
-    );
+  it('keeps conflicting explicit workplace arrangements unknown', () => {
+    const make = (sourceJobId: string, workplaceType: 'hybrid' | 'onsite' | 'remote' | 'unknown') =>
+      normalizeJob(rawJob({ sourceJobId, workplaceType, description: FULL_JD }), { now: NOW });
 
-    expect(mergeDuplicates(onsite, remote).isRemote).toBe(true);
+    for (const [left, right] of [
+      ['hybrid', 'remote'],
+      ['onsite', 'remote'],
+      ['hybrid', 'onsite'],
+    ] as const) {
+      const merged = mergeDuplicates(make('a', left), make('b', right));
+      expect(merged.workplaceType).toBe('unknown');
+      expect(merged.isRemote).toBe(false);
+    }
+
+    const unknownAndRemote = mergeDuplicates(make('a', 'unknown'), make('b', 'remote'));
+    expect(unknownAndRemote.workplaceType).toBe('remote');
+    expect(unknownAndRemote.isRemote).toBe(true);
+
+    const same = mergeDuplicates(make('a', 'hybrid'), make('b', 'hybrid'));
+    expect(same.workplaceType).toBe('hybrid');
+    expect(same.isRemote).toBe(false);
   });
 
   it('prefers an ATS copy over an aggregator copy of equal richness', () => {

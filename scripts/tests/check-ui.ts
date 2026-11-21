@@ -3809,6 +3809,15 @@ try {
       await page.getByLabel('Filter results').fill('Senior React');
       await page.getByRole('combobox', { name: 'Source', exact: true }).selectOption('himalayas');
       await page.getByRole('combobox', { name: 'Minimum match', exact: true }).selectOption('70');
+      const workplaceFilter = page.getByRole('combobox', { name: 'Workplace', exact: true });
+      const salaryCurrency = page.getByRole('combobox', { name: 'Salary currency', exact: true });
+      const minimumAnnualSalary = page.getByRole('spinbutton', {
+        name: 'Minimum annual salary',
+        exact: true,
+      });
+      await workplaceFilter.selectOption('hybrid');
+      await salaryCurrency.selectOption('USD');
+      await minimumAnnualSalary.fill('100000');
       let releaseSearchResponse!: () => void;
       const searchResponseGate = new Promise<void>((resolve) => {
         releaseSearchResponse = resolve;
@@ -3851,6 +3860,9 @@ try {
           await page.getByRole('combobox', { name: 'Minimum match', exact: true }).inputValue(),
           '0',
         );
+        assert.equal(await workplaceFilter.inputValue(), 'all');
+        assert.equal(await salaryCurrency.inputValue(), 'all');
+        assert.equal(await minimumAnnualSalary.inputValue(), '');
       } finally {
         releaseSearchResponse();
       }
@@ -3872,12 +3884,18 @@ try {
         await page.getByRole('combobox', { name: 'Minimum match', exact: true }).inputValue(),
         '0',
       );
+      assert.equal(await workplaceFilter.inputValue(), 'all');
+      assert.equal(await salaryCurrency.inputValue(), 'all');
+      assert.equal(await minimumAnnualSalary.inputValue(), '');
       const newRunButton = page
         .getByRole('navigation', { name: 'Search history' })
         .getByRole('button', { name: /^TypeScript queued/ });
       await page.getByLabel('Filter results').fill('Senior React');
       await page.getByRole('combobox', { name: 'Source', exact: true }).selectOption('himalayas');
       await page.getByRole('combobox', { name: 'Minimum match', exact: true }).selectOption('70');
+      await workplaceFilter.selectOption('onsite');
+      await salaryCurrency.selectOption('USD');
+      await minimumAnnualSalary.fill('90000');
       await newRunButton.click();
       await page.getByText('Search in progress', { exact: true }).waitFor();
       await page
@@ -3894,6 +3912,9 @@ try {
         await page.getByRole('combobox', { name: 'Minimum match', exact: true }).inputValue(),
         '0',
       );
+      assert.equal(await workplaceFilter.inputValue(), 'all');
+      assert.equal(await salaryCurrency.inputValue(), 'all');
+      assert.equal(await minimumAnnualSalary.inputValue(), '');
       await newRunButton.click();
       await page.getByText('Search in progress', { exact: true }).waitFor();
       assert.deepEqual((await database.getSearch(ownerId, submittedId))?.request.sources, [
