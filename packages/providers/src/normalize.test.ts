@@ -14,6 +14,7 @@ import {
   normalizeLocation,
   normalizeSalary,
   normalizeUrl,
+  workplaceTypeFrom,
 } from './normalize.js';
 
 const NOW = Date.parse('2026-03-01T00:00:00.000Z');
@@ -43,6 +44,36 @@ const FULL_JD = [
 ].join('\n');
 
 describe('normalizeJob', () => {
+  it('maps workplace labels conservatively', () => {
+    expect(workplaceTypeFrom('Hybrid')).toBe('hybrid');
+    expect(workplaceTypeFrom('On-site')).toBe('onsite');
+    expect(workplaceTypeFrom('Flexible')).toBe('unknown');
+    expect(workplaceTypeFrom(undefined, true)).toBe('remote');
+  });
+
+  it('preserves structured annual salary and explicit workplace type', () => {
+    const job = normalizeJob(
+      rawJob({
+        salaryMin: 120_000,
+        salaryMax: 150_000,
+        salaryCurrency: 'USD',
+        salaryPeriod: 'year',
+        workplaceType: 'hybrid',
+        isRemote: true,
+      }),
+      { now: NOW },
+    );
+
+    expect(job.salary).toMatchObject({ currency: 'USD', annualMin: 120_000, annualMax: 150_000 });
+    expect(job.workplaceType).toBe('hybrid');
+    expect(job.isRemote).toBe(false);
+  });
+
+  it('keeps missing workplace evidence unknown and derives remote only from the legacy flag', () => {
+    expect(normalizeJob(rawJob(), { now: NOW }).workplaceType).toBe('unknown');
+    expect(normalizeJob(rawJob({ isRemote: true }), { now: NOW }).workplaceType).toBe('remote');
+  });
+
   it('produces a complete job from a full ATS payload', () => {
     const job = normalizeJob(
       rawJob({

@@ -17,6 +17,16 @@ test('collected job schema keeps legacy missing match values normalized to null'
   });
 
   assert.equal(job.match, null);
+  assert.deepEqual(job.salary, {
+    raw: null,
+    min: null,
+    max: null,
+    currency: null,
+    period: null,
+    annualMin: null,
+    annualMax: null,
+  });
+  assert.equal(job.workplaceType, 'unknown');
 });
 
 test('lead tags are trimmed, bounded and case-insensitively unique', () => {

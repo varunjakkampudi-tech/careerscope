@@ -7,7 +7,7 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import type { FastifyInstance, FastifySchema } from 'fastify';
 import { leadStatusSchema, maximumResumeBytes, sessionCookie } from '@careerscope/core';
-import { jobFeedbackReasons } from '@careerscope/shared';
+import { jobFeedbackReasons, WORKPLACE_TYPES } from '@careerscope/shared';
 import { profilePhotoContentTypes } from './profile-photo.js';
 
 /** JSON Schema fragment. The builders below (`text`, `integer`, `array`, `object`, `nullable`) produce these. */
@@ -185,6 +185,16 @@ const job = object(
     title: text({ maxLength: 500 }),
     company: text({ maxLength: 500 }),
     location: text({ maxLength: 500 }),
+    salary: object({
+      raw: nullable(text()),
+      min: nullable({ type: 'number' }),
+      max: nullable({ type: 'number' }),
+      currency: nullable(text()),
+      period: nullable(text({ enum: ['year', 'month', 'week', 'day', 'hour'] })),
+      annualMin: nullable({ type: 'number' }),
+      annualMax: nullable({ type: 'number' }),
+    }),
+    workplaceType: text({ enum: WORKPLACE_TYPES }),
     description: text({ maxLength: 100000 }),
     source: text({ enum: sources }),
     sourceUrl: text({ format: 'uri' }),
@@ -214,6 +224,8 @@ const job = object(
     'title',
     'company',
     'location',
+    'salary',
+    'workplaceType',
     'description',
     'source',
     'sourceUrl',

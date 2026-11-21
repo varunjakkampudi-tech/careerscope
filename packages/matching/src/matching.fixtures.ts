@@ -98,6 +98,7 @@ export function job(overrides: Partial<Job> = {}): Job {
     },
     location: 'Hyderabad, India',
     isRemote: false,
+    workplaceType: 'unknown',
     employmentType: 'fulltime',
     salary: {
       raw: null,

@@ -330,8 +330,12 @@ try {
           sourceJobId: 'scored-fixture',
           title: 'Scored React Engineer',
           companyName: 'Flagged Technology',
-          location: 'Remote',
-          isRemote: true,
+          location: 'Bengaluru, India',
+          salaryMin: 90_000,
+          salaryMax: 110_000,
+          salaryCurrency: 'USD',
+          salaryPeriod: 'year',
+          workplaceType: 'hybrid',
           description: 'Build React and TypeScript interfaces.',
           hasFullDescription: false,
           sourceUrl: 'https://remoteok.com/remote-jobs/scored',
@@ -386,6 +390,16 @@ try {
         title: 'Senior React Engineer',
         company: 'Example Technology',
         location: 'Remote',
+        salary: {
+          raw: '$120,000-$150,000 per year',
+          min: 120_000,
+          max: 150_000,
+          currency: 'USD',
+          period: 'year',
+          annualMin: 120_000,
+          annualMax: 150_000,
+        },
+        workplaceType: 'remote',
         description: 'Build accessible interfaces using React and TypeScript.',
         source: 'himalayas',
         sourceUrl: 'https://himalayas.app/jobs/synthetic',
@@ -3535,6 +3549,57 @@ try {
       assert.equal(await page.locator('details.job').count(), 1, 'source filter narrows results');
       await sourceFilter.selectOption('all');
       const minimumMatch = page.getByRole('combobox', { name: 'Minimum match', exact: true });
+      const workplaceFilter = page.getByRole('combobox', { name: 'Workplace', exact: true });
+      const salaryCurrency = page.getByRole('combobox', { name: 'Salary currency', exact: true });
+      const minimumAnnualSalary = page.getByRole('spinbutton', {
+        name: 'Minimum annual salary',
+        exact: true,
+      });
+      await workplaceFilter.selectOption('hybrid');
+      await waitForJobCount(1);
+      assert.equal(
+        await page.locator('details.job').count(),
+        1,
+        'workplace filter uses the explicit hybrid type',
+      );
+      await workplaceFilter.selectOption('remote');
+      await waitForJobCount(1);
+      assert.equal(
+        await page.locator('details.job').count(),
+        1,
+        'workplace filter distinguishes remote from hybrid',
+      );
+      await workplaceFilter.selectOption('all');
+      await salaryCurrency.selectOption('USD');
+      await minimumAnnualSalary.fill('100000');
+      await waitForJobCount(1);
+      assert.equal(
+        await page.locator('details.job').count(),
+        1,
+        'salary filter excludes the lower annual range and retains the qualifying range',
+      );
+      await minimumAnnualSalary.fill('130000');
+      await waitForJobCount(0);
+      assert.equal(
+        await page.locator('details.job').count(),
+        0,
+        'salary filter does not use the upper bound as the minimum salary evidence',
+      );
+      await page.getByRole('button', { name: 'Clear filter', exact: true }).click();
+      await waitForJobCount(2);
+      assert.equal(await workplaceFilter.inputValue(), 'all');
+      assert.equal(await salaryCurrency.inputValue(), 'all');
+      assert.equal(await minimumAnnualSalary.inputValue(), '');
+      await salaryCurrency.selectOption('USD');
+      await minimumAnnualSalary.fill('130000');
+      await waitForJobCount(0);
+      await salaryCurrency.selectOption('all');
+      await waitForJobCount(2);
+      assert.equal(
+        await minimumAnnualSalary.inputValue(),
+        '',
+        'choosing all currencies clears the disabled salary threshold',
+      );
       const resultTextFilter = page.getByRole('textbox', { name: 'Filter results', exact: true });
       await resultTextFilter.fill('Senior React');
       await sourceFilter.selectOption('himalayas');

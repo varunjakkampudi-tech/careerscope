@@ -14,7 +14,7 @@
 
 import type { RawJob } from '@careerscope/shared';
 import type { JobProvider } from '../types.js';
-import { employmentTypeFrom, periodFrom } from '../normalize.js';
+import { employmentTypeFrom, periodFrom, workplaceTypeFrom } from '../normalize.js';
 import {
   boardJson,
   createBoardProvider,
@@ -103,6 +103,7 @@ const adapter: BoardAdapter<AshbyJob> = {
       companyName: board.company,
       location: item.location ?? item.secondaryLocations?.[0]?.location,
       ...(isRemote ? { isRemote: true } : {}),
+      workplaceType: workplaceTypeFrom(item.workplaceType, item.isRemote === true),
       employmentType: employmentTypeFrom(item.employmentType),
       description,
       descriptionIsHtml: html.length > 0,

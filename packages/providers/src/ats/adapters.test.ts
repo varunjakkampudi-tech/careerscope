@@ -145,6 +145,12 @@ describe('lever', () => {
     });
   });
 
+  it('maps workplace type without treating hybrid as remote', () => {
+    const job = leverAdapter.toRawJob({ ...posting, workplaceType: 'hybrid' }, board)!;
+    expect(job.workplaceType).toBe('hybrid');
+    expect(job.isRemote).toBeUndefined();
+  });
+
   it('normalizes a representative provider posting across experience, salary, and location', () => {
     const raw = leverAdapter.toRawJob(
       {

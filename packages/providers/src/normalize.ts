@@ -28,6 +28,7 @@ import {
   type Job,
   type RawJob,
   type Salary,
+  type WorkplaceType,
 } from '@careerscope/shared';
 import { descriptionToText, snippet } from './html.js';
 
@@ -53,11 +54,18 @@ export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
   const techStack = extractSkills(`${title}\n${descriptionText}`);
 
   const searchable = `${title}\n${descriptionText}`;
-  const isRemote = detectRemote(
+  const detectedRemote = detectRemote(
     `${searchable}\n${raw.location ?? ''}`,
     raw.isRemote === true,
     `${title}\n${raw.location ?? ''}`,
   );
+  const workplaceType =
+    raw.workplaceType && raw.workplaceType !== 'unknown'
+      ? raw.workplaceType
+      : detectedRemote
+        ? 'remote'
+        : 'unknown';
+  const isRemote = workplaceType === 'remote';
   const location = normalizeLocation(raw.location, isRemote);
 
   const employmentType: EmploymentType | null =
@@ -82,6 +90,7 @@ export function normalizeJob(raw: RawJob, options: NormalizeOptions = {}): Job {
     },
     location,
     isRemote,
+    workplaceType,
     employmentType,
     salary: normalizeSalary(raw),
     postedAt: normalizeDate(raw.postedAt, options.now),
@@ -658,6 +667,19 @@ export function employmentTypeFrom(raw: string | null | undefined): EmploymentTy
     .replace(/\b(full|part)\s*time\b/gi, '$1-time')
     .trim();
   return detectEmploymentType(spaced);
+}
+
+/** Map only explicit source labels; an unrecognized or missing value stays unknown. */
+export function workplaceTypeFrom(raw: string | null | undefined, isRemote = false): WorkplaceType {
+  const value =
+    raw
+      ?.toLowerCase()
+      .replace(/[\s_-]+/g, ' ')
+      .trim() ?? '';
+  if (/\bhybrid\b|\bpartly remote\b/.test(value)) return 'hybrid';
+  if (/\bonsite\b|\bon site\b|\bin person\b|\boffice based\b/.test(value)) return 'onsite';
+  if (/\bremote\b|\bwork from home\b/.test(value)) return 'remote';
+  return isRemote ? 'remote' : 'unknown';
 }
 
 /**

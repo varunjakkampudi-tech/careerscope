@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { ApiError, apiJson, apiParsed, isNotFound, offersDiscardAndReload } from './api';
-import { parseAccountSessions, parseMarketingConsent, parseSession } from './api-schemas';
+import {
+  parseAccountSessions,
+  parseMarketingConsent,
+  parseSearchDetail,
+  parseSession,
+} from './api-schemas';
 
 /**
  * CS-35 AC3, client half: every supported conflict code, an unknown code and a
@@ -17,6 +22,45 @@ const GENERIC_CONFLICT = 'This record changed in another session. Your edits hav
 // Deliberately shaped like something an internal error could leak: if any of
 // these tests ever sees this string, the client is echoing server text.
 const SERVER_DETAIL = 'relation "searches" does not exist at character 42';
+
+test('legacy search results remain readable without salary and workplace attributes', () => {
+  const detail = parseSearchDetail({
+    runId: 'legacy-run',
+    status: 'completed',
+    request: { query: 'Engineer', sources: ['remoteok'] },
+    sourceOutcomes: null,
+    jobs: [
+      {
+        id: 'legacy-job',
+        data: {
+          fingerprint: 'legacy-fingerprint',
+          title: 'Engineer',
+          company: 'Example',
+          location: 'Remote',
+          description: '',
+          source: 'remoteok',
+          sourceUrl: 'https://jobs.example.test/role',
+          applyUrl: 'https://jobs.example.test/apply',
+          postedAt: null,
+          match: null,
+        },
+        feedbackReason: null,
+      },
+    ],
+    events: [],
+  });
+
+  assert.deepEqual(detail.jobs[0]?.data.salary, {
+    raw: null,
+    min: null,
+    max: null,
+    currency: null,
+    period: null,
+    annualMin: null,
+    annualMax: null,
+  });
+  assert.equal(detail.jobs[0]?.data.workplaceType, 'unknown');
+});
 
 function parseRevision(body: unknown): { revision: number } {
   if (

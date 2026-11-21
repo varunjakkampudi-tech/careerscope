@@ -9,6 +9,7 @@ import {
   EMPLOYMENT_TYPES,
   LEAD_STATUSES,
   RUN_STATUSES,
+  WORKPLACE_TYPES,
   DEFAULT_MATCH_THRESHOLD,
   DEFAULT_MAX_RESULTS,
   DEFAULT_SEARCH_DAYS,
@@ -353,6 +354,8 @@ export const salarySchema = z.object({
 });
 export type Salary = z.infer<typeof salarySchema>;
 
+export const workplaceTypeSchema = z.enum(WORKPLACE_TYPES);
+
 /** A normalised posting produced by `@careerscope/providers` and scored by `matching`. */
 export const jobSchema = z.object({
   id: z.string(),
@@ -378,6 +381,7 @@ export const jobSchema = z.object({
   }),
   location: z.string(),
   isRemote: z.boolean().default(false),
+  workplaceType: workplaceTypeSchema.default('unknown'),
   employmentType: z.enum(EMPLOYMENT_TYPES).nullable(),
   salary: salarySchema,
   postedAt: z.string().nullable(),

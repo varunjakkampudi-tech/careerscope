@@ -1774,12 +1774,23 @@
       "currentStatus": "partial",
       "evidence": [
         "apps/web/src/components/job-search-view.tsx",
+        "packages/providers/src/normalize.ts",
+        "apps/workers/search/src/collect.ts",
+        "packages/core/src/jobs.ts",
+        "apps/api/src/openapi.ts",
         "docs/GAP-MATRIX.md",
         "docs/TEST-MATRIX.md"
       ],
-      "tests": ["scripts/tests/check-ui.ts"],
+      "tests": [
+        "scripts/tests/check-ui.ts",
+        "packages/providers/src/normalize.test.ts",
+        "packages/providers/src/ats/adapters.test.ts",
+        "apps/web/src/lib/api.test.ts",
+        "packages/core/src/leads.test.ts",
+        "apps/api/src/application-export.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "A prior exact-head browser run found that the default score threshold hid unscored jobs. The implementation and browser coverage are corrected; new exact-head CI and owner acceptance remain pending. Salary and workplace filters require persisted job attributes that are not currently available.",
+      "gap": "Exact-head hosted CI, independent review of the expanded salary/workplace implementation, and owner acceptance remain pending. Telugu and Hindi filter labels are AI-drafted; native-speaker review is not claimed.",
       "scopeDisposition": "in-scope"
     },
     {
