@@ -1,0 +1,266 @@
+.builder {
+  display: grid;
+  gap: 1rem;
+  margin-block: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--border, #d9dee7);
+  border-radius: 1rem;
+  background: var(--surface, #fff);
+}
+
+.heading,
+.sectionHeading,
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.heading h2,
+.sectionHeading h3,
+.analysis h3 {
+  margin: 0;
+}
+
+.heading p,
+.analysis p {
+  max-width: 68ch;
+  color: var(--muted, #596579);
+}
+
+.builder button,
+.builder select,
+.builder input,
+.builder textarea {
+  font: inherit;
+}
+
+.builder button {
+  min-height: 2.75rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--border, #d9dee7);
+  border-radius: 0.65rem;
+  color: var(--ink, #172033);
+  background: var(--surface, #fff);
+  cursor: pointer;
+}
+
+.builder button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.draftList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.draftList button[aria-pressed='true'] {
+  border-color: var(--accent, #275dad);
+  outline: 2px solid color-mix(in srgb, var(--accent, #275dad) 25%, transparent);
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
+  align-items: start;
+  gap: 1rem;
+}
+
+.editor,
+.analysis {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.editor h3 {
+  margin: 0;
+}
+
+.editor label,
+.analysis label {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+  font-weight: 600;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.controls input,
+.controls select,
+.editor textarea,
+.editor input,
+.editor select,
+.analysis textarea {
+  width: 100%;
+  min-height: 2.6rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--border, #aeb8c8);
+  border-radius: 0.5rem;
+  color: var(--ink, #172033);
+  background: var(--surface, #fff);
+}
+
+.editor textarea,
+.analysis textarea {
+  resize: vertical;
+}
+
+.entry {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.85rem;
+  border: 1px solid var(--border, #d9dee7);
+  border-radius: 0.75rem;
+}
+
+.entry legend {
+  padding-inline: 0.35rem;
+  font-weight: 700;
+}
+
+.actions {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.analysis > section {
+  padding: 0.85rem;
+  border: 1px solid var(--border, #d9dee7);
+  border-radius: 0.75rem;
+}
+
+.analysis ul {
+  padding-inline-start: 1.25rem;
+}
+
+.aiGate {
+  background: var(--canvas, #f4f6f9);
+}
+
+.preview {
+  min-height: 25rem;
+  padding: 2rem;
+  border: 1px solid #d6dbe4;
+  border-radius: 0.5rem;
+  color: #172033;
+  background: #fff;
+  box-shadow: 0 8px 26px rgb(20 32 55 / 8%);
+  overflow-wrap: anywhere;
+}
+
+.preview header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #cdd4df;
+}
+
+.preview h2 {
+  margin: 0;
+  font-size: 1.7rem;
+}
+
+.preview h3 {
+  margin: 1.2rem 0 0.4rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.preview h4,
+.preview p {
+  margin-block: 0.25rem;
+}
+
+.preview ul {
+  padding-inline-start: 1.25rem;
+}
+
+.previewEntry {
+  margin-block: 0.75rem;
+}
+
+.previewEntry p,
+.targetRole {
+  color: #4d596b;
+}
+
+.modern header {
+  border-bottom: 3px solid #275dad;
+}
+
+.modern h3 {
+  color: #275dad;
+}
+
+.compact {
+  padding: 1.35rem;
+  font-size: 0.92rem;
+}
+
+.compact header {
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.6rem;
+}
+
+.compact h3 {
+  margin-top: 0.8rem;
+}
+
+@media (max-width: 900px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .builder {
+    padding: 0.75rem;
+  }
+
+  .heading,
+  .sectionHeading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .preview {
+    padding: 1.1rem;
+  }
+}
+
+@media print {
+  :global(body) * {
+    visibility: hidden !important;
+  }
+
+  .printView,
+  .printView * {
+    visibility: visible !important;
+  }
+
+  .printView {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    color: #000;
+  }
+}

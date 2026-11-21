@@ -92,6 +92,13 @@ visible values are `uploading`, `queued`, `cancelling`, `cancelled`, `parsed` an
 `rejected`. Deleting a settled resume removes the stored object, then the result
 and upload rows.
 
+`resume_drafts` stores candidate-entered editable resume documents separately
+from uploaded originals and parser output. It includes the chosen template,
+target role, bounded JSON content, revision, and explicit candidate approval
+timestamp. Every content edit increments the revision and clears approval.
+Draft reads and writes are owner-scoped; no AI provider is called by the
+builder.
+
 Storage budgets are checked under a lock when an upload is first reserved: at
 most 50 uploads and 100 MiB per owner, and 1000 uploads and 1 GiB overall,
 counting every row including cancelled ones. Exceeding a budget is reported as

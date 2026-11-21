@@ -30,6 +30,7 @@ export * from './bull-queue.js';
 export * from './storage.js';
 export * from './file-storage.js';
 export * from './resumes.js';
+export * from './resume-drafts.js';
 export * from './resume-parser.js';
 export * from './market.js';
 export * from './support-cases.js';

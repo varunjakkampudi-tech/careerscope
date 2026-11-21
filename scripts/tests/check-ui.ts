@@ -334,8 +334,25 @@ try {
           isRemote: true,
           description: 'Build React and TypeScript interfaces.',
           hasFullDescription: false,
+          postedAt: '2026-01-01T00:00:00.000Z',
           sourceUrl: 'https://remoteok.com/remote-jobs/scored',
           applyUrl: 'https://example.test/scored',
+        };
+        yield {
+          source: 'remoteok' as const,
+          sourceJobId: 'full-description-fixture',
+          title: 'Senior React Engineer',
+          companyName: 'Example Technology',
+          location: 'Remote',
+          isRemote: true,
+          description:
+            'Build accessible interfaces using React and TypeScript. Collaborate with product and design teams to deliver reliable experiences. '.repeat(
+              6,
+            ),
+          hasFullDescription: true,
+          postedAt: '2026-02-01T00:00:00.000Z',
+          sourceUrl: 'https://remoteok.com/remote-jobs/full-description',
+          applyUrl: 'https://example.test/full-description',
         };
       },
     },
@@ -359,12 +376,12 @@ try {
       now: Date.parse('2026-09-13T12:00:00Z'),
     },
   );
-  assert.equal(scored.jobs.length, 1);
+  assert.equal(scored.jobs.length, 2);
   const sourceOutcomes = [
     {
       source: 'remoteok' as const,
       status: 'completed' as const,
-      accepted: 1,
+      accepted: 2,
       limited: false,
       errorCode: null,
     },
@@ -376,30 +393,7 @@ try {
       errorCode: 'source_permission_pending' as const,
     },
   ];
-  await database.completeCollection(
-    command,
-    fence,
-    [
-      {
-        fingerprint: 'browser-fixture',
-        sourceJobId: 'browser-fixture',
-        title: 'Senior React Engineer',
-        company: 'Example Technology',
-        location: 'Remote',
-        description: 'Build accessible interfaces using React and TypeScript.',
-        source: 'himalayas',
-        sourceUrl: 'https://himalayas.app/jobs/synthetic',
-        sourceLinks: [
-          { source: 'himalayas', url: 'https://himalayas.app/jobs/synthetic' },
-          { source: 'remoteok', url: 'https://remoteok.com/remote-jobs/synthetic' },
-        ],
-        applyUrl: 'https://example.test/apply',
-        postedAt: null,
-      },
-      ...scored.jobs,
-    ],
-    sourceOutcomes,
-  );
+  await database.completeCollection(command, fence, scored.jobs, sourceOutcomes);
   // A separate approved-source failure keeps the retry control covered without
   // making the historical Himalayas fixture look retryable before rights are
   // recorded. Both the account and provider data are synthetic.
@@ -1751,6 +1745,42 @@ try {
         });
         await page.goto(`${origin}/resume`);
         await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
+        const builder = page.getByRole('region', { name: 'Resume Builder' });
+        await builder.getByRole('button', { name: 'New resume', exact: true }).click();
+        await builder.getByLabel('Resume name').fill('Synthetic Role Resume');
+        await builder.getByLabel('Target role').fill('Frontend Engineer');
+        await builder.getByLabel('Full name').fill('Synthetic Candidate');
+        await builder.getByLabel('Professional summary').fill('Builds React interfaces.');
+        await builder.getByLabel('Skills (comma-separated)').fill('React, TypeScript');
+        await builder
+          .getByLabel('Paste job description')
+          .fill('Frontend Engineer needs React, TypeScript, and CSS.');
+        await builder.getByText(/Matched terms:.*React.*typescript/i).waitFor();
+        const draftCreated = page.waitForResponse(
+          (response) =>
+            response.url().endsWith('/api/resume-drafts') && response.request().method() === 'POST',
+        );
+        await builder.getByRole('button', { name: 'Create resume', exact: true }).click();
+        assert.equal((await draftCreated).status(), 201);
+        await builder.getByRole('button', { name: 'Approve this version', exact: true }).click();
+        await builder.getByRole('status').filter({ hasText: 'Approved by you' }).waitFor();
+        await builder
+          .getByLabel('Professional summary')
+          .fill('Builds accessible React interfaces.');
+        await builder
+          .getByRole('status')
+          .filter({ hasText: 'Editing clears your previous approval' })
+          .waitFor();
+        const draftSaved = page.waitForResponse(
+          (response) =>
+            response.url().includes('/api/resume-drafts/') && response.request().method() === 'PUT',
+        );
+        await builder.getByRole('button', { name: 'Save changes', exact: true }).click();
+        assert.equal((await draftSaved).status(), 200);
+        assert.equal(
+          await builder.getByRole('button', { name: 'Approve this version', exact: true }).count(),
+          1,
+        );
         await page.getByLabel('Full Name', { exact: true }).waitFor();
         const uploadInput = page.getByLabel('Upload picture');
         await uploadInput.focus();
@@ -3441,9 +3471,44 @@ try {
         await page.getByRole('button', { name: 'Retry failed sources', exact: true }).count(),
         0,
       );
-      assert.equal(resultBody.jobs[0].data.title, 'Scored React Engineer');
-      assert.equal(resultBody.jobs[1].data.match, null);
-      await page.getByText('Not scored', { exact: true }).waitFor();
+      const matchFirstTitle = resultBody.jobs[0].data.title;
+      assert.deepEqual(
+        resultBody.jobs
+          .map(
+            (job: { data: { match: { confidence: string } | null } }) => job.data.match?.confidence,
+          )
+          .sort(),
+        ['high', 'low'],
+      );
+      const scoredResult = resultBody.jobs.find(
+        (job: { data: { title: string } }) => job.data.title === 'Scored React Engineer',
+      );
+      assert.ok(scoredResult);
+      const resultSort = page.getByLabel('Sort results');
+      await resultSort.selectOption('evidence');
+      await page
+        .getByText(
+          'Description confidence reflects available text only. It does not verify the employer or posting.',
+          { exact: true },
+        )
+        .waitFor();
+      assert.equal(
+        await page.locator('details.job h3').first().innerText(),
+        'Senior React Engineer',
+        `${engine} description-confidence sorting should put the full-description result first`,
+      );
+      await resultSort.selectOption('newest');
+      assert.equal(
+        await page.locator('details.job h3').first().innerText(),
+        'Senior React Engineer',
+        `${engine} newest sorting should put the later posting first`,
+      );
+      await resultSort.selectOption('match');
+      assert.equal(
+        await page.locator('details.job h3').first().innerText(),
+        matchFirstTitle,
+        `${engine} match sorting should put the highest match score first`,
+      );
       await page.getByRole('heading', { name: 'Scored React Engineer', exact: true }).click();
       await page.getByRole('region', { name: 'Match evidence' }).waitFor();
       // CS-18 copy: the low-confidence flag now explains itself instead of
@@ -3457,13 +3522,13 @@ try {
         .locator('details.job')
         .filter({ has: page.getByRole('heading', { name: 'Scored React Engineer', exact: true }) });
       const feedbackReason = scoredJobCard.getByLabel('Report a posting issue');
-      const priorFeedbackReason = resultBody.jobs[0].feedbackReason;
+      const priorFeedbackReason = scoredResult.feedbackReason;
       const firstFeedbackReason =
         priorFeedbackReason === 'suspicious' ? 'irrelevant' : 'suspicious';
       await feedbackReason.selectOption(firstFeedbackReason);
       const firstFeedbackResponse = page.waitForResponse(
         (response) =>
-          response.url().includes(`/api/search-jobs/${resultBody.jobs[0].id}/feedback`) &&
+          response.url().includes(`/api/search-jobs/${scoredResult.id}/feedback`) &&
           response.request().method() === 'PUT',
       );
       await scoredJobCard
@@ -3483,16 +3548,16 @@ try {
         .waitFor();
       let feedbackRows = await database.pool.query(
         'SELECT owner_id, job_id, reason FROM job_feedback WHERE owner_id = $1 AND job_id = $2',
-        [ownerId, resultBody.jobs[0].id],
+        [ownerId, scoredResult.id],
       );
       assert.deepEqual(feedbackRows.rows, [
-        { owner_id: ownerId, job_id: resultBody.jobs[0].id, reason: firstFeedbackReason },
+        { owner_id: ownerId, job_id: scoredResult.id, reason: firstFeedbackReason },
       ]);
       const secondFeedbackReason = firstFeedbackReason === 'suspicious' ? 'incorrect' : 'duplicate';
       await feedbackReason.selectOption(secondFeedbackReason);
       const secondFeedbackResponse = page.waitForResponse(
         (response) =>
-          response.url().includes(`/api/search-jobs/${resultBody.jobs[0].id}/feedback`) &&
+          response.url().includes(`/api/search-jobs/${scoredResult.id}/feedback`) &&
           response.request().method() === 'PUT',
       );
       await scoredJobCard.getByRole('button', { name: 'Update feedback', exact: true }).click();
@@ -3507,10 +3572,10 @@ try {
         .waitFor();
       feedbackRows = await database.pool.query(
         'SELECT owner_id, job_id, reason FROM job_feedback WHERE owner_id = $1 AND job_id = $2',
-        [ownerId, resultBody.jobs[0].id],
+        [ownerId, scoredResult.id],
       );
       assert.deepEqual(feedbackRows.rows, [
-        { owner_id: ownerId, job_id: resultBody.jobs[0].id, reason: secondFeedbackReason },
+        { owner_id: ownerId, job_id: scoredResult.id, reason: secondFeedbackReason },
       ]);
       assert.equal(
         (await database.pool.query('SELECT id FROM job_feedback WHERE owner_id = $1', [ownerId]))
@@ -3525,22 +3590,16 @@ try {
           .filter({ hasText: 'Senior React Engineer' })
           .getByRole('link', { name: 'Remote OK', exact: true })
           .getAttribute('href'),
-        'https://remoteok.com/remote-jobs/synthetic',
+        'https://remoteok.com/remote-jobs/full-description',
       );
-      assert.equal(
-        await page.getByRole('link', { name: 'Himalayas', exact: true }).getAttribute('href'),
-        'https://himalayas.app/jobs/synthetic',
-      );
-      await page
-        .getByText('Build accessible interfaces using React and TypeScript.', { exact: true })
-        .waitFor();
+      await page.getByText(/Build accessible interfaces using React and TypeScript\./).waitFor();
       assert.equal(
         await page
           .locator('details')
           .filter({ hasText: 'Senior React Engineer' })
           .getByRole('link', { name: 'Open Posting' })
           .getAttribute('href'),
-        'https://example.test/apply',
+        'https://example.test/full-description',
       );
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });
@@ -3895,11 +3954,14 @@ try {
         postingHrefs.length > 0,
         `${engine} saved lead details exposes no posting link at all`,
       );
-      assert.deepEqual([...new Set(postingHrefs)], ['https://himalayas.app/jobs/synthetic']);
+      assert.deepEqual(
+        [...new Set(postingHrefs)],
+        ['https://remoteok.com/remote-jobs/full-description'],
+      );
       const leadRepository = new LeadRepository(database);
       const linkedLead = await leadRepository.get(ownerId, leadId);
       assert.equal(linkedLead?.status, 'saved');
-      const postingUrl = 'https://himalayas.app/jobs/synthetic';
+      const postingUrl = 'https://remoteok.com/remote-jobs/full-description';
       const interceptPosting = (route: import('playwright').Route) =>
         route.fulfill({
           status: 200,

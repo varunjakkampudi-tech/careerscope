@@ -70,6 +70,7 @@ import {
   InAppNotificationRepository,
   ResumeUploadRepository,
   ResumeUploadCoordinator,
+  ResumeDraftRepository,
   InvalidResumeUpload,
   ResumeStorageLimit,
   maximumResumeBytes,
@@ -388,6 +389,7 @@ export async function createApp(
   const interviews = new InterviewRepository(database);
   const notifications = new InAppNotificationRepository(database);
   const uploads = new ResumeUploadRepository(database);
+  const resumeDrafts = new ResumeDraftRepository(database);
   const coordinator = options.resumeStorage
     ? new ResumeUploadCoordinator(uploads, options.resumeStorage)
     : undefined;
@@ -1790,6 +1792,43 @@ export async function createApp(
       });
       return reply.code(204).send();
     });
+  });
+  app.get('/api/resume-drafts', async (request) => {
+    if (!(await consumeRateLimit(request, `resume-drafts-read:${request.ownerId!}`, 120, 60)))
+      throw new HttpError(429, 'Too many requests');
+    return { items: await resumeDrafts.list(request.ownerId!) };
+  });
+  app.post('/api/resume-drafts', { bodyLimit: 262_144 }, async (request, reply) => {
+    if (!(await consumeRateLimit(request, `resume-drafts-write:${request.ownerId!}`, 30, 60)))
+      throw new HttpError(429, 'Too many resume updates');
+    return reply.code(201).send(await resumeDrafts.create(request.ownerId!, request.body));
+  });
+  app.put('/api/resume-drafts/:id', { bodyLimit: 262_144 }, async (request) => {
+    if (!(await consumeRateLimit(request, `resume-drafts-write:${request.ownerId!}`, 30, 60)))
+      throw new HttpError(429, 'Too many resume updates');
+    const { id } = identifier.parse(request.params);
+    const draft = await resumeDrafts.update(request.ownerId!, id, request.body);
+    if (!draft) throw new HttpError(404, 'Resume draft not found');
+    return draft;
+  });
+  app.post('/api/resume-drafts/:id/approve', async (request) => {
+    if (!(await consumeRateLimit(request, `resume-drafts-write:${request.ownerId!}`, 30, 60)))
+      throw new HttpError(429, 'Too many resume updates');
+    const { id } = identifier.parse(request.params);
+    const { revision } = z
+      .object({ revision: z.number().int().min(1) })
+      .strict()
+      .parse(request.body);
+    const draft = await resumeDrafts.approve(request.ownerId!, id, revision);
+    if (!draft) throw new HttpError(404, 'Resume draft not found');
+    return draft;
+  });
+  app.delete('/api/resume-drafts/:id', async (request, reply) => {
+    if (!(await consumeRateLimit(request, `resume-drafts-write:${request.ownerId!}`, 30, 60)))
+      throw new HttpError(429, 'Too many resume updates');
+    const { id } = identifier.parse(request.params);
+    await resumeDrafts.delete(request.ownerId!, id);
+    return reply.code(204).send();
   });
   // Per-user budget for authenticated read routes. The key is the user id from
   // the session, never from input, so a caller cannot choose the bucket. It is
