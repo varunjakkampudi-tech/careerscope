@@ -10,6 +10,8 @@ const dimensions: Record<MatchDimension, string> = {
     'Estimates how the role level described in the posting compares with your stated experience level.',
   experience:
     'Compares a stated experience range in the posting with the experience information you provided.',
+  education:
+    'Compares explicit degree or field wording with education text in your saved profile or parsed resume. These are unverified claims and do not establish eligibility.',
   location:
     'Considers the posting location or remote status alongside your saved location preferences.',
   compensation:
@@ -36,7 +38,7 @@ export default function MatchingTransparencyPage() {
       <section className={styles.panel} aria-labelledby="score-heading">
         <h2 id="score-heading">What contributes to the score</h2>
         <p>
-          CareerScope combines seven signals using the weights below. The labels and weights come
+          CareerScope combines eight signals using the weights below. The labels and weights come
           from the same shared definitions used by the matching engine, so this page does not
           maintain a second set of scoring constants.
         </p>

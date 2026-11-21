@@ -332,7 +332,8 @@ try {
           companyName: 'Flagged Technology',
           location: 'Remote',
           isRemote: true,
-          description: 'Build React and TypeScript interfaces.',
+          description:
+            'Requirements:\n- Bachelor degree in Computer Science\nBuild React and TypeScript interfaces.',
           hasFullDescription: false,
           sourceUrl: 'https://remoteok.com/remote-jobs/scored',
           applyUrl: 'https://example.test/scored',
@@ -347,6 +348,7 @@ try {
             fullName: 'Synthetic Candidate',
             email: 'synthetic@example.test',
             location: 'Hyderabad',
+            education: ['BSc Computer Science'],
           },
           preferences: {
             titles: ['React Engineer'],
@@ -1938,10 +1940,11 @@ try {
           }),
         ),
         [
-          'Skills:40%',
+          'Skills:35%',
           'Role title:15%',
           'Seniority:12%',
           'Experience:10%',
+          'Education fit:5%',
           'Location:10%',
           'Compensation:8%',
           'Freshness:5%',
@@ -3453,6 +3456,7 @@ try {
         .getByText('Limited description — score capped, treat as low-confidence', { exact: true })
         .waitFor();
       await page.getByText('Do Not Apply', { exact: true }).waitFor();
+      await page.getByText(/education text matches the stated posting ask/i).waitFor();
       const scoredJobCard = page
         .locator('details.job')
         .filter({ has: page.getByRole('heading', { name: 'Scored React Engineer', exact: true }) });

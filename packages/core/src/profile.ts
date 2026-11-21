@@ -77,7 +77,7 @@ export const saveProfileSchema = z
 /** Validated profile content. */
 export type WritableProfile = z.infer<typeof writableProfileSchema>;
 export type MatchingProfile = {
-  candidate: Pick<WritableProfile['candidate'], 'location'>;
+  candidate: Pick<WritableProfile['candidate'], 'location' | 'education'>;
   preferences: WritableProfile['preferences'];
   application: Pick<
     WritableProfile['application'],
@@ -93,13 +93,13 @@ export type MatchingProfile = {
   derived: DerivedResume | null;
 };
 
-/** Copies only the fields scoring reads (location, preferences, three application fields) plus the derived resume data. */
+/** Copies only scoring inputs (location, education, preferences, selected application fields) plus derived resume data. */
 export function matchingProfile(
   profile: WritableProfile,
   derived: DerivedResume | null = null,
 ): MatchingProfile {
   return {
-    candidate: { location: profile.candidate.location },
+    candidate: { location: profile.candidate.location, education: profile.candidate.education },
     preferences: profile.preferences,
     application: {
       expectedCtc: profile.application.expectedCtc,

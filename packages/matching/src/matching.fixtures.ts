@@ -60,6 +60,7 @@ const CANDIDATE: CandidateContext = {
   ],
   titles: ['Full Stack Software Engineer', 'Senior Associate'],
   yearsOfExperience: 4,
+  education: ['Bachelor of Science in Computer Science'],
   locations: ['Hyderabad', 'Bangalore', 'Remote'],
   homeLocation: 'Hyderabad, India',
   remoteOnly: false,

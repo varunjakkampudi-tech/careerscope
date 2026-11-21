@@ -124,11 +124,12 @@ describe('scoreJob — breakdown', () => {
     expect(matchBreakdownSchema.strict().parse(legacy).scoringVersion).toBeNull();
   });
 
-  it('returns all seven dimensions with their weights and reasons', () => {
+  it('returns all eight dimensions with their weights and reasons', () => {
     const breakdown = scoreJob(job({ descriptionText: NEAR_EXACT_JD }), candidate(), opts);
     const keys = Object.keys(breakdown.dimensions).sort();
     expect(keys).toEqual([
       'compensation',
+      'education',
       'experience',
       'location',
       'recency',
@@ -260,7 +261,7 @@ describe('scoreJob — excluded listings', () => {
     expect(breakdown.excludedReason).toMatch(/Backend/);
     expect(breakdown.matchedSkills).toEqual([]);
     // The drawer still renders — every dimension is present, just not scored.
-    expect(Object.keys(breakdown.dimensions)).toHaveLength(7);
+    expect(Object.keys(breakdown.dimensions)).toHaveLength(8);
   });
 
   // A hard gate must not swallow whether a resume was on file - an excluded

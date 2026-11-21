@@ -1,10 +1,10 @@
 /**
- * Turning seven dimension scores into one number, with the gates and clamps that
+ * Turning eight dimension scores into one number, with the gates and clamps that
  * make that number mean something. Uses `demands.ts` and `dimensions.ts`.
  *
  * Three rules keep the headline honest:
  *   1. Hard eligibility gives a listing zero and says why, rather than letting
- *      a disqualifying detail get averaged away by six good dimensions. The
+ *      a disqualifying detail get averaged away by other dimensions. The
  *      listing remains visible; eligibility is advice, not a discovery filter.
  *   2. A listing whose description was never fetched is capped, so crossing the
  *      user's threshold always implies the JD was actually read.
@@ -28,6 +28,7 @@ import {
   clamp01,
   scoreCompensation,
   scoreExperience,
+  scoreEducation,
   scoreLocation,
   scoreRecency,
   scoreSeniority,
@@ -36,7 +37,7 @@ import {
 } from './dimensions.js';
 
 /** Increment when the deterministic scoring rules or weights materially change. */
-export const MATCH_SCORING_VERSION = 'deterministic-v2';
+export const MATCH_SCORING_VERSION = 'deterministic-v3';
 
 /**
  * Below this many characters a "description" is a teaser — a search-results
@@ -76,6 +77,7 @@ export function scoreJob(
     title: scoreTitle(job.title, candidate),
     seniority: scoreSeniority(job.title, demands, candidate),
     experience: scoreExperience(demands, candidate),
+    education: scoreEducation(demands, candidate),
     location: scoreLocation(job, candidate),
     compensation: scoreCompensation(job, candidate),
     recency: scoreRecency(job, windowDays, now),

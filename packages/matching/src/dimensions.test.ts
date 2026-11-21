@@ -4,6 +4,7 @@ import type { JobDemands } from '@careerscope/shared';
 import {
   scoreCompensation,
   scoreExperience,
+  scoreEducation,
   scoreLocation,
   scoreRecency,
   scoreSeniority,
@@ -17,6 +18,7 @@ function demands(overrides: Partial<JobDemands> = {}): JobDemands {
     skills: [],
     minYears: null,
     maxYears: null,
+    education: [],
     seniority: null,
     isRemote: false,
     employmentType: null,
@@ -25,6 +27,40 @@ function demands(overrides: Partial<JobDemands> = {}): JobDemands {
 }
 
 const ask = (...skills: string[]) => skills.map((skill) => ({ skill, weight: 1 }));
+
+describe('scoreEducation', () => {
+  it('is neutral when education is unknown or the posting has no explicit ask', () => {
+    expect(scoreEducation(demands(), candidate()).score).toBe(0.7);
+    expect(
+      scoreEducation(
+        demands({ education: [{ kind: 'degree', value: 'master', weight: 1 }] }),
+        candidate({ education: [] }),
+      ).score,
+    ).toBe(0.7);
+  });
+
+  it('scores degree level and field from candidate text without asserting verification', () => {
+    const out = scoreEducation(
+      demands({
+        education: [
+          { kind: 'degree', value: 'bachelor', weight: 1 },
+          { kind: 'field', value: 'computer science', weight: 1 },
+        ],
+      }),
+      candidate({ education: ['BSc Computer Science'] }),
+    );
+    expect(out.score).toBe(1);
+    expect(out.reason).toMatch(/unverified/i);
+  });
+
+  it('treats mismatched text as a soft fit signal, not a hard rejection', () => {
+    const out = scoreEducation(
+      demands({ education: [{ kind: 'degree', value: 'master', weight: 1 }] }),
+      candidate({ education: ['Bachelor of Arts'] }),
+    );
+    expect(out.score).toBe(0.25);
+  });
+});
 
 describe('scoreSkills', () => {
   it('gives full marks when every demanded skill is held and current', () => {

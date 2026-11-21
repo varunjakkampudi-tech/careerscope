@@ -41,6 +41,13 @@ export function buildCandidateContext(
     recentSkills: normalizeSkillList(derived?.recentSkills ?? []),
     titles: dedupe([...preferences.titles, ...(derived?.titles ?? [])]),
     yearsOfExperience: resolveYears(application.yearsOfExperience, derived?.yearsOfExperience),
+    education: dedupe([
+      ...candidate.education,
+      ...(derived?.education ?? []),
+      ...(derived?.educationClaims ?? []).map((claim) => claim.normalizedText),
+    ])
+      .slice(0, 40)
+      .map((value) => value.slice(0, 200)),
     locations: dedupe(preferences.locations),
     homeLocation: candidate.location.trim(),
     remoteOnly: preferences.remoteOnly,
