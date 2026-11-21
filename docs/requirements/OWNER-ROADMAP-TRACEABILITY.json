@@ -1594,7 +1594,7 @@
         "apps/workers/search/src/collect.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "The deterministic rule parser extracts bounded experience ranges; explicit candidate-entered years (including zero) take precedence over resume estimates, while unknown values fall back to parsed resume evidence. Scoring treats unknown/silent ranges neutrally and penalizes shortfalls more than excess. Focused tests pass locally, but exact-head CI and independent review remain pending. No labeled-corpus measurement validates extraction accuracy or score calibration; browser-level display of the experience reason is not item-tested.",
+      "gap": "The deterministic rule parser extracts bounded experience ranges; explicit candidate-entered years (including zero) take precedence over resume estimates, while unknown values fall back to parsed resume evidence. Scoring treats unknown/silent ranges neutrally and penalizes shortfalls more than excess. Focused tests pass locally. Prior exact head 12f4e1717cab332346321c899689bfbace4b8997 passed all three required CI jobs in run 44795581203; independent review remains pending and this evidence update requires new exact-head CI. No labeled-corpus measurement validates extraction accuracy or score calibration; browser-level display of the experience reason is not item-tested.",
       "scopeDisposition": "in-scope"
     },
     {
