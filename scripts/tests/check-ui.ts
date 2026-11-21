@@ -3809,12 +3809,6 @@ try {
       await page.getByLabel('Filter results').fill('Senior React');
       await page.getByRole('combobox', { name: 'Source', exact: true }).selectOption('himalayas');
       await page.getByRole('combobox', { name: 'Minimum match', exact: true }).selectOption('70');
-      const workplaceFilter = page.getByRole('combobox', { name: 'Workplace', exact: true });
-      const salaryCurrency = page.getByRole('combobox', { name: 'Salary currency', exact: true });
-      const minimumAnnualSalary = page.getByRole('spinbutton', {
-        name: 'Minimum annual salary',
-        exact: true,
-      });
       await workplaceFilter.selectOption('hybrid');
       await salaryCurrency.selectOption('USD');
       await minimumAnnualSalary.fill('100000');

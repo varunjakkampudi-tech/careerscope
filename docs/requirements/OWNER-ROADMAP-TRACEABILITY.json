@@ -1790,7 +1790,7 @@
         "apps/api/src/application-export.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Reviewer found that conflicting explicit workplace classifications could survive duplicate merging and that browser assertions did not explicitly cover reset of the new workplace/salary controls. A correction is implemented, but focused validation, exact-head hosted CI, independent re-review, and owner acceptance remain pending. Telugu and Hindi filter labels are AI-drafted; native-speaker review is not claimed.",
+      "gap": "The reviewer findings on conflicting workplace labels and browser filter resets were corrected. Node 24 package builds, 126/126 focused provider tests, full application/test typecheck including 98 canonical test files, formatting, file-audit integrity, and roadmap traceability passed. Exact-head hosted CI, independent re-review, and owner acceptance remain pending. Telugu and Hindi filter labels are AI-drafted; native-speaker review is not claimed.",
       "scopeDisposition": "in-scope"
     },
     {
