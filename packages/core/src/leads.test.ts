@@ -64,14 +64,7 @@ test('collected job schema reads historical seven-dimension match records withou
       ...historical,
       dimensions: { ...historical.dimensions, unexpected: { score: 0, weight: 0, reason: '' } },
     },
-    {
-      ...historical,
-      scoringVersion: null,
-      dimensions: {
-        ...historical.dimensions,
-        education: { score: 0.7, weight: 0.05, reason: 'claimed' },
-      },
-    },
+    { ...historical, scoringVersion: null },
   ]) {
     assert.equal(
       collectedJobSchema.safeParse({
