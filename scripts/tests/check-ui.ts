@@ -3464,7 +3464,13 @@ try {
       const educationDimension = scoredJobCard
         .getByRole('region', { name: 'Match evidence' })
         .locator('dl.match-dimensions > div')
-        .filter({ hasText: /^education\b/i });
+        .nth(4);
+      assert.ok(
+        (await educationDimension.locator('dt').innerText())
+          .trim()
+          .toLowerCase()
+          .startsWith('education'),
+      );
       assert.ok((await educationDimension.locator('dd').innerText()).trim().length > 0);
       const feedbackReason = scoredJobCard.getByLabel('Report a posting issue');
       const priorFeedbackReason = resultBody.jobs[0].feedbackReason;
