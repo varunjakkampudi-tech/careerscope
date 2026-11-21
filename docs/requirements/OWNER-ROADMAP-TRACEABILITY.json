@@ -1563,11 +1563,25 @@
       "stageTitle": "Advanced matching and eligibility",
       "title": "Skill matching",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/matching/src/demands.ts",
+        "packages/matching/src/dimensions.ts",
+        "packages/matching/src/context.ts",
+        "packages/shared/src/skills.ts",
+        "apps/web/src/components/match-evidence.tsx",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/matching/src/demands.test.ts",
+        "packages/matching/src/dimensions.test.ts",
+        "packages/matching/src/context.test.ts",
+        "packages/shared/src/skills.test.ts",
+        "apps/workers/search/src/collect.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Synthetic tests exercise weighted required/preferred skill extraction, aliases, recency and family partial credit; the browser suite asserts visible matched and missing skill evidence. Prior head 5acf5f3337d00da25ed486d46ede6d541a3bc826 passed all three required jobs in run 44793696661. Independent review found unrelated historical Stage 01 Node-version rewrites; the correction needs new exact-head CI and review before integration. No labeled-corpus precision/recall or representative extraction-quality measurement exists, and candidates cannot correct or exclude individual resume-derived skills without removing the resume.",
       "scopeDisposition": "in-scope"
     },
     {

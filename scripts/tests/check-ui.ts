@@ -332,7 +332,7 @@ try {
           companyName: 'Flagged Technology',
           location: 'Remote',
           isRemote: true,
-          description: 'Build React and TypeScript interfaces.',
+          description: 'Build React and TypeScript interfaces backed by PostgreSQL.',
           hasFullDescription: false,
           sourceUrl: 'https://remoteok.com/remote-jobs/scored',
           applyUrl: 'https://example.test/scored',
@@ -3445,7 +3445,21 @@ try {
       assert.equal(resultBody.jobs[1].data.match, null);
       await page.getByText('Not scored', { exact: true }).waitFor();
       await page.getByRole('heading', { name: 'Scored React Engineer', exact: true }).click();
-      await page.getByRole('region', { name: 'Match evidence' }).waitFor();
+      const scoredJobCard = page
+        .locator('details.job')
+        .filter({ has: page.getByRole('heading', { name: 'Scored React Engineer', exact: true }) });
+      const scoredMatchEvidence = scoredJobCard.getByRole('region', { name: 'Match evidence' });
+      await scoredMatchEvidence.waitFor();
+      await scoredMatchEvidence
+        .locator('dl.match-skills > div')
+        .filter({ has: page.getByText('Matched Skills', { exact: true }) })
+        .getByText('React, TypeScript', { exact: true })
+        .waitFor();
+      await scoredMatchEvidence
+        .locator('dl.match-skills > div')
+        .filter({ has: page.getByText('Missing Skills', { exact: true }) })
+        .getByText('PostgreSQL', { exact: true })
+        .waitFor();
       // CS-18 copy: the low-confidence flag now explains itself instead of
       // reading "Limited Description" (match-evidence.tsx) — the assertion
       // text was stale, the behaviour it checks is unchanged.
@@ -3453,9 +3467,6 @@ try {
         .getByText('Limited description — score capped, treat as low-confidence', { exact: true })
         .waitFor();
       await page.getByText('Do Not Apply', { exact: true }).waitFor();
-      const scoredJobCard = page
-        .locator('details.job')
-        .filter({ has: page.getByRole('heading', { name: 'Scored React Engineer', exact: true }) });
       const feedbackReason = scoredJobCard.getByLabel('Report a posting issue');
       const priorFeedbackReason = resultBody.jobs[0].feedbackReason;
       const firstFeedbackReason =
