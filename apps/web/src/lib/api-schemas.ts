@@ -428,6 +428,7 @@ const leadSchema = z.object({
   notes: z.string(),
   status: leadStatusSchema,
   applicationEvidence: applicationEvidenceSchema.nullable(),
+  followUpAt: z.string().nullable(),
   employerAcknowledgement: z
     .object({ receivedAt: z.string(), source: z.string(), reference: z.string().nullable() })
     .nullable(),
@@ -455,6 +456,8 @@ const leadHistorySchema = z.object({
   applicationEvidence: applicationEvidenceSchema.nullable(),
   tagsChanged: z.boolean(),
   tags: z.array(z.string()),
+  followUpChanged: z.boolean(),
+  followUpAt: z.string().nullable(),
   createdAt: z.string(),
 });
 /** One revision of a lead. */

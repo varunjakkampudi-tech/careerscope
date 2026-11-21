@@ -3989,6 +3989,22 @@ try {
       assert.equal(acknowledgementRecord.status, 'applied');
       assert.equal(acknowledgementRecord.revision, applicationRecord.revision);
       assert.equal(acknowledgementRecord.employerAcknowledgement.reference, 'synthetic-reference');
+      const followUpCard = openedLead.getByRole('region', {
+        name: 'Application follow-up reminder',
+      });
+      await followUpCard.getByLabel('Follow up at').fill('2030-05-11T10:00');
+      const followUpSaved = page.waitForResponse(
+        (response) =>
+          response.url().endsWith(`/api/leads/${leadId}`) && response.request().method() === 'PUT',
+      );
+      await followUpCard.getByRole('button', { name: 'Save reminder' }).click();
+      const followUpResponse = await followUpSaved;
+      assert.equal(followUpResponse.status(), 200);
+      const followUpRecord = await followUpResponse.json();
+      assert.equal(followUpRecord.status, 'applied');
+      assert.equal(followUpRecord.revision, applicationRecord.revision + 1);
+      assert.ok(Number.isFinite(Date.parse(followUpRecord.followUpAt)));
+      assert.match((await followUpCard.textContent()) ?? '', /Scheduled for/);
       await page.goto(`${origin}/applications`);
       await page.waitForURL(`${origin}/applications`);
       await page.getByRole('heading', { name: 'Applications', exact: true }).waitFor();

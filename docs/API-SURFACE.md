@@ -311,6 +311,9 @@ Entering an application lifecycle stage requires a report; existing legacy rows
 remain readable. Archive/restore preserves evidence, and history exposes the
 previous status and whether notes/evidence changed. Evidence is the candidate's
 claim, not an ATS event. Opening the application URL never mutates the status.
+Candidate-owned follow-up dates are optional, revision-guarded, and included in
+history. They are displayed in CareerScope when the candidate opens the
+application; no email or employer contact is sent.
 
 The acknowledgement endpoint appends a candidate-reported receipt time, source
 and optional reference to `employer_application_acknowledgements`. It requires

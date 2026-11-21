@@ -234,6 +234,7 @@ const lead = object({
   tags: leadTags,
   status,
   applicationEvidence: nullable(applicationEvidence),
+  followUpAt: nullable(timestamp),
   employerAcknowledgement: nullable(employerAcknowledgement),
   livenessStatus: text({ enum: ['unknown', 'live', 'stale'] }),
   livenessCheckedAt: nullable(timestamp),
@@ -952,7 +953,7 @@ function contracts(options: {
       },
     ),
     'PUT /api/leads/:id': operation(
-      'Update candidate-owned notes, tags, stage, and candidate-reported application evidence using optimistic concurrency',
+      'Update candidate-owned notes, tags, stage, application evidence, and follow-up reminder using optimistic concurrency',
       lead,
       {
         body: object(
@@ -961,6 +962,7 @@ function contracts(options: {
             notes: text({ maxLength: 10000 }),
             status,
             applicationEvidence,
+            followUpAt: nullable(timestamp),
             tags: leadTags,
           },
           ['revision', 'notes', 'status'],
@@ -981,6 +983,8 @@ function contracts(options: {
             applicationEvidence: nullable(applicationEvidence),
             tagsChanged: bool,
             tags: leadTags,
+            followUpChanged: bool,
+            followUpAt: nullable(timestamp),
             createdAt: timestamp,
           }),
         ),

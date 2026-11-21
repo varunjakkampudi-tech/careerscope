@@ -44,3 +44,16 @@ test('lead update accepts tags only within the existing optimistic-revision cont
     false,
   );
 });
+
+test('lead follow-up reminders accept an explicit timestamp or clear value only', () => {
+  const base = { revision: 1, notes: '', status: 'applied' as const };
+  assert.equal(
+    updateLeadSchema.parse({ ...base, followUpAt: '2026-11-22T10:00:00.000Z' }).followUpAt,
+    '2026-11-22T10:00:00.000Z',
+  );
+  assert.equal(updateLeadSchema.parse({ ...base, followUpAt: null }).followUpAt, null);
+  assert.equal(
+    updateLeadSchema.safeParse({ ...base, followUpAt: 'not-a-timestamp' }).success,
+    false,
+  );
+});

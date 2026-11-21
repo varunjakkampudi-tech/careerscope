@@ -253,6 +253,13 @@ function LeadEditor({
   ].includes(record.status);
   // CS-61: owner-scoped query keys. Present exactly when authenticated.
   const owner = useOwner();
+  const [nowEpoch, setNowEpoch] = useState<number | null>(null);
+  useEffect(() => {
+    const updateNow = () => setNowEpoch(Date.now());
+    updateNow();
+    const interval = window.setInterval(updateNow, 60_000);
+    return () => window.clearInterval(interval);
+  }, []);
   const [notes, setNotes] = useState(record.notes);
   const [tagsText, setTagsText] = useState(record.tags.join(', '));
   const [applicationEvidenceOpen, setApplicationEvidenceOpen] = useState(false);
@@ -266,6 +273,11 @@ function LeadEditor({
   );
   const [evidenceSource, setEvidenceSource] = useState('');
   const [confidence, setConfidence] = useState<'unknown' | 'low' | 'medium' | 'high'>('unknown');
+  const [followUpLocal, setFollowUpLocal] = useState(() => {
+    if (!record.followUpAt) return '';
+    const date = new Date(record.followUpAt);
+    return new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+  });
   const [acknowledgementOpen, setAcknowledgementOpen] = useState(false);
   const [acknowledgementSource, setAcknowledgementSource] = useState('Employer confirmation');
   const [acknowledgementReference, setAcknowledgementReference] = useState('');
@@ -277,6 +289,7 @@ function LeadEditor({
     mutationFn: (input: {
       status: Lead['status'];
       applicationEvidence?: NonNullable<Lead['applicationEvidence']>;
+      followUpAt?: string | null;
       tags?: string[];
     }) =>
       apiParsed(`/leads/${record.id}`, parseLead, {
@@ -299,6 +312,13 @@ function LeadEditor({
       onDirty(false);
       setNotes(lead.notes);
       setTagsText(lead.tags.join(', '));
+      setFollowUpLocal(() => {
+        if (!lead.followUpAt) return '';
+        const date = new Date(lead.followUpAt);
+        return new Date(date.getTime() - date.getTimezoneOffset() * 60_000)
+          .toISOString()
+          .slice(0, 16);
+      });
       save.reset();
       cache.setQueryData(ownerKey(owner, 'lead', record.id), lead);
     },
@@ -488,6 +508,11 @@ function LeadEditor({
                       ? ' — Candidate-reported application evidence updated'
                       : ''}
                     {entry.tagsChanged ? ' — Saved-job tags updated' : ''}
+                    {entry.followUpChanged
+                      ? entry.followUpAt
+                        ? ` — Follow-up reminder set for ${absoluteDate(entry.followUpAt)}`
+                        : ' — Follow-up reminder cleared'
+                      : ''}
                   </p>
                 </div>
               </li>
@@ -545,6 +570,71 @@ function LeadEditor({
             />
           )}
         </section>
+
+        {record.applicationEvidence && canRecordEmployerAcknowledgement && (
+          <section className={styles.card} aria-label="Application follow-up reminder">
+            <h2>Follow-up Reminder</h2>
+            <p>
+              Choose when to follow up. This reminder is shown in CareerScope when you open this
+              application; it does not send email or contact the employer.
+            </p>
+            {record.followUpAt && (
+              <p
+                role={
+                  nowEpoch !== null && Date.parse(record.followUpAt) <= nowEpoch
+                    ? 'status'
+                    : undefined
+                }
+              >
+                {nowEpoch !== null && Date.parse(record.followUpAt) <= nowEpoch
+                  ? 'Follow-up due'
+                  : 'Scheduled for'}{' '}
+                {absoluteDate(record.followUpAt)}
+              </p>
+            )}
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                if (!followUpLocal) return;
+                save.mutate({
+                  status: record.status,
+                  followUpAt: new Date(followUpLocal).toISOString(),
+                });
+              }}
+            >
+              <label>
+                Follow up at
+                <input
+                  type="datetime-local"
+                  required
+                  value={followUpLocal}
+                  disabled={pending}
+                  onChange={(event) => setFollowUpLocal(event.target.value)}
+                />
+              </label>
+              <button
+                type="submit"
+                className={styles.btnPrimary}
+                disabled={pending || !followUpLocal}
+              >
+                {pending ? 'Saving…' : 'Save reminder'}
+              </button>
+              {record.followUpAt && (
+                <button
+                  type="button"
+                  className={styles.btnSecondary}
+                  disabled={pending}
+                  onClick={() => {
+                    save.mutate({ status: record.status, followUpAt: null });
+                    setFollowUpLocal('');
+                  }}
+                >
+                  Clear reminder
+                </button>
+              )}
+            </form>
+          </section>
+        )}
 
         <section className={styles.card} aria-label="Employer acknowledgement record">
           <h2>Employer Acknowledgement</h2>

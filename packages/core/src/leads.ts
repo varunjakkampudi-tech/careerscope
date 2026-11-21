@@ -83,6 +83,7 @@ export const updateLeadSchema = z
     notes: z.string().max(10000),
     status: leadStatusSchema,
     applicationEvidence: applicationEvidenceSchema.nullable().optional(),
+    followUpAt: z.string().datetime({ offset: true }).nullable().optional(),
     tags: leadTagsSchema.optional(),
   })
   .strict();
@@ -117,6 +118,7 @@ export type LeadRecord = {
   notes: string;
   status: z.infer<typeof leadStatusSchema>;
   applicationEvidence: ApplicationEvidence | null;
+  followUpAt: Date | null;
   employerAcknowledgement: EmployerApplicationAcknowledgement | null;
   tags: string[];
   // A checked fact, distinct from `status` (the user's own pipeline stage) and
@@ -138,6 +140,8 @@ export type LeadHistoryRecord = {
   applicationEvidence: LeadRecord['applicationEvidence'];
   tagsChanged: boolean;
   tags: string[];
+  followUpChanged: boolean;
+  followUpAt: Date | null;
   createdAt: Date;
 };
 /** The lead was changed by someone else since the caller read it; the API maps it to a 409 so the client can reload. */
@@ -148,7 +152,7 @@ export class LeadRevisionConflict extends Conflict {
 }
 /** Column list that maps `saved_leads` to `LeadRecord`, including the latest employer acknowledgement as a subselect. */
 const columns =
-  'id, data, notes, tags, status, application_evidence AS "applicationEvidence", revision, created_at AS "createdAt", updated_at AS "updatedAt",' +
+  'id, data, notes, tags, status, application_evidence AS "applicationEvidence", follow_up_at AS "followUpAt", revision, created_at AS "createdAt", updated_at AS "updatedAt",' +
   ' liveness_status AS "livenessStatus", liveness_checked_at AS "livenessCheckedAt",' +
   ` (SELECT jsonb_build_object('receivedAt', ack.received_at, 'source', ack.source, 'reference', ack.reference)
      FROM employer_application_acknowledgements ack
@@ -156,7 +160,7 @@ const columns =
      ORDER BY ack.received_at DESC, ack.id DESC LIMIT 1) AS "employerAcknowledgement"`;
 /** Same as `columns`, with a table alias for queries that join other tables. */
 const qualifiedColumns = (alias: string) =>
-  `${alias}.id, ${alias}.data, ${alias}.notes, ${alias}.tags, ${alias}.status, ${alias}.application_evidence AS "applicationEvidence", ${alias}.revision,` +
+  `${alias}.id, ${alias}.data, ${alias}.notes, ${alias}.tags, ${alias}.status, ${alias}.application_evidence AS "applicationEvidence", ${alias}.follow_up_at AS "followUpAt", ${alias}.revision,` +
   ` ${alias}.created_at AS "createdAt", ${alias}.updated_at AS "updatedAt",` +
   ` ${alias}.liveness_status AS "livenessStatus", ${alias}.liveness_checked_at AS "livenessCheckedAt",` +
   ` (SELECT jsonb_build_object('receivedAt', ack.received_at, 'source', ack.source, 'reference', ack.reference)
@@ -322,6 +326,7 @@ export class LeadRepository {
       `SELECT revision, previous_status AS "previousStatus", status,
        notes_changed = 1 AS "notesChanged", application_evidence_changed AS "applicationEvidenceChanged",
        application_evidence AS "applicationEvidence", tags_changed AS "tagsChanged", tags,
+       follow_up_changed AS "followUpChanged", follow_up_at AS "followUpAt",
        created_at AS "createdAt"
        FROM lead_history WHERE owner_id = $1 AND lead_id = $2
        AND ($3::integer IS NULL OR revision < $3) ORDER BY revision DESC LIMIT 26`,
@@ -407,6 +412,14 @@ export class LeadRepository {
       }
       if (current.revision !== changes.revision)
         throw new LeadRevisionConflict('Lead revision changed');
+      const followUpAt =
+        changes.followUpAt === undefined
+          ? current.followUpAt
+          : changes.followUpAt === null
+            ? null
+            : new Date(changes.followUpAt);
+      const followUpChanged =
+        (current.followUpAt?.getTime() ?? null) !== (followUpAt?.getTime() ?? null);
       if (changes.tags !== undefined && !['saved', 'archived'].includes(current.status)) {
         throw new z.ZodError([
           {
@@ -438,6 +451,15 @@ export class LeadRepository {
         'rejected',
         'withdrawn',
       ];
+      if (followUpAt && (!applicationEvidence || !progressedStatuses.includes(changes.status))) {
+        throw new z.ZodError([
+          {
+            code: 'custom',
+            path: ['followUpAt'],
+            message: 'Follow-up reminders require a candidate-reported application',
+          },
+        ]);
+      }
       // Archiving or restoring a lead is an organizational action, not a claim
       // that the candidate never applied. Preserve an existing application
       // report across those status changes; only a newly supplied claim must
@@ -473,6 +495,7 @@ export class LeadRepository {
         current.notes === changes.notes &&
         current.status === changes.status &&
         sameApplicationEvidence(current.applicationEvidence, applicationEvidence) &&
+        !followUpChanged &&
         current.tags.length === tags.length &&
         current.tags.every((tag, index) => tag === tags[index])
       ) {
@@ -481,6 +504,7 @@ export class LeadRepository {
       }
       const updated = await client.query<LeadRecord>(
         `UPDATE saved_leads SET notes = $3, status = $4, application_evidence = $5::jsonb, tags = $6::text[],
+         follow_up_at = $7::timestamptz,
          revision = revision + 1, updated_at = now(),
          -- Only moved when the stage actually changes, so editing a note does
          -- not make a cold application look freshly worked.
@@ -493,12 +517,14 @@ export class LeadRepository {
           changes.status,
           applicationEvidence === null ? null : JSON.stringify(applicationEvidence),
           tags,
+          followUpAt,
         ],
       );
       await client.query(
         `INSERT INTO lead_history (id, owner_id, lead_id, revision, status, notes_changed,
-         previous_status, application_evidence_changed, application_evidence, tags_changed, tags)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, $10, $11::text[])`,
+         previous_status, application_evidence_changed, application_evidence, tags_changed, tags,
+         follow_up_changed, follow_up_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, $10, $11::text[], $12, $13::timestamptz)`,
         [
           randomUUID(),
           ownerId,
@@ -514,6 +540,8 @@ export class LeadRepository {
               current.tags.some((tag, index) => tag !== tags[index]),
           ),
           tags,
+          Number(followUpChanged),
+          followUpAt,
         ],
       );
       await client.query('COMMIT');

@@ -50,6 +50,20 @@
       "when": 1794414192236,
       "tag": "0006_resume_version_group_counters",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1795277949155,
+      "tag": "0007_lead_follow_up_reminders",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795278021285,
+      "tag": "0008_lead_follow_up_history",
+      "breakpoints": true
     }
   ]
 }
