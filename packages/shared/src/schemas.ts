@@ -435,15 +435,13 @@ const dimensionShape = Object.fromEntries(
 export const matchDimensionsSchema = z.object(dimensionShape);
 export type MatchDimensions = z.infer<typeof matchDimensionsSchema>;
 
-/** The stored explanation of a job's score, with per-dimension evidence and confidence. */
-export const matchBreakdownSchema = z.object({
+const matchBreakdownFields = {
   /** Null only for historical match records created before scoring was versioned. */
   scoringVersion: z.string().min(1).nullable().default(null),
   /** Final 0..1 score after weighting, gates, clamps and any LLM blend. */
   score: z.number().min(0).max(1),
   /** Score from the deterministic engine alone, before any LLM blend. */
   heuristicScore: z.number().min(0).max(1),
-  dimensions: matchDimensionsSchema,
   matchedSkills: z.array(z.string()),
   missingSkills: z.array(z.string()),
   /** 'low' when only a snippet was available — score is capped in that case. */
@@ -458,7 +456,42 @@ export const matchBreakdownSchema = z.object({
   /** Matched skills that came from the resume specifically, not the profile's
    * typed tech stack, so the resume's contribution is visible in the evidence. */
   resumeSkills: z.array(z.string()).default([]),
+};
+
+/** The stored explanation of a job's score, with per-dimension evidence and confidence. */
+const matchBreakdownBaseSchema = z.object(matchBreakdownFields);
+const currentMatchBreakdownSchema = matchBreakdownBaseSchema.extend({
+  dimensions: matchDimensionsSchema,
 });
+
+const legacyDimensionShape = Object.fromEntries(
+  (Object.keys(MATCH_WEIGHTS) as MatchDimension[])
+    .filter((dimension) => dimension !== 'education')
+    .map((dimension) => [dimension, matchDimensionScoreSchema]),
+) as Record<Exclude<MatchDimension, 'education'>, typeof matchDimensionScoreSchema>;
+const legacyDimensionsSchema = z.object(legacyDimensionShape);
+const legacyMatchBreakdownSchema = matchBreakdownBaseSchema
+  .extend({
+    scoringVersion: z.enum(['deterministic-v2']).nullable().default(null),
+    dimensions: legacyDimensionsSchema,
+  })
+  .transform(({ dimensions, ...breakdown }) => ({
+    ...breakdown,
+    dimensions: {
+      ...dimensions,
+      education: {
+        score: 0,
+        weight: 0,
+        reason: 'Not recorded for this scoring version',
+      },
+    },
+  }));
+
+/** Current records retain their full shape; historical records receive an explicitly unrecorded education dimension. */
+export const matchBreakdownSchema = z.union([
+  currentMatchBreakdownSchema,
+  legacyMatchBreakdownSchema,
+]);
 export type MatchBreakdown = z.infer<typeof matchBreakdownSchema>;
 
 /* -------------------------------------------------------------------------- */

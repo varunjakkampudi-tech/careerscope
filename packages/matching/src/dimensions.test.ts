@@ -60,6 +60,23 @@ describe('scoreEducation', () => {
     );
     expect(out.score).toBe(0.25);
   });
+
+  it('classifies explicit degree tokens without treating unrelated substrings as qualifications', () => {
+    const masterDemand = demands({ education: [{ kind: 'degree', value: 'master', weight: 1 }] });
+    expect(
+      scoreEducation(masterDemand, candidate({ education: ['Diploma in Information Technology'] }))
+        .score,
+    ).toBe(0.25);
+    expect(
+      scoreEducation(masterDemand, candidate({ education: ['Program management'] })).score,
+    ).toBe(0.25);
+    expect(scoreEducation(masterDemand, candidate({ education: ['degree studies'] })).score).toBe(
+      0.25,
+    );
+    expect(
+      scoreEducation(masterDemand, candidate({ education: ['M.A. in Economics'] })).score,
+    ).toBe(1);
+  });
 });
 
 describe('scoreSkills', () => {

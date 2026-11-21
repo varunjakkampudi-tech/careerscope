@@ -13,7 +13,7 @@ const match = z
   .optional()
   .transform((value, context) => {
     if (value == null) return null;
-    const parsed = matchBreakdownSchema.strict().safeParse(value);
+    const parsed = matchBreakdownSchema.safeParse(value);
     if (!parsed.success) {
       context.addIssue({ code: 'custom', message: 'Invalid match breakdown' });
       return z.NEVER;

@@ -19,6 +19,46 @@ test('collected job schema keeps legacy missing match values normalized to null'
   assert.equal(job.match, null);
 });
 
+test('collected job schema reads historical seven-dimension match records without rescoring them', () => {
+  const historical = {
+    scoringVersion: 'deterministic-v2',
+    score: 0.81,
+    heuristicScore: 0.79,
+    dimensions: {
+      compensation: { score: 0.8, weight: 0.1, reason: 'within range' },
+      experience: { score: 1, weight: 0.2, reason: 'within range' },
+      location: { score: 0.7, weight: 0.15, reason: 'unknown' },
+      recency: { score: 0.9, weight: 0.1, reason: 'recent' },
+      seniority: { score: 0.8, weight: 0.1, reason: 'aligned' },
+      skills: { score: 0.9, weight: 0.25, reason: 'matched' },
+      title: { score: 0.8, weight: 0.1, reason: 'aligned' },
+    },
+    matchedSkills: ['TypeScript'],
+    missingSkills: [],
+    confidence: 'high',
+  };
+  const job = collectedJobSchema.parse({
+    fingerprint: 'historical-job',
+    title: 'Historical engineer',
+    company: 'Synthetic company',
+    location: 'Remote',
+    description: 'Historical description',
+    source: 'remoteok',
+    sourceUrl: 'https://jobs.example.test/source',
+    applyUrl: 'https://jobs.example.test/apply',
+    postedAt: null,
+    match: historical,
+  });
+
+  assert.equal(job.match?.score, 0.81);
+  assert.equal(job.match?.scoringVersion, 'deterministic-v2');
+  assert.deepEqual(job.match?.dimensions.education, {
+    score: 0,
+    weight: 0,
+    reason: 'Not recorded for this scoring version',
+  });
+});
+
 test('lead tags are trimmed, bounded and case-insensitively unique', () => {
   assert.deepEqual(leadTagsSchema.parse(['  Frontend  ', 'Remote']), ['Frontend', 'Remote']);
   assert.equal(leadTagsSchema.safeParse(['Frontend', ' frontend ']).success, false);

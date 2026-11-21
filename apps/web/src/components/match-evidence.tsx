@@ -28,7 +28,7 @@ export default function MatchEvidence({ match }: { match: NonNullable<CollectedJ
           <div key={name}>
             <dt>
               {name}
-              <strong>{Math.round(dimension.score * 100)}%</strong>
+              {dimension.weight > 0 && <strong>{Math.round(dimension.score * 100)}%</strong>}
             </dt>
             <dd>{dimension.reason}</dd>
           </div>

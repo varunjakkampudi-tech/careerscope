@@ -121,7 +121,27 @@ describe('scoreJob — breakdown', () => {
     expect(current.scoringVersion).toBe(MATCH_SCORING_VERSION);
 
     const { scoringVersion: _scoringVersion, ...legacy } = current;
-    expect(matchBreakdownSchema.strict().parse(legacy).scoringVersion).toBeNull();
+    expect(matchBreakdownSchema.parse(legacy).scoringVersion).toBeNull();
+  });
+
+  it('reads historical seven-dimension records without changing their score or claiming education evidence', () => {
+    const current = scoreJob(job({ descriptionText: NEAR_EXACT_JD }), candidate(), opts);
+    const { education: _education, ...legacyDimensions } = current.dimensions;
+    const legacy = {
+      ...current,
+      scoringVersion: 'deterministic-v2',
+      dimensions: legacyDimensions,
+    };
+    const parsed = matchBreakdownSchema.parse(legacy);
+    expect(parsed.scoringVersion).toBe('deterministic-v2');
+    expect(parsed.score).toBe(current.score);
+    expect(parsed.heuristicScore).toBe(current.heuristicScore);
+    expect(parsed.dimensions.skills).toEqual(current.dimensions.skills);
+    expect(parsed.dimensions.education).toEqual({
+      score: 0,
+      weight: 0,
+      reason: 'Not recorded for this scoring version',
+    });
   });
 
   it('returns all eight dimensions with their weights and reasons', () => {

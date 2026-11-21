@@ -3456,10 +3456,16 @@ try {
         .getByText('Limited description — score capped, treat as low-confidence', { exact: true })
         .waitFor();
       await page.getByText('Do Not Apply', { exact: true }).waitFor();
-      await page.getByText(/education text matches the stated posting ask/i).waitFor();
       const scoredJobCard = page
         .locator('details.job')
         .filter({ has: page.getByRole('heading', { name: 'Scored React Engineer', exact: true }) });
+      const educationDimension = scoredJobCard
+        .getByRole('region', { name: 'Match evidence' })
+        .locator('dl.match-dimensions > div')
+        .filter({ has: page.getByText('education', { exact: true }) });
+      await educationDimension
+        .getByText(/education text matches the stated posting ask/i)
+        .waitFor();
       const feedbackReason = scoredJobCard.getByLabel('Report a posting issue');
       const priorFeedbackReason = resultBody.jobs[0].feedbackReason;
       const firstFeedbackReason =

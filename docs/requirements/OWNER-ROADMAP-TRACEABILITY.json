@@ -1595,7 +1595,10 @@
         "packages/matching/src/context.ts",
         "packages/matching/src/dimensions.ts",
         "packages/matching/src/score.ts",
+        "packages/shared/src/schemas.ts",
+        "packages/core/src/jobs.ts",
         "packages/core/src/profile.ts",
+        "apps/web/src/components/match-evidence.tsx",
         "docs/GAP-MATRIX.md",
         "docs/TEST-MATRIX.md"
       ],
@@ -1605,11 +1608,12 @@
         "packages/matching/src/dimensions.test.ts",
         "packages/matching/src/score.test.ts",
         "packages/core/src/profile.test.ts",
+        "packages/core/src/leads.test.ts",
         "scripts/tests/check-ui.ts",
         "tests/integration/database.integration.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Implementation adds deterministic explicit degree and field extraction and a soft education-fit dimension using unverified candidate profile/resume text. Local validation, exact-head CI, independent review, item-specific browser evidence, representative labeled-corpus accuracy/calibration, and international qualification equivalence remain outstanding. Education mismatch never blocks a listing.",
+      "gap": "Implementation adds deterministic explicit degree and field extraction and a soft education-fit dimension using unverified candidate profile/resume text. Degree recognition uses explicit token patterns; historical seven-dimension records retain stored scores and show education as unrecorded at zero weight; the browser assertion is scoped to the scored job's education evidence. Local validation passed on Node 22.23.2 (below required Node 24); exact-head CI and independent re-review of the correction SHA remain outstanding. Representative labeled-corpus accuracy/calibration, international qualification equivalence, and credential authenticity are unverified. Education mismatch never blocks a listing.",
       "scopeDisposition": "in-scope"
     },
     {

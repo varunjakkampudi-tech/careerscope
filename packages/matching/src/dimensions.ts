@@ -402,10 +402,17 @@ export function scoreEducation(
 
 function degreeRank(value: string): number {
   const normalized = value.toLowerCase();
-  if (/ph\.?\s*d|doctorate|doctoral degree/.test(normalized)) return 4;
-  if (/master|mba|mca|mtech|m\.\s*tech|msc\b|ma\b/.test(normalized)) return 3;
-  if (/bachelor|btech|b\.?\s*tech|bca|beng|bsc\b|ba\b/.test(normalized)) return 2;
-  if (/associate/.test(normalized)) return 1;
+  const hasToken = (pattern: RegExp) => pattern.test(normalized);
+  if (hasToken(/\b(?:ph\.?\s*d\.?|doctorate|doctoral)\b/)) return 4;
+  if (hasToken(/\b(?:master(?:'s)?|mba|mca|mtech|m\.?\s*tech|m\.?\s*sc\.?|m\.?\s*a\.?)\b/))
+    return 3;
+  if (
+    hasToken(
+      /\b(?:bachelor(?:'s)?|btech|b\.?\s*tech|bca|beng|b\.?\s*eng|b\.?\s*sc\.?|b\.?\s*a\.?)\b/,
+    )
+  )
+    return 2;
+  if (hasToken(/\bassociate(?:'s)?\b/)) return 1;
   return 0;
 }
 
