@@ -273,6 +273,51 @@ const resumeListSchema = z.object({
 /** Body of GET /api/resumes. */
 export const parseResumeList = parser(resumeListSchema);
 
+export const resumeDraftContentSchema = z.object({
+  fullName: z.string(),
+  email: z.string().nullable(),
+  phone: z.string().nullable(),
+  location: z.string().nullable(),
+  summary: z.string(),
+  experience: z.array(
+    z.object({
+      id: z.string(),
+      role: z.string(),
+      company: z.string(),
+      location: z.string().nullable(),
+      startDate: z.string().nullable(),
+      endDate: z.string().nullable(),
+      bullets: z.array(z.string()),
+    }),
+  ),
+  education: z.array(
+    z.object({
+      id: z.string(),
+      institution: z.string(),
+      qualification: z.string(),
+      location: z.string().nullable(),
+      endDate: z.string().nullable(),
+    }),
+  ),
+  skills: z.array(z.string()),
+});
+export type ResumeDraftContent = z.infer<typeof resumeDraftContentSchema>;
+const resumeDraftSchema = z.object({
+  id: z.string().uuid(),
+  ownerId: z.string().uuid(),
+  title: z.string(),
+  targetRole: z.string().nullable(),
+  template: z.enum(['classic', 'modern', 'compact']),
+  content: resumeDraftContentSchema,
+  revision: z.number().int(),
+  approvedAt: z.string().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export type ResumeDraft = z.infer<typeof resumeDraftSchema>;
+export const parseResumeDraft = parser(resumeDraftSchema);
+export const parseResumeDraftList = parser(z.object({ items: z.array(resumeDraftSchema) }));
+
 const resumeParseOutcomeSchema = z.discriminatedUnion('status', [
   z.object({
     status: z.literal('parsed'),

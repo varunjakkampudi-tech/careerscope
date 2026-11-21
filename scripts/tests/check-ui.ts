@@ -1745,6 +1745,42 @@ try {
         });
         await page.goto(`${origin}/resume`);
         await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
+        const builder = page.getByRole('region', { name: 'Resume Builder' });
+        await builder.getByRole('button', { name: 'New resume', exact: true }).click();
+        await builder.getByLabel('Resume name').fill('Synthetic Role Resume');
+        await builder.getByLabel('Target role').fill('Frontend Engineer');
+        await builder.getByLabel('Full name').fill('Synthetic Candidate');
+        await builder.getByLabel('Professional summary').fill('Builds React interfaces.');
+        await builder.getByLabel('Skills (comma-separated)').fill('React, TypeScript');
+        await builder
+          .getByLabel('Paste job description')
+          .fill('Frontend Engineer needs React, TypeScript, and CSS.');
+        await builder.getByText(/Matched terms:.*React.*typescript/i).waitFor();
+        const draftCreated = page.waitForResponse(
+          (response) =>
+            response.url().endsWith('/api/resume-drafts') && response.request().method() === 'POST',
+        );
+        await builder.getByRole('button', { name: 'Create resume', exact: true }).click();
+        assert.equal((await draftCreated).status(), 201);
+        await builder.getByRole('button', { name: 'Approve this version', exact: true }).click();
+        await builder.getByRole('status').filter({ hasText: 'Approved by you' }).waitFor();
+        await builder
+          .getByLabel('Professional summary')
+          .fill('Builds accessible React interfaces.');
+        await builder
+          .getByRole('status')
+          .filter({ hasText: 'Editing clears your previous approval' })
+          .waitFor();
+        const draftSaved = page.waitForResponse(
+          (response) =>
+            response.url().includes('/api/resume-drafts/') && response.request().method() === 'PUT',
+        );
+        await builder.getByRole('button', { name: 'Save changes', exact: true }).click();
+        assert.equal((await draftSaved).status(), 200);
+        assert.equal(
+          await builder.getByRole('button', { name: 'Approve this version', exact: true }).count(),
+          1,
+        );
         await page.getByLabel('Full Name', { exact: true }).waitFor();
         const uploadInput = page.getByLabel('Upload picture');
         await uploadInput.focus();

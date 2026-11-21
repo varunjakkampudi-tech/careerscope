@@ -1923,11 +1923,11 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Saved jobs",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
+      "currentStatus": "partial",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Previously untouched in this continuation; no fresh verification was performed. Recheck against current exact dev state before owner acceptance.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1936,11 +1936,11 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Notes and archives",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
+      "currentStatus": "partial",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Previously untouched in this continuation; no fresh verification was performed. Recheck against current exact dev state before owner acceptance.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1949,11 +1949,11 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Official application links",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
+      "currentStatus": "partial",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Previously untouched in this continuation; no fresh verification was performed. Recheck against current exact dev state before owner acceptance.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1962,11 +1962,11 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Candidate-confirmed applications",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
+      "currentStatus": "partial",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Previously untouched in this continuation; no fresh verification was performed. Recheck against current exact dev state before owner acceptance.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1975,11 +1975,11 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Application status tracking",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
+      "currentStatus": "partial",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Previously untouched in this continuation; no fresh verification was performed. Recheck against current exact dev state before owner acceptance.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -1988,11 +1988,11 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Evidence/history",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
+      "currentStatus": "partial",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Previously untouched in this continuation; no fresh verification was performed. Recheck against current exact dev state before owner acceptance.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2001,11 +2001,11 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Withdrawal",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
+      "currentStatus": "partial",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Previously untouched in this continuation; no fresh verification was performed. Recheck against current exact dev state before owner acceptance.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2014,11 +2014,11 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "CSV export",
       "sourceStatus": "Existing",
-      "currentStatus": "not-started",
+      "currentStatus": "partial",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Previously untouched in this continuation; no fresh verification was performed. Recheck against current exact dev state before owner acceptance.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2027,11 +2027,19 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Employer acknowledgements",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/core/src/leads.ts",
+        "apps/web/src/components/saved-leads.tsx",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/core/src/leads.test.ts",
+        "apps/api/src/applications-export.integration.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Owner-scoped candidate-reported acknowledgement endpoint, disclosure, and regression coverage are implemented. Exact-head CI is failing one browser landmark locator; fix and exact-head rerun, independent review, and owner acceptance remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2040,11 +2048,19 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Follow-up reminders",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/core/src/leads.ts",
+        "apps/web/src/components/saved-leads.tsx",
+        "docs/PROGRESS.md"
+      ],
+      "tests": [
+        "packages/core/src/leads.test.ts",
+        "apps/api/src/applications-export.integration.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Candidate-managed follow-up date/history is implemented; reminder appears when opening the application. There is no proactive notification, and exact-head CI, review, and owner acceptance remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2053,11 +2069,11 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Interview/offer status",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
+      "currentStatus": "partial",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Previously untouched in this continuation; no fresh verification was performed. Recheck against current exact dev state before owner acceptance.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2066,11 +2082,11 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Duplicate application warnings",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
+      "currentStatus": "partial",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Previously untouched in this continuation; no fresh verification was performed. Recheck against current exact dev state before owner acceptance.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2079,11 +2095,11 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Application analytics",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
+      "currentStatus": "partial",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Previously untouched in this continuation; no fresh verification was performed. Recheck against current exact dev state before owner acceptance.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2092,11 +2108,11 @@
       "stageTitle": "Saved jobs and application lifecycle",
       "title": "Mobile application workflow",
       "sourceStatus": "Partial",
-      "currentStatus": "not-started",
+      "currentStatus": "partial",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Previously untouched in this continuation; no fresh verification was performed. Recheck against current exact dev state before owner acceptance.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2105,11 +2121,14 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "Resume templates",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/resume-builder.tsx",
+        "apps/web/src/components/resume-builder.module.css"
+      ],
+      "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Three candidate-editable templates are implemented; exact-head browser CI, accessibility/responsive acceptance, and owner review remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2118,11 +2137,19 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "Resume builder",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/resume-builder.tsx",
+        "packages/core/src/resume-drafts.ts",
+        "apps/api/src/app.ts"
+      ],
+      "tests": [
+        "packages/core/src/resume-drafts.test.ts",
+        "apps/api/src/resume-drafts.integration.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Candidate-entered drafts and owner-scoped persistence are implemented. PostgreSQL integration and exact-head browser CI are pending; only one current draft record has a target-role field, without variant lineage or source-resume linkage.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2131,11 +2158,14 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "Job-specific variants",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/resume-builder.tsx",
+        "packages/core/src/resume-drafts.ts"
+      ],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Target-role labeling is implemented, but separate linked variants, copy-from-variant workflow, and variant browser acceptance are not implemented.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2144,11 +2174,11 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "ATS formatting analysis",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "currentStatus": "partial",
+      "evidence": ["apps/web/src/components/resume-builder.tsx"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Deterministic format checks are shown with an explicit no-score/no-guarantee disclosure; no ATS parser compatibility or score evaluation exists.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2157,11 +2187,11 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "Job/resume keyword comparison",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "currentStatus": "partial",
+      "evidence": ["apps/web/src/components/resume-builder.tsx"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Literal keyword overlap and unmatched terms are displayed, but stemming, phrase matching, parsing quality, and browser evidence are pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2170,11 +2200,11 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "Missing-skills view",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "currentStatus": "partial",
+      "evidence": ["apps/web/src/components/resume-builder.tsx"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Unmatched job-description terms are shown without claiming skills or qualifications; no semantic skill taxonomy or validation exists.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2183,11 +2213,11 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "AI bullet rewriting",
       "sourceStatus": "Gated",
-      "currentStatus": "not-started",
+      "currentStatus": "gated",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Provider-backed rewriting remains disabled; the user has not authorized paid provider calls. No AI-generated claims are inserted.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2196,11 +2226,14 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "Split-screen editor",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/resume-builder.tsx",
+        "apps/web/src/components/resume-builder.module.css"
+      ],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Responsive editor and live preview are implemented; exact-head cross-browser, keyboard, screen reader, and responsive acceptance remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2209,11 +2242,11 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "Before/after comparison",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
+      "currentStatus": "partial",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Saved content can be compared with current unsaved edits; automated before/after browser evidence and richer change highlighting remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2222,11 +2255,14 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "Candidate approval",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/core/src/resume-drafts.ts",
+        "apps/web/src/components/resume-builder.tsx"
+      ],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Candidate approval is revision-bound and edits clear approval; PostgreSQL integration and exact-head UI acceptance remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2235,11 +2271,14 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "Role-specific PDF export",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/web/src/components/resume-builder.tsx",
+        "apps/web/src/components/resume-builder.module.css"
+      ],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Browser print dialog can save a printable view; deterministic server/client PDF export with role-specific download validation is not implemented.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2248,11 +2287,11 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "Cover letter generation",
       "sourceStatus": "Gated",
-      "currentStatus": "not-started",
+      "currentStatus": "gated",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "AI cover-letter generation is disabled; paid provider calls are not authorized and no generated content is produced.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2261,11 +2300,11 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "Application-answer assistance",
       "sourceStatus": "Gated",
-      "currentStatus": "not-started",
+      "currentStatus": "gated",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "AI application-answer assistance is disabled; paid provider calls are not authorized and no generated content is produced.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2274,11 +2313,11 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "AI quotas/cost controls",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
+      "currentStatus": "partial",
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "AI features are disabled so no model costs can accrue from them; configurable quotas, budgets, usage telemetry, and enforcement are not implemented.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2287,11 +2326,14 @@
       "stageTitle": "AI resume builder and dynamic tailoring",
       "title": "Hallucination prevention/evaluation",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
+      "currentStatus": "partial",
+      "evidence": [
+        "packages/core/src/resume-drafts.ts",
+        "apps/web/src/components/resume-builder.tsx"
+      ],
       "tests": [],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Manual candidate-entered data and fact-only display prevent generated claims in this flow; AI evaluation datasets, adversarial evaluation, and provider controls are not implemented.",
       "scopeDisposition": "in-scope"
     },
     {

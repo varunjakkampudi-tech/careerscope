@@ -261,14 +261,14 @@
     {
       "path": "apps/api/src/app.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read-and-diff-review",
-      "state": "reviewed",
-      "concerns": [],
+      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
+      "state": "partially-reviewed",
+      "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed route schemas and wiring for candidate resume target-role and version-group metadata; validation, listing and upload coordination are consistent.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "608697156e7369b604bd0c7c9a9b05f72b4473f08f0e1e414c51fb80b9b32260"
+      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
+      "reviewer": "Codex (current checklist implementation)",
+      "sha256": "5a6c8d9b24c7235bdddaa2006d7cd09166a9222b411df94383fbbeda05c1dea3"
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -421,9 +421,9 @@
     {
       "path": "apps/api/src/openapi.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read-and-diff-review",
-      "state": "reviewed",
-      "concerns": [],
+      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
+      "state": "partially-reviewed",
+      "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [
         {
           "id": "S1-F052",
@@ -433,10 +433,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Reviewed OpenAPI upload and listing contract additions for target role and version lineage.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "214ffecd324c7f6ef0c95bd73118fe978281575bbe70d8a9abe90335183a30b8"
+      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
+      "reviewer": "Codex (current checklist implementation)",
+      "sha256": "22440d756dbf9f598809513f1f5ab93d62ad51aaa617dfa7cb989ca3f420e0a3"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -1207,9 +1207,9 @@
     {
       "path": "apps/web/src/components/profile-editor.tsx",
       "category": "frontend",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
-      "state": "reviewed",
-      "concerns": [],
+      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
+      "state": "partially-reviewed",
+      "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [
         {
           "id": "S3-F001",
@@ -1219,10 +1219,10 @@
           "remediation": "Prevent the Continue click default and key the Continue and Save and finish buttons as distinct nodes; browser acceptance verifies no pre-final submission and clicks the final control."
         }
       ],
-      "observations": "Re-reviewed profile-photo UI changes: client checks type and 5 MiB size while server validation remains authoritative; upload/delete mutations report accessible alert/status feedback, dispatch the shared avatar refresh event only on success, disable conflicting controls while pending, and explain the owner-only privacy boundary. Browser coverage includes keyboard access, invalid file rejection, API failure, upload, reload and delete.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "e9cf0cbd78ab72e0a63ddae82c82d3f62e2f5394bb2768299c9d89a658d435d6"
+      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
+      "reviewer": "Codex (current checklist implementation)",
+      "sha256": "cc6ad8cc5c767f2185dafc1e701b5603db970a93fe6f0bc52509cfac7e0f08b8"
     },
     {
       "path": "apps/web/src/components/recovery-email-section.tsx",
@@ -1338,14 +1338,14 @@
     {
       "path": "apps/web/src/lib/api-schemas.ts",
       "category": "frontend",
-      "reviewMethod": "content-read-and-diff-review",
-      "state": "reviewed",
-      "concerns": [],
+      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
+      "state": "partially-reviewed",
+      "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed response validation for resume role, group and version fields.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "b70601872ca1f347f8a1b4a141c8f59ed184d2d357683aa947ed09197f6115b5"
+      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
+      "reviewer": "Codex (current checklist implementation)",
+      "sha256": "3c387c47dd54581c16937c252aba002de71234cb03c6b29571b7c3dd0aa573a9"
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
@@ -1746,9 +1746,9 @@
     {
       "path": "docs/API-SURFACE.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
-      "state": "reviewed",
-      "concerns": [],
+      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
+      "state": "partially-reviewed",
+      "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [
         {
           "id": "S1-F047",
@@ -1758,10 +1758,10 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Reviewed documented resume-version eligibility and persistent allocation behavior against the implementation.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "0368522c5ecd80a87ce647f7e0f3859464308bb204fc73cfc1f4339f82a9343f"
+      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
+      "reviewer": "Codex (current checklist implementation)",
+      "sha256": "d4e156b04dc8d21ea8b7474846524b245533a63c8376a3207f5623ff86279346"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1822,9 +1822,9 @@
     {
       "path": "docs/DATA-MODEL.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
-      "state": "reviewed",
-      "concerns": [],
+      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
+      "state": "partially-reviewed",
+      "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [
         {
           "id": "S1-F073",
@@ -1834,10 +1834,10 @@
           "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
         }
       ],
-      "observations": "Reviewed group counter table, counter backfill, latest-parsed continuation and no-reuse semantics.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "63294de61a5fafe40af7f3a6f8667d1750c70a9df636bf1fe7c3c2e7e0b163db"
+      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
+      "reviewer": "Codex (current checklist implementation)",
+      "sha256": "7767b756df2429df11e8df389a25574dfdf4bfca0f1ebba5952586868f0bfeb8"
     },
     {
       "path": "docs/FOUNDATIONS.md",
@@ -2870,14 +2870,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "candidate-diff-and-context-review",
-      "state": "reviewed",
-      "concerns": [],
+      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
+      "state": "partially-reviewed",
+      "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
-      "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
-      "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "1ffa4ce71e535c11fba24e018ffefff8e1566d3430db9cf0ebcbd176c72c96d3",
+      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
+      "reviewer": "Codex (current checklist implementation)",
+      "sha256": "f12b8bc10a2de59aaa79701f6c20364879836b0af7008db2f7ecace787a114fa",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -4136,14 +4136,14 @@
     {
       "path": "migrations/meta/_journal.json",
       "category": "generated-lockfile-or-snapshot",
-      "reviewMethod": "content-read-and-diff-review",
-      "state": "reviewed",
-      "concerns": [],
+      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
+      "state": "partially-reviewed",
+      "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed generated migration journal entry for resume version group counters.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "f12ac6eb8e1e812a5f8891939117bfa46de80d7ddc90f2a92584511a41f3e855"
+      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
+      "reviewer": "Codex (current checklist implementation)",
+      "sha256": "0bdff225a72481f7bb40df2cb8b16ce10eb7a1a9285a37e1fad4b07429b36ef5"
     },
     {
       "path": "package-lock.json",
@@ -4160,14 +4160,14 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "candidate-diff-and-context-review",
-      "state": "reviewed",
-      "concerns": [],
+      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
+      "state": "partially-reviewed",
+      "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
-      "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
-      "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "3e3de22033eb63a1cb476d424379b33c22a7670eb577bcde7029d22129d4b2e8",
+      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
+      "reviewer": "Codex (current checklist implementation)",
+      "sha256": "b3b26916562f5c8dabd8e568654394d84096248e4f1b5df1c8f2f9ca2ed24e23",
       "history": [
         {
           "reviewer": "Codex (Stage 03 item 3.16)",
@@ -4528,14 +4528,14 @@
     {
       "path": "packages/core/src/index.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "prior complete source review plus current exact-dev-diff review",
-      "state": "reviewed",
-      "concerns": [],
+      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
+      "state": "partially-reviewed",
+      "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Re-reviewed export delta: ProfilePhotoRepository is exported from the existing core package barrel without changing other public exports.",
-      "evidence": "Reviewed against origin/dev 2d468d7c23b1784fe42ca3d04b1488a9a69389d2; required dev CI run 42396419372 passed Quality gates and Services/integration/browser suites (production image build is skipped on dev push). SHA-256 pins this reviewed source.",
-      "reviewer": "Codex (Stage 01 item 1.01 audit refresh)",
-      "sha256": "4cf28863d78321d8e3ec5abf31e8d406dd8bd108260917af097cb9af45dc2e48"
+      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
+      "reviewer": "Codex (current checklist implementation)",
+      "sha256": "08df4d599d27010670591cfeafc26969adac4c3e51f7b10d77177732f5815ae5"
     },
     {
       "path": "packages/core/src/interviews.ts",
@@ -4972,9 +4972,9 @@
     {
       "path": "packages/core/src/schema.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read-and-diff-review",
-      "state": "reviewed",
-      "concerns": [],
+      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
+      "state": "partially-reviewed",
+      "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [
         {
           "id": "S1-F014",
@@ -4984,10 +4984,10 @@
           "remediation": "Add a lower-case check in a migration after verifying existing data. Recorded for the next migration window; no migration is added in Stage 01 to avoid rewriting applied data."
         }
       ],
-      "observations": "Reviewed resume version group table, owner composite primary key, role constraint and next-number check.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "25d91936158d9f95f3e6d5827fb1be9a00a18e103b813ebea15e07dbe8f3208e"
+      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
+      "reviewer": "Codex (current checklist implementation)",
+      "sha256": "d19448eb49ebdc6363b4dba4b1040b12c78e3df2001ae20a2fb3ff8c4cc4a4a0"
     },
     {
       "path": "packages/core/src/sensitive-data.integration.test.ts",
@@ -7413,9 +7413,9 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "candidate-diff-and-context-review",
-      "state": "reviewed",
-      "concerns": [],
+      "reviewMethod": "current exact-change review only; Stage 01 full-file audit is not re-attested",
+      "state": "partially-reviewed",
+      "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [
         {
           "id": "S1-F049",
@@ -7439,10 +7439,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
-      "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
-      "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "f88b756882296978c1bdac707ded3057225667701ef2825cf56932d0d87be9f9",
+      "observations": "Reviewed current item-specific diff and behavior; this update does not re-attest the historical Stage 01 full-file review.",
+      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
+      "reviewer": "Codex (current checklist implementation)",
+      "sha256": "192257a2f473a5a1611179808eeb45966d948d53a39534d7ef7f2a3d7174d146",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
