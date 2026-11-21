@@ -64,7 +64,11 @@ test('collected job schema reads historical seven-dimension match records withou
       ...historical,
       dimensions: { ...historical.dimensions, unexpected: { score: 0, weight: 0, reason: '' } },
     },
-    { ...historical, scoringVersion: null },
+    {
+      ...historical,
+      scoringVersion: 'deterministic-v3',
+      dimensions: historical.dimensions,
+    },
   ]) {
     assert.equal(
       collectedJobSchema.safeParse({
@@ -82,6 +86,28 @@ test('collected job schema reads historical seven-dimension match records withou
       false,
     );
   }
+
+  const currentNullVersion = collectedJobSchema.parse({
+    fingerprint: 'current-null-version-job',
+    title: 'Current engineer',
+    company: 'Synthetic company',
+    location: 'Remote',
+    description: 'Current description',
+    source: 'remoteok',
+    sourceUrl: 'https://jobs.example.test/source',
+    applyUrl: 'https://jobs.example.test/apply',
+    postedAt: null,
+    match: {
+      ...historical,
+      scoringVersion: null,
+      dimensions: {
+        ...historical.dimensions,
+        education: { score: 0.7, weight: 0.05, reason: 'unknown' },
+      },
+    },
+  });
+  assert.equal(currentNullVersion.match?.scoringVersion, null);
+  assert.equal(currentNullVersion.match?.dimensions.education.weight, 0.05);
 });
 
 test('lead tags are trimmed, bounded and case-insensitively unique', () => {
