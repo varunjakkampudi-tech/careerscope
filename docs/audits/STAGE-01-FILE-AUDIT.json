@@ -1127,10 +1127,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 08.02 correction and acceptance evidence. The default minimum score now preserves unscored jobs; nonzero thresholds still exclude them.",
-      "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 found the default unscored-job regression and required broader browser assertions. Corrected in the current worktree; local Node 24 checks and a new exact-head CI run are pending.",
+      "observations": "Reviewed Stage 08.02 default-score behavior, reset on search submission and success, selected-run reset, and expanded browser assertions.",
+      "evidence": "Follow-up review of exact head 804f4540a2c2824f45a43f8bd49b810cd2a0bcc0 found that the new-search reset assertion was indirect. Current worktree explicitly holds the successful create response to assert reset before selection, then checks run switching separately. New exact-head validation remains pending.",
       "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
-      "sha256": "e36f4a5d6a54da07344b6ed08eab3f4e86754ec3d63a0bf233be0a662043f097",
+      "sha256": "586825602bae0a04625805ae196078eb67ecd1a1ef25cf0ba64a901ba291c465",
       "history": [
         {
           "reviewMethod": "content-read",
@@ -1153,6 +1153,18 @@
           "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
           "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
           "sha256": "cd97bfa1b8c03af22eab79a0e5361b1439e48d04e1bf46b51df077ade8971ceb"
+        },
+        {
+          "path": "apps/web/src/components/job-search-view.tsx",
+          "category": "frontend",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed Stage 08.02 correction and acceptance evidence. The default minimum score now preserves unscored jobs; nonzero thresholds still exclude them.",
+          "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 found the default unscored-job regression and required broader browser assertions. Corrected in the current worktree; local Node 24 checks and a new exact-head CI run are pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "e36f4a5d6a54da07344b6ed08eab3f4e86754ec3d63a0bf233be0a662043f097"
         }
       ]
     },
@@ -1564,9 +1576,7 @@
       "category": "frontend",
       "reviewMethod": "content-read",
       "state": "reviewed",
-      "concerns": [
-        "localStorage access may throw in restricted browser contexts"
-      ],
+      "concerns": ["localStorage access may throw in restricted browser contexts"],
       "findings": [
         {
           "id": "S1-F057",
@@ -1938,10 +1948,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 08.02 correction and acceptance evidence. Updated for the item 8.02 regression correction and expanded browser coverage.",
-      "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 found the default unscored-job regression and required broader browser assertions. Corrected in the current worktree; local Node 24 checks and a new exact-head CI run are pending.",
+      "observations": "Reviewed the Stage 08.02 default unscored-job correction, broadened browser regressions, and partial checklist disposition after formatting.",
+      "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 requested fixes. Corrected in follow-up commit 804f4540a2c2824f45a43f8bd49b810cd2a0bcc0; formatting applied. Exact-head CI and re-review remain pending.",
       "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
-      "sha256": "3eb916b8f7a782d9067b118458ea7ebcb02a76cfc76ae286e6d4c348fdd41870",
+      "sha256": "24772e8d606680d6379dd56c0921aa0f7f32b5621f88c67e1636be29c6e7218e",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2084,6 +2094,18 @@
           "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
           "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
           "sha256": "b4ac77a45e1804255d4b3bc69ce339c863b9183ee19e22348999a6b871a29a0c"
+        },
+        {
+          "path": "docs/GAP-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed Stage 08.02 correction and acceptance evidence. Updated for the item 8.02 regression correction and expanded browser coverage.",
+          "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 found the default unscored-job regression and required broader browser assertions. Corrected in the current worktree; local Node 24 checks and a new exact-head CI run are pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "3eb916b8f7a782d9067b118458ea7ebcb02a76cfc76ae286e6d4c348fdd41870"
         }
       ]
     },
@@ -2354,10 +2376,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 08.02 correction and acceptance evidence. Updated for the item 8.02 regression correction and expanded browser coverage.",
-      "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 found the default unscored-job regression and required broader browser assertions. Corrected in the current worktree; local Node 24 checks and a new exact-head CI run are pending.",
+      "observations": "Reviewed the Stage 08.02 default unscored-job correction, broadened browser regressions, and partial checklist disposition after formatting.",
+      "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 requested fixes. Corrected in follow-up commit 804f4540a2c2824f45a43f8bd49b810cd2a0bcc0; formatting applied. Exact-head CI and re-review remain pending.",
       "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
-      "sha256": "391411942e5b02c521384a702075953179bfa6060f400d5de07eccc2a0c3a6e3",
+      "sha256": "d8960fff5c7f11a2e2ccfea618d3ac745725ae98a02f6b1a9bd3431d3aaf6a26",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2506,6 +2528,18 @@
           "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
           "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
           "sha256": "020fc8925109f82d3c164ca19ab14c293674714f3fe3554fbfbc642ba71ec5bd"
+        },
+        {
+          "path": "docs/TEST-MATRIX.md",
+          "category": "documentation",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [],
+          "observations": "Reviewed Stage 08.02 correction and acceptance evidence. Updated for the item 8.02 regression correction and expanded browser coverage.",
+          "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 found the default unscored-job regression and required broader browser assertions. Corrected in the current worktree; local Node 24 checks and a new exact-head CI run are pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "391411942e5b02c521384a702075953179bfa6060f400d5de07eccc2a0c3a6e3"
         }
       ]
     },
@@ -7531,10 +7565,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed Stage 08.02 correction and acceptance evidence. Updated for the item 8.02 regression correction and expanded browser coverage.",
-      "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 found the default unscored-job regression and required broader browser assertions. Corrected in the current worktree; local Node 24 checks and a new exact-head CI run are pending.",
+      "observations": "Reviewed Stage 08.02 default-score behavior, reset on search submission and success, selected-run reset, and expanded browser assertions.",
+      "evidence": "Follow-up review of exact head 804f4540a2c2824f45a43f8bd49b810cd2a0bcc0 found that the new-search reset assertion was indirect. Current worktree explicitly holds the successful create response to assert reset before selection, then checks run switching separately. New exact-head validation remains pending.",
       "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
-      "sha256": "e8a27082bc0c90bb960ca32c1dfe71a23cf2b940954d4ac64a279cbc16116929",
+      "sha256": "f0e1067759396a54711990cfda5ed373f1b1033d7ca6a4cbae1ee6ce680f8bc1",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7619,6 +7653,74 @@
           "evidence": "Current item 8.02 diff inspected on PR #130; exact-head CI run 44898677757 exposed stale manifest hashes. This audit update does not claim browser acceptance or item completion.",
           "reviewer": "Codex (CareerScope owner item 8.02 audit update)",
           "sha256": "b53e40c9d992dcba9a402eafd4d291c8bd9c7e32c8c72c2314bb8c77d5642bd0"
+        },
+        {
+          "path": "scripts/tests/check-ui.ts",
+          "category": "tooling-and-tests",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F049",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The browser suite did not enforce the implemented CSP promise: it only required script-src to exist and allowed unsafe-inline or missing inline-script hashes to pass.",
+              "remediation": "Added strict directive and inline-body hash assertions to the browser suite; validated test typing, production hash convergence, the served response, and a real Playwright page load. Full application E2E remains separate."
+            },
+            {
+              "id": "S1-F071",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
+              "remediation": "Write screenshots to a unique per-run directory under test-results."
+            },
+            {
+              "id": "S1-F072",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+              "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
+            }
+          ],
+          "observations": "Reviewed Stage 08.02 correction and acceptance evidence. Updated for the item 8.02 regression correction and expanded browser coverage.",
+          "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 found the default unscored-job regression and required broader browser assertions. Corrected in the current worktree; local Node 24 checks and a new exact-head CI run are pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "e8a27082bc0c90bb960ca32c1dfe71a23cf2b940954d4ac64a279cbc16116929"
+        },
+        {
+          "path": "scripts/tests/check-ui.ts",
+          "category": "tooling-and-tests",
+          "reviewMethod": "focused-content-review",
+          "state": "reviewed",
+          "concerns": [],
+          "findings": [
+            {
+              "id": "S1-F049",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The browser suite did not enforce the implemented CSP promise: it only required script-src to exist and allowed unsafe-inline or missing inline-script hashes to pass.",
+              "remediation": "Added strict directive and inline-body hash assertions to the browser suite; validated test typing, production hash convergence, the served response, and a real Playwright page load. Full application E2E remains separate."
+            },
+            {
+              "id": "S1-F071",
+              "severity": "low",
+              "status": "fixed",
+              "summary": "The UI browser suite wrote screenshots to fixed ignored paths and could overwrite outputs from earlier runs.",
+              "remediation": "Write screenshots to a unique per-run directory under test-results."
+            },
+            {
+              "id": "S1-F072",
+              "severity": "medium",
+              "status": "fixed",
+              "summary": "The new cross-account delayed-response regression initially timed out on unsupported Playwright response lifecycle events and then failed TypeScript callback typing.",
+              "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
+            }
+          ],
+          "observations": "Reviewed the Stage 08.02 default unscored-job correction, broadened browser regressions, and partial checklist disposition after formatting.",
+          "evidence": "Independent review of PR #130 exact head b9ddbb2df1a45b4d714847f8f21a7147b83318c0 requested fixes. Corrected in follow-up commit 804f4540a2c2824f45a43f8bd49b810cd2a0bcc0; formatting applied. Exact-head CI and re-review remain pending.",
+          "reviewer": "Codex (CareerScope owner item 8.02 follow-up)",
+          "sha256": "0a24ba29bb928f25727f743355cc92432f21a4cbee2fa4af7c1efd45380e7247"
         }
       ]
     },

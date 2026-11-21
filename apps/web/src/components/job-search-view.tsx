@@ -225,9 +225,7 @@ function JobSearchWorkspace() {
       }),
     onSuccess: (result) => {
       showRun(result.runId, 'replace');
-      setFilter('');
-      setResultSource('all');
-      setMinimumMatch(0);
+      resetResultFilters();
       exportSearch.reset();
       void cache.invalidateQueries({ queryKey: ['searches'] });
     },
@@ -298,13 +296,21 @@ function JobSearchWorkspace() {
   function startSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    if (sources.length)
+    if (sources.length) {
+      resetResultFilters();
       search.mutate({
         query: useProfileTitles ? 'Saved target roles' : String(data.get('query')),
         sources,
         origin: 'manual',
         ...(useProfileTitles ? { useProfileTitles: true } : {}),
       });
+    }
+  }
+
+  function resetResultFilters() {
+    setFilter('');
+    setResultSource('all');
+    setMinimumMatch(0);
   }
 
   const filtered = filter.toLowerCase();
@@ -360,9 +366,7 @@ function JobSearchWorkspace() {
               aria-current={selectedId === run.id ? 'true' : undefined}
               onClick={() => {
                 showRun(run.id);
-                setFilter('');
-                setResultSource('all');
-                setMinimumMatch(0);
+                resetResultFilters();
                 cancel.reset();
                 exportSearch.reset();
               }}
@@ -721,11 +725,7 @@ function JobSearchWorkspace() {
                       detail.data.jobs.length > 0 && hasResultFilters
                         ? {
                             label: t('clearSearchFilter'),
-                            onClick: () => {
-                              setFilter('');
-                              setResultSource('all');
-                              setMinimumMatch(0);
-                            },
+                            onClick: resetResultFilters,
                           }
                         : undefined
                     }

@@ -3525,7 +3525,11 @@ try {
           count,
         );
       await waitForJobCount(2);
-      assert.equal(await page.locator('details.job').count(), 2, 'default shows scored and unscored jobs');
+      assert.equal(
+        await page.locator('details.job').count(),
+        2,
+        'default shows scored and unscored jobs',
+      );
       await sourceFilter.selectOption('remoteok');
       await waitForJobCount(1);
       assert.equal(await page.locator('details.job').count(), 1, 'source filter narrows results');
@@ -3545,7 +3549,11 @@ try {
       );
       await page.getByRole('button', { name: 'Clear filter', exact: true }).click();
       await waitForJobCount(2);
-      assert.equal(await page.locator('details.job').count(), 2, 'clear restores scored and unscored jobs');
+      assert.equal(
+        await page.locator('details.job').count(),
+        2,
+        'clear restores scored and unscored jobs',
+      );
       assert.equal(await resultTextFilter.inputValue(), '');
       assert.equal(await sourceFilter.inputValue(), 'all');
       assert.equal(await minimumMatch.inputValue(), '0');
@@ -3736,6 +3744,27 @@ try {
       await page.getByLabel('Filter results').fill('Senior React');
       await page.getByRole('combobox', { name: 'Source', exact: true }).selectOption('himalayas');
       await page.getByRole('combobox', { name: 'Minimum match', exact: true }).selectOption('70');
+      let releaseSearchResponse!: () => void;
+      const searchResponseGate = new Promise<void>((resolve) => {
+        releaseSearchResponse = resolve;
+      });
+      let announceSearchCreation!: (result: { status: number; runId: string }) => void;
+      const searchCreationReady = new Promise<{ status: number; runId: string }>((resolve) => {
+        announceSearchCreation = resolve;
+      });
+      let searchResponseHeld = false;
+      await page.route('**/api/searches', async (route) => {
+        if (route.request().method() !== 'POST' || searchResponseHeld) {
+          await route.continue();
+          return;
+        }
+        searchResponseHeld = true;
+        const response = await route.fetch();
+        const body = (await response.json()) as { runId: string };
+        announceSearchCreation({ status: response.status(), runId: body.runId });
+        await searchResponseGate;
+        await route.fulfill({ response, json: body });
+      });
       const submitted = page.waitForResponse(
         (response) =>
           response.url().endsWith('/api/searches') && response.request().method() === 'POST',
@@ -3745,20 +3774,61 @@ try {
           response.url().includes('/api/searches/') && response.url().endsWith('/events'),
       );
       await page.getByRole('button', { name: 'Search', exact: true }).click();
+      const createdSearch = await searchCreationReady;
+      try {
+        assert.equal(createdSearch.status, 202);
+        assert.equal(await page.getByLabel('Filter results').inputValue(), '');
+        assert.equal(
+          await page.getByRole('combobox', { name: 'Source', exact: true }).inputValue(),
+          'all',
+        );
+        assert.equal(
+          await page.getByRole('combobox', { name: 'Minimum match', exact: true }).inputValue(),
+          '0',
+        );
+      } finally {
+        releaseSearchResponse();
+      }
       const submission = await submitted;
       assert.equal(submission.status(), 202);
       const submittedId = (await submission.json()).runId;
+      assert.equal(createdSearch.runId, submittedId);
       await page
         .getByRole('navigation', { name: 'Search history' })
         .getByRole('button', { name: /^React.*partial/s })
         .click();
       await page.getByRole('textbox', { name: 'Filter results', exact: true }).waitFor();
       assert.equal(await page.getByLabel('Filter results').inputValue(), '');
-      assert.equal(await page.getByRole('combobox', { name: 'Source', exact: true }).inputValue(), 'all');
-      assert.equal(await page.getByRole('combobox', { name: 'Minimum match', exact: true }).inputValue(), '0');
+      assert.equal(
+        await page.getByRole('combobox', { name: 'Source', exact: true }).inputValue(),
+        'all',
+      );
+      assert.equal(
+        await page.getByRole('combobox', { name: 'Minimum match', exact: true }).inputValue(),
+        '0',
+      );
       const newRunButton = page
         .getByRole('navigation', { name: 'Search history' })
-        .getByRole('button', { name: /^TypeScript/ });
+        .getByRole('button', { name: /^TypeScript queued/ });
+      await page.getByLabel('Filter results').fill('Senior React');
+      await page.getByRole('combobox', { name: 'Source', exact: true }).selectOption('himalayas');
+      await page.getByRole('combobox', { name: 'Minimum match', exact: true }).selectOption('70');
+      await newRunButton.click();
+      await page.getByText('Search in progress', { exact: true }).waitFor();
+      await page
+        .getByRole('navigation', { name: 'Search history' })
+        .getByRole('button', { name: /^React.*partial/s })
+        .click();
+      await page.getByRole('textbox', { name: 'Filter results', exact: true }).waitFor();
+      assert.equal(await page.getByLabel('Filter results').inputValue(), '');
+      assert.equal(
+        await page.getByRole('combobox', { name: 'Source', exact: true }).inputValue(),
+        'all',
+      );
+      assert.equal(
+        await page.getByRole('combobox', { name: 'Minimum match', exact: true }).inputValue(),
+        '0',
+      );
       await newRunButton.click();
       await page.getByText('Search in progress', { exact: true }).waitFor();
       assert.deepEqual((await database.getSearch(ownerId, submittedId))?.request.sources, [
