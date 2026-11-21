@@ -130,7 +130,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     console.error(result.errors.map((error) => `FAIL ${error}`).join('\n'));
     process.exitCode = 1;
   } else {
-    console.log(
+    process.stderr.write(
       `PASS owner roadmap traceability: ${result.items} items across ${result.stages} stages`,
     );
   }

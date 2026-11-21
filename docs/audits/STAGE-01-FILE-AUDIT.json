@@ -6808,7 +6808,7 @@
       "observations": "Written in this change and read in full before commit. Covers tracked-file coverage, duplicate, state, record, hash, stale-record and open critical or high finding checks. It does not prove that a file was reviewed; the README says so.",
       "evidence": "Self-review before commit efdd55a.",
       "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "1f2e614d79beac3e28fa7c4518b524cd8b201390f9d43e62145334168ce806c1"
+      "sha256": "9684ed3746115283c8ac6eac9e7c42bade38a880a2db2105862965effbdfc202"
     },
     {
       "path": "scripts/ci/check-file-audit.test.mjs",
@@ -6936,7 +6936,7 @@
       "observations": "Reviewed for Stage 01 item 1.14: the checker validates the pinned 328-item owner roadmap and source digest, exact sequential IDs and stages, status/gap evidence, referenced files and CI-run tests. The focused checker tests and full Node 24.22.1 unit suite passed.",
       "evidence": "",
       "reviewer": "Codex (Stage 01 item 1.14)",
-      "sha256": "cf22120e776fec976a9b1794316b0e4748900ed50682fbcba9c3c3556cdb4ed6"
+      "sha256": "37d45b521b7b09514ee5bd273fdc56f35c3550ee3e4f1e23aa472fd0c2304bea"
     },
     {
       "path": "scripts/ci/check-roadmap-traceability.test.mjs",

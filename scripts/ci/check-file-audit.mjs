@@ -211,18 +211,20 @@ function main() {
   if (args.has('--sync')) {
     manifest = sync(manifest, tracked);
     writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
-    console.log(`Synced manifest: ${manifest.files.length} entries.`);
+    process.stderr.write(`Synced manifest: ${manifest.files.length} entries.\n`);
   }
   const errors = validate(manifest, tracked, { requireComplete: args.has('--require-complete') });
   const summary = summarize(manifest, tracked);
-  console.log(JSON.stringify(summary, null, 2));
+  process.stderr.write(`${JSON.stringify(summary, null, 2)}\n`);
   if (errors.length > 0) {
     console.error(`File audit check failed with ${errors.length} problem(s):`);
     for (const error of errors) console.error(`  - ${error}`);
     process.exitCode = 1;
     return;
   }
-  console.log('File audit manifest matches the tracked files and its records are valid.');
+  process.stderr.write(
+    'File audit manifest matches the tracked files and its records are valid.\n',
+  );
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) main();
