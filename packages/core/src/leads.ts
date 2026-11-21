@@ -45,7 +45,11 @@ export const employerApplicationAcknowledgementSchema = z
     source: z.string().trim().min(1).max(160),
     reference: z.string().max(240).nullable(),
   })
-  .strict();
+  .strict()
+  .refine((value) => new Date(value.receivedAt).getTime() <= Date.now(), {
+    path: ['receivedAt'],
+    message: 'Acknowledgement time cannot be in the future',
+  });
 export type EmployerApplicationAcknowledgement = z.infer<
   typeof employerApplicationAcknowledgementSchema
 >;
@@ -249,6 +253,65 @@ export class LeadRepository {
       [ownerId, applicationExportStatuses],
     );
     return result.rows.map(hydrate);
+  }
+
+  /** Appends a candidate-reported acknowledgement event without changing the application status. */
+  async recordEmployerAcknowledgement(
+    ownerId: string,
+    id: string,
+    input: unknown,
+  ): Promise<LeadRecord | null> {
+    const acknowledgement = employerApplicationAcknowledgementSchema.parse(input);
+    const client = await this.database.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const current = await client.query<{
+        status: LeadRecord['status'];
+        applicationEvidence: ApplicationEvidence | null;
+      }>(
+        `SELECT status, application_evidence AS "applicationEvidence"
+         FROM saved_leads WHERE owner_id = $1 AND id = $2 FOR UPDATE`,
+        [ownerId, id],
+      );
+      const lead = current.rows[0];
+      if (!lead) {
+        await rollback(client);
+        return null;
+      }
+      if (!lead.applicationEvidence || !applicationExportStatuses.includes(lead.status)) {
+        throw new z.ZodError([
+          {
+            code: 'custom',
+            path: [],
+            message: 'Record an application report before an employer acknowledgement',
+          },
+        ]);
+      }
+      await client.query(
+        `INSERT INTO employer_application_acknowledgements
+           (id, owner_id, lead_id, received_at, source, reference)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [
+          randomUUID(),
+          ownerId,
+          id,
+          acknowledgement.receivedAt,
+          acknowledgement.source,
+          acknowledgement.reference,
+        ],
+      );
+      const result = await client.query<LeadRecord>(
+        `SELECT ${columns} FROM saved_leads WHERE owner_id = $1 AND id = $2`,
+        [ownerId, id],
+      );
+      await client.query('COMMIT');
+      return result.rows[0] ? hydrate(result.rows[0]) : null;
+    } catch (error) {
+      await rollback(client);
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 
   /** Page of a lead's history (25 per page, newest first), or null if the lead is not the user's. */

@@ -3960,6 +3960,35 @@ try {
       assert.equal(applicationRecord.applicationEvidence.method, 'Employer website');
       assert.equal(applicationRecord.applicationEvidence.source, 'Synthetic candidate report');
       assert.deepEqual(applicationRecord.tags, ['audit', 'preserve']);
+      const acknowledgementCard = openedLead.getByRole('region', {
+        name: 'Employer acknowledgement record',
+      });
+      await acknowledgementCard
+        .getByText('Candidate-reported information only.', { exact: false })
+        .waitFor();
+      await acknowledgementCard
+        .getByRole('button', { name: 'Record acknowledgement', exact: true })
+        .click();
+      await acknowledgementCard
+        .getByLabel('Source', { exact: true })
+        .fill('Synthetic employer email');
+      await acknowledgementCard
+        .getByLabel('Non-sensitive reference (optional)', { exact: true })
+        .fill('synthetic-reference');
+      const acknowledgementRecorded = page.waitForResponse(
+        (response) =>
+          response.url().endsWith(`/api/leads/${leadId}/employer-acknowledgements`) &&
+          response.request().method() === 'POST',
+      );
+      await acknowledgementCard
+        .getByRole('button', { name: 'Save acknowledgement', exact: true })
+        .click();
+      const acknowledgementResponse = await acknowledgementRecorded;
+      assert.equal(acknowledgementResponse.status(), 200);
+      const acknowledgementRecord = await acknowledgementResponse.json();
+      assert.equal(acknowledgementRecord.status, 'applied');
+      assert.equal(acknowledgementRecord.revision, applicationRecord.revision);
+      assert.equal(acknowledgementRecord.employerAcknowledgement.reference, 'synthetic-reference');
       await page.goto(`${origin}/applications`);
       await page.waitForURL(`${origin}/applications`);
       await page.getByRole('heading', { name: 'Applications', exact: true }).waitFor();

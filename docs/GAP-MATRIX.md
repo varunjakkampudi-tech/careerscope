@@ -66,3 +66,9 @@ Each row names the repository behavior, evidence, and remaining gap. Status valu
   not replace counsel approval of the effective legal text and public HTTPS URLs (see
   [AUTHENTICATION](AUTHENTICATION.md)). Owner checklist item 2.05 remains gated until that evidence
   is documented. Deployment is outside the current roadmap scope.
+
+## Owner roadmap: Stage 09
+
+| Item | Feature                   | Status  | Evidence                                                                                                                                                                                                                             | Remaining gap                                                                                                                             |
+| ---- | ------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| 9.09 | Employer acknowledgements | Partial | packages/core/src/leads.ts appends owner-scoped acknowledgement events; apps/api/src/app.ts exposes the authenticated endpoint; apps/web/src/components/saved-leads.tsx labels the information as candidate-reported and unverified. | Employer communication is not independently verified. Exact-head CI, independent review and owner checklist verification remain required. |

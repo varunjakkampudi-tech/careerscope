@@ -244,6 +244,13 @@ function LeadEditor({
   allowedStatuses: readonly Lead['status'][];
 }) {
   const cache = useQueryClient();
+  const canRecordEmployerAcknowledgement = [
+    'applied',
+    'interviewing',
+    'offer',
+    'rejected',
+    'withdrawn',
+  ].includes(record.status);
   // CS-61: owner-scoped query keys. Present exactly when authenticated.
   const owner = useOwner();
   const [notes, setNotes] = useState(record.notes);
@@ -259,6 +266,13 @@ function LeadEditor({
   );
   const [evidenceSource, setEvidenceSource] = useState('');
   const [confidence, setConfidence] = useState<'unknown' | 'low' | 'medium' | 'high'>('unknown');
+  const [acknowledgementOpen, setAcknowledgementOpen] = useState(false);
+  const [acknowledgementSource, setAcknowledgementSource] = useState('Employer confirmation');
+  const [acknowledgementReference, setAcknowledgementReference] = useState('');
+  const [acknowledgementReceivedAt, setAcknowledgementReceivedAt] = useState(() => {
+    const now = new Date();
+    return new Date(now.getTime() - now.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+  });
   const save = useMutation({
     mutationFn: (input: {
       status: Lead['status'];
@@ -287,6 +301,24 @@ function LeadEditor({
       setTagsText(lead.tags.join(', '));
       save.reset();
       cache.setQueryData(ownerKey(owner, 'lead', record.id), lead);
+    },
+  });
+  const recordAcknowledgement = useMutation({
+    mutationFn: () =>
+      apiParsed(`/leads/${record.id}/employer-acknowledgements`, parseLead, {
+        method: 'POST',
+        headers: { 'x-csrf-token': csrf },
+        body: JSON.stringify({
+          receivedAt: new Date(acknowledgementReceivedAt).toISOString(),
+          source: acknowledgementSource,
+          reference: acknowledgementReference || null,
+        }),
+      }),
+    onSuccess: (lead) => {
+      cache.setQueryData(ownerKey(owner, 'lead', record.id), lead);
+      void cache.invalidateQueries({ queryKey: ['leads'] });
+      setAcknowledgementOpen(false);
+      recordAcknowledgement.reset();
     },
   });
   const history = useInfiniteQuery({
@@ -511,6 +543,98 @@ function LeadEditor({
               reason="awaiting-input"
               message="No candidate-reported application evidence has been recorded."
             />
+          )}
+        </section>
+
+        <section className={styles.card} aria-label="Employer acknowledgement record">
+          <h2>Employer Acknowledgement</h2>
+          <p>
+            Candidate-reported information only. CareerScope does not verify that an employer sent
+            or received this acknowledgement. Keep reference details non-sensitive.
+          </p>
+          {record.employerAcknowledgement ? (
+            <dl className={styles.detailList}>
+              <dt>Received</dt>
+              <dd>{absoluteDate(record.employerAcknowledgement.receivedAt)}</dd>
+              <dt>Source</dt>
+              <dd>{record.employerAcknowledgement.source}</dd>
+              <dt>Reference</dt>
+              <dd>{record.employerAcknowledgement.reference || 'Not provided'}</dd>
+            </dl>
+          ) : (
+            <EmptyState
+              variant="inline"
+              reason="awaiting-input"
+              message="No candidate-reported employer acknowledgement has been recorded."
+            />
+          )}
+          {record.applicationEvidence &&
+            canRecordEmployerAcknowledgement &&
+            !acknowledgementOpen && (
+              <button
+                type="button"
+                className={styles.btnSecondary}
+                disabled={pending || recordAcknowledgement.isPending}
+                onClick={() => setAcknowledgementOpen(true)}
+              >
+                Record acknowledgement
+              </button>
+            )}
+          {acknowledgementOpen && (
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                recordAcknowledgement.mutate();
+              }}
+            >
+              <label>
+                Received at
+                <input
+                  type="datetime-local"
+                  required
+                  value={acknowledgementReceivedAt}
+                  onChange={(event) => setAcknowledgementReceivedAt(event.target.value)}
+                />
+              </label>
+              <label>
+                Source
+                <input
+                  required
+                  maxLength={160}
+                  value={acknowledgementSource}
+                  onChange={(event) => setAcknowledgementSource(event.target.value)}
+                />
+              </label>
+              <label>
+                Non-sensitive reference (optional)
+                <input
+                  maxLength={240}
+                  value={acknowledgementReference}
+                  onChange={(event) => setAcknowledgementReference(event.target.value)}
+                />
+              </label>
+              {recordAcknowledgement.error && (
+                <ErrorState
+                  variant="inline"
+                  what="Could not record the employer acknowledgement."
+                  detail={recordAcknowledgement.error.message}
+                />
+              )}
+              <button
+                type="submit"
+                className={styles.btnPrimary}
+                disabled={recordAcknowledgement.isPending}
+              >
+                {recordAcknowledgement.isPending ? 'Recording…' : 'Save acknowledgement'}
+              </button>
+              <button
+                type="button"
+                className={styles.btnSecondary}
+                onClick={() => setAcknowledgementOpen(false)}
+              >
+                Cancel
+              </button>
+            </form>
           )}
         </section>
 
