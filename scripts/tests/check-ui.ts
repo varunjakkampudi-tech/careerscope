@@ -3963,6 +3963,7 @@ try {
       const acknowledgementCard = openedLead.locator(
         'section[aria-label="Employer acknowledgement record"]',
       );
+      await acknowledgementCard.waitFor({ state: 'visible' });
       assert.equal(await acknowledgementCard.count(), 1);
       await acknowledgementCard
         .getByText('Candidate-reported information only.', { exact: false })
