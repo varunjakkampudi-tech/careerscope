@@ -1,3 +1,4 @@
+import './zod-config';
 import type { ResumeDraftContent } from './api-schemas.js';
 import { extractSkills } from '@careerscope/shared';
 

@@ -1558,10 +1558,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed shared skill taxonomy comparison, candidate-facing review-only presentation, negative/alias tests, browser assertion, and Stage 10.06 evidence changes.",
-      "evidence": "Stage 10.06 implementation review; taxonomy unit/browser tests and roadmap traceability validation.",
-      "reviewer": "Codex (Stage 10.06 candidate-review suggestions)",
-      "sha256": "658da56f99e1e96585fdb4f3190168dd027818b0012f9fc59acbfae8a8592ca2"
+      "observations": "Reviewed the Zod initialization order before the shared skill taxonomy import and the updated exact-head status record.",
+      "evidence": "zod-config regression test passes; Stage 10.06 import correction reviewed.",
+      "reviewer": "Codex (Stage 10.06 zod initialization correction)",
+      "sha256": "73c000560d27197208346854cd26cb5929861a69e8a3148ed88735b7ddd6a68f"
     },
     {
       "path": "apps/web/src/lib/resume-keywords.test.ts",
@@ -2194,10 +2194,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed shared skill taxonomy comparison, candidate-facing review-only presentation, negative/alias tests, browser assertion, and Stage 10.06 evidence changes.",
-      "evidence": "Stage 10.06 implementation review; taxonomy unit/browser tests and roadmap traceability validation.",
-      "reviewer": "Codex (Stage 10.06 candidate-review suggestions)",
-      "sha256": "7fa8cf75d3978679a485d21f20d4897d7cbfaa392ce6a1e8f10f3db52052ccd1",
+      "observations": "Reviewed the Zod initialization order before the shared skill taxonomy import and the updated exact-head status record.",
+      "evidence": "zod-config regression test passes; Stage 10.06 import correction reviewed.",
+      "reviewer": "Codex (Stage 10.06 zod initialization correction)",
+      "sha256": "3cf7d6a5ce3aa3b27006ea74c76ab9fdef0f5ee5ae0b6507761c602057b28628",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
