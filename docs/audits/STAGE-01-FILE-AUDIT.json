@@ -8015,11 +8015,17 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Added a reachable focused resume-builder browser scenario. It asserts side-by-side layout at 901px, stacked layout at 900px and below, control-column changes at 560px, visibility, horizontal overflow, long-text wrapping, builder-scoped axe checks, and keyboard navigation. The test is now selectable through the validated workflow_dispatch browser scenario.",
-      "evidence": "npm run typecheck:tests passed across 100 canonical files. Exact-head focused browser and standard PR CI are pending; item 10.08 remains partial.",
-      "reviewer": "Codex (CareerScope Stage 10.08 responsive acceptance)",
-      "sha256": "75f5e7bf8868340eeb6412af230c27a856b76bf5069d0154d5a910bf79e688e7",
+      "observations": "Updated the focused resume-builder acceptance to wait for the visible synthetic account button before selection. This removes an immediate-count race observed when the account selector was still hydrating; the failure diagnostic remains for a genuinely missing control.",
+      "evidence": "npm run typecheck:tests passes 100 canonical test files. Focused browser and exact-head PR CI are pending after correction; Stage 10.08 remains partial.",
+      "reviewer": "Codex (CareerScope Stage 10.08 browser setup race fix)",
+      "sha256": "e82014132a109ffcbf8a6b93d99fc7d0882ff0a2f567a17fcbbbed14e0afb36e",
       "history": [
+        {
+          "reviewer": "Codex (CareerScope Stage 10.08 responsive acceptance)",
+          "sha256": "75f5e7bf8868340eeb6412af230c27a856b76bf5069d0154d5a910bf79e688e7",
+          "observations": "Added a reachable focused resume-builder browser scenario. It asserts side-by-side layout at 901px, stacked layout at 900px and below, control-column changes at 560px, visibility, horizontal overflow, long-text wrapping, builder-scoped axe checks, and keyboard navigation. The test is now selectable through the validated workflow_dispatch browser scenario.",
+          "evidence": "npm run typecheck:tests passed across 100 canonical files. Exact-head focused browser and standard PR CI are pending; item 10.08 remains partial."
+        },
         {
           "reviewer": "Codex (CareerScope Stage 10.08 responsive test coverage)",
           "sha256": "974695d4ad81383b36189d67d14899f1ee1ac0139510fc2f60e4615234c08cc3",

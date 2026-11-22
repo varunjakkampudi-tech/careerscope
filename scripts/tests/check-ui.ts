@@ -1323,7 +1323,9 @@ try {
       const selectFixtureAccount = async (email: string, credential = password) => {
         fixtureCredential = credential;
         const accountButton = page.getByRole('button').filter({ hasText: email });
-        if ((await accountButton.count()) === 0) {
+        try {
+          await accountButton.first().waitFor({ state: 'visible', timeout: 15_000 });
+        } catch {
           assert.fail(
             `${engine} test account ${email} is unavailable at ${new URL(page.url()).pathname}; ` +
               `rendered page: ${(await page.locator('body').innerText()).slice(0, 500) || 'empty'}; ` +
