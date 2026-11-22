@@ -1801,11 +1801,43 @@ try {
         await resumePreview.getByRole('heading', { name: 'Bachelor of Engineering' }).waitFor();
         await resumePreview.getByText('Example University', { exact: true }).waitFor();
         await builder.getByLabel('Skills (comma-separated)').fill('React, TypeScript');
+        const resumeOrigin = new URL(page.url()).origin;
+        let providerRequests = 0;
+        const countProviderRequests = (request: import('playwright').Request) => {
+          const url = new URL(request.url());
+          if (
+            url.origin !== resumeOrigin &&
+            (request.resourceType() === 'fetch' || request.resourceType() === 'xhr')
+          ) {
+            providerRequests += 1;
+          }
+        };
+        page.on('request', countProviderRequests);
+        await builder
+          .getByRole('region', { name: 'AI writing assistance' })
+          .getByText(/not enabled/i)
+          .waitFor();
         await builder
           .getByLabel('Paste job description')
           .fill('Frontend Engineer needs React, TypeScript, and CSS.');
         await builder.getByText(/Matched terms:.*React.*typescript/i).waitFor();
         await builder.getByText('CSS3', { exact: true }).waitFor();
+        assert.equal(
+          await builder.getByLabel('Skills (comma-separated)').inputValue(),
+          'React, TypeScript',
+          `${engine}: job-description terms remain suggestions and are not inserted as candidate skills`,
+        );
+        assert.equal(
+          await builder.getByLabel('Professional summary').inputValue(),
+          'Builds React interfaces.',
+          `${engine}: job-description text is not inserted into candidate-authored resume content`,
+        );
+        assert.equal(
+          providerRequests,
+          0,
+          `${engine}: resume analysis sent no fetch or XHR request to an external provider`,
+        );
+        page.off('request', countProviderRequests);
         const originalSummary = 'Builds React interfaces.';
         const responsiveSummary = Array.from(
           { length: 18 },
@@ -2026,9 +2058,14 @@ try {
           const originalPrint = window.print;
           window.print = () => {
             testWindow.__careerScopePrintTitle = document.title;
-            window.dispatchEvent(new Event('afterprint'));
-            window.print = originalPrint;
           };
+          window.addEventListener(
+            'afterprint',
+            () => {
+              window.print = originalPrint;
+            },
+            { once: true },
+          );
         });
         await reloadedBuilder.getByRole('button', { name: 'Print or save as PDF' }).click();
         assert.equal(
@@ -2037,6 +2074,25 @@ try {
           ),
           'Synthetic Role Resume - Frontend Engineer',
         );
+        assert.equal(
+          await page.title(),
+          'Synthetic Role Resume - Frontend Engineer',
+          'the role-specific title remains active while the print dialog is open',
+        );
+        if (engine === 'chromium') {
+          await page.emulateMedia({ media: 'print' });
+          const pdf = await page.pdf({ format: 'A4', printBackground: true });
+          const pdfContent = pdf.toString('latin1');
+          assert.equal(pdf.subarray(0, 5).toString('ascii'), '%PDF-');
+          assert.match(
+            pdfContent,
+            /\/Title\s*\(Synthetic Role Resume - Frontend Engineer\)/,
+            'the generated PDF carries the resume name and target role as its title',
+          );
+          assert.match(pdfContent, /\/Type\s*\/Page\b/, 'the generated PDF contains a page');
+          await page.emulateMedia({ media: 'screen' });
+        }
+        await page.evaluate(() => window.dispatchEvent(new Event('afterprint')));
         assert.notEqual(
           await page.title(),
           'Synthetic Role Resume - Frontend Engineer',

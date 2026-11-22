@@ -2100,10 +2100,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Stage 10.08/10.09 evidence reconciled with responsive, accessibility, comparison-removal, and print assertions. Both items remain partial pending owner verification; manual screen-reader acceptance is not evidenced for 10.08.",
-      "evidence": "Code head 2e1f9f2e602af83f3109a5ad80e0f8882edde8aa passed focused browser run 45047562375 and all three required PR jobs in run 45047568483. Exact independent review dispositions and remaining owner gates are recorded in the owner roadmap inventory.",
-      "reviewer": "Codex (CareerScope Stage 10.08-10.09 evidence reconciliation)",
-      "sha256": "5328c6c796318fc595e9891f25dad792549a292acfe366160aac6dd127c10b99",
+      "observations": "Stage 10.11 adds Chromium PDF artifact assertions for signature, page object, and role-specific title; 10.14 remains partial with external-provider fetch/XHR blocked while AI is disabled; 10.15 remains partial with candidate-only and review-only text assertions. No checklist item is marked verified.",
+      "evidence": "Diff reviewed against Stage 10 scope; exact-head hosted CI pending.",
+      "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
+      "sha256": "4bb0ec8e2b8f0438480ad75adbf54d9e256a2b213333a8c2a65f0c15aa325ff3",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
@@ -2308,6 +2308,12 @@
           "sha256": "b0db651b6d9432c06edd8de3e1bc751c8ba2273a1df16e0d9e54ad02d98176f6",
           "observations": "Reviewed and reconciled Stage 10.06 evidence after corrected exact-head CI and scoped independent approval. Cross-field skill fragments remain unmatched; explicit React Query remains recognized. Item stays partial pending owner verification.",
           "evidence": "Focused skill tests 5/5; typecheck covers 100 canonical tests. Exact head 0f3e307c908ced6ed1569982012c2e73ca8d2d36 passed all required CI in run 45040662036; independent review approved only item 10.06."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.08-10.09 evidence reconciliation)",
+          "sha256": "5328c6c796318fc595e9891f25dad792549a292acfe366160aac6dd127c10b99",
+          "observations": "Stage 10.08/10.09 evidence reconciled with responsive, accessibility, comparison-removal, and print assertions. Both items remain partial pending owner verification; manual screen-reader acceptance is not evidenced for 10.08.",
+          "evidence": "Code head 2e1f9f2e602af83f3109a5ad80e0f8882edde8aa passed focused browser run 45047562375 and all three required PR jobs in run 45047568483. Exact independent review dispositions and remaining owner gates are recorded in the owner roadmap inventory."
         }
       ]
     },
@@ -2382,10 +2388,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed and reconciled Stage 10.06 evidence after corrected exact-head CI and scoped independent approval. Cross-field skill fragments remain unmatched; explicit React Query remains recognized. Item stays partial pending owner verification.",
-      "evidence": "Focused skill tests 5/5; typecheck covers 100 canonical tests. Exact head 0f3e307c908ced6ed1569982012c2e73ca8d2d36 passed all required CI in run 45040662036; independent review approved only item 10.06.",
-      "reviewer": "Codex (CareerScope Stage 10.06 evidence reconciliation)",
-      "sha256": "a7e9c60fb466776f6d06126c7b7a09e2a78f1e1103db2f1fb28cb6e27d2c209b",
+      "observations": "Updated Stage 10 status to record added PDF, no-provider, and candidate-claim browser coverage while retaining gated and owner-verification states.",
+      "evidence": "Documentation only; exact-head CI pending.",
+      "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
+      "sha256": "132eb5bb6b178971b2f3934467cabd73521a807d5362ad193e9f17c039d8cb34",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
@@ -2596,6 +2602,12 @@
           "evidence": "Exact-head run 45038219505 passed all three required hosted jobs; scoped independent re-review approved item 10.05 at e7ec3c58ae0a5483af5c07554b120bf40b8f0784. Semantic matching and parser quality remain open.",
           "reviewer": "Codex (CareerScope Stage 10.05 review closeout)",
           "sha256": "f1994353e834a766af4f5def1172694027804fa9727af32f5b4102941eb5fd71"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.06 evidence reconciliation)",
+          "sha256": "a7e9c60fb466776f6d06126c7b7a09e2a78f1e1103db2f1fb28cb6e27d2c209b",
+          "observations": "Reviewed and reconciled Stage 10.06 evidence after corrected exact-head CI and scoped independent approval. Cross-field skill fragments remain unmatched; explicit React Query remains recognized. Item stays partial pending owner verification.",
+          "evidence": "Focused skill tests 5/5; typecheck covers 100 canonical tests. Exact head 0f3e307c908ced6ed1569982012c2e73ca8d2d36 passed all required CI in run 45040662036; independent review approved only item 10.06."
         }
       ]
     },
@@ -2650,10 +2662,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Stage 10.08/10.09 evidence reconciled with responsive, accessibility, comparison-removal, and print assertions. Both items remain partial pending owner verification; manual screen-reader acceptance is not evidenced for 10.08.",
-      "evidence": "Code head 2e1f9f2e602af83f3109a5ad80e0f8882edde8aa passed focused browser run 45047562375 and all three required PR jobs in run 45047568483. Exact independent review dispositions and remaining owner gates are recorded in the owner roadmap inventory.",
-      "reviewer": "Codex (CareerScope Stage 10.08-10.09 evidence reconciliation)",
-      "sha256": "4c668bdc9f090463f8bddf358287c07b3433e53b5cc924a67ed067bb20180fd8",
+      "observations": "Added Stage 10 browser evidence for Chromium PDF signature/page/title, no external provider fetch/XHR, and posting-only suggestions remaining outside candidate resume fields.",
+      "evidence": "Diff reviewed; exact-head hosted CI pending.",
+      "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
+      "sha256": "51ac7dfed62aa91c49247b6c38a769e2518d27e310a16925fca710744837e1bd",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
@@ -2846,6 +2858,12 @@
           "sha256": "aab7ef5a25042587a8c8059ac11e1520edccce076418611f27b7fb0e36dad947",
           "observations": "Reviewed and reconciled Stage 10.06 evidence after corrected exact-head CI and scoped independent approval. Cross-field skill fragments remain unmatched; explicit React Query remains recognized. Item stays partial pending owner verification.",
           "evidence": "Focused skill tests 5/5; typecheck covers 100 canonical tests. Exact head 0f3e307c908ced6ed1569982012c2e73ca8d2d36 passed all required CI in run 45040662036; independent review approved only item 10.06."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.08-10.09 evidence reconciliation)",
+          "sha256": "4c668bdc9f090463f8bddf358287c07b3433e53b5cc924a67ed067bb20180fd8",
+          "observations": "Stage 10.08/10.09 evidence reconciled with responsive, accessibility, comparison-removal, and print assertions. Both items remain partial pending owner verification; manual screen-reader acceptance is not evidenced for 10.08.",
+          "evidence": "Code head 2e1f9f2e602af83f3109a5ad80e0f8882edde8aa passed focused browser run 45047562375 and all three required PR jobs in run 45047568483. Exact independent review dispositions and remaining owner gates are recorded in the owner roadmap inventory."
         }
       ]
     },
@@ -8033,10 +8051,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "The Stage 10.09 comparison scenario now removes a previously saved experience bullet and asserts it remains highlighted only in the saved version. Print assertions verify the saved article is hidden and current article visible while changed-text highlight backgrounds are transparent.",
-      "evidence": "Focused hosted browser run 45046336500 and all three exact-head PR jobs in 45046342004 passed on SHA 6280c28e7d82d174a13dec85d659da3cde078c7d. New removal and print-visibility assertions are pending validation on the next exact head.",
-      "reviewer": "Codex (CareerScope Stage 10.08 print-style browser test correction)",
-      "sha256": "c6e6f2641dd01530d232a6106f7f578751dc13dc49d7243bc36d5d316228fcdc",
+      "observations": "Reviewed new Stage 10 assertions: Chromium PDF bytes must contain the PDF signature, a page object, and role-specific title; job description terms are not copied into candidate skills or summary; no cross-origin fetch/XHR is made by resume analysis while AI is disabled.",
+      "evidence": "Prettier and ESLint pass; typecheck passes across 100 canonical test files; hosted browser CI pending.",
+      "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
+      "sha256": "0ada59c92293bab469f0de7d3194dbf6a1bae44487b6713e7ef1ff76ad691d34",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10.08 browser setup race fix)",
@@ -8109,6 +8127,12 @@
           "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
           "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
           "sha256": "dfe9b38a036e509e671db729331c7e793eed1c313bc6f43bffab71beed633276"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.08 print-style browser test correction)",
+          "sha256": "c6e6f2641dd01530d232a6106f7f578751dc13dc49d7243bc36d5d316228fcdc",
+          "observations": "The Stage 10.09 comparison scenario now removes a previously saved experience bullet and asserts it remains highlighted only in the saved version. Print assertions verify the saved article is hidden and current article visible while changed-text highlight backgrounds are transparent.",
+          "evidence": "Focused hosted browser run 45046336500 and all three exact-head PR jobs in 45046342004 passed on SHA 6280c28e7d82d174a13dec85d659da3cde078c7d. New removal and print-visibility assertions are pending validation on the next exact head."
         }
       ]
     },
