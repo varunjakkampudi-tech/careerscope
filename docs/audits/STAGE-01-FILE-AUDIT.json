@@ -2004,10 +2004,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 10.01 status and remaining exact-head CI and owner-review gates.",
-      "evidence": "Current Stage 10.01 diff reviewed; exact-head hosted CI run 45026025648 identified this file as stale against the previous audit hash. Checklist item remains partial pending successful exact-head CI and independent review.",
-      "reviewer": "Codex (CareerScope Stage 10.01 diff audit)",
-      "sha256": "68fba087367da34b2db65d7121b99b004ff27adf5bb857aa3f9327905972fd69",
+      "observations": "Updated Stage 10.01 hosted CI and independent review evidence; item remains partial pending owner verification.",
+      "evidence": "Run 45026221054 passed all required checks on exact head 498731afe84d24fcd88a7d9f588f3c0c86e8dce3; independent review approved item 10.01 at that SHA.",
+      "reviewer": "Codex (CareerScope Stage 10.01 evidence refresh)",
+      "sha256": "fc62b53f7945f3179e342ba48b37c9a52030b5703358848a902abec497b617eb",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2134,6 +2134,12 @@
           "sha256": "191a0d6f11231285a17f01e03f8b0cc644d14803b2c5276043225f4e35be808b",
           "observations": "Reviewed the Stage 10.11 description of role-specific browser print title and remaining deterministic PDF generation/download gap.",
           "evidence": "Stage 10.11 remains partial; local UI test typing passes, hosted exact-head acceptance pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.01 diff audit)",
+          "sha256": "68fba087367da34b2db65d7121b99b004ff27adf5bb857aa3f9327905972fd69",
+          "observations": "Reviewed the Stage 10.01 status and remaining exact-head CI and owner-review gates.",
+          "evidence": "Current Stage 10.01 diff reviewed; exact-head hosted CI run 45026025648 identified this file as stale against the previous audit hash. Checklist item remains partial pending successful exact-head CI and independent review."
         }
       ]
     },
@@ -2208,10 +2214,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed Stage 10 progress text against current implementation, checklist statuses, and exact-SHA hosted CI evidence; gated items and skipped optional jobs remain explicit.",
-      "evidence": "Current Stage 10 source head 0878ddbe4822436543037dd6456e4c907b961ce0 passed required hosted CI run 45024145754; optional performance, soak, and recovery jobs were skipped.",
-      "reviewer": "Codex (CareerScope Stage 10 progress sync)",
-      "sha256": "617c976b65988c9692cfa73dc1a0dd786c60d1783e02077ecad4a72494c95693",
+      "observations": "Updated Stage 10.01 hosted CI and independent review evidence; item remains partial pending owner verification.",
+      "evidence": "Run 45026221054 passed all required checks on exact head 498731afe84d24fcd88a7d9f588f3c0c86e8dce3; independent review approved item 10.01 at that SHA.",
+      "reviewer": "Codex (CareerScope Stage 10.01 evidence refresh)",
+      "sha256": "2f2f07db129f06cf73c632ee07258a467180405df54e10cdd052454517a866b9",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2350,6 +2356,12 @@
           "sha256": "9dcdfecb8ac4591ecf0fc959813bbd5bb6f74411ddd3c2c0374fc03bd52208b4",
           "observations": "Reviewed Stage 05 item 5.08 and 5.09 status, focused test/build evidence, and remaining adapter-mapping and false-merge limitations.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10 progress sync)",
+          "sha256": "617c976b65988c9692cfa73dc1a0dd786c60d1783e02077ecad4a72494c95693",
+          "observations": "Reviewed Stage 10 progress text against current implementation, checklist statuses, and exact-SHA hosted CI evidence; gated items and skipped optional jobs remain explicit.",
+          "evidence": "Current Stage 10 source head 0878ddbe4822436543037dd6456e4c907b961ce0 passed required hosted CI run 45024145754; optional performance, soak, and recovery jobs were skipped."
         }
       ]
     },
@@ -2404,10 +2416,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 10.11 browser test mapping and retained deterministic PDF and owner acceptance gaps.",
-      "evidence": "Browser scenario covers suggested title and comparison print styles; exact-head execution pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 evidence update)",
-      "sha256": "166c20b4111c0eeb849bb2e6906f19848acf6c4ac30e0888db5bc3baf9b7416a",
+      "observations": "Updated Stage 10.01 hosted CI and independent review evidence; item remains partial pending owner verification.",
+      "evidence": "Run 45026221054 passed all required checks on exact head 498731afe84d24fcd88a7d9f588f3c0c86e8dce3; independent review approved item 10.01 at that SHA.",
+      "reviewer": "Codex (CareerScope Stage 10.01 evidence refresh)",
+      "sha256": "286d59a524a7cf6e4608809840340fde12c583797dd6d4b7a5e5e5620391b4ac",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2534,6 +2546,12 @@
           "sha256": "d08de3ad68f62e21c10744dc048c1e91a6c2f831382d1e8efe31b8ee32ab3b4d",
           "observations": "Reviewed item-specific Stage 05 normalization and deduplication test evidence and exact-head gates.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 evidence update)",
+          "sha256": "166c20b4111c0eeb849bb2e6906f19848acf6c4ac30e0888db5bc3baf9b7416a",
+          "observations": "Reviewed the Stage 10.11 browser test mapping and retained deterministic PDF and owner acceptance gaps.",
+          "evidence": "Browser scenario covers suggested title and comparison print styles; exact-head execution pending."
         }
       ]
     },
@@ -2972,10 +2990,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed Stage 10.01 evidence paths and partial status; owner acceptance remains open.",
-      "evidence": "Current Stage 10.01 diff reviewed; exact-head hosted CI run 45026025648 identified this file as stale against the previous audit hash. Checklist item remains partial pending successful exact-head CI and independent review.",
-      "reviewer": "Codex (CareerScope Stage 10.01 diff audit)",
-      "sha256": "9113c055599e28736afa75a6348526d14f68c3d05efec47c6b36cd8895e5701e",
+      "observations": "Updated Stage 10.01 hosted CI and independent review evidence; item remains partial pending owner verification.",
+      "evidence": "Run 45026221054 passed all required checks on exact head 498731afe84d24fcd88a7d9f588f3c0c86e8dce3; independent review approved item 10.01 at that SHA.",
+      "reviewer": "Codex (CareerScope Stage 10.01 evidence refresh)",
+      "sha256": "73c4cfa474dcaee12b0edafcebe5d0bdfe85453539035d169d20ae68a5ddc7a9",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3090,6 +3108,12 @@
           "sha256": "7dd167f5305e0e493e23133af5da8d97b8111823f4d0f51b29c72abc7eea1e35",
           "observations": "Reviewed owner item 10.11 implementation and browser test links, and retained its deterministic export gap.",
           "evidence": "Current roadmap row links source styling and browser coverage; checklist remains partial pending exact-head CI and owner acceptance."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.01 diff audit)",
+          "sha256": "9113c055599e28736afa75a6348526d14f68c3d05efec47c6b36cd8895e5701e",
+          "observations": "Reviewed Stage 10.01 evidence paths and partial status; owner acceptance remains open.",
+          "evidence": "Current Stage 10.01 diff reviewed; exact-head hosted CI run 45026025648 identified this file as stale against the previous audit hash. Checklist item remains partial pending successful exact-head CI and independent review."
         }
       ]
     },

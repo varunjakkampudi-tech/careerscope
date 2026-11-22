@@ -2129,7 +2129,7 @@
       ],
       "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Three candidate-editable templates are implemented. Browser assertions select each template, verify preview rendering, and verify Modern persists after reload; exact-head CI, accessibility/responsive acceptance, and owner review remain pending.",
+      "gap": "Three candidate-editable templates are implemented. Browser assertions select each template, verify preview rendering, and verify Modern persists after reload. Exact head 498731afe84d24fcd88a7d9f588f3c0c86e8dce3 passed all required CI jobs in run 45026221054 and independent review approved this item; owner verification remains pending.",
       "scopeDisposition": "in-scope"
     },
     {
