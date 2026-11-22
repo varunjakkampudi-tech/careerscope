@@ -4032,6 +4032,13 @@ try {
       await reloadedApplicationDetails
         .getByText('Candidate reports receiving confirmation', { exact: true })
         .waitFor();
+      const reloadedAcknowledgementCard = reloadedApplicationDetails.getByRole('region', {
+        name: 'Employer acknowledgement record',
+      });
+      await reloadedAcknowledgementCard
+        .getByText('Synthetic employer email', { exact: true })
+        .waitFor();
+      await reloadedAcknowledgementCard.getByText('synthetic-reference', { exact: true }).waitFor();
       const interviewOrganizer = reloadedApplicationDetails.getByRole('region', {
         name: 'Interview organizer',
       });
@@ -4235,6 +4242,35 @@ try {
         .getByRole('region', { name: 'Interview organizer' });
       await persistedOrganizer.getByText('Technical interview', { exact: true }).waitFor();
       await persistedOrganizer.getByText('completed', { exact: true }).waitFor();
+      const archiveButton = applicationDetails.getByRole('button', {
+        name: 'Archive in CareerScope',
+      });
+      const beforeDismissedArchive = await leadRepository.get(ownerId, leadId);
+      assert.equal(beforeDismissedArchive?.status, 'applied');
+      assert.ok(beforeDismissedArchive?.followUpAt);
+      let archiveMutationsAfterDismiss = 0;
+      const countArchiveMutations = (request: import('playwright').Request) => {
+        if (request.url().endsWith(`/api/leads/${leadId}`) && request.method() === 'PUT') {
+          archiveMutationsAfterDismiss += 1;
+        }
+      };
+      page.on('request', countArchiveMutations);
+      let dismissedArchiveConfirmationMessage = '';
+      page.once('dialog', async (dialog) => {
+        dismissedArchiveConfirmationMessage = dialog.message();
+        await dialog.dismiss();
+      });
+      await archiveButton.click();
+      page.off('request', countArchiveMutations);
+      assert.match(dismissedArchiveConfirmationMessage, /clear its follow-up reminder/i);
+      assert.equal(
+        archiveMutationsAfterDismiss,
+        0,
+        `${engine}: dismissing archive confirmation must not submit an update`,
+      );
+      const afterDismissedArchive = await leadRepository.get(ownerId, leadId);
+      assert.equal(afterDismissedArchive?.status, 'applied');
+      assert.equal(afterDismissedArchive?.followUpAt, beforeDismissedArchive?.followUpAt);
       let archiveConfirmationMessage = '';
       page.once('dialog', async (dialog) => {
         archiveConfirmationMessage = dialog.message();
@@ -4244,7 +4280,7 @@ try {
         (response) =>
           response.url().endsWith(`/api/leads/${leadId}`) && response.request().method() === 'PUT',
       );
-      await applicationDetails.getByRole('button', { name: 'Archive in CareerScope' }).click();
+      await archiveButton.click();
       assert.match(archiveConfirmationMessage, /clear its follow-up reminder/i);
       assert.equal((await archiveApplication).status(), 200);
       const archivedApplication = await leadRepository.get(ownerId, leadId);
