@@ -2092,11 +2092,21 @@ try {
           .filter({ hasText: 'Current variant summary for comparison.' })
           .waitFor();
         await page.emulateMedia({ media: 'print' });
-        const printedHighlightBackground = await comparison
-          .locator('mark')
-          .filter({ hasText: 'Current variant summary for comparison.' })
-          .evaluate((element) => getComputedStyle(element).backgroundColor);
-        assert.equal(printedHighlightBackground, 'rgba(0, 0, 0, 0)');
+        const printedHighlights = await comparison.locator('mark').evaluateAll((elements) =>
+          elements.map((element) => ({
+            text: element.textContent,
+            background: getComputedStyle(element).backgroundColor,
+          })),
+        );
+        assert.equal(
+          printedHighlights.some(
+            (highlight) =>
+              highlight.text === 'Current variant summary for comparison.' &&
+              highlight.background === 'rgba(0, 0, 0, 0)',
+          ),
+          true,
+          'changed text stays highlighted in comparison while print removes the highlight background',
+        );
         await page.emulateMedia({ media: 'screen' });
         await page.getByLabel('Full Name', { exact: true }).waitFor();
         const uploadInput = page.getByLabel('Upload picture');

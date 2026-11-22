@@ -8015,10 +8015,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "The focused browser journey reached resume reload and exposed an ambiguous Location label across candidate contact, role, and education. Scoped the assertion to the candidate contact field and added a regression message that distinguishes it from the other section locations. The fixture account selector now waits for the visible synthetic account button.",
-      "evidence": "npm run typecheck:tests passes 100 canonical test files. Focused browser rerun and exact-head PR CI are pending.",
-      "reviewer": "Codex (CareerScope Stage 10.08 resume builder browser test fixes)",
-      "sha256": "4fb5de4e26e8f4ebbf23018e68af56f6daa50b4bf0591c9524adf1cfbaf98274",
+      "observations": "The focused resume-builder browser scenario now checks print highlight styling using a single evaluateAll snapshot. The prior single-element locator timed out after print media emulation despite the on-screen changed-text assertions passing; rerun is pending.",
+      "evidence": "npm run typecheck:tests passes 100 canonical test files; targeted Prettier check passes. Focused hosted browser rerun and exact-head PR CI are pending.",
+      "reviewer": "Codex (CareerScope Stage 10.08 print-style browser test correction)",
+      "sha256": "61e4e07c20db96257cf16587498cd5834a12680bebfde3a6ae4a87099bb665b8",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10.08 browser setup race fix)",
