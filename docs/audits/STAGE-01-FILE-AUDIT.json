@@ -1279,10 +1279,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed role-specific suggested print document title, unsafe filename character cleanup, title restoration after afterprint, and existing single-current-resume print styling.",
-      "evidence": "Typecheck across 100 canonical test files and targeted ESLint pass; exact-head print browser validation pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 print review)",
-      "sha256": "00e6c9edfe5e1e0aa1f6d95b30b559fa2a5886e39e81909692f4242560fc1105"
+      "observations": "Reviewed the Stage 10.01 preview hook change; data-template reflects the selected typed template used by the rendered preview.",
+      "evidence": "Current Stage 10.01 diff reviewed; exact-head hosted CI run 45026025648 identified this file as stale against the previous audit hash. Checklist item remains partial pending successful exact-head CI and independent review.",
+      "reviewer": "Codex (CareerScope Stage 10.01 diff audit)",
+      "sha256": "74efe8657dff40abd3dc37958f92b616749fccacb8d8cefb3f0d82de7f16f84d",
+      "history": [
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 print review)",
+          "sha256": "00e6c9edfe5e1e0aa1f6d95b30b559fa2a5886e39e81909692f4242560fc1105",
+          "observations": "Reviewed role-specific suggested print document title, unsafe filename character cleanup, title restoration after afterprint, and existing single-current-resume print styling.",
+          "evidence": "Typecheck across 100 canonical test files and targeted ESLint pass; exact-head print browser validation pending."
+        }
+      ]
     },
     {
       "path": "apps/web/src/components/resume-panel.module.css",
@@ -1992,14 +2000,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
+      "reviewMethod": "current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 10.11 description of role-specific browser print title and remaining deterministic PDF generation/download gap.",
-      "evidence": "Stage 10.11 remains partial; local UI test typing passes, hosted exact-head acceptance pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 evidence update)",
-      "sha256": "191a0d6f11231285a17f01e03f8b0cc644d14803b2c5276043225f4e35be808b",
+      "observations": "Reviewed the Stage 10.01 status and remaining exact-head CI and owner-review gates.",
+      "evidence": "Current Stage 10.01 diff reviewed; exact-head hosted CI run 45026025648 identified this file as stale against the previous audit hash. Checklist item remains partial pending successful exact-head CI and independent review.",
+      "reviewer": "Codex (CareerScope Stage 10.01 diff audit)",
+      "sha256": "68fba087367da34b2db65d7121b99b004ff27adf5bb857aa3f9327905972fd69",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2120,6 +2128,12 @@
           "sha256": "da3b553a8b588deb6952f61cd3f2440c5810c59a294fbda85f29215eb4539433",
           "observations": "Reviewed Stage 05 items 5.08 and 5.09 evidence and gaps; both remain partial and no external source acceptance is claimed.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 evidence update)",
+          "sha256": "191a0d6f11231285a17f01e03f8b0cc644d14803b2c5276043225f4e35be808b",
+          "observations": "Reviewed the Stage 10.11 description of role-specific browser print title and remaining deterministic PDF generation/download gap.",
+          "evidence": "Stage 10.11 remains partial; local UI test typing passes, hosted exact-head acceptance pending."
         }
       ]
     },
@@ -2954,14 +2968,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "content-read",
+      "reviewMethod": "current-diff-review",
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed owner item 10.11 implementation and browser test links, and retained its deterministic export gap.",
-      "evidence": "Current roadmap row links source styling and browser coverage; checklist remains partial pending exact-head CI and owner acceptance.",
-      "reviewer": "Codex (CareerScope Stage 10.11 evidence update)",
-      "sha256": "7dd167f5305e0e493e23133af5da8d97b8111823f4d0f51b29c72abc7eea1e35",
+      "observations": "Reviewed Stage 10.01 evidence paths and partial status; owner acceptance remains open.",
+      "evidence": "Current Stage 10.01 diff reviewed; exact-head hosted CI run 45026025648 identified this file as stale against the previous audit hash. Checklist item remains partial pending successful exact-head CI and independent review.",
+      "reviewer": "Codex (CareerScope Stage 10.01 diff audit)",
+      "sha256": "9113c055599e28736afa75a6348526d14f68c3d05efec47c6b36cd8895e5701e",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3070,6 +3084,12 @@
           "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
           "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 evidence update)",
+          "sha256": "7dd167f5305e0e493e23133af5da8d97b8111823f4d0f51b29c72abc7eea1e35",
+          "observations": "Reviewed owner item 10.11 implementation and browser test links, and retained its deterministic export gap.",
+          "evidence": "Current roadmap row links source styling and browser coverage; checklist remains partial pending exact-head CI and owner acceptance."
         }
       ]
     },
@@ -7595,10 +7615,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed browser assertions for candidate approval and clearing edits, selected-role filename title, saved/current highlights, and no highlight background in print media.",
-      "evidence": "Test typecheck passes; exact-head browser execution pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 browser regression review)",
-      "sha256": "d87fabaae5c6b0c6813a7c15a49d1c41e0f6fb411231e48492306339cd307611",
+      "observations": "Reviewed Stage 10.01 browser assertions for all three template selections, preview rendering, and Modern template persistence after reload.",
+      "evidence": "Current Stage 10.01 diff reviewed; exact-head hosted CI run 45026025648 identified this file as stale against the previous audit hash. Checklist item remains partial pending successful exact-head CI and independent review.",
+      "reviewer": "Codex (CareerScope Stage 10.01 diff audit)",
+      "sha256": "1cf4a5b9a585f0e600a891943d3a7a52295b00324fe87df127cd19dfce1639bc",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7617,6 +7637,12 @@
           "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
           "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
           "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 browser regression review)",
+          "sha256": "d87fabaae5c6b0c6813a7c15a49d1c41e0f6fb411231e48492306339cd307611",
+          "observations": "Reviewed browser assertions for candidate approval and clearing edits, selected-role filename title, saved/current highlights, and no highlight background in print media.",
+          "evidence": "Test typecheck passes; exact-head browser execution pending."
         }
       ]
     },
