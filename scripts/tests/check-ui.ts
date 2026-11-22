@@ -4235,15 +4235,17 @@ try {
         .getByRole('region', { name: 'Interview organizer' });
       await persistedOrganizer.getByText('Technical interview', { exact: true }).waitFor();
       await persistedOrganizer.getByText('completed', { exact: true }).waitFor();
-      const archiveConfirmation = page.waitForEvent('dialog');
+      let archiveConfirmationMessage = '';
+      page.once('dialog', async (dialog) => {
+        archiveConfirmationMessage = dialog.message();
+        await dialog.accept();
+      });
       const archiveApplication = page.waitForResponse(
         (response) =>
           response.url().endsWith(`/api/leads/${leadId}`) && response.request().method() === 'PUT',
       );
       await applicationDetails.getByRole('button', { name: 'Archive in CareerScope' }).click();
-      const archiveDialog = await archiveConfirmation;
-      assert.match(archiveDialog.message(), /clear its follow-up reminder/i);
-      await archiveDialog.accept();
+      assert.match(archiveConfirmationMessage, /clear its follow-up reminder/i);
       assert.equal((await archiveApplication).status(), 200);
       const archivedApplication = await leadRepository.get(ownerId, leadId);
       assert.equal(archivedApplication?.status, 'archived');
