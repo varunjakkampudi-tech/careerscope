@@ -1960,6 +1960,7 @@ try {
         );
         await builder.getByRole('button', { name: 'Save changes', exact: true }).click();
         assert.equal((await draftSaved).status(), 200);
+        await builder.getByRole('button', { name: 'Approve this version', exact: true }).waitFor();
         assert.equal(
           await builder.getByRole('button', { name: 'Approve this version', exact: true }).count(),
           1,
