@@ -7601,10 +7601,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reproduced and corrected a Stage 09 browser synchronization race: after the application-save response, the test now waits for the labelled employer-acknowledgement section to become visible before asserting the unique section count and continuing the acknowledgement flow.",
-      "evidence": "Exact-head workflow-dispatch run 45051245783 is validating commit 0443fb8480c964318e6c45e40ac7e15714a02fce; browser and integration checks are in progress. Earlier run 45050611828 confirmed the immediate count could be 0 after the successful API response. Final exact-head CI and independent review remain pending.",
+      "observations": "Corrected the Stage 09 browser workflow to reflect application scope: after a saved lead is changed to Applied, the saved screen intentionally deselects it; the test now opens Applications, selects the lead, and verifies the acknowledgement and follow-up panels as accessible named regions.",
+      "evidence": "Full browser run 45050611828 exposed the saved-screen transition and immediate-panel assumption. Run 45051245783 at 0443fb8480c964318e6c45e40ac7e15714a02fce confirmed that the panel is absent on the saved screen after the status transition. The corrected route and accessible-region assertions are awaiting exact-head hosted validation.",
       "reviewer": "Codex (Stage 09 browser CI follow-up)",
-      "sha256": "4f82ddd689a897ced4a7e1c34cba6816005a9a6638ff0c4bf86dfa6a6d0e3d43",
+      "sha256": "71f8e0c1f363dc1c0f1f8711f350b1e0f4b4eef2e63dbff4dea5afdddc8f8657",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7641,6 +7641,12 @@
           "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
           "reviewer": "Codex",
           "sha256": "72ad96fe04ff80a6e2dcd35f62aa08769e41efd0393151e853c81670d04af3f8"
+        },
+        {
+          "observations": "Reproduced and corrected a Stage 09 browser synchronization race: after the application-save response, the test now waits for the labelled employer-acknowledgement section to become visible before asserting the unique section count and continuing the acknowledgement flow.",
+          "evidence": "Exact-head workflow-dispatch run 45051245783 is validating commit 0443fb8480c964318e6c45e40ac7e15714a02fce; browser and integration checks are in progress. Earlier run 45050611828 confirmed the immediate count could be 0 after the successful API response. Final exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 09 browser CI follow-up)",
+          "sha256": "4f82ddd689a897ced4a7e1c34cba6816005a9a6638ff0c4bf86dfa6a6d0e3d43"
         }
       ]
     },

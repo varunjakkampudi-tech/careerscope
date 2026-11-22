@@ -3960,10 +3960,24 @@ try {
       assert.equal(applicationRecord.applicationEvidence.method, 'Employer website');
       assert.equal(applicationRecord.applicationEvidence.source, 'Synthetic candidate report');
       assert.deepEqual(applicationRecord.tags, ['audit', 'preserve']);
-      const acknowledgementCard = openedLead.locator(
-        'section[aria-label="Employer acknowledgement record"]',
-      );
-      await acknowledgementCard.waitFor({ state: 'visible' });
+      // Moving a saved lead into the Applications status space intentionally
+      // deselects it on /saved. Continue through the real candidate workflow:
+      // open /applications and select the lead before recording follow-up data.
+      await page.goto(`${origin}/applications`);
+      await page.waitForURL(`${origin}/applications`);
+      await page.getByRole('heading', { name: 'Applications', exact: true }).waitFor();
+      await page
+        .getByRole('navigation', { name: 'Saved lead list' })
+        .getByRole('button', { name: /Senior React Engineer/ })
+        .click();
+      const applicationDetails = page.getByRole('article', { name: 'Lead details' });
+      await applicationDetails
+        .getByText('Senior React Engineer', { exact: true })
+        .first()
+        .waitFor();
+      const acknowledgementCard = applicationDetails.getByRole('region', {
+        name: 'Employer acknowledgement record',
+      });
       assert.equal(await acknowledgementCard.count(), 1);
       await acknowledgementCard
         .getByText('Candidate-reported information only.', { exact: false })
@@ -3991,7 +4005,7 @@ try {
       assert.equal(acknowledgementRecord.status, 'applied');
       assert.equal(acknowledgementRecord.revision, applicationRecord.revision);
       assert.equal(acknowledgementRecord.employerAcknowledgement.reference, 'synthetic-reference');
-      const followUpCard = openedLead.getByRole('region', {
+      const followUpCard = applicationDetails.getByRole('region', {
         name: 'Application follow-up reminder',
       });
       await followUpCard.getByLabel('Follow up at').fill('2030-05-11T10:00');
@@ -4014,11 +4028,11 @@ try {
         .getByRole('navigation', { name: 'Saved lead list' })
         .getByRole('button', { name: /Senior React Engineer/ })
         .click();
-      const applicationDetails = page.getByRole('article', { name: 'Lead details' });
-      await applicationDetails
+      const reloadedApplicationDetails = page.getByRole('article', { name: 'Lead details' });
+      await reloadedApplicationDetails
         .getByText('Candidate reports receiving confirmation', { exact: true })
         .waitFor();
-      const interviewOrganizer = applicationDetails.getByRole('region', {
+      const interviewOrganizer = reloadedApplicationDetails.getByRole('region', {
         name: 'Interview organizer',
       });
       await interviewOrganizer.getByRole('heading', { name: 'Interview rounds' }).waitFor();
