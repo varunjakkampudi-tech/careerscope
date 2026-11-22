@@ -88,6 +88,23 @@ export const updateResumeDraftSchema = resumeDraftFieldsSchema.extend({
   revision: z.number().int().min(1).max(2_147_483_646),
 });
 
+export function validateResumeDraftUpdate(
+  input: unknown,
+  current: Pick<ResumeDraftRecord, 'variantOfId'>,
+) {
+  const changes = updateResumeDraftSchema.parse(input);
+  if (current.variantOfId && !changes.targetRole) {
+    throw new z.ZodError([
+      {
+        code: 'custom',
+        path: ['targetRole'],
+        message: 'Role variants require a target role',
+      },
+    ]);
+  }
+  return changes;
+}
+
 export type ResumeDraftRecord = z.infer<typeof createResumeDraftSchema> & {
   id: string;
   ownerId: string;
@@ -159,7 +176,6 @@ export class ResumeDraftRepository {
   }
 
   async update(ownerId: string, id: string, input: unknown): Promise<ResumeDraftRecord | null> {
-    const changes = updateResumeDraftSchema.parse(input);
     const client = await this.database.pool.connect();
     try {
       await client.query('BEGIN');
@@ -173,6 +189,7 @@ export class ResumeDraftRepository {
         await rollback(client);
         return null;
       }
+      const changes = validateResumeDraftUpdate(input, current);
       if (current.revision !== changes.revision) throw new ResumeDraftRevisionConflict();
       if (
         current.title === changes.title &&

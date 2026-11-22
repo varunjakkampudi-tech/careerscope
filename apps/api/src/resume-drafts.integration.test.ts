@@ -149,6 +149,29 @@ test(
       assert.equal(variant.variantOfId, draft.id);
       assert.equal(variant.targetRole, 'Product Engineer');
 
+      const unlabelledVariantUpdate = await app.inject({
+        method: 'PUT',
+        url: `/api/resume-drafts/${variant.id}`,
+        headers: { origin, cookie: ownerCookie, 'x-csrf-token': ownerSession.csrf },
+        payload: {
+          revision: 1,
+          title: 'Product engineer variant',
+          targetRole: null,
+          template: 'modern',
+          content: { ...content, summary: 'Attempt to remove the variant role.' },
+        },
+      });
+      assert.equal(unlabelledVariantUpdate.statusCode, 400);
+      const preservedVariant = await app.inject({
+        url: '/api/resume-drafts',
+        headers: { cookie: ownerCookie },
+      });
+      assert.equal(
+        preservedVariant.json().items.find((item: { id: string }) => item.id === variant.id)
+          .targetRole,
+        'Product Engineer',
+      );
+
       const approved = await app.inject({
         method: 'POST',
         url: `/api/resume-drafts/${draft.id}/approve`,

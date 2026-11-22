@@ -1903,6 +1903,11 @@ try {
           ((await variantResponse.json()) as { variantOfId: string | null }).variantOfId,
           draftId,
         );
+        assert.equal(
+          await reloadedBuilder.getByLabel('Target role').getAttribute('required'),
+          '',
+          'a saved linked variant keeps its target role required when edited',
+        );
         await reloadedBuilder
           .getByRole('button', { name: /Synthetic Product Engineer Resume.*Variant/ })
           .waitFor();

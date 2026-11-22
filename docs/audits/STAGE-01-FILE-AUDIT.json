@@ -505,10 +505,24 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed integration coverage for owner-scoped variant creation, foreign-owner rejection, target-role association, and safe unlinking after source deletion.",
-      "evidence": "",
-      "reviewer": "Codex",
-      "sha256": "276967668d9e903e57bc2c4a43248ca6d7b5c717f4c63ccf3359f617ccd47e03"
+      "observations": "Reviewed Stage 10.03 linked-variant role invariant and regression coverage: role is required on creation and update, server validates under lock, API test verifies attempted removal is rejected without changing persisted data, and browser asserts the field remains required after reload. Item remains partial pending owner verification.",
+      "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
+      "sha256": "f712b41d0e7f4670b264d5843dec37fbcd4632d05500f14bce5c39e634c49e24",
+      "history": [
+        {
+          "observations": "Reviewed integration coverage for owner-scoped variant creation, foreign-owner rejection, target-role association, and safe unlinking after source deletion.",
+          "evidence": "",
+          "reviewer": "Codex",
+          "sha256": "276967668d9e903e57bc2c4a43248ca6d7b5c717f4c63ccf3359f617ccd47e03"
+        },
+        {
+          "observations": "Reviewed Stage 10.03 linked-variant update invariant and regressions: linked variants retain a required target role; API integration verifies clearing it is rejected without changing stored role; browser asserts the field remains required after reload. Item remains partial pending owner verification.",
+          "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
+          "sha256": "f712b41d0e7f4670b264d5843dec37fbcd4632d05500f14bce5c39e634c49e24"
+        }
+      ]
     },
     {
       "path": "apps/api/src/resumes.integration.test.ts",
@@ -1279,16 +1293,28 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 10.01 preview hook change; data-template reflects the selected typed template used by the rendered preview.",
-      "evidence": "Current Stage 10.01 diff reviewed; exact-head hosted CI run 45026025648 identified this file as stale against the previous audit hash. Checklist item remains partial pending successful exact-head CI and independent review.",
-      "reviewer": "Codex (CareerScope Stage 10.01 diff audit)",
-      "sha256": "74efe8657dff40abd3dc37958f92b616749fccacb8d8cefb3f0d82de7f16f84d",
+      "observations": "Reviewed Stage 10.03 linked-variant role invariant and regression coverage: role is required on creation and update, server validates under lock, API test verifies attempted removal is rejected without changing persisted data, and browser asserts the field remains required after reload. Item remains partial pending owner verification.",
+      "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
+      "sha256": "9804bf2a27eaa5d160e2249a9ab1b34e82651fc7e5ddedc111a49c3c5fbdfbee",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10.11 print review)",
           "sha256": "00e6c9edfe5e1e0aa1f6d95b30b559fa2a5886e39e81909692f4242560fc1105",
           "observations": "Reviewed role-specific suggested print document title, unsafe filename character cleanup, title restoration after afterprint, and existing single-current-resume print styling.",
           "evidence": "Typecheck across 100 canonical test files and targeted ESLint pass; exact-head print browser validation pending."
+        },
+        {
+          "observations": "Reviewed the Stage 10.01 preview hook change; data-template reflects the selected typed template used by the rendered preview.",
+          "evidence": "Current Stage 10.01 diff reviewed; exact-head hosted CI run 45026025648 identified this file as stale against the previous audit hash. Checklist item remains partial pending successful exact-head CI and independent review.",
+          "reviewer": "Codex (CareerScope Stage 10.01 diff audit)",
+          "sha256": "74efe8657dff40abd3dc37958f92b616749fccacb8d8cefb3f0d82de7f16f84d"
+        },
+        {
+          "observations": "Reviewed Stage 10.03 linked-variant update invariant and regressions: linked variants retain a required target role; API integration verifies clearing it is rejected without changing stored role; browser asserts the field remains required after reload. Item remains partial pending owner verification.",
+          "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
+          "sha256": "9804bf2a27eaa5d160e2249a9ab1b34e82651fc7e5ddedc111a49c3c5fbdfbee"
         }
       ]
     },
@@ -2004,10 +2030,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled Stage 10.02/10.03 CI, review and remaining owner-verification evidence; both checklist statuses remain partial.",
-      "evidence": "Run 45030266521 passed all required checks on exact head 539bc96a56c52c2e1bbe3a8085778fc8d12a17cf. Independent review approved item 10.02; item 10.03 review pending.",
-      "reviewer": "Codex (CareerScope Stage 10.02-10.03 evidence update)",
-      "sha256": "dcb853134b50b4173b75513350c509438358221043c540a9ac658da05505c20c",
+      "observations": "Reviewed Stage 10 evidence reconciliation. Items 10.01 and 10.02 have prior scoped approvals and green exact-head CI; item 10.03 review finding is accurately recorded as corrected with new CI/re-review pending. All owner statuses remain partial; gated provider features remain gated.",
+      "evidence": "Compared updated roadmap traceability, gap matrix, test matrix, progress summary, and historical audit records against current Stage 10 implementation, local checks and review state. Exact-head CI for the 10.03 correction is pending.",
+      "reviewer": "Codex (CareerScope Stage 10 evidence reconciliation)",
+      "sha256": "a612950193e87fcdad1e8197c5f9c7e3efac7d0e661be7e9070b095a43966186",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2152,6 +2178,12 @@
           "sha256": "43b7b6c90619df293153e4848419cf5b973fc86b01b4e7619fb61aa6581d75e4",
           "observations": "Reviewed Stage 10.02 browser coverage and partial checklist evidence; owner verification and exact-head CI remain pending.",
           "evidence": "Current Stage 10.02 draft/test diff reviewed; no hosted CI result is claimed for this change."
+        },
+        {
+          "observations": "Reconciled Stage 10.02/10.03 CI, review and remaining owner-verification evidence; both checklist statuses remain partial.",
+          "evidence": "Run 45030266521 passed all required checks on exact head 539bc96a56c52c2e1bbe3a8085778fc8d12a17cf. Independent review approved item 10.02; item 10.03 review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.02-10.03 evidence update)",
+          "sha256": "dcb853134b50b4173b75513350c509438358221043c540a9ac658da05505c20c"
         }
       ]
     },
@@ -2226,10 +2258,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reconciled Stage 10.02/10.03 CI, review and remaining owner-verification evidence; both checklist statuses remain partial.",
-      "evidence": "Run 45030266521 passed all required checks on exact head 539bc96a56c52c2e1bbe3a8085778fc8d12a17cf. Independent review approved item 10.02; item 10.03 review pending.",
-      "reviewer": "Codex (CareerScope Stage 10.02-10.03 evidence update)",
-      "sha256": "89b712ee6032c0d2fa47266ec0246521e9d2e539f498a016b3fb4a4b9902d468",
+      "observations": "Reviewed Stage 10 evidence reconciliation. Items 10.01 and 10.02 have prior scoped approvals and green exact-head CI; item 10.03 review finding is accurately recorded as corrected with new CI/re-review pending. All owner statuses remain partial; gated provider features remain gated.",
+      "evidence": "Compared updated roadmap traceability, gap matrix, test matrix, progress summary, and historical audit records against current Stage 10 implementation, local checks and review state. Exact-head CI for the 10.03 correction is pending.",
+      "reviewer": "Codex (CareerScope Stage 10 evidence reconciliation)",
+      "sha256": "0bcd3988d63266611c5706138f6190bc660c4ce04ad58d1656c5a15e54c6c407",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2386,6 +2418,12 @@
           "sha256": "4713e0b41330cc6fd08c711471b9b5823b142c245d5b9f66c3428010bc13c67d",
           "observations": "Reviewed Stage 10.02 browser coverage and partial checklist evidence; owner verification and exact-head CI remain pending.",
           "evidence": "Current Stage 10.02 draft/test diff reviewed; no hosted CI result is claimed for this change."
+        },
+        {
+          "observations": "Reconciled Stage 10.02/10.03 CI, review and remaining owner-verification evidence; both checklist statuses remain partial.",
+          "evidence": "Run 45030266521 passed all required checks on exact head 539bc96a56c52c2e1bbe3a8085778fc8d12a17cf. Independent review approved item 10.02; item 10.03 review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.02-10.03 evidence update)",
+          "sha256": "89b712ee6032c0d2fa47266ec0246521e9d2e539f498a016b3fb4a4b9902d468"
         }
       ]
     },
@@ -2440,10 +2478,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled Stage 10.02/10.03 CI, review and remaining owner-verification evidence; both checklist statuses remain partial.",
-      "evidence": "Run 45030266521 passed all required checks on exact head 539bc96a56c52c2e1bbe3a8085778fc8d12a17cf. Independent review approved item 10.02; item 10.03 review pending.",
-      "reviewer": "Codex (CareerScope Stage 10.02-10.03 evidence update)",
-      "sha256": "7c7a2c749cb7a74bb8f6dc586975d39a03cc9b1e0619c0cd58438df798224030",
+      "observations": "Reviewed Stage 10 evidence reconciliation. Items 10.01 and 10.02 have prior scoped approvals and green exact-head CI; item 10.03 review finding is accurately recorded as corrected with new CI/re-review pending. All owner statuses remain partial; gated provider features remain gated.",
+      "evidence": "Compared updated roadmap traceability, gap matrix, test matrix, progress summary, and historical audit records against current Stage 10 implementation, local checks and review state. Exact-head CI for the 10.03 correction is pending.",
+      "reviewer": "Codex (CareerScope Stage 10 evidence reconciliation)",
+      "sha256": "a06b7f31a0710558812b1cd02e37b500bfc7fa2d8dbf8462b3d46ad5c0113fc6",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2588,6 +2626,12 @@
           "sha256": "c83d9f46553b727fdebd0dbb6858b0e35608a0125f41175f76d8eaaefc645f35",
           "observations": "Reviewed Stage 10.02 browser coverage and partial checklist evidence; owner verification and exact-head CI remain pending.",
           "evidence": "Current Stage 10.02 draft/test diff reviewed; no hosted CI result is claimed for this change."
+        },
+        {
+          "observations": "Reconciled Stage 10.02/10.03 CI, review and remaining owner-verification evidence; both checklist statuses remain partial.",
+          "evidence": "Run 45030266521 passed all required checks on exact head 539bc96a56c52c2e1bbe3a8085778fc8d12a17cf. Independent review approved item 10.02; item 10.03 review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.02-10.03 evidence update)",
+          "sha256": "7c7a2c749cb7a74bb8f6dc586975d39a03cc9b1e0619c0cd58438df798224030"
         }
       ]
     },
@@ -3026,10 +3070,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reconciled Stage 10.02/10.03 CI, review and remaining owner-verification evidence; both checklist statuses remain partial.",
-      "evidence": "Run 45030266521 passed all required checks on exact head 539bc96a56c52c2e1bbe3a8085778fc8d12a17cf. Independent review approved item 10.02; item 10.03 review pending.",
-      "reviewer": "Codex (CareerScope Stage 10.02-10.03 evidence update)",
-      "sha256": "c1e3c428306bf4ffb15c4da69040f5a4235a5f3740e9f61e28d8e78ba179f172",
+      "observations": "Reviewed Stage 10 evidence reconciliation. Items 10.01 and 10.02 have prior scoped approvals and green exact-head CI; item 10.03 review finding is accurately recorded as corrected with new CI/re-review pending. All owner statuses remain partial; gated provider features remain gated.",
+      "evidence": "Compared updated roadmap traceability, gap matrix, test matrix, progress summary, and historical audit records against current Stage 10 implementation, local checks and review state. Exact-head CI for the 10.03 correction is pending.",
+      "reviewer": "Codex (CareerScope Stage 10 evidence reconciliation)",
+      "sha256": "de6495e1db7d331f16a2cbf49c1dbaec3778ed07593c59d779108edf10c5ec43",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3162,6 +3206,12 @@
           "sha256": "2699d786b1635db72137b43276056021817b94531cffcdb6e8228a181047c237",
           "observations": "Reviewed Stage 10.02 browser coverage and partial checklist evidence; owner verification and exact-head CI remain pending.",
           "evidence": "Current Stage 10.02 draft/test diff reviewed; no hosted CI result is claimed for this change."
+        },
+        {
+          "observations": "Reconciled Stage 10.02/10.03 CI, review and remaining owner-verification evidence; both checklist statuses remain partial.",
+          "evidence": "Run 45030266521 passed all required checks on exact head 539bc96a56c52c2e1bbe3a8085778fc8d12a17cf. Independent review approved item 10.02; item 10.03 review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.02-10.03 evidence update)",
+          "sha256": "c1e3c428306bf4ffb15c4da69040f5a4235a5f3740e9f61e28d8e78ba179f172"
         }
       ]
     },
@@ -5056,10 +5106,24 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added schema tests for valid role variants and required target roles.",
-      "evidence": "",
-      "reviewer": "Codex",
-      "sha256": "2d36a04fb8e75e735e7ef545516242e63564537e3014eb8fecff1cde0e1a5dbd"
+      "observations": "Reviewed Stage 10.03 linked-variant role invariant and regression coverage: role is required on creation and update, server validates under lock, API test verifies attempted removal is rejected without changing persisted data, and browser asserts the field remains required after reload. Item remains partial pending owner verification.",
+      "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
+      "sha256": "d078255aebd4d4131673de3af694e8ffe121569e61e2c62be8d959ca25657a47",
+      "history": [
+        {
+          "observations": "Added schema tests for valid role variants and required target roles.",
+          "evidence": "",
+          "reviewer": "Codex",
+          "sha256": "2d36a04fb8e75e735e7ef545516242e63564537e3014eb8fecff1cde0e1a5dbd"
+        },
+        {
+          "observations": "Reviewed Stage 10.03 linked-variant update invariant and regressions: linked variants retain a required target role; API integration verifies clearing it is rejected without changing stored role; browser asserts the field remains required after reload. Item remains partial pending owner verification.",
+          "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
+          "sha256": "d078255aebd4d4131673de3af694e8ffe121569e61e2c62be8d959ca25657a47"
+        }
+      ]
     },
     {
       "path": "packages/core/src/resume-drafts.ts",
@@ -5068,10 +5132,24 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed strict variant input validation, immutable update contract, same-owner parent check, and persisted nullable lineage.",
-      "evidence": "",
-      "reviewer": "Codex",
-      "sha256": "eb08ebda55719403099528880db124be73b053514837d40fb112907b8c91d7df"
+      "observations": "Reviewed Stage 10.03 linked-variant role invariant and regression coverage: role is required on creation and update, server validates under lock, API test verifies attempted removal is rejected without changing persisted data, and browser asserts the field remains required after reload. Item remains partial pending owner verification.",
+      "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
+      "sha256": "b919423421966735004357e58de76b861ddad66532702140290fb27117444a03",
+      "history": [
+        {
+          "observations": "Reviewed strict variant input validation, immutable update contract, same-owner parent check, and persisted nullable lineage.",
+          "evidence": "",
+          "reviewer": "Codex",
+          "sha256": "eb08ebda55719403099528880db124be73b053514837d40fb112907b8c91d7df"
+        },
+        {
+          "observations": "Reviewed Stage 10.03 linked-variant update invariant and regressions: linked variants retain a required target role; API integration verifies clearing it is rejected without changing stored role; browser asserts the field remains required after reload. Item remains partial pending owner verification.",
+          "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
+          "sha256": "b919423421966735004357e58de76b861ddad66532702140290fb27117444a03"
+        }
+      ]
     },
     {
       "path": "packages/core/src/resume-parser-child.ts",
@@ -7687,10 +7765,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed Stage 10.02 browser assertions for synthetic resume content, preview rendering, and persisted field reload including full name and skills.",
-      "evidence": "Current item 10.02 test diff reviewed and test typing passes; exact-head hosted CI is pending for this hash.",
-      "reviewer": "Codex (CareerScope Stage 10.02 review correction)",
-      "sha256": "4fbd4ccd2d01f3c1f1093bcd332535431e96eafff695d0ddd7ab220a25211309",
+      "observations": "Reviewed Stage 10.03 linked-variant role invariant and regression coverage: role is required on creation and update, server validates under lock, API test verifies attempted removal is rejected without changing persisted data, and browser asserts the field remains required after reload. Item remains partial pending owner verification.",
+      "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
+      "sha256": "dfe9b38a036e509e671db729331c7e793eed1c313bc6f43bffab71beed633276",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7727,6 +7805,18 @@
           "sha256": "fa5275ee66e005d26972493c8e9e42fdec0692d2bf2e8e60ff66a57f697101d1",
           "observations": "Reviewed Stage 10.02 browser coverage and partial checklist evidence; owner verification and exact-head CI remain pending.",
           "evidence": "Current Stage 10.02 draft/test diff reviewed; no hosted CI result is claimed for this change."
+        },
+        {
+          "observations": "Reviewed Stage 10.02 browser assertions for synthetic resume content, preview rendering, and persisted field reload including full name and skills.",
+          "evidence": "Current item 10.02 test diff reviewed and test typing passes; exact-head hosted CI is pending for this hash.",
+          "reviewer": "Codex (CareerScope Stage 10.02 review correction)",
+          "sha256": "4fbd4ccd2d01f3c1f1093bcd332535431e96eafff695d0ddd7ab220a25211309"
+        },
+        {
+          "observations": "Reviewed Stage 10.03 linked-variant update invariant and regressions: linked variants retain a required target role; API integration verifies clearing it is rejected without changing stored role; browser asserts the field remains required after reload. Item remains partial pending owner verification.",
+          "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
+          "sha256": "dfe9b38a036e509e671db729331c7e793eed1c313bc6f43bffab71beed633276"
         }
       ]
     },

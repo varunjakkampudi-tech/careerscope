@@ -4,6 +4,7 @@ import {
   createResumeDraftSchema,
   resumeDraftContentSchema,
   resumeTemplateSchema,
+  validateResumeDraftUpdate,
 } from './resume-drafts.js';
 
 const content = {
@@ -100,4 +101,29 @@ test('resume draft sections require unique entry identifiers and bounded bullet 
     resumeDraftContentSchema.safeParse({ ...content, email: 'not-an-email' }).success,
     false,
   );
+});
+
+test('linked variants cannot be updated without a target role', () => {
+  const base = {
+    title: 'Product Engineer variant',
+    targetRole: null,
+    template: 'classic',
+    content,
+    revision: 1,
+  };
+  assert.throws(
+    () =>
+      validateResumeDraftUpdate(base, {
+        variantOfId: '8d4c7b90-8844-4ec6-a5ce-016c11572ed5',
+      }),
+    /Role variants require a target role/,
+  );
+  assert.equal(
+    validateResumeDraftUpdate(
+      { ...base, targetRole: 'Product Engineer' },
+      { variantOfId: '8d4c7b90-8844-4ec6-a5ce-016c11572ed5' },
+    ).targetRole,
+    'Product Engineer',
+  );
+  assert.equal(validateResumeDraftUpdate(base, { variantOfId: null }).targetRole, null);
 });

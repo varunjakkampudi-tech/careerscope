@@ -464,7 +464,7 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
                   <label>
                     Target role
                     <input
-                      required={Boolean(variantOfId)}
+                      required={Boolean(variantOfId || activeDraft?.variantOfId)}
                       maxLength={80}
                       value={fields.targetRole ?? ''}
                       onChange={(event) =>
