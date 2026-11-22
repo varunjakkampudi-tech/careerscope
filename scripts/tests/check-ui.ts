@@ -4270,7 +4270,10 @@ try {
       );
       const afterDismissedArchive = await leadRepository.get(ownerId, leadId);
       assert.equal(afterDismissedArchive?.status, 'applied');
-      assert.equal(afterDismissedArchive?.followUpAt, beforeDismissedArchive?.followUpAt);
+      assert.equal(
+        afterDismissedArchive?.followUpAt?.toISOString(),
+        beforeDismissedArchive?.followUpAt?.toISOString(),
+      );
       let archiveConfirmationMessage = '';
       page.once('dialog', async (dialog) => {
         archiveConfirmationMessage = dialog.message();

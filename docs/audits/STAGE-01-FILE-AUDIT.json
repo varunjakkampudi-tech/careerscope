@@ -7613,10 +7613,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "The Stage 09 browser journey follows a saved lead into Applications, persists and reloads the candidate-reported acknowledgement reference, records a reminder, verifies that dismissing archive confirmation sends no update, and verifies that accepted archiving clears the reminder while preserving application evidence.",
-      "evidence": "Added Stage 09 browser regression assertions on codex/stage09-fix-ack-ui at e03f64d0a8bb1f4f4c87c80ec352a2f9e78c4d4f. The first exact-head quality run exposed this stale audit hash; focused quality and browser validation are being refreshed.",
+      "observations": "The Stage 09 browser journey follows a saved lead into Applications, verifies that acknowledgement source and reference persist after navigation, records a reminder, verifies that dismissing archive confirmation sends no update and preserves the reminder, then verifies that accepted archiving clears it while preserving application evidence.",
+      "evidence": "Exact-head run 45055607582 at e03f64d0a8bb1f4f4c87c80ec352a2f9e78c4d4f reached the archive-dismissal regression assertion and exposed a test assertion comparing distinct Date objects. The assertion now compares ISO timestamps. The file hash is refreshed for the corrected browser test; exact-head quality and browser validation remain pending.",
       "reviewer": "Codex (Stage 09 browser CI follow-up)",
-      "sha256": "cbd5537c38331c28a6e0e271ceaacc970c776cd2b52f41cd58793c4fcb00a2dd",
+      "sha256": "1f1a12f3a083982c57799115b32a9567890f205a942682d76128ce5710588bca",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7689,6 +7689,12 @@
           "evidence": "Exact-head run 45052022602 at a289abbd3175992f3b5c7b89943fc3ed189c4539 reproduced HTTP 400 when archiving with an active reminder. The UI change and regression assertions are on codex/stage09-fix-ack-ui. Exact-head CI and independent review remain pending.",
           "reviewer": "Codex (Stage 09 CI follow-up)",
           "sha256": "56b50d4a5cb80abc2ea076ea836c42cbca63cdc7ded962d5e0d9cf53fbcc0050"
+        },
+        {
+          "observations": "The Stage 09 browser journey follows a saved lead into Applications, persists and reloads the candidate-reported acknowledgement reference, records a reminder, verifies that dismissing archive confirmation sends no update, and verifies that accepted archiving clears the reminder while preserving application evidence.",
+          "evidence": "Added Stage 09 browser regression assertions on codex/stage09-fix-ack-ui at e03f64d0a8bb1f4f4c87c80ec352a2f9e78c4d4f. The first exact-head quality run exposed this stale audit hash; focused quality and browser validation are being refreshed.",
+          "reviewer": "Codex (Stage 09 browser CI follow-up)",
+          "sha256": "cbd5537c38331c28a6e0e271ceaacc970c776cd2b52f41cd58793c4fcb00a2dd"
         }
       ]
     },
