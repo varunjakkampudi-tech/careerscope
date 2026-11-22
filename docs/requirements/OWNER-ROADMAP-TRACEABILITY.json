@@ -2161,11 +2161,18 @@
       "currentStatus": "partial",
       "evidence": [
         "apps/web/src/components/resume-builder.tsx",
-        "packages/core/src/resume-drafts.ts"
+        "packages/core/src/resume-drafts.ts",
+        "packages/core/src/schema.ts",
+        "migrations/0008_resume_variants.sql",
+        "apps/api/src/app.ts"
       ],
-      "tests": [],
+      "tests": [
+        "packages/core/src/resume-drafts.test.ts",
+        "apps/api/src/resume-drafts.integration.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Target-role labeling is implemented, but separate linked variants, copy-from-variant workflow, and variant browser acceptance are not implemented.",
+      "gap": "Same-candidate linked variants and copy-from-variant editing are implemented with target-role validation; migration, API isolation and browser acceptance are added, but exact-head CI and owner review remain pending.",
       "scopeDisposition": "in-scope"
     },
     {

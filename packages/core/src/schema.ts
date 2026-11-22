@@ -721,6 +721,7 @@ export const resumeDrafts = pgTable(
     ownerId: uuid('owner_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
+    variantOfId: uuid('variant_of_id'),
     title: text('title').notNull(),
     targetRole: text('target_role'),
     template: text('template').$type<ResumeTemplate>().notNull(),
@@ -733,6 +734,8 @@ export const resumeDrafts = pgTable(
   (table) => [
     uniqueIndex('resume_drafts_owner_id').on(table.ownerId, table.id),
     index('resume_drafts_owner_updated').on(table.ownerId, table.updatedAt, table.id),
+    index('resume_drafts_variant_parent').on(table.ownerId, table.variantOfId),
+    foreignKey({ columns: [table.variantOfId], foreignColumns: [table.id] }).onDelete('set null'),
     check('resume_drafts_revision_positive', sql`${table.revision} > 0`),
     check(
       'resume_drafts_template_valid',

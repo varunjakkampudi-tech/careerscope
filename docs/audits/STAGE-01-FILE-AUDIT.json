@@ -265,10 +265,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "observations": "Reviewed the owner-scoped resume draft creation route: invalid or foreign variant parents return 404 and successful creates return the persisted draft.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
       "reviewer": "Codex",
-      "sha256": "5a6c8d9b24c7235bdddaa2006d7cd09166a9222b411df94383fbbeda05c1dea3"
+      "sha256": "ab95cddfc9b46ad1b6b3df6b7dc24ad13fb487fdc66f37095c092cd2401ad43b"
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -433,10 +433,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "observations": "Reviewed the resume draft and variant response/request contracts, required fields, target-role validation description, and 404 behavior.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
       "reviewer": "Codex",
-      "sha256": "22440d756dbf9f598809513f1f5ab93d62ad51aaa617dfa7cb989ca3f420e0a3"
+      "sha256": "ab2a7fb6690eb73bc2faf27b7fa01c29c95b9930d99679ec1b8d396daba1e66c"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -505,10 +505,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "observations": "Reviewed integration coverage for owner-scoped variant creation, foreign-owner rejection, target-role association, and safe unlinking after source deletion.",
       "evidence": "",
       "reviewer": "Codex",
-      "sha256": "097879c437a8df1a56034fadaff34cb73178d9cda8f9a22145288120a6b5c165"
+      "sha256": "276967668d9e903e57bc2c4a43248ca6d7b5c717f4c63ccf3359f617ccd47e03"
     },
     {
       "path": "apps/api/src/resumes.integration.test.ts",
@@ -1279,10 +1279,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the persisted-draft reload and clean initial editor state: blank fields start clean, saved drafts require explicit selection, and mutation controls use only the selected owner-scoped record.",
+      "observations": "Reviewed copy-from-draft variant creation, required target role, selected parent linkage, and variant labeling in the saved list.",
       "evidence": "",
       "reviewer": "Codex",
-      "sha256": "e2975f0ab09b3579f610ab29d3a88bbfc638f0446ef9519c5307505e369444b5"
+      "sha256": "7ac16012b3dc23c7826253d71ad3375478367d89b6efe3a0155c9a9219483925"
     },
     {
       "path": "apps/web/src/components/resume-panel.module.css",
@@ -1378,10 +1378,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "observations": "Reviewed client parsing for nullable variantOfId in resume draft responses.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
       "reviewer": "Codex",
-      "sha256": "3c387c47dd54581c16937c252aba002de71234cb03c6b29571b7c3dd0aa573a9"
+      "sha256": "aa28938c8085c2c0eb202da97b3b89f107ffaf586237f407234277ef5b592ea9"
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
@@ -1794,10 +1794,10 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "observations": "Updated API documentation for same-owner variants and source deletion behavior.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
       "reviewer": "Codex",
-      "sha256": "d4e156b04dc8d21ea8b7474846524b245533a63c8376a3207f5623ff86279346"
+      "sha256": "a3cdf88abcf330284c5b07e7de8e5c2b5492680cdf6e107ef7925559ec9c740e"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1870,10 +1870,10 @@
           "remediation": "Replaced the historical branch references with the active 0000-0003 migration sequence and each migration purpose."
         }
       ],
-      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "observations": "Updated the resume draft data model for variant lineage and deletion semantics.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
       "reviewer": "Codex",
-      "sha256": "7767b756df2429df11e8df389a25574dfdf4bfca0f1ebba5952586868f0bfeb8"
+      "sha256": "2f5956c32fc66e0ede1712300b845a0a8100333ca73e9a85476ab26211370051"
     },
     {
       "path": "docs/FOUNDATIONS.md",
@@ -1944,14 +1944,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "candidate-diff-and-context-review",
+      "reviewMethod": "current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
+      "observations": "Updated Stage 10 gaps without marking partial or gated items verified.",
       "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
-      "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "3287610884b6bfe439ed6eb54d1acc51061f00a0aabdf7033befe9717449ba05",
+      "reviewer": "Codex",
+      "sha256": "da0f83c2527fd59f81aa623166f2312754cc496d2e40bfd5d686a0a2d3cc3a6b",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2134,7 +2134,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "candidate-diff-and-context-review",
+      "reviewMethod": "current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2146,10 +2146,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
+      "observations": "Updated Stage 10 progress and retained all incomplete/gated statuses.",
       "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
-      "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "53e19b52955f3c4c673dfa63306f193ca45ac0c01ef6274015a62caef8218948",
+      "reviewer": "Codex",
+      "sha256": "695fc8782bfa3275f91e3cf5e672e23144a8c9d0243c94e247de794de10783fb",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2338,14 +2338,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "candidate-diff-and-context-review",
+      "reviewMethod": "current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the candidate change and relevant surrounding implementation for Stage 08 item 8.03. The change adds selectable, deterministic match, description-confidence, and date ordering; it explicitly avoids treating description confidence as employer/posting verification. No additional Stage 01 file-audit finding identified.",
+      "observations": "Documented variant validation, isolation, migration, and browser test coverage with pending exact-head acceptance.",
       "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
-      "reviewer": "Codex (Stage 08 item 8.03)",
-      "sha256": "8746884893125cc07f6523f159c1cf06b7f311627cf79bba5cb77f6dc4dd479d",
+      "reviewer": "Codex",
+      "sha256": "4d7f4c77099fdc50329583fe52f93cf4934a081f598318f606a242754931a257",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2910,10 +2910,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "observations": "Updated only item 10.03 evidence and tests; retained partial status pending exact-head CI and owner review.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
       "reviewer": "Codex",
-      "sha256": "f12b8bc10a2de59aaa79701f6c20364879836b0af7008db2f7ecace787a114fa",
+      "sha256": "ae0b893eb2f160546ee326290593ea70237e8c4cbacf641db65e469aca3a19ba",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -4102,6 +4102,18 @@
       "sha256": "087b7704c08b28eacba5b5db883d809ae6b8db13f40fa8115e1bbd52a94ce2bf"
     },
     {
+      "path": "migrations/0008_resume_variants.sql",
+      "category": "database-migration",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed nullable variant lineage column, self-reference cleanup on source deletion, and owner/parent lookup index.",
+      "evidence": "",
+      "reviewer": "Codex",
+      "sha256": "2ce7232151f54339e8967cdf9baa41dcc700b0db989853b6290bf5e00b1077d6"
+    },
+    {
       "path": "migrations/meta/0000_snapshot.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
@@ -4194,16 +4206,28 @@
       "sha256": ""
     },
     {
+      "path": "migrations/meta/0008_snapshot.json",
+      "category": "generated-lockfile-or-snapshot",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
+    },
+    {
       "path": "migrations/meta/_journal.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "current-diff-review",
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "observations": "Reviewed registration of the new resume variants migration in sequence.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
       "reviewer": "Codex",
-      "sha256": "83d1ee598e918d68b542f3622a7574859ef3562ea88ad8bc6367119618b28006"
+      "sha256": "105feb5aaa11d78bc3969c0ebe4a303c5b4291a783773a614f5f97e1c1c28106"
     },
     {
       "path": "package-lock.json",
@@ -4892,10 +4916,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "observations": "Added schema tests for valid role variants and required target roles.",
       "evidence": "",
       "reviewer": "Codex",
-      "sha256": "d2c74f15b2097c7e716c637ff38c094cd7cc5f9b78e42071f74de12981e7518f"
+      "sha256": "2d36a04fb8e75e735e7ef545516242e63564537e3014eb8fecff1cde0e1a5dbd"
     },
     {
       "path": "packages/core/src/resume-drafts.ts",
@@ -4904,10 +4928,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "observations": "Reviewed strict variant input validation, immutable update contract, same-owner parent check, and persisted nullable lineage.",
       "evidence": "",
       "reviewer": "Codex",
-      "sha256": "f2911552dc146ed096bc63593aafc0e5cccde4644c56646c831e6de9fb3e6d30"
+      "sha256": "eb08ebda55719403099528880db124be73b053514837d40fb112907b8c91d7df"
     },
     {
       "path": "packages/core/src/resume-parser-child.ts",
@@ -5068,10 +5092,10 @@
           "remediation": "Add a lower-case check in a migration after verifying existing data. Recorded for the next migration window; no migration is added in Stage 01 to avoid rewriting applied data."
         }
       ],
-      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
+      "observations": "Reviewed typed variant lineage, lookup index, and self-referential foreign key.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
       "reviewer": "Codex",
-      "sha256": "d19448eb49ebdc6363b4dba4b1040b12c78e3df2001ae20a2fb3ff8c4cc4a4a0"
+      "sha256": "cbc692ef6343b58c9ee9419ce71f7edc46092cd09524cdf6eba007a5b9966abb"
     },
     {
       "path": "packages/core/src/sensitive-data.integration.test.ts",
@@ -7523,10 +7547,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the changed browser journeys, including the persisted resume draft reload and explicit revision selection; earlier search-flow review history remains preserved on this record.",
+      "observations": "Added browser coverage for copying a persisted draft into a role variant and verifying the saved lineage.",
       "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
       "reviewer": "Codex",
-      "sha256": "7b31323b18c1cf36f756b4d3689099761dfa42cd654bbe97af53b82cf66f8af7",
+      "sha256": "d25d1f75bb1283eb1e51229542d152a2236f48e065e5a24f7de9386ca4d406a0",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",

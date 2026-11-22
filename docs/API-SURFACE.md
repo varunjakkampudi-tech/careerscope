@@ -284,7 +284,10 @@ Editable resume drafts are separate from uploaded source files. Draft writes
 are owner-scoped, revision-guarded and bounded to 256 KiB JSON. The candidate
 chooses a template and enters each resume fact; there is no automatic factual
 inference. `approve` records the current revision, and any later content edit
-clears that approval timestamp.
+clears that approval timestamp. Creating a role variant copies the selected
+draft's content and template, requires a new target role, and stores an
+immutable `variantOfId` link to a draft owned by the same candidate. Deleting a
+source draft preserves its variants and clears their source link.
 
 `POST /api/resumes/:id/cancel` is synchronous and owner-scoped. It moves an
 `uploading` upload to `cancelling`, writes the storage cancellation marker, then

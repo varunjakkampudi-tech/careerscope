@@ -264,6 +264,7 @@ const resumeDraftContent = object({
 const resumeDraft = object({
   id: uuid,
   ownerId: uuid,
+  variantOfId: nullable(uuid),
   title: text({ maxLength: 120 }),
   targetRole: nullable(text({ maxLength: 80 })),
   template: text({ enum: ['classic', 'modern', 'compact'] }),
@@ -943,15 +944,19 @@ function contracts(options: {
       resumeDraft,
       {
         code: 201,
-        body: object({
-          title: text({ minLength: 1, maxLength: 120 }),
-          targetRole: nullable(text({ minLength: 1, maxLength: 80 })),
-          template: text({ enum: ['classic', 'modern', 'compact'] }),
-          content: resumeDraftContent,
-        }),
-        failures: [400, 429],
+        body: object(
+          {
+            title: text({ minLength: 1, maxLength: 120 }),
+            targetRole: nullable(text({ minLength: 1, maxLength: 80 })),
+            template: text({ enum: ['classic', 'modern', 'compact'] }),
+            content: resumeDraftContent,
+            variantOfId: nullable(uuid),
+          },
+          ['title', 'targetRole', 'template', 'content'],
+        ),
+        failures: [400, 404, 429],
         description:
-          'Stores only candidate-entered content. It does not infer work history or generate facts. A content edit clears prior approval.',
+          'Stores only candidate-entered content. It does not infer work history or generate facts. Optional variantOfId copies a same-owner draft as a role variant; targetRole is required for variants.',
       },
     ),
     'PUT /api/resume-drafts/:id': operation(

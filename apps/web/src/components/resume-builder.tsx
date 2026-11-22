@@ -128,6 +128,7 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
   const [fields, setFields] = useState<DraftFields>(blankDraft);
   const [baseline, setBaseline] = useState(() => serializeDraft(blankDraft));
   const [isNew, setIsNew] = useState(false);
+  const [variantOfId, setVariantOfId] = useState<string | null>(null);
   const [jobDescription, setJobDescription] = useState('');
   const [showBefore, setShowBefore] = useState(false);
   const selected = drafts.data?.items.find((item) => item.id === selectedId) ?? null;
@@ -145,6 +146,7 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
     setFields(next);
     setBaseline(serializeDraft(next));
     setIsNew(false);
+    setVariantOfId(null);
     setShowBefore(false);
   }
 
@@ -167,7 +169,7 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
       apiParsed('/resume-drafts', parseResumeDraft, {
         method: 'POST',
         headers: { 'x-csrf-token': csrf },
-        body: JSON.stringify(fields),
+        body: JSON.stringify({ ...fields, variantOfId }),
       }),
     onSuccess: refresh,
   });
@@ -256,6 +258,23 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
     setFields(blankDraft);
     setBaseline('');
     setIsNew(true);
+    setVariantOfId(null);
+    setShowBefore(false);
+  }
+
+  function startVariant() {
+    if (!selected) return;
+    if (dirty && !window.confirm('Discard unsaved resume edits and create a role variant?')) return;
+    setSelectedId(null);
+    setFields({
+      title: `${selected.title.slice(0, 110)} (variant)`,
+      targetRole: null,
+      template: selected.template,
+      content: structuredClone(selected.content),
+    });
+    setBaseline('');
+    setIsNew(true);
+    setVariantOfId(selected.id);
     setShowBefore(false);
   }
 
@@ -290,6 +309,11 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
         <button type="button" onClick={startNew} disabled={busy}>
           New resume
         </button>
+        {selected && !isNew && (
+          <button type="button" onClick={startVariant} disabled={busy}>
+            Create role variant
+          </button>
+        )}
       </div>
       {drafts.isPending ? (
         <p role="status">Loading resume drafts…</p>
@@ -321,6 +345,7 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
                   }}
                 >
                   {draft.title} · {draft.targetRole ?? 'General'} · v{draft.revision}
+                  {draft.variantOfId ? ' · Variant' : ''}
                   {draft.approvedAt ? ' · Approved' : ''}
                 </button>
               ))}
@@ -352,6 +377,7 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
                   <label>
                     Target role
                     <input
+                      required={Boolean(variantOfId)}
                       maxLength={80}
                       value={fields.targetRole ?? ''}
                       onChange={(event) =>
@@ -629,7 +655,13 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
                 </label>
                 <div className={styles.actions}>
                   <button type="submit" disabled={busy || !dirty}>
-                    {busy ? 'Saving…' : isNew ? 'Create resume' : 'Save changes'}
+                    {busy
+                      ? 'Saving…'
+                      : isNew
+                        ? variantOfId
+                          ? 'Create role variant'
+                          : 'Create resume'
+                        : 'Save changes'}
                   </button>
                   {!isNew && activeDraft && !dirty && !activeDraft.approvedAt && (
                     <button type="button" onClick={() => approve.mutate()} disabled={busy}>

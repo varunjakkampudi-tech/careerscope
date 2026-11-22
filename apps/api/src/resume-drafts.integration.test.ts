@@ -118,6 +118,37 @@ test(
       });
       assert.equal(foreignUpdate.statusCode, 404);
 
+      const foreignVariant = await app.inject({
+        method: 'POST',
+        url: '/api/resume-drafts',
+        headers: { origin, cookie: otherCookie, 'x-csrf-token': otherSession.csrf },
+        payload: {
+          title: 'Foreign variant',
+          targetRole: 'Product Engineer',
+          template: 'classic',
+          content,
+          variantOfId: draft.id,
+        },
+      });
+      assert.equal(foreignVariant.statusCode, 404);
+
+      const variantResponse = await app.inject({
+        method: 'POST',
+        url: '/api/resume-drafts',
+        headers: { origin, cookie: ownerCookie, 'x-csrf-token': ownerSession.csrf },
+        payload: {
+          title: 'Product engineer variant',
+          targetRole: 'Product Engineer',
+          template: 'modern',
+          content: { ...content, summary: 'Variant-specific summary.' },
+          variantOfId: draft.id,
+        },
+      });
+      assert.equal(variantResponse.statusCode, 201, variantResponse.body);
+      const variant = variantResponse.json();
+      assert.equal(variant.variantOfId, draft.id);
+      assert.equal(variant.targetRole, 'Product Engineer');
+
       const approved = await app.inject({
         method: 'POST',
         url: `/api/resume-drafts/${draft.id}/approve`,
@@ -170,6 +201,15 @@ test(
         headers: { origin, cookie: ownerCookie, 'x-csrf-token': ownerSession.csrf },
       });
       assert.equal(removed.statusCode, 204);
+      const remainingDrafts = await app.inject({
+        url: '/api/resume-drafts',
+        headers: { cookie: ownerCookie },
+      });
+      const survivingVariant = remainingDrafts
+        .json()
+        .items.find((item: { id: string }) => item.id === variant.id);
+      assert.ok(survivingVariant);
+      assert.equal(survivingVariant.variantOfId, null);
     } finally {
       await app?.close();
       await database.close();

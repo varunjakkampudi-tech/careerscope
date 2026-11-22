@@ -305,6 +305,7 @@ export type ResumeDraftContent = z.infer<typeof resumeDraftContentSchema>;
 const resumeDraftSchema = z.object({
   id: z.string().uuid(),
   ownerId: z.string().uuid(),
+  variantOfId: z.string().uuid().nullable(),
   title: z.string(),
   targetRole: z.string().nullable(),
   template: z.enum(['classic', 'modern', 'compact']),

@@ -1801,7 +1801,9 @@ export async function createApp(
   app.post('/api/resume-drafts', { bodyLimit: 262_144 }, async (request, reply) => {
     if (!(await consumeRateLimit(request, `resume-drafts-write:${request.ownerId!}`, 30, 60)))
       throw new HttpError(429, 'Too many resume updates');
-    return reply.code(201).send(await resumeDrafts.create(request.ownerId!, request.body));
+    const draft = await resumeDrafts.create(request.ownerId!, request.body);
+    if (!draft) throw new HttpError(404, 'Resume draft not found');
+    return reply.code(201).send(draft);
   });
   app.put('/api/resume-drafts/:id', { bodyLimit: 262_144 }, async (request) => {
     if (!(await consumeRateLimit(request, `resume-drafts-write:${request.ownerId!}`, 30, 60)))

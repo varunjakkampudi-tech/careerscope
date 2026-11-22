@@ -28,6 +28,26 @@ test('resume drafts accept only the supported templates and bounded candidate-en
     }).success,
     true,
   );
+  const variant = createResumeDraftSchema.safeParse({
+    title: 'Product Engineer variant',
+    targetRole: 'Product Engineer',
+    template: 'classic',
+    content,
+    variantOfId: '8d4c7b90-8844-4ec6-a5ce-016c11572ed5',
+  });
+  assert.equal(variant.success, true);
+  if (variant.success)
+    assert.equal(variant.data.variantOfId, '8d4c7b90-8844-4ec6-a5ce-016c11572ed5');
+  assert.equal(
+    createResumeDraftSchema.safeParse({
+      title: 'Unlabelled variant',
+      targetRole: null,
+      template: 'classic',
+      content,
+      variantOfId: '8d4c7b90-8844-4ec6-a5ce-016c11572ed5',
+    }).success,
+    false,
+  );
   assert.equal(
     createResumeDraftSchema.safeParse({
       title: ' ',

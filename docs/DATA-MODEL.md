@@ -97,7 +97,8 @@ from uploaded originals and parser output. It includes the chosen template,
 target role, bounded JSON content, revision, and explicit candidate approval
 timestamp. Every content edit increments the revision and clears approval.
 Draft reads and writes are owner-scoped; no AI provider is called by the
-builder.
+builder. A role variant stores its same-candidate `variant_of_id` source link;
+deleting a source draft preserves the variant and clears that link.
 
 Storage budgets are checked under a lock when an upload is first reserved: at
 most 50 uploads and 100 MiB per owner, and 1000 uploads and 1 GiB overall,

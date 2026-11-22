@@ -57,6 +57,13 @@
       "when": 1795279283138,
       "tag": "0007_resume_drafts",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795285302311,
+      "tag": "0008_resume_variants",
+      "breakpoints": true
     }
   ]
 }

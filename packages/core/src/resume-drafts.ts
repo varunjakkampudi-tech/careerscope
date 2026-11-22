@@ -64,7 +64,7 @@ export const resumeDraftContentSchema = z
   });
 export type ResumeDraftContent = z.infer<typeof resumeDraftContentSchema>;
 
-export const createResumeDraftSchema = z
+const resumeDraftFieldsSchema = z
   .object({
     title: z.string().trim().min(1).max(120),
     targetRole: z.string().trim().min(1).max(80).nullable(),
@@ -72,7 +72,19 @@ export const createResumeDraftSchema = z
     content: resumeDraftContentSchema,
   })
   .strict();
-export const updateResumeDraftSchema = createResumeDraftSchema.extend({
+
+export const createResumeDraftSchema = resumeDraftFieldsSchema
+  .extend({ variantOfId: z.string().uuid().nullable().default(null) })
+  .superRefine((draft, context) => {
+    if (draft.variantOfId && !draft.targetRole) {
+      context.addIssue({
+        code: 'custom',
+        path: ['targetRole'],
+        message: 'Role variants require a target role',
+      });
+    }
+  });
+export const updateResumeDraftSchema = resumeDraftFieldsSchema.extend({
   revision: z.number().int().min(1).max(2_147_483_646),
 });
 
@@ -85,8 +97,9 @@ export type ResumeDraftRecord = z.infer<typeof createResumeDraftSchema> & {
   updatedAt: Date;
 };
 
-const columns = `id, owner_id AS "ownerId", title, target_role AS "targetRole", template,
-  content, revision, approved_at AS "approvedAt", created_at AS "createdAt", updated_at AS "updatedAt"`;
+const columns = `id, owner_id AS "ownerId", variant_of_id AS "variantOfId", title,
+  target_role AS "targetRole", template, content, revision, approved_at AS "approvedAt",
+  created_at AS "createdAt", updated_at AS "updatedAt"`;
 
 function hydrate(row: ResumeDraftRecord): ResumeDraftRecord {
   return {
@@ -123,11 +136,15 @@ export class ResumeDraftRepository {
     return result.rows[0] ? hydrate(result.rows[0]) : null;
   }
 
-  async create(ownerId: string, input: unknown): Promise<ResumeDraftRecord> {
+  async create(ownerId: string, input: unknown): Promise<ResumeDraftRecord | null> {
     const draft = createResumeDraftSchema.parse(input);
     const result = await this.database.pool.query<ResumeDraftRecord>(
-      `INSERT INTO resume_drafts (id, owner_id, title, target_role, template, content)
-       VALUES ($1, $2, $3, $4, $5, $6::jsonb) RETURNING ${columns}`,
+      `INSERT INTO resume_drafts (id, owner_id, title, target_role, template, content, variant_of_id)
+       SELECT $1, $2, $3, $4, $5, $6::jsonb, $7
+       WHERE $7::uuid IS NULL OR EXISTS (
+         SELECT 1 FROM resume_drafts parent WHERE parent.id = $7 AND parent.owner_id = $2
+       )
+       RETURNING ${columns}`,
       [
         randomUUID(),
         ownerId,
@@ -135,9 +152,10 @@ export class ResumeDraftRepository {
         draft.targetRole,
         draft.template,
         JSON.stringify(draft.content),
+        draft.variantOfId,
       ],
     );
-    return hydrate(result.rows[0]!);
+    return result.rows[0] ? hydrate(result.rows[0]) : null;
   }
 
   async update(ownerId: string, id: string, input: unknown): Promise<ResumeDraftRecord | null> {

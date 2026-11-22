@@ -1761,7 +1761,9 @@ try {
             response.url().endsWith('/api/resume-drafts') && response.request().method() === 'POST',
         );
         await builder.getByRole('button', { name: 'Create resume', exact: true }).click();
-        assert.equal((await draftCreated).status(), 201);
+        const draftResponse = await draftCreated;
+        assert.equal(draftResponse.status(), 201);
+        const draftId = ((await draftResponse.json()) as { id: string }).id;
         await builder.getByRole('button', { name: 'Approve this version', exact: true }).click();
         await builder.getByRole('status').filter({ hasText: 'Approved by you' }).waitFor();
         await builder
@@ -1793,6 +1795,27 @@ try {
         const reloadedSummary = reloadedBuilder.getByLabel('Professional summary');
         await reloadedSummary.waitFor();
         assert.equal(await reloadedSummary.inputValue(), 'Builds accessible React interfaces.');
+        await reloadedBuilder.getByRole('button', { name: 'Create role variant' }).click();
+        assert.equal(
+          await reloadedBuilder.getByLabel('Professional summary').inputValue(),
+          'Builds accessible React interfaces.',
+        );
+        await reloadedBuilder.getByLabel('Target role').fill('Product Engineer');
+        await reloadedBuilder.getByLabel('Resume name').fill('Synthetic Product Engineer Resume');
+        const variantCreated = page.waitForResponse(
+          (response) =>
+            response.url().endsWith('/api/resume-drafts') && response.request().method() === 'POST',
+        );
+        await reloadedBuilder.getByRole('button', { name: 'Create role variant' }).last().click();
+        const variantResponse = await variantCreated;
+        assert.equal(variantResponse.status(), 201);
+        assert.equal(
+          ((await variantResponse.json()) as { variantOfId: string | null }).variantOfId,
+          draftId,
+        );
+        await reloadedBuilder
+          .getByRole('button', { name: /Synthetic Product Engineer Resume.*Variant/ })
+          .waitFor();
         await page.getByLabel('Full Name', { exact: true }).waitFor();
         const uploadInput = page.getByLabel('Upload picture');
         await uploadInput.focus();
