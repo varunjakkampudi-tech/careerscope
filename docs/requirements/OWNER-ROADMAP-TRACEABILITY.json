@@ -2226,7 +2226,7 @@
         "packages/shared/src/skills.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Known taxonomy skills found in the job description are shown for candidate review, with aliases normalized; the feature does not assert resume qualifications or infer unrecognized skills. Full browser acceptance and owner review remain pending.",
+      "gap": "Known taxonomy skills in job descriptions are shown for candidate review, with aliases normalized; the feature does not assert qualifications or infer unknown skills. Independent review found cross-field text joining could produce a false multiword skill. Each candidate field is now evaluated independently with negative and positive regression tests; corrected exact-head CI and independent re-review are pending. Owner verification remains pending.",
       "scopeDisposition": "in-scope"
     },
     {

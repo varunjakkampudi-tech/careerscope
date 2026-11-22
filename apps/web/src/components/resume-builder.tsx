@@ -323,14 +323,11 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
   }, [fields.content, jobDescription]);
   const skillResults = useMemo(
     () =>
-      compareResumeSkills(
-        jobDescription,
-        [
-          fields.content.skills.join(' '),
-          fields.content.summary,
-          ...fields.content.experience.flatMap((item) => [item.role, ...item.bullets]),
-        ].join(' '),
-      ),
+      compareResumeSkills(jobDescription, [
+        ...fields.content.skills,
+        fields.content.summary,
+        ...fields.content.experience.flatMap((item) => [item.role, ...item.bullets]),
+      ]),
     [fields.content, jobDescription],
   );
   const formatChecks = analyzeResumeFormatting(fields.content, fields.targetRole);

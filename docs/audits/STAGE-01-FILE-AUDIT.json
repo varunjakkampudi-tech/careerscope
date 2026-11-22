@@ -1293,10 +1293,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 10.05 correction: sentence punctuation is excluded from tokens while technical tokens are preserved; phrases require adjacent tokens separated only by whitespace and cannot cross stop words or resume-field boundaries; unchanged s-ending terms are protected from false singularization.",
-      "evidence": "Local focused keyword tests pass 7/7; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
-      "reviewer": "Codex (CareerScope Stage 10.05 review correction)",
-      "sha256": "6a2fcf8a785c92ad6b4c8ad3880d1ec15a562903f60dbf4dcbe135dceb4b6520",
+      "observations": "Reviewed Stage 10.06 cross-field skill correction: taxonomy extraction is applied independently to each candidate skill, summary, role title, and experience bullet, then normalized results are unioned. Added negative cross-field and positive explicit multiword skill regressions.",
+      "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.06 review correction)",
+      "sha256": "9443bbc9226be06ce017f17d24fa4f0b25367b184a9053cbebe80e55563fc4fb",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10.11 print review)",
@@ -1325,6 +1325,12 @@
         {
           "observations": "Reviewed Stage 10.05 correction: tokenization strips sentence punctuation while preserving technical punctuation; phrase matches require genuine whitespace adjacency and cannot cross stop words or resume-field boundaries. Focused regressions cover punctuation, stop-word gaps, sentence boundaries, fields, and C++/C#/Node.js.",
           "evidence": "Local focused keyword tests pass 6/6; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.05 review correction)",
+          "sha256": "6a2fcf8a785c92ad6b4c8ad3880d1ec15a562903f60dbf4dcbe135dceb4b6520"
+        },
+        {
+          "observations": "Reviewed Stage 10.05 correction: sentence punctuation is excluded from tokens while technical tokens are preserved; phrases require adjacent tokens separated only by whitespace and cannot cross stop words or resume-field boundaries; unchanged s-ending terms are protected from false singularization.",
+          "evidence": "Local focused keyword tests pass 7/7; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
           "reviewer": "Codex (CareerScope Stage 10.05 review correction)",
           "sha256": "6a2fcf8a785c92ad6b4c8ad3880d1ec15a562903f60dbf4dcbe135dceb4b6520"
         }
@@ -1592,10 +1598,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed shared skill taxonomy comparison, candidate-facing review-only presentation, negative/alias tests, browser assertion, and Stage 10.06 evidence changes.",
-      "evidence": "Stage 10.06 implementation review; taxonomy unit/browser tests and roadmap traceability validation.",
-      "reviewer": "Codex (Stage 10.06 candidate-review suggestions)",
-      "sha256": "c8f089276e32855fbb32509ff6f4918784111e3f8dd65e2c26c0131c786d1669"
+      "observations": "Reviewed Stage 10.06 cross-field skill correction: taxonomy extraction is applied independently to each candidate skill, summary, role title, and experience bullet, then normalized results are unioned. Added negative cross-field and positive explicit multiword skill regressions.",
+      "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.06 review correction)",
+      "sha256": "31c8796c9faededa4b859625c704ecf2a7fbc05d8f0a88743cd574542c6c839e",
+      "history": [
+        {
+          "observations": "Reviewed shared skill taxonomy comparison, candidate-facing review-only presentation, negative/alias tests, browser assertion, and Stage 10.06 evidence changes.",
+          "evidence": "Stage 10.06 implementation review; taxonomy unit/browser tests and roadmap traceability validation.",
+          "reviewer": "Codex (Stage 10.06 candidate-review suggestions)",
+          "sha256": "c8f089276e32855fbb32509ff6f4918784111e3f8dd65e2c26c0131c786d1669"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/resume-analysis.ts",
@@ -1604,10 +1618,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Zod initialization order before the shared skill taxonomy import and the updated exact-head status record.",
-      "evidence": "zod-config regression test passes; Stage 10.06 import correction reviewed.",
-      "reviewer": "Codex (Stage 10.06 zod initialization correction)",
-      "sha256": "73c000560d27197208346854cd26cb5929861a69e8a3148ed88735b7ddd6a68f"
+      "observations": "Reviewed Stage 10.06 cross-field skill correction: taxonomy extraction is applied independently to each candidate skill, summary, role title, and experience bullet, then normalized results are unioned. Added negative cross-field and positive explicit multiword skill regressions.",
+      "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.06 review correction)",
+      "sha256": "135227044bfb8fe02bd6456ff4ce1c968ab76b1e7416fecc9a542a543c8821ed",
+      "history": [
+        {
+          "observations": "Reviewed the Zod initialization order before the shared skill taxonomy import and the updated exact-head status record.",
+          "evidence": "zod-config regression test passes; Stage 10.06 import correction reviewed.",
+          "reviewer": "Codex (Stage 10.06 zod initialization correction)",
+          "sha256": "73c000560d27197208346854cd26cb5929861a69e8a3148ed88735b7ddd6a68f"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/resume-keywords.test.ts",
@@ -2070,10 +2092,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 10.05 evidence: punctuation-tokenization, artificial phrase adjacency, and cross-field matching were corrected; exact head e7ec3c58ae0a5483af5c07554b120bf40b8f0784 passed run 45038219505 and received scoped independent approval. Item remains partial pending owner verification.",
-      "evidence": "Exact-head run 45038219505 passed all three required hosted jobs; scoped independent re-review approved item 10.05 at e7ec3c58ae0a5483af5c07554b120bf40b8f0784. Semantic matching and parser quality remain open.",
-      "reviewer": "Codex (CareerScope Stage 10.05 review closeout)",
-      "sha256": "557362fc0590b21eb377e82855b7cfd8dcecdd20f0834461756edb71b85b4267",
+      "observations": "Reviewed Stage 10.06 correction evidence: cross-field taxonomy skill matching was found and corrected through per-field extraction. Regression verifies disjoint React and Query fragments do not satisfy React Query, while explicitly entered React Query is recognized. Item remains partial pending CI and independent review.",
+      "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
+      "sha256": "7315cbe187182362ccb737870eabdbf65b9e6db4f907226d37dae4ffaaf97515",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2260,6 +2282,12 @@
           "evidence": "Local focused keyword tests pass 7/7; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
           "reviewer": "Codex (CareerScope Stage 10.05 correction evidence)",
           "sha256": "eb57bb197fb87847b2bc18f127e249bd4ba2cd84f63a46fd067b8e466af3538a"
+        },
+        {
+          "observations": "Reviewed Stage 10.05 evidence: punctuation-tokenization, artificial phrase adjacency, and cross-field matching were corrected; exact head e7ec3c58ae0a5483af5c07554b120bf40b8f0784 passed run 45038219505 and received scoped independent approval. Item remains partial pending owner verification.",
+          "evidence": "Exact-head run 45038219505 passed all three required hosted jobs; scoped independent re-review approved item 10.05 at e7ec3c58ae0a5483af5c07554b120bf40b8f0784. Semantic matching and parser quality remain open.",
+          "reviewer": "Codex (CareerScope Stage 10.05 review closeout)",
+          "sha256": "557362fc0590b21eb377e82855b7cfd8dcecdd20f0834461756edb71b85b4267"
         }
       ]
     },
@@ -2334,10 +2362,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed Stage 10.05 evidence: punctuation-tokenization, artificial phrase adjacency, and cross-field matching were corrected; exact head e7ec3c58ae0a5483af5c07554b120bf40b8f0784 passed run 45038219505 and received scoped independent approval. Item remains partial pending owner verification.",
-      "evidence": "Exact-head run 45038219505 passed all three required hosted jobs; scoped independent re-review approved item 10.05 at e7ec3c58ae0a5483af5c07554b120bf40b8f0784. Semantic matching and parser quality remain open.",
-      "reviewer": "Codex (CareerScope Stage 10.05 review closeout)",
-      "sha256": "f1994353e834a766af4f5def1172694027804fa9727af32f5b4102941eb5fd71",
+      "observations": "Reviewed Stage 10.06 correction evidence: cross-field taxonomy skill matching was found and corrected through per-field extraction. Regression verifies disjoint React and Query fragments do not satisfy React Query, while explicitly entered React Query is recognized. Item remains partial pending CI and independent review.",
+      "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
+      "sha256": "a7e3412da126a490ad084154d4d677b0b40a8ec8d8ac1dbc827e021b93dacc3e",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2536,6 +2564,12 @@
           "evidence": "Local focused keyword tests pass 7/7; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
           "reviewer": "Codex (CareerScope Stage 10.05 correction evidence)",
           "sha256": "44a2c951de3cf65e0e23b777c5906de257dffd882d4e3488e11214aa5a5a6e92"
+        },
+        {
+          "observations": "Reviewed Stage 10.05 evidence: punctuation-tokenization, artificial phrase adjacency, and cross-field matching were corrected; exact head e7ec3c58ae0a5483af5c07554b120bf40b8f0784 passed run 45038219505 and received scoped independent approval. Item remains partial pending owner verification.",
+          "evidence": "Exact-head run 45038219505 passed all three required hosted jobs; scoped independent re-review approved item 10.05 at e7ec3c58ae0a5483af5c07554b120bf40b8f0784. Semantic matching and parser quality remain open.",
+          "reviewer": "Codex (CareerScope Stage 10.05 review closeout)",
+          "sha256": "f1994353e834a766af4f5def1172694027804fa9727af32f5b4102941eb5fd71"
         }
       ]
     },
@@ -2590,10 +2624,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 10.05 evidence: punctuation-tokenization, artificial phrase adjacency, and cross-field matching were corrected; exact head e7ec3c58ae0a5483af5c07554b120bf40b8f0784 passed run 45038219505 and received scoped independent approval. Item remains partial pending owner verification.",
-      "evidence": "Exact-head run 45038219505 passed all three required hosted jobs; scoped independent re-review approved item 10.05 at e7ec3c58ae0a5483af5c07554b120bf40b8f0784. Semantic matching and parser quality remain open.",
-      "reviewer": "Codex (CareerScope Stage 10.05 review closeout)",
-      "sha256": "26aaa396960f94b491d39f92dee01490bc04083833aa3d21399f234e7ce77e89",
+      "observations": "Reviewed Stage 10.06 correction evidence: cross-field taxonomy skill matching was found and corrected through per-field extraction. Regression verifies disjoint React and Query fragments do not satisfy React Query, while explicitly entered React Query is recognized. Item remains partial pending CI and independent review.",
+      "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
+      "sha256": "ee915e9b9a29b7a1cfa752a65bb885bbd2d03d2f577810421497100dabbc8c09",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2768,6 +2802,12 @@
           "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
           "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
           "sha256": "96f49032cf3c1f9fb55d2a6935dda2d53a8d2d7e777415a555c877876b5ae10e"
+        },
+        {
+          "observations": "Reviewed Stage 10.05 evidence: punctuation-tokenization, artificial phrase adjacency, and cross-field matching were corrected; exact head e7ec3c58ae0a5483af5c07554b120bf40b8f0784 passed run 45038219505 and received scoped independent approval. Item remains partial pending owner verification.",
+          "evidence": "Exact-head run 45038219505 passed all three required hosted jobs; scoped independent re-review approved item 10.05 at e7ec3c58ae0a5483af5c07554b120bf40b8f0784. Semantic matching and parser quality remain open.",
+          "reviewer": "Codex (CareerScope Stage 10.05 review closeout)",
+          "sha256": "26aaa396960f94b491d39f92dee01490bc04083833aa3d21399f234e7ce77e89"
         }
       ]
     },
@@ -3206,10 +3246,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed Stage 10.05 evidence: punctuation-tokenization, artificial phrase adjacency, and cross-field matching were corrected; exact head e7ec3c58ae0a5483af5c07554b120bf40b8f0784 passed run 45038219505 and received scoped independent approval. Item remains partial pending owner verification.",
-      "evidence": "Exact-head run 45038219505 passed all three required hosted jobs; scoped independent re-review approved item 10.05 at e7ec3c58ae0a5483af5c07554b120bf40b8f0784. Semantic matching and parser quality remain open.",
-      "reviewer": "Codex (CareerScope Stage 10.05 review closeout)",
-      "sha256": "68a96da3b605334be0d4058aca7104161d082863a6386feeaae8664f63e40624",
+      "observations": "Reviewed Stage 10.06 correction evidence: cross-field taxonomy skill matching was found and corrected through per-field extraction. Regression verifies disjoint React and Query fragments do not satisfy React Query, while explicitly entered React Query is recognized. Item remains partial pending CI and independent review.",
+      "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
+      "sha256": "f057b10aaef426810fd105ba637ff61a027fda066aee69628e2294b4f6443dfb",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3384,6 +3424,12 @@
           "evidence": "Local focused keyword tests pass 7/7; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
           "reviewer": "Codex (CareerScope Stage 10.05 correction evidence)",
           "sha256": "a4b00ae73b736f41163b648d20ea0d4f2d3169606d00b8d7412d9c97930aeeda"
+        },
+        {
+          "observations": "Reviewed Stage 10.05 evidence: punctuation-tokenization, artificial phrase adjacency, and cross-field matching were corrected; exact head e7ec3c58ae0a5483af5c07554b120bf40b8f0784 passed run 45038219505 and received scoped independent approval. Item remains partial pending owner verification.",
+          "evidence": "Exact-head run 45038219505 passed all three required hosted jobs; scoped independent re-review approved item 10.05 at e7ec3c58ae0a5483af5c07554b120bf40b8f0784. Semantic matching and parser quality remain open.",
+          "reviewer": "Codex (CareerScope Stage 10.05 review closeout)",
+          "sha256": "68a96da3b605334be0d4058aca7104161d082863a6386feeaae8664f63e40624"
         }
       ]
     },

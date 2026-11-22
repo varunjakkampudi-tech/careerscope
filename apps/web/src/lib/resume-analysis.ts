@@ -17,9 +17,10 @@ export function analyzeResumeFormatting(content: ResumeDraftContent, targetRole:
 }
 
 /** Lists taxonomy-recognized job skills for candidate review; it never edits or asserts resume facts. */
-export function compareResumeSkills(jobDescription: string, resumeText: string) {
+export function compareResumeSkills(jobDescription: string, resumeFields: string | string[]) {
   const requested = extractSkills(jobDescription);
-  const present = new Set(extractSkills(resumeText));
+  const fields = Array.isArray(resumeFields) ? resumeFields : [resumeFields];
+  const present = new Set(fields.flatMap((field) => extractSkills(field)));
   return {
     found: requested.filter((skill) => present.has(skill)),
     toReview: requested.filter((skill) => !present.has(skill)),

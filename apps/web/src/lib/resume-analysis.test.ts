@@ -54,6 +54,25 @@ test('taxonomy skill comparison normalizes known aliases and leaves additions to
   );
 });
 
+test('candidate skill matches do not cross field boundaries', () => {
+  assert.deepEqual(compareResumeSkills('React Query', ['React', 'Query databases']), {
+    found: ['React'],
+    toReview: ['React Query'],
+  });
+  assert.deepEqual(compareResumeSkills('React Query', ['React Query']), {
+    found: ['React', 'React Query'],
+    toReview: [],
+  });
+  assert.deepEqual(compareResumeSkills('React Query', ['React', 'Query', 'Databases']), {
+    found: ['React'],
+    toReview: ['React Query'],
+  });
+  assert.deepEqual(compareResumeSkills('React Query', ['React', 'Query']), {
+    found: ['React'],
+    toReview: ['React Query'],
+  });
+});
+
 test('unknown job terms are not presented as missing skills', () => {
   assert.deepEqual(compareResumeSkills('Work with a fictional Qwerty platform', ''), {
     found: [],
