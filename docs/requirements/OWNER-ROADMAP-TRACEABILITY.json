@@ -2173,7 +2173,7 @@
         "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "Same-candidate linked variants and copy-from-variant editing are implemented with target-role validation on create and update; migrations, API owner-isolation, source deletion unlinking, and browser flow are covered. Independent review found and prompted a correction for clearing the role on update; the correction has local type and unit evidence, with exact-head CI and independent re-review pending. Owner verification remains pending.",
+      "gap": "Same-candidate linked variants and copy-from-variant editing are implemented with target-role validation on create and update; migrations, API owner-isolation, source deletion unlinking, and browser flow are covered. Independent review found and prompted a correction for clearing the role on update. Exact head 935c71696cfad35987ff02866884885f540c87ad passed all required hosted jobs in run 45033364742 and received scoped independent approval. Owner verification remains pending.",
       "scopeDisposition": "in-scope"
     },
     {
