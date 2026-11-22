@@ -1279,10 +1279,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed side-by-side saved/current rendering and changed-text marks for edited fields, changed bullets, and saved-only content on both versions; labels and current-only print behavior remain clear. Item 10.09 remains partial pending exact-head browser/accessibility CI and owner acceptance.",
-      "evidence": "Focused resume tests 9/9, typecheck across 100 canonical test files, and targeted ESLint pass. Current browser regression additionally asserts saved and current text are marked.",
-      "reviewer": "Codex (CareerScope Stage 10.09 comparison review)",
-      "sha256": "5e387119b75aafa4d56ce7aed31dbbafe92fa59f02c1429ce24a079847ad60db"
+      "observations": "Reviewed role-specific suggested print document title, unsafe filename character cleanup, title restoration after afterprint, and existing single-current-resume print styling.",
+      "evidence": "Typecheck across 100 canonical test files and targeted ESLint pass; exact-head print browser validation pending.",
+      "reviewer": "Codex (CareerScope Stage 10.11 print review)",
+      "sha256": "00e6c9edfe5e1e0aa1f6d95b30b559fa2a5886e39e81909692f4242560fc1105"
     },
     {
       "path": "apps/web/src/components/resume-panel.module.css",
@@ -1996,10 +1996,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 10.09 status and gap statement; comparison and inline highlights are recorded without implying acceptance.",
-      "evidence": "Stage 10.09 remains partial pending exact-head browser/accessibility CI and owner acceptance.",
-      "reviewer": "Codex (CareerScope Stage 10.09 evidence update)",
-      "sha256": "f5a50f7dc9a9cc6dad68f3b8155120bfcbc10404294ad2df2b9d33e0dc31f563",
+      "observations": "Reviewed the Stage 10.11 description of role-specific browser print title and remaining deterministic PDF generation/download gap.",
+      "evidence": "Stage 10.11 remains partial; local UI test typing passes, hosted exact-head acceptance pending.",
+      "reviewer": "Codex (CareerScope Stage 10.11 evidence update)",
+      "sha256": "191a0d6f11231285a17f01e03f8b0cc644d14803b2c5276043225f4e35be808b",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2390,10 +2390,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 10 coverage mapping and retained parser and owner acceptance gaps.",
-      "evidence": "Focused unit tests 9/9, typecheck, and lint pass locally; exact-head browser execution pending.",
-      "reviewer": "Codex (CareerScope Stage 10.09 evidence update)",
-      "sha256": "cf8a3abcf5a963e6a2bfc9b124b1a72ad8fb3691960a19620e0d8cd83c9f26eb",
+      "observations": "Reviewed the Stage 10.11 browser test mapping and retained deterministic PDF and owner acceptance gaps.",
+      "evidence": "Browser scenario covers suggested title and comparison print styles; exact-head execution pending.",
+      "reviewer": "Codex (CareerScope Stage 10.11 evidence update)",
+      "sha256": "166c20b4111c0eeb849bb2e6906f19848acf6c4ac30e0888db5bc3baf9b7416a",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2958,10 +2958,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed owner roadmap rows 10.08 and 10.09, implementation and browser test evidence, and explicit open acceptance gates.",
-      "evidence": "Traceability records responsive editor and saved/current comparison with change marks; checklist remains partial pending exact-head CI and owner acceptance.",
-      "reviewer": "Codex (CareerScope Stage 10.09 evidence update)",
-      "sha256": "e3541ba88f78d42f17750b6076bb432eaa5e00056bf4b723eff68d71c1371a96",
+      "observations": "Reviewed owner item 10.11 implementation and browser test links, and retained its deterministic export gap.",
+      "evidence": "Current roadmap row links source styling and browser coverage; checklist remains partial pending exact-head CI and owner acceptance.",
+      "reviewer": "Codex (CareerScope Stage 10.11 evidence update)",
+      "sha256": "7dd167f5305e0e493e23133af5da8d97b8111823f4d0f51b29c72abc7eea1e35",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -7595,10 +7595,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed browser assertions for saved/current comparison content, changed-text marks, and transparent print highlight backgrounds.",
+      "observations": "Reviewed browser assertions for candidate approval and clearing edits, selected-role filename title, saved/current highlights, and no highlight background in print media.",
       "evidence": "Test typecheck passes; exact-head browser execution pending.",
-      "reviewer": "Codex (CareerScope Stage 10.09 browser regression review)",
-      "sha256": "9cd87a8cd6b2a0ddc6eed8abaa73e2226fbbba7f0a97c7bf3afb3dce5fc8d85d",
+      "reviewer": "Codex (CareerScope Stage 10.11 browser regression review)",
+      "sha256": "d87fabaae5c6b0c6813a7c15a49d1c41e0f6fb411231e48492306339cd307611",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",

@@ -38,6 +38,32 @@ function serializeDraft(value: DraftFields) {
   return JSON.stringify(value);
 }
 
+function printResume(draft: Pick<DraftFields, 'title' | 'targetRole'>) {
+  const previousTitle = document.title;
+  const printableTitle =
+    [draft.title, draft.targetRole]
+      .filter(Boolean)
+      .join(' - ')
+      .replace(/[\u0000-\u001f<>:"/\\|?*]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .replace(/^\.+|\.+$/g, '')
+      .trim()
+      .slice(0, 120) || 'CareerScope Resume';
+  const restoreTitle = () => {
+    document.title = previousTitle;
+    window.removeEventListener('afterprint', restoreTitle);
+  };
+
+  document.title = printableTitle;
+  window.addEventListener('afterprint', restoreTitle, { once: true });
+  try {
+    window.print();
+  } catch (error) {
+    restoreTitle();
+    throw error;
+  }
+}
+
 function ResumePreview({
   draft,
   print = false,
@@ -729,7 +755,7 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
                     </button>
                   )}
                   {activeDraft && (
-                    <button type="button" onClick={() => window.print()}>
+                    <button type="button" onClick={() => printResume(fields)}>
                       Print or save as PDF
                     </button>
                   )}

@@ -2300,7 +2300,7 @@
         "apps/web/src/components/resume-builder.tsx",
         "apps/web/src/components/resume-builder.module.css"
       ],
-      "tests": [],
+      "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
       "gap": "Browser print dialog can save a printable view; deterministic server/client PDF export with role-specific download validation is not implemented.",
       "scopeDisposition": "in-scope"

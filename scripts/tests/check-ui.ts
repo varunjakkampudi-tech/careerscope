@@ -1796,6 +1796,27 @@ try {
         const reloadedSummary = reloadedBuilder.getByLabel('Professional summary');
         await reloadedSummary.waitFor();
         assert.equal(await reloadedSummary.inputValue(), 'Builds accessible React interfaces.');
+        await page.evaluate(() => {
+          const testWindow = window as Window & { __careerScopePrintTitle?: string };
+          const originalPrint = window.print;
+          window.print = () => {
+            testWindow.__careerScopePrintTitle = document.title;
+            window.dispatchEvent(new Event('afterprint'));
+            window.print = originalPrint;
+          };
+        });
+        await reloadedBuilder.getByRole('button', { name: 'Print or save as PDF' }).click();
+        assert.equal(
+          await page.evaluate(
+            () => (window as Window & { __careerScopePrintTitle?: string }).__careerScopePrintTitle,
+          ),
+          'Synthetic Role Resume - Frontend Engineer',
+        );
+        assert.notEqual(
+          await page.title(),
+          'Synthetic Role Resume - Frontend Engineer',
+          'the document title is restored after printing',
+        );
         await reloadedBuilder.getByRole('button', { name: 'Create role variant' }).click();
         assert.equal(
           await reloadedBuilder.getByLabel('Professional summary').inputValue(),
