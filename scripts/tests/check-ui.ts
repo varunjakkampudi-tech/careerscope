@@ -2093,7 +2093,13 @@ try {
           .filter({ hasText: 'Current variant summary for comparison.' })
           .waitFor();
         await page.emulateMedia({ media: 'print' });
-        const printedHighlights = await comparison.locator('mark').evaluateAll((elements) =>
+        assert.equal(await page.evaluate(() => matchMedia('print').matches), true);
+        // Print CSS hides the comparison group from the accessibility tree,
+        // so inspect its DOM node directly after validating its role above.
+        const printedComparison = page.locator(
+          '[role="group"][aria-label="Saved and current resume versions"]',
+        );
+        const printedHighlights = await printedComparison.locator('mark').evaluateAll((elements) =>
           elements.map((element) => ({
             text: element.textContent,
             background: getComputedStyle(element).backgroundColor,

@@ -8015,10 +8015,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "The resume builder responsive/a11y path now passes through comparison and approval checks. The print-highlight regression is still failing; assertion diagnostics now record every mark text and computed background to guide the UI fix.",
-      "evidence": "Focused hosted run 45045771213 passed breakpoint, layout, builder axe, comparison, and approval path checks but failed the print highlight background assertion. Focused typecheck and file audit passed on preceding revision; exact-head rerun pending.",
+      "observations": "The print comparison assertion now inspects the hidden print DOM through a CSS locator after separately validating the accessible group role on screen. It also verifies print media is active before checking changed-text transparency.",
+      "evidence": "Hosted focused run 45045771213 passed responsive, layout, builder axe, comparison, and approval wait checks; run 45046052450 confirmed print CSS removes the comparison group from the accessibility tree. Focused rerun pending.",
       "reviewer": "Codex (CareerScope Stage 10.08 print-style browser test correction)",
-      "sha256": "9d03126c1753636fcd37643298e00fdb476976ce196b165ca2d7663642cb1c38",
+      "sha256": "d00e4ef0867a62747c7cc2bdd42dfe6aad6df65f7300dc4ce665ef7d71145c44",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10.08 browser setup race fix)",
