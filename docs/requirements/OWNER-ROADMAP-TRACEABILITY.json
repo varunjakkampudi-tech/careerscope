@@ -2226,7 +2226,7 @@
         "packages/shared/src/skills.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Known taxonomy skills in job descriptions are shown for candidate review, with aliases normalized; the feature does not assert qualifications or infer unknown skills. Independent review found cross-field text joining could produce a false multiword skill. Each candidate field is now evaluated independently with negative and positive regression tests; corrected exact-head CI and independent re-review are pending. Owner verification remains pending.",
+      "gap": "Known taxonomy skills in job descriptions are shown for candidate review, with aliases normalized; the feature does not assert qualifications or infer unknown skills. Candidate fields are evaluated independently with negative and positive regression tests. Exact head 0f3e307c908ced6ed1569982012c2e73ca8d2d36 passed all required CI in run 45040662036 and received scoped independent approval. Owner verification remains pending.",
       "scopeDisposition": "in-scope"
     },
     {

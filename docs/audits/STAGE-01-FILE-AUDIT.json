@@ -2092,11 +2092,17 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 10.06 correction evidence: cross-field taxonomy skill matching was found and corrected through per-field extraction. Regression verifies disjoint React and Query fragments do not satisfy React Query, while explicitly entered React Query is recognized. Item remains partial pending CI and independent review.",
-      "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
-      "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
-      "sha256": "7315cbe187182362ccb737870eabdbf65b9e6db4f907226d37dae4ffaaf97515",
+      "observations": "Reviewed and reconciled Stage 10.06 evidence after corrected exact-head CI and scoped independent approval. Cross-field skill fragments remain unmatched; explicit React Query remains recognized. Item stays partial pending owner verification.",
+      "evidence": "Focused skill tests 5/5; typecheck covers 100 canonical tests. Exact head 0f3e307c908ced6ed1569982012c2e73ca8d2d36 passed all required CI in run 45040662036; independent review approved only item 10.06.",
+      "reviewer": "Codex (CareerScope Stage 10.06 evidence reconciliation)",
+      "sha256": "b0db651b6d9432c06edd8de3e1bc751c8ba2273a1df16e0d9e54ad02d98176f6",
       "history": [
+        {
+          "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
+          "sha256": "7315cbe187182362ccb737870eabdbf65b9e6db4f907226d37dae4ffaaf97515",
+          "observations": "Reviewed Stage 10.06 correction evidence: cross-field taxonomy skill matching was found and corrected through per-field extraction. Regression verifies disjoint React and Query fragments do not satisfy React Query, while explicitly entered React Query is recognized. Item remains partial pending CI and independent review.",
+          "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending."
+        },
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
           "sha256": "7cb5b4797fae177590482712f5f705c5fec54594e4d940f4b1a56566c538a0c2",
@@ -2362,11 +2368,17 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed Stage 10.06 correction evidence: cross-field taxonomy skill matching was found and corrected through per-field extraction. Regression verifies disjoint React and Query fragments do not satisfy React Query, while explicitly entered React Query is recognized. Item remains partial pending CI and independent review.",
-      "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
-      "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
-      "sha256": "a7e3412da126a490ad084154d4d677b0b40a8ec8d8ac1dbc827e021b93dacc3e",
+      "observations": "Reviewed and reconciled Stage 10.06 evidence after corrected exact-head CI and scoped independent approval. Cross-field skill fragments remain unmatched; explicit React Query remains recognized. Item stays partial pending owner verification.",
+      "evidence": "Focused skill tests 5/5; typecheck covers 100 canonical tests. Exact head 0f3e307c908ced6ed1569982012c2e73ca8d2d36 passed all required CI in run 45040662036; independent review approved only item 10.06.",
+      "reviewer": "Codex (CareerScope Stage 10.06 evidence reconciliation)",
+      "sha256": "a7e9c60fb466776f6d06126c7b7a09e2a78f1e1103db2f1fb28cb6e27d2c209b",
       "history": [
+        {
+          "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
+          "sha256": "a7e3412da126a490ad084154d4d677b0b40a8ec8d8ac1dbc827e021b93dacc3e",
+          "observations": "Reviewed Stage 10.06 correction evidence: cross-field taxonomy skill matching was found and corrected through per-field extraction. Regression verifies disjoint React and Query fragments do not satisfy React Query, while explicitly entered React Query is recognized. Item remains partial pending CI and independent review.",
+          "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending."
+        },
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
           "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
@@ -2624,11 +2636,17 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 10.06 correction evidence: cross-field taxonomy skill matching was found and corrected through per-field extraction. Regression verifies disjoint React and Query fragments do not satisfy React Query, while explicitly entered React Query is recognized. Item remains partial pending CI and independent review.",
-      "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
-      "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
-      "sha256": "ee915e9b9a29b7a1cfa752a65bb885bbd2d03d2f577810421497100dabbc8c09",
+      "observations": "Reviewed and reconciled Stage 10.06 evidence after corrected exact-head CI and scoped independent approval. Cross-field skill fragments remain unmatched; explicit React Query remains recognized. Item stays partial pending owner verification.",
+      "evidence": "Focused skill tests 5/5; typecheck covers 100 canonical tests. Exact head 0f3e307c908ced6ed1569982012c2e73ca8d2d36 passed all required CI in run 45040662036; independent review approved only item 10.06.",
+      "reviewer": "Codex (CareerScope Stage 10.06 evidence reconciliation)",
+      "sha256": "aab7ef5a25042587a8c8059ac11e1520edccce076418611f27b7fb0e36dad947",
       "history": [
+        {
+          "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
+          "sha256": "ee915e9b9a29b7a1cfa752a65bb885bbd2d03d2f577810421497100dabbc8c09",
+          "observations": "Reviewed Stage 10.06 correction evidence: cross-field taxonomy skill matching was found and corrected through per-field extraction. Regression verifies disjoint React and Query fragments do not satisfy React Query, while explicitly entered React Query is recognized. Item remains partial pending CI and independent review.",
+          "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending."
+        },
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
           "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
@@ -3246,11 +3264,17 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed Stage 10.06 correction evidence: cross-field taxonomy skill matching was found and corrected through per-field extraction. Regression verifies disjoint React and Query fragments do not satisfy React Query, while explicitly entered React Query is recognized. Item remains partial pending CI and independent review.",
-      "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
-      "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
-      "sha256": "f057b10aaef426810fd105ba637ff61a027fda066aee69628e2294b4f6443dfb",
+      "observations": "Reviewed and reconciled Stage 10.06 evidence after corrected exact-head CI and scoped independent approval. Cross-field skill fragments remain unmatched; explicit React Query remains recognized. Item stays partial pending owner verification.",
+      "evidence": "Focused skill tests 5/5; typecheck covers 100 canonical tests. Exact head 0f3e307c908ced6ed1569982012c2e73ca8d2d36 passed all required CI in run 45040662036; independent review approved only item 10.06.",
+      "reviewer": "Codex (CareerScope Stage 10.06 evidence reconciliation)",
+      "sha256": "1c255555001f197d7cfa1861eb1a7b5cc96132c6ea38f0d5b5af16ec3c8d9e51",
       "history": [
+        {
+          "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
+          "sha256": "f057b10aaef426810fd105ba637ff61a027fda066aee69628e2294b4f6443dfb",
+          "observations": "Reviewed Stage 10.06 correction evidence: cross-field taxonomy skill matching was found and corrected through per-field extraction. Regression verifies disjoint React and Query fragments do not satisfy React Query, while explicitly entered React Query is recognized. Item remains partial pending CI and independent review.",
+          "evidence": "Focused skill tests pass 5/5; typecheck passes across 100 canonical test files. Corrected hosted CI and independent re-review pending."
+        },
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
           "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
