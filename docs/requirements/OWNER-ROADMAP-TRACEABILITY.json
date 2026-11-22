@@ -2216,11 +2216,16 @@
       "currentStatus": "partial",
       "evidence": [
         "apps/web/src/components/resume-builder.tsx",
-        "apps/web/src/lib/resume-keywords.ts"
+        "apps/web/src/lib/resume-analysis.ts",
+        "packages/shared/src/skills.ts"
       ],
-      "tests": ["apps/web/src/lib/resume-keywords.test.ts"],
+      "tests": [
+        "apps/web/src/lib/resume-analysis.test.ts",
+        "scripts/tests/check-ui.ts",
+        "packages/shared/src/skills.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Unmatched job-description tokens and phrases are shown without claiming qualifications; no semantic skill taxonomy or validation exists.",
+      "gap": "Known taxonomy skills found in the job description are shown for candidate review, with aliases normalized; the feature does not assert resume qualifications or infer unrecognized skills. Full browser acceptance and owner review remain pending.",
       "scopeDisposition": "in-scope"
     },
     {

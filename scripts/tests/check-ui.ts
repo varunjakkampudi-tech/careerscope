@@ -1756,6 +1756,7 @@ try {
           .getByLabel('Paste job description')
           .fill('Frontend Engineer needs React, TypeScript, and CSS.');
         await builder.getByText(/Matched terms:.*React.*typescript/i).waitFor();
+        await builder.getByText('CSS3', { exact: true }).waitFor();
         const draftCreated = page.waitForResponse(
           (response) =>
             response.url().endsWith('/api/resume-drafts') && response.request().method() === 'POST',

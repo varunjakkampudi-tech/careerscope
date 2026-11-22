@@ -1279,10 +1279,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed deterministic resume formatting rules, boundary-focused unit tests, test registration, and Stage 10.04 evidence updates. No parser-compatibility or ATS-score claim is made.",
-      "evidence": "Stage 10.04 source and documentation review; focused unit tests and repository validators.",
-      "reviewer": "Codex (Stage 10.04 formatting analysis review)",
-      "sha256": "f8f970a5a23dab6b4ede91ecb8e26a5351feb92fb109317f8554e1df63d71996"
+      "observations": "Reviewed shared skill taxonomy comparison, candidate-facing review-only presentation, negative/alias tests, browser assertion, and Stage 10.06 evidence changes.",
+      "evidence": "Stage 10.06 implementation review; taxonomy unit/browser tests and roadmap traceability validation.",
+      "reviewer": "Codex (Stage 10.06 candidate-review suggestions)",
+      "sha256": "fc9dc923642f81d5234dff4983069c23adb11a4a6d30fcb4e4c8c8ce6187dfca"
     },
     {
       "path": "apps/web/src/components/resume-panel.module.css",
@@ -1546,10 +1546,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed deterministic resume formatting rules, boundary-focused unit tests, test registration, and Stage 10.04 evidence updates. No parser-compatibility or ATS-score claim is made.",
-      "evidence": "Stage 10.04 source and documentation review; focused unit tests and repository validators.",
-      "reviewer": "Codex (Stage 10.04 formatting analysis review)",
-      "sha256": "7e767100eb853fe7bf12e43d1fe6426e2aa12849ce530447caefb661d35cad29"
+      "observations": "Reviewed shared skill taxonomy comparison, candidate-facing review-only presentation, negative/alias tests, browser assertion, and Stage 10.06 evidence changes.",
+      "evidence": "Stage 10.06 implementation review; taxonomy unit/browser tests and roadmap traceability validation.",
+      "reviewer": "Codex (Stage 10.06 candidate-review suggestions)",
+      "sha256": "c8f089276e32855fbb32509ff6f4918784111e3f8dd65e2c26c0131c786d1669"
     },
     {
       "path": "apps/web/src/lib/resume-analysis.ts",
@@ -1558,10 +1558,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed deterministic resume formatting rules, boundary-focused unit tests, test registration, and Stage 10.04 evidence updates. No parser-compatibility or ATS-score claim is made.",
-      "evidence": "Stage 10.04 source and documentation review; focused unit tests and repository validators.",
-      "reviewer": "Codex (Stage 10.04 formatting analysis review)",
-      "sha256": "816f1c18c1b514dc34522520115c71a2728b164b2d95dec33bd3e7726950e231"
+      "observations": "Reviewed shared skill taxonomy comparison, candidate-facing review-only presentation, negative/alias tests, browser assertion, and Stage 10.06 evidence changes.",
+      "evidence": "Stage 10.06 implementation review; taxonomy unit/browser tests and roadmap traceability validation.",
+      "reviewer": "Codex (Stage 10.06 candidate-review suggestions)",
+      "sha256": "658da56f99e1e96585fdb4f3190168dd027818b0012f9fc59acbfae8a8592ca2"
     },
     {
       "path": "apps/web/src/lib/resume-keywords.test.ts",
@@ -1996,10 +1996,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed deterministic resume formatting rules, boundary-focused unit tests, test registration, and Stage 10.04 evidence updates. No parser-compatibility or ATS-score claim is made.",
-      "evidence": "Stage 10.04 source and documentation review; focused unit tests and repository validators.",
-      "reviewer": "Codex (Stage 10.04 formatting analysis review)",
-      "sha256": "13f6d0db4148cdde5f774383d11cabb257a114ada6e0a7c8926f65cc8b1180ec",
+      "observations": "Reviewed shared skill taxonomy comparison, candidate-facing review-only presentation, negative/alias tests, browser assertion, and Stage 10.06 evidence changes.",
+      "evidence": "Stage 10.06 implementation review; taxonomy unit/browser tests and roadmap traceability validation.",
+      "reviewer": "Codex (Stage 10.06 candidate-review suggestions)",
+      "sha256": "efa511ca7ff7499a4dc701545719694872c4c47a4acf50d184cd6e04f95f96e2",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2194,10 +2194,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed Stage 10 status, exact-head CI provenance, and current partial/gated items.",
-      "evidence": "Stage 10 progress update checked against hosted CI and current traceability statuses.",
-      "reviewer": "Codex (Stage 10.04 progress update)",
-      "sha256": "a39c8231a5c9f44a9e4bb819c6669c896e5ca16f00c76adda2998ad792256cad",
+      "observations": "Reviewed shared skill taxonomy comparison, candidate-facing review-only presentation, negative/alias tests, browser assertion, and Stage 10.06 evidence changes.",
+      "evidence": "Stage 10.06 implementation review; taxonomy unit/browser tests and roadmap traceability validation.",
+      "reviewer": "Codex (Stage 10.06 candidate-review suggestions)",
+      "sha256": "7fa8cf75d3978679a485d21f20d4897d7cbfaa392ce6a1e8f10f3db52052ccd1",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2390,10 +2390,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed deterministic resume formatting rules, boundary-focused unit tests, test registration, and Stage 10.04 evidence updates. No parser-compatibility or ATS-score claim is made.",
-      "evidence": "Stage 10.04 source and documentation review; focused unit tests and repository validators.",
-      "reviewer": "Codex (Stage 10.04 formatting analysis review)",
-      "sha256": "aeca32a7d2e656c20fce3a06319d6728ced4039da0fc4f4d40f6e9ca5f29cb7f",
+      "observations": "Reviewed shared skill taxonomy comparison, candidate-facing review-only presentation, negative/alias tests, browser assertion, and Stage 10.06 evidence changes.",
+      "evidence": "Stage 10.06 implementation review; taxonomy unit/browser tests and roadmap traceability validation.",
+      "reviewer": "Codex (Stage 10.06 candidate-review suggestions)",
+      "sha256": "8ce88444c6aaea6dc2ed348411529aa1d8018aa92ba748635f737301701a06bc",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2958,10 +2958,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed deterministic resume formatting rules, boundary-focused unit tests, test registration, and Stage 10.04 evidence updates. No parser-compatibility or ATS-score claim is made.",
-      "evidence": "Stage 10.04 source and documentation review; focused unit tests and repository validators.",
-      "reviewer": "Codex (Stage 10.04 formatting analysis review)",
-      "sha256": "e3b54b6a126576751ff40c3b869b67baa7db4070e7b3a1d353d39ccae850040f",
+      "observations": "Reviewed shared skill taxonomy comparison, candidate-facing review-only presentation, negative/alias tests, browser assertion, and Stage 10.06 evidence changes.",
+      "evidence": "Stage 10.06 implementation review; taxonomy unit/browser tests and roadmap traceability validation.",
+      "reviewer": "Codex (Stage 10.06 candidate-review suggestions)",
+      "sha256": "3b7462f92f78ab47f5a0398197ab2eea3e49d36b43b0fbfdad0066ecc19bf4fe",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -7569,7 +7569,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "current-diff-review",
+      "reviewMethod": "content-read",
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [
@@ -7595,10 +7595,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Added browser coverage for copying a persisted draft into a role variant and verifying the saved lineage.",
-      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex",
-      "sha256": "d25d1f75bb1283eb1e51229542d152a2236f48e065e5a24f7de9386ca4d406a0",
+      "observations": "Reviewed shared skill taxonomy comparison, candidate-facing review-only presentation, negative/alias tests, browser assertion, and Stage 10.06 evidence changes.",
+      "evidence": "Stage 10.06 implementation review; taxonomy unit/browser tests and roadmap traceability validation.",
+      "reviewer": "Codex (Stage 10.06 candidate-review suggestions)",
+      "sha256": "ed4c690e019585fba11660f4411481ff154d61ca4c3df0e7b4dbceb7b7ba49b8",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",

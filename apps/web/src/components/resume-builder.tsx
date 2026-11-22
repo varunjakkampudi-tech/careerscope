@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiJson, apiParsed } from '../lib/api';
 import { ownerKey, useOwner } from '../lib/session';
 import { compareResumeKeywords } from '../lib/resume-keywords';
-import { analyzeResumeFormatting } from '../lib/resume-analysis';
+import { analyzeResumeFormatting, compareResumeSkills } from '../lib/resume-analysis';
 import {
   parseResumeDraft,
   parseResumeDraftList,
@@ -217,6 +217,18 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
       ].join(' '),
     );
   }, [fields.content, jobDescription]);
+  const skillResults = useMemo(
+    () =>
+      compareResumeSkills(
+        jobDescription,
+        [
+          fields.content.skills.join(' '),
+          fields.content.summary,
+          ...fields.content.experience.flatMap((item) => [item.role, ...item.bullets]),
+        ].join(' '),
+      ),
+    [fields.content, jobDescription],
+  );
   const formatChecks = analyzeResumeFormatting(fields.content, fields.targetRole);
   const busy = create.isPending || save.isPending || approve.isPending || remove.isPending;
 
@@ -753,6 +765,14 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
                         {keywordResults.missing.slice(0, 30).join(', ') ||
                           'No unmatched terms found.'}
                       </p>
+                      <p>Known skills from the job description to review in your resume:</p>
+                      <ul>
+                        {skillResults.toReview.map((skill) => (
+                          <li key={skill}>{skill}</li>
+                        ))}
+                        {skillResults.toReview.length === 0 && <li>No unmatched known skills.</li>}
+                      </ul>
+                      <p>Only add a skill if it accurately describes your experience.</p>
                     </>
                   )}
                   <p>
