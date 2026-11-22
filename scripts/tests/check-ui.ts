@@ -1760,7 +1760,25 @@ try {
         }
         await templateSelect.selectOption('modern');
         await builder.getByLabel('Full name').fill('Synthetic Candidate');
+        await builder.getByLabel('Email').fill('synthetic.candidate@example.test');
+        await builder.getByLabel('Phone').fill('+1 555 010 0100');
+        await builder.getByLabel('Location').fill('Hyderabad');
         await builder.getByLabel('Professional summary').fill('Builds React interfaces.');
+        await builder.getByRole('button', { name: 'Add role', exact: true }).click();
+        await builder.getByLabel('Role title').fill('Software Engineer');
+        await builder.getByLabel('Company').fill('Synthetic Systems');
+        await builder
+          .getByLabel('Achievement bullets (one per line)')
+          .fill('Built a candidate-reported feature.');
+        await builder.getByRole('button', { name: 'Add education', exact: true }).click();
+        await builder.getByLabel('Institution').fill('Example University');
+        await builder.getByLabel('Qualification').fill('Bachelor of Engineering');
+        await resumePreview.getByRole('heading', { name: 'Software Engineer' }).waitFor();
+        await resumePreview
+          .getByText('Built a candidate-reported feature.', { exact: true })
+          .waitFor();
+        await resumePreview.getByRole('heading', { name: 'Bachelor of Engineering' }).waitFor();
+        await resumePreview.getByText('Example University', { exact: true }).waitFor();
         await builder.getByLabel('Skills (comma-separated)').fill('React, TypeScript');
         await builder
           .getByLabel('Paste job description')
@@ -1806,6 +1824,29 @@ try {
         const reloadedSummary = reloadedBuilder.getByLabel('Professional summary');
         await reloadedSummary.waitFor();
         assert.equal(await reloadedSummary.inputValue(), 'Builds accessible React interfaces.');
+        assert.equal(
+          await reloadedBuilder.getByLabel('Email').inputValue(),
+          'synthetic.candidate@example.test',
+        );
+        assert.equal(await reloadedBuilder.getByLabel('Phone').inputValue(), '+1 555 010 0100');
+        assert.equal(await reloadedBuilder.getByLabel('Location').inputValue(), 'Hyderabad');
+        assert.equal(
+          await reloadedBuilder.getByLabel('Role title').inputValue(),
+          'Software Engineer',
+        );
+        assert.equal(await reloadedBuilder.getByLabel('Company').inputValue(), 'Synthetic Systems');
+        assert.equal(
+          await reloadedBuilder.getByLabel('Achievement bullets (one per line)').inputValue(),
+          'Built a candidate-reported feature.',
+        );
+        assert.equal(
+          await reloadedBuilder.getByLabel('Institution').inputValue(),
+          'Example University',
+        );
+        assert.equal(
+          await reloadedBuilder.getByLabel('Qualification').inputValue(),
+          'Bachelor of Engineering',
+        );
         assert.equal(await reloadedBuilder.getByLabel('Template').inputValue(), 'modern');
         assert.equal(
           await reloadedBuilder

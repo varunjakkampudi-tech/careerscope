@@ -2150,7 +2150,7 @@
         "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "Candidate-entered drafts and owner-scoped persistence are implemented. PostgreSQL integration and exact-head browser CI are pending; only one current draft record has a target-role field, without variant lineage or source-resume linkage.",
+      "gap": "Candidate-entered drafts and owner-scoped persistence are implemented. Browser coverage now creates, previews, saves, and reloads candidate-entered contact, summary, experience, education, and skills. Exact-head CI for this coverage and owner verification remain pending; source-resume linkage is not implemented.",
       "scopeDisposition": "in-scope"
     },
     {
