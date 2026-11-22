@@ -2252,7 +2252,7 @@
         "apps/web/src/components/resume-builder.tsx",
         "apps/web/src/components/resume-builder.module.css"
       ],
-      "tests": [],
+      "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
       "gap": "Responsive editor and live preview are implemented; exact-head cross-browser, keyboard, screen reader, and responsive acceptance remain pending.",
       "scopeDisposition": "in-scope"
@@ -2264,10 +2264,13 @@
       "title": "Before/after comparison",
       "sourceStatus": "New",
       "currentStatus": "partial",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "evidence": [
+        "apps/web/src/components/resume-builder.tsx",
+        "apps/web/src/components/resume-builder.module.css"
+      ],
+      "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Saved content can be compared with current unsaved edits; automated before/after browser evidence and richer change highlighting remain pending.",
+      "gap": "Saved and current edits are displayed side by side, with a browser regression for both versions. Inline change highlighting and owner acceptance remain open.",
       "scopeDisposition": "in-scope"
     },
     {

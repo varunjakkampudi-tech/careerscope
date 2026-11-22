@@ -716,19 +716,31 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
                     </button>
                   )}
                 </div>
-                <ResumePreview
-                  draft={
-                    showBefore && activeDraft
-                      ? {
+                {showBefore && activeDraft ? (
+                  <div
+                    className={styles.comparison}
+                    role="group"
+                    aria-label="Saved and current resume versions"
+                  >
+                    <section>
+                      <h4>Saved version</h4>
+                      <ResumePreview
+                        draft={{
                           title: activeDraft.title,
                           targetRole: activeDraft.targetRole,
                           template: activeDraft.template,
                           content: activeDraft.content,
-                        }
-                      : fields
-                  }
-                  print
-                />
+                        }}
+                      />
+                    </section>
+                    <section>
+                      <h4>Current edits</h4>
+                      <ResumePreview draft={fields} print />
+                    </section>
+                  </div>
+                ) : (
+                  <ResumePreview draft={fields} print />
+                )}
                 <section aria-labelledby="format-review-heading">
                   <h3 id="format-review-heading">Formatting review</h3>
                   <p>Rule-based guidance only. This is not an ATS score or guarantee.</p>

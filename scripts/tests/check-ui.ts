@@ -1817,6 +1817,21 @@ try {
         await reloadedBuilder
           .getByRole('button', { name: /Synthetic Product Engineer Resume.*Variant/ })
           .waitFor();
+        await reloadedBuilder
+          .getByLabel('Professional summary')
+          .fill('Current variant summary for comparison.');
+        await reloadedBuilder.getByRole('button', { name: 'Compare with saved version' }).click();
+        const comparison = reloadedBuilder.getByRole('group', {
+          name: 'Saved and current resume versions',
+        });
+        await comparison.getByRole('heading', { name: 'Saved version', exact: true }).waitFor();
+        await comparison.getByRole('heading', { name: 'Current edits', exact: true }).waitFor();
+        await comparison
+          .getByText('Builds accessible React interfaces.', { exact: true })
+          .waitFor();
+        await comparison
+          .getByText('Current variant summary for comparison.', { exact: true })
+          .waitFor();
         await page.getByLabel('Full Name', { exact: true }).waitFor();
         const uploadInput = page.getByLabel('Upload picture');
         await uploadInput.focus();
