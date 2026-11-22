@@ -2194,10 +2194,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the Zod initialization order before the shared skill taxonomy import and the updated exact-head status record.",
-      "evidence": "zod-config regression test passes; Stage 10.06 import correction reviewed.",
-      "reviewer": "Codex (Stage 10.06 zod initialization correction)",
-      "sha256": "3cf7d6a5ce3aa3b27006ea74c76ab9fdef0f5ee5ae0b6507761c602057b28628",
+      "observations": "Reviewed Stage 10 progress text against current implementation, checklist statuses, and exact-SHA hosted CI evidence; gated items and skipped optional jobs remain explicit.",
+      "evidence": "Current Stage 10 source head 0878ddbe4822436543037dd6456e4c907b961ce0 passed required hosted CI run 45024145754; optional performance, soak, and recovery jobs were skipped.",
+      "reviewer": "Codex (CareerScope Stage 10 progress sync)",
+      "sha256": "617c976b65988c9692cfa73dc1a0dd786c60d1783e02077ecad4a72494c95693",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
