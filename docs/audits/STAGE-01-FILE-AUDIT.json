@@ -8015,10 +8015,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "The focused resume-builder browser scenario waits for the post-save approval action to render before asserting its count, avoiding a race between the HTTP response and client mutation refresh. The print-style highlight assertion now checks all marks in a single evaluateAll snapshot.",
-      "evidence": "npm run typecheck:tests passes 100 canonical test files. Targeted Prettier check passes. Focused hosted browser and exact-head PR CI are pending.",
+      "observations": "The resume builder responsive/a11y path now passes through comparison and approval checks. The print-highlight regression is still failing; assertion diagnostics now record every mark text and computed background to guide the UI fix.",
+      "evidence": "Focused hosted run 45045771213 passed breakpoint, layout, builder axe, comparison, and approval path checks but failed the print highlight background assertion. Focused typecheck and file audit passed on preceding revision; exact-head rerun pending.",
       "reviewer": "Codex (CareerScope Stage 10.08 print-style browser test correction)",
-      "sha256": "26c7fb24cbce6b6aba75cfbd6186756b792af4d2a3502e0025b847f9ffc3d964",
+      "sha256": "9d03126c1753636fcd37643298e00fdb476976ce196b165ca2d7663642cb1c38",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10.08 browser setup race fix)",

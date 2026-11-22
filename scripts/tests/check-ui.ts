@@ -2106,7 +2106,7 @@ try {
               highlight.background === 'rgba(0, 0, 0, 0)',
           ),
           true,
-          'changed text stays highlighted in comparison while print removes the highlight background',
+          `changed text stays highlighted in comparison while print removes the highlight background; observed ${JSON.stringify(printedHighlights)}`,
         );
         await page.emulateMedia({ media: 'screen' });
         await page.getByLabel('Full Name', { exact: true }).waitFor();
