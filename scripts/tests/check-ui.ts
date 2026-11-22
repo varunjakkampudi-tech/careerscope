@@ -1985,7 +1985,11 @@ try {
           'synthetic.candidate@example.test',
         );
         assert.equal(await reloadedBuilder.getByLabel('Phone').inputValue(), '+1 555 010 0100');
-        assert.equal(await reloadedBuilder.getByLabel('Location').inputValue(), 'Hyderabad');
+        assert.equal(
+          await reloadedBuilder.getByLabel('Location').first().inputValue(),
+          'Hyderabad',
+          'candidate contact location persists separately from role and education locations',
+        );
         assert.equal(
           await reloadedBuilder.getByLabel('Role title').inputValue(),
           'Software Engineer',

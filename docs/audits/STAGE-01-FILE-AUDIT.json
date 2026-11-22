@@ -8015,11 +8015,17 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Updated the focused resume-builder acceptance to wait for the visible synthetic account button before selection. This removes an immediate-count race observed when the account selector was still hydrating; the failure diagnostic remains for a genuinely missing control.",
-      "evidence": "npm run typecheck:tests passes 100 canonical test files. Focused browser and exact-head PR CI are pending after correction; Stage 10.08 remains partial.",
-      "reviewer": "Codex (CareerScope Stage 10.08 browser setup race fix)",
-      "sha256": "e82014132a109ffcbf8a6b93d99fc7d0882ff0a2f567a17fcbbbed14e0afb36e",
+      "observations": "The focused browser journey reached resume reload and exposed an ambiguous Location label across candidate contact, role, and education. Scoped the assertion to the candidate contact field and added a regression message that distinguishes it from the other section locations. The fixture account selector now waits for the visible synthetic account button.",
+      "evidence": "npm run typecheck:tests passes 100 canonical test files. Focused browser rerun and exact-head PR CI are pending.",
+      "reviewer": "Codex (CareerScope Stage 10.08 resume builder browser test fixes)",
+      "sha256": "4fb5de4e26e8f4ebbf23018e68af56f6daa50b4bf0591c9524adf1cfbaf98274",
       "history": [
+        {
+          "reviewer": "Codex (CareerScope Stage 10.08 browser setup race fix)",
+          "sha256": "e82014132a109ffcbf8a6b93d99fc7d0882ff0a2f567a17fcbbbed14e0afb36e",
+          "observations": "Updated the focused resume-builder acceptance to wait for the visible synthetic account button before selection. This removes an immediate-count race observed when the account selector was still hydrating; the failure diagnostic remains for a genuinely missing control.",
+          "evidence": "npm run typecheck:tests passes 100 canonical test files. Focused browser and exact-head PR CI are pending after correction; Stage 10.08 remains partial."
+        },
         {
           "reviewer": "Codex (CareerScope Stage 10.08 responsive acceptance)",
           "sha256": "75f5e7bf8868340eeb6412af230c27a856b76bf5069d0154d5a910bf79e688e7",
