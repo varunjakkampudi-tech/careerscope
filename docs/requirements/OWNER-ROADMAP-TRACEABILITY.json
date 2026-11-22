@@ -2150,7 +2150,7 @@
         "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "Candidate-entered drafts and owner-scoped persistence are implemented. Browser coverage now creates, previews, saves, and reloads candidate-entered contact, summary, experience, education, and skills. Exact-head CI for this coverage and owner verification remain pending; source-resume linkage is not implemented.",
+      "gap": "Candidate-entered drafts and owner-scoped persistence are implemented. Browser coverage creates, previews, saves, and reloads candidate-entered contact, summary, experience, education, and skills. Exact head 539bc96a56c52c2e1bbe3a8085778fc8d12a17cf passed all required CI jobs in run 45030266521 and independent review approved item 10.02; owner verification remains pending. Source-resume linkage is not implemented.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2173,7 +2173,7 @@
         "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "Same-candidate linked variants and copy-from-variant editing are implemented with target-role validation; migration, API isolation and browser acceptance are added, but exact-head CI and owner review remain pending.",
+      "gap": "Same-candidate linked variants and copy-from-variant editing are implemented with target-role validation; migrations, API owner-isolation, source deletion unlinking, and browser flow are covered. Exact head 539bc96a56c52c2e1bbe3a8085778fc8d12a17cf passed all required CI jobs in run 45030266521; independent review and owner verification remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
