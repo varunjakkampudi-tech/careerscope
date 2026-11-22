@@ -97,10 +97,18 @@
           "remediation": "Browser expression changed to all for every non-manual event; regression test check-browser-coverage.test.mjs (3 pass); docs/operations/CI-CD.md updated."
         }
       ],
-      "observations": "Read lines 1 to 260 in full and the step list of lines 260 to 430 earlier. Checked: top-level read-only permissions, per-job read-only permissions, SHA-pinned actions, checkout without persisted credentials, no repository secrets, image job on pull requests only, synthetic ephemeral services. S1-F015 fixed: CAREERSCOPE_UI_BROWSER is now all for every non-manual event, so every push to dev or main runs Chromium, Firefox and WebKit. scripts/ci/check-browser-coverage.test.mjs asserts the expression, the step conditions and the install branch. Lines 300 to 430 are not yet read in full. Read the previously incomplete remainder through line 430. Confirms isolated synthetic PostgreSQL/Redis services, ephemeral cleanup, conditional browser suites, full three-engine coverage on pushes/PRs/schedule, opt-in resilience checks, read-only workflow permissions, pinned actions, no repository secrets, and run summaries that distinguish skipped suites. No additional finding.",
-      "evidence": "Complete file read: lines 1-430 on current branch; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "4a07363dbeb3136f795dd91163a1b56bf0615f90a3bed49707769afcd55064aa"
+      "observations": "Added a workflow_dispatch option for the focused resume-builder browser acceptance. Validation restricts it to the browser suite on Chromium and reserves passive notification lifecycle instrumentation for its existing scenario. Default PR triggers and read-only workflow permissions are unchanged.",
+      "evidence": "Workflow formatting and test typing checked locally; focused dispatch and exact-head PR CI are pending.",
+      "reviewer": "Codex (CareerScope Stage 10.08 focused CI scenario)",
+      "sha256": "0e2e129932ab1cfc9c785bbb075f8983eb4187ef252156dbc8cc6ca2bdfc1d15",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "4a07363dbeb3136f795dd91163a1b56bf0615f90a3bed49707769afcd55064aa",
+          "observations": "Read lines 1 to 260 in full and the step list of lines 260 to 430 earlier. Checked: top-level read-only permissions, per-job read-only permissions, SHA-pinned actions, checkout without persisted credentials, no repository secrets, image job on pull requests only, synthetic ephemeral services. S1-F015 fixed: CAREERSCOPE_UI_BROWSER is now all for every non-manual event, so every push to dev or main runs Chromium, Firefox and WebKit. scripts/ci/check-browser-coverage.test.mjs asserts the expression, the step conditions and the install branch. Lines 300 to 430 are not yet read in full. Read the previously incomplete remainder through line 430. Confirms isolated synthetic PostgreSQL/Redis services, ephemeral cleanup, conditional browser suites, full three-engine coverage on pushes/PRs/schedule, opt-in resilience checks, read-only workflow permissions, pinned actions, no repository secrets, and run summaries that distinguish skipped suites. No additional finding.",
+          "evidence": "Complete file read: lines 1-430 on current branch; SHA-256 records reviewed bytes."
+        }
+      ]
     },
     {
       "path": ".gitignore",
@@ -8007,11 +8015,23 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed Stage 10.03 linked-variant role invariant and regression coverage: role is required on creation and update, server validates under lock, API test verifies attempted removal is rejected without changing persisted data, and browser asserts the field remains required after reload. Item remains partial pending owner verification.",
-      "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
-      "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
-      "sha256": "dfe9b38a036e509e671db729331c7e793eed1c313bc6f43bffab71beed633276",
+      "observations": "Added a reachable focused resume-builder browser scenario. It asserts side-by-side layout at 901px, stacked layout at 900px and below, control-column changes at 560px, visibility, horizontal overflow, long-text wrapping, builder-scoped axe checks, and keyboard navigation. The test is now selectable through the validated workflow_dispatch browser scenario.",
+      "evidence": "npm run typecheck:tests passed across 100 canonical files. Exact-head focused browser and standard PR CI are pending; item 10.08 remains partial.",
+      "reviewer": "Codex (CareerScope Stage 10.08 responsive acceptance)",
+      "sha256": "75f5e7bf8868340eeb6412af230c27a856b76bf5069d0154d5a910bf79e688e7",
       "history": [
+        {
+          "reviewer": "Codex (CareerScope Stage 10.08 responsive test coverage)",
+          "sha256": "974695d4ad81383b36189d67d14899f1ee1ac0139510fc2f60e4615234c08cc3",
+          "observations": "Added Stage 10.08 targeted browser acceptance at the implemented 900px and 560px breakpoints. Assertions cover side-by-side/stacked geometry, control-column transition, editor and preview visibility, horizontal overflow, long-text wrapping, builder-scoped axe checks, and a deliberate keyboard tab sequence. File diff and test typing reviewed.",
+          "evidence": "npm run typecheck:tests passed for 100 canonical test files. Exact-head browser and full CI execution pending; item 10.08 remains partial."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
+          "sha256": "dfe9b38a036e509e671db729331c7e793eed1c313bc6f43bffab71beed633276",
+          "observations": "Reviewed Stage 10.03 linked-variant role invariant and regression coverage: role is required on creation and update, server validates under lock, API test verifies attempted removal is rejected without changing persisted data, and browser asserts the field remains required after reload. Item remains partial pending owner verification.",
+          "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending."
+        },
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
           "evidence": "PR #82 exact head 179bc1645052d41235d3bec1e854fab0b29c6a15 exposed the pending-only queue race in run 43061560382. This change fixes the assertion at its durable source; local typecheck passes, and hosted exact-head CI after this commit remains required.",

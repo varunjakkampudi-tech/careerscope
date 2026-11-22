@@ -48,7 +48,9 @@ import {
 const notificationLifecycleOnly =
   process.env.CAREERSCOPE_UI_SCENARIO === 'notification-panel-close-before-mutation';
 const profilePhotoOnly = process.env.CAREERSCOPE_UI_SCENARIO === 'profile-photo';
-if (process.env.CAREERSCOPE_UI_SCENARIO && !notificationLifecycleOnly && !profilePhotoOnly)
+const resumeBuilderOnly = process.env.CAREERSCOPE_UI_SCENARIO === 'resume-builder';
+const focusedProfileUiOnly = profilePhotoOnly || resumeBuilderOnly;
+if (process.env.CAREERSCOPE_UI_SCENARIO && !notificationLifecycleOnly && !focusedProfileUiOnly)
   throw new Error('Unknown focused browser scenario');
 if (notificationLifecycleOnly) {
   assert.equal(process.env.CAREERSCOPE_UI_BROWSER, 'chromium');
@@ -562,7 +564,7 @@ try {
       );
     }
   };
-  for (const [engine, browserType] of profilePhotoOnly
+  for (const [engine, browserType] of focusedProfileUiOnly
     ? uiBrowsers.filter(([engine]) => engine === 'chromium')
     : uiBrowsers) {
     // Legacy password-account fixtures exercise existing data/session behavior.
@@ -1270,7 +1272,7 @@ try {
       });
       let fixtureCredential = password;
       await page.route('**/api/session', async (route) => {
-        if (profilePhotoOnly) {
+        if (focusedProfileUiOnly) {
           const response = await route.fetch();
           const body = await response.json();
           if (body.authenticated !== false) {
@@ -1309,7 +1311,7 @@ try {
       });
       await page.route('**/api/login', (route) => {
         const { email } = route.request().postDataJSON();
-        if (profilePhotoOnly) {
+        if (focusedProfileUiOnly) {
           return route
             .fetch({
               postData: JSON.stringify({ email, password: fixtureCredential }),
@@ -1663,7 +1665,7 @@ try {
           `${engine} ${name} is not "${expected}": ${directives.get(name) ?? 'absent'}`,
         );
       }
-      if (!profilePhotoOnly) {
+      if (!focusedProfileUiOnly) {
         const skipLink = page.getByRole('link', { name: 'Skip to content', exact: true });
         const hiddenSkip = await skipLink.boundingBox();
         assert.ok(hiddenSkip && hiddenSkip.width === 1 && hiddenSkip.height === 1);
@@ -1720,7 +1722,7 @@ try {
         [],
         `${engine}: dashboard content and global navigation must not leave speculative RSC prefetches open`,
       );
-      if (profilePhotoOnly) {
+      if (focusedProfileUiOnly) {
         // The selected account is the newly registered browser fixture, so
         // seed that account's profile rather than the separate API owner used
         // by the broad cross-owner scenario below.
@@ -1747,6 +1749,23 @@ try {
         await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
         const builder = page.getByRole('region', { name: 'Resume Builder' });
         await builder.getByRole('button', { name: 'New resume', exact: true }).click();
+        await builder.getByLabel('Resume name').focus();
+        await page.keyboard.press('Tab');
+        assert.equal(
+          await builder
+            .getByLabel('Target role')
+            .evaluate((element) => element === document.activeElement),
+          true,
+          `${engine}: resume editor keyboard order reaches the target role after the resume name`,
+        );
+        await page.keyboard.press('Tab');
+        assert.equal(
+          await builder
+            .getByLabel('Template')
+            .evaluate((element) => element === document.activeElement),
+          true,
+          `${engine}: resume editor keyboard order reaches the template after the target role`,
+        );
         await builder.getByLabel('Resume name').fill('Synthetic Role Resume');
         await builder.getByLabel('Target role').fill('Frontend Engineer');
         const templateSelect = builder.getByLabel('Template');
@@ -1785,6 +1804,137 @@ try {
           .fill('Frontend Engineer needs React, TypeScript, and CSS.');
         await builder.getByText(/Matched terms:.*React.*typescript/i).waitFor();
         await builder.getByText('CSS3', { exact: true }).waitFor();
+        const originalSummary = 'Builds React interfaces.';
+        const responsiveSummary = Array.from(
+          { length: 18 },
+          (_, index) => `Synthetic accessible summary phrase ${index + 1}`,
+        ).join(' ');
+        await builder.getByLabel('Professional summary').fill(responsiveSummary);
+        const workspaceForm = builder.locator('form');
+        for (const [width, expectedWorkspaceColumns, expectedControlColumns] of [
+          [901, 2, 2],
+          [900, 1, 2],
+          [561, 1, 2],
+          [560, 1, 1],
+          [320, 1, 1],
+        ] as const) {
+          await page.setViewportSize({ width, height: 900 });
+          const layout = await workspaceForm.evaluate((form) => {
+            const workspace = form.parentElement;
+            if (!workspace) throw new Error('Resume workspace is missing around the editor');
+            const preview = workspace.querySelector('aside');
+            if (!preview) throw new Error('Resume preview is missing from the workspace');
+            const controls = form.querySelector('div');
+            if (!controls) throw new Error('Resume editor controls are missing');
+            const editorRect = form.getBoundingClientRect();
+            const previewRect = preview.getBoundingClientRect();
+            return {
+              workspaceColumns: getComputedStyle(workspace).gridTemplateColumns.trim().split(/\s+/)
+                .length,
+              controlColumns: getComputedStyle(controls).gridTemplateColumns.trim().split(/\s+/)
+                .length,
+              editor: {
+                x: editorRect.x,
+                y: editorRect.y,
+                right: editorRect.right,
+                bottom: editorRect.bottom,
+                width: editorRect.width,
+              },
+              preview: {
+                x: previewRect.x,
+                y: previewRect.y,
+                width: previewRect.width,
+                visible:
+                  getComputedStyle(preview).display !== 'none' &&
+                  getComputedStyle(preview).visibility !== 'hidden',
+              },
+              documentWidth: document.documentElement.scrollWidth,
+              viewportWidth: window.innerWidth,
+            };
+          });
+          assert.equal(
+            layout.workspaceColumns,
+            expectedWorkspaceColumns,
+            `${engine}: resume workspace column count at ${width}px`,
+          );
+          assert.equal(
+            layout.controlColumns,
+            expectedControlColumns,
+            `${engine}: resume editor control column count at ${width}px`,
+          );
+          assert.ok(layout.editor.width > 0, `${engine}: editor remains visible at ${width}px`);
+          assert.ok(layout.preview?.visible, `${engine}: preview remains visible at ${width}px`);
+          assert.ok(
+            layout.preview && layout.preview.width > 0,
+            `${engine}: preview has usable width at ${width}px`,
+          );
+          assert.equal(
+            layout.documentWidth <= layout.viewportWidth,
+            true,
+            `${engine}: resume builder has no horizontal document overflow at ${width}px`,
+          );
+          if (expectedWorkspaceColumns === 2) {
+            assert.ok(
+              layout.preview!.x > layout.editor.x && layout.preview!.x >= layout.editor.right,
+              `${engine}: editor and preview are side by side at ${width}px`,
+            );
+          } else {
+            assert.ok(
+              layout.preview!.y >= layout.editor.bottom,
+              `${engine}: preview follows editor vertically at ${width}px`,
+            );
+          }
+          if (width === 320) {
+            const summaryLayout = await resumePreview
+              .getByText(responsiveSummary, { exact: true })
+              .evaluate((element) => ({
+                height: element.getBoundingClientRect().height,
+                fontSize: Number.parseFloat(getComputedStyle(element).fontSize),
+                scrollWidth: element.scrollWidth,
+                clientWidth: element.clientWidth,
+              }));
+            assert.ok(
+              summaryLayout.height > summaryLayout.fontSize * 2,
+              `${engine}: long candidate text wraps in the narrow preview`,
+            );
+            assert.ok(
+              summaryLayout.scrollWidth <= summaryLayout.clientWidth,
+              `${engine}: long candidate text is not clipped horizontally`,
+            );
+            await page.evaluate(axeSource);
+            const violations = await builder.evaluate(async (root) => {
+              const runner = (
+                globalThis as unknown as {
+                  axe: {
+                    run: (
+                      context: Element,
+                      options: unknown,
+                    ) => Promise<{
+                      violations: {
+                        id: string;
+                        impact: string | null;
+                        nodes: { target: string[] }[];
+                      }[];
+                    }>;
+                  };
+                }
+              ).axe;
+              const audit = await runner.run(root, {
+                runOnly: {
+                  type: 'tag',
+                  values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22a', 'wcag22aa'],
+                },
+              });
+              return audit.violations.map(
+                (violation) =>
+                  `${violation.id} [${violation.impact}] ${violation.nodes.map((node) => node.target.join(' ')).join(', ')}`,
+              );
+            });
+            assert.deepEqual(violations, [], `${engine}: resume builder axe accessibility audit`);
+          }
+        }
+        await page.setViewportSize({ width: 1440, height: 900 });
+        await builder.getByLabel('Professional summary').fill(originalSummary);
         const draftCreated = page.waitForResponse(
           (response) =>
             response.url().endsWith('/api/resume-drafts') && response.request().method() === 'POST',
@@ -1914,7 +2064,8 @@ try {
         await reloadedBuilder
           .getByLabel('Professional summary')
           .fill('Current variant summary for comparison.');
-        await reloadedBuilder.getByRole('button', { name: 'Compare with saved version' }).click();
+        await reloadedBuilder.getByRole('button', { name: 'Compare with saved version' }).focus();
+        await page.keyboard.press('Enter');
         const comparison = reloadedBuilder.getByRole('group', {
           name: 'Saved and current resume versions',
         });
@@ -5982,7 +6133,7 @@ try {
   });
   try {
     await testApp.listen({ host: '127.0.0.1', port: API_PORT });
-    for (const [engine, browserType] of notificationLifecycleOnly || profilePhotoOnly
+    for (const [engine, browserType] of notificationLifecycleOnly || focusedProfileUiOnly
       ? []
       : uiBrowsers) {
       const browser = await browserType.launch();
