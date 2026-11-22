@@ -7613,10 +7613,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "The Stage 09 browser journey follows a saved lead into Applications, records an acknowledgement and reminder, then verifies archiving transparently clears the reminder while preserving candidate-reported application evidence.",
-      "evidence": "Exact-head run 45052022602 at a289abbd3175992f3b5c7b89943fc3ed189c4539 reproduced HTTP 400 when archiving with an active reminder. The UI change and regression assertions are on codex/stage09-fix-ack-ui. Exact-head CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 09 CI follow-up)",
-      "sha256": "56b50d4a5cb80abc2ea076ea836c42cbca63cdc7ded962d5e0d9cf53fbcc0050",
+      "observations": "The Stage 09 browser journey follows a saved lead into Applications, persists and reloads the candidate-reported acknowledgement reference, records a reminder, verifies that dismissing archive confirmation sends no update, and verifies that accepted archiving clears the reminder while preserving application evidence.",
+      "evidence": "Added Stage 09 browser regression assertions on codex/stage09-fix-ack-ui at e03f64d0a8bb1f4f4c87c80ec352a2f9e78c4d4f. The first exact-head quality run exposed this stale audit hash; focused quality and browser validation are being refreshed.",
+      "reviewer": "Codex (Stage 09 browser CI follow-up)",
+      "sha256": "cbd5537c38331c28a6e0e271ceaacc970c776cd2b52f41cd58793c4fcb00a2dd",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7683,6 +7683,12 @@
           "evidence": "Exact-head browser run 45052022602 at a289abbd3175992f3b5c7b89943fc3ed189c4539 exposed HTTP 400 when archiving with an active reminder. The UI now asks for explicit acknowledgement, clears the reminder in the archive update, and the browser test asserts the archived record and preserved application evidence. Exact-head CI and independent review are pending.",
           "reviewer": "Codex (Stage 09 CI follow-up)",
           "sha256": "54ee6e145e4e9acdaed0a261ba1eb7feaf75cefff25ec922feab5ae6c39bc138"
+        },
+        {
+          "observations": "The Stage 09 browser journey follows a saved lead into Applications, records an acknowledgement and reminder, then verifies archiving transparently clears the reminder while preserving candidate-reported application evidence.",
+          "evidence": "Exact-head run 45052022602 at a289abbd3175992f3b5c7b89943fc3ed189c4539 reproduced HTTP 400 when archiving with an active reminder. The UI change and regression assertions are on codex/stage09-fix-ack-ui. Exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 09 CI follow-up)",
+          "sha256": "56b50d4a5cb80abc2ea076ea836c42cbca63cdc7ded962d5e0d9cf53fbcc0050"
         }
       ]
     },
