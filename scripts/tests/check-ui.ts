@@ -4235,18 +4235,24 @@ try {
         .getByRole('region', { name: 'Interview organizer' });
       await persistedOrganizer.getByText('Technical interview', { exact: true }).waitFor();
       await persistedOrganizer.getByText('completed', { exact: true }).waitFor();
-      await page.once('dialog', (dialog) => dialog.accept());
+      const archiveConfirmation = page.waitForEvent('dialog');
       const archiveApplication = page.waitForResponse(
         (response) =>
           response.url().endsWith(`/api/leads/${leadId}`) && response.request().method() === 'PUT',
       );
       await applicationDetails.getByRole('button', { name: 'Archive in CareerScope' }).click();
+      const archiveDialog = await archiveConfirmation;
+      assert.match(archiveDialog.message(), /clear its follow-up reminder/i);
+      await archiveDialog.accept();
       assert.equal((await archiveApplication).status(), 200);
-      assert.equal((await leadRepository.get(ownerId, leadId))?.status, 'archived');
+      const archivedApplication = await leadRepository.get(ownerId, leadId);
+      assert.equal(archivedApplication?.status, 'archived');
       assert.equal(
-        (await leadRepository.get(ownerId, leadId))?.applicationEvidence?.method,
-        'Employer website',
+        archivedApplication?.followUpAt,
+        null,
+        `${engine}: archiving clears the no-longer-actionable follow-up reminder`,
       );
+      assert.equal(archivedApplication?.applicationEvidence?.method, 'Employer website');
       await page.goto(`${origin}/saved`);
       await page.getByRole('heading', { name: 'Saved Leads', exact: true }).waitFor();
       await page.getByRole('button', { name: 'Archived', exact: true }).click();
