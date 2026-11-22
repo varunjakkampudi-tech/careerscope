@@ -8015,10 +8015,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "The print comparison assertion now inspects the hidden print DOM through a CSS locator after separately validating the accessible group role on screen. It also verifies print media is active before checking changed-text transparency.",
-      "evidence": "Hosted focused run 45045771213 passed responsive, layout, builder axe, comparison, and approval wait checks; run 45046052450 confirmed print CSS removes the comparison group from the accessibility tree. Focused rerun pending.",
+      "observations": "The Stage 10.09 comparison scenario now removes a previously saved experience bullet and asserts it remains highlighted only in the saved version. Print assertions verify the saved article is hidden and current article visible while changed-text highlight backgrounds are transparent.",
+      "evidence": "Focused hosted browser run 45046336500 and all three exact-head PR jobs in 45046342004 passed on SHA 6280c28e7d82d174a13dec85d659da3cde078c7d. New removal and print-visibility assertions are pending validation on the next exact head.",
       "reviewer": "Codex (CareerScope Stage 10.08 print-style browser test correction)",
-      "sha256": "d00e4ef0867a62747c7cc2bdd42dfe6aad6df65f7300dc4ce665ef7d71145c44",
+      "sha256": "c6e6f2641dd01530d232a6106f7f578751dc13dc49d7243bc36d5d316228fcdc",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10.08 browser setup race fix)",

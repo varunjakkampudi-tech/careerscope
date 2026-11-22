@@ -2071,11 +2071,14 @@ try {
         await reloadedBuilder
           .getByLabel('Professional summary')
           .fill('Current variant summary for comparison.');
+        await reloadedBuilder.getByLabel('Achievement bullets (one per line)').fill('');
         await reloadedBuilder.getByRole('button', { name: 'Compare with saved version' }).focus();
         await page.keyboard.press('Enter');
         const comparison = reloadedBuilder.getByRole('group', {
           name: 'Saved and current resume versions',
         });
+        const savedVersion = comparison.locator('section').filter({ hasText: 'Saved version' });
+        const currentVersion = comparison.locator('section').filter({ hasText: 'Current edits' });
         await comparison.getByRole('heading', { name: 'Saved version', exact: true }).waitFor();
         await comparison.getByRole('heading', { name: 'Current edits', exact: true }).waitFor();
         await comparison
@@ -2092,6 +2095,17 @@ try {
           .locator('mark')
           .filter({ hasText: 'Current variant summary for comparison.' })
           .waitFor();
+        await savedVersion
+          .locator('mark')
+          .filter({ hasText: 'Built a candidate-reported feature.' })
+          .waitFor();
+        assert.equal(
+          await currentVersion
+            .getByText('Built a candidate-reported feature.', { exact: true })
+            .count(),
+          0,
+          'removed saved content remains highlighted only in the saved version',
+        );
         await page.emulateMedia({ media: 'print' });
         assert.equal(await page.evaluate(() => matchMedia('print').matches), true);
         // Print CSS hides the comparison group from the accessibility tree,
@@ -2105,6 +2119,20 @@ try {
             background: getComputedStyle(element).backgroundColor,
           })),
         );
+        const printedVersionVisibility = await printedComparison
+          .locator(':scope > section')
+          .evaluateAll((sections) =>
+            sections.map((section) => {
+              const heading = section.querySelector(':scope > h4')?.textContent?.trim() ?? '';
+              const article = section.querySelector(':scope > article');
+              if (!article) throw new Error(`Comparison article is missing for ${heading}`);
+              return { heading, visibility: getComputedStyle(article).visibility };
+            }),
+          );
+        assert.deepEqual(printedVersionVisibility, [
+          { heading: 'Saved version', visibility: 'hidden' },
+          { heading: 'Current edits', visibility: 'visible' },
+        ]);
         assert.equal(
           printedHighlights.some(
             (highlight) =>
