@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiJson, apiParsed } from '../lib/api';
 import { ownerKey, useOwner } from '../lib/session';
 import { compareResumeKeywords } from '../lib/resume-keywords';
+import { analyzeResumeFormatting } from '../lib/resume-analysis';
 import {
   parseResumeDraft,
   parseResumeDraftList,
@@ -216,17 +217,7 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
       ].join(' '),
     );
   }, [fields.content, jobDescription]);
-  const formatChecks = [
-    { label: 'Name is present', passed: fields.content.fullName.trim().length > 0 },
-    { label: 'Target role is set', passed: Boolean(fields.targetRole?.trim()) },
-    {
-      label: 'Experience bullets are concise',
-      passed: fields.content.experience.every((item) =>
-        item.bullets.every((bullet) => bullet.length <= 240),
-      ),
-    },
-    { label: 'Contact email is present', passed: Boolean(fields.content.email?.trim()) },
-  ];
+  const formatChecks = analyzeResumeFormatting(fields.content, fields.targetRole);
   const busy = create.isPending || save.isPending || approve.isPending || remove.isPending;
 
   function startNew() {

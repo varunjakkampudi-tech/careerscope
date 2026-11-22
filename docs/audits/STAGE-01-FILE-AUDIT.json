@@ -1279,10 +1279,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
-      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
-      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
-      "sha256": "b8ee06f2a93ec9f8604640c9a5c297c9db5b9d9318e70d5403c28df7bdd50d98"
+      "observations": "Reviewed deterministic resume formatting rules, boundary-focused unit tests, test registration, and Stage 10.04 evidence updates. No parser-compatibility or ATS-score claim is made.",
+      "evidence": "Stage 10.04 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.04 formatting analysis review)",
+      "sha256": "f8f970a5a23dab6b4ede91ecb8e26a5351feb92fb109317f8554e1df63d71996"
     },
     {
       "path": "apps/web/src/components/resume-panel.module.css",
@@ -1538,6 +1538,30 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "a078362c2d85b80b462d034580975ebed8cfb40fd32de04105cb10ebbc0a9dbc"
+    },
+    {
+      "path": "apps/web/src/lib/resume-analysis.test.ts",
+      "category": "frontend",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed deterministic resume formatting rules, boundary-focused unit tests, test registration, and Stage 10.04 evidence updates. No parser-compatibility or ATS-score claim is made.",
+      "evidence": "Stage 10.04 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.04 formatting analysis review)",
+      "sha256": "7e767100eb853fe7bf12e43d1fe6426e2aa12849ce530447caefb661d35cad29"
+    },
+    {
+      "path": "apps/web/src/lib/resume-analysis.ts",
+      "category": "frontend",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed deterministic resume formatting rules, boundary-focused unit tests, test registration, and Stage 10.04 evidence updates. No parser-compatibility or ATS-score claim is made.",
+      "evidence": "Stage 10.04 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.04 formatting analysis review)",
+      "sha256": "816f1c18c1b514dc34522520115c71a2728b164b2d95dec33bd3e7726950e231"
     },
     {
       "path": "apps/web/src/lib/resume-keywords.test.ts",
@@ -1972,10 +1996,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
-      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
-      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
-      "sha256": "39442a3a866925fb2eb3c963866e2a58598e1134ffc04e17f46a951003b275e5",
+      "observations": "Reviewed deterministic resume formatting rules, boundary-focused unit tests, test registration, and Stage 10.04 evidence updates. No parser-compatibility or ATS-score claim is made.",
+      "evidence": "Stage 10.04 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.04 formatting analysis review)",
+      "sha256": "13f6d0db4148cdde5f774383d11cabb257a114ada6e0a7c8926f65cc8b1180ec",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2170,10 +2194,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
-      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
-      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
-      "sha256": "d30e7a96ea91846be584162c10a96e7d89da82d116e2e7df658bdd396adfb234",
+      "observations": "Reviewed Stage 10 status, exact-head CI provenance, and current partial/gated items.",
+      "evidence": "Stage 10 progress update checked against hosted CI and current traceability statuses.",
+      "reviewer": "Codex (Stage 10.04 progress update)",
+      "sha256": "a39c8231a5c9f44a9e4bb819c6669c896e5ca16f00c76adda2998ad792256cad",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2366,10 +2390,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
-      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
-      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
-      "sha256": "81c48f7659be498741b8acf94a5e5c0ad541549280d48d242f62b53fc67ff72b",
+      "observations": "Reviewed deterministic resume formatting rules, boundary-focused unit tests, test registration, and Stage 10.04 evidence updates. No parser-compatibility or ATS-score claim is made.",
+      "evidence": "Stage 10.04 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.04 formatting analysis review)",
+      "sha256": "aeca32a7d2e656c20fce3a06319d6728ced4039da0fc4f4d40f6e9ca5f29cb7f",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2934,10 +2958,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
-      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
-      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
-      "sha256": "dc2d618969180405c227569d56eb920685361ac5c99454e91b2083f09cac41a6",
+      "observations": "Reviewed deterministic resume formatting rules, boundary-focused unit tests, test registration, and Stage 10.04 evidence updates. No parser-compatibility or ATS-score claim is made.",
+      "evidence": "Stage 10.04 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.04 formatting analysis review)",
+      "sha256": "e3b54b6a126576751ff40c3b869b67baa7db4070e7b3a1d353d39ccae850040f",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -4272,10 +4296,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
-      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
-      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
-      "sha256": "6831f9306e835b9590a28fbf79493a3386f16fb8a12302fdb48ba17c0210848a",
+      "observations": "Reviewed deterministic resume formatting rules, boundary-focused unit tests, test registration, and Stage 10.04 evidence updates. No parser-compatibility or ATS-score claim is made.",
+      "evidence": "Stage 10.04 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.04 formatting analysis review)",
+      "sha256": "c2de745ed221ae13e863bcdf180bb533b0dcbec731964d9260a85f5f4b49ef37",
       "history": [
         {
           "reviewer": "Codex (Stage 03 item 3.16)",

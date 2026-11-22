@@ -2182,10 +2182,13 @@
       "title": "ATS formatting analysis",
       "sourceStatus": "New",
       "currentStatus": "partial",
-      "evidence": ["apps/web/src/components/resume-builder.tsx"],
-      "tests": [],
+      "evidence": [
+        "apps/web/src/components/resume-builder.tsx",
+        "apps/web/src/lib/resume-analysis.ts"
+      ],
+      "tests": ["apps/web/src/lib/resume-analysis.test.ts"],
       "externalEvidence": [],
-      "gap": "Deterministic format checks are shown with an explicit no-score/no-guarantee disclosure; no ATS parser compatibility or score evaluation exists.",
+      "gap": "Deterministic formatting rules are implemented and unit-tested with an explicit no-score/no-guarantee disclosure. Compatibility with specific ATS parsers and score evaluation remain unverified.",
       "scopeDisposition": "in-scope"
     },
     {
