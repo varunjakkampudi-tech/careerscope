@@ -2251,11 +2251,16 @@
       "currentStatus": "partial",
       "evidence": [
         "apps/web/src/components/resume-builder.tsx",
-        "apps/web/src/components/resume-builder.module.css"
+        "apps/web/src/components/resume-builder.module.css",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md"
       ],
       "tests": ["scripts/tests/check-ui.ts"],
-      "externalEvidence": [],
-      "gap": "Responsive editor and live preview are implemented; exact-head cross-browser, keyboard, screen reader, and responsive acceptance remain pending.",
+      "externalEvidence": [
+        "Exact code head 2e1f9f2e602af83f3109a5ad80e0f8882edde8aa passed focused browser run 45047562375 and all three required PR CI jobs in run 45047568483.",
+        "Scoped independent review at 6280c28e7d82d174a13dec85d659da3cde078c7d accepted the breakpoint, layout, overflow/wrapping, axe, and keyboard assertions after full CI passed on that exact head. Dedicated screen-reader testing was not evidenced."
+      ],
+      "gap": "Responsive editor/live preview acceptance is covered at 901/900px, 561/560px, and 320px, including actual geometry, overflow/wrapping, builder-scoped axe, and keyboard order. Dedicated screen-reader acceptance is not evidenced and owner verification remains pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2267,11 +2272,16 @@
       "currentStatus": "partial",
       "evidence": [
         "apps/web/src/components/resume-builder.tsx",
-        "apps/web/src/components/resume-builder.module.css"
+        "apps/web/src/components/resume-builder.module.css",
+        "docs/GAP-MATRIX.md",
+        "docs/TEST-MATRIX.md"
       ],
       "tests": ["scripts/tests/check-ui.ts"],
-      "externalEvidence": [],
-      "gap": "Saved and current edits are displayed side by side; changed text is highlighted on both versions, including saved text removed from current edits. Browser exact-head and owner acceptance remain open.",
+      "externalEvidence": [
+        "Exact code head 2e1f9f2e602af83f3109a5ad80e0f8882edde8aa passed focused browser run 45047562375 and all three required PR CI jobs in run 45047568483.",
+        "Scoped independent re-review at exact head 2e1f9f2e602af83f3109a5ad80e0f8882edde8aa confirmed removed-text and print-visibility regressions and conditionally accepted the item pending full CI; that full CI passed on the same head."
+      ],
+      "gap": "Before/after comparison covers changed and removed content, keyboard activation, and print visibility/highlight behavior. Owner verification remains pending.",
       "scopeDisposition": "in-scope"
     },
     {
