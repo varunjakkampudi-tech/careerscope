@@ -796,12 +796,16 @@ function LeadEditor({
               className={styles.btnSecondary}
               disabled={pending || record.status === 'archived'}
               onClick={() => {
-                if (
-                  window.confirm(
-                    'Archive this lead in CareerScope and save current notes and tags?',
-                  )
-                )
-                  save.mutate({ status: 'archived', ...changedTags });
+                const clearsFollowUp = Boolean(record.followUpAt);
+                const confirmation = clearsFollowUp
+                  ? 'Archive this lead in CareerScope, clear its follow-up reminder, and save current notes and tags?'
+                  : 'Archive this lead in CareerScope and save current notes and tags?';
+                if (window.confirm(confirmation))
+                  save.mutate({
+                    status: 'archived',
+                    ...changedTags,
+                    ...(clearsFollowUp ? { followUpAt: null } : {}),
+                  });
               }}
             >
               <Archive size={16} aria-hidden="true" />

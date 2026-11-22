@@ -3960,9 +3960,25 @@ try {
       assert.equal(applicationRecord.applicationEvidence.method, 'Employer website');
       assert.equal(applicationRecord.applicationEvidence.source, 'Synthetic candidate report');
       assert.deepEqual(applicationRecord.tags, ['audit', 'preserve']);
-      const acknowledgementCard = openedLead.getByRole('region', {
+      // Moving a saved lead into the Applications status space intentionally
+      // deselects it on /saved. Continue through the real candidate workflow:
+      // open /applications and select the lead before recording follow-up data.
+      await page.goto(`${origin}/applications`);
+      await page.waitForURL(`${origin}/applications`);
+      await page.getByRole('heading', { name: 'Applications', exact: true }).waitFor();
+      await page
+        .getByRole('navigation', { name: 'Saved lead list' })
+        .getByRole('button', { name: /Senior React Engineer/ })
+        .click();
+      const applicationDetails = page.getByRole('article', { name: 'Lead details' });
+      await applicationDetails
+        .getByText('Senior React Engineer', { exact: true })
+        .first()
+        .waitFor();
+      const acknowledgementCard = applicationDetails.getByRole('region', {
         name: 'Employer acknowledgement record',
       });
+      assert.equal(await acknowledgementCard.count(), 1);
       await acknowledgementCard
         .getByText('Candidate-reported information only.', { exact: false })
         .waitFor();
@@ -3989,7 +4005,7 @@ try {
       assert.equal(acknowledgementRecord.status, 'applied');
       assert.equal(acknowledgementRecord.revision, applicationRecord.revision);
       assert.equal(acknowledgementRecord.employerAcknowledgement.reference, 'synthetic-reference');
-      const followUpCard = openedLead.getByRole('region', {
+      const followUpCard = applicationDetails.getByRole('region', {
         name: 'Application follow-up reminder',
       });
       await followUpCard.getByLabel('Follow up at').fill('2030-05-11T10:00');
@@ -4012,11 +4028,18 @@ try {
         .getByRole('navigation', { name: 'Saved lead list' })
         .getByRole('button', { name: /Senior React Engineer/ })
         .click();
-      const applicationDetails = page.getByRole('article', { name: 'Lead details' });
-      await applicationDetails
+      const reloadedApplicationDetails = page.getByRole('article', { name: 'Lead details' });
+      await reloadedApplicationDetails
         .getByText('Candidate reports receiving confirmation', { exact: true })
         .waitFor();
-      const interviewOrganizer = applicationDetails.getByRole('region', {
+      const reloadedAcknowledgementCard = reloadedApplicationDetails.getByRole('region', {
+        name: 'Employer acknowledgement record',
+      });
+      await reloadedAcknowledgementCard
+        .getByText('Synthetic employer email', { exact: true })
+        .waitFor();
+      await reloadedAcknowledgementCard.getByText('synthetic-reference', { exact: true }).waitFor();
+      const interviewOrganizer = reloadedApplicationDetails.getByRole('region', {
         name: 'Interview organizer',
       });
       await interviewOrganizer.getByRole('heading', { name: 'Interview rounds' }).waitFor();
@@ -4219,18 +4242,58 @@ try {
         .getByRole('region', { name: 'Interview organizer' });
       await persistedOrganizer.getByText('Technical interview', { exact: true }).waitFor();
       await persistedOrganizer.getByText('completed', { exact: true }).waitFor();
-      await page.once('dialog', (dialog) => dialog.accept());
+      const archiveButton = applicationDetails.getByRole('button', {
+        name: 'Archive in CareerScope',
+      });
+      const beforeDismissedArchive = await leadRepository.get(ownerId, leadId);
+      assert.equal(beforeDismissedArchive?.status, 'applied');
+      assert.ok(beforeDismissedArchive?.followUpAt);
+      let archiveMutationsAfterDismiss = 0;
+      const countArchiveMutations = (request: import('playwright').Request) => {
+        if (request.url().endsWith(`/api/leads/${leadId}`) && request.method() === 'PUT') {
+          archiveMutationsAfterDismiss += 1;
+        }
+      };
+      page.on('request', countArchiveMutations);
+      let dismissedArchiveConfirmationMessage = '';
+      page.once('dialog', async (dialog) => {
+        dismissedArchiveConfirmationMessage = dialog.message();
+        await dialog.dismiss();
+      });
+      await archiveButton.click();
+      page.off('request', countArchiveMutations);
+      assert.match(dismissedArchiveConfirmationMessage, /clear its follow-up reminder/i);
+      assert.equal(
+        archiveMutationsAfterDismiss,
+        0,
+        `${engine}: dismissing archive confirmation must not submit an update`,
+      );
+      const afterDismissedArchive = await leadRepository.get(ownerId, leadId);
+      assert.equal(afterDismissedArchive?.status, 'applied');
+      assert.equal(
+        afterDismissedArchive?.followUpAt?.toISOString(),
+        beforeDismissedArchive?.followUpAt?.toISOString(),
+      );
+      let archiveConfirmationMessage = '';
+      page.once('dialog', async (dialog) => {
+        archiveConfirmationMessage = dialog.message();
+        await dialog.accept();
+      });
       const archiveApplication = page.waitForResponse(
         (response) =>
           response.url().endsWith(`/api/leads/${leadId}`) && response.request().method() === 'PUT',
       );
-      await applicationDetails.getByRole('button', { name: 'Archive in CareerScope' }).click();
+      await archiveButton.click();
+      assert.match(archiveConfirmationMessage, /clear its follow-up reminder/i);
       assert.equal((await archiveApplication).status(), 200);
-      assert.equal((await leadRepository.get(ownerId, leadId))?.status, 'archived');
+      const archivedApplication = await leadRepository.get(ownerId, leadId);
+      assert.equal(archivedApplication?.status, 'archived');
       assert.equal(
-        (await leadRepository.get(ownerId, leadId))?.applicationEvidence?.method,
-        'Employer website',
+        archivedApplication?.followUpAt,
+        null,
+        `${engine}: archiving clears the no-longer-actionable follow-up reminder`,
       );
+      assert.equal(archivedApplication?.applicationEvidence?.method, 'Employer website');
       await page.goto(`${origin}/saved`);
       await page.getByRole('heading', { name: 'Saved Leads', exact: true }).waitFor();
       await page.getByRole('button', { name: 'Archived', exact: true }).click();

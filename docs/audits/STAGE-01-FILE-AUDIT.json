@@ -1350,10 +1350,10 @@
           "remediation": "Expose the Applied transition from saved leads and permit tags when the record is saved or archived before the transition; retain the restriction on tag edits after entering application statuses."
         }
       ],
-      "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
-      "reviewer": "Codex (Stage 09 items 9.09-9.10)",
-      "sha256": "2ca51a6780fb78f18f890a27b16881aa428972efdb5fe77489d0fdef88fde956",
+      "observations": "Archiving a lead with an active follow-up now explicitly warns the candidate that the reminder will be cleared and submits the archive and reminder clear atomically, satisfying the backend rule that reminders only exist for active application statuses.",
+      "evidence": "Exact-head browser run 45052022602 at a289abbd3175992f3b5c7b89943fc3ed189c4539 exposed HTTP 400 when archiving with an active reminder. The UI now asks for explicit acknowledgement, clears the reminder in the archive update, and the browser test asserts the archived record and preserved application evidence. Exact-head CI and independent review are pending.",
+      "reviewer": "Codex (Stage 09 CI follow-up)",
+      "sha256": "0991ba393c214de83d24932bcec198da8bca741385d02ef80a2f054f1e5a90ea",
       "history": [
         {
           "sha256": "40fd54243516b2d64a2265fb7ee2e19e83052960ef5680fe0476c9402b935650",
@@ -1372,6 +1372,18 @@
           "reviewer": "Codex (Stage 09 item 9.09)",
           "observations": "Reviewed current changes for Stage 09 item 9.09. The employer acknowledgement remains candidate-reported and is not verified employer communication.",
           "evidence": "Current content SHA-256 records the reviewed bytes. Relevant local checks are documented in docs/PROGRESS.md; database integration, exact-head CI, and independent review remain pending."
+        },
+        {
+          "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
+          "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
+          "reviewer": "Codex (Stage 09 items 9.09-9.10)",
+          "sha256": "2ca51a6780fb78f18f890a27b16881aa428972efdb5fe77489d0fdef88fde956"
+        },
+        {
+          "observations": "Archiving an application with an active follow-up now explains that the reminder will be cleared and submits the status change and reminder clear atomically, preserving the backend invariant that reminders exist only on active application statuses.",
+          "evidence": "Earlier full hosted browser run 45052022602 reached the application archive flow and returned HTTP 400 because the application still had a scheduled follow-up. The fix and browser regression assertion are prepared on codex/stage09-fix-ack-ui; exact-head CI and independent review are pending.",
+          "reviewer": "Codex (Stage 09 CI follow-up)",
+          "sha256": "0673f104d9aca3d7d6ed0e1e3e8907713cc2f702ccf0e0adefb87aee6e9734a3"
         }
       ]
     },
@@ -7575,7 +7587,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -7601,10 +7613,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
-      "reviewer": "Codex (Stage 09 items 9.09-9.10)",
-      "sha256": "3ed34be4f7b5c8e2861aec158dde3e5553b98c26781072751c7de29d4a49b5de",
+      "observations": "The Stage 09 browser journey follows a saved lead into Applications, verifies that acknowledgement source and reference persist after navigation, records a reminder, verifies that dismissing archive confirmation sends no update and preserves the reminder, then verifies that accepted archiving clears it while preserving application evidence.",
+      "evidence": "Exact-head run 45055607582 at e03f64d0a8bb1f4f4c87c80ec352a2f9e78c4d4f reached the archive-dismissal regression assertion and exposed a test assertion comparing distinct Date objects. The assertion now compares ISO timestamps. The file hash is refreshed for the corrected browser test; exact-head quality and browser validation remain pending.",
+      "reviewer": "Codex (Stage 09 browser CI follow-up)",
+      "sha256": "1f1a12f3a083982c57799115b32a9567890f205a942682d76128ce5710588bca",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7635,6 +7647,54 @@
           "reviewer": "Codex (Stage 09 item 9.09)",
           "observations": "Reviewed the Stage 09 item 9.09 candidate acknowledgement recording flow, owner-scoped persistence/API, browser interaction, and associated documentation. The record remains candidate-reported and is not evidence of independently verified employer communication.",
           "evidence": "Current candidate branch codex/stage09-item909-employer-ack; exact content hash records the reviewed bytes. Hosted validation and independent review remain separate gates."
+        },
+        {
+          "observations": "Reviewed the current Stage 09 browser assertion change: it locates the labelled acknowledgement section directly and asserts there is exactly one matching section before checking its candidate-report disclosure.",
+          "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
+          "reviewer": "Codex",
+          "sha256": "72ad96fe04ff80a6e2dcd35f62aa08769e41efd0393151e853c81670d04af3f8"
+        },
+        {
+          "observations": "Reproduced and corrected a Stage 09 browser synchronization race: after the application-save response, the test now waits for the labelled employer-acknowledgement section to become visible before asserting the unique section count and continuing the acknowledgement flow.",
+          "evidence": "Exact-head workflow-dispatch run 45051245783 is validating commit 0443fb8480c964318e6c45e40ac7e15714a02fce; browser and integration checks are in progress. Earlier run 45050611828 confirmed the immediate count could be 0 after the successful API response. Final exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 09 browser CI follow-up)",
+          "sha256": "4f82ddd689a897ced4a7e1c34cba6816005a9a6638ff0c4bf86dfa6a6d0e3d43"
+        },
+        {
+          "observations": "Corrected the Stage 09 browser workflow to reflect application scope: after a saved lead is changed to Applied, the saved screen intentionally deselects it; the test now opens Applications, selects the lead, and verifies the acknowledgement and follow-up panels as accessible named regions.",
+          "evidence": "Full browser run 45050611828 exposed the saved-screen transition and immediate-panel assumption. Run 45051245783 at 0443fb8480c964318e6c45e40ac7e15714a02fce confirmed that the panel is absent on the saved screen after the status transition. The corrected route and accessible-region assertions are awaiting exact-head hosted validation.",
+          "reviewer": "Codex (Stage 09 browser CI follow-up)",
+          "sha256": "71f8e0c1f363dc1c0f1f8711f350b1e0f4b4eef2e63dbff4dea5afdddc8f8657"
+        },
+        {
+          "observations": "Corrected the Stage 09 browser workflow to reflect application scope: after a saved lead is changed to Applied, the saved screen intentionally deselects it; the test now opens Applications, selects the lead, and verifies the acknowledgement and follow-up panels as accessible named regions.",
+          "evidence": "Exact-head workflow-dispatch run 45052022602 targets a289abbd3175992f3b5c7b89943fc3ed189c4539. Local audit validation identified a stale hash because the pre-commit formatter rewrote the test after the prior hash was recorded. The current hash is refreshed in this commit; final exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 09 browser CI follow-up)",
+          "sha256": "bc0753e44caadc17c257fde1e75326496b62c2021314d5bfd792a716a9ebb2af"
+        },
+        {
+          "observations": "The Stage 09 browser journey now follows a saved lead into Applications before acknowledgement/reminder actions and asserts that archiving clears the active reminder while preserving candidate-reported application evidence.",
+          "evidence": "Earlier full hosted browser run 45052022602 reached the application archive flow and returned HTTP 400 because the application still had a scheduled follow-up. The fix and browser regression assertion are prepared on codex/stage09-fix-ack-ui; exact-head CI and independent review are pending.",
+          "reviewer": "Codex (Stage 09 CI follow-up)",
+          "sha256": "ff731ac63616a0f0a1b736f6be223f5bd1a534f3386951b11c5c825c2444749a"
+        },
+        {
+          "observations": "The Stage 09 browser journey follows a saved lead into Applications, records an acknowledgement and reminder, then verifies the archive confirmation discloses reminder clearing and the archived record preserves application evidence while clearing the reminder.",
+          "evidence": "Exact-head browser run 45052022602 at a289abbd3175992f3b5c7b89943fc3ed189c4539 exposed HTTP 400 when archiving with an active reminder. The UI now asks for explicit acknowledgement, clears the reminder in the archive update, and the browser test asserts the archived record and preserved application evidence. Exact-head CI and independent review are pending.",
+          "reviewer": "Codex (Stage 09 CI follow-up)",
+          "sha256": "54ee6e145e4e9acdaed0a261ba1eb7feaf75cefff25ec922feab5ae6c39bc138"
+        },
+        {
+          "observations": "The Stage 09 browser journey follows a saved lead into Applications, records an acknowledgement and reminder, then verifies archiving transparently clears the reminder while preserving candidate-reported application evidence.",
+          "evidence": "Exact-head run 45052022602 at a289abbd3175992f3b5c7b89943fc3ed189c4539 reproduced HTTP 400 when archiving with an active reminder. The UI change and regression assertions are on codex/stage09-fix-ack-ui. Exact-head CI and independent review remain pending.",
+          "reviewer": "Codex (Stage 09 CI follow-up)",
+          "sha256": "56b50d4a5cb80abc2ea076ea836c42cbca63cdc7ded962d5e0d9cf53fbcc0050"
+        },
+        {
+          "observations": "The Stage 09 browser journey follows a saved lead into Applications, persists and reloads the candidate-reported acknowledgement reference, records a reminder, verifies that dismissing archive confirmation sends no update, and verifies that accepted archiving clears the reminder while preserving application evidence.",
+          "evidence": "Added Stage 09 browser regression assertions on codex/stage09-fix-ack-ui at e03f64d0a8bb1f4f4c87c80ec352a2f9e78c4d4f. The first exact-head quality run exposed this stale audit hash; focused quality and browser validation are being refreshed.",
+          "reviewer": "Codex (Stage 09 browser CI follow-up)",
+          "sha256": "cbd5537c38331c28a6e0e271ceaacc970c776cd2b52f41cd58793c4fcb00a2dd"
         }
       ]
     },
