@@ -313,16 +313,13 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
   });
 
   const keywordResults = useMemo(() => {
-    return compareResumeKeywords(
-      jobDescription,
-      [
-        fields.content.fullName,
-        fields.content.summary,
-        ...fields.content.skills,
-        ...fields.content.experience.flatMap((item) => [item.role, item.company, ...item.bullets]),
-        ...fields.content.education.flatMap((item) => [item.qualification, item.institution]),
-      ].join(' '),
-    );
+    return compareResumeKeywords(jobDescription, [
+      fields.content.fullName,
+      fields.content.summary,
+      ...fields.content.skills,
+      ...fields.content.experience.flatMap((item) => [item.role, item.company, ...item.bullets]),
+      ...fields.content.education.flatMap((item) => [item.qualification, item.institution]),
+    ]);
   }, [fields.content, jobDescription]);
   const skillResults = useMemo(
     () =>

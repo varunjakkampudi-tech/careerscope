@@ -2205,7 +2205,7 @@
       ],
       "tests": ["apps/web/src/lib/resume-keywords.test.ts"],
       "externalEvidence": [],
-      "gap": "Conservative plural normalization and adjacent literal phrase comparison are covered by unit tests. Semantic matching, parser-quality evaluation, and owner acceptance remain open.",
+      "gap": "Literal token comparison now preserves punctuation boundaries, creates phrases only from truly adjacent tokens, and keeps resume fields separate. Independent review findings were corrected with unit regressions; corrected exact-head CI and independent re-review are pending. Semantic matching, parser-quality evaluation, and owner verification remain open.",
       "scopeDisposition": "in-scope"
     },
     {

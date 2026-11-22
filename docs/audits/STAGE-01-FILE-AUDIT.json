@@ -1293,10 +1293,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 10.03 linked-variant role invariant and regression coverage: role is required on creation and update, server validates under lock, API test verifies attempted removal is rejected without changing persisted data, and browser asserts the field remains required after reload. Item remains partial pending owner verification.",
-      "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
-      "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
-      "sha256": "9804bf2a27eaa5d160e2249a9ab1b34e82651fc7e5ddedc111a49c3c5fbdfbee",
+      "observations": "Reviewed Stage 10.05 correction: sentence punctuation is excluded from tokens while technical tokens are preserved; phrases require adjacent tokens separated only by whitespace and cannot cross stop words or resume-field boundaries; unchanged s-ending terms are protected from false singularization.",
+      "evidence": "Local focused keyword tests pass 7/7; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.05 review correction)",
+      "sha256": "6a2fcf8a785c92ad6b4c8ad3880d1ec15a562903f60dbf4dcbe135dceb4b6520",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10.11 print review)",
@@ -1315,6 +1315,18 @@
           "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
           "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
           "sha256": "9804bf2a27eaa5d160e2249a9ab1b34e82651fc7e5ddedc111a49c3c5fbdfbee"
+        },
+        {
+          "observations": "Reviewed Stage 10.03 linked-variant role invariant and regression coverage: role is required on creation and update, server validates under lock, API test verifies attempted removal is rejected without changing persisted data, and browser asserts the field remains required after reload. Item remains partial pending owner verification.",
+          "evidence": "Local typecheck across 100 canonical test files passed; 382 unit tests passed, 3 platform-specific skips. Exact-head hosted CI and independent re-review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.03 review correction)",
+          "sha256": "9804bf2a27eaa5d160e2249a9ab1b34e82651fc7e5ddedc111a49c3c5fbdfbee"
+        },
+        {
+          "observations": "Reviewed Stage 10.05 correction: tokenization strips sentence punctuation while preserving technical punctuation; phrase matches require genuine whitespace adjacency and cannot cross stop words or resume-field boundaries. Focused regressions cover punctuation, stop-word gaps, sentence boundaries, fields, and C++/C#/Node.js.",
+          "evidence": "Local focused keyword tests pass 6/6; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.05 review correction)",
+          "sha256": "6a2fcf8a785c92ad6b4c8ad3880d1ec15a562903f60dbf4dcbe135dceb4b6520"
         }
       ]
     },
@@ -1604,10 +1616,24 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
-      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
-      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
-      "sha256": "2b04a478a45a5b850e21297b500fb929b36ebba1654ebdb3213b4a86e48db9ec"
+      "observations": "Reviewed Stage 10.05 correction: sentence punctuation is excluded from tokens while technical tokens are preserved; phrases require adjacent tokens separated only by whitespace and cannot cross stop words or resume-field boundaries; unchanged s-ending terms are protected from false singularization.",
+      "evidence": "Local focused keyword tests pass 7/7; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.05 review correction)",
+      "sha256": "2d697828fae3cf8d13776c9cbf34d8623e8dc0a5f7db0bd7f9133b15a5bdd7b8",
+      "history": [
+        {
+          "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
+          "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
+          "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
+          "sha256": "2b04a478a45a5b850e21297b500fb929b36ebba1654ebdb3213b4a86e48db9ec"
+        },
+        {
+          "observations": "Reviewed Stage 10.05 correction: tokenization strips sentence punctuation while preserving technical punctuation; phrase matches require genuine whitespace adjacency and cannot cross stop words or resume-field boundaries. Focused regressions cover punctuation, stop-word gaps, sentence boundaries, fields, and C++/C#/Node.js.",
+          "evidence": "Local focused keyword tests pass 6/6; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.05 review correction)",
+          "sha256": "82dd839635e33d5e6661725ae28667307f859c4bf8570eae0d5e9cbfb3eef756"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/resume-keywords.ts",
@@ -1616,10 +1642,24 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
-      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
-      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
-      "sha256": "95c5e8e11f922dcb81227d55da10d31ca84e5aa244223a3fe8cc58be604fc2ca"
+      "observations": "Reviewed Stage 10.05 correction: sentence punctuation is excluded from tokens while technical tokens are preserved; phrases require adjacent tokens separated only by whitespace and cannot cross stop words or resume-field boundaries; unchanged s-ending terms are protected from false singularization.",
+      "evidence": "Local focused keyword tests pass 7/7; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.05 review correction)",
+      "sha256": "f8ef94b450ae512960f503ba70ffb5b47c375cf329f395c117e582e7a143a041",
+      "history": [
+        {
+          "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
+          "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
+          "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
+          "sha256": "95c5e8e11f922dcb81227d55da10d31ca84e5aa244223a3fe8cc58be604fc2ca"
+        },
+        {
+          "observations": "Reviewed Stage 10.05 correction: tokenization strips sentence punctuation while preserving technical punctuation; phrase matches require genuine whitespace adjacency and cannot cross stop words or resume-field boundaries. Focused regressions cover punctuation, stop-word gaps, sentence boundaries, fields, and C++/C#/Node.js.",
+          "evidence": "Local focused keyword tests pass 6/6; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.05 review correction)",
+          "sha256": "d50a913f2ef23bb70600fc5eeb0f2297d3b2e2a8cccffc6b3a5d5c2214cce0a0"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/session.test.ts",
@@ -2030,10 +2070,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 10.04 evidence: deterministic formatting checks have unit coverage and explicit non-scoring disclosure; scoped independent review approved the bounded feature at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Exact-head CI run 45034557036 passed on retry after Firefox route-prefetch test flake. Item remains partial pending owner verification.",
-      "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
-      "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
-      "sha256": "4c9e0f2432d7ead6fca7179532287709a41ab167eec97bac5ec66eb5a47e1b34",
+      "observations": "Reviewed Stage 10.05 evidence reconciliation: punctuation tokenization, false phrase adjacency, and cross-field matching defects were corrected with regression tests. Item remains partial pending corrected exact-head CI and independent re-review.",
+      "evidence": "Local focused keyword tests pass 7/7; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.05 correction evidence)",
+      "sha256": "eb57bb197fb87847b2bc18f127e249bd4ba2cd84f63a46fd067b8e466af3538a",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2202,6 +2242,18 @@
           "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent ChatGPT review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
           "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
           "sha256": "f1514c1300dfc65cc4a4cb0f86af29c942f22f3252ca5bb8f976a66296309386"
+        },
+        {
+          "observations": "Reviewed Stage 10.04 evidence: deterministic formatting checks have unit coverage and explicit non-scoring disclosure; scoped independent review approved the bounded feature at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Exact-head CI run 45034557036 passed on retry after Firefox route-prefetch test flake. Item remains partial pending owner verification.",
+          "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
+          "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
+          "sha256": "4c9e0f2432d7ead6fca7179532287709a41ab167eec97bac5ec66eb5a47e1b34"
+        },
+        {
+          "observations": "Reviewed Stage 10.05 evidence reconciliation: token punctuation, phrase adjacency and field boundaries defects were found by independent review and corrected with focused tests. Item remains partial pending corrected exact-head CI and independent re-review.",
+          "evidence": "Local focused keyword tests pass 6/6; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.05 correction evidence)",
+          "sha256": "eb57bb197fb87847b2bc18f127e249bd4ba2cd84f63a46fd067b8e466af3538a"
         }
       ]
     },
@@ -2276,10 +2328,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed Stage 10.04 evidence: deterministic formatting checks have unit coverage and explicit non-scoring disclosure; scoped independent review approved the bounded feature at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Exact-head CI run 45034557036 passed on retry after Firefox route-prefetch test flake. Item remains partial pending owner verification.",
-      "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
-      "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
-      "sha256": "586d0055da5684799cd07affceaae5f7bbf2fb3e48d777c1676b40853a89bbf9",
+      "observations": "Reviewed Stage 10.05 evidence reconciliation: punctuation tokenization, false phrase adjacency, and cross-field matching defects were corrected with regression tests. Item remains partial pending corrected exact-head CI and independent re-review.",
+      "evidence": "Local focused keyword tests pass 7/7; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.05 correction evidence)",
+      "sha256": "44a2c951de3cf65e0e23b777c5906de257dffd882d4e3488e11214aa5a5a6e92",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2460,6 +2512,18 @@
           "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent ChatGPT review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
           "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
           "sha256": "584fe59b7189417e9977cc9b460885e561621192950d9eb3b8c4959739700d41"
+        },
+        {
+          "observations": "Reviewed Stage 10.04 evidence: deterministic formatting checks have unit coverage and explicit non-scoring disclosure; scoped independent review approved the bounded feature at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Exact-head CI run 45034557036 passed on retry after Firefox route-prefetch test flake. Item remains partial pending owner verification.",
+          "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
+          "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
+          "sha256": "586d0055da5684799cd07affceaae5f7bbf2fb3e48d777c1676b40853a89bbf9"
+        },
+        {
+          "observations": "Reviewed Stage 10.05 evidence reconciliation: token punctuation, phrase adjacency and field boundaries defects were found by independent review and corrected with focused tests. Item remains partial pending corrected exact-head CI and independent re-review.",
+          "evidence": "Local focused keyword tests pass 6/6; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.05 correction evidence)",
+          "sha256": "5fdb0425bbb38c42342d9d1d9deb95a9a88ea6559c8bf62bb582719e44a07166"
         }
       ]
     },
@@ -3124,10 +3188,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed Stage 10.04 evidence: deterministic formatting checks have unit coverage and explicit non-scoring disclosure; scoped independent review approved the bounded feature at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Exact-head CI run 45034557036 passed on retry after Firefox route-prefetch test flake. Item remains partial pending owner verification.",
-      "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
-      "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
-      "sha256": "724f48a69a4829b070b4a1aa7d13346fd0034e431248be34d3353fb1c5ff240e",
+      "observations": "Reviewed Stage 10.05 evidence reconciliation: punctuation tokenization, false phrase adjacency, and cross-field matching defects were corrected with regression tests. Item remains partial pending corrected exact-head CI and independent re-review.",
+      "evidence": "Local focused keyword tests pass 7/7; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+      "reviewer": "Codex (CareerScope Stage 10.05 correction evidence)",
+      "sha256": "a4b00ae73b736f41163b648d20ea0d4f2d3169606d00b8d7412d9c97930aeeda",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3284,6 +3348,18 @@
           "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent ChatGPT review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
           "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
           "sha256": "d5ecfe1ac1617dd653bd91794a6caf8ff64babd1faf60ae0cade1ccb99fd61de"
+        },
+        {
+          "observations": "Reviewed Stage 10.04 evidence: deterministic formatting checks have unit coverage and explicit non-scoring disclosure; scoped independent review approved the bounded feature at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Exact-head CI run 45034557036 passed on retry after Firefox route-prefetch test flake. Item remains partial pending owner verification.",
+          "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
+          "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
+          "sha256": "724f48a69a4829b070b4a1aa7d13346fd0034e431248be34d3353fb1c5ff240e"
+        },
+        {
+          "observations": "Reviewed Stage 10.05 evidence reconciliation: token punctuation, phrase adjacency and field boundaries defects were found by independent review and corrected with focused tests. Item remains partial pending corrected exact-head CI and independent re-review.",
+          "evidence": "Local focused keyword tests pass 6/6; project typecheck passed across 100 canonical test files. Corrected hosted CI and independent re-review pending.",
+          "reviewer": "Codex (CareerScope Stage 10.05 correction evidence)",
+          "sha256": "a4b00ae73b736f41163b648d20ea0d4f2d3169606d00b8d7412d9c97930aeeda"
         }
       ]
     },
