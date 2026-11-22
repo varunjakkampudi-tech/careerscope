@@ -1275,14 +1275,14 @@
     {
       "path": "apps/web/src/components/resume-builder.tsx",
       "category": "frontend",
-      "reviewMethod": "current-diff-review",
-      "state": "reviewed",
+      "reviewMethod": "targeted-content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed copy-from-draft variant creation, required target role, selected parent linkage, and variant labeling in the saved list.",
-      "evidence": "",
-      "reviewer": "Codex",
-      "sha256": "7ac16012b3dc23c7826253d71ad3375478367d89b6efe3a0155c9a9219483925"
+      "observations": "Targeted review of Stage 10 keyword comparison changes and related checklist/test wiring; broader file review not claimed.",
+      "evidence": "Stage 10.05–10.06 implementation review on the current PR branch.",
+      "reviewer": "Codex (Stage 10.05–10.06 implementation)",
+      "sha256": "b8ee06f2a93ec9f8604640c9a5c297c9db5b9d9318e70d5403c28df7bdd50d98"
     },
     {
       "path": "apps/web/src/components/resume-panel.module.css",
@@ -1538,6 +1538,30 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "a078362c2d85b80b462d034580975ebed8cfb40fd32de04105cb10ebbc0a9dbc"
+    },
+    {
+      "path": "apps/web/src/lib/resume-keywords.test.ts",
+      "category": "frontend",
+      "reviewMethod": "none",
+      "state": "not-reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
+    },
+    {
+      "path": "apps/web/src/lib/resume-keywords.ts",
+      "category": "frontend",
+      "reviewMethod": "none",
+      "state": "not-reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
     },
     {
       "path": "apps/web/src/lib/session.test.ts",
@@ -1944,14 +1968,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "current-diff-review",
-      "state": "reviewed",
+      "reviewMethod": "targeted-content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 10 gaps without marking partial or gated items verified.",
-      "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
-      "reviewer": "Codex",
-      "sha256": "da0f83c2527fd59f81aa623166f2312754cc496d2e40bfd5d686a0a2d3cc3a6b",
+      "observations": "Targeted review of Stage 10 keyword comparison changes and related checklist/test wiring; broader file review not claimed.",
+      "evidence": "Stage 10.05–10.06 implementation review on the current PR branch.",
+      "reviewer": "Codex (Stage 10.05–10.06 implementation)",
+      "sha256": "39442a3a866925fb2eb3c963866e2a58598e1134ffc04e17f46a951003b275e5",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2134,8 +2158,8 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "current-diff-review",
-      "state": "reviewed",
+      "reviewMethod": "targeted-content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [
         {
@@ -2146,10 +2170,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 10 progress and retained all incomplete/gated statuses.",
-      "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
-      "reviewer": "Codex",
-      "sha256": "695fc8782bfa3275f91e3cf5e672e23144a8c9d0243c94e247de794de10783fb",
+      "observations": "Targeted review of Stage 10.05–10.06 evidence updates; broader file review not claimed.",
+      "evidence": "Stage 10.05–10.06 implementation and test matrix update on the current PR branch.",
+      "reviewer": "Codex (Stage 10.05–10.06 implementation)",
+      "sha256": "d30e7a96ea91846be584162c10a96e7d89da82d116e2e7df658bdd396adfb234",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2338,14 +2362,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "current-diff-review",
-      "state": "reviewed",
+      "reviewMethod": "targeted-content-read",
+      "state": "partially-reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Documented variant validation, isolation, migration, and browser test coverage with pending exact-head acceptance.",
-      "evidence": "Candidate branch content reviewed; exact content hash recorded below.",
-      "reviewer": "Codex",
-      "sha256": "4d7f4c77099fdc50329583fe52f93cf4934a081f598318f606a242754931a257",
+      "observations": "Targeted review of Stage 10.05–10.06 evidence updates; broader file review not claimed.",
+      "evidence": "Stage 10.05–10.06 implementation and test matrix update on the current PR branch.",
+      "reviewer": "Codex (Stage 10.05–10.06 implementation)",
+      "sha256": "81c48f7659be498741b8acf94a5e5c0ad541549280d48d242f62b53fc67ff72b",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2906,14 +2930,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "current-diff-review",
-      "state": "reviewed",
+      "reviewMethod": "targeted-content-read",
+      "state": "partially-reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Updated only item 10.03 evidence and tests; retained partial status pending exact-head CI and owner review.",
-      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex",
-      "sha256": "ae0b893eb2f160546ee326290593ea70237e8c4cbacf641db65e469aca3a19ba",
+      "observations": "Targeted review of Stage 10 keyword comparison changes and related checklist/test wiring; broader file review not claimed.",
+      "evidence": "Stage 10.05–10.06 implementation review on the current PR branch.",
+      "reviewer": "Codex (Stage 10.05–10.06 implementation)",
+      "sha256": "dc2d618969180405c227569d56eb920685361ac5c99454e91b2083f09cac41a6",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -4244,14 +4268,14 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "current-diff-review",
-      "state": "reviewed",
+      "reviewMethod": "targeted-content-read",
+      "state": "partially-reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed the current Stage 10 change for consistency with the candidate-owned resume-draft scope, input validation, owner isolation, revision and approval semantics, API/UI integration, migration history, and test coverage. Remaining checklist acceptance gates are tracked separately and are not implied complete by this file review.",
-      "evidence": "Current Stage 10 feature and Stage 08 browser test adjustments; exact-head acceptance remains pending.",
-      "reviewer": "Codex",
-      "sha256": "b3b26916562f5c8dabd8e568654394d84096248e4f1b5df1c8f2f9ca2ed24e23",
+      "observations": "Targeted review of Stage 10 keyword comparison changes and related checklist/test wiring; broader file review not claimed.",
+      "evidence": "Stage 10.05–10.06 implementation review on the current PR branch.",
+      "reviewer": "Codex (Stage 10.05–10.06 implementation)",
+      "sha256": "6831f9306e835b9590a28fbf79493a3386f16fb8a12302fdb48ba17c0210848a",
       "history": [
         {
           "reviewer": "Codex (Stage 03 item 3.16)",

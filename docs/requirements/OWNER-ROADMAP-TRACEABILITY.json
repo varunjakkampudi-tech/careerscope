@@ -2195,10 +2195,13 @@
       "title": "Job/resume keyword comparison",
       "sourceStatus": "New",
       "currentStatus": "partial",
-      "evidence": ["apps/web/src/components/resume-builder.tsx"],
-      "tests": [],
+      "evidence": [
+        "apps/web/src/components/resume-builder.tsx",
+        "apps/web/src/lib/resume-keywords.ts"
+      ],
+      "tests": ["apps/web/src/lib/resume-keywords.test.ts"],
       "externalEvidence": [],
-      "gap": "Literal keyword overlap and unmatched terms are displayed, but stemming, phrase matching, parsing quality, and browser evidence are pending.",
+      "gap": "Conservative plural normalization and adjacent literal phrase comparison are covered by unit tests. Semantic matching, parser-quality evaluation, and owner acceptance remain open.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2208,10 +2211,13 @@
       "title": "Missing-skills view",
       "sourceStatus": "New",
       "currentStatus": "partial",
-      "evidence": ["apps/web/src/components/resume-builder.tsx"],
-      "tests": [],
+      "evidence": [
+        "apps/web/src/components/resume-builder.tsx",
+        "apps/web/src/lib/resume-keywords.ts"
+      ],
+      "tests": ["apps/web/src/lib/resume-keywords.test.ts"],
       "externalEvidence": [],
-      "gap": "Unmatched job-description terms are shown without claiming skills or qualifications; no semantic skill taxonomy or validation exists.",
+      "gap": "Unmatched job-description tokens and phrases are shown without claiming qualifications; no semantic skill taxonomy or validation exists.",
       "scopeDisposition": "in-scope"
     },
     {

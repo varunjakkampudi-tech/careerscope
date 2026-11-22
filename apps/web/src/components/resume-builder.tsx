@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiJson, apiParsed } from '../lib/api';
 import { ownerKey, useOwner } from '../lib/session';
+import { compareResumeKeywords } from '../lib/resume-keywords';
 import {
   parseResumeDraft,
   parseResumeDraftList,
@@ -31,20 +32,6 @@ const blankDraft: DraftFields = {
   template: 'classic',
   content: blankContent,
 };
-
-const stopWords = new Set(
-  'about after again all also any are because been before being between both but can candidate could did does doing down each few from further had has have having here how into itself just more most other our out over own same she should some such than that the their them then there these they this those through too under until very was were what when where which while who why will with would your'.split(
-    ' ',
-  ),
-);
-
-function keywords(value: string): string[] {
-  const found = new Set<string>();
-  for (const token of value.toLocaleLowerCase().match(/[\p{L}][\p{L}\p{N}+#.-]{1,}/gu) ?? []) {
-    if (token.length > 2 && !stopWords.has(token)) found.add(token);
-  }
-  return [...found];
-}
 
 function serializeDraft(value: DraftFields) {
   return JSON.stringify(value);
@@ -218,26 +205,16 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
   });
 
   const keywordResults = useMemo(() => {
-    const postingTerms = keywords(jobDescription);
-    const resumeTerms = new Set(
-      keywords(
-        [
-          fields.content.fullName,
-          fields.content.summary,
-          ...fields.content.skills,
-          ...fields.content.experience.flatMap((item) => [
-            item.role,
-            item.company,
-            ...item.bullets,
-          ]),
-          ...fields.content.education.flatMap((item) => [item.qualification, item.institution]),
-        ].join(' '),
-      ),
+    return compareResumeKeywords(
+      jobDescription,
+      [
+        fields.content.fullName,
+        fields.content.summary,
+        ...fields.content.skills,
+        ...fields.content.experience.flatMap((item) => [item.role, item.company, ...item.bullets]),
+        ...fields.content.education.flatMap((item) => [item.qualification, item.institution]),
+      ].join(' '),
     );
-    return {
-      matched: postingTerms.filter((term) => resumeTerms.has(term)),
-      missing: postingTerms.filter((term) => !resumeTerms.has(term)),
-    };
   }, [fields.content, jobDescription]);
   const formatChecks = [
     { label: 'Name is present', passed: fields.content.fullName.trim().length > 0 },
@@ -772,6 +749,10 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
                   </label>
                   {jobDescription && (
                     <>
+                      <p>
+                        Literal token and adjacent-phrase comparison; plural normalization is
+                        conservative.
+                      </p>
                       <p>
                         Matched terms:{' '}
                         {keywordResults.matched.join(', ') || 'None found in your resume text.'}

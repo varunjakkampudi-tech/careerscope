@@ -75,20 +75,20 @@ Each row names the repository behavior, evidence, and remaining gap. Status valu
 
 ## Stage 10: AI resume builder and dynamic tailoring
 
-| Item  | Feature                             | Status  | Remaining gap                                                                                                                                   |
-| ----- | ----------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| 10.01 | Resume templates                    | Partial | Templates are implemented; exact-head browser/accessibility validation and owner review remain pending.                                         |
-| 10.02 | Resume builder                      | Partial | Candidate-entered drafts, owner-scoped persistence, and revision approval are implemented; checklist acceptance remains pending.                |
-| 10.03 | Job-specific variants               | Partial | Linked same-candidate variants and copy-from-draft editing are implemented; migration, owner-isolation, and browser checks await exact-head CI. |
-| 10.04 | ATS formatting analysis             | Partial | Deterministic format checks do not establish compatibility with specific ATS parsers.                                                           |
-| 10.05 | Job/resume keyword comparison       | Partial | Literal term overlap does not include phrase matching, stemming, or parser-quality evaluation.                                                  |
-| 10.06 | Missing-skills view                 | Partial | Unmatched terms are displayed without claiming qualifications; no semantic taxonomy or validation is implemented.                               |
-| 10.07 | AI bullet rewriting                 | Gated   | Provider-backed generation remains disabled pending authorization and cost controls.                                                            |
-| 10.08 | Split-screen editor                 | Partial | The responsive editor and preview need exact-head browser/accessibility acceptance.                                                             |
-| 10.09 | Before/after comparison             | Partial | Saved and edited content can be compared; richer change highlighting and acceptance remain open.                                                |
-| 10.10 | Candidate approval                  | Partial | Approval is revision-bound and cleared by edits; exact-head acceptance remains pending.                                                         |
-| 10.11 | Role-specific PDF export            | Partial | Browser print works; deterministic PDF generation and download validation are not implemented.                                                  |
-| 10.12 | Cover letter generation             | Gated   | Provider-backed generation remains disabled pending authorization and cost controls.                                                            |
-| 10.13 | Application-answer assistance       | Gated   | Provider-backed assistance remains disabled pending authorization and cost controls.                                                            |
-| 10.14 | AI quotas/cost controls             | Partial | AI calls are disabled; configurable budgets, quotas, telemetry, and enforcement are not implemented.                                            |
-| 10.15 | Hallucination prevention/evaluation | Partial | This flow uses candidate-entered facts; AI evaluation data, adversarial tests, and provider controls are not implemented.                       |
+| Item  | Feature                             | Status  | Remaining gap                                                                                                                                                 |
+| ----- | ----------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 10.01 | Resume templates                    | Partial | Templates are implemented; exact-head browser/accessibility validation and owner review remain pending.                                                       |
+| 10.02 | Resume builder                      | Partial | Candidate-entered drafts, owner-scoped persistence, and revision approval are implemented; checklist acceptance remains pending.                              |
+| 10.03 | Job-specific variants               | Partial | Linked same-candidate variants and copy-from-draft editing are implemented; migration, owner-isolation, and browser checks await exact-head CI.               |
+| 10.04 | ATS formatting analysis             | Partial | Deterministic format checks do not establish compatibility with specific ATS parsers.                                                                         |
+| 10.05 | Job/resume keyword comparison       | Partial | Conservative plural normalization and adjacent literal phrase comparison now have unit coverage; semantic matching and parser-quality evaluation remain open. |
+| 10.06 | Missing-skills view                 | Partial | Unmatched tokens and phrases are displayed without claiming qualifications; no semantic taxonomy or validation is implemented.                                |
+| 10.07 | AI bullet rewriting                 | Gated   | Provider-backed generation remains disabled pending authorization and cost controls.                                                                          |
+| 10.08 | Split-screen editor                 | Partial | The responsive editor and preview need exact-head browser/accessibility acceptance.                                                                           |
+| 10.09 | Before/after comparison             | Partial | Saved and edited content can be compared; richer change highlighting and acceptance remain open.                                                              |
+| 10.10 | Candidate approval                  | Partial | Approval is revision-bound and cleared by edits; exact-head acceptance remains pending.                                                                       |
+| 10.11 | Role-specific PDF export            | Partial | Browser print works; deterministic PDF generation and download validation are not implemented.                                                                |
+| 10.12 | Cover letter generation             | Gated   | Provider-backed generation remains disabled pending authorization and cost controls.                                                                          |
+| 10.13 | Application-answer assistance       | Gated   | Provider-backed assistance remains disabled pending authorization and cost controls.                                                                          |
+| 10.14 | AI quotas/cost controls             | Partial | AI calls are disabled; configurable budgets, quotas, telemetry, and enforcement are not implemented.                                                          |
+| 10.15 | Hallucination prevention/evaluation | Partial | This flow uses candidate-entered facts; AI evaluation data, adversarial tests, and provider controls are not implemented.                                     |
