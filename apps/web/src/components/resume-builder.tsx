@@ -38,67 +38,147 @@ function serializeDraft(value: DraftFields) {
   return JSON.stringify(value);
 }
 
-function ResumePreview({ draft, print = false }: { draft: DraftFields; print?: boolean }) {
+function ResumePreview({
+  draft,
+  print = false,
+  compareAgainst,
+}: {
+  draft: DraftFields;
+  print?: boolean;
+  compareAgainst?: DraftFields;
+}) {
   const { content } = draft;
+  const isChanged = (value: unknown, previous: unknown) =>
+    compareAgainst !== undefined && JSON.stringify(value) !== JSON.stringify(previous);
+  const changedText = (value: string, changed: boolean) =>
+    changed ? <mark className={styles.changed}>{value}</mark> : value;
   return (
     <article
       className={`${styles.preview} ${styles[draft.template]} ${print ? styles.printView : ''}`}
     >
       <header>
-        <h2>{content.fullName || 'Your name'}</h2>
+        <h2>
+          {changedText(
+            content.fullName || 'Your name',
+            isChanged(content.fullName, compareAgainst?.content.fullName),
+          )}
+        </h2>
         <p>
-          {[content.email, content.phone, content.location].filter(Boolean).join(' · ') ||
-            'Contact details you choose to include'}
+          {changedText(
+            [content.email, content.phone, content.location].filter(Boolean).join(' · ') ||
+              'Contact details you choose to include',
+            isChanged(
+              [content.email, content.phone, content.location],
+              [
+                compareAgainst?.content.email,
+                compareAgainst?.content.phone,
+                compareAgainst?.content.location,
+              ],
+            ),
+          )}
         </p>
-        {draft.targetRole && <p className={styles.targetRole}>{draft.targetRole}</p>}
+        {draft.targetRole && (
+          <p className={styles.targetRole}>
+            {changedText(draft.targetRole, isChanged(draft.targetRole, compareAgainst?.targetRole))}
+          </p>
+        )}
       </header>
       {content.summary && (
         <section>
           <h3>Summary</h3>
-          <p>{content.summary}</p>
+          <p>
+            {changedText(
+              content.summary,
+              isChanged(content.summary, compareAgainst?.content.summary),
+            )}
+          </p>
         </section>
       )}
       {content.experience.length > 0 && (
         <section>
           <h3>Experience</h3>
-          {content.experience.map((item) => (
-            <div className={styles.previewEntry} key={item.id}>
-              <h4>{item.role || 'Role title'}</h4>
-              <p>
-                {[item.company || 'Company', item.location, item.startDate, item.endDate]
-                  .filter(Boolean)
-                  .join(' · ')}
-              </p>
-              {item.bullets.length > 0 && (
-                <ul>
-                  {item.bullets.map((bullet, index) => (
-                    <li key={`${item.id}-${index}`}>{bullet}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ))}
+          {content.experience.map((item) => {
+            const previous = compareAgainst?.content.experience.find(
+              (entry) => entry.id === item.id,
+            );
+            return (
+              <div className={styles.previewEntry} key={item.id}>
+                <h4>
+                  {changedText(item.role || 'Role title', isChanged(item.role, previous?.role))}
+                </h4>
+                <p>
+                  {changedText(
+                    [item.company || 'Company', item.location, item.startDate, item.endDate]
+                      .filter(Boolean)
+                      .join(' · '),
+                    isChanged(
+                      [item.company, item.location, item.startDate, item.endDate],
+                      previous && [
+                        previous.company,
+                        previous.location,
+                        previous.startDate,
+                        previous.endDate,
+                      ],
+                    ),
+                  )}
+                </p>
+                {item.bullets.length > 0 && (
+                  <ul>
+                    {item.bullets.map((bullet, index) => {
+                      const previousBullet = previous?.bullets[index];
+                      return (
+                        <li key={`${item.id}-${index}`}>
+                          {changedText(bullet, isChanged(bullet, previousBullet))}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
+            );
+          })}
         </section>
       )}
       {content.education.length > 0 && (
         <section>
           <h3>Education</h3>
-          {content.education.map((item) => (
-            <div className={styles.previewEntry} key={item.id}>
-              <h4>{item.qualification || 'Qualification'}</h4>
-              <p>
-                {[item.institution || 'Institution', item.location, item.endDate]
-                  .filter(Boolean)
-                  .join(' · ')}
-              </p>
-            </div>
-          ))}
+          {content.education.map((item) => {
+            const previous = compareAgainst?.content.education.find(
+              (entry) => entry.id === item.id,
+            );
+            return (
+              <div className={styles.previewEntry} key={item.id}>
+                <h4>
+                  {changedText(
+                    item.qualification || 'Qualification',
+                    isChanged(item.qualification, previous?.qualification),
+                  )}
+                </h4>
+                <p>
+                  {changedText(
+                    [item.institution || 'Institution', item.location, item.endDate]
+                      .filter(Boolean)
+                      .join(' · '),
+                    isChanged(
+                      [item.institution, item.location, item.endDate],
+                      previous && [previous.institution, previous.location, previous.endDate],
+                    ),
+                  )}
+                </p>
+              </div>
+            );
+          })}
         </section>
       )}
       {content.skills.length > 0 && (
         <section>
           <h3>Skills</h3>
-          <p>{content.skills.join(' · ')}</p>
+          <p>
+            {changedText(
+              content.skills.join(' · '),
+              isChanged(content.skills, compareAgainst?.content.skills),
+            )}
+          </p>
         </section>
       )}
     </article>
@@ -731,12 +811,17 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
                           template: activeDraft.template,
                           content: activeDraft.content,
                         }}
+                        compareAgainst={fields}
                       />
                     </section>
                     <section>
                       <h4>Current edits</h4>
-                      <ResumePreview draft={fields} print />
+                      <ResumePreview draft={fields} print compareAgainst={activeDraft} />
                     </section>
+                    <p className={styles.comparisonNote}>
+                      Highlights mark changed text. A highlight in the saved version marks text
+                      changed or removed in the current edits.
+                    </p>
                   </div>
                 ) : (
                   <ResumePreview draft={fields} print />

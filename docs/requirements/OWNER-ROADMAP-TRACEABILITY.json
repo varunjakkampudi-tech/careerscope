@@ -2270,7 +2270,7 @@
       ],
       "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Saved and current edits are displayed side by side, with a browser regression for both versions. Inline change highlighting and owner acceptance remain open.",
+      "gap": "Saved and current edits are displayed side by side; changed text is highlighted on both versions, including saved text removed from current edits. Browser exact-head and owner acceptance remain open.",
       "scopeDisposition": "in-scope"
     },
     {

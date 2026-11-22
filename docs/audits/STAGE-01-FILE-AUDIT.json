@@ -1267,10 +1267,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed responsive two-column comparison layout and single-column breakpoint; no new external assets or behavior outside the comparison UI. Owner acceptance remains pending.",
-      "evidence": "Current Stage 10.09 diff review; formatting, lint, and typecheck passed. Browser exact-head validation pending.",
+      "observations": "Reviewed responsive two-column comparison, single-column breakpoint, and visible changed-text highlight style.",
+      "evidence": "Current Stage 10.09 implementation review; formatting, targeted lint, and typecheck pass. Exact-head browser/accessibility validation pending.",
       "reviewer": "Codex (CareerScope Stage 10.09 comparison review)",
-      "sha256": "68df7b22a8be3cf22f70ae18db10a055676fbea57fee40323f549c83a2829ddc"
+      "sha256": "7a550c0f6e671d07ddd2984e1e4f4c83ff9a361273267360a098011d35e48991"
     },
     {
       "path": "apps/web/src/components/resume-builder.tsx",
@@ -1279,10 +1279,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed side-by-side saved/current rendering, saved revision snapshot usage, labels, current-only print behavior, and candidate-owned draft flow. Item 10.09 remains partial pending inline highlights and owner acceptance.",
-      "evidence": "Current Stage 10.09 diff review; focused resume analysis tests, formatting, lint, and typecheck passed. Browser exact-head validation pending.",
+      "observations": "Reviewed side-by-side saved/current rendering and changed-text marks for edited fields, changed bullets, and saved-only content on both versions; labels and current-only print behavior remain clear. Item 10.09 remains partial pending exact-head browser/accessibility CI and owner acceptance.",
+      "evidence": "Focused resume tests 9/9, typecheck across 100 canonical test files, and targeted ESLint pass. Current browser regression additionally asserts saved and current text are marked.",
       "reviewer": "Codex (CareerScope Stage 10.09 comparison review)",
-      "sha256": "d9be3857c65dfcf47c503f1a32966fe88582d104de35e12a24fa83e9f82a4706"
+      "sha256": "5e387119b75aafa4d56ce7aed31dbbafe92fa59f02c1429ce24a079847ad60db"
     },
     {
       "path": "apps/web/src/components/resume-panel.module.css",
@@ -1996,10 +1996,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 10.09 status and gap statement; comparison coverage is recorded without implying checklist completion.",
-      "evidence": "Stage 10.09 remains partial pending richer inline change highlighting and owner acceptance.",
+      "observations": "Reviewed Stage 10.09 status and gap statement; comparison and inline highlights are recorded without implying acceptance.",
+      "evidence": "Stage 10.09 remains partial pending exact-head browser/accessibility CI and owner acceptance.",
       "reviewer": "Codex (CareerScope Stage 10.09 evidence update)",
-      "sha256": "3a9bbd090e24f7a2e06ff5bce9a8de0e1724301fad1455c52c9895d91da1834c",
+      "sha256": "f5a50f7dc9a9cc6dad68f3b8155120bfcbc10404294ad2df2b9d33e0dc31f563",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2390,10 +2390,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 10 test coverage mapping and retained parser, accessibility, and owner acceptance gaps.",
-      "evidence": "Focused unit, formatting, lint, and typecheck pass locally; exact-head browser validation pending.",
+      "observations": "Reviewed Stage 10 coverage mapping and retained parser and owner acceptance gaps.",
+      "evidence": "Focused unit tests 9/9, typecheck, and lint pass locally; exact-head browser execution pending.",
       "reviewer": "Codex (CareerScope Stage 10.09 evidence update)",
-      "sha256": "9fc014f0113817cfe58e5a62ccac8b3f7c768651af88445dea52d2f85eed2f41",
+      "sha256": "cf8a3abcf5a963e6a2bfc9b124b1a72ad8fb3691960a19620e0d8cd83c9f26eb",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2958,10 +2958,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed owner roadmap rows 10.08 and 10.09, implementation and browser test evidence, and explicit open acceptance gaps.",
-      "evidence": "Traceability records responsive editor and saved/current comparison browser coverage; checklist remains partial pending exact-head CI and owner acceptance.",
+      "observations": "Reviewed owner roadmap rows 10.08 and 10.09, implementation and browser test evidence, and explicit open acceptance gates.",
+      "evidence": "Traceability records responsive editor and saved/current comparison with change marks; checklist remains partial pending exact-head CI and owner acceptance.",
       "reviewer": "Codex (CareerScope Stage 10.09 evidence update)",
-      "sha256": "b09e6d7efcdf201b0ba177ae7e8d3a4c60c046e87b832f27669309090701eba7",
+      "sha256": "e3541ba88f78d42f17750b6076bb432eaa5e00056bf4b723eff68d71c1371a96",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -7595,10 +7595,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed browser assertions that create a variant, edit summary, open comparison, and require distinct saved and current content under accessible section labels.",
+      "observations": "Reviewed browser flow that creates a variant, edits summary, opens comparison, asserts saved and current summaries, and asserts both changed texts appear in mark elements.",
       "evidence": "Test typecheck passes; exact-head browser execution pending.",
       "reviewer": "Codex (CareerScope Stage 10.09 browser regression review)",
-      "sha256": "72304d4f6be4b1a4e9ef3c73c40ea5840f22a3818771c10a46f00bc988644567",
+      "sha256": "47b71172fce2a081a693fb07c26b9acf2db258f1871342caeed315d78f81f1bf",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",

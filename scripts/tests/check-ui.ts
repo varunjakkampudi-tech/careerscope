@@ -1832,6 +1832,14 @@ try {
         await comparison
           .getByText('Current variant summary for comparison.', { exact: true })
           .waitFor();
+        await comparison
+          .locator('mark')
+          .filter({ hasText: 'Builds accessible React interfaces.' })
+          .waitFor();
+        await comparison
+          .locator('mark')
+          .filter({ hasText: 'Current variant summary for comparison.' })
+          .waitFor();
         await page.getByLabel('Full Name', { exact: true }).waitFor();
         const uploadInput = page.getByLabel('Upload picture');
         await uploadInput.focus();
