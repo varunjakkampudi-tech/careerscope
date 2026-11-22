@@ -2189,7 +2189,7 @@
       ],
       "tests": ["apps/web/src/lib/resume-analysis.test.ts"],
       "externalEvidence": [],
-      "gap": "Deterministic formatting rules are implemented and unit-tested with an explicit no-score/no-guarantee disclosure. Compatibility with specific ATS parsers and score evaluation remain unverified.",
+      "gap": "Deterministic formatting rules are implemented and unit-tested with an explicit no-score/no-guarantee disclosure. Exact head a3644bcab70006e0f4b5d3fca3c99043d7ced9e4 passed required CI in run 45034557036 attempt 2; independent review approved the bounded feature. Compatibility with specific ATS parsers, score evaluation, and owner verification remain unverified.",
       "scopeDisposition": "in-scope"
     },
     {

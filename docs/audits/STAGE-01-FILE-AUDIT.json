@@ -2030,10 +2030,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 10 evidence reconciliation: 10.03 target-role update defect is fixed and independently approved at exact SHA 935c71696cfad35987ff02866884885f540c87ad with all three required hosted jobs passing in run 45033364742. Checklist remains partial pending owner verification.",
-      "evidence": "Exact-head hosted run 45033364742 passed Quality gates, Services/integration/browser, and Production image build. Scoped ChatGPT re-review approved item 10.03 at SHA 935c71696cfad35987ff02866884885f540c87ad. Owner verification remains pending.",
-      "reviewer": "Codex (CareerScope Stage 10.03 review closeout)",
-      "sha256": "f1514c1300dfc65cc4a4cb0f86af29c942f22f3252ca5bb8f976a66296309386",
+      "observations": "Reviewed Stage 10.04 evidence: deterministic formatting checks have unit coverage and explicit non-scoring disclosure; scoped independent review approved the bounded feature at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Exact-head CI run 45034557036 passed on retry after Firefox route-prefetch test flake. Item remains partial pending owner verification.",
+      "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
+      "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
+      "sha256": "4c9e0f2432d7ead6fca7179532287709a41ab167eec97bac5ec66eb5a47e1b34",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2190,6 +2190,18 @@
           "evidence": "Compared updated roadmap traceability, gap matrix, test matrix, progress summary, and historical audit records against current Stage 10 implementation, local checks and review state. Exact-head CI for the 10.03 correction is pending.",
           "reviewer": "Codex (CareerScope Stage 10 evidence reconciliation)",
           "sha256": "a612950193e87fcdad1e8197c5f9c7e3efac7d0e661be7e9070b095a43966186"
+        },
+        {
+          "observations": "Reviewed Stage 10 evidence reconciliation: 10.03 target-role update defect is fixed and independently approved at exact SHA 935c71696cfad35987ff02866884885f540c87ad with all three required hosted jobs passing in run 45033364742. Checklist remains partial pending owner verification.",
+          "evidence": "Exact-head hosted run 45033364742 passed Quality gates, Services/integration/browser, and Production image build. Scoped ChatGPT re-review approved item 10.03 at SHA 935c71696cfad35987ff02866884885f540c87ad. Owner verification remains pending.",
+          "reviewer": "Codex (CareerScope Stage 10.03 review closeout)",
+          "sha256": "f1514c1300dfc65cc4a4cb0f86af29c942f22f3252ca5bb8f976a66296309386"
+        },
+        {
+          "observations": "Reviewed Stage 10.04 evidence: deterministic formatting checks have unit coverage and explicit non-scoring disclosure; scoped independent review approved the bounded feature at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Exact-head CI run 45034557036 passed on retry after Firefox route-prefetch test flake. Item remains partial pending owner verification.",
+          "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent ChatGPT review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
+          "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
+          "sha256": "f1514c1300dfc65cc4a4cb0f86af29c942f22f3252ca5bb8f976a66296309386"
         }
       ]
     },
@@ -2264,10 +2276,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed Stage 10 evidence reconciliation: 10.03 target-role update defect is fixed and independently approved at exact SHA 935c71696cfad35987ff02866884885f540c87ad with all three required hosted jobs passing in run 45033364742. Checklist remains partial pending owner verification.",
-      "evidence": "Exact-head hosted run 45033364742 passed Quality gates, Services/integration/browser, and Production image build. Scoped ChatGPT re-review approved item 10.03 at SHA 935c71696cfad35987ff02866884885f540c87ad. Owner verification remains pending.",
-      "reviewer": "Codex (CareerScope Stage 10.03 review closeout)",
-      "sha256": "584fe59b7189417e9977cc9b460885e561621192950d9eb3b8c4959739700d41",
+      "observations": "Reviewed Stage 10.04 evidence: deterministic formatting checks have unit coverage and explicit non-scoring disclosure; scoped independent review approved the bounded feature at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Exact-head CI run 45034557036 passed on retry after Firefox route-prefetch test flake. Item remains partial pending owner verification.",
+      "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
+      "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
+      "sha256": "586d0055da5684799cd07affceaae5f7bbf2fb3e48d777c1676b40853a89bbf9",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2436,6 +2448,18 @@
           "evidence": "Compared updated roadmap traceability, gap matrix, test matrix, progress summary, and historical audit records against current Stage 10 implementation, local checks and review state. Exact-head CI for the 10.03 correction is pending.",
           "reviewer": "Codex (CareerScope Stage 10 evidence reconciliation)",
           "sha256": "0bcd3988d63266611c5706138f6190bc660c4ce04ad58d1656c5a15e54c6c407"
+        },
+        {
+          "observations": "Reviewed Stage 10 evidence reconciliation: 10.03 target-role update defect is fixed and independently approved at exact SHA 935c71696cfad35987ff02866884885f540c87ad with all three required hosted jobs passing in run 45033364742. Checklist remains partial pending owner verification.",
+          "evidence": "Exact-head hosted run 45033364742 passed Quality gates, Services/integration/browser, and Production image build. Scoped ChatGPT re-review approved item 10.03 at SHA 935c71696cfad35987ff02866884885f540c87ad. Owner verification remains pending.",
+          "reviewer": "Codex (CareerScope Stage 10.03 review closeout)",
+          "sha256": "584fe59b7189417e9977cc9b460885e561621192950d9eb3b8c4959739700d41"
+        },
+        {
+          "observations": "Reviewed Stage 10.04 evidence: deterministic formatting checks have unit coverage and explicit non-scoring disclosure; scoped independent review approved the bounded feature at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Exact-head CI run 45034557036 passed on retry after Firefox route-prefetch test flake. Item remains partial pending owner verification.",
+          "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent ChatGPT review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
+          "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
+          "sha256": "584fe59b7189417e9977cc9b460885e561621192950d9eb3b8c4959739700d41"
         }
       ]
     },
@@ -2490,10 +2514,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 10 evidence reconciliation: 10.03 target-role update defect is fixed and independently approved at exact SHA 935c71696cfad35987ff02866884885f540c87ad with all three required hosted jobs passing in run 45033364742. Checklist remains partial pending owner verification.",
-      "evidence": "Exact-head hosted run 45033364742 passed Quality gates, Services/integration/browser, and Production image build. Scoped ChatGPT re-review approved item 10.03 at SHA 935c71696cfad35987ff02866884885f540c87ad. Owner verification remains pending.",
-      "reviewer": "Codex (CareerScope Stage 10.03 review closeout)",
-      "sha256": "73d7c0defca315fe4293210fa71d968f12414dcb3329320ff128b86fe4f503f5",
+      "observations": "Reviewed Stage 10.04 evidence: deterministic formatting checks have unit coverage and explicit non-scoring disclosure; scoped independent review approved the bounded feature at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Exact-head CI run 45034557036 passed on retry after Firefox route-prefetch test flake. Item remains partial pending owner verification.",
+      "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
+      "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
+      "sha256": "96f49032cf3c1f9fb55d2a6935dda2d53a8d2d7e777415a555c877876b5ae10e",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2650,6 +2674,18 @@
           "evidence": "Compared updated roadmap traceability, gap matrix, test matrix, progress summary, and historical audit records against current Stage 10 implementation, local checks and review state. Exact-head CI for the 10.03 correction is pending.",
           "reviewer": "Codex (CareerScope Stage 10 evidence reconciliation)",
           "sha256": "a06b7f31a0710558812b1cd02e37b500bfc7fa2d8dbf8462b3d46ad5c0113fc6"
+        },
+        {
+          "observations": "Reviewed Stage 10 evidence reconciliation: 10.03 target-role update defect is fixed and independently approved at exact SHA 935c71696cfad35987ff02866884885f540c87ad with all three required hosted jobs passing in run 45033364742. Checklist remains partial pending owner verification.",
+          "evidence": "Exact-head hosted run 45033364742 passed Quality gates, Services/integration/browser, and Production image build. Scoped ChatGPT re-review approved item 10.03 at SHA 935c71696cfad35987ff02866884885f540c87ad. Owner verification remains pending.",
+          "reviewer": "Codex (CareerScope Stage 10.03 review closeout)",
+          "sha256": "73d7c0defca315fe4293210fa71d968f12414dcb3329320ff128b86fe4f503f5"
+        },
+        {
+          "observations": "Reviewed Stage 10.04 evidence: deterministic formatting checks have unit coverage and explicit non-scoring disclosure; scoped independent review approved the bounded feature at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Exact-head CI run 45034557036 passed on retry after Firefox route-prefetch test flake. Item remains partial pending owner verification.",
+          "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent ChatGPT review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
+          "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
+          "sha256": "73d7c0defca315fe4293210fa71d968f12414dcb3329320ff128b86fe4f503f5"
         }
       ]
     },
@@ -3088,10 +3124,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed Stage 10 evidence reconciliation: 10.03 target-role update defect is fixed and independently approved at exact SHA 935c71696cfad35987ff02866884885f540c87ad with all three required hosted jobs passing in run 45033364742. Checklist remains partial pending owner verification.",
-      "evidence": "Exact-head hosted run 45033364742 passed Quality gates, Services/integration/browser, and Production image build. Scoped ChatGPT re-review approved item 10.03 at SHA 935c71696cfad35987ff02866884885f540c87ad. Owner verification remains pending.",
-      "reviewer": "Codex (CareerScope Stage 10.03 review closeout)",
-      "sha256": "d5ecfe1ac1617dd653bd91794a6caf8ff64babd1faf60ae0cade1ccb99fd61de",
+      "observations": "Reviewed Stage 10.04 evidence: deterministic formatting checks have unit coverage and explicit non-scoring disclosure; scoped independent review approved the bounded feature at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Exact-head CI run 45034557036 passed on retry after Firefox route-prefetch test flake. Item remains partial pending owner verification.",
+      "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
+      "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
+      "sha256": "724f48a69a4829b070b4a1aa7d13346fd0034e431248be34d3353fb1c5ff240e",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3236,6 +3272,18 @@
           "evidence": "Compared updated roadmap traceability, gap matrix, test matrix, progress summary, and historical audit records against current Stage 10 implementation, local checks and review state. Exact-head CI for the 10.03 correction is pending.",
           "reviewer": "Codex (CareerScope Stage 10 evidence reconciliation)",
           "sha256": "de6495e1db7d331f16a2cbf49c1dbaec3778ed07593c59d779108edf10c5ec43"
+        },
+        {
+          "observations": "Reviewed Stage 10 evidence reconciliation: 10.03 target-role update defect is fixed and independently approved at exact SHA 935c71696cfad35987ff02866884885f540c87ad with all three required hosted jobs passing in run 45033364742. Checklist remains partial pending owner verification.",
+          "evidence": "Exact-head hosted run 45033364742 passed Quality gates, Services/integration/browser, and Production image build. Scoped ChatGPT re-review approved item 10.03 at SHA 935c71696cfad35987ff02866884885f540c87ad. Owner verification remains pending.",
+          "reviewer": "Codex (CareerScope Stage 10.03 review closeout)",
+          "sha256": "d5ecfe1ac1617dd653bd91794a6caf8ff64babd1faf60ae0cade1ccb99fd61de"
+        },
+        {
+          "observations": "Reviewed Stage 10.04 evidence: deterministic formatting checks have unit coverage and explicit non-scoring disclosure; scoped independent review approved the bounded feature at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Exact-head CI run 45034557036 passed on retry after Firefox route-prefetch test flake. Item remains partial pending owner verification.",
+          "evidence": "Exact-head CI run 45034557036 attempt 2 passed all required jobs; independent ChatGPT review approved item 10.04 at a3644bcab70006e0f4b5d3fca3c99043d7ced9e4. Parser compatibility and scoring remain unverified.",
+          "reviewer": "Codex (CareerScope Stage 10.04 evidence closeout)",
+          "sha256": "d5ecfe1ac1617dd653bd91794a6caf8ff64babd1faf60ae0cade1ccb99fd61de"
         }
       ]
     },
