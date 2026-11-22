@@ -1275,13 +1275,13 @@
     {
       "path": "apps/web/src/components/resume-builder.tsx",
       "category": "frontend",
-      "reviewMethod": "targeted-content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Targeted review of Stage 10 keyword comparison changes and related checklist/test wiring; broader file review not claimed.",
-      "evidence": "Stage 10.05–10.06 implementation review on the current PR branch.",
-      "reviewer": "Codex (Stage 10.05–10.06 implementation)",
+      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
+      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
       "sha256": "b8ee06f2a93ec9f8604640c9a5c297c9db5b9d9318e70d5403c28df7bdd50d98"
     },
     {
@@ -1542,26 +1542,26 @@
     {
       "path": "apps/web/src/lib/resume-keywords.test.ts",
       "category": "frontend",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
+      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
+      "sha256": "2b04a478a45a5b850e21297b500fb929b36ebba1654ebdb3213b4a86e48db9ec"
     },
     {
       "path": "apps/web/src/lib/resume-keywords.ts",
       "category": "frontend",
-      "reviewMethod": "none",
-      "state": "not-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "",
-      "evidence": "",
-      "reviewer": "",
-      "sha256": ""
+      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
+      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
+      "sha256": "95c5e8e11f922dcb81227d55da10d31ca84e5aa244223a3fe8cc58be604fc2ca"
     },
     {
       "path": "apps/web/src/lib/session.test.ts",
@@ -1968,13 +1968,13 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "targeted-content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Targeted review of Stage 10 keyword comparison changes and related checklist/test wiring; broader file review not claimed.",
-      "evidence": "Stage 10.05–10.06 implementation review on the current PR branch.",
-      "reviewer": "Codex (Stage 10.05–10.06 implementation)",
+      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
+      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
       "sha256": "39442a3a866925fb2eb3c963866e2a58598e1134ffc04e17f46a951003b275e5",
       "history": [
         {
@@ -2158,8 +2158,8 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "targeted-content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [
         {
@@ -2170,9 +2170,9 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Targeted review of Stage 10.05–10.06 evidence updates; broader file review not claimed.",
-      "evidence": "Stage 10.05–10.06 implementation and test matrix update on the current PR branch.",
-      "reviewer": "Codex (Stage 10.05–10.06 implementation)",
+      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
+      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
       "sha256": "d30e7a96ea91846be584162c10a96e7d89da82d116e2e7df658bdd396adfb234",
       "history": [
         {
@@ -2362,13 +2362,13 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "targeted-content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Targeted review of Stage 10.05–10.06 evidence updates; broader file review not claimed.",
-      "evidence": "Stage 10.05–10.06 implementation and test matrix update on the current PR branch.",
-      "reviewer": "Codex (Stage 10.05–10.06 implementation)",
+      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
+      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
       "sha256": "81c48f7659be498741b8acf94a5e5c0ad541549280d48d242f62b53fc67ff72b",
       "history": [
         {
@@ -2930,13 +2930,13 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "targeted-content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Targeted review of Stage 10 keyword comparison changes and related checklist/test wiring; broader file review not claimed.",
-      "evidence": "Stage 10.05–10.06 implementation review on the current PR branch.",
-      "reviewer": "Codex (Stage 10.05–10.06 implementation)",
+      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
+      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
       "sha256": "dc2d618969180405c227569d56eb920685361ac5c99454e91b2083f09cac41a6",
       "history": [
         {
@@ -4268,13 +4268,13 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "targeted-content-read",
-      "state": "partially-reviewed",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Targeted review of Stage 10 keyword comparison changes and related checklist/test wiring; broader file review not claimed.",
-      "evidence": "Stage 10.05–10.06 implementation review on the current PR branch.",
-      "reviewer": "Codex (Stage 10.05–10.06 implementation)",
+      "observations": "Reviewed the current Stage 10 keyword-comparison implementation, its test registration, and the corresponding checklist/evidence edits. No unsupported ATS or qualification claims are introduced.",
+      "evidence": "Stage 10.05–10.06 source and documentation review; focused unit tests and repository validators.",
+      "reviewer": "Codex (Stage 10.05–10.06 implementation review)",
       "sha256": "6831f9306e835b9590a28fbf79493a3386f16fb8a12302fdb48ba17c0210848a",
       "history": [
         {
