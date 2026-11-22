@@ -1840,6 +1840,13 @@ try {
           .locator('mark')
           .filter({ hasText: 'Current variant summary for comparison.' })
           .waitFor();
+        await page.emulateMedia({ media: 'print' });
+        const printedHighlightBackground = await comparison
+          .locator('mark')
+          .filter({ hasText: 'Current variant summary for comparison.' })
+          .evaluate((element) => getComputedStyle(element).backgroundColor);
+        assert.equal(printedHighlightBackground, 'rgba(0, 0, 0, 0)');
+        await page.emulateMedia({ media: 'screen' });
         await page.getByLabel('Full Name', { exact: true }).waitFor();
         const uploadInput = page.getByLabel('Upload picture');
         await uploadInput.focus();

@@ -1267,10 +1267,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed responsive two-column comparison, single-column breakpoint, and visible changed-text highlight style.",
-      "evidence": "Current Stage 10.09 implementation review; formatting, targeted lint, and typecheck pass. Exact-head browser/accessibility validation pending.",
+      "observations": "Reviewed responsive comparison layout and highlights, including removal of highlight backgrounds from print output.",
+      "evidence": "Typecheck passes; exact-head print-media browser assertion and full browser validation pending.",
       "reviewer": "Codex (CareerScope Stage 10.09 comparison review)",
-      "sha256": "7a550c0f6e671d07ddd2984e1e4f4c83ff9a361273267360a098011d35e48991"
+      "sha256": "bd0ba2fb3a1c3cdc5a01147df3e779405006893c3f14ce639be61cdacee43678"
     },
     {
       "path": "apps/web/src/components/resume-builder.tsx",
@@ -7595,10 +7595,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed browser flow that creates a variant, edits summary, opens comparison, asserts saved and current summaries, and asserts both changed texts appear in mark elements.",
+      "observations": "Reviewed browser assertions for saved/current comparison content, changed-text marks, and transparent print highlight backgrounds.",
       "evidence": "Test typecheck passes; exact-head browser execution pending.",
       "reviewer": "Codex (CareerScope Stage 10.09 browser regression review)",
-      "sha256": "47b71172fce2a081a693fb07c26b9acf2db258f1871342caeed315d78f81f1bf",
+      "sha256": "9cd87a8cd6b2a0ddc6eed8abaa73e2226fbbba7f0a97c7bf3afb3dce5fc8d85d",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",

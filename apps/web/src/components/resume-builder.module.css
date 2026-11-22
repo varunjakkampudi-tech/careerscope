@@ -301,4 +301,9 @@
     box-shadow: none;
     color: #000;
   }
+
+  .printView mark {
+    color: inherit;
+    background: transparent;
+  }
 }
