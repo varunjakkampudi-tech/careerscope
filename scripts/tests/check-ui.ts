@@ -1749,6 +1749,16 @@ try {
         await builder.getByRole('button', { name: 'New resume', exact: true }).click();
         await builder.getByLabel('Resume name').fill('Synthetic Role Resume');
         await builder.getByLabel('Target role').fill('Frontend Engineer');
+        const templateSelect = builder.getByLabel('Template');
+        const resumePreview = builder
+          .getByRole('complementary', { name: 'Resume review tools' })
+          .locator('article')
+          .first();
+        for (const template of ['modern', 'compact', 'classic'] as const) {
+          await templateSelect.selectOption(template);
+          assert.equal(await resumePreview.getAttribute('data-template'), template);
+        }
+        await templateSelect.selectOption('modern');
         await builder.getByLabel('Full name').fill('Synthetic Candidate');
         await builder.getByLabel('Professional summary').fill('Builds React interfaces.');
         await builder.getByLabel('Skills (comma-separated)').fill('React, TypeScript');
@@ -1796,6 +1806,15 @@ try {
         const reloadedSummary = reloadedBuilder.getByLabel('Professional summary');
         await reloadedSummary.waitFor();
         assert.equal(await reloadedSummary.inputValue(), 'Builds accessible React interfaces.');
+        assert.equal(await reloadedBuilder.getByLabel('Template').inputValue(), 'modern');
+        assert.equal(
+          await reloadedBuilder
+            .getByRole('complementary', { name: 'Resume review tools' })
+            .locator('article')
+            .first()
+            .getAttribute('data-template'),
+          'modern',
+        );
         await page.evaluate(() => {
           const testWindow = window as Window & { __careerScopePrintTitle?: string };
           const originalPrint = window.print;

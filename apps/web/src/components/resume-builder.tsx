@@ -81,6 +81,7 @@ function ResumePreview({
   return (
     <article
       className={`${styles.preview} ${styles[draft.template]} ${print ? styles.printView : ''}`}
+      data-template={draft.template}
     >
       <header>
         <h2>

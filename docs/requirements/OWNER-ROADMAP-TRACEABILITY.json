@@ -2124,11 +2124,12 @@
       "currentStatus": "partial",
       "evidence": [
         "apps/web/src/components/resume-builder.tsx",
-        "apps/web/src/components/resume-builder.module.css"
+        "apps/web/src/components/resume-builder.module.css",
+        "scripts/tests/check-ui.ts"
       ],
       "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Three candidate-editable templates are implemented; exact-head browser CI, accessibility/responsive acceptance, and owner review remain pending.",
+      "gap": "Three candidate-editable templates are implemented. Browser assertions select each template, verify preview rendering, and verify Modern persists after reload; exact-head CI, accessibility/responsive acceptance, and owner review remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
