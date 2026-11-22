@@ -7663,10 +7663,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed Stage 10.02 browser coverage and partial checklist evidence; owner verification and exact-head CI remain pending.",
-      "evidence": "Current Stage 10.02 draft/test diff reviewed; no hosted CI result is claimed for this change.",
-      "reviewer": "Codex (CareerScope Stage 10.02 evidence update)",
-      "sha256": "fa5275ee66e005d26972493c8e9e42fdec0692d2bf2e8e60ff66a57f697101d1",
+      "observations": "Reviewed Stage 10.02 browser assertions for synthetic resume content, preview rendering, and persisted field reload including full name and skills.",
+      "evidence": "Current item 10.02 test diff reviewed and test typing passes; exact-head hosted CI is pending for this hash.",
+      "reviewer": "Codex (CareerScope Stage 10.02 review correction)",
+      "sha256": "4fbd4ccd2d01f3c1f1093bcd332535431e96eafff695d0ddd7ab220a25211309",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7697,6 +7697,12 @@
           "sha256": "1cf4a5b9a585f0e600a891943d3a7a52295b00324fe87df127cd19dfce1639bc",
           "observations": "Reviewed Stage 10.01 browser assertions for all three template selections, preview rendering, and Modern template persistence after reload.",
           "evidence": "Current Stage 10.01 diff reviewed; exact-head hosted CI run 45026025648 identified this file as stale against the previous audit hash. Checklist item remains partial pending successful exact-head CI and independent review."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.02 evidence update)",
+          "sha256": "fa5275ee66e005d26972493c8e9e42fdec0692d2bf2e8e60ff66a57f697101d1",
+          "observations": "Reviewed Stage 10.02 browser coverage and partial checklist evidence; owner verification and exact-head CI remain pending.",
+          "evidence": "Current Stage 10.02 draft/test diff reviewed; no hosted CI result is claimed for this change."
         }
       ]
     },

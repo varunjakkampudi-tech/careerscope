@@ -1823,6 +1823,10 @@ try {
           .click();
         const reloadedSummary = reloadedBuilder.getByLabel('Professional summary');
         await reloadedSummary.waitFor();
+        assert.equal(
+          await reloadedBuilder.getByLabel('Full name').inputValue(),
+          'Synthetic Candidate',
+        );
         assert.equal(await reloadedSummary.inputValue(), 'Builds accessible React interfaces.');
         assert.equal(
           await reloadedBuilder.getByLabel('Email').inputValue(),
@@ -1846,6 +1850,10 @@ try {
         assert.equal(
           await reloadedBuilder.getByLabel('Qualification').inputValue(),
           'Bachelor of Engineering',
+        );
+        assert.equal(
+          await reloadedBuilder.getByLabel('Skills (comma-separated)').inputValue(),
+          'React, TypeScript',
         );
         assert.equal(await reloadedBuilder.getByLabel('Template').inputValue(), 'modern');
         assert.equal(
