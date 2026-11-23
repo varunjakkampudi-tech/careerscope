@@ -2375,9 +2375,12 @@
       "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [
         "PR #136 exact-head code review approved at SHA 8c9b7857039787564f578208c1e168c929842e83",
-        "GitHub Actions run 45175065392 passed the focused Chromium browser, accessibility, keyboard, and responsive suite at SHA 8c9b7857039787564f578208c1e168c929842e83"
+        "GitHub Actions run 45175065392 passed the focused Chromium browser, accessibility, keyboard, and responsive suite at SHA 8c9b7857039787564f578208c1e168c929842e83",
+        "GitHub Actions run 45183500343 passed exact-head quality gates (suite=checks) at SHA b262e3ff1610da865130f1d0fe91c9e435728d06; service/browser and production-image jobs were skipped",
+        "GitHub Actions run 45183507303 passed focused Chromium resume-builder browser, axe accessibility, keyboard, and responsive checks at SHA b262e3ff1610da865130f1d0fe91c9e435728d06; integration, migrations, production-image, performance, soak, and recovery checks were skipped",
+        "Independent code review approved the Stage 10.15 selector, keyword-normalization, and audit corrections at exact SHA b262e3ff1610da865130f1d0fe91c9e435728d06"
       ],
-      "gap": "Model-output adversarial evaluation datasets and provider controls are not implemented. The hosted regression covers only disabled-provider input isolation; owner verification remains pending.",
+      "gap": "The deterministic browser regression covers disabled-provider input isolation only. Live-model adversarial output evaluation datasets and provider controls are not implemented; server-side provider egress is not tested. Owner verification remains pending.",
       "scopeDisposition": "in-scope"
     },
     {

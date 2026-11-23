@@ -2263,14 +2263,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "current-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Cross-checked Stage 10.14 against V12 cost and quota controls. No provider adapter, tier plan, price schedule or super-admin alert route exists; the item remains partial and AI stays disabled.",
-      "evidence": "Canonical checklist specifies per-tier quotas, reserve/release, token usage, daily spend breaker and admin alert. Owner policy inputs are listed in BLOCKERS.md.",
-      "reviewer": "Codex (Stage 10.14 cost policy gap reconciliation)",
-      "sha256": "ffb8a7da8cd94628d2edb4ef3cca8e2ec99d47d54c3883aef00b2f2b10cae3bd",
+      "observations": "Recorded exact-head quality and focused Chromium evidence for the three-case disabled-provider adversarial regression. Item 10.15 remains partial; live-model evaluation and owner verification remain open.",
+      "evidence": "Exact quality run 45183500343 and focused browser run 45183507303 succeeded at SHA b262e3ff1610da865130f1d0fe91c9e435728d06. Independent review approved the test corrections at that exact SHA. Focused browser skips and scope limits are stated in the matrix.",
+      "reviewer": "Codex (CareerScope Stage 10.15 exact-head evidence update)",
+      "sha256": "a1b17391654769682d3e34286f938ad1935ba04f1fd2a71dc15977e93ed1e63e",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -2544,6 +2544,12 @@
           "sha256": "d0f5259d9a6559905303289a1801d8cb595264097d7100dd26fbb748a3e32183",
           "observations": "Reconciled Stage 10.15 status and exact-head evidence; item remains partial because model-output evaluation and owner verification remain open.",
           "evidence": "Focused hosted Chromium browser and accessibility suite passed on SHA 8c9b7857039787564f578208c1e168c929842e83; independent review approved the test change."
+        },
+        {
+          "reviewer": "Codex (Stage 10.14 cost policy gap reconciliation)",
+          "sha256": "ffb8a7da8cd94628d2edb4ef3cca8e2ec99d47d54c3883aef00b2f2b10cae3bd",
+          "observations": "Cross-checked Stage 10.14 against V12 cost and quota controls. No provider adapter, tier plan, price schedule or super-admin alert route exists; the item remains partial and AI stays disabled.",
+          "evidence": "Canonical checklist specifies per-tier quotas, reserve/release, token usage, daily spend breaker and admin alert. Owner policy inputs are listed in BLOCKERS.md."
         }
       ]
     },
@@ -3622,10 +3628,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Cross-checked Stage 10.14 against V12 cost and quota controls. No provider adapter, tier plan, price schedule or super-admin alert route exists; the item remains partial and AI stays disabled.",
-      "evidence": "Canonical checklist specifies per-tier quotas, reserve/release, token usage, daily spend breaker and admin alert. Owner policy inputs are listed in BLOCKERS.md.",
-      "reviewer": "Codex (Stage 10.14 cost policy gap reconciliation)",
-      "sha256": "fccfbeac048c8e76c9c28c777dcfd9b7fb70d52b01a6a69016b6df7a24c42bfd",
+      "observations": "Added exact-head quality, focused Chromium browser, and independent review evidence for Stage 10.15 while preserving partial status and recording skipped suites and remaining limitations.",
+      "evidence": "Roadmap traceability validation covers 328 items across 22 stages; exact-head quality run 45183500343 and focused browser run 45183507303 succeeded at SHA b262e3ff1610da865130f1d0fe91c9e435728d06.",
+      "reviewer": "Codex (CareerScope Stage 10.15 exact-head evidence update)",
+      "sha256": "80a92bd6a142ba9b166ccea73e6cfb3df31276b33a3d6c9e514bf9c03b253311",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -3881,6 +3887,12 @@
           "sha256": "40d75967b36a5be9af19cec6a6bbfc113b4a7de55eed3266ec7f0ee67eed2030",
           "observations": "Reconciled Stage 10.15 status and exact-head evidence; item remains partial because model-output evaluation and owner verification remain open.",
           "evidence": "Focused hosted Chromium browser and accessibility suite passed on SHA 8c9b7857039787564f578208c1e168c929842e83; independent review approved the test change."
+        },
+        {
+          "reviewer": "Codex (Stage 10.14 cost policy gap reconciliation)",
+          "sha256": "fccfbeac048c8e76c9c28c777dcfd9b7fb70d52b01a6a69016b6df7a24c42bfd",
+          "observations": "Cross-checked Stage 10.14 against V12 cost and quota controls. No provider adapter, tier plan, price schedule or super-admin alert route exists; the item remains partial and AI stays disabled.",
+          "evidence": "Canonical checklist specifies per-tier quotas, reserve/release, token usage, daily spend breaker and admin alert. Owner policy inputs are listed in BLOCKERS.md."
         }
       ]
     },
@@ -8441,7 +8453,7 @@
         }
       ],
       "observations": "Expanded the Stage 10.15 disabled-provider adversarial job-description regression to three deterministic cases covering fabricated tenure, employer/leadership, certifications, and skills. Case-specific waits target the exact suggestion list or normalized keyword-review output before asserting candidate-authored content remains unchanged, fabricated claims remain absent from preview, and no external provider fetch/XHR occurs. This does not test live model output.",
-      "evidence": "npm run typecheck:tests, formatting, complete file-audit validation, and roadmap traceability pass. Exact-head quality run 45182460367 passed at c5d3c8e96a2c4ae5a538d0f90563ab1c803fd877; focused browser run 45182466384 exposed a keyword-plural normalization mismatch (engineers -> engineer). Corrected exact-head browser and quality validation are pending.",
+      "evidence": "npm run typecheck:tests passed for 100 canonical files; Prettier, complete file-audit validation, and roadmap traceability passed. Exact-head quality run 45183500343 and focused Chromium browser/axe/keyboard/responsive run 45183507303 passed at SHA b262e3ff1610da865130f1d0fe91c9e435728d06. Independent review approved the test and audit correction. This remains disabled-provider isolation, not live-model output evaluation.",
       "reviewer": "Codex (CareerScope Stage 10.15 keyword-normalization test correction)",
       "sha256": "aef1533c7ef56a9fe703674cc360452e87b9042abc9aeb3b4da3c222fdfdf93f",
       "history": [
