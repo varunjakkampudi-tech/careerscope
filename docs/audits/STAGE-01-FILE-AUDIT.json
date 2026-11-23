@@ -2259,10 +2259,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled Stage 10.15 status and evidence without claiming model-output evaluation or checklist completion.",
-      "evidence": "Adversarial input browser assertions are documented; exact-head browser execution and owner verification remain pending.",
+      "observations": "Reconciled Stage 10.15 status and exact-head evidence; item remains partial because model-output evaluation and owner verification remain open.",
+      "evidence": "Focused hosted Chromium browser and accessibility suite passed on SHA 8c9b7857039787564f578208c1e168c929842e83; independent review approved the test change.",
       "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
-      "sha256": "7f884f8ea477af42b8da1e3036538375cc39f3d509e6559f3af2a6199786a3cb",
+      "sha256": "d0f5259d9a6559905303289a1801d8cb595264097d7100dd26fbb748a3e32183",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -2604,10 +2604,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reconciled Stage 10.11 evidence after hosted exact-head cross-browser PDF download acceptance; item remains partial pending native PDF viewer and owner verification.",
-      "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
-      "sha256": "157ca2fdfd3a03225b67a0fbccbdfc5e7e72fd620f94855a2ab65fbf500b72e5",
+      "observations": "Reconciled Stage 10.15 status and exact-head evidence; item remains partial because model-output evaluation and owner verification remain open.",
+      "evidence": "Focused hosted Chromium browser and accessibility suite passed on SHA 8c9b7857039787564f578208c1e168c929842e83; independent review approved the test change.",
+      "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
+      "sha256": "943e61c4a2c66c243d4c98a6bf83276a695ca357ba976ddf968646e3efb6ed5e",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
@@ -2911,10 +2911,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled Stage 10.15 status and evidence without claiming model-output evaluation or checklist completion.",
-      "evidence": "Adversarial input browser assertions are documented; exact-head browser execution and owner verification remain pending.",
+      "observations": "Reconciled Stage 10.15 status and exact-head evidence; item remains partial because model-output evaluation and owner verification remain open.",
+      "evidence": "Focused hosted Chromium browser and accessibility suite passed on SHA 8c9b7857039787564f578208c1e168c929842e83; independent review approved the test change.",
       "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
-      "sha256": "5da93461036925956113effef2988b23b9ae81f0013157462725038caab402d0",
+      "sha256": "67d62d2df59190c798daee6b90080df07218a2c8acfdf222f0b1a37fd09dad88",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -3608,10 +3608,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reconciled Stage 10.15 status and evidence without claiming model-output evaluation or checklist completion.",
-      "evidence": "Adversarial input browser assertions are documented; exact-head browser execution and owner verification remain pending.",
+      "observations": "Reconciled Stage 10.15 status and exact-head evidence; item remains partial because model-output evaluation and owner verification remain open.",
+      "evidence": "Focused hosted Chromium browser and accessibility suite passed on SHA 8c9b7857039787564f578208c1e168c929842e83; independent review approved the test change.",
       "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
-      "sha256": "9ab397d897798f3a652781afe2a4b83642837b4c99c6c14cf7cfeefc9f70e6c2",
+      "sha256": "40d75967b36a5be9af19cec6a6bbfc113b4a7de55eed3266ec7f0ee67eed2030",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -8421,7 +8421,7 @@
         }
       ],
       "observations": "Reviewed the Stage 10.15 adversarial job-description regression: untrusted prompt instructions do not alter candidate-authored fields or preview and no external provider request occurs. Model-output evaluation remains untested.",
-      "evidence": "npm run typecheck:tests passes for 100 canonical test files; exact-head browser execution and independent checklist review are pending.",
+      "evidence": "npm run typecheck:tests passes for 100 canonical test files; hosted focused Chromium browser, axe, keyboard, and responsive run 45175065392 passes at exact head 8c9b7857039787564f578208c1e168c929842e83; independent review approved this test change.",
       "reviewer": "Codex (CareerScope Stage 10.15 adversarial input regression)",
       "sha256": "e1d59bf148747085da861243eae187b21da99d9ccb1fe67a45d67ee3ecdddae4",
       "history": [
@@ -8520,6 +8520,12 @@
           "sha256": "e1d59bf148747085da861243eae187b21da99d9ccb1fe67a45d67ee3ecdddae4",
           "observations": "Reviewed the Stage 10.15 adversarial job-description regression: untrusted prompt instructions do not alter candidate-authored fields or preview and no external provider request occurs. Model-output evaluation remains untested.",
           "evidence": "npm run typecheck:tests passes for 100 canonical test files; exact-head browser execution and independent checklist review are pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.15 adversarial input regression)",
+          "sha256": "e1d59bf148747085da861243eae187b21da99d9ccb1fe67a45d67ee3ecdddae4",
+          "observations": "Reviewed the Stage 10.15 adversarial job-description regression: untrusted prompt instructions do not alter candidate-authored fields or preview and no external provider request occurs. Model-output evaluation remains untested.",
+          "evidence": "npm run typecheck:tests passes for 100 canonical test files; hosted focused Chromium browser, axe, keyboard, and responsive run 45175065392 passes at exact head 8c9b7857039787564f578208c1e168c929842e83; independent review approved this test change."
         }
       ]
     },
