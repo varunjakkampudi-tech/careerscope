@@ -5043,7 +5043,12 @@ try {
       for (const source of ['Greenhouse', 'Lever', 'Ashby', 'Workable'])
         await sourceHealthPanel.getByText(source, { exact: true }).waitFor();
       await sourceHealthPanel.getByText('Latest elapsed time: 120 ms', { exact: true }).waitFor();
-      await sourceHealthPanel.getByText(/Search run time:.*2026/).waitFor();
+      const searchRunTimes = sourceHealthPanel.getByText(/Search run time:.*2026/);
+      assert.ok(
+        await searchRunTimes.count(),
+        'recent source outcomes should include run timestamps',
+      );
+      await searchRunTimes.first().waitFor();
       const sourceHealthResponse = await page.request.get(`${origin}/api/searches`);
       assert.equal(sourceHealthResponse.status(), 200);
       const sourceHealthRuns = (await sourceHealthResponse.json()).items as Array<{

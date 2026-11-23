@@ -7713,10 +7713,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed current source duration change and regression assertion; prior audit history is preserved.",
-      "evidence": "Exact-head run 44490477511: quality gate failed formatting under locked Prettier 3.9.9 after local formatter-version drift; services suite found partial search outcome assertion missing the additive durationMs field. Corrected with locked formatter and regression assertion; new exact-head CI pending.",
-      "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
-      "sha256": "2da60f9ff98c50c8301d73a2fb0550ade1da9648f17b678a7c5d8f26fcfe24e5",
+      "observations": "Reviewed source-health browser assertions. Timestamp matching now checks that at least one recent row is present and waits on its first match, avoiding strict-mode failure when the panel displays multiple rows.",
+      "evidence": "Exact-head run 44492306240 failed because the timestamp locator matched six visible rows. This correction retains a presence assertion and waits on the first result; exact-head CI and independent review remain pending.",
+      "reviewer": "Codex (CareerScope owner item 5.15 CI correction)",
+      "sha256": "cf720d865cb2997cfd5a3c81961c3ff5ec1f9a611215db4f548b83ebd2dd963e",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
