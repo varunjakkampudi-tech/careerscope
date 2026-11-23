@@ -399,6 +399,58 @@ export const jobFeedback = pgTable(
   ],
 );
 
+/** Current staff disposition for a candidate report; reviewer identity is intentionally staff-only. */
+export const jobFeedbackReviews = pgTable(
+  'job_feedback_reviews',
+  {
+    feedbackId: uuid('feedback_id').primaryKey(),
+    status: text('status').notNull(),
+    reviewedBy: uuid('reviewed_by').notNull(),
+    reviewedAt: timestamp('reviewed_at', { withTimezone: true }).defaultNow().notNull(),
+    note: text('note'),
+  },
+  (table) => [
+    foreignKey({ columns: [table.feedbackId], foreignColumns: [jobFeedback.id] }).onDelete(
+      'cascade',
+    ),
+    foreignKey({ columns: [table.reviewedBy], foreignColumns: [users.id] }),
+    check('job_feedback_reviews_status_valid', sql`${table.status} IN ('confirmed', 'dismissed')`),
+    check(
+      'job_feedback_reviews_note_bounded',
+      sql`${table.note} IS NULL OR length(${table.note}) <= 1000`,
+    ),
+    index('job_feedback_reviews_status_reviewed').on(table.status, table.reviewedAt),
+  ],
+);
+
+/** Append-only moderation decisions retained only while the underlying report exists. */
+export const jobFeedbackReviewEvents = pgTable(
+  'job_feedback_review_events',
+  {
+    id: uuid('id').primaryKey(),
+    feedbackId: uuid('feedback_id').notNull(),
+    reviewedBy: uuid('reviewed_by').notNull(),
+    status: text('status').notNull(),
+    note: text('note'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    foreignKey({ columns: [table.feedbackId], foreignColumns: [jobFeedback.id] }).onDelete(
+      'cascade',
+    ),
+    foreignKey({ columns: [table.reviewedBy], foreignColumns: [users.id] }),
+    check(
+      'job_feedback_review_events_status_valid',
+      sql`${table.status} IN ('confirmed', 'dismissed')`,
+    ),
+    check(
+      'job_feedback_review_events_note_bounded',
+      sql`${table.note} IS NULL OR length(${table.note}) <= 1000`,
+    ),
+    index('job_feedback_review_events_feedback_created').on(table.feedbackId, table.createdAt),
+  ],
+);
+
 /** Saved leads: a user's pipeline entries, unique per fingerprint, with revision, tags and application evidence. */
 export const leads = pgTable(
   'saved_leads',

@@ -1511,11 +1511,17 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Moderator review",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/api/src/app.ts",
+        "apps/api/src/openapi.ts",
+        "migrations/0007_stage06_job_feedback_moderation.sql",
+        "docs/API-SURFACE.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": ["apps/api/src/job-feedback-moderation.integration.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Admin-only API moderation queue and audited dispositions are implemented and the focused PostgreSQL integration test passes locally. Exact-head hosted CI and independent acceptance remain pending; no dedicated moderator UI is included in this implementation.",
       "scopeDisposition": "in-scope"
     },
     {

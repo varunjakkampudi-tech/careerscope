@@ -261,14 +261,14 @@
     {
       "path": "apps/api/src/app.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "stage-item-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed route schemas and wiring for candidate resume target-role and version-group metadata; validation, listing and upload coordination are consistent.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "608697156e7369b604bd0c7c9a9b05f72b4473f08f0e1e414c51fb80b9b32260"
+      "observations": "Reviewed the Stage 6.11 diff for live-role authorization, CSRF-protected decisions, bounded queue access, transaction locking, reason-change reopening and error handling.",
+      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
+      "reviewer": "Codex (Stage 06 item 6.11 change review)",
+      "sha256": "4e0d88a490559023026c0c5f1285cc6087ef59aa9dbb591c1c7ef89755ea8e31"
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -371,6 +371,18 @@
       "sha256": "f48f0a1450b502b005f5876f95e3e0e2b9b15bf857cec1bd59229d12ea41beb9"
     },
     {
+      "path": "apps/api/src/job-feedback-moderation.integration.test.ts",
+      "category": "backend-api",
+      "reviewMethod": "stage-item-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read the complete new integration test covering candidate denial, admin paging, candidate privacy, dispositions, append-only events and pending reset.",
+      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
+      "reviewer": "Codex (Stage 06 item 6.11 change review)",
+      "sha256": "9f100d139cb71d7f27b7795a2f8d2748aebde94fe086fd5476b0525e6572b6a0"
+    },
+    {
       "path": "apps/api/src/job-feedback.integration.test.ts",
       "category": "backend-api",
       "reviewMethod": "content-read",
@@ -421,7 +433,7 @@
     {
       "path": "apps/api/src/openapi.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "stage-item-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -433,10 +445,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Reviewed OpenAPI upload and listing contract additions for target role and version lineage.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "214ffecd324c7f6ef0c95bd73118fe978281575bbe70d8a9abe90335183a30b8"
+      "observations": "Reviewed the Stage 6.11 route contracts, validation limits, authorization description and response privacy fields.",
+      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
+      "reviewer": "Codex (Stage 06 item 6.11 change review)",
+      "sha256": "011b0678cf612b9362928a0b4873a12042ddbd02547e47c7dd0fe6d1e5ef5df4"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -1722,7 +1734,7 @@
     {
       "path": "docs/API-SURFACE.md",
       "category": "documentation",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "stage-item-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1734,10 +1746,10 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Reviewed documented resume-version eligibility and persistent allocation behavior against the implementation.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "0368522c5ecd80a87ce647f7e0f3859464308bb204fc73cfc1f4339f82a9343f"
+      "observations": "Reviewed the Stage 6.11 route rows and their role, CSRF, audit and deletion semantics.",
+      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
+      "reviewer": "Codex (Stage 06 item 6.11 change review)",
+      "sha256": "045a1c5bbaa33d9cb98551a88bc74823fdddf0e986080fa5640c8756949fbc23"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1884,14 +1896,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "stage-item-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+      "observations": "Reviewed the Stage 6.11 partial status and the remaining exact-head acceptance gap.",
+      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
+      "reviewer": "Codex (Stage 06 item 6.11 change review)",
+      "sha256": "f83c9ae1082cb6e2dc6719923307c30653161de97a5058c46b68f9944705c6be",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2074,7 +2086,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "stage-item-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2086,10 +2098,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
+      "observations": "Reviewed the updated stage status and Stage 6.11 evidence summary.",
+      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
+      "reviewer": "Codex (Stage 06 item 6.11 change review)",
+      "sha256": "921fe01a0aef09088798cb1346002ee299c6d20db656943398d0f6a543edf4af",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2278,14 +2290,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "stage-item-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+      "observations": "Reviewed the Stage 6.11 proof row and accurately scoped local and pending verification.",
+      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
+      "reviewer": "Codex (Stage 06 item 6.11 change review)",
+      "sha256": "88e5923e5323edfa166d8cee18b402ac7dfeca7e1d923ceff031b46e2ae4c717",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2846,14 +2858,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "stage-item-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+      "observations": "Reviewed the canonical 6.11 partial state, evidence paths, CI-enforced test path and remaining gap.",
+      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
+      "reviewer": "Codex (Stage 06 item 6.11 change review)",
+      "sha256": "449bd947be80ba425ed73dae2e3adfeae939abd3cd2f3e910d7788d8fc978a92",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -4030,6 +4042,18 @@
       "sha256": "d35552c187eb6dc3a885ee028bc960803ac1fbf015a1de240f8871b8fa03d216"
     },
     {
+      "path": "migrations/0007_stage06_job_feedback_moderation.sql",
+      "category": "database-migration",
+      "reviewMethod": "stage-item-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read the complete migration defining bounded review decisions, reviewer references, cascade behavior, constraints and indexes.",
+      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
+      "reviewer": "Codex (Stage 06 item 6.11 change review)",
+      "sha256": "fb261ae65d1f334c357628bf3f0995f644e0b6312398d60a28ce2ea57181f0b6"
+    },
+    {
       "path": "migrations/meta/0000_snapshot.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
@@ -4110,16 +4134,28 @@
       "evidence": ""
     },
     {
+      "path": "migrations/meta/0007_snapshot.json",
+      "category": "generated-lockfile-or-snapshot",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
+    },
+    {
       "path": "migrations/meta/_journal.json",
       "category": "generated-lockfile-or-snapshot",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "stage-item-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed generated migration journal entry for resume version group counters.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "f12ac6eb8e1e812a5f8891939117bfa46de80d7ddc90f2a92584511a41f3e855"
+      "observations": "Reviewed the generated migration journal entry for migration 0007 and its ordering.",
+      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
+      "reviewer": "Codex (Stage 06 item 6.11 change review)",
+      "sha256": "41087c7bb5bdf41be7eb74a1350b4241b55e8802cd9599adb263d0c8182acb43"
     },
     {
       "path": "package-lock.json",
@@ -4136,14 +4172,14 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "content-read",
+      "reviewMethod": "stage-item-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "7e588f96ae3e7b89fe8894a4dcc982e1f9ff9a8e33608140caf93e05a4f38dfa",
+      "observations": "Reviewed the integration command update to include the new moderator review PostgreSQL test.",
+      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
+      "reviewer": "Codex (Stage 06 item 6.11 change review)",
+      "sha256": "20db21bd507453070d7c5a69a7108ce69750fc0d992ed6a93358dc2eb6e53fa7",
       "history": [
         {
           "reviewer": "Codex (Stage 03 item 3.16)",
@@ -4948,7 +4984,7 @@
     {
       "path": "packages/core/src/schema.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "stage-item-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -4960,10 +4996,10 @@
           "remediation": "Add a lower-case check in a migration after verifying existing data. Recorded for the next migration window; no migration is added in Stage 01 to avoid rewriting applied data."
         }
       ],
-      "observations": "Reviewed resume version group table, owner composite primary key, role constraint and next-number check.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
-      "reviewer": "Codex (CareerScope item 4.07 follow-up audit)",
-      "sha256": "25d91936158d9f95f3e6d5827fb1be9a00a18e103b813ebea15e07dbe8f3208e"
+      "observations": "Reviewed the Stage 6.11 schema diff for review-state/event constraints, foreign keys, indexes and cascade semantics.",
+      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
+      "reviewer": "Codex (Stage 06 item 6.11 change review)",
+      "sha256": "a4f01987367dec8835935fd4982ab2f4f3adb5445da2e3288558d024a50cc4ea"
     },
     {
       "path": "packages/core/src/sensitive-data.integration.test.ts",

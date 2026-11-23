@@ -66,3 +66,9 @@ Each row names the repository behavior, evidence, and remaining gap. Status valu
   not replace counsel approval of the effective legal text and public HTTPS URLs (see
   [AUTHENTICATION](AUTHENTICATION.md)). Owner checklist item 2.05 remains gated until that evidence
   is documented. Deployment is outside the current roadmap scope.
+
+## Stage 06: ghost-job, spam and fraud detection (active item only)
+
+| Item | Feature          | Status  | Evidence                                                                                                                                 | Remaining gap                                                                                                                                                                                                         |
+| ---- | ---------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 6.11 | Moderator review | Partial | `apps/api/src/app.ts`, `migrations/0007_stage06_job_feedback_moderation.sql`, `apps/api/src/job-feedback-moderation.integration.test.ts` | Exact-head hosted CI and independent acceptance are pending. The workflow is API-only; no dedicated moderator UI is included. Other Stage 06 items retain their own item-level status in the owner-roadmap inventory. |
