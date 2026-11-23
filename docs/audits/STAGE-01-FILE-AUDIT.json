@@ -201,10 +201,30 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; hosted browser CI remains pending"],
       "findings": [],
-      "observations": "Added unit coverage for WinAnsi/unsupported-script behavior, role-specific metadata, sanitized filenames, A4 page geometry, and pagination.",
-      "evidence": "Focused PDF tests pass 3/3; full unit suite passes 390 with 3 skipped. Exact-head browser CI pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
-      "sha256": "d6596d2735c79d69a5bd510c75c6807524b8ee54d53887255f4a7ab4350b2bf6"
+      "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.test.ts; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+      "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision.",
+      "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+      "sha256": "cfc19c481514b6915c50fbb9128f7dc6dab026563a56221ecc91a07f5f597874",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "2521036393ff6bc420a006387d3874d8ad273a3e4f8e8907492dfacf8957966e",
+          "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.test.ts; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "2521036393ff6bc420a006387d3874d8ad273a3e4f8e8907492dfacf8957966e",
+          "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.test.ts; added or reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
+          "sha256": "d6596d2735c79d69a5bd510c75c6807524b8ee54d53887255f4a7ab4350b2bf6",
+          "observations": "Added unit coverage for WinAnsi/unsupported-script behavior, role-specific metadata, sanitized filenames, A4 page geometry, and pagination.",
+          "evidence": "Focused PDF tests pass 3/3; full unit suite passes 390 with 3 skipped. Exact-head browser CI pending."
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/resume-pdf.ts",
@@ -213,10 +233,30 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; hosted browser CI remains pending"],
       "findings": [],
-      "observations": "Added client-side jsPDF generation with A4 page layout, role-specific metadata and filename, candidate-authored sections, pagination, page numbering, and refusal of unsupported characters to avoid lossy output.",
-      "evidence": "Focused PDF tests pass 3/3; local pdf-parse smoke extracts all candidate sections. Full unit suite and typecheck pass; exact-head browser CI pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
-      "sha256": "3727e8a14b16869e77847ababc6ded671e21c94f9dcf5d2ce69af27c37c43b37"
+      "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.ts; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+      "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision.",
+      "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+      "sha256": "b6e3b3243cac3ffd9214ebadcc280fd55f2d58ca22a936aefd4f60a90589033d",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "b6e3b3243cac3ffd9214ebadcc280fd55f2d58ca22a936aefd4f60a90589033d",
+          "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.ts; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "b6e3b3243cac3ffd9214ebadcc280fd55f2d58ca22a936aefd4f60a90589033d",
+          "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.ts; added or reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
+          "sha256": "3727e8a14b16869e77847ababc6ded671e21c94f9dcf5d2ce69af27c37c43b37",
+          "observations": "Added client-side jsPDF generation with A4 page layout, role-specific metadata and filename, candidate-authored sections, pagination, page numbering, and refusal of unsupported characters to avoid lossy output.",
+          "evidence": "Focused PDF tests pass 3/3; local pdf-parse smoke extracts all candidate sections. Full unit suite and typecheck pass; exact-head browser CI pending."
+        }
+      ]
     },
     {
       "path": "README.md",
@@ -697,11 +737,29 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added lazy-loaded jsPDF 4.2.1 for candidate-initiated downloads; package declares MIT license and npm install reported zero advisories.",
-      "evidence": "Only the web workspace adds the PDF generator dependency. It is imported when the candidate selects Download PDF; no provider or external request was introduced.",
-      "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
-      "sha256": "77d28c961f244d2a06f6fe4ccf75b357a14879f12ec750cdc98e284b44e7dab2",
+      "observations": "Reviewed the current source or evidence update for apps/web/package.json; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+      "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision.",
+      "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+      "sha256": "7f4d43d5276cc1506bb84b117fdbf187529e112f1b6d2340fdc9ac35cad45279",
       "history": [
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "7f4d43d5276cc1506bb84b117fdbf187529e112f1b6d2340fdc9ac35cad45279",
+          "observations": "Reviewed the current source or evidence update for apps/web/package.json; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "7f4d43d5276cc1506bb84b117fdbf187529e112f1b6d2340fdc9ac35cad45279",
+          "observations": "Reviewed the current source or evidence update for apps/web/package.json; added or reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
+          "sha256": "77d28c961f244d2a06f6fe4ccf75b357a14879f12ec750cdc98e284b44e7dab2",
+          "observations": "Added lazy-loaded jsPDF 4.2.1 for candidate-initiated downloads; package declares MIT license and npm install reported zero advisories.",
+          "evidence": "Only the web workspace adds the PDF generator dependency. It is imported when the candidate selects Download PDF; no provider or external request was introduced."
+        },
         {
           "reviewer": "Codex (Stage 01 item 1.03)",
           "sha256": "2db03d12aa411e5d29177cb2fde52ee189f49547f7bd01abddb92d70e26e7e82",
@@ -2138,11 +2196,29 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded Stage 10.11 direct PDF export behavior, supported character range, tests, and remaining native/Unicode/owner acceptance gaps.",
-      "evidence": "Documentation retains item 10.11 as partial; current exact-head browser CI and owner verification are pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
-      "sha256": "b4e685026534f87568235168ba562cee0ba776bfc7e04891bb567ed9a0385b8b",
+      "observations": "Reviewed the current source or evidence update for docs/GAP-MATRIX.md; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+      "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision.",
+      "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+      "sha256": "bd5d5a0b80cfc140c634983da64529213332f7481f3a42e5ca5b215d0449b255",
       "history": [
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "bd5d5a0b80cfc140c634983da64529213332f7481f3a42e5ca5b215d0449b255",
+          "observations": "Reviewed the current source or evidence update for docs/GAP-MATRIX.md; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "0ee1ad6e76fb9229136d73b83f37846ff9fda091c16f4604771c3a794128a944",
+          "observations": "Reviewed the current source or evidence update for docs/GAP-MATRIX.md; added or reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
+          "sha256": "b4e685026534f87568235168ba562cee0ba776bfc7e04891bb567ed9a0385b8b",
+          "observations": "Recorded Stage 10.11 direct PDF export behavior, supported character range, tests, and remaining native/Unicode/owner acceptance gaps.",
+          "evidence": "Documentation retains item 10.11 as partial; current exact-head browser CI and owner verification are pending."
+        },
         {
           "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
           "sha256": "63fdb4a92e30d63b28c628bf69d6e3bdfe9f3b704abcac17b840651f672f0dbf",
@@ -2730,11 +2806,29 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Mapped Stage 10.11 unit, PDF text extraction, and browser download checks to their current sources and limitations.",
-      "evidence": "Current exact-head hosted browser validation and owner verification remain pending; output is not represented as full Unicode or native print acceptance.",
-      "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
-      "sha256": "ad1c2c363e27f8cfaadbaa2d0ec23498b0b416a47e0e4fa6f047ead0946bd61f",
+      "observations": "Reviewed the current source or evidence update for docs/TEST-MATRIX.md; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+      "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision.",
+      "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+      "sha256": "58749cf75f42f31ab962ff42cfe3382e495c8b68f2ef4335eb7a94fcb25e210d",
       "history": [
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "58749cf75f42f31ab962ff42cfe3382e495c8b68f2ef4335eb7a94fcb25e210d",
+          "observations": "Reviewed the current source or evidence update for docs/TEST-MATRIX.md; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "461906869131e9179f9b2ffa2af4db32b5a6418e5374a6cdcc56e8554ba3b971",
+          "observations": "Reviewed the current source or evidence update for docs/TEST-MATRIX.md; added or reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
+          "sha256": "ad1c2c363e27f8cfaadbaa2d0ec23498b0b416a47e0e4fa6f047ead0946bd61f",
+          "observations": "Mapped Stage 10.11 unit, PDF text extraction, and browser download checks to their current sources and limitations.",
+          "evidence": "Current exact-head hosted browser validation and owner verification remain pending; output is not represented as full Unicode or native print acceptance."
+        },
         {
           "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
           "sha256": "2d1826c84a392fbc243f63a1b0079314761efab19fa0b1a90274b5e7355649c0",
@@ -3388,11 +3482,29 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Updated item 10.11 evidence and tests for the downloadable PDF implementation while retaining partial status and unsupported-script/native-print gaps.",
-      "evidence": "Current direct exporter, unit tests and browser artifact assertions are linked; exact-head CI and owner acceptance remain pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
-      "sha256": "d175518b6e2fad315b105a8a26ae10d88a2fdbb20486c11e7e2a3d46e94b306d",
+      "observations": "Reviewed the current source or evidence update for docs/requirements/OWNER-ROADMAP-TRACEABILITY.json; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+      "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision.",
+      "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+      "sha256": "5fd8253b38e16b0cfd1bbc5656509ab23adb301d0074a6e175a55199235e3327",
       "history": [
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "5fd8253b38e16b0cfd1bbc5656509ab23adb301d0074a6e175a55199235e3327",
+          "observations": "Reviewed the current source or evidence update for docs/requirements/OWNER-ROADMAP-TRACEABILITY.json; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "5fd8253b38e16b0cfd1bbc5656509ab23adb301d0074a6e175a55199235e3327",
+          "observations": "Reviewed the current source or evidence update for docs/requirements/OWNER-ROADMAP-TRACEABILITY.json; added or reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
+          "sha256": "d175518b6e2fad315b105a8a26ae10d88a2fdbb20486c11e7e2a3d46e94b306d",
+          "observations": "Updated item 10.11 evidence and tests for the downloadable PDF implementation while retaining partial status and unsupported-script/native-print gaps.",
+          "evidence": "Current direct exporter, unit tests and browser artifact assertions are linked; exact-head CI and owner acceptance remain pending."
+        },
         {
           "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
           "sha256": "ee6b52ab7c825cf2de9e2e25ebca34710e67165a554327f8fcd8d0fb66ae0080",
@@ -4816,8 +4928,8 @@
       "state": "not-applicable-source",
       "concerns": [],
       "findings": [],
-      "observations": "Generated npm lockfile snapshot for the reviewed web dependency change; package graph was audited by npm install (zero advisories).",
-      "evidence": "Associated source dependency and lazy loading are documented in apps/web/package.json and the Stage 10.11 audit record.",
+      "observations": "Generated npm lockfile snapshot for jsPDF and the PDF text-extraction test dependency; npm install reported zero advisories.",
+      "evidence": "Dependency declarations are in apps/web/package.json; package-lock is generated and not treated as hand-written source.",
       "reviewer": "",
       "sha256": ""
     },

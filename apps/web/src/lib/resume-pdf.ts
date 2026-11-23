@@ -130,8 +130,11 @@ export function createResumePdf(draft: ResumePdfDraft) {
     }
   };
 
-  const addSectionHeading = (heading: string) => {
-    addPageIfNeeded(compact ? 11 : 12);
+  const addSectionHeading = (heading: string, firstEntry: string) => {
+    const headingHeight = compact ? 10 : 14;
+    // Keep a section heading with at least the first line of its content.
+    const firstLineHeight = firstEntry.trim() ? lineHeight : 0;
+    addPageIfNeeded(headingHeight + firstLineHeight);
     y += compact ? 2 : 4;
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(compact ? 10 : 11);
@@ -165,17 +168,22 @@ export function createResumePdf(draft: ResumePdfDraft) {
   y += compact ? 1 : 3;
 
   if (draft.content.summary.trim()) {
-    addSectionHeading('Summary');
+    addSectionHeading('Summary', draft.content.summary.trim());
     addWrappedText(draft.content.summary.trim());
   }
 
   if (draft.content.skills.length) {
-    addSectionHeading('Skills');
-    addWrappedText(draft.content.skills.join('  ·  '));
+    const skills = draft.content.skills.join('  ·  ');
+    addSectionHeading('Skills', skills);
+    addWrappedText(skills);
   }
 
   if (draft.content.experience.length) {
-    addSectionHeading('Experience');
+    const firstExperience = draft.content.experience[0]!;
+    addSectionHeading(
+      'Experience',
+      [firstExperience.role, firstExperience.company].filter(Boolean).join(' — '),
+    );
     for (const experience of draft.content.experience) {
       const dates = [experience.startDate, experience.endDate].filter(Boolean).join(' - ');
       addWrappedText([experience.role, experience.company].filter(Boolean).join(' — '), {
@@ -190,7 +198,11 @@ export function createResumePdf(draft: ResumePdfDraft) {
   }
 
   if (draft.content.education.length) {
-    addSectionHeading('Education');
+    const firstEducation = draft.content.education[0]!;
+    addSectionHeading(
+      'Education',
+      [firstEducation.qualification, firstEducation.institution].filter(Boolean).join(' — '),
+    );
     for (const education of draft.content.education) {
       addWrappedText([education.qualification, education.institution].filter(Boolean).join(' — '), {
         bold: true,

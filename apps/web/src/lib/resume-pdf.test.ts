@@ -1,6 +1,16 @@
 import assert from 'node:assert/strict';
+import { resolve } from 'node:path';
 import test from 'node:test';
+import { pathToFileURL } from 'node:url';
+import { PDFParse } from 'pdf-parse';
 import { createResumePdf, supportsDirectResumePdf, type ResumePdfDraft } from './resume-pdf.js';
+
+async function isValidResumeContent(content: ResumePdfDraft['content']) {
+  const coreSchema = await import(
+    pathToFileURL(resolve(process.cwd(), 'packages/core/dist/resume-drafts.js')).href
+  );
+  return coreSchema.resumeDraftContentSchema.safeParse(content).success;
+}
 
 const draft: ResumePdfDraft = {
   title: 'Synthetic Role Resume',
@@ -64,18 +74,111 @@ test('direct PDF export carries role-specific metadata, a sanitized filename, an
   assert.match(contents, /\/Type\s*\/Page\b/);
 });
 
-test('direct PDF export paginates long candidate-authored summaries', async () => {
+test('direct PDF export preserves WinAnsi characters in extracted text', async () => {
+  const accentedDraft: ResumePdfDraft = {
+    ...draft,
+    content: {
+      ...draft.content,
+      fullName: 'José O’Neil',
+      summary: 'Delivered €5M in savings at Café Europa.',
+      experience: draft.content.experience.map((item) => ({ ...item, company: 'Café Europa' })),
+    },
+  };
+  const { blob } = createResumePdf(accentedDraft);
+  const parser = new PDFParse({ data: new Uint8Array(await blob.arrayBuffer()) });
+  try {
+    const extracted = (await parser.getText()).text;
+    assert.match(extracted, /José O’Neil/);
+    assert.match(extracted, /€5M/);
+    assert.match(extracted, /Café Europa/);
+  } finally {
+    await parser.destroy();
+  }
+});
+
+test('direct PDF export paginates a schema-valid candidate-authored resume', async () => {
   const longDraft = {
     ...draft,
     content: {
       ...draft.content,
-      summary: `${'Candidate-authored achievement with measurable results. '.repeat(260)}`,
+      fullName: 'Candidate with a long work history',
+      summary: 'A candidate-authored profile within the supported summary limit.',
+      experience: Array.from({ length: 16 }, (_, experienceIndex) => ({
+        id: `experience-${experienceIndex}`,
+        role: `Role ${experienceIndex}`,
+        company: `Company ${experienceIndex}`,
+        location: 'London',
+        startDate: '2020-01',
+        endDate: null,
+        bullets: Array.from({ length: 8 }, (_, bulletIndex) =>
+          `Candidate-authored achievement ${experienceIndex * 8 + bulletIndex} with measurable results. `.repeat(
+            4,
+          ),
+        ),
+      })),
+      education: [
+        {
+          id: 'education-final',
+          institution: 'Final Page University',
+          qualification: 'Bachelor of Engineering',
+          location: null,
+          endDate: '2021',
+        },
+      ],
     },
   };
+  assert.equal(await isValidResumeContent(longDraft.content), true);
   const { blob } = createResumePdf(longDraft);
-  const contents = Buffer.from(await blob.arrayBuffer()).toString('latin1');
-  assert.ok(
-    (contents.match(/\/Type\s*\/Page\b/g) ?? []).length > 1,
-    'long content flows onto additional A4 pages',
-  );
+  const parser = new PDFParse({ data: new Uint8Array(await blob.arrayBuffer()) });
+  try {
+    const result = await parser.getText();
+    assert.ok(result.pages.length > 1, 'long candidate content flows onto additional A4 pages');
+    assert.match(result.pages[0]!.text, /Candidate with a long work history/);
+    assert.match(result.text, /Candidate-authored achievement 0 with measurable results/);
+    assert.match(result.text, /Candidate-authored achievement 127 with measurable results/);
+    assert.match(result.pages.at(-1)!.text, /Final Page University/);
+  } finally {
+    await parser.destroy();
+  }
+});
+
+test('section headings stay with their first entry at page boundaries', async () => {
+  for (let count = 1; count <= 60; count += 1) {
+    const boundaryDraft: ResumePdfDraft = {
+      ...draft,
+      content: {
+        ...draft.content,
+        skills: Array.from({ length: count }, (_, index) =>
+          `Skill ${index} with boundary text`.padEnd(45, 'x'),
+        ),
+        experience: [
+          {
+            id: 'boundary-experience',
+            role: 'Boundary Role',
+            company: 'Boundary Company',
+            location: null,
+            startDate: null,
+            endDate: null,
+            bullets: [],
+          },
+        ],
+      },
+    };
+    assert.equal(await isValidResumeContent(boundaryDraft.content), true);
+    const { blob } = createResumePdf(boundaryDraft);
+    const parser = new PDFParse({ data: new Uint8Array(await blob.arrayBuffer()) });
+    try {
+      const result = await parser.getText();
+      let headingSeen = false;
+      for (const page of result.pages) {
+        if (page.text.includes('Experience')) {
+          headingSeen = true;
+          assert.match(page.text, /Boundary Role/);
+        }
+      }
+      assert.equal(headingSeen, true, 'boundary content includes the Experience section');
+    } finally {
+      await parser.destroy();
+    }
+  }
 });

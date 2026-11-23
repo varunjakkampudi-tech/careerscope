@@ -2318,7 +2318,7 @@
       ],
       "tests": ["apps/web/src/lib/resume-pdf.test.ts", "scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "A client-side A4 PDF download now has role-specific filename/title, paginated candidate-authored sections, and text-extraction browser coverage. Unit and browser checks are added; hosted exact-head validation is pending. Direct generation currently supports Western Latin/WinAnsi characters and refuses other scripts with a print/save fallback to avoid data loss. Broader Unicode font coverage, native print/save acceptance, and owner verification remain open.",
+      "gap": "A client-side A4 PDF download now has role-specific filename/title, paginated candidate-authored sections, and browser text-extraction coverage. Unit tests validate schema-valid multi-page resume data, extracted text from the first and final pages, section-heading page boundaries, and representative Western Latin/WinAnsi characters. Hosted exact-head validation is pending. Direct generation refuses unsupported scripts with a print/save fallback to avoid data loss. Broader Unicode font coverage, native print/save acceptance, and owner verification remain open.",
       "scopeDisposition": "in-scope"
     },
     {
