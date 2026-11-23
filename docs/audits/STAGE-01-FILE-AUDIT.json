@@ -2100,11 +2100,23 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Stage 10.11 adds Chromium PDF artifact assertions for signature, page object, and role-specific title; 10.14 remains partial with external-provider fetch/XHR blocked while AI is disabled; 10.15 remains partial with candidate-only and review-only text assertions. No checklist item is marked verified.",
-      "evidence": "Diff reviewed against Stage 10 scope; exact-head hosted CI pending.",
-      "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
-      "sha256": "4bb0ec8e2b8f0438480ad75adbf54d9e256a2b213333a8c2a65f0c15aa325ff3",
+      "observations": "Refreshed the file-audit record after Prettier normalized docs/GAP-MATRIX.md; the Stage 10 evidence update is recorded in the current audit history.",
+      "evidence": "Owner roadmap record and GAP-MATRIX.md now distinguish Chromium-generated PDF smoke evidence from deterministic app-managed download and native/cross-browser acceptance. Exact-head review/CI evidence is recorded; owner verification remains open.",
+      "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
+      "sha256": "63fdb4a92e30d63b28c628bf69d6e3bdfe9f3b704abcac17b840651f672f0dbf",
       "history": [
+        {
+          "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
+          "sha256": "dad96d35ad7cb8b8458574a97c9bd55b4718c354b792566cc544bab2eb212d76",
+          "observations": "Reconciled Stage 10.10 and 10.11 checklist gaps with current approval/browser evidence; both remain partial pending owner verification.",
+          "evidence": "Owner roadmap record and GAP-MATRIX.md now distinguish Chromium-generated PDF smoke evidence from deterministic app-managed download and native/cross-browser acceptance. Exact-head review/CI evidence is recorded; owner verification remains open."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
+          "sha256": "4bb0ec8e2b8f0438480ad75adbf54d9e256a2b213333a8c2a65f0c15aa325ff3",
+          "observations": "Stage 10.11 adds Chromium PDF artifact assertions for signature, page object, and role-specific title; 10.14 remains partial with external-provider fetch/XHR blocked while AI is disabled; 10.15 remains partial with candidate-only and review-only text assertions. No checklist item is marked verified.",
+          "evidence": "Diff reviewed against Stage 10 scope; exact-head hosted CI pending."
+        },
         {
           "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
           "sha256": "7315cbe187182362ccb737870eabdbf65b9e6db4f907226d37dae4ffaaf97515",
@@ -2388,11 +2400,17 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 10 status to record added PDF, no-provider, and candidate-claim browser coverage while retaining gated and owner-verification states.",
-      "evidence": "Documentation only; exact-head CI pending.",
-      "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
-      "sha256": "132eb5bb6b178971b2f3934467cabd73521a807d5362ad193e9f17c039d8cb34",
+      "observations": "Updated Stage 10 progress with exact-head required CI, focused browser run, independent engineering approval, and remaining owner/provider/PDF gates.",
+      "evidence": "PR #132 exact head c45bffead1ca4cd99590673cbbe71c895c4dafed passed required CI run 45060312481, focused browser run 45117527467, and independent engineering review. This documentation retains owner verification and other Stage 10 gaps as open.",
+      "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
+      "sha256": "9c9eae24470a008205ac7faded505d38d940cabf0aa8785d884624c11cd6eb0f",
       "history": [
+        {
+          "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
+          "sha256": "132eb5bb6b178971b2f3934467cabd73521a807d5362ad193e9f17c039d8cb34",
+          "observations": "Updated Stage 10 status to record added PDF, no-provider, and candidate-claim browser coverage while retaining gated and owner-verification states.",
+          "evidence": "Documentation only; exact-head CI pending."
+        },
         {
           "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
           "sha256": "a7e3412da126a490ad084154d4d677b0b40a8ec8d8ac1dbc827e021b93dacc3e",
@@ -2662,11 +2680,23 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added Stage 10 browser evidence for Chromium PDF signature/page/title, no external provider fetch/XHR, and posting-only suggestions remaining outside candidate resume fields.",
-      "evidence": "Diff reviewed; exact-head hosted CI pending.",
-      "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
-      "sha256": "51ac7dfed62aa91c49247b6c38a769e2518d27e310a16925fca710744837e1bd",
+      "observations": "Refreshed the file-audit record after Prettier normalized docs/TEST-MATRIX.md; the Stage 10 evidence update is recorded in the current audit history.",
+      "evidence": "Updated documentation against the exact-head review and CI evidence for PR #132; does not claim native PDF export or checklist owner verification.",
+      "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
+      "sha256": "2d1826c84a392fbc243f63a1b0079314761efab19fa0b1a90274b5e7355649c0",
       "history": [
+        {
+          "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
+          "sha256": "a7c754fef7518a7d32fbb1d4aa793d0508917bb5dac7a0c09d920863af21fa50",
+          "observations": "Clarified Stage 10.10 approval test mapping and bounded Stage 10.11 Chromium PDF assertions, including export limitations.",
+          "evidence": "Updated documentation against the exact-head review and CI evidence for PR #132; does not claim native PDF export or checklist owner verification."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
+          "sha256": "51ac7dfed62aa91c49247b6c38a769e2518d27e310a16925fca710744837e1bd",
+          "observations": "Added Stage 10 browser evidence for Chromium PDF signature/page/title, no external provider fetch/XHR, and posting-only suggestions remaining outside candidate resume fields.",
+          "evidence": "Diff reviewed; exact-head hosted CI pending."
+        },
         {
           "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
           "sha256": "ee915e9b9a29b7a1cfa752a65bb885bbd2d03d2f577810421497100dabbc8c09",
@@ -3302,11 +3332,23 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Stage 10.08/10.09 evidence reconciled with responsive, accessibility, comparison-removal, and print assertions. Both items remain partial pending owner verification; manual screen-reader acceptance is not evidenced for 10.08.",
-      "evidence": "Code head 2e1f9f2e602af83f3109a5ad80e0f8882edde8aa passed focused browser run 45047562375 and all three required PR jobs in run 45047568483. Exact independent review dispositions and remaining owner gates are recorded in the owner roadmap inventory.",
-      "reviewer": "Codex (CareerScope Stage 10.08-10.09 evidence reconciliation)",
-      "sha256": "e517ab1d5f04ef313edecbb49875a52a167b1982d710a28bd3740cd146702d97",
+      "observations": "Refreshed the file-audit record after Prettier normalized docs/requirements/OWNER-ROADMAP-TRACEABILITY.json; the Stage 10 evidence update is recorded in the current audit history.",
+      "evidence": "PR #132 exact head c45bffead1ca4cd99590673cbbe71c895c4dafed against base fad57ea3253024983f29183acefaee59328d0d01; required CI run 45060312481 and focused browser run 45117527467 passed. Independent review approved bounded engineering scope and identified these traceability details; no owner checklist completion was granted.",
+      "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
+      "sha256": "ee6b52ab7c825cf2de9e2e25ebca34710e67165a554327f8fcd8d0fb66ae0080",
       "history": [
+        {
+          "reviewer": "Codex (CareerScope Stage 10.10-10.11 review evidence reconciliation)",
+          "sha256": "7cde6bec0fe21f71a275fdaaa721c336db8cb7f62293dd8975df4707a6f1fdf7",
+          "observations": "Reconciled owner roadmap evidence for Stage 10.10 approval regression coverage and Stage 10.11 Chromium PDF artifact coverage after exact-head independent engineering approval. Both items remain partial pending owner verification; PDF evidence does not establish deterministic application-managed download or cross-browser/native print acceptance.",
+          "evidence": "PR #132 exact head c45bffead1ca4cd99590673cbbe71c895c4dafed against base fad57ea3253024983f29183acefaee59328d0d01; required CI run 45060312481 and focused browser run 45117527467 passed. Independent review approved bounded engineering scope and identified these traceability details; no owner checklist completion was granted."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.08-10.09 evidence reconciliation)",
+          "sha256": "e517ab1d5f04ef313edecbb49875a52a167b1982d710a28bd3740cd146702d97",
+          "observations": "Stage 10.08/10.09 evidence reconciled with responsive, accessibility, comparison-removal, and print assertions. Both items remain partial pending owner verification; manual screen-reader acceptance is not evidenced for 10.08.",
+          "evidence": "Code head 2e1f9f2e602af83f3109a5ad80e0f8882edde8aa passed focused browser run 45047562375 and all three required PR jobs in run 45047568483. Exact independent review dispositions and remaining owner gates are recorded in the owner roadmap inventory."
+        },
         {
           "reviewer": "Codex (CareerScope Stage 10.06 correction evidence)",
           "sha256": "f057b10aaef426810fd105ba637ff61a027fda066aee69628e2294b4f6443dfb",

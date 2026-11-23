@@ -2295,9 +2295,13 @@
         "packages/core/src/resume-drafts.ts",
         "apps/web/src/components/resume-builder.tsx"
       ],
-      "tests": [],
+      "tests": [
+        "packages/core/src/resume-drafts.test.ts",
+        "apps/api/src/resume-drafts.integration.test.ts",
+        "scripts/tests/check-ui.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Candidate approval is revision-bound and edits clear approval; PostgreSQL integration and exact-head UI acceptance remain pending.",
+      "gap": "Revision-bound candidate approval is covered by unit, PostgreSQL integration, and browser acceptance tests; edits clear approval. Exact-head engineering review and CI passed, while owner checklist verification remains pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2313,7 +2317,7 @@
       ],
       "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Browser print dialog can save a printable view; deterministic server/client PDF export with role-specific download validation is not implemented.",
+      "gap": "Chromium browser acceptance generates an A4 PDF from the print flow and checks its PDF signature, page object, role-specific title, and restored document title. This does not implement deterministic application-managed PDF download or prove cross-browser layout; native print/save and owner acceptance remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
