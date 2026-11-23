@@ -1784,7 +1784,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed the complete focused suite. It verifies extraction, unmapped-script fallback, both real subset cmaps against all product-allowlisted codepoints, and Unicode multi-page page bounds, side margins, pagination and bold Cyrillic content.",
-      "evidence": "Current candidate contents and relevant diff reviewed for the Stage 10.11 Unicode PDF correction.",
+      "evidence": "PR #136 exact head 75345b5e53015cc0cd83f4336af94f88f8ab0d03 against base e770e87e747a373145830155e6e77e3bfaf4059f; hosted run 45154220385 passed quality, integration/browser, performance, soak, and recovery. Independent review approved the bounded Unicode implementation. Production-image workflow job was skipped and local runtime image was not produced; owner and native/cross-browser acceptance remain pending.",
       "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
       "sha256": "45c8177abb7e0f26903738d5f5a3aa5c1caa8f7f64637b95410b7a47aff09d9c",
       "history": [
@@ -1826,7 +1826,7 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed the complete module and diff. Runtime checks every used embedded-font codepoint against regular and bold cmap mappings before PDF creation; unsupported text remains rejected for the print/save fallback. Layout and WinAnsi paths remain intact.",
-      "evidence": "Current candidate contents and relevant diff reviewed for the Stage 10.11 Unicode PDF correction.",
+      "evidence": "PR #136 exact head 75345b5e53015cc0cd83f4336af94f88f8ab0d03 against base e770e87e747a373145830155e6e77e3bfaf4059f; hosted run 45154220385 passed quality, integration/browser, performance, soak, and recovery. Independent review approved the bounded Unicode implementation. Production-image workflow job was skipped and local runtime image was not produced; owner and native/cross-browser acceptance remain pending.",
       "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
       "sha256": "af1cfc02f9a58555767652afaa4ead74217ca3a53ef0c83b0f97c9c6eb917983",
       "history": [
@@ -2259,10 +2259,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed updated Stage 10.11 evidence. It records only the focused 9/9 result and pending full check, exact-head CI, independent review, browser acceptance and owner verification.",
-      "evidence": "Current candidate contents and relevant diff reviewed for the Stage 10.11 Unicode PDF correction.",
+      "observations": "Stage 10.11 evidence records 9/9 focused PDF tests, 396 passing tests on functional source commit 22a5690, exact-head hosted run 45154220385, and independent bounded implementation review. The production-image job was skipped; owner and native/cross-browser acceptance remain pending.",
+      "evidence": "Updated Stage 10.11 evidence with exact-head hosted run 45154220385 and independent bounded code-review approval at 75345b5e53015cc0cd83f4336af94f88f8ab0d03. Production-image job was skipped; native/cross-browser and owner verification remain pending.",
       "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
-      "sha256": "0dbc040c381f74533cfb2d3ef63a299a6d7bd4d2ad79e672974e7cf0289deb7c",
+      "sha256": "b100bc10b265f6f8eb98b809edab6de3508b58f0fb47451fd430e38cd017af1e",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -2598,10 +2598,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed updated Stage 10.11 progress description. It keeps the item partial and separates current focused evidence from pending exact-head, browser and owner acceptance.",
-      "evidence": "Current candidate contents and relevant diff reviewed for the Stage 10.11 Unicode PDF correction.",
+      "observations": "Stage 10.11 progress records exact-head hosted run 45154220385 and the independent bounded implementation approval, while keeping the production-image, native/cross-browser, and owner gates explicit. The checklist item remains partial.",
+      "evidence": "Updated Stage 10.11 progress with exact-head hosted run 45154220385 and independent bounded code-review approval at 75345b5e53015cc0cd83f4336af94f88f8ab0d03. Production-image job was skipped; native/cross-browser and owner verification remain pending.",
       "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
-      "sha256": "ad67b03172b7c141ae91853181f85e55ebd0caeae98fc20503d1aa2d12f2083a",
+      "sha256": "6b092ed56e936d2cf3aac1a592de02014024f3eb8c8f14a058763b8477724b4b",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
@@ -3590,10 +3590,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Recorded the Unicode font extension, its focused tests, validation status, and remaining gates for item 10.11.",
-      "evidence": "Roadmap traceability passed for all 328 items across 22 stages; item 10.11 remains partial.",
+      "observations": "Canonical item 10.11 evidence is reconciled to exact-head hosted run 45154220385 and independent bounded implementation approval. The Docker production-image job was skipped, and native/cross-browser acceptance plus owner verification remain open; status remains partial.",
+      "evidence": "Reconciled canonical item 10.11 with exact-head hosted run 45154220385, independent bounded code-review approval at 75345b5e53015cc0cd83f4336af94f88f8ab0d03, and explicit image-build/native-browser/owner acceptance gaps. Checklist status remains partial.",
       "reviewer": "Codex (Stage 10.11 Unicode extension review)",
-      "sha256": "7d6701a8c013ca2ed92bc9196b64074c2a39637ce4dd087ba80d85a90bbb34b7",
+      "sha256": "234bae8f2ba98afbeea6d3e1b1a99a5114ec163ec7146aa547f99498d996e393",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
