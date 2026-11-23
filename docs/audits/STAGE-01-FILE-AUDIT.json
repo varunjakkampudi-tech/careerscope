@@ -8440,10 +8440,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Expanded the Stage 10.15 disabled-provider adversarial job-description regression to a deterministic corpus covering fabricated tenure, employer/leadership, certifications, and skills. Each case asserts candidate-authored skills and summary remain unchanged, fabricated claims stay out of the preview, and no external provider fetch/XHR occurs. This does not test live model output.",
-      "evidence": "npm run typecheck:tests passes for 100 canonical test files; formatting, complete file-audit validation, and roadmap traceability pass. Exact-head hosted quality and focused browser validation for the expanded corpus are pending; item 10.15 remains partial.",
-      "reviewer": "Codex (CareerScope Stage 10.15 adversarial input corpus)",
-      "sha256": "9e08d1c967174aa29b7ce7de18d8321e7a0cef4d97bfc8795e7c9babc8c42c60",
+      "observations": "Expanded the Stage 10.15 disabled-provider adversarial job-description regression to three deterministic cases covering fabricated tenure, employer/leadership, certifications, and skills. Each case waits for a unique processed-analysis signal, then asserts candidate-authored skills and summary remain unchanged, fabricated claims stay out of the preview, and no external provider fetch/XHR occurs. This does not test live model output.",
+      "evidence": "npm run typecheck:tests passes for 100 canonical test files; Prettier, complete file-audit validation, and roadmap traceability pass. Exact-head hosted quality passed on 85c0dedf29ce4eeb800a1b2ad60aaad2cb902d1b. The focused Chromium run exposed an ambiguous selector; exact-head browser validation is pending after correction. Item 10.15 remains partial.",
+      "reviewer": "Codex (CareerScope Stage 10.15 adversarial input corpus correction)",
+      "sha256": "bcf803a74a413a51cba3f4f98d9c557c31825dcd4c77962e13f6f66e4e747997",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
@@ -8540,6 +8540,12 @@
           "sha256": "e1d59bf148747085da861243eae187b21da99d9ccb1fe67a45d67ee3ecdddae4",
           "observations": "Reviewed the Stage 10.15 adversarial job-description regression: untrusted prompt instructions do not alter candidate-authored fields or preview and no external provider request occurs. Model-output evaluation remains untested.",
           "evidence": "npm run typecheck:tests passed for 100 canonical test files; focused exact-head Chromium browser, axe, keyboard, and responsive run 45175065392 subsequently passed on SHA 8c9b7857039787564f578208c1e168c929842e83 and independent review approved that test change. An earlier record noted the run was pending before it completed. Model-output evaluation remains untested."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.15 adversarial input corpus)",
+          "sha256": "9e08d1c967174aa29b7ce7de18d8321e7a0cef4d97bfc8795e7c9babc8c42c60",
+          "observations": "Expanded the Stage 10.15 disabled-provider adversarial job-description regression to a deterministic corpus covering fabricated tenure, employer/leadership, certifications, and skills. Each case asserts candidate-authored skills and summary remain unchanged, fabricated claims stay out of the preview, and no external provider fetch/XHR occurs. This does not test live model output.",
+          "evidence": "npm run typecheck:tests passes for 100 canonical test files; formatting, complete file-audit validation, and roadmap traceability pass. Exact-head hosted quality and focused browser validation for the expanded corpus are pending; item 10.15 remains partial."
         }
       ]
     },
