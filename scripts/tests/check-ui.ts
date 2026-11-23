@@ -29,6 +29,7 @@ import {
 import { createApp } from '../../apps/api/src/app.js';
 import { collect } from '../../apps/workers/search/src/collect.js';
 import { createRemoteOkProvider, type JobProvider } from '@careerscope/providers';
+import { extractText } from '@careerscope/resume';
 import { selectUiBrowsers } from './ui-browsers.js';
 import {
   browserRequestFailureCategory,
@@ -48,7 +49,9 @@ import {
 const notificationLifecycleOnly =
   process.env.CAREERSCOPE_UI_SCENARIO === 'notification-panel-close-before-mutation';
 const profilePhotoOnly = process.env.CAREERSCOPE_UI_SCENARIO === 'profile-photo';
-if (process.env.CAREERSCOPE_UI_SCENARIO && !notificationLifecycleOnly && !profilePhotoOnly)
+const resumeBuilderOnly = process.env.CAREERSCOPE_UI_SCENARIO === 'resume-builder';
+const focusedProfileUiOnly = profilePhotoOnly || resumeBuilderOnly;
+if (process.env.CAREERSCOPE_UI_SCENARIO && !notificationLifecycleOnly && !focusedProfileUiOnly)
   throw new Error('Unknown focused browser scenario');
 if (notificationLifecycleOnly) {
   assert.equal(process.env.CAREERSCOPE_UI_BROWSER, 'chromium');
@@ -334,8 +337,25 @@ try {
           isRemote: true,
           description: 'Build React and TypeScript interfaces.',
           hasFullDescription: false,
+          postedAt: '2026-01-01T00:00:00.000Z',
           sourceUrl: 'https://remoteok.com/remote-jobs/scored',
           applyUrl: 'https://example.test/scored',
+        };
+        yield {
+          source: 'remoteok' as const,
+          sourceJobId: 'full-description-fixture',
+          title: 'Senior React Engineer',
+          companyName: 'Example Technology',
+          location: 'Remote',
+          isRemote: true,
+          description:
+            'Build accessible interfaces using React and TypeScript. Collaborate with product and design teams to deliver reliable experiences. '.repeat(
+              6,
+            ),
+          hasFullDescription: true,
+          postedAt: '2026-02-01T00:00:00.000Z',
+          sourceUrl: 'https://remoteok.com/remote-jobs/full-description',
+          applyUrl: 'https://example.test/full-description',
         };
       },
     },
@@ -359,12 +379,12 @@ try {
       now: Date.parse('2026-09-13T12:00:00Z'),
     },
   );
-  assert.equal(scored.jobs.length, 1);
+  assert.equal(scored.jobs.length, 2);
   const sourceOutcomes = [
     {
       source: 'remoteok' as const,
       status: 'completed' as const,
-      accepted: 1,
+      accepted: 2,
       limited: false,
       errorCode: null,
     },
@@ -376,30 +396,7 @@ try {
       errorCode: 'source_permission_pending' as const,
     },
   ];
-  await database.completeCollection(
-    command,
-    fence,
-    [
-      {
-        fingerprint: 'browser-fixture',
-        sourceJobId: 'browser-fixture',
-        title: 'Senior React Engineer',
-        company: 'Example Technology',
-        location: 'Remote',
-        description: 'Build accessible interfaces using React and TypeScript.',
-        source: 'himalayas',
-        sourceUrl: 'https://himalayas.app/jobs/synthetic',
-        sourceLinks: [
-          { source: 'himalayas', url: 'https://himalayas.app/jobs/synthetic' },
-          { source: 'remoteok', url: 'https://remoteok.com/remote-jobs/synthetic' },
-        ],
-        applyUrl: 'https://example.test/apply',
-        postedAt: null,
-      },
-      ...scored.jobs,
-    ],
-    sourceOutcomes,
-  );
+  await database.completeCollection(command, fence, scored.jobs, sourceOutcomes);
   // A separate approved-source failure keeps the retry control covered without
   // making the historical Himalayas fixture look retryable before rights are
   // recorded. Both the account and provider data are synthetic.
@@ -568,7 +565,7 @@ try {
       );
     }
   };
-  for (const [engine, browserType] of profilePhotoOnly
+  for (const [engine, browserType] of focusedProfileUiOnly
     ? uiBrowsers.filter(([engine]) => engine === 'chromium')
     : uiBrowsers) {
     // Legacy password-account fixtures exercise existing data/session behavior.
@@ -1276,7 +1273,7 @@ try {
       });
       let fixtureCredential = password;
       await page.route('**/api/session', async (route) => {
-        if (profilePhotoOnly) {
+        if (focusedProfileUiOnly) {
           const response = await route.fetch();
           const body = await response.json();
           if (body.authenticated !== false) {
@@ -1315,7 +1312,7 @@ try {
       });
       await page.route('**/api/login', (route) => {
         const { email } = route.request().postDataJSON();
-        if (profilePhotoOnly) {
+        if (focusedProfileUiOnly) {
           return route
             .fetch({
               postData: JSON.stringify({ email, password: fixtureCredential }),
@@ -1327,7 +1324,9 @@ try {
       const selectFixtureAccount = async (email: string, credential = password) => {
         fixtureCredential = credential;
         const accountButton = page.getByRole('button').filter({ hasText: email });
-        if ((await accountButton.count()) === 0) {
+        try {
+          await accountButton.first().waitFor({ state: 'visible', timeout: 15_000 });
+        } catch {
           assert.fail(
             `${engine} test account ${email} is unavailable at ${new URL(page.url()).pathname}; ` +
               `rendered page: ${(await page.locator('body').innerText()).slice(0, 500) || 'empty'}; ` +
@@ -1669,7 +1668,7 @@ try {
           `${engine} ${name} is not "${expected}": ${directives.get(name) ?? 'absent'}`,
         );
       }
-      if (!profilePhotoOnly) {
+      if (!focusedProfileUiOnly) {
         const skipLink = page.getByRole('link', { name: 'Skip to content', exact: true });
         const hiddenSkip = await skipLink.boundingBox();
         assert.ok(hiddenSkip && hiddenSkip.width === 1 && hiddenSkip.height === 1);
@@ -1726,7 +1725,7 @@ try {
         [],
         `${engine}: dashboard content and global navigation must not leave speculative RSC prefetches open`,
       );
-      if (profilePhotoOnly) {
+      if (focusedProfileUiOnly) {
         // The selected account is the newly registered browser fixture, so
         // seed that account's profile rather than the separate API owner used
         // by the broad cross-owner scenario below.
@@ -1751,6 +1750,505 @@ try {
         });
         await page.goto(`${origin}/resume`);
         await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
+        const builder = page.getByRole('region', { name: 'Resume Builder' });
+        await builder.getByRole('button', { name: 'New resume', exact: true }).click();
+        await builder.getByLabel('Resume name').focus();
+        await page.keyboard.press('Tab');
+        assert.equal(
+          await builder
+            .getByLabel('Target role')
+            .evaluate((element) => element === document.activeElement),
+          true,
+          `${engine}: resume editor keyboard order reaches the target role after the resume name`,
+        );
+        await page.keyboard.press('Tab');
+        assert.equal(
+          await builder
+            .getByLabel('Template')
+            .evaluate((element) => element === document.activeElement),
+          true,
+          `${engine}: resume editor keyboard order reaches the template after the target role`,
+        );
+        await builder.getByLabel('Resume name').fill('Synthetic Role Resume');
+        await builder.getByLabel('Target role').fill('Frontend Engineer');
+        const templateSelect = builder.getByLabel('Template');
+        const resumePreview = builder
+          .getByRole('complementary', { name: 'Resume review tools' })
+          .locator('article')
+          .first();
+        for (const template of ['modern', 'compact', 'classic'] as const) {
+          await templateSelect.selectOption(template);
+          assert.equal(await resumePreview.getAttribute('data-template'), template);
+        }
+        await templateSelect.selectOption('modern');
+        await builder.getByLabel('Full name').fill('Synthetic Candidate');
+        await builder.getByLabel('Email').fill('synthetic.candidate@example.test');
+        await builder.getByLabel('Phone').fill('+1 555 010 0100');
+        await builder.getByLabel('Location').fill('Hyderabad');
+        await builder.getByLabel('Professional summary').fill('Builds React interfaces.');
+        await builder.getByRole('button', { name: 'Add role', exact: true }).click();
+        await builder.getByLabel('Role title').fill('Software Engineer');
+        await builder.getByLabel('Company').fill('Synthetic Systems');
+        await builder
+          .getByLabel('Achievement bullets (one per line)')
+          .fill('Built a candidate-reported feature.');
+        await builder.getByRole('button', { name: 'Add education', exact: true }).click();
+        await builder.getByLabel('Institution').fill('Example University');
+        await builder.getByLabel('Qualification').fill('Bachelor of Engineering');
+        await resumePreview.getByRole('heading', { name: 'Software Engineer' }).waitFor();
+        await resumePreview
+          .getByText('Built a candidate-reported feature.', { exact: true })
+          .waitFor();
+        await resumePreview.getByRole('heading', { name: 'Bachelor of Engineering' }).waitFor();
+        await resumePreview.getByText('Example University', { exact: true }).waitFor();
+        await builder.getByLabel('Skills (comma-separated)').fill('React, TypeScript');
+        const resumeOrigin = new URL(page.url()).origin;
+        let providerRequests = 0;
+        const countProviderRequests = (request: import('playwright').Request) => {
+          const url = new URL(request.url());
+          if (
+            url.origin !== resumeOrigin &&
+            (request.resourceType() === 'fetch' || request.resourceType() === 'xhr')
+          ) {
+            providerRequests += 1;
+          }
+        };
+        page.on('request', countProviderRequests);
+        await builder
+          .getByRole('region', { name: 'AI writing assistance' })
+          .getByText(/not enabled/i)
+          .waitFor();
+        await builder
+          .getByLabel('Paste job description')
+          .fill('Frontend Engineer needs React, TypeScript, and CSS.');
+        await builder.getByText(/Matched terms:.*React.*typescript/i).waitFor();
+        await builder.getByText('CSS3', { exact: true }).waitFor();
+        assert.equal(
+          await builder.getByLabel('Skills (comma-separated)').inputValue(),
+          'React, TypeScript',
+          `${engine}: job-description terms remain suggestions and are not inserted as candidate skills`,
+        );
+        assert.equal(
+          await builder.getByLabel('Professional summary').inputValue(),
+          'Builds React interfaces.',
+          `${engine}: job-description text is not inserted into candidate-authored resume content`,
+        );
+        assert.equal(
+          providerRequests,
+          0,
+          `${engine}: resume analysis sent no fetch or XHR request to an external provider`,
+        );
+        page.off('request', countProviderRequests);
+        const originalSummary = 'Builds React interfaces.';
+        const responsiveSummary = Array.from(
+          { length: 18 },
+          (_, index) => `Synthetic accessible summary phrase ${index + 1}`,
+        ).join(' ');
+        await builder.getByLabel('Professional summary').fill(responsiveSummary);
+        const workspaceForm = builder.locator('form');
+        for (const [width, expectedWorkspaceColumns, expectedControlColumns] of [
+          [901, 2, 2],
+          [900, 1, 2],
+          [561, 1, 2],
+          [560, 1, 1],
+          [320, 1, 1],
+        ] as const) {
+          await page.setViewportSize({ width, height: 900 });
+          const layout = await workspaceForm.evaluate((form) => {
+            const workspace = form.parentElement;
+            if (!workspace) throw new Error('Resume workspace is missing around the editor');
+            const preview = workspace.querySelector('aside');
+            if (!preview) throw new Error('Resume preview is missing from the workspace');
+            const controls = form.querySelector('div');
+            if (!controls) throw new Error('Resume editor controls are missing');
+            const editorRect = form.getBoundingClientRect();
+            const previewRect = preview.getBoundingClientRect();
+            return {
+              workspaceColumns: getComputedStyle(workspace).gridTemplateColumns.trim().split(/\s+/)
+                .length,
+              controlColumns: getComputedStyle(controls).gridTemplateColumns.trim().split(/\s+/)
+                .length,
+              editor: {
+                x: editorRect.x,
+                y: editorRect.y,
+                right: editorRect.right,
+                bottom: editorRect.bottom,
+                width: editorRect.width,
+              },
+              preview: {
+                x: previewRect.x,
+                y: previewRect.y,
+                width: previewRect.width,
+                visible:
+                  getComputedStyle(preview).display !== 'none' &&
+                  getComputedStyle(preview).visibility !== 'hidden',
+              },
+              documentWidth: document.documentElement.scrollWidth,
+              viewportWidth: window.innerWidth,
+            };
+          });
+          assert.equal(
+            layout.workspaceColumns,
+            expectedWorkspaceColumns,
+            `${engine}: resume workspace column count at ${width}px`,
+          );
+          assert.equal(
+            layout.controlColumns,
+            expectedControlColumns,
+            `${engine}: resume editor control column count at ${width}px`,
+          );
+          assert.ok(layout.editor.width > 0, `${engine}: editor remains visible at ${width}px`);
+          assert.ok(layout.preview?.visible, `${engine}: preview remains visible at ${width}px`);
+          assert.ok(
+            layout.preview && layout.preview.width > 0,
+            `${engine}: preview has usable width at ${width}px`,
+          );
+          assert.equal(
+            layout.documentWidth <= layout.viewportWidth,
+            true,
+            `${engine}: resume builder has no horizontal document overflow at ${width}px`,
+          );
+          if (expectedWorkspaceColumns === 2) {
+            assert.ok(
+              layout.preview!.x > layout.editor.x && layout.preview!.x >= layout.editor.right,
+              `${engine}: editor and preview are side by side at ${width}px`,
+            );
+          } else {
+            assert.ok(
+              layout.preview!.y >= layout.editor.bottom,
+              `${engine}: preview follows editor vertically at ${width}px`,
+            );
+          }
+          if (width === 320) {
+            const summaryLayout = await resumePreview
+              .getByText(responsiveSummary, { exact: true })
+              .evaluate((element) => ({
+                height: element.getBoundingClientRect().height,
+                fontSize: Number.parseFloat(getComputedStyle(element).fontSize),
+                scrollWidth: element.scrollWidth,
+                clientWidth: element.clientWidth,
+              }));
+            assert.ok(
+              summaryLayout.height > summaryLayout.fontSize * 2,
+              `${engine}: long candidate text wraps in the narrow preview`,
+            );
+            assert.ok(
+              summaryLayout.scrollWidth <= summaryLayout.clientWidth,
+              `${engine}: long candidate text is not clipped horizontally`,
+            );
+            await page.evaluate(axeSource);
+            const violations = await builder.evaluate(async (root) => {
+              const runner = (
+                globalThis as unknown as {
+                  axe: {
+                    run: (
+                      context: Element,
+                      options: unknown,
+                    ) => Promise<{
+                      violations: {
+                        id: string;
+                        impact: string | null;
+                        nodes: { target: string[] }[];
+                      }[];
+                    }>;
+                  };
+                }
+              ).axe;
+              const audit = await runner.run(root, {
+                runOnly: {
+                  type: 'tag',
+                  values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22a', 'wcag22aa'],
+                },
+              });
+              return audit.violations.map(
+                (violation) =>
+                  `${violation.id} [${violation.impact}] ${violation.nodes.map((node) => node.target.join(' ')).join(', ')}`,
+              );
+            });
+            assert.deepEqual(violations, [], `${engine}: resume builder axe accessibility audit`);
+          }
+        }
+        await page.setViewportSize({ width: 1440, height: 900 });
+        await builder.getByLabel('Professional summary').fill(originalSummary);
+        const draftCreated = page.waitForResponse(
+          (response) =>
+            response.url().endsWith('/api/resume-drafts') && response.request().method() === 'POST',
+        );
+        await builder.getByRole('button', { name: 'Create resume', exact: true }).click();
+        const draftResponse = await draftCreated;
+        assert.equal(draftResponse.status(), 201);
+        const draftId = ((await draftResponse.json()) as { id: string }).id;
+        await builder.getByRole('button', { name: 'Approve this version', exact: true }).click();
+        await builder.getByRole('status').filter({ hasText: 'Approved by you' }).waitFor();
+        await builder
+          .getByLabel('Professional summary')
+          .fill('Builds accessible React interfaces.');
+        await builder
+          .getByRole('status')
+          .filter({ hasText: 'Editing clears your previous approval' })
+          .waitFor();
+        const draftSaved = page.waitForResponse(
+          (response) =>
+            response.url().includes('/api/resume-drafts/') && response.request().method() === 'PUT',
+        );
+        await builder.getByRole('button', { name: 'Save changes', exact: true }).click();
+        assert.equal((await draftSaved).status(), 200);
+        await builder.getByRole('button', { name: 'Approve this version', exact: true }).waitFor();
+        assert.equal(
+          await builder.getByRole('button', { name: 'Approve this version', exact: true }).count(),
+          1,
+        );
+        await page.reload();
+        await page.getByRole('heading', { name: 'Candidate Profile', exact: true }).waitFor();
+        const reloadedBuilder = page.getByRole('region', { name: 'Resume Builder' });
+        await reloadedBuilder
+          .getByRole('button', {
+            name: 'Synthetic Role Resume · Frontend Engineer · v2',
+            exact: true,
+          })
+          .click();
+        const reloadedSummary = reloadedBuilder.getByLabel('Professional summary');
+        await reloadedSummary.waitFor();
+        assert.equal(
+          await reloadedBuilder.getByLabel('Full name').inputValue(),
+          'Synthetic Candidate',
+        );
+        assert.equal(await reloadedSummary.inputValue(), 'Builds accessible React interfaces.');
+        assert.equal(
+          await reloadedBuilder.getByLabel('Email').inputValue(),
+          'synthetic.candidate@example.test',
+        );
+        assert.equal(await reloadedBuilder.getByLabel('Phone').inputValue(), '+1 555 010 0100');
+        assert.equal(
+          await reloadedBuilder.getByLabel('Location').first().inputValue(),
+          'Hyderabad',
+          'candidate contact location persists separately from role and education locations',
+        );
+        assert.equal(
+          await reloadedBuilder.getByLabel('Role title').inputValue(),
+          'Software Engineer',
+        );
+        assert.equal(await reloadedBuilder.getByLabel('Company').inputValue(), 'Synthetic Systems');
+        assert.equal(
+          await reloadedBuilder.getByLabel('Achievement bullets (one per line)').inputValue(),
+          'Built a candidate-reported feature.',
+        );
+        assert.equal(
+          await reloadedBuilder.getByLabel('Institution').inputValue(),
+          'Example University',
+        );
+        assert.equal(
+          await reloadedBuilder.getByLabel('Qualification').inputValue(),
+          'Bachelor of Engineering',
+        );
+        assert.equal(
+          await reloadedBuilder.getByLabel('Skills (comma-separated)').inputValue(),
+          'React, TypeScript',
+        );
+        assert.equal(await reloadedBuilder.getByLabel('Template').inputValue(), 'modern');
+        assert.equal(
+          await reloadedBuilder
+            .getByRole('complementary', { name: 'Resume review tools' })
+            .locator('article')
+            .first()
+            .getAttribute('data-template'),
+          'modern',
+        );
+        const [resumePdfDownload] = await Promise.all([
+          page.waitForEvent('download'),
+          reloadedBuilder.getByRole('button', { name: 'Download PDF' }).click(),
+        ]);
+        assert.equal(
+          resumePdfDownload.suggestedFilename(),
+          'Synthetic Role Resume - Frontend Engineer.pdf',
+        );
+        const resumePdfPath = await resumePdfDownload.path();
+        assert.ok(resumePdfPath, 'the application-managed PDF download has a file');
+        const resumePdfBytes = await readFile(resumePdfPath);
+        assert.equal(resumePdfBytes.subarray(0, 5).toString('ascii'), '%PDF-');
+        const resumePdfContent = resumePdfBytes.toString('latin1');
+        assert.match(
+          resumePdfContent,
+          /\/Title\s*\(Synthetic Role Resume - Frontend Engineer\)/,
+          'the downloaded PDF carries its resume and target role in document metadata',
+        );
+        assert.ok(
+          (resumePdfContent.match(/\/Type\s*\/Page\b/g) ?? []).length >= 1,
+          'the downloaded PDF contains at least one page',
+        );
+        const extractedResumePdfText = await extractText(resumePdfBytes);
+        for (const expectedText of [
+          'Synthetic Candidate',
+          'Frontend Engineer',
+          'Builds accessible React interfaces.',
+          'Synthetic Systems',
+          'Built a candidate-reported feature.',
+          'Example University',
+          'React',
+          'TypeScript',
+        ]) {
+          assert.ok(
+            extractedResumePdfText.includes(expectedText),
+            `the downloaded PDF includes candidate-authored text: ${expectedText}`,
+          );
+        }
+        assert.match(
+          await reloadedBuilder.getByRole('status').last().innerText(),
+          /PDF download started/,
+        );
+        await reloadedBuilder.getByLabel('Full name').fill('తెలుగు పేరు');
+        await reloadedBuilder.getByRole('button', { name: 'Download PDF' }).click();
+        assert.match(
+          await reloadedBuilder.getByRole('status').last().innerText(),
+          /Use Print or save as PDF to retain other scripts/,
+        );
+        await reloadedBuilder.getByLabel('Full name').fill('Synthetic Candidate');
+        await page.evaluate(() => {
+          const testWindow = window as Window & { __careerScopePrintTitle?: string };
+          const originalPrint = window.print;
+          window.print = () => {
+            testWindow.__careerScopePrintTitle = document.title;
+          };
+          window.addEventListener(
+            'afterprint',
+            () => {
+              window.print = originalPrint;
+            },
+            { once: true },
+          );
+        });
+        await reloadedBuilder.getByRole('button', { name: 'Print or save as PDF' }).click();
+        assert.equal(
+          await page.evaluate(
+            () => (window as Window & { __careerScopePrintTitle?: string }).__careerScopePrintTitle,
+          ),
+          'Synthetic Role Resume - Frontend Engineer',
+        );
+        assert.equal(
+          await page.title(),
+          'Synthetic Role Resume - Frontend Engineer',
+          'the role-specific title remains active while the print dialog is open',
+        );
+        if (engine === 'chromium') {
+          await page.emulateMedia({ media: 'print' });
+          const pdf = await page.pdf({ format: 'A4', printBackground: true });
+          const pdfContent = pdf.toString('latin1');
+          assert.equal(pdf.subarray(0, 5).toString('ascii'), '%PDF-');
+          assert.match(
+            pdfContent,
+            /\/Title\s*\(Synthetic Role Resume - Frontend Engineer\)/,
+            'the generated PDF carries the resume name and target role as its title',
+          );
+          assert.match(pdfContent, /\/Type\s*\/Page\b/, 'the generated PDF contains a page');
+          await page.emulateMedia({ media: 'screen' });
+        }
+        await page.evaluate(() => window.dispatchEvent(new Event('afterprint')));
+        assert.notEqual(
+          await page.title(),
+          'Synthetic Role Resume - Frontend Engineer',
+          'the document title is restored after printing',
+        );
+        await reloadedBuilder.getByRole('button', { name: 'Create role variant' }).click();
+        assert.equal(
+          await reloadedBuilder.getByLabel('Professional summary').inputValue(),
+          'Builds accessible React interfaces.',
+        );
+        await reloadedBuilder.getByLabel('Target role').fill('Product Engineer');
+        await reloadedBuilder.getByLabel('Resume name').fill('Synthetic Product Engineer Resume');
+        const variantCreated = page.waitForResponse(
+          (response) =>
+            response.url().endsWith('/api/resume-drafts') && response.request().method() === 'POST',
+        );
+        await reloadedBuilder.getByRole('button', { name: 'Create role variant' }).last().click();
+        const variantResponse = await variantCreated;
+        assert.equal(variantResponse.status(), 201);
+        assert.equal(
+          ((await variantResponse.json()) as { variantOfId: string | null }).variantOfId,
+          draftId,
+        );
+        assert.equal(
+          await reloadedBuilder.getByLabel('Target role').getAttribute('required'),
+          '',
+          'a saved linked variant keeps its target role required when edited',
+        );
+        await reloadedBuilder
+          .getByRole('button', { name: /Synthetic Product Engineer Resume.*Variant/ })
+          .waitFor();
+        await reloadedBuilder
+          .getByLabel('Professional summary')
+          .fill('Current variant summary for comparison.');
+        await reloadedBuilder.getByLabel('Achievement bullets (one per line)').fill('');
+        await reloadedBuilder.getByRole('button', { name: 'Compare with saved version' }).focus();
+        await page.keyboard.press('Enter');
+        const comparison = reloadedBuilder.getByRole('group', {
+          name: 'Saved and current resume versions',
+        });
+        const savedVersion = comparison.locator('section').filter({ hasText: 'Saved version' });
+        const currentVersion = comparison.locator('section').filter({ hasText: 'Current edits' });
+        await comparison.getByRole('heading', { name: 'Saved version', exact: true }).waitFor();
+        await comparison.getByRole('heading', { name: 'Current edits', exact: true }).waitFor();
+        await comparison
+          .getByText('Builds accessible React interfaces.', { exact: true })
+          .waitFor();
+        await comparison
+          .getByText('Current variant summary for comparison.', { exact: true })
+          .waitFor();
+        await comparison
+          .locator('mark')
+          .filter({ hasText: 'Builds accessible React interfaces.' })
+          .waitFor();
+        await comparison
+          .locator('mark')
+          .filter({ hasText: 'Current variant summary for comparison.' })
+          .waitFor();
+        await savedVersion
+          .locator('mark')
+          .filter({ hasText: 'Built a candidate-reported feature.' })
+          .waitFor();
+        assert.equal(
+          await currentVersion
+            .getByText('Built a candidate-reported feature.', { exact: true })
+            .count(),
+          0,
+          'removed saved content remains highlighted only in the saved version',
+        );
+        await page.emulateMedia({ media: 'print' });
+        assert.equal(await page.evaluate(() => matchMedia('print').matches), true);
+        // Print CSS hides the comparison group from the accessibility tree,
+        // so inspect its DOM node directly after validating its role above.
+        const printedComparison = page.locator(
+          '[role="group"][aria-label="Saved and current resume versions"]',
+        );
+        const printedHighlights = await printedComparison.locator('mark').evaluateAll((elements) =>
+          elements.map((element) => ({
+            text: element.textContent,
+            background: getComputedStyle(element).backgroundColor,
+          })),
+        );
+        const printedVersionVisibility = await printedComparison
+          .locator(':scope > section')
+          .evaluateAll((sections) =>
+            sections.map((section) => {
+              const heading = section.querySelector(':scope > h4')?.textContent?.trim() ?? '';
+              const article = section.querySelector(':scope > article');
+              if (!article) throw new Error(`Comparison article is missing for ${heading}`);
+              return { heading, visibility: getComputedStyle(article).visibility };
+            }),
+          );
+        assert.deepEqual(printedVersionVisibility, [
+          { heading: 'Saved version', visibility: 'hidden' },
+          { heading: 'Current edits', visibility: 'visible' },
+        ]);
+        assert.equal(
+          printedHighlights.some(
+            (highlight) =>
+              highlight.text === 'Current variant summary for comparison.' &&
+              highlight.background === 'rgba(0, 0, 0, 0)',
+          ),
+          true,
+          `changed text stays highlighted in comparison while print removes the highlight background; observed ${JSON.stringify(printedHighlights)}`,
+        );
+        await page.emulateMedia({ media: 'screen' });
         await page.getByLabel('Full Name', { exact: true }).waitFor();
         const uploadInput = page.getByLabel('Upload picture');
         await uploadInput.focus();
@@ -3441,9 +3939,44 @@ try {
         await page.getByRole('button', { name: 'Retry failed sources', exact: true }).count(),
         0,
       );
-      assert.equal(resultBody.jobs[0].data.title, 'Scored React Engineer');
-      assert.equal(resultBody.jobs[1].data.match, null);
-      await page.getByText('Not scored', { exact: true }).waitFor();
+      const matchFirstTitle = resultBody.jobs[0].data.title;
+      assert.deepEqual(
+        resultBody.jobs
+          .map(
+            (job: { data: { match: { confidence: string } | null } }) => job.data.match?.confidence,
+          )
+          .sort(),
+        ['high', 'low'],
+      );
+      const scoredResult = resultBody.jobs.find(
+        (job: { data: { title: string } }) => job.data.title === 'Scored React Engineer',
+      );
+      assert.ok(scoredResult);
+      const resultSort = page.getByLabel('Sort results');
+      await resultSort.selectOption('evidence');
+      await page
+        .getByText(
+          'Description confidence reflects available text only. It does not verify the employer or posting.',
+          { exact: true },
+        )
+        .waitFor();
+      assert.equal(
+        await page.locator('details.job h3').first().innerText(),
+        'Senior React Engineer',
+        `${engine} description-confidence sorting should put the full-description result first`,
+      );
+      await resultSort.selectOption('newest');
+      assert.equal(
+        await page.locator('details.job h3').first().innerText(),
+        'Senior React Engineer',
+        `${engine} newest sorting should put the later posting first`,
+      );
+      await resultSort.selectOption('match');
+      assert.equal(
+        await page.locator('details.job h3').first().innerText(),
+        matchFirstTitle,
+        `${engine} match sorting should put the highest match score first`,
+      );
       await page.getByRole('heading', { name: 'Scored React Engineer', exact: true }).click();
       await page.getByRole('region', { name: 'Match evidence' }).waitFor();
       // CS-18 copy: the low-confidence flag now explains itself instead of
@@ -3457,13 +3990,13 @@ try {
         .locator('details.job')
         .filter({ has: page.getByRole('heading', { name: 'Scored React Engineer', exact: true }) });
       const feedbackReason = scoredJobCard.getByLabel('Report a posting issue');
-      const priorFeedbackReason = resultBody.jobs[0].feedbackReason;
+      const priorFeedbackReason = scoredResult.feedbackReason;
       const firstFeedbackReason =
         priorFeedbackReason === 'suspicious' ? 'irrelevant' : 'suspicious';
       await feedbackReason.selectOption(firstFeedbackReason);
       const firstFeedbackResponse = page.waitForResponse(
         (response) =>
-          response.url().includes(`/api/search-jobs/${resultBody.jobs[0].id}/feedback`) &&
+          response.url().includes(`/api/search-jobs/${scoredResult.id}/feedback`) &&
           response.request().method() === 'PUT',
       );
       await scoredJobCard
@@ -3483,16 +4016,16 @@ try {
         .waitFor();
       let feedbackRows = await database.pool.query(
         'SELECT owner_id, job_id, reason FROM job_feedback WHERE owner_id = $1 AND job_id = $2',
-        [ownerId, resultBody.jobs[0].id],
+        [ownerId, scoredResult.id],
       );
       assert.deepEqual(feedbackRows.rows, [
-        { owner_id: ownerId, job_id: resultBody.jobs[0].id, reason: firstFeedbackReason },
+        { owner_id: ownerId, job_id: scoredResult.id, reason: firstFeedbackReason },
       ]);
       const secondFeedbackReason = firstFeedbackReason === 'suspicious' ? 'incorrect' : 'duplicate';
       await feedbackReason.selectOption(secondFeedbackReason);
       const secondFeedbackResponse = page.waitForResponse(
         (response) =>
-          response.url().includes(`/api/search-jobs/${resultBody.jobs[0].id}/feedback`) &&
+          response.url().includes(`/api/search-jobs/${scoredResult.id}/feedback`) &&
           response.request().method() === 'PUT',
       );
       await scoredJobCard.getByRole('button', { name: 'Update feedback', exact: true }).click();
@@ -3507,10 +4040,10 @@ try {
         .waitFor();
       feedbackRows = await database.pool.query(
         'SELECT owner_id, job_id, reason FROM job_feedback WHERE owner_id = $1 AND job_id = $2',
-        [ownerId, resultBody.jobs[0].id],
+        [ownerId, scoredResult.id],
       );
       assert.deepEqual(feedbackRows.rows, [
-        { owner_id: ownerId, job_id: resultBody.jobs[0].id, reason: secondFeedbackReason },
+        { owner_id: ownerId, job_id: scoredResult.id, reason: secondFeedbackReason },
       ]);
       assert.equal(
         (await database.pool.query('SELECT id FROM job_feedback WHERE owner_id = $1', [ownerId]))
@@ -3525,22 +4058,16 @@ try {
           .filter({ hasText: 'Senior React Engineer' })
           .getByRole('link', { name: 'Remote OK', exact: true })
           .getAttribute('href'),
-        'https://remoteok.com/remote-jobs/synthetic',
+        'https://remoteok.com/remote-jobs/full-description',
       );
-      assert.equal(
-        await page.getByRole('link', { name: 'Himalayas', exact: true }).getAttribute('href'),
-        'https://himalayas.app/jobs/synthetic',
-      );
-      await page
-        .getByText('Build accessible interfaces using React and TypeScript.', { exact: true })
-        .waitFor();
+      await page.getByText(/Build accessible interfaces using React and TypeScript\./).waitFor();
       assert.equal(
         await page
           .locator('details')
           .filter({ hasText: 'Senior React Engineer' })
           .getByRole('link', { name: 'Open Posting' })
           .getAttribute('href'),
-        'https://example.test/apply',
+        'https://example.test/full-description',
       );
       for (const width of responsiveWidthsEndingAt(320)) {
         await page.setViewportSize({ width, height: 900 });
@@ -3895,11 +4422,14 @@ try {
         postingHrefs.length > 0,
         `${engine} saved lead details exposes no posting link at all`,
       );
-      assert.deepEqual([...new Set(postingHrefs)], ['https://himalayas.app/jobs/synthetic']);
+      assert.deepEqual(
+        [...new Set(postingHrefs)],
+        ['https://remoteok.com/remote-jobs/full-description'],
+      );
       const leadRepository = new LeadRepository(database);
       const linkedLead = await leadRepository.get(ownerId, leadId);
       assert.equal(linkedLead?.status, 'saved');
-      const postingUrl = 'https://himalayas.app/jobs/synthetic';
+      const postingUrl = 'https://remoteok.com/remote-jobs/full-description';
       const interceptPosting = (route: import('playwright').Route) =>
         route.fulfill({
           status: 200,
@@ -5760,7 +6290,7 @@ try {
   });
   try {
     await testApp.listen({ host: '127.0.0.1', port: API_PORT });
-    for (const [engine, browserType] of notificationLifecycleOnly || profilePhotoOnly
+    for (const [engine, browserType] of notificationLifecycleOnly || focusedProfileUiOnly
       ? []
       : uiBrowsers) {
       const browser = await browserType.launch();

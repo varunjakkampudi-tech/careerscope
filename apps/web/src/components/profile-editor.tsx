@@ -8,6 +8,7 @@ import { PROFILE_PHOTO_UPDATED_EVENT } from '../lib/profile-photo';
 import { useOwner, ownerKey } from '../lib/session';
 import styles from './profile-editor.module.css';
 import ResumePanel, { type ResumeProposal } from './resume-panel';
+import ResumeBuilder from './resume-builder';
 import { ErrorState, LoadingState } from './ui-states';
 
 const maximumProfilePhotoUploadBytes = 5 * 1024 * 1024;
@@ -923,6 +924,7 @@ export default function ProfileEditor({
           setSaved(false);
         }}
       />
+      <ResumeBuilder csrf={csrf} />
       {profile.isPending ? (
         <LoadingState variant="inline" message="Loading profile..." />
       ) : profile.isError ? (

@@ -11,6 +11,7 @@
   "dependencies": {
     "@careerscope/shared": "3.0.0",
     "@tanstack/react-query": "^5.62.7",
+    "jspdf": "^4.2.1",
     "lucide-react": "^1.43.0",
     "next": "16.4.5",
     "react": "19.2.8",
@@ -24,6 +25,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
     "eslint-plugin-jsx-a11y": "^6.10.0",
+    "pdf-parse": "^2.1.0",
+    "pdfjs-dist": "^5.4.296",
     "typescript": "^5"
   }
 }

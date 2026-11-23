@@ -70,12 +70,12 @@ session, never from the request body or path.
 
 ### Server limits
 
-| Setting             | Value                                                          |
-| ------------------- | -------------------------------------------------------------- |
-| `bodyLimit`         | 16 KiB (resume upload routes raise this to the resume maximum) |
-| `requestTimeout`    | 15 s                                                           |
-| `connectionTimeout` | 10 s                                                           |
-| `trustProxy`        | `false` — forwarded headers are never believed                 |
+| Setting             | Value                                                                                                  |
+| ------------------- | ------------------------------------------------------------------------------------------------------ |
+| `bodyLimit`         | 16 KiB (resume upload routes raise this to the resume maximum; resume draft JSON is capped at 256 KiB) |
+| `requestTimeout`    | 15 s                                                                                                   |
+| `connectionTimeout` | 10 s                                                                                                   |
+| `trustProxy`        | `false` — forwarded headers are never believed                                                         |
 
 ### Error envelope
 
@@ -243,14 +243,19 @@ Preparation is deterministic. External AI elaboration has been removed.
 
 ### Resumes
 
-| Method | Path                       | Auth | CSRF | Rate limit  |
-| ------ | -------------------------- | ---- | ---- | ----------- |
-| GET    | `/api/resumes`             | yes  | no   | —           |
-| POST   | `/api/resumes`             | yes  | yes  | 5 / hour    |
-| GET    | `/api/resumes/:id`         | yes  | no   | —           |
-| POST   | `/api/resumes/:id/recover` | yes  | yes  | 10 / hour   |
-| POST   | `/api/resumes/:id/cancel`  | yes  | yes  | 20 / minute |
-| DELETE | `/api/resumes/:id`         | yes  | yes  | 20 / minute |
+| Method | Path                             | Auth | CSRF | Rate limit   |
+| ------ | -------------------------------- | ---- | ---- | ------------ |
+| GET    | `/api/resumes`                   | yes  | no   | —            |
+| POST   | `/api/resumes`                   | yes  | yes  | 5 / hour     |
+| GET    | `/api/resumes/:id`               | yes  | no   | —            |
+| POST   | `/api/resumes/:id/recover`       | yes  | yes  | 10 / hour    |
+| POST   | `/api/resumes/:id/cancel`        | yes  | yes  | 20 / minute  |
+| DELETE | `/api/resumes/:id`               | yes  | yes  | 20 / minute  |
+| GET    | `/api/resume-drafts`             | yes  | no   | 120 / minute |
+| POST   | `/api/resume-drafts`             | yes  | yes  | 30 / minute  |
+| PUT    | `/api/resume-drafts/:id`         | yes  | yes  | 30 / minute  |
+| POST   | `/api/resume-drafts/:id/approve` | yes  | yes  | 30 / minute  |
+| DELETE | `/api/resume-drafts/:id`         | yes  | yes  | 30 / minute  |
 
 `POST /api/resumes` takes `application/octet-stream`, requires an
 `Idempotency-Key` header, and returns `202` with the upload id and status. An
@@ -274,6 +279,15 @@ which is true only when the server has the storage cancel capability and the
 status is `uploading` or `cancelling`. The response also carries
 `cancellationEnabled`. The web panel shows the cancel control only when
 `cancellable` is true.
+
+Editable resume drafts are separate from uploaded source files. Draft writes
+are owner-scoped, revision-guarded and bounded to 256 KiB JSON. The candidate
+chooses a template and enters each resume fact; there is no automatic factual
+inference. `approve` records the current revision, and any later content edit
+clears that approval timestamp. Creating a role variant copies the selected
+draft's content and template, requires a new target role, and stores an
+immutable `variantOfId` link to a draft owned by the same candidate. Deleting a
+source draft preserves its variants and clears their source link.
 
 `POST /api/resumes/:id/cancel` is synchronous and owner-scoped. It moves an
 `uploading` upload to `cancelling`, writes the storage cancellation marker, then

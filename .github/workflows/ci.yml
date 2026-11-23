@@ -52,6 +52,7 @@ on:
         options:
           - full
           - notification-panel-close-before-mutation
+          - resume-builder
 
 permissions:
   contents: read
@@ -226,10 +227,11 @@ jobs:
         run: |
           test "$SELECTED_SUITE" = browser
           test "$CAREERSCOPE_UI_BROWSER" = chromium
-          test "$CAREERSCOPE_UI_SCENARIO" = notification-panel-close-before-mutation
+          test "$CAREERSCOPE_UI_SCENARIO" = notification-panel-close-before-mutation ||
+            test "$CAREERSCOPE_UI_SCENARIO" = resume-builder
 
       - name: Validate passive lifecycle instrumentation
-        if: env.CAREERSCOPE_UI_SCENARIO != ''
+        if: env.CAREERSCOPE_UI_SCENARIO == 'notification-panel-close-before-mutation'
         run: node --import tsx --test scripts/jobs/notification-lifecycle.test.mjs
 
       - name: Create synthetic ephemeral test configuration

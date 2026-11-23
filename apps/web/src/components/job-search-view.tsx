@@ -32,6 +32,7 @@ import {
   type SearchDetail,
 } from '@/lib/api-schemas';
 import { localizedText, useInterfaceLocale } from '@/lib/locale';
+import { sortSearchJobs, type JobSortMode } from '@/lib/job-search-sort';
 import { ownerKey, useSession } from '@/lib/session';
 import { SaveJob } from '@/components/saved-leads';
 import MatchEvidence from '@/components/match-evidence';
@@ -159,6 +160,7 @@ function JobSearchWorkspace() {
   const owner = session.data?.owner;
   const [selected, setSelected] = useState<string | null>(null);
   const [filter, setFilter] = useState('');
+  const [sortMode, setSortMode] = useState<JobSortMode>('match');
   const [sourceSelection, setSourceSelection] = useState<CreateSearch['sources'] | null>(null);
   const [useProfileTitles, setUseProfileTitles] = useState(false);
 
@@ -314,11 +316,12 @@ function JobSearchWorkspace() {
   const hasAvailableSelection = sources.some((source) =>
     availableSources.has(source as LaunchSource),
   );
-  const jobs = (
+  const jobs = sortSearchJobs(
     detail.data?.jobs.filter(({ data }) =>
       `${data.title} ${data.company} ${data.location}`.toLowerCase().includes(filtered),
-    ) ?? []
-  ).sort((a, b) => (b.data.match?.score ?? -1) - (a.data.match?.score ?? -1));
+    ) ?? [],
+    sortMode,
+  );
 
   return (
     <div className="workspace">
@@ -646,14 +649,32 @@ function JobSearchWorkspace() {
                 </button>
               )}
               {detail.data.jobs.length > 0 && (
-                <label className="filter">
-                  <span className="sr-only">Filter results</span>
-                  <input
-                    placeholder="Filter results"
-                    value={filter}
-                    onChange={(event) => setFilter(event.target.value)}
-                  />
-                </label>
+                <div className={styles.resultControls}>
+                  <label className="filter">
+                    <span className="sr-only">Filter results</span>
+                    <input
+                      placeholder="Filter results"
+                      value={filter}
+                      onChange={(event) => setFilter(event.target.value)}
+                    />
+                  </label>
+                  <label className={styles.sortControl}>
+                    <span>{t('sortResults')}</span>
+                    <select
+                      value={sortMode}
+                      onChange={(event) => setSortMode(event.target.value as JobSortMode)}
+                    >
+                      <option value="match">{t('sortBestMatch')}</option>
+                      <option value="evidence">{t('sortEvidenceQuality')}</option>
+                      <option value="newest">{t('sortNewest')}</option>
+                    </select>
+                  </label>
+                  {sortMode === 'evidence' && (
+                    <p className={styles.sortNote} role="note">
+                      {t('sortEvidenceLimit')}
+                    </p>
+                  )}
+                </div>
               )}
               {jobs.length === 0 && ['completed', 'partial'].includes(detail.data.status) && (
                 <div lang={locale}>

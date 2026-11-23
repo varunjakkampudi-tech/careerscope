@@ -1,0 +1,3 @@
+ALTER TABLE "resume_drafts" ADD COLUMN "variant_of_id" uuid;--> statement-breakpoint
+ALTER TABLE "resume_drafts" ADD CONSTRAINT "resume_drafts_variant_of_id_resume_drafts_id_fk" FOREIGN KEY ("variant_of_id") REFERENCES "public"."resume_drafts"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "resume_drafts_variant_parent" ON "resume_drafts" USING btree ("owner_id","variant_of_id");

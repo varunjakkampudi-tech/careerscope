@@ -235,6 +235,45 @@ const lead = object({
   createdAt: timestamp,
   updatedAt: timestamp,
 });
+const resumeDraftEntry = object({
+  id: text({ minLength: 1, maxLength: 80 }),
+  role: text({ minLength: 1, maxLength: 120 }),
+  company: text({ minLength: 1, maxLength: 120 }),
+  location: nullable(text({ maxLength: 120 })),
+  startDate: nullable(text({ maxLength: 32 })),
+  endDate: nullable(text({ maxLength: 32 })),
+  bullets: array(text({ minLength: 1, maxLength: 600 }), { maxItems: 12 }),
+});
+const resumeDraftEducation = object({
+  id: text({ minLength: 1, maxLength: 80 }),
+  institution: text({ minLength: 1, maxLength: 160 }),
+  qualification: text({ minLength: 1, maxLength: 120 }),
+  location: nullable(text({ maxLength: 120 })),
+  endDate: nullable(text({ maxLength: 32 })),
+});
+const resumeDraftContent = object({
+  fullName: text({ minLength: 1, maxLength: 120 }),
+  email: nullable(text({ format: 'email', maxLength: 254 })),
+  phone: nullable(text({ maxLength: 40 })),
+  location: nullable(text({ maxLength: 120 })),
+  summary: text({ maxLength: 2400 }),
+  experience: array(resumeDraftEntry, { maxItems: 20 }),
+  education: array(resumeDraftEducation, { maxItems: 12 }),
+  skills: array(text({ minLength: 1, maxLength: 80 }), { maxItems: 60 }),
+});
+const resumeDraft = object({
+  id: uuid,
+  ownerId: uuid,
+  variantOfId: nullable(uuid),
+  title: text({ maxLength: 120 }),
+  targetRole: nullable(text({ maxLength: 80 })),
+  template: text({ enum: ['classic', 'modern', 'compact'] }),
+  content: resumeDraftContent,
+  revision,
+  approvedAt: nullable(timestamp),
+  createdAt: timestamp,
+  updatedAt: timestamp,
+});
 const interviewContact = object({
   name: text({ minLength: 1, maxLength: 120 }),
   role: nullable(text({ maxLength: 120 })),
@@ -894,6 +933,60 @@ function contracts(options: {
       'Delete a settled resume and its stored object',
       { type: 'null' },
       { code: 204, failures: [400, 409, 429, 503], description: resumeDescription },
+    ),
+    'GET /api/resume-drafts': operation(
+      'List the authenticated candidate’s editable resume drafts',
+      object({ items: array(resumeDraft) }),
+      { failures: [429] },
+    ),
+    'POST /api/resume-drafts': operation(
+      'Create an editable resume draft with candidate-entered content',
+      resumeDraft,
+      {
+        code: 201,
+        body: object(
+          {
+            title: text({ minLength: 1, maxLength: 120 }),
+            targetRole: nullable(text({ minLength: 1, maxLength: 80 })),
+            template: text({ enum: ['classic', 'modern', 'compact'] }),
+            content: resumeDraftContent,
+            variantOfId: nullable(uuid),
+          },
+          ['title', 'targetRole', 'template', 'content'],
+        ),
+        failures: [400, 404, 429],
+        description:
+          'Stores only candidate-entered content. It does not infer work history or generate facts. Optional variantOfId copies a same-owner draft as a role variant; targetRole is required for variants.',
+      },
+    ),
+    'PUT /api/resume-drafts/:id': operation(
+      'Update an editable resume draft using optimistic concurrency',
+      resumeDraft,
+      {
+        body: object({
+          revision,
+          title: text({ minLength: 1, maxLength: 120 }),
+          targetRole: nullable(text({ minLength: 1, maxLength: 80 })),
+          template: text({ enum: ['classic', 'modern', 'compact'] }),
+          content: resumeDraftContent,
+        }),
+        failures: [400, 404, 409, 429],
+        description: 'Any content change clears the prior candidate approval timestamp.',
+      },
+    ),
+    'POST /api/resume-drafts/:id/approve': operation(
+      'Record the candidate’s explicit approval of the current resume draft revision',
+      resumeDraft,
+      {
+        body: object({ revision }),
+        failures: [400, 404, 409, 429],
+        description: 'Approval is revision-specific; any later content edit clears it.',
+      },
+    ),
+    'DELETE /api/resume-drafts/:id': operation(
+      'Delete an editable resume draft',
+      { type: 'null' },
+      { code: 204, failures: [400, 429] },
     ),
     'GET /api/leads': operation(
       'List saved leads by stage',
