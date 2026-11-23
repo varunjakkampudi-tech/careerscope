@@ -3960,8 +3960,8 @@ try {
       assert.equal(applicationRecord.applicationEvidence.method, 'Employer website');
       assert.equal(applicationRecord.applicationEvidence.source, 'Synthetic candidate report');
       assert.deepEqual(applicationRecord.tags, ['audit', 'preserve']);
-      const acknowledgementCard = openedLead.locator('section').filter({
-        has: page.getByRole('heading', { name: 'Employer Acknowledgement', exact: true }),
+      const acknowledgementCard = openedLead.getByRole('region', {
+        name: 'Employer acknowledgement record',
       });
       assert.equal(await acknowledgementCard.count(), 1);
       await acknowledgementCard
