@@ -1387,7 +1387,7 @@
         "apps/workers/search/src/collect.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Owner-scoped recent search outcomes include accepted counts, timestamp, and per-source duration when attempted; permission-blocked sources have no duration and the UI disclaims live provider availability. Exact head 16ad8cb4b29732733e4b595f08ba0a705c4ba59d passed all required Node 24 hosted CI jobs in run 45190079618. System-wide operational telemetry, alerting, and automated source suspension remain unimplemented; this user-history summary does not show live provider availability. No provider is activated. Independent review and owner checklist verification remain pending.",
+      "gap": "Owner-scoped recent search outcomes include accepted counts, timestamp, and per-source duration when attempted; permission-blocked sources have no duration and the UI disclaims live provider availability. Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 passed all three required Node 24 hosted CI jobs in run 45192426932. Independent ChatGPT review approved the scoped implementation at that exact head against base fad57ea3253024983f29183acefaee59328d0d01. System-wide operational telemetry, alerting, and automated source suspension after terms changes or repeated errors remain unimplemented; this user-history summary does not show live provider availability. No provider is activated. Owner checklist verification remains pending. This documentation evidence update needs its own exact-head CI and review.",
       "scopeDisposition": "in-scope"
     },
     {
