@@ -1516,12 +1516,13 @@
         "apps/api/src/app.ts",
         "apps/api/src/openapi.ts",
         "migrations/0007_stage06_job_feedback_moderation.sql",
+        "migrations/0008_job_feedback_review_revision.sql",
         "docs/API-SURFACE.md",
         "docs/PROGRESS.md"
       ],
       "tests": ["apps/api/src/job-feedback-moderation.integration.test.ts"],
       "externalEvidence": [],
-      "gap": "Admin-only API moderation queue and audited dispositions are implemented and the focused PostgreSQL integration test passes locally. Exact-head hosted CI and independent acceptance remain pending; no dedicated moderator UI is included in this implementation.",
+      "gap": "Admin-only API moderation queue and audited dispositions are implemented. The focused PostgreSQL integration test covers status-bound cursors, timestamp-tie pagination, CSRF, live role revocation, and stale candidate/moderator updates. Exact-head hosted CI and independent acceptance remain pending; no dedicated moderator UI is included in this implementation.",
       "scopeDisposition": "in-scope"
     },
     {

@@ -313,20 +313,20 @@ claim, not an ATS event. Opening the application URL never mutates the status.
 
 ### Interviews, notifications, feedback and sources
 
-| Method | Path                                 | Auth       | CSRF | Success                                                                       |
-| ------ | ------------------------------------ | ---------- | ---- | ----------------------------------------------------------------------------- |
-| GET    | `/api/leads/:id/interviews`          | yes        | no   | `200 { items: InterviewRound[] }`                                             |
-| POST   | `/api/leads/:id/interviews`          | yes        | yes  | `200 InterviewRound`                                                          |
-| PUT    | `/api/interviews/:id`                | yes        | yes  | `200 InterviewRound`; a stale `revision` is a 409                             |
-| GET    | `/api/notifications`                 | yes        | no   | `200 { items: [{ id, roundId, leadId, createdAt, readAt }], unreadCount }`    |
-| GET    | `/api/notifications/preferences`     | yes        | no   | `200 { interviewRemindersInAppEnabled }`                                      |
-| PUT    | `/api/notifications/preferences`     | yes        | yes  | `200 { interviewRemindersInAppEnabled }`                                      |
-| PUT    | `/api/notifications/:id/read`        | yes        | yes  | `204`; `404` for an unknown or foreign id                                     |
-| PUT    | `/api/search-jobs/:id/feedback`      | yes        | yes  | `200 { reason }`                                                              |
-| GET    | `/api/admin/job-feedback`            | yes, admin | no   | `200 { items: JobFeedbackReport[] }`; pending by default, maximum 50 per page |
-| PUT    | `/api/admin/job-feedback/:id/review` | yes, admin | yes  | `200 { reportId, status }`; status is `confirmed` or `dismissed`              |
-| GET    | `/api/job-sources`                   | yes        | no   | `200 { items: [{ id, label, available, unavailableReason }] }`                |
-| GET    | `/api/applications/export`           | yes        | no   | `200 text/csv`, privacy-scoped application records                            |
+| Method | Path                                 | Auth       | CSRF | Success                                                                                                           |
+| ------ | ------------------------------------ | ---------- | ---- | ----------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/leads/:id/interviews`          | yes        | no   | `200 { items: InterviewRound[] }`                                                                                 |
+| POST   | `/api/leads/:id/interviews`          | yes        | yes  | `200 InterviewRound`                                                                                              |
+| PUT    | `/api/interviews/:id`                | yes        | yes  | `200 InterviewRound`; a stale `revision` is a 409                                                                 |
+| GET    | `/api/notifications`                 | yes        | no   | `200 { items: [{ id, roundId, leadId, createdAt, readAt }], unreadCount }`                                        |
+| GET    | `/api/notifications/preferences`     | yes        | no   | `200 { interviewRemindersInAppEnabled }`                                                                          |
+| PUT    | `/api/notifications/preferences`     | yes        | yes  | `200 { interviewRemindersInAppEnabled }`                                                                          |
+| PUT    | `/api/notifications/:id/read`        | yes        | yes  | `204`; `404` for an unknown or foreign id                                                                         |
+| PUT    | `/api/search-jobs/:id/feedback`      | yes        | yes  | `200 { reason }`                                                                                                  |
+| GET    | `/api/admin/job-feedback`            | yes, admin | no   | `200 { items: JobFeedbackReport[] }`; pending by default, maximum 50 per page; cursor must match requested status |
+| PUT    | `/api/admin/job-feedback/:id/review` | yes, admin | yes  | `200 { reportId, status }`; status is `confirmed` or `dismissed`, stale revision returns `409`                    |
+| GET    | `/api/job-sources`                   | yes        | no   | `200 { items: [{ id, label, available, unavailableReason }] }`                                                    |
+| GET    | `/api/applications/export`           | yes        | no   | `200 text/csv`, privacy-scoped application records                                                                |
 
 The full field list of every body is in the OpenAPI document (`/api/docs/json`, built from
 `apps/api/src/openapi.ts`). `apps/api/src/error-handler.test.ts` fails when a registered route is
@@ -336,6 +336,10 @@ Moderator routes check the account's current database role on every request. The
 reporting candidate's account identifier and contact information. Review decisions are stored as
 current disposition plus append-only decision events; changing a candidate's reason reopens the
 report. Deleting the underlying search result removes its feedback and associated review history.
+Each queue row includes a `revision`; moderators must submit it as `expectedRevision` when
+reviewing. If the candidate changes the report after it was loaded, the review returns `409` and
+the moderator must reload. Pagination cursors are rejected when the referenced report no longer
+belongs to the requested queue status.
 
 ### Searches
 

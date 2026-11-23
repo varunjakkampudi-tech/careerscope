@@ -61,6 +61,27 @@ test(
           }),
         ],
       );
+      const additionalJobIds = [randomUUID(), randomUUID()];
+      for (let index = 0; index < additionalJobIds.length; index += 1) {
+        const additionalJobId = additionalJobIds[index]!;
+        await database.pool.query(
+          `INSERT INTO search_jobs (id, owner_id, run_id, fingerprint, data)
+           VALUES ($1, $2, $3, $4, $5::jsonb)`,
+          [
+            additionalJobId,
+            candidateId,
+            search.id,
+            `moderator-report-fixture-${index + 2}`,
+            JSON.stringify({
+              title: `React Engineer ${index + 2}`,
+              company: 'Synthetic Company',
+              location: 'Remote',
+              source: 'remoteok',
+              sourceUrl: `https://remoteok.com/remote-jobs/moderator-fixture-${index + 2}`,
+            }),
+          ],
+        );
+      }
 
       const auth = new Auth(database);
       const candidateCredentials = await auth.loginWithVerifiedEmail(`${candidateId}@example.test`);
@@ -95,6 +116,25 @@ test(
         payload: { reason: 'suspicious' },
       });
       assert.equal(candidateFeedback.statusCode, 200, candidateFeedback.body);
+      for (let index = 0; index < additionalJobIds.length; index += 1) {
+        const additionalJobId = additionalJobIds[index]!;
+        const feedbackSubmission: { statusCode: number; body: string } = await app.inject({
+          method: 'PUT',
+          url: `/api/search-jobs/${additionalJobId}/feedback`,
+          headers: {
+            origin,
+            cookie: candidateCookie,
+            'x-csrf-token': candidateSession.csrf,
+          },
+          payload: { reason: index === 0 ? 'incorrect' : 'unavailable' },
+        });
+        assert.equal(feedbackSubmission.statusCode, 200, feedbackSubmission.body);
+      }
+      await database.pool.query(
+        `UPDATE job_feedback SET created_at = '2026-01-02T00:00:00Z'
+         WHERE owner_id = $1`,
+        [candidateId],
+      );
 
       const denied = await app.inject({
         url: '/api/admin/job-feedback',
@@ -102,18 +142,80 @@ test(
       });
       assert.equal(denied.statusCode, 403);
       const queue = await app.inject({
-        url: '/api/admin/job-feedback?limit=1',
+        url: '/api/admin/job-feedback?limit=50',
         headers: { cookie: moderatorCookie },
       });
       assert.equal(queue.statusCode, 200, queue.body);
-      assert.equal(queue.json().items.length, 1);
-      const report = queue.json().items[0] as Record<string, unknown>;
+      assert.equal(queue.json().items.length, 3);
+      const report = queue
+        .json()
+        .items.find((item: Record<string, unknown>) => item.jobId === jobId) as
+        Record<string, unknown> | undefined;
+      assert.ok(report);
       assert.equal(report.reason, 'suspicious');
       assert.equal(report.title, 'React Engineer');
       assert.equal(report.company, 'Synthetic Company');
       assert.equal('ownerId' in report, false);
       assert.equal('email' in report, false);
       assert.equal('candidateEmail' in report, false);
+
+      const firstPage = await app.inject({
+        url: '/api/admin/job-feedback?limit=1',
+        headers: { cookie: moderatorCookie },
+      });
+      assert.equal(firstPage.json().items.length, 1);
+      const firstPageId = firstPage.json().items[0].reportId as string;
+      const secondPage = await app.inject({
+        url: `/api/admin/job-feedback?limit=1&before=${firstPageId}`,
+        headers: { cookie: moderatorCookie },
+      });
+      assert.equal(secondPage.statusCode, 200, secondPage.body);
+      assert.equal(secondPage.json().items.length, 1);
+      const secondPageId = secondPage.json().items[0].reportId as string;
+      assert.notEqual(secondPageId, firstPageId);
+      const thirdPage = await app.inject({
+        url: `/api/admin/job-feedback?limit=1&before=${secondPageId}`,
+        headers: { cookie: moderatorCookie },
+      });
+      assert.equal(thirdPage.statusCode, 200, thirdPage.body);
+      assert.equal(thirdPage.json().items.length, 1);
+      assert.notEqual(thirdPage.json().items[0].reportId, firstPageId);
+      assert.notEqual(thirdPage.json().items[0].reportId, secondPageId);
+      assert.equal(
+        (
+          await app.inject({
+            url: `/api/admin/job-feedback?status=confirmed&before=${firstPageId}`,
+            headers: { cookie: moderatorCookie },
+          })
+        ).statusCode,
+        400,
+        'a cursor from another status cannot change the result page boundary',
+      );
+      assert.equal(
+        (
+          await app.inject({
+            url: `/api/admin/job-feedback?before=${randomUUID()}`,
+            headers: { cookie: moderatorCookie },
+          })
+        ).statusCode,
+        400,
+        'unknown cursor ids are rejected',
+      );
+
+      const missingCsrf = await app.inject({
+        method: 'PUT',
+        url: `/api/admin/job-feedback/${report.reportId}/review`,
+        headers: { origin, cookie: moderatorCookie },
+        payload: { status: 'confirmed', expectedRevision: report.revision as number },
+      });
+      assert.equal(missingCsrf.statusCode, 403);
+      const invalidCsrf = await app.inject({
+        method: 'PUT',
+        url: `/api/admin/job-feedback/${report.reportId}/review`,
+        headers: { origin, cookie: moderatorCookie, 'x-csrf-token': 'invalid' },
+        payload: { status: 'confirmed', expectedRevision: report.revision as number },
+      });
+      assert.equal(invalidCsrf.statusCode, 403);
 
       const firstDecision = await app.inject({
         method: 'PUT',
@@ -122,6 +224,7 @@ test(
         payload: {
           status: 'confirmed',
           note: 'Source listing does not match the employer domain.',
+          expectedRevision: report.revision as number,
         },
       });
       assert.equal(firstDecision.statusCode, 200, firstDecision.body);
@@ -141,7 +244,7 @@ test(
         method: 'PUT',
         url: `/api/admin/job-feedback/${report.reportId}/review`,
         headers: moderatorHeaders,
-        payload: { status: 'dismissed' },
+        payload: { status: 'dismissed', expectedRevision: report.revision as number },
       });
       assert.equal(secondDecision.statusCode, 200, secondDecision.body);
       assert.equal(
@@ -170,9 +273,70 @@ test(
         url: '/api/admin/job-feedback',
         headers: { cookie: moderatorCookie },
       });
-      assert.equal(pendingAgain.json().items.length, 1);
-      assert.equal(pendingAgain.json().items[0].reason, 'incorrect');
-      assert.equal(pendingAgain.json().items[0].reviewStatus, null);
+      assert.equal(pendingAgain.json().items.length, 3);
+      const refreshed = pendingAgain
+        .json()
+        .items.find((item: Record<string, unknown>) => item.reportId === report.reportId) as
+        Record<string, unknown> | undefined;
+      assert.ok(refreshed);
+      assert.equal(refreshed.reason, 'incorrect');
+      assert.equal(refreshed.reviewStatus, null);
+      const changedCursorPage = await app.inject({
+        url: `/api/admin/job-feedback?status=confirmed&before=${report.reportId}`,
+        headers: { cookie: moderatorCookie },
+      });
+      assert.equal(changedCursorPage.statusCode, 400);
+      assert.equal(
+        (
+          await app.inject({
+            url: `/api/admin/job-feedback?status=pending&before=${report.reportId}`,
+            headers: { cookie: moderatorCookie },
+          })
+        ).statusCode,
+        200,
+        'a cursor whose report status changed to pending is usable only for pending results',
+      );
+
+      const [concurrentCandidateUpdate, concurrentModeratorReview] = await Promise.all([
+        app.inject({
+          method: 'PUT',
+          url: `/api/search-jobs/${jobId}/feedback`,
+          headers: {
+            origin,
+            cookie: candidateCookie,
+            'x-csrf-token': candidateSession.csrf,
+          },
+          payload: { reason: 'unavailable' },
+        }),
+        app.inject({
+          method: 'PUT',
+          url: `/api/admin/job-feedback/${report.reportId}/review`,
+          headers: moderatorHeaders,
+          payload: { status: 'confirmed', expectedRevision: refreshed.revision as number },
+        }),
+      ]);
+      assert.equal(concurrentCandidateUpdate.statusCode, 200, concurrentCandidateUpdate.body);
+      assert.ok([200, 409].includes(concurrentModeratorReview.statusCode));
+      const afterConcurrentRace = await app.inject({
+        url: '/api/admin/job-feedback',
+        headers: { cookie: moderatorCookie },
+      });
+      const racedReport = afterConcurrentRace
+        .json()
+        .items.find((item: Record<string, unknown>) => item.reportId === report.reportId);
+      assert.equal(racedReport.reason, 'unavailable');
+      assert.equal(
+        racedReport.reviewStatus,
+        null,
+        'a disposition for a superseded reason can never remain current',
+      );
+      const staleRevisionReview = await app.inject({
+        method: 'PUT',
+        url: `/api/admin/job-feedback/${report.reportId}/review`,
+        headers: moderatorHeaders,
+        payload: { status: 'confirmed', expectedRevision: refreshed.revision as number },
+      });
+      assert.equal(staleRevisionReview.statusCode, 409, staleRevisionReview.body);
 
       const docs = await app.inject({
         url: '/api/docs/json',
@@ -192,6 +356,19 @@ test(
         payload: { status: 'dismissed' },
       });
       assert.equal(candidateCanNotReview.statusCode, 403);
+      await database.pool.query("UPDATE users SET role = 'candidate' WHERE id = $1", [moderatorId]);
+      const revokedModeratorRead = await app.inject({
+        url: '/api/admin/job-feedback',
+        headers: { cookie: moderatorCookie },
+      });
+      assert.equal(revokedModeratorRead.statusCode, 403);
+      const revokedModeratorReview = await app.inject({
+        method: 'PUT',
+        url: `/api/admin/job-feedback/${report.reportId}/review`,
+        headers: moderatorHeaders,
+        payload: { status: 'dismissed', expectedRevision: racedReport.revision as number },
+      });
+      assert.equal(revokedModeratorReview.statusCode, 403);
     } finally {
       await app?.close();
       await database.close();

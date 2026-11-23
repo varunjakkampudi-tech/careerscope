@@ -384,6 +384,7 @@ export const jobFeedback = pgTable(
     reason: text('reason').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+    revision: integer('revision').default(1).notNull(),
   },
   (table) => [
     foreignKey({
@@ -396,6 +397,7 @@ export const jobFeedback = pgTable(
       'job_feedback_reason_valid',
       sql`${table.reason} IN ('irrelevant', 'duplicate', 'incorrect', 'unavailable', 'suspicious')`,
     ),
+    check('job_feedback_revision_positive', sql`${table.revision} > 0`),
   ],
 );
 

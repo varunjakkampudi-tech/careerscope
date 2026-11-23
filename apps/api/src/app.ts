@@ -183,6 +183,7 @@ const jobFeedbackReviewSchema = z
   .object({
     status: jobFeedbackReviewStatusSchema,
     note: z.string().trim().max(1000).optional(),
+    expectedRevision: z.number().int().positive(),
   })
   .strict();
 const notificationPreferencesUpdateSchema = z
@@ -2070,7 +2071,7 @@ export async function createApp(
         `INSERT INTO job_feedback (id, owner_id, job_id, reason)
          SELECT $1, owner_id, id, $3 FROM search_jobs WHERE owner_id = $2 AND id = $4
          ON CONFLICT (owner_id, job_id) DO UPDATE
-         SET reason = EXCLUDED.reason, updated_at = now()
+         SET reason = EXCLUDED.reason, updated_at = now(), revision = job_feedback.revision + 1
          RETURNING reason`,
         [randomUUID(), request.ownerId, reason, id],
       );
@@ -2097,9 +2098,19 @@ export async function createApp(
     if (!(await consumeRateLimit(request, `admin-job-feedback:${request.ownerId!}`, 120, 60)))
       throw new HttpError(429, 'Too many moderation requests');
     const query = jobFeedbackReviewQuerySchema.parse(request.query);
+    if (query.before) {
+      const cursor = await database.pool.query<{ status: string | null }>(
+        `SELECT r.status FROM job_feedback f
+         LEFT JOIN job_feedback_reviews r ON r.feedback_id = f.id
+         WHERE f.id = $1`,
+        [query.before],
+      );
+      const cursorStatus = cursor.rowCount ? (cursor.rows[0]!.status ?? 'pending') : null;
+      if (cursorStatus !== query.status) throw new HttpError(400, 'Invalid moderation cursor');
+    }
     const result = await database.pool.query(
       `SELECT f.id AS "reportId", f.reason, f.created_at AS "reportedAt",
-              f.updated_at AS "updatedAt", r.status AS "reviewStatus",
+              f.updated_at AS "updatedAt", f.revision, r.status AS "reviewStatus",
               r.reviewed_at AS "reviewedAt", r.note AS "reviewNote",
               j.id AS "jobId", j.data->>'title' AS title, j.data->>'company' AS company,
               j.data->>'location' AS location, j.data->>'source' AS source,
@@ -2109,7 +2120,10 @@ export async function createApp(
        LEFT JOIN job_feedback_reviews r ON r.feedback_id = f.id
        WHERE (($1 = 'pending' AND r.feedback_id IS NULL) OR r.status = $1)
          AND ($2::uuid IS NULL OR EXISTS (
-           SELECT 1 FROM job_feedback cursor WHERE cursor.id = $2
+           SELECT 1 FROM job_feedback cursor
+           LEFT JOIN job_feedback_reviews cursor_review ON cursor_review.feedback_id = cursor.id
+           WHERE cursor.id = $2
+             AND (($1 = 'pending' AND cursor_review.feedback_id IS NULL) OR cursor_review.status = $1)
              AND (f.created_at, f.id) < (cursor.created_at, cursor.id)
          ))
        ORDER BY f.created_at DESC, f.id DESC LIMIT $3`,
@@ -2122,18 +2136,20 @@ export async function createApp(
     if (!(await consumeRateLimit(request, `admin-job-feedback-review:${request.ownerId!}`, 60, 60)))
       throw new HttpError(429, 'Too many moderation updates');
     const { id } = identifier.parse(request.params);
-    const { status, note } = jobFeedbackReviewSchema.parse(request.body);
+    const { status, note, expectedRevision } = jobFeedbackReviewSchema.parse(request.body);
     const client = await database.pool.connect();
     try {
       await client.query('BEGIN');
-      const feedback = await client.query<{ id: string }>(
-        'SELECT id FROM job_feedback WHERE id = $1 FOR UPDATE',
+      const feedback = await client.query<{ id: string; revision: number }>(
+        'SELECT id, revision FROM job_feedback WHERE id = $1 FOR UPDATE',
         [id],
       );
       if (!feedback.rowCount) {
         await client.query('ROLLBACK');
         throw new HttpError(404, 'Report not found');
       }
+      if (feedback.rows[0]!.revision !== expectedRevision)
+        throw new HttpError(409, 'Report changed; reload before reviewing');
       await client.query(
         `INSERT INTO job_feedback_reviews (feedback_id, status, reviewed_by, reviewed_at, note)
          VALUES ($1, $2, $3, now(), $4)

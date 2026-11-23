@@ -261,14 +261,14 @@
     {
       "path": "apps/api/src/app.ts",
       "category": "backend-api",
-      "reviewMethod": "stage-item-diff-review",
+      "reviewMethod": "change-scoped source and test review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 6.11 diff for live-role authorization, CSRF-protected decisions, bounded queue access, transaction locking, reason-change reopening and error handling.",
-      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
-      "reviewer": "Codex (Stage 06 item 6.11 change review)",
-      "sha256": "4e0d88a490559023026c0c5f1285cc6087ef59aa9dbb591c1c7ef89755ea8e31"
+      "observations": "Reviewed current diff for status-bound pagination cursors, optimistic revision checks, CSRF and live role enforcement coverage, API contract documentation, and integration assertions. Focused PostgreSQL integration passed; exact-head hosted CI and independent acceptance remain pending.",
+      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
+      "reviewer": "Codex (Stage 06.11 review corrections)",
+      "sha256": "9a9cbd5af8c8c00d13ab2b4a99d986967caaa28db4c40c1b7622dcc18b5eb53b"
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -373,14 +373,14 @@
     {
       "path": "apps/api/src/job-feedback-moderation.integration.test.ts",
       "category": "backend-api",
-      "reviewMethod": "stage-item-diff-review",
+      "reviewMethod": "change-scoped source and test review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete new integration test covering candidate denial, admin paging, candidate privacy, dispositions, append-only events and pending reset.",
-      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
-      "reviewer": "Codex (Stage 06 item 6.11 change review)",
-      "sha256": "9f100d139cb71d7f27b7795a2f8d2748aebde94fe086fd5476b0525e6572b6a0"
+      "observations": "Reviewed current diff for status-bound pagination cursors, optimistic revision checks, CSRF and live role enforcement coverage, API contract documentation, and integration assertions. Focused PostgreSQL integration passed; exact-head hosted CI and independent acceptance remain pending.",
+      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
+      "reviewer": "Codex (Stage 06.11 review corrections)",
+      "sha256": "a272c79d54f10be516d82ca8f3ccb75be688c87a415c9fcc5298dcbb6e3709b9"
     },
     {
       "path": "apps/api/src/job-feedback.integration.test.ts",
@@ -433,7 +433,7 @@
     {
       "path": "apps/api/src/openapi.ts",
       "category": "backend-api",
-      "reviewMethod": "stage-item-diff-review",
+      "reviewMethod": "change-scoped source and test review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -445,10 +445,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Reviewed the Stage 6.11 route contracts, validation limits, authorization description and response privacy fields.",
-      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
-      "reviewer": "Codex (Stage 06 item 6.11 change review)",
-      "sha256": "011b0678cf612b9362928a0b4873a12042ddbd02547e47c7dd0fe6d1e5ef5df4"
+      "observations": "Reviewed current diff for status-bound pagination cursors, optimistic revision checks, CSRF and live role enforcement coverage, API contract documentation, and integration assertions. Focused PostgreSQL integration passed; exact-head hosted CI and independent acceptance remain pending.",
+      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
+      "reviewer": "Codex (Stage 06.11 review corrections)",
+      "sha256": "1ea2248620b08e0eb4942ec89ad578aeb1c3869f0868375d7521c931812ca090"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -1734,7 +1734,7 @@
     {
       "path": "docs/API-SURFACE.md",
       "category": "documentation",
-      "reviewMethod": "stage-item-diff-review",
+      "reviewMethod": "change-scoped source and test review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1746,10 +1746,10 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Reviewed the Stage 6.11 route rows and their role, CSRF, audit and deletion semantics.",
-      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
-      "reviewer": "Codex (Stage 06 item 6.11 change review)",
-      "sha256": "045a1c5bbaa33d9cb98551a88bc74823fdddf0e986080fa5640c8756949fbc23"
+      "observations": "Reviewed current diff for status-bound pagination cursors, optimistic revision checks, CSRF and live role enforcement coverage, API contract documentation, and integration assertions. Focused PostgreSQL integration passed; exact-head hosted CI and independent acceptance remain pending.",
+      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
+      "reviewer": "Codex (Stage 06.11 review corrections)",
+      "sha256": "6f40b4594b45165ac13d9bc8f39412208d81e9dcb1398e269bfce2031a43af5b"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1896,14 +1896,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "stage-item-diff-review",
+      "reviewMethod": "change-scoped documentation review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 6.11 partial status and the remaining exact-head acceptance gap.",
-      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
-      "reviewer": "Codex (Stage 06 item 6.11 change review)",
-      "sha256": "f83c9ae1082cb6e2dc6719923307c30653161de97a5058c46b68f9944705c6be",
+      "observations": "Reviewed status and evidence updates against current implementation, migration, integration test results, and pending exact-head CI/independent acceptance.",
+      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
+      "reviewer": "Codex (Stage 06.11 review corrections)",
+      "sha256": "9be879f5f887ca15b104d72b72cee6dba29aff563bb537f96c7aff575718a05e",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2086,7 +2086,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "stage-item-diff-review",
+      "reviewMethod": "change-scoped documentation review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2098,10 +2098,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the updated stage status and Stage 6.11 evidence summary.",
-      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
-      "reviewer": "Codex (Stage 06 item 6.11 change review)",
-      "sha256": "921fe01a0aef09088798cb1346002ee299c6d20db656943398d0f6a543edf4af",
+      "observations": "Reviewed status and evidence updates against current implementation, migration, integration test results, and pending exact-head CI/independent acceptance.",
+      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
+      "reviewer": "Codex (Stage 06.11 review corrections)",
+      "sha256": "ed738b52dba4797f6bd273f59b7e036031ffbf91e95986e154875b5c78f38bad",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2858,14 +2858,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "stage-item-diff-review",
+      "reviewMethod": "change-scoped documentation review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the canonical 6.11 partial state, evidence paths, CI-enforced test path and remaining gap.",
-      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
-      "reviewer": "Codex (Stage 06 item 6.11 change review)",
-      "sha256": "449bd947be80ba425ed73dae2e3adfeae939abd3cd2f3e910d7788d8fc978a92",
+      "observations": "Reviewed status and evidence updates against current implementation, migration, integration test results, and pending exact-head CI/independent acceptance.",
+      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
+      "reviewer": "Codex (Stage 06.11 review corrections)",
+      "sha256": "0c4ce690581b1eabecaa73bc8b5bd1f1390c4c37314ab0e2c163b1bee33bd433",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -4054,6 +4054,18 @@
       "sha256": "fb261ae65d1f334c357628bf3f0995f644e0b6312398d60a28ce2ea57181f0b6"
     },
     {
+      "path": "migrations/0008_job_feedback_review_revision.sql",
+      "category": "database-migration",
+      "reviewMethod": "migration source review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed additive revision column with default 1 and positive-value check; migration is append-only and validated by drizzle-kit consistency check.",
+      "evidence": "Focused PostgreSQL integration applied migrations 0001 through 0008.",
+      "reviewer": "Codex (Stage 06.11 review corrections)",
+      "sha256": "e6d367a13b75035d7a2b2546e982a118d1054b8466f358bf5d4d03e58375ece1"
+    },
+    {
       "path": "migrations/meta/0000_snapshot.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
@@ -4146,16 +4158,28 @@
       "sha256": ""
     },
     {
-      "path": "migrations/meta/_journal.json",
+      "path": "migrations/meta/0008_snapshot.json",
       "category": "generated-lockfile-or-snapshot",
-      "reviewMethod": "stage-item-diff-review",
-      "state": "reviewed",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the generated migration journal entry for migration 0007 and its ordering.",
-      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
-      "reviewer": "Codex (Stage 06 item 6.11 change review)",
-      "sha256": "41087c7bb5bdf41be7eb74a1350b4241b55e8802cd9599adb263d0c8182acb43"
+      "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
+    },
+    {
+      "path": "migrations/meta/_journal.json",
+      "category": "generated-lockfile-or-snapshot",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Generated Drizzle migration journal metadata; migration consistency is validated by drizzle-kit check.",
+      "evidence": "Generated metadata classification per scripts/ci/check-file-audit.mjs.",
+      "reviewer": null,
+      "sha256": null
     },
     {
       "path": "package-lock.json",
@@ -4984,7 +5008,7 @@
     {
       "path": "packages/core/src/schema.ts",
       "category": "shared-domain-package",
-      "reviewMethod": "stage-item-diff-review",
+      "reviewMethod": "change-scoped source and test review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -4996,10 +5020,10 @@
           "remediation": "Add a lower-case check in a migration after verifying existing data. Recorded for the next migration window; no migration is added in Stage 01 to avoid rewriting applied data."
         }
       ],
-      "observations": "Reviewed the Stage 6.11 schema diff for review-state/event constraints, foreign keys, indexes and cascade semantics.",
-      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
-      "reviewer": "Codex (Stage 06 item 6.11 change review)",
-      "sha256": "a4f01987367dec8835935fd4982ab2f4f3adb5445da2e3288558d024a50cc4ea"
+      "observations": "Reviewed current diff for status-bound pagination cursors, optimistic revision checks, CSRF and live role enforcement coverage, API contract documentation, and integration assertions. Focused PostgreSQL integration passed; exact-head hosted CI and independent acceptance remain pending.",
+      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
+      "reviewer": "Codex (Stage 06.11 review corrections)",
+      "sha256": "dee7c83fbf5624e9653b5c48222c183dbd984914ae06402453496a9464571a11"
     },
     {
       "path": "packages/core/src/sensitive-data.integration.test.ts",
