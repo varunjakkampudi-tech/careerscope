@@ -3,6 +3,16 @@
 Records which test proves each stage item. Only tests that a CI script runs count. The traceability
 gate enforces this for the foundations register in [FOUNDATIONS](FOUNDATIONS.md).
 
+## Owner roadmap item 8.04: saved searches
+
+`apps/api/src/saved-searches.integration.test.ts` verifies migration-backed owner isolation,
+request validation, case-insensitive name uniqueness, the 25-item limit, deletion, and account-safe
+404 behavior. The real-browser flow in `scripts/tests/check-ui.ts` saves a selected search, reruns
+the same query and sources as a new manual run, then deletes the saved configuration. Both checks
+passed in hosted Node 24 run `45187589945` on exact head
+`83591f9bdd7617b51a4616350a8b722d605f2821`; all required quality, service/integration/browser,
+and production-image jobs succeeded.
+
 ## Stage 01: repository foundations register
 
 The item numbers in this section are the repository's 13-item foundations register, not the

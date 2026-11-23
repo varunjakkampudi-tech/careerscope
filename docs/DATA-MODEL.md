@@ -5,6 +5,11 @@ includes owner-scoped profiles/preferences, encrypted resume metadata and
 processing state, provider jobs/provenance, saved jobs, searches, and explicit
 application lifecycle/history records.
 
+`saved_searches` stores up to 25 named, owner-scoped search configurations. A case-insensitive
+unique index prevents duplicate names per owner; the request JSON is validated and bounded, and
+deleting an account cascades its saved searches. Search executions remain immutable snapshots in
+`search_runs` and are not overwritten when a saved configuration is edited or run.
+
 Candidate application records are stored in `saved_leads`. The optional
 `application_evidence` JSON value records a candidate's own method, reported
 timestamp, confirmation, source and confidence; it is not an employer/ATS

@@ -29,6 +29,8 @@ import {
   parseSearchCreated,
   parseSearchDetail,
   parseSearchRuns,
+  parseSavedSearch,
+  parseSavedSearches,
   type SearchDetail,
 } from '@/lib/api-schemas';
 import { localizedText, useInterfaceLocale } from '@/lib/locale';
@@ -161,6 +163,7 @@ function JobSearchWorkspace() {
   const [filter, setFilter] = useState('');
   const [sourceSelection, setSourceSelection] = useState<CreateSearch['sources'] | null>(null);
   const [useProfileTitles, setUseProfileTitles] = useState(false);
+  const [savedSearchName, setSavedSearchName] = useState('');
 
   const sourceCatalog = useQuery({
     queryKey: ownerKey(owner, 'job-sources'),
@@ -177,6 +180,12 @@ function JobSearchWorkspace() {
     queryFn: ({ signal }) => apiParsed('/searches', parseSearchRuns, { signal }),
     enabled: !!owner && session.data?.authenticated === true,
     refetchInterval: 5000,
+    retry: 1,
+  });
+  const savedSearches = useQuery({
+    queryKey: ownerKey(owner, 'saved-searches'),
+    queryFn: ({ signal }) => apiParsed('/saved-searches', parseSavedSearches, { signal }),
+    enabled: !!owner && session.data?.authenticated === true,
     retry: 1,
   });
   // The run being viewed is addressable (CS forensic audit F-3): a link to a
@@ -227,6 +236,29 @@ function JobSearchWorkspace() {
       exportSearch.reset();
       void cache.invalidateQueries({ queryKey: ['searches'] });
     },
+  });
+  const saveSearch = useMutation({
+    mutationFn: (name: string) =>
+      apiParsed('/saved-searches', parseSavedSearch, {
+        method: 'POST',
+        headers: { 'x-csrf-token': session.data?.csrf ?? '' },
+        body: JSON.stringify({
+          name,
+          request: detail.data ? { ...detail.data.request, origin: 'manual' } : undefined,
+        }),
+      }),
+    onSuccess: () => {
+      setSavedSearchName('');
+      void cache.invalidateQueries({ queryKey: ownerKey(owner, 'saved-searches') });
+    },
+  });
+  const deleteSavedSearch = useMutation({
+    mutationFn: (id: string) =>
+      apiJson(`/saved-searches/${id}`, {
+        method: 'DELETE',
+        headers: { 'x-csrf-token': session.data?.csrf ?? '' },
+      }),
+    onSuccess: () => void cache.invalidateQueries({ queryKey: ownerKey(owner, 'saved-searches') }),
   });
   const cancel = useMutation({
     mutationFn: (runId: string) =>
@@ -364,6 +396,58 @@ function JobSearchWorkspace() {
             </button>
           ))}
         </nav>
+        <section className={styles.savedSearches} aria-labelledby="saved-searches-heading">
+          <h2 id="saved-searches-heading">{t('savedSearchesHeading')}</h2>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              if (detail.data && savedSearchName.trim()) saveSearch.mutate(savedSearchName.trim());
+            }}
+          >
+            <label>
+              <span className="sr-only">{t('savedSearchName')}</span>
+              <input
+                value={savedSearchName}
+                onChange={(event) => setSavedSearchName(event.target.value)}
+                placeholder={t('savedSearchName')}
+                minLength={1}
+                maxLength={80}
+                required
+                disabled={!detail.data || saveSearch.isPending}
+              />
+            </label>
+            <button type="submit" disabled={!detail.data || saveSearch.isPending}>
+              {saveSearch.isPending ? t('savingSavedSearch') : t('saveSearch')}
+            </button>
+          </form>
+          {savedSearches.data?.items.length === 0 && <p>{t('noSavedSearches')}</p>}
+          <ul>
+            {savedSearches.data?.items.map((saved) => (
+              <li key={saved.id}>
+                <span>{saved.name}</span>
+                <button
+                  type="button"
+                  aria-label={`${t('runSavedSearch')}: ${saved.name}`}
+                  disabled={search.isPending}
+                  onClick={() => search.mutate({ ...saved.request, origin: 'manual' })}
+                >
+                  {t('runSavedSearch')}
+                </button>
+                <button
+                  type="button"
+                  aria-label={`${t('deleteSavedSearch')}: ${saved.name}`}
+                  disabled={deleteSavedSearch.isPending}
+                  onClick={() => deleteSavedSearch.mutate(saved.id)}
+                >
+                  {t('deleteSavedSearch')}
+                </button>
+              </li>
+            ))}
+          </ul>
+          {(saveSearch.error || deleteSavedSearch.error || savedSearches.error) && (
+            <p role="alert">{t('savedSearchError')}</p>
+          )}
+        </section>
       </aside>
       <section className="results">
         <div className="section-heading" lang={locale}>
