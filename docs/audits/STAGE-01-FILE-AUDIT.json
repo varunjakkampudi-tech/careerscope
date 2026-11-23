@@ -2262,7 +2262,7 @@
       "observations": "Reviewed updated Stage 10.11 evidence. It records only the focused 9/9 result and pending full check, exact-head CI, independent review, browser acceptance and owner verification.",
       "evidence": "Current candidate contents and relevant diff reviewed for the Stage 10.11 Unicode PDF correction.",
       "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
-      "sha256": "bf429cfaabd394a08d4e71235ed9c0c8741e29df6895b6cdb9ac20fe12300c9f",
+      "sha256": "0dbc040c381f74533cfb2d3ef63a299a6d7bd4d2ad79e672974e7cf0289deb7c",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
