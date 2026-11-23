@@ -110,31 +110,48 @@ export function supportsDirectResumePdf(draft: ResumePdfDraft) {
   );
 }
 
-export function hasEmbeddedFontGlyphs(draft: ResumePdfDraft, regularFontBase64: string) {
+function createFontGlyphLookup(fonts: ResumePdfFonts) {
   const pdf = new jsPDF({ putOnlyUsedFonts: true });
-  pdf.addFileToVFS('NotoSans-Regular.ttf', regularFontBase64);
+  pdf.addFileToVFS('NotoSans-Regular.ttf', fonts.regular);
+  pdf.addFileToVFS('NotoSans-Bold.ttf', fonts.bold);
   pdf.addFont('NotoSans-Regular.ttf', 'Noto Sans', 'normal');
-  pdf.setFont('Noto Sans', 'normal');
-  const font = pdf.getFont();
-  const characterToGlyph = font.metadata.characterToGlyph as unknown as (
-    codePoint: number,
-  ) => number;
+  pdf.addFont('NotoSans-Bold.ttf', 'Noto Sans', 'bold');
+  return (style: 'normal' | 'bold', codePoint: number) => {
+    pdf.setFont('Noto Sans', style);
+    const metadata = pdf.getFont().metadata;
+    const characterToGlyph = metadata.characterToGlyph as unknown as (codePoint: number) => number;
+    return characterToGlyph.call(metadata, codePoint);
+  };
+}
+
+export function hasEmbeddedFontGlyphs(draft: ResumePdfDraft, fonts: ResumePdfFonts) {
+  const glyphLookup = createFontGlyphLookup(fonts);
   return collectResumeText(draft).every((value) =>
-    Array.from(value).every(
-      (character) =>
-        !needsEmbeddedFont(character) ||
-        characterToGlyph.call(font.metadata, character.codePointAt(0)!) !== 0,
-    ),
+    Array.from(value).every((character) => {
+      if (!needsEmbeddedFont(character)) return true;
+      const codePoint = character.codePointAt(0)!;
+      return glyphLookup('normal', codePoint) !== 0 && glyphLookup('bold', codePoint) !== 0;
+    }),
   );
 }
 
-export function isSupportedWithEmbeddedFontGlyphs(
-  draft: ResumePdfDraft,
-  regularFontBase64: string,
-) {
+export function embeddedResumePdfFontsCoverSupportedCodepoints(fonts: ResumePdfFonts) {
+  const glyphLookup = createFontGlyphLookup(fonts);
+  for (let codePoint = 0; codePoint <= 0x10ffff; codePoint += 1) {
+    if (
+      isSupportedByEmbeddedFont(codePoint) &&
+      (glyphLookup('normal', codePoint) === 0 || glyphLookup('bold', codePoint) === 0)
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function isSupportedWithEmbeddedFontGlyphs(draft: ResumePdfDraft, fonts: ResumePdfFonts) {
   return (
     supportsDirectResumePdf(draft) &&
-    (!needsEmbeddedResumePdfFont(draft) || hasEmbeddedFontGlyphs(draft, regularFontBase64))
+    (!needsEmbeddedResumePdfFont(draft) || hasEmbeddedFontGlyphs(draft, fonts))
   );
 }
 
@@ -158,7 +175,8 @@ export function createResumePdf(draft: ResumePdfDraft, fonts?: ResumePdfFonts) {
   if (!supportsDirectResumePdf(draft)) throw new UnsupportedResumePdfTextError();
 
   const usesEmbeddedFont = needsEmbeddedResumePdfFont(draft);
-  if (usesEmbeddedFont && !fonts) throw new UnsupportedResumePdfTextError();
+  if (usesEmbeddedFont && (!fonts || !hasEmbeddedFontGlyphs(draft, fonts)))
+    throw new UnsupportedResumePdfTextError();
 
   const pdf = new jsPDF({
     orientation: 'portrait',
@@ -171,22 +189,8 @@ export function createResumePdf(draft: ResumePdfDraft, fonts?: ResumePdfFonts) {
     pdf.addFileToVFS('NotoSans-Bold.ttf', fonts!.bold);
     pdf.addFont('NotoSans-Regular.ttf', 'Noto Sans', 'normal');
     pdf.addFont('NotoSans-Bold.ttf', 'Noto Sans', 'bold');
-    pdf.setFont('Noto Sans', 'normal');
-    const font = pdf.getFont();
-    const characterToGlyph = font.metadata.characterToGlyph as unknown as (
-      codePoint: number,
-    ) => number;
-    if (
-      !collectResumeText(draft).every((value) =>
-        Array.from(value).every(
-          (character) =>
-            !needsEmbeddedFont(character) ||
-            characterToGlyph.call(font.metadata, character.codePointAt(0)!) !== 0,
-        ),
-      )
-    )
-      throw new UnsupportedResumePdfTextError();
   }
+
   const fontFamily = usesEmbeddedFont ? 'Noto Sans' : 'helvetica';
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();

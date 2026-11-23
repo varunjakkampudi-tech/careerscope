@@ -1364,14 +1364,14 @@
     {
       "path": "apps/web/src/components/resume-builder.tsx",
       "category": "frontend",
-      "reviewMethod": "current-diff-review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed lazy same-origin font loading and user-visible print fallback for unsupported or unmapped characters.",
-      "evidence": "Web lint/typecheck and full npm run check passed under Node 24.22.1; browser acceptance and independent review remain pending.",
-      "reviewer": "Codex (Stage 10.11 Unicode extension review)",
-      "sha256": "7f740c8fd9d560223e99fdb18043d04bc158dfc84bd49050157fbf1183aff65c",
+      "observations": "Reviewed the changed export flow: the loader supplies both subset font faces, the candidate draft is checked against both faces before enabling direct export, and existing print/save fallback behavior remains available on unsupported text or font-load failure.",
+      "evidence": "Current candidate contents and relevant diff reviewed for the Stage 10.11 Unicode PDF correction.",
+      "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
+      "sha256": "a89fa1990edd9a2bbca0c1dd5849a62ed3232229a98cbb7ffbde96575f564d1d",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10.06 review correction)",
@@ -1779,14 +1779,14 @@
     {
       "path": "apps/web/src/lib/resume-pdf.test.ts",
       "category": "tests",
-      "reviewMethod": "current-diff-review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
-      "concerns": ["Current diff reviewed; hosted browser CI remains pending"],
+      "concerns": [],
       "findings": [],
-      "observations": "Added Greek/Cyrillic extracted-text coverage, font glyph lookup checks, and unsupported CJK fallback coverage.",
-      "evidence": "Focused PDF suite passed 8/8; full npm run check passed under Node 24.22.1. Exact-head hosted CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 10.11 Unicode extension review)",
-      "sha256": "6d300447d91dbd5a5395f7135c7e5e1c82c118ecd3b8a953717663cfb5f59722",
+      "observations": "Reviewed the complete focused suite. It verifies extraction, unmapped-script fallback, both real subset cmaps against all product-allowlisted codepoints, and Unicode multi-page page bounds, side margins, pagination and bold Cyrillic content.",
+      "evidence": "Current candidate contents and relevant diff reviewed for the Stage 10.11 Unicode PDF correction.",
+      "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
+      "sha256": "45c8177abb7e0f26903738d5f5a3aa5c1caa8f7f64637b95410b7a47aff09d9c",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -1821,14 +1821,14 @@
     {
       "path": "apps/web/src/lib/resume-pdf.ts",
       "category": "frontend",
-      "reviewMethod": "current-diff-review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
-      "concerns": ["Current diff reviewed; hosted browser CI remains pending"],
+      "concerns": [],
       "findings": [],
-      "observations": "Reviewed embedded font registration, actual glyph lookup, subset codepoint gating, and unsupported-script fallback behavior.",
-      "evidence": "Focused PDF suite passed 8/8; full npm run check passed under Node 24.22.1. Exact-head hosted CI, independent review, and browser acceptance remain pending.",
-      "reviewer": "Codex (Stage 10.11 Unicode extension review)",
-      "sha256": "d2b8e28dc7b20e2f58ff82becd6007741f9972fb57e9bf6ed021b466a9a4cd82",
+      "observations": "Reviewed the complete module and diff. Runtime checks every used embedded-font codepoint against regular and bold cmap mappings before PDF creation; unsupported text remains rejected for the print/save fallback. Layout and WinAnsi paths remain intact.",
+      "evidence": "Current candidate contents and relevant diff reviewed for the Stage 10.11 Unicode PDF correction.",
+      "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
+      "sha256": "af1cfc02f9a58555767652afaa4ead74217ca3a53ef0c83b0f97c9c6eb917983",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -2255,14 +2255,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "current-diff-review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated Stage 10.11 evidence for the subsetted Unicode font path, existing geometry evidence, and outstanding review gates.",
-      "evidence": "Documentation reconciled against the current implementation and verification results; status remains partial.",
-      "reviewer": "Codex (Stage 10.11 Unicode extension review)",
-      "sha256": "5934859eeabb312d62e230ec0a96a9d8666f99114bfd381997ee9c6dd0d7b78d",
+      "observations": "Reviewed updated Stage 10.11 evidence. It records only the focused 9/9 result and pending full check, exact-head CI, independent review, browser acceptance and owner verification.",
+      "evidence": "Current candidate contents and relevant diff reviewed for the Stage 10.11 Unicode PDF correction.",
+      "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
+      "sha256": "148898e4d10a2b440fe2dc21885e33a25f8debdda55f93bb427e164e0ef3306a",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -2586,7 +2586,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "current-diff-review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2598,10 +2598,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 10.11 progress while retaining partial status and Stage 11 boundary.",
-      "evidence": "Documentation reconciled against current implementation and verification results; owner verification remains pending.",
-      "reviewer": "Codex (Stage 10.11 Unicode extension review)",
-      "sha256": "dd596a8846183789f93eae4047f81aa4591a39afd4ad34ea671d66b365e04b93",
+      "observations": "Reviewed updated Stage 10.11 progress description. It keeps the item partial and separates current focused evidence from pending exact-head, browser and owner acceptance.",
+      "evidence": "Current candidate contents and relevant diff reviewed for the Stage 10.11 Unicode PDF correction.",
+      "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
+      "sha256": "c3870ebc777be98e58cd16d73f3ada0c2841bb5c1b00e357d178784391aa8f88",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
@@ -8710,6 +8710,18 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "6040b0afb6dbae5f400cfaeb18fb8595d5644a4bea2f0dccc43797d136d58863"
+    },
+    {
+      "path": "apps/web/public/fonts/README.md",
+      "category": "documentation",
+      "reviewMethod": "content-read-and-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read the complete provenance note: upstream v2.015 static font paths, fonttools subset command/ranges, OFL license and reserved-name note, runtime cmap test linkage, and checked-in asset hashes.",
+      "evidence": "Current candidate contents reviewed for the Stage 10.11 Unicode PDF correction.",
+      "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
+      "sha256": "5f5c06769df9a94ad1f9d247b5855d920ab84f06570848b6d849be42614f0c4f"
     }
   ]
 }

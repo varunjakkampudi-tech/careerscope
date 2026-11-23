@@ -353,7 +353,7 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
         ? await (await import('../lib/resume-pdf-fonts')).loadResumePdfFonts()
         : undefined;
       if (
-        (fonts && !isSupportedWithEmbeddedFontGlyphs(fields, fonts.regular)) ||
+        (fonts && !isSupportedWithEmbeddedFontGlyphs(fields, fonts)) ||
         (!fonts && !supportsDirectResumePdf(fields))
       ) {
         const { UnsupportedResumePdfTextError } = await import('../lib/resume-pdf');
