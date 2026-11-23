@@ -7613,10 +7613,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the Stage 09 acknowledgement browser failure: changing a saved lead to applied removes it from the saved-screen status scope and intentionally deselects it. The browser journey now opens the same lead in the Applications screen before asserting application-only acknowledgement and follow-up controls.",
-      "evidence": "Reviewed browser coverage for status-change cancellation, archive-confirmation dismissal without mutation, and successful archive; SHA-256 records the reviewed bytes. Exact-head CI remains separate.",
-      "reviewer": "Codex (Stage 09 archive cancellation coverage)",
-      "sha256": "7be07411ca3ce1bf3f258aa5799399b174d36eff8b25fd96fffdfa140e9d4ac2",
+      "observations": "Reviewed the Stage 09 acknowledgement and follow-up browser flow, including navigating from Saved Leads to Applications, successful API writes, archive cancellation, and archive completion. The follow-up assertion now waits for the saved-state text after the successful API response, avoiding a race with the React render that was observed in exact-head CI.",
+      "evidence": "Latest Stage 09 browser assertion correction; the SHA-256 pins the updated test bytes. Exact-head CI, independent review, and checklist owner verification remain separate gates.",
+      "reviewer": "Codex (Stage 09 follow-up browser race correction)",
+      "sha256": "e83924e33b78119b77f97c5e1ae1dc460696c7730cd67fc3449ba61c134378b1",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",

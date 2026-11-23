@@ -4013,6 +4013,7 @@ try {
       assert.equal(followUpRecord.status, 'applied');
       assert.equal(followUpRecord.revision, applicationRecord.revision + 1);
       assert.ok(Number.isFinite(Date.parse(followUpRecord.followUpAt)));
+      await followUpCard.getByText(/Scheduled for/).waitFor();
       assert.match((await followUpCard.textContent()) ?? '', /Scheduled for/);
       await page.goto(`${origin}/applications`);
       await page.waitForURL(`${origin}/applications`);
