@@ -2196,10 +2196,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current source or evidence update for docs/GAP-MATRIX.md; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
-      "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision.",
-      "reviewer": "Codex (Stage 10.11 independent-review corrections)",
-      "sha256": "bd5d5a0b80cfc140c634983da64529213332f7481f3a42e5ca5b215d0449b255",
+      "observations": "Updated docs/GAP-MATRIX.md to distinguish exact-head CI and independent engineering approval from remaining owner/product acceptance.",
+      "evidence": "Recorded exact head 505f28703fe694f07ed2b4fe8197ed02f3a28671, required CI run 45125280732, and independent exact-SHA engineering approval. Broader Unicode, native/cross-browser acceptance, and owner verification remain open.",
+      "reviewer": "Codex (CareerScope Stage 10 exact-head evidence reconciliation)",
+      "sha256": "486eebb1d17e43c37c923072c97072ee8349fa2af7820700f3b4054bc392e89d",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -2520,10 +2520,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 10 progress for the direct PDF download and retained pending exact-head browser and owner acceptance gates.",
-      "evidence": "Current source adds role-specific A4 PDF generation and candidate-content checks; previous exact-head implementation CI is historical and does not validate this change.",
-      "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
-      "sha256": "2787fd68db29f712beb0b4922d4b9060b887dbb09e1214089902fd38f603a7f2",
+      "observations": "Updated docs/PROGRESS.md to distinguish exact-head CI and independent engineering approval from remaining owner/product acceptance.",
+      "evidence": "Reconciled Stage 10.11 current exact-head CI and independent review evidence; item 10.11 and Stage 10 remain partial pending owner verification.",
+      "reviewer": "Codex (CareerScope Stage 10 exact-head evidence reconciliation)",
+      "sha256": "f785904c3d0a64940bd5343195d61c5636cba2719b3ee063d045bb53e756a726",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
@@ -2806,10 +2806,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current source or evidence update for docs/TEST-MATRIX.md; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
-      "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision.",
-      "reviewer": "Codex (Stage 10.11 independent-review corrections)",
-      "sha256": "58749cf75f42f31ab962ff42cfe3382e495c8b68f2ef4335eb7a94fcb25e210d",
+      "observations": "Updated docs/TEST-MATRIX.md to distinguish exact-head CI and independent engineering approval from remaining owner/product acceptance.",
+      "evidence": "Recorded exact-head CI and independent review approval for 10.11; broader font coverage, native/cross-browser acceptance, and owner verification remain open.",
+      "reviewer": "Codex (CareerScope Stage 10 exact-head evidence reconciliation)",
+      "sha256": "948226178f84c4e86b0b177c5f3c83dd2233b09c3464e8662ae52a4672d3d543",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -3482,10 +3482,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed the current source or evidence update for docs/requirements/OWNER-ROADMAP-TRACEABILITY.json; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
-      "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision.",
-      "reviewer": "Codex (Stage 10.11 independent-review corrections)",
-      "sha256": "5fd8253b38e16b0cfd1bbc5656509ab23adb301d0074a6e175a55199235e3327",
+      "observations": "Updated docs/requirements/OWNER-ROADMAP-TRACEABILITY.json to distinguish exact-head CI and independent engineering approval from remaining owner/product acceptance.",
+      "evidence": "Recorded exact head 505f28703fe694f07ed2b4fe8197ed02f3a28671, required CI run 45125280732, and independent exact-SHA engineering approval while retaining remaining acceptance gaps.",
+      "reviewer": "Codex (CareerScope Stage 10 exact-head evidence reconciliation)",
+      "sha256": "78fd76fc7636b5e885981e7e40700104a8dc5c361638bb6e54f5f6b2e953383a",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
