@@ -1372,6 +1372,18 @@
           "reviewer": "Codex (Stage 09 item 9.09)",
           "observations": "Reviewed current changes for Stage 09 item 9.09. The employer acknowledgement remains candidate-reported and is not verified employer communication.",
           "evidence": "Current content SHA-256 records the reviewed bytes. Relevant local checks are documented in docs/PROGRESS.md; database integration, exact-head CI, and independent review remain pending."
+        },
+        {
+          "sha256": "2ca51a6780fb78f18f890a27b16881aa428972efdb5fe77489d0fdef88fde956",
+          "reviewer": "Codex (Stage 09 items 9.09-9.10)",
+          "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
+          "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending."
+        },
+        {
+          "sha256": "132cbd9f4895d7dc6fb8c2ffd1295aafdcc11ae17727a81fabf46ff01beacefd",
+          "reviewer": "Codex (Stage 09 item 9.09 lint check)",
+          "observations": "A proposed explicit region role was checked and rejected as redundant for a named section.",
+          "evidence": "The repository pre-commit ESLint hook reported jsx-a11y/no-redundant-roles. This intermediate version was not committed."
         }
       ]
     },
@@ -7601,10 +7613,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
-      "reviewer": "Codex (Stage 09 items 9.09-9.10)",
-      "sha256": "3ed34be4f7b5c8e2861aec158dde3e5553b98c26781072751c7de29d4a49b5de",
+      "observations": "The employer acknowledgement regression locates the labelled section directly and asserts its candidate-reported disclaimer before interacting with its controls.",
+      "evidence": "PR #133 exact head d3bd91544a20762314353d40c1a9e5e885927175 failed on the region-role locator in run 44925487357 attempt 2. A section-selector correction is prepared; exact-head CI, independent review, and owner verification remain pending.",
+      "reviewer": "Codex (Stage 09 item 9.09 browser correction)",
+      "sha256": "72ad96fe04ff80a6e2dcd35f62aa08769e41efd0393151e853c81670d04af3f8",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7635,6 +7647,12 @@
           "reviewer": "Codex (Stage 09 item 9.09)",
           "observations": "Reviewed the Stage 09 item 9.09 candidate acknowledgement recording flow, owner-scoped persistence/API, browser interaction, and associated documentation. The record remains candidate-reported and is not evidence of independently verified employer communication.",
           "evidence": "Current candidate branch codex/stage09-item909-employer-ack; exact content hash records the reviewed bytes. Hosted validation and independent review remain separate gates."
+        },
+        {
+          "sha256": "3ed34be4f7b5c8e2861aec158dde3e5553b98c26781072751c7de29d4a49b5de",
+          "reviewer": "Codex (Stage 09 items 9.09-9.10)",
+          "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
+          "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending."
         }
       ]
     },
