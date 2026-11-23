@@ -195,80 +195,6 @@
       "sha256": "40144f03a9de3c98e1a75306bf3b155817ab251a0ada3e7b34a1c0c0ad2be754"
     },
     {
-      "path": "apps/web/src/lib/resume-pdf.test.ts",
-      "category": "tests",
-      "reviewMethod": "current-diff-review",
-      "state": "reviewed",
-      "concerns": ["Current diff reviewed; hosted browser CI remains pending"],
-      "findings": [],
-      "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending.",
-      "evidence": "Focused PDF suite passed 6/6 and typecheck passed across 100 canonical test files before documentation reconciliation; exact-head CI and independent re-review remain pending.",
-      "reviewer": "Codex (Stage 10.11 geometry review correction)",
-      "sha256": "6217866e9f92bccc914ef17990b4e86759ecca24a706c4358afe5abcd3d3526c",
-      "history": [
-        {
-          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
-          "sha256": "2521036393ff6bc420a006387d3874d8ad273a3e4f8e8907492dfacf8957966e",
-          "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.test.ts; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
-          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
-        },
-        {
-          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
-          "sha256": "2521036393ff6bc420a006387d3874d8ad273a3e4f8e8907492dfacf8957966e",
-          "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.test.ts; added or reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
-          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
-        },
-        {
-          "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
-          "sha256": "d6596d2735c79d69a5bd510c75c6807524b8ee54d53887255f4a7ab4350b2bf6",
-          "observations": "Added unit coverage for WinAnsi/unsupported-script behavior, role-specific metadata, sanitized filenames, A4 page geometry, and pagination.",
-          "evidence": "Focused PDF tests pass 3/3; full unit suite passes 390 with 3 skipped. Exact-head browser CI pending."
-        },
-        {
-          "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
-          "sha256": "fe4299fe51e7ad65cab9396d7bfb3fe18daf42e645883e31a00799ad59a399f9",
-          "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification."
-        },
-        {
-          "reviewer": "Codex (Stage 10.11 geometry review correction)",
-          "sha256": "6217866e9f92bccc914ef17990b4e86759ecca24a706c4358afe5abcd3d3526c",
-          "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending."
-        }
-      ]
-    },
-    {
-      "path": "apps/web/src/lib/resume-pdf.ts",
-      "category": "frontend",
-      "reviewMethod": "current-diff-review",
-      "state": "reviewed",
-      "concerns": ["Current diff reviewed; hosted browser CI remains pending"],
-      "findings": [],
-      "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.ts; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
-      "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision.",
-      "reviewer": "Codex (Stage 10.11 independent-review corrections)",
-      "sha256": "b6e3b3243cac3ffd9214ebadcc280fd55f2d58ca22a936aefd4f60a90589033d",
-      "history": [
-        {
-          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
-          "sha256": "b6e3b3243cac3ffd9214ebadcc280fd55f2d58ca22a936aefd4f60a90589033d",
-          "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.ts; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
-          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
-        },
-        {
-          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
-          "sha256": "b6e3b3243cac3ffd9214ebadcc280fd55f2d58ca22a936aefd4f60a90589033d",
-          "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.ts; added or reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
-          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
-        },
-        {
-          "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
-          "sha256": "3727e8a14b16869e77847ababc6ded671e21c94f9dcf5d2ce69af27c37c43b37",
-          "observations": "Added client-side jsPDF generation with A4 page layout, role-specific metadata and filename, candidate-authored sections, pagination, page numbering, and refusal of unsupported characters to avoid lossy output.",
-          "evidence": "Focused PDF tests pass 3/3; local pdf-parse smoke extracts all candidate sections. Full unit suite and typecheck pass; exact-head browser CI pending."
-        }
-      ]
-    },
-    {
       "path": "README.md",
       "category": "documentation",
       "reviewMethod": "content-read",
@@ -830,6 +756,42 @@
       "evidence": "",
       "reviewer": "",
       "sha256": ""
+    },
+    {
+      "path": "apps/web/public/fonts/NotoSans-Bold-subset.ttf",
+      "category": "binary-asset",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Subsetted Noto Sans font binary; cmap coverage reviewed and OFL-1.1 license included in adjacent OFL.txt.",
+      "evidence": "Font cmap inspection and focused PDF extraction tests pass 8/8; browser and native viewer acceptance remain pending.",
+      "reviewer": "",
+      "sha256": ""
+    },
+    {
+      "path": "apps/web/public/fonts/NotoSans-Regular-subset.ttf",
+      "category": "binary-asset",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Subsetted Noto Sans font binary; cmap coverage reviewed and OFL-1.1 license included in adjacent OFL.txt.",
+      "evidence": "Font cmap inspection and focused PDF extraction tests pass 8/8; browser and native viewer acceptance remain pending.",
+      "reviewer": "",
+      "sha256": ""
+    },
+    {
+      "path": "apps/web/public/fonts/OFL.txt",
+      "category": "frontend",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Included SIL Open Font License 1.1 for bundled subsetted Noto Sans regular and bold assets.",
+      "evidence": "License terms and whitespace-normalized text checked with the bundled font assets; OFL-1.1 retained.",
+      "reviewer": "Codex (Stage 10.11 Unicode extension review)",
+      "sha256": "e2e177a32561584d4fc13aaa3cd8e53758a12910f013fe9ca125419111722029"
     },
     {
       "path": "apps/web/scripts/build-with-csp.mjs",
@@ -1402,14 +1364,14 @@
     {
       "path": "apps/web/src/components/resume-builder.tsx",
       "category": "frontend",
-      "reviewMethod": "current-diff-review",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Added a candidate-initiated PDF download alongside the existing print/save option. Export errors are shown as generic UI messages; unsupported scripts receive a print/save fallback.",
-      "evidence": "Current diff review; focused export unit tests pass 3/3, full unit suite passes 390 with 3 skipped, typecheck passes across 100 canonical tests, and targeted lint passes. Exact-head browser CI pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
-      "sha256": "87b3d246d16528ab4ec6641bece203c21ed0a8b77f06420c97f0ff76a40c3c2d",
+      "observations": "Reviewed the changed export flow: the loader supplies both subset font faces, the candidate draft is checked against both faces before enabling direct export, and existing print/save fallback behavior remains available on unsupported text or font-load failure.",
+      "evidence": "Current candidate contents and relevant diff reviewed for the Stage 10.11 Unicode PDF correction.",
+      "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
+      "sha256": "a89fa1990edd9a2bbca0c1dd5849a62ed3232229a98cbb7ffbde96575f564d1d",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10.06 review correction)",
@@ -1803,6 +1765,92 @@
       ]
     },
     {
+      "path": "apps/web/src/lib/resume-pdf-fonts.ts",
+      "category": "frontend",
+      "reviewMethod": "current-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Added lazy same-origin loading and base64 conversion for regular/bold subset font assets.",
+      "evidence": "Web typecheck passed; focused PDF suite passed 8/8; full npm run check passed under Node 24.22.1. Browser download acceptance and independent review remain pending.",
+      "reviewer": "Codex (Stage 10.11 Unicode extension review)",
+      "sha256": "bd6515fa3eb3dcf301698b2d2d6ec92b5abee4fec4b747e4b664db01642bace9"
+    },
+    {
+      "path": "apps/web/src/lib/resume-pdf.test.ts",
+      "category": "tests",
+      "reviewMethod": "content-read-and-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed the complete focused suite. It verifies extraction, unmapped-script fallback, both real subset cmaps against all product-allowlisted codepoints, and Unicode multi-page page bounds, side margins, pagination and bold Cyrillic content.",
+      "evidence": "PR #136 exact head 75345b5e53015cc0cd83f4336af94f88f8ab0d03 against base e770e87e747a373145830155e6e77e3bfaf4059f; hosted run 45154220385 passed quality, integration/browser, performance, soak, and recovery. Independent review approved the bounded Unicode implementation. Production-image workflow job was skipped and local runtime image was not produced; owner and native/cross-browser acceptance remain pending.",
+      "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
+      "sha256": "45c8177abb7e0f26903738d5f5a3aa5c1caa8f7f64637b95410b7a47aff09d9c",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "2521036393ff6bc420a006387d3874d8ad273a3e4f8e8907492dfacf8957966e",
+          "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.test.ts; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "2521036393ff6bc420a006387d3874d8ad273a3e4f8e8907492dfacf8957966e",
+          "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.test.ts; added or reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
+          "sha256": "d6596d2735c79d69a5bd510c75c6807524b8ee54d53887255f4a7ab4350b2bf6",
+          "observations": "Added unit coverage for WinAnsi/unsupported-script behavior, role-specific metadata, sanitized filenames, A4 page geometry, and pagination.",
+          "evidence": "Focused PDF tests pass 3/3; full unit suite passes 390 with 3 skipped. Exact-head browser CI pending."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
+          "sha256": "fe4299fe51e7ad65cab9396d7bfb3fe18daf42e645883e31a00799ad59a399f9",
+          "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 geometry review correction)",
+          "sha256": "6217866e9f92bccc914ef17990b4e86759ecca24a706c4358afe5abcd3d3526c",
+          "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending."
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/lib/resume-pdf.ts",
+      "category": "frontend",
+      "reviewMethod": "content-read-and-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed the complete module and diff. Runtime checks every used embedded-font codepoint against regular and bold cmap mappings before PDF creation; unsupported text remains rejected for the print/save fallback. Layout and WinAnsi paths remain intact.",
+      "evidence": "PR #136 exact head 75345b5e53015cc0cd83f4336af94f88f8ab0d03 against base e770e87e747a373145830155e6e77e3bfaf4059f; hosted run 45154220385 passed quality, integration/browser, performance, soak, and recovery. Independent review approved the bounded Unicode implementation. Production-image workflow job was skipped and local runtime image was not produced; owner and native/cross-browser acceptance remain pending.",
+      "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
+      "sha256": "af1cfc02f9a58555767652afaa4ead74217ca3a53ef0c83b0f97c9c6eb917983",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "b6e3b3243cac3ffd9214ebadcc280fd55f2d58ca22a936aefd4f60a90589033d",
+          "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.ts; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 independent-review corrections)",
+          "sha256": "b6e3b3243cac3ffd9214ebadcc280fd55f2d58ca22a936aefd4f60a90589033d",
+          "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.ts; added or reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
+          "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
+          "sha256": "3727e8a14b16869e77847ababc6ded671e21c94f9dcf5d2ce69af27c37c43b37",
+          "observations": "Added client-side jsPDF generation with A4 page layout, role-specific metadata and filename, candidate-authored sections, pagination, page numbering, and refusal of unsupported characters to avoid lossy output.",
+          "evidence": "Focused PDF tests pass 3/3; local pdf-parse smoke extracts all candidate sections. Full unit suite and typecheck pass; exact-head browser CI pending."
+        }
+      ]
+    },
+    {
       "path": "apps/web/src/lib/session.test.ts",
       "category": "frontend",
       "reviewMethod": "content-read",
@@ -2113,10 +2161,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed blocker status and made the resolved full-audit coverage statement count-independent; current coverage counts remain in the manifest and audit validation output. Follow-up item 2.05 review: inspected owner/legacy ID mapping and legal gate wording; records counsel-approved legal text and public HTTPS URLs remain outstanding.",
-      "evidence": "Content inspected and aligned to the current file audit on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes. Additional focused item 2.05 documentation review; SHA-256 records current bytes.",
-      "reviewer": "Codex (Stage 01 closeout)",
-      "sha256": "10f198095caa1372d2447db323e2f39420d534b7696c9f28a30d13b929e2402e"
+      "observations": "Cross-checked Stage 10.14 against V12 cost and quota controls. No provider adapter, tier plan, price schedule or super-admin alert route exists; the item remains partial and AI stays disabled.",
+      "evidence": "Canonical checklist specifies per-tier quotas, reserve/release, token usage, daily spend breaker and admin alert. Owner policy inputs are listed in BLOCKERS.md.",
+      "reviewer": "Codex (Stage 10.14 cost policy gap reconciliation)",
+      "sha256": "7792df63f30d61ac28f839c424848be2c17b37ddfe7e4c8e6adfc1b215427b8d",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 10 owner-action consolidation)",
+          "sha256": "eaefd9fd8a9b52647d5dfbd1b8635c5f34ed90cc43911451cc19a64c74c602a6",
+          "observations": "Consolidated unresolved Stage 10 provider/cost policy, ATS test-target, and manual accessibility/PDF acceptance gates without changing their status or claiming completion.",
+          "evidence": "Cross-checked Stage 10 checklist source, GAP-MATRIX, TEST-MATRIX, and owner roadmap traceability. Provider generation remains disabled and manual checks remain pending."
+        }
+      ]
     },
     {
       "path": "docs/DATA-MODEL.md",
@@ -2211,11 +2267,17 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Compared the Stage 10.02 inventory entry with the original owner roadmap attachment. The source row names Resume builder and does not require source-resume linkage; removed that unsupported gap. Owner verification remains pending.",
-      "evidence": "Original owner roadmap attachment SHA-256 427aa3fd646d1b27c535d6765411bda924755d1dfc8dae14980d73d03b056045; Stage 10.02 source row compared directly.",
-      "reviewer": "Codex (Stage 10.02 checklist scope correction)",
-      "sha256": "fcd22ea694513bc020f80cf13baf8fa60354c9fed893075e0f8f14c58f9a7bb7",
+      "observations": "Reconciled the Stage 10.11 gap with the local synthetic one-page Greek/Cyrillic Chrome viewer smoke result; broader viewer and owner acceptance remain pending.",
+      "evidence": "Local manual Chrome built-in PDF viewer smoke check on a synthetic one-page resume displayed Greek and Cyrillic text. This is limited sample evidence; exact-head CI and owner verification remain separate.",
+      "reviewer": "Codex (Stage 10.11 native-viewer documentation reconciliation)",
+      "sha256": "4ebd21bb71d9e834bf6624651666c057b9ea6b1e4453399f00c500ab24773003",
       "history": [
+        {
+          "observations": "Recorded exact-head quality and focused Chromium evidence for the three-case disabled-provider adversarial regression. Item 10.15 remains partial; live-model evaluation and owner verification remain open.",
+          "evidence": "Exact quality run 45183500343 and focused browser run 45183507303 succeeded at SHA b262e3ff1610da865130f1d0fe91c9e435728d06. Independent review approved the test corrections at that exact SHA. Focused browser skips and scope limits are stated in the matrix.",
+          "reviewer": "Codex (CareerScope Stage 10.15 exact-head evidence update)",
+          "sha256": "a1b17391654769682d3e34286f938ad1935ba04f1fd2a71dc15977e93ed1e63e"
+        },
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
           "sha256": "bd5d5a0b80cfc140c634983da64529213332f7481f3a42e5ca5b215d0449b255",
@@ -2476,6 +2538,24 @@
           "reviewer": "Codex (Stage 10.11 geometry review closeout)",
           "sha256": "0cff1fb35564da9d4ba1a38be61773400798c0b55fda0a37945a90d65df53cdc",
           "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
+          "sha256": "7cf58bc0896612dc4ce80ee6b783bed996043739d260f578ad14dc0fcdd74f95",
+          "observations": "Updated checklist and test documentation to record hosted cross-browser Unicode PDF download success while retaining native viewer and owner acceptance gaps.",
+          "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
+          "sha256": "d0f5259d9a6559905303289a1801d8cb595264097d7100dd26fbb748a3e32183",
+          "observations": "Reconciled Stage 10.15 status and exact-head evidence; item remains partial because model-output evaluation and owner verification remain open.",
+          "evidence": "Focused hosted Chromium browser and accessibility suite passed on SHA 8c9b7857039787564f578208c1e168c929842e83; independent review approved the test change."
+        },
+        {
+          "reviewer": "Codex (Stage 10.14 cost policy gap reconciliation)",
+          "sha256": "ffb8a7da8cd94628d2edb4ef3cca8e2ec99d47d54c3883aef00b2f2b10cae3bd",
+          "observations": "Cross-checked Stage 10.14 against V12 cost and quota controls. No provider adapter, tier plan, price schedule or super-admin alert route exists; the item remains partial and AI stays disabled.",
+          "evidence": "Canonical checklist specifies per-tier quotas, reserve/release, token usage, daily spend breaker and admin alert. Owner policy inputs are listed in BLOCKERS.md."
         }
       ]
     },
@@ -2538,7 +2618,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "content-read",
+      "reviewMethod": "content-read-and-diff-review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2550,10 +2630,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open.",
-      "evidence": "Corrected head f063df844cf23b292341f017bf5997f92ba354a4 passed required CI run 45133065368 on attempt 2 and received independent exact-SHA approval.",
-      "reviewer": "Codex (Stage 10.11 geometry review closeout)",
-      "sha256": "7c50ddaffbfc87c2bc1423eb35bd0b28637886bf3738a2c444a5224862baf732",
+      "observations": "Reconciled Stage 10.15 status and exact-head evidence; item remains partial because model-output evaluation and owner verification remain open.",
+      "evidence": "Focused hosted Chromium browser and accessibility suite passed on SHA 8c9b7857039787564f578208c1e168c929842e83; independent review approved the test change.",
+      "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
+      "sha256": "943e61c4a2c66c243d4c98a6bf83276a695ca357ba976ddf968646e3efb6ed5e",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
@@ -2797,6 +2877,12 @@
           "reviewer": "Codex (Stage 10.11 geometry review closeout)",
           "sha256": "7c50ddaffbfc87c2bc1423eb35bd0b28637886bf3738a2c444a5224862baf732",
           "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
+          "sha256": "157ca2fdfd3a03225b67a0fbccbdfc5e7e72fd620f94855a2ab65fbf500b72e5",
+          "observations": "Updated checklist and test documentation to record hosted cross-browser Unicode PDF download success while retaining native viewer and owner acceptance gaps.",
+          "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending."
         }
       ]
     },
@@ -2851,11 +2937,17 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open.",
-      "evidence": "Corrected head f063df844cf23b292341f017bf5997f92ba354a4 passed required CI run 45133065368 on attempt 2 and received independent exact-SHA approval.",
-      "reviewer": "Codex (Stage 10.11 geometry review closeout)",
-      "sha256": "2f501f607fc1d4f2e5c5093c90388bbd7eafe3028ef8b453c71e06fcef288e1a",
+      "observations": "Recorded the local Chrome built-in PDF viewer smoke result and its limits; deterministic tests and owner acceptance remain separate.",
+      "evidence": "Local manual Chrome built-in PDF viewer smoke check on a synthetic one-page resume displayed Greek and Cyrillic text. This is limited sample evidence; exact-head CI and owner verification remain separate.",
+      "reviewer": "Codex (Stage 10.11 native-viewer documentation reconciliation)",
+      "sha256": "aec27318c51388b62562c108dd19f94fd743c49b16cac56a7330bdbc5b444380",
       "history": [
+        {
+          "observations": "Reconciled Stage 10.15 status and exact-head evidence; item remains partial because model-output evaluation and owner verification remain open.",
+          "evidence": "Focused hosted Chromium browser and accessibility suite passed on SHA 8c9b7857039787564f578208c1e168c929842e83; independent review approved the test change.",
+          "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
+          "sha256": "67d62d2df59190c798daee6b90080df07218a2c8acfdf222f0b1a37fd09dad88"
+        },
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
           "sha256": "58749cf75f42f31ab962ff42cfe3382e495c8b68f2ef4335eb7a94fcb25e210d",
@@ -3104,6 +3196,12 @@
           "reviewer": "Codex (Stage 10.11 geometry review closeout)",
           "sha256": "2f501f607fc1d4f2e5c5093c90388bbd7eafe3028ef8b453c71e06fcef288e1a",
           "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
+          "sha256": "7ed55b65067caee80c0785a77c9fc797037cbb7527f62b4b157e91b0cc8254e3",
+          "observations": "Updated checklist and test documentation to record hosted cross-browser Unicode PDF download success while retaining native viewer and owner acceptance gaps.",
+          "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending."
         }
       ]
     },
@@ -3542,11 +3640,17 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Compared the Stage 10.02 inventory entry with the original owner roadmap attachment. The source row names Resume builder and does not require source-resume linkage; removed that unsupported gap. Owner verification remains pending.",
-      "evidence": "Original owner roadmap attachment SHA-256 427aa3fd646d1b27c535d6765411bda924755d1dfc8dae14980d73d03b056045; Stage 10.02 source row compared directly.",
-      "reviewer": "Codex (Stage 10.02 checklist scope correction)",
-      "sha256": "d101a47117bdc5ed333e1d52300e521e04774ea19576aa31158e886acda3b81c",
+      "observations": "Updated Stage 10.11 with a bounded local Chrome built-in viewer observation; item remains partial pending broader coverage and owner verification.",
+      "evidence": "Local manual Chrome built-in PDF viewer smoke check on a synthetic one-page resume displayed Greek and Cyrillic text. This is limited sample evidence; exact-head CI and owner verification remain separate.",
+      "reviewer": "Codex (Stage 10.11 native-viewer documentation reconciliation)",
+      "sha256": "2504c1cca89fdb818e7797e5cda320e1fdbb5427f7651cb51288e037ac3802bf",
       "history": [
+        {
+          "observations": "Added exact-head quality, focused Chromium browser, and independent review evidence for Stage 10.15 while preserving partial status and recording skipped suites and remaining limitations.",
+          "evidence": "Roadmap traceability validation covers 328 items across 22 stages; exact-head quality run 45183500343 and focused browser run 45183507303 succeeded at SHA b262e3ff1610da865130f1d0fe91c9e435728d06.",
+          "reviewer": "Codex (CareerScope Stage 10.15 exact-head evidence update)",
+          "sha256": "80a92bd6a142ba9b166ccea73e6cfb3df31276b33a3d6c9e514bf9c03b253311"
+        },
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
           "sha256": "5fd8253b38e16b0cfd1bbc5656509ab23adb301d0074a6e175a55199235e3327",
@@ -3789,6 +3893,24 @@
           "reviewer": "Codex (Stage 10.11 geometry review closeout)",
           "sha256": "0b7ad069d0ed4a2521d7a289fab0ce262daa2dd4b45ca3f123baf9efa6596e84",
           "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
+          "sha256": "463816a463f965a0e88afba499ee3ee226794fd6e1ea6be127d958ec489e1626",
+          "observations": "Updated checklist and test documentation to record hosted cross-browser Unicode PDF download success while retaining native viewer and owner acceptance gaps.",
+          "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
+          "sha256": "40d75967b36a5be9af19cec6a6bbfc113b4a7de55eed3266ec7f0ee67eed2030",
+          "observations": "Reconciled Stage 10.15 status and exact-head evidence; item remains partial because model-output evaluation and owner verification remain open.",
+          "evidence": "Focused hosted Chromium browser and accessibility suite passed on SHA 8c9b7857039787564f578208c1e168c929842e83; independent review approved the test change."
+        },
+        {
+          "reviewer": "Codex (Stage 10.14 cost policy gap reconciliation)",
+          "sha256": "fccfbeac048c8e76c9c28c777dcfd9b7fb70d52b01a6a69016b6df7a24c42bfd",
+          "observations": "Cross-checked Stage 10.14 against V12 cost and quota controls. No provider adapter, tier plan, price schedule or super-admin alert route exists; the item remains partial and AI stays disabled.",
+          "evidence": "Canonical checklist specifies per-tier quotas, reserve/release, token usage, daily spend breaker and admin alert. Owner policy inputs are listed in BLOCKERS.md."
         }
       ]
     },
@@ -8348,11 +8470,17 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Added browser assertions for the app-managed PDF download, sanitized role-specific filename, PDF metadata/page object, extracted candidate-authored text, and unsupported-script fallback.",
-      "evidence": "Browser acceptance is present in source; run on the new exact head remains pending. Existing focused local PDF/parser smoke and type checks passed.",
-      "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
-      "sha256": "5e50eab4f3a562295300e66901a765a5b32092271764acc327b60b432ca9468d",
+      "observations": "Passed the Next router prefetch header into the stale-route settlement classifier at both barrier call sites; the exact CI failure identified a previous-route Firefox /jobs prefetch during notification-fixture reset.",
+      "evidence": "Focused unit suite scripts/tests/ui-requests.test.ts passed 6/6 locally. Exact-head CI is required to confirm the Firefox browser-suite flake is resolved.",
+      "reviewer": "Codex (Stage 10 Firefox route-prefetch settlement fix)",
+      "sha256": "4fd76eb07ffed11b5bff0da5fbaa7b1c73bcc6da672a19a900b69e198c60b39c",
       "history": [
+        {
+          "observations": "Expanded the Stage 10.15 disabled-provider adversarial job-description regression to three deterministic cases covering fabricated tenure, employer/leadership, certifications, and skills. Case-specific waits target the exact suggestion list or normalized keyword-review output before asserting candidate-authored content remains unchanged, fabricated claims remain absent from preview, and no external provider fetch/XHR occurs. This does not test live model output.",
+          "evidence": "npm run typecheck:tests passed for 100 canonical files; Prettier, complete file-audit validation, and roadmap traceability passed. Exact-head quality run 45183500343 and focused Chromium browser/axe/keyboard/responsive run 45183507303 passed at SHA b262e3ff1610da865130f1d0fe91c9e435728d06. Independent review approved the test and audit correction. This remains disabled-provider isolation, not live-model output evaluation.",
+          "reviewer": "Codex (CareerScope Stage 10.15 keyword-normalization test correction)",
+          "sha256": "aef1533c7ef56a9fe703674cc360452e87b9042abc9aeb3b4da3c222fdfdf93f"
+        },
         {
           "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
           "sha256": "0ada59c92293bab469f0de7d3194dbf6a1bae44487b6713e7ef1ff76ad691d34",
@@ -8436,6 +8564,30 @@
           "sha256": "c6e6f2641dd01530d232a6106f7f578751dc13dc49d7243bc36d5d316228fcdc",
           "observations": "The Stage 10.09 comparison scenario now removes a previously saved experience bullet and asserts it remains highlighted only in the saved version. Print assertions verify the saved article is hidden and current article visible while changed-text highlight backgrounds are transparent.",
           "evidence": "Focused hosted browser run 45046336500 and all three exact-head PR jobs in 45046342004 passed on SHA 6280c28e7d82d174a13dec85d659da3cde078c7d. New removal and print-visibility assertions are pending validation on the next exact head."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 cross-browser PDF regression closeout)",
+          "sha256": "6d24f837593ff42aba7e10c613dfd5ee4e9d565b136db14fac5c3dc90afe1aa0",
+          "observations": "The Stage 10.11 browser regression waits for the app-managed PDF download, validates its sanitized role-specific filename, PDF header/page object, extracted Greek and Cyrillic candidate-authored text, and success feedback. Unsupported Telugu retains the print/save fallback.",
+          "evidence": "Exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe passed hosted cross-browser run 45164018450 on Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. Native PDF viewer rendering and owner acceptance remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.15 adversarial input regression)",
+          "sha256": "e1d59bf148747085da861243eae187b21da99d9ccb1fe67a45d67ee3ecdddae4",
+          "observations": "Reviewed the Stage 10.15 adversarial job-description regression: untrusted prompt instructions do not alter candidate-authored fields or preview and no external provider request occurs. Model-output evaluation remains untested.",
+          "evidence": "npm run typecheck:tests passed for 100 canonical test files; focused exact-head Chromium browser, axe, keyboard, and responsive run 45175065392 subsequently passed on SHA 8c9b7857039787564f578208c1e168c929842e83 and independent review approved that test change. An earlier record noted the run was pending before it completed. Model-output evaluation remains untested."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.15 adversarial input corpus)",
+          "sha256": "9e08d1c967174aa29b7ce7de18d8321e7a0cef4d97bfc8795e7c9babc8c42c60",
+          "observations": "Expanded the Stage 10.15 disabled-provider adversarial job-description regression to a deterministic corpus covering fabricated tenure, employer/leadership, certifications, and skills. Each case asserts candidate-authored skills and summary remain unchanged, fabricated claims stay out of the preview, and no external provider fetch/XHR occurs. This does not test live model output.",
+          "evidence": "npm run typecheck:tests passes for 100 canonical test files; formatting, complete file-audit validation, and roadmap traceability pass. Exact-head hosted quality and focused browser validation for the expanded corpus are pending; item 10.15 remains partial."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.15 adversarial input corpus correction)",
+          "sha256": "bcf803a74a413a51cba3f4f98d9c557c31825dcd4c77962e13f6f66e4e747997",
+          "observations": "Expanded the Stage 10.15 disabled-provider adversarial job-description regression to three deterministic cases covering fabricated tenure, employer/leadership, certifications, and skills. Each case waits for a unique processed-analysis signal, then asserts candidate-authored skills and summary remain unchanged, fabricated claims stay out of the preview, and no external provider fetch/XHR occurs. This does not test live model output.",
+          "evidence": "npm run typecheck:tests passes for 100 canonical test files; Prettier, complete file-audit validation, and roadmap traceability pass. Exact-head hosted quality passed on 85c0dedf29ce4eeb800a1b2ad60aaad2cb902d1b. The focused Chromium run exposed an ambiguous selector; exact-head browser validation is pending after correction. Item 10.15 remains partial."
         }
       ]
     },
@@ -8502,10 +8654,18 @@
           "remediation": "Replaced the path fixture with the synthetic candidate@example.test identity."
         }
       ],
-      "observations": "Re-reviewed complete tests after Stage 03 item 3.13 regression update. Cover route epochs, method/resource/engine/path allowlists, including prior-route Chromium search detail reads while current-route and non-Chromium requests remain strict; same-origin path normalization, dynamic/query redaction and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed.",
-      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "cb3ce3fd9bf8c860e4bb28a0598cf6dd28ae7ff6212fda6851f60f43896c61ed"
+      "observations": "Added route-epoch cases for stale Next router prefetch GETs in Firefox and WebKit while asserting current-route and untagged requests remain in the settlement barrier.",
+      "evidence": "Focused unit suite scripts/tests/ui-requests.test.ts passed 6/6 locally. Exact-head CI is required to confirm the Firefox browser-suite flake is resolved.",
+      "reviewer": "Codex (Stage 10 Firefox route-prefetch settlement fix)",
+      "sha256": "8dfc25b7d9fe603483b90c5f009f24b05d9c41cdfcc16f1f74e846528eb9ab58",
+      "history": [
+        {
+          "observations": "Re-reviewed complete tests after Stage 03 item 3.13 regression update. Cover route epochs, method/resource/engine/path allowlists, including prior-route Chromium search detail reads while current-route and non-Chromium requests remain strict; same-origin path normalization, dynamic/query redaction and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed.",
+          "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "cb3ce3fd9bf8c860e4bb28a0598cf6dd28ae7ff6212fda6851f60f43896c61ed"
+        }
+      ]
     },
     {
       "path": "scripts/tests/ui-requests.ts",
@@ -8514,10 +8674,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.",
-      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "4d95c21eb0bbe1ca0139c7b3c262fbaa13ebad23d02b81d80a258271a1580e84"
+      "observations": "Scoped the settlement allowance for stale GETs: explicitly tagged Next router prefetches may outlive their source route in every browser; other non-Chromium fetches remain strict, as do current-route requests, writes, documents, and unrelated images.",
+      "evidence": "Focused unit suite scripts/tests/ui-requests.test.ts passed 6/6 locally. Exact-head CI is required to confirm the Firefox browser-suite flake is resolved.",
+      "reviewer": "Codex (Stage 10 Firefox route-prefetch settlement fix)",
+      "sha256": "a39b7305b596a5dad80ac61d05fa033e0877a1005a2fab50d67b5de6b72cd4a5",
+      "history": [
+        {
+          "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.",
+          "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "sha256": "4d95c21eb0bbe1ca0139c7b3c262fbaa13ebad23d02b81d80a258271a1580e84"
+        }
+      ]
     },
     {
       "path": "scripts/tests/visual-baselines/sign-in-desktop.png",
@@ -8662,6 +8830,18 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "6040b0afb6dbae5f400cfaeb18fb8595d5644a4bea2f0dccc43797d136d58863"
+    },
+    {
+      "path": "apps/web/public/fonts/README.md",
+      "category": "documentation",
+      "reviewMethod": "content-read-and-diff-review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Read the complete provenance note: upstream v2.015 static font paths, fonttools subset command/ranges, OFL license and reserved-name note, runtime cmap test linkage, and checked-in asset hashes.",
+      "evidence": "Current candidate contents reviewed for the Stage 10.11 Unicode PDF correction.",
+      "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
+      "sha256": "5f5c06769df9a94ad1f9d247b5855d920ab84f06570848b6d849be42614f0c4f"
     }
   ]
 }

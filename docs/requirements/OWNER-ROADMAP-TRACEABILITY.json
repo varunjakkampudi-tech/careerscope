@@ -2318,7 +2318,7 @@
       ],
       "tests": ["apps/web/src/lib/resume-pdf.test.ts", "scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "A client-side A4 PDF download now has role-specific filename/title, paginated candidate-authored sections, and browser text-extraction coverage. Unit tests validate schema-valid multi-page resume data, extracted text from the first and final pages, section-heading page boundaries, representative Western Latin/WinAnsi characters, and every nonempty PDF.js text item's geometry within A4 page edges and 16 mm horizontal margins. Vertical bounds use PDF.js ascent/descent metrics with a 2 pt tolerance; this is coordinate-level geometry coverage, not rasterized or native viewer validation. Independent review found intermediate head e878a614f9bab4e12f648ebc2e79147d0aef6fd6 insufficient. Corrected head f063df844cf23b292341f017bf5997f92ba354a4 passed all required CI jobs in run 45133065368 on attempt 2 and received independent exact-SHA approval against base fad57ea3253024983f29183acefaee59328d0d01. The first Services attempt failed on a Firefox /jobs route-prefetch timeout during fixture reset; its retry passed without source changes. Historical head 505f28703fe694f07ed2b4fe8197ed02f3a28671 passed required hosted CI run 45125280732 and received independent engineering approval against base fad57ea3253024983f29183acefaee59328d0d01; that evidence predates both geometry revisions. Direct generation refuses unsupported scripts with a print/save fallback to avoid data loss. Broader Unicode font coverage, native/cross-browser acceptance, and owner verification remain open.",
+      "gap": "A client-side A4 PDF download has role-specific filename/title, candidate-authored sections, pagination and page numbering. Geometry and extraction coverage applies to the prior WinAnsi implementation. The Unicode extension embeds subsetted OFL-1.1 Noto Sans regular/bold for the documented cmap allowlist; runtime checks every used glyph in both faces, and unsupported or unmapped text retains the print/save fallback. Tests cover both font cmaps, Greek/Cyrillic text extraction, bold Cyrillic, Unicode multi-page A4 geometry and 16 mm side margins, and unsupported CJK fallback. Font source, subset recipe, license, and hashes are documented in apps/web/public/fonts/README.md. Focused PDF suite: 9/9. Full npm run check passed on functional source commit 22a5690 (396 passed, 3 skipped, 0 failed). Exact head 75345b5e53015cc0cd83f4336af94f88f8ab0d03 passed hosted run 45154220385: quality gates, production artifact build, PostgreSQL/Redis integration, browser/axe/keyboard/responsive, performance, soak, and recovery. Independent code review approved the bounded implementation against base e770e87e747a373145830155e6e77e3bfaf4059f. The production-image workflow job was skipped on workflow_dispatch and the local Docker runtime image was not produced. Hosted cross-browser Unicode PDF download acceptance passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe in run 45164018450 on Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This validates browser-managed download and extracted Unicode content. A local Chrome built-in PDF viewer smoke check displayed a synthetic one-page resume with Greek and Cyrillic text visibly intact. This does not establish multi-page, CJK/Telugu, cross-platform, or owner acceptance; item remains partial. Owner verification remains pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2357,7 +2357,7 @@
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "AI features are disabled so no model costs can accrue from them; configurable quotas, budgets, usage telemetry, and enforcement are not implemented.",
+      "gap": "AI generation is disabled. No provider/model pricing schedule, account-tier mapping, per-tier request/token ceilings, durable pre-call reservations/releases, usage accounting, daily spend circuit breaker, or administrator alert route exists. Owner must define these policies before any provider is enabled.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2369,11 +2369,18 @@
       "currentStatus": "partial",
       "evidence": [
         "packages/core/src/resume-drafts.ts",
-        "apps/web/src/components/resume-builder.tsx"
+        "apps/web/src/components/resume-builder.tsx",
+        "scripts/tests/check-ui.ts"
       ],
-      "tests": [],
-      "externalEvidence": [],
-      "gap": "Manual candidate-entered data and fact-only display prevent generated claims in this flow; AI evaluation datasets, adversarial evaluation, and provider controls are not implemented.",
+      "tests": ["scripts/tests/check-ui.ts"],
+      "externalEvidence": [
+        "PR #136 exact-head code review approved at SHA 8c9b7857039787564f578208c1e168c929842e83",
+        "GitHub Actions run 45175065392 passed the focused Chromium browser, accessibility, keyboard, and responsive suite at SHA 8c9b7857039787564f578208c1e168c929842e83",
+        "GitHub Actions run 45183500343 passed exact-head quality gates (suite=checks) at SHA b262e3ff1610da865130f1d0fe91c9e435728d06; service/browser and production-image jobs were skipped",
+        "GitHub Actions run 45183507303 passed focused Chromium resume-builder browser, axe accessibility, keyboard, and responsive checks at SHA b262e3ff1610da865130f1d0fe91c9e435728d06; integration, migrations, production-image, performance, soak, and recovery checks were skipped",
+        "Independent code review approved the Stage 10.15 selector, keyword-normalization, and audit corrections at exact SHA b262e3ff1610da865130f1d0fe91c9e435728d06"
+      ],
+      "gap": "The deterministic browser regression covers disabled-provider input isolation only. Live-model adversarial output evaluation datasets and provider controls are not implemented; server-side provider egress is not tested. Owner verification remains pending.",
       "scopeDisposition": "in-scope"
     },
     {

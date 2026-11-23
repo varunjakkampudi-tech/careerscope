@@ -339,8 +339,27 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
     setPdfExporting(true);
     setPdfMessage('');
     try {
-      const { createResumePdf } = await import('../lib/resume-pdf');
-      const { blob, filename } = createResumePdf(fields);
+      const {
+        createResumePdf,
+        isSupportedWithEmbeddedFontGlyphs,
+        needsEmbeddedResumePdfFont,
+        supportsDirectResumePdf,
+      } = await import('../lib/resume-pdf');
+      if (!supportsDirectResumePdf(fields)) {
+        const { UnsupportedResumePdfTextError } = await import('../lib/resume-pdf');
+        throw new UnsupportedResumePdfTextError();
+      }
+      const fonts = needsEmbeddedResumePdfFont(fields)
+        ? await (await import('../lib/resume-pdf-fonts')).loadResumePdfFonts()
+        : undefined;
+      if (
+        (fonts && !isSupportedWithEmbeddedFontGlyphs(fields, fonts)) ||
+        (!fonts && !supportsDirectResumePdf(fields))
+      ) {
+        const { UnsupportedResumePdfTextError } = await import('../lib/resume-pdf');
+        throw new UnsupportedResumePdfTextError();
+      }
+      const { blob, filename } = createResumePdf(fields, fonts);
       const objectUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = objectUrl;

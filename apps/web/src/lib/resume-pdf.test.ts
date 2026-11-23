@@ -3,7 +3,16 @@ import { resolve, sep } from 'node:path';
 import test from 'node:test';
 import { pathToFileURL } from 'node:url';
 import { PDFParse } from 'pdf-parse';
-import { createResumePdf, supportsDirectResumePdf, type ResumePdfDraft } from './resume-pdf.js';
+import {
+  createResumePdf,
+  embeddedResumePdfFontsCoverSupportedCodepoints,
+  hasEmbeddedFontGlyphs,
+  isSupportedWithEmbeddedFontGlyphs,
+  needsEmbeddedResumePdfFont,
+  supportsDirectResumePdf,
+  type ResumePdfDraft,
+} from './resume-pdf.js';
+import { readFile } from 'node:fs/promises';
 
 async function isValidResumeContent(content: ResumePdfDraft['content']) {
   const coreSchema = await import(
@@ -86,6 +95,81 @@ test('direct PDF export accepts Western Latin text and declines unsupported scri
     supportsDirectResumePdf({ ...draft, content: { ...draft.content, fullName: 'తెలుగు పేరు' } }),
     false,
   );
+  assert.equal(
+    supportsDirectResumePdf({ ...draft, content: { ...draft.content, fullName: 'Αλέξανδρος' } }),
+    true,
+  );
+  assert.equal(
+    supportsDirectResumePdf({ ...draft, content: { ...draft.content, fullName: 'Ирина' } }),
+    true,
+  );
+  assert.equal(
+    needsEmbeddedResumePdfFont({ ...draft, content: { ...draft.content, fullName: 'Ирина' } }),
+    true,
+  );
+  assert.equal(
+    supportsDirectResumePdf({ ...draft, content: { ...draft.content, fullName: '漢字' } }),
+    false,
+  );
+});
+
+test('embedded PDF font preserves Greek and Cyrillic in extracted resume text', async () => {
+  const fontDirectory = resolve(process.cwd(), 'apps/web/public/fonts');
+  const fonts = {
+    regular: (await readFile(resolve(fontDirectory, 'NotoSans-Regular-subset.ttf'))).toString(
+      'base64',
+    ),
+    bold: (await readFile(resolve(fontDirectory, 'NotoSans-Bold-subset.ttf'))).toString('base64'),
+  };
+  const multilingualDraft: ResumePdfDraft = {
+    ...draft,
+    content: {
+      ...draft.content,
+      fullName: 'Αλέξανδρος Иванова',
+      summary: 'Ανάπτυξη λογισμικού και разработка ПО.',
+    },
+  };
+  const { blob } = createResumePdf(multilingualDraft, fonts);
+  assert.equal(hasEmbeddedFontGlyphs(multilingualDraft, fonts), true);
+  assert.equal(isSupportedWithEmbeddedFontGlyphs(multilingualDraft, fonts), true);
+  const parser = new PDFParse({ data: new Uint8Array(await blob.arrayBuffer()) });
+  try {
+    const extracted = (await parser.getText()).text;
+    assert.match(extracted, /Αλέξανδρος Иванова/);
+    assert.match(extracted, /Ανάπτυξη λογισμικού και разработка ПО/);
+  } finally {
+    await parser.destroy();
+  }
+});
+
+test('embedded PDF font refuses an unmapped codepoint before generating output', async () => {
+  const fontDirectory = resolve(process.cwd(), 'apps/web/public/fonts');
+  const fonts = {
+    regular: (await readFile(resolve(fontDirectory, 'NotoSans-Regular-subset.ttf'))).toString(
+      'base64',
+    ),
+    bold: (await readFile(resolve(fontDirectory, 'NotoSans-Bold-subset.ttf'))).toString('base64'),
+  };
+  const unsupportedDraft = {
+    ...draft,
+    content: { ...draft.content, fullName: 'Αλέξανδρος漢' },
+  };
+  assert.equal(hasEmbeddedFontGlyphs(unsupportedDraft, fonts), false);
+  assert.equal(isSupportedWithEmbeddedFontGlyphs(unsupportedDraft, fonts), false);
+  assert.throws(() => createResumePdf(unsupportedDraft, fonts), {
+    name: 'UnsupportedResumePdfTextError',
+  });
+});
+
+test('regular and bold font cmaps cover every declared embedded-font codepoint', async () => {
+  const fontDirectory = resolve(process.cwd(), 'apps/web/public/fonts');
+  const fonts = {
+    regular: (await readFile(resolve(fontDirectory, 'NotoSans-Regular-subset.ttf'))).toString(
+      'base64',
+    ),
+    bold: (await readFile(resolve(fontDirectory, 'NotoSans-Bold-subset.ttf'))).toString('base64'),
+  };
+  assert.equal(embeddedResumePdfFontsCoverSupportedCodepoints(fonts), true);
 });
 
 test('direct PDF export carries role-specific metadata, a sanitized filename, and an A4 page', async () => {
@@ -173,15 +257,22 @@ test('direct PDF export paginates a schema-valid candidate-authored resume', asy
 });
 
 test('multi-page PDF text remains inside the A4 page bounds', async () => {
+  const fontDirectory = resolve(process.cwd(), 'apps/web/public/fonts');
+  const fonts = {
+    regular: (await readFile(resolve(fontDirectory, 'NotoSans-Regular-subset.ttf'))).toString(
+      'base64',
+    ),
+    bold: (await readFile(resolve(fontDirectory, 'NotoSans-Bold-subset.ttf'))).toString('base64'),
+  };
   const longDraft: ResumePdfDraft = {
     ...draft,
     content: {
       ...draft.content,
-      fullName: 'Candidate with a long work history',
-      summary: 'A candidate-authored profile within the supported summary limit.',
+      fullName: 'Αλέξανδρος Иванова with a long work history',
+      summary: 'Ανάπτυξη λογισμικού and разработка ПО in a candidate-authored profile.',
       experience: Array.from({ length: 16 }, (_, experienceIndex) => ({
         id: `layout-experience-${experienceIndex}`,
-        role: `Role ${experienceIndex}`,
+        role: `${experienceIndex === 0 ? 'Инженер' : 'Role'} ${experienceIndex}`,
         company: `Company ${experienceIndex}`,
         location: 'London',
         startDate: '2020-01',
@@ -196,7 +287,7 @@ test('multi-page PDF text remains inside the A4 page bounds', async () => {
   };
   assert.equal(await isValidResumeContent(longDraft.content), true);
 
-  const { blob } = createResumePdf(longDraft);
+  const { blob } = createResumePdf(longDraft, fonts);
   const pdfjs = await import(
     pathToFileURL(resolve(process.cwd(), 'node_modules/pdfjs-dist/legacy/build/pdf.mjs')).href
   );
@@ -210,6 +301,12 @@ test('multi-page PDF text remains inside the A4 page bounds', async () => {
   const pageEdgePadding = 10;
   try {
     assert.ok(document.numPages > 1);
+    const firstPageText = ((await (await document.getPage(1)).getTextContent()).items as unknown[])
+      .filter(isNonEmptyPdfTextItem)
+      .map((item) => item.str)
+      .join(' ');
+    assert.match(firstPageText, /Αλέξανδρος Иванова/);
+    assert.match(firstPageText, /Ανάπτυξη λογισμικού/);
     for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber += 1) {
       const page = await document.getPage(pageNumber);
       const viewport = page.getViewport({ scale: 1 });
@@ -257,6 +354,20 @@ test('multi-page PDF text remains inside the A4 page bounds', async () => {
         );
       }
     }
+    const allPageText = await Promise.all(
+      Array.from({ length: document.numPages }, async (_, index) => {
+        const page = await document.getPage(index + 1);
+        return ((await page.getTextContent()).items as unknown[])
+          .filter(isNonEmptyPdfTextItem)
+          .map((item) => item.str)
+          .join(' ');
+      }),
+    );
+    assert.ok(allPageText.length > 1, 'Unicode resume content paginates');
+    assert.ok(
+      allPageText.some((text) => text.includes('Инженер 0')),
+      'bold Cyrillic role exists',
+    );
   } finally {
     await document.destroy();
   }
