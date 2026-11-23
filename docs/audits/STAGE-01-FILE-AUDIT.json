@@ -8440,10 +8440,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the Stage 10.15 adversarial job-description regression: untrusted prompt instructions do not alter candidate-authored fields or preview and no external provider request occurs. Model-output evaluation remains untested.",
-      "evidence": "npm run typecheck:tests passes for 100 canonical test files; hosted focused Chromium browser, axe, keyboard, and responsive run 45175065392 passes at exact head 8c9b7857039787564f578208c1e168c929842e83; independent review approved this test change.",
-      "reviewer": "Codex (CareerScope Stage 10.15 adversarial input regression)",
-      "sha256": "e1d59bf148747085da861243eae187b21da99d9ccb1fe67a45d67ee3ecdddae4",
+      "observations": "Expanded the Stage 10.15 disabled-provider adversarial job-description regression to a deterministic corpus covering fabricated tenure, employer/leadership, certifications, and skills. Each case asserts candidate-authored skills and summary remain unchanged, fabricated claims stay out of the preview, and no external provider fetch/XHR occurs. This does not test live model output.",
+      "evidence": "npm run typecheck:tests passes for 100 canonical test files; Prettier and git diff --check pass. Exact-head hosted browser validation for this corpus is pending; item 10.15 remains partial.",
+      "reviewer": "Codex (CareerScope Stage 10.15 adversarial input corpus)",
+      "sha256": "f4c4c01ee28a10a692bc83eabdd83d3bf34b806e020d1e17443a9a64733f2a70",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
@@ -8540,6 +8540,12 @@
           "sha256": "e1d59bf148747085da861243eae187b21da99d9ccb1fe67a45d67ee3ecdddae4",
           "observations": "Reviewed the Stage 10.15 adversarial job-description regression: untrusted prompt instructions do not alter candidate-authored fields or preview and no external provider request occurs. Model-output evaluation remains untested.",
           "evidence": "npm run typecheck:tests passes for 100 canonical test files; exact-head browser execution and independent checklist review are pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.15 adversarial input regression)",
+          "sha256": "e1d59bf148747085da861243eae187b21da99d9ccb1fe67a45d67ee3ecdddae4",
+          "observations": "Reviewed the Stage 10.15 adversarial job-description regression: untrusted prompt instructions do not alter candidate-authored fields or preview and no external provider request occurs. Model-output evaluation remains untested.",
+          "evidence": "npm run typecheck:tests passes for 100 canonical test files; hosted focused Chromium browser, axe, keyboard, and responsive run 45175065392 passes at exact head 8c9b7857039787564f578208c1e168c929842e83; independent review approved this test change."
         },
         {
           "reviewer": "Codex (CareerScope Stage 10.15 adversarial input regression)",
