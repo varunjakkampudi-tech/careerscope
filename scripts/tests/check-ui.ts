@@ -29,6 +29,7 @@ import {
 import { createApp } from '../../apps/api/src/app.js';
 import { collect } from '../../apps/workers/search/src/collect.js';
 import { createRemoteOkProvider, type JobProvider } from '@careerscope/providers';
+import { extractText } from '@careerscope/resume';
 import { selectUiBrowsers } from './ui-browsers.js';
 import {
   browserRequestFailureCategory,
@@ -2053,6 +2054,55 @@ try {
             .getAttribute('data-template'),
           'modern',
         );
+        const [resumePdfDownload] = await Promise.all([
+          page.waitForEvent('download'),
+          reloadedBuilder.getByRole('button', { name: 'Download PDF' }).click(),
+        ]);
+        assert.equal(
+          resumePdfDownload.suggestedFilename(),
+          'Synthetic Role Resume - Frontend Engineer.pdf',
+        );
+        const resumePdfPath = await resumePdfDownload.path();
+        assert.ok(resumePdfPath, 'the application-managed PDF download has a file');
+        const resumePdfBytes = await readFile(resumePdfPath);
+        assert.equal(resumePdfBytes.subarray(0, 5).toString('ascii'), '%PDF-');
+        const resumePdfContent = resumePdfBytes.toString('latin1');
+        assert.match(
+          resumePdfContent,
+          /\/Title\s*\(Synthetic Role Resume - Frontend Engineer\)/,
+          'the downloaded PDF carries its resume and target role in document metadata',
+        );
+        assert.ok(
+          (resumePdfContent.match(/\/Type\s*\/Page\b/g) ?? []).length >= 1,
+          'the downloaded PDF contains at least one page',
+        );
+        const extractedResumePdfText = await extractText(resumePdfBytes);
+        for (const expectedText of [
+          'Synthetic Candidate',
+          'Frontend Engineer',
+          'Builds accessible React interfaces.',
+          'Synthetic Systems',
+          'Built a candidate-reported feature.',
+          'Example University',
+          'React',
+          'TypeScript',
+        ]) {
+          assert.ok(
+            extractedResumePdfText.includes(expectedText),
+            `the downloaded PDF includes candidate-authored text: ${expectedText}`,
+          );
+        }
+        assert.match(
+          await reloadedBuilder.getByRole('status').last().innerText(),
+          /PDF download started/,
+        );
+        await reloadedBuilder.getByLabel('Full name').fill('తెలుగు పేరు');
+        await reloadedBuilder.getByRole('button', { name: 'Download PDF' }).click();
+        assert.match(
+          await reloadedBuilder.getByRole('status').last().innerText(),
+          /Use Print or save as PDF to retain other scripts/,
+        );
+        await reloadedBuilder.getByLabel('Full name').fill('Synthetic Candidate');
         await page.evaluate(() => {
           const testWindow = window as Window & { __careerScopePrintTitle?: string };
           const originalPrint = window.print;

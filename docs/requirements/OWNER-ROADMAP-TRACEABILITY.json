@@ -2313,11 +2313,12 @@
       "currentStatus": "partial",
       "evidence": [
         "apps/web/src/components/resume-builder.tsx",
-        "apps/web/src/components/resume-builder.module.css"
+        "apps/web/src/components/resume-builder.module.css",
+        "apps/web/src/lib/resume-pdf.ts"
       ],
-      "tests": ["scripts/tests/check-ui.ts"],
+      "tests": ["apps/web/src/lib/resume-pdf.test.ts", "scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Chromium browser acceptance generates an A4 PDF from the print flow and checks its PDF signature, page object, role-specific title, and restored document title. This does not implement deterministic application-managed PDF download or prove cross-browser layout; native print/save and owner acceptance remain pending.",
+      "gap": "A client-side A4 PDF download now has role-specific filename/title, paginated candidate-authored sections, and text-extraction browser coverage. Unit and browser checks are added; hosted exact-head validation is pending. Direct generation currently supports Western Latin/WinAnsi characters and refuses other scripts with a print/save fallback to avoid data loss. Broader Unicode font coverage, native print/save acceptance, and owner verification remain open.",
       "scopeDisposition": "in-scope"
     },
     {

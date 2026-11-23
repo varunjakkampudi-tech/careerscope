@@ -226,6 +226,8 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
   const [variantOfId, setVariantOfId] = useState<string | null>(null);
   const [jobDescription, setJobDescription] = useState('');
   const [showBefore, setShowBefore] = useState(false);
+  const [pdfExporting, setPdfExporting] = useState(false);
+  const [pdfMessage, setPdfMessage] = useState('');
   const selected = drafts.data?.items.find((item) => item.id === selectedId) ?? null;
   const activeDraft = selected;
   const dirty = isNew || serializeDraft(fields) !== baseline;
@@ -332,6 +334,33 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
   );
   const formatChecks = analyzeResumeFormatting(fields.content, fields.targetRole);
   const busy = create.isPending || save.isPending || approve.isPending || remove.isPending;
+
+  async function exportPdf() {
+    setPdfExporting(true);
+    setPdfMessage('');
+    try {
+      const { createResumePdf } = await import('../lib/resume-pdf');
+      const { blob, filename } = createResumePdf(fields);
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = filename;
+      link.hidden = true;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      setPdfMessage('PDF download started.');
+    } catch (error) {
+      setPdfMessage(
+        error instanceof Error && error.name === 'UnsupportedResumePdfTextError'
+          ? error.message
+          : 'Could not generate the PDF. You can still use Print or save as PDF.',
+      );
+    } finally {
+      setPdfExporting(false);
+    }
+  }
 
   function startNew() {
     if (dirty && !window.confirm('Discard unsaved resume edits and start a new draft?')) return;
@@ -757,6 +786,16 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
                   {activeDraft && (
                     <button
                       type="button"
+                      onClick={() => void exportPdf()}
+                      disabled={pdfExporting}
+                      aria-busy={pdfExporting}
+                    >
+                      {pdfExporting ? 'Preparing PDF…' : 'Download PDF'}
+                    </button>
+                  )}
+                  {activeDraft && (
+                    <button
+                      type="button"
                       onClick={() => {
                         if (window.confirm('Delete this resume draft?')) remove.mutate();
                       }}
@@ -775,6 +814,7 @@ export default function ResumeBuilder({ csrf }: { csrf: string }) {
                 {dirty && activeDraft?.approvedAt && (
                   <p role="status">Editing clears your previous approval when you save.</p>
                 )}
+                {pdfMessage && <p role="status">{pdfMessage}</p>}
                 {create.error && (
                   <ErrorState
                     variant="inline"
