@@ -4239,6 +4239,34 @@ try {
       assert.equal(await applicationStatus.inputValue(), 'applied');
       assert.equal((await leadRepository.get(ownerId, leadId))?.status, 'applied');
       assert.ok((await leadRepository.get(ownerId, leadId))?.followUpAt);
+      const archiveButton = applicationDetails.getByRole('button', {
+        name: 'Archive in CareerScope',
+      });
+      const beforeDismissedArchive = await leadRepository.get(ownerId, leadId);
+      let archiveMutationsAfterDismiss = 0;
+      const countArchiveMutations = (request: import('playwright').Request) => {
+        if (request.url().endsWith(`/api/leads/${leadId}`) && request.method() === 'PUT')
+          archiveMutationsAfterDismiss += 1;
+      };
+      page.on('request', countArchiveMutations);
+      let dismissedArchiveConfirmationMessage = '';
+      page.once('dialog', async (dialog) => {
+        dismissedArchiveConfirmationMessage = dialog.message();
+        await dialog.dismiss();
+      });
+      await archiveButton.click();
+      page.off('request', countArchiveMutations);
+      assert.match(
+        dismissedArchiveConfirmationMessage,
+        /scheduled follow-up reminder will also be cleared/i,
+      );
+      assert.equal(archiveMutationsAfterDismiss, 0);
+      const afterDismissedArchive = await leadRepository.get(ownerId, leadId);
+      assert.equal(afterDismissedArchive?.status, 'applied');
+      assert.equal(
+        afterDismissedArchive?.followUpAt?.toISOString(),
+        beforeDismissedArchive?.followUpAt?.toISOString(),
+      );
       await page.once('dialog', (dialog) => {
         assert.match(dialog.message(), /scheduled follow-up reminder will also be cleared/i);
         void dialog.accept();
@@ -4247,7 +4275,7 @@ try {
         (response) =>
           response.url().endsWith(`/api/leads/${leadId}`) && response.request().method() === 'PUT',
       );
-      await applicationDetails.getByRole('button', { name: 'Archive in CareerScope' }).click();
+      await archiveButton.click();
       assert.equal((await archiveApplication).status(), 200);
       assert.equal((await leadRepository.get(ownerId, leadId))?.status, 'archived');
       assert.equal((await leadRepository.get(ownerId, leadId))?.followUpAt, null);

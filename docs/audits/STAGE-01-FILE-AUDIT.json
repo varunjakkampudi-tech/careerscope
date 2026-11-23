@@ -2419,9 +2419,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Reviewed status selector scope, cancellation regression, archive-button disclosure, and supporting documentation; SHA-256 records the reviewed bytes. Exact-head CI and owner review remain separate gates.",
-      "reviewer": "Codex (Stage 09 reminder confirmation correction)",
-      "sha256": "d6fdc9c312065537e8cde6865b6b6f71c8cc0b5fbcf7fe27be55b3040b810c3f",
+      "evidence": "Reviewed browser coverage for status-change cancellation, archive-confirmation dismissal without mutation, and successful archive; SHA-256 records the reviewed bytes. Exact-head CI remains separate.",
+      "reviewer": "Codex (Stage 09 archive cancellation coverage)",
+      "sha256": "f4498bc52d267710a44d53d5940ca36b016e61e3099cb23084fedbf810cdcae4",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -7614,9 +7614,9 @@
         }
       ],
       "observations": "Reviewed the Stage 09 acknowledgement browser failure: changing a saved lead to applied removes it from the saved-screen status scope and intentionally deselects it. The browser journey now opens the same lead in the Applications screen before asserting application-only acknowledgement and follow-up controls.",
-      "evidence": "Reviewed status selector scope, cancellation regression, archive-button disclosure, and supporting documentation; SHA-256 records the reviewed bytes. Exact-head CI and owner review remain separate gates.",
-      "reviewer": "Codex (Stage 09 reminder confirmation correction)",
-      "sha256": "11edb5250b2ce924672ddc005c86731c16446e18777be2fcb5af2fbac9dd98b1",
+      "evidence": "Reviewed browser coverage for status-change cancellation, archive-confirmation dismissal without mutation, and successful archive; SHA-256 records the reviewed bytes. Exact-head CI remains separate.",
+      "reviewer": "Codex (Stage 09 archive cancellation coverage)",
+      "sha256": "7be07411ca3ce1bf3f258aa5799399b174d36eff8b25fd96fffdfa140e9d4ac2",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
