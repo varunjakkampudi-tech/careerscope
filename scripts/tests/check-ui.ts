@@ -3963,6 +3963,7 @@ try {
       const acknowledgementCard = openedLead.getByRole('region', {
         name: 'Employer acknowledgement record',
       });
+      await acknowledgementCard.waitFor();
       assert.equal(await acknowledgementCard.count(), 1);
       await acknowledgementCard
         .getByText('Candidate-reported information only.', { exact: false })

@@ -7613,10 +7613,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the Stage 09 acknowledgement browser failure: the test now locates the acknowledgement section by its explicit accessible region name, matching the component aria-label; no application behavior changed.",
-      "evidence": "CI run 45193368589 failed at check-ui.ts:3966 because the previous nested heading filter matched zero sections; exact-head rerun will validate this selector correction.",
+      "observations": "Reviewed the Stage 09 acknowledgement browser failure: the test now locates the section by its accessible region name, waits for it to appear after application state refresh, then asserts uniqueness.",
+      "evidence": "CI run 45213920862 showed the region locator count remained zero before the client rerender after the application update; exact-head rerun will validate the visibility wait.",
       "reviewer": "Codex (Stage 09 employer acknowledgement CI correction)",
-      "sha256": "cf4fe3069ec5cdddd70f405970f36ca919e7ce61251f1bda9ad55ab839bf86d4",
+      "sha256": "755d20362031d8f287a98cd168ef1a3085ea3d8bb260b1b3097bda62d3f7013a",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
