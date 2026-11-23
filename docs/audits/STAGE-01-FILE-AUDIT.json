@@ -7767,10 +7767,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed source-health browser assertions. Timestamp matching now checks that at least one recent row is present and waits on its first match, avoiding strict-mode failure when the panel displays multiple rows.",
-      "evidence": "Exact-head run 44492306240 failed because the timestamp locator matched six visible rows. This correction retains a presence assertion and waits on the first result; exact-head CI and independent review remain pending.",
-      "reviewer": "Codex (CareerScope owner item 5.15 CI correction)",
-      "sha256": "cf720d865cb2997cfd5a3c81961c3ff5ec1f9a611215db4f548b83ebd2dd963e",
+      "observations": "Reviewed the cross-browser request-settlement helper and its UI integration. It excludes only GET fetches marked as Next.js router prefetches for known app routes after route navigation; ordinary requests, writes, unknown paths, and same-route prefetches remain in the settlement barrier.",
+      "evidence": "Run 45195768664 on head 6ecb410825fe13d333ba2361637b15068dfe226f passed quality and image jobs but failed Firefox browser acceptance because a marked GET /jobs route prefetch from route epoch 161 remained pending at epoch 179. The helper regression passes locally; exact-head CI after this correction remains pending.",
+      "reviewer": "Codex (Stage 05 item 5.15 browser CI correction)",
+      "sha256": "1106e1085332650fd59d64986d2f0873a748d3314ce4bc6360f87e88ded5687d",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7819,6 +7819,12 @@
           "observations": "Reviewed browser source-health fixture assertions for accepted count, per-source elapsed duration from the API, and displayed search-run timestamp.",
           "evidence": "Hosted run 44490187735 exposed stale manifest hashes after the commit formatter rewrote this file; updated active hashes preserve prior records. Updated-head CI pending.",
           "sha256": "8ccae3a31c6040b88db0895e68daca857736351f911ba804e18ad0e36245bd6d"
+        },
+        {
+          "sha256": "cf720d865cb2997cfd5a3c81961c3ff5ec1f9a611215db4f548b83ebd2dd963e",
+          "reviewer": "Codex (CareerScope owner item 5.15 CI correction)",
+          "observations": "Reviewed source-health browser assertions. Timestamp matching now checks that at least one recent row is present and waits on its first match, avoiding strict-mode failure when the panel displays multiple rows.",
+          "evidence": "Exact-head run 44492306240 failed because the timestamp locator matched six visible rows. This correction retains a presence assertion and waits on the first result; exact-head CI and independent review remain pending."
         }
       ]
     },
@@ -7885,10 +7891,18 @@
           "remediation": "Replaced the path fixture with the synthetic candidate@example.test identity."
         }
       ],
-      "observations": "Re-reviewed complete tests after Stage 03 item 3.13 regression update. Cover route epochs, method/resource/engine/path allowlists, including prior-route Chromium search detail reads while current-route and non-Chromium requests remain strict; same-origin path normalization, dynamic/query redaction and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed.",
-      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "cb3ce3fd9bf8c860e4bb28a0598cf6dd28ae7ff6212fda6851f60f43896c61ed"
+      "observations": "Reviewed the cross-browser request-settlement helper and its UI integration. It excludes only GET fetches marked as Next.js router prefetches for known app routes after route navigation; ordinary requests, writes, unknown paths, and same-route prefetches remain in the settlement barrier.",
+      "evidence": "Run 45195768664 on head 6ecb410825fe13d333ba2361637b15068dfe226f passed quality and image jobs but failed Firefox browser acceptance because a marked GET /jobs route prefetch from route epoch 161 remained pending at epoch 179. The helper regression passes locally; exact-head CI after this correction remains pending.",
+      "reviewer": "Codex (Stage 05 item 5.15 browser CI correction)",
+      "sha256": "a41d63a68cd4360b71744595a2e6f80b5af9f66686300278f7d8b6c652d8eafd",
+      "history": [
+        {
+          "sha256": "cb3ce3fd9bf8c860e4bb28a0598cf6dd28ae7ff6212fda6851f60f43896c61ed",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "observations": "Re-reviewed complete tests after Stage 03 item 3.13 regression update. Cover route epochs, method/resource/engine/path allowlists, including prior-route Chromium search detail reads while current-route and non-Chromium requests remain strict; same-origin path normalization, dynamic/query redaction and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed.",
+          "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes."
+        }
+      ]
     },
     {
       "path": "scripts/tests/ui-requests.ts",
@@ -7897,10 +7911,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.",
-      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "4d95c21eb0bbe1ca0139c7b3c262fbaa13ebad23d02b81d80a258271a1580e84"
+      "observations": "Reviewed the cross-browser request-settlement helper and its UI integration. It excludes only GET fetches marked as Next.js router prefetches for known app routes after route navigation; ordinary requests, writes, unknown paths, and same-route prefetches remain in the settlement barrier.",
+      "evidence": "Run 45195768664 on head 6ecb410825fe13d333ba2361637b15068dfe226f passed quality and image jobs but failed Firefox browser acceptance because a marked GET /jobs route prefetch from route epoch 161 remained pending at epoch 179. The helper regression passes locally; exact-head CI after this correction remains pending.",
+      "reviewer": "Codex (Stage 05 item 5.15 browser CI correction)",
+      "sha256": "cc1cf2888e04358a79091c49b5363ea1ca162fe494d915bc328233f94b823020",
+      "history": [
+        {
+          "sha256": "4d95c21eb0bbe1ca0139c7b3c262fbaa13ebad23d02b81d80a258271a1580e84",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.",
+          "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes."
+        }
+      ]
     },
     {
       "path": "scripts/tests/visual-baselines/sign-in-desktop.png",

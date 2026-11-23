@@ -69,6 +69,34 @@ export function staleEarlierRouteRead(
   );
 }
 
+/** A marked Next.js route prefetch for a known page is irrelevant after leaving its start route. */
+export function staleNextRoutePrefetch(
+  method: string,
+  resourceType: string,
+  startedEpoch: number,
+  currentEpoch: number,
+  pathname: string,
+  isNextRouterPrefetch: boolean,
+): boolean {
+  const appRoutes = new Set([
+    '/dashboard',
+    '/jobs',
+    '/applications',
+    '/saved',
+    '/resume',
+    '/settings',
+    '/career-resources',
+    '/preparation',
+  ]);
+  return (
+    method === 'GET' &&
+    resourceType === 'fetch' &&
+    isNextRouterPrefetch &&
+    appRoutes.has(pathname) &&
+    startedEpoch !== currentEpoch
+  );
+}
+
 /** Return a same-origin pathname only; never retain query strings or foreign URLs. */
 export function sameOriginBrowserPath(value: string, origin: string): string | null {
   try {
