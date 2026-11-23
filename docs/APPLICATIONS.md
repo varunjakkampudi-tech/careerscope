@@ -21,6 +21,12 @@ lifecycle transition requires an explicit candidate report. The report's
 timestamp must be a valid offset-bearing ISO datetime and cannot be in the
 future.
 
+Follow-up reminders apply only while a lead is in an application lifecycle
+status. Moving it to `saved` or `archived` clears the reminder and records that
+change in lead history; the archive confirmation tells the candidate when this
+will happen. Applications can be archived through the dedicated Archive button;
+their status selector does not offer an archived option.
+
 Candidates explicitly change their records. Opening a source or application
 destination does not mark the job applied. No application-submission bot,
 browser credential automation or inferred employer outcome is part of this

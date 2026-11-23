@@ -27,6 +27,7 @@ test('application CSV exports candidate claims and escapes spreadsheet formulas'
       source: 'Candidate entry',
       confidence: 'medium',
     },
+    followUpAt: null,
     livenessStatus: 'unknown',
     livenessCheckedAt: null,
     employerAcknowledgement: null,

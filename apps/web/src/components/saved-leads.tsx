@@ -244,8 +244,22 @@ function LeadEditor({
   allowedStatuses: readonly Lead['status'][];
 }) {
   const cache = useQueryClient();
+  const canRecordEmployerAcknowledgement = [
+    'applied',
+    'interviewing',
+    'offer',
+    'rejected',
+    'withdrawn',
+  ].includes(record.status);
   // CS-61: owner-scoped query keys. Present exactly when authenticated.
   const owner = useOwner();
+  const [nowEpoch, setNowEpoch] = useState<number | null>(null);
+  useEffect(() => {
+    const updateNow = () => setNowEpoch(Date.now());
+    updateNow();
+    const interval = window.setInterval(updateNow, 60_000);
+    return () => window.clearInterval(interval);
+  }, []);
   const [notes, setNotes] = useState(record.notes);
   const [tagsText, setTagsText] = useState(record.tags.join(', '));
   const [applicationEvidenceOpen, setApplicationEvidenceOpen] = useState(false);
@@ -259,10 +273,23 @@ function LeadEditor({
   );
   const [evidenceSource, setEvidenceSource] = useState('');
   const [confidence, setConfidence] = useState<'unknown' | 'low' | 'medium' | 'high'>('unknown');
+  const [followUpLocal, setFollowUpLocal] = useState(() => {
+    if (!record.followUpAt) return '';
+    const date = new Date(record.followUpAt);
+    return new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+  });
+  const [acknowledgementOpen, setAcknowledgementOpen] = useState(false);
+  const [acknowledgementSource, setAcknowledgementSource] = useState('Employer confirmation');
+  const [acknowledgementReference, setAcknowledgementReference] = useState('');
+  const [acknowledgementReceivedAt, setAcknowledgementReceivedAt] = useState(() => {
+    const now = new Date();
+    return new Date(now.getTime() - now.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+  });
   const save = useMutation({
     mutationFn: (input: {
       status: Lead['status'];
       applicationEvidence?: NonNullable<Lead['applicationEvidence']>;
+      followUpAt?: string | null;
       tags?: string[];
     }) =>
       apiParsed(`/leads/${record.id}`, parseLead, {
@@ -285,8 +312,33 @@ function LeadEditor({
       onDirty(false);
       setNotes(lead.notes);
       setTagsText(lead.tags.join(', '));
+      setFollowUpLocal(() => {
+        if (!lead.followUpAt) return '';
+        const date = new Date(lead.followUpAt);
+        return new Date(date.getTime() - date.getTimezoneOffset() * 60_000)
+          .toISOString()
+          .slice(0, 16);
+      });
       save.reset();
       cache.setQueryData(ownerKey(owner, 'lead', record.id), lead);
+    },
+  });
+  const recordAcknowledgement = useMutation({
+    mutationFn: () =>
+      apiParsed(`/leads/${record.id}/employer-acknowledgements`, parseLead, {
+        method: 'POST',
+        headers: { 'x-csrf-token': csrf },
+        body: JSON.stringify({
+          receivedAt: new Date(acknowledgementReceivedAt).toISOString(),
+          source: acknowledgementSource,
+          reference: acknowledgementReference || null,
+        }),
+      }),
+    onSuccess: (lead) => {
+      cache.setQueryData(ownerKey(owner, 'lead', record.id), lead);
+      void cache.invalidateQueries({ queryKey: ['leads'] });
+      setAcknowledgementOpen(false);
+      recordAcknowledgement.reset();
     },
   });
   const history = useInfiniteQuery({
@@ -456,6 +508,11 @@ function LeadEditor({
                       ? ' — Candidate-reported application evidence updated'
                       : ''}
                     {entry.tagsChanged ? ' — Saved-job tags updated' : ''}
+                    {entry.followUpChanged
+                      ? entry.followUpAt
+                        ? ` — Follow-up reminder set for ${absoluteDate(entry.followUpAt)}`
+                        : ' — Follow-up reminder cleared'
+                      : ''}
                   </p>
                 </div>
               </li>
@@ -514,6 +571,163 @@ function LeadEditor({
           )}
         </section>
 
+        {record.applicationEvidence && canRecordEmployerAcknowledgement && (
+          <section className={styles.card} aria-label="Application follow-up reminder">
+            <h2>Follow-up Reminder</h2>
+            <p>
+              Choose when to follow up. This reminder is shown in CareerScope when you open this
+              application; it does not send email or contact the employer.
+            </p>
+            {record.followUpAt && (
+              <p
+                role={
+                  nowEpoch !== null && Date.parse(record.followUpAt) <= nowEpoch
+                    ? 'status'
+                    : undefined
+                }
+              >
+                {nowEpoch !== null && Date.parse(record.followUpAt) <= nowEpoch
+                  ? 'Follow-up due'
+                  : 'Scheduled for'}{' '}
+                {absoluteDate(record.followUpAt)}
+              </p>
+            )}
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                if (!followUpLocal) return;
+                save.mutate({
+                  status: record.status,
+                  followUpAt: new Date(followUpLocal).toISOString(),
+                });
+              }}
+            >
+              <label>
+                Follow up at
+                <input
+                  type="datetime-local"
+                  required
+                  value={followUpLocal}
+                  disabled={pending}
+                  onChange={(event) => setFollowUpLocal(event.target.value)}
+                />
+              </label>
+              <button
+                type="submit"
+                className={styles.btnPrimary}
+                disabled={pending || !followUpLocal}
+              >
+                {pending ? 'Saving…' : 'Save reminder'}
+              </button>
+              {record.followUpAt && (
+                <button
+                  type="button"
+                  className={styles.btnSecondary}
+                  disabled={pending}
+                  onClick={() => {
+                    save.mutate({ status: record.status, followUpAt: null });
+                    setFollowUpLocal('');
+                  }}
+                >
+                  Clear reminder
+                </button>
+              )}
+            </form>
+          </section>
+        )}
+
+        <section className={styles.card} aria-label="Employer acknowledgement record">
+          <h2>Employer Acknowledgement</h2>
+          <p>
+            Candidate-reported information only. CareerScope does not verify that an employer sent
+            or received this acknowledgement. Keep reference details non-sensitive.
+          </p>
+          {record.employerAcknowledgement ? (
+            <dl className={styles.detailList}>
+              <dt>Received</dt>
+              <dd>{absoluteDate(record.employerAcknowledgement.receivedAt)}</dd>
+              <dt>Source</dt>
+              <dd>{record.employerAcknowledgement.source}</dd>
+              <dt>Reference</dt>
+              <dd>{record.employerAcknowledgement.reference || 'Not provided'}</dd>
+            </dl>
+          ) : (
+            <EmptyState
+              variant="inline"
+              reason="awaiting-input"
+              message="No candidate-reported employer acknowledgement has been recorded."
+            />
+          )}
+          {record.applicationEvidence &&
+            canRecordEmployerAcknowledgement &&
+            !acknowledgementOpen && (
+              <button
+                type="button"
+                className={styles.btnSecondary}
+                disabled={pending || recordAcknowledgement.isPending}
+                onClick={() => setAcknowledgementOpen(true)}
+              >
+                Record acknowledgement
+              </button>
+            )}
+          {acknowledgementOpen && (
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                recordAcknowledgement.mutate();
+              }}
+            >
+              <label>
+                Received at
+                <input
+                  type="datetime-local"
+                  required
+                  value={acknowledgementReceivedAt}
+                  onChange={(event) => setAcknowledgementReceivedAt(event.target.value)}
+                />
+              </label>
+              <label>
+                Source
+                <input
+                  required
+                  maxLength={160}
+                  value={acknowledgementSource}
+                  onChange={(event) => setAcknowledgementSource(event.target.value)}
+                />
+              </label>
+              <label>
+                Non-sensitive reference (optional)
+                <input
+                  maxLength={240}
+                  value={acknowledgementReference}
+                  onChange={(event) => setAcknowledgementReference(event.target.value)}
+                />
+              </label>
+              {recordAcknowledgement.error && (
+                <ErrorState
+                  variant="inline"
+                  what="Could not record the employer acknowledgement."
+                  detail={recordAcknowledgement.error.message}
+                />
+              )}
+              <button
+                type="submit"
+                className={styles.btnPrimary}
+                disabled={recordAcknowledgement.isPending}
+              >
+                {recordAcknowledgement.isPending ? 'Recording…' : 'Save acknowledgement'}
+              </button>
+              <button
+                type="button"
+                className={styles.btnSecondary}
+                onClick={() => setAcknowledgementOpen(false)}
+              >
+                Cancel
+              </button>
+            </form>
+          )}
+        </section>
+
         <section
           className={`${styles.card} ${styles.actionsCard}`}
           aria-label="Application actions"
@@ -538,9 +752,13 @@ function LeadEditor({
                 onChange={(event) => {
                   const next = event.target.value as Lead['status'];
                   if (next === record.status) return;
+                  const reminderNotice =
+                    record.followUpAt && ['saved', 'archived'].includes(next)
+                      ? ' Its scheduled follow-up reminder will also be cleared.'
+                      : '';
                   if (
                     window.confirm(
-                      `Change status to "${statusLabel(next)}" and save current notes and tags?`,
+                      `Change status to "${statusLabel(next)}" and save current notes and tags?${reminderNotice}`,
                     )
                   )
                     if (next === 'applied' && !record.applicationEvidence)
@@ -582,9 +800,12 @@ function LeadEditor({
               className={styles.btnSecondary}
               disabled={pending || record.status === 'archived'}
               onClick={() => {
+                const reminderNotice = record.followUpAt
+                  ? ' Its scheduled follow-up reminder will also be cleared.'
+                  : '';
                 if (
                   window.confirm(
-                    'Archive this lead in CareerScope and save current notes and tags?',
+                    `Archive this lead in CareerScope and save current notes and tags?${reminderNotice}`,
                   )
                 )
                   save.mutate({ status: 'archived', ...changedTags });
