@@ -3960,9 +3960,9 @@ try {
       assert.equal(applicationRecord.applicationEvidence.method, 'Employer website');
       assert.equal(applicationRecord.applicationEvidence.source, 'Synthetic candidate report');
       assert.deepEqual(applicationRecord.tags, ['audit', 'preserve']);
-      const acknowledgementCard = openedLead.locator(
-        'section[aria-label="Employer acknowledgement record"]',
-      );
+      const acknowledgementCard = openedLead.locator('section').filter({
+        has: page.getByRole('heading', { name: 'Employer Acknowledgement', exact: true }),
+      });
       assert.equal(await acknowledgementCard.count(), 1);
       await acknowledgementCard
         .getByText('Candidate-reported information only.', { exact: false })

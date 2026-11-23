@@ -7613,10 +7613,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "The employer acknowledgement regression locates the labelled section directly and asserts its candidate-reported disclaimer before interacting with its controls.",
-      "evidence": "PR #133 exact head d3bd91544a20762314353d40c1a9e5e885927175 failed on the region-role locator in run 44925487357 attempt 2. A section-selector correction is prepared; exact-head CI, independent review, and owner verification remain pending.",
-      "reviewer": "Codex (Stage 09 item 9.09 browser correction)",
-      "sha256": "72ad96fe04ff80a6e2dcd35f62aa08769e41efd0393151e853c81670d04af3f8",
+      "observations": "Reviewed Stage 09 acknowledgement browser regression selector. It scopes the section by the unique visible Employer Acknowledgement heading within opened lead details; uniqueness is asserted before continuing the candidate-reported acknowledgement flow.",
+      "evidence": "CI run 45191314747 on 54c8f0bfa02d3685d0b91776fc22fa8852e97bbc failed because the CSS selector for the labelled acknowledgement section matched zero elements. This revision selects the section containing the exact visible heading and retains a uniqueness assertion; exact-head CI remains pending.",
+      "reviewer": "Codex (Stage 09 item 9.09 CI correction)",
+      "sha256": "c4bd8e5087ffe37203128a2fb891e2e44f1c8f83383e186c541ce55c3e864537",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7653,6 +7653,12 @@
           "reviewer": "Codex (Stage 09 items 9.09-9.10)",
           "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
           "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending."
+        },
+        {
+          "sha256": "72ad96fe04ff80a6e2dcd35f62aa08769e41efd0393151e853c81670d04af3f8",
+          "reviewer": "Codex (Stage 09 item 9.09 browser correction)",
+          "observations": "The employer acknowledgement regression locates the labelled section directly and asserts its candidate-reported disclaimer before interacting with its controls.",
+          "evidence": "PR #133 exact head d3bd91544a20762314353d40c1a9e5e885927175 failed on the region-role locator in run 44925487357 attempt 2. A section-selector correction is prepared; exact-head CI, independent review, and owner verification remain pending."
         }
       ]
     },
