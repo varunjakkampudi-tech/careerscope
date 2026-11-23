@@ -31,6 +31,7 @@ import { collect } from '../../apps/workers/search/src/collect.js';
 import { createRemoteOkProvider, type JobProvider } from '@careerscope/providers';
 import { selectUiBrowsers } from './ui-browsers.js';
 import {
+  NEXT_APP_ROUTE_PREFETCH_PATHS,
   browserRequestFailureCategory,
   browserWarningCategory,
   browserWarningPaths,
@@ -1442,16 +1443,7 @@ try {
         );
       const recentRequestEvents: string[] = [];
       const sharedRoutePrefetches: string[] = [];
-      const sharedRoutePaths = new Set([
-        '/dashboard',
-        '/jobs',
-        '/applications',
-        '/saved',
-        '/resume',
-        '/settings',
-        '/career-resources',
-        '/preparation',
-      ]);
+      const sharedRoutePaths = new Set<string>(NEXT_APP_ROUTE_PREFETCH_PATHS);
       const recordRequestEvent = (request: import('playwright').Request, event: string) => {
         const rawPath = new URL(request.url()).pathname;
         const path = rawPath

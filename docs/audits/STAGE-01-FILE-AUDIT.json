@@ -2046,10 +2046,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 05 item 5.15 progress, gap, test and owner-traceability records. The records distinguish the exact-head CI and ChatGPT approval for the scoped historical reporting change from the incomplete full checklist item; system-wide operational telemetry, alerting, automated suspension and owner verification remain pending.",
-      "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 against dev base fad57ea3253024983f29183acefaee59328d0d01 passed all three required hosted jobs in run 45192426932 and received an independent ChatGPT approval limited to the scoped implementation. This documentation-only follow-up requires its own exact-head CI and review.",
-      "reviewer": "Codex (Stage 05 item 5.15 evidence reconciliation)",
-      "sha256": "91b3ddf17987199bd9fc0dd9dee1c1a805c21e6a5ae80a676025b668f80335d0",
+      "observations": "Reviewed the source-health evidence and browser request-settlement cleanup. Documentation distinguishes the scoped source-health implementation from outstanding system monitoring, alerting, source suspension and owner-acceptance requirements. The browser helper and diagnostics share the same recognized route-prefetch path list.",
+      "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 passed required CI run 45192426932 and received independent approval. Exact head 76b9a14170f19f7cb323408c23ec70ead991ec75 passed all required CI jobs in run 45198233746 and received independent approval. The current change centralizes the known-route list and reconciles the historical evidence; its exact-head CI/review are tracked on PR #105.",
+      "reviewer": "Codex (Stage 05 item 5.15 review-evidence cleanup)",
+      "sha256": "a31f3e7c7b4158a5ed29d01b3fdd5716c0e6c2763609101e183e8bb680716b73",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2212,6 +2212,12 @@
           "reviewer": "Codex (Stage 05 item 5.15 CI evidence update)",
           "observations": "Updated Stage 05.15 evidence to record exact-head CI while preserving the operational monitoring and owner-acceptance gaps.",
           "evidence": "Exact head 16ad8cb4b29732733e4b595f08ba0a705c4ba59d passed all three required Node 24 hosted CI jobs in run 45190079618. Item 5.15 remains partial pending independent review, operational monitoring, and owner acceptance."
+        },
+        {
+          "sha256": "91b3ddf17987199bd9fc0dd9dee1c1a805c21e6a5ae80a676025b668f80335d0",
+          "reviewer": "Codex (Stage 05 item 5.15 evidence reconciliation)",
+          "observations": "Reviewed the Stage 05 item 5.15 progress, gap, test and owner-traceability records. The records distinguish the exact-head CI and ChatGPT approval for the scoped historical reporting change from the incomplete full checklist item; system-wide operational telemetry, alerting, automated suspension and owner verification remain pending.",
+          "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 against dev base fad57ea3253024983f29183acefaee59328d0d01 passed all three required hosted jobs in run 45192426932 and received an independent ChatGPT approval limited to the scoped implementation. This documentation-only follow-up requires its own exact-head CI and review."
         }
       ]
     },
@@ -2286,10 +2292,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the Stage 05 item 5.15 progress, gap, test and owner-traceability records. The records distinguish the exact-head CI and ChatGPT approval for the scoped historical reporting change from the incomplete full checklist item; system-wide operational telemetry, alerting, automated suspension and owner verification remain pending.",
-      "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 against dev base fad57ea3253024983f29183acefaee59328d0d01 passed all three required hosted jobs in run 45192426932 and received an independent ChatGPT approval limited to the scoped implementation. This documentation-only follow-up requires its own exact-head CI and review.",
-      "reviewer": "Codex (Stage 05 item 5.15 evidence reconciliation)",
-      "sha256": "5a34dc0af891ec7ed35564b9dc9c98b1aac01fae2156441086ed2db2b2c95364",
+      "observations": "Reviewed the source-health evidence and browser request-settlement cleanup. Documentation distinguishes the scoped source-health implementation from outstanding system monitoring, alerting, source suspension and owner-acceptance requirements. The browser helper and diagnostics share the same recognized route-prefetch path list.",
+      "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 passed required CI run 45192426932 and received independent approval. Exact head 76b9a14170f19f7cb323408c23ec70ead991ec75 passed all required CI jobs in run 45198233746 and received independent approval. The current change centralizes the known-route list and reconciles the historical evidence; its exact-head CI/review are tracked on PR #105.",
+      "reviewer": "Codex (Stage 05 item 5.15 review-evidence cleanup)",
+      "sha256": "c0b124a8061952816f4585063b1f6a006d4a23bcab574955c1d3261185a1c184",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2470,6 +2476,12 @@
           "reviewer": "Codex (Stage 05 item 5.15 CI evidence update)",
           "observations": "Updated Stage 05.15 evidence to record exact-head CI while preserving the operational monitoring and owner-acceptance gaps.",
           "evidence": "Exact head 16ad8cb4b29732733e4b595f08ba0a705c4ba59d passed all three required Node 24 hosted CI jobs in run 45190079618. Item 5.15 remains partial pending independent review, operational monitoring, and owner acceptance."
+        },
+        {
+          "sha256": "5a34dc0af891ec7ed35564b9dc9c98b1aac01fae2156441086ed2db2b2c95364",
+          "reviewer": "Codex (Stage 05 item 5.15 evidence reconciliation)",
+          "observations": "Reviewed the Stage 05 item 5.15 progress, gap, test and owner-traceability records. The records distinguish the exact-head CI and ChatGPT approval for the scoped historical reporting change from the incomplete full checklist item; system-wide operational telemetry, alerting, automated suspension and owner verification remain pending.",
+          "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 against dev base fad57ea3253024983f29183acefaee59328d0d01 passed all three required hosted jobs in run 45192426932 and received an independent ChatGPT approval limited to the scoped implementation. This documentation-only follow-up requires its own exact-head CI and review."
         }
       ]
     },
@@ -2524,10 +2536,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 05 item 5.15 progress, gap, test and owner-traceability records. The records distinguish exact-head CI and ChatGPT approval for the scoped historical reporting change from the incomplete full checklist item; system-wide operational telemetry, alerting, automated suspension and owner verification remain pending.",
-      "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 against dev base fad57ea3253024983f29183acefaee59328d0d01 passed all three required hosted jobs in run 45192426932 and received an independent ChatGPT approval limited to the scoped implementation. This documentation-only follow-up requires its own exact-head CI and review.",
-      "reviewer": "Codex (Stage 05 item 5.15 evidence reconciliation)",
-      "sha256": "2fb60ea1ab0331dcb4e9f73f56a9c41b99d9b3405f2a78af71bed667d8d422f4",
+      "observations": "Reviewed the Stage 05 item 5.15 test and status record. It records exact historical CI/review evidence and preserves the item as partial for unimplemented operational health monitoring, alerting, suspension and owner verification.",
+      "evidence": "Exact heads 3cb61ce730314aeecf2849dc12ab239383aab596 and 76b9a14170f19f7cb323408c23ec70ead991ec75 passed their recorded exact-head CI and review gates. Current PR #105 holds the follow-up route-list cleanup and its exact-head validation.",
+      "reviewer": "Codex (Stage 05 item 5.15 review-evidence cleanup)",
+      "sha256": "7eed82c21e708838a78893cb95177a830e64755b9ad088d4856ed327b93f8a69",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2702,6 +2714,18 @@
           "reviewer": "Codex (Stage 05 item 5.15 evidence reconciliation)",
           "observations": "Reviewed the Stage 05 item 5.15 progress, gap, test and owner-traceability records. The records distinguish the exact-head CI and ChatGPT approval for the scoped historical reporting change from the incomplete full checklist item; system-wide operational telemetry, alerting, automated suspension and owner verification remain pending.",
           "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 against dev base fad57ea3253024983f29183acefaee59328d0d01 passed all three required hosted jobs in run 45192426932 and received an independent ChatGPT approval limited to the scoped implementation. This documentation-only follow-up requires its own exact-head CI and review."
+        },
+        {
+          "sha256": "2fb60ea1ab0331dcb4e9f73f56a9c41b99d9b3405f2a78af71bed667d8d422f4",
+          "reviewer": "Codex (Stage 05 item 5.15 evidence reconciliation)",
+          "observations": "Reviewed the Stage 05 item 5.15 progress, gap, test and owner-traceability records. The records distinguish exact-head CI and ChatGPT approval for the scoped historical reporting change from the incomplete full checklist item; system-wide operational telemetry, alerting, automated suspension and owner verification remain pending.",
+          "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 against dev base fad57ea3253024983f29183acefaee59328d0d01 passed all three required hosted jobs in run 45192426932 and received an independent ChatGPT approval limited to the scoped implementation. This documentation-only follow-up requires its own exact-head CI and review."
+        },
+        {
+          "sha256": "7d6d03bbe819add61d1ab2ab549a2fb15a372a27e0bb5f66ba6e9daf8c28c94f",
+          "reviewer": "Codex (Stage 05 item 5.15 review-evidence cleanup)",
+          "observations": "Reviewed the source-health evidence and browser request-settlement cleanup. Documentation distinguishes the scoped source-health implementation from outstanding system monitoring, alerting, source suspension and owner-acceptance requirements. The browser helper and diagnostics share the same recognized route-prefetch path list.",
+          "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 passed required CI run 45192426932 and received independent approval. Exact head 76b9a14170f19f7cb323408c23ec70ead991ec75 passed all required CI jobs in run 45198233746 and received independent approval. The current change centralizes the known-route list and reconciles the historical evidence; its exact-head CI/review are tracked on PR #105."
         }
       ]
     },
@@ -3140,10 +3164,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 05 item 5.15 progress, gap, test and owner-traceability records. The records distinguish the exact-head CI and ChatGPT approval for the scoped historical reporting change from the incomplete full checklist item; system-wide operational telemetry, alerting, automated suspension and owner verification remain pending.",
-      "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 against dev base fad57ea3253024983f29183acefaee59328d0d01 passed all three required hosted jobs in run 45192426932 and received an independent ChatGPT approval limited to the scoped implementation. This documentation-only follow-up requires its own exact-head CI and review.",
-      "reviewer": "Codex (Stage 05 item 5.15 evidence reconciliation)",
-      "sha256": "fb7a8c867904be3bd1b9dc224f92ce9d91d62aa9f362aafdae24937e7defb349",
+      "observations": "Reviewed the source-health evidence and browser request-settlement cleanup. Documentation distinguishes the scoped source-health implementation from outstanding system monitoring, alerting, source suspension and owner-acceptance requirements. The browser helper and diagnostics share the same recognized route-prefetch path list.",
+      "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 passed required CI run 45192426932 and received independent approval. Exact head 76b9a14170f19f7cb323408c23ec70ead991ec75 passed all required CI jobs in run 45198233746 and received independent approval. The current change centralizes the known-route list and reconciles the historical evidence; its exact-head CI/review are tracked on PR #105.",
+      "reviewer": "Codex (Stage 05 item 5.15 review-evidence cleanup)",
+      "sha256": "3b8f6272b921b46f38060c41e545d39845b9d52d76f88ff2070f5f5ec3d56113",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3288,6 +3312,12 @@
           "reviewer": "Codex (Stage 05 item 5.15 CI evidence update)",
           "observations": "Updated Stage 05.15 evidence to record exact-head CI while preserving the operational monitoring and owner-acceptance gaps.",
           "evidence": "Exact head 16ad8cb4b29732733e4b595f08ba0a705c4ba59d passed all three required Node 24 hosted CI jobs in run 45190079618. Item 5.15 remains partial pending independent review, operational monitoring, and owner acceptance."
+        },
+        {
+          "sha256": "fb7a8c867904be3bd1b9dc224f92ce9d91d62aa9f362aafdae24937e7defb349",
+          "reviewer": "Codex (Stage 05 item 5.15 evidence reconciliation)",
+          "observations": "Reviewed the Stage 05 item 5.15 progress, gap, test and owner-traceability records. The records distinguish the exact-head CI and ChatGPT approval for the scoped historical reporting change from the incomplete full checklist item; system-wide operational telemetry, alerting, automated suspension and owner verification remain pending.",
+          "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 against dev base fad57ea3253024983f29183acefaee59328d0d01 passed all three required hosted jobs in run 45192426932 and received an independent ChatGPT approval limited to the scoped implementation. This documentation-only follow-up requires its own exact-head CI and review."
         }
       ]
     },
@@ -7767,10 +7797,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the cross-browser request-settlement helper and its UI integration. It excludes only GET fetches marked as Next.js router prefetches for known app routes after route navigation; ordinary requests, writes, unknown paths, and same-route prefetches remain in the settlement barrier.",
-      "evidence": "Run 45195768664 on head 6ecb410825fe13d333ba2361637b15068dfe226f passed quality and image jobs but failed Firefox browser acceptance because a marked GET /jobs route prefetch from route epoch 161 remained pending at epoch 179. The helper regression passes locally; exact-head CI after this correction remains pending.",
-      "reviewer": "Codex (Stage 05 item 5.15 browser CI correction)",
-      "sha256": "1106e1085332650fd59d64986d2f0873a748d3314ce4bc6360f87e88ded5687d",
+      "observations": "Reviewed the source-health evidence and browser request-settlement cleanup. Documentation distinguishes the scoped source-health implementation from outstanding system monitoring, alerting, source suspension and owner-acceptance requirements. The browser helper and diagnostics share the same recognized route-prefetch path list.",
+      "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 passed required CI run 45192426932 and received independent approval. Exact head 76b9a14170f19f7cb323408c23ec70ead991ec75 passed all required CI jobs in run 45198233746 and received independent approval. The current change centralizes the known-route list and reconciles the historical evidence; its exact-head CI/review are tracked on PR #105.",
+      "reviewer": "Codex (Stage 05 item 5.15 review-evidence cleanup)",
+      "sha256": "40306d543fdbd3f67a739aab0de2001c62381ce8c5912f0fb3967f5f16d6d5c5",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7825,6 +7855,12 @@
           "reviewer": "Codex (CareerScope owner item 5.15 CI correction)",
           "observations": "Reviewed source-health browser assertions. Timestamp matching now checks that at least one recent row is present and waits on its first match, avoiding strict-mode failure when the panel displays multiple rows.",
           "evidence": "Exact-head run 44492306240 failed because the timestamp locator matched six visible rows. This correction retains a presence assertion and waits on the first result; exact-head CI and independent review remain pending."
+        },
+        {
+          "sha256": "1106e1085332650fd59d64986d2f0873a748d3314ce4bc6360f87e88ded5687d",
+          "reviewer": "Codex (Stage 05 item 5.15 browser CI correction)",
+          "observations": "Reviewed the cross-browser request-settlement helper and its UI integration. It excludes only GET fetches marked as Next.js router prefetches for known app routes after route navigation; ordinary requests, writes, unknown paths, and same-route prefetches remain in the settlement barrier.",
+          "evidence": "Run 45195768664 on head 6ecb410825fe13d333ba2361637b15068dfe226f passed quality and image jobs but failed Firefox browser acceptance because a marked GET /jobs route prefetch from route epoch 161 remained pending at epoch 179. The helper regression passes locally; exact-head CI after this correction remains pending."
         }
       ]
     },
@@ -7911,16 +7947,22 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the cross-browser request-settlement helper and its UI integration. It excludes only GET fetches marked as Next.js router prefetches for known app routes after route navigation; ordinary requests, writes, unknown paths, and same-route prefetches remain in the settlement barrier.",
-      "evidence": "Run 45195768664 on head 6ecb410825fe13d333ba2361637b15068dfe226f passed quality and image jobs but failed Firefox browser acceptance because a marked GET /jobs route prefetch from route epoch 161 remained pending at epoch 179. The helper regression passes locally; exact-head CI after this correction remains pending.",
-      "reviewer": "Codex (Stage 05 item 5.15 browser CI correction)",
-      "sha256": "cc1cf2888e04358a79091c49b5363ea1ca162fe494d915bc328233f94b823020",
+      "observations": "Reviewed the source-health evidence and browser request-settlement cleanup. Documentation distinguishes the scoped source-health implementation from outstanding system monitoring, alerting, source suspension and owner-acceptance requirements. The browser helper and diagnostics share the same recognized route-prefetch path list.",
+      "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 passed required CI run 45192426932 and received independent approval. Exact head 76b9a14170f19f7cb323408c23ec70ead991ec75 passed all required CI jobs in run 45198233746 and received independent approval. The current change centralizes the known-route list and reconciles the historical evidence; its exact-head CI/review are tracked on PR #105.",
+      "reviewer": "Codex (Stage 05 item 5.15 review-evidence cleanup)",
+      "sha256": "583f6de672ac9f399cbba7b1fc916b217cd5c5f18eab7e1b119bc2679af17cb4",
       "history": [
         {
           "sha256": "4d95c21eb0bbe1ca0139c7b3c262fbaa13ebad23d02b81d80a258271a1580e84",
           "reviewer": "Codex (Stage 01 item 1.01)",
           "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.",
           "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes."
+        },
+        {
+          "sha256": "cc1cf2888e04358a79091c49b5363ea1ca162fe494d915bc328233f94b823020",
+          "reviewer": "Codex (Stage 05 item 5.15 browser CI correction)",
+          "observations": "Reviewed the cross-browser request-settlement helper and its UI integration. It excludes only GET fetches marked as Next.js router prefetches for known app routes after route navigation; ordinary requests, writes, unknown paths, and same-route prefetches remain in the settlement barrier.",
+          "evidence": "Run 45195768664 on head 6ecb410825fe13d333ba2361637b15068dfe226f passed quality and image jobs but failed Firefox browser acceptance because a marked GET /jobs route prefetch from route epoch 161 remained pending at epoch 179. The helper regression passes locally; exact-head CI after this correction remains pending."
         }
       ]
     },
