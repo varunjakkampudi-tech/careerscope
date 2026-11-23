@@ -2096,6 +2096,33 @@ try {
           await reloadedBuilder.getByRole('status').last().innerText(),
           /PDF download started/,
         );
+        await reloadedBuilder.getByLabel('Full name').fill('Μαρία Иванова');
+        const [unicodeResumePdfDownload] = await Promise.all([
+          page.waitForEvent('download'),
+          reloadedBuilder.getByRole('button', { name: 'Download PDF' }).click(),
+        ]);
+        assert.equal(
+          unicodeResumePdfDownload.suggestedFilename(),
+          'Synthetic Role Resume - Frontend Engineer.pdf',
+          `${engine}: Unicode content preserves the role-specific download filename`,
+        );
+        const unicodeResumePdfPath = await unicodeResumePdfDownload.path();
+        assert.ok(unicodeResumePdfPath, `${engine}: the Unicode PDF download has a file`);
+        const unicodeResumePdfBytes = await readFile(unicodeResumePdfPath);
+        assert.equal(
+          unicodeResumePdfBytes.subarray(0, 5).toString('ascii'),
+          '%PDF-',
+          `${engine}: the Unicode export is a PDF`,
+        );
+        assert.ok(
+          (await extractText(unicodeResumePdfBytes)).includes('Μαρία Иванова'),
+          `${engine}: the downloaded PDF preserves Greek and Cyrillic candidate text`,
+        );
+        assert.match(
+          await reloadedBuilder.getByRole('status').last().innerText(),
+          /PDF download started/,
+          `${engine}: the UI reports a successful Unicode download`,
+        );
         await reloadedBuilder.getByLabel('Full name').fill('తెలుగు పేరు');
         await reloadedBuilder.getByRole('button', { name: 'Download PDF' }).click();
         assert.match(
