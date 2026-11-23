@@ -3960,6 +3960,13 @@ try {
       assert.equal(applicationRecord.applicationEvidence.method, 'Employer website');
       assert.equal(applicationRecord.applicationEvidence.source, 'Synthetic candidate report');
       assert.deepEqual(applicationRecord.tags, ['audit', 'preserve']);
+      // The saved-leads view intentionally deselects a lead when it changes
+      // into the applications status space. Continue the application journey
+      // in its owning screen before asserting application-only controls.
+      await page.goto(`${origin}/applications?lead=${leadId}`);
+      await page.waitForURL(`${origin}/applications?lead=${leadId}`);
+      await page.getByRole('heading', { name: 'Applications', exact: true }).waitFor();
+      await openedLead.getByText('Senior React Engineer', { exact: true }).first().waitFor();
       const acknowledgementCard = openedLead.getByRole('region', {
         name: 'Employer acknowledgement record',
       });

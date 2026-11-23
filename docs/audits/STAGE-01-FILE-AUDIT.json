@@ -7613,10 +7613,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the Stage 09 acknowledgement browser failure: the test now locates the section by its accessible region name, waits for it to appear after application state refresh, then asserts uniqueness.",
-      "evidence": "CI run 45213920862 showed the region locator count remained zero before the client rerender after the application update; exact-head rerun will validate the visibility wait.",
+      "observations": "Reviewed the Stage 09 acknowledgement browser failure: changing a saved lead to applied removes it from the saved-screen status scope and intentionally deselects it. The browser journey now opens the same lead in the Applications screen before asserting application-only acknowledgement and follow-up controls.",
+      "evidence": "PR #133 run 45215563638 showed the saved-screen article disappeared after the successful status update; the wait for the acknowledgement region then timed out. The revised flow follows the application into /applications?lead=<id>; local test typing and formatting pass, with exact-head browser CI pending.",
       "reviewer": "Codex (Stage 09 employer acknowledgement CI correction)",
-      "sha256": "755d20362031d8f287a98cd168ef1a3085ea3d8bb260b1b3097bda62d3f7013a",
+      "sha256": "b65edc20fd4d2bd0c6bc4315953f2156235038447cd9af0532964c00ef627c10",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
