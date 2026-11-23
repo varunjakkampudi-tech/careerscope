@@ -929,6 +929,62 @@ function contracts(options: {
           'Stores only a reason code scoped to the authenticated owner and search result. Repeated updates replace that owner’s prior reason. The action does not change the job posting or application lifecycle.',
       },
     ),
+    'GET /api/admin/job-feedback': operation(
+      'List candidate job reports for authorized staff moderation',
+      object({
+        items: array(
+          object({
+            reportId: uuid,
+            reason: text({ enum: [...jobFeedbackReasons] }),
+            reportedAt: timestamp,
+            updatedAt: timestamp,
+            revision: integer({ minimum: 1 }),
+            reviewRevision: nullable(integer({ minimum: 1 })),
+            reviewStatus: nullable(text({ enum: ['confirmed', 'dismissed'] })),
+            reviewedAt: nullable(timestamp),
+            reviewNote: nullable(text({ maxLength: 1000 })),
+            jobId: uuid,
+            title: nullable(text()),
+            company: nullable(text()),
+            location: nullable(text()),
+            source: nullable(text()),
+            sourceUrl: nullable(text()),
+          }),
+        ),
+      }),
+      {
+        querystring: object(
+          {
+            status: text({ enum: ['pending', 'confirmed', 'dismissed'], default: 'pending' }),
+            before: uuid,
+            limit: integer({ minimum: 1, maximum: 50, default: 25 }),
+          },
+          [],
+        ),
+        failures: [400, 401, 403, 429, 503],
+        description:
+          'Requires a live administrator account. Results omit candidate identifiers and contact details; pending is the default status and pages are limited to 50 reports.',
+      },
+    ),
+    'PUT /api/admin/job-feedback/:id/review': operation(
+      'Record an administrator disposition for a candidate job report',
+      object({ reportId: uuid, status: text({ enum: ['confirmed', 'dismissed'] }) }),
+      {
+        params: object({ id: uuid }),
+        body: object(
+          {
+            status: text({ enum: ['confirmed', 'dismissed'] }),
+            note: text({ maxLength: 1000 }),
+            expectedRevision: integer({ minimum: 1 }),
+            expectedReviewRevision: nullable(integer({ minimum: 1 })),
+          },
+          ['status', 'expectedRevision', 'expectedReviewRevision'],
+        ),
+        failures: [400, 401, 403, 404, 409, 429, 503],
+        description:
+          'Requires a live administrator account and CSRF protection. expectedRevision prevents decisions on reports that changed after the moderator loaded them; expectedReviewRevision prevents stale competing administrator decisions (null for a pending report). Every decision is retained in the report review history for the lifetime of its report; a candidate changing the reason returns the report to pending.',
+      },
+    ),
     'GET /api/leads/:id': operation('Read a saved lead', lead, { failures: [400, 404, 429] }),
     'GET /api/applications/export': operation(
       'Download the authenticated candidate’s application records as privacy-scoped CSV',

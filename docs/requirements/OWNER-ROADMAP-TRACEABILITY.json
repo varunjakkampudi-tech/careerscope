@@ -1511,11 +1511,19 @@
       "stageTitle": "Ghost-job, spam and fraud detection",
       "title": "Moderator review",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/api/src/app.ts",
+        "apps/api/src/openapi.ts",
+        "migrations/0007_stage06_job_feedback_moderation.sql",
+        "migrations/0008_job_feedback_review_revision.sql",
+        "migrations/0009_job_feedback_review_revision.sql",
+        "docs/API-SURFACE.md",
+        "docs/PROGRESS.md"
+      ],
+      "tests": ["apps/api/src/job-feedback-moderation.integration.test.ts"],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Admin-only API moderation queue and audited dispositions are implemented. The focused PostgreSQL integration covers status-bound cursors, timestamp-tie pagination, CSRF, live role revocation, stale candidate updates, and competing moderator decisions. Exact-head hosted CI and owner verification remain pending. Review events are retained for the report lifetime and cascade when the report is deleted; no dedicated moderator UI is included.",
       "scopeDisposition": "in-scope"
     },
     {

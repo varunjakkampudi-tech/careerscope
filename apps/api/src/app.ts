@@ -171,6 +171,22 @@ const emailChangeVerifySchema = z
   .object({ address: z.enum(['current', 'new']), code: z.string().regex(/^\d{6}$/) })
   .strict();
 const jobFeedbackSchema = z.object({ reason: jobFeedbackReasonSchema }).strict();
+const jobFeedbackReviewStatusSchema = z.enum(['confirmed', 'dismissed']);
+const jobFeedbackReviewQuerySchema = z
+  .object({
+    status: z.enum(['pending', 'confirmed', 'dismissed']).default('pending'),
+    before: z.string().uuid().optional(),
+    limit: z.coerce.number().int().min(1).max(50).default(25),
+  })
+  .strict();
+const jobFeedbackReviewSchema = z
+  .object({
+    status: jobFeedbackReviewStatusSchema,
+    note: z.string().trim().max(1000).optional(),
+    expectedRevision: z.number().int().positive(),
+    expectedReviewRevision: z.number().int().positive().nullable(),
+  })
+  .strict();
 const notificationPreferencesUpdateSchema = z
   .object({ interviewRemindersInAppEnabled: z.boolean() })
   .strict();
@@ -316,6 +332,14 @@ export async function createApp(
       request.log.error({ requestId: request.id }, 'Shared rate-limit service unavailable');
       throw new HttpError(503, 'Service temporarily unavailable');
     }
+  };
+  const requireAdmin = async (request: FastifyRequest) => {
+    const result = await database.pool
+      .query<{ role: string }>('SELECT role FROM users WHERE id = $1', [request.ownerId])
+      .catch(() => {
+        throw new HttpError(503, 'Service temporarily unavailable');
+      });
+    if (result.rows[0]?.role !== 'admin') throw new HttpError(403, 'Administrator access required');
   };
   // Password login exists only for isolated test fixtures and is refused alongside any runtime auth mode.
   const harnessPasswordLogin =
@@ -2035,16 +2059,129 @@ export async function createApp(
       throw new HttpError(429, 'Too many feedback updates');
     const { id } = identifier.parse(request.params);
     const { reason } = jobFeedbackSchema.parse(request.body);
-    const result = await database.pool.query<{ id: string; reason: string; updatedAt: Date }>(
-      `INSERT INTO job_feedback (id, owner_id, job_id, reason)
-       SELECT $1, owner_id, id, $3 FROM search_jobs WHERE owner_id = $2 AND id = $4
-       ON CONFLICT (owner_id, job_id) DO UPDATE
-       SET reason = EXCLUDED.reason, updated_at = now()
-       RETURNING id, reason, updated_at AS "updatedAt"`,
-      [randomUUID(), request.ownerId, reason, id],
+    const client = await database.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const previous = await client.query<{ id: string; reason: string }>(
+        `SELECT f.id, f.reason FROM job_feedback f
+         JOIN search_jobs j ON j.owner_id = f.owner_id AND j.id = f.job_id
+         WHERE f.owner_id = $1 AND f.job_id = $2 AND j.owner_id = $1 FOR UPDATE OF f`,
+        [request.ownerId, id],
+      );
+      const result = await client.query<{ reason: string }>(
+        `INSERT INTO job_feedback (id, owner_id, job_id, reason)
+         SELECT $1, owner_id, id, $3 FROM search_jobs WHERE owner_id = $2 AND id = $4
+         ON CONFLICT (owner_id, job_id) DO UPDATE
+         SET reason = EXCLUDED.reason, updated_at = now(), revision = job_feedback.revision + 1
+         RETURNING reason`,
+        [randomUUID(), request.ownerId, reason, id],
+      );
+      if (!result.rowCount) {
+        await client.query('ROLLBACK');
+        throw new HttpError(404, 'Job not found');
+      }
+      if (previous.rows[0] && previous.rows[0].reason !== reason) {
+        await client.query('DELETE FROM job_feedback_reviews WHERE feedback_id = $1', [
+          previous.rows[0].id,
+        ]);
+      }
+      await client.query('COMMIT');
+      return reply.code(200).send({ reason: result.rows[0]!.reason });
+    } catch (error) {
+      await client.query('ROLLBACK').catch(() => undefined);
+      throw error;
+    } finally {
+      client.release();
+    }
+  });
+  app.get('/api/admin/job-feedback', async (request) => {
+    await requireAdmin(request);
+    if (!(await consumeRateLimit(request, `admin-job-feedback:${request.ownerId!}`, 120, 60)))
+      throw new HttpError(429, 'Too many moderation requests');
+    const query = jobFeedbackReviewQuerySchema.parse(request.query);
+    if (query.before) {
+      const cursor = await database.pool.query<{ status: string | null }>(
+        `SELECT r.status FROM job_feedback f
+         LEFT JOIN job_feedback_reviews r ON r.feedback_id = f.id
+         WHERE f.id = $1`,
+        [query.before],
+      );
+      const cursorStatus = cursor.rowCount ? (cursor.rows[0]!.status ?? 'pending') : null;
+      if (cursorStatus !== query.status) throw new HttpError(400, 'Invalid moderation cursor');
+    }
+    const result = await database.pool.query(
+      `SELECT f.id AS "reportId", f.reason, f.created_at AS "reportedAt",
+              f.updated_at AS "updatedAt", f.revision, r.revision AS "reviewRevision",
+              r.status AS "reviewStatus",
+              r.reviewed_at AS "reviewedAt", r.note AS "reviewNote",
+              j.id AS "jobId", j.data->>'title' AS title, j.data->>'company' AS company,
+              j.data->>'location' AS location, j.data->>'source' AS source,
+              j.data->>'sourceUrl' AS "sourceUrl"
+       FROM job_feedback f
+       JOIN search_jobs j ON j.owner_id = f.owner_id AND j.id = f.job_id
+       LEFT JOIN job_feedback_reviews r ON r.feedback_id = f.id
+       WHERE (($1 = 'pending' AND r.feedback_id IS NULL) OR r.status = $1)
+         AND ($2::uuid IS NULL OR EXISTS (
+           SELECT 1 FROM job_feedback cursor
+           LEFT JOIN job_feedback_reviews cursor_review ON cursor_review.feedback_id = cursor.id
+           WHERE cursor.id = $2
+             AND (($1 = 'pending' AND cursor_review.feedback_id IS NULL) OR cursor_review.status = $1)
+             AND (f.created_at, f.id) < (cursor.created_at, cursor.id)
+         ))
+       ORDER BY f.created_at DESC, f.id DESC LIMIT $3`,
+      [query.status, query.before ?? null, query.limit],
     );
-    if (!result.rowCount) throw new HttpError(404, 'Job not found');
-    return reply.code(200).send({ reason: result.rows[0]!.reason });
+    return { items: result.rows };
+  });
+  app.put('/api/admin/job-feedback/:id/review', async (request, reply) => {
+    await requireAdmin(request);
+    if (!(await consumeRateLimit(request, `admin-job-feedback-review:${request.ownerId!}`, 60, 60)))
+      throw new HttpError(429, 'Too many moderation updates');
+    const { id } = identifier.parse(request.params);
+    const { status, note, expectedRevision, expectedReviewRevision } =
+      jobFeedbackReviewSchema.parse(request.body);
+    const client = await database.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const feedback = await client.query<{ id: string; revision: number }>(
+        'SELECT id, revision FROM job_feedback WHERE id = $1 FOR UPDATE',
+        [id],
+      );
+      if (!feedback.rowCount) {
+        await client.query('ROLLBACK');
+        throw new HttpError(404, 'Report not found');
+      }
+      if (feedback.rows[0]!.revision !== expectedRevision)
+        throw new HttpError(409, 'Report changed; reload before reviewing');
+      const currentReview = await client.query<{ revision: number }>(
+        'SELECT revision FROM job_feedback_reviews WHERE feedback_id = $1',
+        [id],
+      );
+      const reviewRevision = currentReview.rows[0]?.revision ?? null;
+      if (reviewRevision !== expectedReviewRevision)
+        throw new HttpError(409, 'Review disposition changed; reload before reviewing');
+      await client.query(
+        `INSERT INTO job_feedback_reviews (feedback_id, status, reviewed_by, reviewed_at, note)
+         VALUES ($1, $2, $3, now(), $4)
+         ON CONFLICT (feedback_id) DO UPDATE
+         SET status = EXCLUDED.status, reviewed_by = EXCLUDED.reviewed_by,
+             reviewed_at = EXCLUDED.reviewed_at, note = EXCLUDED.note,
+             revision = job_feedback_reviews.revision + 1`,
+        [id, status, request.ownerId, note || null],
+      );
+      await client.query(
+        `INSERT INTO job_feedback_review_events (id, feedback_id, reviewed_by, status, note)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [randomUUID(), id, request.ownerId, status, note || null],
+      );
+      await client.query('COMMIT');
+      return reply.code(200).send({ reportId: id, status });
+    } catch (error) {
+      await client.query('ROLLBACK').catch(() => undefined);
+      throw error;
+    } finally {
+      client.release();
+    }
   });
   app.post('/api/searches/:id/cancel', async (request) => {
     const { id } = identifier.parse(request.params);

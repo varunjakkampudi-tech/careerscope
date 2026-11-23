@@ -1,0 +1,2 @@
+ALTER TABLE "job_feedback" ADD COLUMN "revision" integer DEFAULT 1 NOT NULL;--> statement-breakpoint
+ALTER TABLE "job_feedback" ADD CONSTRAINT "job_feedback_revision_positive" CHECK ("job_feedback"."revision" > 0);
