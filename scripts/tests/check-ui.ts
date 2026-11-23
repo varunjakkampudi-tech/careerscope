@@ -2830,7 +2830,12 @@ try {
       } finally {
         recoveryGate.resolve();
       }
-      assert.equal((await recoveredUpload).status(), 200);
+      const recoveredResponse = await recoveredUpload;
+      assert.equal(recoveredResponse.status(), 200);
+      // A response event can precede the browser's requestfinished event. Keep
+      // the later settlement barrier honest by draining this mutation response
+      // before navigating through the remaining browser scenarios.
+      assert.equal(await recoveredResponse.finished(), null);
       const markBrowserResumeParsed = async (id: string) => {
         await database.pool.query(
           `INSERT INTO resume_results (upload_id, owner_id, command_id, status, parsed)

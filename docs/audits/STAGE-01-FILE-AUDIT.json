@@ -7637,11 +7637,17 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed the Stage 09 acknowledgement and follow-up browser flow, including navigating from Saved Leads to Applications, successful API writes, archive cancellation, and archive completion. The follow-up assertion now waits for the saved-state text after the successful API response, avoiding a race with the React render that was observed in exact-head CI.",
-      "evidence": "Latest Stage 09 browser assertion correction; the SHA-256 pins the updated test bytes. Exact-head CI, independent review, and checklist owner verification remain separate gates.",
-      "reviewer": "Codex (Stage 09 follow-up browser race correction)",
-      "sha256": "e83924e33b78119b77f97c5e1ae1dc460696c7730cd67fc3449ba61c134378b1",
+      "observations": "The Stage 09 browser journey waits for the resume-recovery POST response body to finish after receiving HTTP 200, before later route-settlement barriers run. This preserves the rule that in-flight writes block settlement and addresses the exact CI failure where an earlier recovery response was still in flight during a notification test.",
+      "evidence": "Exact-head run 45232943229 exposed the in-flight response during a later notification fixture. This correction explicitly awaits response.finished(); focused typechecking and exact-head CI are pending.",
+      "reviewer": "Codex (Stage 09 browser response settlement correction)",
+      "sha256": "db46bcd9a6dad6821d6ff3216f8f98e331f418be7d77d3c68a361163334eb3bf",
       "history": [
+        {
+          "observations": "Reviewed the Stage 09 acknowledgement and follow-up browser flow, including navigating from Saved Leads to Applications, successful API writes, archive cancellation, and archive completion. The follow-up assertion now waits for the saved-state text after the successful API response, avoiding a race with the React render that was observed in exact-head CI.",
+          "evidence": "Latest Stage 09 browser assertion correction; the SHA-256 pins the updated test bytes. Exact-head CI, independent review, and checklist owner verification remain separate gates.",
+          "reviewer": "Codex (Stage 09 follow-up browser race correction)",
+          "sha256": "e83924e33b78119b77f97c5e1ae1dc460696c7730cd67fc3449ba61c134378b1"
+        },
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
           "evidence": "PR #82 exact head 179bc1645052d41235d3bec1e854fab0b29c6a15 exposed the pending-only queue race in run 43061560382. This change fixes the assertion at its durable source; local typecheck passes, and hosted exact-head CI after this commit remains required.",
