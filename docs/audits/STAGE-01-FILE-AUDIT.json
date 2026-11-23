@@ -265,10 +265,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current diff for status-bound pagination cursors, optimistic revision checks, CSRF and live role enforcement coverage, API contract documentation, and integration assertions. Focused PostgreSQL integration passed; exact-head hosted CI and independent acceptance remain pending.",
-      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
-      "reviewer": "Codex (Stage 06.11 review corrections)",
-      "sha256": "9a9cbd5af8c8c00d13ab2b4a99d986967caaa28db4c40c1b7622dcc18b5eb53b"
+      "observations": "Reviewed separate candidate-report and moderator-disposition revision checks under a shared report row lock; focused PostgreSQL integration verifies stale candidate writes and competing moderator decisions conflict without recording a losing decision.",
+      "evidence": "PR #137 follow-up for independent review findings.",
+      "reviewer": "Codex (Stage 06.11 competing-decision correction)",
+      "sha256": "c02f70c400841a9ef4cbc487f9f33c512cce44a530fd59269630f27e39bb392d"
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -377,10 +377,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current diff for status-bound pagination cursors, optimistic revision checks, CSRF and live role enforcement coverage, API contract documentation, and integration assertions. Focused PostgreSQL integration passed; exact-head hosted CI and independent acceptance remain pending.",
-      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
-      "reviewer": "Codex (Stage 06.11 review corrections)",
-      "sha256": "a272c79d54f10be516d82ca8f3ccb75be688c87a415c9fcc5298dcbb6e3709b9"
+      "observations": "Reviewed separate candidate-report and moderator-disposition revision checks under a shared report row lock; focused PostgreSQL integration verifies stale candidate writes and competing moderator decisions conflict without recording a losing decision.",
+      "evidence": "PR #137 follow-up for independent review findings.",
+      "reviewer": "Codex (Stage 06.11 competing-decision correction)",
+      "sha256": "0159aa6a081c3d2ebd5b88337c9bb551973feb5db5d479b76f16e1eee2a2f6cf"
     },
     {
       "path": "apps/api/src/job-feedback.integration.test.ts",
@@ -445,10 +445,10 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Reviewed current diff for status-bound pagination cursors, optimistic revision checks, CSRF and live role enforcement coverage, API contract documentation, and integration assertions. Focused PostgreSQL integration passed; exact-head hosted CI and independent acceptance remain pending.",
-      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
-      "reviewer": "Codex (Stage 06.11 review corrections)",
-      "sha256": "1ea2248620b08e0eb4942ec89ad578aeb1c3869f0868375d7521c931812ca090"
+      "observations": "Reviewed separate candidate-report and moderator-disposition revision checks under a shared report row lock; focused PostgreSQL integration verifies stale candidate writes and competing moderator decisions conflict without recording a losing decision.",
+      "evidence": "PR #137 follow-up for independent review findings.",
+      "reviewer": "Codex (Stage 06.11 competing-decision correction)",
+      "sha256": "f09764adc72f8db43bccbb527a09240977f6891f361960e6eabe65eecc19cdf5"
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -1734,7 +1734,7 @@
     {
       "path": "docs/API-SURFACE.md",
       "category": "documentation",
-      "reviewMethod": "change-scoped source and test review",
+      "reviewMethod": "change-scoped documentation review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -1746,10 +1746,10 @@
           "remediation": "Updated the documented default to the current safe state-conflict message from errors.ts."
         }
       ],
-      "observations": "Reviewed current diff for status-bound pagination cursors, optimistic revision checks, CSRF and live role enforcement coverage, API contract documentation, and integration assertions. Focused PostgreSQL integration passed; exact-head hosted CI and independent acceptance remain pending.",
-      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
-      "reviewer": "Codex (Stage 06.11 review corrections)",
-      "sha256": "6f40b4594b45165ac13d9bc8f39412208d81e9dcb1398e269bfce2031a43af5b"
+      "observations": "Reviewed status and evidence language for candidate and moderator concurrency, report-lifetime audit history, exact-head CI, and owner verification; item remains partial.",
+      "evidence": "PR #137 follow-up for independent review findings.",
+      "reviewer": "Codex (Stage 06.11 competing-decision correction)",
+      "sha256": "f62bb5e429a49354dda52b696c1adde386d33abb62deb0f085a126c731549317"
     },
     {
       "path": "docs/APPLICATIONS.md",
@@ -1900,10 +1900,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed status and evidence updates against current implementation, migration, integration test results, and pending exact-head CI/independent acceptance.",
-      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
-      "reviewer": "Codex (Stage 06.11 review corrections)",
-      "sha256": "9be879f5f887ca15b104d72b72cee6dba29aff563bb537f96c7aff575718a05e",
+      "observations": "Reviewed status and evidence language for candidate and moderator concurrency, report-lifetime audit history, exact-head CI, and owner verification; item remains partial.",
+      "evidence": "PR #137 follow-up for independent review findings.",
+      "reviewer": "Codex (Stage 06.11 competing-decision correction)",
+      "sha256": "b1b3d6d5ddf335d529665abf232a30a3ae1dc4b5bd98f02e5ccbdecffed14eef",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2098,10 +2098,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed status and evidence updates against current implementation, migration, integration test results, and pending exact-head CI/independent acceptance.",
-      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
-      "reviewer": "Codex (Stage 06.11 review corrections)",
-      "sha256": "ed738b52dba4797f6bd273f59b7e036031ffbf91e95986e154875b5c78f38bad",
+      "observations": "Reviewed status and evidence language for candidate and moderator concurrency, report-lifetime audit history, exact-head CI, and owner verification; item remains partial.",
+      "evidence": "PR #137 follow-up for independent review findings.",
+      "reviewer": "Codex (Stage 06.11 competing-decision correction)",
+      "sha256": "f3848cb5924f1a38c17ad4783a3f06e0b228df75c6225b0f11bc7eae4d73e6d9",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2290,14 +2290,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "stage-item-diff-review",
+      "reviewMethod": "change-scoped documentation review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 6.11 proof row and accurately scoped local and pending verification.",
-      "evidence": "Change-scoped review; SHA-256 records the current reviewed bytes.",
-      "reviewer": "Codex (Stage 06 item 6.11 change review)",
-      "sha256": "88e5923e5323edfa166d8cee18b402ac7dfeca7e1d923ceff031b46e2ae4c717",
+      "observations": "Reviewed status and evidence language for candidate and moderator concurrency, report-lifetime audit history, exact-head CI, and owner verification; item remains partial.",
+      "evidence": "PR #137 follow-up for independent review findings.",
+      "reviewer": "Codex (Stage 06.11 competing-decision correction)",
+      "sha256": "26cffd752a185c4feeeb321962f42589300d666031b409d53aba131afe660b93",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2862,10 +2862,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed status and evidence updates against current implementation, migration, integration test results, and pending exact-head CI/independent acceptance.",
-      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
-      "reviewer": "Codex (Stage 06.11 review corrections)",
-      "sha256": "0c4ce690581b1eabecaa73bc8b5bd1f1390c4c37314ab0e2c163b1bee33bd433",
+      "observations": "Reviewed status and evidence language for candidate and moderator concurrency, report-lifetime audit history, exact-head CI, and owner verification; item remains partial.",
+      "evidence": "PR #137 follow-up for independent review findings.",
+      "reviewer": "Codex (Stage 06.11 competing-decision correction)",
+      "sha256": "fef820a3ceacee8423630d85875b1eb538e4edba6e11f69953fa56cb853eec77",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -4066,6 +4066,18 @@
       "sha256": "e6d367a13b75035d7a2b2546e982a118d1054b8466f358bf5d4d03e58375ece1"
     },
     {
+      "path": "migrations/0009_job_feedback_review_revision.sql",
+      "category": "database-migration",
+      "reviewMethod": "migration source review",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed additive current-review revision with positive-value constraint, default 1 and idempotent schema generation; focused PostgreSQL integration applied migration 0009.",
+      "evidence": "PR #137 exact-head local disposable PostgreSQL integration.",
+      "reviewer": "Codex (Stage 06.11 competing-decision correction)",
+      "sha256": "04837217ea5e185c5b4b9d6d56dac1305118b1bde062c8eb60c6974bbc070291"
+    },
+    {
       "path": "migrations/meta/0000_snapshot.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
@@ -4159,6 +4171,18 @@
     },
     {
       "path": "migrations/meta/0008_snapshot.json",
+      "category": "generated-lockfile-or-snapshot",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Generated file: its integrity is covered by the package manager or migration tooling and it is not hand-written source.",
+      "evidence": "",
+      "reviewer": "",
+      "sha256": ""
+    },
+    {
+      "path": "migrations/meta/0009_snapshot.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "classification-only",
       "state": "not-applicable-source",
@@ -5020,10 +5044,10 @@
           "remediation": "Add a lower-case check in a migration after verifying existing data. Recorded for the next migration window; no migration is added in Stage 01 to avoid rewriting applied data."
         }
       ],
-      "observations": "Reviewed current diff for status-bound pagination cursors, optimistic revision checks, CSRF and live role enforcement coverage, API contract documentation, and integration assertions. Focused PostgreSQL integration passed; exact-head hosted CI and independent acceptance remain pending.",
-      "evidence": "PR #137 Stage 06.11 moderation queue review corrections.",
-      "reviewer": "Codex (Stage 06.11 review corrections)",
-      "sha256": "dee7c83fbf5624e9653b5c48222c183dbd984914ae06402453496a9464571a11"
+      "observations": "Reviewed separate candidate-report and moderator-disposition revision checks under a shared report row lock; focused PostgreSQL integration verifies stale candidate writes and competing moderator decisions conflict without recording a losing decision.",
+      "evidence": "PR #137 follow-up for independent review findings.",
+      "reviewer": "Codex (Stage 06.11 competing-decision correction)",
+      "sha256": "cf356270acca38283515d5901e4e40dd78a84db0ebd3a390d8501c1bdd3e9e55"
     },
     {
       "path": "packages/core/src/sensitive-data.integration.test.ts",

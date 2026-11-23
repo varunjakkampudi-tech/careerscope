@@ -336,10 +336,13 @@ Moderator routes check the account's current database role on every request. The
 reporting candidate's account identifier and contact information. Review decisions are stored as
 current disposition plus append-only decision events; changing a candidate's reason reopens the
 report. Deleting the underlying search result removes its feedback and associated review history.
-Each queue row includes a `revision`; moderators must submit it as `expectedRevision` when
-reviewing. If the candidate changes the report after it was loaded, the review returns `409` and
-the moderator must reload. Pagination cursors are rejected when the referenced report no longer
-belongs to the requested queue status.
+Each queue row includes a candidate report `revision` and nullable `reviewRevision`; moderators
+must submit both as `expectedRevision` and `expectedReviewRevision`. The review revision is null
+while pending and increments after each staff decision. If the candidate changes the report or
+another moderator changes its disposition after it was loaded, the review returns `409` and the
+moderator must reload. Pagination cursors are rejected when the referenced report no longer belongs
+to the requested queue status. Review events are append-only for the report's lifetime; deleting
+the underlying search result also deletes its report and review history.
 
 ### Searches
 

@@ -206,14 +206,22 @@ test(
         method: 'PUT',
         url: `/api/admin/job-feedback/${report.reportId}/review`,
         headers: { origin, cookie: moderatorCookie },
-        payload: { status: 'confirmed', expectedRevision: report.revision as number },
+        payload: {
+          status: 'confirmed',
+          expectedRevision: report.revision as number,
+          expectedReviewRevision: null,
+        },
       });
       assert.equal(missingCsrf.statusCode, 403);
       const invalidCsrf = await app.inject({
         method: 'PUT',
         url: `/api/admin/job-feedback/${report.reportId}/review`,
         headers: { origin, cookie: moderatorCookie, 'x-csrf-token': 'invalid' },
-        payload: { status: 'confirmed', expectedRevision: report.revision as number },
+        payload: {
+          status: 'confirmed',
+          expectedRevision: report.revision as number,
+          expectedReviewRevision: null,
+        },
       });
       assert.equal(invalidCsrf.statusCode, 403);
 
@@ -225,6 +233,7 @@ test(
           status: 'confirmed',
           note: 'Source listing does not match the employer domain.',
           expectedRevision: report.revision as number,
+          expectedReviewRevision: null,
         },
       });
       assert.equal(firstDecision.statusCode, 200, firstDecision.body);
@@ -244,7 +253,11 @@ test(
         method: 'PUT',
         url: `/api/admin/job-feedback/${report.reportId}/review`,
         headers: moderatorHeaders,
-        payload: { status: 'dismissed', expectedRevision: report.revision as number },
+        payload: {
+          status: 'dismissed',
+          expectedRevision: report.revision as number,
+          expectedReviewRevision: confirmed.json().items[0].reviewRevision as number,
+        },
       });
       assert.equal(secondDecision.statusCode, 200, secondDecision.body);
       assert.equal(
@@ -312,7 +325,11 @@ test(
           method: 'PUT',
           url: `/api/admin/job-feedback/${report.reportId}/review`,
           headers: moderatorHeaders,
-          payload: { status: 'confirmed', expectedRevision: refreshed.revision as number },
+          payload: {
+            status: 'confirmed',
+            expectedRevision: refreshed.revision as number,
+            expectedReviewRevision: refreshed.reviewRevision as number | null,
+          },
         }),
       ]);
       assert.equal(concurrentCandidateUpdate.statusCode, 200, concurrentCandidateUpdate.body);
@@ -334,9 +351,59 @@ test(
         method: 'PUT',
         url: `/api/admin/job-feedback/${report.reportId}/review`,
         headers: moderatorHeaders,
-        payload: { status: 'confirmed', expectedRevision: refreshed.revision as number },
+        payload: {
+          status: 'confirmed',
+          expectedRevision: refreshed.revision as number,
+          expectedReviewRevision: refreshed.reviewRevision as number | null,
+        },
       });
       assert.equal(staleRevisionReview.statusCode, 409, staleRevisionReview.body);
+
+      const [moderatorDecisionA, moderatorDecisionB] = await Promise.all([
+        app.inject({
+          method: 'PUT',
+          url: `/api/admin/job-feedback/${report.reportId}/review`,
+          headers: moderatorHeaders,
+          payload: {
+            status: 'confirmed',
+            expectedRevision: racedReport.revision as number,
+            expectedReviewRevision: racedReport.reviewRevision as number | null,
+          },
+        }),
+        app.inject({
+          method: 'PUT',
+          url: `/api/admin/job-feedback/${report.reportId}/review`,
+          headers: moderatorHeaders,
+          payload: {
+            status: 'dismissed',
+            expectedRevision: racedReport.revision as number,
+            expectedReviewRevision: racedReport.reviewRevision as number | null,
+          },
+        }),
+      ]);
+      assert.deepEqual(
+        [moderatorDecisionA.statusCode, moderatorDecisionB.statusCode].sort(),
+        [200, 409],
+        'only one moderator decision based on the same disposition revision can succeed',
+      );
+      const moderatorRaceState = await database.pool.query<{
+        revision: number;
+        status: string;
+      }>('SELECT revision, status FROM job_feedback_reviews WHERE feedback_id = $1', [
+        report.reportId,
+      ]);
+      assert.equal(moderatorRaceState.rows[0]!.revision, 1);
+      assert.ok(['confirmed', 'dismissed'].includes(moderatorRaceState.rows[0]!.status));
+      assert.equal(
+        (
+          await database.pool.query(
+            'SELECT id FROM job_feedback_review_events WHERE feedback_id = $1',
+            [report.reportId],
+          )
+        ).rowCount,
+        3,
+        'the stale competing moderator decision is not appended',
+      );
 
       const docs = await app.inject({
         url: '/api/docs/json',
@@ -366,7 +433,11 @@ test(
         method: 'PUT',
         url: `/api/admin/job-feedback/${report.reportId}/review`,
         headers: moderatorHeaders,
-        payload: { status: 'dismissed', expectedRevision: racedReport.revision as number },
+        payload: {
+          status: 'dismissed',
+          expectedRevision: racedReport.revision as number,
+          expectedReviewRevision: moderatorRaceState.rows[0]!.revision,
+        },
       });
       assert.equal(revokedModeratorReview.statusCode, 403);
     } finally {

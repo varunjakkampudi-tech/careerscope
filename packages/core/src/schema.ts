@@ -406,6 +406,7 @@ export const jobFeedbackReviews = pgTable(
   'job_feedback_reviews',
   {
     feedbackId: uuid('feedback_id').primaryKey(),
+    revision: integer('revision').default(1).notNull(),
     status: text('status').notNull(),
     reviewedBy: uuid('reviewed_by').notNull(),
     reviewedAt: timestamp('reviewed_at', { withTimezone: true }).defaultNow().notNull(),
@@ -416,6 +417,7 @@ export const jobFeedbackReviews = pgTable(
       'cascade',
     ),
     foreignKey({ columns: [table.reviewedBy], foreignColumns: [users.id] }),
+    check('job_feedback_reviews_revision_positive', sql`${table.revision} > 0`),
     check('job_feedback_reviews_status_valid', sql`${table.status} IN ('confirmed', 'dismissed')`),
     check(
       'job_feedback_reviews_note_bounded',

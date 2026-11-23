@@ -184,6 +184,7 @@ const jobFeedbackReviewSchema = z
     status: jobFeedbackReviewStatusSchema,
     note: z.string().trim().max(1000).optional(),
     expectedRevision: z.number().int().positive(),
+    expectedReviewRevision: z.number().int().positive().nullable(),
   })
   .strict();
 const notificationPreferencesUpdateSchema = z
@@ -2110,7 +2111,8 @@ export async function createApp(
     }
     const result = await database.pool.query(
       `SELECT f.id AS "reportId", f.reason, f.created_at AS "reportedAt",
-              f.updated_at AS "updatedAt", f.revision, r.status AS "reviewStatus",
+              f.updated_at AS "updatedAt", f.revision, r.revision AS "reviewRevision",
+              r.status AS "reviewStatus",
               r.reviewed_at AS "reviewedAt", r.note AS "reviewNote",
               j.id AS "jobId", j.data->>'title' AS title, j.data->>'company' AS company,
               j.data->>'location' AS location, j.data->>'source' AS source,
@@ -2136,7 +2138,8 @@ export async function createApp(
     if (!(await consumeRateLimit(request, `admin-job-feedback-review:${request.ownerId!}`, 60, 60)))
       throw new HttpError(429, 'Too many moderation updates');
     const { id } = identifier.parse(request.params);
-    const { status, note, expectedRevision } = jobFeedbackReviewSchema.parse(request.body);
+    const { status, note, expectedRevision, expectedReviewRevision } =
+      jobFeedbackReviewSchema.parse(request.body);
     const client = await database.pool.connect();
     try {
       await client.query('BEGIN');
@@ -2150,12 +2153,20 @@ export async function createApp(
       }
       if (feedback.rows[0]!.revision !== expectedRevision)
         throw new HttpError(409, 'Report changed; reload before reviewing');
+      const currentReview = await client.query<{ revision: number }>(
+        'SELECT revision FROM job_feedback_reviews WHERE feedback_id = $1',
+        [id],
+      );
+      const reviewRevision = currentReview.rows[0]?.revision ?? null;
+      if (reviewRevision !== expectedReviewRevision)
+        throw new HttpError(409, 'Review disposition changed; reload before reviewing');
       await client.query(
         `INSERT INTO job_feedback_reviews (feedback_id, status, reviewed_by, reviewed_at, note)
          VALUES ($1, $2, $3, now(), $4)
          ON CONFLICT (feedback_id) DO UPDATE
          SET status = EXCLUDED.status, reviewed_by = EXCLUDED.reviewed_by,
-             reviewed_at = EXCLUDED.reviewed_at, note = EXCLUDED.note`,
+             reviewed_at = EXCLUDED.reviewed_at, note = EXCLUDED.note,
+             revision = job_feedback_reviews.revision + 1`,
         [id, status, request.ownerId, note || null],
       );
       await client.query(
