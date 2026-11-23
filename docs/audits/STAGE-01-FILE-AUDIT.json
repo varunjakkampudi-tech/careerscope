@@ -2259,10 +2259,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled Stage 10.11 evidence after hosted exact-head cross-browser PDF download acceptance; item remains partial pending native PDF viewer and owner verification.",
-      "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
-      "sha256": "7cf58bc0896612dc4ce80ee6b783bed996043739d260f578ad14dc0fcdd74f95",
+      "observations": "Reconciled Stage 10.15 status and evidence without claiming model-output evaluation or checklist completion.",
+      "evidence": "Adversarial input browser assertions are documented; exact-head browser execution and owner verification remain pending.",
+      "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
+      "sha256": "7f884f8ea477af42b8da1e3036538375cc39f3d509e6559f3af2a6199786a3cb",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -2911,10 +2911,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled Stage 10.11 evidence after hosted exact-head cross-browser PDF download acceptance; item remains partial pending native PDF viewer and owner verification.",
-      "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
-      "sha256": "7ed55b65067caee80c0785a77c9fc797037cbb7527f62b4b157e91b0cc8254e3",
+      "observations": "Reconciled Stage 10.15 status and evidence without claiming model-output evaluation or checklist completion.",
+      "evidence": "Adversarial input browser assertions are documented; exact-head browser execution and owner verification remain pending.",
+      "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
+      "sha256": "5da93461036925956113effef2988b23b9ae81f0013157462725038caab402d0",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -3608,10 +3608,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reconciled Stage 10.11 evidence after hosted exact-head cross-browser PDF download acceptance; item remains partial pending native PDF viewer and owner verification.",
-      "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
-      "sha256": "463816a463f965a0e88afba499ee3ee226794fd6e1ea6be127d958ec489e1626",
+      "observations": "Reconciled Stage 10.15 status and evidence without claiming model-output evaluation or checklist completion.",
+      "evidence": "Adversarial input browser assertions are documented; exact-head browser execution and owner verification remain pending.",
+      "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
+      "sha256": "9ab397d897798f3a652781afe2a4b83642837b4c99c6c14cf7cfeefc9f70e6c2",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -8420,10 +8420,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Browser regression asserts the app-managed PDF download, sanitized role-specific filename, PDF structure, extracted candidate-authored Unicode text, success feedback, and unsupported-script fallback.",
-      "evidence": "Exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe passed hosted cross-browser run 45164018450 on Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. Native PDF viewer rendering and owner acceptance remain pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
-      "sha256": "6d24f837593ff42aba7e10c613dfd5ee4e9d565b136db14fac5c3dc90afe1aa0",
+      "observations": "Reviewed the Stage 10.15 adversarial job-description regression: untrusted prompt instructions do not alter candidate-authored fields or preview and no external provider request occurs. Model-output evaluation remains untested.",
+      "evidence": "npm run typecheck:tests passes for 100 canonical test files; exact-head browser execution and independent checklist review are pending.",
+      "reviewer": "Codex (CareerScope Stage 10.15 adversarial input regression)",
+      "sha256": "e1d59bf148747085da861243eae187b21da99d9ccb1fe67a45d67ee3ecdddae4",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
@@ -8514,6 +8514,12 @@
           "sha256": "6d24f837593ff42aba7e10c613dfd5ee4e9d565b136db14fac5c3dc90afe1aa0",
           "observations": "The Stage 10.11 browser regression waits for the app-managed PDF download, validates its sanitized role-specific filename, PDF header/page object, extracted Greek and Cyrillic candidate-authored text, and success feedback. Unsupported Telugu retains the print/save fallback.",
           "evidence": "Exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe passed hosted cross-browser run 45164018450 on Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. Native PDF viewer rendering and owner acceptance remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.15 adversarial input regression)",
+          "sha256": "e1d59bf148747085da861243eae187b21da99d9ccb1fe67a45d67ee3ecdddae4",
+          "observations": "Reviewed the Stage 10.15 adversarial job-description regression: untrusted prompt instructions do not alter candidate-authored fields or preview and no external provider request occurs. Model-output evaluation remains untested.",
+          "evidence": "npm run typecheck:tests passes for 100 canonical test files; exact-head browser execution and independent checklist review are pending."
         }
       ]
     },

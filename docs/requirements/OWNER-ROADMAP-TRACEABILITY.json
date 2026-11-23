@@ -2369,11 +2369,12 @@
       "currentStatus": "partial",
       "evidence": [
         "packages/core/src/resume-drafts.ts",
-        "apps/web/src/components/resume-builder.tsx"
+        "apps/web/src/components/resume-builder.tsx",
+        "scripts/tests/check-ui.ts"
       ],
-      "tests": [],
+      "tests": ["scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Manual candidate-entered data and fact-only display prevent generated claims in this flow; AI evaluation datasets, adversarial evaluation, and provider controls are not implemented.",
+      "gap": "Model-output adversarial evaluation datasets and provider controls are not implemented. This browser regression covers only disabled-provider input isolation; exact-head execution and owner verification remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
