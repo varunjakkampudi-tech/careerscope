@@ -24,7 +24,7 @@ future.
 Follow-up reminders apply only while a lead is in an application lifecycle
 status. Moving it to `saved` or `archived` clears the reminder and records that
 change in lead history; the archive confirmation tells the candidate when this
-will happen.
+will happen, whether they use the Archive button or the status selector.
 
 Candidates explicitly change their records. Opening a source or application
 destination does not mark the job applied. No application-submission bot,

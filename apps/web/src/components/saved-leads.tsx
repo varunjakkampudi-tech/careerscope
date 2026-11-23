@@ -752,9 +752,13 @@ function LeadEditor({
                 onChange={(event) => {
                   const next = event.target.value as Lead['status'];
                   if (next === record.status) return;
+                  const reminderNotice =
+                    record.followUpAt && ['saved', 'archived'].includes(next)
+                      ? ' Its scheduled follow-up reminder will also be cleared.'
+                      : '';
                   if (
                     window.confirm(
-                      `Change status to "${statusLabel(next)}" and save current notes and tags?`,
+                      `Change status to "${statusLabel(next)}" and save current notes and tags?${reminderNotice}`,
                     )
                   )
                     if (next === 'applied' && !record.applicationEvidence)

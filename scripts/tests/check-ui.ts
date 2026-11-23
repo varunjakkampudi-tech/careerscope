@@ -4228,6 +4228,15 @@ try {
         .getByRole('region', { name: 'Interview organizer' });
       await persistedOrganizer.getByText('Technical interview', { exact: true }).waitFor();
       await persistedOrganizer.getByText('completed', { exact: true }).waitFor();
+      const applicationStatus = applicationDetails.getByLabel('Status');
+      await page.once('dialog', (dialog) => {
+        assert.match(dialog.message(), /scheduled follow-up reminder will also be cleared/i);
+        void dialog.dismiss();
+      });
+      await applicationStatus.selectOption('archived');
+      assert.equal(await applicationStatus.inputValue(), 'applied');
+      assert.equal((await leadRepository.get(ownerId, leadId))?.status, 'applied');
+      assert.ok((await leadRepository.get(ownerId, leadId))?.followUpAt);
       await page.once('dialog', (dialog) => {
         assert.match(dialog.message(), /scheduled follow-up reminder will also be cleared/i);
         void dialog.accept();
