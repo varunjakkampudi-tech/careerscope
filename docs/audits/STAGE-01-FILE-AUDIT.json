@@ -2000,11 +2000,17 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Reviewed status selector scope, cancellation regression, archive-button disclosure, and supporting documentation; SHA-256 records the reviewed bytes. Exact-head CI and owner review remain separate gates.",
-      "reviewer": "Codex (Stage 09 reminder confirmation correction)",
-      "sha256": "8b82d9082e9c822ed3f614652931777db75a42a1aa52434be03a7beede16bcc2",
+      "observations": "Recorded exact Stage 09 functional-head CI success and retained employer-verification, proactive-reminder, independent-review, and owner gaps.",
+      "evidence": "Exact functional head f5181e4126de14b7b12d3b79ecf7b1d6f819815b passed all three CI jobs in run 45227521036. Independent review and owner checklist verification remain separate.",
+      "reviewer": "Codex (Stage 09 exact-head evidence reconciliation)",
+      "sha256": "9ca9f704def377d5b6ac88e5d91ff5b703c2424d1fb5aca32d8f2daec81771fc",
       "history": [
+        {
+          "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
+          "evidence": "Reviewed status selector scope, cancellation regression, archive-button disclosure, and supporting documentation; SHA-256 records the reviewed bytes. Exact-head CI and owner review remain separate gates.",
+          "reviewer": "Codex (Stage 09 reminder confirmation correction)",
+          "sha256": "8b82d9082e9c822ed3f614652931777db75a42a1aa52434be03a7beede16bcc2"
+        },
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
           "sha256": "7cb5b4797fae177590482712f5f705c5fec54594e4d940f4b1a56566c538a0c2",
@@ -2210,11 +2216,17 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Reviewed current source and documentation for the Stage 09 reminder archive correction; SHA-256 records the reviewed bytes. Exact-head CI and independent review remain separate gates.",
-      "reviewer": "Codex (Stage 09 reminder archive correction)",
-      "sha256": "8902ad96d8dcf8c874f4ac0be0b07a3755c491d4affd20c30abc56a320664e7f",
+      "observations": "Updated Stage 09.09 and 9.10 status from pending CI to exact functional-head CI success while preserving independent-review and owner-verification gaps.",
+      "evidence": "Exact functional head f5181e4126de14b7b12d3b79ecf7b1d6f819815b passed all three CI jobs in run 45227521036. Independent review and owner checklist verification remain separate.",
+      "reviewer": "Codex (Stage 09 exact-head evidence reconciliation)",
+      "sha256": "d95018b6d26324fbefd93698bafbee20bef52586bb7b747bbd134af9e88c11c7",
       "history": [
+        {
+          "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
+          "evidence": "Reviewed current source and documentation for the Stage 09 reminder archive correction; SHA-256 records the reviewed bytes. Exact-head CI and independent review remain separate gates.",
+          "reviewer": "Codex (Stage 09 reminder archive correction)",
+          "sha256": "8902ad96d8dcf8c874f4ac0be0b07a3755c491d4affd20c30abc56a320664e7f"
+        },
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
           "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
@@ -2418,11 +2430,17 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Reviewed browser coverage for status-change cancellation, archive-confirmation dismissal without mutation, and successful archive; SHA-256 records the reviewed bytes. Exact-head CI remains separate.",
-      "reviewer": "Codex (Stage 09 archive cancellation coverage)",
-      "sha256": "f4498bc52d267710a44d53d5940ca36b016e61e3099cb23084fedbf810cdcae4",
+      "observations": "Reconciled Stage 09.09/.10 tests with exact functional-head run 45227521036; independent review and owner verification remain pending.",
+      "evidence": "Exact functional head f5181e4126de14b7b12d3b79ecf7b1d6f819815b passed all three CI jobs in run 45227521036. Independent review and owner checklist verification remain separate.",
+      "reviewer": "Codex (Stage 09 exact-head evidence reconciliation)",
+      "sha256": "93c6dcff0cf770b6ec88635198b6e595a3073c5c422e8ac4ee8a5828b6cd77ef",
       "history": [
+        {
+          "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
+          "evidence": "Reviewed browser coverage for status-change cancellation, archive-confirmation dismissal without mutation, and successful archive; SHA-256 records the reviewed bytes. Exact-head CI remains separate.",
+          "reviewer": "Codex (Stage 09 archive cancellation coverage)",
+          "sha256": "f4498bc52d267710a44d53d5940ca36b016e61e3099cb23084fedbf810cdcae4"
+        },
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
           "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",
@@ -2998,11 +3016,17 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
-      "reviewer": "Codex (Stage 09 items 9.09-9.10)",
-      "sha256": "0e4402f407b0881739213d62f307565d16140e94a532dcf7c2c8acbb796192a4",
+      "observations": "Recorded exact Stage 09 functional-head CI success for 9.09/.10 and preserved their partial status.",
+      "evidence": "Exact functional head f5181e4126de14b7b12d3b79ecf7b1d6f819815b passed all three CI jobs in run 45227521036. Independent review and owner checklist verification remain separate.",
+      "reviewer": "Codex (Stage 09 exact-head evidence reconciliation)",
+      "sha256": "599cd0934e14893e097663031f114b86f9acb368fd5afc1297cfaf07bb6b7d29",
       "history": [
+        {
+          "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
+          "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
+          "reviewer": "Codex (Stage 09 items 9.09-9.10)",
+          "sha256": "0e4402f407b0881739213d62f307565d16140e94a532dcf7c2c8acbb796192a4"
+        },
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
           "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; focused F-025, migration integration, and Chromium browser evidence was run locally.",

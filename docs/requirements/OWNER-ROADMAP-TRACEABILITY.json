@@ -2033,7 +2033,7 @@
         "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "A candidate can append an owner-scoped employer acknowledgement with receipt time, source, and an optional non-sensitive reference. The event is stored separately from candidate application evidence and does not change application status or revision. CareerScope does not verify the employer communication. Exact-head CI, independent review, and owner checklist verification remain required.",
+      "gap": "A candidate can append an owner-scoped employer acknowledgement with receipt time, source, and an optional non-sensitive reference. The event is stored separately from candidate application evidence and does not change application status or revision. CareerScope does not verify the employer communication. Exact-head CI, independent review, and owner checklist verification remain required. Exact functional head f5181e4126de14b7b12d3b79ecf7b1d6f819815b passed all three jobs in run 45227521036; current-head independent review and owner verification remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
@@ -2059,7 +2059,7 @@
         "scripts/tests/check-ui.ts"
       ],
       "externalEvidence": [],
-      "gap": "Candidates can schedule or clear owner-scoped follow-up dates, and updates are revisioned and recorded in history. The date is displayed only when the candidate opens the application; proactive notifications are not implemented. Exact-head CI, independent review, and owner verification remain required.",
+      "gap": "Candidates can schedule or clear owner-scoped follow-up dates, and updates are revisioned and recorded in history. The date is displayed only when the candidate opens the application; proactive notifications are not implemented. Exact-head CI, independent review, and owner verification remain required. The browser test waits for the saved-state render after the successful API response. Exact functional head f5181e4126de14b7b12d3b79ecf7b1d6f819815b passed all three jobs in run 45227521036; current-head independent review and owner verification remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
