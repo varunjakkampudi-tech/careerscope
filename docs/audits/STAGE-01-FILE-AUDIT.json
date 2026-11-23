@@ -2262,7 +2262,7 @@
       "observations": "Reviewed updated Stage 10.11 evidence. It records only the focused 9/9 result and pending full check, exact-head CI, independent review, browser acceptance and owner verification.",
       "evidence": "Current candidate contents and relevant diff reviewed for the Stage 10.11 Unicode PDF correction.",
       "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
-      "sha256": "148898e4d10a2b440fe2dc21885e33a25f8debdda55f93bb427e164e0ef3306a",
+      "sha256": "bf429cfaabd394a08d4e71235ed9c0c8741e29df6895b6cdb9ac20fe12300c9f",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -2601,7 +2601,7 @@
       "observations": "Reviewed updated Stage 10.11 progress description. It keeps the item partial and separates current focused evidence from pending exact-head, browser and owner acceptance.",
       "evidence": "Current candidate contents and relevant diff reviewed for the Stage 10.11 Unicode PDF correction.",
       "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
-      "sha256": "c3870ebc777be98e58cd16d73f3ada0c2841bb5c1b00e357d178784391aa8f88",
+      "sha256": "ad67b03172b7c141ae91853181f85e55ebd0caeae98fc20503d1aa2d12f2083a",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
